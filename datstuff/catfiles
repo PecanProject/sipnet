@@ -1,0 +1,21 @@
+#!/bin/tcsh
+
+# Concatenate files from each month into one uber-file
+
+# Base file name:
+set base = "new-fluxes/flux_flags_"
+
+# Output file name:
+set output = "new-fluxes/new-fluxes.flags"
+
+# Loop through years:
+foreach i ("2002_" "2003_")
+
+# Loop through months:
+foreach j ("01" "02" "03" "04" "05" "06" "07" "08" "09" "10" "11" "12")
+
+# append to end of existing base file:
+cat $base$i$j.dat >> $output
+
+end
+end
