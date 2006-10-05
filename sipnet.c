@@ -335,13 +335,15 @@ static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible out
    Note: there should be NO blank lines in file, even between different spatial locations;
    all entries for a given location should be contiguous, and locations should be in ascending order
    There may be locations for which there is no climate data, in which case we use climate from location 0
+   If intervalLength is negative, then it is interpreted as being in seconds rather than days (e.g. -1800 for 1/2 hour time steps)
+   - In this case, it is multiplied by -1 and converted to days before being stored in the climate linked list
 */
 int * readClimData(char *climFile, int numLocs) {
   FILE *in;
   ClimateNode *curr, *next;
   int loc, year, day;
   int lastYear;
-  double time, length;
+  double time, length; // time in hours, length in days (or fraction of day)
   double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
   int currLoc;
   int count;
@@ -389,7 +391,11 @@ int * readClimData(char *climFile, int numLocs) {
     curr->year = year;
     curr->day = day;
     curr->time = time;
+
+    if (length < 0) // parse as seconds
+      length = length/-86400.; // convert to days
     curr->length = length;
+
     curr->tair = tair;
     curr->tsoil = tsoil;
     curr->par = par * (1.0/length);
@@ -442,7 +448,7 @@ int * readClimData(char *climFile, int numLocs) {
 	curr = next = firstClimates[currLoc]; // we'll start writing to next linked list 
       }
       else { // loc < currLoc
-	printf("Error reading climate file: was reading location %d, trying ot read location %d\n", currLoc, loc);
+	printf("Error reading climate file: was reading location %d, trying to read location %d\n", currLoc, loc);
 	printf("Climate records for a given location should be contiguous, and locations should be in ascending order\n");
 	exit(1);
       }
@@ -601,7 +607,7 @@ void calcLightEff2 (double *lightEff, double lai, double par) {
   double lightIntensity;
   double cumLightEff = 0.0;
   
-  if (lai > 0 && par > 0) { // must have at least some leaves and some light
+  if (lai > 0 && par > 0) { // must have at least some leaves and some light; DANGER: sensitive to round-off errors: e.g. lai = -0.00000001 will give a very different lightEff from lai = 0.000000001; but since we later multiply by lai (in potPsn), this shouldn't lead to any major problems
     for (layer = 1; layer <= NUM_LAYERS; layer++) {
       cumLai = lai * ((double)layer / NUM_LAYERS); // lai from this layer up
       lightIntensity = par * exp(-1.0 * params.attenuation * cumLai); // between 0 and par
@@ -641,7 +647,7 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
   double currLightEff, cumLightEff;
   int coeff; // current coefficient in Simpson's rule
   
-  if (lai > 0 && par > 0) { // must have at least some leaves and some light
+  if (lai > 0 && par > 0) { // must have at least some leaves and some light; DANGER: sensitive to round-off errors: e.g. lai = -0.00000001 will give a very different lightEff from lai = 0.000000001; but since we later multiply by lai (in potPsn), this shouldn't lead to any major problems
     cumLai = 0.0;
     cumLightEff = 0.0; // the running sum
     layer = 0;
@@ -886,7 +892,15 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall)
   double rd; // aerodynamic resistance between ground and canopy air space (sec/m)
   double snowRemaining; // to make sure we don't get rid of more than there is
 
-  // if no snow, set fluxes to 0
+  /* If no snow, set fluxes to 0
+     Note that this formulation means that there could be big differences in the fluxes depending on whether the snow pack is 0 or slightly greater than 0
+     e.g. if there is snow fall in timestep i but no snow pack, then there will be no sublimation or snowMelt, but if there is a small snow pack, then there can be sublimation
+     This could have the unrealistic result that, with no snow pack in timestep i, there is actually a larger snow pack in timestep (i+1) than there would be if there had been a snow pack in timestep i
+     However, if we allow sublimation when there is snowfall but no snow pack, then we could have sublimation and evaporation from the soil in the same time step, which may be even worse
+     Note that there is, in principle, no reason why we should set snowMelt = 0 if there is snow fall but no snow pack,
+     in practice (the way the model is written now), snowMelt will always = 0 in this case anyway, since snow fall only happens when tair < 0 and snow melt only when tair > 0
+     Note that if we wanted to allow sublimation when there is snow fall but no snow pack, then the check here could be rewritten as if (snowRemaining <= 0) rather than envi.snow <= 0 (and snowRemaining could be calculated before the check)
+  */
   if (envi.snow <= 0) {
     *snowMelt = 0;
     *sublimation = 0;
@@ -900,7 +914,7 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall)
     *sublimation = CONVERSION * (E_STAR_SNOW - climate->vPress)/rd;
 
     snowRemaining = envi.snow + (snowFall * climate->length);
-    
+ 
     // remove to allow sublimation of a negative amount of snow
     // right now we can't sublime a negative amount of snow
     if (*sublimation < 0)
@@ -929,6 +943,8 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall)
 	*snowMelt = snowRemaining/climate->length;
     } // end else above freezing
   } // end else there is snow
+
+  // printf("%d %f %f %f %f %f %f\n", climate->day, climate->tair, climate->precip, envi.snow, *snowMelt, *sublimation, snowFall);
 } // end snowPack
       
 
@@ -983,8 +999,8 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
       *evaporation = 0;
 
     // make sure we don't evaporate more than we have:
-    if (waterRemaining - (*evaporation * climate->length) < TINY) {
-      *evaporation = (waterRemaining - TINY)/climate->length; // leave a tiny little bit, to avoid negative water due to round-off errors
+    if (waterRemaining - (*evaporation * climate->length) < 0) {
+      *evaporation = waterRemaining/climate->length; 
       waterRemaining = 0;
     }
     else
@@ -994,8 +1010,8 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
 #if LITTER_WATER_DRAINAGE // we're calculating drainage even when evap. layer is not overflowing
   *drainage = params.litWaterDrainRate * (water/whc); // drainage rate is proportional to fractional soil moisture
   // make sure we don't drain more than we have:
-  if (waterRemaining - (*drainage * climate->length) < TINY) {
-    *drainage = (waterRemaining - TINY)/climate->length; // leave a tiny little bit, to avoid negative water due to round-off errors
+  if (waterRemaining - (*drainage * climate->length) < 0) {
+    *drainage = waterRemaining/climate->length; 
     waterRemaining = 0;
   }
   else
@@ -1232,11 +1248,11 @@ void calculateFluxes() {
   // printf("%f %f %f %f %f\n", fluxes.leafLitter*climate->length, fluxes.woodLitter*climate->length, fluxes.rVeg*climate->length, fluxes.rSoil*climate->length, fluxes.photosynthesis*climate->length);
 
   /* diagnosis: print water fluxes:
-     printf("%f %f %f %f %f %f %f %f %f %f\n", 
-     fluxes.rain*climate->length, fluxes.snowFall*climate->length, fluxes.immedEvap*climate->length,
-     fluxes.snowMelt*climate->length, fluxes.sublimation*climate->length,
-     fluxes.fastFlow*climate->length, fluxes.evaporation*climate->length, fluxes.topDrainage*climate->length,
-     fluxes.bottomDrainage*climate->length, fluxes.transpiration*climate->length);
+  printf("%f %f %f %f %f %f %f %f %f %f\n", 
+	 fluxes.rain*climate->length, fluxes.snowFall*climate->length, fluxes.immedEvap*climate->length,
+	 fluxes.snowMelt*climate->length, fluxes.sublimation*climate->length,
+	 fluxes.fastFlow*climate->length, fluxes.evaporation*climate->length, fluxes.topDrainage*climate->length,
+	 fluxes.bottomDrainage*climate->length, fluxes.transpiration*climate->length);
   */
 
   /* printf("%f %f %f\n", fluxes.photosynthesis*climate->length, fluxes.transpiration*climate->length, 
@@ -1327,9 +1343,51 @@ void updateTrackers(double oldSoilWater) {
     * climate->length;
 
   trackers.soilWetnessFrac = (oldSoilWater + envi.soilWater)/(2.0*params.soilWHC);
-  // mean of soil wetness at start of time step at soil wetness at end of time step - assume linear
+  // mean of soil wetness at start of time step and soil wetness at end of time step - assume linear
 }
 
+
+// If var < minVal, then set var = 0
+// Note that if minVal = 0, then this will (as suggested) ensure that var >= 0
+//  If minVal > 0, then minVal can be thought of as some epsilon value, below which var is treated as 0
+void ensureNonNegative(double *var, double minVal) {
+  if (*var < minVal)
+    *var = 0.;
+}
+
+
+// Make sure all environment variables are positive after updating them:
+// Note: For some variables, there are checks elsewhere in the code to ensure that fluxes don't make stocks go negative
+//  However, the stocks could still go slightly negative due to rounding errors
+// For other variables, there are NOT currently (as of 7-16-06) checks to make sure out-fluxes aren't too large
+//  In these cases, this function should be thought of as a last-resort check - ideally, the fluxes would be modified 
+//  so that they did not make the stocks negative (otherwise the fluxes could be inconsistent with the changes in the stocks)
+void ensureNonNegativeStocks() {
+
+  ensureNonNegative(&(envi.plantWoodC), 0);
+  ensureNonNegative(&(envi.plantLeafC), 0);
+
+#if LITTER_POOL
+  ensureNonNegative(&(envi.litter), 0);
+#endif
+
+  ensureNonNegative(&(envi.soil), 0);
+
+#if MODEL_WATER
+
+#if LITTER_WATER
+  ensureNonNegative(&(envi.litterWater), 0);
+#endif
+
+  ensureNonNegative(&(envi.soilWater), 0);
+  ensureNonNegative(&(envi.snow), TINY); /* In the case of snow, the model has very different behavior for a snow pack of 0
+					 vs. a snow pack of slightly greater than 0 (e.g. no soil evaporation if snow > 0).
+					 Thus to avoid large errors due to small rounding errors, we'll set snow = 0 any time it falls below TINY,
+					 the assumption being that if snow < TINY, then it was really supposed to be 0, but isn't because of rounding errors.
+				      */
+#endif
+
+}					 
 
 // !!! main runner function !!!
 
@@ -1374,6 +1432,8 @@ void updateState() {
   envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) * climate->length;
 
 #endif // MODEL_WATER
+
+  ensureNonNegativeStocks();
 
   npp = fluxes.photosynthesis - fluxes.rVeg;
   addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
