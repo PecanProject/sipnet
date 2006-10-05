@@ -82,7 +82,7 @@
 
 // constants for tracking running mean of NPP:
 #define MEAN_NPP_DAYS 5 // over how many days do we keep the running mean?
-#define MEAN_NPP_MAX_ENTRIES MEAN_NPP_DAYS * 24 // assume that the most pts we can have is one per hour
+#define MEAN_NPP_MAX_ENTRIES MEAN_NPP_DAYS * 96 // assume that the most pts we can have is one every 15 minutes
 
 // some constants for water submodel:
 #define LAMBDA 2501000. // latent heat of vaporization (J/kg)
@@ -556,9 +556,9 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
 // pre: out is open for writing
 // print header line to output file
 void outputHeader(FILE *out) {
-  fprintf(out, "(PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;\n");
-  fprintf(out, " NPP, YearlyNPP, NEE, TotNEE and SoilResp in g C/m^2 [positive NPP = UPTAKE, positive NEE and SoilResp = LOSS]\n");
-  fprintf(out, " Evapotranspiration in cm H2O over whole time step)\n");
+  // fprintf(out, "(PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;\n");
+  // fprintf(out, " NPP, YearlyNPP, NEE, TotNEE and SoilResp in g C/m^2 [positive NPP = UPTAKE, positive NEE and SoilResp = LOSS]\n");
+  // fprintf(out, " Evapotranspiration in cm H2O over whole time step)\n");
   fprintf(out, "Location Year Day  Time PlantWoodC PlantLeafC Soil   Litter LitterWater SoilWater SoilWetness Snow   NPP YearlyNPP     NEE   TotNEE Evapotranspiration\n");
 }
 
@@ -1397,6 +1397,7 @@ void ensureNonNegativeStocks() {
 void updateState() {
   double npp; // net primary productivity, g C * m^-2 ground area * day^-1
   double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
+  int err;
 
   oldSoilWater = envi.soilWater;
 
@@ -1436,7 +1437,14 @@ void updateState() {
   ensureNonNegativeStocks();
 
   npp = fluxes.photosynthesis - fluxes.rVeg;
-  addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
+  err = addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
+  if (err != 0) {  // error while trying to add value to mean tracker; checking this all the time slow things down a bit, but I've already been burned once by not checking it, and don't want to be burned again
+    printf("******* Error type %d while trying to add value to NPP mean tracker in sipnet:updateState() *******\n", err);
+    printf("npp = %f, climate->length = %f\n", npp, climate->length);
+    printf("Suggestion: try changing MEAN_NPP_MAX_ENTRIES in sipnet.c\n");
+    exit(1);
+  }
+    
   updateTrackers(oldSoilWater);
 }
 
