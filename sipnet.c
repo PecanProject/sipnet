@@ -1,6 +1,9 @@
 /* SiPnET: Simplified PnET
 
-   Author: Bill Sacks
+   Author: Bill Sacks  wsacks@wisc.edu
+   modified by... 
+   John Zobitz zobitz@math.utah.edu
+   Dave Moore dmoore1@ucar.edu 
 
    A simple box model of carbon cycling
    largely based on PnET
@@ -17,12 +20,27 @@
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)
+#define CSV_OUTPUT 0 
+//output .out file as a CSV file
+
+//alternative transpiration methods modified by Dave Moore 
+#define ALTERNATIVE_TRANS 0
+// do we want to impliment alternative transpiration?
+
+#define BALL_BERRY 0
+//impliment a Ball Berry submodel to calculate gs from RH, CO2 and A
+//MUST BE OFF for PENMAN MONTEITH TO RUN
+
+#define PENMAN_MONTEITH_TRANS 0
+//impliment a transpiration calculation based on the Penman-Monteith Equation.
+//March 1st 2007 PM equation not really working.
+
+//#define G 0
+//assume that soil heat flux is zero;
 
 #define GROWTH_RESP 0
 // explicitly model growth resp., rather than including with maint. resp.
 
-#define LITTER_POOL 0
-// have extra litter pool, in addition to soil c pool
 
 #define LLOYD_TAYLOR 0
 // use Lloyd-Taylor model for soil respiration, in which temperature sensitivity decreases at higher temperatures?
@@ -71,6 +89,34 @@
 #define SOIL_PHENOL 0 && !GDD
 // use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)
 
+#define LITTER_POOL 0
+// have extra litter pool, in addition to soil c pool
+
+#define SOIL_MULTIPOOL 0 && !LITTER_POOL
+// do we have a multipool approach to model soils?
+// if LITTER_POOL == 1, then SOIL_MULTIPOOL will be 0 because we take care of litter with 
+// the soil quality submodel. 
+
+#define NUMBER_SOIL_CARBON_POOLS 3
+// first number: number of pools we want to have.
+// IF SOIL_MULTIPOOL=0, then NUMBER_SOIL_CARBON_POOLS = 1
+// if SOIL_MULTIPOOL=1, then NUMBER_SOIL_CARBON_POOLS = number given
+
+#define SOIL_QUALITY 0 && SOIL_MULTIPOOL
+// do we have a soil quality submodel?
+// we only do SOIL_QUALITY if SOIL_MULTIPOOL is turned on
+
+#define MICROBES 0 && !SOIL_MULTIPOOL
+// do we utilize microbes.  This will only be an option
+// if SOIL_MULTIPOOL==0 and MICROBES ==1
+
+#define STOICHIOMETRY 0 && MICROBES
+// do we utilize stoichometric considerations for the microbial pool?
+ 
+#define ROOTS 1
+// do we model root dynamics?
+
+
 // end definitions for choosing different model structures
 
 // begin constant definitions
@@ -82,7 +128,15 @@
 
 // constants for tracking running mean of NPP:
 #define MEAN_NPP_DAYS 5 // over how many days do we keep the running mean?
-#define MEAN_NPP_MAX_ENTRIES MEAN_NPP_DAYS * 96 // assume that the most pts we can have is one every 15 minutes
+#define MEAN_NPP_MAX_ENTRIES MEAN_NPP_DAYS * 24 // assume that the most pts we can have is one per hour
+
+// constants for tracking running mean of GPP:
+#define MEAN_GPP_SOIL_DAYS 3 // over how many days do we keep the running mean?
+#define MEAN_GPP_SOIL_MAX_ENTRIES MEAN_GPP_SOIL_DAYS * 24 // assume that the most pts we can have is one per hour
+
+// constants for tracking running mean of NPP for the soil:
+#define MEAN_NPP_SOIL_DAYS 3 // over how many days do we keep the running mean?
+#define MEAN_NPP_SOIL_MAX_ENTRIES MEAN_NPP_SOIL_DAYS * 24 // assume that the most pts we can have is one per hour
 
 // some constants for water submodel:
 #define LAMBDA 2501000. // latent heat of vaporization (J/kg)
@@ -123,7 +177,8 @@ struct ClimateVars {
 		    NOTE: input is in Pa */
   double wspd; // avg. wind speed (m/s)
   double soilWetness; // fractional soil wetness (fraction of saturation - between 0 and 1)
-
+  double netrad; // net radiation : data: Rnet_25m_REBS  measured in W/m2 at 25.5m above the ground
+  double soilheat; // Soil Heat Flux (G): Used in the PenmanMonteith Equation
 #if GDD
   double gdd; /* growing degree days from Jan. 1 to now
 		 NOTE: Calculated, *not* read from file */
@@ -147,6 +202,7 @@ typedef struct Parameters {
   double soilWFracInit; // unitless: fraction of soilWHC
   double snowInit; // cm water equiv.
 
+	// 7 parameters
   // parameters:
 
   // photosynthesis:
@@ -160,6 +216,8 @@ typedef struct Parameters {
 		       (Einsteins * m^-2 ground area * day^-1) */
   double attenuation; // light attenuation coefficient
   
+  // 9 parameters
+  
   // phenology-related:
   double leafOnDay; // day when leaves appear
   double gddLeafOn; // with gdd-based phenology, gdd threshold for leaf appearance
@@ -171,6 +229,7 @@ typedef struct Parameters {
   double leafTurnoverRate; /* average turnover rate of leaves, in fraction per day
 			      NOTE: read in as per-year rate! */
 
+	// 8 parameters
   // autotrophic respiration:
   double baseVegResp; /* vegetation maintenance respiration at 0 degrees C
 			(g C respired * g^-1 plant C * day^-1) 
@@ -182,6 +241,7 @@ typedef struct Parameters {
   double frozenSoilFolREff; // amount that foliar resp. is shutdown if soil is frozen (0 = full shutdown, 1 = no shutdown)
   double frozenSoilThreshold; // soil temperature below which frozenSoilFolREff and frozenSoilEff kick in (degrees C)
 
+	// 5 parameters
   // soil respiration:
   double litterBreakdownRate; /* rate at which litter is converted to soil/respired
 								 at 0 degrees C and max soil moisture
@@ -195,13 +255,28 @@ typedef struct Parameters {
   double baseSoilRespCold; /* soil respiration at 0 degrees C and max soil moisture when tsoil < coldSoilThreshold
 			      (g C respired * g^-1 soil C * day^-1)
 			      NOTE: read in as per-year rate! */
+			      
+ double baseSoilRespEpsilon; /* soil respiration at 0 degrees C and max soil moisture 
+			 (g C respired * g^-1 soil C * day^-1) 
+			 NOTE: read in as per-year rate! */
+  double baseSoilRespColdEpsilon; /* soil respiration at 0 degrees C and max soil moisture when tsoil < coldSoilThreshold
+			      (g C respired * g^-1 soil C * day^-1)
+			      NOTE: read in as per-year rate! */			      
+			      
+	// 6 parameters
+				      
   double soilRespQ10; // scalar determining effect of temp on soil resp.
   double soilRespQ10Cold; // scalar determining effect of temp on soil resp. when tsoil < coldSoilThreshold
+  
+  double soilRespQ10Epsilon; // scalar determining effect of temp on soil resp.
+  double soilRespQ10ColdEpsilon; // scalar determining effect of temp on soil resp. when tsoil < coldSoilThreshold
+  
   double coldSoilThreshold; // temp. at which use baseSoilRespCold and soilRespQ10Cold (if SEASONAL_R_SOIL true) (degrees C)
   double E0; // E0 in Lloyd-Taylor soil respiration function
   double T0; // T0 in Lloyd-Taylor soil respiration function
   double soilRespMoistEffect; // scalar determining effect of moisture on soil resp.
 
+	// 8 parameters
   // moisture-related:
   double waterRemoveFrac; /* fraction of plant available soil water which can be removed in one day
 			    without water stress occurring */
@@ -218,7 +293,7 @@ typedef struct Parameters {
   double rdConst; // scalar determining amount of aerodynamic resistance
   double rSoilConst1, rSoilConst2; /* soil resistance = e^(rSoilConst1 - rSoilConst2 * W1)
 				      where W1 = (litterWater/litterWHC) */
-
+  double m_ballBerry ; // slope for the Ball Berry relationship
   double leafCSpWt; // g C * m^-2 leaf area
   double cFracLeaf; // g leaf C * g^-1 leaf
 
@@ -226,12 +301,58 @@ typedef struct Parameters {
 			  (leaf loss handled separately)
 			  NOTE: read in as per-year rate! */
 
+
   // calculated parameters:
   double psnTMax; // degrees C - assumed symmetrical around psnTOpt
+  
+  	// 16-1 calculated= 15 parameters
+  
+  // quality model parameters
+  double qualityLeaf; // value for leaf litter quality
+  double qualityWood; // value for wood litter quality
+  double efficiency; // conversion efficiency of ingested carbon
+  double efficiencyEpsilon; // value for efficiency slope
+
+	// 4 parameters
+
+  double maxIngestionRate;	// hr-1 - maximum ingestion rate of the microbe
+  double maxIngestionRateEpsilon;	// unitless - maximum ingestion rate of the microbe
+  double halfSatIngestion;	// mg C g-1 soil - half saturation ingestion rate of microbe
+  double totNitrogen;		// Percentage nitrogen in soil
+  double microbeNC;			// mg N / mg C - microbe N:C ratio
+	// 5 parameters
+
+
+  double microbeInit;		// mg C / g soil microbe initial carbon amount
+  	// 1 parameters
+
+  double fineRootFrac;			// fraction of wood carbon allocated to fine roots
+  double coarseRootFrac;		// fraction of wood carbon that is coarse roots
+  double fineRootAllocation;	// fraction of NPP allocated to fine roots
+  double woodAllocation;		// fraction of NPP allocated to the roots
+  double fineRootExudation;	    // fraction of GPP exuded to the soil
+  double coarseRootExudation;	// fraction of NPP exuded to the soil
+ 	// 6 parameters
+ 	
+  double fineRootTurnover;	    // turnover of fine roots (per year rate)
+  double coarseRootTurnover;	// turnover of coarse roots (per year rate)
+  double baseFineRootResp;	    // base respiration rate of fine roots  (per year rate)
+  double baseCoarseRootResp;	// base respiration rate of coarse roots (per year rate)
+  double fineRootQ10;			// Q10 of fine roots
+  double coarseRootQ10;			// Q10 of coarse roots
+  	// 6 parameters
+
+  double baseMicrobeResp;		// base respiration rate of microbes
+  double microbeQ10;			// Q10 of coarse roots 
+  double microbePulseEff;		// fraction of exudates that microbes immediately use.
+	//Total parameters=7+9+8+5+14+15+4+5+1+5+6+3=81
+  
+ // double soilBreakdownCoeff[NUMBER_SOIL_CARBON_POOLS];	// Rate coefficients if we do not have a multipool quality model
+  
 } Params;
 
 
-#define NUM_PARAMS 54 // this only counts parameters read from file
+#define NUM_PARAMS 84 // this only counts parameters read from file
 
 
 
@@ -240,10 +361,22 @@ typedef struct Environment {
   double plantWoodC; // carbon in plant wood (above-ground + roots) (g C * m^-2 ground area)
   double plantLeafC; // carbon in leaves (g C * m^-2 ground area)
   double litter; // carbon in litter (g C * m^-2 ground area)
-  double soil; // carbon in soil (g C * m^-2 ground area)
+  #if SOIL_MULTIPOOL
+  	double soil[NUMBER_SOIL_CARBON_POOLS];	// if we have more than one quality pool we use this
+  #else
+  	double soil;
+  #endif
+  
+  	
+
   double litterWater; // water in litter (evaporative) layer (cm)
   double soilWater; // plant available soil water (cm)
   double snow; // snow pack (cm water equiv.)
+  
+  double microbeC; // carbon in microbes g C m-2 ground area
+  
+  double coarseRootC;
+  double fineRootC;
 } Envi;
 
 // fluxes as per-day rates
@@ -266,6 +399,28 @@ typedef struct FluxVars {
   double topDrainage; // drainage from top of soil to lower level (cm water * day^-1)
   double bottomDrainage; // drainage from lower level of soil out of system (cm water * day^-1)
   double transpiration; // cm water * day^-1
+  double rWood;		// g C m^-2 ground area day^-1 of wood respiration
+  double rLeaf;		// g C m^-2 ground area day^-1 of leaf respiration
+  
+  #if SOIL_MULTIPOOL
+	double maintRespiration[NUMBER_SOIL_CARBON_POOLS];  // Microbial maintenance respiration rate g C m-2 ground area day^-1
+  	double microbeIngestion[NUMBER_SOIL_CARBON_POOLS];
+  #else
+  	double maintRespiration;  
+  	double microbeIngestion;
+  #endif
+ 
+  double fineRootLoss; 			// Loss rate of fine roots (turnover + exudation)
+  double coarseRootLoss;		// Loss rate of coarse roots (turnover + exudation)
+  
+  double fineRootCreation;		// Creation rate of fine roots
+  double coarseRootCreation;	// Creation rate of coarse roots
+  double woodCreation;			// Creation rate of wood
+  
+  double rCoarseRoot;			// Coarse root respiration
+  double rFineRoot;				// Fine root respiration
+  
+  double soilPulse;				// Exudates into the soil
 } Fluxes;
 
 
@@ -291,6 +446,14 @@ typedef struct TrackerVars { // variables to track various things
   double evapotranspiration; // cm water evaporated/sublimated (sublimed???) or transpired in this time step
   double soilWetnessFrac; /* mean fractional soil wetness (soilWater/soilWHC) over this time step
 			     (linear mean: mean of wetness at start of time step and wetness at end of time step) */
+  double fa; // g C * m^-2 of net photosynthesis (GPP - leaf respiration) in this time interval
+  double fr; // g C * m^-2 of non foliar respiration (soil + wood respiration) in this time interval
+  double totSoilC;		// total soil carbon across all the pools
+  
+  double rRoot;		// g C m-2 of root respiration
+  double rSoil;		// Soil respiration (microbes+root) 
+
+  double rAboveground;	// Wood and foliar respiration
 } Trackers;
 
 
@@ -316,6 +479,8 @@ static Envi envi; // state variables
 static Trackers trackers;
 static PhenologyTrackers phenologyTrackers; 
 static MeanTracker *meanNPP; // running mean of NPP over some fixed time (stored in g C * m^-2 * day^-1)
+static MeanTracker *meanGPP; // running mean of GPP over some fixed time for linkages (stored in g C * m^-2 * day^-1)
+
 static ClimateNode *climate; // current climate
 static Fluxes fluxes;
 static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible outputs
@@ -335,8 +500,6 @@ static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible out
    Note: there should be NO blank lines in file, even between different spatial locations;
    all entries for a given location should be contiguous, and locations should be in ascending order
    There may be locations for which there is no climate data, in which case we use climate from location 0
-   If intervalLength is negative, then it is interpreted as being in seconds rather than days (e.g. -1800 for 1/2 hour time steps)
-   - In this case, it is multiplied by -1 and converted to days before being stored in the climate linked list
 */
 int * readClimData(char *climFile, int numLocs) {
   FILE *in;
@@ -344,7 +507,7 @@ int * readClimData(char *climFile, int numLocs) {
   int loc, year, day;
   int lastYear;
   double time, length; // time in hours, length in days (or fraction of day)
-  double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
+  double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness, netrad, soilheat;
   int currLoc;
   int count;
   int i;
@@ -363,7 +526,7 @@ int * readClimData(char *climFile, int numLocs) {
 
   in = openFile(climFile, "r");
  
-  status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+  status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness, &netrad, &soilheat);
   if (status == EOF) {
     printf("Error: no climate data in %s\n", climFile);
     exit(1);
@@ -410,7 +573,8 @@ int * readClimData(char *climFile, int numLocs) {
     if (curr->wspd < TINY)
       curr->wspd = TINY; // avoid divide by zero
     curr->soilWetness = soilWetness;
-
+    curr->netrad = netrad;
+    curr->soilheat = soilheat;
 #if GDD
     if (year != lastYear) // HAPPY NEW YEAR!
       gdd = 0; // reset growing degree days
@@ -423,7 +587,7 @@ int * readClimData(char *climFile, int numLocs) {
 
     lastYear = year;
 
-    status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+    status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness, &netrad, &soilheat);
 
     if (status != EOF) { // we have another climate record
       // check new location, compare with old location (currLoc), make sure new location is valid, and act accordingly:
@@ -492,10 +656,10 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterWFracInit", &(params.litterWFracInit));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilWFracInit", &(params.soilWFracInit));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "snowInit", &(params.snowInit));
-
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "aMax", &(params.aMax));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "aMaxFrac", &(params.aMaxFrac));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseFolRespFrac", &(params.baseFolRespFrac));
+  
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "psnTMin", &(params.psnTMin));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "psnTOpt", &(params.psnTOpt));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "vegRespQ10", &(params.vegRespQ10));
@@ -506,6 +670,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "dVpdExp", &(params.dVpdExp));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "halfSatPar", &(params.halfSatPar));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "attenuation", &(params.attenuation));
+  
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafOnDay", &(params.leafOnDay));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "gddLeafOn", &(params.gddLeafOn));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilTempLeafOn", &(params.soilTempLeafOn));
@@ -516,12 +681,18 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafTurnoverRate", &(params.leafTurnoverRate));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseVegResp", &(params.baseVegResp));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterBreakdownRate", &(params.litterBreakdownRate));
+  
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "fracLitterRespired", &(params.fracLitterRespired));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilResp", &(params.baseSoilResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespEpsilon", &(params.baseSoilRespEpsilon));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespCold", &(params.baseSoilRespCold));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespColdEpsilon", &(params.baseSoilRespColdEpsilon));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10", &(params.soilRespQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10Epsilon", &(params.soilRespQ10Epsilon));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10Cold", &(params.soilRespQ10Cold));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10ColdEpsilon", &(params.soilRespQ10ColdEpsilon));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "coldSoilThreshold", &(params.coldSoilThreshold));
+  
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "E0", &(params.E0));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "T0", &(params.T0));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespMoistEffect", &(params.soilRespMoistEffect));
@@ -532,6 +703,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilWHC", &(params.soilWHC));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "immedEvapFrac", &(params.immedEvapFrac));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "fastFlowFrac", &(params.fastFlowFrac));
+  
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "snowMelt", &(params.snowMelt));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "litWaterDrainRate", &(params.litWaterDrainRate));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "rdConst", &(params.rdConst));
@@ -540,6 +712,35 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafCSpWt", &(params.leafCSpWt));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "cFracLeaf", &(params.cFracLeaf));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "turnoverRate", &(params.turnoverRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityLeaf", &(params.qualityLeaf));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityWood", &(params.qualityWood));
+  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "efficiency", &(params.efficiency));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "efficiencyEpsilon", &(params.efficiencyEpsilon));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "maxIngestionRate", &(params.maxIngestionRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "maxIngestionRateEpsilon", &(params.maxIngestionRateEpsilon));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "halfSatIngestion", &(params.halfSatIngestion));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "totNitrogen", &(params.totNitrogen)); 
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeNC", &(params.microbeNC));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeInit", &(params.microbeInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootFrac", &(params.fineRootFrac));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootFrac", &(params.coarseRootFrac));
+
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootAllocation", &(params.fineRootAllocation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "woodAllocation", &(params.woodAllocation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootExudation", &(params.fineRootExudation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootExudation", &(params.coarseRootExudation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootTurnover", &(params.fineRootTurnover));  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootTurnover", &(params.coarseRootTurnover));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseFineRootResp", &(params.baseFineRootResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseCoarseRootResp", &(params.baseCoarseRootResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootQ10", &(params.fineRootQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootQ10", &(params.coarseRootQ10));
+  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseMicrobeResp", &(params.baseMicrobeResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeQ10", &(params.microbeQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbePulseEff", &(params.microbePulseEff));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "m_ballBerry", &(params.m_ballBerry));
 
   fclose(paramF);
   fclose(spatialParamF);
@@ -555,20 +756,62 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
 
 // pre: out is open for writing
 // print header line to output file
+
+//I wish someone who write a .header file to automatically output the correct header
+
+// Not only that ...I'd like the options used in the model run to be added to the file;
+ 
 void outputHeader(FILE *out) {
-  // fprintf(out, "(PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;\n");
-  // fprintf(out, " NPP, YearlyNPP, NEE, TotNEE and SoilResp in g C/m^2 [positive NPP = UPTAKE, positive NEE and SoilResp = LOSS]\n");
-  // fprintf(out, " Evapotranspiration in cm H2O over whole time step)\n");
-  fprintf(out, "Location Year Day  Time PlantWoodC PlantLeafC Soil   Litter LitterWater SoilWater SoilWetness Snow   NPP YearlyNPP     NEE   TotNEE Evapotranspiration\n");
+  fprintf(out, "(PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;\n");
+  fprintf(out, "Location Year Day  Time PlantWoodC PlantLeafC Soil   Litter LitterWater SoilWater SoilWetness Snow\n");
 }
 
 // pre: out is open for writing
 // print current state to output file
 void outputState(FILE *out, int loc, int year, int day, double time) {
-  fprintf(out, "%8d %4d %3d %5.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.3f %8.2f %8.2f %8.2f %8.8f %8.2f %8.3f\n", 
+  
+  		fprintf(out,"%8d %4d %3d %5.2f %8.2f %8.2f ",loc,year,day,time,envi.plantWoodC,envi.plantLeafC);
+  		
+  		
+  		#if SOIL_MULTIPOOL
+  			int counter;
+  	
+  			for(counter=0; counter<NUMBER_SOIL_CARBON_POOLS; counter++) {
+  				fprintf(out, "%8.2f ",envi.soil[counter]);
+	  		}
+ 		  		fprintf(out,"%8.2f ",trackers.totSoilC);
+	  	#else
+	  		fprintf(out, "%8.2f ",envi.soil);
+	  	#endif	
+  	
+
+  			fprintf(out, "%8.2f", envi.microbeC);
+  			
+  		#if ROOTS
+  			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
+  		#endif	
+  			
+   /*		#if SOIL_MULTIPOOL
+	  		fprintf(out, "%8.2f", envi.microbeC/trackers.totSoilC*1000);	// Convert to mg C / g soil
+		#else
+  			fprintf(out, "%8.2f", envi.microbeC/envi.soil*1000);	// Convert to mg C / g soil
+  		#endif	*/
+  	
+  	fprintf(out, " %8.2f %8.2f %8.2f %8.3f %8.2f ", 
+		 envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow);
+	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.npp, trackers.nee, trackers.gpp, trackers.rAboveground, 
+  			trackers.rSoil, trackers.rtot);
+
+
+//trackers.fa, trackers.fr, fluxes.rLeaf*climate->length,trackers.evapotranspiration
+	
+}
+
+void outputStatecsv(FILE *out, int loc, int year, int day, double time) {
+  fprintf(out, "%8d , %4d , %3d , %5.2f , %8.2f , %8.2f , %8.2f , %8.2f , %8.2f , %8.2f , %8.3f , %8.2f , %8.2f , %8.2f , %8.8f , %8.2f , %8.3f , %8.3f , %8.3f, %8.3f , %8.3f , %8.3f  \n", 
 	  loc, year, day, time,
 	  envi.plantWoodC, envi.plantLeafC, envi.soil, envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow,
-	  trackers.npp, trackers.yearlyNpp, trackers.nee, trackers.totNee, trackers.evapotranspiration);
+	  trackers.npp, trackers.yearlyNpp, trackers.nee, trackers.totNee, trackers.evapotranspiration, fluxes.transpiration, trackers.gpp, trackers.ra, trackers.rh, trackers.rtot );
 }
 
 
@@ -607,7 +850,7 @@ void calcLightEff2 (double *lightEff, double lai, double par) {
   double lightIntensity;
   double cumLightEff = 0.0;
   
-  if (lai > 0 && par > 0) { // must have at least some leaves and some light; DANGER: sensitive to round-off errors: e.g. lai = -0.00000001 will give a very different lightEff from lai = 0.000000001; but since we later multiply by lai (in potPsn), this shouldn't lead to any major problems
+  if (lai > 0 && par > 0) { // must have at least some leaves and some light
     for (layer = 1; layer <= NUM_LAYERS; layer++) {
       cumLai = lai * ((double)layer / NUM_LAYERS); // lai from this layer up
       lightIntensity = par * exp(-1.0 * params.attenuation * cumLai); // between 0 and par
@@ -637,6 +880,9 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
     where h is the distance between each x value (here h = 1/NUM_LAYERS).
     We keep track of the running sum in cumLightEff.
   */
+  
+  // Information on the distribution of LAI with height is available
+  // as of March 2007 ... contact Dr. Maggie Prater Maggie.Prater@colorado.edu
 
   static const int NUM_LAYERS = 6;
   // believe it or not, 6 layers gives approximately the same result as 100 layers
@@ -647,7 +893,7 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
   double currLightEff, cumLightEff;
   int coeff; // current coefficient in Simpson's rule
   
-  if (lai > 0 && par > 0) { // must have at least some leaves and some light; DANGER: sensitive to round-off errors: e.g. lai = -0.00000001 will give a very different lightEff from lai = 0.000000001; but since we later multiply by lai (in potPsn), this shouldn't lead to any major problems
+  if (lai > 0 && par > 0) { // must have at least some leaves and some light
     cumLai = 0.0;
     cumLightEff = 0.0; // the running sum
     layer = 0;
@@ -703,6 +949,164 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair, d
 
   // printf("%f %f %f %f %f %f ", climate->length, grossAMax, conversion, dTemp, dVpd, lightEff);
 }
+
+
+
+void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd, double vPress, double plantLeafC, double leafCSpWt, double soilWater) {
+/*moisture_bwb:  Calculates moisture use by using a Ball Woodrow Berry 
+ * Instead of A (net photosynthesis) we are driving the Ball Woodrow Berry 
+ * equation with potGrossPsn units: g C * m^-2 ground area * day^-1
+ * formulation which estimates gs from A */
+double potTrans; // potential transpiration in the absense of plant water stress (cm H20 * day^-1)
+  double removableWater;
+  double gs_canopy; //gs stomatal conductance... canopy level
+  double CO2_stom = 380;
+  double vPress_sat; // Saturating Vapor Press (sum of VPD and vPress)
+  double RH_pcent; // Relative Humidity - the ratio of vPress to saturating vapor pressure
+  double lai_int; // calculate lai from current plantLeafC and the leafCSpwt */
+  lai_int = envi.plantLeafC / params.leafCSpWt;
+ /*  We do not require lai since potGrossPsn is in units of 
+ *  g C * m^-2 ground area * day^-1 */
+  vPress_sat = climate->vPress + climate->vpd; //calculate saturating vapor pressure
+  RH_pcent = climate->vPress / vPress_sat; // calculate relative humidity for ball berry
+
+//  double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
+  
+  if (potGrossPsn < TINY) { // avoid divide by 0
+    *trans = 0.0; // no photosynthesis -> no transpiration
+    *dWater = 1; // dWater doesn't matter, since we don't have any photosynthesis
+  }
+ else {
+                    /*Ball Berry Equation 
+                     * unit issues:  
+                     * potGrossPsn should be converted to 
+                     * micro mol c02 per m^2 leaf area
+                     * there are 1/12 mol of carbon in a gram
+                     * potGrossPsn/12*1000*LAI = umol carbon dioxide per 
+                     * m^2 
+                     * */;
+		gs_canopy = params.m_ballBerry * potGrossPsn/12*1000*lai_int * (RH_pcent/CO2_stom) ;
+		//mol  / m^2 leaf area 
+		
+		potTrans = (gs_canopy *climate->vpd/climate->vPress)/lai_int*20/1000;
+		/* gs_canopy/climate_>vpd is the transpiration rate mol/m^2 leaf area per day
+		 * dividing by lai_init converts to mol per m^2 ground area
+		 * there are 20g water per mol 
+		 * multiply by the density of water 1cm^3/g
+		 * multipy by 100cm and divide by 10^6cm^3
+		 * 
+		 *  must convert to cm3 per cm2 land area.
+		 */
+    removableWater = soilWater * params.waterRemoveFrac;
+    if (climate->tsoil < params.frozenSoilThreshold) // frozen soil - less or no water available
+      removableWater *= params.frozenSoilEff; 
+      /* frozen soil effect: fraction of water available if soil is frozen
+		 (assume amt. of water avail. w/ frozen soil scales linearly with amt. of
+		 water avail. in thawed soil) */
+    if (removableWater >= potTrans)
+      *trans = potTrans;
+    else
+      *trans = removableWater;
+
+#if WATER_PSN // we're modeling water stress
+    *dWater = *trans/potTrans; // from PnET: equivalent to setting DWATER_MAX = 1
+#else // WATER_PSN = 0
+    if (climate->tsoil < params.frozenSoilThreshold && params.frozenSoilEff == 0)
+      // (note: can't have partial shutdown of psn with frozen soil if WATER_PSN = 0)
+      *dWater = 0; // still allow total shut down of psn. if soil is frozen
+    else // either soil is thawed, or frozenSoilEff > 0
+      *dWater = 1; // no water stress, even if *trans/potTrans < 1
+#endif // WATER_PSN
+//printf("Remove %f potT %f dW %f vpd %f \n", removableWater, potTrans, *dWater, climate->vpd);
+  }
+}
+ 
+/* it would be preferable to include CO2 concentration as an input variable in the climate file
+ *  Ball Berry Equation or Ball-Woodrow-Berry model
+ * gsc = gsc0 + k(A)(Hs/Ccs)
+ * where gsc is stomatal conductance,  gsc0 is a basal conductance value which we assume is =0
+ * k is an assumed splope parameter estimated in our case from the literature
+ * Hs is the relative humidity - calculated here as (vPress/(vPress+vpd))
+ * Ccs is the CO2 concentration at the stomata currently we will assume 
+ * this is 370 and I may edit the Climate input file to include CO2 in future 
+ * BALL_BERRY_m is hardcoded into the equation at 3.89  */
+
+// printf("%d\n", gs_canopy);
+
+
+// Penman Monteith method of estimating transiration and water use
+//  Started Nov 2006 - coding commenced Nov 20th
+
+void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, double soilWater) {
+  double potTrans; // potential transpiration in the absense of plant water stress (cm H20 * day^-1)
+  double removableWater;
+//not used   double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
+    double gapfraction = 17; // gap fraction = 17% - the Penman Monteith Equation doesn't appear to be sensitive to gapfraction;
+  double rCanConst = 30.8; // Rcan = rCanConst/windspeed - 30.8 ;
+  //is the median rCanConst to achieve the measured Rcan of 8.5 s/m;
+  double DELTA ; // Delta is calculated as d Vsat/ d Tair;
+ 
+/*
+ * required constants and other values
+ * Rn // Net radiation // read in from clim file
+ * G // soil heat flux // read in from clim file
+ * RHO // DENSITY OF (DRY) AIR (KG M-3)
+ * CP // SPECIFIC HEAT OF AIR AT CONST PRESSURE (J KG-1 K-1)
+ * VPD // VAPOR PRESSURE DEFICIT (PA)
+ * rb - BULK AERODYNAMIC RESISTANCE (S/M)
+ * rc - CANOPY AERODYNAMIC RESISTANCE (S/M)
+ * LAMDA //LATENT HEAT OF VAPORIZATION OF WATER (J Kg-1) - 2450 @20C
+ * GAMMA // PSYCHROMETRIC CONSTANT Kg M-2 S
+ * DELTA slope of the saturation vapour pressure vs Temperature relationship
+ */ 
+  if (potGrossPsn < TINY) { // avoid divide by 0
+    *trans = 0.0; // no photosynthesis -> no transpiration
+    *dWater = 1; // dWater doesn't matter, since we don't have any photosynthesis
+  }
+  else {
+  	DELTA = (2508.3/((climate->tair +237.3)*(climate->tair +237.3))*exp((17.3*climate->tair)/(climate->tair +237.3)));
+    potTrans = (DELTA*((1- gapfraction/100)*climate->netrad - climate->soilheat) + (RHO*CP*vpd)/(rCanConst/climate->wspd))/(DELTA+GAMMA*(1 + (params.rdConst/climate->wspd)/(rCanConst/climate->wspd)));
+    
+    /*
+     * the aerodynamic resistance - of the canopy can be calculated as follows:
+     * rc = [ln((Zm-d)/Zom)*ln((Zh-d)/Zoh)] / k*k*wspd ;
+     * 
+     * rc aerodynamic resistance [s m-1],
+     * Zm height of wind measurements [m],
+     * Zh height of humidity measurements [m],
+     * d zero plane displacement height [m],
+     * Zom roughness length governing momentum transfer [m],
+     * Zoh roughness length governing transfer of heat and vapour [m],
+     * k von Karman's constant, 0.41 [-],
+     * wspd wind speed at height z [m s-1].
+    */ 
+    removableWater = soilWater * params.waterRemoveFrac;
+    if (climate->tsoil < params.frozenSoilThreshold) // frozen soil - less or no water available
+      removableWater *= params.frozenSoilEff; 
+      /* frozen soil effect: fraction of water available if soil is frozen
+		(assume amt. of water avail. w/ frozen soil scales linearly with amt. of
+		 water avail. in thawed soil) */
+    if (removableWater >= potTrans)
+      *trans = potTrans;
+    else
+      *trans = removableWater;
+
+
+#if WATER_PSN // we're modeling water stress
+    *dWater = *trans/potTrans; // from PnET: equivalent to setting DWATER_MAX = 1
+#else // WATER_PSN = 0
+    if (climate->tsoil < params.frozenSoilThreshold && params.frozenSoilEff == 0)
+      // (note: can't have partial shutdown of psn with frozen soil if WATER_PSN = 0)
+      *dWater = 0; // still allow total shut down of psn. if soil is frozen
+    else // either soil is thawed, or frozenSoilEff > 0
+      *dWater = 1; // no water stress, even if *trans/potTrans < 1
+#endif // WATER_PSN
+//printf("PotGrossPsn: %f dWater %f potTrans %f\n", potGrossPsn, *dWater, potTrans);
+  }
+
+  // printf("%f\n", *dWater);
+}
+  
 
 // calculate transpiration (cm H20 * day^-1)
 // and dWater (factor between 0 and 1)
@@ -892,15 +1296,7 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall)
   double rd; // aerodynamic resistance between ground and canopy air space (sec/m)
   double snowRemaining; // to make sure we don't get rid of more than there is
 
-  /* If no snow, set fluxes to 0
-     Note that this formulation means that there could be big differences in the fluxes depending on whether the snow pack is 0 or slightly greater than 0
-     e.g. if there is snow fall in timestep i but no snow pack, then there will be no sublimation or snowMelt, but if there is a small snow pack, then there can be sublimation
-     This could have the unrealistic result that, with no snow pack in timestep i, there is actually a larger snow pack in timestep (i+1) than there would be if there had been a snow pack in timestep i
-     However, if we allow sublimation when there is snowfall but no snow pack, then we could have sublimation and evaporation from the soil in the same time step, which may be even worse
-     Note that there is, in principle, no reason why we should set snowMelt = 0 if there is snow fall but no snow pack,
-     in practice (the way the model is written now), snowMelt will always = 0 in this case anyway, since snow fall only happens when tair < 0 and snow melt only when tair > 0
-     Note that if we wanted to allow sublimation when there is snow fall but no snow pack, then the check here could be rewritten as if (snowRemaining <= 0) rather than envi.snow <= 0 (and snowRemaining could be calculated before the check)
-  */
+  // if no snow, set fluxes to 0
   if (envi.snow <= 0) {
     *snowMelt = 0;
     *sublimation = 0;
@@ -914,7 +1310,7 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall)
     *sublimation = CONVERSION * (E_STAR_SNOW - climate->vPress)/rd;
 
     snowRemaining = envi.snow + (snowFall * climate->length);
- 
+    
     // remove to allow sublimation of a negative amount of snow
     // right now we can't sublime a negative amount of snow
     if (*sublimation < 0)
@@ -943,8 +1339,6 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall)
 	*snowMelt = snowRemaining/climate->length;
     } // end else above freezing
   } // end else there is snow
-
-  // printf("%d %f %f %f %f %f %f\n", climate->day, climate->tair, climate->precip, envi.snow, *snowMelt, *sublimation, snowFall);
 } // end snowPack
       
 
@@ -999,8 +1393,8 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
       *evaporation = 0;
 
     // make sure we don't evaporate more than we have:
-    if (waterRemaining - (*evaporation * climate->length) < 0) {
-      *evaporation = waterRemaining/climate->length; 
+    if (waterRemaining - (*evaporation * climate->length) < TINY) {
+      *evaporation = (waterRemaining - TINY)/climate->length; // leave a tiny little bit, to avoid negative water due to round-off errors
       waterRemaining = 0;
     }
     else
@@ -1010,8 +1404,8 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
 #if LITTER_WATER_DRAINAGE // we're calculating drainage even when evap. layer is not overflowing
   *drainage = params.litWaterDrainRate * (water/whc); // drainage rate is proportional to fractional soil moisture
   // make sure we don't drain more than we have:
-  if (waterRemaining - (*drainage * climate->length) < 0) {
-    *drainage = waterRemaining/climate->length; 
+  if (waterRemaining - (*drainage * climate->length) < TINY) {
+    *drainage = (waterRemaining - TINY)/climate->length; // leave a tiny little bit, to avoid negative water due to round-off errors
     waterRemaining = 0;
   }
   else
@@ -1077,6 +1471,15 @@ void vegResp(double *folResp, double *woodResp, double baseFolResp) {
   *woodResp = params.baseVegResp * envi.plantWoodC * pow(params.vegRespQ10, climate->tair/10.0);
 }
 
+// calculate foliar respiration and wood maint. resp, both in g C * m^-2 ground area * day^-1
+// does *not* explicitly model growth resp. (includes it in maint. resp)
+void calcRootResp(double *rootResp, double respQ10, double baseRate, double poolSize) {
+  *rootResp = baseRate * poolSize * pow(respQ10, climate->tsoil/10.0);
+ 
+
+}
+
+
 // a second veg. resp. method:
 // calculate foliar resp., wood maint. resp. and growth resp., all in g C * m^-2 ground area * day^-1
 // growth resp. modeled in a very simple way
@@ -1092,49 +1495,328 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp, double base
     *growthResp = 0;
 }
   
+/////////////////
+
+// ensure that all the allocation to wood + leaves + fine roots < 1
+void ensureAllocation() {
+	double allocationSum;
+	
+	allocationSum = params.leafAllocation+params.woodAllocation+params.fineRootAllocation;
+	
+	if (allocationSum > 1) { 
+		params.woodAllocation = 0; 
+	
+		if (params.leafAllocation+params.fineRootAllocation > 1) {
+	 		params.fineRootAllocation = 0; 
+	 		
+	 		if (params.leafAllocation > 1 ) {
+				params.leafAllocation = 0; }
+	 	}
+	}
+
+		
+}
+	 	
+	
+// Currently we have a water effect and an effect for different cold soil parameters  (this is maintenance respiration)
+void calcMaintenanceRespiration(double tsoil, double water, double whc) {
+
+	double moistEffect;
+	double tempEffect;
+
+	#if DAYCENT_WATER_HRESP
+  		// calculate here so only have to do this ugly calculation once
+  		static const double daycentWaterExp = 3.22 * (1.7 - 0.55)/(0.55 + 0.007); 
+	#endif	
+	
+	
+	#if WATER_HRESP // if soil moisture affects heterotrophic resp.
+
+		#if DAYCENT_WATER_HRESP // using DAYCENT formulation
+  			// NOTE: would probably be best to make all these constants parameters that are read in, but for now we have them hard-coded
+  			moistEffect = pow(((water/whc - 1.7)/(0.55 - 1.7)), daycentWaterExp)
+    			* pow((water/whc + 0.007)/(0.55 + 0.007), 3.22);
+		#else // using PnET formulation
+  			moistEffect = pow((water/whc), params.soilRespMoistEffect);
+		#endif // DAYCENT_WATER_HRESP
+
+	#else // no WATER_HRESP
+ 		moistEffect = 1;
+	#endif // WATER_HRESP
+
+
+	
+	#if SOIL_MULTIPOOL
+		int counter;
+	
+		double baseSoilRespSlope, soilRespQ10Slope;		// Slope parameters for Q10 and Soil Resp
+		double poolBaseRespiration, poolQ10;
+
+		double soilQuality;
+
+
+		for(counter=0;counter<NUMBER_SOIL_CARBON_POOLS;counter++) {			// Loop through all the soil carbon pools
+
+
+			#if SOIL_QUALITY
+				soilQuality=(counter+1)/NUMBER_SOIL_CARBON_POOLS;	// Ensures that the quality will never be zero
+			#else
+				soilQuality=0;
+			#endif
+	
+
+		
+
+	
+			#if SEASONAL_R_SOIL 		// decide which parameters to use based on tsoil
+  				if (tsoil >= params.coldSoilThreshold) {	// use normal (warm temp.) params
+    					baseSoilRespSlope=params.baseSoilResp*params.baseSoilRespEpsilon;
+    					soilRespQ10Slope=params.soilRespQ10*params.soilRespQ10Epsilon;
+    					
+    					poolBaseRespiration=params.baseSoilResp + baseSoilRespSlope * soilQuality; 
+		 				poolQ10=params.soilRespQ10-soilRespQ10Slope * soilQuality;
+				 	
+		 				tempEffect=poolBaseRespiration*pow(poolQ10,tsoil/10);
+  		
+  				else // use cold temp. params
+  					baseSoilRespSlope=params.baseSoilRespCold*params.baseSoilRespColdEpsilon;
+    				soilRespQ10Slope=params.soilRespQ10Cold*params.soilRespQ10ColdEpsilon;
+    					
+    				poolBaseRespiration=params.baseSoilRespCold + baseSoilRespSlope * soilQuality; 
+		 			poolQ10=params.soilRespQ10Cold-soilRespQ10Slope * soilQuality;
+  		   				
+				 	
+		 			tempEffect=poolBaseRespiration*pow(poolQ10,tsoil/10);
+  		
+  				}
+			#else // SEASONAL_R_SOIL FALSE -> always use normal params
+    			baseSoilRespSlope=params.baseSoilResp*params.baseSoilRespEpsilon;
+    			soilRespQ10Slope=params.soilRespQ10*params.soilRespQ10Epsilon;
+    					
+    			poolBaseRespiration=params.baseSoilResp + baseSoilRespSlope * soilQuality; 
+				poolQ10=params.soilRespQ10-soilRespQ10Slope * soilQuality;
+				 	
+				tempEffect=poolBaseRespiration*pow(poolQ10,tsoil/10);
+	
+			#endif
+	
+			fluxes.maintRespiration[counter]=envi.soil[counter]*moistEffect*tempEffect;
+		}
+	
+	#else		// We use a single pool model
+	
+
+	
+		#if MICROBES	// If we don't have a multipool approach, respiration is determined by microbe biomass	 					
+			
+			tempEffect=params.baseMicrobeResp*pow(params.microbeQ10,tsoil/10);			
+			
+			fluxes.maintRespiration=envi.microbeC*moistEffect*tempEffect;
+		#else
+
+			#if SEASONAL_R_SOIL 		// decide which parameters to use based on tsoil
+  				if (tsoil >= params.coldSoilThreshold) {	// use normal (warm temp.) params		 	
+		 			tempEffect=params.baseSoilResp*pow(params.soilRespQ10,tsoil/10);
+  				else // use cold temp. params
+  					tempEffect=params.baseSoilRespCold*pow(params.soilRespQ10Cold,tsoil/10);
+  				}
+			#else // SEASONAL_R_SOIL FALSE -> always use normal params
+				 	
+				tempEffect=params.baseSoilResp*pow(params.soilRespQ10,tsoil/10);
+	
+			#endif
+			
+			fluxes.maintRespiration=envi.soil*moistEffect*tempEffect;		
+		#endif
+		
+	#endif
+
+}
+
+
+
+
+double microbeQualityEfficiency(double soilQuality) {
+	double efficiencySlope;
+	
+	efficiencySlope=params.efficiency*params.efficiencyEpsilon;
+	
+	return params.efficiency+efficiencySlope*soilQuality;	// Efficiency an increasing function of quality
+}
+
+void microbeGrowth() {
+	#if SOIL_MULTIPOOL
+		int counter;	// Counter of quality pools
+		for( counter=0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
+			#if SOIL_QUALITY
+				double maxIngestionSlope;			
+				double soilQuality;
+				double ingestionCoeff;
+				
+				soilQuality=(counter+1)/NUMBER_SOIL_CARBON_POOLS;	// Ensures that the quality will never be zero
+				
+				maxIngestionSlope=params.maxIngestionRate*params.maxIngestionRateEpsilon;
+    		
+    			ingestionCoeff=params.maxIngestionRate+maxIngestionSlope * soilQuality;
+
+				fluxes.microbeIngestion[counter]=ingestionCoeff * envi.soil[counter]/trackers.totSoilC;	// Scale this proportional to total soil
+			#endif  //We need code in here if we just have a rate coefficient pool	
+		}
+	#elif MICROBES
+		double baseRate;
+
+		baseRate=params.maxIngestionRate*envi.soil/(params.halfSatIngestion+envi.soil);
+		fluxes.microbeIngestion=baseRate*envi.microbeC;		// Flux that microbes remove from soil  (mg C g soil day)
+	
+	#endif
+	
+}
+
+// Now we need to calculate the production of the soil carbon pool, but we are going to have 
+// some outputs here that become inputs.  We need to output total respiration of this pool, as this
+// gets fed back into the optimization
+
+// soil quality is always the current counter divided by the number of total pools
+// Here we update the soil carbon pools and report the total respiration rate across all pools
+// (it is easier this way than updating the carbon pools separately because then we don't have to store all
+// the fluxes in a separate vector)
+
+// find what soil carbon pool the litter (wood or leaf) enters into
+int litterInputPool(double qualityComponent) {
+	return floor(qualityComponent * NUMBER_SOIL_CARBON_POOLS);	// Ensures that the input pool will never be 0
+}
+
+
+void soilDegradation() {
+	
+	double soilWater;
+	#if MODEL_WATER // take soilWater from environment
+ 		soilWater = envi.soilWater;
+	#else // take  soilWater from climate drivers
+  		soilWater = climate->soilWetness * params.soilWHC;
+	#endif
+
+	calcMaintenanceRespiration(climate->tsoil,soilWater,params.soilWHC);
+
+	
+	
+	#if SOIL_MULTIPOOL
+		int counter;	// Counter of different soil pools
+		int woodLitterInput, leafLitterInput;	// The particular pool litter enters into
+		double litterInput;		// The litter rate into a pool
+		
+		double totResp, poolResp;	// Respiration rate summed across all pools
+		
+		microbeGrowth();
+		#if SOIL_QUALITY 	
+			
+			
+			double microbeEff;
+
+			double soilQuality;
+
+			totResp=0;
+			woodLitterInput=litterInputPool(params.qualityWood);	//fluxes.woodLitter gives us the amount in the pool we adjust these by 1 because the input pool will 
+																//never be 0
+			leafLitterInput=litterInputPool(params.qualityLeaf);	//fluxes.leafLitter gives us the amount in the pool
+
+
+			for( counter=NUMBER_SOIL_CARBON_POOLS-1; -1 < counter; counter--) {
+				litterInput=0;		// Initialize the total litter input with every loop
+			
+			
+				soilQuality=(counter+1)/NUMBER_SOIL_CARBON_POOLS;
+				
+			
+			// calculate the microbial efficiency
+				microbeEff=params.efficiency*soilQuality;
+			       
+				poolResp=(1-microbeEff)*fluxes.microbeIngestion[counter];
+				totResp+=poolResp+fluxes.maintRespiration[counter];			// Add in growth + maintenance respiration
+			
+			
+				if (woodLitterInput == counter) {
+					litterInput+=fluxes.woodLitter*climate -> length;
+				}
+				
+				if (leafLitterInput == counter) {
+					litterInput+=fluxes.leafLitter*climate -> length;
+				}
+			
+				#if (counter==0)
+					envi.soil[counter]+=(litterInput-fluxes.microbeIngestion[counter]-fluxes.maintRespiration[counter])*climate->length;	// Transfer from this pool				
+				#else
+					envi.soil[counter]+=(litterInput-fluxes.microbeIngestion[counter]-fluxes.maintRespiration[counter])*climate->length;	// Transfer from this pool
+					envi.soil[counter-1]+=(microbeEff*fluxes.microbeIngestion[counter])*climate->length;	// Transfer into next pool
+
+				#endif	
+				
+				
+
+			}
+			// Do the roots.  If we don't model roots, the value of these fluxes will be zero.
+			
+			envi.soil[NUMBER_SOIL_CARBON_POOLS-1]+=(fluxes.coarseRootLoss+fluxes.fineRootLoss) * climate->length;
+			fluxes.rSoil=totResp;
+		//#else		This is the loop for no quality model
+		
+		#endif
+	#elif MICROBES
+		microbeGrowth();
+		double microbeEff;
+
+		
+		#if STOICHIOMETRY
+			double microbeAdjustment;
+			microbeAdjustment=(params.totNitrogen-params.microbeNC*envi.microbeC)/envi.soil/params.microbeNC;
+			#if microbeAdjustment > 1
+				microbeEff=params.efficiency;
+			#else
+				microbeEff=params.efficiency*microbeAdjustment;
+			#endif
+		#else		// Now we do the single pool model	
+		
+			microbeEff=params.efficiency;
+		#endif
+		
+	
+		
+		envi.soil+=(fluxes.coarseRootLoss+fluxes.fineRootLoss+fluxes.woodLitter+fluxes.leafLitter-fluxes.microbeIngestion)*climate->length;
+		envi.microbeC+=(microbeEff*fluxes.microbeIngestion+fluxes.soilPulse-fluxes.maintRespiration)*climate->length;
+		
+		fluxes.rSoil=fluxes.maintRespiration+(1-microbeEff)*fluxes.microbeIngestion;
+		
+		
+	#elif LITTER_POOL		// If LITTER_POOL = 1, then all other bets are off
+  		envi.litter += (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil - fluxes.rLitter)
+			* climate->length;
+			
+		envi.soil += (fluxes.coarseRootLoss+fluxes.fineRootLoss+fluxes.litterToSoil - fluxes.rSoil) * climate->length;
+		
+		
+	#else // Normal pool (single pool, no microbes)
+		fluxes.rSoil=fluxes.maintRespiration;
+		envi.soil+=(fluxes.coarseRootLoss+fluxes.fineRootLoss+fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) * climate->length;
+	#endif
+	
+	// Update roots.  If we don't model roots, these fluxes will be zero.
+	envi.coarseRootC += (fluxes.coarseRootCreation-fluxes.coarseRootLoss-fluxes.rCoarseRoot) * climate->length; 
+	envi.fineRootC += (fluxes.fineRootCreation-fluxes.fineRootLoss-fluxes.rFineRoot) * climate->length; 	
+
+	
+}
+
+
+
+
+
+	
+////
 
 // !!! general, multi-purpose functions !!!
 
 
-// general function to calculate soil C broken down, as a function of tsoil and soil moisture:
-// (g C * m^-2 * day^-1)
-// based on function in PnET-CN
-// poolC is amt. of C in this soil pool (g C * m^-2), 
-// baseRate is breakdown rate at 0 degrees C, max soil moisture (g respired/g/day)
-// water and whc (both in cm) refer to this specific soil layer
-double soilBreakdown(double poolC, double baseRate, double water, double whc, double tsoil, double Q10) {
-  double tempEffect;
-  double moistEffect;
 
-#if DAYCENT_WATER_HRESP
-  // calculate here so only have to do this ugly calculation once
-  static const double daycentWaterExp = 3.22 * (1.7 - 0.55)/(0.55 + 0.007); 
-#endif
-
-
-#if LLOYD_TAYLOR // we're using the Lloyd-Taylor model for temperature effect
-  tempEffect = exp(params.E0 * (-1/params.T0 - 1/(tsoil - params.T0)));
-#else // using standard Q10
-  tempEffect = pow(Q10, tsoil/10.0);
-#endif
-
-#if WATER_HRESP // if soil moisture affects heterotrophic resp.
-
-#if DAYCENT_WATER_HRESP // using DAYCENT formulation
-  // NOTE: would probably be best to make all these constants parameters that are read in, but for now we have them hard-coded
-  moistEffect = pow(((water/whc - 1.7)/(0.55 - 1.7)), daycentWaterExp)
-    * pow((water/whc + 0.007)/(0.55 + 0.007), 3.22);
-#else // using PnET formulation
-  moistEffect = pow((water/whc), params.soilRespMoistEffect);
-#endif // DAYCENT_WATER_HRESP
-
-#else // no WATER_HRESP
-  moistEffect = 1;
-#endif // WATER_HRESP
-
-  return poolC * baseRate * tempEffect * moistEffect;
-}
-  
 
 // !!! functions to calculate fluxes !!!
 // all fluxes are on a per-day basis
@@ -1149,97 +1831,145 @@ double woodLitterF(double plantWoodC) {
 
 void calculateFluxes() {
   // auxiliary variables:
-  double baseFolResp;
-  double potGrossPsn; // potential photosynthesis, without water stress
-  double dWater;
-  double lai; // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter) 
+  	double baseFolResp;
+  	double potGrossPsn; // potential photosynthesis, without water stress
+  	double dWater;
+  	double lai; // m^2 leaf/m^2 ground (calculated from plantLeafC)
+  	double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter) 
 							 (g C/m^2 ground/day) */
-  double folResp, woodResp; // maintenance respiration terms, g C * m^-2 ground area * day^-1
-  double litterWater, soilWater; /* amount of water in litter and soil (cm)
+  	double folResp, woodResp; // maintenance respiration terms, g C * m^-2 ground area * day^-1
+  	double litterWater, soilWater; /* amount of water in litter and soil (cm)
 				    taken from either environment or climate drivers, depending on value of MODEL_WATER */
-#if GROWTH_RESP
-  double growthResp; // g C * m^-2 ground area * day^-1
-#endif
+				    
 
-#if COMPLEX_WATER
-  double netRain; // rain - immedEvap (cm/day) 
-#endif
+	
+	#if GROWTH_RESP
+  		double growthResp; // g C * m^-2 ground area * day^-1
+	#endif
+
+	#if COMPLEX_WATER
+  		double netRain; // rain - immedEvap (cm/day) 
+	#endif
 
 
-#if MODEL_WATER // take litterWater and soilWater from environment
-  litterWater = envi.litterWater;
-  soilWater = envi.soilWater;
-#else // take litterWater and soilWater from climate drivers
-  litterWater = climate->soilWetness * params.litterWHC; /* assume wetness is uniform throughout all layers
+	#if MODEL_WATER // take litterWater and soilWater from environment
+  		litterWater = envi.litterWater;
+  		soilWater = envi.soilWater;
+	#else // take litterWater and soilWater from climate drivers
+  		litterWater = climate->soilWetness * params.litterWHC; /* assume wetness is uniform throughout all layers
 							    (probably unrealistic, but it shouldn't matter too much) */
-  soilWater = climate->soilWetness * params.soilWHC;
-#endif
+  		soilWater = climate->soilWetness * params.soilWHC;
+	#endif
 
-  lai = envi.plantLeafC / params.leafCSpWt; // current lai
+  	lai = envi.plantLeafC / params.leafCSpWt; // current lai
 
-  potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd, climate->par, climate->day);
-  moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd, soilWater);
+  	potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd, climate->par, climate->day);
+  	moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd, soilWater);
 
-#if MODEL_WATER // water modeling happens here:
+	#if MODEL_WATER // water modeling happens here:
 
-#if COMPLEX_WATER
-  calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap));
-  netRain = fluxes.rain - fluxes.immedEvap;
-  snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
-  soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.topDrainage), &(fluxes.bottomDrainage),
-		  netRain, fluxes.snowMelt, fluxes.transpiration, litterWater, soilWater);
-#else
-  simpleWaterFlow(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), &(fluxes.snowMelt), &(fluxes.sublimation),
-		  &(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.topDrainage), &(fluxes.bottomDrainage), 
-		  soilWater, envi.snow, climate->precip, climate->tair, climate->length, fluxes.transpiration);
-#endif // COMPLEX_WATER
+		#if COMPLEX_WATER
+		  	calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap));
+  			netRain = fluxes.rain - fluxes.immedEvap;
+  			snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
+			soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.topDrainage), &(fluxes.bottomDrainage),
+		  		netRain, fluxes.snowMelt, fluxes.transpiration, litterWater, soilWater);
+		#else
+			simpleWaterFlow(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), &(fluxes.snowMelt), &(fluxes.sublimation),
+		  		&(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.topDrainage), &(fluxes.bottomDrainage), 
+		  		soilWater, envi.snow, climate->precip, climate->tair, climate->length, fluxes.transpiration);
+		#endif // COMPLEX_WATER
 
-#else // MODEL_WATER = 0: set all water fluxes to 0
-  fluxes.rain = fluxes.snowFall = fluxes.immedEvap = fluxes.snowMelt = fluxes.sublimation
-    = fluxes.fastFlow = fluxes.evaporation = fluxes.topDrainage = fluxes.bottomDrainage = 0;
-#endif // MODEL_WATER
+	#else // MODEL_WATER = 0: set all water fluxes to 0
+  		fluxes.rain = fluxes.snowFall = fluxes.immedEvap = fluxes.snowMelt = fluxes.sublimation
+    	= fluxes.fastFlow = fluxes.evaporation = fluxes.topDrainage = fluxes.bottomDrainage = 0;
+	#endif // MODEL_WATER
 
-  getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
+  	getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
 
-#if GROWTH_RESP
-  vegResp2(&folResp, &woodResp, &growthResp, baseFolResp, fluxes.photosynthesis);
-  fluxes.rVeg = folResp + woodResp + growthResp;
-#else
-  vegResp(&folResp, &woodResp, baseFolResp);
-  fluxes.rVeg = folResp + woodResp;
-#endif
+	#if GROWTH_RESP
+  		vegResp2(&folResp, &woodResp, &growthResp, baseFolResp, fluxes.photosynthesis);
+  		fluxes.rVeg = folResp + woodResp + growthResp;
+  		fluxes.rWood = woodResp;
+  		fluxes.rLeaf= folResp+growthResp;
+	#else
+  		vegResp(&folResp, &woodResp, baseFolResp);
+  		fluxes.rVeg = folResp + woodResp;
+  		fluxes.rWood = woodResp;
+  		fluxes.rLeaf= folResp;
+	#endif
 
-  leafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
+  	leafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
   
-#if LITTER_POOL
-  litterBreakdown = soilBreakdown(envi.litter, params.litterBreakdownRate, 
+	#if LITTER_POOL
+  		litterBreakdown = soilBreakdown(envi.litter, params.litterBreakdownRate, 
 				  litterWater, params.litterWHC, climate->tsoil, params.soilRespQ10);
-  // NOTE: right now, we don't have capability to use separate cold soil params for litter
-#else
-  litterBreakdown = 0;
-#endif
+  	// NOTE: right now, we don't have capability to use separate cold soil params for litter
+	#else
+  		litterBreakdown = 0;
+	#endif
   
   // finally, calculate fluxes that we haven't already calculated:
 
-  fluxes.woodLitter = woodLitterF(envi.plantWoodC);
+  	fluxes.woodLitter = woodLitterF(envi.plantWoodC);
 
-  // the following two fluxes will be 0 if we're not modeling litter pool:
-  fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
-  fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
+  	// the following two fluxes will be 0 if we're not modeling litter pool:
+  	fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
+  	fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
 
 
-#if SEASONAL_R_SOIL // decide which parameters to use based on tsoil
-  if (climate->tsoil >= params.coldSoilThreshold) // use normal (warm temp.) params
-    fluxes.rSoil = soilBreakdown(envi.soil, params.baseSoilResp, 
-				 soilWater, params.soilWHC, climate->tsoil, params.soilRespQ10);
-  else // use cold temp. params
-    fluxes.rSoil = soilBreakdown(envi.soil, params.baseSoilRespCold,
-				 soilWater, params.soilWHC, climate->tsoil, params.soilRespQ10Cold);
-#else // SEASONAL_R_SOIL FALSE -> always use normal params
-  fluxes.rSoil = soilBreakdown(envi.soil, params.baseSoilResp, 
-			       soilWater, params.soilWHC, climate->tsoil, params.soilRespQ10);
-#endif
+	
+	#if ROOTS
+	double coarseExudate, fineExudate;	// exudates in and out of soil
+	double npp, gppSoil;		// running means of our tracker variables
+	
+	npp=getMeanTrackerMean(meanNPP);
+	gppSoil=getMeanTrackerMean(meanGPP);	
+		if (npp > 0) {
+			fluxes.coarseRootCreation=(1-params.leafAllocation-params.fineRootAllocation)*npp;
+			fluxes.fineRootCreation=params.fineRootAllocation*npp;
+			fluxes.woodCreation=params.woodAllocation*npp; }
+		else {
+			fluxes.coarseRootCreation=0;
+			fluxes.fineRootCreation=0;
+			fluxes.woodCreation=0;
+		}
+
+
+	
+		if ((gppSoil > 0) & (envi.fineRootC > 0)) {
+			coarseExudate=params.coarseRootExudation*gppSoil;
+			fineExudate=params.fineRootExudation*gppSoil; }
+		else {
+			fineExudate=0;
+			coarseExudate=0;
+		}
+
+		fluxes.coarseRootLoss=(1-params.microbePulseEff)*coarseExudate+params.coarseRootTurnover*envi.coarseRootC;
+		fluxes.fineRootLoss=(1-params.microbePulseEff)*fineExudate+params.fineRootTurnover*envi.fineRootC;
+	
+		fluxes.soilPulse=params.microbePulseEff*(coarseExudate+fineExudate);	// fluxes that get added to microbe pool
+		
+		calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10, params.baseCoarseRootResp, envi.coarseRootC);
+		calcRootResp(&fluxes.rFineRoot, params.fineRootQ10, params.baseFineRootResp, envi.fineRootC);
+     
+     #else		// If we don't model roots, then all these fluxes will be zero
+     
+		fluxes.rCoarseRoot=0;
+		fluxes.rFineRoot=0;
+		fluxes.coarseRootCreation=0;
+		fluxes.fineRootCreation=0;
+		fluxes.woodCreation=0;
+		fluxes.coarseRootLoss=0;
+		fluxes.fineRootLoss=0;
+		fluxes.soilPulse=0;
+		
+	#endif
+
+
+	
+
+
 
   // printf("%f %f %f\n", fluxes.rLitter*climate->length, fluxes.rSoil*climate->length, (fluxes.leafLitter+fluxes.woodLitter)*climate->length);
 
@@ -1286,65 +2016,20 @@ void initTrackers(void) {
   trackers.totNee = 0.0;
   trackers.evapotranspiration = 0.0;
   trackers.soilWetnessFrac = envi.soilWater/params.soilWHC;
-}
+  trackers.fa = 0.0;
+  trackers.fr = 0.0;
+  trackers.totSoilC = 0.0;
+  trackers.rSoil = 0.0;
 
-// update trackers at each time step
-// oldSoilWater is how much soil water there was at the beginning of the time step (cm)
-void updateTrackers(double oldSoilWater) {
-  static int lastYear = -1; // what was the year of the last step?
-
-  if (climate->year != lastYear) { // new year: reset yearly trackers
-    trackers.yearlyGpp = 0.0;
-    trackers.yearlyRtot = 0.0;
-    trackers.yearlyRa = 0.0;
-    trackers.yearlyRh = 0.0;
-    trackers.yearlyNpp = 0.0;
-    trackers.yearlyNee = 0.0;
-
-    lastYear = climate->year;
-
-
-    // At start of 1999, reset cumulative trackers
-    // Note that this is only for one specific application: we don't usually want to do this
-    /*
-    if (climate->year == 1999) {
-      trackers.totGpp = 0.0;
-      trackers.totRtot = 0.0;
-      trackers.totRa = 0.0;
-      trackers.totRh = 0.0;
-      trackers.totNpp = 0.0;
-      trackers.totNee = 0.0;
-    }
-    */
-  }
-
-  trackers.gpp = fluxes.photosynthesis * climate->length;
-  trackers.ra = fluxes.rVeg * climate->length;
-  trackers.rh = (fluxes.rLitter + fluxes.rSoil) * climate->length;
-  trackers.rtot = trackers.ra + trackers.rh;
-  trackers.npp = trackers.gpp - trackers.ra;
-  trackers.nee = -1.0*(trackers.npp - trackers.rh);
-
-  trackers.yearlyGpp += trackers.gpp;
-  trackers.yearlyRa += trackers.ra;
-  trackers.yearlyRh += trackers.rh;
-  trackers.yearlyRtot += trackers.rtot;
-  trackers.yearlyNpp += trackers.npp;
-  trackers.yearlyNee += trackers.nee;
-
-  trackers.totGpp += trackers.gpp;
-  trackers.totRa += trackers.ra;
-  trackers.totRh += trackers.rh;
-  trackers.totRtot += trackers.rtot;
-  trackers.totNpp += trackers.npp;
-  trackers.totNee += trackers.nee;
+  trackers.rRoot = 0.0;
   
-  trackers.evapotranspiration = (fluxes.transpiration + fluxes.immedEvap + fluxes.evaporation + fluxes.sublimation)
-    * climate->length;
 
-  trackers.soilWetnessFrac = (oldSoilWater + envi.soilWater)/(2.0*params.soilWHC);
-  // mean of soil wetness at start of time step and soil wetness at end of time step - assume linear
+  trackers.totSoilC = params.soilInit;
+  trackers.rAboveground = 0.0;
+
+  
 }
+
 
 
 // If var < minVal, then set var = 0
@@ -1389,55 +2074,139 @@ void ensureNonNegativeStocks() {
 
 }					 
 
+// update trackers at each time step
+// oldSoilWater is how much soil water there was at the beginning of the time step (cm)
+void updateTrackers(double oldSoilWater) {
+  static int lastYear = -1; // what was the year of the last step?
+
+  if (climate->year != lastYear) { // new year: reset yearly trackers
+    trackers.yearlyGpp = 0.0;
+    trackers.yearlyRtot = 0.0;
+    trackers.yearlyRa = 0.0;
+    trackers.yearlyRh = 0.0;
+    trackers.yearlyNpp = 0.0;
+    trackers.yearlyNee = 0.0;
+
+    lastYear = climate->year;
+
+
+    // At start of 1999, reset cumulative trackers
+    // Note that this is only for one specific application: we don't usually want to do this
+    /*
+    if (climate->year == 1999) {
+      trackers.totGpp = 0.0;
+      trackers.totRtot = 0.0;
+      trackers.totRa = 0.0;
+      trackers.totRh = 0.0;
+      trackers.totNpp = 0.0;
+      trackers.totNee = 0.0;
+    }
+    */
+  }
+
+  trackers.gpp = fluxes.photosynthesis * climate->length;
+
+  trackers.rh = (fluxes.rLitter + fluxes.rSoil) * climate->length;  // everything that is microbial
+  trackers.rAboveground = (fluxes.rVeg) * climate->length;	// This is wood plus leaf respiration
+  trackers.rRoot=(fluxes.rCoarseRoot+fluxes.rFineRoot) * climate ->length;
+  trackers.rSoil=trackers.rRoot+trackers.rh;
+  trackers.ra = trackers.rRoot+ trackers.rAboveground;
+  trackers.rtot = trackers.ra + trackers.rh;
+  trackers.npp = trackers.gpp - trackers.ra;
+  trackers.nee = -1.0*(trackers.npp - trackers.rh);
+
+  trackers.fa = trackers.gpp- (fluxes.rLeaf) * climate ->length;
+  trackers.fr = trackers.rh + (fluxes.rWood) * climate ->length;
+
+
+  trackers.yearlyGpp += trackers.gpp;
+  trackers.yearlyRa += trackers.ra;
+  trackers.yearlyRh += trackers.rh;
+  trackers.yearlyRtot += trackers.rtot;
+  trackers.yearlyNpp += trackers.npp;
+  trackers.yearlyNee += trackers.nee;
+
+  trackers.totGpp += trackers.gpp;
+  trackers.totRa += trackers.ra;
+  trackers.totRh += trackers.rh;
+  trackers.totRtot += trackers.rtot;
+  trackers.totNpp += trackers.npp;
+  trackers.totNee += trackers.nee;
+  
+  trackers.evapotranspiration = (fluxes.transpiration + fluxes.immedEvap + fluxes.evaporation + fluxes.sublimation)
+    * climate->length;
+
+  trackers.soilWetnessFrac = (oldSoilWater + envi.soilWater)/(2.0*params.soilWHC);
+	trackers.totSoilC=0;	// Set this to 0, and then we add to it
+    #if SOIL_MULTIPOOL
+      int counter;
+      
+  		for( counter=0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
+  			trackers.totSoilC += envi.soil[counter];
+  		}
+  	#else
+  		trackers.totSoilC += envi.soil;
+  	#endif
+
+  
+  
+  // mean of soil wetness at start of time step at soil wetness at end of time step - assume linear
+}
+
+
 // !!! main runner function !!!
+
 
 
 // calculate all fluxes and update state for this time step
 // we calculate all fluxes before updating state in case flux calculations depend on the old state
 void updateState() {
-  double npp; // net primary productivity, g C * m^-2 ground area * day^-1
-  double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
-  int err;
+	double npp; // net primary productivity, g C * m^-2 ground area * day^-1
+  	double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
+    int err;
+  	oldSoilWater = envi.soilWater;
 
-  oldSoilWater = envi.soilWater;
+  	calculateFluxes();
 
-  calculateFluxes();
+  	// update the stocks, with fluxes adjusted for length of time step:
+  	envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation - fluxes.leafCreation - fluxes.woodLitter 
+  				- fluxes.rVeg-fluxes.coarseRootCreation-fluxes.fineRootCreation)* climate->length;
+  	envi.plantLeafC += (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
 
-  // update the stocks, with fluxes adjusted for length of time step:
-  envi.plantWoodC += (fluxes.photosynthesis - fluxes.leafCreation - fluxes.woodLitter - fluxes.rVeg)
-	* climate->length;
-  envi.plantLeafC += (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
 
-#if LITTER_POOL
-  envi.litter += (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil - fluxes.rLitter)
-	* climate->length;
-  envi.soil += (fluxes.litterToSoil - fluxes.rSoil) * climate->length;
-#else
-  envi.soil += (fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) * climate->length;
-#endif
+			
 
-#if MODEL_WATER // water pool updating happens here:
+	soilDegradation();		// This updates all the soil functions
+	
+	
 
-#if LITTER_WATER // (2 soil water layers; litter water will only be on if complex water is also on)
-  envi.litterWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
-		       - fluxes.evaporation - fluxes.topDrainage) * climate->length;
-  envi.soilWater += (fluxes.topDrainage - fluxes.transpiration - fluxes.bottomDrainage)
-    * climate->length;
-#else // LITTER_WATER = 0 (only one soil water layer)
-  // note: some of these fluxes will always be 0 if complex water is off
-  envi.soilWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
-		     - fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) * climate->length;
-#endif // LITTER_WATER
+	#if MODEL_WATER // water pool updating happens here:
 
-  // if COMPLEX_WATER = 0 or SNOW = 0, some or all of these fluxes will always be 0
-  envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) * climate->length;
+		#if LITTER_WATER // (2 soil water layers; litter water will only be on if complex water is also on)
+  			envi.litterWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
+		    	   - fluxes.evaporation - fluxes.topDrainage) * climate->length;
+  			envi.soilWater += (fluxes.topDrainage - fluxes.transpiration - fluxes.bottomDrainage)
+    		* climate->length;
+	
+		#else // LITTER_WATER = 0 (only one soil water layer)
+  		// note: some of these fluxes will always be 0 if complex water is off
+  			envi.soilWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
+		     	- fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) * climate->length;
+		#endif // LITTER_WATER
 
-#endif // MODEL_WATER
+  		// if COMPLEX_WATER = 0 or SNOW = 0, some or all of these fluxes will always be 0
+  		envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) * climate->length;
+
+	#endif // MODEL_WATER
 
   ensureNonNegativeStocks();
 
+
   npp = fluxes.photosynthesis - fluxes.rVeg;
-  err = addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
+  addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
+  addValueToMeanTracker(meanGPP, fluxes.photosynthesis, climate->length); // update running mean of NPP
+  updateTrackers(oldSoilWater);
+    err = addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
   if (err != 0) {  // error while trying to add value to mean tracker; checking this all the time slow things down a bit, but I've already been burned once by not checking it, and don't want to be burned again
     printf("******* Error type %d while trying to add value to NPP mean tracker in sipnet:updateState() *******\n", err);
     printf("npp = %f, climate->length = %f\n", npp, climate->length);
@@ -1446,6 +2215,7 @@ void updateState() {
   }
     
   updateTrackers(oldSoilWater);
+
 }
 
 
@@ -1482,6 +2252,12 @@ void setupModel(SpatialParams *spatialParams, int loc) {
   // make it so soil resp. is 5.2 g C m-2 day-1 at 10 degrees C, moisture-saturated soil, and soil C = init. soil C
   // params.baseSoilResp = ((5.2 * 365.0)/params.soilInit)/params.soilRespQ10;
 
+
+// ensure that all the allocation parameters sum up to something less than one:
+  #if ROOTS
+  	ensureAllocation();
+  #endif
+
   // change units of parameters:
   params.baseVegResp /= 365.0; // change from per-year to per-day rate
   params.litterBreakdownRate /= 365.0;
@@ -1493,11 +2269,61 @@ void setupModel(SpatialParams *spatialParams, int loc) {
   // calculate additional parameters:
   params.psnTMax = params.psnTOpt + (params.psnTOpt - params.psnTMin); // assumed symmetrical
 
-  envi.plantWoodC = params.plantWoodInit;
+ #if ROOTS
+  envi.plantWoodC = (1-params.coarseRootFrac-params.fineRootFrac)*params.plantWoodInit;
+ #else
+ 	envi.plantWoodC = params.plantWoodInit;
+ #endif 
+ 
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
   envi.litter = params.litterInit;
-  envi.soil = params.soilInit;
 
+
+// If SOIL_QUALITY, split initial soilCarbon equally among all the pools
+ 	#if SOIL_MULTIPOOL
+ 		int counter;
+
+		for( counter=0; counter <NUMBER_SOIL_CARBON_POOLS; counter++) {
+	
+			envi.soil[counter]=params.soilInit/NUMBER_SOIL_CARBON_POOLS; 
+			
+		}
+		trackers.totSoilC=params.soilInit;
+	#else
+  		envi.soil = params.soilInit;
+
+	#endif
+
+	#if SOIL_QUALITY
+		params.maxIngestionRate = params.maxIngestionRate*24*params.microbeInit/1000;
+			// change from per hour to per day rate, and then multiply by microbial concentration (mg C / g soil).
+
+	#else
+		params.maxIngestionRate = params.maxIngestionRate*24;	// change from per hour to per day rate
+	#endif
+
+
+
+  envi.microbeC = params.microbeInit*params.soilInit/1000;		// convert to gC m-2 
+
+  params.halfSatIngestion = params.halfSatIngestion*params.soilInit;
+  params.totNitrogen = params.totNitrogen*params.soilInit;	// convert to gC m-2
+
+  params.fineRootTurnover /= 365.0;
+  params.coarseRootTurnover /= 365.0; 
+  
+  params.baseCoarseRootResp /= 365.0;
+  params.baseFineRootResp /= 365.0;
+  params.baseMicrobeResp = params.baseMicrobeResp*24;		// change from per hour to per day rate
+  
+  
+  
+  envi.coarseRootC = params.coarseRootFrac*params.plantWoodInit;
+  envi.fineRootC = params.fineRootFrac*params.plantWoodInit;
+  
+
+  
+  
   envi.litterWater = params.litterWFracInit * params.litterWHC;
   if (envi.litterWater < 0)
     envi.litterWater = 0;
@@ -1519,6 +2345,7 @@ void setupModel(SpatialParams *spatialParams, int loc) {
   initTrackers();
   initPhenologyTrackers();
   resetMeanTracker(meanNPP, 0); // initialize with mean NPP (over last MEAN_NPP_DAYS) of 0
+  resetMeanTracker(meanGPP, 0); // initialize with mean NPP (over last MEAN_GPP_DAYS) of 0
 }
 
 
@@ -1530,8 +2357,9 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 void runModelOutput(FILE *out, int printHeader, SpatialParams *spatialParams, int loc) {
   int firstLoc, lastLoc, currLoc;
   
-  if (printHeader)
+  if (printHeader) {
     outputHeader(out);
+  }
 
   if (loc == -1) { // run everywhere
     firstLoc = 0;
@@ -1708,6 +2536,7 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char 
   setupOutputPointers();
 
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES); 
+  meanGPP = newMeanTracker(0, MEAN_GPP_SOIL_DAYS, MEAN_GPP_SOIL_MAX_ENTRIES);
 
   return numLocs;
 }
@@ -1720,4 +2549,5 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char 
 void cleanupModel(int numLocs) {
   freeClimateList(numLocs);
   deallocateMeanTracker(meanNPP);
+  deallocateMeanTracker(meanGPP);
 }   
