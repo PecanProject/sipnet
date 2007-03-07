@@ -2202,7 +2202,7 @@ void updateState() {
   ensureNonNegativeStocks();
 
 
-  npp = fluxes.photosynthesis - fluxes.rVeg;
+  npp = fluxes.photosynthesis - fluxes.rVeg-fluxes.rCoarseRoot-fluxes.rFineRoot;
   addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
   addValueToMeanTracker(meanGPP, fluxes.photosynthesis, climate->length); // update running mean of NPP
   updateTrackers(oldSoilWater);
