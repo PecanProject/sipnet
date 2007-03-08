@@ -363,7 +363,7 @@ void metropolis(char *outNameBase, SpatialParams *spatialParams, int loc,
       pold[currLoc - thisFirstLoc] = oldVal; // remember old value
       if (accept == 1) { // we haven't set accept to 0 yet (if accept = 0 already, don't bother setting new param. values)
 	pdelta = getSpatialParamKnob(spatialParams, ichg, currLoc); // pdelta is expressed as fraction of parameter's range
-	padd = (random() * 1.0/RAND_MAX - 0.5) * pdelta * range; 
+	padd = (rand() * 1.0/RAND_MAX - 0.5) * pdelta * range; 
 	// new value will be oldVal + padd
 	if (checkSpatialParam(spatialParams, ichg, oldVal + padd) == 0) { // outside allowable range
 	  accept = 0; /* if new value is outside allowable range at any location, reject point (equivalent to making likelihood tiny)

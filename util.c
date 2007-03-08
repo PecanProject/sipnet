@@ -48,7 +48,7 @@ double randm() {
   double val;
 
   do {
-    val = random()/(RAND_MAX + 1.0);
+    val = rand()/(RAND_MAX + 1.0);
   } while (val <= 0.0); // val should be <= 0.0 once in a blue moon
   return log(val);
 }

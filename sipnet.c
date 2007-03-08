@@ -297,7 +297,7 @@ typedef struct Parameters {
   double leafCSpWt; // g C * m^-2 leaf area
   double cFracLeaf; // g leaf C * g^-1 leaf
 
-  double turnoverRate; /* average turnover rate of woody plant C, in fraction per day
+  double woodTurnoverRate; /* average turnover rate of woody plant C, in fraction per day
 			  (leaf loss handled separately)
 			  NOTE: read in as per-year rate! */
 
@@ -334,8 +334,8 @@ typedef struct Parameters {
   double coarseRootExudation;	// fraction of NPP exuded to the soil
  	// 6 parameters
  	
-  double fineRootTurnover;	    // turnover of fine roots (per year rate)
-  double coarseRootTurnover;	// turnover of coarse roots (per year rate)
+  double fineRootTurnoverRate;	    // turnover of fine roots (per year rate)
+  double coarseRootTurnoverRate;	// turnover of coarse roots (per year rate)
   double baseFineRootResp;	    // base respiration rate of fine roots  (per year rate)
   double baseCoarseRootResp;	// base respiration rate of coarse roots (per year rate)
   double fineRootQ10;			// Q10 of fine roots
@@ -711,7 +711,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "rSoilConst2", &(params.rSoilConst2));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafCSpWt", &(params.leafCSpWt));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "cFracLeaf", &(params.cFracLeaf));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "turnoverRate", &(params.turnoverRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "woodTurnoverRate", &(params.woodTurnoverRate));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityLeaf", &(params.qualityLeaf));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityWood", &(params.qualityWood));
   
@@ -730,8 +730,8 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "woodAllocation", &(params.woodAllocation));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootExudation", &(params.fineRootExudation));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootExudation", &(params.coarseRootExudation));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootTurnover", &(params.fineRootTurnover));  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootTurnover", &(params.coarseRootTurnover));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootTurnoverRate", &(params.fineRootTurnoverRate));  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseFineRootResp", &(params.baseFineRootResp));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseCoarseRootResp", &(params.baseCoarseRootResp));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootQ10", &(params.fineRootQ10));
@@ -1825,7 +1825,7 @@ void soilDegradation() {
 // transfer of carbon from plant woody material to litter, in g C * m^-2 ground area * day^-1
 // (includes above-ground and roots)
 double woodLitterF(double plantWoodC) {
-  return plantWoodC * params.turnoverRate; // turnover rate is fraction lost per day
+  return plantWoodC * params.woodTurnoverRate; // turnover rate is fraction lost per day
 }
 
 
@@ -1945,8 +1945,8 @@ void calculateFluxes() {
 			coarseExudate=0;
 		}
 
-		fluxes.coarseRootLoss=(1-params.microbePulseEff)*coarseExudate+params.coarseRootTurnover*envi.coarseRootC;
-		fluxes.fineRootLoss=(1-params.microbePulseEff)*fineExudate+params.fineRootTurnover*envi.fineRootC;
+		fluxes.coarseRootLoss=(1-params.microbePulseEff)*coarseExudate+params.coarseRootTurnoverRate*envi.coarseRootC;
+		fluxes.fineRootLoss=(1-params.microbePulseEff)*fineExudate+params.fineRootTurnoverRate*envi.fineRootC;
 	
 		fluxes.soilPulse=params.microbePulseEff*(coarseExudate+fineExudate);	// fluxes that get added to microbe pool
 		
@@ -2263,7 +2263,7 @@ void setupModel(SpatialParams *spatialParams, int loc) {
   params.litterBreakdownRate /= 365.0;
   params.baseSoilResp /= 365.0;
   params.baseSoilRespCold /= 365.0;
-  params.turnoverRate /= 365.0;
+  params.woodTurnoverRate /= 365.0;
   params.leafTurnoverRate /= 365.0; 
 
   // calculate additional parameters:
@@ -2309,8 +2309,8 @@ void setupModel(SpatialParams *spatialParams, int loc) {
   params.halfSatIngestion = params.halfSatIngestion*params.soilInit;
   params.totNitrogen = params.totNitrogen*params.soilInit;	// convert to gC m-2
 
-  params.fineRootTurnover /= 365.0;
-  params.coarseRootTurnover /= 365.0; 
+  params.fineRootTurnoverRate /= 365.0;
+  params.coarseRootTurnoverRate /= 365.0; 
   
   params.baseCoarseRootResp /= 365.0;
   params.baseFineRootResp /= 365.0;

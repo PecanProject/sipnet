@@ -383,7 +383,7 @@ void setAllSpatialParamBests(SpatialParams *spatialParams, int loc) {
 int randomChangeableSpatialParam(SpatialParams *spatialParams) {
   int rnd; 
 
-  rnd = (int) floor(spatialParams->numChangeableParams * (random()*1.0/(RAND_MAX + 1.0))); // 0 <= rnd < spatialParams->numChangeableParams
+  rnd = (int) floor(spatialParams->numChangeableParams * (rand()*1.0/(RAND_MAX + 1.0))); // 0 <= rnd < spatialParams->numChangeableParams
 
   return spatialParams->changeableParamIndices[rnd]; 
 }
@@ -433,7 +433,7 @@ void resetSpatialParams(SpatialParams *spatialParams, double knob, int randomRes
 	  value = getSpatialParamGuess(spatialParams, i, loc);
 	else // random: set parameter value to be somewhere between min and max
 	  value = getSpatialParamMin(spatialParams, i) + (getSpatialParamMax(spatialParams, i) - getSpatialParamMin(spatialParams, i)) 
-	    * ((float)random()/RAND_MAX);
+	    * ((float)rand()/RAND_MAX);
 	setSpatialParam(spatialParams, i, loc, value);
 	setSpatialParamBest(spatialParams, i, loc, value);
 	setSpatialParamKnob(spatialParams, i, loc, knob);
@@ -444,7 +444,7 @@ void resetSpatialParams(SpatialParams *spatialParams, double knob, int randomRes
 	value = getSpatialParamGuess(spatialParams, i, 0);
       else // random: set parameter value to be somewhere between min and max
 	  value = getSpatialParamMin(spatialParams, i) + (getSpatialParamMax(spatialParams, i) - getSpatialParamMin(spatialParams, i))
-	    * ((float)random()/RAND_MAX);
+	    * ((float)rand()/RAND_MAX);
       setSpatialParam(spatialParams, i, 0, value);
       setSpatialParamBest(spatialParams, i, 0, value);
       setSpatialParamKnob(spatialParams, i, 0, knob);
