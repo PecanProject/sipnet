@@ -113,7 +113,7 @@
 #define STOICHIOMETRY 0 && MICROBES
 // do we utilize stoichometric considerations for the microbial pool?
  
-#define ROOTS 1
+#define ROOTS 0
 // do we model root dynamics?
 
 
@@ -801,7 +801,7 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
 		 envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow);
 	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.npp, trackers.nee, trackers.gpp, trackers.rAboveground, 
   			trackers.rSoil, trackers.rtot);
-
+//note without modeling root dynamics 
 
 //trackers.fa, trackers.fr, fluxes.rLeaf*climate->length,trackers.evapotranspiration
 	
