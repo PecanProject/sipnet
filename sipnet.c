@@ -787,9 +787,9 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
 
   			fprintf(out, "%8.2f", envi.microbeC);
   			
-  		#if ROOTS
+
   			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
-  		#endif	
+
   			
    /*		#if SOIL_MULTIPOOL
 	  		fprintf(out, "%8.2f", envi.microbeC/trackers.totSoilC*1000);	// Convert to mg C / g soil
@@ -808,9 +808,17 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
 }
 
 void outputStatecsv(FILE *out, int loc, int year, int day, double time) {
-  fprintf(out, "%8d , %4d , %3d , %5.2f , %8.2f , %8.2f , %8.2f , %8.2f , %8.2f , %8.2f , %8.3f , %8.2f , %8.2f , %8.2f , %8.8f , %8.2f , %8.3f , %8.3f , %8.3f, %8.3f , %8.3f , %8.3f  \n", 
-	  loc, year, day, time,
-	  envi.plantWoodC, envi.plantLeafC, envi.soil, envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow,
+  fprintf(out, "%8d , %4d , %3d , %5.2f , %8.2f , %8.2f , ", loc, year, day, time,
+  		envi.plantWoodC, envi.plantLeafC);
+	
+	#if SOIL_MULTIPOOL
+		fprintf(out, "%8.2f ,", trackers.totSoilC);
+	#else
+		fprintf(out, "%8.2f ,", envi.soil);
+	#endif
+	 
+	fprintf(out, "%8.2f , %8.3f, %8.2f , %8.3f , %8.2f , %8.2f , %8.2f , %8.8f , %8.2f , %8.3f , %8.3f , %8.3f, %8.3f , %8.3f , %8.3f  \n", 
+	  envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow,
 	  trackers.npp, trackers.yearlyNpp, trackers.nee, trackers.totNee, trackers.evapotranspiration, fluxes.transpiration, trackers.gpp, trackers.ra, trackers.rh, trackers.rtot );
 }
 
@@ -2056,7 +2064,17 @@ void ensureNonNegativeStocks() {
   ensureNonNegative(&(envi.litter), 0);
 #endif
 
-  ensureNonNegative(&(envi.soil), 0);
+  #if SOIL_MULTIPOOL
+  	int counter;
+  	for(counter=0; counter< NUMBER_SOIL_CARBON_POOLS; counter++)
+  	 {ensureNonNegative(&(envi.soil[counter]), 0);}
+  #else
+  	ensureNonNegative(&(envi.soil), 0);
+  #endif
+  
+   ensureNonNegative(&(envi.coarseRootC), 0);
+   ensureNonNegative(&(envi.fineRootC), 0);
+   ensureNonNegative(&(envi.microbeC), 0);
 
 #if MODEL_WATER
 
@@ -2257,6 +2275,12 @@ void setupModel(SpatialParams *spatialParams, int loc) {
   #if ROOTS
   	ensureAllocation();
   #endif
+
+// If we aren't explicitly modeling microbe pool, then do not have a pulse to microbes,
+// exudates go directly to the soil
+#if !MICROBES
+	params.microbePulseEff=0;
+#endif
 
   // change units of parameters:
   params.baseVegResp /= 365.0; // change from per-year to per-day rate
