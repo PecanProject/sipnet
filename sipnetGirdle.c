@@ -670,98 +670,98 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   *spatialParamsPtr = newSpatialParams(NUM_PARAMS, numLocs);
   spatialParams = *spatialParamsPtr; // to prevent lots of unnecessary dereferences
 
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "E0", &(params.E0));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "T0", &(params.T0));
+ readOneSpatialParam(spatialParams, paramF, spatialParamF, "plantWoodInit", &(params.plantWoodInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "laiInit", &(params.laiInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterInit", &(params.litterInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilInit", &(params.soilInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterWFracInit", &(params.litterWFracInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilWFracInit", &(params.soilWFracInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "snowInit", &(params.snowInit));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "aMax", &(params.aMax));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "aMaxFrac", &(params.aMaxFrac));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "attenuation", &(params.attenuation));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseCoarseRootResp", &(params.baseCoarseRootResp));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseFineRootResp", &(params.baseFineRootResp));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseFolRespFrac", &(params.baseFolRespFrac));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseMicrobeResp", &(params.baseMicrobeResp));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilResp", &(params.baseSoilResp));
-  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespCold", &(params.baseSoilRespCold));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespColdEpsilon", &(params.baseSoilRespColdEpsilon));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespEpsilon", &(params.baseSoilRespEpsilon));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseVegResp", &(params.baseVegResp));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "cFracLeaf", &(params.cFracLeaf));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootExudation", &(params.coarseRootExudation));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootFrac", &(params.coarseRootFrac));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootQ10", &(params.coarseRootQ10));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coldSoilThreshold", &(params.coldSoilThreshold));
-  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "dVpdExp", &(params.dVpdExp));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "dVpdSlope", &(params.dVpdSlope));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "efficiency", &(params.efficiency));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "efficiencyEpsilon", &(params.efficiencyEpsilon));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fastFlowFrac", &(params.fastFlowFrac));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootAllocation", &(params.fineRootAllocation));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootExudation", &(params.fineRootExudation));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootFrac", &(params.fineRootFrac));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootQ10", &(params.fineRootQ10));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootTurnoverRate", &(params.fineRootTurnoverRate));
-  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fracLeafFall", &(params.fracLeafFall));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fracLitterRespired", &(params.fracLitterRespired));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "frozenSoilEff", &(params.frozenSoilEff));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "frozenSoilFolREff", &(params.frozenSoilFolREff));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "frozenSoilThreshold", &(params.frozenSoilThreshold));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "gddLeafOn", &(params.gddLeafOn));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "growthRespFrac", &(params.growthRespFrac));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "halfSatIngestion", &(params.halfSatIngestion));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "halfSatPar", &(params.halfSatPar));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "immedEvapFrac", &(params.immedEvapFrac));
-  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "laiInit", &(params.laiInit));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafAllocation", &(params.leafAllocation));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafCSpWt", &(params.leafCSpWt));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafGrowth", &(params.leafGrowth));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafOffDay", &(params.leafOffDay));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafOnDay", &(params.leafOnDay));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafTurnoverRate", &(params.leafTurnoverRate));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litWaterDrainRate", &(params.litWaterDrainRate));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterBreakdownRate", &(params.litterBreakdownRate));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterInit", &(params.litterInit));
-  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterWFracInit", &(params.litterWFracInit));  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterWHC", &(params.litterWHC));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "m_ballBerry", &(params.m_ballBerry));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "maxIngestionRate", &(params.maxIngestionRate));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "maxIngestionRateEpsilon", &(params.maxIngestionRateEpsilon));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeInit", &(params.microbeInit));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeNC", &(params.microbeNC));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbePulseEff", &(params.microbePulseEff));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeQ10", &(params.microbeQ10));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "plantWoodInit", &(params.plantWoodInit));
   
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "psnTMin", &(params.psnTMin));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "psnTOpt", &(params.psnTOpt));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityLeaf", &(params.qualityLeaf));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityWood", &(params.qualityWood));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "rSoilConst1", &(params.rSoilConst1));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "rSoilConst2", &(params.rSoilConst2));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "rdConst", &(params.rdConst)); 
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "snowInit", &(params.snowInit));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "snowMelt", &(params.snowMelt));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilInit", &(params.soilInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "vegRespQ10", &(params.vegRespQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "growthRespFrac", &(params.growthRespFrac));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "frozenSoilFolREff", &(params.frozenSoilFolREff));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "frozenSoilThreshold", &(params.frozenSoilThreshold));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "dVpdSlope", &(params.dVpdSlope));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "dVpdExp", &(params.dVpdExp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "halfSatPar", &(params.halfSatPar));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "attenuation", &(params.attenuation));
   
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespMoistEffect", &(params.soilRespMoistEffect));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafOnDay", &(params.leafOnDay));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "gddLeafOn", &(params.gddLeafOn));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilTempLeafOn", &(params.soilTempLeafOn));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafOffDay", &(params.leafOffDay));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafGrowth", &(params.leafGrowth));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fracLeafFall", &(params.fracLeafFall));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafAllocation", &(params.leafAllocation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafTurnoverRate", &(params.leafTurnoverRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseVegResp", &(params.baseVegResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterBreakdownRate", &(params.litterBreakdownRate));
+  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fracLitterRespired", &(params.fracLitterRespired));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilResp", &(params.baseSoilResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespEpsilon", &(params.baseSoilRespEpsilon));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespCold", &(params.baseSoilRespCold));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseSoilRespColdEpsilon", &(params.baseSoilRespColdEpsilon));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10", &(params.soilRespQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10Epsilon", &(params.soilRespQ10Epsilon));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10Cold", &(params.soilRespQ10Cold));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10ColdEpsilon", &(params.soilRespQ10ColdEpsilon));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespQ10Epsilon", &(params.soilRespQ10Epsilon));  
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilTempLeafOn", &(params.soilTempLeafOn));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilWFracInit", &(params.soilWFracInit));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilWHC", &(params.soilWHC));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "totNitrogen", &(params.totNitrogen));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "vegRespQ10", &(params.vegRespQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coldSoilThreshold", &(params.coldSoilThreshold));
   
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "E0", &(params.E0));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "T0", &(params.T0));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilRespMoistEffect", &(params.soilRespMoistEffect));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "waterRemoveFrac", &(params.waterRemoveFrac));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "woodAllocation", &(params.woodAllocation));
-  readOneSpatialParam(spatialParams, paramF, spatialParamF, "woodTurnoverRate", &(params.woodTurnoverRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "frozenSoilEff", &(params.frozenSoilEff));
   readOneSpatialParam(spatialParams, paramF, spatialParamF, "wueConst", &(params.wueConst));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litterWHC", &(params.litterWHC));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "soilWHC", &(params.soilWHC));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "immedEvapFrac", &(params.immedEvapFrac));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fastFlowFrac", &(params.fastFlowFrac));
+  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "snowMelt", &(params.snowMelt));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "litWaterDrainRate", &(params.litWaterDrainRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "rdConst", &(params.rdConst));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "rSoilConst1", &(params.rSoilConst1));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "rSoilConst2", &(params.rSoilConst2));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "leafCSpWt", &(params.leafCSpWt));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "cFracLeaf", &(params.cFracLeaf));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "woodTurnoverRate", &(params.woodTurnoverRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityLeaf", &(params.qualityLeaf));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "qualityWood", &(params.qualityWood));
+  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "efficiency", &(params.efficiency));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "efficiencyEpsilon", &(params.efficiencyEpsilon));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "maxIngestionRate", &(params.maxIngestionRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "maxIngestionRateEpsilon", &(params.maxIngestionRateEpsilon));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "halfSatIngestion", &(params.halfSatIngestion));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "totNitrogen", &(params.totNitrogen)); 
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeNC", &(params.microbeNC));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeInit", &(params.microbeInit));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootFrac", &(params.fineRootFrac));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootFrac", &(params.coarseRootFrac));
+
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootAllocation", &(params.fineRootAllocation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "woodAllocation", &(params.woodAllocation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootExudation", &(params.fineRootExudation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootExudation", &(params.coarseRootExudation));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootTurnoverRate", &(params.fineRootTurnoverRate));  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseFineRootResp", &(params.baseFineRootResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseCoarseRootResp", &(params.baseCoarseRootResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "fineRootQ10", &(params.fineRootQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "coarseRootQ10", &(params.coarseRootQ10));
+  
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "baseMicrobeResp", &(params.baseMicrobeResp));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbeQ10", &(params.microbeQ10));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "microbePulseEff", &(params.microbePulseEff));
+  readOneSpatialParam(spatialParams, paramF, spatialParamF, "m_ballBerry", &(params.m_ballBerry));
 
   fclose(paramF);		// Close the temporary file
   fclose(spatialParamF);
