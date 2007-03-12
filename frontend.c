@@ -16,6 +16,7 @@
 // important constants - default values:
 
 #define LOC -1 // default is run at all locations (but if doing a sens. test, will default to running at loc. 0)
+#define HEADER 0 // // Make the default no printing of header files
 
 void usage(char *progName) {
   printf("Usage: %s fileName, where:\n", progName);
@@ -36,8 +37,9 @@ void usage(char *progName) {
   printf("Output from sensitivity test put in fileName.sens\n");
   printf("\nThe following are optional arguments, with their default values:\n");
   printf("[ -l loc ] : location to run at (-1 means run at all locations) {%d}\n", LOC);
+  printf("[ -h 1   ] : Print header on output file\n");
   printf("\tNote: If doing a sensitivity test, loc defaults to 0\n");
-  printf("\nNOTE: On Mac, must specify optional arguments BEFORE any required arguments\n");
+  printf("\nNOTE: Must specify optional arguments BEFORE any required arguments\n");
 }
 
 
@@ -52,6 +54,8 @@ int main(int argc, char *argv[]) {
   int numLocs; // read in initModel
   int *steps; /* number of time steps in each location;
 		 as of 8/30/04, unused: but we save it so we can free it */
+
+  int printHeader=HEADER;
 
   // parameters for sens. test:
   int changeIndex, numRuns;
@@ -72,12 +76,17 @@ int main(int argc, char *argv[]) {
   double **standarddevs;
   int dataTypeIndices[MAX_DATA_TYPES];
 
+	
+
   // get command-line arguments:
-  while ((option = getopt(argc, argv, "l:")) != -1) {
+  while ((option = getopt(argc, argv, "l:h:")) != -1) {
     // we have another optional argument
     switch(option) {
     case 'l':
       loc = strtol(optarg, &errc, 0);
+      break;
+    case 'h':
+      printHeader = strtol(optarg, &errc, 0);
       break;
     default:
       usage(argv[0]);
@@ -108,7 +117,7 @@ int main(int argc, char *argv[]) {
 
     out = openFile(outFile, "w");
 
-    runModelOutput(out, 0, spatialParams, loc); 
+    runModelOutput(out, printHeader, spatialParams, loc); 
 
     fclose(out);
   }
@@ -163,7 +172,7 @@ int main(int argc, char *argv[]) {
       }
 
       // do this model run:
-      runModelOutput(out, 0, spatialParams, loc); 
+      runModelOutput(out, printHeader, spatialParams, loc); 
       fclose(out);
       runNum++;
     }
