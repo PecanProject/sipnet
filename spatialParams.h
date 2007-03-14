@@ -7,6 +7,7 @@
 // struct to hold a single (possibly) spatially-varying param
 typedef struct OneSpatialParamStruct {
   char name[64]; // name of parameter
+  int isRequired;  // 0 or 1; 1 indicates that we should terminate run if this parameter isn't specified in input file
   int numLocs; // 0 if this parameter is non-spatial
   int isChangeable; // 0 or 1
   double *value; /* if non-spatial, points to a single double
@@ -29,8 +30,11 @@ typedef struct OneSpatialParamStruct {
 } OneSpatialParam;
 
 typedef struct SpatialParamsStruct {
-  OneSpatialParam *parameters; // vector of parameters, dynamically-allocated
-  int numParameters; // number of parameters
+  OneSpatialParam *parameters; // vector of parameters, dynamically-allocated (stored in order in which they were initialized)
+  int maxParameters; // maximum number of parameters
+  int numParameters; // actual number of parameters (tracks # that have been initialized with initializeOneSpatialParam)
+  int numParamsRead; // tracks number of parameters that have been read in from file
+  int *readIndices;  // indices (in parameters vector) of the parameters read from file, in the order in which they were read (this will allow us to output parameters in the same order later)
   int numChangeableParams; // number of changeable params (in an optimization)
   int *changeableParamIndices; // indices (in parameters vector) of the changeable params (length of this vector is numChangeableParams)
   int numLocs; // number of spatial locations
@@ -38,18 +42,20 @@ typedef struct SpatialParamsStruct {
 
 
 // allocate space for a new spatialParams structure, return a pointer to it
-SpatialParams *newSpatialParams(int numParameters, int numLocs);
+SpatialParams *newSpatialParams(int maxParameters, int numLocs);
 
 
-// return 1 if all parameters have been read in, 0 if not
-int allParamsRead(SpatialParams *spatialParams);
+/* Initialize next spatial parameter:
+   Set name of parameter equal to "name", 
+    and set parameter's externalLoc pointer to point to the location given by "externalLoc" parameter
+    Also set parameter's isRequired value: if true, then we'll terminate execution if this parameter is not read from file
+   Note: acceptable to have externalLoc = NULL, but then it won't be assigned by loadSpatialParams
+*/
+void initializeOneSpatialParam(SpatialParams *spatialParams, char *name, double *externalLoc, int isRequired);
 
 
-/* Read next parameter from file, setting all values in spatialParams structure appropriately
-   Ensure that name is the name of the parameter we're reading
-   Set this parameter's externalLoc pointer to point to the location given by the externalLoc parameter
-   Note: acceptable to have externalLoc = NULL, but then (obviously) won't be assigned by loadSpatialParams
-
+/* Read all parameters from file, setting all values in spatialParams structure appropriately
+   
    Structure of paramFile:
       name  value  changeable  min  max  sigma
    where value is a number if parameter is non-spatial, or * if parameter is spatial; changeable is 0 or 1 (boolean)
@@ -57,10 +63,16 @@ int allParamsRead(SpatialParams *spatialParams);
       name  value  [value  value...]
    where the number of values is equal to the number of spatial locations
 
-   PRE: paramFile is open and file pointer points to the next parameter to be read
-        if this is a spatial parameter, spatialParamFile is open and file pointer points to the next parameter to be read
-*/
-void readOneSpatialParam(SpatialParams *spatialParams, FILE *paramFile, FILE *spatialParamFile, char *name, double *externalLoc);
+   The order of the parameters in paramFile does not matter,
+    but parameters must be specified in the same order in paramFile and spatialParamFile
+
+   ! is a comment character in paramFile: anything after a ! on a line is ignored 
+    note, though, that comments are not currently allowed in spatialParamFile
+
+   PRE: paramFile is open and file pointer points to start of file
+        spatialParamFile is open and file pointer points to 2nd line (after the numLocs line)
+ */
+void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spatialParamFile);
 
 
 /* Return 1 if parameter i varies spatially, 0 if not
@@ -155,6 +167,7 @@ void setSpatialParamBest(SpatialParams *spatialParams, int i, int loc, double va
 
 
 /* Set best value of all parameters at given location to be equal to their current value
+    (Note: ignores parameters that were never read in)
    If loc = -1, set best value of all parameters at ALL locations to be equal to their current value
 */
 void setAllSpatialParamBests(SpatialParams *spatialParams, int loc);
@@ -179,6 +192,8 @@ void loadSpatialParams(SpatialParams *spatialParams, int loc);
 
 /* If randomReset = 0, set values of all parameters to be equal to guess values
    If randomReset non-zero, set parameter values to be somewhere (chosen uniform randomly) between min and max
+    - Note that non-changeable parameters will still be set to their guess values, though
+    (Note: ignores parameters that were never read in)
    (If randomReset non-zero, random number generator must have been seeded)
    Set best values of all parameters to be equal to current values
    Set knobs of all parameters to be equal to knob argument
@@ -187,6 +202,7 @@ void resetSpatialParams(SpatialParams *spatialParams, double knob, int randomRes
 
 
 /* Write best parameter values, and other parameter info, to files
+    (only write parameters that were read in, and in the same order that they were read in)
    Note that other parameter info won't have changed since the read - we just copy that over
    Write all parameter info to file with name *paramFile, and spatially-varying parameter values to file with name *spatialParamFile
    See readOneSpatialParam for file formats

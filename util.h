@@ -51,4 +51,15 @@ void assignArray(double *out, double *in, int n);
 // return sum(array[0..length-1])
 double sumArray(double *array, int length);
 
+
+// do an strcmp on s1 and s2, ignoring case
+// (convert both to lower case before comparing)
+// return value is the same as for strcmp
+int strcmpIgnoreCase(char *s1, char *s2);
+
+// If line contains any character in the string commentChars,
+//  strip the comment off the line (i.e. replace first occurrence of commentChars with '\0')
+// Return 1 if line contains only a comment (or only blanks), 0 otherwise
+int stripComment(char *line, const char *commentChars);
+
 #endif
