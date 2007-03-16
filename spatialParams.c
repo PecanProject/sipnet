@@ -46,12 +46,6 @@ int locateParam(SpatialParams *spatialParams, char *name)  {
 }
 
 
-// Return 1 if parameter i has already had its value set, 0 otherwise
-int valueSet(SpatialParams *spatialParams, int i)  {
-  return (spatialParams->parameters[i].value != NULL);
-}
-
-
 // Set array[0..length-1] to all be equal to value
 void setAll(double *array, int length, double value) {
   int i;
@@ -312,6 +306,24 @@ void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spat
 }  // readSpatialParams
 
 
+// Return numParameters, the actual number of parameters that have been initialized with initializeOneSpatialParam
+int getNumParameters(SpatialParams *spatialParams)  {
+  return spatialParams->numParameters;
+}
+
+
+// Return number of parameters that have been read in from file
+int getNumParamsRead(SpatialParams *spatialParams)  {
+  return spatialParams->numParamsRead;
+}
+
+
+// Return 1 if parameter i has had its value set, 0 otherwise
+int valueSet(SpatialParams *spatialParams, int i)  {
+  return (spatialParams->parameters[i].value != NULL);
+}
+
+
 
 /* Return 1 if parameter i varies spatially, 0 if not
    PRE: 0 <= i < spatialParams->numParameters
@@ -449,7 +461,7 @@ void setAllSpatialParamBests(SpatialParams *spatialParams, int loc) {
     firstLoc = lastLoc = loc;
 
   for (i = 0; i < numParams; i++) {
-    if (valueSet(spatialParams, i)) {  // ignore this parameter if it was never read in
+    if (valueSet(spatialParams, i)) {  // if valueSet is false, ignore this parameter (it was never read in)
       if (isSpatial(spatialParams, i)) {
 	for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
 	  value = getSpatialParam(spatialParams, i, currLoc);
@@ -517,7 +529,7 @@ void resetSpatialParams(SpatialParams *spatialParams, double knob, int randomRes
   numLocs = spatialParams->numLocs;
 
   for (i = 0; i < numParams; i++) {
-    if (valueSet(spatialParams, i)) {  // ignore this parameter if it was never read in
+    if (valueSet(spatialParams, i)) {  // if valueSet is false, ignore this parameter (it was never read in)
       if (isSpatial(spatialParams, i)) {
 	for (loc = 0; loc < numLocs; loc++) {
 	  if ((randomReset == 0) || !isChangeable(spatialParams, i)) // non-random: use guess value
@@ -559,7 +571,7 @@ void writeBestSpatialParams(SpatialParams *spatialParams, char *paramFile, char 
   paramF = openFile(paramFile, "w");
   spatialParamF = openFile(spatialParamFile, "w");
 
-  numParamsRead = spatialParams->numParamsRead;
+  numParamsRead = getNumParamsRead(spatialParams);
   numLocs = spatialParams->numLocs;
 
   fprintf(spatialParamF, "%d\n", numLocs);
@@ -602,7 +614,7 @@ void writeChangeableParamInfo(SpatialParams *spatialParams, int loc, FILE *outF)
   else
     theLoc = loc;
 
-  numParamsRead = spatialParams->numParamsRead;
+  numParamsRead = getNumParamsRead(spatialParams);
   count = 0; // count of changeable parameters
   fprintf(outF, "Changeable Parameters:\n");
   for (i = 0; i < numParamsRead; i++) {

@@ -75,6 +75,18 @@ void initializeOneSpatialParam(SpatialParams *spatialParams, char *name, double 
 void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spatialParamFile);
 
 
+// Return numParameters, the actual number of parameters that have been initialized with initializeOneSpatialParam
+int getNumParameters(SpatialParams *spatialParams);
+
+
+// Return number of parameters that have been read in from file
+int getNumParamsRead(SpatialParams *spatialParams);
+
+
+// Return 1 if parameter i has had its value set, 0 otherwise
+int valueSet(SpatialParams *spatialParams, int i);
+
+
 /* Return 1 if parameter i varies spatially, 0 if not
    PRE: 0 <= i < spatialParams->numParameters 
 */
