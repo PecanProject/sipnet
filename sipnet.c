@@ -106,14 +106,14 @@
 // do we have a soil quality submodel?
 // we only do SOIL_QUALITY if SOIL_MULTIPOOL is turned on
 
-#define MICROBES 0 && !SOIL_MULTIPOOL
+#define MICROBES 1 && !SOIL_MULTIPOOL
 // do we utilize microbes.  This will only be an option
 // if SOIL_MULTIPOOL==0 and MICROBES ==1
 
-#define STOICHIOMETRY 0 && MICROBES
+#define STOICHIOMETRY 1 && MICROBES
 // do we utilize stoichometric considerations for the microbial pool?
  
-#define ROOTS 0
+#define ROOTS 1
 // do we model root dynamics?
 
 
@@ -258,21 +258,13 @@ typedef struct Parameters {
 			      (g C respired * g^-1 soil C * day^-1)
 			      NOTE: read in as per-year rate! */
 			      
- double baseSoilRespEpsilon; /* soil respiration at 0 degrees C and max soil moisture 
-			 (g C respired * g^-1 soil C * day^-1) 
-			 NOTE: read in as per-year rate! */
-  double baseSoilRespColdEpsilon; /* soil respiration at 0 degrees C and max soil moisture when tsoil < coldSoilThreshold
-			      (g C respired * g^-1 soil C * day^-1)
-			      NOTE: read in as per-year rate! */			      
 			      
 	// 6 parameters
 				      
   double soilRespQ10; // scalar determining effect of temp on soil resp.
   double soilRespQ10Cold; // scalar determining effect of temp on soil resp. when tsoil < coldSoilThreshold
   
-  double soilRespQ10Epsilon; // scalar determining effect of temp on soil resp.
-  double soilRespQ10ColdEpsilon; // scalar determining effect of temp on soil resp. when tsoil < coldSoilThreshold
-  
+
   double coldSoilThreshold; // temp. at which use baseSoilRespCold and soilRespQ10Cold (if SEASONAL_R_SOIL true) (degrees C)
   double E0; // E0 in Lloyd-Taylor soil respiration function
   double T0; // T0 in Lloyd-Taylor soil respiration function
@@ -313,12 +305,10 @@ typedef struct Parameters {
   double qualityLeaf; // value for leaf litter quality
   double qualityWood; // value for wood litter quality
   double efficiency; // conversion efficiency of ingested carbon
-  double efficiencyEpsilon; // value for efficiency slope
 
 	// 4 parameters
 
   double maxIngestionRate;	// hr-1 - maximum ingestion rate of the microbe
-  double maxIngestionRateEpsilon;	// unitless - maximum ingestion rate of the microbe
   double halfSatIngestion;	// mg C g-1 soil - half saturation ingestion rate of microbe
   double totNitrogen;		// Percentage nitrogen in soil
   double microbeNC;			// mg N / mg C - microbe N:C ratio
@@ -690,13 +680,9 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   
   initializeOneSpatialParam(spatialParams, "fracLitterRespired", &(params.fracLitterRespired), LITTER_POOL);
   initializeOneSpatialParam(spatialParams, "baseSoilResp", &(params.baseSoilResp), 1);
-  initializeOneSpatialParam(spatialParams, "baseSoilRespEpsilon", &(params.baseSoilRespEpsilon), 1);
   initializeOneSpatialParam(spatialParams, "baseSoilRespCold", &(params.baseSoilRespCold), SEASONAL_R_SOIL);
-  initializeOneSpatialParam(spatialParams, "baseSoilRespColdEpsilon", &(params.baseSoilRespColdEpsilon), SEASONAL_R_SOIL);
   initializeOneSpatialParam(spatialParams, "soilRespQ10", &(params.soilRespQ10), 1);
-  initializeOneSpatialParam(spatialParams, "soilRespQ10Epsilon", &(params.soilRespQ10Epsilon), 1);
   initializeOneSpatialParam(spatialParams, "soilRespQ10Cold", &(params.soilRespQ10Cold), SEASONAL_R_SOIL);
-  initializeOneSpatialParam(spatialParams, "soilRespQ10ColdEpsilon", &(params.soilRespQ10ColdEpsilon), SEASONAL_R_SOIL);
   initializeOneSpatialParam(spatialParams, "coldSoilThreshold", &(params.coldSoilThreshold), SEASONAL_R_SOIL);
   
   initializeOneSpatialParam(spatialParams, "E0", &(params.E0), LLOYD_TAYLOR);
@@ -721,31 +707,29 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   initializeOneSpatialParam(spatialParams, "qualityLeaf", &(params.qualityLeaf), SOIL_QUALITY);
   initializeOneSpatialParam(spatialParams, "qualityWood", &(params.qualityWood), SOIL_QUALITY);
   
-  initializeOneSpatialParam(spatialParams, "efficiency", &(params.efficiency), 0);
-  initializeOneSpatialParam(spatialParams, "efficiencyEpsilon", &(params.efficiencyEpsilon), 0);
-  initializeOneSpatialParam(spatialParams, "maxIngestionRate", &(params.maxIngestionRate), 0);
-  initializeOneSpatialParam(spatialParams, "maxIngestionRateEpsilon", &(params.maxIngestionRateEpsilon), 0);
-  initializeOneSpatialParam(spatialParams, "halfSatIngestion", &(params.halfSatIngestion), 0);
-  initializeOneSpatialParam(spatialParams, "totNitrogen", &(params.totNitrogen), 0); 
-  initializeOneSpatialParam(spatialParams, "microbeNC", &(params.microbeNC), 0);
-  initializeOneSpatialParam(spatialParams, "microbeInit", &(params.microbeInit), 0);
-  initializeOneSpatialParam(spatialParams, "fineRootFrac", &(params.fineRootFrac), 0);
-  initializeOneSpatialParam(spatialParams, "coarseRootFrac", &(params.coarseRootFrac), 0);
+  initializeOneSpatialParam(spatialParams, "efficiency", &(params.efficiency), (SOIL_QUALITY) || (MICROBES));
+  initializeOneSpatialParam(spatialParams, "maxIngestionRate", &(params.maxIngestionRate), (SOIL_QUALITY) || (MICROBES));
+  initializeOneSpatialParam(spatialParams, "halfSatIngestion", &(params.halfSatIngestion), MICROBES);
+  initializeOneSpatialParam(spatialParams, "totNitrogen", &(params.totNitrogen), STOICHIOMETRY); 
+  initializeOneSpatialParam(spatialParams, "microbeNC", &(params.microbeNC), STOICHIOMETRY);
+  initializeOneSpatialParam(spatialParams, "microbeInit", &(params.microbeInit), (SOIL_QUALITY) || (MICROBES));
+  initializeOneSpatialParam(spatialParams, "fineRootFrac", &(params.fineRootFrac), ROOTS);
+  initializeOneSpatialParam(spatialParams, "coarseRootFrac", &(params.coarseRootFrac), ROOTS);
 
-  initializeOneSpatialParam(spatialParams, "fineRootAllocation", &(params.fineRootAllocation), 0);
-  initializeOneSpatialParam(spatialParams, "woodAllocation", &(params.woodAllocation), 0);
-  initializeOneSpatialParam(spatialParams, "fineRootExudation", &(params.fineRootExudation), 0);
-  initializeOneSpatialParam(spatialParams, "coarseRootExudation", &(params.coarseRootExudation), 0);
-  initializeOneSpatialParam(spatialParams, "fineRootTurnoverRate", &(params.fineRootTurnoverRate), 0);  
-  initializeOneSpatialParam(spatialParams, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate), 0);
-  initializeOneSpatialParam(spatialParams, "baseFineRootResp", &(params.baseFineRootResp), 0);
-  initializeOneSpatialParam(spatialParams, "baseCoarseRootResp", &(params.baseCoarseRootResp), 0);
-  initializeOneSpatialParam(spatialParams, "fineRootQ10", &(params.fineRootQ10), 0);
-  initializeOneSpatialParam(spatialParams, "coarseRootQ10", &(params.coarseRootQ10), 0);
+  initializeOneSpatialParam(spatialParams, "fineRootAllocation", &(params.fineRootAllocation), ROOTS);
+  initializeOneSpatialParam(spatialParams, "woodAllocation", &(params.woodAllocation), ROOTS);
+  initializeOneSpatialParam(spatialParams, "fineRootExudation", &(params.fineRootExudation), ROOTS);
+  initializeOneSpatialParam(spatialParams, "coarseRootExudation", &(params.coarseRootExudation), ROOTS);
+  initializeOneSpatialParam(spatialParams, "fineRootTurnoverRate", &(params.fineRootTurnoverRate), ROOTS);  
+  initializeOneSpatialParam(spatialParams, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate), ROOTS);
+  initializeOneSpatialParam(spatialParams, "baseFineRootResp", &(params.baseFineRootResp), ROOTS);
+  initializeOneSpatialParam(spatialParams, "baseCoarseRootResp", &(params.baseCoarseRootResp), ROOTS);
+  initializeOneSpatialParam(spatialParams, "fineRootQ10", &(params.fineRootQ10), ROOTS);
+  initializeOneSpatialParam(spatialParams, "coarseRootQ10", &(params.coarseRootQ10), ROOTS);
   
-  initializeOneSpatialParam(spatialParams, "baseMicrobeResp", &(params.baseMicrobeResp), 0);
-  initializeOneSpatialParam(spatialParams, "microbeQ10", &(params.microbeQ10), 0);
-  initializeOneSpatialParam(spatialParams, "microbePulseEff", &(params.microbePulseEff), 0);
+  initializeOneSpatialParam(spatialParams, "baseMicrobeResp", &(params.baseMicrobeResp), MICROBES);
+  initializeOneSpatialParam(spatialParams, "microbeQ10", &(params.microbeQ10), MICROBES);
+  initializeOneSpatialParam(spatialParams, "microbePulseEff", &(params.microbePulseEff), (ROOTS) && (MICROBES) );
   initializeOneSpatialParam(spatialParams, "m_ballBerry", &(params.m_ballBerry), 0);
 
   
@@ -803,8 +787,8 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
   	
   	fprintf(out, " %8.2f %8.2f %8.2f %8.3f %8.2f ", 
 		 envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow);
-	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.npp, trackers.nee, trackers.gpp, trackers.rAboveground, 
-  			trackers.rSoil, trackers.rtot);
+	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.npp, trackers.nee, trackers.gpp, trackers.rAboveground, 
+  			trackers.rSoil, trackers.rRoot,trackers.rtot);
 //note without modeling root dynamics 
 
 //trackers.fa, trackers.fr, fluxes.rLeaf*climate->length,trackers.evapotranspiration
@@ -1561,7 +1545,6 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 	#if SOIL_MULTIPOOL
 		int counter;
 	
-		double baseSoilRespSlope, soilRespQ10Slope;		// Slope parameters for Q10 and Soil Resp
 		double poolBaseRespiration, poolQ10;
 
 		double soilQuality;
@@ -1582,31 +1565,25 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 	
 			#if SEASONAL_R_SOIL 		// decide which parameters to use based on tsoil
   				if (tsoil >= params.coldSoilThreshold) {	// use normal (warm temp.) params
-    					baseSoilRespSlope=params.baseSoilResp*params.baseSoilRespEpsilon;
-    					soilRespQ10Slope=params.soilRespQ10*params.soilRespQ10Epsilon;
     					
-    					poolBaseRespiration=params.baseSoilResp + baseSoilRespSlope * soilQuality; 
-		 				poolQ10=params.soilRespQ10-soilRespQ10Slope * soilQuality;
+    					poolBaseRespiration=params.baseSoilResp; 
+		 				poolQ10=params.soilRespQ10;
 				 	
 		 				tempEffect=poolBaseRespiration*pow(poolQ10,tsoil/10);
   		
   				else // use cold temp. params
-  					baseSoilRespSlope=params.baseSoilRespCold*params.baseSoilRespColdEpsilon;
-    				soilRespQ10Slope=params.soilRespQ10Cold*params.soilRespQ10ColdEpsilon;
     					
-    				poolBaseRespiration=params.baseSoilRespCold + baseSoilRespSlope * soilQuality; 
-		 			poolQ10=params.soilRespQ10Cold-soilRespQ10Slope * soilQuality;
+    				poolBaseRespiration=params.baseSoilRespCold; 
+		 			poolQ10=params.soilRespQ10Cold;
   		   				
 				 	
 		 			tempEffect=poolBaseRespiration*pow(poolQ10,tsoil/10);
   		
   				}
 			#else // SEASONAL_R_SOIL FALSE -> always use normal params
-    			baseSoilRespSlope=params.baseSoilResp*params.baseSoilRespEpsilon;
-    			soilRespQ10Slope=params.soilRespQ10*params.soilRespQ10Epsilon;
     					
-    			poolBaseRespiration=params.baseSoilResp + baseSoilRespSlope * soilQuality; 
-				poolQ10=params.soilRespQ10-soilRespQ10Slope * soilQuality;
+    			poolBaseRespiration=params.baseSoilResp; 
+				poolQ10=params.soilRespQ10;
 				 	
 				tempEffect=poolBaseRespiration*pow(poolQ10,tsoil/10);
 	
@@ -1649,11 +1626,9 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 
 
 double microbeQualityEfficiency(double soilQuality) {
-	double efficiencySlope;
+
 	
-	efficiencySlope=params.efficiency*params.efficiencyEpsilon;
-	
-	return params.efficiency+efficiencySlope*soilQuality;	// Efficiency an increasing function of quality
+	return params.efficiency;	// Efficiency an increasing function of quality
 }
 
 void microbeGrowth() {
@@ -1661,15 +1636,13 @@ void microbeGrowth() {
 		int counter;	// Counter of quality pools
 		for( counter=0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
 			#if SOIL_QUALITY
-				double maxIngestionSlope;			
+
 				double soilQuality;
 				double ingestionCoeff;
 				
 				soilQuality=(counter+1)/NUMBER_SOIL_CARBON_POOLS;	// Ensures that the quality will never be zero
 				
-				maxIngestionSlope=params.maxIngestionRate*params.maxIngestionRateEpsilon;
-    		
-    			ingestionCoeff=params.maxIngestionRate+maxIngestionSlope * soilQuality;
+    			ingestionCoeff=params.maxIngestionRate;
 
 				fluxes.microbeIngestion[counter]=ingestionCoeff * envi.soil[counter]/trackers.totSoilC;	// Scale this proportional to total soil
 			#endif  //We need code in here if we just have a rate coefficient pool	
@@ -1925,6 +1898,8 @@ void calculateFluxes() {
 		fluxes.litterToSoil = 0;
 	#endif
   
+  // finally, calculate fluxes that we haven't already calculated:
+
   	fluxes.woodLitter = woodLitterF(envi.plantWoodC);
 
 	

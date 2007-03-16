@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 
   if (argc == optind + 1) { // do a single run
     strcpy(outFile, argv[optind]);
-    strcat(outFile, ".out");
+    strcat(outFile, "Girdle.out");
 
     out = openFile(outFile, "w");
 
