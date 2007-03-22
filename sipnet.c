@@ -106,14 +106,14 @@
 // do we have a soil quality submodel?
 // we only do SOIL_QUALITY if SOIL_MULTIPOOL is turned on
 
-#define MICROBES 1 && !SOIL_MULTIPOOL
+#define MICROBES 0 && !SOIL_MULTIPOOL
 // do we utilize microbes.  This will only be an option
 // if SOIL_MULTIPOOL==0 and MICROBES ==1
 
-#define STOICHIOMETRY 1 && MICROBES
+#define STOICHIOMETRY 0 && MICROBES
 // do we utilize stoichometric considerations for the microbial pool?
  
-#define ROOTS 1
+#define ROOTS 0
 // do we model root dynamics?
 
 
