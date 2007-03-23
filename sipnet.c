@@ -982,10 +982,12 @@ double potTrans; // potential transpiration in the absense of plant water stress
                      * m^2 
                      * */;
 		gs_canopy = params.m_ballBerry * potGrossPsn/12*1000*lai_int * (RH_pcent/CO2_stom) ;
+		
+		//gcan = m*A*RelHum/CO2;
 		//mol  / m^2 leaf area 
 		
-		potTrans = (gs_canopy *climate->vpd/climate->vPress)/lai_int*20/1000;
-		/* gs_canopy/climate_>vpd is the transpiration rate mol/m^2 leaf area per day
+		potTrans = (gs_canopy*climate->vpd)/lai_int*20/1000;
+		/* gs_canopy*climate_>vpd is the transpiration rate mol/m^2 leaf area per day
 		 * dividing by lai_init converts to mol per m^2 ground area
 		 * there are 20g water per mol 
 		 * multiply by the density of water 1cm^3/g
