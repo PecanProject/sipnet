@@ -128,15 +128,15 @@
 
 // constants for tracking running mean of NPP:
 #define MEAN_NPP_DAYS 5 // over how many days do we keep the running mean?
-#define MEAN_NPP_MAX_ENTRIES MEAN_NPP_DAYS * 24 // assume that the most pts we can have is one per hour
+#define MEAN_NPP_MAX_ENTRIES MEAN_NPP_DAYS * 50 // assume that the most pts we can have is two per hour
 
 // constants for tracking running mean of GPP:
 #define MEAN_GPP_SOIL_DAYS 3 // over how many days do we keep the running mean?
-#define MEAN_GPP_SOIL_MAX_ENTRIES MEAN_GPP_SOIL_DAYS * 24 // assume that the most pts we can have is one per hour
+#define MEAN_GPP_SOIL_MAX_ENTRIES MEAN_GPP_SOIL_DAYS * 50 // assume that the most pts we can have is one per hour
 
 // constants for tracking running mean of NPP for the soil:
 #define MEAN_NPP_SOIL_DAYS 3 // over how many days do we keep the running mean?
-#define MEAN_NPP_SOIL_MAX_ENTRIES MEAN_NPP_SOIL_DAYS * 24 // assume that the most pts we can have is one per hour
+#define MEAN_NPP_SOIL_MAX_ENTRIES MEAN_NPP_SOIL_DAYS * 50 // assume that the most pts we can have is one per hour
 
 // some constants for water submodel:
 #define LAMBDA 2501000. // latent heat of vaporization (J/kg)
@@ -177,8 +177,7 @@ struct ClimateVars {
 		    NOTE: input is in Pa */
   double wspd; // avg. wind speed (m/s)
   double soilWetness; // fractional soil wetness (fraction of saturation - between 0 and 1)
-  double netrad; // net radiation : data: Rnet_25m_REBS  measured in W/m2 at 25.5m above the ground
-  double soilheat; // Soil Heat Flux (G): Used in the PenmanMonteith Equation
+  
 #if GDD
   double gdd; /* growing degree days from Jan. 1 to now
 		 NOTE: Calculated, *not* read from file */
@@ -476,6 +475,7 @@ static Fluxes fluxes;
 static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible outputs
 
 
+
 /* Read climate file into linked lists, 
    make firstClimates be a vector where each element is a pointer to the head of a list corresponding to one spatial location
 
@@ -497,7 +497,7 @@ int * readClimData(char *climFile, int numLocs) {
   int loc, year, day;
   int lastYear;
   double time, length; // time in hours, length in days (or fraction of day)
-  double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness, netrad, soilheat;
+  double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
   int currLoc;
   int count;
   int i;
@@ -516,7 +516,7 @@ int * readClimData(char *climFile, int numLocs) {
 
   in = openFile(climFile, "r");
  
-  status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness, &netrad, &soilheat);
+  status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
   if (status == EOF) {
     printf("Error: no climate data in %s\n", climFile);
     exit(1);
@@ -563,8 +563,8 @@ int * readClimData(char *climFile, int numLocs) {
     if (curr->wspd < TINY)
       curr->wspd = TINY; // avoid divide by zero
     curr->soilWetness = soilWetness;
-    curr->netrad = netrad;
-    curr->soilheat = soilheat;
+    
+    
 #if GDD
     if (year != lastYear) // HAPPY NEW YEAR!
       gdd = 0; // reset growing degree days
@@ -577,7 +577,7 @@ int * readClimData(char *climFile, int numLocs) {
 
     lastYear = year;
 
-    status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness, &netrad, &soilheat);
+    status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &loc, &year, &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
 
     if (status != EOF) { // we have another climate record
       // check new location, compare with old location (currLoc), make sure new location is valid, and act accordingly:
@@ -750,8 +750,23 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
 // Not only that ...I'd like the options used in the model run to be added to the file;
  
 void outputHeader(FILE *out) {
-  fprintf(out, "(PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;\n");
-  fprintf(out, "Location Year Day  Time PlantWoodC PlantLeafC Soil   Litter LitterWater SoilWater SoilWetness Snow\n");
+  fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;\n");
+  fprintf(out, "loc year day time plantWoodC plantLeafC ");
+    		
+    	#if SOIL_MULTIPOOL
+  			int counter;
+  	
+  			for(counter=0; counter<NUMBER_SOIL_CARBON_POOLS; counter++) {
+  				fprintf(out, "soil(%8.2f) ",[counter]);
+	  		}
+ 		  		fprintf(out,"totSoilC ");
+  			fprintf(out, "microbeC ");
+  			fprintf(out, "coarseRootC fineRootC ");
+	  	#else
+  			fprintf(out, "soil ");	
+  		#endif
+  fprintf(out, "litter litterWater soilWater soilWetnessFrac snow ");
+  fprintf(out, "npp nee gpp rAboveground rSoil rRoot rtot\n");
 }
 
 // pre: out is open for writing
@@ -768,17 +783,17 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
   				fprintf(out, "%8.2f ",envi.soil[counter]);
 	  		}
  		  		fprintf(out,"%8.2f ",trackers.totSoilC);
+
+  			fprintf(out, "%8.2f", envi.microbeC);
+  			
+  			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
+
 	  	#else
 	  		fprintf(out, "%8.2f ",envi.soil);
 	  	#endif	
   	
 
-  			fprintf(out, "%8.2f", envi.microbeC);
-  			
 
-  			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
-
-  			
    /*		#if SOIL_MULTIPOOL
 	  		fprintf(out, "%8.2f", envi.microbeC/trackers.totSoilC*1000);	// Convert to mg C / g soil
 		#else
@@ -1063,7 +1078,7 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, 
   }
   else {
   	DELTA = (2508.3/((climate->tair +237.3)*(climate->tair +237.3))*exp((17.3*climate->tair)/(climate->tair +237.3)));
-    potTrans = (DELTA*((1- gapfraction/100)*climate->netrad - climate->soilheat) + (RHO*CP*vpd)/(rCanConst/climate->wspd))/(DELTA+GAMMA*(1 + (params.rdConst/climate->wspd)/(rCanConst/climate->wspd)));
+    potTrans = (DELTA*((1- gapfraction/100)*climate->par - climate->tsoil) + (RHO*CP*vpd)/(rCanConst/climate->wspd))/(DELTA+GAMMA*(1 + (params.rdConst/climate->wspd)/(rCanConst/climate->wspd)));
     
     /*
      * the aerodynamic resistance - of the canopy can be calculated as follows:
