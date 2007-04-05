@@ -108,6 +108,42 @@ void setPossiblySpatial(double *array, int loc, double value, int isSpatial, int
     array[0] = value;
 }
 
+
+/* Read array of spatial values from file, for a single parameter
+   Values are returned in the array spatialValues, which must be at least of length numLocs
+   spatialParamFile is the (already-open) file of spatial parameters
+    - the file pointer should be pointing to the start of the line we want to read
+   pName gives the name of the parameter; we'll abort if the next parameter does not have the name given by pName
+   numLocs is the number of values to read
+ */
+void readSpatialValues(double *spatialValues, FILE *spatialParamFile, char pName[64], int numLocs)  {
+  char pNameSpatial[64];
+  int status;
+  int i;
+
+  // read name from spatialParamFile, make sure it's what we expect:
+  status = fscanf(spatialParamFile, "%s", pNameSpatial);
+  if (status == EOF || status == 0) { // error reading
+    printf("Error trying to read %s from spatialParamFile\n", pName);
+    exit(1);
+  }
+  else if (strcmpIgnoreCase(pName, pNameSpatial) != 0) { // compare, ignore case
+    printf("Error: read %s from spatialParamFile, expected %s\n", pNameSpatial, pName);
+    exit(1);
+  }
+
+  // now read values and assign param->value, guess, best, and knob:
+  for (i = 0; i < numLocs; i++) {
+    status = fscanf(spatialParamFile, "%lf", &(spatialValues[i]));
+    if (status == EOF || status == 0) { // error reading
+      printf("Error: did not find enough values in spatialParamFile for %s\n", pName);
+      exit(1);
+    }
+  }
+    
+}
+
+
 /*************************************************/
 
 // Public functions: defined in spatialParams.h
@@ -188,16 +224,19 @@ void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spat
   const char *COMMENT_CHARS = "!";  // comment characters (ignore everything after this on a line)
 
   char line[256];
-  char pName[64], pNameSpatial[64];  // parameter name
+  char pName[64];  // parameter name
   int paramIndex;  
   OneSpatialParam *param; // a pointer to a single parameter, for easier access
   char strValue[32]; // before we know whether value is a number or "*"
   double value, min, max, sigma;
-  int changeable;
+  double *spatialValues;  // temporary storage for values read from spatial param file
+  int changeable, spatiallyVarying;  // is the parameter changeable? is it spatially-varying?
   char *errc;
   int isComment;
-  int status;
   int numLocs, i;
+
+  numLocs = spatialParams->numLocs;  // for those parameters that are spatially-varying
+  spatialValues = (double *)malloc(numLocs * sizeof(double));
 
   while (fgets(line, sizeof(line), paramFile) != NULL)  {  // while not EOF or error
     // remove trailing comments:
@@ -206,93 +245,84 @@ void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spat
     if (!isComment)  {  // if this isn't just a comment line or blank line    
       // tokenize line:
       strcpy(pName, strtok(line, TOKENS)); // copy first token into pName
-      paramIndex = locateParam(spatialParams, pName);
-
-      if (paramIndex == -1)  {  // not found
-	printf("Error reading parameter file: read %s, but this parameter wasn't initialized\n", pName);
-	exit(1);
-      }
-      else if (valueSet(spatialParams, paramIndex))  {
-	printf("Error reading parameter file: read %s, but this parameter has already been set\n", pName);
-	exit(1);
-      }
-      // otherwise, we're good to go
-      
-      // set param to point to the appropriate parameter, for easier access
-      param = &(spatialParams->parameters[paramIndex]);
-
-      // mark this as the next parameter read from file:
-      spatialParams->readIndices[spatialParams->numParamsRead] = paramIndex;
-      spatialParams->numParamsRead++;
-
-      // continue to tokenize:
       strcpy(strValue, strtok(NULL, TOKENS)); // copy next token into strValue; wait until later to figure out if it's "*" or a number
       changeable = strtol(strtok(NULL, TOKENS), &errc, 0);
       min = strtod(strtok(NULL, TOKENS), &errc);
       max = strtod(strtok(NULL, TOKENS), &errc);
       sigma = strtod(strtok(NULL, TOKENS), &errc);
 
-      // fill the new spatialParam structure with changeable, min, max, and sigma
-      param->isChangeable = changeable;
-      param->min = min;
-      param->max = max;
-      param->sigma = sigma;
-
-      if (changeable) { // we need to update info on changeable params in spatialParams
-	spatialParams->changeableParamIndices[spatialParams->numChangeableParams] = paramIndex;
-	// before we change it, spatialParams->numChangeableParams is the index of the first free spot in the changeableParamIndices vector
-	spatialParams->numChangeableParams++;
-      }
-  
       // now we need to see if we read in an actual value, or a "*" (if the latter, it's a spatially-varying parameter)
+      // note that we read this before doing the error checking on paramIndex:
+      //  that way, even if we ignore this parameter, we've still read (and ignored) the corresponding line in the spatial param file, if it's a spatially-varying parameter
       if (strcmp(strValue, "*") == 0) { // we read "*": this is a spatially-varying parameter
-	numLocs = param->numLocs = spatialParams->numLocs;
+	readSpatialValues(spatialValues, spatialParamFile, pName, numLocs);
+	spatiallyVarying = 1;
+      }
+      else {
+	spatiallyVarying = 0;
+      }
 
-	// read info from spatialParamFile:
-	status = fscanf(spatialParamFile, "%s", pNameSpatial);
-	if (status == EOF || status == 0) { // error reading
-	  printf("Error trying to read %s from spatialParamFile\n", pName);
-	  exit(1);
+      paramIndex = locateParam(spatialParams, pName);
+
+      if (paramIndex == -1)  {  // not found
+	printf("WARNING: Ignoring parameter %s: this parameter wasn't initialized in the code\n", pName);
+      }
+      else if (valueSet(spatialParams, paramIndex))  {
+	printf("Error reading parameter file: read %s, but this parameter has already been set\n", pName);
+	exit(1);
+      }
+      else  {   // otherwise, we're good to go
+      
+	// set param to point to the appropriate parameter, for easier access
+	param = &(spatialParams->parameters[paramIndex]);
+
+	// mark this as the next parameter read from file:
+	spatialParams->readIndices[spatialParams->numParamsRead] = paramIndex;
+	spatialParams->numParamsRead++;
+
+	// fill the new spatialParam structure with changeable, min, max, and sigma
+	param->isChangeable = changeable;
+	param->min = min;
+	param->max = max;
+	param->sigma = sigma;
+
+	if (changeable) { // we need to update info on changeable params in spatialParams
+	  spatialParams->changeableParamIndices[spatialParams->numChangeableParams] = paramIndex;
+	  // before we change it, spatialParams->numChangeableParams is the index of the first free spot in the changeableParamIndices vector
+	  spatialParams->numChangeableParams++;
 	}
-	else if (strcmpIgnoreCase(pName, pNameSpatial) != 0) { // compare, ignore case
-	  printf("Error: read %s from spatialParamFile, expected %s\n", pNameSpatial, pName);
-	  exit(1);
-	}
+  
+	if (spatiallyVarying) { 
+	  param->numLocs = numLocs;
 
-	// we've read correct name, now read all the values:
-	// first, allocate space:
-	param->value = (double *)malloc(numLocs * sizeof(double));
-	param->guess = (double *)malloc(numLocs * sizeof(double));
-	param->best = (double *)malloc(numLocs * sizeof(double));
-	param->knob = (double *)malloc(numLocs * sizeof(double));
+	  // allocate space:
+	  param->value = (double *)malloc(numLocs * sizeof(double));
+	  param->guess = (double *)malloc(numLocs * sizeof(double));
+	  param->best = (double *)malloc(numLocs * sizeof(double));
+	  param->knob = (double *)malloc(numLocs * sizeof(double));
 
-	// now read values and assign param->value, guess, best, and knob:
-	for (i = 0; i < numLocs; i++) {
-	  status = fscanf(spatialParamFile, "%lf", &value);
-	  if (status == EOF || status == 0) { // error reading
-	    printf("Error: did not find enough values in spatialParamFile for %s\n", pName);
-	    exit(1);
-	  }
+	  // now assign param->value, guess, best, and knob (these were read above, in call to readSpatialValues):
+	  for (i = 0; i < numLocs; i++) {
+	    // assign value, guess and best to all be the guess value initially:
+	    param->value[i] = param->guess[i] = param->best[i] = spatialValues[i];
+	    param->knob[i] = 0; // assign knob to be 0 initially
+	  } // for i
+	} // if spatially-varying
+	else { // non-spatially-varying parameter
+	  param->numLocs = 0; // signifies non-spatially-varying
+    
+	  // allocate space for a single value in each of param->value, guess, best and knob:
+	  param->value = (double *)malloc(sizeof(double));
+	  param->guess = (double *)malloc(sizeof(double));
+	  param->best = (double *)malloc(sizeof(double));
+	  param->knob = (double *)malloc(sizeof(double));
 
 	  // assign value, guess and best to all be the guess value initially:
-	  param->value[i] = param->guess[i] = param->best[i] = value;
-	  param->knob[i] = 0; // assign knob to be 0 initially
-	} // for i
-      } // if spatially-varying
-      else { // non-spatially-varying parameter
-	param->numLocs = 0; // signifies non-spatially-varying
-    
-	// allocate space for a single value in each of param->value, guess, best and knob:
-	param->value = (double *)malloc(sizeof(double));
-	param->guess = (double *)malloc(sizeof(double));
-	param->best = (double *)malloc(sizeof(double));
-	param->knob = (double *)malloc(sizeof(double));
-
-	// assign value, guess and best to all be the guess value initially:
-	value = strtod(strValue, &errc); // convert string value to double
-	param->value[0] = param->guess[0] = param->best[0] = value;
-	param->knob[0] = 0; // assign knob to be 0 initially
-      } // else non-spatially-varying
+	  value = strtod(strValue, &errc); // convert string value to double
+	  param->value[0] = param->guess[0] = param->best[0] = value;
+	  param->knob[0] = 0; // assign knob to be 0 initially
+	} // else non-spatially-varying
+      } // else (no errors in reading this line from parameter file)
     }  // if !isComment
   }  // while not EOF or error
   
@@ -300,9 +330,12 @@ void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spat
   if (ferror(paramFile))  {
     printf("Error reading file in readSpatialParams\n");
     printf("ferror = %d\n", ferror(paramFile));
+    exit(1);
   }
 
   checkAllRead(spatialParams);  // terminate program if some required parameters weren't read
+
+  free(spatialValues);
 }  // readSpatialParams
 
 

@@ -642,6 +642,11 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
 
   fscanf(spatialParamF, "%d", &numLocs);
 
+  if (numLocs < 1)  {
+    printf("Error: numLocs must be >= 1: read %d\n", numLocs);
+    exit(1);
+  }
+
   *spatialParamsPtr = newSpatialParams(NUM_PARAMS, numLocs);
   spatialParams = *spatialParamsPtr; // to prevent lots of unnecessary dereferences
 
