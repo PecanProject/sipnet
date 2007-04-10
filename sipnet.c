@@ -759,7 +759,7 @@ void outputHeader(FILE *out) {
   			int counter;
   	
   			for(counter=0; counter<NUMBER_SOIL_CARBON_POOLS; counter++) {
-  				fprintf(out, "soil(%8.2f) ",[counter]);
+  				fprintf(out, "soil(%8.2f) ",envi.soil[counter]);
 	  		}
  		  		fprintf(out,"totSoilC ");
 
