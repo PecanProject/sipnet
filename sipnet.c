@@ -131,12 +131,9 @@
 #define MEAN_NPP_MAX_ENTRIES MEAN_NPP_DAYS * 50 // assume that the most pts we can have is two per hour
 
 // constants for tracking running mean of GPP:
-#define MEAN_GPP_SOIL_DAYS 3 // over how many days do we keep the running mean?
+#define MEAN_GPP_SOIL_DAYS 5 // over how many days do we keep the running mean?
 #define MEAN_GPP_SOIL_MAX_ENTRIES MEAN_GPP_SOIL_DAYS * 50 // assume that the most pts we can have is one per hour
 
-// constants for tracking running mean of NPP for the soil:
-#define MEAN_NPP_SOIL_DAYS 3 // over how many days do we keep the running mean?
-#define MEAN_NPP_SOIL_MAX_ENTRIES MEAN_NPP_SOIL_DAYS * 50 // assume that the most pts we can have is one per hour
 
 // some constants for water submodel:
 #define LAMBDA 2501000. // latent heat of vaporization (J/kg)
@@ -765,11 +762,13 @@ void outputHeader(FILE *out) {
   				fprintf(out, "soil(%8.2f) ",[counter]);
 	  		}
  		  		fprintf(out,"totSoilC ");
-  			fprintf(out, "microbeC ");
-  			fprintf(out, "coarseRootC fineRootC ");
+
 	  	#else
   			fprintf(out, "soil ");	
   		#endif
+  		
+  		  	fprintf(out, "microbeC ");
+  			fprintf(out, "coarseRootC fineRootC ");
   fprintf(out, "litter litterWater soilWater soilWetnessFrac snow ");
   fprintf(out, "npp nee gpp rAboveground rSoil rRoot rtot\n");
 }
@@ -789,9 +788,7 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
 	  		}
  		  		fprintf(out,"%8.2f ",trackers.totSoilC);
 
-  			fprintf(out, "%8.2f", envi.microbeC);
-  			
-  			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
+
 
 	  	#else
 	  		fprintf(out, "%8.2f ",envi.soil);
@@ -799,15 +796,13 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
   	
 
 
-   /*		#if SOIL_MULTIPOOL
-	  		fprintf(out, "%8.2f", envi.microbeC/trackers.totSoilC*1000);	// Convert to mg C / g soil
-		#else
-  			fprintf(out, "%8.2f", envi.microbeC/envi.soil*1000);	// Convert to mg C / g soil
-  		#endif	*/
+  			fprintf(out, "%8.2f", envi.microbeC);
+  			
+  			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
   	
   	fprintf(out, " %8.2f %8.2f %8.2f %8.3f %8.2f ", 
 		 envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow);
-	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.npp, trackers.nee, trackers.gpp, trackers.rAboveground, 
+	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.evapotranspiration, trackers.nee, trackers.gpp, trackers.rAboveground, 
   			trackers.rSoil, trackers.rRoot,trackers.rtot);
 //note without modeling root dynamics 
 
@@ -1558,6 +1553,7 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   			moistEffect = pow((water/whc), params.soilRespMoistEffect);
 		#endif // DAYCENT_WATER_HRESP
 
+		if (climate->tsoil < 0) moistEffect=1;		// Ignore moisture effects in frozen soils
 	#else // no WATER_HRESP
  		moistEffect = 1;
 	#endif // WATER_HRESP
@@ -1593,7 +1589,7 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 				 	
 		 				tempEffect=poolBaseRespiration*pow(poolQ10,tsoil/10);
   		
-  				else // use cold temp. params
+  				} else { // use cold temp. params
     					
     				poolBaseRespiration=params.baseSoilRespCold; 
 		 			poolQ10=params.soilRespQ10Cold;
@@ -2328,7 +2324,7 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
   envi.microbeC = params.microbeInit*params.soilInit/1000;		// convert to gC m-2 
 
-  params.halfSatIngestion = params.halfSatIngestion*params.soilInit;
+  
   params.totNitrogen = params.totNitrogen*params.soilInit;	// convert to gC m-2
 
   params.fineRootTurnoverRate /= 365.0;
