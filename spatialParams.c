@@ -220,7 +220,7 @@ void initializeOneSpatialParam(SpatialParams *spatialParams, char *name, double 
         spatialParamFile is open and file pointer points to 2nd line (after the numLocs line)
  */
 void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spatialParamFile)  {
-  const char *TOKENS = " \t\n"; // tokens that can separate values in parameter files
+  const char *SEPARATORS = " \t\n"; // characters that can separate values in parameter files
   const char *COMMENT_CHARS = "!";  // comment characters (ignore everything after this on a line)
 
   char line[256];
@@ -244,12 +244,12 @@ void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spat
 
     if (!isComment)  {  // if this isn't just a comment line or blank line    
       // tokenize line:
-      strcpy(pName, strtok(line, TOKENS)); // copy first token into pName
-      strcpy(strValue, strtok(NULL, TOKENS)); // copy next token into strValue; wait until later to figure out if it's "*" or a number
-      changeable = strtol(strtok(NULL, TOKENS), &errc, 0);
-      min = strtod(strtok(NULL, TOKENS), &errc);
-      max = strtod(strtok(NULL, TOKENS), &errc);
-      sigma = strtod(strtok(NULL, TOKENS), &errc);
+      strcpy(pName, strtok(line, SEPARATORS)); // copy first token into pName
+      strcpy(strValue, strtok(NULL, SEPARATORS)); // copy next token into strValue; wait until later to figure out if it's "*" or a number
+      changeable = strtol(strtok(NULL, SEPARATORS), &errc, 0);
+      min = strtod(strtok(NULL, SEPARATORS), &errc);
+      max = strtod(strtok(NULL, SEPARATORS), &errc);
+      sigma = strtod(strtok(NULL, SEPARATORS), &errc);
 
       // now we need to see if we read in an actual value, or a "*" (if the latter, it's a spatially-varying parameter)
       // note that we read this before doing the error checking on paramIndex:
@@ -692,6 +692,7 @@ void deleteSpatialParams(SpatialParams *spatialParams) {
   free(spatialParams->parameters);
   free(spatialParams->readIndices);
   free(spatialParams->changeableParamIndices);
+  free(spatialParams);
 }
 
 

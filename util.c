@@ -14,7 +14,7 @@
 #include "util.h"
 
 // our own openFile method, which exits gracefully if there's an error
-FILE *openFile(char *name, char *mode) {
+FILE *openFile(const char *name, const char *mode) {
   FILE *f;
 
   if ((f = fopen(name, mode)) == NULL) {
@@ -133,7 +133,7 @@ double sumArray(double *array, int length) {
 // do an strcmp on s1 and s2, ignoring case
 // (convert both to lower case before comparing)
 // return value is the same as for strcmp
-int strcmpIgnoreCase(char *s1, char *s2)  {
+int strcmpIgnoreCase(const char *s1, const char *s2)  {
   char *s1Lower;
   char *s2Lower;
   int i;

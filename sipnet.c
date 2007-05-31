@@ -2479,13 +2479,14 @@ void printModelComponents(FILE *out) {
 // return an array[0..MAX_DATA_TYPES-1] of strings,
 // where arr[i] gives the name of data type i
 char **getDataTypeNames() {
+  // NOTE: data type names shouldn't have spaces in them (for determining corresponding input names in namelist input file, for estimate program)
 #if EXTRA_DATA_TYPES
-  static char *DATA_TYPES[MAX_DATA_TYPES] = {"EVAPOTRANSPIRATION", "NEE", "SOIL WETNESS",
+  static char *DATA_TYPES[MAX_DATA_TYPES] = {"EVAPOTRANSPIRATION", "NEE", "SOIL_WETNESS",
 					     "GPP", "RTOT", "RA", "RH", "NPP",
 					     "YEARLY_GPP", "YEARLY_RTOT", "YEARLY_RA", "YEARLY_RH", "YEARLY_NPP", "YEARLY_NEE",
 					     "TOT_GPP", "TOT_RTOT", "TOT_RA", "TOT_RH", "TOT_NPP", "TOT_NEE"};
 #else
-  static char *DATA_TYPES[MAX_DATA_TYPES] = {"EVAPOTRANSPIRATION", "NEE", "SOIL WETNESS"};
+  static char *DATA_TYPES[MAX_DATA_TYPES] = {"EVAPOTRANSPIRATION", "NEE", "SOIL_WETNESS"};
 #endif
 
   return DATA_TYPES;

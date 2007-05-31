@@ -1,0 +1,62 @@
+! Input file to set up a forward run of SIPNET
+
+! --- INPUTS FOR ALL RUN TYPES ---
+
+RUNTYPE = standard
+! RUNTYPE must be one of 'standard', 'senstest', or 'montecarlo'
+
+FILENAME = niwots
+! FILENAME.param is the file of parameter values & initial conditions
+! FILENAME.param-spatial is the file of spatially-varying parameters
+!  (first line must contain a single integer: # of locations)
+! FILENAME.clim is the file of climate data for each time step
+
+LOCATION = -1
+! Location to run at (-1 means run at all locations)
+! (If doing a sensitivity test or monte carlo run, location defaults to
+!  0: can only do these types of runs at a single location)
+
+
+PRINT_HEADER = 1
+! If 1, print header on output file; if 0, don't print header (default: 0)
+
+
+! --- INPUTS FOR SENSTEST ---
+
+! These inputs are ignored for run types other than senstest
+
+CHANGE_INDEX = 0
+! Index of parameter to change in a sensitivity test
+
+LOW_VAL = 0
+HIGH_VAL = 0
+NUM_RUNS = 1
+! Parameter is varied from LOW_VAL to HIGH_VAL over a total of NUM_RUNS
+
+! Note: output from sensitivity test will be put in FILENAME.sens
+! Note that it is only possible to run at a single location using this option
+
+
+! --- INPUTS FOR MONTECARLO RUN ---
+
+! These inputs are ignored for run types other than montecarlo
+
+MC_PARAM_FILE = none
+! File of parameter values to use in multiple runs, 
+!  in place of FILENAME.param
+!  The first line of this file must contain the indices of the
+!  parameters whose values are given, and each subsequent line contains
+!  one set of parameter values.
+
+MC_OUTPUT = none
+! Will hold output from montecarlo run
+
+NUM_TO_SKIP = 0
+! Number of elements on each line to ignore (e.g. leading likelihood
+!  values)
+
+STATS_ONLY = 0
+! If 0, output each run to MC_OUT_FILE#.out
+! If 1, output only means and standard deviations to MC_OUT_FILE.out
+
+! Note that it is only possible to run at a single location using this option

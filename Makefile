@@ -3,19 +3,19 @@ LD=gcc
 CFLAGS=-Wall
 LIBLINKS=-lm
 
-ESTIMATE_CFILES=sipnet.c ml-metro5.c ml-metrorun.c paramchange.c runmean.c util.c spatialParams.c
+ESTIMATE_CFILES=sipnet.c ml-metro5.c ml-metrorun.c paramchange.c runmean.c util.c spatialParams.c namelistInput.c
 ESTIMATE_OFILES=$(ESTIMATE_CFILES:.c=.o)
 
-SENSTEST_CFILES=sipnet.c sensTest.c paramchange.c runmean.c util.c spatialParams.c
+SENSTEST_CFILES=sipnet.c sensTest.c paramchange.c runmean.c util.c spatialParams.c namelistInput.c
 SENSTEST_OFILES=$(SENSTEST_CFILES:.c=.o)
 
-SENSTESTFULL_CFILES=sipnet.c sensTestFull.c paramchange.c runmean.c util.c spatialParams.c
+SENSTESTFULL_CFILES=sipnet.c sensTestFull.c paramchange.c runmean.c util.c spatialParams.c namelistInput.c
 SENSTESTFULL_OFILES=$(SENSTESTFULL_CFILES:.c=.o)
 
-SIPNET_CFILES=sipnet.c frontend.c runmean.c util.c spatialParams.c
+SIPNET_CFILES=sipnet.c frontend.c runmean.c util.c spatialParams.c namelistInput.c
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 
-SIPNETGIRDLE_CFILES=sipnetGirdle.c frontendGirdle.c runmean.c util.c spatialParams.c
+SIPNETGIRDLE_CFILES=sipnetGirdle.c frontendGirdle.c runmean.c util.c spatialParams.c namelistInput.c
 SIPNETGIRDLE_OFILES=$(SIPNETGIRDLE_CFILES:.c=.o)
 
 
