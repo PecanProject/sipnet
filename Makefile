@@ -18,8 +18,11 @@ SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNETGIRDLE_CFILES=sipnetGirdle.c frontendGirdle.c runmean.c util.c spatialParams.c namelistInput.c
 SIPNETGIRDLE_OFILES=$(SIPNETGIRDLE_CFILES:.c=.o)
 
+MAKE_SPATIAL_INPUTS_CFILES=makeSpatialInputs.c util.c namelistInput.c
+MAKE_SPATIAL_INPUTS_OFILES=$(MAKE_SPATIAL_INPUTS_CFILES:.c=.o)
 
-all: estimate sensTest sensTestFull sipnet sipnetGirdle
+
+all: estimate sensTest sensTestFull sipnet sipnetGirdle makeSpatialInputs
 
 estimate: $(ESTIMATE_OFILES)
 	$(LD) $(LIBLINKS) -o estimate $(ESTIMATE_OFILES)
@@ -36,8 +39,11 @@ sipnet: $(SIPNET_OFILES)
 sipnetGirdle: $(SIPNETGIRDLE_OFILES)
 	$(LD) $(LIBLINKS) -o sipnetGirdle $(SIPNETGIRDLE_OFILES)
 
+makeSpatialInputs: $(MAKE_SPATIAL_INPUTS_OFILES)
+	$(LD) $(LIBLINKS) -o makeSpatialInputs $(MAKE_SPATIAL_INPUTS_OFILES)
+
 clean:
-	rm -f $(ESTIMATE_OFILES) $(SENSTEST_OFILES) $(SENSTESTFULL_OFILES) $(SIPNET_OFILES) $(SIPNETGIRDLE_OFILES) estimate sensTest sensTestFull sipnet sipnetGirdle
+	rm -f $(ESTIMATE_OFILES) $(SENSTEST_OFILES) $(SENSTESTFULL_OFILES) $(SIPNET_OFILES) $(SIPNETGIRDLE_OFILES) $(MAKE_SPATIAL_INPUTS_OFILES) estimate sensTest sensTestFull sipnet sipnetGirdle makeSpatialInputs
 
 #This target automatically builds dependencies.
 depend::
