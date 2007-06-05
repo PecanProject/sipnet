@@ -11,6 +11,7 @@
 #include "sipnet.h"
 #include "util.h"
 #include "namelistInput.h"
+#include "outputItems.h"
 
 #define NUM_STEPS 4507 // only used if we want to output means/standard deviations over a set of parameter sets
 
@@ -20,6 +21,8 @@
 #define RUNTYPE_MAXNAME 16
 #define INPUT_MAXNAME 64
 #define INPUT_FILE "sipnet.in"
+#define DO_MAIN_OUTPUT 1
+#define DO_SINGLE_OUTPUTS 0
 #define LOC -1 // default is run at all locations (but if doing a sens. test or monte carlo run, will default to running at loc. 0)
 #define HEADER 0 // // Make the default no printing of header files
 
@@ -42,9 +45,12 @@ int main(int argc, char *argv[]) {
   char option; // reading in optional arguments
 
   SpatialParams *spatialParams; // the parameters used in the model (possibly spatially-varying)
+  OutputItems *outputItems;  // structure to hold information for output to single-variable files (if doSingleOutputs is true)
   
   char runtype[RUNTYPE_MAXNAME];
 
+  int doMainOutput = DO_MAIN_OUTPUT;  // do we do main outputting of all variables?
+  int doSingleOutputs = DO_SINGLE_OUTPUTS;  // do we do extra outputting of single-variable files?
   int loc = LOC; // location to run at (set through optional -l argument)
   int numLocs; // read in initModel
   int *steps; /* number of time steps in each location;
@@ -102,6 +108,8 @@ int main(int argc, char *argv[]) {
   addNamelistInputItem(namelistInputs, "RUNTYPE", STRING_TYPE, runtype, RUNTYPE_MAXNAME);
   addNamelistInputItem(namelistInputs, "FILENAME", STRING_TYPE, fileName, FILE_MAXNAME);
   addNamelistInputItem(namelistInputs, "LOCATION", INT_TYPE, &loc, 0);
+  addNamelistInputItem(namelistInputs, "DO_MAIN_OUTPUT", INT_TYPE, &doMainOutput, 0);
+  addNamelistInputItem(namelistInputs, "DO_SINGLE_OUTPUTS", INT_TYPE, &doSingleOutputs, 0);
   addNamelistInputItem(namelistInputs, "PRINT_HEADER", INT_TYPE, &printHeader, 0);
   addNamelistInputItem(namelistInputs, "CHANGE_INDEX", INT_TYPE, &changeIndex, 0);
   addNamelistInputItem(namelistInputs, "LOW_VAL", DOUBLE_TYPE, &lowVal, 0);
@@ -136,15 +144,28 @@ int main(int argc, char *argv[]) {
   strcat(climFile, ".clim");
   numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
 
+  if (doSingleOutputs)  {
+    outputItems = newOutputItems(fileName, ' ');
+    setupOutputItems(outputItems);
+  }
+  else  {
+    outputItems = NULL;
+  }
+
   if (strcmpIgnoreCase(runtype, "standard") == 0)  {  // do a single run
-    strcpy(outFile, fileName);
-    strcat(outFile, ".out");
+    if (doMainOutput)  {
+      strcpy(outFile, fileName);
+      strcat(outFile, ".out");
+      out = openFile(outFile, "w");
+    }
+    else  {
+      out = NULL;
+    }
 
-    out = openFile(outFile, "w");
+    runModelOutput(out, outputItems, printHeader, spatialParams, loc); 
 
-    runModelOutput(out, printHeader, spatialParams, loc); 
-
-    fclose(out);
+    if (doMainOutput)
+      fclose(out);
   }
 
   else if (strcmpIgnoreCase(runtype, "montecarlo") == 0)  {  // multiple runs from file
@@ -171,13 +192,20 @@ int main(int argc, char *argv[]) {
       indices[i] = strtol(strtok(NULL, " \t"), &errc, 0);
 
     if (!statsOnly)  {
+      // do each run, output to fileName#.out (if doMainOutput is true),
+      //  and/or fileName.<dataTypeName> (if doSingleOutputs is true)
 
-      // do each run, output to fileName#.out
       runNum = 1;
+      out = NULL;
       while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0)) { 
 	// get next set of parameter values and do next run
-	sprintf(outFile, "%s%d.out", mcOutFileBase, runNum);
-	out = openFile(outFile, "w");
+
+	if (doMainOutput)  {
+	  sprintf(outFile, "%s%d.out", mcOutFileBase, runNum);
+	  out = openFile(outFile, "w");
+	}
+	// else out will stay NULL
+
 	if (numToSkip > 0) {
 	  strtok(line, " \t"); // read and ignore first value
 	  for (i = 0; i < numToSkip - 1; i++) // read and ignore other values
@@ -195,8 +223,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	// do this model run:
-	runModelOutput(out, printHeader, spatialParams, loc); 
-	fclose(out);
+	runModelOutput(out, outputItems, printHeader, spatialParams, loc); 
+	if (doMainOutput)
+	  fclose(out);
 	runNum++;
       }
 
@@ -304,16 +333,21 @@ int main(int argc, char *argv[]) {
   }
 
   else if (strcmpIgnoreCase(runtype, "senstest") == 0)  {  // do a sensitivity test
-    strcpy(outFile, fileName);
-    strcat(outFile, ".sens");
-    out = openFile(outFile, "w");
+    if (doMainOutput)  {
+      strcpy(outFile, fileName);
+      strcat(outFile, ".sens");
+      out = openFile(outFile, "w");
+    }
+    else
+      out = NULL;
 
     if (loc == -1) {
       printf("loc was set to -1: can only run sens. test at one location: running at location 0\n");
       loc = 0;
     }
-    sensTest(out, changeIndex, lowVal, highVal, numRuns, spatialParams, loc);
-    fclose(out);
+    sensTest(out, outputItems, changeIndex, lowVal, highVal, numRuns, spatialParams, loc);
+    if (doMainOutput)
+      fclose(out);
   }
 
   else  {
@@ -323,6 +357,8 @@ int main(int argc, char *argv[]) {
   
   cleanupModel(numLocs);
   deleteSpatialParams(spatialParams);
+  if (outputItems != NULL)
+    deleteOutputItems(outputItems);
   free(steps);
   
   return 0;

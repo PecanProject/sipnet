@@ -5,7 +5,7 @@
 RUNTYPE = standard
 ! RUNTYPE must be one of 'standard', 'senstest', or 'montecarlo'
 
-FILENAME = niwots
+FILENAME = niwots_spatial
 ! FILENAME.param is the file of parameter values & initial conditions
 ! FILENAME.param-spatial is the file of spatially-varying parameters
 !  (first line must contain a single integer: # of locations)
@@ -16,9 +16,21 @@ LOCATION = -1
 ! (If doing a sensitivity test or monte carlo run, location defaults to
 !  0: can only do these types of runs at a single location)
 
+DO_MAIN_OUTPUT = 1
+! If 1, do the primary output to FILENAME.out (time series of all output
+!  variables)
+! If 0, suppress this output
+! Ignored for montecarlo run with statsonly (treated as 1)
 
 PRINT_HEADER = 1
-! If 1, print header on output file; if 0, don't print header (default: 0)
+! If 1, print header on main output file; if 0, don't print header
+!  (default: 0)
+
+DO_SINGLE_OUTPUTS = 1
+! If 1, do extra outputs: one variable per file (e.g. FILENAME.NEE)
+! If 0, don't do these extra outputs
+! (These extra outputs are setup in sipnet.c : setupOutputItems)
+! Ignored for montecarlo run with statsonly (treated as 0)
 
 
 ! --- INPUTS FOR SENSTEST ---
@@ -28,9 +40,9 @@ PRINT_HEADER = 1
 CHANGE_INDEX = 0
 ! Index of parameter to change in a sensitivity test
 
-LOW_VAL = 0
-HIGH_VAL = 0
-NUM_RUNS = 1
+LOW_VAL = 5000
+HIGH_VAL = 15000
+NUM_RUNS = 3
 ! Parameter is varied from LOW_VAL to HIGH_VAL over a total of NUM_RUNS
 
 ! Note: output from sensitivity test will be put in FILENAME.sens

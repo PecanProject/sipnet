@@ -17,6 +17,7 @@
 #include "runmean.h"
 #include "util.h"
 #include "spatialParams.h"
+#include "outputItems.h"
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)
@@ -2366,15 +2367,19 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 }
 
 
-/* do one run of the model using parameter values in spatialParams, output results to out
-   If printHeader = 1, print a header for the output file, if 0 don't
+/* Do one run of the model using parameter values in spatialParams
+   If out != NULL, output results to out
+    If printHeader = 1, print a header for the output file, if 0 don't
+   If outputItems != NULL, do additional outputting as given by this structure (1 variable per file)
+    If loc == -1, then print currLoc as first item on each line
    Run at spatial location given by loc (0-indexing) - or run everywhere if loc = -1
    Note: number of locations given in spatialParams
 */
-void runModelOutput(FILE *out, int printHeader, SpatialParams *spatialParams, int loc) {
+void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, SpatialParams *spatialParams, int loc) {
   int firstLoc, lastLoc, currLoc;
+  char label[64];
   
-  if (printHeader) {
+  if ((out != NULL) && printHeader) {
     outputHeader(out);
   }
 
@@ -2387,12 +2392,21 @@ void runModelOutput(FILE *out, int printHeader, SpatialParams *spatialParams, in
   
   for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     setupModel(spatialParams, currLoc);
+    if ((loc == -1) && (outputItems != NULL))  {  // print the current location at the start of the line
+      sprintf(label, "%d", currLoc);
+      writeOutputItemLabels(outputItems, label);
+    }
       
     while (climate != NULL) {
       updateState();
-      outputState(out, currLoc, climate->year, climate->day, climate->time);
+      if (out != NULL)
+	outputState(out, currLoc, climate->year, climate->day, climate->time);
+      if (outputItems != NULL)
+	writeOutputItemValues(outputItems);
       climate = climate->nextClim;
     }
+    if (outputItems != NULL)
+      terminateOutputItemLines(outputItems);
   }
 }
 
@@ -2425,21 +2439,36 @@ void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[], S
   }
 }
 
-// do a sensitivity test on paramNum, varying from low to high, doing a total of numRuns runs
-// run only at a single location (given by loc)
-void sensTest(FILE *out, int paramNum, double low, double high, int numRuns, SpatialParams *spatialParams, int loc) 
+/* Do a sensitivity test on paramNum, varying from low to high, doing a total of numRuns runs
+   Run only at a single location (given by loc)
+   If out != NULL, output results to out
+   If outputItems != NULL, do additional outputting as given by this structure (1 variable per file)
+    Print parameter value as first item on each line
+   If out != NULL, do main outputting to out
+   If outputItems != NULL
+*/
+void sensTest(FILE *out, OutputItems *outputItems, int paramNum, double low, double high, int numRuns, SpatialParams *spatialParams, int loc) 
 {
   int runNum;
   double changeAmt = (high - low)/(double)(numRuns - 1);
   double value; // current parameter value
+  char label[64];
   
   value = low;
   for (runNum = 0; runNum < numRuns; runNum++) {
     // printf("%d %f\n", runNum, value);
     // fprintf(out, "# Value = %f\n", value);
     setSpatialParam(spatialParams, paramNum, loc, value);
-    runModelOutput(out, 0, spatialParams, loc);
-    fprintf(out, "\n\n");
+
+    if (outputItems != NULL)  {
+      sprintf(label, "%f", value);
+      writeOutputItemLabels(outputItems, label);
+    }
+      
+    runModelOutput(out, outputItems, 0, spatialParams, loc);
+
+    if (out != NULL)
+      fprintf(out, "\n\n");
     value += changeAmt;
   }
 }
@@ -2522,6 +2551,19 @@ void setupOutputPointers(void) {
   outputPtrs[i++] = &(trackers.totNpp);
   outputPtrs[i++] = &(trackers.totNee);
 #endif
+}
+
+
+/* PRE: outputItems has been created with newOutputItems
+
+   Setup outputItems structure
+   Each variable added will be output in a separate file ('*.varName')
+ */
+void setupOutputItems(OutputItems *outputItems)  {
+  addOutputItem(outputItems, "NEE", &(trackers.nee));
+  addOutputItem(outputItems, "NEE_cum", &(trackers.totNee));
+  addOutputItem(outputItems, "GPP", &(trackers.gpp));
+  addOutputItem(outputItems, "GPP_cum", &(trackers.totGpp));
 }
 
 
