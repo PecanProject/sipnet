@@ -4,9 +4,11 @@
 #ifndef SPATIAL_PARAMS_H
 #define SPATIAL_PARAMS_H
 
+#define PARAM_MAXNAME 64
+
 // struct to hold a single (possibly) spatially-varying param
 typedef struct OneSpatialParamStruct {
-  char name[64]; // name of parameter
+  char name[PARAM_MAXNAME]; // name of parameter
   int isRequired;  // 0 or 1; 1 indicates that we should terminate run if this parameter isn't specified in input file
   int numLocs; // 0 if this parameter is non-spatial
   int isChangeable; // 0 or 1
@@ -81,6 +83,11 @@ int getNumParameters(SpatialParams *spatialParams);
 
 // Return number of parameters that have been read in from file
 int getNumParamsRead(SpatialParams *spatialParams);
+
+
+// Find parameter with given name in the parameters vector
+// If found, return index in vector, otherwise return -1
+int locateParam(SpatialParams *spatialParams, char *name);
 
 
 // Return 1 if parameter i has had its value set, 0 otherwise

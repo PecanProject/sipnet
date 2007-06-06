@@ -2,10 +2,10 @@
 
 ! --- INPUTS FOR ALL RUN TYPES ---
 
-RUNTYPE = standard
+RUNTYPE = senstest
 ! RUNTYPE must be one of 'standard', 'senstest', or 'montecarlo'
 
-FILENAME = niwots_spatial
+FILENAME = niwots
 ! FILENAME.param is the file of parameter values & initial conditions
 ! FILENAME.param-spatial is the file of spatially-varying parameters
 !  (first line must contain a single integer: # of locations)
@@ -37,11 +37,11 @@ DO_SINGLE_OUTPUTS = 1
 
 ! These inputs are ignored for run types other than senstest
 
-CHANGE_INDEX = 0
-! Index of parameter to change in a sensitivity test
+CHANGE_PARAM = amax
+! Name of parameter to change in a sensitivity test
 
-LOW_VAL = 5000
-HIGH_VAL = 15000
+LOW_VAL = 5
+HIGH_VAL = 15
 NUM_RUNS = 3
 ! Parameter is varied from LOW_VAL to HIGH_VAL over a total of NUM_RUNS
 

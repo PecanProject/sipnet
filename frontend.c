@@ -10,10 +10,9 @@
 #include <unistd.h> // for command-line arguments
 #include "sipnet.h"
 #include "util.h"
+#include "spatialParams.h"
 #include "namelistInput.h"
 #include "outputItems.h"
-
-#define NUM_STEPS 4507 // only used if we want to output means/standard deviations over a set of parameter sets
 
 // important constants - default values:
 
@@ -53,13 +52,14 @@ int main(int argc, char *argv[]) {
   int doSingleOutputs = DO_SINGLE_OUTPUTS;  // do we do extra outputting of single-variable files?
   int loc = LOC; // location to run at (set through optional -l argument)
   int numLocs; // read in initModel
-  int *steps; /* number of time steps in each location;
-		 as of 8/30/04, unused: but we save it so we can free it */
+  int *steps; // number of time steps in each location
 
   int printHeader=HEADER;
 
   // parameters for sens. test:
-  int changeIndex, numRuns;
+  char changeParam[PARAM_MAXNAME];
+  int changeIndex;  // determined dynamically from changeParam
+  int numRuns;
   double lowVal, highVal;
 
   int numToSkip = 0; // number of #'s to skip at start of each line of pChange
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
   addNamelistInputItem(namelistInputs, "DO_MAIN_OUTPUT", INT_TYPE, &doMainOutput, 0);
   addNamelistInputItem(namelistInputs, "DO_SINGLE_OUTPUTS", INT_TYPE, &doSingleOutputs, 0);
   addNamelistInputItem(namelistInputs, "PRINT_HEADER", INT_TYPE, &printHeader, 0);
-  addNamelistInputItem(namelistInputs, "CHANGE_INDEX", INT_TYPE, &changeIndex, 0);
+  addNamelistInputItem(namelistInputs, "CHANGE_PARAM", STRING_TYPE, changeParam, PARAM_MAXNAME);
   addNamelistInputItem(namelistInputs, "LOW_VAL", DOUBLE_TYPE, &lowVal, 0);
   addNamelistInputItem(namelistInputs, "HIGH_VAL", DOUBLE_TYPE, &highVal, 0);
   addNamelistInputItem(namelistInputs, "NUM_RUNS", INT_TYPE, &numRuns, 0);
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
   dieIfNotSet(namelistInputs, "RUNTYPE");
   dieIfNotSet(namelistInputs, "FILENAME");
   if (strcmpIgnoreCase(runtype, "senstest") == 0)  {
-    dieIfNotRead(namelistInputs, "CHANGE_INDEX");
+    dieIfNotRead(namelistInputs, "CHANGE_PARAM");
     dieIfNotRead(namelistInputs, "LOW_VAL");
     dieIfNotRead(namelistInputs, "HIGH_VAL");
     dieIfNotRead(namelistInputs, "NUM_RUNS");
@@ -233,9 +233,9 @@ int main(int argc, char *argv[]) {
 
     else  {  // statsOnly
 
-      model = make2DArray(NUM_STEPS, MAX_DATA_TYPES);
-      means = make2DArray(NUM_STEPS, MAX_DATA_TYPES);
-      standarddevs = make2DArray(NUM_STEPS, MAX_DATA_TYPES);
+      model = make2DArray(steps[0], MAX_DATA_TYPES);
+      means = make2DArray(steps[0], MAX_DATA_TYPES);
+      standarddevs = make2DArray(steps[0], MAX_DATA_TYPES);
 
       // fill dataTypeIndices: use all data types
       for (i = 0; i < MAX_DATA_TYPES; i++)
@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
       // do each run, only output means and standard devs. of NEE to fileName.out:
       // first pass: compute means; second pass: compute standard deviations
     
-      for (i = 0; i < NUM_STEPS; i++) {
+      for (i = 0; i < steps[0]; i++) {
 	for (type = 0; type < MAX_DATA_TYPES; type++) {
 	  means[i][type] = 0.0;
 	  standarddevs[i][type] = 0.0;
@@ -276,13 +276,13 @@ int main(int argc, char *argv[]) {
 	
 	  if (k == 0) { // first pass
 	    // update means:
-	    for (j = 0; j < NUM_STEPS; j++)
+	    for (j = 0; j < steps[0]; j++)
 	      for (type = 0; type < MAX_DATA_TYPES; type++)
 		means[j][type] += model[j][type];
 	  }
 	  else { // second pass
 	    // update standard deviations:
-	    for (j = 0; j < NUM_STEPS; j++)
+	    for (j = 0; j < steps[0]; j++)
 	      for (type = 0; type < MAX_DATA_TYPES; type++)
 		standarddevs[j][type] += pow((model[j][type] - means[j][type]), 2);
 	  }
@@ -293,7 +293,7 @@ int main(int argc, char *argv[]) {
 	runNum--; // correct for one extra addition
 	if (k == 0) { // first pass
 	  // make means means rather than sums:
-	  for (j = 0; j < NUM_STEPS; j++)
+	  for (j = 0; j < steps[0]; j++)
 	    for (type = 0; type < MAX_DATA_TYPES; type++)
 	      means[j][type] = means[j][type]/(double)runNum;
 	
@@ -304,7 +304,7 @@ int main(int argc, char *argv[]) {
 
 	else { // second pass
 	  // make standard devs standard devs rather than sum of squares:
-	  for (j = 0; j < NUM_STEPS; j++)
+	  for (j = 0; j < steps[0]; j++)
 	    for (type = 0; type < MAX_DATA_TYPES; type++)
 	      standarddevs[j][type] = sqrt(standarddevs[j][type]/(double)(runNum - 1));
 
@@ -312,7 +312,7 @@ int main(int argc, char *argv[]) {
 	  sprintf(outFile, "%s.out", mcOutFileBase);
 	  out = openFile(outFile, "w");
 	
-	  for (j = 0; j < NUM_STEPS; j++) {
+	  for (j = 0; j < steps[0]; j++) {
 	    for (type = 0; type < MAX_DATA_TYPES; type++)
 	      fprintf(out, "%f %f\t", means[j][type], standarddevs[j][type]);
 	    fprintf(out, "\n");
@@ -345,6 +345,14 @@ int main(int argc, char *argv[]) {
       printf("loc was set to -1: can only run sens. test at one location: running at location 0\n");
       loc = 0;
     }
+
+    changeIndex = locateParam(spatialParams, changeParam);
+    if (changeIndex == -1)  {
+      printf("Invalid parameter '%s'\n", changeParam);
+      printf("Please fix CHANGE_PARAM in sipnet.in and re-run\n");
+      exit(1);
+    }
+
     sensTest(out, outputItems, changeIndex, lowVal, highVal, numRuns, spatialParams, loc);
     if (doMainOutput)
       fclose(out);

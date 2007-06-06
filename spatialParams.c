@@ -22,28 +22,6 @@ int allParamsInitialized(SpatialParams *spatialParams) {
   else
     return 0;
 }
-  
-
-// Find parameter with given name in the parameters vector
-// If found, return index in vector, otherwise return -1
-int locateParam(SpatialParams *spatialParams, char *name)  {
-  int i;
-  int found;
-
-  i = 0;
-  found = 0;
-  while (i < spatialParams->numParameters && !found)  {
-    if (strcmpIgnoreCase(name, spatialParams->parameters[i].name) == 0)  {
-      found = 1;
-    }
-    i++;
-  }
-
-  if (found)
-    return (i - 1);
-  else
-    return -1;
-}
 
 
 // Set array[0..length-1] to all be equal to value
@@ -116,8 +94,8 @@ void setPossiblySpatial(double *array, int loc, double value, int isSpatial, int
    pName gives the name of the parameter; we'll abort if the next parameter does not have the name given by pName
    numLocs is the number of values to read
  */
-void readSpatialValues(double *spatialValues, FILE *spatialParamFile, char pName[64], int numLocs)  {
-  char pNameSpatial[64];
+void readSpatialValues(double *spatialValues, FILE *spatialParamFile, char pName[PARAM_MAXNAME], int numLocs)  {
+  char pNameSpatial[PARAM_MAXNAME];
   int status;
   int i;
 
@@ -224,7 +202,7 @@ void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spat
   const char *COMMENT_CHARS = "!";  // comment characters (ignore everything after this on a line)
 
   char line[256];
-  char pName[64];  // parameter name
+  char pName[PARAM_MAXNAME];  // parameter name
   int paramIndex;  
   OneSpatialParam *param; // a pointer to a single parameter, for easier access
   char strValue[32]; // before we know whether value is a number or "*"
@@ -348,6 +326,28 @@ int getNumParameters(SpatialParams *spatialParams)  {
 // Return number of parameters that have been read in from file
 int getNumParamsRead(SpatialParams *spatialParams)  {
   return spatialParams->numParamsRead;
+}
+
+
+// Find parameter with given name in the parameters vector
+// If found, return index in vector, otherwise return -1
+int locateParam(SpatialParams *spatialParams, char *name)  {
+  int i;
+  int found;
+
+  i = 0;
+  found = 0;
+  while (i < spatialParams->numParameters && !found)  {
+    if (strcmpIgnoreCase(name, spatialParams->parameters[i].name) == 0)  {
+      found = 1;
+    }
+    i++;
+  }
+
+  if (found)
+    return (i - 1);
+  else
+    return -1;
 }
 
 
