@@ -21,8 +21,8 @@
 #define INPUT_FILE "estimate.in"
 
 #define ADD_PERCENT 0.5
-#define COMPARE_INDICES_FILE "" // file giving start and end indices for post-comparison at each location; no file means use all points
-#define FILE_FOR_AGG "" // no file
+#define COMPARE_INDICES_EXT "" // extension of file giving start and end indices for post-comparison at each location; no file means use all points
+#define AGGREGATION_EXT "" // extension of file containing information for model/data aggregation; no file means don't do any aggregation
 #define UNAGGED_WEIGHT 0.0 // if aggregation is done, give no weight to unaggregated points in optimization
 #define NUM_CHAINS 10 // number of chains to run to convergence - pick best of these to use as start pt. for optimization
 #define ITER 375000 // number of metropolis iterations once we've converged and finished numSpinUps
@@ -33,7 +33,7 @@
 #define PARAM_FILE "" // file to use in place of fileName.param - empty string means use fileName.param
 #define RANDOM_START 0 // default is start with guess parameter values, NOT random parameter values
 #define NUM_SPIN_UPS 125000 // once we've converged, additional number of iterations before we start recording
-#define OPT_INDICES_FILE "" // file giving start and end indices for optimization at each location; no file means use all points
+#define OPT_INDICES_EXT "" // extension of file giving start and end indices for optimization at each location; no file means use all points
 #define VALID_FRAC 0.5 /* fraction of data points which must be valid
 		     to use data from a given time step */
 #define PARAM_WEIGHT 0.0
@@ -105,9 +105,12 @@ int main(int argc, char *argv[]) {
   int *steps; // number of time steps in each location
   char option;
   double addPercent = ADD_PERCENT;
-  char compareIndicesFile[FILE_MAXNAME] = COMPARE_INDICES_FILE; // optional file holding indices for model-data comparisons
-  char optIndicesFile[FILE_MAXNAME] = OPT_INDICES_FILE; // optional file holding indices for optimizations
-  char fileForAgg[FILE_MAXNAME] = FILE_FOR_AGG; // optional file for aggregating 
+  char compareIndicesExt[FILE_MAXNAME] = COMPARE_INDICES_EXT; // extension of optional file holding indices for model-data comparisons
+  char compareIndicesFile[2*FILE_MAXNAME]; // optional file holding indices for model-data comparisons
+  char optIndicesExt[FILE_MAXNAME] = OPT_INDICES_EXT; // extension of optional file holding indices for optimizations
+  char optIndicesFile[2*FILE_MAXNAME]; // optional file holding indices for optimizations
+  char aggregationExt[FILE_MAXNAME] = AGGREGATION_EXT; // extension of optional file for aggregating 
+  char aggregationFile[2*FILE_MAXNAME]; // optional file for aggregating 
   char paramFile[FILE_MAXNAME] = PARAM_FILE; // if, after getting optional arguments, paramFile is "", set paramFile = fileName.param
   long iter = ITER, numSpinUps = NUM_SPIN_UPS;
   int numChains = NUM_CHAINS, numRuns = NUM_RUNS, numAtOnce = NUM_AT_ONCE, loc = LOC;
@@ -169,9 +172,9 @@ int main(int argc, char *argv[]) {
   addNamelistInputItem(namelistInputs, "VALID_FRAC", DOUBLE_TYPE, &validFrac, 0);
   addNamelistInputItem(namelistInputs, "SCALE_FACTOR", DOUBLE_TYPE, &scaleFactor, 0);
   addNamelistInputItem(namelistInputs, "PARAM_WEIGHT", DOUBLE_TYPE, &paramWeight, 0);
-  addNamelistInputItem(namelistInputs, "OPT_INDICES_FILE", STRING_TYPE, optIndicesFile, FILE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "COMPARE_INDICES_FILE", STRING_TYPE, compareIndicesFile, FILE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "FILE_FOR_AGG", STRING_TYPE, fileForAgg, FILE_MAXNAME);
+  addNamelistInputItem(namelistInputs, "OPT_INDICES_EXT", STRING_TYPE, optIndicesExt, FILE_MAXNAME);
+  addNamelistInputItem(namelistInputs, "COMPARE_INDICES_EXT", STRING_TYPE, compareIndicesExt, FILE_MAXNAME);
+  addNamelistInputItem(namelistInputs, "AGGREGATION_EXT", STRING_TYPE, aggregationExt, FILE_MAXNAME);
   addNamelistInputItem(namelistInputs, "UNAGGED_WEIGHT", DOUBLE_TYPE, &unaggedWeight, 0);
 
   // one entry for each data type that can be included in optimization:
@@ -204,13 +207,28 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
+  // Build optIndicesFile, compareIndicesFile, aggregationFile (file names):
+  if (strcmp(optIndicesExt, "") != 0)
+    buildFileName(optIndicesFile, inFileName, optIndicesExt);
+  else
+    strcpy(optIndicesFile, "");
+
+  if (strcmp(compareIndicesExt, "") != 0)
+    buildFileName(compareIndicesFile, inFileName, compareIndicesExt);
+  else
+    strcpy(compareIndicesFile, "");
+
+  if (strcmp(aggregationExt, "") != 0)
+    buildFileName(aggregationFile, inFileName, aggregationExt);
+  else
+    strcpy(aggregationFile, "");
+
+
   if (strcmp(paramFile, "") == 0) { // no alternative parameter file specified
     // set paramFile = {inFileName}.param
-    strcpy(paramFile, inFileName);
-    strcat(paramFile, ".param");
+    buildFileName(paramFile, inFileName, "param");
   }
-  strcpy(climFile, inFileName);
-  strcat(climFile, ".clim");
+  buildFileName(climFile, inFileName, "clim");
 
   numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
 
@@ -224,7 +242,7 @@ int main(int argc, char *argv[]) {
   fprintf(userOut, "Constants:\n");
   fprintf(userOut, "ADD_PERCENT = %f\n", addPercent);
   fprintf(userOut, "COMPARE_INDICES_FILE = %s\n", compareIndicesFile);
-  fprintf(userOut, "FILE_FOR_AGG = %s\n", fileForAgg);
+  fprintf(userOut, "AGGREGATION_FILE = %s\n", aggregationFile);
   fprintf(userOut, "UNAGGED_WEIGHT = %f\n", unaggedWeight);
   fprintf(userOut, "NUM_CHAINS = %d\n", numChains);
   fprintf(userOut, "ITER = %ld\n", iter);
@@ -244,8 +262,8 @@ int main(int argc, char *argv[]) {
   readData(inFileName, dataTypeIndices, numDataTypes, MAX_DATA_TYPES, numLocs, steps, 
 	   validFrac, optIndicesFile, compareIndicesFile, userOut);
 
-  if (strcmp(fileForAgg, "") != 0) { // there is a file for model-data aggregation
-    readFileForAgg(fileForAgg, numDataTypes, unaggedWeight);
+  if (strcmp(aggregationFile, "") != 0) { // there is a file for model-data aggregation
+    readFileForAgg(aggregationFile, numDataTypes, unaggedWeight);
     differenceFunc = aggedDifference;
     numDataTypes *= 2; /* A bifurcation of data types: each data type is split into two data types:
 			  an aggregated and an unaggregated.
@@ -272,8 +290,7 @@ int main(int argc, char *argv[]) {
 	       addPercent, iter, numAtOnce, numChains, randomStart, numSpinUps, paramWeight, scaleFactor,
 	       dataTypeIndices, numDataTypes, userOut);
 
-    strcpy(paramOutFile, thisFile);
-    strcat(paramOutFile, ".param");
+    buildFileName(paramOutFile, thisFile, "param");
     strcpy(spatialParamOutFile, paramOutFile);
     strcat(spatialParamOutFile, "-spatial");
 

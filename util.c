@@ -13,6 +13,16 @@
 #include <ctype.h>
 #include "util.h"
 
+
+// set filename = <base>.<ext>
+// assumes filename has been allocated and is large enough to hold result
+void buildFileName(char *filename, const char *base, const char *ext)  {
+  strcpy(filename, base);
+  strcat(filename, ".");
+  strcat(filename, ext);
+}
+
+
 // our own openFile method, which exits gracefully if there's an error
 FILE *openFile(const char *name, const char *mode) {
   FILE *f;
@@ -22,6 +32,21 @@ FILE *openFile(const char *name, const char *mode) {
     exit(1);
   }
 
+  return f;
+}
+
+
+// call openFile on a file with name <name>.<ext> (i.e. include an extension)
+FILE *openFileExt(const char *name, const char *ext, const char *mode)  {
+  char *fullName;
+  FILE *f;
+  
+  fullName = (char *)malloc((strlen(name) + strlen(ext) + 2) * sizeof(char));
+  buildFileName(fullName, name, ext);
+  
+  f = openFile(fullName, mode);
+
+  free(fullName);
   return f;
 }
 

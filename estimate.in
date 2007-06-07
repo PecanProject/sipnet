@@ -2,7 +2,7 @@
 
 ! --- FILE NAMES ---
 
-FILENAME = niwots
+FILENAME = niwots_subset
 ! FILENAME.param is the file of parameter values and info
 !  (unless PARAM_FILE is specified below)
 ! FILENAME.param-spatial is the file of spatially-varying parameters
@@ -71,7 +71,7 @@ ITER = 375000
 ADD_PERCENT = 0.5
 ! Initial pDelta, as percent of parameter range
 
-VALID_FRAC = 0.5
+VALID_FRAC = 0.0
 ! Fraction of data points which must be valid to use data from a given
 !  time step
 
@@ -83,27 +83,36 @@ SCALE_FACTOR = 1.0
 PARAM_WEIGHT = 0.0
 ! Relative weight of param. vs. data error
 
-OPT_INDICES_FILE = none
+OPT_INDICES_EXT = none
+! If not 'none', this gives the extension of the optimization indices
+!  file; the full filename is FILENAME.OPT_INDICES_EXT
 ! File giving, for each location, start and end indices for optimization
 !  (one line per location, with each line containing two integers: start
 !  & end; if no file specified, use all points)
 !  (1-indexing; end = -1 means go to end)
 
-COMPARE_INDICES_FILE = none
+COMPARE_INDICES_EXT = none
+! If not 'none', this gives the extension of the comparison indices
+!  file; the full filename is FILENAME.COMPARE_INDICES_EXT
 ! File giving, for each location, start and end indices for model-data
 !  comparisons (one line per location, with each line containing two
 !  integers: start & end; if no file specified, use all points)
 !  (1-indexing; end = -1 means go to end)
 
-FILE_FOR_AGG = none
-! File containing number of time steps per model/data aggregation
-!  Each line contains aggregation info for one location, and each line
+AGGREGATION_EXT = agg
+! If not 'none', this gives the extension of the file containing number
+!  of time steps per model/data aggregation - i.e. aggregations that are
+!  performed prior to doing model-data comparisons in the optimization
+! The full filename is FILENAME.AGGREGATION_EXT
+! Each line contains aggregation info for one location, and each line
 !  is terminated with a -1
 !  Each value (i) on a given line is an integer giving the number of
 !  time steps in aggregation i in that time step
 !  (e.g. to run model-data comparison on a yearly aggregation, each
 !  value would be number of steps in year i)
 !  (if no file specified, will perform no aggregation)
+! Note that VALID_FRAC is ignored for aggregated data (assumed equal to
+!  0)
 
 UNAGGED_WEIGHT = 0.0
 ! If aggregation is done, relative weight of unaggregated points in
