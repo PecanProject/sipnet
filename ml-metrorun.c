@@ -20,7 +20,7 @@
 #define INPUT_MAXNAME 64
 #define INPUT_FILE "estimate.in"
 
-#define ADD_PERCENT 0.5
+#define ADD_FRACTION 0.5
 #define COMPARE_INDICES_EXT "" // extension of file giving start and end indices for post-comparison at each location; no file means use all points
 #define AGGREGATION_EXT "" // extension of file containing information for model/data aggregation; no file means don't do any aggregation
 #define UNAGGED_WEIGHT 0.0 // if aggregation is done, give no weight to unaggregated points in optimization
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
   int numLocs; // number of spatial locations: read from spatial param. file
   int *steps; // number of time steps in each location
   char option;
-  double addPercent = ADD_PERCENT;
+  double addFraction = ADD_FRACTION;
   char compareIndicesExt[FILE_MAXNAME] = COMPARE_INDICES_EXT; // extension of optional file holding indices for model-data comparisons
   char compareIndicesFile[2*FILE_MAXNAME]; // optional file holding indices for model-data comparisons
   char optIndicesExt[FILE_MAXNAME] = OPT_INDICES_EXT; // extension of optional file holding indices for optimizations
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
   addNamelistInputItem(namelistInputs, "NUM_CHAINS", INT_TYPE, &numChains, 0);
   addNamelistInputItem(namelistInputs, "NUM_SPINUPS", LONG_TYPE, &numSpinUps, 0);
   addNamelistInputItem(namelistInputs, "ITER", LONG_TYPE, &iter, 0);
-  addNamelistInputItem(namelistInputs, "ADD_PERCENT", DOUBLE_TYPE, &addPercent, 0);
+  addNamelistInputItem(namelistInputs, "ADD_FRACTION", DOUBLE_TYPE, &addFraction, 0);
   addNamelistInputItem(namelistInputs, "VALID_FRAC", DOUBLE_TYPE, &validFrac, 0);
   addNamelistInputItem(namelistInputs, "SCALE_FACTOR", DOUBLE_TYPE, &scaleFactor, 0);
   addNamelistInputItem(namelistInputs, "PARAM_WEIGHT", DOUBLE_TYPE, &paramWeight, 0);
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
   printModelComponents(userOut); // write to file which model componenets are turned on
 
   fprintf(userOut, "Constants:\n");
-  fprintf(userOut, "ADD_PERCENT = %f\n", addPercent);
+  fprintf(userOut, "ADD_FRACTION = %f\n", addFraction);
   fprintf(userOut, "COMPARE_INDICES_FILE = %s\n", compareIndicesFile);
   fprintf(userOut, "AGGREGATION_FILE = %s\n", aggregationFile);
   fprintf(userOut, "UNAGGED_WEIGHT = %f\n", unaggedWeight);
@@ -287,7 +287,7 @@ int main(int argc, char *argv[]) {
 							*/
     
     metropolis(thisFile, spatialParams, loc, differenceFunc, runModelNoOut, 
-	       addPercent, iter, numAtOnce, numChains, randomStart, numSpinUps, paramWeight, scaleFactor,
+	       addFraction, iter, numAtOnce, numChains, randomStart, numSpinUps, paramWeight, scaleFactor,
 	       dataTypeIndices, numDataTypes, userOut);
 
     buildFileName(paramOutFile, thisFile, "param");

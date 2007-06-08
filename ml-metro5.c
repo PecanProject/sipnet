@@ -96,7 +96,7 @@ void writeHistFileBin(FILE *histFile, double ltotnew, double *sigma, OutputInfo 
 // randomStart is boolean: do we start each chain with a random param. set (as opposed to guess values)?
 void reset(SpatialParams *spatialParams, double *loglikely, double *ltotnew, double *ltotold, double *ltotmax, 
 	   double **sigma, OutputInfo **outputInfo,
-	   int loc, int randomStart, double addPercent, FILE *userOut,
+	   int loc, int randomStart, double addFraction, FILE *userOut,
 	   double (*likely)(double *, OutputInfo *,
 			    int, SpatialParams *, double,
 			    void (*)(double **, int, int *, SpatialParams *, int),
@@ -116,7 +116,7 @@ void reset(SpatialParams *spatialParams, double *loglikely, double *ltotnew, dou
   else // only running at one location
     firstLoc = lastLoc = loc;
 
-  resetSpatialParams(spatialParams, addPercent, randomStart); // reset value, best & knob (set knob to addPercent)
+  resetSpatialParams(spatialParams, addFraction, randomStart); // reset value, best & knob (set knob to addFraction)
 
   /*compute log-likelihood of parameter set*/
   for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
@@ -259,7 +259,7 @@ void metropolis(char *outNameBase, SpatialParams *spatialParams, int loc,
 				 void (*)(double **, int, int *, SpatialParams *, int),
 				 int [], int),
 		void (*model)(double **, int, int *, SpatialParams *, int),
-		double addPercent,
+		double addFraction,
 		long estSteps, int numAtOnce, int numChains, int randomStart, long numSpinUps, double paramWeight, 
 		double scaleFactor,
 		int dataTypeIndices[], int numDataTypes,
@@ -319,7 +319,7 @@ void metropolis(char *outNameBase, SpatialParams *spatialParams, int loc,
   chainNum = 1;
   fprintf(userOut, "\n\nRESETTING FOR START CHAIN %d of %d\n\n", chainNum, numChains);
   reset(spatialParams, loglikely, &ltotnew, &ltotold, &ltotmax, sigma, outputInfo,
-	loc, randomStart, addPercent, userOut, likely, paramWeight, model, dataTypeIndices, numDataTypes);
+	loc, randomStart, addFraction, userOut, likely, paramWeight, model, dataTypeIndices, numDataTypes);
   
   writeChangeableParamInfo(spatialParams, loc, userOut);
 
@@ -474,7 +474,7 @@ void metropolis(char *outNameBase, SpatialParams *spatialParams, int loc,
 	    chainNum++; // move on to the next convergence chain
 	    fprintf(userOut, "\n\nRESETTING FOR START CHAIN %d of %d\n\n", chainNum, numChains);
 	    reset(spatialParams, loglikely, &ltotnew, &ltotold, &ltotmax, sigma, outputInfo, 
-		  loc, randomStart, addPercent, userOut, likely, paramWeight, model, dataTypeIndices, numDataTypes);
+		  loc, randomStart, addFraction, userOut, likely, paramWeight, model, dataTypeIndices, numDataTypes);
 	  }
 	  
 	  else { // chainNum >= numChains: we're done running start chains, time to read best from file

@@ -65,11 +65,11 @@ NUM_SPINUPS = 125000
 !  stabilize)
 
 ITER = 375000
-! Number of Metropolis iterations one we've converged and finished
+! Number of Metropolis iterations once we've converged and finished
 !  NUM_SPINUPS
 
-ADD_PERCENT = 0.5
-! Initial pDelta, as percent of parameter range
+ADD_FRACTION = 0.5
+! Initial pDelta, as fraction of parameter range
 
 VALID_FRAC = 0.0
 ! Fraction of data points which must be valid to use data from a given

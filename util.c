@@ -60,12 +60,12 @@ void seedRand(unsigned int seed, FILE *outF) {
     t = time(NULL);
     if (outF != NULL)
       fprintf(outF, "Seeding random number generator with time: %d\n\n", (unsigned int)t);
-    srandom(t);
+    srand(t);
   }
   else {
     if (outF != NULL)
       fprintf(outF, "Seeding random number generator with %d\n\n", seed);
-    srandom(seed);
+    srand(seed);
   }
 }
 
