@@ -771,7 +771,7 @@ void outputHeader(FILE *out) {
   		  	fprintf(out, "microbeC ");
   			fprintf(out, "coarseRootC fineRootC ");
   fprintf(out, "litter litterWater soilWater soilWetnessFrac snow ");
-  fprintf(out, "npp nee gpp rAboveground rSoil rRoot rtot\n");
+  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot rtot\n");
 }
 
 // pre: out is open for writing
@@ -803,7 +803,7 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
   	
   	fprintf(out, " %8.2f %8.2f %8.2f %8.3f %8.2f ", 
 		 envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow);
-	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.evapotranspiration, trackers.nee, trackers.gpp, trackers.rAboveground, 
+	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.evapotranspiration, trackers.nee, trackers.totNee, trackers.gpp, trackers.rAboveground, 
   			trackers.rSoil, trackers.rRoot,trackers.rtot);
 //note without modeling root dynamics 
 
@@ -2216,14 +2216,20 @@ void updateState() {
 
 
   npp = fluxes.photosynthesis - fluxes.rVeg-fluxes.rCoarseRoot-fluxes.rFineRoot;
-  addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
-  addValueToMeanTracker(meanGPP, fluxes.photosynthesis, climate->length); // update running mean of NPP
-  updateTrackers(oldSoilWater);
-    err = addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
-  if (err != 0) {  // error while trying to add value to mean tracker; checking this all the time slow things down a bit, but I've already been burned once by not checking it, and don't want to be burned again
+
+  err = addValueToMeanTracker(meanNPP, npp, climate->length); // update running mean of NPP
+  if (err != 0) {  
     printf("******* Error type %d while trying to add value to NPP mean tracker in sipnet:updateState() *******\n", err);
     printf("npp = %f, climate->length = %f\n", npp, climate->length);
     printf("Suggestion: try changing MEAN_NPP_MAX_ENTRIES in sipnet.c\n");
+    exit(1);
+  }
+
+  err = addValueToMeanTracker(meanGPP, fluxes.photosynthesis, climate->length); // update running mean of GPP
+  if (err != 0) {  
+    printf("******* Error type %d while trying to add value to GPP mean tracker in sipnet:updateState() *******\n", err);
+    printf("GPP = %f, climate->length = %f\n", fluxes.photosynthesis, climate->length);
+    printf("Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
     exit(1);
   }
     
