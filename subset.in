@@ -1,9 +1,9 @@
 ! Input file for the subsetData program
 
-INPUT_FILENAME = niwots
+INPUT_FILENAME = niwot
 ! base name of files containing existing input data
 
-OUTPUT_FILENAME = niwots_subset
+OUTPUT_FILENAME = niwot_subset
 ! base name of desired output files, containing subset of input files
 
 START_YEAR = 2005

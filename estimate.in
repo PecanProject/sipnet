@@ -2,7 +2,7 @@
 
 ! --- FILE NAMES ---
 
-FILENAME = niwots_subset
+FILENAME = niwot_subset
 ! FILENAME.param is the file of parameter values and info
 !  (unless PARAM_FILE is specified below)
 ! FILENAME.param-spatial is the file of spatially-varying parameters
@@ -21,7 +21,7 @@ PARAM_FILE = none
 ! If specified (not 'none'), use given file for parameter values and
 !  info, rather than FILENAME.param
 
-OUTPUT_NAME = niwots-estimated
+OUTPUT_NAME = niwot-estimated
 ! OUTPUT_NAME will store user-readable info about the run
 ! OUTPUT_NAME.param and OUTPUT_NAME.param-spatial will store best
 !  parameter set found
