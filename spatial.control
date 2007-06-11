@@ -1,7 +1,7 @@
 ! Name		Spatial?	Col	Op_type
-plantWoodInit	Yes		0	+	
+plantWoodInit	No		0	+	
 soilInit	No		0	+
 laiInit		No		0	+
-tair		Yes		5	+
+tair		No		5	+
 tsoil		No		6	+
 precip		No		8	*		

@@ -11,12 +11,12 @@ FILENAME = niwot
 !  (first line must contain a single integer: # of locations)
 ! FILENAME.clim is the file of climate data for each time step
 
-LOCATION = -1
+LOCATION = 0
 ! Location to run at (-1 means run at all locations)
 ! (If doing a sensitivity test or monte carlo run, location defaults to
 !  0: can only do these types of runs at a single location)
 
-DO_MAIN_OUTPUT = 1
+DO_MAIN_OUTPUT = 0
 ! If 1, do the primary output to FILENAME.out (time series of all output
 !  variables)
 ! If 0, suppress this output
@@ -41,12 +41,12 @@ DO_SINGLE_OUTPUTS = 1
 
 ! These inputs are ignored for run types other than senstest
 
-CHANGE_PARAM = amax
+CHANGE_PARAM = none
 ! Name of parameter to change in a sensitivity test
 
-LOW_VAL = 5
-HIGH_VAL = 15
-NUM_RUNS = 3
+LOW_VAL = 0
+HIGH_VAL = 1
+NUM_RUNS = 10
 ! Parameter is varied from LOW_VAL to HIGH_VAL over a total of NUM_RUNS
 
 ! Note: output from sensitivity test will be put in FILENAME.sens
