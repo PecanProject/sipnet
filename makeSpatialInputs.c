@@ -24,7 +24,7 @@
     Name: variable name
     Spatial?: Yes | No
     Col: If a climate variable, column of this variable in .clim file
-     (1-indexing)
+     (column 0 would be loc)
      If a parameter, col=0
     Op_type: + | * (are anomalies additive or multiplicative?)
 
@@ -400,7 +400,7 @@ void readControlFile(char *fileName, SpatialParams *spatialParams, SpatialClim *
    Write to <outputFilename>.param and <outputFilename>.param-spatial
 
    Assumes that none of the parameters in <inputFilename>.param are already spatial
-    (we ignore any existing <inputFilename>.param-spatial
+    (we ignore any existing <inputFilename>.param-spatial)
  */
 void processParameters(char *inputFilename, char *outputFilename, SpatialParams *spatialParams, int numLocs)  {
   const char *SEPARATORS = " \t"; // characters that can separate values in parameter file
@@ -621,6 +621,12 @@ int main(int argc, char *argv[])  {
   dieIfNotRead(namelistInputs, "INPUT_FILENAME");
   dieIfNotRead(namelistInputs, "OUTPUT_FILENAME");
   dieIfNotRead(namelistInputs, "NUM_LOCS");
+
+  if (numLocs < 1)  {
+    printf("ERROR: invalid numLocs (%d): must be >= 1\n", numLocs);
+    printf("Please fix %s and re-run\n", NAMELIST_FILE);
+    exit(1);
+  }
 
   spatialParams = newSpatialParams();
   spatialClim = newSpatialClim();
