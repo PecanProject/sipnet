@@ -35,6 +35,8 @@ DO_SINGLE_OUTPUTS = 1
 !  value on each line is the location, followed by the time series
 ! For RUNTYPE = senstest, the first value on each line is the parameter
 !  value, followed by the time series
+! For RUNTYPE = montecarlo, there is no leading label value - these
+!  files just contain the time series
 
 
 ! --- INPUTS FOR SENSTEST ---
@@ -60,9 +62,9 @@ NUM_RUNS = 10
 MC_PARAM_FILE = none
 ! File of parameter values to use in multiple runs, 
 !  in place of FILENAME.param
-!  The first line of this file must contain the indices of the
-!  parameters whose values are given, and each subsequent line contains
-!  one set of parameter values.
+!  The first line of this file must contain the names of the parameters
+!  whose values are given (in the order in which they are given), and
+!  each subsequent line contains one set of parameter values.
 
 MC_OUTPUT = none
 ! Will hold output from montecarlo run

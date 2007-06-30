@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   NamelistInputs *namelistInputs;
 
   FILE *out, *pChange; 
-  char line[1024];
+  char line[8192];  // allow this to be long, since it might have to store lots of parameter names
   char *errc;
   char option; // reading in optional arguments
 
@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
   int statsOnly = 0; // do we only output means & standard dev's for a montecarlo run?
   int numChangeableParams, i; // in pChange
   int *indices; // indices of changeable params
+  char *paramName;  // name of one of the parameters that varies for a montecarlo run
   double value; // one value from file
   char fileName[FILE_MAXNAME];
   char outFile[FILE_MAXNAME+24];
@@ -138,6 +139,12 @@ int main(int argc, char *argv[]) {
     dieIfNotSet(namelistInputs, "MC_OUTPUT");
   }
 
+  // set values for ignored items:
+  if ((strcmpIgnoreCase(runtype, "montecarlo") == 0) && (statsOnly == 1))  {
+    doMainOutput = 1;  // it's silly for this to be false: means & standard dev's wouldn't be output!
+    doSingleOutputs = 0;  // single outputs not implemented for this type of run
+  }
+
   strcpy(paramFile, fileName);
   strcat(paramFile, ".param");
   strcpy(climFile, fileName);
@@ -178,22 +185,30 @@ int main(int argc, char *argv[]) {
 
     // first find number of changeable parameters:
     fgets(line, sizeof(line), pChange);
-    strtok(line, " \t"); // read and ignore first token -- split on space and tab
+    strtok(line, " \t\n"); // read and ignore first token -- split on space, tab & newline
     numChangeableParams = 1; // assume at least one changeableParam
-    while (strtok(NULL, " \t") != NULL) // now count # of remaining tokens (ie indices)
+    while (strtok(NULL, " \t\n") != NULL) // now count # of remaining tokens (i.e. # of parameter names)
       numChangeableParams++;
 
-    // now allocate space for arrays and find the param indices:
+    // now allocate space for array and find the param indices:
     indices = (int *)malloc(numChangeableParams * sizeof(int));
     rewind(pChange);
     fgets(line, sizeof(line), pChange);
-    indices[0] = strtol(strtok(line, " \t"), &errc, 0);
-    for (i = 1; i < numChangeableParams; i++)
-      indices[i] = strtol(strtok(NULL, " \t"), &errc, 0);
+    paramName = strtok(line, " \t\n");  // get the first item
+    for (i = 0; i < numChangeableParams; i++)  {
+      indices[i] = locateParam(spatialParams, paramName);
+      if (indices[i] == -1)  {
+	printf("Invalid parameter '%s'\n", paramName);
+	printf("Please fix first line of %s and re-run\n", mcParamFile);
+	exit(1);
+      }
+      paramName = strtok(NULL, " \t\n");  /* get the next item (note: the last time this is called, we'll have paramName = NULL;
+					   that's okay, because we just ignore it */
+    }
 
     if (!statsOnly)  {
-      // do each run, output to fileName#.out (if doMainOutput is true),
-      //  and/or fileName.<dataTypeName> (if doSingleOutputs is true)
+      // do each run, output to mcOutFileBase#.out (if doMainOutput is true),
+      //  and/or mcOutFileBase.<dataTypeName> (if doSingleOutputs is true)
 
       runNum = 1;
       out = NULL;
@@ -241,7 +256,7 @@ int main(int argc, char *argv[]) {
       for (i = 0; i < MAX_DATA_TYPES; i++)
 	dataTypeIndices[i] = i;
 
-      // do each run, only output means and standard devs. of NEE to fileName.out:
+      // do each run, only output means and standard devs. of NEE to mcOutFileBase.out:
       // first pass: compute means; second pass: compute standard deviations
     
       for (i = 0; i < steps[0]; i++) {
@@ -308,17 +323,21 @@ int main(int argc, char *argv[]) {
 	    for (type = 0; type < MAX_DATA_TYPES; type++)
 	      standarddevs[j][type] = sqrt(standarddevs[j][type]/(double)(runNum - 1));
 
-	  // write means and standard dev's to file:
-	  sprintf(outFile, "%s.out", mcOutFileBase);
-	  out = openFile(outFile, "w");
-	
-	  for (j = 0; j < steps[0]; j++) {
-	    for (type = 0; type < MAX_DATA_TYPES; type++)
-	      fprintf(out, "%f %f\t", means[j][type], standarddevs[j][type]);
-	    fprintf(out, "\n");
+	  if (doMainOutput)  {  /* Note: it would be silly for doMainOutput to be false,
+				   because if it were, the means and standard deviations
+				   would not be output! */
+	    // write means and standard dev's to file:
+	    sprintf(outFile, "%s.out", mcOutFileBase);
+	    out = openFile(outFile, "w");
+	    
+	    for (j = 0; j < steps[0]; j++) {
+	      for (type = 0; type < MAX_DATA_TYPES; type++)
+		fprintf(out, "%f %f\t", means[j][type], standarddevs[j][type]);
+	      fprintf(out, "\n");
+	    }
+	    
+	    fclose(out);
 	  }
-	
-	  fclose(out);
 	}      
       }
 
