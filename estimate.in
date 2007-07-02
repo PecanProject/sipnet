@@ -71,7 +71,7 @@ ITER = 375000
 ADD_FRACTION = 0.5
 ! Initial pDelta, as fraction of parameter range
 
-VALID_FRAC = 0.0
+VALID_FRAC = 0.5
 ! Fraction of data points which must be valid to use data from a given
 !  time step
 
