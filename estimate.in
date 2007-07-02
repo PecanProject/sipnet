@@ -2,7 +2,7 @@
 
 ! --- FILE NAMES ---
 
-FILENAME = niwot_subset
+FILENAME = niwot
 ! FILENAME.param is the file of parameter values and info
 !  (unless PARAM_FILE is specified below)
 ! FILENAME.param-spatial is the file of spatially-varying parameters
@@ -99,7 +99,7 @@ COMPARE_INDICES_EXT = none
 !  integers: start & end; if no file specified, use all points)
 !  (1-indexing; end = -1 means go to end)
 
-AGGREGATION_EXT = agg
+AGGREGATION_EXT = none
 ! If not 'none', this gives the extension of the file containing number
 !  of time steps per model/data aggregation - i.e. aggregations that are
 !  performed prior to doing model-data comparisons in the optimization
