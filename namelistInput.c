@@ -246,6 +246,7 @@ void dieIfNotSet(NamelistInputs *namelistInputs, char *name)  {
   if (namelistInputItem->type != STRING_TYPE)  {
     printf("ERROR in dieIfNotSet: %s not of string_type\n", name);
     printf(" Use dieIfNotRead instead\n");
+    exit(1);
   }
 
   dieIfNotRead(namelistInputs, name);

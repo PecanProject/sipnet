@@ -6,7 +6,7 @@ LIBLINKS=-lm
 ESTIMATE_CFILES=sipnet.c ml-metro5.c ml-metrorun.c paramchange.c runmean.c util.c spatialParams.c namelistInput.c outputItems.c
 ESTIMATE_OFILES=$(ESTIMATE_CFILES:.c=.o)
 
-SENSTEST_CFILES=sipnet.c sensTest.c paramchange.c runmean.c util.c spatialParams.c outputItems.c
+SENSTEST_CFILES=sipnet.c sensTest.c paramchange.c runmean.c util.c spatialParams.c namelistInput.c outputItems.c
 SENSTEST_OFILES=$(SENSTEST_CFILES:.c=.o)
 
 SENSTESTFULL_CFILES=sipnet.c sensTestFull.c paramchange.c runmean.c util.c spatialParams.c outputItems.c
