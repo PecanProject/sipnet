@@ -1,5 +1,0 @@
-CONTROL_FILENAME = spatial.control
-INPUT_FILENAME = niwot
-OUTPUT_FILENAME = niwot_spatial
-NUM_LOCS = 100
-

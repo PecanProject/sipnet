@@ -18,16 +18,13 @@ SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNETGIRDLE_CFILES=sipnetGirdle.c frontendGirdle.c runmean.c util.c spatialParams.c
 SIPNETGIRDLE_OFILES=$(SIPNETGIRDLE_CFILES:.c=.o)
 
-MAKE_SPATIAL_INPUTS_CFILES=makeSpatialInputs.c util.c namelistInput.c
-MAKE_SPATIAL_INPUTS_OFILES=$(MAKE_SPATIAL_INPUTS_CFILES:.c=.o)
-
 TRANSPOSE_CFILES=transpose.c util.c
 TRANSPOSE_OFILES=$(TRANSPOSE_CFILES:.c=.o)
 
 SUBSET_DATA_CFILES=subsetData.c util.c namelistInput.c
 SUBSET_DATA_OFILES=$(SUBSET_DATA_CFILES:.c=.o)
 
-all: estimate sensTest sensTestFull sipnet sipnetGirdle makeSpatialInputs transpose subsetData
+all: estimate sensTest sensTestFull sipnet sipnetGirdle transpose subsetData
 
 estimate: $(ESTIMATE_OFILES)
 	$(LD) $(LIBLINKS) -o estimate $(ESTIMATE_OFILES)
@@ -44,9 +41,6 @@ sipnet: $(SIPNET_OFILES)
 sipnetGirdle: $(SIPNETGIRDLE_OFILES)
 	$(LD) $(LIBLINKS) -o sipnetGirdle $(SIPNETGIRDLE_OFILES)
 
-makeSpatialInputs: $(MAKE_SPATIAL_INPUTS_OFILES)
-	$(LD) $(LIBLINKS) -o makeSpatialInputs $(MAKE_SPATIAL_INPUTS_OFILES)
-
 transpose: $(TRANSPOSE_OFILES)
 	$(LD) $(LIBLINKS) -o transpose $(TRANSPOSE_OFILES)
 
@@ -54,7 +48,7 @@ subsetData: $(SUBSET_DATA_OFILES)
 	$(LD) $(LIBLINKS) -o subsetData $(SUBSET_DATA_OFILES)
 
 clean:
-	rm -f $(ESTIMATE_OFILES) $(SENSTEST_OFILES) $(SENSTESTFULL_OFILES) $(SIPNET_OFILES) $(SIPNETGIRDLE_OFILES) $(MAKE_SPATIAL_INPUTS_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) estimate sensTest sensTestFull sipnet sipnetGirdle makeSpatialInputs transpose subsetData
+	rm -f $(ESTIMATE_OFILES) $(SENSTEST_OFILES) $(SENSTESTFULL_OFILES) $(SIPNET_OFILES) $(SIPNETGIRDLE_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) estimate sensTest sensTestFull sipnet sipnetGirdle transpose subsetData
 
 #This target automatically builds dependencies.
 depend::

@@ -39,7 +39,7 @@ OPT_SOIL_WETNESS = 0
 
 ! --- VARIABLES CONTROLLING OPTIMIZATION ---
 
-LOC = 0
+LOC = -1
 ! Location to run at (-1 means run at all locations)
 
 NUM_RUNS = 1
@@ -59,12 +59,12 @@ NUM_CHAINS = 10
 !  these as a starting point for the optimization
 !  (doing multiple starts helps prevent getting stuck in local optima)
 
-NUM_SPINUPS = 0
+NUM_SPINUPS = 125000
 ! Once temperatures have converged, number of additional iterations
 !  (spin-ups) to run before we start recording (to allow posteriors to
 !  stabilize)
 
-ITER = 150000
+ITER = 375000
 ! Number of Metropolis iterations once we've converged and finished
 !  NUM_SPINUPS
 
@@ -118,3 +118,5 @@ UNAGGED_WEIGHT = 0.0
 ! If aggregation is done, relative weight of unaggregated points in
 !  optimization (should probably be 0 or 1; 0 means only use aggregated
 !  points in optimization)
+
+
