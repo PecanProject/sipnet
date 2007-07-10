@@ -30,7 +30,6 @@ baseVegResp		0.006		1	0.0006		0.06		0.000020
 litterBreakdownRate	0.4		0	0.13		1.2		0.1
 fracLitterRespired	0.5		0	0.4		0.6		0.1
 baseSoilResp		0.06		1	0.003		0.6		0.000050
-baseSoilRespEpsilon	0.000000	0	0.000000	1.000000	0.000050
 baseSoilRespCold	0.03		0	0.006		0.15		0.000050
 soilRespQ10		2.0		1	1.400000	5		0.050000
 soilRespQ10Cold		2.0000		0	1.400000	3.500000	0.050000
