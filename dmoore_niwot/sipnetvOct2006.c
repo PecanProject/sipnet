@@ -1180,7 +1180,7 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
     // make sure we don't evaporate more than we have:
     if (waterRemaining - (*evaporation * climate->length) < 0) {
       *evaporation = waterRemaining/climate->length; 
-      waterRemaining = 0;
+      waterRemaining = 0;///change to tiny
     }
     else
       waterRemaining -= (*evaporation * climate->length);
@@ -1191,7 +1191,7 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
   // make sure we don't drain more than we have:
   if (waterRemaining - (*drainage * climate->length) < 0) {
     *drainage = waterRemaining/climate->length; 
-    waterRemaining = 0;
+    waterRemaining = 0;// change to tiny 
   }
   else
     waterRemaining -= (*drainage * climate->length);

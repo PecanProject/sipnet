@@ -25,16 +25,16 @@
 //output .out file as a CSV file
 
 //alternative transpiration methods modified by Dave Moore 
-#define ALTERNATIVE_TRANS 0
+#define ALTERNATIVE_TRANS 1
 // do we want to impliment alternative transpiration?
 
 #define BALL_BERRY 0
 //impliment a Ball Berry submodel to calculate gs from RH, CO2 and A
 //MUST BE OFF for PENMAN MONTEITH TO RUN
 
-#define PENMAN_MONTEITH_TRANS 0
+#define PENMAN_MONTEITH_TRANS 1
 //impliment a transpiration calculation based on the Penman-Monteith Equation.
-//March 1st 2007 PM equation not really working.
+//New Formulation based on Tang et al 2006, J Geophys Res 111
 
 //#define G 0
 //assume that soil heat flux is zero;
@@ -140,6 +140,7 @@
 #define LAMBDA 2501000. // latent heat of vaporization (J/kg)
 #define LAMBDA_S 2835000. // latent heat of sublimation (J/kg)
 #define RHO 1.3 // air density (kg/m^3)
+#define RHOW 1000 // water density (kg/m^3)
 #define CP 1005. // specific heat of air (J/(kg K))
 #define GAMMA 66. // psychometric constant (Pa/K)
 #define E_STAR_SNOW 0.6 /* approximate saturation vapor pressure at 0 degrees C (kPa)
@@ -735,6 +736,85 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   initializeOneSpatialParam(spatialParams, "microbePulseEff", &(params.microbePulseEff), (ROOTS) && (MICROBES) );
   initializeOneSpatialParam(spatialParams, "m_ballBerry", &(params.m_ballBerry), 0);
 
+//required parameters - print out;
+printf("plantWoodInit,	1\n");	
+printf("laiInit,	1	 \n");	
+printf("litterInit,	1	 \n");	
+printf("soilInit,	1	 \n");	
+printf("litterWFracInit,	1 \n");	
+printf("soilWFracInit,	1	 \n");	
+printf("snowInit,	1	 \n");	
+printf("aMax,	1	 \n");	
+printf("aMaxFrac,	1	 \n");	
+printf("baseFolRespFrac,	1 \n");	
+printf("psnTMin,	1	 \n");	
+printf("psnTOpt,	1	 \n");	
+printf("vegRespQ10,	1	 \n");	
+printf("growthRespFrac,		 %d\n",	GROWTH_RESP);
+printf("frozenSoilFolREff,	1 \n");	
+printf("frozenSoilThreshold,	1 \n");	
+printf("dVpdSlope,	1	 \n");	
+printf("dVpdExp,	1	 \n");	
+printf("halfSatPar,	1	 \n");	
+printf("attenuation,	1	 \n");	
+printf("leafOnDay,		 %d\n",	(GDD) || (SOIL_PHENOL));
+printf("gddLeafOn,		 %d\n",GDD);
+printf("soilTempLeafOn,		 %d\n",SOIL_PHENOL);
+printf("leafOffDay,	1	 \n	"	);	
+printf("leafGrowth,	1	 \n	"	);	
+printf("fracLeafFall,	1	 \n	"	);	
+printf("leafAllocation,	1	 \n	"	);	
+printf("leafTurnoverRate,	1	 \n"	);	
+printf("baseVegResp,	1	 \n	");	
+printf("litterBreakdownRate,		 %d\n	",LITTER_POOL);
+printf("fracLitterRespired,		 %d\n	",LITTER_POOL);
+printf("baseSoilResp,	1	 \n	"	);	
+printf("baseSoilRespCold,		 %d\n	",SEASONAL_R_SOIL);
+printf("soilRespQ10,	1	 \n	"	);	
+printf("soilRespQ10Cold,		 %d\n	",SEASONAL_R_SOIL);
+printf("coldSoilThreshold,		 %d\n	",SEASONAL_R_SOIL);
+printf("E0,		 %d\n	",LLOYD_TAYLOR);
+printf("T0,		 %d\n	",LLOYD_TAYLOR);
+printf("soilRespMoistEffect,		 %d\n	",((WATER_HRESP) && !(DAYCENT_WATER_HRESP)));
+printf("waterRemoveFrac,	1	 \n	");	
+printf("frozenSoilEff,	1	 \n	"	);	
+printf("wueConst,	1	 \n	"	);	
+printf("litterWHC,	1	 \n	"	);	
+printf("soilWHC,	1	 \n	"	);	
+printf("immedEvapFrac,		 %d\n	"	,COMPLEX_WATER);
+printf("fastFlowFrac,		 %d\n	"	,COMPLEX_WATER);
+printf("snowMelt,		 %d\n	"	,SNOW);
+printf("litWaterDrainRate,		 %d\n	",LITTER_WATER_DRAINAGE);
+printf("rdConst,		 %d\n	",(COMPLEX_WATER) || (PENMAN_MONTEITH_TRANS));
+printf("rSoilConst1,		 %d\n	",COMPLEX_WATER);
+printf("rSoilConst2,		 %d\n	",COMPLEX_WATER);
+printf("leafCSpWt,	1	 \n	");	
+printf("cFracLeaf,	1	 \n	");	
+printf("woodTurnoverRate,	1	 \n");	
+printf("qualityLeaf,		 %d\n	",SOIL_QUALITY);
+printf("qualityWood,		 %d\n	",SOIL_QUALITY);
+printf("efficiency,		 %d\n	",(SOIL_QUALITY) || (MICROBES));
+printf("maxIngestionRate,		 %d\n	",(SOIL_QUALITY) || (MICROBES));
+printf("halfSatIngestion,		 %d\n	",MICROBES);
+printf("totNitrogen,		 %d\n	",STOICHIOMETRY);
+printf("microbeNC,		 %d\n	",STOICHIOMETRY);
+printf("microbeInit,		 %d\n	",(SOIL_QUALITY) || (MICROBES));
+printf("fineRootFrac,		 %d\n	",ROOTS);
+printf("coarseRootFrac,		 %d\n	",ROOTS);
+printf("fineRootAllocation,		 %d\n	",ROOTS);
+printf("woodAllocation,		 %d\n	",ROOTS);
+printf("fineRootExudation,		 %d\n	",ROOTS);
+printf("coarseRootExudation,		 %d\n	",ROOTS);
+printf("fineRootTurnoverRate,		 %d\n	",ROOTS);
+printf("coarseRootTurnoverRate,		 %d\n	",ROOTS);
+printf("baseFineRootResp,		 %d\n	",ROOTS);
+printf("baseCoarseRootResp,		 %d\n	",ROOTS);
+printf("fineRootQ10,		 %d\n	",ROOTS);
+printf("coarseRootQ10,		 %d\n	",ROOTS);
+printf("baseMicrobeResp,		 %d\n	",MICROBES);
+printf("microbeQ10,		 %d\n	",MICROBES);
+printf("microbePulseEff,		 %d\n	",(ROOTS) && (MICROBES) );
+printf("m_ballBerry,		 %d\n	",BALL_BERRY);
   
   readSpatialParams(spatialParams, paramF, spatialParamF);
 
@@ -753,62 +833,16 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
 // Not only that ...I'd like the options used in the model run to be added to the file;
  
 void outputHeader(FILE *out) {
-  fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;\n");
-  fprintf(out, "loc year day time plantWoodC plantLeafC ");
-    		
-    	#if SOIL_MULTIPOOL
-  			int counter;
-  	
-  			for(counter=0; counter<NUMBER_SOIL_CARBON_POOLS; counter++) {
-  				fprintf(out, "soil(%8.2f) ",envi.soil[counter]);
-	  		}
- 		  		fprintf(out,"totSoilC ");
-
-	  	#else
-  			fprintf(out, "soil ");	
-  		#endif
-  		
-  		  	fprintf(out, "microbeC ");
-  			fprintf(out, "coarseRootC fineRootC ");
-  fprintf(out, "litter litterWater soilWater soilWetnessFrac snow ");
-  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot rtot\n");
+  fprintf(out, "	loc year day time plantWoodC plantLeafC soil litter litterWater soilWater soilWetnessFrac snow npp yearlyNpp nee totNee evapotranspiration ra rh rtot transpiration gpp\n");
 }
 
 // pre: out is open for writing
 // print current state to output file
 void outputState(FILE *out, int loc, int year, int day, double time) {
-  
-  		fprintf(out,"%8d %4d %3d %5.2f %8.2f %8.2f ",loc,year,day,time,envi.plantWoodC,envi.plantLeafC);
-  		
-  		
-  		#if SOIL_MULTIPOOL
-  			int counter;
-  	
-  			for(counter=0; counter<NUMBER_SOIL_CARBON_POOLS; counter++) {
-  				fprintf(out, "%8.2f ",envi.soil[counter]);
-	  		}
- 		  		fprintf(out,"%8.2f ",trackers.totSoilC);
-
-
-
-	  	#else
-	  		fprintf(out, "%8.2f ",envi.soil);
-	  	#endif	
-  	
-
-
-  			fprintf(out, "%8.2f", envi.microbeC);
-  			
-  			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
-  	
-  	fprintf(out, " %8.2f %8.2f %8.2f %8.3f %8.2f ", 
-		 envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow);
-	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.evapotranspiration, trackers.nee, trackers.totNee, trackers.gpp, trackers.rAboveground, 
-  			trackers.rSoil, trackers.rRoot,trackers.rtot);
-//note without modeling root dynamics 
-
-//trackers.fa, trackers.fr, fluxes.rLeaf*climate->length,trackers.evapotranspiration
-	
+  fprintf(out, "%8d %4d %3d %5.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.3f %8.2f %8.2f %8.2f %8.8f %8.2f %8.3f %8.3f  %8.3f %8.3f %8.3f  %8.3f\n", 
+	  loc, year, day, time,
+	  envi.plantWoodC, envi.plantLeafC, envi.soil, envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow,
+	  trackers.npp, trackers.yearlyNpp, trackers.nee, trackers.totNee, trackers.evapotranspiration, trackers.ra, trackers.rh, trackers.rtot, fluxes.transpiration, trackers.gpp );
 }
 
 void outputStatecsv(FILE *out, int loc, int year, int day, double time) {
@@ -1050,8 +1084,8 @@ double potTrans; // potential transpiration in the absense of plant water stress
 
 // Penman Monteith method of estimating transiration and water use
 //  Started Nov 2006 - coding commenced Nov 20th
-
-void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, double soilWater) {
+/*
+void moisture_pm1(double *trans, double *dWater, double potGrossPsn, double vpd, double soilWater) {
   double potTrans; // potential transpiration in the absense of plant water stress (cm H20 * day^-1)
   double removableWater;
 //not used   double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
@@ -1062,8 +1096,6 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, 
  
 /*
  * required constants and other values
- * Rn // Net radiation // read in from clim file
- * G // soil heat flux // read in from clim file
  * RHO // DENSITY OF (DRY) AIR (KG M-3)
  * CP // SPECIFIC HEAT OF AIR AT CONST PRESSURE (J KG-1 K-1)
  * VPD // VAPOR PRESSURE DEFICIT (PA)
@@ -1072,7 +1104,7 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, 
  * LAMDA //LATENT HEAT OF VAPORIZATION OF WATER (J Kg-1) - 2450 @20C
  * GAMMA // PSYCHROMETRIC CONSTANT Kg M-2 S
  * DELTA slope of the saturation vapour pressure vs Temperature relationship
- */ 
+ 
   if (potGrossPsn < TINY) { // avoid divide by 0
     *trans = 0.0; // no photosynthesis -> no transpiration
     *dWater = 1; // dWater doesn't matter, since we don't have any photosynthesis
@@ -1081,25 +1113,25 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, 
   	DELTA = (2508.3/((climate->tair +237.3)*(climate->tair +237.3))*exp((17.3*climate->tair)/(climate->tair +237.3)));
     potTrans = (DELTA*((1- gapfraction/100)*climate->par - climate->tsoil) + (RHO*CP*vpd)/(rCanConst/climate->wspd))/(DELTA+GAMMA*(1 + (params.rdConst/climate->wspd)/(rCanConst/climate->wspd)));
     
-    /*
-     * the aerodynamic resistance - of the canopy can be calculated as follows:
-     * rc = [ln((Zm-d)/Zom)*ln((Zh-d)/Zoh)] / k*k*wspd ;
-     * 
-     * rc aerodynamic resistance [s m-1],
-     * Zm height of wind measurements [m],
-     * Zh height of humidity measurements [m],
-     * d zero plane displacement height [m],
-     * Zom roughness length governing momentum transfer [m],
-     * Zoh roughness length governing transfer of heat and vapour [m],
-     * k von Karman's constant, 0.41 [-],
-     * wspd wind speed at height z [m s-1].
-    */ 
+    
+     //* the aerodynamic resistance - of the canopy can be calculated as follows:
+     //* rc = [ln((Zm-d)/Zom)*ln((Zh-d)/Zoh)] / k*k*wspd ;
+     //* 
+     //* rc aerodynamic resistance [s m-1],
+     //* Zm height of wind measurements [m],
+     //* Zh height of humidity measurements [m],
+     //* d zero plane displacement height [m],
+     //* Zom roughness length governing momentum transfer [m],
+     //* Zoh roughness length governing transfer of heat and vapour [m],
+     //* k von Karman's constant, 0.41 [-],
+     //* wspd wind speed at height z [m s-1].
+    
     removableWater = soilWater * params.waterRemoveFrac;
     if (climate->tsoil < params.frozenSoilThreshold) // frozen soil - less or no water available
       removableWater *= params.frozenSoilEff; 
-      /* frozen soil effect: fraction of water available if soil is frozen
-		(assume amt. of water avail. w/ frozen soil scales linearly with amt. of
-		 water avail. in thawed soil) */
+      // frozen soil effect: fraction of water available if soil is frozen
+	//	(assume amt. of water avail. w/ frozen soil scales linearly with amt. of
+	//	 water avail. in thawed soil) 
     if (removableWater >= potTrans)
       *trans = potTrans;
     else
@@ -1120,6 +1152,50 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, 
 
   // printf("%f\n", *dWater);
 }
+*/
+  
+// calculate transpiration (cm H20 * day^-1)
+// and dWater (factor between 0 and 1)
+void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd, double soilWater) {
+  double potTrans; // potential transpiration in the absense of plant water stress (cm H20 * day^-1)
+  double removableWater;
+  double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
+
+  if (potGrossPsn < TINY) { // avoid divide by 0
+    *trans = 0.0; // no photosynthesis -> no transpiration
+    *dWater = 1; // dWater doesn't matter, since we don't have any photosynthesis
+  }
+
+  else {
+    wue = params.wueConst*(115.8+0.4226 * climate->tair)/vpd;
+    potTrans = potGrossPsn/wue * 1000.0 * (44.0/12.0) * (1.0/10000.0); 
+    // 1000 converts g to mg; 44/12 converts g C to g CO2, 1/10000 converts m^2 to cm^2
+
+    removableWater = soilWater * params.waterRemoveFrac;
+    if (climate->tsoil < params.frozenSoilThreshold) // frozen soil - less or no water available
+      removableWater *= params.frozenSoilEff; /* frozen soil effect: fraction of water available if soil is frozen
+						 (assume amt. of water avail. w/ frozen soil scales linearly with amt. of
+						 water avail. in thawed soil) */
+    if (removableWater >= potTrans)
+      *trans = potTrans;
+    else
+      *trans = removableWater;
+
+
+#if WATER_PSN // we're modeling water stress
+    *dWater = *trans/potTrans; // from PnET: equivalent to setting DWATER_MAX = 1
+#else // WATER_PSN = 0
+    if (climate->tsoil < params.frozenSoilThreshold && params.frozenSoilEff == 0)
+      // (note: can't have partial shutdown of psn with frozen soil if WATER_PSN = 0)
+      *dWater = 0; // still allow total shut down of psn. if soil is frozen
+    else // either soil is thawed, or frozenSoilEff > 0
+      *dWater = 1; // no water stress, even if *trans/potTrans < 1
+#endif // WATER_PSN
+  }
+
+  // printf("%f\n", *dWater);
+}  
+  
   
 
 // calculate transpiration (cm H20 * day^-1)
@@ -2570,6 +2646,11 @@ void setupOutputItems(OutputItems *outputItems)  {
   addOutputItem(outputItems, "NEE_cum", &(trackers.totNee));
   addOutputItem(outputItems, "GPP", &(trackers.gpp));
   addOutputItem(outputItems, "GPP_cum", &(trackers.totGpp));
+  addOutputItem(outputItems, "ET", &(trackers.evapotranspiration));
+  addOutputItem(outputItems, "Trans", &(fluxes.transpiration));
+  addOutputItem(outputItems, "sub", &(fluxes.sublimation));
+  addOutputItem(outputItems, "evap", &(fluxes.evaporation));
+  
 }
 
 
