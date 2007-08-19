@@ -1,5 +1,6 @@
 // Bill Sacks
 // 7/9/02
+// edits DM - Dave Moore august 2007
 
 // functions shared by different parameter estimation methods
 
@@ -99,6 +100,7 @@ double difference(double *sigma, OutputInfo *outputInfo,
     absDifference[dataNum] = 0.0; //DM 08/16/2007
     sumSquares[dataNum] = 0.0;
     sumData[dataNum] = 0.0;//DM 08/19/2007
+    absDevMean[dataNum] =0.0 // DM 08/19/2007
     absSqDevMean = 0.0;//DM 08/19/2007
     n[dataNum] = 0;
   }
@@ -109,6 +111,7 @@ double difference(double *sigma, OutputInfo *outputInfo,
 	sumSquares[dataNum] += pow((model[i][dataNum] - data[loc][i][dataNum]), 2);
 	sumData[dataNum] +=(data[loc][i][dataNum]);//DM 08/19/2007 calc sum of data;
 	absDifference[dataNum] += fabs(model[i][dataNum] - data[loc][i][dataNum]);
+	absDevMean[dataNum] += fabs(data[loc][i][dataNum] - (sumData[dataNum]/n[dataNum]));
 	absSqDevMean[dataNum] += pow((data[loc][i][dataNum] - (sumData[dataNum]/n[dataNum])), 2);
 	n[dataNum]++;
       }
@@ -121,9 +124,14 @@ double difference(double *sigma, OutputInfo *outputInfo,
 
   logLike = 0;
   for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
-    sigma[dataNum] = sqrt(sumSquares[dataNum]/(double)(n[dataNum]));
-    beta[dataNum] = sqrt(sumSquares[dataNum]/(double)(n[dataNum]));//DM 08/16/07
- // dm 08/16/07 will try to modify this later
+    //sigma[dataNum] = sqrt(sumSquares[dataNum]/(double)(n[dataNum]));
+    sigma[dataNum] = sqrt(absSqDevMean[dataNum])/(double)(n[dataNum]);
+    beta[dataNum] = (absDevMean[dataNum]/(double)(n[dataNum]));//DM 08/16/07
+ // dm 08/19/07 
+ // sigma is the square root of the sum of the squares of each residual
+ // beta is the mean residual 
+ //where residual is the deviation of each data point from the overall mean value for that data type  
+ 
  //for niwot 1998 - 2005 
  // sqrt(2)*Beta = 1.441233
  // while stddev of NEE = 1.3441169 calculated using SAS
@@ -135,10 +143,14 @@ double difference(double *sigma, OutputInfo *outputInfo,
      * Sigma is typically calculated from the properties of the data not from the model
      * should be as follows 
     */
- //   logLike += n[dataNum] * log(sigma[dataNum]);
- //   logLike += sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));
+#if doubleExp
  		logLike += n[dataNum] * log(2* beta[dataNum]) ; //DM 08/16/07
- 		logLike += absDifference[dataNum]/beta[dataNum]  //DM 08/16/07 
+ 		logLike += absDifference[dataNum]/beta[dataNum]  //DM 08/16/07
+#else 
+   logLike += n[dataNum] * log(sigma[dataNum]);
+   logLike += sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));  
+#endif
+    		 
   }
 
   free(sumSquares);
