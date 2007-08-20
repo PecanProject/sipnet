@@ -1,6 +1,5 @@
 // Bill Sacks
 // 7/9/02
-// edits DM - Dave Moore august 2007
 
 // functions shared by different parameter estimation methods
 
@@ -10,11 +9,6 @@
 #include <stdlib.h>
 #include "paramchange.h"
 #include "util.h"
-
-//
-#define doubleExp 0
-//
-
 
 // the following variables are made global because they are computed once
 // at the beginning of the program, and then must stick around (unchanging) for the whole program
@@ -69,8 +63,6 @@ static AggregateInfo *aggInfo; // vector: spatial
 
    NOTE: this is actually the NEGATIVE log likelihood, discarding constant terms
    to get true log likelihood, add n*log(sqrt(2*pi)), then multiply by -1
-   
-   Edits by Dave Moore 08/16/2007 indicated by DM 08/16/07
 */
 double difference(double *sigma, OutputInfo *outputInfo,
 		  int loc, SpatialParams *spatialParams, double paramWeight,
@@ -78,21 +70,12 @@ double difference(double *sigma, OutputInfo *outputInfo,
 		  int dataTypeIndices[], int numDataTypes) 
 {
   int i, dataNum;
-  double *beta;
   double *sumSquares; // one sum of squares value for each data type
-  double *absDifference; //DM 08/16/07 one absolute difference value for each data type
-  double *absResDiff; //DM 08/16/07 one residual difference value for each data type
-  double *sumData; //DM 08/16/07 one sum value for each data type
+  double *absDifference; // one sum of squares value for each data type
   int *n; // number of data points used in each sumSquares
   double logLike; // the log likelihood
-  double *absDevMean; // DM 08/19/07 the absolute difference between each data point from the mean of that data type
-  double *absSqDevMean; //DM 08/19/07 the square of the deviations of each data point from the mean of that data type
-  
+  absDifference[dataNum] = makeArray(numDataTypes); //dm 08/20/2007
   sumSquares = makeArray(numDataTypes);
-  sumData = makeArray(numDataTypes); //DM 08/19/07 Sum of each data type
-  absDifference = makeArray(numDataTypes); //DM 08/16/07 Abolute difference between the model and the data;
-  absSqDevMean = makeArray(numDataTypes); //DM 08/19/07 Absolute Squared difference of each data point from the mean of that data type;
-  absDevMean =  makeArray(numDataTypes); //DM 08/19/07 Absolute difference of each data point from the mean of that data type;
   n = (int *)malloc(numDataTypes * sizeof(int));
 
   (*modelF)(model, numDataTypes, dataTypeIndices, spatialParams, loc);
@@ -100,11 +83,8 @@ double difference(double *sigma, OutputInfo *outputInfo,
 
   // initialize sumSquares and count arrays
   for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
-    absDifference[dataNum] = 0.0; //DM 08/16/2007
     sumSquares[dataNum] = 0.0;
-    sumData[dataNum] = 0.0;//DM 08/19/2007
-    absDevMean[dataNum] =0.0; // DM 08/19/2007
-    absSqDevMean[dataNum] = 0.0;//DM 08/19/2007
+    absDifference[dataNum] = 0.0;//dm 08/20/2007
     n[dataNum] = 0;
   }
 
@@ -112,10 +92,7 @@ double difference(double *sigma, OutputInfo *outputInfo,
     for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
       if (valid[loc][i][dataNum]) {
 	sumSquares[dataNum] += pow((model[i][dataNum] - data[loc][i][dataNum]), 2);
-	sumData[dataNum] +=(data[loc][i][dataNum]);//DM 08/19/2007 calc sum of data;
-	absDifference[dataNum] += fabs(model[i][dataNum] - data[loc][i][dataNum]);
-	absDevMean[dataNum] += fabs(data[loc][i][dataNum] - (sumData[dataNum]/n[dataNum]));
-	absSqDevMean[dataNum] += pow((data[loc][i][dataNum] - (sumData[dataNum]/n[dataNum])), 2);
+	absDifference[dataNum] += (model[i][dataNum] - data[loc][i][dataNum]);//dm 08/20/2007
 	n[dataNum]++;
       }
     }
@@ -127,33 +104,14 @@ double difference(double *sigma, OutputInfo *outputInfo,
 
   logLike = 0;
   for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
+    sigma[dataNum] = absDifference[dataNum]/(double)(n[dataNum]);
     //sigma[dataNum] = sqrt(sumSquares[dataNum]/(double)(n[dataNum]));
-    sigma[dataNum] = sqrt(absSqDevMean[dataNum])/(double)(n[dataNum]);
-    beta[dataNum] = (absDevMean[dataNum]/(double)(n[dataNum]));//DM 08/16/07
- // dm 08/19/07 
- // sigma is the square root of the sum of the squares of each residual
- // beta is the mean residual 
- //where residual is the deviation of each data point from the overall mean value for that data type  
- 
- //for niwot 1998 - 2005 
- // sqrt(2)*Beta = 1.441233
- // while stddev of NEE = 1.3441169 calculated using SAS
- // In the cost function we use  0.0081208 (calculated using the Obs and Modeled NEE from Moore et al 2007)
     /* we can estimate sigma[i] using just sumSquares[i] because sigma[i] is calculated by taking the partial derivative
        of likelihood with respect to sigma[i], and this partial only depends on sumSquares[i]
-    
-    //DM - I don't believe that sigma should be calculated from the sum of squares of the model and the data
-     * Sigma is typically calculated from the properties of the data not from the model
-     * should be as follows 
     */
-#if doubleExp
- 		logLike += n[dataNum] * log(2* beta[dataNum]) ; //DM 08/16/07
- 		logLike += absDifference[dataNum]/beta[dataNum]  //DM 08/16/07
-#else 
-   logLike += n[dataNum] * log(sigma[dataNum]);
-   logLike += sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));  
-#endif
-    		 
+    logLike += n[dataNum] * log(sigma[dataNum]);
+    logLike += absDifference[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]))  //DM 08/16/07
+    //logLike += sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));
   }
 
   free(sumSquares);
@@ -863,4 +821,5 @@ void cleanupParamchange() {
   if (aggedModel != NULL) // we've malloced it
     free2DArray((void **)aggedModel);
 }
+
 
