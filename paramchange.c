@@ -78,18 +78,21 @@ double difference(double *sigma, OutputInfo *outputInfo,
 		  int dataTypeIndices[], int numDataTypes) 
 {
   int i, dataNum;
+  double *beta;
   double *sumSquares; // one sum of squares value for each data type
   double *absDifference; //DM 08/16/07 one absolute difference value for each data type
   double *absResDiff; //DM 08/16/07 one residual difference value for each data type
   double *sumData; //DM 08/16/07 one sum value for each data type
   int *n; // number of data points used in each sumSquares
   double logLike; // the log likelihood
-
+  double *absDevMean; // DM 08/19/07 the absolute difference between each data point from the mean of that data type
+  double *absSqDevMean; //DM 08/19/07 the square of the deviations of each data point from the mean of that data type
+  
   sumSquares = makeArray(numDataTypes);
   sumData = makeArray(numDataTypes); //DM 08/19/07 Sum of each data type
   absDifference = makeArray(numDataTypes); //DM 08/16/07 Abolute difference between the model and the data;
-  absSqDevMean = makeArray(numDataTypes); //DM 08/19/07 Absolute Squared deviation from the mean;
-
+  absSqDevMean = makeArray(numDataTypes); //DM 08/19/07 Absolute Squared difference of each data point from the mean of that data type;
+  absDevMean =  makeArray(numDataTypes); //DM 08/19/07 Absolute difference of each data point from the mean of that data type;
   n = (int *)malloc(numDataTypes * sizeof(int));
 
   (*modelF)(model, numDataTypes, dataTypeIndices, spatialParams, loc);
@@ -100,8 +103,8 @@ double difference(double *sigma, OutputInfo *outputInfo,
     absDifference[dataNum] = 0.0; //DM 08/16/2007
     sumSquares[dataNum] = 0.0;
     sumData[dataNum] = 0.0;//DM 08/19/2007
-    absDevMean[dataNum] =0.0 // DM 08/19/2007
-    absSqDevMean = 0.0;//DM 08/19/2007
+    absDevMean[dataNum] =0.0; // DM 08/19/2007
+    absSqDevMean[dataNum] = 0.0;//DM 08/19/2007
     n[dataNum] = 0;
   }
 
