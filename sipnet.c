@@ -117,6 +117,8 @@
 #define ROOTS 0
 // do we model root dynamics?
 
+#define MODIS 0
+// do we use modis FPAR data to constrain GPP?
 
 // end definitions for choosing different model structures
 
