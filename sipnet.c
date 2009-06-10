@@ -433,6 +433,7 @@ typedef struct TrackerVars { // variables to track various things
   double totNpp; // g C * m^-2 taken up, to date
   double totNee; // g C * m^-2 given off, to date
   double evapotranspiration; // cm water evaporated/sublimated (sublimed???) or transpired in this time step
+  double transpiration; // cm water transpired in this time step
   double soilWetnessFrac; /* mean fractional soil wetness (soilWater/soilWHC) over this time step
 			     (linear mean: mean of wetness at start of time step and wetness at end of time step) */
   double fa; // g C * m^-2 of net photosynthesis (GPP - leaf respiration) in this time interval
@@ -773,7 +774,7 @@ void outputHeader(FILE *out) {
   		  	fprintf(out, "microbeC ");
   			fprintf(out, "coarseRootC fineRootC ");
   fprintf(out, "litter litterWater soilWater soilWetnessFrac snow ");
-  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot rtot\n");
+  fprintf(out, "evapotranspiration transpiration nee totNee gpp rAboveground rSoil rRoot rtot\n");
 }
 
 // pre: out is open for writing
@@ -805,7 +806,7 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
   	
   	fprintf(out, " %8.2f %8.2f %8.2f %8.3f %8.2f ", 
 		 envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac, envi.snow);
-	fprintf(out,"%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.evapotranspiration, trackers.nee, trackers.totNee, trackers.gpp, trackers.rAboveground, 
+	fprintf(out,"%8.5f %8.5f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",trackers.evapotranspiration, trackers.transpiration,  trackers.nee, trackers.totNee, trackers.gpp, trackers.rAboveground, 
   			trackers.rSoil, trackers.rRoot,trackers.rtot);
 //note without modeling root dynamics 
 
@@ -2020,6 +2021,7 @@ void initTrackers(void) {
   trackers.totNpp = 0.0;
   trackers.totNee = 0.0;
   trackers.evapotranspiration = 0.0;
+  trackers.transpiration=0.0;
   trackers.soilWetnessFrac = envi.soilWater/params.soilWHC;
   trackers.fa = 0.0;
   trackers.fr = 0.0;
@@ -2150,6 +2152,8 @@ void updateTrackers(double oldSoilWater) {
   
   trackers.evapotranspiration = (fluxes.transpiration + fluxes.immedEvap + fluxes.evaporation + fluxes.sublimation)
     * climate->length;
+  
+  trackers.transpiration = (fluxes.transpiration) * climate->length;
 
   trackers.soilWetnessFrac = (oldSoilWater + envi.soilWater)/(2.0*params.soilWHC);
 	trackers.totSoilC=0;	// Set this to 0, and then we add to it
