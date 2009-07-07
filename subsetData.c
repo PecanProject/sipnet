@@ -2,7 +2,7 @@
 
    Given a set of SIPNET input files, 
    along with a start year, start day, and number of days,
-   create subsetted files (.clim, .dat, .valid, .spd)
+   create subsetted files (.clim, .dat, .valid, .sigma, .spd)
    that start at the given date and extend for the given # of days.
 
    To start at the beginning of the record, specify START_YEAR = START_DAY = -1
@@ -91,7 +91,7 @@ int pastStart(int year, int day, int startYear, int startDay)  {
 }
 
 
-/* Read lines from clim, data, and valid files,
+/* Read lines from clim, data, valid and sigma files,
    until we reach a point on or after the date given by startYear, startDay
    (startDay is Julian day of year)
 
@@ -106,7 +106,7 @@ int pastStart(int year, int day, int startYear, int startDay)  {
 
    This is only implemented for files containing a single location
 */
-void gotoStart(FILE *climFin, FILE *dataFin, FILE *validFin, int *startYear, int *startDay)  {
+void gotoStart(FILE *climFin, FILE *dataFin, FILE *validFin, FILE *sigmaFin, int *startYear, int *startDay)  {
   char line[MAX_LINE];
   fpos_t fpos;  // file position in climFin, so we can "unread" the last line
   char *status;
@@ -128,6 +128,8 @@ void gotoStart(FILE *climFin, FILE *dataFin, FILE *validFin, int *startYear, int
     checkStatus(status, "ERROR reading data file: Unexpected EOF or error\n");
     status = fgets(line, MAX_LINE, validFin); // read & ignore line from valid file
     checkStatus(status, "ERROR reading valid file: Unexpected EOF or error\n");
+    status = fgets(line, MAX_LINE, sigmaFin); // read & ignore line from valid file
+    checkStatus(status, "ERROR reading sigma file: Unexpected EOF or error\n");
     
     // read next line from climate file:
     fgetpos(climFin, &fpos);
@@ -163,7 +165,7 @@ void gotoStart(FILE *climFin, FILE *dataFin, FILE *validFin, int *startYear, int
    Assumes that there is at least one time step per day in the input files
     (i.e. the interval between two time steps is not greater than a day)
  */
-void copySubset(FILE *climFin, FILE *dataFin, FILE *validFin, FILE *climFout, FILE *dataFout, FILE *validFout, FILE *spdFout, FILE *aggFout, int aggType, int startYear, int startDay, int numDays)  {
+void copySubset(FILE *climFin, FILE *dataFin, FILE *validFin, FILE *sigmaFin, FILE *climFout, FILE *dataFout, FILE *validFout, FILE *sigmaFout, FILE *spdFout, FILE *aggFout, int aggType, int startYear, int startDay, int numDays)  {
   char line[MAX_LINE];
   int loc, year, day;
   int currYear, currDay;
@@ -197,6 +199,11 @@ void copySubset(FILE *climFin, FILE *dataFin, FILE *validFin, FILE *climFout, FI
     checkStatus(status, "ERROR reading valid file: Unexpected EOF or error\n");
     fputs(line, validFout);
 
+    // read & copy line from sigma file
+    status = fgets(line, MAX_LINE, sigmaFin); 
+    checkStatus(status, "ERROR reading sigma file: Unexpected EOF or error\n");
+    fputs(line, sigmaFout);
+    
     // read next line from climate file:
     // note that we copy it to output file at TOP of loop
     status = readClimLine(climFin, line, MAX_LINE, &loc, &year, &day);
@@ -328,7 +335,7 @@ int main(int argc, char *argv[])  {
   int startYear, startDay, numDays;
   char aggTypeString[MAX_NAME];
   int aggType;  // one of AGGREGATION_TYPES
-  FILE *climFin, *dataFin, *validFin, *climFout, *dataFout, *validFout, *spdFout, *aggFout;
+  FILE *climFin, *dataFin, *validFin, *sigmaFin, *climFout, *dataFout, *validFout, *sigmaFout, *spdFout, *aggFout;
 
   // setup namelist input:
   namelistInputs = newNamelistInputs();
@@ -364,27 +371,31 @@ int main(int argc, char *argv[])  {
   climFin = openFileExt(inFilename, "clim", "r");
   dataFin = openFileExt(inFilename, "dat", "r");
   validFin = openFileExt(inFilename, "valid", "r");
+  sigmaFin = openFileExt(inFilename, "sigma", "r");
 
   // output files:
   climFout = openFileExt(outFilename, "clim", "w");
   dataFout = openFileExt(outFilename, "dat", "w");
   validFout = openFileExt(outFilename, "valid", "w");
+  sigmaFout = openFileExt(outFilename, "sigma", "w");
   spdFout = openFileExt(outFilename, "spd", "w");
   aggFout = openFileExt(outFilename, "agg", "w");
 
   // do the work:
   checkLocations(climFin);  // make sure the climate file only contains one location
-  gotoStart(climFin, dataFin, validFin, &startYear, &startDay);
-  copySubset(climFin, dataFin, validFin, climFout, dataFout, validFout, spdFout, aggFout, aggType, startYear, startDay, numDays);
+  gotoStart(climFin, dataFin, validFin, sigmaFin, &startYear, &startDay);
+  copySubset(climFin, dataFin, validFin, sigmaFin, climFout, dataFout, validFout, sigmaFout, spdFout, aggFout, aggType, startYear, startDay, numDays);
   copyOtherFiles(inFilename, outFilename);
 
   // close files:
   fclose(climFin);
   fclose(dataFin);
   fclose(validFin);
+  fclose(sigmaFin);
   fclose(climFout);
   fclose(dataFout);
   fclose(validFout);
+  fclose(sigmaFout);
   fclose(spdFout);
   fclose(aggFout);
 

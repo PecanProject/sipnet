@@ -2574,8 +2574,11 @@ void setupOutputPointers(void) {
 void setupOutputItems(OutputItems *outputItems)  {
   addOutputItem(outputItems, "NEE", &(trackers.nee));
   addOutputItem(outputItems, "NEE_cum", &(trackers.totNee));
-  addOutputItem(outputItems, "GPP", &(trackers.gpp));
+/* addOutputItem(outputItems, "GPP", &(trackers.gpp));
   addOutputItem(outputItems, "GPP_cum", &(trackers.totGpp));
+ */
+  addOutputItem(outputItems, "ET", &(trackers.evapotranspiration ));
+  addOutputItem(outputItems, "Transpiration", &(trackers.transpiration ));
 }
 
 
