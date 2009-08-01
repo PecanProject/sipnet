@@ -18,7 +18,7 @@
 #if EXTRA_DATA_TYPES
 #define MAX_DATA_TYPES 20
 #else
-#define MAX_DATA_TYPES 3
+#define MAX_DATA_TYPES 7
 #endif 
 
 

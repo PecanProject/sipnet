@@ -2,7 +2,7 @@
 
 ! --- FILE NAMES ---
 
-FILENAME = niwot
+FILENAME = howland_tuning97to2000_specified
 ! FILENAME.param is the file of parameter values and info
 !  (unless PARAM_FILE is specified below)
 ! FILENAME.param-spatial is the file of spatially-varying parameters
@@ -21,7 +21,7 @@ PARAM_FILE = none
 ! If specified (not 'none'), use given file for parameter values and
 !  info, rather than FILENAME.param
 
-OUTPUT_NAME = niwot-estimated
+OUTPUT_NAME = sigmaprescribed/howland_tuning97to2000_sigmaprescribed_NEEonly
 ! OUTPUT_NAME will store user-readable info about the run
 ! OUTPUT_NAME.param and OUTPUT_NAME.param-spatial will store best
 !  parameter set found
@@ -35,6 +35,10 @@ OUTPUT_NAME = niwot-estimated
 OPT_NEE = 1
 OPT_EVAPOTRANSPIRATION = 0
 OPT_SOIL_WETNESS = 0
+OPT_R_SOIL = 0
+OPT_ANNUAL_LITTER = 0
+OPT_LAI= 0
+OPT_PLANT_WOOD_C = 0
 
 
 ! --- VARIABLES CONTROLLING OPTIMIZATION ---
@@ -71,7 +75,7 @@ ITER = 375000
 ADD_FRACTION = 0.5
 ! Initial pDelta, as fraction of parameter range
 
-VALID_FRAC = 0.5
+VALID_FRAC = 0.75
 ! Fraction of data points which must be valid to use data from a given
 !  time step
 

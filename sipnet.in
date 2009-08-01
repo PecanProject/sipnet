@@ -5,7 +5,7 @@
 RUNTYPE = standard
 ! RUNTYPE must be one of 'standard', 'senstest', or 'montecarlo'
 
-FILENAME = niwot
+FILENAME = ./sigmaprescribed/howland_fwd_full
 ! FILENAME.param is the file of parameter values & initial conditions
 ! FILENAME.param-spatial is the file of spatially-varying parameters
 !  (first line must contain a single integer: # of locations)
@@ -22,7 +22,7 @@ DO_MAIN_OUTPUT = 1
 ! If 0, suppress this output
 ! Ignored for montecarlo run with statsonly (treated as 1)
 
-PRINT_HEADER = 0
+PRINT_HEADER = 1
 ! If 1, print header on main output file; if 0, don't print header
 !  (default: 0)
 
@@ -43,11 +43,11 @@ DO_SINGLE_OUTPUTS = 0
 
 ! These inputs are ignored for run types other than senstest
 
-CHANGE_PARAM = none
+CHANGE_PARAM = wueConst
 ! Name of parameter to change in a sensitivity test
 
-LOW_VAL = 0
-HIGH_VAL = 1
+LOW_VAL = 0.01
+HIGH_VAL = 15
 NUM_RUNS = 10
 ! Parameter is varied from LOW_VAL to HIGH_VAL over a total of NUM_RUNS
 
