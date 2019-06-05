@@ -1,0 +1,120 @@
+! Input file to set up a parameter estimation run (using 'estimate')
+
+! --- FILE NAMES ---
+
+FILENAME = niwot_subset
+! FILENAME.param is the file of parameter values and info
+!  (unless PARAM_FILE is specified below)
+! FILENAME.param-spatial is the file of spatially-varying parameters
+!  (first line must contain a single int: # of locations)
+!  (if PARAM_FILE is specified, then instead use PARAM_FILE-spatial for
+!  spatially-varying parameters)
+! FILENAME.clim is the file of climate data for each time step
+! FILENAME.dat is the file of measured data (one column per data type)
+! FILENAME.spd (steps per day) contains one line per location; each line
+!  begins with year and julian day of 1st point, followed by the number
+!  of steps in each day, terminated by -1
+! FILENAME.valid contains fraction of valid data points for each time
+!  step (one col. per data type)
+
+PARAM_FILE = none
+! If specified (not 'none'), use given file for parameter values and
+!  info, rather than FILENAME.param
+
+OUTPUT_NAME = niwot-estimated
+! OUTPUT_NAME will store user-readable info about the run
+! OUTPUT_NAME.param and OUTPUT_NAME.param-spatial will store best
+!  parameter set found
+! OUTPUT_NAME.hist<n> will store history of run - i.e. every accepted
+!  parameter set - for each location n
+
+
+! --- DATA TYPES TO INCLUDE IN OPTIMIZATION ---
+
+! 1 = include in optimization; 0 = don't include
+OPT_NEE = 1
+OPT_EVAPOTRANSPIRATION = 0
+OPT_SOIL_WETNESS = 0
+
+
+! --- VARIABLES CONTROLLING OPTIMIZATION ---
+
+LOC = 0
+! Location to run at (-1 means run at all locations)
+
+NUM_RUNS = 1
+! Number of separate runs to perform
+
+RANDOM_START = 0
+! If 0, start chains with param. values = guess
+! If 1, start randomly between min and max
+
+NUM_AT_ONCE = 10000
+! To determine convergence: run for NUM_AT_ONCE iterations, then check
+!  accept % - if not close to A_STAR, run for another NUM_AT_ONCE
+!  iterations
+
+NUM_CHAINS = 10
+! Start by running NUM_CHAINS to convergence, then choosing the best of
+!  these as a starting point for the optimization
+!  (doing multiple starts helps prevent getting stuck in local optima)
+
+NUM_SPINUPS = 0
+! Once temperatures have converged, number of additional iterations
+!  (spin-ups) to run before we start recording (to allow posteriors to
+!  stabilize)
+
+ITER = 150000
+! Number of Metropolis iterations once we've converged and finished
+!  NUM_SPINUPS
+
+ADD_FRACTION = 0.5
+! Initial pDelta, as fraction of parameter range
+
+VALID_FRAC = 0.0
+! Fraction of data points which must be valid to use data from a given
+!  time step
+
+SCALE_FACTOR = 1.0
+! Amount to multiply log likelihood difference by
+!  (anything but 1 goes against theory, unless used in conjunction with
+!  UNAGGED_WEIGHT)
+
+PARAM_WEIGHT = 0.0
+! Relative weight of param. vs. data error
+
+OPT_INDICES_EXT = none
+! If not 'none', this gives the extension of the optimization indices
+!  file; the full filename is FILENAME.OPT_INDICES_EXT
+! File giving, for each location, start and end indices for optimization
+!  (one line per location, with each line containing two integers: start
+!  & end; if no file specified, use all points)
+!  (1-indexing; end = -1 means go to end)
+
+COMPARE_INDICES_EXT = none
+! If not 'none', this gives the extension of the comparison indices
+!  file; the full filename is FILENAME.COMPARE_INDICES_EXT
+! File giving, for each location, start and end indices for model-data
+!  comparisons (one line per location, with each line containing two
+!  integers: start & end; if no file specified, use all points)
+!  (1-indexing; end = -1 means go to end)
+
+AGGREGATION_EXT = agg
+! If not 'none', this gives the extension of the file containing number
+!  of time steps per model/data aggregation - i.e. aggregations that are
+!  performed prior to doing model-data comparisons in the optimization
+! The full filename is FILENAME.AGGREGATION_EXT
+! Each line contains aggregation info for one location, and each line
+!  is terminated with a -1
+!  Each value (i) on a given line is an integer giving the number of
+!  time steps in aggregation i in that time step
+!  (e.g. to run model-data comparison on a yearly aggregation, each
+!  value would be number of steps in year i)
+!  (if no file specified, will perform no aggregation)
+! Note that VALID_FRAC is ignored for aggregated data (assumed equal to
+!  0)
+
+UNAGGED_WEIGHT = 0.0
+! If aggregation is done, relative weight of unaggregated points in
+!  optimization (should probably be 0 or 1; 0 means only use aggregated
+!  points in optimization)

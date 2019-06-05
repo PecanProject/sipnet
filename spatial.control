@@ -1,0 +1,12 @@
+! Change 'Spatial?' from 'No' to 'Yes' to read in .anomalies file for the given variable,
+!  and make that variable spatially-varying in the clim or param file
+! Note that Col=0 -> parameter, Col>0 -> climate variable
+!  (in the latter case, Col gives the column # in the .clim file - indexing is such that col. 0 would be loc)
+
+! Name		Spatial?	Col	Op_type
+plantWoodInit	No		0	+
+soilInit	No		0	+
+laiInit		No		0	+
+tair		No		5	+
+tsoil		No		6	+
+precip		No		8	*

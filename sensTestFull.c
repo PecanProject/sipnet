@@ -284,7 +284,7 @@ for (paramStep=0; paramStep < NUM_PARAMS; paramStep++) {
   	changeAmt = (maxVal - minVal)/(double)(numRuns - 1);
 
 	// Verify that with each iteration we are resetting the parameters.  When this is uncommented
-	// then the value printed on the screen should be the parameter value in niwots.param in the
+	// then the value printed on the screen should be the parameter value in niwot.param in the
 	// second column
 	
 /*	if (paramStep>0) {

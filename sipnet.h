@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include "spatialParams.h"
+#include "outputItems.h"
 
 #define EXTRA_DATA_TYPES 0
 // Allow the outputting of extra data types (e.g. GPP, Rtot)?
@@ -68,17 +69,34 @@ void cleanupModel(int numLocs);
 void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[], SpatialParams *spatialParams, int loc);
 
 
-/* do one run of the model using parameter values in spatialParams, output results to out
-   If printHeader = 1, print a header for the output file, if 0 don't
+/* Do one run of the model using parameter values in spatialParams
+   If out != NULL, output results to out
+    If printHeader = 1, print a header for the output file, if 0 don't
+   If outputItems != NULL, do additional outputting as given by this structure (1 variable per file)
+    If loc == -1, then print currLoc as first item on each line
    Run at spatial location given by loc (0-indexing) - or run everywhere if loc = -1
    Note: number of locations given in spatialParams
 */
-void runModelOutput(FILE *out, int printHeader, SpatialParams *spatialParams, int loc);
+void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, SpatialParams *spatialParams, int loc);
 
 
-// do a sensitivity test on paramNum, varying from low to high, doing a total of numRuns runs
-// run only at a single location (given by loc)
-void sensTest(FILE *out, int paramNum, double low, double high, int numRuns, SpatialParams *spatialParams, int loc); 
+/* Do a sensitivity test on paramNum, varying from low to high, doing a total of numRuns runs
+   Run only at a single location (given by loc)
+   If out != NULL, output results to out
+   If outputItems != NULL, do additional outputting as given by this structure (1 variable per file)
+    Print parameter value as first item on each line
+   If out != NULL, do main outputting to out
+   If outputItems != NULL
+*/
+void sensTest(FILE *out, OutputItems *outputItems, int paramNum, double low, double high, int numRuns, SpatialParams *spatialParams, int loc); 
+
+
+/* PRE: outputItems has been created with newOutputItems
+
+   Setup outputItems structure
+   Each variable added will be output in a separate file ('*.varName')
+ */
+void setupOutputItems(OutputItems *outputItems);
 
 
 #endif

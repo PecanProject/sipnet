@@ -10,8 +10,15 @@
 
 #include <stdio.h>
 
+// set filename = <base>.<ext>
+// assumes filename has been allocated and is large enough to hold result
+void buildFileName(char *filename, const char *base, const char *ext);
+
 // our own openFile method, which exits gracefully if there's an error
-FILE *openFile(char *name, char *mode);
+FILE *openFile(const char *name, const char *mode);
+
+// call openFile on a file with name <name>.<ext> (i.e. include an extension)
+FILE *openFileExt(const char *name, const char *ext, const char *mode);
 
 // if seed = 0, seed based on time, otherwise seed based on seed
 // if outF is specified (not NULL), write seed to file
@@ -55,7 +62,7 @@ double sumArray(double *array, int length);
 // do an strcmp on s1 and s2, ignoring case
 // (convert both to lower case before comparing)
 // return value is the same as for strcmp
-int strcmpIgnoreCase(char *s1, char *s2);
+int strcmpIgnoreCase(const char *s1, const char *s2);
 
 // If line contains any character in the string commentChars,
 //  strip the comment off the line (i.e. replace first occurrence of commentChars with '\0')

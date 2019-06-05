@@ -13,8 +13,18 @@
 #include <ctype.h>
 #include "util.h"
 
+
+// set filename = <base>.<ext>
+// assumes filename has been allocated and is large enough to hold result
+void buildFileName(char *filename, const char *base, const char *ext)  {
+  strcpy(filename, base);
+  strcat(filename, ".");
+  strcat(filename, ext);
+}
+
+
 // our own openFile method, which exits gracefully if there's an error
-FILE *openFile(char *name, char *mode) {
+FILE *openFile(const char *name, const char *mode) {
   FILE *f;
 
   if ((f = fopen(name, mode)) == NULL) {
@@ -22,6 +32,21 @@ FILE *openFile(char *name, char *mode) {
     exit(1);
   }
 
+  return f;
+}
+
+
+// call openFile on a file with name <name>.<ext> (i.e. include an extension)
+FILE *openFileExt(const char *name, const char *ext, const char *mode)  {
+  char *fullName;
+  FILE *f;
+  
+  fullName = (char *)malloc((strlen(name) + strlen(ext) + 2) * sizeof(char));
+  buildFileName(fullName, name, ext);
+  
+  f = openFile(fullName, mode);
+
+  free(fullName);
   return f;
 }
 
@@ -35,12 +60,12 @@ void seedRand(unsigned int seed, FILE *outF) {
     t = time(NULL);
     if (outF != NULL)
       fprintf(outF, "Seeding random number generator with time: %d\n\n", (unsigned int)t);
-    srandom(t);
+    srand(t);
   }
   else {
     if (outF != NULL)
       fprintf(outF, "Seeding random number generator with %d\n\n", seed);
-    srandom(seed);
+    srand(seed);
   }
 }
 
@@ -133,7 +158,7 @@ double sumArray(double *array, int length) {
 // do an strcmp on s1 and s2, ignoring case
 // (convert both to lower case before comparing)
 // return value is the same as for strcmp
-int strcmpIgnoreCase(char *s1, char *s2)  {
+int strcmpIgnoreCase(const char *s1, const char *s2)  {
   char *s1Lower;
   char *s2Lower;
   int i;
