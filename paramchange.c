@@ -16,11 +16,14 @@
 static double numLocs; /* number of spatial locations: first dimension of data, startOpt, endOpt, valid, numAggSteps, aggSteps, aggedData, aggInfo
 			  set in readData */
 static double ***data; /* read in once at start of program
-			 compared with model data in difference function 
+			 compared with model data in difference function
+			 1st dimension is spatial location, 2nd is time step, 3rd is data type */
+static double ***sigmas; /* (dm) data uncertainty read in once at start of program
+			 compared with model data in difference function
 			 1st dimension is spatial location, 2nd is time step, 3rd is data type */
 static double **model; // made global so don't have to re-allocate memory all the time
 static int *startOpt, *endOpt; // starting and ending indices for optimization (1-indexing) (vector: spatial)
-static int ***valid; /* valid[i][j][k] indicates whether data[i][j][k] is valid (0 = invalid, non-0 = valid) 
+static int ***valid; /* valid[i][j][k] indicates whether data[i][j][k] is valid (0 = invalid, non-0 = valid)
 		       (based on fraction of valid data points) */
 
 static int *numAggSteps = NULL; /* size of 2nd dimension of aggSteps array (spatial)
@@ -31,13 +34,13 @@ static int **aggSteps = NULL; /* array specifying how many steps make up each ag
 static double ***aggedData = NULL; /* aggregated data (initialized to NULL b/c we may never malloc this array)
 				     only holds data between startOpt and endOpt */
 static double **aggedModel = NULL; /* aggregated model (intitialized to NULL b/c we may never malloc this array)
-				      made global so don't have to re-allocate memory all the time 
+				      made global so don't have to re-allocate memory all the time
 				      only holds model output between startOpt and endOpt */
 static double unaggedWeight = 0.0; /* if aggregation is done, weight of unaggregated data in optimization
 				      (0 -> only use aggregated data) */
 
 typedef struct AggregateInfoStruct { // set at beginning of program
-  int startPt, endPt; // indices of data point to start and stop at (1-indexing)	   
+  int startPt, endPt; // indices of data point to start and stop at (1-indexing)
   int *spd; // steps per day
   int numDays;
   int startYear; // 4 digit year
@@ -46,6 +49,171 @@ typedef struct AggregateInfoStruct { // set at beginning of program
 
 static AggregateInfo *aggInfo; // vector: spatial
 
+
+/* Difference, version 4 - READS IN SIGMAS (dm) ESTIMATES SIGMA, RETURNS AGGREGATE INFO
+   Run modelF with given parameters at location loc, compare output with measured data
+   using data types given by dataTypeIndices[0..numDataTypes-1]
+   Return a measure of the difference between measured and predicted data
+   (Higher = worse)
+   Return best sigma value for each data type in sigma[0..numDataTypes-1]
+   Return mean error, mean daily-aggregated error, and yearly-aggregated output for each year
+   and each data type in *outputInfo array
+   Pre: sigma and outputInfo are already malloced, as are outputInfo[*].years arrays
+
+   Only use "valid" data points (as determined by validFrac in readData)
+   And only use points between startOpt and endOpt (set in readData)
+   [IGNORE paramWeight - just there to be consistent with old difference function]
+
+   NOTE: this is actually the NEGATIVE log likelihood, discarding constant terms
+   to get true log likelihood, add n*log(sqrt(2*pi)), then multiply by -1
+*/
+/*Added read in ***sigmas
+ * removed ***sigma from double difference(double  *sigma, ***sigmas, OutputInfo *outputInfo,
+ *
+ */
+double difference(double  *sigma, OutputInfo *outputInfo,
+		  int loc, SpatialParams *spatialParams, double paramWeight,
+		  void (*modelF)(double **, int, int *, SpatialParams *, int),
+		  int dataTypeIndices[], int numDataTypes, int costFunction, double dataTypeWeights[])
+{
+  int i, dataNum;
+  double *sumSquares; // one sum of squares value for each data type
+  double *DownWtSumSquares; //sum of square value downweighted by the number of data points _dm 05 24 10
+  int *n; // number of data points used in each sumSquares
+  double logLike; // the log likelihood
+  double thisSigma; //(dm) declare thisSigma
+  //FILE *dbg; //(dm) debug file
+  sumSquares = makeArray(numDataTypes);
+  DownWtSumSquares = makeArray(numDataTypes);
+  n = (int *)malloc(numDataTypes * sizeof(int));
+
+  (*modelF)(model, numDataTypes, dataTypeIndices, spatialParams, loc);
+  // run model, put results in model array
+
+  // initialize sumSquares and count arrays
+
+  for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
+    sumSquares[dataNum] = 0.0;
+    DownWtSumSquares[dataNum] = 0.0;
+    n[dataNum] = 0;
+  }
+
+
+  for (i = startOpt[loc] - 1; i < endOpt[loc]; i++) {
+    for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
+      if (valid[loc][i][dataNum]) {
+
+
+    	  if (costFunction==0) {
+    		  thisSigma = sqrt(0.5); // set it to be the square root of 0.5 to cancel out the expression below if we aren't estimating sigma.
+    	  }
+    	  else {
+    		  thisSigma = sigmas[loc][i][dataNum];  /* Now set it to be the sigma value read in */
+    	  }
+
+    	  //output thissigma to screen to debug
+    	  //fprintf(stdout,"thisSigma = %f\n\n", thisSigma);
+    	  // sigmas are read in and provide expected numbers but there are some missing data points??
+    	  //output residual to the screen
+    //	  	FILE *fp=stdout;
+    //	  	stdout=fopen("out-snap","w");
+    //	  	fprintf(stdout,"thisSigma = %f\n\n", thisSigma);
+    	  	//sometimes this results in the creation of an empty file - probably indicating that the sigmas are not being read in correctly
+    	  	//fprintf(stdout,"Square residual = %f\n\n", (pow((model[i][dataNum] - data[loc][i][dataNum]), 2)));
+    	  	//printf("Hello hello");
+    //	  	fclose(stdout);
+
+    //	  	stdout=fp;
+
+    	  sumSquares[dataNum] += (pow((model[i][dataNum] - data[loc][i][dataNum]), 2) / (2.0*thisSigma*thisSigma));
+
+	n[dataNum]++;
+      }
+
+    }
+  }
+//(removed dm) sumSquares[dataNum] += pow((model[i][dataNum] - data[loc][i][dataNum]), 2);
+
+  // calculate aggregate info on each data type
+  for (dataNum = 0; dataNum < numDataTypes; dataNum++)
+    aggregates(outputInfo, model, loc, dataNum);
+
+  // Make sure we don't keep multiplying by zero for the product cost function
+  if (costFunction ==3) {
+	   logLike = 1;
+  } else {
+	   logLike = 0;
+  }
+
+
+////value of logLike;
+  for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
+    sigma[dataNum] = sqrt(sumSquares[dataNum]/(double)(n[dataNum]));
+    /* we can estimate sigma[i] using just sumSquares[i] because sigma[i] is calculated by taking the partial derivative
+       of likelihood with respect to sigma[i], and this partial only depends on sumSquares[i]
+       // sigma[dataNum]  is no longer used.  Instead sigma is read in for each observation as dot.sigmas
+    */
+    if (costFunction == 0) {
+    	// if n[dataNum] = 0, then the program will give an error here.  This is just a test to make sure we are ok.
+    	if (n[dataNum] != 0) {
+    		logLike += dataTypeWeights[dataTypeIndices[dataNum]] * n[dataNum] * log(sigma[dataNum]);
+    		logLike += dataTypeWeights[dataTypeIndices[dataNum]] * sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));
+    	} // (n[dataNum] != 0
+    } // (costFunction == 0)
+				//+(n[dataNum] * log(sigmas[dataNum]));// logLike is the sum of the weighted sum of squares (j) for each data type
+    else if (costFunction==1) {
+    	logLike += dataTypeWeights[dataTypeIndices[dataNum]]*sumSquares[dataNum];  }
+    else if (costFunction==2) {
+		   logLike +=numDataTypes *(sumSquares[dataNum]/(1+n[dataNum])); }
+	else if (costFunction ==3){
+		   logLike *=pow(sumSquares[dataNum],(1.0/numDataTypes));
+	}
+
+    	  //(CF2)
+    	  //DownWtSumSquares[dataNum] =(sumSquares[dataNum]/(1+n[dataNum])); //calculates the down-weighted sum of squares ***added 1 to avoid division by zero?;
+    	  //    	  logLike += ((DownWtSumSquares[dataNum])*3.0);//logLike is sum of the Cost Functions for each data type divided by the number of data points used for each (CF2)
+    	  //(CF3)
+    	  //logLike *=pow(sumSquares[dataNum],(1.0/5));//logLike is the product of the weighted sum of squares (j) for each data type - ???plus one to avoid a perfect fit causing the likelihood calculation to explode
+    	  //????take the 7th root to bring back to a value similar to the individual costfuntions CF3
+
+//
+    	  //logLike += log(thisSigma);//(dm) now the individual sigmas for each data point is added to the logLike // moved to line 101
+    	  // sigmas are read in and provide expected numbers but there are some missing data points??
+    	  //output residual to the screen
+    	  	//FILE *fp=stdout;
+    	  	//stdout=fopen("out-snap","w");
+    	  	//fprintf(stdout,"Instant SumSquares = %f\n\n", sumSquares[dataNum]);
+    	  	//fprintf(stdout,"logLike = %f\n\n", logLike);
+    	  	//sometimes this results in the creation of an empty file - probably indicating that the sigmas are not being read in correctly
+    	  	//fprintf(stdout,"Square residual = %f\n\n", (pow((model[i][dataNum] - data[loc][i][dataNum]), 2)));
+    	  	//printf("Hello hello");
+    	  	//fclose(stdout);
+
+    	  	//stdout=fp;
+    //logLike += n[dataNum] * log(sigma[dataNum]);//change this - add to nested loop
+    //logLike += sumSquares[dataNum]); //change this - add to nested loop
+  }
+/*remove the division by 2 sigma^2 in the calculation of logLike, near the bottom of the function
+ * (i.e., you are now doing this division once per observation, rather than just once at the end)
+ *
+ * (dm removed:)
+ *  (2.0*(sigma[dataNum])*(sigma[dataNum])
+  */
+
+  //debug;
+  //dbg = openFile(outFileName, "w");
+  //fprintf(stdout,"sumSquares = %f\n\n", sumSquares[dataNum]);
+  //fprintf(dbg, "\n\n");
+  //fclose(dbg);
+
+  free(sumSquares);
+  free(n);
+
+  // NOTE: this is actually the NEGATIVE log likelihood, discarding constant terms
+  // to get true log likelihood, add n*log(sqrt(2*pi)), then multiply by -1
+
+  return logLike;
+}
 
 /* Difference, version 3 - ESTIMATES SIGMA, RETURNS AGGREGATE INFO
    Run modelF with given parameters at location loc, compare output with measured data
@@ -64,10 +232,12 @@ static AggregateInfo *aggInfo; // vector: spatial
    NOTE: this is actually the NEGATIVE log likelihood, discarding constant terms
    to get true log likelihood, add n*log(sqrt(2*pi)), then multiply by -1
 */
-double difference(double *sigma, OutputInfo *outputInfo,
+
+/*dm
+  double difference(double *sigma, OutputInfo *outputInfo,
 		  int loc, SpatialParams *spatialParams, double paramWeight,
 		  void (*modelF)(double **, int, int *, SpatialParams *, int),
-		  int dataTypeIndices[], int numDataTypes) 
+		  int dataTypeIndices[], int numDataTypes)
 {
   int i, dataNum;
   double *sumSquares; // one sum of squares value for each data type
@@ -97,15 +267,17 @@ double difference(double *sigma, OutputInfo *outputInfo,
 
   // calculate aggregate info on each data type
   for (dataNum = 0; dataNum < numDataTypes; dataNum++)
-    aggregates(outputInfo, model, loc, dataNum); 
+    aggregates(outputInfo, model, loc, dataNum);
 
   logLike = 0;
   for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
     sigma[dataNum] = sqrt(sumSquares[dataNum]/(double)(n[dataNum]));
-    /* we can estimate sigma[i] using just sumSquares[i] because sigma[i] is calculated by taking the partial derivative
-       of likelihood with respect to sigma[i], and this partial only depends on sumSquares[i]
+    // we can estimate sigma[i] using just sumSquares[i] because sigma[i] is calculated by taking the partial derivative
+    //   of likelihood with respect to sigma[i], and this partial only depends on sumSquares[i]
     */
-    logLike += n[dataNum] * log(sigma[dataNum]);
+
+/* (dm)
+logLike += n[dataNum] * log(sigma[dataNum]);
     logLike += sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));
   }
 
@@ -114,10 +286,10 @@ double difference(double *sigma, OutputInfo *outputInfo,
 
   // NOTE: this is actually the NEGATIVE log likelihood, discarding constant terms
   // to get true log likelihood, add n*log(sqrt(2*pi)), then multiply by -1
-  
+
   return logLike;
 }
-
+ */
 
 /* pre: **origArray contains original (unaggregated) data/model output
    (origArray[i][j] is timestep i, data type j)
@@ -134,9 +306,9 @@ void computeAggedData(double **theAggedData, double **origArray, int myNumAggSte
 
   index = myStartOpt - 1; // index into data array (myStartOpt is 1-indexed)
   for (i = 0; i < myNumAggSteps; i++) {
-    for (dataType = 0; dataType < numDataTypes; dataType++) 
+    for (dataType = 0; dataType < numDataTypes; dataType++)
       theAggedData[i][dataType] = 0.0; // reset sums
-    
+
     for (j = 0; j < myAggSteps[i]; j++) { // loop through all steps in this aggregated step
       for (dataType = 0; dataType < numDataTypes; dataType++) // accumulate each sum
 	theAggedData[i][dataType] += origArray[index][dataType];
@@ -162,9 +334,9 @@ void computeAggedData(double **theAggedData, double **origArray, int myNumAggSte
    if i < numDataTypes/2 then sigma[i] gives sigma for unaggregated data; otherwise for aggregated data)
    Return mean error, mean daily-aggregated error, and yearly-aggregated output for each year
    and each data type in *outputInfo array (indexed like sigma array - see above)
-   
+
    Pre: sigma and outputInfo are already malloced, as are outputInfo[*].years arrays
-   global *numAggSteps, **aggSteps and ***aggedData have all been set appropriately, 
+   global *numAggSteps, **aggSteps and ***aggedData have all been set appropriately,
    and global **aggedModel has been malloced appropriately
    numDataTypes is actually TWICE the number of data types
    (for each data type, one unaggregated and one aggregated)
@@ -174,20 +346,23 @@ void computeAggedData(double **theAggedData, double **origArray, int myNumAggSte
    (NOTE: UNTESTED FOR ANYTHING BUT STARTOPT=1, ENDOPT=-1 (I.E. ALL POINTS))
    [IGNORE paramWeight - just there to be consistent with difference function above]
 */
+
+// 6/9/11: For now we don't do anything with the cost function or data Type weights - we just want to make
+// it consistent with the difference function above so we don't get an error.
 double aggedDifference(double *sigma, OutputInfo *outputInfo,
 		       int loc, SpatialParams *spatialParams, double paramWeight,
 		       void (*modelF)(double **, int, int *, SpatialParams *, int),
-		       int dataTypeIndices[], int numDataTypes) 
+		       int dataTypeIndices[], int numDataTypes, int costFunction, double dataTypeWeights[])
 {
   int i, dataNum;
   double *sumSquares; // one sum of squares value for each data type
   int *n; // number of data points used in each sumSquares
   double logLike; // the log likelihood
-  
+
   sumSquares = makeArray(numDataTypes);
   n = (int *)malloc(numDataTypes * sizeof(int));
 
-  (*modelF)(model, numDataTypes/2, dataTypeIndices, spatialParams, loc); 
+  (*modelF)(model, numDataTypes/2, dataTypeIndices, spatialParams, loc);
   // run model, put results in model array
   // divide numDataTypes by 2 so we have actual (unbifurcated) number of data types
 
@@ -220,8 +395,8 @@ double aggedDifference(double *sigma, OutputInfo *outputInfo,
 
   // calculate aggregate info on each data type
   for (dataNum = 0; dataNum < numDataTypes/2; dataNum++) {
-    aggregates(outputInfo, model, loc, dataNum); 
-    
+    aggregates(outputInfo, model, loc, dataNum);
+
     // copy aggregate info from position i to position (numDataTypes/2 + i)
     // (same data type, but aggregated - will have same aggregate info)
     copyOutputInfo(&(outputInfo[numDataTypes/2 + dataNum]), &(outputInfo[dataNum]));
@@ -246,7 +421,7 @@ double aggedDifference(double *sigma, OutputInfo *outputInfo,
   free(n);
 
   // NOTE: this is actually the NEGATIVE log likelihood, discarding constant terms
-  
+
   return logLike;
 }
 
@@ -266,7 +441,7 @@ void aggregates(OutputInfo *outputInfo, double **model, int loc, int dataNum)
 				       represents the number of days in this year */
   int i, j, day, julianDay, year;
   int leapYr; // 1 if this is a leap year
-  int index; 
+  int index;
   double *modelD, *dataD; // daily aggregations
   int yearIndex; // starting at 0 rather than being a 4-digit year
   double sum;
@@ -360,7 +535,7 @@ int countLines(char *fileName) {
   f = openFile(fileName, "r");
   numLines = 0;
   while ((fgets(line, sizeof(line), f) != NULL) && (strcmp(line, "\n") != 0)) // read & ignore
-    numLines++; 
+    numLines++;
 
   fclose(f);
 
@@ -444,16 +619,16 @@ void readIndicesFile(char *fileName, int *startIndices, int *endIndices, int num
    where these files have one line for each location, and each line contains two integers: start & end;
    if either of these file names is given as an empty string (""), use all data points for optimizations or model-data comparisons.
    NOTE: Both of these use 1-indexing; end = -1 means go to end
-   
+
    steps is an array giving the number of time steps at each of the myNumLocs locations
 
    This function also allocates space for model array
 */
 void readData(char *fileName, int dataTypeIndices[], int numDataTypes, int totNumDataTypes, int myNumLocs, int *steps,
-	      double validFrac, char *optIndicesFile, char *compareIndicesFile, FILE *outFile) 
+	      double validFrac, char *optIndicesFile, char *compareIndicesFile, FILE *outFile)
 {
-  char dataFile[64], spdFile[64], validFile[64]; // sigmaFile[64]
-  FILE *in1, *in2;
+  char dataFile[64], spdFile[64], validFile[64], sigmaFile[64]; //(dm) uncommented sigmaFile[64];
+  FILE *in1, *in2, *in3;
   int status;
   int index;
   int julianDay;
@@ -464,26 +639,26 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes, int totNu
   int numData;
   int i, loc;
   char spdString[32]; // store one # from spd file (in a string to allow for shorthands like #<n>)
-  int count, startCount; 
+  int count, startCount;
   long filePos;
   int *tempStartCompare, *tempEndCompare; // vectors holding compare indices temporarily, before they're put in aggInfo
 
   numLocs = myNumLocs; // set global numLocs
 
   strcpy(dataFile, fileName);
-  //  strcpy(sigmaFile, fileName);
+  strcpy(sigmaFile, fileName);//(dm) uncommented
   strcpy(spdFile, fileName);
   strcpy(validFile, fileName);
   strcat(dataFile, ".dat");
-  //  strcat(sigmaFile, ".sigma");
+  strcat(sigmaFile, ".sigma");//(dm)uncommented
   strcat(spdFile, ".spd");
   strcat(validFile, ".valid");
-  
+
   totSteps = 0;
   maxSteps = 0;
   for (loc = 0; loc < numLocs; loc++) {
     totSteps += steps[loc]; // count total number of data points expected
-    if (steps[loc] > maxSteps) 
+    if (steps[loc] > maxSteps)
       maxSteps = steps[loc];
   }
   numData = countLines(dataFile); // determine number of data points in file
@@ -493,14 +668,20 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes, int totNu
   }
 
   in1 = openFile(dataFile, "r");
-  //  in2 = openFile(sigmaFile, "r");
+ //(dm) removed in2 = openFile(sigmaFile, "r");
   in2 = openFile(validFile, "r");
+  in3 = openFile(sigmaFile, "r");//better to add sigmaFile as in3 as in2 is already assigned to validFile
 
   data = (double ***)malloc(numLocs * sizeof(double **));
   for (loc = 0; loc < numLocs; loc++)
     data[loc] = make2DArray(steps[loc], numDataTypes); // make 2-d array just big enough for known # of time steps in this location
   model = make2DArray(numData, numDataTypes);
-  //  sigmas = make2DArray(numData, numDataTypes);
+
+  //  (dm) added code to read sigmas for each time step and each data type
+  sigmas = (double ***)malloc(numLocs * sizeof(double **));
+  for (loc = 0; loc < numLocs; loc++)
+    sigmas[loc] = make2DArray(steps[loc], numDataTypes); // make 2-d array just big enough for known # of time steps in this location
+
   valid = (int ***)malloc(numLocs * sizeof(int **));
   for (loc = 0; loc < numLocs; loc++)
     valid[loc] = make2DIntArray(numData, numDataTypes); // make 2-d array just big enough for known # of time steps in this location
@@ -512,22 +693,28 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes, int totNu
       // assign data elements appropriately, based on which data types we're using:
       for (i = 0; i < numDataTypes; i++)
 	data[loc][index][i] = oneLine[dataTypeIndices[i]];
-      
+
       readDataLine(in2, oneLine, totNumDataTypes); // read valid file
       // assign valid elements appropriately, based on which data types we're using:
       for (i = 0; i < numDataTypes; i++)
 	valid[loc][index][i] = (oneLine[dataTypeIndices[i]] >= validFrac);
+
+      readDataLine(in3, oneLine, totNumDataTypes); // read sigmas file
+      // assign sigmas elements appropriately, based on which data types we're using:
+      for (i = 0; i < numDataTypes; i++)
+    	  sigmas[loc][index][i] = oneLine[dataTypeIndices[i]];
     }
   }
 
   free(oneLine);
   fclose(in1);
   fclose(in2);
+  fclose(in3);
 
   startOpt = (int *)malloc(numLocs * sizeof(int));
   endOpt = (int *)malloc(numLocs * sizeof(int));
   readIndicesFile(optIndicesFile, startOpt, endOpt, numLocs, steps);
-  
+
   // now find start day, start year, and steps per day
 
   aggInfo = (AggregateInfo *)malloc(numLocs * sizeof(AggregateInfo));
@@ -618,20 +805,20 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes, int totNu
       exit(1);
     }
 
-    fprintf(outFile, "Location #%d: Post-comparisons: start year = %d, start day = %d, # days = %d\n\n", 
+    fprintf(outFile, "Location #%d: Post-comparisons: start year = %d, start day = %d, # days = %d\n\n",
 	    loc, aggInfo[loc].startYear, aggInfo[loc].startDay, aggInfo[loc].numDays);
-    
+
     aggInfo[loc].spd = (int *)malloc(aggInfo[loc].numDays * sizeof(int));
-    
+
     fseek(in1, filePos, SEEK_SET); /* rewind to just before first spd value after any we skipped to get to startCompare
 				      note: we have skipped one extra spd string - but this is recorded in saved values ("start*" variables)
 				      SEEK_SET makes offset from start of file; filePos is set above */
     /* restore dataCount, count and spd from 1st pass through line
        These were set when we were at position given by filePos
        Note: we may have to deal with count > 0 */
-    
+
     dataCount = startDataCount;
-    count = startCount; 
+    count = startCount;
     spd = startSpd;
 
     aggInfo[loc].spd[0] = dataCount - aggInfo[loc].startPt + 1; // accounts for possible missing steps in first day
@@ -643,7 +830,7 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes, int totNu
     // if count > 0, we just leave count and spd as they are - as if we just read #count
 
     // now fill spd array:
-    index = 1; 
+    index = 1;
     while (index < aggInfo[loc].numDays) {
       while (count > 0 && index < aggInfo[loc].numDays) { // while loop needed to process #n possibility
 	aggInfo[loc].spd[index] = spd;
@@ -651,7 +838,7 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes, int totNu
 	index++;
 	count--;
       } // while
-      
+
       fscanf(in1, "%s", spdString);
       status = parseSpdValue(spdString, &spd, &count);
     } // outer while
@@ -695,11 +882,11 @@ void readFileForAgg(char *fileForAgg, int numDataTypes, double myUnaggedWeight) 
 
   f = openFile(fileForAgg, "r");
 
-  maxCount = 0; 
+  maxCount = 0;
   for (loc = 0; loc < numLocs; loc++) {
     // first, find number of agged steps in this location:
     filePos = ftell(f); // save current location
-    count = 0; 
+    count = 0;
     fscanf(f, "%d", &curr);
     while (curr != -1) { // count number of values before next -1
       count++;
@@ -710,7 +897,7 @@ void readFileForAgg(char *fileForAgg, int numDataTypes, double myUnaggedWeight) 
     if (count > maxCount)
       maxCount = count;
 
-    // now fill aggSteps[loc] vector 
+    // now fill aggSteps[loc] vector
     fseek(f, filePos, SEEK_SET); // rewind to beginning of this location (SEEK_SET makes offset from start of file)
     sum = 0; // keep count of aggSteps to make sure we reach correct total
     for (i = 0; i < numAggSteps[loc]; i++) { // read each piece of data
@@ -743,9 +930,9 @@ OutputInfo *newOutputInfo(int numDataTypes, int loc) {
   OutputInfo *outputInfo;
   int years;
   int i;
-  
+
   outputInfo = (OutputInfo *)malloc(numDataTypes * sizeof(OutputInfo));
-  
+
   years = aggInfo[loc].numDays/365 + 2; // this is the most years that could be represented by this number of days
   for (i = 0; i < numDataTypes; i++)
     outputInfo[i].years = makeArray(years);
@@ -794,6 +981,11 @@ void cleanupParamchange() {
     free2DArray((void **)valid[loc]);
   free(valid);
 
+  // JZ ADD: Free sigma values
+  for (loc = 0; loc < numLocs; loc++)
+    free2DArray((void **)sigmas[loc]);
+  free(sigmas);
+
   for (loc = 0; loc < numLocs; loc++)
     free(aggInfo[loc].spd);
   free(aggInfo);
@@ -806,7 +998,7 @@ void cleanupParamchange() {
       free(aggSteps[loc]);
     free(aggSteps);
   }
-  
+
   if (aggedData != NULL) { // we've malloced it
     for (loc = 0; loc < numLocs; loc++)
       free2DArray((void **)aggedData[loc]);

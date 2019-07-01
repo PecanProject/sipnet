@@ -18,8 +18,8 @@
 #if EXTRA_DATA_TYPES
 #define MAX_DATA_TYPES 20
 #else
-#define MAX_DATA_TYPES 3
-#endif 
+#define MAX_DATA_TYPES 5
+#endif
 
 
 // write to file which model components are turned on
@@ -60,7 +60,7 @@ void cleanupModel(int numLocs);
 
 /* pre: outArray has dimensions of at least (# model steps) x numDataTypes
    dataTypeIndices[0..numDataTypes-1] gives indices of data types to use (see DATA_TYPES array in sipnet.h)
-   
+
    run model with parameter values in spatialParams, don't output to file
    instead, output some variables at each step into an array
    Run at spatial location given by loc (0-indexing)
@@ -88,7 +88,7 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, Spatia
    If out != NULL, do main outputting to out
    If outputItems != NULL
 */
-void sensTest(FILE *out, OutputItems *outputItems, int paramNum, double low, double high, int numRuns, SpatialParams *spatialParams, int loc); 
+void sensTest(FILE *out, OutputItems *outputItems, int paramNum, double low, double high, int numRuns, SpatialParams *spatialParams, int loc);
 
 
 /* PRE: outputItems has been created with newOutputItems

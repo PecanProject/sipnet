@@ -42,7 +42,7 @@ typedef struct OutputInfoStruct {
 double difference(double *sigma, OutputInfo *outputInfo,
 		  int loc, SpatialParams *spatialParams, double paramWeight,
 		  void (*modelF)(double **, int, int *, SpatialParams *, int),
-		  int dataTypeIndices[], int numDataTypes);
+		  int dataTypeIndices[], int numDataTypes, int costFunction, double dataTypeWeights[]);
 
 
 
@@ -62,9 +62,9 @@ double difference(double *sigma, OutputInfo *outputInfo,
    if i < numDataTypes/2 then sigma[i] gives sigma for unaggregated data; otherwise for aggregated data)
    Return mean error, mean daily-aggregated error, and yearly-aggregated output for each year
    and each data type in *outputInfo array (indexed like sigma array - see above)
-   
+
    Pre: sigma and outputInfo are already malloced, as are outputInfo[*].years arrays
-   global *numAggSteps, **aggSteps and ***aggedData have all been set appropriately, 
+   global *numAggSteps, **aggSteps and ***aggedData have all been set appropriately,
    and global **aggedModel has been malloced appropriately
    numDataTypes is actually TWICE the number of data types
    (for each data type, one unaggregated and one aggregated)
@@ -74,10 +74,14 @@ double difference(double *sigma, OutputInfo *outputInfo,
    (NOTE: UNTESTED FOR ANYTHING BUT STARTOPT=1, ENDOPT=-1 (I.E. ALL POINTS))
    [IGNORE paramWeight - just there to be consistent with difference function above]
 */
+
+// 6/9/11: For now we don't do anything with the cost function or data Type weights - we just want to make
+// it consistent with the difference function above so we don't get an error.
+
 double aggedDifference(double *sigma, OutputInfo *outputInfo,
 		       int loc, SpatialParams *spatialParams, double paramWeight,
 		       void (*modelF)(double **, int, int *, SpatialParams *, int),
-		       int dataTypeIndices[], int numDataTypes); 
+		       int dataTypeIndices[], int numDataTypes, int costFunction, double dataTypeWeights[]);
 
 /* Take array of model output, compare output with measured data - for given dataNum
    (i.e. perform comparisons between model[*][dataNum] and data[loc][*][dataNum]
@@ -108,7 +112,7 @@ void aggregates(OutputInfo *outputInfo, double **model, int loc, int dataNum);
    where these files have one line for each location, and each line contains two integers: start & end;
    if either of these file names is given as an empty string (""), use all data points for optimizations or model-data comparisons.
    NOTE: Both of these use 1-indexing; end = -1 means go to end
-   
+
    steps is an array giving the number of time steps at each of the myNumLocs locations
 
    This function also allocates space for model array

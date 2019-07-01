@@ -1,13 +1,13 @@
 ! Input file for the subsetData program
 
-INPUT_FILENAME = niwot
+INPUT_FILENAME = ../MODISdata/niwotAllDataModis
 ! base name of files containing existing input data
 
-OUTPUT_FILENAME = niwot_subset
+OUTPUT_FILENAME = ../MODISdata/testData/niwotMODIS_test
 ! base name of desired output files, containing subset of input files
 
-START_YEAR = -1
-START_DAY = -1
+START_YEAR = 2003
+START_DAY = 152
 ! To start at the beginning of the record,
 !  specify START_YEAR = START_DAY = -1
 ! START_DAY: Julian day of year
@@ -24,7 +24,7 @@ START_DAY = -1
 ! Nov 1 = 305
 ! Dec 1 = 335
 
-NUM_DAYS = -1
+NUM_DAYS = 30
 ! To go to the end of the record, specify NUM_DAYS = -1
 
 AGGREGATION = none
