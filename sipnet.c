@@ -1009,6 +1009,8 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair, d
     dTemp = 0.0;
 
   dVpd = 1.0 - params.dVpdSlope * pow(vpd, params.dVpdExp);
+  if (dVpd < 0)
+    dVpd = 0.0;
 
   calcLightEff3(&lightEff, lai, par);
 
