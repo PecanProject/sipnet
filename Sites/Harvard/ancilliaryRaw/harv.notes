@@ -1,0 +1,173 @@
+plantsInit: from Barford et al., 2001 ("Factors Controlling long and short-term
+sequestration of atmospheric co2 in a mid-latitude forest"), 
+plant c in 2001 is 10000 g C/m^2 above-ground 
+about 80% of plant c is above-ground, so total of 10000/.8 = 12500 g C/m^2
+They estimate that 160*.6 = 100 g C/m^2/yr are stored in biomass, 
+so extrapolating backwards we have about 11500 g C/m^2/yr in 1992
+Aber et al., 1993 ("Plant and soil responses to chronic nitrogen additions at the harvard
+forest, mass") give about the same: 11000 g C/m^2
+We'll start with 11000 g C/m^2
+(note: we lump together above-ground and below-ground wood)
+
+litterInit: 400 g C/m^2: guess based on vegetation turnover:
+125 g C/m^2/yr leaves, 125 g C/m^2/yr wood, want litter to stay 1-2 yrs
+
+soilInit: from paper by Curtis et al. (cited by Rob):
+soil c is 8800 g C/m^2, with change of 20 g C/m^2/yr
+so 10 yrs ago, 8600 g C/m^2
+used to use:
+from Magill et al., 2000 ("Long-term nitrogen additions and nitrogen saturation
+in two temperate forests"),
+soil c is about 6300 g C/m^2
+ACTUALLY, WE'LL GO BACK TO USING THE NUMBER FROM MAGILL ET AL
+- JUST CARE ABOUT UPPER LAYER.
+
+
+litterWaterInit: assume initially full bucket
+
+soilWaterInit: assume initially full bucket
+
+aMax: from PnET: using N% of 2.2, slope of 71.9, intercept of -46
+aMax = -46 + 71.9*2.2 = 112
+
+aMaxFrac: from PnET
+
+baseFolRespFrac: from PnET
+
+psnTMin: from PnET
+
+psnTOpt: from PnET
+
+vegRespQ10: 2.0 (standard value used in literature)
+
+dVpdSlope: from PnET
+
+dVpdExp: from PnET
+
+halfSatPar: from PnET (converted from 200 uE/sec to 17 E/day)
+
+attenuation: from PnET
+
+leafOnDay: from param. optimization (144 = May 24)
+
+gddLeafOn: from PnET, mean of GDDFolStart and GDDFolEnd: (100 + 900)/2 = 500
+
+soilTempLeafOn: 12 degrees = mean of soil temps corresponding to the 10 diff. leafOn params - see 10/20/03 notes)
+Expect retrieved value to be somewhat higher, though, since 12 is often reached before the given leafOut date (since springtime soil temp is not a strictly increasing function)
+
+leafOffDay: from param. optimization (285 = Oct. 12)
+
+leafGrowth: from records from Harv. forest LTER website, max LAI about 4
+To get leafGrowth (in g C * m^-2), multiply by leafSpWt * cFracLeaf
+
+leafAllocation: unused
+
+leafTurnoverRate: unused
+
+baseVegResp (growth + maint. combined in one term): 
+Edwards and Hanson, 1996 ("stem respiration in a closed-canopy upland oak forest")
+give average of 149 g C/m^2 in '93, 204 g C/m^2 in '94 total stem respiration
+Avg. = 177 g C respired/m^2/yr
+in a forest with a total of 160 Mg C biomass/hectare = 16000 g C/m^2
+So we have 177 g C respired/m^2/yr * (1 m^2/16000 g C) = .011 g C respired/g C/yr
+Mean temperature here is 13.3 degrees C
+Assuming a Q10 of 2.0 and linear scaling (which is NOT the case,
+but should give an ok first guess), we get .011 / 2^(13.3/10) 
+= .004 g C respired/g C/yr at 0 degrees C
+REVISED:
+This gave about .008 g/g/yr, so we want .004 * .011/.008 = .006 g/g/yr at 0 degrees C
+(note: there may be a problem with using this value, from Tennessee - perhaps baseVegResp
+in colder climates is higher, to make total resp. about the same???)
+
+baseVegResp, version 2 (only maint. resp):
+same as old baseVegResp, *except*:
+Edwards and Hanson give GrowthResp = .44 * (total stem resp) (mean from their data table)
+So we get .003 g C respired/g C/yr at 0 degrees C maintenance resp.
+
+litterBreakdownRate: want turnover time of 1-2 years (say 1.5 years) (from Rob)
+from some previous experiments, we found that rSoil = .0574 g/g/yr
+when baseSoilResp = 0.03 g/g/yr
+So, to get .67 g/g/yr, set litterBreakdownRate to .67 * .03/.0574 = .4 g/g/yr
+
+fracLitterRespired: 0.5 (from Rob)
+Century gives values between 0.45 and 0.55 for most pools
+
+baseSoilResp: TEM gives about .002 g/g/mo = .024 g/g/yr [soil and detritus]
+Aber et al. '97 (PnET CN) give .072 g/g/yr at 11 degrees C [just soil]
+Using a Q10 of 2, we get 0.034 g/g/yr
+For a first guess, we'll use 0.03 g/g/yr
+
+soilRespQ10: 2.0 (standard value used in literature)
+
+T0: Lloyd and Taylor (1994, "On the temperature dependence of soil respiration") get a value of -46 C
+    By varying this value, we find that T0 = -25 gives resp. at 20 C about 250x higher than resp at 0 C - so use this as maximum
+    And use T0 = -273 (i.e. absolute zero) as minumum (note that this gives a basically flat response to temperature)
+
+E0: Lloyd and Taylor (1994) get a value of 309 C
+    We set min at 0 (no temperature response), and arbitrarily set max at 618 C (to be symmetrical)
+    (However, note that we expect strong trade-off between E0 and T0; 
+    Falge et al. (2001, "Gap filling strategies for defensible annual sums of net ecosystem exchange") fix E0 at 309 and just estimate T0:
+    we'll do this as well)
+
+soilRespMoistEffect: from PnET (note that our soilRespMoistEffect has a slightly
+different meaning: PnET gives 0, which corresponds to 1 in sipnet)
+
+waterRemoveFrac: PnET gives 0.04 - ie 4% per day
+	Since we have potTrans as a daily rate rather than a daily total, we need to
+	convert the daily total of 4% of water to a daily RATE during the daytime
+	Assuming a 12 hour day, 4% over the day means a rate of 8%/day over the 
+	daytime (ie the times of photosynthesis) (thus removing 4% of water during the
+	daytime and none at night) - so we'll use a value of 0.08
+
+wueConst: from PnET
+
+litterWHC: NO IDEA - FIND THIS OUT!!!
+
+soilWHC: from PnET
+
+immedEvapFrac: PnET's precIntFrac, rounded to 1 sig. fig.
+
+fastFlowFrac: from PnET
+
+snowMelt: from PnET (Aber and Federer, '92), 0.15 cm snow melted per degree per day
+(this number is in turn from the BROOK model - Federer and Lash 1978)
+
+litWaterDrainRate: Entirely arbitrary guess (1 mm/day at full moisture saturation), but give it a big range (.1 mm/day to 1 cm/day)
+
+rdConst: mean of values derived from Camillo and Gurney 1986 and value of 503.13 reported
+in Sellers et al. 1989, for a tropical forest with LAI 5 (lower LAI -> lower rdConst)
+Camillo and Gurney gave a range of retrieved z0 values of 0.02 to 0.7 cm
+and rdConst = (ln(z0/50))^2/(0.4)^2, giving a range of 114 - 363
+
+rSoilConst1: from Sellers et al. 1996 (Part I)
+
+rSoilConst2: from Sellers et al. 1996 (Part I)
+
+leafCSpWt:
+Scott Ollinger gives 60-80 for leafSpWt (we'll use 70)
+Multiply this by 0.45 to get leafCSpWt of 32
+
+leafSpWt (deprecated - replaced with leafCSpWt): 
+from personal communication with Scott Olinger (suggested between 60 and 80)
+
+cFracLeaf: from literature (gives values between .45 and .5); PnET uses .45
+
+turnoverRate: Aber et al., 1997 ("Modeling nitrogen saturation in forest ecosystems
+in response to land use and atmospheric deposition") (PnET CN) give:
+fractional mortality of live wood/yr = 0.025
+[NOTE: DOES NOT TAKE ROOT TURNOVER INTO ACCOUNT]
+BUT WE DON'T SEPARATE LIVE & DEAD WOOD!!!
+From Aber et al., 1995, have wood. prod. = 227 g C/m^2/yr
+From Barford et al., net growth of 100 g C/m^2/yr
+Thus have turnover rate of 127 g C/m^2/yr
+This is about .01 g C/g C/m^2/yr, so we'll use this value
+REVISED 11/4/02:
+This didn't take roots into account.
+For now, just treat roots as part of wood (this is probably a bad way to do it)
+Roots = 220 g C/m^2/yr flux (in and out - probably pretty much balanced)
+(from a paper by Curtis et al., provided by Rob)
+Thus, total turnover rate of 347 g C/m^2/yr
+This is about .03 g C/g C/m^2/yr, so we'll use this value
+
+
+docRate: for now, use 0

@@ -1,0 +1,80 @@
+Procedure for adding new Niwot data (e.g. new year):
+
+1) Download annual data
+
+2) Cat together all new years for each of climates, climates.flags, fluxes, and fluxes.flags
+
+3) Run removeheaders on the 4 resulting files
+
+4) (There is no longer a step 4)
+
+5) (There is no longer a step 5)
+
+6) cat new climate data, flux data with previous data
+
+7) Separate out the following from climate file, make separate files for ea.:
+	day (= floor(decimal day of year)), hourofday (= hour + minute/60), ppfd, precip, rhum, soilwetness, tair, tsoil, ustar, wdir, wspd, year
+
+8) FOR OLD (PRE-5/13/04) CLIMFILL ONLY: Create timeday file (vector whose length is length of climate array; start at 0 and increment by 1/48 with each element)
+
+9) Check: take head of each of these (num lines = number of steps in old climate file), diff with old files
+
+10) Modify daylen.m for correct location and times; run it
+
+11) For any climate data with missing values, fill missing values using climfill.m
+Note: only fill values that are missing (ie NaN) - don't remove and refill values that were already filled by some algorithm in the data set.
+Note: this also calculates vpress, vpd and vpdsoil (make sure it's using the right function for this)
+	Optional: Check diff between filled and unfilled files - if some are the same, delete filled, make link to original (to avoid wasting disk space)
+	If not already there, create link from precipfill to precip
+	Multiply vpress, vpd and vpdsoil by 1000, resave
+
+12) NEE = CO2 flux with u* filter
+	Note: CO2 storage already taken into account
+	Note: don't refill data - already filled
+	Convert to g C * m^-2 * timestep^-1 (multiply by (12*1800/1000000))
+	Save it
+	If not already there, create link from neefill to nee_ustarfilt (or whatever the nee file is called)
+
+13) neevalid = ((CO2-flag == 1) & (ustar >= 0.2))
+	Note: use ustar rather than ustarfill to be more conservative
+	Save it
+
+14) FH2O = H2O flux
+	Note: ignore H2O storage
+	Note: don't refill data - already filled
+	Convert it to cm H2O * timestep^-1 (multiply by (18*1800/(1000*10000)))
+	Save it
+	If not already there, create link from fh2ofill to fh2o
+
+15) fh2ovalid = ((LE-flag == 1) & (ustar >= 0.2))
+	Note: use ustar rather than ustarfill to be more conservative
+	Save it 
+
+16) Set ndays (in Matlab), run climdn, fh2odn, needn
+	Divide each entry in intervaldn by 2 (convert from #steps to hours), save it
+
+17) Run validdn for each of fh2o and nee
+
+18) Run soilwetnessdn
+	May want to first modify upperlimit
+	(Outputs soilwetnessdn (in fractional soil wetness) and soilwetnessvaliddn)
+
+19) Run sipnetClim
+	Can compare new niwots.clim with old niwots.clim
+	mv new niwots.clim to ~/sipnet
+
+20) Create niwots.spd file: e.g.
+	1998 305 3 2 #1885 -1
+	Where:
+	1998 = first year
+	305 = first day
+	3 = # time steps in first day
+	2 = # time steps in second day
+	#1885 = short-hand for 1885 2's (i.e. 2 time steps in every following day)
+	-1 = terminator
+
+21) In Matlab, set data = [fh2odns needns soilwetnessdns], save it as niwots.dat
+	Set valid = [fh2ovaliddn neevaliddn soilwetnessvaliddn], save it as niwots.valid
+	Check data and valid against old - basically the same?
+
+CONGRATULATIONS, YOU'RE DONE! NOW RUN IT IN FORWARD MODE AND ASSIMILATION MODE!

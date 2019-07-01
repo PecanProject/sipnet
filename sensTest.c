@@ -84,8 +84,8 @@ int main(int argc, char *argv[]) {
   char option;
   char optIndicesExt[FILE_MAXNAME] = OPT_INDICES_EXT; // extension of optional file holding indices for optimizations
   char optIndicesFile[2*FILE_MAXNAME]; // optional file holding indices for optimizations
-  char aggregationExt[FILE_MAXNAME] = AGGREGATION_EXT; // extension of optional file for aggregating 
-  char aggregationFile[2*FILE_MAXNAME]; // optional file for aggregating 
+  char aggregationExt[FILE_MAXNAME] = AGGREGATION_EXT; // extension of optional file for aggregating
+  char aggregationFile[2*FILE_MAXNAME]; // optional file for aggregating
   char paramFile[FILE_MAXNAME] = PARAM_FILE; // if, after getting optional arguments, paramFile is "", set paramFile = fileName.param
   int loc = LOC;
   double unaggedWeight = UNAGGED_WEIGHT;
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   char climFile[FILE_MAXNAME+24]; // name of climate file
   double (*differenceFunc)(double *, OutputInfo *, int, SpatialParams *, double,
 			   void (*)(double **, int, int *, SpatialParams *, int), int [], int);
-  // function pointer: the difference function to use (depends on whether we're aggregating model & data) 
+  // function pointer: the difference function to use (depends on whether we're aggregating model & data)
 
   // parameters used for performing the sensitivity test:
   char changeParam[PARAM_MAXNAME];
@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
   output = openFile(outFileName, "w");
   nullOutput = tmpfile(); // for output we don't want to see
 
-  readData(fileName, dataTypeIndices, numDataTypes, MAX_DATA_TYPES, numLocs, steps, 
+  readData(fileName, dataTypeIndices, numDataTypes, MAX_DATA_TYPES, numLocs, steps,
 	   validFrac, optIndicesFile, "", nullOutput); // 2nd to last argument is compareIndicesFile, for which we have none
 
   if (strcmp(aggregationFile, "") != 0) { // there is a file for model-data aggregation
@@ -246,13 +246,13 @@ int main(int argc, char *argv[]) {
   paramVal = lowVal;
   for (runNum = 0; runNum < numRuns; runNum++) {
     setSpatialParam(spatialParams, changeIndex, loc, paramVal); // set the parameter value
-    
+
     // run the model, compute log likelihood (model-data error statistic)
     // paramWeight (5th argument) = 0
     loglikely = -1.0 * (*differenceFunc)(sigma, outputInfo, loc, spatialParams,
-					 0, runModelNoOut, dataTypeIndices, numDataTypes);
+					 0, runModelNoOut, dataTypeIndices, numDataTypes,costFunction, dataTypeWeights);
 
-    fprintf(output, "%f\t%f\n", paramVal, loglikely); 
+    fprintf(output, "%f\t%f\n", paramVal, loglikely);
 
     paramVal += changeAmt;
   }
@@ -264,7 +264,7 @@ int main(int argc, char *argv[]) {
   free(steps);
   free(sigma);
   freeOutputInfo(outputInfo, numDataTypes);
-  fclose(output); 
+  fclose(output);
 
   return 0;
 }

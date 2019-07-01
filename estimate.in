@@ -2,7 +2,7 @@
 
 ! --- FILE NAMES ---
 
-FILENAME = niwot
+FILENAME = MODISdata/validationData/niwotMODIS_validation
 ! FILENAME.param is the file of parameter values and info
 !  (unless PARAM_FILE is specified below)
 ! FILENAME.param-spatial is the file of spatially-varying parameters
@@ -17,11 +17,11 @@ FILENAME = niwot
 ! FILENAME.valid contains fraction of valid data points for each time
 !  step (one col. per data type)
 
-PARAM_FILE = none
+PARAM_FILE = Sites/Niwot/modelDefaults/niwotDefault.param
 ! If specified (not 'none'), use given file for parameter values and
 !  info, rather than FILENAME.param
 
-OUTPUT_NAME = niwot-estimated
+OUTPUT_NAME = MODIS_paramEstimates/validationData/NEE/niwot_validationResultsDwnWt
 ! OUTPUT_NAME will store user-readable info about the run
 ! OUTPUT_NAME.param and OUTPUT_NAME.param-spatial will store best
 !  parameter set found
@@ -32,20 +32,40 @@ OUTPUT_NAME = niwot-estimated
 ! --- DATA TYPES TO INCLUDE IN OPTIMIZATION ---
 
 ! 1 = include in optimization; 0 = don't include
-OPT_NEE = 1
 OPT_EVAPOTRANSPIRATION = 0
+OPT_NEE = 1
 OPT_SOIL_WETNESS = 0
+OPT_FAPAR = 1
+OPT_YEARLY_NEE = 1
 
+! --- WEIGHTED LIKELIHOOD DATA TYPES TO INCLUDE IN OPTIMIZATION ---
+
+! 1 = include in optimization; 0 = don't include  ALL WEIGHTS MUST BE NO GREATER THAN 1
+WEIGHT_EVAPOTRANSPIRATION = 0
+WEIGHT_NEE = 1
+WEIGHT_SOIL_WETNESS = 0
+WEIGHT_FAPAR = 1
+WEIGHT_YEARLY_NEE = 1
 
 ! --- VARIABLES CONTROLLING OPTIMIZATION ---
 
 LOC = -1
 ! Location to run at (-1 means run at all locations)
 
+COST_FUNCTION = 2
+! Cost function used in file 
+! = 0: Plain old vanilla cost function used in previous sipnet papers (sigma estimated from likelihood function)
+! = 1: Plain old vanilla cost function where sigma values are read in and estimated.
+! = 2: Log likelihood summed, Down weighted by the number of data points  (Make sure weights = 1 in this case)
+! = 3: Log likelihood product by the number of data types.
+
+! Weights are not used in Cost Functions 2 and 3
+! Note: data stream errors are used in all cost functions except COST_FUNCTION = 0
+
 NUM_RUNS = 1
 ! Number of separate runs to perform
 
-RANDOM_START = 0
+RANDOM_START = 1
 ! If 0, start chains with param. values = guess
 ! If 1, start randomly between min and max
 
@@ -59,6 +79,7 @@ NUM_CHAINS = 10
 !  these as a starting point for the optimization
 !  (doing multiple starts helps prevent getting stuck in local optima)
 
+
 NUM_SPINUPS = 125000
 ! Once temperatures have converged, number of additional iterations
 !  (spin-ups) to run before we start recording (to allow posteriors to
@@ -67,6 +88,7 @@ NUM_SPINUPS = 125000
 ITER = 375000
 ! Number of Metropolis iterations once we've converged and finished
 !  NUM_SPINUPS
+
 
 ADD_FRACTION = 0.5
 ! Initial pDelta, as fraction of parameter range

@@ -37,7 +37,7 @@
 #define VALID_FRAC 0.5 /* fraction of data points which must be valid
 		     to use data from a given time step */
 #define PARAM_WEIGHT 0.0
-
+#define COST_FUNCTION 0  // Set different options for cost functions
 
 void usage(char *progName) {
   printf("Usage: %s [-h] [-i inputFile]\n", progName);
@@ -57,6 +57,14 @@ int initDataTypeIndices(int dataTypeIndices[]) {
   return MAX_DATA_TYPES;
 }
 
+// initialize all elements of data weights array to 1
+
+void initDataTypeWeights(double dataTypeWeights[]) {
+  int i;
+  for (i = 0; i < MAX_DATA_TYPES; i++)
+    dataTypeWeights[i] = 1;
+
+}
 
 /* PRE: dataTypeSwitches is of size MAX_DATA_TYPES
    dataTypeSwitches[i] is 1 if we are including this data type in optimization, 0 if not
@@ -88,13 +96,23 @@ void printDataTypeIndices(int dataTypeIndices[], int numDataTypes, FILE *filePtr
 {
   int i;
   char **dataTypeNames = getDataTypeNames();
-  
+
   fprintf(filePtr, "Data types used in optimization:\n");
   for (i = 0; i < numDataTypes; i++)
-    fprintf(filePtr, "\t%s\n", dataTypeNames[dataTypeIndices[i]]); 
+    fprintf(filePtr, "\t%s\n", dataTypeNames[dataTypeIndices[i]]);
+
 }
-    
-  
+
+// print what weights we're using on each data type to file
+void printDataTypeWeightIndices(int dataTypeIndices[], int numDataTypes, double dataTypeWeights[], FILE *filePtr)
+{
+  int i;
+  char **dataTypeNames = getDataTypeNames();
+
+  fprintf(filePtr, "Data type likelihood weights used in optimization:\n");
+  for (i = 0; i < numDataTypes; i++)
+    fprintf(filePtr, "\t%s=%2.2f\n", dataTypeNames[dataTypeIndices[i]],dataTypeWeights[dataTypeIndices[i]]);
+}
 
 int main(int argc, char *argv[]) {
   char inputFile[INPUT_MAXNAME] = INPUT_FILE;
@@ -109,8 +127,8 @@ int main(int argc, char *argv[]) {
   char compareIndicesFile[2*FILE_MAXNAME]; // optional file holding indices for model-data comparisons
   char optIndicesExt[FILE_MAXNAME] = OPT_INDICES_EXT; // extension of optional file holding indices for optimizations
   char optIndicesFile[2*FILE_MAXNAME]; // optional file holding indices for optimizations
-  char aggregationExt[FILE_MAXNAME] = AGGREGATION_EXT; // extension of optional file for aggregating 
-  char aggregationFile[2*FILE_MAXNAME]; // optional file for aggregating 
+  char aggregationExt[FILE_MAXNAME] = AGGREGATION_EXT; // extension of optional file for aggregating
+  char aggregationFile[2*FILE_MAXNAME]; // optional file for aggregating
   char paramFile[FILE_MAXNAME] = PARAM_FILE; // if, after getting optional arguments, paramFile is "", set paramFile = fileName.param
   long iter = ITER, numSpinUps = NUM_SPIN_UPS;
   int numChains = NUM_CHAINS, numRuns = NUM_RUNS, numAtOnce = NUM_AT_ONCE, loc = LOC;
@@ -119,17 +137,22 @@ int main(int argc, char *argv[]) {
   double validFrac = VALID_FRAC;
   int dataTypeIndices[MAX_DATA_TYPES]; // MAX_DATA_TYPES defined in sipnet.c
   int dataTypeSwitches[MAX_DATA_TYPES];  // 0 or 1 for each data type; used to build dataTypeIndices array
+  double dataTypeWeights[MAX_DATA_TYPES];  // Likelihood Weights for each data type we are optimizing on
   int numDataTypes; // how many data types are we actually optimizing on?
   int runNum;
+  int costFunction; // Determine which cost function we use.
+
   FILE *userOut;
   char inFileName[FILE_MAXNAME], outFileName[FILE_MAXNAME];
   char climFile[FILE_MAXNAME+24]; // name of climate file
   char thisFile[FILE_MAXNAME+24]; // changes for each run
   char paramOutFile[FILE_MAXNAME+48], spatialParamOutFile[FILE_MAXNAME+48]; // for outputting best parameters
-  void *differenceFunc = difference; /* the difference function to use (depends on whether we're aggregating model & data) 
+  void *differenceFunc = difference; /* the difference function to use (depends on whether we're aggregating model & data)
 					(default is plain old vanilla "difference") */
   char **dataTypeNames;
   char optTypeName[NAMELIST_INPUT_MAXNAME];  // names such as OPT_NEE, read in from input file
+  char weightTypeName[NAMELIST_INPUT_MAXNAME];  // names such as WEIGHT_NEE, read in from input file
+
   int i;
 
   numDataTypes = initDataTypeIndices(dataTypeIndices); // initialize array to [0,1,...,MAX_DATA_TYPES-1] (default)
@@ -162,6 +185,7 @@ int main(int argc, char *argv[]) {
   addNamelistInputItem(namelistInputs, "PARAM_FILE", STRING_TYPE, paramFile, FILE_MAXNAME);
   addNamelistInputItem(namelistInputs, "OUTPUT_NAME", STRING_TYPE, outFileName, FILE_MAXNAME);
   addNamelistInputItem(namelistInputs, "LOC", INT_TYPE, &loc, 0);
+  addNamelistInputItem(namelistInputs, "COST_FUNCTION", INT_TYPE, &costFunction, 0);
   addNamelistInputItem(namelistInputs, "NUM_RUNS", INT_TYPE, &numRuns, 0);
   addNamelistInputItem(namelistInputs, "RANDOM_START", INT_TYPE, &randomStart, 0);
   addNamelistInputItem(namelistInputs, "NUM_AT_ONCE", INT_TYPE, &numAtOnce, 0);
@@ -179,6 +203,7 @@ int main(int argc, char *argv[]) {
 
   // one entry for each data type that can be included in optimization:
   dataTypeNames = getDataTypeNames();
+
   for (i = 0; i < MAX_DATA_TYPES; i++)  {
     if (strlen(dataTypeNames[i]) + 4 >= NAMELIST_INPUT_MAXNAME)  {
       printf("ERROR: OPT_%s is too long of a name for namelist input\n", dataTypeNames[i]);
@@ -190,6 +215,19 @@ int main(int argc, char *argv[]) {
 
     addNamelistInputItem(namelistInputs, optTypeName, INT_TYPE, &(dataTypeSwitches[i]), 0);
     dataTypeSwitches[i] = 0;  // initialize to 0 in case it's not read from input file
+  }
+
+  for (i = 0; i < MAX_DATA_TYPES; i++)  {
+    if (strlen(dataTypeNames[i]) + 7 >= NAMELIST_INPUT_MAXNAME)  {
+      printf("ERROR: WEIGHT_%s is too long of a name for namelist input\n", dataTypeNames[i]);
+      printf("Either change the name of this data type, or increase NAMELIST_INPUT_MAXNAME in namelistInput.h\n");
+      exit(1);
+    }
+    strcpy(weightTypeName, "WEIGHT_");
+    strcat(weightTypeName, dataTypeNames[i]);
+
+    addNamelistInputItem(namelistInputs, weightTypeName, DOUBLE_TYPE, &(dataTypeWeights[i]), 0);
+    dataTypeWeights[i] = 0;  // initialize to 0 in case it's not read from input file
   }
 
   // read from input file:
@@ -247,6 +285,7 @@ int main(int argc, char *argv[]) {
   fprintf(userOut, "NUM_CHAINS = %d\n", numChains);
   fprintf(userOut, "ITER = %ld\n", iter);
   fprintf(userOut, "SCALE_FACTOR = %f\n", scaleFactor);
+  fprintf(userOut, "COST_FUNCTION = %d\n", costFunction);
   fprintf(userOut, "LOC = %d\n", loc);
   fprintf(userOut, "NUM_RUNS = %d\n", numRuns);
   fprintf(userOut, "NUM_AT_ONCE = %d\n", numAtOnce);
@@ -259,7 +298,10 @@ int main(int argc, char *argv[]) {
   printDataTypeIndices(dataTypeIndices, numDataTypes, userOut);
   fprintf(userOut, "\n\n");
 
-  readData(inFileName, dataTypeIndices, numDataTypes, MAX_DATA_TYPES, numLocs, steps, 
+  printDataTypeWeightIndices(dataTypeIndices, numDataTypes, dataTypeWeights,userOut);
+  fprintf(userOut, "\n\n");
+
+  readData(inFileName, dataTypeIndices, numDataTypes, MAX_DATA_TYPES, numLocs, steps,
 	   validFrac, optIndicesFile, compareIndicesFile, userOut);
 
   if (strcmp(aggregationFile, "") != 0) { // there is a file for model-data aggregation
@@ -285,10 +327,10 @@ int main(int argc, char *argv[]) {
       sprintf(thisFile, "%s_%d_", outFileName, runNum); /* append runNum to base file name
 							   add extra underscore at end to separate run # from location #
 							*/
-    
-    metropolis(thisFile, spatialParams, loc, differenceFunc, runModelNoOut, 
+
+    metropolis(thisFile, spatialParams, loc, differenceFunc, runModelNoOut,
 	       addFraction, iter, numAtOnce, numChains, randomStart, numSpinUps, paramWeight, scaleFactor,
-	       dataTypeIndices, numDataTypes, userOut);
+	       dataTypeIndices, numDataTypes, costFunction, dataTypeWeights, userOut);
 
     buildFileName(paramOutFile, thisFile, "param");
     strcpy(spatialParamOutFile, paramOutFile);
@@ -303,7 +345,7 @@ int main(int argc, char *argv[]) {
   cleanupParamchange();
   deleteSpatialParams(spatialParams);
   free(steps);
-  fclose(userOut); 
+  fclose(userOut);
 
   return 0;
 }
