@@ -1353,7 +1353,7 @@ void simpleWaterFlow(double *rain, double *snowFall, double *immedEvap, double *
 
 // calculate total rain and snowfall (cm water equiv./day)
 // also, immediate evaporation (from interception) (cm/day)
-void calcPrecip(double *rain, double *snowFall, double *immedEvap)
+void calcPrecip(double *rain, double *snowFall, double *immedEvap, double lai)
 {
   // below freezing -> precip falls as snow
   if (climate->tair <= 0) {
@@ -1373,7 +1373,20 @@ void calcPrecip(double *rain, double *snowFall, double *immedEvap)
      For now we'll assume that these two effects cancel, and immediate evap. is a constant fraction
      Note that we don't evaporate snow here (we'll let sublimation take care of that)
   */
-  *immedEvap = (*rain) * params.immedEvapFrac;
+
+   #if LEAF_WATER
+    double maxLeafPool;
+
+    maxLeafPool = lai * params.leafPoolDepth; // calculate current leaf pool size depending on lai
+    *immedEvap = (*rain) * params.immedEvapFrac; 
+
+    // don't evaporate more than pool size, excess water will go to the soil
+    if(*immedEvap > maxLeafPool)
+     *immedEvap = maxLeafPool;
+ 
+   #else
+    *immedEvap = (*rain) * params.immedEvapFrac;
+   #endif
 }
 
 // snowpack dynamics:
@@ -1953,7 +1966,7 @@ void calculateFluxes() {
 	#if MODEL_WATER // water modeling happens here:
 
 		#if COMPLEX_WATER
-		  	calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap));
+		  	calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), lai);
   			netRain = fluxes.rain - fluxes.immedEvap;
   			snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
 			soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.topDrainage), &(fluxes.bottomDrainage),
