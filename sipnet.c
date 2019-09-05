@@ -79,6 +79,10 @@
 // does water from the top layer drain down into bottom layer even if top layer not overflowing?
 // if litter water is off, then litter water drainage is off: litter water drainage wouldn't do anything
 
+#define LEAF_WATER 1 && (COMPLEX_WATER)
+// calculate leaf pool and evaporate from that pool 
+// makes immediate evaporation more realistic for smaller timesteps
+
 #define SNOW (1 || (COMPLEX_WATER)) && MODEL_WATER
 // keep track of snowpack, rather than assuming all precip. is liquid
 // note: when using a complex water submodel, we ALWAYS keep track of snowpack
