@@ -296,6 +296,7 @@ typedef struct Parameters {
   double m_ballBerry ; // slope for the Ball Berry relationship
   double leafCSpWt; // g C * m^-2 leaf area
   double cFracLeaf; // g leaf C * g^-1 leaf
+  double leafPoolDepth; // leaf (evaporative) pool rim thickness in mm
 
   double woodTurnoverRate; /* average turnover rate of woody plant C, in fraction per day
 			  (leaf loss handled separately)
@@ -712,6 +713,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   initializeOneSpatialParam(spatialParams, "soilWHC", &(params.soilWHC), 1);
   initializeOneSpatialParam(spatialParams, "immedEvapFrac", &(params.immedEvapFrac), COMPLEX_WATER);
   initializeOneSpatialParam(spatialParams, "fastFlowFrac", &(params.fastFlowFrac), COMPLEX_WATER);
+  initializeOneSpatialParam(spatialParams, "leafPoolDepth", &(params.leafPoolDepth), LEAF_WATER);
 
   initializeOneSpatialParam(spatialParams, "snowMelt", &(params.snowMelt), SNOW);
   initializeOneSpatialParam(spatialParams, "litWaterDrainRate", &(params.litWaterDrainRate), LITTER_WATER_DRAINAGE);
