@@ -48,7 +48,7 @@
 // Lloyd-Taylor model is R = R0 * e^(E0 * (1/(-T0) - 1/(T - T0))) (see Lloyd and Taylor 1994, "On the temperature dependence of soil respiration")
 // where R0 is rate at 0 degrees C, T is soil temp., E0 and T0 are parameters
 
-#define SEASONAL_R_SOIL 0 && !LLOYD_TAYLOR
+#define SEASONAL_R_SOIL 1 && !LLOYD_TAYLOR
 // use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil < (some threshold)?
 // if so, use standard parameters for warm soil, separate parameters for cold soil
 // if we're using the Lloyd-Taylor model, we won't use different parameters at different temperatures
@@ -1718,7 +1718,7 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 			#if SEASONAL_R_SOIL 		// decide which parameters to use based on tsoil
   				if (tsoil >= params.coldSoilThreshold) {	// use normal (warm temp.) params
 		 			tempEffect=params.baseSoilResp*pow(params.soilRespQ10,tsoil/10);
-  				else // use cold temp. params
+  				} else { // use cold temp. params
   					tempEffect=params.baseSoilRespCold*pow(params.soilRespQ10Cold,tsoil/10);
   				}
 			#else // SEASONAL_R_SOIL FALSE -> always use normal params
