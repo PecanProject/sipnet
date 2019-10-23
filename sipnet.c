@@ -48,7 +48,7 @@
 // Lloyd-Taylor model is R = R0 * e^(E0 * (1/(-T0) - 1/(T - T0))) (see Lloyd and Taylor 1994, "On the temperature dependence of soil respiration")
 // where R0 is rate at 0 degrees C, T is soil temp., E0 and T0 are parameters
 
-#define SEASONAL_R_SOIL 0 && !LLOYD_TAYLOR
+#define SEASONAL_R_SOIL 1 && !LLOYD_TAYLOR
 // use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil < (some threshold)?
 // if so, use standard parameters for warm soil, separate parameters for cold soil
 // if we're using the Lloyd-Taylor model, we won't use different parameters at different temperatures
@@ -78,6 +78,10 @@
 #define LITTER_WATER_DRAINAGE 1 && (LITTER_WATER)
 // does water from the top layer drain down into bottom layer even if top layer not overflowing?
 // if litter water is off, then litter water drainage is off: litter water drainage wouldn't do anything
+
+#define LEAF_WATER 1 && (COMPLEX_WATER)
+// calculate leaf pool and evaporate from that pool 
+// makes immediate evaporation more realistic for smaller timesteps
 
 #define SNOW (1 || (COMPLEX_WATER)) && MODEL_WATER
 // keep track of snowpack, rather than assuming all precip. is liquid
@@ -292,6 +296,7 @@ typedef struct Parameters {
   double m_ballBerry ; // slope for the Ball Berry relationship
   double leafCSpWt; // g C * m^-2 leaf area
   double cFracLeaf; // g leaf C * g^-1 leaf
+  double leafPoolDepth; // leaf (evaporative) pool rim thickness in mm
 
   double woodTurnoverRate; /* average turnover rate of woody plant C, in fraction per day
 			  (leaf loss handled separately)
@@ -708,6 +713,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile, char *spati
   initializeOneSpatialParam(spatialParams, "soilWHC", &(params.soilWHC), 1);
   initializeOneSpatialParam(spatialParams, "immedEvapFrac", &(params.immedEvapFrac), COMPLEX_WATER);
   initializeOneSpatialParam(spatialParams, "fastFlowFrac", &(params.fastFlowFrac), COMPLEX_WATER);
+  initializeOneSpatialParam(spatialParams, "leafPoolDepth", &(params.leafPoolDepth), LEAF_WATER);
 
   initializeOneSpatialParam(spatialParams, "snowMelt", &(params.snowMelt), SNOW);
   initializeOneSpatialParam(spatialParams, "litWaterDrainRate", &(params.litWaterDrainRate), LITTER_WATER_DRAINAGE);
@@ -1347,7 +1353,7 @@ void simpleWaterFlow(double *rain, double *snowFall, double *immedEvap, double *
 
 // calculate total rain and snowfall (cm water equiv./day)
 // also, immediate evaporation (from interception) (cm/day)
-void calcPrecip(double *rain, double *snowFall, double *immedEvap)
+void calcPrecip(double *rain, double *snowFall, double *immedEvap, double lai)
 {
   // below freezing -> precip falls as snow
   if (climate->tair <= 0) {
@@ -1367,7 +1373,20 @@ void calcPrecip(double *rain, double *snowFall, double *immedEvap)
      For now we'll assume that these two effects cancel, and immediate evap. is a constant fraction
      Note that we don't evaporate snow here (we'll let sublimation take care of that)
   */
-  *immedEvap = (*rain) * params.immedEvapFrac;
+
+   #if LEAF_WATER
+    double maxLeafPool;
+
+    maxLeafPool = lai * params.leafPoolDepth; // calculate current leaf pool size depending on lai
+    *immedEvap = (*rain) * params.immedEvapFrac; 
+
+    // don't evaporate more than pool size, excess water will go to the soil
+    if(*immedEvap > maxLeafPool)
+     *immedEvap = maxLeafPool;
+ 
+   #else
+    *immedEvap = (*rain) * params.immedEvapFrac;
+   #endif
 }
 
 // snowpack dynamics:
@@ -1699,7 +1718,7 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 			#if SEASONAL_R_SOIL 		// decide which parameters to use based on tsoil
   				if (tsoil >= params.coldSoilThreshold) {	// use normal (warm temp.) params
 		 			tempEffect=params.baseSoilResp*pow(params.soilRespQ10,tsoil/10);
-  				else // use cold temp. params
+  				} else { // use cold temp. params
   					tempEffect=params.baseSoilRespCold*pow(params.soilRespQ10Cold,tsoil/10);
   				}
 			#else // SEASONAL_R_SOIL FALSE -> always use normal params
@@ -1947,7 +1966,7 @@ void calculateFluxes() {
 	#if MODEL_WATER // water modeling happens here:
 
 		#if COMPLEX_WATER
-		  	calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap));
+		  	calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), lai);
   			netRain = fluxes.rain - fluxes.immedEvap;
   			snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
 			soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.topDrainage), &(fluxes.bottomDrainage),
