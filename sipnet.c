@@ -48,7 +48,7 @@
 // Lloyd-Taylor model is R = R0 * e^(E0 * (1/(-T0) - 1/(T - T0))) (see Lloyd and Taylor 1994, "On the temperature dependence of soil respiration")
 // where R0 is rate at 0 degrees C, T is soil temp., E0 and T0 are parameters
 
-#define SEASONAL_R_SOIL 1 && !LLOYD_TAYLOR
+#define SEASONAL_R_SOIL 0 && !LLOYD_TAYLOR
 // use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil < (some threshold)?
 // if so, use standard parameters for warm soil, separate parameters for cold soil
 // if we're using the Lloyd-Taylor model, we won't use different parameters at different temperatures
@@ -79,7 +79,7 @@
 // does water from the top layer drain down into bottom layer even if top layer not overflowing?
 // if litter water is off, then litter water drainage is off: litter water drainage wouldn't do anything
 
-#define LEAF_WATER 1 && (COMPLEX_WATER)
+#define LEAF_WATER 0 && (COMPLEX_WATER)
 // calculate leaf pool and evaporate from that pool 
 // makes immediate evaporation more realistic for smaller timesteps
 
