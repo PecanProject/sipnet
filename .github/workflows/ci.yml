@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+jobs:
+
+  # try to build PEcAn on all versions of R
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        OS:
+          - macos-latest
+          - ubuntu-latest
+          - ubuntu-20.04
+          - windows-latest
+
+    runs-on: ${{ matrix.OS }}
+
+    steps:
+    # checkout source code
+    - uses: actions/checkout@v2
+
+    # compile sipnet
+    - name: compile sipnet
+      run: make
+
+    # run single sipnet run
+    - name: sipnet on Sites/Niwot/niwot
+      run: ./sipnet
