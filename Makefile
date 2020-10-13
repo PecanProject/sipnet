@@ -22,19 +22,19 @@ SUBSET_DATA_OFILES=$(SUBSET_DATA_CFILES:.c=.o)
 all: estimate sipnet transpose subsetData
 
 estimate: $(ESTIMATE_OFILES)
-	$(LD) $(LIBLINKS) -o estimate $(ESTIMATE_OFILES)
+	$(LD) -o estimate $(ESTIMATE_OFILES) $(LIBLINKS)
 
 #sensTest: $(SENSTEST_OFILES)
-#	$(LD) $(LIBLINKS) -o sensTest $(SENSTEST_OFILES)
+#	$(LD) -o sensTest $(SENSTEST_OFILES) $(LIBLINKS)
 
 sipnet: $(SIPNET_OFILES)
-	$(LD) $(LIBLINKS) -o sipnet $(SIPNET_OFILES)
+	$(LD) -o sipnet $(SIPNET_OFILES) $(LIBLINKS)
 
 transpose: $(TRANSPOSE_OFILES)
-	$(LD) $(LIBLINKS) -o transpose $(TRANSPOSE_OFILES)
+	$(LD) -o transpose $(TRANSPOSE_OFILES) $(LIBLINKS)
 
 subsetData: $(SUBSET_DATA_OFILES)
-	$(LD) $(LIBLINKS) -o subsetData $(SUBSET_DATA_OFILES)
+	$(LD) -o subsetData $(SUBSET_DATA_OFILES) $(LIBLINKS)
 
 clean:
 	rm -f $(ESTIMATE_OFILES) $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) estimate sensTest  sipnet transpose subsetData
