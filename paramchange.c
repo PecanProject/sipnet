@@ -534,7 +534,7 @@ int countLines(char *fileName) {
 
   f = openFile(fileName, "r");
   numLines = 0;
-  while ((fgets(line, sizeof(line), f) != NULL) && (strcmp(line, "\n") != 0)) // read & ignore
+  while ((fgets(line, sizeof(line), f) != NULL) && (strcmp(line, "\n") != 0) && (strcmp(line, "\r\n") != 0)) // read & ignore
     numLines++;
 
   fclose(f);

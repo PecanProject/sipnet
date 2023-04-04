@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
 
     // do each run, output to fileName#.out
     runNum = 1;
-    while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0)) { 
+    while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0) && (strcmp(line, "\r\n") != 0)) { 
       // get next set of parameter values and do next run
       sprintf(outFile, "%s%d.out", argv[optind + 3], runNum);
       out = openFile(outFile, "w");
@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
 
     for (k = 0; k < 2; k++) {
       runNum = 1;
-      while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0)) { 
+      while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0) && (strcmp(line, "\r\n") != 0)) { 
 	// get next set of parameter values and do next run
 	if (numToSkip > 0) {
 	  strtok(line, " \t"); // read and ignore first value

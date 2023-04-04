@@ -198,7 +198,7 @@ void initializeOneSpatialParam(SpatialParams *spatialParams, char *name, double 
         spatialParamFile is open and file pointer points to 2nd line (after the numLocs line)
  */
 void readSpatialParams(SpatialParams *spatialParams, FILE *paramFile, FILE *spatialParamFile)  {
-  const char *SEPARATORS = " \t\n"; // characters that can separate values in parameter files
+  const char *SEPARATORS = " \t\n\r"; // characters that can separate values in parameter files
   const char *COMMENT_CHARS = "!";  // comment characters (ignore everything after this on a line)
 
   char line[256];
