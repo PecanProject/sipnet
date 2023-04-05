@@ -197,7 +197,7 @@ int stripComment(char *line, const char *commentChars)  {
   }
   
   // determine length without any leading blanks
-  lenTrim = strlen(line) - strspn(line, " \t\n");
+  lenTrim = strlen(line) - strspn(line, " \t\n\r");
   return (lenTrim == 0);
 }
   

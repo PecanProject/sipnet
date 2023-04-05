@@ -185,16 +185,16 @@ int main(int argc, char *argv[]) {
 
     // first find number of changeable parameters:
     fgets(line, sizeof(line), pChange);
-    strtok(line, " \t\n"); // read and ignore first token -- split on space, tab & newline
+    strtok(line, " \t\n\r"); // read and ignore first token -- split on space, tab, newline & carriage return
     numChangeableParams = 1; // assume at least one changeableParam
-    while (strtok(NULL, " \t\n") != NULL) // now count # of remaining tokens (i.e. # of parameter names)
+    while (strtok(NULL, " \t\n\r") != NULL) // now count # of remaining tokens (i.e. # of parameter names)
       numChangeableParams++;
 
     // now allocate space for array and find the param indices:
     indices = (int *)malloc(numChangeableParams * sizeof(int));
     rewind(pChange);
     fgets(line, sizeof(line), pChange);
-    paramName = strtok(line, " \t\n");  // get the first item
+    paramName = strtok(line, " \t\n\r");  // get the first item
     for (i = 0; i < numChangeableParams; i++)  {
       indices[i] = locateParam(spatialParams, paramName);
       if (indices[i] == -1)  {
@@ -202,7 +202,7 @@ int main(int argc, char *argv[]) {
 	printf("Please fix first line of %s and re-run\n", mcParamFile);
 	exit(1);
       }
-      paramName = strtok(NULL, " \t\n");  /* get the next item (note: the last time this is called, we'll have paramName = NULL;
+      paramName = strtok(NULL, " \t\n\r");  /* get the next item (note: the last time this is called, we'll have paramName = NULL;
 					   that's okay, because we just ignore it */
     }
 
@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
 
       runNum = 1;
       out = NULL;
-      while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0)) { 
+      while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0) && (strcmp(line, "\r\n") != 0)) { 
 	// get next set of parameter values and do next run
 
 	if (doMainOutput)  {
@@ -268,7 +268,7 @@ int main(int argc, char *argv[]) {
 
       for (k = 0; k < 2; k++) {
 	runNum = 1;
-	while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0)) { 
+	while((fgets(line, sizeof(line), pChange) != NULL) && (strcmp(line, "\n") != 0) && (strcmp(line, "\r\n") != 0)) { 
 	  // get next set of parameter values and do next run
 	  if (numToSkip > 0) {
 	    strtok(line, " \t"); // read and ignore first value

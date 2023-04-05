@@ -126,7 +126,7 @@ void readNamelistInputs(NamelistInputs *namelistInputs, const char *fileName)  {
 
   
   strcpy(allSeparators, SEPARATORS);
-  strcat(allSeparators, "\n");
+  strcat(allSeparators, "\n\r");
   infile = openFile(fileName, "r");
 
   while(fgets(line, sizeof(line), infile) != NULL)  {  // while not EOF or error

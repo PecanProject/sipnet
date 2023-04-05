@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
   numPerLine = 0;
 
   status = strtok(line, " \t");
-  while (status != NULL && strcmp(status, "\n") != 0) { // more tokens that aren't "\n"
+  while (status != NULL && strcmp(status, "\n") != 0 && strcmp(status, "\r\n") != 0) { // more tokens that aren't "\n"
     numPerLine++;
     status = strtok(NULL, " \t"); // find next token, if it exists
   }

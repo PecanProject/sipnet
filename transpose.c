@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include "util.h"
 
-#define SEPARATORS " \t\n"  // valid separators between items on a line
+#define SEPARATORS " \t\n\r"  // valid separators between items on a line
 
 
 void usage(char *progName)  {

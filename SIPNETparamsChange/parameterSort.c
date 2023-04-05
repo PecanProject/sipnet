@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
  	
  	while( (fgets(line,256,fileIn) != NULL) | (counter<NUM_PARAMS) )  { 
  	 
-  		if ( (strncmp(line,"*",1)!=0) & (strncmp(line,"\n",1)!=0) ) {
+  		if ( (strncmp(line,"*",1)!=0) & (strncmp(line,"\n",1)!=0) & (strncmp(line,"\r",1)!=0) ) {
   			strcpy(paramList[counter],line);
   			
   			//if (counter==NUM_PARAMETERS-1) strcat(niwots[counter],"\n");
