@@ -814,7 +814,7 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
 
 
 
-  			fprintf(out, "%8.2f", envi.microbeC);
+  			fprintf(out, "%8.2f ", envi.microbeC);
 
   			fprintf(out, "%8.2f %8.2f", envi.coarseRootC,envi.fineRootC);
 
