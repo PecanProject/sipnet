@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # Updated SIPNET Equations
 
 ## Current SIPNET
@@ -88,8 +93,8 @@ Any reason to have this list? State variables indexed w/ 0 e.g.
 - $Q_{10denitr}$: Temperature coefficient for $R_{denitr}$ (unitless)
 - $Q_{10meth}$: Temperature coefficient for $R_{meth}$ (unitless)
 - $Q_{10dec}$: Temperature coefficient for $R_{dec}$ (unitless)
-- $d_x$: $x$ dependence functions (temperature, moisture, etc)
-
+- $f_x$: $x$ dependence functions (temperature, moisture, etc) 
+  - $f$ also used for fractions; Original used $D$ but that is also used for day of year
 
 ### Equations
 
@@ -97,35 +102,36 @@ Any reason to have this list? State variables indexed w/ 0 e.g.
 
 Rates of decomposition, nitrification, denitrification, and methanogenesis are depend on temperature and soil moisture.
 
-**Temperature dependence $d_{temp}$**
+##### Temperature dependence $f_{T}$
 
 Used for photosynthesis (eq A9):
 
 
 $$
-d_{temp}=\max\left(\frac{(T_{max} - T_{air})(T_{air} - T_{min})}{\left(\frac{(T_{max} - T_{min})}{2}\right)^2}, 0\right)
+f_{T}=\max\left(\frac{(T_{max} - T_{air})(T_{air} - T_{min})}{\left(\frac{(T_{max} - T_{min})}{2}\right)^2}, 0\right)
 $$
 
 
 
 $$
-d_{temp} = Q_{10}^{(T - 20)/10}
+f_{temp} = Q_{10}^{(T - 20)/10}
 $$
 
-**Moisture dependence**
+##### Soil Moisture dependence
 
-Might need to add an optimal W$_S$ != 1
+Might need to find a function with an optimal W$_S$ != 1
 
 $$
-d_{W} = 1 - \frac{W_{S}}{W_{c}}
+f_{W} = 1 - \frac{W_{S}}{W_{c}}
 $$
 
-**Dependence on anaerobic conditions**
+##### Dependence on soil anaerobic conditions
 
 $$
 d_{anaer} = \frac{W_{S}}{W_{c}}
 $$
 
+### Rates
 
 ##### Fertilization (no3, nh4, om)
 
@@ -141,39 +147,46 @@ $$
 R_{org_fert} = \textrm{provided as a driver}
 $$
 
-#### Decomposition (C$_S$ $\rightarrow$ CO$_2$) 
+##### Decomposition (C$_S$ $\rightarrow$ CO$_2$)
 
 $$
 R_{dec} = K_{dec} \cdot f_{T} \cdot f_{W}
 $$
 
-#### N Mineralization (N$_S$ $\rightarrow$ NH$_4$)
+##### N Mineralization (N$_S$ $\rightarrow$ NH$_4$)
 
 $$
 R_{min} = R_{dec} \cdot N_{S} \cdot f_{T} \cdot f_{W}
 $$
 
 
-#### Nitrification (NH$_4$ $\rightarrow$ NO$_3$ & N$_2$O )
-
+##### Nitrification (NH$_4$ $\rightarrow$ NO$_3$ & N$_2$O )
 
 $$
 R_{nitr} = K_{nitr} \cdot NH_4 \cdot f_{T} \cdot f_{W}
 $$
 
-#### Denitrification (NO$_3$ $\rightarrow$ N$_2$O )
+##### Denitrification (NO$_3$ $\rightarrow$ N$_2$O )
 
 $$
 R_{denitr} = K_{denitr} \cdot NO_3 \cdot f_{T} \cdot f_{anaer}
 $$
 
-#### Methane Production (C$_S$ $\rightarrow$ CH$_4$)
+##### Methane Production (C$_S$ $\rightarrow$ CH$_4$)
+
+Need to modify this for to account for diffusion, ebullition, and plant transport
 
 $$
-R_{meth} = K_{meth} \cdot C_S \cdot f_{anaer} - K_{methox} \cdot CH_4
+R_{meth} = K_{meth} \cdot C_S \cdot f_{anaer}
 $$
 
-#### Nitrogen Fixation (addition of N$_S$??)
+##### Methane Oxidation (CH$_4$ $\rightarrow$ CO$_2$)
+
+$$
+R_{methox} = K_{methox} \cdot CH_4 \cdot f_{T} \cdot f_{W}
+$$
+
+##### Nitrogen Fixation (addition of N$_S$??)
 
 if a nitrogen fixing plant is present, N fixation is represented as a function of plant growth, needs to have a carbon cost to the plant 
 
@@ -181,36 +194,47 @@ $$
 R_{fix} = K_{fix} \cdot R_{growth}
 $$
 
-## Differential Equations
+### Differential Equations for Fluxes and Pools
 
-### Soil Organic Carbon and Nitrogen Pools
+##### Soil Litter
+
+TBD
+
+##### Soil Organic Carbon
 
 $$
 \frac{dC_S}{dt} = -R_{dec} \cdot C_S
 $$
 
+##### Soil Organic Nitrogen
+
 $$
 \frac{dN_S}{dt} = -R_{dec} \cdot N_S + R_{fix} + R_{updake}
 $$
 
-### Soil Ammonium
+##### Soil Ammonium
 
 $$
 \frac{dNH_4}{dt} = R_{min} \cdot N_S + R_{nh4fert} - R_{nitr}
 $$
 
-### Soil Nitrate 
+##### Soil Nitrate 
 
 $$
 \frac{dNO_3}{dt} = R_{nitr}  + R_{nh4fert} - R_{denitr}
 $$
 
-### Nitrous Oxide
+##### Nitrous Oxide
 
 $$
 \frac{dN_2O}{dt} = f_{N2O_{nitr}} \cdot R_{nitr} + f_{N2O_{denitr}} \cdot R_{denitr}
 $$
 
+##### Methane
+
+$$
+\frac{dCH_4}{dt} = R_{meth} - R_{methox}
+$$
 
 ## References
 
