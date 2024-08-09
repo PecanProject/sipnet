@@ -41,8 +41,8 @@ Model parameters that can change from one run to the next. These include initial
 | 10 | baseFolRespFrac | basal foliage resp. rate |   | as % of max. net photosynth. rate |
 | 11 | psnTMin | min temp at which net photosynthesis occurs | °C |   |
 | 12 | psnTOpt | optimal temp at which net photosynthesis occurs | °C |   |
-| 13 | dVpdSlope | used to calculate VPD effect on Psn | dimensionless | dVpd = 1 - dVpdSlope * vpd^{\textrm{dVpdExp}} |
-| 14 | dVpdExp | used to calculate VPD effect on Psn | dimensionless | dVpd = 1 - dVpdSlope * vpd^{\textrm{dVpdExp}} |
+| 13 | dVpdSlope | used to calculate VPD effect on Psn | dimensionless | dVpd = 1 - dVpdSlope * vpd^dVpdExp |
+| 14 | dVpdExp | used to calculate VPD effect on Psn | dimensionless | dVpd = 1 - dVpdSlope * vpd^dVpdExp |
 | 15 | halfSatPar | par at which photosynthesis occurs at 1/2 theoretical maximum | Einsteins * m^-2 ground area * day^-1 |   |
 | 16 | attenuation | light attenuation coefficient |   |   |
 
@@ -75,12 +75,12 @@ Model parameters that can change from one run to the next. These include initial
 
 |  | Parameter Name  | Definition  | Units  | notes |
 | :---- | :---- | :---- | :---- | :---- |
-| 30 | litterBreakdownRate | rate at which litter is converted to soil/respired at 0°C and max soil moisture |  g C broken down * g^-1 litter C * day^-1 | read in as per-year rate |
+| 30 | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture |  g C broken down * g^-1 litter C * day^-1 | read in as per-year rate |
 | 31 | fracLitterRespired | of the litter broken down, fraction respired (the rest is transferred to soil pool) |   |   |
 | 32 | baseSoilResp | soil respiration at 0°C and max soil moisture | g C respired * g^-1 soil C * day^-1 | read in as per-year rate |
-| 33 | baseSoilRespCold | soil respiration at 0°C and max soil moisture when tsoil \< coldSoilThreshold | g C respired * g^-1 soil C * day^-1 | read in as per-year rate |
+| 33 | baseSoilRespCold | soil respiration at 0°C and max soil moisture when tsoil < coldSoilThreshold | g C respired * g^-1 soil C * day^-1 | read in as per-year rate |
 | 34 | soilRespQ10 | scalar determining effect of temp on soil resp. |   |   |
-| 35 | soilRespQ10Cold | scalar determining effect of temp on soil resp. when tsoil \< coldSoilThreshold |   |   |
+| 35 | soilRespQ10Cold | scalar determining effect of temp on soil resp. when tsoil < coldSoilThreshold |   |   |
 | 36 | coldSoilThreshold | temp. at which use baseSoilRespCold and soilRespQ10Cold | °C | Not used if SEASONAL_R_SOIL  is 0 |
 | 37 | E0 | E0 in Lloyd-Taylor soil respiration function |   | Not used if LLOYD_TAYLOR is 0 |
 | 38 | T0 | T0 in Lloyd-Taylor soil respiration function |   | Not used if LLOYD_TAYLOR is 0 |
@@ -92,7 +92,7 @@ Model parameters that can change from one run to the next. These include initial
 |  | Parameter Name  | Definition  | Units  | notes |
 | :---- | :---- | :---- | :---- | :---- |
 | 40 | waterRemoveFrac | fraction of plant available soil water which can be removed in one day	without water stress occurring |   |   |
-| 41 | frozenSoilEff | fraction of water that is available if soil is frozen (0 = none available, 1 = all still avail.) |   | if frozenSoilEff = 0, then shut down psn. even if WATER_PSN = 0, if soil is frozen (if frozenSoilEff \> 0, it has no effect if WATER_PSN = 0) |
+| 41 | frozenSoilEff | fraction of water that is available if soil is frozen (0 = none available, 1 = all still avail.) |   | if frozenSoilEff = 0, then shut down psn. even if WATER_PSN = 0, if soil is frozen (if frozenSoilEff > 0, it has no effect if WATER_PSN = 0) |
 | 42 | wueConst | water use efficiency constant |   |   |
 | 43 | litterWHC | litter (evaporative layer) water holding capacity | cm |   |
 | 44 | soilWHC | soil (transpiration layer) water holding capacity | cm |   |
@@ -145,7 +145,7 @@ Model parameters that can change from one run to the next. These include initial
 | PENMAN_MONTEITH_TRANS 0 | 0 | impliment a transpiration calculation based on the Penman-Monteith Equation |
 | GROWTH_RESP 0 | 0 | explicitly model growth resp., rather than including with maint. resp. |
 | LLOYD_TAYLOR 0 | 0 | use Lloyd-Taylor model for soil respiration, in which temperature sensitivity decreases at higher temperatures? |
-| SEASONAL_R_SOIL 0 && !LLOYD_TAYLOR | 0 | use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil \< (some threshold)? |
+| SEASONAL_R_SOIL 0 && !LLOYD_TAYLOR | 0 | use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil < (some threshold)? |
 | WATER_PSN 1 | 1 | does soil moisture affect photosynthesis? |
 | WATER_HRESP 1 | 1 | does soil moisture affect heterotrophic respiration? |
 | DAYCENT_WATER_HRESP 0 && WATER_HRESP | 0 | use DAYCENT soil moisture function? |
