@@ -9,7 +9,7 @@ on:
 
 jobs:
 
-  # try to build PEcAn on all versions of R
+  # try to build SIPNET on Windows, Ubuntu, MacOS
   build:
     strategy:
       fail-fast: false
@@ -44,3 +44,14 @@ jobs:
       run: |
         echo "::error title={No Output}::Test run for Niwot site failed to produce output"
         exit 1
+
+     # check whether niwot.out has changed
+     - name: Check whether niwot.out has changed
+       run: |
+         if git diff --exit-code Sites/Niwot/niwot.out; then
+	   echo "Success: Niwot.out created and has not changed"
+	 else
+	   echo "::error title={Output Changed}::The test file niwot.out has changed"
+	   exit 1
+	 fi
+
