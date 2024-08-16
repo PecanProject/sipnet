@@ -28,10 +28,21 @@ jobs:
 
     # compile sipnet
     - name: compile sipnet
-      run: |
-        make
-        if (hashFiles('**/niwot.out') && )
+      run: make
+
+    # remove existing test output file
+    - name: Remove File
+      uses: JesseTG/rm@v1.0.3
+      with:
+        path: Sites/Niwot/niwot.out
 
     # run single sipnet run
     - name: sipnet on Sites/Niwot/niwot
       run: ./sipnet
+
+    # check output of test
+    - name: fail if no niwot output exists
+      if: ${{ hashFiles('Sites/Niwot/niwot.out') == '' }}
+      run: |
+        echo "::error title={No Output}::Test run for Niwot site failed to produce output"
+        exit 1
