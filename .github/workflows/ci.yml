@@ -28,7 +28,9 @@ jobs:
 
     # compile sipnet
     - name: compile sipnet
-      run: make
+      run: |
+        make
+        if (hashFiles('**/niwot.out') && )
 
     # run single sipnet run
     - name: sipnet on Sites/Niwot/niwot
