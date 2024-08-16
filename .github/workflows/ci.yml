@@ -31,10 +31,8 @@ jobs:
       run: make
 
     # remove existing test output file
-    - name: Remove File
-      uses: JesseTG/rm@v1.0.3
-      with:
-        path: Sites/Niwot/niwot.out
+    - name: Remove Niwout Output File
+      run: rm -f Sites/Niwot/niwot.out
 
     # run single sipnet run
     - name: sipnet on Sites/Niwot/niwot
