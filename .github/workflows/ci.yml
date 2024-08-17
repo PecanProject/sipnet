@@ -46,6 +46,7 @@ jobs:
         exit 1
     # check whether niwot.out has changed
     - name: Check whether niwot.out has changed
+      shell: bash
       run: |
          if git diff --exit-code Sites/Niwot/niwot.out; then
            echo "Success: Niwot.out created and has not changed"
