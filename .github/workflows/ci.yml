@@ -48,7 +48,7 @@ jobs:
     - name: Check whether niwot.out has changed
       shell: bash
       run: |
-         if git diff --exit-code Sites/Niwot/niwot.out; then
+         if git diff --exit-code --ignore-cr-at-eol Sites/Niwot/niwot.out; then
            echo "Success: Niwot.out created and has not changed"
            else
              echo "::error title={Output Changed}::The test file niwot.out has changed"
