@@ -123,7 +123,7 @@ Model parameters that can change from one run to the next. These include initial
 | 64 | fineRootFrac | fraction of wood carbon allocated to fine roots |   |   |
 | 65 | coarseRootFrac | fraction of wood carbon that is coarse roots |   |   |
 | 66 | fineRootAllocation | fraction of NPP allocated to fine roots |   |   |
-| 67 | woodAllocation | fraction of NPP allocated to the roots |   |   |
+| 67 | woodAllocation | fraction of NPP allocated to wood |   |   |
 | 68 | fineRootExudation | fraction of GPP exuded to the soil |   |   |
 | 69 | coarseRootExudation | fraction of NPP exuded to the soil |   |   |
 | 70 | fineRootTurnoverRate | turnover of fine roots | per year rate |   |
