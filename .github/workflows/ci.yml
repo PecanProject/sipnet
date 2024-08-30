@@ -9,7 +9,7 @@ on:
 
 jobs:
 
-  # try to build PEcAn on all versions of R
+  # try to build SIPNET on Ubuntu & MacOS
   build:
     strategy:
       fail-fast: false
@@ -18,7 +18,6 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - ubuntu-20.04
-          - windows-latest
 
     runs-on: ${{ matrix.OS }}
 
@@ -30,6 +29,27 @@ jobs:
     - name: compile sipnet
       run: make
 
+    # remove existing test output file
+    - name: Remove Niwout Output File
+      run: rm Sites/Niwot/niwot.out
+
     # run single sipnet run
     - name: sipnet on Sites/Niwot/niwot
       run: ./sipnet
+
+    # check output of test
+    - name: fail if no niwot output exists
+      if: ${{ hashFiles('Sites/Niwot/niwot.out') == '' }}
+      run: |
+        echo "::error title={No Output}::Test run for Niwot site failed to produce output"
+        exit 1
+    # check whether niwot.out has changed
+    - name: Check whether niwot.out has changed 
+      shell: bash
+      run: |
+         if git diff --exit-code Sites/Niwot/niwot.out; then
+           echo "Success: Niwot.out created and has not changed"
+           else
+             echo "::error title={Output Changed}::The test file niwot.out has changed"
+           exit 1
+           fi
