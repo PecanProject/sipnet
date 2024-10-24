@@ -56,7 +56,20 @@ One additional parameter, $T_{\text{max}}$, the maximum temperature for photosyn
 
 ## [VERY MUCH DRAFT] Proposed updates to include CH4 and N2O
 
+### Initial state values
+
+- $C_{S,0}$: Soil organic carbon content (g C m$^{-2}$)
+- $N_{S,0}$: Soil organic nitrogen content (g N m$^{-2}$), = $C_S \cdot CN_S$
+- (C, N Litter)
+- ${NH_4}_{S,0}$: Initial ammonium content (g N m$^{-2}$)
+- ${NO_3}_{S,0}$: Initial nitrate nitrogen content (g N m$^{-2}$)
+- ${CH_4}_S,0}$: Methane concentration in the soil (g C m$^{-2}$)
+- ${N_2O}{S,0}$: Nitrous oxide concentration in the soil (g N m$^{-2}$)
+- ${W_S}_{S,0}$: Soil moisture content (cm)
+
 ### State Variables
+
+Same as above, without '0' but not used as inputs
 
 - $C_S$: Soil organic carbon content (g C m$^{-2}$)
 - $N_S$: Soil organic nitrogen content (g N m$^{-2}$), = $C_S \cdot CN_S$
@@ -66,13 +79,6 @@ One additional parameter, $T_{\text{max}}$, the maximum temperature for photosyn
 - $CH_4$: Methane concentration in the soil (g C m$^{-2}$)
 - $N_2O$: Nitrous oxide concentration in the soil (g N m$^{-2}$)
 - $W_S$: Soil moisture content (cm)
-
-### Initial Values
-
-
-Any reason to have this list? State variables indexed w/ 0 e.g.
-
-- $C_{S,0}$: Initial soil carbon content (g C m$^{-2}$)
 
 ### Parameters
 
