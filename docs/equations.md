@@ -64,7 +64,7 @@ One additional parameter, $T_{\text{max}}$, the maximum temperature for photosyn
 - ${NH_4}_{S,0}$: Initial ammonium content (g N m$^{-2}$)
 - ${NO_3}_{S,0}$: Initial nitrate nitrogen content (g N m$^{-2}$)
 - ${CH_4}_S,0}$: Methane concentration in the soil (g C m$^{-2}$)
-- ${N_2O}{S,0}$: Nitrous oxide concentration in the soil (g N m$^{-2}$)
+- ${N_2O}_{S,0}$: Nitrous oxide concentration in the soil (g N m$^{-2}$)
 - ${W_S}_{S,0}$: Soil moisture content (cm)
 
 ### State Variables
