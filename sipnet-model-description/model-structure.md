@@ -138,8 +138,8 @@ $$
 ## Internally calculated states
 
 - $$d_{anaer}$$ Fraction of soil that is anaerobic.
-- $$T_{soil}$$
-- $$N_{\textrm{pool_i}} = C_{\textrm{pool_i}} / CN_{\textrm{pool_i}}$$
+- $$T_{soil}$$ soil temperature
+- N_pool_i = C_pool_i / CN_pool_i
 
 ## References
 
