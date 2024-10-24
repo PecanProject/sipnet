@@ -4,7 +4,7 @@
 
 Rates of decomposition, nitrification, denitrification, and methanogenesis are depend on temperature and soil moisture.
 
-### Temperature dependence $f_{T}$
+### Temperature dependence $$f_{T}$$
 
 Used for photosynthesis (eq A9). 
 
@@ -46,32 +46,32 @@ $$
 R_{org_fert} = \textrm{provided as a driver}
 $$
 
-### Decomposition (C$_S$ $\rightarrow$ CO$_2$)
+### Decomposition (C$$_S$$ $\rightarrow$ CO$$_2$$)
 
 $$
 R_{dec} = K_{dec} \cdot f_{T} \cdot f_{W}
 $$
 
-### N Mineralization (N$_S$ $\rightarrow$ NH$_4$)
+### N Mineralization (N$$_S$$ $$\rightarrow$$ NH$$_4$$)
 
 $$
 R_{min} = R_{dec} \cdot N_{S} \cdot f_{T} \cdot f_{W}
 $$
 
 
-### Nitrification (NH$_4$ $\rightarrow$ NO$_3$ & N$_2$O )
+### Nitrification (NH$$_4$$ $$\rightarrow$$ NO$$_3$$ & N$$_2$$O )
 
 $$
 R_{nitr} = K_{nitr} \cdot NH_4 \cdot f_{T} \cdot f_{W}
 $$
 
-### Denitrification (NO$_3$ $\rightarrow$ N$_2$O )
+### Denitrification (NO$$_3$$ $$\rightarrow$$ N$$_2$$O )
 
 $$
 R_{denitr} = K_{denitr} \cdot NO_3 \cdot f_{T} \cdot f_{anaer}
 $$
 
-### Methane Production (C$_S$ $\rightarrow$ CH$_4$)
+### Methane Production (C$$_S$$ $$\rightarrow$$ CH$$_4$$)
 
 Need to modify this for to account for diffusion, ebullition, and plant transport
 
@@ -79,13 +79,13 @@ $$
 R_{meth} = K_{meth} \cdot C_S \cdot f_{anaer}
 $$
 
-### Methane Oxidation (CH$_4$ $\rightarrow$ CO$_2$)
+### Methane Oxidation (CH$$_4$$ $$\rightarrow$$ CO$$_2$$)
 
 $$
 R_{methox} = K_{methox} \cdot CH_4 \cdot f_{T} \cdot f_{W}
 $$
 
-### Nitrogen Fixation (addition of N$_S$??)
+### Nitrogen Fixation (addition of N$$_S$$??)
 
 if a nitrogen fixing plant is present, N fixation is represented as a function of plant growth, needs to have a carbon cost to the plant 
 
@@ -129,45 +129,17 @@ $$
 \frac{dN_2O}{dt} = f_{N2O_{nitr}} \cdot R_{nitr} + f_{N2O_{denitr}} \cdot R_{denitr}
 $$
 
-### Methane
+### Methane Flux
 
 $$
 \frac{dCH_4}{dt} = R_{meth} - R_{methox}
 $$
 
-## States, Parameters, Drivers to add
+## Internally calculated states
 
-Parameters
 - $$d_{anaer}$$ Fraction of soil that is anaerobic.
-- $$W_{c}$$ Critical soil water content above which anaerobic conditions occur.
 - $$T_{soil}$$
-- $$N_{\textrm{litter}}
-- $$N_{\textrm{leaf}}
-- $$N_{\textrm{wood}}
-
-Drivers
-- Irrigation
-  - options
-    - 1. specify amount added (cm)
-    - 2. specify W_C when irrigation starts and W_C when irrigation stops 
-  - increases soil moisture
-- Fertilization
-  - N amount
-  - Fertilizer type --> estimate NH4-N, NO3-N, Org-N
-  - Increases pool sizes (NH4, NO3, SOC-C, N)
-- Tillage
-  - increase k for one month
-  - alter bulk density or other soil properties?
-- Planting
-  - mass to add as small leaves and roots
-- Harvest
-  - % removed
-  - % litter to surface vs soil 
-
-Outputs
-- SOC
-- N2O
-- CH4
+- $$N_{\textrm{pool_i}} = C_{\textrm{pool_i}} / CN_{\textrm{pool_i}}$$
 
 ## References
 
