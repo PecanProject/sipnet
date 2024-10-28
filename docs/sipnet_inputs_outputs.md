@@ -153,7 +153,7 @@ Model parameters that can change from one run to the next. These include initial
 | COMPLEX_WATER 1 && MODEL_WATER | 1 | do we use a more complex water submodel? (model evaporation as well as transpiration) |
 | LITTER_WATER 0 && (COMPLEX_WATER) | 0 | do we have a separate litter water layer, used for evaporation? |
 | LITTER_WATER_DRAINAGE 1 && (LITTER_WATER) | 0 | does water from the top layer drain down into bottom layer even if top layer not overflowing? |
-| SNOW (1 || (COMPLEX_WATER)) && MODEL_WATER | 1 | keep track of snowpack, rather than assuming all precip. is liquid |
+| SNOW (1 \|\| (COMPLEX_WATER)) && MODEL_WATER | 1 | keep track of snowpack, rather than assuming all precip. is liquid |
 | GDD 0 | 0 | use GDD to determine leaf growth? (note: mutually exclusive with SOIL_PHENOL) |
 | SOIL_PHENOL 0 && !GDD | 0 | use soil temp. to determine leaf growth? (note: mutually exclusive with GDD) |
 | LITTER_POOL 0 | 0 | have extra litter pool, in addition to soil c pool |
