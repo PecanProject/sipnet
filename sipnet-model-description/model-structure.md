@@ -97,18 +97,20 @@ $$
 
 ### Soil Litter
 
-TBD
+C_litter = C_litter - R_{C, tillage}
+
+C_soil = C_soil 
 
 ### Soil Organic Carbon
 
 $$
-\frac{dC_S}{dt} = -R_{dec} \cdot C_S
+\frac{dC_S}{dt} = C_S + R_{C, tillage} - R_{dec} 
 $$
 
 ### Soil Organic Nitrogen
 
 $$
-\frac{dN_S}{dt} = -R_{dec} \cdot N_S + R_{fix} + R_{updake}
+\frac{dN_S}{dt} = N_S -R_{dec} + R_{fix} + R_{updake}
 $$
 
 ### Soil Ammonium
@@ -140,6 +142,34 @@ $$
 - $$d_{anaer}$$ Fraction of soil that is anaerobic.
 - $$T_{soil}$$ soil temperature
 - N_pool_i = C_pool_i / CN_pool_i
+
+# Events
+
+## Tillage
+
+parameters: depth, fraction incorporated
+
+transfer litter to soil pool, amount
+
+
+$$R_{N, tillage} = (fraction incorporated) * N_{litter}$$
+
+$$R_{C, tillage} = (fraction incorporated) * C_{litter}$$
+
+## Emergence
+
+emergence is operationally defined as the date on which LAI reaches 15% of maximum
+
+Set plant carbon pools at emergence:
+
+$$C_{leaf} = LAI / SLW$$
+
+$$C_{plant} = C_{leaf} / \alpha_L$$
+
+$$C_{wood} = C_{plant} \cdot \alpha_W$$
+
+$$C_{root} = C_{plant} \cdot \alpha_W $$
+
 
 ## References
 
