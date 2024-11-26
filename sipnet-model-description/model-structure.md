@@ -173,15 +173,34 @@ $$
 
 Where $F_{CH_4}$ is the methane flux modified by temperature, moisture, and a water function related to oxygen availability.
 
+## Carbon:Nitrogen Ratio Dynamics
+
+The carbon and nitrogen cycle are tightly coupled by the C:N ratios of plant and organic matter pools. The C:N ratio of plant biomass pools is fixed, while the C:N ratio of soil organic matter and litter pools is dynamic.
+
+### Fixed Plant C:N Ratios
+
+Plant biomass pools have a fixed CN ratio and are thus stoichiometrically coupled to carbon:
+
+$$
+N_i = \frac{C_i}{\mathit{CN}_{i}} \label{eq:cn_stoich}
+$$
+
+Where $i$ is the leaf, wood, fine root, or coarse root pool.
+
+Soil organic matter and litter pools have dynamic CN that is determined below.
+
+### Dynamic Soil Organic Matter and Litter C:N Ratios ($\mathit{CN}_{\text{soil}}$)
+
+The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.
+
+$$
+\frac{d\mathit{CN}_{\text{i}}}{dt} = \frac{1}{N_{\text{i}}} \left( \frac{dC_{\text{i}}}{dt} - \mathit{CN}_{\text{i}} \cdot \frac{dN_{\text{i}}}{dt} \right)
+$$
+
+Where $i$ is either the soil organic matter or litter pool.
+
+
 ## Nitrogen Dynamics
-
-Biomass and litter N is stoichiometrically related to carbon by fixed $\mathit{CN}$ parameters for each pool:
-
-$$
-F^N_i = \frac{F^C_i}{\mathit{CN}_{i}} \label{eq:cn_stoich}
-$$
-
-Where $i$ is either the soil or litter nitrogen pool.
 
 ### Plant Biomass Nitrogen
 
@@ -303,18 +322,6 @@ R_A = \max(R_A, I_{\text{N limit}} \cdot GPP)
 $$
 
 This is a simplifying assumption that may warrant further investigation into the causes and impacts. If the impact of this assumption on error in GHG budgets, more complex N limitation schemes will be considered.
-
-## Carbon:Nitrogen Ratio Dynamics
-
-### Soil Organic Matter and Litter C:N Ratios ($\mathit{CN}_{\text{soil}}$)
-
-The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.
-
-$$
-\frac{d\mathit{CN}_{\text{i}}}{dt} = \frac{1}{N_{\text{i}}} \left( \frac{dC_{\text{i}}}{dt} - \mathit{CN}_{\text{i}} \cdot \frac{dN_{\text{i}}}{dt} \right)
-$$
-
-Where $i$ is either the soil organic matter or litter pool.
 
 ## Water Dynamics
 
