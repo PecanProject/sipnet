@@ -242,7 +242,6 @@ $$
 
 #### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)$
 
-Of models that represent N2O flux as a single process rather than a combination of nitrification and denitrification, 
 
 The simplest way to represent N2O flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F_{n min}$. For example, CLM-CN and CLM 4.0 represent N2O flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents N2O flux as a proportion of the N mineralization rate.
 
