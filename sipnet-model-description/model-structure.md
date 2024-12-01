@@ -163,7 +163,7 @@ $R_H$ Heterotrophic respiration of soil organic matter is a function of each car
 ### Methane Production $(C_\text{org,soil} \rightarrow CH_4)$
 
 $$
-R_\text{meth} = K_\text{meth} \cdot C_\text{soil} \cdot D_{\mathrm{moistur,O_2}}
+R_\text{meth} = K_\text{meth} \cdot C_\text{soil} \cdot D_{\mathrm{water,O_2}}
 $$
 
 
