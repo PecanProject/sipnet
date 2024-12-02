@@ -246,7 +246,7 @@ $$
   F^N_\text{litter,min}
 $$
 
-The flux of nitrogen from living biomass to the litter pool is calculated using equation \eqref{eq:cn_stoich}, and nitrogen from organic matter ammendments are given as inputs (TK-ref fert section).
+The flux of nitrogen from living biomass to the litter pool is calculated using \eqref{eq:cn_stoich}, and nitrogen from organic matter ammendments are given as inputs (TK-ref fert section).
 
 ### Soil Organic Nitrogen
 
@@ -311,7 +311,7 @@ $$
 
 ### Plant Nitrogen Uptake $F^N_\text{uptake}$
 
-Plant N is calculated as as the amount of N required to support the plant growth as the sum of changes in plant N pools from equation \eqref{eq:plant_n}:
+Plant N is calculated as as the amount of N required to support the plant growth as the sum of changes in plant N pools from \eqref{eq:plant_n}:
 
 $$
 \frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt}
@@ -563,7 +563,7 @@ $$
 C_{\text{plant,e}} = C_{\text{leaf,e}} / \alpha_{\text{leaf}}
 $$
 
-Now carbon for each pool can be calculated using the allocation coefficients (equation \eqref{eq:Z3}), and nitrogen for each pool can be calculated using the stoichiometric ratios (equation \eqref{eq:cn_stoich}).
+Now carbon for each pool can be calculated using the allocation coefficients \eqref{eq:Z3}, and nitrogen for each pool can be calculated using the stoichiometric ratios \eqref{eq:cn_stoich}.
 
 ### Harvest
 
