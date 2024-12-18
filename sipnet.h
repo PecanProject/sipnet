@@ -51,6 +51,10 @@ char **getDataTypeNames();
 */
 int initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char *climFile);
 
+/*
+ * TBD
+ */
+void initEvents(char *eventFile, int numLocs);
 
 // call this when done running model:
 // de-allocates space for climate linked list
