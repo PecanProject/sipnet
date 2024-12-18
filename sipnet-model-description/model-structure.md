@@ -311,7 +311,7 @@ $$
 
 ### Plant Nitrogen Uptake $F^N_\text{uptake}$
 
-Plant N is calculated as as the amount of N required to support the plant growth as the sum of changes in plant N pools from {#eq:plant_n}:
+Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools from {#eq:plant_n}:
 
 $$
 \frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt}
@@ -362,13 +362,13 @@ $F^W_{\text{precip}}$ is the precipitation rate prescribed at each time step in 
 
 #### Drainage
 
-Under well-drained conditions, drainage occurs when soil water content ($W_{\text{soil}}$) exceeds the soil water holding capacity ($W_{\text{WHC}}). Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ will simulate reduced drainage, and setting $f_{\text{drain}}$ close to zero will simulate flooded conditions. Flooding will be controlled by the date of the flooding event, and can occur in any season and for any duration.
+Under well-drained conditions, drainage occurs when soil water content ($W_{\text{soil}}$) exceeds the soil water holding capacity ($W_{\text{WHC}}). Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduced the rate of drainage, and flooding will will require a combination of a low $f_{\text{drain}}$ and sufficient size and / or frequency of $F^W_\text{irrigation}$ to maintain flooded conditions.
 
 $$
-F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0)
+F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0) \label{eq:drainage}
 $$
 
-This is adapted from the original SIPNET formulation (Braswell et al 2005), adding a new parameter that can control the drainage rate.
+This is adapted from the original SIPNET formulation (Braswell et al 2005), adding a new parameter that controls the drainage rate.
 
 ### Transpiration
 
@@ -396,7 +396,7 @@ $$
 
 Actual transpiration ($F^W_\text{trans}$) is the minimum of potential transpiration ($F^W_{\text{pot}}$) and the fraction ($f$) of the total soil water ($W_\text{soil}$) that is removable in one day.
 
-## Dependence Functions for Temperature, Moisture, and Organic Matter 
+## Dependence Functions for Temperature and Moisture 
 
 Metabolic processes including photosynthesis, autotrophic and heterotrophic respiration, decomposition, nitrogen volatilization, and methanogenesis are modified directly by temperature, soil moisture, and / or vapor pressure deficit.
 
@@ -434,9 +434,6 @@ This function provides two ways to reduce the number of parameters in the model.
 ### Moisture dependence functions $D_{water}$
 
 Moisture dependence functions are typically based on soil water content as a fraction of water holding capacity, also referred to as soil moisture in SIPNET. We will represent this fraction as $f_\text{WHC}$.
-
-#### Drainage rates 
-
 
 #### Soil Water Content Fraction
 
@@ -586,23 +583,27 @@ $$
 Event parameters:
 
 * Irrigation rate ($F^W_{\text{irrigation}}$), cm/day
-* Irrigation type indicator ($I_{\text{irrigation}}$) can be added to the canopy (0) or soil (1)
+* Irrigation type indicator ($I_{\text{irrigation}}$):
+	•	Canopy irrigation (0): Water applied to the canopy, simulating rainfall.
+	•	Soil irrigation (1): Water directly added to the soil.
+	•	Flooding (2): Special case of soil irrigation, where water fully saturates the soil and maintains flooding.
 
-For direct soil irrigation, the irrigation rate is added to the soil water pool. Canopy irrigation is simulated in the same way as precipitation, with a fraction intercepted and evaporated, and the remainder added to the precipitation pool.
 
+**Canopy irrigation** is simulated in the same way as precipitation, where a fraction of irrigation is intercepted and evaporated, and the remainder is added to the soil water pool.
+
+**Soil irrigation** adds water directly to the soil pool without interception. Flooded furrow irrigation' is a special case of soil irrigation, with a high rate of irrigation.
+
+**Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
+<!-- Floodiing may also reduce the drainage parameter ($f_{\text{drain}}$) close to zero \eqref{eq:drainage}.-->
 
 $$
 F^W_{\text{irrigation}} = 
 \begin{cases}
 f_{\text{intercept}} \cdot F^W_{\text{irrigation}} & \text{canopy} \\
 F^W_{\text{irrigation}} & \text{soil}
+W_{\text{WHC}} - W_{\text{soil}} + F^W_{\text{irrigation}} & \text{flooding}
 \end{cases}
 $$
-
-### Flooding
-
-Flooding is a 
-
 
 ## References
 
