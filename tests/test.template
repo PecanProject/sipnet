@@ -1,0 +1,37 @@
+// Unit test template file
+//
+// Copy and modify as needed (and remove these comments!)
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int init() {
+  // Initialization steps for the test; eg copying files, allocating mem, etc
+
+  // Return a status code, 0 = success
+}
+
+int run() {
+  // Run the tests, of course
+
+  // Return a status code, 0 = success
+}
+
+void cleanup() {
+  // Perform any cleanup as needed
+}
+
+int main() {
+  int status;
+  status = init();
+  if (status) {
+    printf("Test initialization failed with status %d\b", status);
+  }
+
+  status = run();
+  if (status) {
+    printf("Test run failed with status %d\b", status);
+  }
+
+  cleanup();
+}
