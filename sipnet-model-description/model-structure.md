@@ -25,7 +25,7 @@ $$
 \text{GPP}_{\text{max}} = A_{\text{max}} \cdot A_d + R_{f0} \tag{Braswell A6}\label{eq:A6}
 $$
 
-The daily maximum gross photosynthetic rate ($\text{GPP}_{\text{max}}$) accounts for leaf-level maximum assimilation rate ($A_{\text{max}}$), a scaling factor ($A_d$), and foliar respiration ($R_{f0}$).
+The daily maximum gross photosynthetic rate ($\text{GPP}_{\text{max}}$) accounts for leaf-level maximum assimilation rate ($A_{\text{max}}$), a scaling factor reflecting the average daily $A_{\text{max}}$ ($A_d$), and foliar respiration ($R_{f0}$).
 
 #### Potential Photosynthesis
 
@@ -45,7 +45,7 @@ $$
 \text{GPP} = \text{GPP}_{\text{pot}} \cdot D_{\text{water}} \tag{Braswell A17}\label{eq:A17}
 $$
 
-The total adjusted gross primary production (GPP) is the product of potential GPP ($\text{GPP}_{\text{pot}}$) and the water stress factor ($D_{\text{water}}$) from \eqref{eq:A16}.
+The total adjusted gross primary production (GPP) is the product of potential GPP ($\text{GPP}_{\text{pot}}$) and the water stress factor ($D_{\text{water}}$) from {#eq:A16}.
 
 The water stress factor $D_{\text{water}}$ is the ratio of actual to potential transpiration \ref{eq:A16}, and couples GPP to transpiration by reducing GPP.
 
@@ -112,18 +112,18 @@ $$
 Where $R_\text{leaf,opt}$ is leaf maintenance respiration at $T_\text{opt}$, proportional to the maximum photosynthetic rate $A_{\text{max}}$ with a scaling factor $k_\text{leaf}$ multiplied by the mass of leaf $C_\text{leaf}$.
 
 $$
-R_\text{leaf} = R_\text{leaf,opt} \cdot D_{\text{temp,Q10,}T_\text{opt}} \tag{A18}\label{eq:A18}
+R_\text{leaf} = R_\text{leaf,opt} \cdot D_{\text{temp,Q10}} \tag{A18}\label{eq:A18}
 $$
 
-Actual foliar respiration ($R_\text{leaf}$) is modeled as a function of the foliar respiration rate ($R_{f0}$) at optimum temperature of leaf respiration $T_\text{opt}$ and the $Q_{10}$ temperature sensitivity factor.
+Actual foliar respiration ($R_\text{leaf}$) is modeled as a function of the foliar respiration rate ($R_\text{leaf,opt}$) at optimum temperature of leaf respiration $T_\text{opt}$ and the $Q_{10}$ temperature sensitivity factor.
 
 #### Wood Maintenance Respiration
 
 $$
-R_\text{wood} = K_\text{wood} \cdot C_\text{wood} \cdot D_{\text{temp,Q10}} \tag{Braswell A19}\label{eq:A19}
+R_\text{wood} = K_\text{wood} \cdot C_\text{wood} \cdot D_{\text{temp,Q10}_v} \tag{Braswell A19}\label{eq:A19}
 $$
 
-Wood maintenance respiration ($R_m$) depends on the wood carbon content ($C_W$), a scaling constant ($K_w$), and the $Q_{10}$ factor for temperature sensitivity.
+Wood maintenance respiration ($R_m$) depends on the wood carbon content ($C_\text{wood}$), a scaling constant ($k_\text{wood}$), and the temperature sensitivity scaling function $D_{\text{temp,Q10}_v}$.
 
 
 #### Litter Carbon
@@ -164,7 +164,7 @@ $$
 F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}}
 $$
 
-The rate of decomposition is a function of the litter carbon content and the decomposition rate $K_{\text{litter}}$ modified by temperature and moisture factors.
+The rate of decomposition is a function of the litter carbon content and the decomposition rate $K_{\text{litter}}$ modified by temperature and moisture factors. $f_{R_H}$ is the fraction of litter carbon that is respired.
 
 
 #### Soil Carbon
@@ -246,7 +246,7 @@ $$
   F^N_\text{litter,min}
 $$
 
-The flux of nitrogen from living biomass to the litter pool is calculated using \eqref{eq:cn_stoich}, and nitrogen from organic matter ammendments are given as inputs (TK-ref fert section).
+The flux of nitrogen from living biomass to the litter pool is calculated using {#eq:cn_stoich}, and nitrogen from organic matter ammendments are given as inputs (TK-ref fert section).
 
 ### Soil Organic Nitrogen
 
@@ -311,7 +311,7 @@ $$
 
 ### Plant Nitrogen Uptake $F^N_\text{uptake}$
 
-Plant N is calculated as as the amount of N required to support the plant growth as the sum of changes in plant N pools from \eqref{eq:plant_n}:
+Plant N is calculated as as the amount of N required to support the plant growth as the sum of changes in plant N pools from {#eq:plant_n}:
 
 $$
 \frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt}
@@ -346,31 +346,29 @@ If this scheme is too simple, we can adjust either the conditions under which N 
 
 ## Water Dynamics
 
-### Soil Water
 
 #### Soil Water Storage
 
 $$
 \frac{dW_{\text{soil}}}{dt} = f_{\text{intercept}} \cdot \left(
-F^W_\text{precip} + F^W_{\text{canopy irrigation}}\right) + F^W_\text{soil irrigation} +
-- F^W_\text{drainage} - F^W_\text{transpiration} \tag{Braswell A4}\label{eq:A4}
+F^W_\text{precip} + F^W_{\text{canopy irrigation}}\right) + F^W_\text{soil irrigation} - F^W_\text{drainage} - F^W_\text{transpiration} \tag{Braswell A4}\label{eq:A4}
 $$
 
 The change in soil water content ($W_{\text{soil}}$) is determined by precipitation $F^W_{\text{precip}}$ and losses due to drainage $F^W_{\text{drainage}}$ and transpiration $F^W_{\text{transpiration}}$.
 
 $F^W_{\text{precip}}$ is the precipitation rate prescribed at each time step in the `<sitename>.clim` file and fraction of precipitation intercepted by the canopy $f_{\text{intercept}}$.
 
+
+
 #### Drainage
 
-Under well-drained conditions, drainage occurs when soil water content, $W_{\text{soil}}$, exceeds the soil water holding capacity, $W_{\text{WHC}}$. Beyond this point, additional water drains off. Under flooded conditions, drainage is set to zero, and excess water accumulates.
+Under well-drained conditions, drainage occurs when soil water content ($W_{\text{soil}}$) exceeds the soil water holding capacity ($W_{\text{WHC}}). Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ will simulate reduced drainage, and setting $f_{\text{drain}}$ close to zero will simulate flooded conditions. Flooding will be controlled by the date of the flooding event, and can occur in any season and for any duration.
 
 $$
-F^W_{\text{drainage}} = 
-\begin{cases} 
-\max(W_{\text{soil}} - W_{\text{WHC}}, 0) & \text{non-flooded (Braswell text)} \\
-0 & \text{flooded (new formulation)}
-\end{cases}
+F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0)
 $$
+
+This is adapted from the original SIPNET formulation (Braswell et al 2005), adding a new parameter that can control the drainage rate.
 
 ### Transpiration
 
@@ -398,7 +396,7 @@ $$
 
 Actual transpiration ($F^W_\text{trans}$) is the minimum of potential transpiration ($F^W_{\text{pot}}$) and the fraction ($f$) of the total soil water ($W_\text{soil}$) that is removable in one day.
 
-## Temperature and Moisture Dependence Functions
+## Dependence Functions for Temperature, Moisture, and Organic Matter 
 
 Metabolic processes including photosynthesis, autotrophic and heterotrophic respiration, decomposition, nitrogen volatilization, and methanogenesis are modified directly by temperature, soil moisture, and / or vapor pressure deficit.
 
@@ -437,7 +435,10 @@ This function provides two ways to reduce the number of parameters in the model.
 
 Moisture dependence functions are typically based on soil water content as a fraction of water holding capacity, also referred to as soil moisture in SIPNET. We will represent this fraction as $f_\text{WHC}$.
 
-### Soil Water Content Fraction
+#### Drainage rates 
+
+
+#### Soil Water Content Fraction
 
 $$
 f_{\text{WHC}} = \frac{W_{\text{soil}}}{W_{\text{WHC}}}
@@ -451,7 +452,7 @@ Where
 #### Water Stress Factor
 
 $$
-D_{\text{water stress}} = \frac{F^W_\text{trans}}{F^W_\text{trans, pot}} \tag{Braswell A16}\label{eq:A16}
+D_{\text{water stress}} = \frac{F^W_{\text{trans}}}{F^W_{\text{trans, pot}}} \tag{Braswell A16} \label{eq:A16}
 $$
 
 The water stress factor ($D_{\text{water}}$) is the ratio of actual transpiration ($F^W_\text{trans}$) to potential transpiration ($F^W_\text{trans, pot}$).
@@ -485,19 +486,7 @@ Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, a
 
 For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.
 
-**Alternative Functions** Available data suggest that there are many functions that could represent the relationship between $f_{\text{WHC}}$ and fluxes from anaerobic metabolism. 
-However, it is unlikely that available data will support the choice of one over others. A model with fewer parameters would be preferred, as would one that has some theoretical justification beyond shape. For example, 
-Yan et al (2018) propose a $D_\text{water}$ function that captures the transition from water to oxygen limited metabolism.
 
-Some options considered:
-- Piecewise linear function
-- Gaussian function (Wang et al 2023)
-- Beta
-- Double exponential function
-- Double logistic function
-- Adapt the parabolic $D_\text{temp, A}$ from SIPNET (Braswell et al 2005)
-
-In a study of factors affecting N2O flux from agricultural soils, Wang et al 2023 found that of pH, Bulk Density, Clay, SOC, Total N, NH4+ NO3- Temperature and $f_{WHC}$, only temperature and $f_{WHC}$ were significantly correlated with $F^N_\mathrm{N_2O}$.
 
 ## Agronomic Management Events
 
@@ -563,7 +552,7 @@ $$
 C_{\text{plant,e}} = C_{\text{leaf,e}} / \alpha_{\text{leaf}}
 $$
 
-Now carbon for each pool can be calculated using the allocation coefficients \eqref{eq:Z3}, and nitrogen for each pool can be calculated using the stoichiometric ratios \eqref{eq:cn_stoich}.
+Now carbon for each pool can be calculated using the allocation coefficients {#eq:Z3}, and nitrogen for each pool can be calculated using the stoichiometric ratios {#eq:cn_stoich}.
 
 ### Harvest
 
@@ -576,7 +565,9 @@ Event parameters:
 
 A harvest event removes a fraction of aboveground (and less commonly, belowground) biomass from the system and transferrs a fraction of aboveground and typically all belowground biomass to the litter pool.
 
-In the case of annuals and crop termination events, $f_{\text{remove,i}} + f_{\text{transfer,i}} = 1$ for each biomass pool $i$. In the case of perennials, $f_{\text{remove,i}} + f_{\text{transfer,i}} \leq 1$.
+In the case of annuals and crop termination events, $f_{\text{remove,i}} + f_{\text{transfer,i}} = 1$ for each biomass pool $i$. In the case of perennials and non-terminating annual mowing events, $f_{\text{remove,i}} + f_{\text{transfer,i}} \leq 1$.
+
+Orchard and vineyard management practices including smoothing and sweeping will be represented as tillage events with a small increase in litter decomposition rate and small or no increase in soil organic matter decomposition rate.
 
 Harvest removal:
 
@@ -608,11 +599,17 @@ F^W_{\text{irrigation}} & \text{soil}
 \end{cases}
 $$
 
+### Flooding
+
+Flooding is a 
+
 
 ## References
 
 Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. Estimating Diurnal to Annual Ecosystem Parameters by Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem Exchange Observations. Global Change Biology 11 (2): 335–55. https://doi.org/10.1111/j.1365-2486.2005.00897.x.
 
+
+Libohova, Z., Seybold, C., Wysocki, D., Wills, S., Schoeneberger, P., Williams, C., Lindbo, D., Stott, D. and Owens, P.R., 2018. Reevaluating the effects of soil organic matter and other properties on available water-holding capacity using the National Cooperative Soil Survey Characterization Database. Journal of soil and water conservation, 73(4), pp.411-421.
 
 Manzoni, Stefano, and Amilcare Porporato. 2009. Soil Carbon and Nitrogen Mineralization: Theory and Models across Scales. Soil Biology and Biochemistry 41 (7): 1355–79. https://doi.org/10.1016/j.soilbio.2009.02.031.
 
