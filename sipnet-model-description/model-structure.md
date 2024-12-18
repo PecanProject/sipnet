@@ -600,7 +600,7 @@ $$
 F^W_{\text{irrigation}} = 
 \begin{cases}
 f_{\text{intercept}} \cdot F^W_{\text{irrigation}} & \text{canopy} \\
-F^W_{\text{irrigation}} & \text{soil}
+F^W_{\text{irrigation}} & \text{soil} \\
 W_{\text{WHC}} - W_{\text{soil}} + F^W_{\text{irrigation}} & \text{flooding}
 \end{cases}
 $$
