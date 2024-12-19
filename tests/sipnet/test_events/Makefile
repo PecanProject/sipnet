@@ -2,7 +2,7 @@ CC=gcc
 LD=gcc
 CFLAGS=-Wall -g
 LDFLAGS=-L../../..
-LDLIBS=-lsipnet
+LDLIBS=-lsipnet -lm
 
 # List test files in this directory here
 TEST_CFILES=testEventInfra.c
