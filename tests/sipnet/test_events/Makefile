@@ -5,7 +5,9 @@ LDFLAGS=-L../../..
 LDLIBS=-lsipnet -lm
 
 # List test files in this directory here
-TEST_CFILES=testEventInfra.c
+TEST_CFILES=testEventInfra.c testEventInfraNeg.c
+
+# The rest is boilerplate, likely copyable as is to a new test directory
 TEST_OBJ_FILES=$(TEST_CFILES:%.c=%.o)
 TEST_EXECUTABLES:=$(basename $(TEST_CFILES))
 RUN_EXECUTABLES:= $(addsuffix .run, $(TEST_EXECUTABLES))
@@ -17,7 +19,7 @@ tests: $(TEST_EXECUTABLES)
 $(TEST_EXECUTABLES): %: %.o
 	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
 
-$(TEST_OBJ_FILES): ../utils.h ../../../libsipnet.a
+$(TEST_OBJ_FILES): ../utils.h ../../../libsipnet.a ../exitHandler.c
 $(TEST_OBJ_FILES): %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 

@@ -1,7 +1,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 #include "../utils.h"
 #include "../../../events.c"
@@ -82,7 +81,7 @@ int checkTillageParams(
 }
 
 int init() {
-  // char * filename = "infra_events.in";
+  // char * filename = "infra_events_simple.in";
   // if (access(filename, F_OK) == -1) {
   //   return 1;
   // }
@@ -91,9 +90,10 @@ int init() {
   return 0;
 }
 
-int run() {
+int runTestSimple() {
+  // Simple test with one loc, one event per type
   int numLocs = 1;
-  EventNode** output = readEventData("infra_events.in", numLocs);
+  EventNode** output = readEventData("infra_events_simple.in", numLocs);
 
   if (!output) {
     return 1;
@@ -117,6 +117,84 @@ int run() {
   status |= checkEvent(event, 0, 2022, 250, HARVEST);
   status |= checkHarvestParams((HarvestParams*)event->eventParams, 0.4, 0.1, 0.2, 0.3);
 
+  return status;
+}
+
+int runTestMulti() {
+  // More complex test; multiple locations
+  int numLocs = 1;
+  EventNode** output = readEventData("infra_events_multi.in", numLocs);
+
+  if (!output) {
+    return 1;
+  }
+
+  // check output is correct
+  int status = 0;
+  int loc = 0;
+  EventNode *event = output[loc];
+  status |= checkEvent(event, loc, 2024, 60, TILLAGE);
+  status |= checkTillageParams((TillageParams*)event->eventParams, 0.1, 0.2, 0.3);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 65, PLANTING);
+  status |= checkPlantingParams((PlantingParams*)event->eventParams, 15, 20, 5);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 70, IRRIGATION);
+  status |= checkIrrigationParams((IrrigationParams*)event->eventParams, 5, 1);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 75, FERTILIZATION);
+  status |= checkFertilizationParams((FertilizationParams*)event->eventParams, 15, 10,5);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 250, HARVEST);
+  status |= checkHarvestParams((HarvestParams*)event->eventParams, 0.1, 0.2, 0.3, 0.4);
+
+  loc++;
+  event = output[loc];
+  status |= checkEvent(event, loc, 2024, 59, TILLAGE);
+  status |= checkTillageParams((TillageParams*)event->eventParams, 0.2, 0.3, 0.1);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 64, PLANTING);
+  status |= checkPlantingParams((PlantingParams*)event->eventParams, 15, 20, 5);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 69, IRRIGATION);
+  status |= checkIrrigationParams((IrrigationParams*)event->eventParams, 5, 0);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 74, FERTILIZATION);
+  status |= checkFertilizationParams((FertilizationParams*)event->eventParams, 5, 15,10);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 249, HARVEST);
+  status |= checkHarvestParams((HarvestParams*)event->eventParams, 0.2, 0.3, 0.4, 0.1);
+
+  loc++;
+  event = output[loc];
+  status |= checkEvent(event, loc, 2024, 58, TILLAGE);
+  status |= checkTillageParams((TillageParams*)event->eventParams, 0.3, 0.1, 0.2);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 63, PLANTING);
+  status |= checkPlantingParams((PlantingParams*)event->eventParams, 15, 20, 5);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 68, IRRIGATION);
+  status |= checkIrrigationParams((IrrigationParams*)event->eventParams, 6, 1);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 73, FERTILIZATION);
+  status |= checkFertilizationParams((FertilizationParams*)event->eventParams, 5, 10,15);
+  event = event->nextEvent;
+  status |= checkEvent(event, loc, 2024, 248, HARVEST);
+  status |= checkHarvestParams((HarvestParams*)event->eventParams, 0.3, 0.4, 0.1, 0.2);
+
+  return status;
+}
+
+int run() {
+
+  int status;
+
+  status = runTestSimple();
+  if (status) {
+    return 1;
+  }
+
+  status = runTestMulti();
   if (status) {
     return 1;
   }

@@ -1,4 +1,4 @@
-0  2022  40 irrig   5   0           # 5cm canopy irrigation on day 40
+0  2022  40  irrig  5   0           # 5cm canopy irrigation on day 40
 0  2022  40  fert   15 5 10         # fertilized with 15 g/m2 organic N, 5 g/m2 organic C, and 10 g/m2 mineral N on day 40
 0  2022  45  till   0.1 0.2 0.3     # tilled on day 45, 10% of surface litter transferred to soil pool, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30%
 0  2022  46  plant  10 10 1         # planting - planting occurs on day 40, after 10 days the plants have emerged with a size of 10 g C/m2 and 1 g N / m2
