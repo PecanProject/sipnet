@@ -46,6 +46,7 @@ clean:
 #
 # UNIT TESTS
 SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
+SIPNET_TEST_DIRS_RUN:= $(addsuffix .run, $(SIPNET_TEST_DIRS))
 SIPNET_TEST_DIRS_CLEAN:= $(addsuffix .clean, $(SIPNET_TEST_DIRS))
 SIPNET_LIB=libsipnet.a
 
@@ -67,13 +68,18 @@ $(SIPNET_TEST_DIRS): pretest $(SIPNET_LIB)
 posttest: $(SIPNET_TEST_DIRS)
 	mv modelStructures.orig.h modelStructures.h
 
+testrun: $(SIPNET_TEST_DIRS_RUN)
+
+$(SIPNET_TEST_DIRS_RUN):
+	$(MAKE) -C $(basename $@) run
+
 testclean: $(SIPNET_TEST_DIRS_CLEAN)
 	rm -f $(SIPNET_LIB)
 
 $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
-.PHONY: all test $(SIPNET_TEST_DIRS) pretest posttest $(SIPNET_LIB) testclean $(SIPNET_TEST_DIRS_CLEAN)
+.PHONY: all test $(SIPNET_TEST_DIRS) pretest posttest $(SIPNET_LIB) testrun $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN)
 
 
 #This target automatically builds dependencies.

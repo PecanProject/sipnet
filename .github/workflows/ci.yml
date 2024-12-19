@@ -9,6 +9,30 @@ on:
 
 jobs:
 
+  # Build and run unit tests
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        OS:
+          - macos-latest
+          - ubuntu-latest
+          - ubuntu-20.04
+
+    runs-on: ${{ matrix.OS }}
+
+    steps:
+      # checkout source code
+      - uses: actions/checkout@v2
+
+      # compile tests
+      - name: compile tests
+        run: make test
+
+      # run tests
+      - name: run tests
+        run: make testrun
+
   # try to build SIPNET on Ubuntu & MacOS
   build:
     strategy:
