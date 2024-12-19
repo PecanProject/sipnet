@@ -156,9 +156,9 @@ int main(int argc, char *argv[]) {
   strcat(climFile, ".clim");
   numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
 
-#ifdef EVENT_HANDLER
 	strcpy(eventFile, fileName);
 	strcat(eventFile, ".event");
+#if EVENT_HANDLER
 	initEvents(eventFile, numLocs);
 #endif
 
