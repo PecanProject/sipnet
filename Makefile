@@ -68,7 +68,7 @@ help:
 	@echo "  all         - Builds all components."
 	@echo "  document    - Generate documentation."
 	@echo "  sipnet      - Builds the 'sipnet' executable."
-	@echo "  clean       - Removes compiled files and executables."
+	@echo "  clean       - Removes compiled files, executables, and documentation."
 	@echo "  depend      - Automatically generates dependency information for source files."
 	@echo "  === additional tools ==="
 	@echo "  estimate    - Builds 'estimate' executable to estimate parameters using MCMC."
