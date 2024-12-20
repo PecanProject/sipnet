@@ -3,7 +3,7 @@
 
 ## Compiling
 
-SIPNET uses `make` build the model and documentation. There are also miscellaneous targets for running analysis workflows:
+SIPNET uses `make` to build the model and documentation. There are also miscellaneous targets for running analysis workflows:
 
 ```sh
 # build SIPNET executable
