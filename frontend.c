@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
   double **standarddevs;
   int dataTypeIndices[MAX_DATA_TYPES];
 
-#ifdef EVENT_HANDLER
+#if EVENT_HANDLER
 	// Extra filename if we are handing events
 	char eventFile[FILE_MAXNAME+24];
 #endif

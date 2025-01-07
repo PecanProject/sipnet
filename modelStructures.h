@@ -11,7 +11,8 @@
 // See also sipnet.c for other options (that should be moved here if/when testing is added)
 
 #define EVENT_HANDLER 0
-// Read in and process agronomic events. Expects a file named <FILENAME>.event to exist.
+// Read in and process agronomic events. SIPNET expects a file named events.in to exist, though
+// unit tests may use other names.
 
 
 #endif //MODEL_STRUCTURES_H

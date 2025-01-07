@@ -52,7 +52,14 @@ char **getDataTypeNames();
 int initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char *climFile);
 
 /*
- * TBD
+ * Read in event data for all the model runs
+ *
+ * Read in event data from a file with the following specification:
+ * - one line per event
+ * - all events are ordered first by location (ascending) and then by year/day (ascending)
+ *
+ * @param eventFile Name of file containing event data
+ * @param numLocs Number of locations in the event file.
  */
 void initEvents(char *eventFile, int numLocs);
 

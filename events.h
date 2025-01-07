@@ -55,11 +55,12 @@ struct EventNode {
   EventNode *nextEvent;
 };
 
-/* Read event data from <FILENAME>.event
+/* Read event data from input filename (canonically events.in)
  *
  * Format: returned data is structured as an array of EventNode pointers, indexed by
  * location. Each element of the array is the first event for that location (or null
- * if there are no events). It is assumed that the events are in chrono order.
+ * if there are no events). It is assumed that the events are ordered first by location
+ * and then by year and day.
  */
 EventNode** readEventData(char *eventFile, int numLocs);
 

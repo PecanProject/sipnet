@@ -142,9 +142,6 @@ EventNode** readEventData(char *eventFile, int numLocs) {
   currYear = year;
   currDay = day;
 
-  //printf("Found events:\n");
-  //printEvent(next);
-
   while (fgets(line, EVENT_LINE_SIZE, in) != NULL) {
     // We have another event
     curr = next;
@@ -171,7 +168,6 @@ EventNode** readEventData(char *eventFile, int numLocs) {
     }
 
     next = createEventNode(loc, year, day, eventType, eventParamsStr);
-    //printEvent(next);
     if (currLoc == loc) {
       // Same location, add the new event to this location's list
       curr->nextEvent = next;

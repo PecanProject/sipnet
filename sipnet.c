@@ -489,8 +489,8 @@ static ClimateNode *climate; // current climate
 static Fluxes fluxes;
 static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible outputs
 
-#ifdef EVENT_HANDLER
-static EventNode **events; // MJL: event structs
+#if EVENT_HANDLER
+static EventNode **events;
 #endif
 
 /* Read climate file into linked lists,
@@ -1936,8 +1936,8 @@ void calculateFluxes() {
   	double potGrossPsn; // potential photosynthesis, without water stress
   	double dWater;
   	double lai; // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  	//double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter)
-		//					 (g C/m^2 ground/day) */
+    //double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter)
+    //(g C/m^2 ground/day) */
   	double folResp, woodResp; // maintenance respiration terms, g C * m^-2 ground area * day^-1
   	double litterWater, soilWater; /* amount of water in litter and soil (cm)
 				    taken from either environment or climate drivers, depending on value of MODEL_WATER */
@@ -2485,7 +2485,7 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
 // Setup events at given location
 void setupEvents(int currLoc) {
-
+  // Implementation TBD
 }
 
 
@@ -2514,8 +2514,8 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, Spatia
 
   for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     setupModel(spatialParams, currLoc);
-#ifdef EVENT_HANDLER
-  	setupEvents(currLoc);
+#if EVENT_HANDLER
+    setupEvents(currLoc);
 #endif
     if ((loc == -1) && (outputItems != NULL))  {  // print the current location at the start of the line
       sprintf(label, "%d", currLoc);
@@ -2525,15 +2525,16 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, Spatia
     while (climate != NULL) {
       updateState();
       if (out != NULL) {
-	      outputState(out, currLoc, climate->year, climate->day, climate->time);
+        outputState(out, currLoc, climate->year, climate->day, climate->time);
       }
       if (outputItems != NULL) {
-	      writeOutputItemValues(outputItems);
+        writeOutputItemValues(outputItems);
       }
       climate = climate->nextClim;
     }
-    if (outputItems != NULL)
+    if (outputItems != NULL) {
       terminateOutputItemLines(outputItems);
+    }
   }
 }
 
@@ -2794,7 +2795,7 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char 
  * Populates static event structs
  */
 void initEvents(char *eventFile, int numLocs) {
-#ifdef EVENT_HANDLER
+#if EVENT_HANDLER
 	events = readEventData(eventFile, numLocs);
 #endif
 }
