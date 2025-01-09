@@ -92,8 +92,8 @@ $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
 .PHONY: all clean document estimate sipnet transpose subsetData doxygen
-        test $(SIPNET_TEST_DIRS) pretest posttest $(SIPNET_LIB) testrun 
-        $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN)
+	test $(SIPNET_TEST_DIRS) pretest posttest $(SIPNET_LIB) testrun 
+	$(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN)
 
 help:
 	@echo "Available targets:"
