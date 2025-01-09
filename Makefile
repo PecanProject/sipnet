@@ -19,8 +19,23 @@ TRANSPOSE_OFILES=$(TRANSPOSE_CFILES:.c=.o)
 SUBSET_DATA_CFILES=subsetData.c util.c namelistInput.c
 SUBSET_DATA_OFILES=$(SUBSET_DATA_CFILES:.c=.o)
 
+CFILES=$(sort $(ESTIMATE_CFILES) $(SENSTEST_CFILES) $(SIPNET_CFILES) $(TRANSPOSE_CFILES) $(SUBSET_DATA_CFILES))
+
+# Doxygen
+DOXYFILE = docs/Doxyfile
+DOXYGEN_HTML_DIR = docs/html
+DOXYGEN_LATEX_DIR = docs/latex
+
 # all: estimate sensTest sipnet transpose subsetData
-all: estimate sipnet transpose subsetData
+all: estimate sipnet transpose subsetData document
+
+# Only update docs if source files or Doxyfile have changed
+document: .doxygen.stamp
+
+.doxygen.stamp: $(CFILES) $(DOXYFILE)
+	@echo "Running Doxygen..."
+	doxygen $(DOXYFILE)
+	@touch .doxygen.stamp
 
 estimate: $(ESTIMATE_OFILES)
 	$(LD) -o estimate $(ESTIMATE_OFILES) $(LIBLINKS)
@@ -39,11 +54,8 @@ subsetData: $(SUBSET_DATA_OFILES)
 
 clean:
 	rm -f $(ESTIMATE_OFILES) $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) estimate sensTest  sipnet transpose subsetData
+	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
 
-#clean:
-#	rm -f $(ESTIMATE_OFILES) $(SENSTEST_OFILES) $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) estimate sensTest  sipnet transpose subsetData
-
-#
 # UNIT TESTS
 SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
 SIPNET_TEST_DIRS_RUN:= $(addsuffix .run, $(SIPNET_TEST_DIRS))
@@ -79,11 +91,26 @@ testclean: $(SIPNET_TEST_DIRS_CLEAN)
 $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
-.PHONY: all test $(SIPNET_TEST_DIRS) pretest posttest $(SIPNET_LIB) testrun $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN)
+.PHONY: all clean document estimate sipnet transpose subsetData doxygen
+        test $(SIPNET_TEST_DIRS) pretest posttest $(SIPNET_LIB) testrun 
+        $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN)
 
+help:
+	@echo "Available targets:"
+	@echo "  help        - Display this help message."
+	@echo "  === core targets ==="
+	@echo "  all         - Builds all components."
+	@echo "  document    - Generate documentation."
+	@echo "  sipnet      - Builds the 'sipnet' executable."
+	@echo "  clean       - Removes compiled files, executables, and documentation."
+	@echo "  depend      - Automatically generates dependency information for source files."
+	@echo "  === additional tools ==="
+	@echo "  estimate    - Builds 'estimate' executable to estimate parameters using MCMC."
+	@echo "  transpose   - Builds 'transpose' executable to read in and transpose a matrix"
+	@echo "  subsetData  - Builds 'subsetData' executable that subsets input files (e.g., .clim, .dat, .valid, .sigma, .spd) from a specified start date and length of time in days."
 
-#This target automatically builds dependencies.
 depend::
 	makedepend $(CFILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
+
