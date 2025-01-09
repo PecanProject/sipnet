@@ -65,7 +65,7 @@ jobs:
 
   # Run Unit Tests
   test:
-    needs: build_integration_test
+    needs: build
     strategy:
       fail-fast: false
       matrix:
