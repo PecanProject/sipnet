@@ -45,10 +45,13 @@ jobs:
 
       # check for correct output of Niwot run
       - name: Check if niwot.out is generated
-        if: ${{ !files.exists('Sites/Niwot/niwot.out') }}
+        shell: bash
         run: |
-          echo "::error title={No Output}::Test run for Niwot site failed to produce output"
-          exit 1
+          if: ${{ !files.exists('Sites/Niwot/niwot.out') }}
+            echo "::error title={No Output}::Test run for Niwot site failed to produce output"
+            exit 1
+          fi
+        
       # Check if niwot.out has changed 
       - name: Check whether niwot.out has changed 
         shell: bash
