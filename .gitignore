@@ -1,5 +1,25 @@
+# build artifacts and executables
 *.o
 estimate
 sipnet
 subsetData
 transpose
+.doxygen.stamp
+
+# documentation
+docs/html
+docs/latex
+
+.DS_Store
+.Rproj.user
+.Rhistory
+
+# System-specific files
+.DS_Store
+.Rproj.user
+.Rhistory
+
+# Temporary and backup files
+*.bak
+*~
+*.tmp
