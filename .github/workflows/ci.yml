@@ -47,7 +47,7 @@ jobs:
       - name: Check if niwot.out is generated
         shell: bash
         run: |
-          if: ${{ !files.exists('Sites/Niwot/niwot.out') }}
+          if [ ! -f Sites/Niwot/niwot.out ]; then
             echo "::error title={No Output}::Test run for Niwot site failed to produce output"
             exit 1
           fi
