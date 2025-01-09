@@ -25,7 +25,16 @@ jobs:
     # checkout source code
     - uses: actions/checkout@v2
 
-    # compile sipnet
+    # install doxygen
+    - name: Install Doxygen
+      run:  |
+        if [[ "$RUNNER_OS" == "Linux" ]]; then
+          sudo apt-get install doxygen -y
+        elif [[ "$RUNNER_OS" == "macOS" ]]; then
+          brew install doxygen
+        fi
+        
+    # compile SIPNET
     - name: compile sipnet
       run: make
 
