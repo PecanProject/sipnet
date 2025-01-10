@@ -1,5 +1,27 @@
 //
 // events.c
+/**
+ * @file events.c
+ * @brief Handles reading, parsing, and storing agronomic events for SIPNET simulations.
+ *
+ * The `events.in` file specifies agronomic events with the following columns:
+ * | col | parameter   | description                                | units            |
+ * |-----|-------------|--------------------------------------------|------------------|
+ * | 1   | loc         | spatial location index                     |                  |
+ * | 2   | year        | year of start of this timestep             |                  |
+ * | 3   | day         | day of start of this timestep              | Day of year      |
+ * | 4   | event_type  | type of event                              | (e.g., "irrig")  |
+ * | 5...n| event_param| parameters specific to the event type      | (varies)         |
+ *
+ *
+ * Event types include:
+ * - "irrig": Parameters = [amount added (cm/d), type (0=canopy, 1=soil, 2=flood)]
+ * - "fert": Parameters = [Org-N (g/m²), Org-C (g/ha), Min-N (g/m²), Min-N2 (g/m²)]
+ * - "till": Parameters = [SOM decomposition modifier, litter decomposition modifier]
+ * - "plant": Parameters = [emergence lag (days), C (g/m²), N (g/m²)]]
+ * - "harv": Parameters = [fraction aboveground removed, fraction belowground removed, ...]
+ * See test examples in `tests/sipnet/test_events/`.
+ */
 //
 
 #include "events.h"
