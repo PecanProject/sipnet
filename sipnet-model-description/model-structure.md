@@ -5,13 +5,21 @@ header-includes:
   - \usepackage{amsmath}
 ---
 
+<!--
+$$
+Y=mX+b \tag{1} \label{eq:line}
+$$
+
+In equation \eqref{eq:line}, $m$ is the slope and $b$ is the intercept.
+-->
+
 # Model Structure
 
-Goal: simplified biogeochemical model that is capable of simulating GHG balance, including soil carbon, CO2, CH4, and N2O flux. Key validation criteria is the ability to correctly capture the response of these pools and fluxes to changes in agronomic management practices, both current and future. 
+Goal: simplified biogeochemical model that is capable of simulating GHG balance, including soil carbon, $CO_2$, $CH_4$, and $N_2O$ flux. Key validation criteria is the ability to correctly capture the response of these pools and fluxes to changes in agronomic management practices, both current and future. 
 
 Simplification criteria:
 
-Start as simple as possible, add complexity as needed. When new features are considered, they should be evaluated alongside other possible model improvements that have been considered, and the overall list of project needs (see TK-Appendix, CARB Wish List table)
+> Start as simple as possible, add complexity as needed. When new features are considered, they should be evaluated alongside other possible model improvements that have been considered, and the overall list of project needs.
 
 Note that fluxes are denoted by $F$, except that respiration is denoted by $R$ following convention and previous descriptions of SIPNET.
 
@@ -45,25 +53,25 @@ $$
 \text{GPP} = \text{GPP}_{\text{pot}} \cdot D_{\text{water}} \tag{Braswell A17}\label{eq:A17}
 $$
 
-The total adjusted gross primary production (GPP) is the product of potential GPP ($\text{GPP}_{\text{pot}}$) and the water stress factor ($D_{\text{water}}$) from {#eq:A16}.
+The total adjusted gross primary production (GPP) is the product of potential GPP ($\text{GPP}_{\text{pot}}$) and the water stress factor $D_{\text{water}}$.
 
-The water stress factor $D_{\text{water}}$ is the ratio of actual to potential transpiration \ref{eq:A16}, and couples GPP to transpiration by reducing GPP.
+The water stress factor $D_{\text{water}}$ is defined in equation \ref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
 #### Plant Growth
 
 $$
-\text{NPP} = \text{GPP} - R_A
+\text{NPP} = \text{GPP} - R_A \tag{1} \label{eq:npp}
 $$
 
-Net primary productivity ($\text{NPP}$) is the total carbon gain of plant biomass.
+Net primary productivity ($\text{NPP}$) is the total carbon gain of plant biomass, which is partitioned among plant biomass pools.
 
 $$
-\text{NPP}=\sum_{1}^{j} \frac{dC_{\text{plant,j}}}{dt}
+\text{NPP}=\sum_{1}^{j} \frac{dC_{\text{plant,j}}}{dt} \tag{2} \label{eq:npp_summ}
 $$
 
 Where $j$ is leaf, wood, fine root, or coarse root. NPP is allocated to plant biomass pools in proportion to their allocation parameters $\alpha_j$.
 
-Note that $\alpha_{fine root}, \alpha_\text{leaf}, \alpha_\text{wood}$ are specified input parameters and $\alpha_\text{coarse root} = 1 - \alpha_\text{fine root} - \alpha_\text{leaf} - \alpha_\text{wood}$.
+Note that $\alpha_\text{fine root}, \alpha_\text{leaf}, \alpha_\text{wood}$ are specified input parameters and $\alpha_\text{coarse root} = 1 - \alpha_\text{fine root} - \alpha_\text{leaf} - \alpha_\text{wood}$.
 
 $$
 dC_{\text{plant,j}} = \text{NPP} \cdot a_j - 
@@ -71,7 +79,9 @@ dC_{\text{plant,j}} = \text{NPP} \cdot a_j -
   \tag{Zobitz 3}\label{eq:Z3}
 $$
 
-In the case of annuals, all biomass is either harvested and removed or added to litter pools. In the case of perennials a fraction of the biomass remains except at the end of the perennial's life, providing the following constraint:
+In the case of annuals, all biomass is either harvested and removed or added to litter pools. $F^C_{\text{harvest,removed,j}}$ is calculated by equation \ref{eq:harvest}.
+
+In the case of perennials a fraction of the biomass remains except at the end of the perennial's life, providing the following constraint:
 
 $$
 F^C_{\text{harvest,removed,j}} + F^C_{\text{litter,j}} =
@@ -135,7 +145,7 @@ $$
 F^C_\text{litter} - F^C_{\text{decomp}}
 $$
 
-Where $F^C_\text{litter}$ is the carbon flux from plant biomass into the litter pool through senescence and harvest. $F^C_{\text{decomp,litter}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and decomposition.
+Where $F^C_\text{litter}$ is the carbon flux from plant biomass into the litter pool through senescence and harvest \eqref{eq:litter_flux}. $F^C_{\text{decomp,litter}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and decomposition \eqref{eq:decomp_carbon}.
 
 The flux of carbon from the plant to the litter pool is the sum litter produced through senescence, transfer of any biomass pools during harvest, and organic matter ammendments:
 
@@ -143,7 +153,7 @@ $$
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,i}} \cdot C_{\text{plant,i}} +
   \sum_{j} F^C_\text{harvest,transfer,j} +
-  F^C_\text{fert,org}
+  F^C_\text{fert,org} \tag{3}\label{eq:litter_flux}
 $$
 
 Where $i$ is leaf, wood, fine root, or coarse root biomass pool, and $j$ is the above or belowground biomass pool transferred to litter during harvest.
@@ -151,21 +161,20 @@ Where $i$ is leaf, wood, fine root, or coarse root biomass pool, and $j$ is the 
 The decomposition flux from litter carbon is divided into heterotrophic respiration and carbon transfer to soil:
 
 $$
-F^C_{\text{decomp}} = R_{H_{\text{litter}}} + F^C_{\text{soil}}
+F^C_{\text{decomp}} = R_{H_{\text{litter}}} + F^C_{\text{soil}} \tag{4}\label{eq:decomp_carbon}
 $$
 
-Where $R_{H_{\text{litter}}}$ is heterotrophic respiration from litter, and $F^C_{\text{soil}}$ is the carbon transfer from the litter pool to the soil. This partitioning is based on the fraction of litter that is respired, $f_{R_H}$.
+Where $R_{H_{\text{litter}}}$ is heterotrophic respiration from litter \eqref{eq:rh_litter}, and $F^C_{\text{soil}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is based on the fraction of litter that is respired, $f_{R_H}$.
 
 $$
-R_{H_{\text{litter}}} = f_{R_H} \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}}
+R_{H_{\text{litter}}} = f_{R_H} \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{5}\label{eq:rh_litter}
 $$
 
 $$
-F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}}
+F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{6}\label{eq:soil_carbon}
 $$
 
 The rate of decomposition is a function of the litter carbon content and the decomposition rate $K_{\text{litter}}$ modified by temperature and moisture factors. $f_{R_H}$ is the fraction of litter carbon that is respired.
-
 
 #### Soil Carbon
 
@@ -180,15 +189,15 @@ The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined b
 Total heterotrophic respiration is the sum of respiration from soil and litter pools:
 
 $$
-R_{H} = f_{R_H} \cdot \left(\sum_i  K_\text{i} \cdot C_\text{i} \cdot D_{\text{tillage,i}}\right) \cdot D_{\text{temp}} \cdot D_{\text{water}}  
+R_{H} = f_{R_H} \cdot \left(\sum_i  K_\text{i} \cdot C_\text{i} \cdot D_{\text{tillage,i}}\right) \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot D_{\textit{CN}} \tag{7}\label{eq:rh}
 $$
 
-Where heterotrophic respiration, $R_H$, is a function of each carbon pool $C_i$ and its associated decomposition rate $K_{C_i}$ adjusted by the fraction allocated to respiration $f_{R_H}$, temperature and moisture functions. Pools are denoted by $i$: soil and litter.
+Where heterotrophic respiration, $R_H$, is a function of each carbon pool $C_i$ and its associated decomposition rate $K_{C_i}$ adjusted by the fraction allocated to respiration, $f_{R_H}$, and the temperature, moisture, and _CN_ dependency functions. Pools are denoted by $i$: soil and litter.
 
 ### Methane Production $(C \rightarrow \mathit{CH_4})$
 
 $$
-F^C_\mathit{CH_4} = \left(\sum_{i} K_\mathit{CH_4,i} \cdot C_\text{i}\right) \cdot D_\mathrm{water, O_2} \cdot D_\text{temp}
+F^C_\mathit{CH_4} = \left(\sum_{i} K_\mathit{CH_4,i} \cdot C_\text{i}\right) \cdot D_\mathrm{water, O_2} \cdot D_\text{temp} \tag{8}\label{eq:ch4}
 $$
 
 The calculation of methane flux ($F^C_{CH_4}$) is analagous to to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters ($K_\mathit{CH_4,i}$), a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
@@ -202,7 +211,7 @@ The carbon and nitrogen cycle are tightly coupled by the C:N ratios of plant and
 Plant biomass pools have a fixed CN ratio and are thus stoichiometrically coupled to carbon:
 
 $$
-N_i = \frac{C_i}{\mathit{CN}_{i}} \label{eq:cn_stoich}
+N_i = \frac{C_i}{\mathit{CN}_{i}} \tag{9}\label{eq:cn_stoich}
 $$
 
 Where $i$ is the leaf, wood, fine root, or coarse root pool.
@@ -214,11 +223,20 @@ Soil organic matter and litter pools have dynamic CN that is determined below.
 The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.
 
 $$
-\frac{d\mathit{CN}_{\text{i}}}{dt} = \frac{1}{N_{\text{i}}} \left( \frac{dC_{\text{i}}}{dt} - \mathit{CN}_{\text{i}} \cdot \frac{dN_{\text{i}}}{dt} \right)
+\frac{d\mathit{CN}_{\text{i}}}{dt} = \frac{1}{N_{\text{i}}} \left( \frac{dC_{\text{i}}}{dt} - \mathit{CN}_{\text{i}} \cdot \frac{dN_{\text{i}}}{dt} \right) \tag{10}\label{eq:cn}
 $$
 
 Where $i$ is either the soil organic matter or litter pool.
 
+### C:N Dependency Function ($D_{\textit{CN}}$)
+
+To represent the influence of sustrate quality on decomposition rate, we add a simple dependence function $D_{\textit{CN}}$.
+
+$$
+D_{\textit{CN}} = \frac{1}{1+k_\textit{CN} \cdot \textit{CN}} \tag{11}\label{eq:cn_dep}
+$$
+
+Where $k_\textit{CN}$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio. This parameter represents the half-saturation constant of the Michaelis-Menten equation.
 
 ## Nitrogen Dynamics
 
@@ -227,7 +245,7 @@ Where $i$ is either the soil organic matter or litter pool.
 Similar to the stoichiometric coupling of litter fluxes, the change in plant biomass N over time is stoichiometrically coupled to plant biomass C:
 
 $$
-\frac{dN_{\text{plant,j}}}{dt} = \frac{dC_{\text{plant,j}}}{dt} / \mathit{CN}_{\text{plant,j}} \label{eq:plant_n}
+\frac{dN_{\text{plant,j}}}{dt} = \frac{dC_{\text{plant,j}}}{dt} / \mathit{CN}_{\text{plant,j}} \tag{12}\label{eq:plant_n}
 $$
 
 Where $j$ is leaf, wood, fine root, or coarse root.
@@ -243,17 +261,17 @@ $$
   F^N_{\text{litter,wood}} + 
   F^N_{\text{litter,leaf}} +
   F^N_\text{fert,org} - 
-  F^N_\text{litter,min}
+  F^N_\text{litter,min} \tag{13}\label{eq:litter_dndt}
 $$
 
-The flux of nitrogen from living biomass to the litter pool is calculated using {#eq:cn_stoich}, and nitrogen from organic matter ammendments are given as inputs (TK-ref fert section).
+The flux of nitrogen from living biomass to the litter pool is calculated using equation \ref{eq:cn_stoich}, and nitrogen from organic matter ammendments are given as inputs.
 
 ### Soil Organic Nitrogen
 
 $$
 \frac{dN_\text{org,soil}}{dt} = 
    F^N_\text{litter} -
-   F^N_\text{min,soil}
+   F^N_\text{min,soil} \tag{14}\label{eq:org_soil_dndt}
 $$
 
 The change in nitrogen pools in this model is proportional to the ratio of carbon to nitrogen in the pool. Equations for the evolution of soil and litter CN are below.
@@ -266,7 +284,8 @@ $$
   F^N_\text{fert,min} - 
   F^N_\mathrm{vol} - 
   F^N_\text{leach} - 
-  F^N_\text{uptake}
+  F^N_\text{uptake} 
+  \tag{15}\label{eq:mineral_n_dndt}
 $$
 
 Mineralization and fertilization add to the mineral nitrogen pool, and losses include mineralization, volatilization, leaching, and plant uptake, described below:
@@ -276,24 +295,24 @@ Mineralization and fertilization add to the mineral nitrogen pool, and losses in
 $$
 F^N_\text{min} = 
   \frac{R_{H\text{litter}}}{\mathit{CN}_{\text{litter}}} +
-  \frac{R_H}{\mathit{CN}_{\text{soil}}}
+  \frac{R_H}{\mathit{CN}_{\text{soil}}} \tag{16}\label{eq:n_min}
 $$
 
 #### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)$
 
 
-The simplest way to represent N2O flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent N2O flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents N2O flux as a proportion of the N mineralization rate.
+The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate.
 
-Because we expect N2O emissions will be dominated by fertilizer N inputs, we will start with the N_min pool size approach. This approach also has the advantage of accounting for reduced N2O flux when N is limiting (Zahele and Dalmorech 2011). 
+Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the N_min pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
 
 $$
-F^N_\mathrm{N_2O vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}}
+F^N_\mathrm{N_2O vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n2o_vol}
 $$
 
 ### Nitrogen Leaching $F^N_\text{leach}$
 
 $$
-F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach}
+F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} \tag{18}\label{eq:n_leach}
 $$
 
 Where $F^N_\text{leach}$ is the fraction of $N_{min}$ in soil water that is available to be leached, $F^W_{drainage}$ is drainage.
@@ -305,19 +324,19 @@ For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to 
 The rate at which N is fixed is a function of the NPP of the plant and a fixed parameter $K_\text{fix}$, and is modified by temperature:
 
 $$
-F^N_\text{fix} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}}
+F^N_\text{fix} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}} \tag{19}\label{eq:n_fix}
 $$
 
 
 ### Plant Nitrogen Uptake $F^N_\text{uptake}$
 
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools from {#eq:plant_n}:
+Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools \eqref{eq:plant_n_demand}:
 
 $$
-\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt}
+\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt} \tag{20}\label{eq:plant_n_demand}
 $$
 
-Where $i$ is leaf, wood, fine root, or coarse root.
+Where $i$ is leaf, wood, fine root, or coarse root, and $\frac{dN_{\text{plant,i}}}{dt}$ is calculated in equation \ref{eq:plant_n}.
 
 #### Nitrogen Limitation Indicator Function $I_{\text{N limit}}$
 
@@ -329,13 +348,13 @@ $$
 I_{\text{N limit}} = \begin{cases}
 1, & \text{if } \frac{dN_\text{plant}}{dt} \leq N_{\text{min}} \\
 0, & \text{if } \frac{dN_\text{plant}}{dt} > N_{\text{min}}
-\end{cases}
+\end{cases} \tag{21}\label{eq:n_limit}
 $$
 
 When $I=0$, SIPNET will throw a warning and increase autotrophic respiration to $R_A=GPP$ to stop plant growth and associated N uptake:
 
 $$
-R_A = \max(R_A, I_{\text{N limit}} \cdot GPP)
+R_A = \max(R_A, I_{\text{N limit}} \cdot GPP) \tag{22}\label{eq:n_limit_ra}
 $$
 
 This will effectively stop plant growth and N uptake when there there is insufficient N.
@@ -365,7 +384,7 @@ $F^W_{\text{precip}}$ is the precipitation rate prescribed at each time step in 
 Under well-drained conditions, drainage occurs when soil water content ($W_{\text{soil}}$) exceeds the soil water holding capacity ($W_{\text{WHC}}). Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduced the rate of drainage, and flooding will will require a combination of a low $f_{\text{drain}}$ and sufficient size and / or frequency of $F^W_\text{irrigation}$ to maintain flooded conditions.
 
 $$
-F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0) \label{eq:drainage}
+F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0) \tag{23}\label{eq:drainage}
 $$
 
 This is adapted from the original SIPNET formulation (Braswell et al 2005), adding a new parameter that controls the drainage rate.
@@ -409,7 +428,7 @@ Below is a description of these functions.
 Photosynthesis has a temperature optimum in the range of observed air temperatures as well as maximum and minimum temperatures of photosynthesis ($A$). SIPNET represents the temperature dependence of photosynthesis as a parabolic function. This function has a maximum at the temperature optimum, and decreases as temperature moves away from the optimum.
 
 $$
-D_\text{temp,A}=\max\left(\frac{(T_{max} - T_{air})(T_{air} - T_{min})}{\left(\frac{(T_{max} - T_{min})}{2}\right)^2}, 0\right)
+D_\text{temp,A}=\max\left(\frac{(T_\text{max} - T_\text{air})(T_\text{air} - T_\text{min})}{\left(\frac{T_\text{max} - T_\text{min}}{2}\right)^2}, 0\right)
 \tag{Braswell A9}\label{eq:A9}
 $$
 
@@ -422,23 +441,23 @@ Becuase the function is symmetric around $T_\text{opt}$, the parameters $T_{\tex
 The temperature response of autotrophic ($R_a$) and heterotrophic ($R_H$) respiration represented as an exponential relationship using a simplified Arrhenius function.
 
 $$
-D_{\text{temp,Q10}} = Q_{10}^{\frac{(T-T_\text{opt})}{10}} \tag{Braswell A18}\label{eq:BA18}
+D_{\text{temp,Q10}} = Q_{10}^{\frac{(T-T_\text{opt})}{10}} \tag{Braswell A18}\label{eq:A18b}
 $$
 
-The exponential function is a simplification of the Arrhenius function in which $Q_{10}$ is the temperature sensitivity parameter, $T$ is the temperature, and $T_{\text{opt}}$ is the optimal temperature for the process set to 0 for wood and soil respiration.
+The exponential function is a simplification of the Arrhenius function in which $Q_{10}$ is the temperature sensitivity parameter, $T$ is the temperature, and $T_{\text{opt}}$ is the optimal temperature for the process set to 0 for wood and soil respiration. (Note that this is part of the equation for leaf respiration in Braswell et al. (2005).
 
 We assume $T=T_\text{air}$ for leaf and wood respiration, and $T=T_\text{soil}$ for soil and root respiration. The optimal temperature for leaf respiration is the optimal temperature for photosynthesis, $T_{\text{opt}}=T_{\text{opt,A}}$, while $T_{\text{opt}}=0$ for wood, root, and soil respiration.
 
-This function provides two ways to reduce the number of parameters in the model. Braswell et al (2005) used two $Q_{10}$ values, one for $R_A$ and one for $R_H$ and these calibrated to the same value of 1.7. By contrast, Zobitz et al (2008) used four $Q_{10}$ values, one for both leaf and wood, and one each for coarse root, fine root, and soil. Notably, these four $Q_{10}$ values ranged from 1.4 to 5.8 when SIPNET was calibrated to CO2 fluxes in a subalpine forest.
+This function provides two ways to reduce the number of parameters in the model. Braswell et al (2005) used two $Q_{10}$ values, one for $R_A$ and one for $R_H$ and these calibrated to the same value of 1.7. By contrast, Zobitz et al (2008) used four $Q_{10}$ values, one for both leaf and wood, and one each for coarse root, fine root, and soil. Notably, these four $Q_{10}$ values ranged from 1.4 to 5.8 when SIPNET was calibrated to $CO_2$ fluxes in a subalpine forest.
 
 ### Moisture dependence functions $D_{water}$
 
-Moisture dependence functions are typically based on soil water content as a fraction of water holding capacity, also referred to as soil moisture in SIPNET. We will represent this fraction as $f_\text{WHC}$.
+Moisture dependence functions are typically based on soil water content as a fraction of water holding capacity, also referred to as soil moisture or fractional soil wetness. We will represent this fraction of soil wetness as $f_\text{WHC}$.
 
 #### Soil Water Content Fraction
 
 $$
-f_{\text{WHC}} = \frac{W_{\text{soil}}}{W_{\text{WHC}}}
+f_{\text{WHC}} = \frac{W_{\text{soil}}}{W_{\text{WHC}}} 
 $$
 
 Where
@@ -452,7 +471,7 @@ $$
 D_{\text{water stress}} = \frac{F^W_{\text{trans}}}{F^W_{\text{trans, pot}}} \tag{Braswell A16} \label{eq:A16}
 $$
 
-The water stress factor ($D_{\text{water}}$) is the ratio of actual transpiration ($F^W_\text{trans}$) to potential transpiration ($F^W_\text{trans, pot}$).
+The water stress factor ($D_{\text{water}}$, ) is the ratio of actual transpiration ($F^W_\text{trans}$) to potential transpiration ($F^W_\text{trans, pot}$).
 
 #### Soil Respiration Moisture Dependence ($D_{\text{water}R_H}$)
 
@@ -463,7 +482,7 @@ D_{\text{water} R_H} =
 \begin{cases}
 1, & \text{if } T_{\text{soil}} \leq 0 \\
 f_{\text{WHC}} & \text{if } T_{\text{soil}} > 0
-\end{cases}
+\end{cases} \tag{24}\label{eq:water_rh}
 $$
 
 #### Moisture Dependence For Anaerobic Metabolism with Soil Moisture Optimum
@@ -482,8 +501,6 @@ $$
 Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maiximum and width.
 
 For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.
-
-
 
 ## Agronomic Management Events
 
@@ -515,10 +532,10 @@ Event parameters from the `events.in` file:
 These values specified as fractions (e.g. 0.2 for 20% increase in decomposition rate). They are set to 0 by default and are expected to be >0. They are set in the `events.in`, and are effective for one month after the tillage event.
 
 $$
-K_{\text{i}} = K_{\text{i}} \cdot (1+D_{K\text{,tillage,i}})
+K^{\prime}_{\text{i}} = K_{\text{i}} \cdot (1+D_{K\text{,tillage,i}})
 $$
 
-Where $i$ is either litter or soil organic matter pool.
+Where $i$ is either litter or soil organic matter pool, and $K^{\prime}$ is the transiently adjusted decomposition rate.
 
 The choice of one month adjustment period is based on DayCent (Parton et al 2001).
 
@@ -540,16 +557,16 @@ Since emergence is defined as 15% LAI, plant biomass at emergence can be inferre
 First calculate the leaf carbon:
 
 $$
-C_{\text{leaf,e}} = \frac{LAI_e}{SLW}
+C_{\text{leaf,e}} = \frac{LAI_e}{SLW} \tag{25}\label{eq:leaf_emergence_carbon}
 $$
 
 Then calculate total plant carbon at emergence:
 
 $$
-C_{\text{plant,e}} = C_{\text{leaf,e}} / \alpha_{\text{leaf}}
+C_{\text{plant,e}} = C_{\text{leaf,e}} / \alpha_{\text{leaf}} \tag{26}\label{eq:plant_emergence_carbon}
 $$
 
-Now carbon for each pool can be calculated using the allocation coefficients {#eq:Z3}, and nitrogen for each pool can be calculated using the stoichiometric ratios {#eq:cn_stoich}.
+Now carbon for each pool can be calculated using the allocation coefficients \eqref{eq:Z3}, and nitrogen for each pool can be calculated using the stoichiometric ratios \eqref{eq:cn_stoich}.
 
 ### Harvest
 
@@ -560,7 +577,7 @@ Event parameters:
 * Fraction of aboveground biomass transferred to litter ($f_{\text{transfer,above}}$)
 * Fraction of belowground biomass transferred to litter ($f_{\text{transfer,below}}$)
 
-A harvest event removes a fraction of aboveground (and less commonly, belowground) biomass from the system and transferrs a fraction of aboveground and typically all belowground biomass to the litter pool.
+A harvest event removes a fraction of aboveground (and less commonly, belowground) biomass from the system and transferrs a fraction of aboveground and typically all belowground biomass to the litter pool \eqref{eq:harvest}.
 
 In the case of annuals and crop termination events, $f_{\text{remove,i}} + f_{\text{transfer,i}} = 1$ for each biomass pool $i$. In the case of perennials and non-terminating annual mowing events, $f_{\text{remove,i}} + f_{\text{transfer,i}} \leq 1$.
 
@@ -575,7 +592,7 @@ $$
 Harvest transfer to litter:
 
 $$
-F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} + f_{\text{transfer,below}} \cdot C_{\text{root}}
+F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} + f_{\text{transfer,below}} \cdot C_{\text{root}} \tag{27}\label{eq:harvest}
 $$
 
 ### Irrigation
@@ -602,7 +619,7 @@ F^W_{\text{irrigation}} =
 f_{\text{intercept}} \cdot F^W_{\text{irrigation}} & \text{canopy} \\
 F^W_{\text{irrigation}} & \text{soil} \\
 W_{\text{WHC}} - W_{\text{soil}} + F^W_{\text{irrigation}} & \text{flooding}
-\end{cases}
+\end{cases} \tag{28}\label{eq:irrigation}
 $$
 
 ## References
