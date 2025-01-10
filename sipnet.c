@@ -18,6 +18,8 @@
 #include "util.h"
 #include "spatialParams.h"
 #include "outputItems.h"
+#include "modelStructures.h"
+#include "events.h"
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)
@@ -26,14 +28,14 @@
 
 //alternative transpiration methods modified by Dave Moore
 #define ALTERNATIVE_TRANS 0
-// do we want to impliment alternative transpiration?
+// do we want to implement alternative transpiration?
 
 #define BALL_BERRY 0
-//impliment a Ball Berry submodel to calculate gs from RH, CO2 and A
+//implement a Ball Berry submodel to calculate gs from RH, CO2 and A
 //MUST BE OFF for PENMAN MONTEITH TO RUN
 
 #define PENMAN_MONTEITH_TRANS 0
-//impliment a transpiration calculation based on the Penman-Monteith Equation.
+//implement a transpiration calculation based on the Penman-Monteith Equation.
 //March 1st 2007 PM equation not really working.
 
 //#define G 0
@@ -487,7 +489,9 @@ static ClimateNode *climate; // current climate
 static Fluxes fluxes;
 static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible outputs
 
-
+#if EVENT_HANDLER
+static EventNode **events;
+#endif
 
 /* Read climate file into linked lists,
    make firstClimates be a vector where each element is a pointer to the head of a list corresponding to one spatial location
@@ -934,8 +938,8 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
     coeff = 1;
     int err;
     double fAPAR;		// Calculation of fAPAR according to 1 - exp(attenuation*LAI)
-    double APAR;		// Absorbed PAR by the canopy
-    double lightIntensityTop, lightIntensityBottom;	// PAR absorbed by the canopy
+    //double APAR;		// Absorbed PAR by the canopy
+    //double lightIntensityTop, lightIntensityBottom;	// PAR absorbed by the canopy
     cumfAPAR = 0.0;
 
 
@@ -966,11 +970,11 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
     fAPAR = cumfAPAR/(3.0*NUM_LAYERS);  // the average value, multiplying by h/3 in Simpson's rule, and dividing by the number of steps
 
 
-    lightIntensityTop = par;  // Energy at the top of the canopy
-    lightIntensityBottom = par * exp(-1.0 * params.attenuation * lai); // LAI at the bottom of the canopy
+    //lightIntensityTop = par;  // Energy at the top of the canopy
+    //lightIntensityBottom = par * exp(-1.0 * params.attenuation * lai); // LAI at the bottom of the canopy
 																		// between 0 and par
         // this is the amount of incident par
-    APAR = params.m_ballBerry * (lightIntensityTop - lightIntensityBottom);		// APAR at this layer
+    //APAR = params.m_ballBerry * (lightIntensityTop - lightIntensityBottom);		// APAR at this layer
               // is a fraction of the difference between incoming par and transmitted par
 
 
@@ -1932,8 +1936,8 @@ void calculateFluxes() {
   	double potGrossPsn; // potential photosynthesis, without water stress
   	double dWater;
   	double lai; // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  	double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter)
-							 (g C/m^2 ground/day) */
+    //double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter)
+    //(g C/m^2 ground/day) */
   	double folResp, woodResp; // maintenance respiration terms, g C * m^-2 ground area * day^-1
   	double litterWater, soilWater; /* amount of water in litter and soil (cm)
 				    taken from either environment or climate drivers, depending on value of MODEL_WATER */
@@ -2005,7 +2009,7 @@ void calculateFluxes() {
 		fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
   	// NOTE: right now, we don't have capability to use separate cold soil params for litter
 	#else
-  		litterBreakdown = 0;
+  	//	litterBreakdown = 0;
 		fluxes.rLitter = 0;
 		fluxes.litterToSoil = 0;
 	#endif
@@ -2479,6 +2483,12 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 }
 
 
+// Setup events at given location
+void setupEvents(int currLoc) {
+  // Implementation TBD
+}
+
+
 /* Do one run of the model using parameter values in spatialParams
    If out != NULL, output results to out
     If printHeader = 1, print a header for the output file, if 0 don't
@@ -2504,6 +2514,9 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, Spatia
 
   for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     setupModel(spatialParams, currLoc);
+#if EVENT_HANDLER
+    setupEvents(currLoc);
+#endif
     if ((loc == -1) && (outputItems != NULL))  {  // print the current location at the start of the line
       sprintf(label, "%d", currLoc);
       writeOutputItemLabels(outputItems, label);
@@ -2511,14 +2524,17 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, Spatia
 
     while (climate != NULL) {
       updateState();
-      if (out != NULL)
-	outputState(out, currLoc, climate->year, climate->day, climate->time);
-      if (outputItems != NULL)
-	writeOutputItemValues(outputItems);
+      if (out != NULL) {
+        outputState(out, currLoc, climate->year, climate->day, climate->time);
+      }
+      if (outputItems != NULL) {
+        writeOutputItemValues(outputItems);
+      }
       climate = climate->nextClim;
     }
-    if (outputItems != NULL)
+    if (outputItems != NULL) {
       terminateOutputItemLines(outputItems);
+    }
   }
 }
 
@@ -2775,8 +2791,14 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char 
   return numLocs;
 }
 
-
-
+/* Do initialization of event data if event handling is turned on.
+ * Populates static event structs
+ */
+void initEvents(char *eventFile, int numLocs) {
+#if EVENT_HANDLER
+	events = readEventData(eventFile, numLocs);
+#endif
+}
 // call this when done running model:
 // de-allocates space for climate linked list
 // (needs to know number of locations)
