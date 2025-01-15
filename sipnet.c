@@ -96,7 +96,7 @@
 #define SOIL_PHENOL 0 && !GDD
 // use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)
 
-#define LITTER_POOL 0
+// LITTER_POOL moved to modelStructures.h
 // have extra litter pool, in addition to soil c pool
 
 #define SOIL_MULTIPOOL 0 && !LITTER_POOL
@@ -120,7 +120,7 @@
 #define STOICHIOMETRY 0 && MICROBES
 // do we utilize stoichometric considerations for the microbial pool?
 
-#define ROOTS 1
+// ROOTS moved to modelStructures.h
 // do we model root dynamics?
 
 
