@@ -489,8 +489,12 @@ static ClimateNode *climate; // current climate
 static Fluxes fluxes;
 static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible outputs
 
+// MJL REMOVE THIS BEFORE CHECKIN
+#define EVENT_HANDLER 1
+
 #if EVENT_HANDLER
 static EventNode **events;
+static EventNode *locEvent; // current location event list
 #endif
 
 /* Read climate file into linked lists,
@@ -2275,32 +2279,75 @@ void updateTrackers(double oldSoilWater) {
   // mean of soil wetness at start of time step at soil wetness at end of time step - assume linear
 }
 
+// This should be in events.h/c, but with all the global state defined in this file,
+// let's leave it here for now. Maybe someday we will factor that out.
+//
+// Process events for current location/year/day
+void processEvents() {
+#if EVENT_HANDLER
+	// If locEvent starts off NULL, this function will just fall through, as it should.
+	const int year = climate->year;
+	const int day = climate->day;
+
+	// The events file has been tested on read, so we know this event list should be in chrono
+	// order. However, we need to check to make sure the current event is not in the past, as
+	// that would indicate an event that did not have a corresponding climate file record.
+	while (locEvent != NULL && locEvent->year <= year && locEvent->day <= day) {
+		if (locEvent->year < year || locEvent->day < day) {
+			printf("Agronomic event found for loc: %d year: %d day: %d that does not have a corresponding record in the climate file\n", locEvent->year, locEvent->year, locEvent->day);
+			exit(1);
+		}
+		switch (locEvent->type) {
+			// Implementation TBD, as we enable the various event types
+			case IRRIGATION:
+				// TBD
+					printf("Irrigation events not yet implemented\n");
+					break;
+			case PLANTING:
+				// TBD
+					printf("Planting events not yet implemented\n");
+					break;
+			case HARVEST:
+				// TBD
+					printf("Harvest events not yet implemented\n");
+					break;
+			case TILLAGE:
+				// TBD
+					printf("Tillage events not yet implemented\n");
+					break;
+			case FERTILIZATION:
+				// TBD
+					printf("Fertilization events not yet implemented\n");
+					break;
+			default:
+				printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
+				exit(1);
+		}
+
+		locEvent = locEvent->nextEvent;
+	}
+#endif
+}
+
 
 // !!! main runner function !!!
-
-
 
 // calculate all fluxes and update state for this time step
 // we calculate all fluxes before updating state in case flux calculations depend on the old state
 void updateState() {
 	double npp; // net primary productivity, g C * m^-2 ground area * day^-1
-  	double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
-    int err;
-  	oldSoilWater = envi.soilWater;
+  double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
+  int err;
+  oldSoilWater = envi.soilWater;
 
-  	calculateFluxes();
+  calculateFluxes();
 
-  	// update the stocks, with fluxes adjusted for length of time step:
-  	envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation - fluxes.leafCreation - fluxes.woodLitter
-  				- fluxes.rVeg-fluxes.coarseRootCreation-fluxes.fineRootCreation)* climate->length;
-  	envi.plantLeafC += (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
-
-
-
+  // update the stocks, with fluxes adjusted for length of time step:
+  envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation - fluxes.leafCreation - fluxes.woodLitter
+  			- fluxes.rVeg-fluxes.coarseRootCreation-fluxes.fineRootCreation)* climate->length;
+  envi.plantLeafC += (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
 
 	soilDegradation();		// This updates all the soil functions
-
-
 
 	#if MODEL_WATER // water pool updating happens here:
 
@@ -2322,6 +2369,13 @@ void updateState() {
 	#endif // MODEL_WATER
 
   ensureNonNegativeStocks();
+
+#if EVENT_HANDLER
+	// Process events for this location/year/day, AFTER updates are made to fluxes and state
+	// variables above. Events are (currently, Jan 25) handled as instantaneous deltas to
+	// relevant state (envi and fluxes fields),
+	processEvents();
+#endif
 
 
   npp = fluxes.photosynthesis - fluxes.rVeg-fluxes.rCoarseRoot-fluxes.rFineRoot;
@@ -2485,7 +2539,9 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
 // Setup events at given location
 void setupEvents(int currLoc) {
-  // Implementation TBD
+#if EVENT_HANDLER
+	locEvent = events[currLoc];
+#endif
 }
 
 
@@ -2553,6 +2609,12 @@ void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[], S
   int outputNum;
 
   setupModel(spatialParams, loc);
+
+#if EVENT_HANDLER
+	// Implementation TBD
+	printf("Event handler not yet implemented for running model with no output\n");
+	exit(1);
+#endif
 
   // loop through every step of the model:
   while (climate != NULL) {
