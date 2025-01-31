@@ -26,3 +26,9 @@ make testrun
 # Clean after tests are run
 make testclean
 ```
+
+If changes are made to the `modelStructure.h` file and unit tests are failing, try running the update script as shown below. Consider running this script even if unit tests _are not_ failing.
+```shell
+# Run this command from the root directory to update unit test versions of modelStructures.h
+tests/update_model_structures.sh
+```
