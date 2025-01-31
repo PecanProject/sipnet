@@ -489,9 +489,6 @@ static ClimateNode *climate; // current climate
 static Fluxes fluxes;
 static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible outputs
 
-// MJL REMOVE THIS BEFORE CHECKIN
-#define EVENT_HANDLER 1
-
 #if EVENT_HANDLER
 static EventNode **events;
 static EventNode *locEvent; // current location event list
