@@ -2282,47 +2282,47 @@ void updateTrackers(double oldSoilWater) {
 // Process events for current location/year/day
 void processEvents() {
 #if EVENT_HANDLER
-	// If locEvent starts off NULL, this function will just fall through, as it should.
-	const int year = climate->year;
-	const int day = climate->day;
+  // If locEvent starts off NULL, this function will just fall through, as it should.
+  const int year = climate->year;
+  const int day = climate->day;
 
-	// The events file has been tested on read, so we know this event list should be in chrono
-	// order. However, we need to check to make sure the current event is not in the past, as
-	// that would indicate an event that did not have a corresponding climate file record.
-	while (locEvent != NULL && locEvent->year <= year && locEvent->day <= day) {
-		if (locEvent->year < year || locEvent->day < day) {
-			printf("Agronomic event found for loc: %d year: %d day: %d that does not have a corresponding record in the climate file\n", locEvent->year, locEvent->year, locEvent->day);
-			exit(1);
-		}
-		switch (locEvent->type) {
-			// Implementation TBD, as we enable the various event types
-			case IRRIGATION:
-				// TBD
-					printf("Irrigation events not yet implemented\n");
-					break;
-			case PLANTING:
-				// TBD
-					printf("Planting events not yet implemented\n");
-					break;
-			case HARVEST:
-				// TBD
-					printf("Harvest events not yet implemented\n");
-					break;
-			case TILLAGE:
-				// TBD
-					printf("Tillage events not yet implemented\n");
-					break;
-			case FERTILIZATION:
-				// TBD
-					printf("Fertilization events not yet implemented\n");
-					break;
-			default:
-				printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
-				exit(1);
-		}
+  // The events file has been tested on read, so we know this event list should be in chrono
+  // order. However, we need to check to make sure the current event is not in the past, as
+  // that would indicate an event that did not have a corresponding climate file record.
+  while (locEvent != NULL && locEvent->year <= year && locEvent->day <= day) {
+    if (locEvent->year < year || locEvent->day < day) {
+      printf("Agronomic event found for loc: %d year: %d day: %d that does not have a corresponding record in the climate file\n", locEvent->year, locEvent->year, locEvent->day);
+      exit(1);
+    }
+    switch (locEvent->type) {
+      // Implementation TBD, as we enable the various event types
+      case IRRIGATION:
+        // TBD
+          printf("Irrigation events not yet implemented\n");
+          break;
+      case PLANTING:
+        // TBD
+          printf("Planting events not yet implemented\n");
+          break;
+      case HARVEST:
+        // TBD
+          printf("Harvest events not yet implemented\n");
+          break;
+      case TILLAGE:
+        // TBD
+          printf("Tillage events not yet implemented\n");
+          break;
+      case FERTILIZATION:
+        // TBD
+          printf("Fertilization events not yet implemented\n");
+          break;
+      default:
+        printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
+        exit(1);
+    }
 
-		locEvent = locEvent->nextEvent;
-	}
+    locEvent = locEvent->nextEvent;
+  }
 #endif
 }
 
@@ -2332,7 +2332,7 @@ void processEvents() {
 // calculate all fluxes and update state for this time step
 // we calculate all fluxes before updating state in case flux calculations depend on the old state
 void updateState() {
-	double npp; // net primary productivity, g C * m^-2 ground area * day^-1
+  double npp; // net primary productivity, g C * m^-2 ground area * day^-1
   double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
   int err;
   oldSoilWater = envi.soilWater;
@@ -2341,39 +2341,38 @@ void updateState() {
 
   // update the stocks, with fluxes adjusted for length of time step:
   envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation - fluxes.leafCreation - fluxes.woodLitter
-  			- fluxes.rVeg-fluxes.coarseRootCreation-fluxes.fineRootCreation)* climate->length;
+        - fluxes.rVeg-fluxes.coarseRootCreation-fluxes.fineRootCreation)* climate->length;
   envi.plantLeafC += (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
 
-	soilDegradation();		// This updates all the soil functions
+  soilDegradation();    // This updates all the soil functions
 
-	#if MODEL_WATER // water pool updating happens here:
+  #if MODEL_WATER // water pool updating happens here:
 
-		#if LITTER_WATER // (2 soil water layers; litter water will only be on if complex water is also on)
-  			envi.litterWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
-		    	   - fluxes.evaporation - fluxes.topDrainage) * climate->length;
-  			envi.soilWater += (fluxes.topDrainage - fluxes.transpiration - fluxes.bottomDrainage)
-    		* climate->length;
+    #if LITTER_WATER // (2 soil water layers; litter water will only be on if complex water is also on)
+        envi.litterWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
+             - fluxes.evaporation - fluxes.topDrainage) * climate->length;
+        envi.soilWater += (fluxes.topDrainage - fluxes.transpiration - fluxes.bottomDrainage)
+        * climate->length;
 
-		#else // LITTER_WATER = 0 (only one soil water layer)
-  		// note: some of these fluxes will always be 0 if complex water is off
-  			envi.soilWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
-		     	- fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) * climate->length;
-		#endif // LITTER_WATER
+    #else // LITTER_WATER = 0 (only one soil water layer)
+      // note: some of these fluxes will always be 0 if complex water is off
+        envi.soilWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
+          - fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) * climate->length;
+    #endif // LITTER_WATER
 
-  		// if COMPLEX_WATER = 0 or SNOW = 0, some or all of these fluxes will always be 0
-  		envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) * climate->length;
+      // if COMPLEX_WATER = 0 or SNOW = 0, some or all of these fluxes will always be 0
+      envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) * climate->length;
 
-	#endif // MODEL_WATER
+  #endif // MODEL_WATER
 
   ensureNonNegativeStocks();
 
 #if EVENT_HANDLER
-	// Process events for this location/year/day, AFTER updates are made to fluxes and state
-	// variables above. Events are (currently, Jan 25) handled as instantaneous deltas to
-	// relevant state (envi and fluxes fields),
-	processEvents();
+  // Process events for this location/year/day, AFTER updates are made to fluxes and state
+  // variables above. Events are (currently, Jan 25) handled as instantaneous deltas to
+  // relevant state (envi and fluxes fields),
+  processEvents();
 #endif
-
 
   npp = fluxes.photosynthesis - fluxes.rVeg-fluxes.rCoarseRoot-fluxes.rFineRoot;
 
@@ -2394,7 +2393,6 @@ void updateState() {
   }
 
   updateTrackers(oldSoilWater);
-
 }
 
 
