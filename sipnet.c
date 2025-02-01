@@ -2369,7 +2369,7 @@ void updateState() {
 
 #if EVENT_HANDLER
   // Process events for this location/year/day, AFTER updates are made to fluxes and state
-  // variables above. Events are (currently, Jan 25) handled as instantaneous deltas to
+  // variables above. Events are (currently, Jan 25, 2025) handled as instantaneous deltas to
   // relevant state (envi and fluxes fields),
   processEvents();
 #endif
