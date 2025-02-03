@@ -2535,7 +2535,7 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 // Setup events at given location
 void setupEvents(int currLoc) {
 #if EVENT_HANDLER
-	locEvent = events[currLoc];
+  locEvent = events[currLoc];
 #endif
 }
 
@@ -2606,9 +2606,9 @@ void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[], S
   setupModel(spatialParams, loc);
 
 #if EVENT_HANDLER
-	// Implementation TBD
-	printf("Event handler not yet implemented for running model with no output\n");
-	exit(1);
+  // Implementation TBD
+  printf("Event handler not yet implemented for running model with no output\n");
+  exit(1);
 #endif
 
   // loop through every step of the model:
