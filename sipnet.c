@@ -20,6 +20,7 @@
 #include "outputItems.h"
 #include "modelStructures.h"
 #include "events.h"
+#include "exitCodes.h"
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)
@@ -2280,8 +2281,8 @@ void updateTrackers(double oldSoilWater) {
 // let's leave it here for now. Maybe someday we will factor that out.
 //
 // Process events for current location/year/day
-void processEvents() {
 #if EVENT_HANDLER
+void processEvents() {
   // If locEvent starts off NULL, this function will just fall through, as it should.
   const int year = climate->year;
   const int day = climate->day;
@@ -2318,13 +2319,13 @@ void processEvents() {
           break;
       default:
         printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
-        exit(1);
+        exit(EXIT_UNKNOWN_EVENT);
     }
 
     locEvent = locEvent->nextEvent;
   }
-#endif
 }
+#endif
 
 
 // !!! main runner function !!!
