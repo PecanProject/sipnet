@@ -4,9 +4,9 @@
 // Exit codes for SIPNET; most of the current uses of exit(1) should
 // get better codes, which will appear here
 typedef enum {
-  EXIT_SUCCESS = 0,
-  EXIT_FAILURE = 1,
-  EXIT_UNKNOWN_EVENT = 2
-} ExitCode;
+  EXIT_CODE_SUCCESS = 0,
+  EXIT_CODE_FAILURE = 1,
+  EXIT_CODE_UNKNOWN_EVENT = 2
+} exit_code_t;
 
 #endif
