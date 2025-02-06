@@ -2534,11 +2534,11 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
 
 // Setup events at given location
-void setupEvents(int currLoc) {
 #if EVENT_HANDLER
+void setupEvents(int currLoc) {
   locEvent = events[currLoc];
-#endif
 }
+#endif
 
 
 /* Do one run of the model using parameter values in spatialParams
