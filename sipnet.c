@@ -2319,7 +2319,7 @@ void processEvents() {
           break;
       default:
         printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
-        exit(EXIT_UNKNOWN_EVENT);
+        exit(EXIT_CODE_UNKNOWN_EVENT);
     }
 
     locEvent = locEvent->nextEvent;
