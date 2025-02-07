@@ -78,6 +78,12 @@
 // do we have a separate litter water layer, used for evaporation?
 // if complex water is off, then litter water is off: litter water layer wouldn't do anything
 
+#if LITTER_WATER & EVENT_HANDLER
+#error EVENT_HANDLER and LITTER_WATER may not both be activated
+#endif
+// We do not handle having both LITTER_WATER and EVENT_HANDLING on; this may
+// be implemented in a later phase
+
 #define LITTER_WATER_DRAINAGE 1 && (LITTER_WATER)
 // does water from the top layer drain down into bottom layer even if top layer not overflowing?
 // if litter water is off, then litter water drainage is off: litter water drainage wouldn't do anything
@@ -2271,7 +2277,7 @@ void updateTrackers(double oldSoilWater) {
     trackers.LAI = envi.plantLeafC/params.leafCSpWt;
     trackers.yearlyLitter += fluxes.leafLitter;
     trackers.plantWoodC = envi.plantWoodC;
-    	//note this variable is added for Howland forest multi-model comparison includes ONLY leaf litter
+    //note this variable is added for Howland forest multi-model comparison includes ONLY leaf litter
 
 
   // mean of soil wetness at start of time step at soil wetness at end of time step - assume linear
@@ -2298,9 +2304,22 @@ void processEvents() {
     switch (locEvent->type) {
       // Implementation TBD, as we enable the various event types
       case IRRIGATION:
-        // TBD
-          printf("Irrigation events not yet implemented\n");
-          break;
+        const IrrigationParams* irrParams = locEvent->eventParams;
+        const double amount = irrParams->amountAdded;
+        if (irrParams->location == CANOPY) {
+          // Part of the irrigation evaporates, and the rest makes it to the soil
+          // Evaporated fraction
+          const double evapAmount = params.immedEvapFrac * amount;
+          fluxes.immedEvap += evapAmount;
+          // Remainder goes to the soil
+          const double soilAmount = amount - evapAmount;
+          envi.soilWater += soilAmount;
+        }
+        else { // location = soil
+        	// All goes to the soil
+        	envi.soilWater += amount;
+        }
+        break;
       case PLANTING:
         // TBD
           printf("Planting events not yet implemented\n");
@@ -2348,13 +2367,11 @@ void updateState() {
   soilDegradation();    // This updates all the soil functions
 
   #if MODEL_WATER // water pool updating happens here:
-
     #if LITTER_WATER // (2 soil water layers; litter water will only be on if complex water is also on)
         envi.litterWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
              - fluxes.evaporation - fluxes.topDrainage) * climate->length;
         envi.soilWater += (fluxes.topDrainage - fluxes.transpiration - fluxes.bottomDrainage)
         * climate->length;
-
     #else // LITTER_WATER = 0 (only one soil water layer)
       // note: some of these fluxes will always be 0 if complex water is off
         envi.soilWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow

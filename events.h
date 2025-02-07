@@ -1,20 +1,20 @@
-//
-// Created by Michael J Longfritz on 11/8/24.
-//
-
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include "modelStructures.h"
-
-enum EventType {
+typedef enum EventType {
   FERTILIZATION,
   HARVEST,
   IRRIGATION,
   PLANTING,
   TILLAGE,
   UNKNOWN_EVENT
-};
+} event_type_t;
+
+typedef enum IrrigationLocation
+{
+  CANOPY = 0,
+  SOIL = 1
+} irrigation_location_t;
 
 typedef struct HarvestParams {
   double fractionRemovedAbove;
@@ -25,7 +25,7 @@ typedef struct HarvestParams {
 
 typedef struct IrrigationParams {
   double amountAdded;
-  int location; // 0=canopy, 1=soil
+  irrigation_location_t location;
 } IrrigationParams;
 
 typedef struct FertilizationParams {
@@ -49,7 +49,7 @@ typedef struct TillageParams {
 
 typedef struct EventNode EventNode;
 struct EventNode {
-  enum EventType type;
+  event_type_t type;
   int loc, year, day;
   void *eventParams;
   EventNode *nextEvent;

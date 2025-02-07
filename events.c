@@ -114,7 +114,7 @@ EventNode* createEventNode(
   return event;
 }
 
-enum EventType getEventType(char *eventTypeStr) {
+event_type_t getEventType(char *eventTypeStr) {
   if (strcmp(eventTypeStr, "irrig") == 0) {
     return IRRIGATION;
   } else if (strcmp(eventTypeStr, "fert") == 0) {
