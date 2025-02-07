@@ -13,7 +13,8 @@ typedef enum EventType {
 typedef enum IrrigationLocation
 {
   CANOPY = 0,
-  SOIL = 1
+  SOIL = 1,
+  FLOOD = 2 // placeholder, not supported yet
 } irrigation_location_t;
 
 typedef struct HarvestParams {

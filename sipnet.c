@@ -2315,9 +2315,13 @@ void processEvents() {
           const double soilAmount = amount - evapAmount;
           envi.soilWater += soilAmount;
         }
-        else { // location = soil
-        	// All goes to the soil
-        	envi.soilWater += amount;
+        else if (irrParams->location == SOIL) {
+          // All goes to the soil
+          envi.soilWater += amount;
+        }
+        else {
+          printf("Unknown irrigation location type: %d\n", irrParams->location);
+          exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
         }
         break;
       case PLANTING:
@@ -2338,7 +2342,7 @@ void processEvents() {
           break;
       default:
         printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
-        exit(EXIT_CODE_UNKNOWN_EVENT);
+        exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
     locEvent = locEvent->nextEvent;
