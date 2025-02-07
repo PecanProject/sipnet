@@ -13,6 +13,7 @@
 #include "spatialParams.h"
 #include "namelistInput.h"
 #include "outputItems.h"
+#include "modelStructures.h"
 
 // important constants - default values:
 
@@ -81,6 +82,10 @@ int main(int argc, char *argv[]) {
   double **standarddevs;
   int dataTypeIndices[MAX_DATA_TYPES];
 
+#if EVENT_HANDLER
+	// Extra filename if we are handing events
+	char eventFile[FILE_MAXNAME+24];
+#endif
 
   // get command-line arguments:
   while ((option = getopt(argc, argv, "hi:")) != -1) {
@@ -150,6 +155,12 @@ int main(int argc, char *argv[]) {
   strcpy(climFile, fileName);
   strcat(climFile, ".clim");
   numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
+
+#if EVENT_HANDLER
+	strcpy(eventFile, fileName);
+	strcat(eventFile, ".event");
+	initEvents(eventFile, numLocs);
+#endif
 
   if (doSingleOutputs)  {
     outputItems = newOutputItems(fileName, ' ');

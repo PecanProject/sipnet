@@ -4,52 +4,86 @@ on:
   push:
     branches:
       - master
-
   pull_request:
 
 jobs:
-
-  # try to build SIPNET on Ubuntu & MacOS
+  # Build and Integration Test
   build:
     strategy:
       fail-fast: false
       matrix:
-        OS:
+        OS: 
           - macos-latest
           - ubuntu-latest
           - ubuntu-20.04
-
     runs-on: ${{ matrix.OS }}
 
     steps:
-    # checkout source code
-    - uses: actions/checkout@v2
+      # checkout source code
+      - uses: actions/checkout@v2
 
-    # compile sipnet
-    - name: compile sipnet
-      run: make
+      # install doxygen
+      - name: Install Doxygen
+        run:  |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo apt-get install doxygen -y
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            brew install --formula doxygen
+          fi
+        
+      # compile SIPNET
+      - name: compile sipnet
+        run: make
 
-    # remove existing test output file
-    - name: Remove Niwout Output File
-      run: rm Sites/Niwot/niwot.out
+      # remove existing test output file
+      - name: Remove Niwout Output File
+        run: rm Sites/Niwot/niwot.out
 
-    # run single sipnet run
-    - name: sipnet on Sites/Niwot/niwot
-      run: ./sipnet
+      # run single sipnet run
+      - name: Run SIPNET on Sites/Niwot/niwot
+        run: ./sipnet
 
-    # check output of test
-    - name: fail if no niwot output exists
-      if: ${{ hashFiles('Sites/Niwot/niwot.out') == '' }}
-      run: |
-        echo "::error title={No Output}::Test run for Niwot site failed to produce output"
-        exit 1
-    # check whether niwot.out has changed
-    - name: Check whether niwot.out has changed 
-      shell: bash
-      run: |
-         if git diff --exit-code Sites/Niwot/niwot.out; then
-           echo "Success: Niwot.out created and has not changed"
-           else
-             echo "::error title={Output Changed}::The test file niwot.out has changed"
-           exit 1
-           fi
+      # check for correct output of Niwot run
+      - name: Check if niwot.out is generated
+        shell: bash
+        run: |
+          if [ ! -f Sites/Niwot/niwot.out ]; then
+            echo "::error title={No Output}::Test run for Niwot site failed to produce output"
+            exit 1
+          fi
+        
+      # Check if niwot.out has changed 
+      - name: Check whether niwot.out has changed 
+        shell: bash
+        run: |
+          if git diff --exit-code Sites/Niwot/niwot.out; then
+            echo "Success: Niwot.out created and has not changed"
+          else
+            echo "::error title={Output Changed}::The test file niwot.out has changed. This is expected to fail with some changes to SIPNET. When this happens, assess correctness and then update the reference niwot.out."
+            exit 1
+          fi
+
+  # Run Unit Tests
+  test:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        OS: 
+          - macos-latest
+          - ubuntu-latest
+          - ubuntu-20.04
+    runs-on: ${{ matrix.OS }}
+
+    steps:
+      # checkout source code
+      - uses: actions/checkout@v2
+
+      # compile unit tests
+      - name: compile tests
+        run: make test
+
+      # run tests
+      - name: Run Unit Tests
+        run: make testrun
+

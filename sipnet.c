@@ -18,6 +18,9 @@
 #include "util.h"
 #include "spatialParams.h"
 #include "outputItems.h"
+#include "modelStructures.h"
+#include "events.h"
+#include "exitCodes.h"
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)
@@ -26,14 +29,14 @@
 
 //alternative transpiration methods modified by Dave Moore
 #define ALTERNATIVE_TRANS 0
-// do we want to impliment alternative transpiration?
+// do we want to implement alternative transpiration?
 
 #define BALL_BERRY 0
-//impliment a Ball Berry submodel to calculate gs from RH, CO2 and A
+//implement a Ball Berry submodel to calculate gs from RH, CO2 and A
 //MUST BE OFF for PENMAN MONTEITH TO RUN
 
 #define PENMAN_MONTEITH_TRANS 0
-//impliment a transpiration calculation based on the Penman-Monteith Equation.
+//implement a transpiration calculation based on the Penman-Monteith Equation.
 //March 1st 2007 PM equation not really working.
 
 //#define G 0
@@ -94,7 +97,7 @@
 #define SOIL_PHENOL 0 && !GDD
 // use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)
 
-#define LITTER_POOL 0
+// LITTER_POOL moved to modelStructures.h
 // have extra litter pool, in addition to soil c pool
 
 #define SOIL_MULTIPOOL 0 && !LITTER_POOL
@@ -118,7 +121,7 @@
 #define STOICHIOMETRY 0 && MICROBES
 // do we utilize stoichometric considerations for the microbial pool?
 
-#define ROOTS 1
+// ROOTS moved to modelStructures.h
 // do we model root dynamics?
 
 
@@ -487,7 +490,10 @@ static ClimateNode *climate; // current climate
 static Fluxes fluxes;
 static double *outputPtrs[MAX_DATA_TYPES]; // pointers to different possible outputs
 
-
+#if EVENT_HANDLER
+static EventNode **events;
+static EventNode *locEvent; // current location event list
+#endif
 
 /* Read climate file into linked lists,
    make firstClimates be a vector where each element is a pointer to the head of a list corresponding to one spatial location
@@ -934,8 +940,8 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
     coeff = 1;
     int err;
     double fAPAR;		// Calculation of fAPAR according to 1 - exp(attenuation*LAI)
-    double APAR;		// Absorbed PAR by the canopy
-    double lightIntensityTop, lightIntensityBottom;	// PAR absorbed by the canopy
+    //double APAR;		// Absorbed PAR by the canopy
+    //double lightIntensityTop, lightIntensityBottom;	// PAR absorbed by the canopy
     cumfAPAR = 0.0;
 
 
@@ -966,11 +972,11 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
     fAPAR = cumfAPAR/(3.0*NUM_LAYERS);  // the average value, multiplying by h/3 in Simpson's rule, and dividing by the number of steps
 
 
-    lightIntensityTop = par;  // Energy at the top of the canopy
-    lightIntensityBottom = par * exp(-1.0 * params.attenuation * lai); // LAI at the bottom of the canopy
+    //lightIntensityTop = par;  // Energy at the top of the canopy
+    //lightIntensityBottom = par * exp(-1.0 * params.attenuation * lai); // LAI at the bottom of the canopy
 																		// between 0 and par
         // this is the amount of incident par
-    APAR = params.m_ballBerry * (lightIntensityTop - lightIntensityBottom);		// APAR at this layer
+    //APAR = params.m_ballBerry * (lightIntensityTop - lightIntensityBottom);		// APAR at this layer
               // is a fraction of the difference between incoming par and transmitted par
 
 
@@ -1932,8 +1938,8 @@ void calculateFluxes() {
   	double potGrossPsn; // potential photosynthesis, without water stress
   	double dWater;
   	double lai; // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  	double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter)
-							 (g C/m^2 ground/day) */
+    //double litterBreakdown; /* total litter breakdown (i.e. litterToSoil + rLitter)
+    //(g C/m^2 ground/day) */
   	double folResp, woodResp; // maintenance respiration terms, g C * m^-2 ground area * day^-1
   	double litterWater, soilWater; /* amount of water in litter and soil (cm)
 				    taken from either environment or climate drivers, depending on value of MODEL_WATER */
@@ -2005,7 +2011,7 @@ void calculateFluxes() {
 		fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
   	// NOTE: right now, we don't have capability to use separate cold soil params for litter
 	#else
-  		litterBreakdown = 0;
+  	//	litterBreakdown = 0;
 		fluxes.rLitter = 0;
 		fluxes.litterToSoil = 0;
 	#endif
@@ -2271,54 +2277,103 @@ void updateTrackers(double oldSoilWater) {
   // mean of soil wetness at start of time step at soil wetness at end of time step - assume linear
 }
 
+// This should be in events.h/c, but with all the global state defined in this file,
+// let's leave it here for now. Maybe someday we will factor that out.
+//
+// Process events for current location/year/day
+#if EVENT_HANDLER
+void processEvents() {
+  // If locEvent starts off NULL, this function will just fall through, as it should.
+  const int year = climate->year;
+  const int day = climate->day;
+
+  // The events file has been tested on read, so we know this event list should be in chrono
+  // order. However, we need to check to make sure the current event is not in the past, as
+  // that would indicate an event that did not have a corresponding climate file record.
+  while (locEvent != NULL && locEvent->year <= year && locEvent->day <= day) {
+    if (locEvent->year < year || locEvent->day < day) {
+      printf("Agronomic event found for loc: %d year: %d day: %d that does not have a corresponding record in the climate file\n", locEvent->year, locEvent->year, locEvent->day);
+      exit(1);
+    }
+    switch (locEvent->type) {
+      // Implementation TBD, as we enable the various event types
+      case IRRIGATION:
+        // TBD
+          printf("Irrigation events not yet implemented\n");
+          break;
+      case PLANTING:
+        // TBD
+          printf("Planting events not yet implemented\n");
+          break;
+      case HARVEST:
+        // TBD
+          printf("Harvest events not yet implemented\n");
+          break;
+      case TILLAGE:
+        // TBD
+          printf("Tillage events not yet implemented\n");
+          break;
+      case FERTILIZATION:
+        // TBD
+          printf("Fertilization events not yet implemented\n");
+          break;
+      default:
+        printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
+        exit(EXIT_CODE_UNKNOWN_EVENT);
+    }
+
+    locEvent = locEvent->nextEvent;
+  }
+}
+#endif
+
 
 // !!! main runner function !!!
-
-
 
 // calculate all fluxes and update state for this time step
 // we calculate all fluxes before updating state in case flux calculations depend on the old state
 void updateState() {
-	double npp; // net primary productivity, g C * m^-2 ground area * day^-1
-  	double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
-    int err;
-  	oldSoilWater = envi.soilWater;
+  double npp; // net primary productivity, g C * m^-2 ground area * day^-1
+  double oldSoilWater; // how much soil water was there before we updated it? Used in trackers
+  int err;
+  oldSoilWater = envi.soilWater;
 
-  	calculateFluxes();
+  calculateFluxes();
 
-  	// update the stocks, with fluxes adjusted for length of time step:
-  	envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation - fluxes.leafCreation - fluxes.woodLitter
-  				- fluxes.rVeg-fluxes.coarseRootCreation-fluxes.fineRootCreation)* climate->length;
-  	envi.plantLeafC += (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
+  // update the stocks, with fluxes adjusted for length of time step:
+  envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation - fluxes.leafCreation - fluxes.woodLitter
+        - fluxes.rVeg-fluxes.coarseRootCreation-fluxes.fineRootCreation)* climate->length;
+  envi.plantLeafC += (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
 
+  soilDegradation();    // This updates all the soil functions
 
+  #if MODEL_WATER // water pool updating happens here:
 
+    #if LITTER_WATER // (2 soil water layers; litter water will only be on if complex water is also on)
+        envi.litterWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
+             - fluxes.evaporation - fluxes.topDrainage) * climate->length;
+        envi.soilWater += (fluxes.topDrainage - fluxes.transpiration - fluxes.bottomDrainage)
+        * climate->length;
 
-	soilDegradation();		// This updates all the soil functions
+    #else // LITTER_WATER = 0 (only one soil water layer)
+      // note: some of these fluxes will always be 0 if complex water is off
+        envi.soilWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
+          - fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) * climate->length;
+    #endif // LITTER_WATER
 
+      // if COMPLEX_WATER = 0 or SNOW = 0, some or all of these fluxes will always be 0
+      envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) * climate->length;
 
-
-	#if MODEL_WATER // water pool updating happens here:
-
-		#if LITTER_WATER // (2 soil water layers; litter water will only be on if complex water is also on)
-  			envi.litterWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
-		    	   - fluxes.evaporation - fluxes.topDrainage) * climate->length;
-  			envi.soilWater += (fluxes.topDrainage - fluxes.transpiration - fluxes.bottomDrainage)
-    		* climate->length;
-
-		#else // LITTER_WATER = 0 (only one soil water layer)
-  		// note: some of these fluxes will always be 0 if complex water is off
-  			envi.soilWater += (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow
-		     	- fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) * climate->length;
-		#endif // LITTER_WATER
-
-  		// if COMPLEX_WATER = 0 or SNOW = 0, some or all of these fluxes will always be 0
-  		envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) * climate->length;
-
-	#endif // MODEL_WATER
+  #endif // MODEL_WATER
 
   ensureNonNegativeStocks();
 
+#if EVENT_HANDLER
+  // Process events for this location/year/day, AFTER updates are made to fluxes and state
+  // variables above. Events are (currently, Jan 25, 2025) handled as instantaneous deltas to
+  // relevant state (envi and fluxes fields),
+  processEvents();
+#endif
 
   npp = fluxes.photosynthesis - fluxes.rVeg-fluxes.rCoarseRoot-fluxes.rFineRoot;
 
@@ -2339,7 +2394,6 @@ void updateState() {
   }
 
   updateTrackers(oldSoilWater);
-
 }
 
 
@@ -2479,6 +2533,14 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 }
 
 
+// Setup events at given location
+#if EVENT_HANDLER
+void setupEvents(int currLoc) {
+  locEvent = events[currLoc];
+}
+#endif
+
+
 /* Do one run of the model using parameter values in spatialParams
    If out != NULL, output results to out
     If printHeader = 1, print a header for the output file, if 0 don't
@@ -2504,6 +2566,9 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, Spatia
 
   for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     setupModel(spatialParams, currLoc);
+#if EVENT_HANDLER
+    setupEvents(currLoc);
+#endif
     if ((loc == -1) && (outputItems != NULL))  {  // print the current location at the start of the line
       sprintf(label, "%d", currLoc);
       writeOutputItemLabels(outputItems, label);
@@ -2511,14 +2576,17 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader, Spatia
 
     while (climate != NULL) {
       updateState();
-      if (out != NULL)
-	outputState(out, currLoc, climate->year, climate->day, climate->time);
-      if (outputItems != NULL)
-	writeOutputItemValues(outputItems);
+      if (out != NULL) {
+        outputState(out, currLoc, climate->year, climate->day, climate->time);
+      }
+      if (outputItems != NULL) {
+        writeOutputItemValues(outputItems);
+      }
       climate = climate->nextClim;
     }
-    if (outputItems != NULL)
+    if (outputItems != NULL) {
       terminateOutputItemLines(outputItems);
+    }
   }
 }
 
@@ -2537,6 +2605,12 @@ void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[], S
   int outputNum;
 
   setupModel(spatialParams, loc);
+
+#if EVENT_HANDLER
+  // Implementation TBD
+  printf("Event handler not yet implemented for running model with no output\n");
+  exit(1);
+#endif
 
   // loop through every step of the model:
   while (climate != NULL) {
@@ -2775,8 +2849,14 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char 
   return numLocs;
 }
 
-
-
+/* Do initialization of event data if event handling is turned on.
+ * Populates static event structs
+ */
+void initEvents(char *eventFile, int numLocs) {
+#if EVENT_HANDLER
+	events = readEventData(eventFile, numLocs);
+#endif
+}
 // call this when done running model:
 // de-allocates space for climate linked list
 // (needs to know number of locations)
