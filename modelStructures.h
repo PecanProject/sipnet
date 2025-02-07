@@ -1,8 +1,10 @@
 //
-// This file is inteneded to hold settings for different model structure options,
+// This file is intended to hold settings for different model structure options,
 // implemented as compile-time flags. The options are here (with nothing else) to
 // improve testability.
 //
+// If this file is changed, consider running tests/update_model_structures.sh to update
+// the corresponding unit test versions of this file.
 
 #ifndef MODEL_STRUCTURES_H
 #define MODEL_STRUCTURES_H
@@ -14,5 +16,10 @@
 // Read in and process agronomic events. SIPNET expects a file named events.in to exist, though
 // unit tests may use other names.
 
+// have extra litter pool, in addition to soil c pool
+#define LITTER_POOL 0
+
+// Whether we model root dynamics
+#define ROOTS 1
 
 #endif //MODEL_STRUCTURES_H
