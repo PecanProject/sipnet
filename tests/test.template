@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "modelStructures.h"
+// local #includes
+// sipnet #includes
+
 int init() {
   // Initialization steps for the test; eg copying files, allocating mem, etc
 

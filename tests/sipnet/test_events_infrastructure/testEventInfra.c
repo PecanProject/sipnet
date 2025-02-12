@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "modelStructures.h"
 #include "../utils.h"
 #include "../../../events.c"
 

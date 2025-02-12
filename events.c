@@ -20,7 +20,7 @@
  * - "till": Parameters = [SOM decomposition modifier, litter decomposition modifier]
  * - "plant": Parameters = [emergence lag (days), C (g/m²), N (g/m²)]]
  * - "harv": Parameters = [fraction aboveground removed, fraction belowground removed, ...]
- * See test examples in `tests/sipnet/test_events/`.
+ * See test examples in `tests/sipnet/test_events_infrastructure/`.
  */
 //
 

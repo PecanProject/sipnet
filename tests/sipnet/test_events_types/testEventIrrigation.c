@@ -2,25 +2,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h"
+#include "modelStructures.h" // must include first
 #include "../utils.h"
-#include "../../../events.c"
 #include "../../../sipnet.c"
-
-int tolCheck(double a, double b)
-{
-  // Using "!" to maintain 0 == success
-  return !(fabs(a - b) < 1e-4);
-}
 
 int checkOutput(double soilWater, double immedEvap)
 {
-  if (tolCheck(soilWater, envi.soilWater))
+  if (!compareDoubles(soilWater, envi.soilWater))
   {
     printf("Soil water is %f, expected %f\n", soilWater, envi.soilWater);
     return 1;
   }
-  if (tolCheck(immedEvap, fluxes.immedEvap))
+  if (!compareDoubles(immedEvap, fluxes.immedEvap))
   {
     printf("Immed evap is %f, expected %f\n", immedEvap, fluxes.immedEvap);
     return 1;
