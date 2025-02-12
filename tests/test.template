@@ -6,8 +6,8 @@
 #include <stdlib.h>
 
 #include "modelStructures.h"
-// local #includes
-// sipnet #includes
+// make sure to #include modelStructures.h before bringing in sipnet code to be tested
+// sipnet directory #includes here
 
 int init() {
   // Initialization steps for the test; eg copying files, allocating mem, etc
