@@ -2,7 +2,6 @@ name: cpp-linter
 
 on:
   pull_request:
-    branches: [main, master, develop]
     # This is overkill, but why not
     paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.cxx', '**.hxx', '**.cc', '**.hh', '**CMakeLists.txt', 'meson.build', '**.cmake']
 
