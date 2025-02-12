@@ -21,12 +21,7 @@ int checkOutput(double soilWater, double immedEvap)
   return 0;
 }
 
-int init() {
-  // No init needed
-  return 0;
-}
-
-int runTest() {
+int run() {
   int numLocs = 1;
   int status = 0;
 
@@ -64,41 +59,13 @@ int runTest() {
   return status;
 }
 
-int run() {
-
-  int status;
-
-  status = runTest();
-  if (status) {
-    return 1;
-  }
-
-  return 0;
-}
-
-void cleanup() {
-  // Perform any cleanup as needed
-  // None needed here, we can leave the copied file
-}
-
 int main() {
-  int status;
-  status = init();
-  if (status) {
-    printf("Test initialization failed with status %d\n", status);
-    exit(status);
-  } else {
-    printf("Test initialized\n");
-  }
-
   printf("Starting run()\n");
-  status = run();
+  int status = run();
   if (status) {
     printf("Test run failed with status %d\n", status);
     exit(status);
   }
 
   printf("testEventIrrigation PASSED\n");
-
-  cleanup();
 }
