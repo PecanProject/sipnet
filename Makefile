@@ -26,7 +26,6 @@ DOXYFILE = docs/Doxyfile
 DOXYGEN_HTML_DIR = docs/html
 DOXYGEN_LATEX_DIR = docs/latex
 
-# all: estimate sensTest sipnet transpose subsetData
 all: estimate sipnet transpose subsetData document
 
 # Only update docs if source files or Doxyfile have changed
@@ -82,9 +81,9 @@ testclean: $(SIPNET_TEST_DIRS_CLEAN)
 $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
-.PHONY: all clean document estimate sipnet transpose subsetData doxygen
-	test $(SIPNET_TEST_DIRS) $(SIPNET_LIB) testrun
-	$(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN)
+.PHONY: all clean document estimate sipnet transpose subsetData doxygen \
+		test $(SIPNET_TEST_DIRS) $(SIPNET_LIB) testrun \
+		$(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) help
 
 help:
 	@echo "Available targets:"
