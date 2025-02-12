@@ -2433,13 +2433,13 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
 // ensure that all the allocation parameters sum up to something less than one:
   #if ROOTS
-  	ensureAllocation();
+    ensureAllocation();
   #endif
 
 // If we aren't explicitly modeling microbe pool, then do not have a pulse to microbes,
 // exudates go directly to the soil
 #if !MICROBES
-	params.microbePulseEff=0;
+  params.microbePulseEff=0;
 #endif
 
   // change units of parameters:
@@ -2456,7 +2456,7 @@ void setupModel(SpatialParams *spatialParams, int loc) {
  #if ROOTS
   envi.plantWoodC = (1-params.coarseRootFrac-params.fineRootFrac)*params.plantWoodInit;
  #else
- 	envi.plantWoodC = params.plantWoodInit;
+  envi.plantWoodC = params.plantWoodInit;
  #endif
 
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
@@ -2464,41 +2464,41 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
 
 // If SOIL_QUALITY, split initial soilCarbon equally among all the pools
- 	#if SOIL_MULTIPOOL
- 		int counter;
+  #if SOIL_MULTIPOOL
+    int counter;
 
-		for( counter=0; counter <NUMBER_SOIL_CARBON_POOLS; counter++) {
+    for( counter=0; counter <NUMBER_SOIL_CARBON_POOLS; counter++) {
 
-			envi.soil[counter]=params.soilInit/NUMBER_SOIL_CARBON_POOLS;
+      envi.soil[counter]=params.soilInit/NUMBER_SOIL_CARBON_POOLS;
 
-		}
-		trackers.totSoilC=params.soilInit;
-	#else
-  		envi.soil = params.soilInit;
+    }
+    trackers.totSoilC=params.soilInit;
+  #else
+      envi.soil = params.soilInit;
 
-	#endif
+  #endif
 
-	#if SOIL_QUALITY
-		params.maxIngestionRate = params.maxIngestionRate*24*params.microbeInit/1000;
-			// change from per hour to per day rate, and then multiply by microbial concentration (mg C / g soil).
+  #if SOIL_QUALITY
+    params.maxIngestionRate = params.maxIngestionRate*24*params.microbeInit/1000;
+      // change from per hour to per day rate, and then multiply by microbial concentration (mg C / g soil).
 
-	#else
-		params.maxIngestionRate = params.maxIngestionRate*24;	// change from per hour to per day rate
-	#endif
-
-
-
-  envi.microbeC = params.microbeInit*params.soilInit/1000;		// convert to gC m-2
+  #else
+    params.maxIngestionRate = params.maxIngestionRate*24; // change from per hour to per day rate
+  #endif
 
 
-  params.totNitrogen = params.totNitrogen*params.soilInit;	// convert to gC m-2
+
+  envi.microbeC = params.microbeInit*params.soilInit/1000;    // convert to gC m-2
+
+
+  params.totNitrogen = params.totNitrogen*params.soilInit;  // convert to gC m-2
 
   params.fineRootTurnoverRate /= 365.0;
   params.coarseRootTurnoverRate /= 365.0;
 
   params.baseCoarseRootResp /= 365.0;
   params.baseFineRootResp /= 365.0;
-  params.baseMicrobeResp = params.baseMicrobeResp*24;		// change from per hour to per day rate
+  params.baseMicrobeResp = params.baseMicrobeResp*24;   // change from per hour to per day rate
 
 
   envi.coarseRootC = params.coarseRootFrac*params.plantWoodInit;
