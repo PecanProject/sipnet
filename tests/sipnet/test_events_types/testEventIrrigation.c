@@ -36,7 +36,7 @@ int run() {
   params.immedEvapFrac = 0.5;
 
   //// ONE IRRIGATION EVENT
-  // amount 5, location 1 (soil)
+  // amount 5, method 1 (soil)
   events = readEventData("events_one_irrig.in", numLocs);
   setupEvents(0);
   processEvents();
@@ -44,8 +44,8 @@ int run() {
   status |= checkOutput(5, 0);
 
   //// TWO IRRIGATION EVENTS
-  // amount 3, location 1 (soil)
-  // amount 4, location 0 (canopy)
+  // amount 3, method 1 (soil)
+  // amount 4, method 0 (canopy)
   events = readEventData("events_two_irrig.in", numLocs);
   setupEvents(0);
   processEvents();

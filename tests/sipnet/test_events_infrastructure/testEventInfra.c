@@ -37,11 +37,11 @@ int checkHarvestParams(
 int checkIrrigationParams(
   IrrigationParams *params,
   double amountAdded,
-  int location
+  int method
   ) {
   return !(
     compareDoubles(params->amountAdded, amountAdded) &&
-    params->location == location
+    params->method == method
     );
 }
 

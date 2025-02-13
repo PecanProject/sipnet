@@ -57,11 +57,11 @@ EventNode* createEventNode(
     case IRRIGATION:
       {
         double amountAdded;
-        int location;
+        int method;
         IrrigationParams *params = (IrrigationParams*)malloc(sizeof(IrrigationParams));
-        sscanf(eventParamsStr, "%lf %d", &amountAdded, &location);
+        sscanf(eventParamsStr, "%lf %d", &amountAdded, &method);
         params->amountAdded = amountAdded;
-        params->location = location;
+        params->method = method;
         event->eventParams = params;
       }
       break;

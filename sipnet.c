@@ -2307,7 +2307,7 @@ void processEvents() {
         {
           const IrrigationParams* irrParams = locEvent->eventParams;
           const double amount = irrParams->amountAdded;
-          if (irrParams->location == CANOPY) {
+          if (irrParams->method == CANOPY) {
             // Part of the irrigation evaporates, and the rest makes it to the soil
             // Evaporated fraction
             const double evapAmount = params.immedEvapFrac * amount;
@@ -2316,12 +2316,12 @@ void processEvents() {
             const double soilAmount = amount - evapAmount;
             envi.soilWater += soilAmount;
           }
-          else if (irrParams->location == SOIL) {
+          else if (irrParams->method == SOIL) {
             // All goes to the soil
             envi.soilWater += amount;
           }
           else {
-            printf("Unknown irrigation location type: %d\n", irrParams->location);
+            printf("Unknown irrigation method type: %d\n", irrParams->method);
             exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
           }
         }

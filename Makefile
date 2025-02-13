@@ -26,7 +26,7 @@ DOXYFILE = docs/Doxyfile
 DOXYGEN_HTML_DIR = docs/html
 DOXYGEN_LATEX_DIR = docs/latex
 
-all: estimate sipnet transpose subsetData document
+all: estimate sipnet transpose subsetData
 
 # Only update docs if source files or Doxyfile have changed
 document: .doxygen.stamp
