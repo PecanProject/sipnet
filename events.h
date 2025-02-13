@@ -1,7 +1,8 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-typedef enum EventType {
+typedef enum EventType
+{
   FERTILIZATION,
   HARVEST,
   IRRIGATION,
@@ -10,46 +11,52 @@ typedef enum EventType {
   UNKNOWN_EVENT
 } event_type_t;
 
-typedef enum IrrigationLocation
+typedef enum IrrigationMethod
 {
   CANOPY = 0,
   SOIL = 1,
   FLOOD = 2 // placeholder, not supported yet
-} irrigation_location_t;
+} irrigation_method_t;
 
-typedef struct HarvestParams {
+typedef struct HarvestParams
+{
   double fractionRemovedAbove;
   double fractionRemovedBelow;
   double fractionTransferredAbove; // to surface litter pool
   double fractionTransferredBelow; // to soil litter pool
 } HarvestParams;
 
-typedef struct IrrigationParams {
+typedef struct IrrigationParams
+{
   double amountAdded;
-  irrigation_location_t location;
+  irrigation_method_t method;
 } IrrigationParams;
 
-typedef struct FertilizationParams {
+typedef struct FertilizationParams
+{
   double orgN;
   double orgC;
   double minN;
-  //double nh4_no3_frac; for two-pool version
+  // double nh4_no3_frac; for two-pool version
 } FertilizationParams;
 
-typedef struct PlantingParams {
+typedef struct PlantingParams
+{
   int emergenceLag;
   double addedC;
   double addedN;
 } PlantingParams;
 
-typedef struct TillageParams {
+typedef struct TillageParams
+{
   double fractionLitterTransferred;
   double somDecompModifier;
   double litterDecompModifier;
 } TillageParams;
 
 typedef struct EventNode EventNode;
-struct EventNode {
+struct EventNode
+{
   event_type_t type;
   int loc, year, day;
   void *eventParams;
@@ -63,7 +70,6 @@ struct EventNode {
  * if there are no events). It is assumed that the events are ordered first by location
  * and then by year and day.
  */
-EventNode** readEventData(char *eventFile, int numLocs);
+EventNode **readEventData(char *eventFile, int numLocs);
 
-
-#endif //EVENTS_H
+#endif // EVENTS_H
