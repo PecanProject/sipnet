@@ -1,7 +1,8 @@
 # build artifacts and executables
+# /sipnet instead of just sipnet to NOT ignore test dirs
 *.o
 estimate
-sipnet
+/sipnet
 subsetData
 transpose
 .doxygen.stamp
@@ -9,10 +10,6 @@ transpose
 # documentation
 docs/html
 docs/latex
-
-.DS_Store
-.Rproj.user
-.Rhistory
 
 # System-specific files
 .DS_Store
