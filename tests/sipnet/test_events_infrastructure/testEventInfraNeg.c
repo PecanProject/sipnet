@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "modelStructures.h"
 #include "../../../events.c"
 #include "../exitHandler.c"
 
@@ -28,7 +29,6 @@ int run() {
   if (!jmp_rval) {
     readEventData("infra_events_unknown.in", 1);
   }
-  printf("status %d exit_res %d jmp_rval %d\n", status, exit_result, jmp_rval);
   test_assert(jmp_rval==1);
   status |= !exit_result;
 
