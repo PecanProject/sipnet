@@ -19,7 +19,8 @@ Heterotrophic respiration ($R_h$) is a function of soil carbon content ($C_S$), 
 
 ## Flooding
 
-There are multiple options for representing 
+There are multiple options for representing flooding.
+
 Set indicator variable to 1 if the site is a wetland, 0 otherwise. Then
 
 1. if the site is a wetland, set the drainage to zero OR
@@ -302,7 +303,7 @@ $$
 
 $W_{\text{WHC,0}}$ is the soil water holding capacity at zero SOM, $k_{\text{SOM}}$ is the sensitivity of WHC to SOM, $C_{\text{SOM}}$ is the soil organic matter content, and $C_{\text{sat}}$ is the soil organic matter content at which WHC is saturated.
 
-_Note:_ This is based on Libohova et al. (2018), a synthesis of US soils data that reported relationships as the response of WHC as a volume fraction ($k_{\text{SOM,vol}$ with units of cm water / cm soil). To convert from %WHC to SIPNET units of cm water / 30cm soil it is necessary to multiply by the soil bulk density and soil depth:
+_Note:_ This is based on Libohova et al. (2018), a synthesis of US soils data that reported relationships as the response of WHC as a volume fraction ($k_{\text{SOM,vol}$) with units of cm water / cm soil). To convert from %WHC to SIPNET units of cm water / 30cm soil it is necessary to multiply by the soil bulk density and soil depth:
 $k_{\text{SOM,cm}} = k_{\text{SOM,vol}} \cdot \rho_b \cdot d$ where $\rho_b$ is soil bulk density and $d$ is soil depth. 
 
 Libohova et al. (2018) suggests that $k_{\text{SOM,vol}}$ is ~ 1.5% change in WHC per 1% increase in SOC in sandy soils. In silty and clayey soils, the slope is ~ 0.6%. Assuming a bulk density of 1.3 g/cm^3 and a soil depth of 30 cm, this would correspond to $k_{\text{SOM,cm}}$ of 0.2 and 0.6 cm water / 30 cm soil, respectively.

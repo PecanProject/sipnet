@@ -25,15 +25,23 @@ Note that fluxes are denoted by $F$, except that respiration is denoted by $R$ f
 
 ## Carbon Dynamics
 
-### Photosynthesis and GPP
+### Photosynthesis and Gross Primary Production (GPP)
 
 #### Maximum Photosynthetic Rate
 
 $$
-\text{GPP}_{\text{max}} = A_{\text{max}} \cdot A_d + R_{f0} \tag{Braswell A6}\label{eq:A6}
+\text{GPP}_{\text{max}} = A_{\text{max}} \cdot A_d + R_{leaf,0} \tag{Braswell A6}\label{eq:A6}
 $$
 
-The daily maximum gross photosynthetic rate ($\text{GPP}_{\text{max}}$) accounts for leaf-level maximum assimilation rate ($A_{\text{max}}$), a scaling factor reflecting the average daily $A_{\text{max}}$ ($A_d$), and foliar respiration ($R_{f0}$).
+
+The daily maximum gross photosynthetic rate ($\text{GPP}_{\text{max}}$) represents the maximum potential GPP under optimal conditions. It is modeled as the leaf-level maximum net assimilation rate ($A_{\text{max}}$) multiplied by a scaling factor ($A_d$), plus foliar maintenance respiration at optimum temperature ($R_{\text{leaf},0}$). The scaling factor $A_d$ accounts for daily variation in photosynthesis, representing the average fraction of $A_{\text{max}}$ that is realized over the course of a day. 
+
+<!-- R_leaf,0 is included in **Gross**PP because it is part of the C flux that is directly related to the plant's photosynthetic process.
+
+It is not immmediately clear to me why GPP is called Gross Photosynthetic Rate here, though this comes directly from Braswell et al. (2005). It seems that GPR (like its components Amax and R_leaf,0) are leaf level processes (units of /g leaf) while GPP is ecosystem scale (with units of /m2).
+
+Assuming implementation is correct because it derived from PnET and has been used in SIPNET by many people for many years.
+-->
 
 #### Potential Photosynthesis
 
@@ -55,7 +63,7 @@ $$
 
 The total adjusted gross primary production (GPP) is the product of potential GPP ($\text{GPP}_{\text{pot}}$) and the water stress factor $D_{\text{water}}$.
 
-The water stress factor $D_{\text{water}}$ is defined in equation \ref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.
+The water stress factor $D_{\text{water}}$ is defined in equation \eqref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
 #### Plant Growth
 
@@ -79,7 +87,7 @@ dC_{\text{plant,j}} = \text{NPP} \cdot a_j -
   \tag{Zobitz 3}\label{eq:Z3}
 $$
 
-In the case of annuals, all biomass is either harvested and removed or added to litter pools. $F^C_{\text{harvest,removed,j}}$ is calculated by equation \ref{eq:harvest}.
+In the case of annuals, all biomass is either harvested and removed or added to litter pools. $F^C_{\text{harvest,removed,j}}$ is calculated by \eqref{eq:harvest}.
 
 In the case of perennials a fraction of the biomass remains except at the end of the perennial's life, providing the following constraint:
 
@@ -189,10 +197,10 @@ The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined b
 Total heterotrophic respiration is the sum of respiration from soil and litter pools:
 
 $$
-R_{H} = f_{R_H} \cdot \left(\sum_i  K_\text{i} \cdot C_\text{i} \cdot D_{\text{tillage,i}}\right) \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot D_{\textit{CN}} \tag{7}\label{eq:rh}
+R_{H} = f_{R_H} \cdot \left(\sum_i  K_\text{i} \cdot C_\text{i} \cdot D_{\text{tillage,i}}\right) \cdot D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{\textit{CN}} \tag{7}\label{eq:rh}
 $$
 
-Where heterotrophic respiration, $R_H$, is a function of each carbon pool $C_i$ and its associated decomposition rate $K_{C_i}$ adjusted by the fraction allocated to respiration, $f_{R_H}$, and the temperature, moisture, and _CN_ dependency functions. Pools are denoted by $i$: soil and litter.
+Where heterotrophic respiration, $R_H$, is a function of each carbon pool $C_i$ and its associated decomposition rate $K_{C_i}$ adjusted by the fraction allocated to respiration, $f_{R_H}$, and the temperature, moisture, tillage, and _CN_ dependency ($D_\star$) functions. Pools are denoted by $i$: soil and litter.
 
 ### Methane Production $(C \rightarrow \mathit{CH_4})$
 
@@ -263,24 +271,27 @@ $$
   F^N_\text{fert,org} - 
   F^N_\text{litter,min} \tag{13}\label{eq:litter_dndt}
 $$
-
-The flux of nitrogen from living biomass to the litter pool is calculated using equation \ref{eq:cn_stoich}, and nitrogen from organic matter ammendments are given as inputs.
+The flux of nitrogen from living biomass to the litter pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool \eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content and the C:N ratio of the inputs.
 
 ### Soil Organic Nitrogen
 
 $$
 \frac{dN_\text{org,soil}}{dt} = 
    F^N_\text{litter} -
-   F^N_\text{min,soil} \tag{14}\label{eq:org_soil_dndt}
+   F^N_\text{soil,min} \tag{14}\label{eq:org_soil_dndt}
 $$
 
 The change in nitrogen pools in this model is proportional to the ratio of carbon to nitrogen in the pool. Equations for the evolution of soil and litter CN are below.
 
 ### Soil Mineral Nitrogen 
 
+Change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization, and losses to volatilization, leaching, and plant uptake:
+
 $$
 \frac{dN_\text{min}}{{dt}} = 
-  F^N_\text{min} +
+  F^N_\text{litter,min} +
+  F^N_\text{soil,min} +
+  F^N_\text{fix} - 
   F^N_\text{fert,min} - 
   F^N_\mathrm{vol} - 
   F^N_\text{leach} - 
@@ -288,22 +299,28 @@ $$
   \tag{15}\label{eq:mineral_n_dndt}
 $$
 
-Mineralization and fertilization add to the mineral nitrogen pool, and losses include mineralization, volatilization, leaching, and plant uptake, described below:
+Mineralization, fertilization, and fixation add to the mineral nitrogen pool. Losses include mineralization, volatilization, leaching, and plant uptake, described below:
 
 #### N Mineralization ($F^N_\text{min}$)
 
+
+Total nitrogen mineralization is proportional to the total heterotrophic respiration from soil and litter pools, divided by the C:N ratio of the pool. The effects of temperature, moisture, tillage, and C:N ratio on mineralization rate is captured in the calculation of $R_\text{H}.
+
+
 $$
-F^N_\text{min} = 
-  \frac{R_{H\text{litter}}}{\mathit{CN}_{\text{litter}}} +
-  \frac{R_H}{\mathit{CN}_{\text{soil}}} \tag{16}\label{eq:n_min}
+F^N_\text{min} = \sum_i \left( \frac{R_{H\text{i}}}{\mathit{CN}_{\text{i}}} \right) \tag{16}\label{eq:n_min}
 $$
+
+
 
 #### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)$
 
 
-The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate.
+The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate. 
 
-Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the N_min pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
+Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
+
+A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$.
 
 $$
 F^N_\mathrm{N_2O vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n2o_vol}
@@ -327,7 +344,6 @@ $$
 F^N_\text{fix} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}} \tag{19}\label{eq:n_fix}
 $$
 
-
 ### Plant Nitrogen Uptake $F^N_\text{uptake}$
 
 Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools \eqref{eq:plant_n_demand}:
@@ -336,7 +352,7 @@ $$
 \frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt} \tag{20}\label{eq:plant_n_demand}
 $$
 
-Where $i$ is leaf, wood, fine root, or coarse root, and $\frac{dN_{\text{plant,i}}}{dt}$ is calculated in equation \ref{eq:plant_n}.
+Where $i$ is leaf, wood, fine root, or coarse root, and $\frac{dN_{\text{plant,i}}}{dt}$ is calculated in \eqref{eq:plant_n}.
 
 #### Nitrogen Limitation Indicator Function $I_{\text{N limit}}$
 
@@ -611,7 +627,7 @@ Event parameters:
 **Soil irrigation** adds water directly to the soil pool without interception. Flooded furrow irrigation' is a special case of soil irrigation, with a high rate of irrigation.
 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
-<!-- Floodiing may also reduce the drainage parameter ($f_{\text{drain}}$) close to zero \eqref{eq:drainage}.-->
+<!-- Floodiing may also reduce the drainage parameter ($f_{\text{drain}}$) close to zero \eq{eq:drainage}.-->
 
 $$
 F^W_{\text{irrigation}} = 
