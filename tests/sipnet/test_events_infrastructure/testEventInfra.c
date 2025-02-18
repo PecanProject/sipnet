@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "modelStructures.h"
 #include "../utils.h"
 #include "../../../events.c"
 
@@ -36,11 +37,11 @@ int checkHarvestParams(
 int checkIrrigationParams(
   IrrigationParams *params,
   double amountAdded,
-  int location
+  int method
   ) {
   return !(
     compareDoubles(params->amountAdded, amountAdded) &&
-    params->location == location
+    params->method == method
     );
 }
 

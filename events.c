@@ -20,7 +20,7 @@
  * - "till": Parameters = [SOM decomposition modifier, litter decomposition modifier]
  * - "plant": Parameters = [emergence lag (days), C (g/m²), N (g/m²)]]
  * - "harv": Parameters = [fraction aboveground removed, fraction belowground removed, ...]
- * See test examples in `tests/sipnet/test_events/`.
+ * See test examples in `tests/sipnet/test_events_infrastructure/`.
  */
 //
 
@@ -57,11 +57,11 @@ EventNode* createEventNode(
     case IRRIGATION:
       {
         double amountAdded;
-        int location;
+        int method;
         IrrigationParams *params = (IrrigationParams*)malloc(sizeof(IrrigationParams));
-        sscanf(eventParamsStr, "%lf %d", &amountAdded, &location);
+        sscanf(eventParamsStr, "%lf %d", &amountAdded, &method);
         params->amountAdded = amountAdded;
-        params->location = location;
+        params->method = method;
         event->eventParams = params;
       }
       break;
@@ -114,7 +114,7 @@ EventNode* createEventNode(
   return event;
 }
 
-enum EventType getEventType(char *eventTypeStr) {
+event_type_t getEventType(char *eventTypeStr) {
   if (strcmp(eventTypeStr, "irrig") == 0) {
     return IRRIGATION;
   } else if (strcmp(eventTypeStr, "fert") == 0) {

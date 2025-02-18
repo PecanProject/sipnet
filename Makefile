@@ -26,7 +26,7 @@ DOXYFILE = docs/Doxyfile
 DOXYGEN_HTML_DIR = docs/html
 DOXYGEN_LATEX_DIR = docs/latex
 
-all: estimate sipnet transpose subsetData document
+all: estimate sipnet transpose subsetData
 
 # Only update docs if source files or Doxyfile have changed
 document: .doxygen.stamp
@@ -64,20 +64,11 @@ SIPNET_LIB=libsipnet.a
 $(SIPNET_LIB): $(SIPNET_LIB)($(SIPNET_OFILES))
 	ranlib $(SIPNET_LIB)
 
-test: pretest $(SIPNET_TEST_DIRS) posttest $(SIPNET_LIB)
-
-pretest:
-	cp modelStructures.h modelStructures.orig.h
+test: $(SIPNET_TEST_DIRS) $(SIPNET_LIB)
 
 # The dash in the build command tells make to continue if there are errors, allowing cleanup
-$(SIPNET_TEST_DIRS): pretest $(SIPNET_LIB)
-	cp $@/modelStructures.h modelStructures.h
+$(SIPNET_TEST_DIRS): $(SIPNET_LIB)
 	-$(MAKE) -C $@
-
-# This is far from infallible, as model_structures.h will be in a bad place if a test
-# build step fails in a non-catchable way
-posttest: $(SIPNET_TEST_DIRS)
-	mv modelStructures.orig.h modelStructures.h
 
 testrun: $(SIPNET_TEST_DIRS_RUN)
 
@@ -91,7 +82,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
 .PHONY: all clean document estimate sipnet transpose subsetData doxygen \
-		test $(SIPNET_TEST_DIRS) pretest posttest $(SIPNET_LIB) testrun \
+		test $(SIPNET_TEST_DIRS) $(SIPNET_LIB) testrun \
 		$(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) help
 
 help:
