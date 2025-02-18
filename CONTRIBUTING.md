@@ -8,13 +8,13 @@ All contributors are expected to adhere to the PEcAn Project [Code of Conduct](h
 
 #### Branches
 
-The `master` branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches should be named according to the following convention: `ISSUE#-feature-name`. For example, if you are working on issue #23, your branch should be named `23-event-handler`.
+The `master` branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches should be named to clearly indicate the purpose, and may be combined with associated issue, e.g. `ISSUE#-feature-name`.
 
 #### Pull Requests
 
 Pull requests should be made from feature branches to the `master` branch. 
 
-Pull request descriptions should include a brief summary of the changes and a list of any issues that are resolved by the pull request. 
+Pull request descriptions should include a brief summary of the changes and links to related issues. 
 
 Expectations for merging:
 - Pass all integration tests 
