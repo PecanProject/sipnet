@@ -144,10 +144,66 @@ Where $GPP^prime$ is GPP before adding the carbon cost of N fixation.
 
 Alternatively, could divert a fraction of root exudates. 
 
-### N fixation
+### N fixation - Additions for Fixed Nitrogen Partitioning and Adjusted Plant Uptake
 
-- Carbon limitation?
-- Soil N-fixers (non-symbiotic)
+A new PFT-specific parameter, $f_{\text{N fix, plant}}$ represents the fraction of fixed N that is allocated directly to plant uptake.
+
+**Total Fixed Nitrogen Flux**
+
+First compute the total fixed nitrogen flux:
+
+$$
+F^N_\text{fix, total} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}}
+\tag{19}\label{eq:n_fix_total}
+$$
+
+**Partitioning the Fixed Nitrogen Flux into plant N and soil mineral N**
+
+Partition the total fixed N flux into two components:
+- Direct allocation to plant uptake:
+$$
+F^N_\text{fix, plant} = f_{\text{N fix, plant}} \cdot F^N_\text{fix, total}
+\tag{19a}\label{eq:n_fix_plant}
+$$
+
+- Allocation to the mineral nitrogen pool:
+
+$$
+F^N_\text{fix, min} = (1 - f_{\text{N fix, plant}}) \cdot F^N_\text{fix, total}
+\tag{19b}\label{eq:n_fix_min}
+$$
+
+**Modified Mineral Nitrogen Balance**
+
+The soil mineral nitrogen balance is updated to include only the $F^N_\text{fix, min}$ component from nitrogen fixation:
+$$
+\frac{dN_\text{min}}{{dt}} = 
+  F^N_\text{litter,min} +
+  F^N_\text{soil,min} +
+  F^N_\text{fix, min} - 
+  F^N_\text{fert,min} - 
+  F^N_\mathrm{vol} - 
+  F^N_\text{leach} - 
+  F^N_\text{uptake, soil}
+\tag{15}\label{eq:mineral_n_dndt}
+$$
+
+**Adjusted Plant Nitrogen Uptake**
+
+Plant N demand is calculated as:
+$$
+\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt}
+\tag{20}\label{eq:plant_n_demand}
+$$
+
+Since a fraction $ F^N_\text{fix, plant} $ is taken directly from fixation, the additional mineral N required from the soil is reduced accordingly. Define the soil mineral N uptake as:
+$$
+F^N_\text{uptake, soil} = \max\left( \frac{dN_\text{plant}}{dt} - F^N_\text{fix, plant}, \; 0 \right)
+\tag{20a}\label{eq:plant_n_uptake}
+$$
+
+For N fixing plants, the direct uptake $ F^N_\text{fix, plant} $ is added to the plant N pool, and only the residual demand $ F^N_\text{uptake, soil} $ is met by drawing down the soil mineral N.
+
 
 ## Additional Moisture dependency functions $D_\text{water}$
 
