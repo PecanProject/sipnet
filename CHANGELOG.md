@@ -6,6 +6,20 @@ Once a new release is made this file will be updated to create a new `Unreleased
 
 For more information about this file see also [Keep a Changelog](http://keepachangelog.com/) .
 
+<!-- 
+sections to include in release notes:
+
+## [Unreleased]
+
+### Added
+
+### Fixed
+
+### Changed
+
+### Removed
+-->
+
 ## [Unreleased]
 
 ### Added
