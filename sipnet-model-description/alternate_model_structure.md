@@ -123,6 +123,8 @@ Assuming a 1:1 ratio of $CH_4$ to $CO_2$ production.
 
 ## Nitrogen Fixation
 
+In model-structure, all fixed N goes directly to the soil mineral N pool. This is an important simplifying assumption that will likely need to be revisited:
+- For n fixing plants, most fixed N goes directly to the plant, not the soil. It will be more complicated to model this, as we will need to subtract this flux from plant N demand.
 
 ### Carbon Cost of N fixation
 

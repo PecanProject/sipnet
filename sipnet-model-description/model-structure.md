@@ -336,13 +336,17 @@ Where $F^N_\text{leach}$ is the fraction of $N_{min}$ in soil water that is avai
 
 ### Nitrogen Fixation $F^N_\text{fix}$
 
-For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to be driven by plant growth, and are modified directly by temperature but not directly modified by water. We assume that there is no non-symbiotic N fixation.
+The rate at which N is fixed is a function of the NPP of the plant and a fixed parameter $K_\text{fix}$, and is modified by temperature.
 
-The rate at which N is fixed is a function of the NPP of the plant and a fixed parameter $K_\text{fix}$, and is modified by temperature:
+For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to be driven by plant growth, and also depend on temperature.
 
 $$
 F^N_\text{fix} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}} \tag{19}\label{eq:n_fix}
 $$
+
+Nitrogen fixation is represented by adding fixed nitrogen directly to the soil mineral nitrogen pool. This is a reasonable first approximation, consistent with the simplicity of the nitrogen limitation model where limitation only occurs when nitrogen demand exceeds supply. 
+
+For nitrogen-fixing plants, most of the fixed nitrogen is directly used by the plant. It would be more complicated to model this by splitting, which could include splitting the fixed N into soil and plant pools and then meeting a portion of plant N demand with this flux.
 
 ### Plant Nitrogen Uptake $F^N_\text{uptake}$
 
