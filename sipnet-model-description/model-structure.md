@@ -346,7 +346,7 @@ $$
 
 ### Plant Nitrogen Uptake $F^N_\text{uptake}$
 
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools \eqref{eq:plant_n_demand}:
+Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
 
 $$
 \frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt} \tag{20}\label{eq:plant_n_demand}
@@ -617,17 +617,22 @@ Event parameters:
 
 * Irrigation rate ($F^W_{\text{irrigation}}$), cm/day
 * Irrigation type indicator ($I_{\text{irrigation}}$):
-	•	Canopy irrigation (0): Water applied to the canopy, simulating rainfall.
-	•	Soil irrigation (1): Water directly added to the soil.
-	•	Flooding (2): Special case of soil irrigation, where water fully saturates the soil and maintains flooding.
+	* Canopy irrigation (0): Water applied to the canopy, simulating rainfall.
+	*	Soil irrigation (1): Water directly added to the soil.
+
+<!--	
+Note: Flooding not yet implemented
+*	Flooding (2): Special case of soil irrigation, where water fully saturates the soil and maintains flooding. -->
 
 
 **Canopy irrigation** is simulated in the same way as precipitation, where a fraction of irrigation is intercepted and evaporated, and the remainder is added to the soil water pool.
 
 **Soil irrigation** adds water directly to the soil pool without interception. Flooded furrow irrigation' is a special case of soil irrigation, with a high rate of irrigation.
 
+<!-- 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
-<!-- Floodiing may also reduce the drainage parameter ($f_{\text{drain}}$) close to zero \eq{eq:drainage}.-->
+
+ Floodiing may also reduce the drainage parameter ($f_{\text{drain}}$) close to zero \eq{eq:drainage}.
 
 $$
 F^W_{\text{irrigation}} = 
@@ -637,6 +642,8 @@ F^W_{\text{irrigation}} & \text{soil} \\
 W_{\text{WHC}} - W_{\text{soil}} + F^W_{\text{irrigation}} & \text{flooding}
 \end{cases} \tag{28}\label{eq:irrigation}
 $$
+
+-->
 
 ## References
 
