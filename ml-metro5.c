@@ -298,10 +298,10 @@ void metropolis(
   const double INC = pow(DEC, ((A_STAR - 1) / A_STAR));
   // want INC^A_STAR * DEC^(1 - A_STAR) = 1
 
-  char histFileBase[256], histFileName[256], chainInfo[256];
+  char histFileBase[256], histFileName[270], chainInfo[256];
   FILE **histFiles;  // vector of FILE ptrs (one for each location)
   int accept, yes = 0;
-  long k = 1;
+  long k;
   int chainNum;  // which starting chain are we on (for running multiple chains
   // to convergence then choosing best)
   int firstLoc, lastLoc, numLocs;  // first, last and number of locations that
