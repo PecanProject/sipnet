@@ -882,10 +882,24 @@ void freeClimateList(int numLocs) {
 // rather than returning a value, they have as parameters the variable(s) which they modify
 // so a single function can modify multiple variables
 
-
-// calculate amount of light absorbed
-// using light attenuation (as in PnET)
-// CURRENTLY UNUSED (see calcLightEff3)
+/**
+ * @brief Compute light absorbed using simple integration
+ * 
+ * **CURRENTLY UNUSED** (see calcLightEff3)
+ * canopy light effect (simple integration).
+ *
+ * This uses light attenuation (as in PnET) to first calculate light intensity and then the light effect `lightEFF`
+ * for each layer.
+ * 
+ * cumLai is 0 at the canopy top and equals total LAI at the bottom.
+ * 
+ * Note: SIPNET is not a multi-layer model; this function derives a canopy‐averaged 
+ * light effect that is then used to calculate calculate GPP for the whole canopy.
+ *
+ * @param[out] lightEff Pointer average light effect.
+ * @param[in] lai Leaf area index (m^2 leaf/m^2 ground).
+ * @param[in] par Incoming Photosynthetically Active Radiation (PAR).
+ */
 void calcLightEff2 (double *lightEff, double lai, double par) {
   static const int NUM_LAYERS = 50;
 
@@ -908,10 +922,25 @@ void calcLightEff2 (double *lightEff, double lai, double par) {
     *lightEff = 0;
 }
 
-
-// another method to calculate amount of light absorbed
-// using light attenuation (as in PnET)
-// difference between this and calcLightEff2 is that here we use Simpson's method to approximate the integral
+/**
+ * @brief Compute canopy light effect using Simpson's rule.
+ *
+ * Like calcLightEff3 but here we use Simpson's method to approximate the integral.
+ * 
+ * Simpson's rule approximates the integral as:
+ *   (h/3) * (y(0) + 4y(1) + 2y(2) + 4y(3) + ... + 2y(n-2) + 4y(n-1) + y(n)),
+ *   where h is the distance between each x value (here h = 1/NUM_LAYERS).
+ *   We keep track of the running sum in cumLightEff.
+ * 
+ * cumLai is 0 at the canopy top and equals total LAI at the bottom.
+ *
+ * Note: SIPNET is not a multi-layer model; this function derives a canopy‐averaged 
+ * light effect that is then used to calculate calculate GPP for the whole canopy.
+ *
+ * @param[out] lightEff Canopy average light effect.
+ * @param[in] lai Leaf area index (m^2 leaf/m^2 ground).
+ * @param[in] par Incoming Photosynthetically Active Radiation (PAR).
+ */
 void calcLightEff3 (double *lightEff, double lai, double par) {
   /*
     We are essentially integrating over the canopy, from top to bottom,
@@ -919,10 +948,6 @@ void calcLightEff3 (double *lightEff, double lai, double par) {
     Here we use Simpson's method to approximate the integral, so we need an odd number of points.
     This means that NUM_LAYERS must be EVEN because we loop from layer = 0 to layer = NUM_LAYERS
 
-    As a reminder, Simpson's rule approximates the integral as:
-    (h/3) * (y(0) + 4y(1) + 2y(2) + 4y(3) + ... + 2y(n-2) + 4y(n-1) + y(n)),
-    where h is the distance between each x value (here h = 1/NUM_LAYERS).
-    We keep track of the running sum in cumLightEff.
   */
 
   // Information on the distribution of LAI with height is available
