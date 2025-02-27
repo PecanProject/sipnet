@@ -50,8 +50,8 @@ void writeHistFile(FILE *histFile, double ltotnew, double *sigma,
     fprintf(histFile, "%f ",
             getSpatialParam(spatialParams,
                             spatialParams->changeableParamIndices[i], loc));
-  fprintf(histFile, "\n");
-}
+    fprintf(histFile, "\n");
+  }
 }
 
 // .hist file writing, binary version:
@@ -478,8 +478,7 @@ void metropolis(
           // note: anything but a scaleFactor of 1 goes against theory
           randm() < scaleFactor * (ltotnew - ltotold)) {
         accept = 1;
-          }
-      else {
+      } else {
         accept = 0;
       }
     }  // end if (accept == 1)

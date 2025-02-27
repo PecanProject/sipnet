@@ -80,8 +80,9 @@ void cleanupModel(int numLocs);
    Note: can only run at one location: to run at all locations, must put
    runModelNoOut call in a loop
 */
-void runModelNoOut(double **outArray, int numDataTypes, const int dataTypeIndices[],
-                   SpatialParams *spatialParams, int loc);
+void runModelNoOut(double **outArray, int numDataTypes,
+                   const int dataTypeIndices[], SpatialParams *spatialParams,
+                   int loc);
 
 /* Do one run of the model using parameter values in spatialParams
    If out != NULL, output results to out
@@ -89,12 +90,11 @@ void runModelNoOut(double **outArray, int numDataTypes, const int dataTypeIndice
    If outputItems != NULL, do additional outputting as given by this
      structure (1 variable per file)
    If loc == -1, then print currLoc as first item on each line
-   Run at spatial location given by loc (0-indexing) - or run everywhere if loc = -1
-   Note: number of locations given in spatialParams
+   Run at spatial location given by loc (0-indexing) - or run everywhere if loc
+   = -1 Note: number of locations given in spatialParams
 */
 void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader,
                     SpatialParams *spatialParams, int loc);
-
 
 /* Do a sensitivity test on paramNum, varying from low to high, doing a total
      of numRuns runs
