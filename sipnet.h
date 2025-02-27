@@ -80,9 +80,8 @@ void cleanupModel(int numLocs);
    Note: can only run at one location: to run at all locations, must put
    runModelNoOut call in a loop
 */
-void runModelNoOut(double **outArray, int numDataTypes,
-                   int dataTypeIndices[], SpatialParams *spatialParams,
-                   int loc);
+void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[],
+                   SpatialParams *spatialParams, int loc);
 
 /* Do one run of the model using parameter values in spatialParams
    If out != NULL, output results to out

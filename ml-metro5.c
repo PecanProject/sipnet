@@ -128,10 +128,10 @@ void reset(
     double *ltotold, double *ltotmax, double **sigma, OutputInfo **outputInfo,
     int loc, int randomStart, double addFraction, FILE *userOut,
     double (*likely)(double *, OutputInfo *, int, SpatialParams *, double,
-                     void (*)(double **, int,   int *, SpatialParams *, int),
+                     void (*)(double **, int, int *, SpatialParams *, int),
                      int[], int, int, double[]),
     double paramWeight,
-    void (*model)(double **, int,   int *, SpatialParams *, int),
+    void (*model)(double **, int, int *, SpatialParams *, int),
     int dataTypeIndices[], int numDataTypes, int costFunction,
     double dataTypeWeights[]) {
   int currLoc;
@@ -303,7 +303,7 @@ void metropolis(
     double (*likely)(double *, OutputInfo *, int, SpatialParams *, double,
                      void (*)(double **, int, int *, SpatialParams *, int),
                      int[], int, int, double[]),
-    void (*model)(double **, int,   int *, SpatialParams *, int),
+    void (*model)(double **, int, int *, SpatialParams *, int),
     double addFraction, long estSteps, int numAtOnce, int numChains,
     int randomStart, long numSpinUps, double paramWeight, double scaleFactor,
     int dataTypeIndices[], int numDataTypes, int costFunction,
