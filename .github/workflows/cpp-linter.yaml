@@ -22,8 +22,8 @@ jobs:
           tidy-checks: '' # Use .clang-tidy config file
           # only 'update' a single comment in a pull request thread.
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
-      - name: Fail fast
+      - name: analysis
         if: steps.linter.outputs.checks-failed > 0
         run: |
-            echo "Some linter checks failed. ${{ steps.linter.outputs.checks-failed }}" |
+            echo "${{ steps.linter.outputs.checks-failed }} linter checks failed" |
             exit 1

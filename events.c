@@ -33,7 +33,7 @@
 void printEvent(EventNode* event);
 
 EventNode* createEventNode(
-    int loc, int year, int day, int eventType, char* eventParamsStr
+    int loc, int year, int day, int eventType, const char* eventParamsStr
 ) {
   EventNode *event = (EventNode*)malloc(sizeof(EventNode));
   event->loc = loc;
@@ -114,7 +114,7 @@ EventNode* createEventNode(
   return event;
 }
 
-event_type_t getEventType(char *eventTypeStr) {
+event_type_t getEventType(const char *eventTypeStr) {
   if (strcmp(eventTypeStr, "irrig") == 0) {
     return IRRIGATION;
   } else if (strcmp(eventTypeStr, "fert") == 0) {

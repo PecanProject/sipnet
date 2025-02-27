@@ -395,7 +395,7 @@ typedef struct Parameters {
 
 } Params;
 
-#define NUM_PARAMS sizeof(Params) / sizeof(double)
+#define NUM_PARAMS (sizeof(Params) / sizeof(double))
 
 // the state of the environment
 typedef struct Environment {
@@ -586,7 +586,7 @@ int *readClimData(char *climFile, int numLocs) {
   FILE *in;
   ClimateNode *curr, *next;
   int loc, year, day;
-  int lastYear;
+  int lastYear = -1;
   double time, length;  // time in hours, length in days (or fraction of day)
   double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
   int currLoc;
@@ -602,8 +602,9 @@ int *readClimData(char *climFile, int numLocs) {
   int status;  // status of the read
 
   steps = (int *)malloc(numLocs * sizeof(int));
-  for (i = 0; i < numLocs; i++)
+  for (i = 0; i < numLocs; i++) {
     steps[i] = 0;  // 0 will denote nothing read
+  }
 
   in = openFile(climFile, "r");
 
@@ -623,15 +624,16 @@ int *readClimData(char *climFile, int numLocs) {
   firstClimates =
       (ClimateNode **)malloc(numLocs * sizeof(ClimateNode *));  // vector of
                                                                 // heads
-  for (currLoc = 0; currLoc < numLocs; currLoc++)
+  for (currLoc = 0; currLoc < numLocs; currLoc++) {
     firstClimates[currLoc] = NULL;  // default is null
+  }
   // if firstClimates[i] stays null for some i, that means we didn't read any
   // climate data for location i, so use climate from location 0
 
   currLoc = loc;
   // allocate space for head
   firstClimates[currLoc] = (ClimateNode *)malloc(sizeof(ClimateNode));
-  curr = next = firstClimates[currLoc];
+  next = firstClimates[currLoc];
   count = 0;
   while (status != EOF) {
     // we have another day's climate
@@ -642,8 +644,9 @@ int *readClimData(char *climFile, int numLocs) {
     curr->day = day;
     curr->time = time;
 
-    if (length < 0)  // parse as seconds
+    if (length < 0) {  // parse as seconds
       length = length / -86400.;  // convert to days
+    }
     curr->length = length;
 
     curr->tair = tair;
@@ -652,21 +655,25 @@ int *readClimData(char *climFile, int numLocs) {
     // convert par from Einsteins * m^-2 to Einsteins * m^-2 * day^-1
     curr->precip = precip * 0.1;  // convert from mm to cm
     curr->vpd = vpd * 0.001;  // convert from Pa to kPa
-    if (curr->vpd < TINY)
+    if (curr->vpd < TINY) {
       curr->vpd = TINY;  // avoid divide by zero
+    }
     curr->vpdSoil = vpdSoil * 0.001;  // convert from Pa to kPa
     curr->vPress = vPress * 0.001;  // convert from Pa to kPa
     curr->wspd = wspd;
-    if (curr->wspd < TINY)
+    if (curr->wspd < TINY) {
       curr->wspd = TINY;  // avoid divide by zero
+    }
     curr->soilWetness = soilWetness;
 
 #if GDD
-    if (year != lastYear)  // HAPPY NEW YEAR!
+    if (year != lastYear) {  // HAPPY NEW YEAR!
       gdd = 0;  // reset growing degree days
+    }
     thisGdd = tair * length;
-    if (thisGdd < 0)  // can't have negative growing degree days
+    if (thisGdd < 0) {  // can't have negative growing degree days
       thisGdd = 0;
+    }
     gdd += thisGdd;
     curr->gdd = gdd;
 #endif
@@ -700,6 +707,7 @@ int *readClimData(char *climFile, int numLocs) {
         curr->nextClim = NULL;  // terminate last linked list
         steps[currLoc] = count;  // record the number of time steps for last
                                  // location
+        lastYear = -1;
         count = 0;  // reset count of # of time steps
 #if GDD
         gdd = 0;  // reset growing degree days
@@ -708,8 +716,8 @@ int *readClimData(char *climFile, int numLocs) {
         firstClimates[currLoc] =
             (ClimateNode *)malloc(sizeof(ClimateNode));  // allocate space for
                                                          // head
-        curr = next = firstClimates[currLoc];  // we'll start writing to next
-                                               // linked list
+        next = firstClimates[currLoc];  // we'll start writing to next
+                                        // linked list
       } else {  // loc < currLoc
         printf("Error reading climate file: was reading location %d, trying to "
                "read location %d\n",
@@ -728,10 +736,11 @@ int *readClimData(char *climFile, int numLocs) {
 
   fclose(in);
 
-  for (i = 0; i < numLocs; i++)
-    if (steps[i] == 0)  // nothing read for this location
+  for (i = 0; i < numLocs; i++) {
+    if (steps[i] == 0) {  // nothing read for this location
       steps[i] = steps[0];  // this location will duplicate location 0
-
+    }
+  }
   return steps;
 }
 
@@ -771,6 +780,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
                                       // dereferences
 
   // clang-format off
+  // NOLINTBEGIN
   initializeOneSpatialParam(spatialParams, "plantWoodInit", &(params.plantWoodInit), 1);
   initializeOneSpatialParam(spatialParams, "laiInit", &(params.laiInit), 1);
   initializeOneSpatialParam(spatialParams, "litterInit", &(params.litterInit), 1);
@@ -858,6 +868,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
   initializeOneSpatialParam(spatialParams, "microbeQ10", &(params.microbeQ10), MICROBES);
   initializeOneSpatialParam(spatialParams, "microbePulseEff", &(params.microbePulseEff), (ROOTS) && (MICROBES) );
   initializeOneSpatialParam(spatialParams, "m_ballBerry", &(params.m_ballBerry), 1);
+  // NOLINTEND
   // clang-format on
 
   readSpatialParams(spatialParams, paramF, spatialParamF);
@@ -990,7 +1001,7 @@ void calcLightEff2(double *lightEff, double lai, double par) {
   static const int NUM_LAYERS = 50;
 
   int layer;  // counter
-  double cumLai = 0.0;  // lai from this layer up
+  double cumLai;  // lai from this layer up
   double lightIntensity;
   double cumLightEff = 0.0;
 
@@ -1005,8 +1016,9 @@ void calcLightEff2(double *lightEff, double lai, double par) {
     }
 
     *lightEff = cumLightEff / (double)NUM_LAYERS;  // find average light effect
-  } else  // no leaves or no light!
+  } else {  // no leaves or no light!
     *lightEff = 0;
+  }
 }
 
 // another method to calculate amount of light absorbed
@@ -1037,12 +1049,11 @@ void calcLightEff3(double *lightEff, double lai, double par) {
   int layer;  // counter
   double cumLai;  // lai from this layer up
   double lightIntensity;
-  double currLightEff, cumLightEff;
-  double currfAPAR, cumfAPAR;
+  double currLightEff = 0.0, cumLightEff;
+  double currfAPAR = 0.0, cumfAPAR;
   int coeff;  // current coefficient in Simpson's rule
 
   if (lai > 0 && par > 0) {  // must have at least some leaves and some light
-    cumLai = 0.0;
     cumLightEff = 0.0;  // the running sum
     layer = 0;
     coeff = 1;
@@ -1110,8 +1121,9 @@ void calcLightEff3(double *lightEff, double lai, double par) {
       exit(1);
     }
 
-  } else  // no leaves or no light!
+  } else {  // no leaves or no light!
     *lightEff = 0;
+  }
 }
 
 // calculate gross photosynthesis without water effect (g C * m^-2 ground area *
@@ -1134,13 +1146,13 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
 
   dTemp = (params.psnTMax - tair) * (tair - params.psnTMin) /
           pow((params.psnTMax - params.psnTMin) / 2.0, 2);
-  if (dTemp < 0)
+  if (dTemp < 0) {
     dTemp = 0.0;
-
+  }
   dVpd = 1.0 - params.dVpdSlope * pow(vpd, params.dVpdExp);
-  if (dVpd < 0)
+  if (dVpd < 0) {
     dVpd = 0.0;
-
+  }
   calcLightEff3(&lightEff, lai, par);
 
   conversion = C_WEIGHT * (1.0 / TEN_9) *
@@ -1193,7 +1205,7 @@ void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
      * potGrossPsn/12*1000*LAI = umol carbon dioxide per
      * m^2
      * */
-    ;
+
     gs_canopy = params.m_ballBerry * potGrossPsn / 12 * 1000 * lai_int *
                 (RH_pcent / CO2_stom);
 
@@ -1209,16 +1221,18 @@ void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
      *  must convert to cm3 per cm2 land area.
      */
     removableWater = soilWater * params.waterRemoveFrac;
-    if (climate->tsoil < params.frozenSoilThreshold)
+    if (climate->tsoil < params.frozenSoilThreshold) {
       // frozen soil - less or no water available
       /* frozen soil effect: fraction of water available if soil is frozen
        * (assume amt. of water avail. w/ frozen soil scales linearly with amt.
        * of water avail. in thawed soil) */
       removableWater *= params.frozenSoilEff;
-    if (removableWater >= potTrans)
+    }
+    if (removableWater >= potTrans) {
       *trans = potTrans;
-    else
+    } else {
       *trans = removableWater;
+    }
 
 #if WATER_PSN  // we're modeling water stress
     *dWater = *trans / potTrans;  // from PnET: equivalent to setting DWATER_MAX
@@ -1307,16 +1321,18 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd,
      * wspd wind speed at height z [m s-1].
      */
     removableWater = soilWater * params.waterRemoveFrac;
-    if (climate->tsoil < params.frozenSoilThreshold)  // frozen soil - less or
-                                                      // no water available
+    if (climate->tsoil < params.frozenSoilThreshold) {
+      // frozen soil - less or no water available
       removableWater *= params.frozenSoilEff;
+    }
     /* frozen soil effect: fraction of water available if soil is frozen (assume
      * amt. of water avail. w/ frozen soil scales linearly with amt. of water
      * avail. in thawed soil) */
-    if (removableWater >= potTrans)
+    if (removableWater >= potTrans) {
       *trans = potTrans;
-    else
+    } else {
       *trans = removableWater;
+    }
 
 #if WATER_PSN  // we're modeling water stress
     *dWater = *trans / potTrans;  // from PnET: equivalent to setting DWATER_MAX
@@ -1359,17 +1375,19 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
     // to cm^2
 
     removableWater = soilWater * params.waterRemoveFrac;
-    if (climate->tsoil < params.frozenSoilThreshold)
+    if (climate->tsoil < params.frozenSoilThreshold) {
       // frozen soil - less or no water available
       /* frozen soil effect: fraction of water available if soil is frozen
                                                (assume amt. of water avail. w/
          frozen soil scales linearly with amt. of water avail. in thawed soil)
        */
       removableWater *= params.frozenSoilEff;
-    if (removableWater >= potTrans)
+    }
+    if (removableWater >= potTrans) {
       *trans = potTrans;
-    else
+    } else {
       *trans = removableWater;
+    }
 
 #if WATER_PSN  // we're modeling water stress
     *dWater = *trans / potTrans;  // from PnET: equivalent to setting DWATER_MAX
@@ -1433,11 +1451,12 @@ void leafFluxes(double *leafCreation, double *leafLitter, double plantLeafC) {
   npp = getMeanTrackerMean(meanNPP);
   // first determine the fluxes that happen at every time step, not just start &
   // end of growing season:
-  if (npp > 0)
+  if (npp > 0) {
     *leafCreation = npp * params.leafAllocation;  // a fraction of NPP is
-                                                  // allocated to leaf growth
-  else  // net loss of C in this time step - no C left for growth
+    // allocated to leaf growth
+  } else {  // net loss of C in this time step - no C left for growth
     *leafCreation = 0;
+  }
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
 
@@ -1490,10 +1509,12 @@ void simpleWaterFlow(double *rain, double *snowFall, double *immedEvap,
     *rain = precip / length;
     if (snow > 0) {
       *snowMelt = params.snowMelt * temp;  // snow melt proportional to temp.
-      if ((*snowMelt * length) > snow)  // can only melt what's there!
+      if ((*snowMelt * length) > snow) {  // can only melt what's there!
         *snowMelt = snow / length;
-    } else
+      }
+    } else {
       *snowMelt = 0;
+    }
   }
 
 #else  // not modeling snow
@@ -1504,8 +1525,9 @@ void simpleWaterFlow(double *rain, double *snowFall, double *immedEvap,
 
   netIn = (*rain + *snowMelt - trans) * length;
   *bottomDrainage = ((water + netIn) - params.soilWHC) / length;
-  if (*bottomDrainage < 0)
+  if (*bottomDrainage < 0) {
     *bottomDrainage = 0;
+  }
 
   // all the things we don't model in simpleWaterFlow mode:
   *immedEvap = *sublimation = *fastFlow = *evaporation = *topDrainage = 0;
@@ -1584,8 +1606,9 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
 
     // remove to allow sublimation of a negative amount of snow
     // right now we can't sublime a negative amount of snow
-    if (*sublimation < 0)
+    if (*sublimation < 0) {
       *sublimation = 0;
+    }
 
     // make sure we don't sublime more than there is to sublime:
     if (snowRemaining - (*sublimation * climate->length) < 0) {
@@ -1593,12 +1616,14 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
       snowRemaining = 0;
     }
 
-    else
+    else {
       snowRemaining -= (*sublimation * climate->length);
+    }
 
     // below freezing: no snow melt
-    if (climate->tair <= 0)
+    if (climate->tair <= 0) {
       *snowMelt = 0;
+    }
 
     // above freezing: melt snow
     else {
@@ -1606,8 +1631,9 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
                                                     // temp.
 
       // make sure we don't melt more than there is to melt:
-      if (snowRemaining - (*snowMelt * climate->length) < 0)
+      if (snowRemaining - (*snowMelt * climate->length) < 0) {
         *snowMelt = snowRemaining / climate->length;
+      }
     }  // end else above freezing
   }  // end else there is snow
 }  // end snowPack
@@ -1656,8 +1682,9 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
       water + netIn * climate->length - fluxesOut * climate->length;
 
   // if there's a snow pack, don't evaporate from soil:
-  if (envi.snow > 0)
+  if (envi.snow > 0) {
     *evaporation = 0;
+  }
 
   // else no snow pack:
   else {
@@ -1668,8 +1695,9 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
     // (when this isn't true, there won't be much water evaporated anyway)
 
     // remove to allow negative evaporation (i.e. condensation):
-    if (*evaporation < 0)
+    if (*evaporation < 0) {
       *evaporation = 0;
+    }
 
     // make sure we don't evaporate more than we have:
     if (waterRemaining - (*evaporation * climate->length) < TINY) {
@@ -1677,8 +1705,9 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
       // errors
       *evaporation = (waterRemaining - TINY) / climate->length;
       waterRemaining = 0;
-    } else
+    } else {
       waterRemaining -= (*evaporation * climate->length);
+    }
   }
 
 #if LITTER_WATER_DRAINAGE  // we're calculating drainage even when evap. layer
@@ -1697,8 +1726,9 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
 #endif
 
   // drain any water that remains beyond water holding capacity:
-  if (waterRemaining > whc)
+  if (waterRemaining > whc) {
     *drainage += (waterRemaining - whc) / (climate->length);
+  }
 }
 
 // calculate drainage from bottom (soil/transpiration) layer (cm/day)
@@ -1710,8 +1740,9 @@ void transSoilDrainage(double *bottomDrainage, double topDrainage, double trans,
 
   waterRemaining = soilWater + (topDrainage - trans) * climate->length;
   *bottomDrainage = (waterRemaining - params.soilWHC) / (climate->length);
-  if (*bottomDrainage < 0)
+  if (*bottomDrainage < 0) {
     *bottomDrainage = 0;
+  }
 }
 
 // calculates fastFlow (cm/day), evaporation (cm/day) and drainage to lower
@@ -1753,10 +1784,10 @@ void getGpp(double *gpp, double potGrossPsn, double dWater) {
 void vegResp(double *folResp, double *woodResp, double baseFolResp) {
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
-  if (climate->tsoil < params.frozenSoilThreshold)
+  if (climate->tsoil < params.frozenSoilThreshold) {
     *folResp *= params.frozenSoilFolREff;  // allows foliar resp. to be shutdown
                                            // by a given fraction in winter
-
+  }
   *woodResp = params.baseVegResp * envi.plantWoodC *
               pow(params.vegRespQ10, climate->tair / 10.0);
 }
@@ -1776,18 +1807,19 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
               double baseFolResp, double gpp) {
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
-  if (climate->tsoil < params.frozenSoilThreshold)
+  if (climate->tsoil < params.frozenSoilThreshold) {
     *folResp *= params.frozenSoilFolREff;  // allows foliar resp. to be shutdown
                                            // by a given fraction in winter
-
+  }
   *woodResp = params.baseVegResp * envi.plantWoodC *
               pow(params.vegRespQ10, climate->tair / 10.0);
 
   // Rg is a fraction of the recent mean NPP
   *growthResp = params.growthRespFrac * getMeanTrackerMean(meanNPP);
 
-  if (*growthResp < 0)
+  if (*growthResp < 0) {
     *growthResp = 0;
+  }
 }
 
 /////////////////
@@ -1835,8 +1867,9 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   moistEffect = pow((water / whc), params.soilRespMoistEffect);
 #endif  // DAYCENT_WATER_HRESP
 
-  if (climate->tsoil < 0)
+  if (climate->tsoil < 0) {
     moistEffect = 1;  // Ignore moisture effects in frozen soils
+  }
 #else  // no WATER_HRESP
   moistEffect = 1;
 #endif  // WATER_HRESP
@@ -2333,8 +2366,9 @@ void initTrackers(void) {
 //  If minVal > 0, then minVal can be thought of as some epsilon value, below
 //  which var is treated as 0
 void ensureNonNegative(double *var, double minVal) {
-  if (*var < minVal)
+  if (*var < minVal) {
     *var = 0.;
+  }
 }
 
 // Make sure all environment variables are positive after updating them:
@@ -2657,8 +2691,9 @@ void initPhenologyTrackers() {
      have problems with GDD-based growth if first day of simulation is not
      Jan. 1.)
   */
-  if (phenologyTrackers.didLeafFall && !phenologyTrackers.didLeafGrowth)
+  if (phenologyTrackers.didLeafFall && !phenologyTrackers.didLeafGrowth) {
     phenologyTrackers.didLeafGrowth = 1;
+  }
   // printf("stuff: %8d %8d \n",phenologyTrackers.lastYear, climate->year);
   phenologyTrackers.lastYear = climate->year;  // set the year of the previous
                                                // (non-existent) time step to be
@@ -2756,24 +2791,27 @@ void setupModel(SpatialParams *spatialParams, int loc) {
   envi.fineRootC = params.fineRootFrac * params.plantWoodInit;
 
   envi.litterWater = params.litterWFracInit * params.litterWHC;
-  if (envi.litterWater < 0)
+  if (envi.litterWater < 0) {
     envi.litterWater = 0;
-  else if (envi.litterWater > params.litterWHC)
+  } else if (envi.litterWater > params.litterWHC) {
     envi.litterWater = params.litterWHC;
+  }
 
   envi.soilWater = params.soilWFracInit * params.soilWHC;
-  if (envi.soilWater < 0)
+  if (envi.soilWater < 0) {
     envi.soilWater = 0;
-  else if (envi.soilWater > params.soilWHC)
+  } else if (envi.soilWater > params.soilWHC) {
     envi.soilWater = params.soilWHC;
+  }
 
   envi.snow = params.snowInit;
 
-  if (firstClimates[loc] != NULL)
+  if (firstClimates[loc] != NULL) {
     climate = firstClimates[loc];  // set climate ptr to point to first climate
                                    // record in this location
-  else  // no climate data for this location
+  } else {  // no climate data for this location
     climate = firstClimates[0];  // use climate data from location 0
+  }
   initTrackers();
   initPhenologyTrackers();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
@@ -2809,8 +2847,9 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader,
   if (loc == -1) {  // run everywhere
     firstLoc = 0;
     lastLoc = spatialParams->numLocs - 1;
-  } else  // just run at one point
+  } else {  // just run at one point
     firstLoc = lastLoc = loc;
+  }
 
   for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     setupModel(spatialParams, currLoc);
@@ -2849,8 +2888,9 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader,
    Note: can only run at one location: to run at all locations, must put
    runModelNoOut call in a loop
 */
-void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[],
-                   SpatialParams *spatialParams, int loc) {
+void runModelNoOut(double **outArray, int numDataTypes,
+                   const int dataTypeIndices[], SpatialParams *spatialParams,
+                   int loc) {
   int step = 0;
   int outputNum;
 
@@ -2868,8 +2908,9 @@ void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[],
     updateState();
 
     // loop through all desired outputs, putting each into outArray:
-    for (outputNum = 0; outputNum < numDataTypes; outputNum++)
+    for (outputNum = 0; outputNum < numDataTypes; outputNum++) {
       outArray[step][outputNum] = *(outputPtrs[dataTypeIndices[outputNum]]);
+    }
 
     step++;
     climate = climate->nextClim;
@@ -2903,8 +2944,9 @@ void sensTest(FILE *out, OutputItems *outputItems, int paramNum, double low,
 
     runModelOutput(out, outputItems, 0, spatialParams, loc);
 
-    if (out != NULL)
+    if (out != NULL) {
       fprintf(out, "\n\n");
+    }
     value += changeAmt;
   }
 }
@@ -3033,7 +3075,8 @@ void setupOutputPointers(void) {
   // outputPtrs[i++] = &(trackers.LAI);
   // outputPtrs[i++] = &(trackers.plantWoodC);
   outputPtrs[i++] = &(trackers.fpar);
-  outputPtrs[i++] = &(trackers.yearlyNee);
+  outputPtrs[i++] = &(trackers.yearlyNee);  // NOLINT (i++ incremented val never
+                                            // used)
 #if EXTRA_DATA_TYPES
 
   // outputPtrs[i++] = &(trackers.fpar);

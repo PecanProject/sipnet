@@ -39,17 +39,19 @@ void writeHistFile(FILE *histFile, double ltotnew, double *sigma,
     fprintf(histFile, "%f ", sigma[i]);
     fprintf(histFile, "%f %f ", outputInfo[i].meanError,
             outputInfo[i].daysError);
-    for (j = 0; j < outputInfo[i].numYears; j++)
+    for (j = 0; j < outputInfo[i].numYears; j++) {
       fprintf(histFile, "%f ", outputInfo[i].years[j]);  // annual output for
-                                                         // this year
+      // this year
+    }
   }
 
   np = spatialParams->numChangeableParams;
-  for (i = 0; i < np; i++)
+  for (i = 0; i < np; i++) {
     fprintf(histFile, "%f ",
             getSpatialParam(spatialParams,
                             spatialParams->changeableParamIndices[i], loc));
   fprintf(histFile, "\n");
+}
 }
 
 // .hist file writing, binary version:
@@ -90,16 +92,18 @@ void writeHistFileBin(FILE *histFile, double ltotnew, double *sigma,
     writeDoubleAsFloat(sigma[i], histFile);
     writeDoubleAsFloat(outputInfo[i].meanError, histFile);
     writeDoubleAsFloat(outputInfo[i].daysError, histFile);
-    for (j = 0; j < outputInfo[i].numYears; j++)
+    for (j = 0; j < outputInfo[i].numYears; j++) {
       writeDoubleAsFloat(outputInfo[i].years[j], histFile);
+    }
   }
 
   np = spatialParams->numChangeableParams;
-  for (i = 0; i < np; i++)
+  for (i = 0; i < np; i++) {
     writeDoubleAsFloat(getSpatialParam(spatialParams,
                                        spatialParams->changeableParamIndices[i],
                                        loc),
                        histFile);
+  }
 }
 
 /************************************************************************/
@@ -136,16 +140,17 @@ void reset(
   if (loc == -1) {  // running at all locations
     firstLoc = 0;
     lastLoc = spatialParams->numLocs - 1;
-  } else  // only running at one location
+  } else {
+    // only running at one location
     firstLoc = lastLoc = loc;
-
+  }
   // reset value, best & knob (set knob to addFraction)
   resetSpatialParams(spatialParams, addFraction, randomStart);
 
   /*compute log-likelihood of parameter set*/
   for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     locIndex = currLoc - firstLoc;  // index into arrays
-    loglikely[locIndex] =
+    loglikely[locIndex] =  // NOLINTNEXTLINE (outputInfo false warning)
         -1.0 * (*likely)(sigma[locIndex], outputInfo[locIndex], currLoc,
                          spatialParams, paramWeight, model, dataTypeIndices,
                          numDataTypes, costFunction, dataTypeWeights);
@@ -184,8 +189,10 @@ void writeChainInfo(char *chainInfo, double ltotold, double ltotmax,
   if (loc == -1) {  // running at all locations
     firstLoc = 0;
     lastLoc = spatialParams->numLocs - 1;
-  } else  // only running at one location
+  } else {
+    // only running at one location
     firstLoc = lastLoc = loc;
+  }
 
   // write last and maximum log likelihoods:
   fwrite(&ltotold, sizeof(double), 1, out);
@@ -198,9 +205,11 @@ void writeChainInfo(char *chainInfo, double ltotold, double ltotmax,
     if (isSpatial(spatialParams, index)) {
       thisFirstLoc = firstLoc;
       thisLastLoc = lastLoc;
-    } else  // non-spatial - we'll just use one location (doesn't matter which
-            // one)
+    } else {
+      // non-spatial - we'll just use one location (doesn't matter which
+      // one)
       thisFirstLoc = thisLastLoc = 0;
+    }
 
     for (currLoc = thisFirstLoc; currLoc <= thisLastLoc; currLoc++) {
       // if non-spatial, or loc != -1, we'll only execute this loop once
@@ -241,8 +250,10 @@ void readChainInfo(char *chainInfo, double *ltotold, double *ltotmax,
   if (loc == -1) {  // running at all locations
     firstLoc = 0;
     lastLoc = spatialParams->numLocs - 1;
-  } else  // only running at one location
+  } else {
+    // only running at one location
     firstLoc = lastLoc = loc;
+  }
 
   // read last and maximum log likelihoods:
   fread(ltotold, sizeof(double), 1, in);
@@ -255,8 +266,10 @@ void readChainInfo(char *chainInfo, double *ltotold, double *ltotmax,
     if (isSpatial(spatialParams, index)) {
       thisFirstLoc = firstLoc;
       thisLastLoc = lastLoc;
-    } else  // non-spatial - we just use one location (doesn't matter which one)
+    } else {
+      // non-spatial - we just use one location (doesn't matter which one)
       thisFirstLoc = thisLastLoc = 0;
+    }
 
     for (currLoc = thisFirstLoc; currLoc <= thisLastLoc; currLoc++) {
       // if non-spatial, or loc != -1, we'll only execute this loop once
@@ -342,8 +355,9 @@ void metropolis(
   pold = makeArray(numLocs);
   sigma = make2DArray(numLocs, numDataTypes);
   outputInfo = (OutputInfo **)malloc(numLocs * sizeof(OutputInfo *));
-  for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++)
+  for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     outputInfo[currLoc - firstLoc] = newOutputInfo(numDataTypes, currLoc);
+  }
   histFiles = (FILE **)malloc(numLocs * sizeof(FILE *));  // one file for each
                                                           // location
 
@@ -403,8 +417,10 @@ void metropolis(
     if (isSpatial(spatialParams, ichg)) {
       thisFirstLoc = firstLoc;
       thisLastLoc = lastLoc;
-    } else  // non-spatial - we just use one location (doesn't matter which one)
+    } else {
+      // non-spatial - we just use one location (doesn't matter which one)
       thisFirstLoc = thisLastLoc = 0;
+    }
 
     /*change parameter*/
     range = (getSpatialParamMax(spatialParams, ichg) -
@@ -427,14 +443,16 @@ void metropolis(
              location, reject point (equivalent to making likelihood tiny)
              however, we'll continue the loop, because we need to fill pold
              vector in order to reset param. values later */
-        } else
+        } else {
           // set new value equal to oldVal + padd
           setSpatialParam(spatialParams, ichg, currLoc, oldVal + padd);
+        }
       }  // if accept == 1
     }  // for currLoc
 
-    if (accept == 1) {  // we're within allowable range at all locations; run
-                        // model at all locations and check new total likelihood
+    if (accept == 1) {
+      // we're within allowable range at all locations; run
+      // model at all locations and check new total likelihood
 
       /*compute log-likelihood of new parameter set*/
       for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
@@ -454,17 +472,16 @@ void metropolis(
                     bests at all locations */
       }
 
-      /*compare new to old and accept or reject*/
-      if (ltotnew > ltotold)
+      /* compare new to old and accept or reject */
+      if (ltotnew > ltotold  // standard check
+          ||
+          // note: anything but a scaleFactor of 1 goes against theory
+          randm() < scaleFactor * (ltotnew - ltotold)) {
         accept = 1;
-      else if (randm() < scaleFactor * (ltotnew - ltotold))  // note: anything
-                                                             // but a
-                                                             // scaleFactor of 1
-                                                             // goes against
-                                                             // theory
-        accept = 1;
-      else
+          }
+      else {
         accept = 0;
+      }
     }  // end if (accept == 1)
 
     /* act on acceptance */
@@ -516,8 +533,10 @@ void metropolis(
         for (currLoc = thisFirstLoc; currLoc <= thisLastLoc; currLoc++) {
           pdelta = getSpatialParamKnob(spatialParams, ichg, currLoc);
           pdelta = pdelta * DEC;  // decrease temperature
-          if (pdelta < DBL_EPSILON)  // don't let temperature get too small
+          if (pdelta < DBL_EPSILON) {
+            // don't let temperature get too small
             pdelta = DBL_EPSILON;
+          }
           setSpatialParamKnob(spatialParams, ichg, currLoc, pdelta);
         }  // for (currLoc)
       }  // if (converged == 0)
@@ -573,10 +592,10 @@ void metropolis(
                       ltotmax);
             }
 
-            else  // the most recent chain was the best: no need to read from
-                  // file
+            else {
+              // the most recent chain was the best: no need to read from file
               fprintf(userOut, "\n\nKEEPING MOST RECENT START CHAIN INFO\n\n");
-
+            }
           }  // end else done running start chains
 
           k = 0;  // start count over so we run for another estSteps steps
@@ -603,13 +622,15 @@ void metropolis(
   */
 
   // close files, free dynamically-allocated pointers:
-  for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++)
+  for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     fclose(histFiles[currLoc - firstLoc]);
+  }
   free(histFiles);
   free(pold);
   free(loglikely);
   free2DArray((void **)sigma);
-  for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++)
+  for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
     freeOutputInfo(outputInfo[currLoc - firstLoc], numDataTypes);
+  }
   free(outputInfo);
 }
