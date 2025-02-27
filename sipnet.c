@@ -2889,8 +2889,8 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader,
    runModelNoOut call in a loop
 */
 void runModelNoOut(double **outArray, int numDataTypes,
-                   const int dataTypeIndices[], SpatialParams *spatialParams,
-                   int loc) {
+                   int dataTypeIndices[],  // NOLINT (const int[])
+                   SpatialParams *spatialParams, int loc) {
   int step = 0;
   int outputNum;
 

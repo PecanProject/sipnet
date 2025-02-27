@@ -81,7 +81,7 @@ void cleanupModel(int numLocs);
    runModelNoOut call in a loop
 */
 void runModelNoOut(double **outArray, int numDataTypes,
-                   const int dataTypeIndices[], SpatialParams *spatialParams,
+                   int dataTypeIndices[], SpatialParams *spatialParams,
                    int loc);
 
 /* Do one run of the model using parameter values in spatialParams
