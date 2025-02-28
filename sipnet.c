@@ -894,7 +894,7 @@ void freeClimateList(int numLocs) {
  * cumLai is 0 at the canopy top and equals total LAI at the bottom.
  * 
  * Note: SIPNET is not a multi-layer model; this function derives a canopy‐averaged 
- * light effect that is then used to calculate calculate GPP for the whole canopy.
+ * light effect that is then used to calculate GPP for the whole canopy.
  *
  * @param[out] lightEff Pointer average light effect.
  * @param[in] lai Leaf area index (m^2 leaf/m^2 ground).
