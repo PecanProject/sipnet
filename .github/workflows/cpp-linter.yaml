@@ -3,6 +3,7 @@ name: cpp-linter
 on:
   pull_request:
     # This is overkill, but why not
+    # Note: this step is run on files that match this pattern AND are modified in the PR
     paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.cxx', '**.hxx', '**.cc', '**.hh', '**CMakeLists.txt', 'meson.build', '**.cmake']
 
 jobs:

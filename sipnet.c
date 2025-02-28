@@ -2535,45 +2535,45 @@ void processEvents() {
       exit(1);
     }
     switch (locEvent->type) {
-    // Implementation TBD, as we enable the various event types
-    case IRRIGATION: {
-      const IrrigationParams *irrParams = locEvent->eventParams;
-      const double amount = irrParams->amountAdded;
-      if (irrParams->method == CANOPY) {
-        // Part of the irrigation evaporates, and the rest makes it to the soil
-        // Evaporated fraction
-        const double evapAmount = params.immedEvapFrac * amount;
-        fluxes.immedEvap += evapAmount;
-        // Remainder goes to the soil
-        const double soilAmount = amount - evapAmount;
-        envi.soilWater += soilAmount;
-      } else if (irrParams->method == SOIL) {
-        // All goes to the soil
-        envi.soilWater += amount;
-      } else {
-        printf("Unknown irrigation method type: %d\n", irrParams->method);
+      // Implementation TBD, as we enable the various event types
+      case IRRIGATION: {
+        const IrrigationParams *irrParams = locEvent->eventParams;
+        const double amount = irrParams->amountAdded;
+        if (irrParams->method == CANOPY) {
+          // Part of the irrigation evaporates, and the rest makes it to the
+          // soil Evaporated fraction
+          const double evapAmount = params.immedEvapFrac * amount;
+          fluxes.immedEvap += evapAmount;
+          // Remainder goes to the soil
+          const double soilAmount = amount - evapAmount;
+          envi.soilWater += soilAmount;
+        } else if (irrParams->method == SOIL) {
+          // All goes to the soil
+          envi.soilWater += amount;
+        } else {
+          printf("Unknown irrigation method type: %d\n", irrParams->method);
+          exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+        }
+      } break;
+      case PLANTING:
+        // TBD
+        printf("Planting events not yet implemented\n");
+        break;
+      case HARVEST:
+        // TBD
+        printf("Harvest events not yet implemented\n");
+        break;
+      case TILLAGE:
+        // TBD
+        printf("Tillage events not yet implemented\n");
+        break;
+      case FERTILIZATION:
+        // TBD
+        printf("Fertilization events not yet implemented\n");
+        break;
+      default:
+        printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
-      }
-    } break;
-    case PLANTING:
-      // TBD
-      printf("Planting events not yet implemented\n");
-      break;
-    case HARVEST:
-      // TBD
-      printf("Harvest events not yet implemented\n");
-      break;
-    case TILLAGE:
-      // TBD
-      printf("Tillage events not yet implemented\n");
-      break;
-    case FERTILIZATION:
-      // TBD
-      printf("Fertilization events not yet implemented\n");
-      break;
-    default:
-      printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
-      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
     locEvent = locEvent->nextEvent;
