@@ -26,7 +26,7 @@ DOXYFILE = docs/Doxyfile
 DOXYGEN_HTML_DIR = docs/html
 DOXYGEN_LATEX_DIR = docs/latex
 
-all: estimate sipnet transpose subsetData
+all: estimate sipnet transpose subsetData release
 
 # Only update docs if source files or Doxyfile have changed
 document: .doxygen.stamp
@@ -51,9 +51,15 @@ transpose: $(TRANSPOSE_OFILES)
 subsetData: $(SUBSET_DATA_OFILES)
 	$(LD) -o subsetData $(SUBSET_DATA_OFILES) $(LIBLINKS)
 
+release: sipnet
+	mkdir -p release
+	cp sipnet release/
+	tar -czvf release/sipnet.tar.gz -C release sipnet
+	rm release/sipnet
+
 clean:
 	rm -f $(ESTIMATE_OFILES) $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) estimate sensTest  sipnet transpose subsetData
-	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
+	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR) release
 
 # UNIT TESTS
 SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
