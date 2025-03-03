@@ -113,18 +113,14 @@ $(SIPNET_TEST_DIRS_RUN):
 	$(MAKE) -C $(basename $@) run
 
 testclean: $(SIPNET_TEST_DIRS_CLEAN)
-#	rm -f $(SIPNET_LIB)# This will error (intentionally) if the library has not been built; when running
-                       ## this manually, make sure to build it from the top-level makefile first
-                       #$(TEST_OBJ_FILES): $(TEST_DEPS) $(LIB_DEPS)
-                       #$(TEST_OBJ_FILES): %.o: %.c
-                       #	$(CC) $(CFLAGS) -c -o $@ $<
+#	rm -f $(SIPNET_LIB)
 
 $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
-.PHONY: all clean document estimate sipnet transpose subsetData doxygen \
-		test $(SIPNET_TEST_DIRS) $(SIPNET_LIB) testrun \
-		$(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) help
+.PHONY: all clean sipnet estimate transpose subsetData histutil \
+		$(SIPNET_LIB) $(COMMON_LIB) help document .doxygen.stamp \
+		test $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun
 
 help:
 	@echo "Available make targets:"
@@ -143,7 +139,7 @@ help:
 	@echo "  transpose    - read in and transpose a matrix"
 	@echo "  subsetData   - subset input files (e.g., .clim, .dat, .valid, .sigma, .spd) from a specified start date"
 	@echo "                 and length of time in days (see src/utilities/subset.in for sample input file)"
-	@echo "  histutils    - Build bintotxt and txttobin, utilities to convert the hist file output from an estimate"
+	@echo "  histutil     - Build bintotxt and txttobin, utilities to convert the hist file output from an estimate"
 	@echo "                 run from a binary file to a text file, and back again"
 	@echo "  === Tests ==="
 	@echo "  test         - Build the unit tests"
