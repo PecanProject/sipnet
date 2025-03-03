@@ -6,6 +6,7 @@ LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
 
+# Main executables
 COMMON_CFILES:=util.c paramchange.c namelistInput.c spatialParams.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
@@ -20,24 +21,19 @@ ESTIMATE_CFILES:=$(addprefix src/estimate/, $(ESTIMATE_CFILES))
 ESTIMATE_OFILES=$(ESTIMATE_CFILES:.c=.o)
 ESTIMATE_LIBS=-lsipnet_common -lsipnet
 
-SENSTEST_CFILES:=sensTest.c
-SENSTEST_CFILES:=$(addprefix src/sensTest/, $(SENSTEST_CFILES))
-SENSTEST_OFILES=$(SENSTEST_CFILES:.c=.o)
-SENSTEST_LIBS=-lsipnet_common -lsipnet
-
+# Utilities
 TRANSPOSE_CFILES:=transpose.c
-TRANSPOSE_CFILES:=$(addprefix src/transpose/, $(TRANSPOSE_CFILES))
+TRANSPOSE_CFILES:=$(addprefix src/utilities/, $(TRANSPOSE_CFILES))
 TRANSPOSE_OFILES=$(TRANSPOSE_CFILES:.c=.o)
 TRANSPOSE_LIBS=-lsipnet_common
 
 SUBSET_DATA_CFILES:=subsetData.c
-SUBSET_DATA_CFILES:=$(addprefix src/subsetData/, $(SUBSET_DATA_CFILES))
+SUBSET_DATA_CFILES:=$(addprefix src/utilities/, $(SUBSET_DATA_CFILES))
 SUBSET_DATA_OFILES=$(SUBSET_DATA_CFILES:.c=.o)
 SUBSET_DATA_LIBS=-lsipnet_common
 
-# one-off build for the hist file utils
 HISTUTIL_CFILES:=bintotxt.c txttobin.c
-HISTUTIL_CFILES:=$(addprefix src/common/, $(HISTUTIL_CFILES))
+HISTUTIL_CFILES:=$(addprefix src/utilities/, $(HISTUTIL_CFILES))
 HISTUTIL_OFILES=$(HISTUTIL_CFILES:.c=.o)
 HISTUTIL_LIBS=-lsipnet_common
 
@@ -58,11 +54,11 @@ DOXYGEN_LATEX_DIR = docs/latex
 # environment
 .DEFAULT_GOAL := sipnet
 
+# the main executables - the original 'all' target
+exec: estimate sipnet transpose subsetData
+
 # with the default set to 'sipnet', we can have all do (close to) everything
 all: exec document
-
-# the main executables - the original 'all' target
-exec: estimate sipnet transpose subsetData # sensTest
 
 # Only update docs if source files or Doxyfile have changed
 document: .doxygen.stamp
@@ -84,9 +80,6 @@ sipnet: $(SIPNET_OFILES) $(COMMON_LIB)
 estimate: $(ESTIMATE_OFILES) $(COMMON_LIB) $(SIPNET_LIB)
 	$(LD) $(LDFLAGS) -o estimate $(ESTIMATE_OFILES) $(LIBLINKS) $(ESTIMATE_LIBS)
 
-#sensTest: $(SENSTEST_OFILES) $(SENSTEST_LIBS) $(COMMON_LIB) $(SIPNET_LIB)
-#	$(LD) $(LDFLAGS) -o sensTest $(SENSTEST_OFILES) $(LIBLINKS) $(SENSTEST_LIBS)
-
 transpose: $(TRANSPOSE_OFILES) $(COMMON_LIB)
 	$(LD) $(LDFLAGS) -o transpose $(TRANSPOSE_OFILES) $(LIBLINKS) $(TRANSPOSE_LIBS)
 
@@ -99,8 +92,8 @@ histutil: $(HISTUTIL_OFILES) $(COMMON_LIB)
 
 clean:
 	rm -f $(ESTIMATE_OFILES) $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) $(COMMON_OFILES)
-	rm -f $(HISTUTIL_OFILES)
-	rm -f estimate sensTest sipnet transpose subsetData $(COMMON_LIB) $(SIPNET_LIB) bintotxt txttobin
+	rm -f $(HISTUTIL_OFILES) $(LIB_DIR)/$(COMMON_LIB) $(LIB_DIR)/$(SIPNET_LIB)
+	rm -f estimate sensTest sipnet transpose subsetData bintotxt txttobin
 	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
 
 # UNIT TESTS
@@ -120,7 +113,11 @@ $(SIPNET_TEST_DIRS_RUN):
 	$(MAKE) -C $(basename $@) run
 
 testclean: $(SIPNET_TEST_DIRS_CLEAN)
-	rm -f $(SIPNET_LIB)
+#	rm -f $(SIPNET_LIB)# This will error (intentionally) if the library has not been built; when running
+                       ## this manually, make sure to build it from the top-level makefile first
+                       #$(TEST_OBJ_FILES): $(TEST_DEPS) $(LIB_DEPS)
+                       #$(TEST_OBJ_FILES): %.o: %.c
+                       #	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
@@ -133,21 +130,20 @@ help:
 	@echo "Available make targets:"
 	@echo "  help         - Display this help message."
 	@echo "  === Core Targets ==="
-	@echo "  (default)    - Build the sipnet executable"
-	@echo "  <executable> - Build an individual executable; available: sipnet, estimate, sensTest, transpose"
-	@echo "                 See below for more information"
-	@echo "  exec         - Build all of the above executables"
+	@echo "  sipnet       - Build the sipnet executable (this is the default target as well)"
+	@echo "  estimate     - Build the estimate executable (estimates parameters using MCMC; see estimate.in in the "
+	@echo "                 src/estimate directory for sample input file)"
+	@echo "  exec         - Build the above executables and all utilities (see below)"
 	@echo "  document     - Generate documentation (via doxygen)"
 	@echo "  all          - Build all above executables and the documentation"
 	@echo "  clean        - Remove compiled files, executables, and documentation"
 	@echo "  depend       - Generate build dependency information for source files and append to Makefile"
 	@echo "  === Tool Info ==="
-	@echo "  sipnet       - main model program"
-	@echo "  estimate     - estimate parameters using MCMC"
+	@echo "  === Utilities ==="
 	@echo "  transpose    - read in and transpose a matrix"
 	@echo "  subsetData   - subset input files (e.g., .clim, .dat, .valid, .sigma, .spd) from a specified start date"
-	@echo "                 and length of time in days"
-	@echo " === Tests ==="
+	@echo "                 and length of time in days (see src/utilities/subset.in for sample input file)"
+	@echo "  === Tests ==="
 	@echo "  test         - Build the unit tests"
 	@echo "  testrun      - Run the unit tests"
 	@echo "  testclean    - Clean build artifacts and executables from the unit tests"
