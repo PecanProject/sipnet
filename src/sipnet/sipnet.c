@@ -13,10 +13,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+
+#include "common/util.h"
+
 #include "sipnet.h"
 #include "runmean.h"
-#include "util.h"
-#include "spatialParams.h"
 #include "outputItems.h"
 #include "modelStructures.h"
 #include "events.h"

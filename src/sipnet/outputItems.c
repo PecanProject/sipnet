@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "outputItems.h"
-#include "util.h"
+#include "common/util.h"
 
 // Private/helper functions: not defined in outputItems.h:
 

@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "util.h"
+#include "common/util.h"
 
 #define SEPARATORS " \t\n\r"  // valid separators between items on a line
 
