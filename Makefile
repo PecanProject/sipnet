@@ -1,6 +1,6 @@
 CC=gcc
 LD=gcc
-AR=libtool
+AR=ar -rs
 CFLAGS=-Wall -Werror -g -I./src
 LIBLINKS=-lm
 LIB_DIR=./libs
@@ -73,10 +73,10 @@ document: .doxygen.stamp
 	@touch .doxygen.stamp
 
 $(COMMON_LIB): $(COMMON_OFILES)
-	$(AR) -static -o $(LIB_DIR)/$(COMMON_LIB) $(COMMON_OFILES)
+	$(AR) $(LIB_DIR)/$(COMMON_LIB) $(COMMON_OFILES)
 
 $(SIPNET_LIB): $(SIPNET_OFILES)
-	$(AR) -static -o $(LIB_DIR)/$(SIPNET_LIB) $(SIPNET_OFILES)
+	$(AR) $(LIB_DIR)/$(SIPNET_LIB) $(SIPNET_OFILES)
 
 sipnet: $(SIPNET_OFILES) $(COMMON_LIB)
 	$(LD) $(LDFLAGS) -o sipnet $(SIPNET_OFILES) $(LIBLINKS) $(SIPNET_LIBS)
