@@ -996,75 +996,32 @@ void freeClimateList(int numLocs) {
 // so a single function can modify multiple variables
 
 /**
- * @brief Compute light absorbed using simple integration
- * 
- * **CURRENTLY UNUSED** (see calcLightEff3)
- * canopy light effect (simple integration).
- *
- * This uses light attenuation (as in PnET) to first calculate light intensity and then the light effect `lightEFF`
- * for each layer.
- * 
- * cumLai is 0 at the canopy top and equals total LAI at the bottom.
- * 
- * Note: SIPNET is not a multi-layer model; this function derives a canopy‐averaged 
- * light effect that is then used to calculate GPP for the whole canopy.
- *
- * @param[out] lightEff Pointer average light effect.
- * @param[in] lai Leaf area index (m^2 leaf/m^2 ground).
- * @param[in] par Incoming Photosynthetically Active Radiation (PAR).
- */
-void calcLightEff2 (double *lightEff, double lai, double par) {
-  static const int NUM_LAYERS = 50;
-
-  int layer;  // counter
-  double cumLai;  // lai from this layer up
-  double lightIntensity;
-  double cumLightEff = 0.0;
-
-  if (lai > 0 && par > 0) {  // must have at least some leaves and some light
-    for (layer = 1; layer <= NUM_LAYERS; layer++) {
-      // lai from this layer up
-      cumLai = lai * ((double)layer / NUM_LAYERS);
-      // between 0 and par
-      lightIntensity = par * exp(-1.0 * params.attenuation * cumLai);
-      // add between 0 and 1; when lightIntensity = halfSatPar, add 1/2
-      cumLightEff += (1 - pow(2, (-1.0 * lightIntensity / params.halfSatPar)));
-    }
-
-    *lightEff = cumLightEff / (double)NUM_LAYERS;  // find average light effect
-  } else {  // no leaves or no light!
-    *lightEff = 0;
-  }
-}
-
-/**
  * @brief Compute canopy light effect using Simpson's rule.
  *
- * Like calcLightEff3 but here we use Simpson's method to approximate the integral.
- * 
+ * Similar to light attenuation in PnET, first calculate light
+ * intensity and then the light effect `lightEFF` for each layer.
+ *
+ * Integrating Light Effect over the canopy, from top to bottom, approximated numerically using Simpson's method. 
+ * Simpson's rule requires an odd number of points, thus NUM_LAYERS must be EVEN because we loop 
+ * from layer = 0 to layer = NUM_LAYERS
+ *
  * Simpson's rule approximates the integral as:
  *   (h/3) * (y(0) + 4y(1) + 2y(2) + 4y(3) + ... + 2y(n-2) + 4y(n-1) + y(n)),
  *   where h is the distance between each x value (here h = 1/NUM_LAYERS).
  *   We keep track of the running sum in cumLightEff.
- * 
+ *
  * cumLai is 0 at the canopy top and equals total LAI at the bottom.
  *
- * Note: SIPNET is not a multi-layer model; this function derives a canopy‐averaged 
- * light effect that is then used to calculate calculate GPP for the whole canopy.
+ * Note: SIPNET is not a multi-layer model; this function derives a
+ * canopy‐averaged light effect that is then used to calculate calculate GPP for
+ * the whole canopy.
  *
  * @param[out] lightEff Canopy average light effect.
  * @param[in] lai Leaf area index (m^2 leaf/m^2 ground).
  * @param[in] par Incoming Photosynthetically Active Radiation (PAR).
  */
-void calcLightEff3 (double *lightEff, double lai, double par) {
-  /*
-    We are essentially integrating over the canopy, from top to bottom,
-    but it's an ugly integral, so we'll approximate it numerically.
-    Here we use Simpson's method to approximate the integral, so we need an odd
-    number of points. This means that NUM_LAYERS must be EVEN because we loop
-    from layer = 0 to layer = NUM_LAYERS
+void calcLightEff (double *lightEff, double lai, double par) {
 
-  */
 
   // Information on the distribution of LAI with height is available
   // as of March 2007 ... contact Dr. Maggie Prater Maggie.Prater@colorado.edu
@@ -1180,7 +1137,7 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
   if (dVpd < 0) {
     dVpd = 0.0;
   }
-  calcLightEff3(&lightEff, lai, par);
+  calcLightEff(&lightEff, lai, par);
 
   conversion = C_WEIGHT * (1.0 / TEN_9) *
                (params.leafCSpWt / params.cFracLeaf) * lai *
