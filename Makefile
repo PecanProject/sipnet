@@ -101,10 +101,10 @@ SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
 SIPNET_TEST_DIRS_RUN:= $(addsuffix .run, $(SIPNET_TEST_DIRS))
 SIPNET_TEST_DIRS_CLEAN:= $(addsuffix .clean, $(SIPNET_TEST_DIRS))
 
-test: $(SIPNET_TEST_DIRS) $(SIPNET_LIB)
+test: $(SIPNET_TEST_DIRS) $(COMMON_LIB) $(SIPNET_LIB)
 
 # The dash in the build command tells make to continue if there are errors, allowing cleanup
-$(SIPNET_TEST_DIRS): $(SIPNET_LIB)
+$(SIPNET_TEST_DIRS): $(SIPNET_LIB) $(COMMON_LIB)
 	-$(MAKE) -C $@
 
 testrun: $(SIPNET_TEST_DIRS_RUN)
