@@ -42,7 +42,7 @@ jobs:
       # run single sipnet run
       - name: Run SIPNET on tests/smoke/niwot
         shell: bash
-        run: ./sipnet -i tests/smoke
+        run: ./sipnet -i tests/smoke/sipnet.in
 
       # check for correct output of Niwot run
       - name: Check if niwot.out is generated
