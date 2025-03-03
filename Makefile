@@ -1,7 +1,7 @@
 CC=gcc
 LD=gcc
 AR=ar
-CFLAGS=-Wall
+CFLAGS=-Wall -Werror
 LIBLINKS=-lm
 
 ESTIMATE_CFILES=sipnet.c ml-metro5.c ml-metrorun.c paramchange.c runmean.c util.c spatialParams.c namelistInput.c outputItems.c events.c
