@@ -9,9 +9,8 @@
 #include <math.h>
 #include <string.h>
 #include <float.h>
-#include "paramchange.h"
-#include "spatialParams.h"
-#include "util.h"
+#include "common/util.h"
+#include "ml-metro.h"
 
 #define A_STAR 0.4  // target acceptance rate
 #define DEC 0.99  // how much to decrease temp. by on rejection

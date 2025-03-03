@@ -7,12 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h> // for command-line arguments
-#include "sipnet.h"
+
+#include "common/util.h"
+#include "common/namelistInput.h"
+#include "sipnet/sipnet.h"
+
 #include "ml-metro.h"
-#include "paramchange.h"
-#include "util.h"
-#include "spatialParams.h"
-#include "namelistInput.h"
 
 // important constants - default values:
 
@@ -27,7 +27,7 @@
 #define NUM_CHAINS 10 // number of chains to run to convergence - pick best of these to use as start pt. for optimization
 #define ITER 375000 // number of metropolis iterations once we've converged and finished numSpinUps
 #define SCALE_FACTOR 1.0 // multiply LL difference by this
-#define LOC -1 // default is run at all locations
+#define LOC (-1) // default is run at all locations
 #define NUM_RUNS 1
 #define NUM_AT_ONCE 10000 // interval for checking convergence
 #define PARAM_FILE "" // file to use in place of fileName.param - empty string means use fileName.param
@@ -35,7 +35,7 @@
 #define NUM_SPIN_UPS 125000 // once we've converged, additional number of iterations before we start recording
 #define OPT_INDICES_EXT "" // extension of file giving start and end indices for optimization at each location; no file means use all points
 #define VALID_FRAC 0.5 /* fraction of data points which must be valid
-		     to use data from a given time step */
+                          to use data from a given time step */
 #define PARAM_WEIGHT 0.0
 #define COST_FUNCTION 0  // Set different options for cost functions
 

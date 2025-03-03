@@ -8,10 +8,12 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h> // for command-line arguments
+
+#include "common/namelistInput.h"
+#include "common/spatialParams.h"
+#include "common/util.h"
+
 #include "sipnet.h"
-#include "util.h"
-#include "spatialParams.h"
-#include "namelistInput.h"
 #include "outputItems.h"
 #include "modelStructures.h"
 

@@ -4,7 +4,7 @@
 #define SIPNET_H
 
 #include <stdio.h>
-#include "spatialParams.h"
+#include "common/spatialParams.h"
 #include "outputItems.h"
 
 #define EXTRA_DATA_TYPES 0

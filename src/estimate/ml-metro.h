@@ -2,8 +2,8 @@
 #ifndef ML_METRO_H
 #define ML_METRO_H
 
-#include "paramchange.h"
-#include "spatialParams.h"
+#include "common/paramchange.h"
+#include "common/spatialParams.h"
 
 /* Puts best parameters found in spatialParams
    If loc = -1, run at all locations; if loc >= 0, run only at that single

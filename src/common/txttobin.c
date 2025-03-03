@@ -7,18 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// our own openFile method, which exits gracefully if there's an error
-FILE *openFile(char *name, char *mode) {
-  FILE *f;
-
-  if ((f = fopen(name, mode)) == NULL) {
-    printf("Error opening %s for %s\n", name, mode);
-    exit(1);
-  }
-
-  return f;
-}
-
+#include "util.h"
 
 int main(int argc, char *argv[]) {
   const int MAX_LINE = 1024;
