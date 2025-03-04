@@ -1,4 +1,11 @@
-These notes used to reside in the main README. They have been moved here pretty much verbatim, and may no longer make complete sense.
+## The Archive (or, SIPNET's Graveyard?)
+
+This ARCHIVE directory holds code, data, and documentation from prior experiments and tests.
+It is not guaranteed to run with the current system (in fact, is almost guaranteed NOT to).
+
+## Comments on Variants from Older Main README
+
+These notes below used to reside in the main README. They have been moved here almost verbatim (other than the header), and may no longer make sense.
 
 VARIANTS OF [MAIN PROGRAM EXECUTABLES]:
 

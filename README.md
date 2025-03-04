@@ -1,3 +1,30 @@
+# SIPNET
+
+(short blurb)
+
+## Introduction
+
+(Insert SIPNET blurb here; maybe with a reference or two?)
+
+## Getting Started
+
+### Installing
+
+What's required? 
+
+[Python may be required in the future, depending on what happens with formatting pre-commit hooks; we'll see]
+
+### Executing the Program
+
+blah blah blah
+
+## Contributing
+
+See the main [Contributing](/CONTRIBUTING.md) page
+
+-----
+### Old stuff...
+
 Typing 'make' in this directory will make the following executables:
 
 MAIN PROGRAMS:
