@@ -88,11 +88,3 @@ jobs:
       - name: Run Unit Tests
         run: make testrun
 
-      # temp breakpoint
-      - name: Breakpoint if tests failed
-        if: failure()
-        uses: namespacelabs/breakpoint-action@v0
-        with:
-          duration: 30m
-          authorized-users: alomir
-

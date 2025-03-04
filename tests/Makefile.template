@@ -4,7 +4,7 @@ CC=gcc
 LD=gcc
 CFLAGS=-Wall -g -I$(ROOT_DIR)/src -I$(ROOT_DIR)/tests
 LDFLAGS=-L$(ROOT_DIR)/libs
-LDLIBS=-lm -lsipnet -lsipnet_common
+LDLIBS=-lsipnet -lsipnet_common -lm
 
 # List test files in this directory here
 TEST_CFILES=<c files in this directory containing tests> <<== CHANGE THIS
