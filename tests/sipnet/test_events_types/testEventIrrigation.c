@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #include "modelStructures.h" // must include first
-#include "../utils.h"
-#include "../../../sipnet.c"
+#include "utils/tUtils.h"
+#include "sipnet/sipnet.c"
 
 int checkOutput(double soilWater, double immedEvap)
 {

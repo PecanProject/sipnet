@@ -13,10 +13,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+
+#include "common/util.h"
+
 #include "sipnet.h"
 #include "runmean.h"
-#include "util.h"
-#include "spatialParams.h"
 #include "outputItems.h"
 #include "modelStructures.h"
 #include "events.h"
@@ -1001,8 +1002,8 @@ void freeClimateList(int numLocs) {
  * Similar to light attenuation in PnET, first calculate light
  * intensity and then the light effect `lightEFF` for each layer.
  *
- * Integrating Light Effect over the canopy, from top to bottom, approximated numerically using Simpson's method. 
- * Simpson's rule requires an odd number of points, thus NUM_LAYERS must be EVEN because we loop 
+ * Integrating Light Effect over the canopy, from top to bottom, approximated numerically using Simpson's method.
+ * Simpson's rule requires an odd number of points, thus NUM_LAYERS must be EVEN because we loop
  * from layer = 0 to layer = NUM_LAYERS
  *
  * Simpson's rule approximates the integral as:

@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #include "modelStructures.h"
-#include "../../../events.c"
-#include "../exitHandler.c"
+#include "sipnet/events.c"
+#include "utils/exitHandler.c"
 
 int run() {
   int status = 0;

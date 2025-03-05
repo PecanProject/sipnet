@@ -23,8 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "util.h"
-#include "namelistInput.h"
+#include "common/namelistInput.h"
+#include "common/util.h"
 
 #define NAMELIST_FILE "subset.in"
 #define MAX_LINE 1024  // maximum line length for input files, including terminating '\0'
