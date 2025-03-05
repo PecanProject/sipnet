@@ -34,6 +34,14 @@ runs.
 
 [Describe building the doxygen documentation and what it contains]
 
+## Roadmap or Changelog section?
+
+Do we want to list upcoming work? We could link to the issues page, and/or to the changelog
+
 ## Contributing
 
 See the main [Contributing](/CONTRIBUTING.md) page
+
+## License
+
+Distributed under the BSD 3-Clause license. See [LICENSE](/LICENSE) for more information.
