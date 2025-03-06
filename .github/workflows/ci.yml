@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    tags:
+      - 'v*.*.*'  
     branches:
       - master
   pull_request:
@@ -105,14 +107,15 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            This release includes binary builds for historical SIPNET versions.
+          draft: true  # Create the release as a draft
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.sha }}
-          release_name: Release ${{ github.sha }}
-          draft: false
-          prerelease: false
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
