@@ -1,19 +1,17 @@
 ---
 format:
-#  pdf:
-#    geometry: margin=0.5in
-#    header-includes:
-#      - \usepackage{xcolor}
-#      - \newcommand{\neweqn}[1]{\textcolor{gray}{#1}}
-#      - \usepackage{longtable}
-#      - \usepackage{amsmath}
   html:
     engine: katex
-
-
+  pdf:
+    geometry: margin=0.5in
+    header-includes:
+      - \usepackage{longtable}
+      - \usepackage{amsmath}
 ---
 
-<!--
+<!-- 
+How to Number Equations 
+(Haven't figured out how to number only the new ones automatically)
 $$
 Y=mX+b \tag{1} \label{eq:line}
 $$
