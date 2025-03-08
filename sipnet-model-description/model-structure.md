@@ -44,7 +44,7 @@ There are multiple ways to configure the model structure, and not all model stru
 
 We aim to extend the scope of this document to be more comprehensive of the regularly used features.
 
-### $\mathfrak{Proposed Features}$
+### $\mathfrak{Proposed \ Features}$
 
 Proposed features are indicated using the using $\mathfrak{Fraktur Font}$. Where an entire section is new, it is only used in the section heading. Otherwise, it is used for terms within equations. As these features are implemented, the `\mathfrak{}` commands should be removed.
 
