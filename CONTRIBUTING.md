@@ -1,6 +1,13 @@
 
 ## Style Guide
 
+TODO:
+1. add some 'code of conduct' lines here, or a separate file?
+2. add info about our use of `clang-format` and `clang-tidy` once that has settled down
+3. Add section about actually contributing - that is, git cloning, PRs, etc. Pull from David's nice doc he wrote for CARB.
+    1. In fact, we might want to pull a LOT from that doc and put it here. I think it covers code of conduct, too.
+4. Move the compiling section to more mainstream docs, as that is relevant to non-contributing users
+
 ## Compiling
 
 SIPNET uses `make` to build the model and documentation. There are also miscellaneous targets for running analysis workflows:
