@@ -1,0 +1,53 @@
+\doxysection{exit\+Handler.\+c}
+\label{exit_handler_8c_source}\index{exitHandler.c@{exitHandler.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ <setjmp.h>}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{//}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ expected\_code\ =\ 1;\ \ \textcolor{comment}{//\ the\ expected\ value\ a\ tested\ function\ passes\ to\ exit}}
+\DoxyCodeLine{00007\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ should\_exit\ =\ 1;\ \ \ \ \textcolor{comment}{//\ set\ in\ test\ code;\ 1\ if\ exit\ should\ have\ been\ called}}
+\DoxyCodeLine{00008\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ really\_exit\ =\ 0;\ \ \ \ \textcolor{comment}{//\ set\ to\ 1\ to\ prevent\ stubbing\ behavior\ and\ actually\ exit}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{static}\ jmp\_buf\ jump\_env;}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ exit\_result\ =\ 1;}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ test\_assert(x)\ (exit\_result\ =\ exit\_result\ \&\&\ (x))}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ set\ should\_exit=0\ when\ code\ SHOULDN'T\ exit(),\ e.g.:}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ should\_exit\ =\ 0;}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ if\ (!(jmp\_rval=setjmp(jump\_env)))}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ \ \ call\_to\_non\_exiting\_code();}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ test\_assert(jmp\_rval==0);}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ set\ should\_exit=1\ when\ exit\ is\ expected:}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ should\_exit\ =\ 1;}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ expected\_code\ =\ 1;\ //\ or\ whatever\ the\ exit\ code\ should\ be}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ if\ (!(jmp\_rval=setjmp(jump\_env)))}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ \ \ call\_to\_exiting\_code();}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//}}
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ test\_assert(jmp\_rval==1);}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ stub\ function}}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ exit(\textcolor{keywordtype}{int}\ code)}
+\DoxyCodeLine{00037\ \{}
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordflow}{if}\ (!really\_exit)}
+\DoxyCodeLine{00039\ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Mocking\ the\ exit\ call\(\backslash\)n"{}});}
+\DoxyCodeLine{00041\ \ \ \ \ test\_assert(should\_exit==1);}
+\DoxyCodeLine{00042\ \ \ \ \ test\_assert(expected\_code==code);}
+\DoxyCodeLine{00043\ \ \ \ \ longjmp(jump\_env,\ 1);}
+\DoxyCodeLine{00044\ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \_exit(code);}
+\DoxyCodeLine{00047\ \}}
+
+\end{DoxyCode}

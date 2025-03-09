@@ -1,0 +1,128 @@
+\doxysection{neefill.\+m}
+\label{neefill_8m_source}\index{neefill.m@{neefill.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ nee=nangap(load(\textcolor{stringliteral}{'data/nee'}));}
+\DoxyCodeLine{00003\ tair=load(\textcolor{stringliteral}{'data/tairfill'});}
+\DoxyCodeLine{00004\ vpd=load(\textcolor{stringliteral}{'data/vpdfill'});}
+\DoxyCodeLine{00005\ tsoil=load(\textcolor{stringliteral}{'data/tsoilfill'});}
+\DoxyCodeLine{00006\ par=load(\textcolor{stringliteral}{'data/parfill'});}
+\DoxyCodeLine{00007\ ustar=load(\textcolor{stringliteral}{'data/ustarfill'});}
+\DoxyCodeLine{00008\ fh2o=load(\textcolor{stringliteral}{'data/fh2ofill'});}
+\DoxyCodeLine{00009\ wspd=load(\textcolor{stringliteral}{'data/wspdfill'});}
+\DoxyCodeLine{00010\ wdir=load(\textcolor{stringliteral}{'data/wdirfill'});}
+\DoxyCodeLine{00011\ year=load(\textcolor{stringliteral}{'data/year'});}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ potpar=load(\textcolor{stringliteral}{'data/potpar'});}
+\DoxyCodeLine{00014\ hour=load(\textcolor{stringliteral}{'data/hourofday'});}
+\DoxyCodeLine{00015\ day=load(\textcolor{stringliteral}{'data/dayofyear'});}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ shour=sin(2*pi*hour/24.);}
+\DoxyCodeLine{00018\ chour=cos(2*pi*hour/24.);}
+\DoxyCodeLine{00019\ sday=sin(2*pi*(day-\/1)/365.25);}
+\DoxyCodeLine{00020\ cday=cos(2*pi*(day-\/1)/365.25);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ neem1=[NaN;nee(1:end-\/1)];}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \%\ NIGHTTIME\ NEE\ (NIGHTTIME\ RESP)}
+\DoxyCodeLine{00025\ wg=find(\string~isnan(nee)\ \&\ ustar>0.25\ \&\ potpar==0);}
+\DoxyCodeLine{00026\ p=[shour\ chour\ sday\ cday\ tair\ vpd\ tsoil\ fh2o\ wspd\ wdir];}
+\DoxyCodeLine{00027\ [yg,net,sig]=nnregress(p(wg,:),nee(wg),9,1.5,1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00028\ [respmod\ sigmod]=nnfwd(net,p);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \%\ NIGHTTIME\ NEE\ (NIGHTTIME\ RESP)\ INCLUDING\ USTAR}
+\DoxyCodeLine{00031\ wg=find(\string~isnan(nee)\ \&\ ustar>0.25\ \&\ potpar==0);}
+\DoxyCodeLine{00032\ p=[shour\ chour\ sday\ cday\ tair\ vpd\ tsoil\ fh2o\ wspd\ wdir];}
+\DoxyCodeLine{00033\ [yg,net,sig]=nnregress(p(wg,:),nee(wg),9,1.5,1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ [respmod\ sigmod]=nnfwd(net,p);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ pj=[shour(1)\ chour(1)\ sday(1)\ cday(1)\ tair(1)\ vpd(1)\ tsoil(1)\ fh2o(1)\ 0.0\ wspd(1)\ wdir(1)];}
+\DoxyCodeLine{00040\ respmod(1)=nnfwd(net,pj);}
+\DoxyCodeLine{00041\ \textcolor{keywordflow}{for}\ i=2:length(nee)}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ pj=[shour(i)\ chour(i)\ sday(i)\ cday(i)\ tair(i)\ vpd(i)\ tsoil(i)\ fh2o(i)\ respmod(i-\/1)\ wspd(i)\ wdir(i)];}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ respmod(i)=nnfwd(net,pj);}
+\DoxyCodeLine{00044\ end\ \ }
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ neefill=nee;}
+\DoxyCodeLine{00048\ neefill(wb)=neemod(wb);}
+\DoxyCodeLine{00049\ sigfill=sigmod;}
+\DoxyCodeLine{00050\ sigfill(wg)=0.0;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ err=nee-\/neemod;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ save\ neefill;}
+\DoxyCodeLine{00059\ save\ data/neefill\ neefill\ -\/ascii;}
+\DoxyCodeLine{00060\ save\ data/neesigfill\ sigfill\ -\/ascii}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \%\%\%}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ neem1=[nee(wg(1));nee(1:end-\/1)];}
+\DoxyCodeLine{00067\ wg=find(\string~isnan(nee)\ \&\ \string~isnan(neem1)\ \&\ ustar>0.2);}
+\DoxyCodeLine{00068\ wb=find(isnan(nee)\ |\ isnan(neem1)\ |\ ustar<=0.2);}
+\DoxyCodeLine{00069\ pg=[hour(wg)\ day(wg)\ tair(wg)\ par(wg)\ vpd(wg)\ tsoil(wg)\ neem1(wg)];}
+\DoxyCodeLine{00070\ tg=nee(wg);}
+\DoxyCodeLine{00071\ [yg,net,sig]=nnregress(pg,tg,7,1.,1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ R2=0.881}
+\DoxyCodeLine{00072\ p=[hour\ day\ tair\ par\ vpd\ tsoil\ neem1];}
+\DoxyCodeLine{00073\ [neemod\ sigmod]=nnfwd(net,p);}
+\DoxyCodeLine{00074\ neefill=nee;}
+\DoxyCodeLine{00075\ neefill(wb)=neemod(wb);}
+\DoxyCodeLine{00076\ sigfill=sigmod;}
+\DoxyCodeLine{00077\ sigfill(wg)=0.0;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \%SCREEN\ OUTLINERS?}
+\DoxyCodeLine{00081\ \%err=tg-\/yg;}
+\DoxyCodeLine{00082\ \%[sorterr\ isorterr]=sort(err);}
+\DoxyCodeLine{00083\ \%n=length(err);}
+\DoxyCodeLine{00084\ \%i001=fix(0.001*n);}
+\DoxyCodeLine{00085\ \%i999=fix(0.999*n);}
+\DoxyCodeLine{00086\ \%f=find(sorterr>sorterr(i001)\ \&\ sorterr<sorterr(i999));}
+\DoxyCodeLine{00087\ \%tg2=tg(isorterr(f));}
+\DoxyCodeLine{00088\ \%pg2=pg(isorterr(f),:);}
+\DoxyCodeLine{00089\ \%[yg,net,sig]=nnregress(pg,tg,7,1.,1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ R2=}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \%SCREEN\ UNLIKELY\ POINTS?}
+\DoxyCodeLine{00093\ \%load\ data/potpar;}
+\DoxyCodeLine{00094\ \%par(find(potpar==0))=0;}
+\DoxyCodeLine{00095\ \%wg=find(\string~isnan(nee)\ \&\ ustar>0.2\ \&\ \string~(potpar==0\ \&\ nee<0));}
+\DoxyCodeLine{00096\ \%wb=find(isnan(nee)\ |\ ustar<=0.2\ |\ (potpar==0\ \&\ nee<0));}
+\DoxyCodeLine{00097\ \%pg=[hour(wg)\ day(wg)\ tair(wg)\ par(wg)\ vpd(wg)\ tsoil(wg)];}
+\DoxyCodeLine{00098\ \%tg=nee(wg);}
+\DoxyCodeLine{00099\ \%[yg,net,sig]=nnregress(pg,tg,7,1.,1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ R2=}
+\DoxyCodeLine{00100\ \%p=[hour\ day\ tair\ par\ vpd\ tsoil];}
+\DoxyCodeLine{00101\ \%[neemod\ sigmod]=nnfwd(net,p);}
+\DoxyCodeLine{00102\ \%neefill=nee;}
+\DoxyCodeLine{00103\ \%neefill(wb)=neemod(wb);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \%\%\%\%\%\ TRY\ TO\ PREDICT\ NEE\ FROM\ 1997-\/2001\ BASED\ ON\ 1991-\/1997}
+\DoxyCodeLine{00107\ \%timeyears=load('data/timeyears');}
+\DoxyCodeLine{00108\ \%wg=find(\string~isnan(nee)\ \&\ ustar>0.2\ \&\ timeyears<1997.0);}
+\DoxyCodeLine{00109\ \%pg=[hour(wg)\ day(wg)\ tair(wg)\ par(wg)\ vpd(wg)\ tsoil(wg)];}
+\DoxyCodeLine{00110\ \%tg=nee(wg);}
+\DoxyCodeLine{00111\ \%[yg,net,sig]=nnregress(pg,tg,7,1.,1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ R\string^2:\ 0.835\ }
+\DoxyCodeLine{00112\ \%p=[hour\ day\ tair\ par\ vpd\ tsoil];}
+\DoxyCodeLine{00113\ \%[neemod\ sigmod]=nnfwd(net,p);}
+\DoxyCodeLine{00114\ \%wg2=find(\string~isnan(nee)\ \&\ ustar>0.2\ \&\ timeyears>=1997.0);}
+\DoxyCodeLine{00115\ \%corrcoef(neemod(wg2),nee(wg2)).\string^2}
+\DoxyCodeLine{00116\ \%save\ neefillto1997}
+\DoxyCodeLine{00117\ \%}
+\DoxyCodeLine{00118\ \%\ R\string^2=0.814}
+\DoxyCodeLine{00119\ \%\ NOT\ BAD!}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ }
+
+\end{DoxyCode}

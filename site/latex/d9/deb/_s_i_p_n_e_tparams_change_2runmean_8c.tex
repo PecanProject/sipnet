@@ -1,0 +1,100 @@
+\doxysection{SIPNETparams\+Change/runmean.c File Reference}
+\label{_s_i_p_n_e_tparams_change_2runmean_8c}\index{runmean.c@{runmean.c}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include "{}runmean.\+h"{}}\newline
+Include dependency graph for SIPNETparams\+Change/runmean.c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Mean\+Tracker} $\ast$ \textbf{ new\+Mean\+Tracker} (\textbf{ double} \textbf{ init\+Mean}, \textbf{ double} tot\+Weight, \textbf{ int} \textbf{ max\+Entries})
+\item 
+\textbf{ void} \textbf{ reset\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker}, \textbf{ double} \textbf{ init\+Mean})
+\item 
+\textbf{ int} \textbf{ add\+Value\+To\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker}, \textbf{ double} \textbf{ value}, \textbf{ double} \textbf{ weight})
+\item 
+\textbf{ double} \textbf{ get\+Mean\+Tracker\+Mean} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker})
+\item 
+\textbf{ void} \textbf{ deallocate\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{_s_i_p_n_e_tparams_change_2runmean_8c_a3b3e682c43d0a347c6eaf7de4cb68a16} 
+\index{runmean.c@{runmean.c}!addValueToMeanTracker@{addValueToMeanTracker}}
+\index{addValueToMeanTracker@{addValueToMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{addValueToMeanTracker()}
+{\footnotesize\ttfamily \textbf{ int} add\+Value\+To\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker,  }\item[{\textbf{ double}}]{value,  }\item[{\textbf{ double}}]{weight }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 61} of file \textbf{ SIPNETparams\+Change/runmean.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ reset\+Mean\+Tracker()}, and \textbf{ value}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{_s_i_p_n_e_tparams_change_2runmean_8c_ac19d52df9855de7455e094c7d9b11e79} 
+\index{runmean.c@{runmean.c}!deallocateMeanTracker@{deallocateMeanTracker}}
+\index{deallocateMeanTracker@{deallocateMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{deallocateMeanTracker()}
+{\footnotesize\ttfamily \textbf{ void} deallocate\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 118} of file \textbf{ SIPNETparams\+Change/runmean.\+c}.
+
+
+
+References \textbf{ index}.
+
+\label{_s_i_p_n_e_tparams_change_2runmean_8c_aee80c094e5cc8830c70fd93fa14bb102} 
+\index{runmean.c@{runmean.c}!getMeanTrackerMean@{getMeanTrackerMean}}
+\index{getMeanTrackerMean@{getMeanTrackerMean}!runmean.c@{runmean.c}}
+\doxysubsubsection{getMeanTrackerMean()}
+{\footnotesize\ttfamily \textbf{ double} get\+Mean\+Tracker\+Mean (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ SIPNETparams\+Change/runmean.\+c}.
+
+
+
+References \textbf{ index}.
+
+\label{_s_i_p_n_e_tparams_change_2runmean_8c_a05982cf71148e3b1c4d8a2a14e0c93ab} 
+\index{runmean.c@{runmean.c}!newMeanTracker@{newMeanTracker}}
+\index{newMeanTracker@{newMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{newMeanTracker()}
+{\footnotesize\ttfamily \textbf{ Mean\+Tracker} $\ast$ new\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ double}}]{init\+Mean,  }\item[{\textbf{ double}}]{tot\+Weight,  }\item[{\textbf{ int}}]{max\+Entries }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ SIPNETparams\+Change/runmean.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ reset\+Mean\+Tracker()}, and \textbf{ Mean\+Tracker\+Struct\+::values}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{_s_i_p_n_e_tparams_change_2runmean_8c_aafa097eaf82986761f1920d2a1ed2457} 
+\index{runmean.c@{runmean.c}!resetMeanTracker@{resetMeanTracker}}
+\index{resetMeanTracker@{resetMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{resetMeanTracker()}
+{\footnotesize\ttfamily \textbf{ void} reset\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker,  }\item[{\textbf{ double}}]{init\+Mean }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ SIPNETparams\+Change/runmean.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ add\+Value\+To\+Mean\+Tracker()}, and \textbf{ new\+Mean\+Tracker()}.
+

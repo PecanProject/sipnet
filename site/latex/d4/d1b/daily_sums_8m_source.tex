@@ -1,0 +1,27 @@
+\doxysection{daily\+Sums.\+m}
+\label{daily_sums_8m_source}\index{dailySums.m@{dailySums.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ dailyData\ =\ dailySums(data,\ days)}
+\DoxyCodeLine{00002\ \%\ Divide\ data\ up\ into\ daily\ sums}
+\DoxyCodeLine{00003\ \%\ PRE:\ days\ is\ a\ vector\ of\ same\ length\ as\ data,\ giving\ some\ index\ of\ the}
+\DoxyCodeLine{00004\ \%\ different\ days\ (these\ indices\ need\ not\ be\ unique\ -\/\ they\ are\ just\ required}
+\DoxyCodeLine{00005\ \%\ to\ change\ from\ day\ i\ to\ day\ (i+1)}
+\DoxyCodeLine{00006\ \%\ POST:\ dailyData[i]\ gives\ sum\ of\ data\ in\ day\ i}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ dailyIndex\ =\ 1;\ \%\ index\ into\ dailyData\ vector}
+\DoxyCodeLine{00009\ thisDay\ =\ days(1);}
+\DoxyCodeLine{00010\ dailyData(1)\ =\ 0;\ \%\ initialize\ to\ 0}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keywordflow}{for}\ i=1:length(data)}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordflow}{if}\ (days(i)\ ==\ thisDay)\ \%\ it\textcolor{stringliteral}{'s\ the\ same\ day}}
+\DoxyCodeLine{00014\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ dailyData(dailyIndex)\ =\ dailyData(dailyIndex)\ +\ data(i);}}
+\DoxyCodeLine{00015\ \textcolor{stringliteral}{\ \ \ \ else\ \%\ it'}s\ the\ next\ day}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ thisDay\ =\ days(i);}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ dailyIndex\ =\ dailyIndex\ +\ 1;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ dailyData(dailyIndex)\ =\ data(i);}
+\DoxyCodeLine{00019\ \ \ \ \ end}
+\DoxyCodeLine{00020\ end}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ }
+
+\end{DoxyCode}

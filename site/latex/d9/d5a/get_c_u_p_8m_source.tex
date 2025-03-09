@@ -1,0 +1,39 @@
+\doxysection{get\+CUP.\+m}
+\label{get_c_u_p_8m_source}\index{getCUP.m@{getCUP.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ [cup,\ annualNee]\ =\ getCUP(nee,\ year,\ firstYear,\ lastYear,\ ptsPerDay)}
+\DoxyCodeLine{00002\ \%\ Given\ a\ vector\ of\ NEE\ data,\ and\ corresponding\ vector\ of\ years}
+\DoxyCodeLine{00003\ \%\ (where\ year(i)\ is\ the\ year\ of\ data(i)),}
+\DoxyCodeLine{00004\ \%\ where\ (ptsPerDay)\ data\ points\ make\ up\ each\ day\ in\ data\ and\ year\ vectors}
+\DoxyCodeLine{00005\ \%\ Note:\ there\ must\ be\ a\ multiple\ of\ ptsPerDay\ points\ in\ each\ year}
+\DoxyCodeLine{00006\ \%\ Return\ a\ vector\ of\ carbon\ uptake\ periods\ (CUP)\ \textcolor{keywordflow}{for\ each}\ year\ from}
+\DoxyCodeLine{00007\ \%\ firstYear\ to\ lastYear\ (\#\ days\ with\ nee\ <\ 0)}
+\DoxyCodeLine{00008\ \%\ And\ \textcolor{keywordflow}{return}\ a\ vector\ of\ annualNee\ \textcolor{keywordflow}{for\ each}\ year\ from\ firstYear\ to\ lastYear}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \%\ first\ reshape\ nee\ \textcolor{keywordflow}{if}\ necessary\ (as\ needed\ by\ splitdata)}
+\DoxyCodeLine{00011\ [rows\ cols]\ =\ size(nee);}
+\DoxyCodeLine{00012\ \textcolor{keywordflow}{if}\ (rows\ ==\ 1)}
+\DoxyCodeLine{00013\ \ \ \ \ nee\ =\ nee\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00014\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00015\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00016\ \textcolor{stringliteral}{\%\ and\ do\ the\ same\ for\ year\ vector}}
+\DoxyCodeLine{00017\ \textcolor{stringliteral}{[rows\ cols]\ =\ size(year);}}
+\DoxyCodeLine{00018\ \textcolor{stringliteral}{if\ (rows\ ==\ 1)}}
+\DoxyCodeLine{00019\ \textcolor{stringliteral}{\ \ \ \ year\ =\ year'};}
+\DoxyCodeLine{00020\ end}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ neeByDay\ =\ splitdata(nee,ptsPerDay);\ \%\ split\ into\ days}
+\DoxyCodeLine{00023\ neeDaily\ =\ sum(neeByDay\textcolor{stringliteral}{');\ \%\ find\ daily\ sums\ (have\ to\ take\ transpose\ so\ sum\ along\ correct\ dimension)}}
+\DoxyCodeLine{00024\ \textcolor{stringliteral}{yearByDay\ =\ splitdata(year,ptsPerDay);\ \%\ split\ into\ days}}
+\DoxyCodeLine{00025\ \textcolor{stringliteral}{yearDaily\ =\ yearByDay(:,1);\ \%\ the\ year\ of\ each\ day\ is\ the\ year\ of\ the\ first\ hour\ of\ the\ day}}
+\DoxyCodeLine{00026\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00027\ \textcolor{stringliteral}{for\ thisYear\ =\ firstYear:lastYear}}
+\DoxyCodeLine{00028\ \textcolor{stringliteral}{\ \ \ \ i\ =\ find(yearDaily\ ==\ thisYear);}}
+\DoxyCodeLine{00029\ \textcolor{stringliteral}{\ \ \ \ annualNee(thisYear\ -\/\ firstYear\ +\ 1)\ =\ sum(neeDaily(i));}}
+\DoxyCodeLine{00030\ \textcolor{stringliteral}{\ \ \ \ cup(thisYear\ -\/\ firstYear\ +\ 1)\ =\ length(find(neeDaily(i)\ <\ 0));}}
+\DoxyCodeLine{00031\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00032\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00033\ \textcolor{stringliteral}{end}}
+
+\end{DoxyCode}

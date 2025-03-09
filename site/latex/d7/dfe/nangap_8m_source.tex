@@ -1,0 +1,16 @@
+\doxysection{nangap.\+m}
+\label{nangap_8m_source}\index{nangap.m@{nangap.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ y=nangap(y,missing,undo);}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \%\ \textcolor{keyword}{function}\ y=nangap(y,missing);}
+\DoxyCodeLine{00004\ \%\ \textcolor{keywordflow}{if}\ (nargin<2)\ missing=\ -\/9999;}
+\DoxyCodeLine{00005\ \%\ y(find(y==missing))=NaN;}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keywordflow}{if}\ (nargin<2\ |\ isempty(missing))\ missing=\ -\/9999;end}
+\DoxyCodeLine{00008\ \textcolor{keywordflow}{if}\ (nargin<3\ |\ undo\string~=\textcolor{stringliteral}{'undo'})\ y(find(y==missing))=NaN;end}
+\DoxyCodeLine{00009\ \textcolor{keywordflow}{if}\ (nargin>2\ \&\ undo==\textcolor{stringliteral}{'undo'})\ y(find(isnan(y)))=missing;end}
+\DoxyCodeLine{00010\ }
+
+\end{DoxyCode}

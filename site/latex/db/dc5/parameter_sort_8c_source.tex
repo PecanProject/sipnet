@@ -1,0 +1,60 @@
+\doxysection{parameter\+Sort.\+c}
+\label{parameter_sort_8c_source}\index{parameterSort.c@{parameterSort.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\ \ \#define\ NUM\_PARAMS\ 84}}
+\DoxyCodeLine{00009\ \ \ }
+\DoxyCodeLine{00010\ \ \ }
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ If\ fileName.param\ is\ not\ created,\ then\ do\ so\ }}
+\DoxyCodeLine{00013\ \ \ }
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])}
+\DoxyCodeLine{00015\ \ \{\ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ paramList[NUM\_PARAMS][100];}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ line[256];}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ counter;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ inputFile[256];}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ outFile[256];}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ strcpy(inputFile,argv[1]);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ strcpy(outFile,argv[1]);}
+\DoxyCodeLine{00026\ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ strcat(inputFile,\ \textcolor{stringliteral}{"{}.parameters"{}});}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ strcat(outFile,\ \textcolor{stringliteral}{"{}.param"{}});}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ FILE\ *fileIn\ =\ fopen(\ inputFile,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ counter=0;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(\ (fgets(line,256,fileIn)\ !=\ NULL)\ |\ (counter<NUM\_PARAMS)\ )\ \ \{\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\ (strncmp(line,\textcolor{stringliteral}{"{}*"{}},1)!=0)\ \&\ (strncmp(line,\textcolor{stringliteral}{"{}\(\backslash\)n"{}},1)!=0)\ \&\ (strncmp(line,\textcolor{stringliteral}{"{}\(\backslash\)r"{}},1)!=0)\ )\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ strcpy(paramList[counter],line);}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ (counter==NUM\_PARAMETERS-\/1)\ strcat(niwots[counter],"{}\(\backslash\)n"{});}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ counter++;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ fclose(fileIn);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ qsort((\textcolor{keywordtype}{char}\ *)paramList,\ \textcolor{keyword}{sizeof}(paramList)/\textcolor{keyword}{sizeof}(paramList[0]),\ \textcolor{keyword}{sizeof}(*paramList),\ strcmp\ );}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ FILE\ *fileOut\ =\ fopen(\ outFile,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{for}\ (counter\ =\ 0;\ counter\ <\ NUM\_PARAMS;\ counter++)\ fprintf(fileOut,\textcolor{stringliteral}{"{}\%s"{}},paramList[counter]);}
+\DoxyCodeLine{00051\ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ fclose(fileOut);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{return}(0);}
+\DoxyCodeLine{00054\ \ \}}
+
+\end{DoxyCode}

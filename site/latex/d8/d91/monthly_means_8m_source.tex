@@ -1,0 +1,35 @@
+\doxysection{monthly\+Means.\+m}
+\label{monthly_means_8m_source}\index{monthlyMeans.m@{monthlyMeans.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ monthlyMeanData\ =\ monthlyMeans(data,\ years,\ days,\ divisions,\ lengths)}
+\DoxyCodeLine{00002\ \%\ divide\ data\ up\ into\ monthly\ means,\ \textcolor{keyword}{using\ }monthlySums\ \textcolor{keyword}{function}}
+\DoxyCodeLine{00003\ \%\ monthlyMeanData[i,j,k]\ gives\ mean\ of\ data\ in\ year\ (i+firstYear-\/1),\ month\ j,\ division\ k}
+\DoxyCodeLine{00004\ \%\ \ where\ firstYear\ is\ first\ year\ in\ years\ vector}
+\DoxyCodeLine{00005\ \%\ PRE:\ years\ and\ days\ are\ vectors\ giving\ year\ and\ julian\ day\ of\ corresponding\ position\ in\ data\ vector}
+\DoxyCodeLine{00006\ \%\ \ divisions\ is\ a\ vector\ giving\ divisions\ (1..n)\ of\ data\ into\ different\ categories\ (length(divisions)\ ==\ length(data))}
+\DoxyCodeLine{00007\ \%\ \ (note\ that\ divisions\ can\ be\ all\ ones,\ in\ which\ \textcolor{keywordflow}{case}\ all\ data\ from\ a}
+\DoxyCodeLine{00008\ \%\ \ given\ month\ and\ year\ are\ lumped\ together;\ otherwise,\ divisions}
+\DoxyCodeLine{00009\ \%\ \ allows,\ e.g.\ separating\ data\ into\ days\ and\ nights)}
+\DoxyCodeLine{00010\ \%\ \ lengths\ gives\ relative\ weighting\ of\ each\ data\ point}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ dataWeighted\ =\ data\ .*\ lengths;}
+\DoxyCodeLine{00013\ dataWeightedMonthly\ =\ monthlySums(dataWeighted,\ years,\ days,\ divisions);}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \%\ now\ we\ have\ weighted\ sums\ -\/\ just\ have\ to\ convert\ to\ means:}
+\DoxyCodeLine{00016\ lengthsMonthly\ =\ monthlySums(lengths,\ years,\ days,\ divisions);\ \%\ compute\ monthly-\/summed\ lengths}
+\DoxyCodeLine{00017\ for\ yr\ =\ 1:length(lengthsMonthly(:,1,1))\ \%\ loop\ over\ years}
+\DoxyCodeLine{00018\ \ \ \ \ for\ mo\ =\ 1:length(lengthsMonthly(1,:,1))\ \%\ loop\ over\ months}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ for\ div\ =\ 1:length(lengthsMonthly(1,1,:))\ \%\ loop\ over\ divisions}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \%\ compute\ the\ mean\ for\ this\ year,\ month\ and\ division\ (mean\ =\ sum\ divided\ by\ total\ weight\ (i.e.\ length)):}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ if\ (lengthsMonthly(yr,mo,div)\ ==\ 0)}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ monthlyMeanData(yr,mo,div)\ =\ 0;\ \%\ avoid\ divide\ by\ 0}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ monthlyMeanData(yr,mo,div)\ =\ dataWeightedMonthly(yr,mo,div)/lengthsMonthly(yr,mo,div);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ end}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ end}
+\DoxyCodeLine{00027\ \ \ \ \ end}
+\DoxyCodeLine{00028\ end}
+\DoxyCodeLine{00029\ end}
+
+\end{DoxyCode}

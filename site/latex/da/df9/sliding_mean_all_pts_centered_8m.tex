@@ -1,0 +1,130 @@
+\doxysection{sliding\+Mean\+All\+Pts\+Centered.\+m File Reference}
+\label{sliding_mean_all_pts_centered_8m}\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ start} \textbf{ with} a \textbf{ window} of if \textbf{ window} if \textbf{ window} \textbf{ odd} \textbf{ if} (\textbf{ this\+Window}==0) \% \textbf{ handle} \textbf{ window} \textbf{ size} of 0 \textbf{ specially} \textbf{ mean\+Data}(\textbf{ startI})
+\item 
+\textbf{ end} \textbf{ for} \textbf{ with} \textbf{ not} \textbf{ enough} \textbf{ points} \textbf{ for} \textbf{ given} \textbf{ window} \textbf{ take} mean \textbf{ from} first \textbf{ point} \textbf{ to} a \textbf{ symmetrical} \textbf{ point} on \textbf{ the} \textbf{ other} \textbf{ side} of i \textbf{ mean\+Data} (i)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Given} data[1..n] and \textbf{ window}
+\item 
+\textbf{ Given} data[1..n] and \textbf{ the} \textbf{ size} of \textbf{ the} \textbf{ window} \textbf{ return} \textbf{ mean\+Data} [1..n]
+\item 
+\textbf{ Given} data[1..n] and \textbf{ the} \textbf{ size} of \textbf{ the} \textbf{ window} \textbf{ return} \textbf{ where}
+\item 
+\textbf{ Given} data[1..n] and \textbf{ the} \textbf{ size} of \textbf{ the} \textbf{ window} \textbf{ return} \textbf{ if} \textbf{ window} is \textbf{ even}
+\item 
+\textbf{ Given} data[1..n] and \textbf{ the} \textbf{ size} of \textbf{ the} \textbf{ window} \textbf{ return} \textbf{ if} \textbf{ window} is and \textbf{ this} \textbf{ range} is \textbf{ narrowed} \textbf{ symmetrically} \textbf{ if} i \textbf{ outside} \textbf{ this} \textbf{ range}(\textbf{ range} \% \textbf{ kept} \textbf{ even}) \% \textbf{ Note} \textbf{ that} mean \textbf{ around} 1\textbf{ st} \textbf{ point} \textbf{ will} \textbf{ be} \textbf{ NaN} \% \textbf{ if} \textbf{ window} is \textbf{ odd} \textbf{ start} \textbf{ at} first \textbf{ point} in vector \textbf{ this\+Window} = \textbf{ mod}(\textbf{ window},2)
+\item 
+\textbf{ startI} = startI + 1
+\item 
+\textbf{ end} \textbf{ for} \textbf{ i} = \textbf{ start\+I\+:floor}(\textbf{ window}/2) \% \textbf{ do} \textbf{ start} \textbf{ points}
+\item 
+\textbf{ end} \textbf{ now} \textbf{ do} \textbf{ end} \textbf{ points}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{sliding_mean_all_pts_centered_8m_a22064526743a54380872c3fbe48cbba9} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!if@{if}}
+\index{if@{if}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{if()}
+{\footnotesize\ttfamily \textbf{ start} \textbf{ with} a \textbf{ window} of if \textbf{ window} if \textbf{ window} \textbf{ odd} if (\begin{DoxyParamCaption}\item[{\textbf{ this\+Window}}]{ = {\ttfamily =0} }\end{DoxyParamCaption})}
+
+\label{sliding_mean_all_pts_centered_8m_a58eff911c4542ef838d443bb7b99aafc} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!meanData@{meanData}}
+\index{meanData@{meanData}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{meanData()}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ for} \textbf{ with} \textbf{ not} \textbf{ enough} \textbf{ points} \textbf{ for} \textbf{ given} \textbf{ window} \textbf{ take} mean \textbf{ from} first \textbf{ point} \textbf{ to} a \textbf{ symmetrical} \textbf{ point} on \textbf{ the} \textbf{ other} \textbf{ side} of i mean\+Data (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{sliding_mean_all_pts_centered_8m_af8939166853a1d778961ca53851173b9} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!even@{even}}
+\index{even@{even}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{even}
+{\footnotesize\ttfamily \textbf{ start} \textbf{ with} a \textbf{ window} of \textbf{ if} \textbf{ window} even}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+
+\label{sliding_mean_all_pts_centered_8m_a0aa72b8ca7fe14c7dc2c652fd62f9645} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!i@{i}}
+\index{i@{i}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ start} \textbf{ with} a \textbf{ window} \textbf{ size} \textbf{ smaller} \textbf{ for} i = \textbf{ start\+I\+:floor}(\textbf{ window}/2) \% \textbf{ do} \textbf{ start} \textbf{ points}}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+
+\label{sliding_mean_all_pts_centered_8m_a74e5c502e3a5886c4ae0cead7dc10bb6} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!meanData@{meanData}}
+\index{meanData@{meanData}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{meanData}
+{\footnotesize\ttfamily \textbf{ Given} data [1..n] and \textbf{ the} \textbf{ size} of \textbf{ the} \textbf{ window} \textbf{ return} mean\+Data[1..n]}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+
+\label{sliding_mean_all_pts_centered_8m_a00fc8aafa5b031e91f591012f877db66} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!points@{points}}
+\index{points@{points}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{points}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ now} \textbf{ do} \textbf{ end} points}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+
+\label{sliding_mean_all_pts_centered_8m_af5b315095b69ff62245b7cecdcecb68c} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!startI@{startI}}
+\index{startI@{startI}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{startI}
+{\footnotesize\ttfamily startI = startI + 1}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+
+\label{sliding_mean_all_pts_centered_8m_afa93c770ce238921597abd1eadd46f4c} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!thisWindow@{thisWindow}}
+\index{thisWindow@{thisWindow}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{thisWindow}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ now} \textbf{ do} \textbf{ end} \textbf{ with} \textbf{ not} \textbf{ enough} \textbf{ points} \textbf{ for} \textbf{ given} \textbf{ window} this\+Window = \textbf{ mod}(\textbf{ window},2)}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+
+\label{sliding_mean_all_pts_centered_8m_aa49a3ecb5c21a9cec058bbea9a8998fd} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!where@{where}}
+\index{where@{where}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{where}
+{\footnotesize\ttfamily \textbf{ Given} data [1..n] and \textbf{ the} \textbf{ size} of \textbf{ the} \textbf{ window} \textbf{ return} where}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+
+
+
+Referenced by \textbf{ fprintf()}, \textbf{ years()}, and \textbf{ years()}.
+
+\label{sliding_mean_all_pts_centered_8m_a44aadba0545c020df0ab992ee30ef5a6} 
+\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}!window@{window}}
+\index{window@{window}!slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\doxysubsubsection{window}
+{\footnotesize\ttfamily \textbf{ Given} data [1..n] and window}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ sliding\+Mean\+All\+Pts\+Centered.\+m}.
+

@@ -1,0 +1,576 @@
+\doxysection{climfill.\+m File Reference}
+\label{climfill_8m}\index{climfill.m@{climfill.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ we} \textbf{ use} \textbf{ integer} (\textbf{ equivalent} \textbf{ to} \textbf{ floor}(\textbf{ dayofyear})) \%\textbf{ time}
+\item 
+2 $\ast$\textbf{ pi} $\ast$\textbf{ hour}/24. \textbf{ sin} ()
+\item 
+\textbf{ nb} (i)
+\item 
+\textbf{ badcount} (\textbf{ wb}\{i\})
+\item 
+\textbf{ r2a} (i)
+\item 
+\textbf{ relerra} (i)
+\item 
+\textbf{ r2b} (i)
+\item 
+\textbf{ relerrb} (i)
+\item 
+\textbf{ rhumfill} (\textbf{ find}(rhumfill$<$ 0))=0
+\item 
+\textbf{ parfill} (\textbf{ find}(parfill$<$ 0))=0
+\item 
+\textbf{ wspdfill} (\textbf{ find}(wspdfill$<$ 0))=0
+\item 
+\textbf{ wdirfill} (\textbf{ find}(wdirfill $>$360$\vert$wdirfill$<$ 0))=0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ dat} \{1\}=\textbf{ nangap}(\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ tair}\textquotesingle{}))
+\item 
+\textbf{ numvars} =7
+\item 
+\textbf{ potpar} =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/potpar\textquotesingle{})
+\item 
+\textbf{ hour} =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ hourofday}\textquotesingle{})
+\item 
+\textbf{ note} \textbf{ \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+\item 
+\textbf{ we} \textbf{ use} \textbf{ hour} \textbf{ at} \textbf{ start} = \textbf{ fin} + 1
+\item 
+\textbf{ shouldn} \textbf{ t} \textbf{ make} a \textbf{ difference} \textbf{ day} =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/day\textquotesingle{})
+\item 
+\textbf{ note} \textbf{ \+\_\+\+\_\+pad1\+\_\+\+\_\+}
+\item 
+\textbf{ chour} =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$\textbf{ hour}/24.)
+\item 
+\textbf{ sday} =\textbf{ sin}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)
+\item 
+\textbf{ cday} =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)
+\item 
+\textbf{ badcount} =\textbf{ zeros}(length(\textbf{ dat}\{1\}),1)
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ wb} \{i\}=\textbf{ find}(\textbf{ isnan}(\textbf{ dat}\{i\}))
+\item 
+\textbf{ end} \textbf{ x} =[\textbf{ shour} \textbf{ chour} \textbf{ sday} \textbf{ cday}]
+\item 
+\textbf{ go} \textbf{ to} \textbf{ next} \textbf{ iteration} of \textbf{ loop} \textbf{ end} [\textbf{ yg}, net, \textbf{ sig}] =\textbf{ nnregress}(\textbf{ x}(\textbf{ wg}\{i\},\+:),\textbf{ dat}\{i\}(\textbf{ wg}\{i\}),5,1.\+5,1)
+\item 
+\textbf{ datfill} \{i\}(\textbf{ wb}\{i\})=\textbf{ nnfwd}(net,\textbf{ x}(\textbf{ wb}\{i\},\+:))
+\item 
+\textbf{ datmod} \{i\}=\textbf{ nnfwd}(net,\textbf{ x})
+\item 
+\textbf{ end} \textbf{ toterr} =relerr.$\ast$\textbf{ nb}
+\item 
+\textbf{ save} \textbf{ climfill}
+\item 
+\textbf{ D} =\textbf{ cell2mat}(\textbf{ datfill})
+\item 
+\textbf{ go} \textbf{ to} \textbf{ next} \textbf{ iteration} of \textbf{ loop} \textbf{ end} \textbf{ vars} =\textbf{ setdiff}((1\+:\textbf{ numvars}),i)
+\item 
+\textbf{ X} =[\textbf{ x} \textbf{ D}(\+:,\textbf{ vars}) \textbf{ datmod}\{i\}]
+\item 
+\textbf{ datfill2} \{i\}(\textbf{ wb}\{i\})=\textbf{ nnfwd}(net,\textbf{ X}(\textbf{ wb}\{i\},\+:))
+\item 
+\textbf{ datmod2} \{i\}=\textbf{ nnfwd}(net,\textbf{ X})
+\item 
+\textbf{ tairfill} =\textbf{ datfill2}\{1\}
+\item 
+\textbf{ rhumfill} =\textbf{ datfill2}\{2\}
+\item 
+\textbf{ parfill} =\textbf{ datfill2}\{3\}
+\item 
+\textbf{ tsoilfill} =\textbf{ datfill2}\{4\}
+\item 
+\textbf{ ustarfill} =\textbf{ datfill2}\{5\}
+\item 
+\textbf{ wspdfill} =\textbf{ datfill2}\{6\}
+\item 
+\textbf{ wdirfill} =\textbf{ datfill2}\{7\}
+\item 
+\textbf{ fh2ofill} =\textbf{ datfill2}\{8\}
+\item 
+\textbf{ BUILD} \textbf{ VPRESS}
+\item 
+\textbf{ BUILD} \textbf{ VPD}
+\item 
+\textbf{ BUILD} \textbf{ VPDSOIL} [\textbf{ vpressfill}, \textbf{ vpdfill}, \textbf{ vpdsoilfill}] = \textbf{ calcvpress\+Niwot}(\textbf{ rhumfill}, \textbf{ tairfill}, \textbf{ tsoilfill})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{climfill_8m_a4a26910a0971cd0cb5fc618a5649a1b4} 
+\index{climfill.m@{climfill.m}!badcount@{badcount}}
+\index{badcount@{badcount}!climfill.m@{climfill.m}}
+\doxysubsubsection{badcount()}
+{\footnotesize\ttfamily badcount (\begin{DoxyParamCaption}\item[{\textbf{ wb}\{i\}}]{ }\end{DoxyParamCaption})}
+
+\label{climfill_8m_a598fc8326775ce05890ba75e1e8228cb} 
+\index{climfill.m@{climfill.m}!integer@{integer}}
+\index{integer@{integer}!climfill.m@{climfill.m}}
+\doxysubsubsection{integer()}
+{\footnotesize\ttfamily \textbf{ we} \textbf{ use} integer (\begin{DoxyParamCaption}\item[{\textbf{ equivalent} \textbf{ to} }]{floordayofyear }\end{DoxyParamCaption})}
+
+\label{climfill_8m_a50122708e2070f272679970e95d71f09} 
+\index{climfill.m@{climfill.m}!nb@{nb}}
+\index{nb@{nb}!climfill.m@{climfill.m}}
+\doxysubsubsection{nb()}
+{\footnotesize\ttfamily nb (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{climfill_8m_a63d3e233345d6e8456c376a70531a6e0} 
+\index{climfill.m@{climfill.m}!parfill@{parfill}}
+\index{parfill@{parfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{parfill()}
+{\footnotesize\ttfamily parfill (\begin{DoxyParamCaption}\item[{\textbf{ find}(parfill$<$ 0)}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+\label{climfill_8m_adf8afa59dd174fd94e8860d1fb7adf35} 
+\index{climfill.m@{climfill.m}!r2a@{r2a}}
+\index{r2a@{r2a}!climfill.m@{climfill.m}}
+\doxysubsubsection{r2a()}
+{\footnotesize\ttfamily r2a (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ net}.
+
+\label{climfill_8m_a7bbb48d58f5cdf68417b96e5500d8a67} 
+\index{climfill.m@{climfill.m}!r2b@{r2b}}
+\index{r2b@{r2b}!climfill.m@{climfill.m}}
+\doxysubsubsection{r2b()}
+{\footnotesize\ttfamily r2b (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ net}.
+
+\label{climfill_8m_a42911d890207c801c6afb16f1fc9d515} 
+\index{climfill.m@{climfill.m}!relerra@{relerra}}
+\index{relerra@{relerra}!climfill.m@{climfill.m}}
+\doxysubsubsection{relerra()}
+{\footnotesize\ttfamily relerra (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ i}, and \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{climfill_8m_affe70b544ee72a7bde12c5e753dea66f} 
+\index{climfill.m@{climfill.m}!relerrb@{relerrb}}
+\index{relerrb@{relerrb}!climfill.m@{climfill.m}}
+\doxysubsubsection{relerrb()}
+{\footnotesize\ttfamily relerrb (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ i}, and \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{climfill_8m_a2c01ec3bcea23e1f9c30a8b7d924b06b} 
+\index{climfill.m@{climfill.m}!rhumfill@{rhumfill}}
+\index{rhumfill@{rhumfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{rhumfill()}
+{\footnotesize\ttfamily rhumfill (\begin{DoxyParamCaption}\item[{\textbf{ find}(rhumfill$<$ 0)}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+\label{climfill_8m_af5519426eafe3c8521d250d801f62813} 
+\index{climfill.m@{climfill.m}!sin@{sin}}
+\index{sin@{sin}!climfill.m@{climfill.m}}
+\doxysubsubsection{sin()}
+{\footnotesize\ttfamily 2 $\ast$\textbf{ pi} $\ast$\textbf{ hour}/24. sin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+\label{climfill_8m_aabce4665e5e9fb169449e462de39f824} 
+\index{climfill.m@{climfill.m}!wdirfill@{wdirfill}}
+\index{wdirfill@{wdirfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{wdirfill()}
+{\footnotesize\ttfamily wdirfill (\begin{DoxyParamCaption}\item[{\textbf{ find}(wdirfill $>$360$\vert$wdirfill$<$ 0)}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+\label{climfill_8m_a1bbe8e7f0fab1530c6229ea6f424c780} 
+\index{climfill.m@{climfill.m}!wspdfill@{wspdfill}}
+\index{wspdfill@{wspdfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{wspdfill()}
+{\footnotesize\ttfamily wspdfill (\begin{DoxyParamCaption}\item[{\textbf{ find}(wspdfill$<$ 0)}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{climfill_8m_a157d03f5605e5eee0baf3bc2d74ac8b3} 
+\index{climfill.m@{climfill.m}!\_\_pad0\_\_@{\_\_pad0\_\_}}
+\index{\_\_pad0\_\_@{\_\_pad0\_\_}!climfill.m@{climfill.m}}
+\doxysubsubsection{\_\_pad0\_\_}
+{\footnotesize\ttfamily \textbf{ note} \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a01bfc5f409d5ca048de4ddeec2f93923} 
+\index{climfill.m@{climfill.m}!\_\_pad1\_\_@{\_\_pad1\_\_}}
+\index{\_\_pad1\_\_@{\_\_pad1\_\_}!climfill.m@{climfill.m}}
+\doxysubsubsection{\_\_pad1\_\_}
+{\footnotesize\ttfamily \textbf{ note} \+\_\+\+\_\+pad1\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a63c50df11592e0cf0bcf4bfba92293c3} 
+\index{climfill.m@{climfill.m}!badcount@{badcount}}
+\index{badcount@{badcount}!climfill.m@{climfill.m}}
+\doxysubsubsection{badcount}
+{\footnotesize\ttfamily badcount =\textbf{ zeros}(length(\textbf{ dat}\{1\}),1)}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_afb5bc55b6b599479066ff920f6823f12} 
+\index{climfill.m@{climfill.m}!cday@{cday}}
+\index{cday@{cday}!climfill.m@{climfill.m}}
+\doxysubsubsection{cday}
+{\footnotesize\ttfamily cday =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a888f991d6f653e7521f8df3b42d8d52b} 
+\index{climfill.m@{climfill.m}!chour@{chour}}
+\index{chour@{chour}!climfill.m@{climfill.m}}
+\doxysubsubsection{chour}
+{\footnotesize\ttfamily chour =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$\textbf{ hour}/24.)}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a23424c0df7ccac3f2dd12ea3732ca9b0} 
+\index{climfill.m@{climfill.m}!climfill@{climfill}}
+\index{climfill@{climfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{climfill}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ save} climfill}
+
+
+
+Definition at line \textbf{ 50} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a350bfcb1e3cfb28ddff48ce525d4f139} 
+\index{climfill.m@{climfill.m}!D@{D}}
+\index{D@{D}!climfill.m@{climfill.m}}
+\doxysubsubsection{D}
+{\footnotesize\ttfamily D =\textbf{ cell2mat}(\textbf{ datfill})}
+
+
+
+Definition at line \textbf{ 52} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a4cabe20f4789aa5689735cd972635612} 
+\index{climfill.m@{climfill.m}!dat@{dat}}
+\index{dat@{dat}!climfill.m@{climfill.m}}
+\doxysubsubsection{dat}
+{\footnotesize\ttfamily dat \{1\}=\textbf{ nangap}(\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ tair}\textquotesingle{}))}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_acad37c37f04dc64e8a403898bbf2ee64} 
+\index{climfill.m@{climfill.m}!datfill@{datfill}}
+\index{datfill@{datfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{datfill}
+{\footnotesize\ttfamily datfill \{i\}(\textbf{ wb}\{i\})=\textbf{ nnfwd}(net,\textbf{ x}(\textbf{ wb}\{i\},\+:))}
+
+
+
+Definition at line \textbf{ 44} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a95c9157c09a41ec91183e07e058ae319} 
+\index{climfill.m@{climfill.m}!datfill2@{datfill2}}
+\index{datfill2@{datfill2}!climfill.m@{climfill.m}}
+\doxysubsubsection{datfill2}
+{\footnotesize\ttfamily datfill2 \{i\}(\textbf{ wb}\{i\})=\textbf{ nnfwd}(net,\textbf{ X}(\textbf{ wb}\{i\},\+:))}
+
+
+
+Definition at line \textbf{ 65} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a48ae5cbb0c2b889ad052909830c3150f} 
+\index{climfill.m@{climfill.m}!datmod@{datmod}}
+\index{datmod@{datmod}!climfill.m@{climfill.m}}
+\doxysubsubsection{datmod}
+{\footnotesize\ttfamily datmod \{i\}=\textbf{ nnfwd}(net,\textbf{ x})}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a2e1dc7b3985923ab787528f04187db10} 
+\index{climfill.m@{climfill.m}!datmod2@{datmod2}}
+\index{datmod2@{datmod2}!climfill.m@{climfill.m}}
+\doxysubsubsection{datmod2}
+{\footnotesize\ttfamily datmod2 \{i\}=\textbf{ nnfwd}(net,\textbf{ X})}
+
+
+
+Definition at line \textbf{ 66} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a2eb5e76160e25e9ee35c7f3676260d28} 
+\index{climfill.m@{climfill.m}!day@{day}}
+\index{day@{day}!climfill.m@{climfill.m}}
+\doxysubsubsection{day}
+{\footnotesize\ttfamily \textbf{ shouldn} \textbf{ t} \textbf{ make} a \textbf{ difference} day =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/day\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ climfill.\+m}.
+
+
+
+Referenced by \textbf{ aggregates()}, \textbf{ check\+Event()}, \textbf{ check\+Locations()}, \textbf{ copy\+Subset()}, \textbf{ create\+Event\+Node()}, \textbf{ goto\+Start()}, \textbf{ main()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ past\+Start()}, \textbf{ print\+Event()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Clim\+Line()}, \textbf{ read\+Event\+Data()}, \textbf{ year()}, and \textbf{ years()}.
+
+\label{climfill_8m_a291ae282da04a8b55da700c6dfd3b85d} 
+\index{climfill.m@{climfill.m}!end@{end}}
+\index{end@{end}!climfill.m@{climfill.m}}
+\doxysubsubsection{end}
+{\footnotesize\ttfamily \textbf{ go} \textbf{ to} \textbf{ next} \textbf{ iteration} of \textbf{ loop} end[\textbf{ yg}, net, \textbf{ sig}] =\textbf{ nnregress}(\textbf{ x}(\textbf{ wg}\{i\},\+:),\textbf{ dat}\{i\}(\textbf{ wg}\{i\}),5,1.\+5,1)}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a07af46e8f3c6af5b89fcba9470d1b476} 
+\index{climfill.m@{climfill.m}!fh2ofill@{fh2ofill}}
+\index{fh2ofill@{fh2ofill}!climfill.m@{climfill.m}}
+\doxysubsubsection{fh2ofill}
+{\footnotesize\ttfamily fh2ofill =\textbf{ datfill2}\{8\}}
+
+
+
+Definition at line \textbf{ 78} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a2f5f64dc14f3bf36059a21ca80fec1e5} 
+\index{climfill.m@{climfill.m}!hour@{hour}}
+\index{hour@{hour}!climfill.m@{climfill.m}}
+\doxysubsubsection{hour}
+{\footnotesize\ttfamily hour =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ hourofday}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a81b94ba50b782836960e54bcfa99fc88} 
+\index{climfill.m@{climfill.m}!i@{i}}
+\index{i@{i}!climfill.m@{climfill.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:numvars\ \ \ }
+\DoxyCodeLine{\ \ \ \ wg\{i\}=find(\string~isnan(dat\{i\}))}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 25} of file \textbf{ climfill.\+m}.
+
+
+
+Referenced by \textbf{ relerra()}, and \textbf{ relerrb()}.
+
+\label{climfill_8m_a4ae9f156f70718423e5840d50ec7150f} 
+\index{climfill.m@{climfill.m}!numvars@{numvars}}
+\index{numvars@{numvars}!climfill.m@{climfill.m}}
+\doxysubsubsection{numvars}
+{\footnotesize\ttfamily numvars =7}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a887ba42ddbd16a59020d8e951d7d2d87} 
+\index{climfill.m@{climfill.m}!parfill@{parfill}}
+\index{parfill@{parfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{parfill}
+{\footnotesize\ttfamily parfill =\textbf{ datfill2}\{3\}}
+
+
+
+Definition at line \textbf{ 73} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a975aa28cae0eea41b763f0442065cc3a} 
+\index{climfill.m@{climfill.m}!potpar@{potpar}}
+\index{potpar@{potpar}!climfill.m@{climfill.m}}
+\doxysubsubsection{potpar}
+{\footnotesize\ttfamily potpar =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/potpar\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a1d9f437775aaaafe4070a1acefc1c871} 
+\index{climfill.m@{climfill.m}!rhumfill@{rhumfill}}
+\index{rhumfill@{rhumfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{rhumfill}
+{\footnotesize\ttfamily rhumfill =\textbf{ datfill2}\{2\}}
+
+
+
+Definition at line \textbf{ 72} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a7e4a21b65ca3a4da94460f926e553508} 
+\index{climfill.m@{climfill.m}!sday@{sday}}
+\index{sday@{sday}!climfill.m@{climfill.m}}
+\doxysubsubsection{sday}
+{\footnotesize\ttfamily sday =\textbf{ sin}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a746cf80ff987fe202212c70d05063d82} 
+\index{climfill.m@{climfill.m}!start@{start}}
+\index{start@{start}!climfill.m@{climfill.m}}
+\doxysubsubsection{start}
+{\footnotesize\ttfamily \textbf{ fraction} of \textbf{ valid} \textbf{ pts} in \textbf{ this} \textbf{ step} start = \textbf{ fin} + 1}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a77e22477ce5129851bd0d8b26e004381} 
+\index{climfill.m@{climfill.m}!tairfill@{tairfill}}
+\index{tairfill@{tairfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{tairfill}
+{\footnotesize\ttfamily tairfill =\textbf{ datfill2}\{1\}}
+
+
+
+Definition at line \textbf{ 71} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a493b4006079f41fd9c6274ddf97fe53d} 
+\index{climfill.m@{climfill.m}!toterr@{toterr}}
+\index{toterr@{toterr}!climfill.m@{climfill.m}}
+\doxysubsubsection{toterr}
+{\footnotesize\ttfamily \textbf{ end} toterr =relerr.$\ast$\textbf{ nb}}
+
+
+
+Definition at line \textbf{ 48} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a5c57c4224fd51bbe847262d0d6841bad} 
+\index{climfill.m@{climfill.m}!tsoilfill@{tsoilfill}}
+\index{tsoilfill@{tsoilfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{tsoilfill}
+{\footnotesize\ttfamily tsoilfill =\textbf{ datfill2}\{4\}}
+
+
+
+Definition at line \textbf{ 74} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a7c62f18b103d3e861f34d264a0c856f5} 
+\index{climfill.m@{climfill.m}!ustarfill@{ustarfill}}
+\index{ustarfill@{ustarfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{ustarfill}
+{\footnotesize\ttfamily ustarfill =\textbf{ datfill2}\{5\}}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_ac6e085dd842e3ed41261e8f052a4fe03} 
+\index{climfill.m@{climfill.m}!vars@{vars}}
+\index{vars@{vars}!climfill.m@{climfill.m}}
+\doxysubsubsection{vars}
+{\footnotesize\ttfamily \textbf{ go} \textbf{ to} \textbf{ next} \textbf{ iteration} of \textbf{ loop} \textbf{ end} vars =\textbf{ setdiff}((1\+:\textbf{ numvars}),i)}
+
+
+
+Definition at line \textbf{ 59} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_abe71c26729c23b2a391000864a57dfc1} 
+\index{climfill.m@{climfill.m}!VPD@{VPD}}
+\index{VPD@{VPD}!climfill.m@{climfill.m}}
+\doxysubsubsection{VPD}
+{\footnotesize\ttfamily \textbf{ BUILD} VPD}
+
+
+
+Definition at line \textbf{ 85} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a7af382b1565e939391a51f6c88f2ae75} 
+\index{climfill.m@{climfill.m}!VPDSOIL@{VPDSOIL}}
+\index{VPDSOIL@{VPDSOIL}!climfill.m@{climfill.m}}
+\doxysubsubsection{VPDSOIL}
+{\footnotesize\ttfamily \textbf{ BUILD} VPDSOIL[\textbf{ vpressfill}, \textbf{ vpdfill}, \textbf{ vpdsoilfill}] = \textbf{ calcvpress\+Niwot}(\textbf{ rhumfill}, \textbf{ tairfill}, \textbf{ tsoilfill})}
+
+
+
+Definition at line \textbf{ 85} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a65e6eb72f0340ab888e16d161c7c417f} 
+\index{climfill.m@{climfill.m}!VPRESS@{VPRESS}}
+\index{VPRESS@{VPRESS}!climfill.m@{climfill.m}}
+\doxysubsubsection{VPRESS}
+{\footnotesize\ttfamily \textbf{ BUILD} VPRESS}
+
+
+
+Definition at line \textbf{ 85} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_ad9aaea5ea641523aae2aadd70ea8bc24} 
+\index{climfill.m@{climfill.m}!wb@{wb}}
+\index{wb@{wb}!climfill.m@{climfill.m}}
+\doxysubsubsection{wb}
+{\footnotesize\ttfamily wb \{i\}=\textbf{ find}(\textbf{ isnan}(\textbf{ dat}\{i\}))}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_ab9feb26fc06b9a0b49294b38f29864b0} 
+\index{climfill.m@{climfill.m}!wdirfill@{wdirfill}}
+\index{wdirfill@{wdirfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{wdirfill}
+{\footnotesize\ttfamily wdirfill =\textbf{ datfill2}\{7\}}
+
+
+
+Definition at line \textbf{ 77} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_a4b6fb77231e14a9dce9071d873e98d07} 
+\index{climfill.m@{climfill.m}!wspdfill@{wspdfill}}
+\index{wspdfill@{wspdfill}!climfill.m@{climfill.m}}
+\doxysubsubsection{wspdfill}
+{\footnotesize\ttfamily wspdfill =\textbf{ datfill2}\{6\}}
+
+
+
+Definition at line \textbf{ 76} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_ac98c3bb25378222646e977292011625f} 
+\index{climfill.m@{climfill.m}!x@{x}}
+\index{x@{x}!climfill.m@{climfill.m}}
+\doxysubsubsection{x}
+{\footnotesize\ttfamily \textbf{ end} x =[\textbf{ shour} \textbf{ chour} \textbf{ sday} \textbf{ cday}]}
+
+
+
+Definition at line \textbf{ 33} of file \textbf{ climfill.\+m}.
+
+\label{climfill_8m_ac51b57a703ba1c5869228690c93e1701} 
+\index{climfill.m@{climfill.m}!X@{X}}
+\index{X@{X}!climfill.m@{climfill.m}}
+\doxysubsubsection{X}
+{\footnotesize\ttfamily X =[\textbf{ x} \textbf{ D}(\+:,\textbf{ vars}) \textbf{ datmod}\{i\}]}
+
+
+
+Definition at line \textbf{ 60} of file \textbf{ climfill.\+m}.
+

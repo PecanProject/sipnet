@@ -1,0 +1,641 @@
+\doxysection{ml-\/metro5.c}
+\label{ml-metro5_8c_source}\index{ml-\/metro5.c@{ml-\/metro5.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*9/14/04\ modified\ by\ Bill\ Sacks\ to\ work\ with\ spatially-\/varying\ parameters\ */}}
+\DoxyCodeLine{00002\ \textcolor{comment}{/*7/15/02\ modified\ by\ Bill\ Sacks\ to\ work\ with\ sipnet}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ (original\ provided\ by\ George\ Hurtt)\ */}}
+\DoxyCodeLine{00004\ \textcolor{comment}{/*11/19/01\ modified\ for\ new\ input*/}}
+\DoxyCodeLine{00005\ \textcolor{comment}{/*9/26/01\ Program\ to\ estimate\ parameters\ in\ miami-\/biomass\ model*/}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <float.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}paramchange.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}spatialParams.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ A\_STAR\ 0.4\ \ }\textcolor{comment}{//\ target\ acceptance\ rate}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ DEC\ 0.99\ \ }\textcolor{comment}{//\ how\ much\ to\ decrease\ temp.\ by\ on\ rejection}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ THRESH\ 0.02\ \ }\textcolor{comment}{//\ how\ close\ we\ have\ to\ get\ to\ A\_STAR\ before\ stop\ adjusting}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ temperatures}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ write\ a\ header\ line\ for\ the\ .hist\ file}}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ writeHistFileHeader(FILE\ *histFile,\ \textcolor{keywordtype}{int}\ numYears,\ \textcolor{keywordtype}{int}\ np,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numDataTypes)\ \{}
+\DoxyCodeLine{00024\ \ \ fprintf(histFile,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Log\_likelihood\ \ \%dx(Sigma\_estimate\ \ Mean\_error\ \ "{}}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Daily\_aggregated\_mean\_error\ \ \%dxAnnual\_Totals)\ \ \%dxParam\_values\(\backslash\)n"{}},}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ numDataTypes,\ numYears,\ np);}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ write\ one\ point\ to\ the\ .hist\ file\ for\ the\ given\ location\ (loc)}}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ writeHistFile(FILE\ *histFile,\ \textcolor{keywordtype}{double}\ ltotnew,\ \textcolor{keywordtype}{double}\ *sigma,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OutputInfo\ *outputInfo,\ \textcolor{keywordtype}{int}\ numDataTypes,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{int}\ i,\ j;}
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordtype}{int}\ np;\ \ \textcolor{comment}{//\ number\ of\ changeable\ parameters}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ fprintf(histFile,\ \textcolor{stringliteral}{"{}\%f\ "{}},\ ltotnew);}
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ fprintf(histFile,\ \textcolor{stringliteral}{"{}\%f\ "{}},\ sigma[i]);}
+\DoxyCodeLine{00040\ \ \ \ \ fprintf(histFile,\ \textcolor{stringliteral}{"{}\%f\ \%f\ "{}},\ outputInfo[i].meanError,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ outputInfo[i].daysError);}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ outputInfo[i].numYears;\ j++)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ fprintf(histFile,\ \textcolor{stringliteral}{"{}\%f\ "{}},\ outputInfo[i].years[j]);\ \ \textcolor{comment}{//\ annual\ output\ for}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \textcolor{comment}{//\ this\ year}}
+\DoxyCodeLine{00045\ \ \ \ \ \}}
+\DoxyCodeLine{00046\ \ \ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ np\ =\ spatialParams-\/>numChangeableParams;}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ np;\ i++)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ fprintf(histFile,\ \textcolor{stringliteral}{"{}\%f\ "{}},}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParam(spatialParams,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ spatialParams-\/>changeableParamIndices[i],\ loc));}
+\DoxyCodeLine{00053\ \ \ \ \ fprintf(histFile,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00054\ \ \ \}}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ .hist\ file\ writing,\ binary\ version:}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{//\ write\ a\ header\ for\ the\ .hist\ file\ in\ binary\ format\ (a\ single\ int\ giving}}
+\DoxyCodeLine{00060\ \textcolor{comment}{//\ number\ of\ floats\ per\ point)}}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ writeHistFileBinHeader(FILE\ *histFile,\ \textcolor{keywordtype}{int}\ numYears,\ \textcolor{keywordtype}{int}\ np,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numDataTypes)\ \{}
+\DoxyCodeLine{00063\ \ \ \textcolor{keywordtype}{int}\ numPerPoint;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ numPerPoint\ =\ 1\ +\ numDataTypes\ *\ (3\ +\ numYears)\ +\ np;}
+\DoxyCodeLine{00066\ \ \ \textcolor{comment}{//\ for\ each\ point,\ we\ write\ ltot\ plus,\ for\ each\ data\ type,\ sigma,\ mean\ error,}}
+\DoxyCodeLine{00067\ \ \ \textcolor{comment}{//\ days\ error,\ yearly\ sums,\ plus\ each\ param.\ value}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ fwrite(\&numPerPoint,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}),\ 1,\ histFile);\ \ \textcolor{comment}{//\ write\ numPerPoint\ to\ file}}
+\DoxyCodeLine{00070\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{comment}{//\ given\ a\ double\ argument,\ write\ it\ as\ a\ float\ to\ the\ given\ binary\ file}}
+\DoxyCodeLine{00073\ \textcolor{comment}{//\ (writing\ it\ as\ a\ float\ rather\ than\ a\ double\ saves\ space,\ at\ the\ expense\ of\ a}}
+\DoxyCodeLine{00074\ \textcolor{comment}{//\ little\ precision)}}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ writeDoubleAsFloat(\textcolor{keywordtype}{double}\ num,\ FILE\ *outfile)\ \{}
+\DoxyCodeLine{00076\ \ \ \textcolor{keywordtype}{float}\ theFloat;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ theFloat\ =\ (float)num;}
+\DoxyCodeLine{00079\ \ \ fwrite(\&theFloat,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float}),\ 1,\ outfile);\ \ \textcolor{comment}{//\ write\ to\ file}}
+\DoxyCodeLine{00080\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{comment}{//\ write\ one\ point\ to\ the\ .hist\ file\ for\ the\ given\ location\ (loc),\ in\ binary}}
+\DoxyCodeLine{00083\ \textcolor{comment}{//\ format}}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ writeHistFileBin(FILE\ *histFile,\ \textcolor{keywordtype}{double}\ ltotnew,\ \textcolor{keywordtype}{double}\ *sigma,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OutputInfo\ *outputInfo,\ \textcolor{keywordtype}{int}\ numDataTypes,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00087\ \ \ \textcolor{keywordtype}{int}\ i,\ j;}
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordtype}{int}\ np;\ \ \textcolor{comment}{//\ number\ of\ changeable\ parameters}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ writeDoubleAsFloat(ltotnew,\ histFile);}
+\DoxyCodeLine{00091\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ writeDoubleAsFloat(sigma[i],\ histFile);}
+\DoxyCodeLine{00093\ \ \ \ \ writeDoubleAsFloat(outputInfo[i].meanError,\ histFile);}
+\DoxyCodeLine{00094\ \ \ \ \ writeDoubleAsFloat(outputInfo[i].daysError,\ histFile);}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ outputInfo[i].numYears;\ j++)\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ writeDoubleAsFloat(outputInfo[i].years[j],\ histFile);}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ np\ =\ spatialParams-\/>numChangeableParams;}
+\DoxyCodeLine{00101\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ np;\ i++)\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ writeDoubleAsFloat(getSpatialParam(spatialParams,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ spatialParams-\/>changeableParamIndices[i],}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ loc),}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ histFile);}
+\DoxyCodeLine{00106\ \ \ \}}
+\DoxyCodeLine{00107\ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{comment}{/************************************************************************/}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{//\ reset\ parameter,\ log\ likelihood\ variables,\ etc.\ for\ start\ of\ MCMC\ chain}}
+\DoxyCodeLine{00112\ \textcolor{comment}{//\ parameters\ from\ spatialParams\ through\ outputInfo\ are\ outputs,\ rest\ are\ inputs}}
+\DoxyCodeLine{00113\ \textcolor{comment}{//\ (spatialParams\ also\ provides\ some\ inputs)\ all\ output\ parameters\ are\ arrays}}
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ except\ ltotnew,\ ltotold\ and\ ltotmax;\ loglikely,\ outputInfo\ and\ sigma\ are}}
+\DoxyCodeLine{00115\ \textcolor{comment}{//\ spatial\ (1st\ dimension\ of\ sigma\ and\ outputInfo\ is\ spatial\ dimension;}}
+\DoxyCodeLine{00116\ \textcolor{comment}{//\ loglikely\ is\ only\ one-\/dimensional)}}
+\DoxyCodeLine{00117\ \textcolor{comment}{//}}
+\DoxyCodeLine{00118\ \textcolor{comment}{//\ if\ loc\ =\ -\/1,\ we're\ running\ everywhere\ (number\ of\ locations,\ which\ is\ also\ the}}
+\DoxyCodeLine{00119\ \textcolor{comment}{//\ size\ of\ loglikely\ and\ sigma,\ specified\ in\ spatialParams)}}
+\DoxyCodeLine{00120\ \textcolor{comment}{//}}
+\DoxyCodeLine{00121\ \textcolor{comment}{//\ if\ loc\ >=\ 0,\ we're\ running\ at\ a\ single\ location;\ in\ this\ case,\ 1st\ dimension}}
+\DoxyCodeLine{00122\ \textcolor{comment}{//\ of\ loglikely\ and\ sigma\ only\ has\ length\ 1}}
+\DoxyCodeLine{00123\ \textcolor{comment}{//}}
+\DoxyCodeLine{00124\ \textcolor{comment}{//\ randomStart\ is\ boolean:\ do\ we\ start\ each\ chain\ with\ a\ random\ param.\ set\ (as}}
+\DoxyCodeLine{00125\ \textcolor{comment}{//\ opposed\ to\ guess\ values)?}}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{void}\ reset(}
+\DoxyCodeLine{00127\ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{double}\ *loglikely,\ \textcolor{keywordtype}{double}\ *ltotnew,}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{double}\ *ltotold,\ \textcolor{keywordtype}{double}\ *ltotmax,\ \textcolor{keywordtype}{double}\ **sigma,\ OutputInfo\ **outputInfo,}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{int}\ loc,\ \textcolor{keywordtype}{int}\ randomStart,\ \textcolor{keywordtype}{double}\ addFraction,\ FILE\ *userOut,}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordtype}{double}\ (*likely)(\textcolor{keywordtype}{double}\ *,\ OutputInfo\ *,\ \textcolor{keywordtype}{int},\ SpatialParams\ *,\ \textcolor{keywordtype}{double},}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}[],\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{double}[]),}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{double}\ paramWeight,}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordtype}{void}\ (*model)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ costFunction,}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordtype}{double}\ dataTypeWeights[])\ \{}
+\DoxyCodeLine{00137\ \ \ \textcolor{keywordtype}{int}\ currLoc;}
+\DoxyCodeLine{00138\ \ \ \textcolor{keywordtype}{int}\ firstLoc,\ lastLoc,\ locIndex;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ running\ at\ all\ locations}}
+\DoxyCodeLine{00141\ \ \ \ \ firstLoc\ =\ 0;}
+\DoxyCodeLine{00142\ \ \ \ \ lastLoc\ =\ spatialParams-\/>numLocs\ -\/\ 1;}
+\DoxyCodeLine{00143\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{//\ only\ running\ at\ one\ location}}
+\DoxyCodeLine{00145\ \ \ \ \ firstLoc\ =\ lastLoc\ =\ loc;}
+\DoxyCodeLine{00146\ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \textcolor{comment}{//\ reset\ value,\ best\ \&\ knob\ (set\ knob\ to\ addFraction)}}
+\DoxyCodeLine{00148\ \ \ resetSpatialParams(spatialParams,\ addFraction,\ randomStart);}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \textcolor{comment}{/*compute\ log-\/likelihood\ of\ parameter\ set*/}}
+\DoxyCodeLine{00151\ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ locIndex\ =\ currLoc\ -\/\ firstLoc;\ \ \textcolor{comment}{//\ index\ into\ arrays}}
+\DoxyCodeLine{00153\ \ \ \ \ loglikely[locIndex]\ =\ \ \textcolor{comment}{//\ NOLINTNEXTLINE\ (outputInfo\ false\ warning)}}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ -\/1.0\ *\ (*likely)(sigma[locIndex],\ outputInfo[locIndex],\ currLoc,}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ spatialParams,\ paramWeight,\ model,\ dataTypeIndices,}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numDataTypes,\ costFunction,\ dataTypeWeights);}
+\DoxyCodeLine{00157\ \ \ \}}
+\DoxyCodeLine{00158\ \ \ *ltotold\ =\ *ltotmax\ =\ *ltotnew\ =\ sumArray(loglikely,\ lastLoc\ -\/\ firstLoc\ +\ 1);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \textcolor{comment}{/*screen\ output*/}}
+\DoxyCodeLine{00161\ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)t\(\backslash\)t\(\backslash\)t**ESTIMATOR**\(\backslash\)n"{}});}
+\DoxyCodeLine{00162\ \ \ writeChangeableParamInfo(spatialParams,\ loc,\ userOut);}
+\DoxyCodeLine{00163\ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)t\(\backslash\)tlTOT\(\backslash\)tnew=\ \%9.6f\(\backslash\)tmax=\ \%9.6f\(\backslash\)n"{}},\ *ltotnew,\ *ltotmax);}
+\DoxyCodeLine{00164\ \}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{comment}{/************************************************************************/}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{comment}{/*\ write\ (to\ chainInfo\ file)\ all\ information\ needed\ to\ restart\ a\ chain\ from\ a}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ \ \ given\ point\ format\ of\ file:\ binary\ file\ as\ follows:\ ltotold\ ltotmax\ \ <np>\ *}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ \ \ (value\ best\ knob)\ where\ np\ is\ the\ number\ of\ changeable\ parameters}}
+\DoxyCodeLine{00171\ \textcolor{comment}{}}
+\DoxyCodeLine{00172\ \textcolor{comment}{\ \ \ if\ loc\ =\ -\/1,\ then\ for\ each\ spatial\ parameter\ we\ write\ all\ values\ (i.e.\ value}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ \ \ at\ each\ point)\ followed\ by\ all\ bests\ and\ all\ knobs}}
+\DoxyCodeLine{00174\ \textcolor{comment}{}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ if\ loc\ >=\ 0,\ then\ we\ only\ write\ value,\ best\ and\ knob\ at\ the\ given\ location}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ \ \ where\ all\ values\ are\ doubles}}
+\DoxyCodeLine{00177\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ writeChainInfo(\textcolor{keywordtype}{char}\ *chainInfo,\ \textcolor{keywordtype}{double}\ ltotold,\ \textcolor{keywordtype}{double}\ ltotmax,}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00180\ \ \ FILE\ *out;}
+\DoxyCodeLine{00181\ \ \ \textcolor{keywordtype}{int}\ np;\ \ \textcolor{comment}{//\ number\ of\ changeable\ parameters}}
+\DoxyCodeLine{00182\ \ \ \textcolor{keywordtype}{int}\ i,\ index;}
+\DoxyCodeLine{00183\ \ \ \textcolor{keywordtype}{int}\ firstLoc,\ lastLoc,\ thisFirstLoc,\ thisLastLoc,\ currLoc;}
+\DoxyCodeLine{00184\ \ \ \textcolor{keywordtype}{double}\ value[1];\ \ \textcolor{comment}{//\ next\ value\ to\ be\ written}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ out\ =\ openFile(chainInfo,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ np\ =\ spatialParams-\/>numChangeableParams;}
+\DoxyCodeLine{00189\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ running\ at\ all\ locations}}
+\DoxyCodeLine{00190\ \ \ \ \ firstLoc\ =\ 0;}
+\DoxyCodeLine{00191\ \ \ \ \ lastLoc\ =\ spatialParams-\/>numLocs\ -\/\ 1;}
+\DoxyCodeLine{00192\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{comment}{//\ only\ running\ at\ one\ location}}
+\DoxyCodeLine{00194\ \ \ \ \ firstLoc\ =\ lastLoc\ =\ loc;}
+\DoxyCodeLine{00195\ \ \ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \textcolor{comment}{//\ write\ last\ and\ maximum\ log\ likelihoods:}}
+\DoxyCodeLine{00198\ \ \ fwrite(\&ltotold,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ out);}
+\DoxyCodeLine{00199\ \ \ fwrite(\&ltotmax,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ out);}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \textcolor{comment}{//\ write\ parameter\ info:}}
+\DoxyCodeLine{00202\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ np;\ i++)\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ index\ =\ spatialParams-\/>changeableParamIndices[i];\ \ \textcolor{comment}{//\ get\ index\ of\ ith}}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ changeable\ parameter}}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordflow}{if}\ (isSpatial(spatialParams,\ index))\ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ thisFirstLoc\ =\ firstLoc;}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ thisLastLoc\ =\ lastLoc;}
+\DoxyCodeLine{00208\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \textcolor{comment}{//\ non-\/spatial\ -\/\ we'll\ just\ use\ one\ location\ (doesn't\ matter\ which}}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \textcolor{comment}{//\ one)}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ thisFirstLoc\ =\ thisLastLoc\ =\ 0;}
+\DoxyCodeLine{00212\ \ \ \ \ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \textcolor{comment}{//\ if\ non-\/spatial,\ or\ loc\ !=\ -\/1,\ we'll\ only\ execute\ this\ loop\ once}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ value[0]\ =\ getSpatialParam(spatialParams,\ index,\ currLoc);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ fwrite(value,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ out);}
+\DoxyCodeLine{00218\ \ \ \ \ \}}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \textcolor{comment}{//\ if\ non-\/spatial,\ or\ loc\ !=\ -\/1,\ we'll\ only\ execute\ this\ loop\ once}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ value[0]\ =\ getSpatialParamBest(spatialParams,\ index,\ currLoc);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ fwrite(value,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ out);}
+\DoxyCodeLine{00223\ \ \ \ \ \}}
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \textcolor{comment}{//\ if\ non-\/spatial,\ or\ loc\ !=\ -\/1,\ we'll\ only\ execute\ this\ loop\ once}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ value[0]\ =\ getSpatialParamKnob(spatialParams,\ index,\ currLoc);}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ fwrite(value,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ out);}
+\DoxyCodeLine{00228\ \ \ \ \ \}}
+\DoxyCodeLine{00229\ \ \ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ fclose(out);}
+\DoxyCodeLine{00232\ \}}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \textcolor{comment}{/************************************************************************/}}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{comment}{//\ read\ (from\ chainInfo\ file)\ all\ information\ needed\ to\ restart\ a\ chain\ from\ a}}
+\DoxyCodeLine{00237\ \textcolor{comment}{//\ given\ point\ (see\ writeChainInfo\ function\ for\ format\ of\ file)\ ltotold\ and}}
+\DoxyCodeLine{00238\ \textcolor{comment}{//\ ltotmax\ are\ pointers\ (NOT\ vectors)}}
+\DoxyCodeLine{00239\ \textcolor{keywordtype}{void}\ readChainInfo(\textcolor{keywordtype}{char}\ *chainInfo,\ \textcolor{keywordtype}{double}\ *ltotold,\ \textcolor{keywordtype}{double}\ *ltotmax,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00241\ \ \ FILE\ *in;}
+\DoxyCodeLine{00242\ \ \ \textcolor{keywordtype}{int}\ np;\ \ \textcolor{comment}{//\ number\ of\ changeable\ parameters}}
+\DoxyCodeLine{00243\ \ \ \textcolor{keywordtype}{int}\ i,\ index;}
+\DoxyCodeLine{00244\ \ \ \textcolor{keywordtype}{int}\ firstLoc,\ lastLoc,\ thisFirstLoc,\ thisLastLoc,\ currLoc;}
+\DoxyCodeLine{00245\ \ \ \textcolor{keywordtype}{double}\ value[1];\ \ \textcolor{comment}{//\ for\ the\ current\ value\ we\ just\ read}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ in\ =\ openFile(chainInfo,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ np\ =\ spatialParams-\/>numChangeableParams;}
+\DoxyCodeLine{00250\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ running\ at\ all\ locations}}
+\DoxyCodeLine{00251\ \ \ \ \ firstLoc\ =\ 0;}
+\DoxyCodeLine{00252\ \ \ \ \ lastLoc\ =\ spatialParams-\/>numLocs\ -\/\ 1;}
+\DoxyCodeLine{00253\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \textcolor{comment}{//\ only\ running\ at\ one\ location}}
+\DoxyCodeLine{00255\ \ \ \ \ firstLoc\ =\ lastLoc\ =\ loc;}
+\DoxyCodeLine{00256\ \ \ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \textcolor{comment}{//\ read\ last\ and\ maximum\ log\ likelihoods:}}
+\DoxyCodeLine{00259\ \ \ fread(ltotold,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ in);}
+\DoxyCodeLine{00260\ \ \ fread(ltotmax,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ in);}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \textcolor{comment}{//\ read\ parameter\ info:}}
+\DoxyCodeLine{00263\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ np;\ i++)\ \{}
+\DoxyCodeLine{00264\ \ \ \ \ index\ =\ spatialParams-\/>changeableParamIndices[i];\ \ \textcolor{comment}{//\ get\ index\ of\ ith}}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ changeable\ parameter}}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keywordflow}{if}\ (isSpatial(spatialParams,\ index))\ \{}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ thisFirstLoc\ =\ firstLoc;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ thisLastLoc\ =\ lastLoc;}
+\DoxyCodeLine{00269\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \textcolor{comment}{//\ non-\/spatial\ -\/\ we\ just\ use\ one\ location\ (doesn't\ matter\ which\ one)}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ thisFirstLoc\ =\ thisLastLoc\ =\ 0;}
+\DoxyCodeLine{00272\ \ \ \ \ \}}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \textcolor{comment}{//\ if\ non-\/spatial,\ or\ loc\ !=\ -\/1,\ we'll\ only\ execute\ this\ loop\ once}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ fread(value,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ in);\ \ \textcolor{comment}{//\ fread\ needs\ a\ pointer}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ setSpatialParam(spatialParams,\ index,\ currLoc,\ value[0]);}
+\DoxyCodeLine{00278\ \ \ \ \ \}}
+\DoxyCodeLine{00279\ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \textcolor{comment}{//\ if\ non-\/spatial,\ or\ loc\ !=\ -\/1,\ we'll\ only\ execute\ this\ loop\ once}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ fread(value,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ in);\ \ \textcolor{comment}{//\ fread\ needs\ a\ pointer}}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ setSpatialParamBest(spatialParams,\ index,\ currLoc,\ value[0]);}
+\DoxyCodeLine{00283\ \ \ \ \ \}}
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \textcolor{comment}{//\ if\ non-\/spatial,\ or\ loc\ !=\ -\/1,\ we'll\ only\ execute\ this\ loop\ once}}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ fread(value,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}),\ 1,\ in);\ \ \textcolor{comment}{//\ fread\ needs\ a\ pointer}}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ setSpatialParamKnob(spatialParams,\ index,\ currLoc,\ value[0]);}
+\DoxyCodeLine{00288\ \ \ \ \ \}}
+\DoxyCodeLine{00289\ \ \ \}}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ fclose(in);}
+\DoxyCodeLine{00292\ \}}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \textcolor{comment}{/************************************************************************/}}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \textcolor{comment}{/*\ Puts\ best\ parameters\ found\ in\ spatialParams}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ \ \ If\ loc\ =\ -\/1,\ run\ at\ all\ locations;\ if\ loc\ >=\ 0,\ run\ only\ at\ that\ single}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ \ \ location.\ randomStart\ is\ boolean:\ do\ we\ start\ each\ chain\ with\ a\ random\ param.}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ \ \ set\ (as\ opposed\ to\ guess\ values)?\ NOTE:\ anything\ but\ a\ scale\ factor\ of\ 1\ goes}}
+\DoxyCodeLine{00300\ \textcolor{comment}{\ \ \ against\ theory\ */}}
+\DoxyCodeLine{00301\ \textcolor{keywordtype}{void}\ metropolis(}
+\DoxyCodeLine{00302\ \ \ \ \ \textcolor{keywordtype}{char}\ *outNameBase,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc,}
+\DoxyCodeLine{00303\ \ \ \ \ \textcolor{keywordtype}{double}\ (*likely)(\textcolor{keywordtype}{double}\ *,\ OutputInfo\ *,\ \textcolor{keywordtype}{int},\ SpatialParams\ *,\ \textcolor{keywordtype}{double},}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}[],\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{double}[]),}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{keywordtype}{void}\ (*model)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{keywordtype}{double}\ addFraction,\ \textcolor{keywordtype}{long}\ estSteps,\ \textcolor{keywordtype}{int}\ numAtOnce,\ \textcolor{keywordtype}{int}\ numChains,}
+\DoxyCodeLine{00308\ \ \ \ \ \textcolor{keywordtype}{int}\ randomStart,\ \textcolor{keywordtype}{long}\ numSpinUps,\ \textcolor{keywordtype}{double}\ paramWeight,\ \textcolor{keywordtype}{double}\ scaleFactor,}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ costFunction,}
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{keywordtype}{double}\ dataTypeWeights[],\ FILE\ *userOut)\ \{}
+\DoxyCodeLine{00311\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ INC\ =\ pow(DEC,\ ((A\_STAR\ -\/\ 1)\ /\ A\_STAR));}
+\DoxyCodeLine{00312\ \ \ \textcolor{comment}{//\ want\ INC\string^A\_STAR\ *\ DEC\string^(1\ -\/\ A\_STAR)\ =\ 1}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \textcolor{keywordtype}{char}\ histFileBase[256],\ histFileName[270],\ chainInfo[256];}
+\DoxyCodeLine{00315\ \ \ FILE\ **histFiles;\ \ \textcolor{comment}{//\ vector\ of\ FILE\ ptrs\ (one\ for\ each\ location)}}
+\DoxyCodeLine{00316\ \ \ \textcolor{keywordtype}{int}\ accept,\ yes\ =\ 0;}
+\DoxyCodeLine{00317\ \ \ \textcolor{keywordtype}{long}\ k;}
+\DoxyCodeLine{00318\ \ \ \textcolor{keywordtype}{int}\ chainNum;\ \ \textcolor{comment}{//\ which\ starting\ chain\ are\ we\ on\ (for\ running\ multiple\ chains}}
+\DoxyCodeLine{00319\ \ \ \textcolor{comment}{//\ to\ convergence\ then\ choosing\ best)}}
+\DoxyCodeLine{00320\ \ \ \textcolor{keywordtype}{int}\ firstLoc,\ lastLoc,\ numLocs;\ \ \textcolor{comment}{//\ first,\ last\ and\ number\ of\ locations\ that}}
+\DoxyCodeLine{00321\ \ \ \textcolor{comment}{//\ we're\ actually\ running\ at\ (based\ on\ both\ loc\ and\ spatialParams-\/>numLocs)}}
+\DoxyCodeLine{00322\ \ \ \textcolor{keywordtype}{int}\ thisFirstLoc,\ thisLastLoc;\ \ \textcolor{comment}{//\ for\ spatial\ params,\ same\ as\ firstLoc\ and}}
+\DoxyCodeLine{00323\ \ \ \textcolor{comment}{//\ lastLoc;\ for\ non-\/spatial\ params,\ both\ are\ 0}}
+\DoxyCodeLine{00324\ \ \ \textcolor{keywordtype}{int}\ currLoc,\ locIndex;}
+\DoxyCodeLine{00325\ \ \ \textcolor{keywordtype}{int}\ ichg;\ \ \textcolor{comment}{//\ parameter\ to\ change}}
+\DoxyCodeLine{00326\ \ \ \textcolor{keywordtype}{double}\ range;\ \ \textcolor{comment}{//\ (max\ -\/\ min)\ of\ current\ parameter}}
+\DoxyCodeLine{00327\ \ \ \textcolor{keywordtype}{double}\ *loglikely;\ \ \textcolor{comment}{//\ spatial}}
+\DoxyCodeLine{00328\ \ \ \textcolor{keywordtype}{double}\ ltotnew,\ ltotold,\ ltotmax;}
+\DoxyCodeLine{00329\ \ \ \textcolor{keywordtype}{double}\ bestChainLtotmax;\ \ \textcolor{comment}{//\ ltotmax\ of\ the\ best\ starting\ chain\ so\ far}}
+\DoxyCodeLine{00330\ \ \ \textcolor{keywordtype}{double}\ oldVal;}
+\DoxyCodeLine{00331\ \ \ \textcolor{keywordtype}{double}\ *pold;\ \ \textcolor{comment}{//\ spatial}}
+\DoxyCodeLine{00332\ \ \ \textcolor{keywordtype}{double}\ pdelta,\ padd;}
+\DoxyCodeLine{00333\ \ \ \textcolor{keywordtype}{double}\ **sigma;\ \ \textcolor{comment}{//\ sigma\ of\ this\ point,\ estimated\ by\ likely\ function\ (2-\/d}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ array:\ sigma[i][j]\ is\ sigma\ at\ loc.\ i,\ data\ type\ j)}}
+\DoxyCodeLine{00335\ \ \ OutputInfo\ **outputInfo;\ \ \textcolor{comment}{//\ store\ error\ info\ and\ annual\ totals\ for\ each\ run}}
+\DoxyCodeLine{00336\ \ \ \textcolor{comment}{//\ \&\ each\ data\ type\ 2-\/d\ array:\ outputInfo[i][j]\ is\ outputInfo\ at\ location\ i,}}
+\DoxyCodeLine{00337\ \ \ \textcolor{comment}{//\ data\ type\ j}}
+\DoxyCodeLine{00338\ \ \ \textcolor{keywordtype}{int}\ converged\ =\ 0;\ \textcolor{comment}{/*\ have\ we\ converged\ on\ correct\ param\ ranges\ yet?}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ \ \ \ \ \ we've\ converged\ when\ we're\ near\ A\_STAR\ acceptance}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ \ \ \ \ \ If\ numChains\ >\ 1,\ converged\ will\ only\ be\ set\ to\ 1\ after\ we've\ converged}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ \ \ \ \ \ (numChains)\ times\ */}}
+\DoxyCodeLine{00342\ \ \ \textcolor{keywordtype}{long}\ totalIters\ =\ numSpinUps\ +\ estSteps;\ \ \textcolor{comment}{//\ how\ many\ total\ steps\ to\ take\ once}}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ temperatures\ have\ converged}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ running\ at\ all\ locations}}
+\DoxyCodeLine{00346\ \ \ \ \ numLocs\ =\ spatialParams-\/>numLocs;}
+\DoxyCodeLine{00347\ \ \ \ \ firstLoc\ =\ 0;}
+\DoxyCodeLine{00348\ \ \ \ \ lastLoc\ =\ numLocs\ -\/\ 1;}
+\DoxyCodeLine{00349\ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ only\ running\ at\ one\ location}}
+\DoxyCodeLine{00350\ \ \ \ \ firstLoc\ =\ lastLoc\ =\ loc;}
+\DoxyCodeLine{00351\ \ \ \ \ numLocs\ =\ 1;}
+\DoxyCodeLine{00352\ \ \ \}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \ \ loglikely\ =\ makeArray(numLocs);}
+\DoxyCodeLine{00355\ \ \ pold\ =\ makeArray(numLocs);}
+\DoxyCodeLine{00356\ \ \ sigma\ =\ make2DArray(numLocs,\ numDataTypes);}
+\DoxyCodeLine{00357\ \ \ outputInfo\ =\ (OutputInfo\ **)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(OutputInfo\ *));}
+\DoxyCodeLine{00358\ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00359\ \ \ \ \ outputInfo[currLoc\ -\/\ firstLoc]\ =\ newOutputInfo(numDataTypes,\ currLoc);}
+\DoxyCodeLine{00360\ \ \ \}}
+\DoxyCodeLine{00361\ \ \ histFiles\ =\ (FILE\ **)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(FILE\ *));\ \ \textcolor{comment}{//\ one\ file\ for\ each}}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ location}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \ \ strcpy(histFileBase,\ outNameBase);}
+\DoxyCodeLine{00365\ \ \ strcpy(chainInfo,\ outNameBase);}
+\DoxyCodeLine{00366\ \ \ strcat(histFileBase,\ \textcolor{stringliteral}{"{}.hist"{}});}
+\DoxyCodeLine{00367\ \ \ strcat(chainInfo,\ \textcolor{stringliteral}{"{}.chain\_info"{}});}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ chainNum\ =\ 1;}
+\DoxyCodeLine{00370\ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)nRESETTING\ FOR\ START\ CHAIN\ \%d\ of\ \%d\(\backslash\)n\(\backslash\)n"{}},\ chainNum,}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ numChains);}
+\DoxyCodeLine{00372\ \ \ reset(spatialParams,\ loglikely,\ \&ltotnew,\ \&ltotold,\ \&ltotmax,\ sigma,}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ outputInfo,\ loc,\ randomStart,\ addFraction,\ userOut,\ likely,\ paramWeight,}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ model,\ dataTypeIndices,\ numDataTypes,\ costFunction,\ dataTypeWeights);}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \ \ writeChangeableParamInfo(spatialParams,\ loc,\ userOut);}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ bestChainLtotmax\ =\ -\/1.0\ *\ DBL\_MAX;\ \ \textcolor{comment}{//\ really\ friggin'\ small\ (i.e.\ really}}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ friggin'\ big\ in\ the\ negative\ direction)}}
+\DoxyCodeLine{00380\ \ \ k\ =\ 1;}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \textcolor{comment}{//\ open\ all\ hist\ files\ (one\ for\ each\ location),\ assign\ file\ pointers}}
+\DoxyCodeLine{00383\ \ \ \textcolor{comment}{//\ (histFiles),\ write\ header\ to\ each}}
+\DoxyCodeLine{00384\ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00385\ \ \ \ \ locIndex\ =\ currLoc\ -\/\ firstLoc;\ \ \textcolor{comment}{//\ index\ into\ array}}
+\DoxyCodeLine{00386\ \ \ \ \ \textcolor{comment}{//\ append\ currLoc\ to\ end\ of\ histFileBase\ to\ get\ name\ of\ current\ file}}
+\DoxyCodeLine{00387\ \ \ \ \ sprintf(histFileName,\ \textcolor{stringliteral}{"{}\%s\%d"{}},\ histFileBase,\ currLoc);}
+\DoxyCodeLine{00388\ \ \ \ \ histFiles[locIndex]\ =\ openFile(histFileName,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \ \ \ \ \textcolor{comment}{//\ writeHistFileHeader(histFiles[locIndex],}}
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{comment}{//\ outputInfo[locIndex][0].numYears,\ spatialParams-\/>numChangeableParams,}}
+\DoxyCodeLine{00392\ \ \ \ \ \textcolor{comment}{//\ numDataTypes);}}
+\DoxyCodeLine{00393\ \ \ \ \ writeHistFileBinHeader(histFiles[locIndex],}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ outputInfo[locIndex][0].numYears,}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ spatialParams-\/>numChangeableParams,\ numDataTypes);}
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{comment}{/*\ NOTE:\ 1)\ this\ has\ to\ be\ done\ AFTER\ call\ to\ reset,\ since}}
+\DoxyCodeLine{00397\ \textcolor{comment}{\ \ \ \ \ \ \ outputInfo.numYears\ is\ set\ in\ call\ to\ likely\ function}}
+\DoxyCodeLine{00398\ \textcolor{comment}{}}
+\DoxyCodeLine{00399\ \textcolor{comment}{\ \ \ \ \ \ \ 2)\ it\ doesn't\ matter\ which\ data\ type\ we\ use\ for\ outputInfo\ (here\ we\ use}}
+\DoxyCodeLine{00400\ \textcolor{comment}{\ \ \ \ \ \ \ 0),\ since\ all\ will\ have\ the\ same\ numYears\ */}}
+\DoxyCodeLine{00401\ \ \ \}}
+\DoxyCodeLine{00402\ }
+\DoxyCodeLine{00403\ \textcolor{comment}{\ \ /*****metropolis\ loop***********************************************/}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \textcolor{keywordflow}{while}\ ((converged\ ==\ 0)\ ||\ (k\ <=\ totalIters))\ \{}
+\DoxyCodeLine{00406\ \ \ \ \ accept\ =\ 1;\ \ \textcolor{comment}{//\ so\ far,\ we're\ in\ accept\ mode\ -\/\ we\ haven't\ rejected\ the\ new}}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ point\ yet}}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{comment}{/*select\ parameter\ to\ change\ at\ random*/}}
+\DoxyCodeLine{00410\ \ \ \ \ ichg\ =\ randomChangeableSpatialParam(spatialParams);}
+\DoxyCodeLine{00411\ }
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{comment}{/*\ determine\ first\ and\ last\ location\ for\ THIS\ parameter\ (depends\ on\ whether}}
+\DoxyCodeLine{00413\ \textcolor{comment}{\ \ \ \ \ \ \ parameter\ is\ spatial)\ note\ that\ we'll\ still\ use\ firstLoc\ and\ lastLoc\ for}}
+\DoxyCodeLine{00414\ \textcolor{comment}{\ \ \ \ \ \ \ things\ like\ actually\ running\ model;\ thisFirstLoc\ and\ thisLastLoc\ just}}
+\DoxyCodeLine{00415\ \textcolor{comment}{\ \ \ \ \ \ \ refer\ to\ locations\ we\ care\ about\ for\ parameter-\/related\ things\ like}}
+\DoxyCodeLine{00416\ \textcolor{comment}{\ \ \ \ \ \ \ choosing\ a\ new\ parameter\ value\ */}}
+\DoxyCodeLine{00417\ \ \ \ \ \textcolor{keywordflow}{if}\ (isSpatial(spatialParams,\ ichg))\ \{}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ thisFirstLoc\ =\ firstLoc;}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ thisLastLoc\ =\ lastLoc;}
+\DoxyCodeLine{00420\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \textcolor{comment}{//\ non-\/spatial\ -\/\ we\ just\ use\ one\ location\ (doesn't\ matter\ which\ one)}}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ thisFirstLoc\ =\ thisLastLoc\ =\ 0;}
+\DoxyCodeLine{00423\ \ \ \ \ \}}
+\DoxyCodeLine{00424\ }
+\DoxyCodeLine{00425\ \ \ \ \ \textcolor{comment}{/*change\ parameter*/}}
+\DoxyCodeLine{00426\ \ \ \ \ range\ =\ (getSpatialParamMax(spatialParams,\ ichg)\ -\/}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamMin(spatialParams,\ ichg));\ \ \textcolor{comment}{//\ range\ is\ the\ same\ for}}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ all\ locations}}
+\DoxyCodeLine{00429\ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ oldVal\ =\ getSpatialParam(spatialParams,\ ichg,\ currLoc);}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ pold[currLoc\ -\/\ thisFirstLoc]\ =\ oldVal;\ \ \textcolor{comment}{//\ remember\ old\ value}}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (accept\ ==\ 1)\ \{}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ haven't\ set\ accept\ to\ 0\ yet\ (if\ accept\ =\ 0\ already,\ don't\ bother}}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ setting\ new\ param.\ values)}}
+\DoxyCodeLine{00435\ }
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ pdelta\ is\ expressed\ as\ fraction\ of\ parameter's\ range}}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ pdelta\ =\ getSpatialParamKnob(spatialParams,\ ichg,\ currLoc);}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ padd\ =\ (rand()\ *\ 1.0\ /\ RAND\_MAX\ -\/\ 0.5)\ *\ pdelta\ *\ range;}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ new\ value\ will\ be\ oldVal\ +\ padd}}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (checkSpatialParam(spatialParams,\ ichg,\ oldVal\ +\ padd)\ ==}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ 0)\ \{\ \ \textcolor{comment}{//\ outside\ allowable\ range}}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ accept\ =\ 0;\ \textcolor{comment}{/*\ if\ new\ value\ is\ outside\ allowable\ range\ at\ any}}
+\DoxyCodeLine{00443\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ location,\ reject\ point\ (equivalent\ to\ making\ likelihood\ tiny)}}
+\DoxyCodeLine{00444\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ however,\ we'll\ continue\ the\ loop,\ because\ we\ need\ to\ fill\ pold}}
+\DoxyCodeLine{00445\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ vector\ in\ order\ to\ reset\ param.\ values\ later\ */}}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\ new\ value\ equal\ to\ oldVal\ +\ padd}}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \ \ setSpatialParam(spatialParams,\ ichg,\ currLoc,\ oldVal\ +\ padd);}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ accept\ ==\ 1}}
+\DoxyCodeLine{00451\ \ \ \ \ \}\ \ \textcolor{comment}{//\ for\ currLoc}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \ \ \textcolor{keywordflow}{if}\ (accept\ ==\ 1)\ \{}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \textcolor{comment}{//\ we're\ within\ allowable\ range\ at\ all\ locations;\ run}}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \textcolor{comment}{//\ model\ at\ all\ locations\ and\ check\ new\ total\ likelihood}}
+\DoxyCodeLine{00456\ }
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \textcolor{comment}{/*compute\ log-\/likelihood\ of\ new\ parameter\ set*/}}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ locIndex\ =\ currLoc\ -\/\ firstLoc;\ \ \textcolor{comment}{//\ index\ into\ arrays}}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ loglikely[locIndex]\ =}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ -\/1.0\ *\ (*likely)(sigma[locIndex],\ outputInfo[locIndex],\ currLoc,}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ spatialParams,\ paramWeight,\ model,\ dataTypeIndices,}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numDataTypes,\ costFunction,\ dataTypeWeights);}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ ltotnew\ =\ sumArray(loglikely,\ numLocs);}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \textcolor{comment}{//\ compare\ "{}new"{}\ likelihood\ to\ "{}max"{}\ likelihood\ and\ act}}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ltotnew\ >\ ltotmax)\ \{}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ ltotmax\ =\ ltotnew;}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ setAllSpatialParamBests(spatialParams,\ loc);\ \textcolor{comment}{/*\ set\ best\ equal\ to}}
+\DoxyCodeLine{00471\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\ value\ for\ all\ parameters\ if\ loc\ ==\ -\/1,\ this\ will\ set}}
+\DoxyCodeLine{00472\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bests\ at\ all\ locations\ */}}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \textcolor{comment}{/*\ compare\ new\ to\ old\ and\ accept\ or\ reject\ */}}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ltotnew\ >\ ltotold\ \ \textcolor{comment}{//\ standard\ check}}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ ||}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ note:\ anything\ but\ a\ scaleFactor\ of\ 1\ goes\ against\ theory}}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ randm()\ <\ scaleFactor\ *\ (ltotnew\ -\/\ ltotold))\ \{}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ accept\ =\ 1;}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ accept\ =\ 0;}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00484\ \ \ \ \ \}\ \ \textcolor{comment}{//\ end\ if\ (accept\ ==\ 1)}}
+\DoxyCodeLine{00485\ }
+\DoxyCodeLine{00486\ \ \ \ \ \textcolor{comment}{/*\ act\ on\ acceptance\ */}}
+\DoxyCodeLine{00487\ \ \ \ \ \textcolor{keywordflow}{if}\ (accept\ ==\ 1)\ \{}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \textcolor{comment}{/*\ update\ likelihoods\ */}}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ ltotold\ =\ ltotnew;}
+\DoxyCodeLine{00490\ }
+\DoxyCodeLine{00491\ \ \ \ \ \ \ yes++;\ \ \textcolor{comment}{//\ chalk\ up\ one\ more\ acceptance}}
+\DoxyCodeLine{00492\ }
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (converged\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ we\ haven't\ converged\ yet\ -\/\ twist\ knob}}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (equivalent\ to\ old\ pdelta)}}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ pdelta\ =\ getSpatialParamKnob(spatialParams,\ ichg,\ currLoc);}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ pdelta\ =\ pdelta\ *\ INC;\ \ \textcolor{comment}{//\ increase\ temperature}}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ used\ to\ prevent\ temperature\ from\ going\ above\ 1,\ but\ we\ no\ longer}}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ care\ about\ how\ big\ pdelta\ gets}}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ setSpatialParamKnob(spatialParams,\ ichg,\ currLoc,\ pdelta);}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (k\ >\ numSpinUps)\ \{\ \ \textcolor{comment}{//\ only\ write\ to\ history\ files\ if\ we\ have}}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ been\ converged\ for\ >\ numSpinUps\ steps}}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NOTE:\ I\ THINK\ WE\ SHOULD\ TECHNICALLY\ BE\ WRITING\ TO\ HIST\ FILE\ WHETHER}}
+\DoxyCodeLine{00505\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ WE\ ACCEPT\ OR\ REJECT\ IF\ WE\ REJECT,\ SHOULD\ RE-\/WRITE\ OLD\ POINT\ TO\ HIST}}
+\DoxyCodeLine{00506\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ FILE\ (WILL\ HAVE\ TO\ SAVE\ OLD\ LOGLIKELY,\ SIGMA,\ AND\ OUTPUTINFO)\ TO\ DO}}
+\DoxyCodeLine{00507\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ THIS,\ REMOVE\ THIS\ ELSE\ IF\ BLOCK,\ AND\ PUT\ IT\ IN\ AN\ IF\ (CONVERGED\ \&\&\ K}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ >\ NUMSPINUPS)\ BLOCK\ AFTER\ END\ OF\ ELSE\ (REJECTION)\ BLOCK\ */}}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \ \ locIndex\ =\ currLoc\ -\/\ firstLoc;}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ writeHistFile(histFiles[locIndex],\ loglikely[locIndex],}}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sigma[locIndex],\ outputInfo[locIndex],\ numDataTypes,\ spatialParams,}}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ currLoc);}}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ writeHistFileBin(histFiles[locIndex],\ loglikely[locIndex],}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sigma[locIndex],\ outputInfo[locIndex],\ numDataTypes,}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ spatialParams,\ currLoc);}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00519\ \ \ \ \ \}}
+\DoxyCodeLine{00520\ }
+\DoxyCodeLine{00521\ \ \ \ \ \textcolor{comment}{/*\ act\ on\ rejection\ */}}
+\DoxyCodeLine{00522\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \textcolor{comment}{/*\ return\ to\ "{}old"{}\ parameters\ */}}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ oldVal\ =\ pold[currLoc\ -\/\ thisFirstLoc];}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ setSpatialParam(spatialParams,\ ichg,\ currLoc,\ oldVal);\ \ \textcolor{comment}{//\ restore\ old}}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ value}}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00529\ }
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (converged\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ we\ haven't\ converged\ yet\ -\/\ twist\ knob}}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (equivalent\ to\ old\ pdelta)}}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ thisFirstLoc;\ currLoc\ <=\ thisLastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ pdelta\ =\ getSpatialParamKnob(spatialParams,\ ichg,\ currLoc);}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ pdelta\ =\ pdelta\ *\ DEC;\ \ \textcolor{comment}{//\ decrease\ temperature}}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pdelta\ <\ DBL\_EPSILON)\ \{}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ don't\ let\ temperature\ get\ too\ small}}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \ \ \ \ \ \ pdelta\ =\ DBL\_EPSILON;}
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ setSpatialParamKnob(spatialParams,\ ichg,\ currLoc,\ pdelta);}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ for\ (currLoc)}}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ (converged\ ==\ 0)}}
+\DoxyCodeLine{00542\ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ (rejection)}}
+\DoxyCodeLine{00543\ }
+\DoxyCodeLine{00544\ \ \ \ \ \textcolor{keywordflow}{if}\ (k\ \%\ numAtOnce\ ==\ 0)\ \{}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \textcolor{comment}{//\ we've\ run\ for\ numAtOnce\ iterations\ -\/\ time\ to\ output}}
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \textcolor{comment}{\ \ \ \ \ \ /**************screen\ output**********************/}}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)t\(\backslash\)t\(\backslash\)tITERATION\ \%6ld\(\backslash\)n"{}},\ k);}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)t\(\backslash\)t\(\backslash\)tFRACTION\ ACCEPTED\ \%3.2f\(\backslash\)n\(\backslash\)n"{}},}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yes\ *\ 1.0\ /\ numAtOnce);}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ writeChangeableParamInfo(spatialParams,\ loc,\ userOut);}
+\DoxyCodeLine{00552\ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)t\(\backslash\)tlTOT\(\backslash\)tnew=\ \%9.6f\(\backslash\)tmax=\ \%9.6f\(\backslash\)n"{}},\ ltotnew,}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ltotmax);}
+\DoxyCodeLine{00554\ }
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \textcolor{comment}{/*\ END\ SCREEN\ OUTPUT\ */}}
+\DoxyCodeLine{00556\ }
+\DoxyCodeLine{00557\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (converged\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ we\ haven't\ converged\ yet\ -\/\ check\ for}}
+\DoxyCodeLine{00558\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ convergence:}}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fabs(yes\ *\ 1.0\ /\ numAtOnce\ -\/\ A\_STAR)\ <\ THRESH)\ \{\ \ \textcolor{comment}{//\ we've}}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ newly-\/converged}}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ltotmax\ >=\ bestChainLtotmax)\ \{\ \ \textcolor{comment}{//\ this\ is\ the\ best\ chain\ we've}}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ found\ so\ far}}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ bestChainLtotmax\ =\ ltotmax;}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ write\ current\ info\ to\ file\ so\ we\ can\ restore\ it\ later:}}
+\DoxyCodeLine{00565\ \ \ \ \ \ \ \ \ \ \ \ \ writeChainInfo(chainInfo,\ ltotold,\ ltotmax,\ spatialParams,\ loc);}
+\DoxyCodeLine{00566\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)nBEST\ START\ CHAIN\ FOUND\ SO\ FAR:\ WRITING\ CHAIN\ "{}}}
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}INFO\ TO\ FILE\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00569\ }
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (chainNum\ <\ numChains)\ \{\ \ \textcolor{comment}{//\ reset\ for\ the\ next\ chain}}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ chainNum++;\ \ \textcolor{comment}{//\ move\ on\ to\ the\ next\ convergence\ chain}}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)nRESETTING\ FOR\ START\ CHAIN\ \%d\ of\ \%d\(\backslash\)n\(\backslash\)n"{}},}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ chainNum,\ numChains);}
+\DoxyCodeLine{00574\ \ \ \ \ \ \ \ \ \ \ \ \ reset(spatialParams,\ loglikely,\ \&ltotnew,\ \&ltotold,\ \&ltotmax,\ sigma,}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ outputInfo,\ loc,\ randomStart,\ addFraction,\ userOut,\ likely,}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ paramWeight,\ model,\ dataTypeIndices,\ numDataTypes,}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ costFunction,\ dataTypeWeights);}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00579\ }
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ chainNum\ >=\ numChains:\ we're\ done\ running\ start\ chains,}}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ time\ to\ read\ best\ from\ file}}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ converged\ =\ 1;}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)nCONVERGED\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{00584\ }
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ltotmax\ <\ bestChainLtotmax)\ \{\ \ \textcolor{comment}{//\ the\ most\ recent\ chain\ wasn't}}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ best:\ read\ best\ from\ file}}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ readChainInfo(chainInfo,\ \&ltotold,\ \&ltotmax,\ spatialParams,\ loc);}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)nREADING\ BEST\ CHAIN\ INFO\ FROM\ FILE:\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ writeChangeableParamInfo(spatialParams,\ loc,\ userOut);}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)t\(\backslash\)tlTOT\(\backslash\)told=\ \%9.6f\(\backslash\)tmax=\ \%9.6f\(\backslash\)n"{}},\ ltotold,}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ltotmax);}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00593\ }
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ most\ recent\ chain\ was\ the\ best:\ no\ need\ to\ read\ from\ file}}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(userOut,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)nKEEPING\ MOST\ RECENT\ START\ CHAIN\ INFO\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ end\ else\ done\ running\ start\ chains}}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ k\ =\ 0;\ \ \textcolor{comment}{//\ start\ count\ over\ so\ we\ run\ for\ another\ estSteps\ steps}}
+\DoxyCodeLine{00601\ }
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ NOTE:\ could\ do\ a\ couple\ tests\ here:}}
+\DoxyCodeLine{00603\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ 1)\ halve\ all\ param.\ temperatures\ (i.e.\ knobs)\ after\ convergence}}
+\DoxyCodeLine{00604\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ 2)\ set\ current\ point\ to\ be\ best\ point\ after\ convergence}}
+\DoxyCodeLine{00605\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00606\ }
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ end\ if\ we've\ newly-\/converged}}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ end\ if\ (converged\ ==\ 0)}}
+\DoxyCodeLine{00609\ }
+\DoxyCodeLine{00610\ \ \ \ \ \ \ yes\ =\ 0;}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \ \ \ \ \}\ \ \textcolor{comment}{//\ end\ if\ (k\ \%\ numAtOnce\ ==\ 0)}}
+\DoxyCodeLine{00613\ }
+\DoxyCodeLine{00614\ \ \ \ \ k++;}
+\DoxyCodeLine{00615\ \ \ \}\ \ \textcolor{comment}{//\ end\ metropolis\ ESTSTEP\ loop}}
+\DoxyCodeLine{00616\ }
+\DoxyCodeLine{00617\ \ \ \textcolor{comment}{/*\ NOTE:\ may\ want\ to\ print\ (to\ file)\ some\ measure\ of\ best\ point\ here}}
+\DoxyCodeLine{00618\ \textcolor{comment}{\ \ \ \ \ (e.g.\ ltotmax;\ may\ even\ want\ to\ print\ outputInfo\ of\ best\ point,\ which\ would}}
+\DoxyCodeLine{00619\ \textcolor{comment}{\ \ \ \ \ be\ more\ easily\ done\ in\ metropolis\ loop,\ re-\/writing\ best\ file\ each\ time\ we}}
+\DoxyCodeLine{00620\ \textcolor{comment}{\ \ \ \ \ find\ a\ new\ best\ point)}}
+\DoxyCodeLine{00621\ \textcolor{comment}{\ \ */}}
+\DoxyCodeLine{00622\ }
+\DoxyCodeLine{00623\ \ \ \textcolor{comment}{//\ close\ files,\ free\ dynamically-\/allocated\ pointers:}}
+\DoxyCodeLine{00624\ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00625\ \ \ \ \ fclose(histFiles[currLoc\ -\/\ firstLoc]);}
+\DoxyCodeLine{00626\ \ \ \}}
+\DoxyCodeLine{00627\ \ \ free(histFiles);}
+\DoxyCodeLine{00628\ \ \ free(pold);}
+\DoxyCodeLine{00629\ \ \ free(loglikely);}
+\DoxyCodeLine{00630\ \ \ free2DArray((\textcolor{keywordtype}{void}\ **)sigma);}
+\DoxyCodeLine{00631\ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00632\ \ \ \ \ freeOutputInfo(outputInfo[currLoc\ -\/\ firstLoc],\ numDataTypes);}
+\DoxyCodeLine{00633\ \ \ \}}
+\DoxyCodeLine{00634\ \ \ free(outputInfo);}
+\DoxyCodeLine{00635\ \}}
+
+\end{DoxyCode}

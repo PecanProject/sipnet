@@ -1,0 +1,69 @@
+\doxysection{modis\+FPARqc.\+m}
+\label{modis_f_p_a_rqc_8m_source}\index{modisFPARqc.m@{modisFPARqc.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ vQC=modisFPARqc(v)}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \%\ Author:\ AB,\ JZ}
+\DoxyCodeLine{00004\ \%\ Modified:\ 11/13/09}
+\DoxyCodeLine{00005\ \%\ Purpose:\ Graph\ Quality\ Control}
+\DoxyCodeLine{00006\ \%\ \ \ \ \ \ \ \ \ \ AB\ notebook\ has\ the\ notes\ on\ what\ the\ different\ codes\ mean}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \%\%\%\ Depending\ on\ the\ flag\ of\ the\ modis\ data\ the\ quality\ of\ the\ measurement\ is\ reduced}
+\DoxyCodeLine{00009\ \%\%\%\ on\ the\ condition\ by\ a\ multiplicative\ factor.}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \%\%\%\ Size\ of\ desired\ target\ matrix}
+\DoxyCodeLine{00012\ numRows=length(v);}
+\DoxyCodeLine{00013\ numCols=length(v\{1\});}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ }
+\DoxyCodeLine{00018\ v=char(v);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Reshape\ into\ an\ array\ -\/-\/\ it\ goes\ timestep\ by\ timestep,\ so\ the\ first\ 49\ rows\ are\ the\ pixels\ from\ time\ 1,\ etc}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \%\%\%\ input\ is\ a\ cell\ matrix}
+\DoxyCodeLine{00021\ \ vQC=ones(length(v),1);}
+\DoxyCodeLine{00022\ \ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \%\%\%\ Test\ to\ see\ \textcolor{keywordflow}{if}\ good\ quality\ by\ checking\ 1st\ bit}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,1:2))==1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'good\ quality'}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ vQC(index)=0.8.*vQC(index);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Reduce\ factor,\ but\ not\ completely}
+\DoxyCodeLine{00028\ \ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,1:2))==2);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'not\ produced,\ cloud'}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ vQC(index)=0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Not\ acceptable\ data}
+\DoxyCodeLine{00031\ \ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,1:2))==3);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'not\ able\ to\ produce'}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ vQC(index)=0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Not\ acceptable\ data}
+\DoxyCodeLine{00034\ \ }
+\DoxyCodeLine{00035\ \ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \%\%\%\ Test\ snow\_ice}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,3))==1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'significant\ snow\ detected'}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ vQC(index)=0.5.*vQC(index);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00039\ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \%\%\%\ Test\ aerosol}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,4))==1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'med\ or\ hi\ aerosol\ on\ pixel'}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ vQC(index)=0.5.*vQC(index);}
+\DoxyCodeLine{00043\ \ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \%\%\%\ Test\ cirrus\ clouds}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,5))==1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'cirrus\ clouds\ present'}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ vQC(index)=0.5.*vQC(index);}
+\DoxyCodeLine{00047\ \ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \%\%\%\ Test\ adjacent\ clouds}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,6))==1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'adjacent\ clouds\ detected'}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ vQC(index)=0.5.*vQC(index);}
+\DoxyCodeLine{00051\ \ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \%\%\%\ Test\ cloud\ shadow}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,7))==1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'cloud\ shadow\ detected'}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ vQC(index)=0.5.*vQC(index);}
+\DoxyCodeLine{00055\ \ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \%\%\%\ Test\ user\ mask}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ index=find(bin2dec(v(:,8))==1);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Termed\ \textcolor{stringliteral}{'user\ mask\ bit-\/set'}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ vQC(index)=0;}
+\DoxyCodeLine{00059\ \ }
+\DoxyCodeLine{00060\ \%\%\%\ Reshape\ into\ target\ matrix}
+\DoxyCodeLine{00061\ vQC=reshape(vQC,numCols,numRows);\ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Do\ the\ opposite\ way\ and\ then\ transpose}
+\DoxyCodeLine{00062\ vQC=vQC\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00063\ \textcolor{stringliteral}{\ endfunction}}
+
+\end{DoxyCode}

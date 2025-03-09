@@ -1,0 +1,161 @@
+\doxysection{snow\+Validate.\+m File Reference}
+\label{snow_validate_8m}\index{snowValidate.m@{snowValidate.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ curr\+Valid\+Indices} (\textbf{ snow\+Pre\+Melt})=0
+\item 
+\textbf{ curr\+Valid\+Indices} (\textbf{ snow\+Winter})=0
+\item 
+\textbf{ valid\+Indices} (\textbf{ index})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ valid\+Indices}
+\item 
+function \textbf{ Purpose}
+\item 
+\textbf{ snow\+End} =[117
+\item 
+\textbf{ snow\+Start} =[337
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ curr\+Day\+Of\+Year} =\textbf{ day\+Of\+Year}(\textbf{ index})
+\item 
+\textbf{ curr\+Valid\+Indices} =\textbf{ valid\+Indices}(\textbf{ index})
+\item 
+\textbf{ snow\+Pre\+Melt} =\textbf{ find}(\textbf{ curr\+Day\+Of\+Year} $<$ \textbf{ snow\+End}(i))
+\item 
+\textbf{ snow\+Winter} =\textbf{ find}(\textbf{ curr\+Day\+Of\+Year} $>$ \textbf{ snow\+Start}(i))
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{snow_validate_8m_add2dd4d8aeb077fc79dab591640bf74d} 
+\index{snowValidate.m@{snowValidate.m}!currValidIndices@{currValidIndices}}
+\index{currValidIndices@{currValidIndices}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{currValidIndices()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily curr\+Valid\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ snow\+Pre\+Melt}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+\label{snow_validate_8m_a6f00dd89898655c2c51ca838d90a9900} 
+\index{snowValidate.m@{snowValidate.m}!currValidIndices@{currValidIndices}}
+\index{currValidIndices@{currValidIndices}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{currValidIndices()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily curr\+Valid\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ snow\+Winter}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+\label{snow_validate_8m_a33d3e3df9212346cfcc62867d0f9d643} 
+\index{snowValidate.m@{snowValidate.m}!validIndices@{validIndices}}
+\index{validIndices@{validIndices}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{validIndices()}
+{\footnotesize\ttfamily valid\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ index}}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{snow_validate_8m_a0d8aba83eb61784b405ea07b1935a17b} 
+\index{snowValidate.m@{snowValidate.m}!currDayOfYear@{currDayOfYear}}
+\index{currDayOfYear@{currDayOfYear}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{currDayOfYear}
+{\footnotesize\ttfamily curr\+Day\+Of\+Year =\textbf{ day\+Of\+Year}(\textbf{ index})}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_a58e8ae020cb6d87082fe9233de90cb60} 
+\index{snowValidate.m@{snowValidate.m}!currValidIndices@{currValidIndices}}
+\index{currValidIndices@{currValidIndices}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{currValidIndices}
+{\footnotesize\ttfamily curr\+Valid\+Indices =\textbf{ valid\+Indices}(\textbf{ index})}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_a6f6ccfcf58b31cb6412107d9d5281426} 
+\index{snowValidate.m@{snowValidate.m}!i@{i}}
+\index{i@{i}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:length(yearVector)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ index=find(yearVector(i)==year)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 27} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_a6740654192ad71dd4f663f11a6b50669} 
+\index{snowValidate.m@{snowValidate.m}!Purpose@{Purpose}}
+\index{Purpose@{Purpose}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{Purpose}
+{\footnotesize\ttfamily function Purpose}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_a03eed14e96d3a801f68b778f60d98e33} 
+\index{snowValidate.m@{snowValidate.m}!snowEnd@{snowEnd}}
+\index{snowEnd@{snowEnd}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{snowEnd}
+{\footnotesize\ttfamily snow\+End =[117}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_a0a2f9a76cc7740120939c1fb6bb23599} 
+\index{snowValidate.m@{snowValidate.m}!snowPreMelt@{snowPreMelt}}
+\index{snowPreMelt@{snowPreMelt}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{snowPreMelt}
+{\footnotesize\ttfamily snow\+Pre\+Melt =\textbf{ find}(\textbf{ curr\+Day\+Of\+Year} $<$ \textbf{ snow\+End}(i))}
+
+
+
+Definition at line \textbf{ 34} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_a133c416f85d195906272d9c26b650f35} 
+\index{snowValidate.m@{snowValidate.m}!snowStart@{snowStart}}
+\index{snowStart@{snowStart}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{snowStart}
+{\footnotesize\ttfamily snow\+Start =[337}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_a23e1c03c0866035cfd556dc7bada3d31} 
+\index{snowValidate.m@{snowValidate.m}!snowWinter@{snowWinter}}
+\index{snowWinter@{snowWinter}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{snowWinter}
+{\footnotesize\ttfamily snow\+Winter =\textbf{ find}(\textbf{ curr\+Day\+Of\+Year} $>$ \textbf{ snow\+Start}(i))}
+
+
+
+Definition at line \textbf{ 35} of file \textbf{ snow\+Validate.\+m}.
+
+\label{snow_validate_8m_abfc18f7f3dd1a4cd7086ac5f6aa36c43} 
+\index{snowValidate.m@{snowValidate.m}!validIndices@{validIndices}}
+\index{validIndices@{validIndices}!snowValidate.m@{snowValidate.m}}
+\doxysubsubsection{validIndices}
+{\footnotesize\ttfamily function valid\+Indices}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=snowValidate(year,dayOfYear,validIndices)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\%\ Author:\ JMZ}
+\DoxyCodeLine{\%\ Created:\ June\ 17}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ snow\+Validate.\+m}.
+

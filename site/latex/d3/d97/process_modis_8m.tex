@@ -1,0 +1,615 @@
+\doxysection{process\+Modis.\+m File Reference}
+\label{process_modis_8m}\index{processModis.m@{processModis.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ process\+Modis} \textbf{ average} \textbf{ it} (\textbf{ with} \textbf{ QC}) and \textbf{ write} it \textbf{ out} \textbf{ to} a \textbf{ MODIS} \textbf{ file} \%\%\% \textbf{ Essentially} \textbf{ the} \textbf{ same} \textbf{ file} \textbf{ as} \textbf{ file\+Read.\+m}
+\item 
+\textbf{ The} first \textbf{ one} is a \textbf{ headerline} \textbf{ while} (\textbf{ test1$\sim$}=-\/1) \textbf{ test1}
+\item 
+\textbf{ Restart} \textbf{ back} \textbf{ from} \textbf{ the} \textbf{ beginning} \textbf{ frewind} (\textbf{ fid})
+\item 
+\textbf{ year\+Modis} (i)
+\item 
+\textbf{ decday\+Modis} (i)
+\item 
+\textbf{ Fpar\+\_\+1km} (i,\+:)
+\item 
+\textbf{ Fpar\+Std\+Dev\+\_\+1km} (i,\+:)
+\item 
+\textbf{ end} \textbf{ fclose} (\textbf{ fid})
+\item 
+\textbf{ Replace} \textbf{ any} of \textbf{ the} \textbf{ std\+Dev} \textbf{ with} \textbf{ Nan} (2.\+48=248 is a \textbf{ bit} \textbf{ code} \textbf{ saying} \textbf{ that} \textbf{ it} \textbf{ couldn} \textquotesingle{}\textbf{ t} \textbf{ be} \textbf{ determined}) \%\%\% \textbf{ See} \textbf{ NASA} \textbf{ MOD15\+A2} \textbf{ page} \textbf{ for} \textbf{ more} \textbf{ details} \textbf{ index}
+\item 
+\textbf{ Fpar\+Std\+Dev\+\_\+1km} (\textbf{ index})
+\item 
+\textbf{ report} \textbf{ back} \textbf{ the} \textbf{ absolute} \textbf{ difference} of \textbf{ pixel} \textbf{ to} \textbf{ pixel} \textbf{ variation} \textbf{ mean} (\textbf{ diff\+Fpar}) \textbf{ std}(\textbf{ diff\+Fpar}) \%\%\% \textbf{ Mask} \textbf{ the} \textbf{ QC} \textbf{ when} \textbf{ there} is snow \textbf{ avg\+Fpar\+Extra\+\_\+\+QCsnow\+Mask}
+\item 
+\textbf{ dlmwrite} (\textquotesingle{}\textbf{ modis\+Data.\+txt}\textquotesingle{}, data, \textquotesingle{}\textbf{ delimiter}\textquotesingle{}, \textquotesingle{} \textquotesingle{}, \textquotesingle{}\textbf{ precision}\textquotesingle{}, \textquotesingle{}\%8.\+3\textbf{ f}\textquotesingle{})
+\item 
+length(\textbf{ time\+Compare} \textbf{ col} ()
+\item 
+\textbf{ Go} \textbf{ with} \textbf{ the} \textbf{ beginning} of \textbf{ timestep} \textbf{ if} \textbf{ isempty} (\textbf{ curr\+Index})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ process\+Modis} \textbf{ Author}
+\item 
+function \textbf{ process\+Modis} \textbf{ average} \textbf{ but} \textbf{ only} \textbf{ has} \textbf{ the} \textbf{ MODIS} \textbf{ part} and \textbf{ not} \textbf{ SIPNET} data \textbf{ Also} \textbf{ writes} \textbf{ out} \textbf{ the} \textbf{ f\+APAR} \textbf{ std} \textbf{ dev} \textbf{ for} \textbf{ analysis} \textbf{ Also} \textbf{ masks} \textbf{ the} \textbf{ QC} \textbf{ variable} \textbf{ for} \textbf{ when} \textbf{ there} is snow \textbf{ Helpful} \textbf{ doc}
+\item 
+\textbf{ out\+Val} =\textbf{ dlmread}(\textbf{ file\+Name},\textquotesingle{},\textquotesingle{})
+\item 
+\textbf{ fid} =\textbf{ fopen}(\textbf{ file\+Name})
+\item 
+\textbf{ count} = 0
+\item 
+\textbf{ Loop} \textbf{ through} \textbf{ to} \textbf{ get} \textbf{ the} \textbf{ size} of \textbf{ things} \textbf{ test1} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ Subtract} \textbf{ one} \textbf{ for} \textbf{ the} \textbf{ last} \textbf{ value} \textbf{ Allocate} \textbf{ memory} \textbf{ for} \textbf{ matrices} \textbf{ num\+Total} = \textbf{ count}/6
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} \textbf{ LAIqc}
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} \textbf{ fpar\+Qc}
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} \textbf{ measurements}
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} and \textbf{ their} \textbf{ std} \textbf{ deviation} \textbf{ decday\+Modis} =\textbf{ zeros}(\textbf{ num\+Total},1)
+\item 
+\textbf{ year\+Modis} =\textbf{ zeros}(\textbf{ num\+Total},1)
+\item 
+\textbf{ Fpar\+\_\+1km} =\textbf{ zeros}(\textbf{ num\+Total},49)
+\item 
+\textbf{ Fpar\+Std\+Dev\+\_\+1km} =\textbf{ zeros}(\textbf{ num\+Total},49)
+\item 
+\textbf{ Fpar\+Extra\+\_\+\+QC\+\_\+cellstr} =\textbf{ cellstr}(\textbf{ char}(\textbf{ zeros}(\textbf{ num\+Total},1)))
+\item 
+\textbf{ The} first \textbf{ one} is a \textbf{ headerline} \textbf{ loop} \textbf{ through} \textbf{ until} \textbf{ we} are \textbf{ done} \textbf{ for} \textbf{ i}
+\item 
+\textbf{ string\+Fpar\+Lai\+\_\+\+QC} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Fpar\+Std\+Dev\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Fpar\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Lai\+Std\+Dev\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Lai\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ Tokenize} \textbf{ the} \textbf{ strings} [\textbf{ time\+Out}, \textbf{ element\+Name}, \textbf{ pixel\+Fpar\+\_\+\+QC}] =\textbf{ modis\+Tokenize\+String}(\textbf{ string\+Fpar\+Extra\+\_\+\+QC})
+\item 
+\textbf{ year\+In} =\textbf{ floor}(\textbf{ time\+Out}/10$^\wedge$3)
+\item 
+\textbf{ day\+In} = \textbf{ rem}(\textbf{ time\+Out},1000)
+\item 
+\textbf{ Fpar\+Result} =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar}))./100
+\item 
+\textbf{ Divide} \textbf{ by} \textbf{ to} \textbf{ get} a \textbf{ result}
+\item 
+\textbf{ Fpar\+Std\+Dev\+Result} =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar\+Std\+Dev}))./100
+\item 
+\textbf{ Do} \textbf{ the} \textbf{ QC} on \textbf{ the} data \textbf{ Fpar\+Extra\+\_\+\+QC} =\textbf{ modis\+FPARqc}(\textbf{ Fpar\+Extra\+\_\+\+QC\+\_\+cellstr})
+\item 
+\textbf{ Average} \textbf{ the} data \textbf{ according} \textbf{ to} \textbf{ the} \textbf{ pixels} \textbf{ tower\+Pixels} =[17 18 19 24 25 26 31 32 33]
+\item 
+\textbf{ avg\+Fpar\+Std\+Dev\+\_\+1km} =\textbf{ grid\+Average}(\textbf{ Fpar\+Std\+Dev\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})
+\item 
+\textbf{ avg\+Fpar\+\_\+1km} =\textbf{ grid\+Average}(\textbf{ Fpar\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})
+\item 
+\textbf{ avg\+Fpar\+Extra\+\_\+\+QC} =\textbf{ grid\+Average}(\textbf{ Fpar\+Extra\+\_\+\+QC},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})
+\item 
+\textbf{ Report} \textbf{ the} \textbf{ pixel} \textbf{ to} \textbf{ pixel} \textbf{ variation} \textbf{ tower\+Fpar\+\_\+1km} =\textbf{ Fpar\+\_\+1km}(\+:,\textbf{ tower\+Pixels})
+\item 
+\textbf{ diff\+Fpar} =\textbf{ tower\+Fpar\+\_\+1km}-\/\textbf{ repmat}(\textbf{ avg\+Fpar\+\_\+1km},1,9)
+\item 
+\textbf{ Export} \textbf{ results} \textbf{ to} a data \textbf{ file} \textbf{ data} =[ \textbf{ year\+Modis} \textbf{ decday\+Modis} \textbf{ avg\+Fpar\+\_\+1km} \textbf{ avg\+Fpar\+Std\+Dev\+\_\+1km} \textbf{ avg\+Fpar\+Extra\+\_\+\+QC} \textbf{ avg\+Fpar\+Extra\+\_\+\+QCsnow\+Mask}]
+\item 
+function \textbf{ data\+Out}
+\item 
+\textbf{ if} \textbf{ index\+Flag}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{process_modis_8m_a4b1029b61b1dbec36654d80e4133cf49} 
+\index{processModis.m@{processModis.m}!col@{col}}
+\index{col@{col}!processModis.m@{processModis.m}}
+\doxysubsubsection{col()}
+{\footnotesize\ttfamily length(\textbf{ time\+Compare} col (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ grid\+Average.\+m}.
+
+\label{process_modis_8m_aca328f66426a2ebd58fbbac7b924ad5c} 
+\index{processModis.m@{processModis.m}!decdayModis@{decdayModis}}
+\index{decdayModis@{decdayModis}!processModis.m@{processModis.m}}
+\doxysubsubsection{decdayModis()}
+{\footnotesize\ttfamily decday\+Modis (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a447243ae3b81405da5363c60cb464acd} 
+\index{processModis.m@{processModis.m}!dlmwrite@{dlmwrite}}
+\index{dlmwrite@{dlmwrite}!processModis.m@{processModis.m}}
+\doxysubsubsection{dlmwrite()}
+{\footnotesize\ttfamily dlmwrite (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ modis\+Data.\+txt}\textquotesingle{}}]{,  }\item[{data}]{,  }\item[{\textquotesingle{}\textbf{ delimiter}\textquotesingle{}}]{,  }\item[{\textquotesingle{} \textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ precision}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\%8.\+3\textbf{ f}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a5f84f51058cdb4f43c29d2c875659f42} 
+\index{processModis.m@{processModis.m}!fclose@{fclose}}
+\index{fclose@{fclose}!processModis.m@{processModis.m}}
+\doxysubsubsection{fclose()}
+{\footnotesize\ttfamily \textbf{ end} fclose (\begin{DoxyParamCaption}\item[{\textbf{ fid}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a658180c734f0e671a0f3da1156b10d1b} 
+\index{processModis.m@{processModis.m}!Fpar\_1km@{Fpar\_1km}}
+\index{Fpar\_1km@{Fpar\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{Fpar\_1km()}
+{\footnotesize\ttfamily Fpar\+\_\+1km (\begin{DoxyParamCaption}\item[{i}]{,  }\item[{\+:}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a7dd1ed3b9e178f8379218ccf84b646ac} 
+\index{processModis.m@{processModis.m}!FparStdDev\_1km@{FparStdDev\_1km}}
+\index{FparStdDev\_1km@{FparStdDev\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{FparStdDev\_1km()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Fpar\+Std\+Dev\+\_\+1km (\begin{DoxyParamCaption}\item[{i}]{,  }\item[{\+:}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a60d14f0d51c887f3db80803c32b550f0} 
+\index{processModis.m@{processModis.m}!FparStdDev\_1km@{FparStdDev\_1km}}
+\index{FparStdDev\_1km@{FparStdDev\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{FparStdDev\_1km()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Fpar\+Std\+Dev\+\_\+1km (\begin{DoxyParamCaption}\item[{\textbf{ index}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_afdab91c8ead096de007899dbb2434986} 
+\index{processModis.m@{processModis.m}!frewind@{frewind}}
+\index{frewind@{frewind}!processModis.m@{processModis.m}}
+\doxysubsubsection{frewind()}
+{\footnotesize\ttfamily \textbf{ Restart} \textbf{ back} \textbf{ from} \textbf{ the} \textbf{ beginning} frewind (\begin{DoxyParamCaption}\item[{\textbf{ fid}}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ first}.
+
+\label{process_modis_8m_a66de73cf04159d4aded2de5ffdb86e7e} 
+\index{processModis.m@{processModis.m}!isempty@{isempty}}
+\index{isempty@{isempty}!processModis.m@{processModis.m}}
+\doxysubsubsection{isempty()}
+{\footnotesize\ttfamily \textbf{ Go} \textbf{ with} \textbf{ the} \textbf{ beginning} of \textbf{ timestep} \textbf{ if} isempty (\begin{DoxyParamCaption}\item[{\textbf{ curr\+Index}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a4eade17f9ad6b4c427bdc694245ea53f} 
+\index{processModis.m@{processModis.m}!it@{it}}
+\index{it@{it}!processModis.m@{processModis.m}}
+\doxysubsubsection{it()}
+{\footnotesize\ttfamily function \textbf{ process\+Modis} \textbf{ average} it (\begin{DoxyParamCaption}\item[{\textbf{ with}}]{QC }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ and}.
+
+\label{process_modis_8m_ad612346523d720bbc9899b0c33372a4c} 
+\index{processModis.m@{processModis.m}!mean@{mean}}
+\index{mean@{mean}!processModis.m@{processModis.m}}
+\doxysubsubsection{mean()}
+{\footnotesize\ttfamily \textbf{ report} \textbf{ back} \textbf{ the} \textbf{ absolute} \textbf{ difference} of \textbf{ pixel} \textbf{ to} \textbf{ pixel} \textbf{ variation} mean (\begin{DoxyParamCaption}\item[{\textbf{ diff\+Fpar}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a32c9fdfdaf509aadca51f505f4f615b7} 
+\index{processModis.m@{processModis.m}!Nan@{Nan}}
+\index{Nan@{Nan}!processModis.m@{processModis.m}}
+\doxysubsubsection{Nan()}
+{\footnotesize\ttfamily \textbf{ Replace} \textbf{ any} of \textbf{ the} \textbf{ std\+Dev} \textbf{ with} Nan (\begin{DoxyParamCaption}\item[{2.}]{48 = {\ttfamily 248~is~a~\textbf{ bit}~\textbf{ code}~\textbf{ saying}~\textbf{ that}~\textbf{ it}~\textbf{ couldn}~\textquotesingle{}\textbf{ t}~\textbf{ be}~\textbf{ determined}} }\end{DoxyParamCaption})}
+
+\label{process_modis_8m_a9dba6bcb2e6f3dc49d7f4dacc7b7c5f1} 
+\index{processModis.m@{processModis.m}!while@{while}}
+\index{while@{while}!processModis.m@{processModis.m}}
+\doxysubsubsection{while()}
+{\footnotesize\ttfamily \textbf{ The} first \textbf{ one} is a \textbf{ headerline} while (\begin{DoxyParamCaption}\item[{\textbf{ test1$\sim$}}]{ = {\ttfamily -\/1} }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ first}.
+
+\label{process_modis_8m_a9d8a40bc4fd9a59e3738564d076b1e06} 
+\index{processModis.m@{processModis.m}!yearModis@{yearModis}}
+\index{yearModis@{yearModis}!processModis.m@{processModis.m}}
+\doxysubsubsection{yearModis()}
+{\footnotesize\ttfamily year\+Modis (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{process_modis_8m_a9efd34bbeb1ae806dfe478121767081e} 
+\index{processModis.m@{processModis.m}!Author@{Author}}
+\index{Author@{Author}!processModis.m@{processModis.m}}
+\doxysubsubsection{Author}
+{\footnotesize\ttfamily function \textbf{ process\+Modis} Author}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a949e077720f0d2d52f083d1e0cc44426} 
+\index{processModis.m@{processModis.m}!avgFpar\_1km@{avgFpar\_1km}}
+\index{avgFpar\_1km@{avgFpar\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{avgFpar\_1km}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ Make} \textbf{ them} into \textbf{ big} \textbf{ long} vectors corresponding \textbf{ to} \textbf{ the} \textbf{ time} avg\+Fpar\+\_\+1km =\textbf{ grid\+Average}(\textbf{ Fpar\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})}
+
+
+
+Definition at line \textbf{ 97} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_aa21d26a47b69adf5d7aafde211e9b9e0} 
+\index{processModis.m@{processModis.m}!avgFparExtra\_QC@{avgFparExtra\_QC}}
+\index{avgFparExtra\_QC@{avgFparExtra\_QC}!processModis.m@{processModis.m}}
+\doxysubsubsection{avgFparExtra\_QC}
+{\footnotesize\ttfamily avg\+Fpar\+Extra\+\_\+\+QC =\textbf{ grid\+Average}(\textbf{ Fpar\+Extra\+\_\+\+QC},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a1811ea1f94256041cb4f2bd850c638f5} 
+\index{processModis.m@{processModis.m}!avgFparStdDev\_1km@{avgFparStdDev\_1km}}
+\index{avgFparStdDev\_1km@{avgFparStdDev\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{avgFparStdDev\_1km}
+{\footnotesize\ttfamily avg\+Fpar\+Std\+Dev\+\_\+1km =\textbf{ grid\+Average}(\textbf{ Fpar\+Std\+Dev\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})}
+
+
+
+Definition at line \textbf{ 96} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ae11b3deb3de3df7dc48e439074023e35} 
+\index{processModis.m@{processModis.m}!count@{count}}
+\index{count@{count}!processModis.m@{processModis.m}}
+\doxysubsubsection{count}
+{\footnotesize\ttfamily count = 0}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ process\+Modis.\+m}.
+
+
+
+Referenced by \textbf{ parse\+Spd\+Value()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+File\+For\+Agg()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+\label{process_modis_8m_ac965b34ae0b43e82cade41684663d43e} 
+\index{processModis.m@{processModis.m}!data@{data}}
+\index{data@{data}!processModis.m@{processModis.m}}
+\doxysubsubsection{data}
+{\footnotesize\ttfamily \textbf{ Export} \textbf{ results} \textbf{ to} a data \textbf{ file} data =[ \textbf{ year\+Modis} \textbf{ decday\+Modis} \textbf{ avg\+Fpar\+\_\+1km} \textbf{ avg\+Fpar\+Std\+Dev\+\_\+1km} \textbf{ avg\+Fpar\+Extra\+\_\+\+QC} \textbf{ avg\+Fpar\+Extra\+\_\+\+QCsnow\+Mask}]}
+
+
+
+Definition at line \textbf{ 116} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a2e5e57837d85edd2b32a66f8b69f8e34} 
+\index{processModis.m@{processModis.m}!dataOut@{dataOut}}
+\index{dataOut@{dataOut}!processModis.m@{processModis.m}}
+\doxysubsubsection{dataOut}
+{\footnotesize\ttfamily function data\+Out}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=dataMake(timeIn,dataIn,timeCompare,indexFlag)}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \%\%\%\ yearIn\ will\ be\ a\ smaller\ vector\ than\ yearCompare}
+\DoxyCodeLine{\ \ \ }
+\DoxyCodeLine{\ \ \ \ [row,col]=size(dataIn)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 135} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_afe1af29cfe172fac020ba8fb58366c4d} 
+\index{processModis.m@{processModis.m}!dayIn@{dayIn}}
+\index{dayIn@{dayIn}!processModis.m@{processModis.m}}
+\doxysubsubsection{dayIn}
+{\footnotesize\ttfamily day\+In = \textbf{ rem}(\textbf{ time\+Out},1000)}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ac7fbbc298223a0b3f0e4abd610f40d5d} 
+\index{processModis.m@{processModis.m}!decdayModis@{decdayModis}}
+\index{decdayModis@{decdayModis}!processModis.m@{processModis.m}}
+\doxysubsubsection{decdayModis}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} and \textbf{ their} \textbf{ std} \textbf{ deviation} decday\+Modis =\textbf{ zeros}(\textbf{ num\+Total},1)}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ae4a22768960339758103b52c1a560b8b} 
+\index{processModis.m@{processModis.m}!diffFpar@{diffFpar}}
+\index{diffFpar@{diffFpar}!processModis.m@{processModis.m}}
+\doxysubsubsection{diffFpar}
+{\footnotesize\ttfamily diff\+Fpar =\textbf{ tower\+Fpar\+\_\+1km}-\/\textbf{ repmat}(\textbf{ avg\+Fpar\+\_\+1km},1,9)}
+
+
+
+Definition at line \textbf{ 103} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a39ad225d43471de78ee6aa5215f5c69c} 
+\index{processModis.m@{processModis.m}!doc@{doc}}
+\index{doc@{doc}!processModis.m@{processModis.m}}
+\doxysubsubsection{doc}
+{\footnotesize\ttfamily function \textbf{ process\+Modis} \textbf{ average} \textbf{ but} \textbf{ only} \textbf{ has} \textbf{ the} \textbf{ MODIS} \textbf{ part} and \textbf{ not} \textbf{ SIPNET} data \textbf{ Also} \textbf{ writes} \textbf{ out} \textbf{ the} \textbf{ f\+APAR} \textbf{ std} \textbf{ dev} \textbf{ for} \textbf{ analysis} \textbf{ Also} \textbf{ masks} \textbf{ the} \textbf{ QC} \textbf{ variable} \textbf{ for} \textbf{ when} \textbf{ there} is snow \textbf{ Helpful} doc}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ae9011d40c6f13e68e6f07156e0da7c5d} 
+\index{processModis.m@{processModis.m}!fid@{fid}}
+\index{fid@{fid}!processModis.m@{processModis.m}}
+\doxysubsubsection{fid}
+{\footnotesize\ttfamily fid =\textbf{ fopen}(\textbf{ file\+Name})}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_adf2084a3cfabc550e716c39256b59bc3} 
+\index{processModis.m@{processModis.m}!Fpar\_1km@{Fpar\_1km}}
+\index{Fpar\_1km@{Fpar\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{Fpar\_1km}
+{\footnotesize\ttfamily Fpar\+\_\+1km =\textbf{ zeros}(\textbf{ num\+Total},49)}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a1e819df295f8c34b8c1821cfbbeb2c0a} 
+\index{processModis.m@{processModis.m}!FparExtra\_QC@{FparExtra\_QC}}
+\index{FparExtra\_QC@{FparExtra\_QC}!processModis.m@{processModis.m}}
+\doxysubsubsection{FparExtra\_QC}
+{\footnotesize\ttfamily \textbf{ Do} \textbf{ the} \textbf{ QC} on \textbf{ the} data Fpar\+Extra\+\_\+\+QC =\textbf{ modis\+FPARqc}(\textbf{ Fpar\+Extra\+\_\+\+QC\+\_\+cellstr})}
+
+
+
+Definition at line \textbf{ 85} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ac27c10fb1b422e6bc1a6cef08ee00704} 
+\index{processModis.m@{processModis.m}!FparExtra\_QC\_cellstr@{FparExtra\_QC\_cellstr}}
+\index{FparExtra\_QC\_cellstr@{FparExtra\_QC\_cellstr}!processModis.m@{processModis.m}}
+\doxysubsubsection{FparExtra\_QC\_cellstr}
+{\footnotesize\ttfamily Fpar\+Extra\+\_\+\+QC\+\_\+cellstr =\textbf{ cellstr}(\textbf{ char}(\textbf{ zeros}(\textbf{ num\+Total},1)))}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_af05407e2048e785cbbc27b873b2bfcd4} 
+\index{processModis.m@{processModis.m}!fparQc@{fparQc}}
+\index{fparQc@{fparQc}!processModis.m@{processModis.m}}
+\doxysubsubsection{fparQc}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} fpar\+Qc}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_af770e1ecf62ca621da8a96adc7502152} 
+\index{processModis.m@{processModis.m}!FparResult@{FparResult}}
+\index{FparResult@{FparResult}!processModis.m@{processModis.m}}
+\doxysubsubsection{FparResult}
+{\footnotesize\ttfamily Fpar\+Result =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar}))./100}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_aa54cac52e4f62eba62578353c7bf33e2} 
+\index{processModis.m@{processModis.m}!FparStdDev\_1km@{FparStdDev\_1km}}
+\index{FparStdDev\_1km@{FparStdDev\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{FparStdDev\_1km}
+{\footnotesize\ttfamily Fpar\+Std\+Dev\+\_\+1km =\textbf{ zeros}(\textbf{ num\+Total},49)}
+
+
+
+Definition at line \textbf{ 44} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a762614d6d4f7e8779f868dbd4ac6997f} 
+\index{processModis.m@{processModis.m}!FparStdDevResult@{FparStdDevResult}}
+\index{FparStdDevResult@{FparStdDevResult}!processModis.m@{processModis.m}}
+\doxysubsubsection{FparStdDevResult}
+{\footnotesize\ttfamily Fpar\+Std\+Dev\+Result =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar\+Std\+Dev}))./100}
+
+
+
+Definition at line \textbf{ 76} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a81b94ba50b782836960e54bcfa99fc88} 
+\index{processModis.m@{processModis.m}!i@{i}}
+\index{i@{i}!processModis.m@{processModis.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:numTotal}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ stringFparExtra\_QC=fgetl(fid)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 53} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a5de924f0dedaa5fdcff473ead669aab3} 
+\index{processModis.m@{processModis.m}!indexFlag@{indexFlag}}
+\index{indexFlag@{indexFlag}!processModis.m@{processModis.m}}
+\doxysubsubsection{indexFlag}
+{\footnotesize\ttfamily \textbf{ if} index\+Flag}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{==\ 1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ dataOut=ones(length(timeCompare),col)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 140} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a654f6461b0a795a57ca1b08f28f2d917} 
+\index{processModis.m@{processModis.m}!LAIqc@{LAIqc}}
+\index{LAIqc@{LAIqc}!processModis.m@{processModis.m}}
+\doxysubsubsection{LAIqc}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} LAIqc}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a8b5cdd53840f7654f8471a1c03db4741} 
+\index{processModis.m@{processModis.m}!measurements@{measurements}}
+\index{measurements@{measurements}!processModis.m@{processModis.m}}
+\doxysubsubsection{measurements}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} measurements}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ab8c775ab68e44d83a1dbf67da17a2012} 
+\index{processModis.m@{processModis.m}!numTotal@{numTotal}}
+\index{numTotal@{numTotal}!processModis.m@{processModis.m}}
+\doxysubsubsection{numTotal}
+{\footnotesize\ttfamily \textbf{ Subtract} \textbf{ one} \textbf{ for} \textbf{ the} \textbf{ last} \textbf{ value} \textbf{ Allocate} \textbf{ memory} \textbf{ for} \textbf{ matrices} num\+Total = \textbf{ count}/6}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a9ec4db00ff517a9263101825e21392ee} 
+\index{processModis.m@{processModis.m}!outVal@{outVal}}
+\index{outVal@{outVal}!processModis.m@{processModis.m}}
+\doxysubsubsection{outVal}
+{\footnotesize\ttfamily out\+Val =\textbf{ dlmread}(\textbf{ file\+Name},\textquotesingle{},\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a3d2338a1d6c50fca05bfd2d9eed6b2d7} 
+\index{processModis.m@{processModis.m}!result@{result}}
+\index{result@{result}!processModis.m@{processModis.m}}
+\doxysubsubsection{result}
+{\footnotesize\ttfamily \textbf{ Divide} \textbf{ by} \textbf{ to} \textbf{ get} a result}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ process\+Modis.\+m}.
+
+
+
+Referenced by \textbf{ strcmp\+Ignore\+Case()}.
+
+\label{process_modis_8m_aa1043055fd78851f431d0c891a1442a0} 
+\index{processModis.m@{processModis.m}!stringFpar\_1km@{stringFpar\_1km}}
+\index{stringFpar\_1km@{stringFpar\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{stringFpar\_1km}
+{\footnotesize\ttfamily string\+Fpar\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a474d43b69306ac3292942126a4234856} 
+\index{processModis.m@{processModis.m}!stringFparLai\_QC@{stringFparLai\_QC}}
+\index{stringFparLai\_QC@{stringFparLai\_QC}!processModis.m@{processModis.m}}
+\doxysubsubsection{stringFparLai\_QC}
+{\footnotesize\ttfamily string\+Fpar\+Lai\+\_\+\+QC =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 55} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a7719243e0a7df00cb463f7a5c2ca9ae3} 
+\index{processModis.m@{processModis.m}!stringFparStdDev\_1km@{stringFparStdDev\_1km}}
+\index{stringFparStdDev\_1km@{stringFparStdDev\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{stringFparStdDev\_1km}
+{\footnotesize\ttfamily string\+Fpar\+Std\+Dev\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ac1f9ec96e8168e9d4635abb08c46e5b1} 
+\index{processModis.m@{processModis.m}!stringLai\_1km@{stringLai\_1km}}
+\index{stringLai\_1km@{stringLai\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{stringLai\_1km}
+{\footnotesize\ttfamily string\+Lai\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 59} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a460215750042736c2ba791cb4579f025} 
+\index{processModis.m@{processModis.m}!stringLaiStdDev\_1km@{stringLaiStdDev\_1km}}
+\index{stringLaiStdDev\_1km@{stringLaiStdDev\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{stringLaiStdDev\_1km}
+{\footnotesize\ttfamily string\+Lai\+Std\+Dev\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 58} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_abb559a9db2a76e855228ca52279eabe0} 
+\index{processModis.m@{processModis.m}!strings@{strings}}
+\index{strings@{strings}!processModis.m@{processModis.m}}
+\doxysubsubsection{strings}
+{\footnotesize\ttfamily \textbf{ Tokenize} \textbf{ the} strings[\textbf{ time\+Out}, \textbf{ element\+Name}, \textbf{ pixel\+Fpar\+\_\+\+QC}] =\textbf{ modis\+Tokenize\+String}(\textbf{ string\+Fpar\+Extra\+\_\+\+QC})}
+
+
+
+Definition at line \textbf{ 61} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a42b72f913c3201fc62660d512f5ac746} 
+\index{processModis.m@{processModis.m}!test1@{test1}}
+\index{test1@{test1}!processModis.m@{processModis.m}}
+\doxysubsubsection{test1}
+{\footnotesize\ttfamily test1 =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ac9d33084a4a9a3fe336e50934602541f} 
+\index{processModis.m@{processModis.m}!towerFpar\_1km@{towerFpar\_1km}}
+\index{towerFpar\_1km@{towerFpar\_1km}!processModis.m@{processModis.m}}
+\doxysubsubsection{towerFpar\_1km}
+{\footnotesize\ttfamily \textbf{ Report} \textbf{ the} \textbf{ pixel} \textbf{ to} \textbf{ pixel} \textbf{ variation} tower\+Fpar\+\_\+1km =\textbf{ Fpar\+\_\+1km}(\+:,\textbf{ tower\+Pixels})}
+
+
+
+Definition at line \textbf{ 102} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_ae10d41f4a5e5860343dad375269223c1} 
+\index{processModis.m@{processModis.m}!towerPixels@{towerPixels}}
+\index{towerPixels@{towerPixels}!processModis.m@{processModis.m}}
+\doxysubsubsection{towerPixels}
+{\footnotesize\ttfamily \textbf{ Average} \textbf{ the} data \textbf{ according} \textbf{ to} \textbf{ the} \textbf{ pixels} tower\+Pixels =[17 18 19 24 25 26 31 32 33]}
+
+
+
+Definition at line \textbf{ 95} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a784f73cd23a16069925b2d43f3a34d12} 
+\index{processModis.m@{processModis.m}!yearIn@{yearIn}}
+\index{yearIn@{yearIn}!processModis.m@{processModis.m}}
+\doxysubsubsection{yearIn}
+{\footnotesize\ttfamily year\+In =\textbf{ floor}(\textbf{ time\+Out}/10$^\wedge$3)}
+
+
+
+Definition at line \textbf{ 68} of file \textbf{ process\+Modis.\+m}.
+
+\label{process_modis_8m_a09f74fa75a5788fa219f92dcd15049a2} 
+\index{processModis.m@{processModis.m}!yearModis@{yearModis}}
+\index{yearModis@{yearModis}!processModis.m@{processModis.m}}
+\doxysubsubsection{yearModis}
+{\footnotesize\ttfamily year\+Modis =\textbf{ zeros}(\textbf{ num\+Total},1)}
+
+
+
+Definition at line \textbf{ 42} of file \textbf{ process\+Modis.\+m}.
+

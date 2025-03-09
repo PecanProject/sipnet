@@ -1,0 +1,168 @@
+\doxysection{paramchange.\+h}
+\label{paramchange_8h_source}\index{paramchange.h@{paramchange.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ PARAMCHANGE\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ PARAMCHANGE\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}spatialParams.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ used\ for\ parameter\ estimation}}
+\DoxyCodeLine{00008\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ChangeableParamInfo\ \{}
+\DoxyCodeLine{00009\ \ \ \textcolor{keywordtype}{char}\ name[64];}
+\DoxyCodeLine{00010\ \ \ \textcolor{keywordtype}{double}\ guess;}
+\DoxyCodeLine{00011\ \ \ \textcolor{keywordtype}{double}\ min;}
+\DoxyCodeLine{00012\ \ \ \textcolor{keywordtype}{double}\ max;}
+\DoxyCodeLine{00013\ \ \ \textcolor{keywordtype}{double}\ sigma;}
+\DoxyCodeLine{00014\ \}\ PInfo;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }OutputInfoStruct\ \{}
+\DoxyCodeLine{00017\ \ \ \textcolor{keywordtype}{double}\ meanError;\ \textcolor{comment}{//\ mean\ error\ per\ day}}
+\DoxyCodeLine{00018\ \ \ \textcolor{keywordtype}{double}\ daysError;\ \textcolor{comment}{//\ daily-\/aggregated\ mean\ error\ per\ day}}
+\DoxyCodeLine{00019\ \ \ \textcolor{keywordtype}{double}\ *years;\ \textcolor{comment}{//\ for\ each\ year,\ total\ for\ the\ year}}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordtype}{int}\ numYears;\ \textcolor{comment}{//\ size\ of\ years\ array}}
+\DoxyCodeLine{00021\ \}\ OutputInfo;}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*\ Difference,\ version\ 3\ -\/\ ESTIMATES\ SIGMA,\ RETURNS\ AGGREGATE\ INFO}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ Run\ modelF\ with\ given\ parameters\ at\ location\ loc,\ compare\ output\ with\ measured\ data}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ using\ data\ types\ given\ by\ dataTypeIndices[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ Return\ a\ measure\ of\ the\ difference\ between\ measured\ and\ predicted\ data}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ (Higher\ =\ worse)}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ Return\ best\ sigma\ value\ for\ each\ data\ type\ in\ sigma[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ Return\ mean\ error,\ mean\ daily-\/aggregated\ error,\ and\ yearly-\/aggregated\ output\ for\ each\ year}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ \ and\ each\ data\ type\ in\ *outputInfo\ array}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ \ Pre:\ sigma\ and\ outputInfo\ are\ already\ malloced,\ as\ are\ outputInfo[*].years\ arrays}}
+\DoxyCodeLine{00034\ \textcolor{comment}{}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ Only\ use\ "{}valid"{}\ data\ points\ (as\ determined\ by\ validFrac\ in\ readData)}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ And\ only\ use\ points\ between\ startOpt\ and\ endOpt\ (set\ in\ readData)}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ [IGNORE\ paramWeight\ -\/\ just\ there\ to\ be\ consistent\ with\ old\ difference\ function]}}
+\DoxyCodeLine{00038\ \textcolor{comment}{}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ NOTE:\ this\ is\ actually\ the\ NEGATIVE\ log\ likelihood,\ discarding\ constant\ terms}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ to\ get\ true\ log\ likelihood,\ add\ n*log(sqrt(2*pi)),\ then\ multiply\ by\ -\/1}}
+\DoxyCodeLine{00041\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{double}\ difference(\textcolor{keywordtype}{double}\ *sigma,\ OutputInfo\ *outputInfo,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ loc,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{double}\ paramWeight,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*modelF)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ costFunction,\ \textcolor{keywordtype}{double}\ dataTypeWeights[]);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/*\ Aggregated\ difference\ -\/\ ESTIMATES\ SIGMA,\ RETURNS\ AGGREGATE\ INFO}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ Same\ as\ difference\ function\ above,\ but\ aggregates\ model\ output\ to\ fewer\ steps}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ \ \ Total\ difference\ is\ a\ weighted\ sum\ of\ error\ on\ aggregated\ output\ vs.\ data}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ and\ error\ on\ unaggregated\ output\ vs.\ data\ (weight\ determined\ by\ global\ unaggedWeight)}}
+\DoxyCodeLine{00053\ \textcolor{comment}{}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ Run\ modelF\ with\ given\ parameters\ at\ location\ loc,\ compare\ output\ with\ measured\ data}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ using\ data\ types\ given\ by\ dataTypeIndices[0..numDataTypes/2-\/1]}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ Return\ a\ measure\ of\ the\ difference\ between\ measured\ and\ predicted\ data}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ (Higher\ =\ worse)}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ Assumes\ error\ is\ the\ same\ on\ each\ aggregated\ time\ step,}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ even\ if\ aggregation\ lengths\ are\ different}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ Return\ best\ sigma\ value\ for\ each\ data\ type\ in\ sigma[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ (where\ sigma[i]\ is\ sigma\ for\ data\ type\ given\ by\ dataTypeIndices[i\%(numDataTypes/2)];}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ if\ i\ <\ numDataTypes/2\ then\ sigma[i]\ gives\ sigma\ for\ unaggregated\ data;\ otherwise\ for\ aggregated\ data)}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ Return\ mean\ error,\ mean\ daily-\/aggregated\ error,\ and\ yearly-\/aggregated\ output\ for\ each\ year}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ and\ each\ data\ type\ in\ *outputInfo\ array\ (indexed\ like\ sigma\ array\ -\/\ see\ above)}}
+\DoxyCodeLine{00065\ \textcolor{comment}{}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ Pre:\ sigma\ and\ outputInfo\ are\ already\ malloced,\ as\ are\ outputInfo[*].years\ arrays}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ global\ *numAggSteps,\ **aggSteps\ and\ ***aggedData\ have\ all\ been\ set\ appropriately,}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ and\ global\ **aggedModel\ has\ been\ malloced\ appropriately}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ numDataTypes\ is\ actually\ TWICE\ the\ number\ of\ data\ types}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ (for\ each\ data\ type,\ one\ unaggregated\ and\ one\ aggregated)}}
+\DoxyCodeLine{00071\ \textcolor{comment}{}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ FOR\ NOW,\ WE\ IGNORE\ THE\ VALID\ FRACTION\ (THIS\ HASN'T\ BEEN\ AGGREGATED\ UP)}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ Only\ use\ points\ between\ startOpt\ and\ endOpt\ (set\ in\ readData)}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ (NOTE:\ UNTESTED\ FOR\ ANYTHING\ BUT\ STARTOPT=1,\ ENDOPT=-\/1\ (I.E.\ ALL\ POINTS))}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ [IGNORE\ paramWeight\ -\/\ just\ there\ to\ be\ consistent\ with\ difference\ function\ above]}}
+\DoxyCodeLine{00076\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{//\ 6/9/11:\ For\ now\ we\ don't\ do\ anything\ with\ the\ cost\ function\ or\ data\ Type\ weights\ -\/\ we\ just\ want\ to\ make}}
+\DoxyCodeLine{00079\ \textcolor{comment}{//\ it\ consistent\ with\ the\ difference\ function\ above\ so\ we\ don't\ get\ an\ error.}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{double}\ aggedDifference(\textcolor{keywordtype}{double}\ *sigma,\ OutputInfo\ *outputInfo,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ loc,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{double}\ paramWeight,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*modelF)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ costFunction,\ \textcolor{keywordtype}{double}\ dataTypeWeights[]);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{comment}{/*\ Take\ array\ of\ model\ output,\ compare\ output\ with\ measured\ data\ -\/\ for\ given\ dataNum}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ \ \ (i.e.\ perform\ comparisons\ between\ model[*][dataNum]\ and\ data[loc][*][dataNum]}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ \ \ Return\ (in\ outputInfo[dataNum])\ mean\ error\ (per\ day),\ mean\ daily-\/aggregated\ error\ (per\ day)}}
+\DoxyCodeLine{00089\ \textcolor{comment}{\ \ \ Also\ fill\ years\ array\ with\ annual\ total\ NEE\ for\ each\ year}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ \ \ and\ set\ outputInfo.numYears,\ the\ size\ of\ the\ years\ array}}
+\DoxyCodeLine{00091\ \textcolor{comment}{\ \ \ Pre:\ outputInfo\ is\ already\ malloced,\ as\ are\ outputInfo[*].years\ arrays}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ \ \ (Can\ later\ use\ years\ array\ to\ find\ yearly-\/aggregated\ error\ and\ interannual\ variability)}}
+\DoxyCodeLine{00093\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{void}\ aggregates(OutputInfo\ *outputInfo,\ \textcolor{keywordtype}{double}\ **model,\ \textcolor{keywordtype}{int}\ loc,\ \textcolor{keywordtype}{int}\ dataNum);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{/*\ Read\ measured\ data\ (from\ fileName.dat)\ and\ valid\ fractions\ (from\ fileName.valid)\ into\ arrays\ (used\ to\ also\ read\ sigmas)}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ and\ set\ values\ in\ valid\ array\ (based\ on\ validFrac)}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ Each\ line\ in\ data\ (and\ valid)\ file\ has\ totNumDataTypes\ columns}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ and\ each\ file\ has\ one\ line\ for\ each\ time\ step\ at\ each\ of\ the\ myNumLocs\ location\ (all\ time\ steps\ for\ a\ single\ location\ are\ continuous),}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ with\ NO\ blank\ lines}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ where\ steps\ vector\ gives\ \#\ of\ time\ steps\ at\ each\ location\ (so\ total\ number\ of\ lines\ in\ data/valid\ files\ should\ equal\ sum\ of\ elements\ in\ steps\ vector)}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ dataTypeIndices\ give\ the\ numDataTypes\ indices\ of\ the\ data\ types\ that\ we'll\ actually\ use\ in\ optimization}}
+\DoxyCodeLine{00105\ \textcolor{comment}{\ \ \ Also\ read\ spd\ file\ (steps\ per\ day)\ (fileName.spd),\ which\ has\ one\ line\ for\ each\ location}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ \ \ Each\ line\ begins\ with\ the\ year\ of\ the\ first\ point,\ followed\ by\ the\ julian\ day\ of\ the\ first\ point,}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ \ \ followed\ by\ the\ number\ of\ steps\ per\ day\ for\ each\ day,\ terminated\ by\ -\/1}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ As\ a\ short-\/hand,\ \#n\ means\ repeat\ the\ last\ steps-\/per-\/day\ value\ n\ more\ times\ (e.g.\ "{}2\ \#3"{}\ is\ equivalent\ to\ "{}2\ 2\ 2\ 2"{})}}
+\DoxyCodeLine{00109\ \textcolor{comment}{}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ \ \ Also\ possibly\ read\ start\ and\ end\ indices\ for\ optimizations\ for\ each\ location\ (from\ optIndicesFile),}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ \ \ and\ start\ and\ end\ indices\ for\ final\ model-\/data\ comparisons\ for\ each\ location\ (from\ compareIndicesFile),}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ \ \ where\ these\ files\ have\ one\ line\ for\ each\ location,\ and\ each\ line\ contains\ two\ integers:\ start\ \&\ end;}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ if\ either\ of\ these\ file\ names\ is\ given\ as\ an\ empty\ string\ ("{}"{}),\ use\ all\ data\ points\ for\ optimizations\ or\ model-\/data\ comparisons.}}
+\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ NOTE:\ Both\ of\ these\ use\ 1-\/indexing;\ end\ =\ -\/1\ means\ go\ to\ end}}
+\DoxyCodeLine{00115\ \textcolor{comment}{}}
+\DoxyCodeLine{00116\ \textcolor{comment}{\ \ \ steps\ is\ an\ array\ giving\ the\ number\ of\ time\ steps\ at\ each\ of\ the\ myNumLocs\ locations}}
+\DoxyCodeLine{00117\ \textcolor{comment}{}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ This\ function\ also\ allocates\ space\ for\ model\ array}}
+\DoxyCodeLine{00119\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ readData(\textcolor{keywordtype}{char}\ *fileName,\ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ totNumDataTypes,\ \textcolor{keywordtype}{int}\ myNumLocs,\ \textcolor{keywordtype}{int}\ *steps,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ validFrac,\ \textcolor{keywordtype}{char}\ *optIndicesFile,\ \textcolor{keywordtype}{char}\ *compareIndicesFile,\ FILE\ *outFile);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{comment}{/*\ pre:\ readData\ has\ been\ called\ (to\ set\ global\ startOpt,\ endOpt\ and\ numLocs\ appropriately)}}
+\DoxyCodeLine{00125\ \textcolor{comment}{}}
+\DoxyCodeLine{00126\ \textcolor{comment}{\ \ \ read\ number\ of\ time\ steps\ per\ each\ model-\/data\ aggregation\ from\ file}}
+\DoxyCodeLine{00127\ \textcolor{comment}{\ \ \ each\ line\ in\ fileForAgg\ contains\ aggregation\ info\ for\ one\ location,}}
+\DoxyCodeLine{00128\ \textcolor{comment}{\ \ \ where\ each\ value\ (i)\ on\ a\ given\ line\ is\ an\ integer\ giving\ the\ number\ of\ time\ steps\ in\ aggregation\ i\ in\ that\ time\ step}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ (e.g.\ to\ run\ model-\/data\ comparison\ on\ a\ yearly\ aggregation,\ each\ value\ would\ be\ number\ of\ steps\ in\ year\ i);}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ \ \ each\ line\ must\ be\ terminated\ with\ a\ -\/1}}
+\DoxyCodeLine{00131\ \textcolor{comment}{}}
+\DoxyCodeLine{00132\ \textcolor{comment}{\ \ \ if\ sum\ of\ all\ time\ steps\ (i.e.\ sum\ of\ all\ numbers\ on\ line)\ differs\ from\ total\ number\ of\ data,}}
+\DoxyCodeLine{00133\ \textcolor{comment}{\ \ \ exit\ with\ an\ error\ message}}
+\DoxyCodeLine{00134\ \textcolor{comment}{}}
+\DoxyCodeLine{00135\ \textcolor{comment}{\ \ \ otherwise,}}
+\DoxyCodeLine{00136\ \textcolor{comment}{\ \ \ set\ global\ numAggSteps\ (1-\/d\ array:\ spatial)\ and\ aggSteps\ (2-\/d\ array:\ spatial)\ and\ unaggedWeight\ appropriately}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ also\ compute\ aggedData\ array\ (of\ size\ numLocs\ x\ numAggSteps\ x\ numDataTypes)}}
+\DoxyCodeLine{00138\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{void}\ readFileForAgg(\textcolor{keywordtype}{char}\ *fileForAgg,\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{double}\ myUnaggedWeight);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{comment}{//\ malloc\ space\ for\ outputInfo\ array[0..numDataTypes-\/1],\ and\ outputInfo[*].years\ arrays\ for\ a\ single\ location,\ loc}}
+\DoxyCodeLine{00143\ \textcolor{comment}{//\ make\ years\ arrays\ large\ enough\ to\ hold\ data\ from\ given\ location}}
+\DoxyCodeLine{00144\ OutputInfo\ *newOutputInfo(\textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ loc);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{//\ copy\ data\ from\ outputInfo\ ptr\ in\ to\ outputInfo\ ptr\ out}}
+\DoxyCodeLine{00148\ \textcolor{comment}{//\ PRE:\ outputInfo\ struct\ pointed\ to\ by\ out\ has\ already\ been\ malloced,\ as\ has\ its\ years\ array}}
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{void}\ copyOutputInfo(OutputInfo\ *out,\ OutputInfo\ *in);}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{comment}{//\ given\ an\ outputInfo\ array[0..numDataTypes-\/1]\ (dynamically\ allocated),\ free\ years\ and\ the\ array\ itself}}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{void}\ freeOutputInfo(OutputInfo\ *outputInfo,\ \textcolor{keywordtype}{int}\ numDataTypes);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{comment}{//\ call\ this\ when\ done\ program:}}
+\DoxyCodeLine{00156\ \textcolor{comment}{//\ free\ space\ used\ by\ global\ pointers}}
+\DoxyCodeLine{00157\ \textcolor{keywordtype}{void}\ cleanupParamchange();}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

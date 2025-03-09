@@ -1,0 +1,16 @@
+\doxysection{is\+Leap\+Year.\+m}
+\label{is_leap_year_8m_source}\index{isLeapYear.m@{isLeapYear.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ leap\ =\ isLeapYear(year)}
+\DoxyCodeLine{00002\ \ \ \ \ \%\ \textcolor{keywordflow}{return}\ 1\ \textcolor{keywordflow}{if}\ year\ is\ a\ leap\ year,\ otherwise\ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{00003\ \ \ \ \ }
+\DoxyCodeLine{00004\ \ \ \ \ \textcolor{keywordflow}{if}\ (mod(year,4)\ >\ 0\ ||\ (mod(year,100)\ ==\ 0\ \&\&\ mod(year,400)\ >\ 0))}
+\DoxyCodeLine{00005\ \ \ \ \ \ \ \ \ leap\ =\ 0;\ \%\ not\ a\ leap\ year}
+\DoxyCodeLine{00006\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00007\ \ \ \ \ \ \ \ \ leap\ =\ 1;\ \%\ a\ leap\ year}
+\DoxyCodeLine{00008\ \ \ \ \ end}
+\DoxyCodeLine{00009\ \ \ \ \ }
+\DoxyCodeLine{00010\ \ \ }
+
+\end{DoxyCode}

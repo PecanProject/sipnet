@@ -1,0 +1,822 @@
+\doxysection{process\+Modis\+Sipnet.\+m File Reference}
+\label{process_modis_sipnet_8m}\index{processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ The} first \textbf{ one} is a \textbf{ headerline} \textbf{ while} (\textbf{ test1$\sim$}=-\/1) \textbf{ test1}
+\item 
+\textbf{ Restart} \textbf{ back} \textbf{ from} \textbf{ the} \textbf{ beginning} \textbf{ frewind} (\textbf{ fid})
+\item 
+\textbf{ year\+Modis} (i)
+\item 
+\textbf{ decday\+Modis} (i)
+\item 
+\textbf{ Fpar\+\_\+1km} (i,\+:)
+\item 
+\textbf{ Fpar\+Std\+Dev\+\_\+1km} (i,\+:)
+\item 
+\textbf{ end} \textbf{ fclose} (\textbf{ fid})
+\item 
+\textbf{ Replace} \textbf{ any} of \textbf{ the} \textbf{ std\+Dev} \textbf{ with} \textbf{ Nan} (2.\+48=248 is a \textbf{ bit} \textbf{ code} \textbf{ saying} \textbf{ that} \textbf{ it} \textbf{ couldn} \textquotesingle{}\textbf{ t} \textbf{ be} \textbf{ determined}) \%\%\% \textbf{ See} \textbf{ NASA} \textbf{ MOD15\+A2} \textbf{ page} \textbf{ for} \textbf{ more} \textbf{ details} \textbf{ index}
+\item 
+\textbf{ Fpar\+Std\+Dev\+\_\+1km} (\textbf{ index})
+\item 
+\textbf{ We} \textbf{ have} \textbf{ more} \textbf{ site} years of \textbf{ niwot\+Data} (1998 -\/ 2007) \textbf{ Leap} years \textbf{ were} in \%\%\% 2000 and 2004 and 2008 \%\%\% \textbf{ Modis} data \textbf{ begins} in 2000.(\textbf{ See} \textbf{ misc\+Files}/\textbf{ year\+Indices.\+xlsx} \textbf{ for} \textbf{ index} \textbf{ values}) \%\%\% \textbf{ Year} \textbf{ Date} \textbf{ add} \%\%\% 1998 0 \%\%\% 1999 365 \%\%\% 2000 730 \%\%\% 2001 1096 \%\%\% 2002 1461 \%\%\% 2003 1826 \%\%\% 2004 2191 \%\%\% 2005 2557 \%\%\% 2006 2922 \%\%\% 2007 3287 \%\%\% 2008 3652 \%\%\% 2009 4018 \%\%\% 2010 4383 \textbf{ day\+Add}
+\item 
+\textbf{ cal\+Year\+Modis} (\textbf{ index})
+\item 
+\textbf{ cal\+Year\+Niwot} (\textbf{ index})
+\item 
+\textbf{ Make} \textbf{ sure} \textbf{ we} \textbf{ have} \textbf{ the} \textbf{ old} \textbf{ climate} \textbf{ file} \textbf{ w} \textbf{ o} \textbf{ MODIS} \textbf{ dlmwrite} ([\textbf{ file\+Out\+Loc} \textquotesingle{}.\textbf{ dat}\textquotesingle{}], \textbf{ data\+Out}, \textquotesingle{}\textbf{ delimiter}\textquotesingle{}, \textquotesingle{} \textquotesingle{}, \textquotesingle{}\textbf{ precision}\textquotesingle{}, \textquotesingle{}\%8.\+4\textbf{ f}\textquotesingle{})
+\item 
+\textbf{ dlmwrite} ([\textbf{ file\+Out\+Loc} \textquotesingle{}.\textbf{ valid}\textquotesingle{}], \textbf{ qc\+Out}, \textquotesingle{}\textbf{ delimiter}\textquotesingle{}, \textquotesingle{} \textquotesingle{}, \textquotesingle{}\textbf{ precision}\textquotesingle{}, \textquotesingle{}\%8.\+4\textbf{ f}\textquotesingle{})
+\item 
+\textbf{ dlmwrite} ([\textbf{ file\+Out\+Loc} \textquotesingle{}.sigma\textquotesingle{}], \textbf{ sigma\+Out}, \textquotesingle{}\textbf{ delimiter}\textquotesingle{}, \textquotesingle{} \textquotesingle{}, \textquotesingle{}\textbf{ precision}\textquotesingle{}, \textquotesingle{}\%8.\+4\textbf{ f}\textquotesingle{})
+\item 
+\textbf{ Copy} \textbf{ remaining} \textbf{ files} \textbf{ copyfile} ([\textbf{ file\+In\+Loc} \textquotesingle{}.spd\textquotesingle{}],[\textbf{ file\+Out\+Loc} \textquotesingle{}.spd\textquotesingle{}])
+\item 
+length(\textbf{ time\+Compare} \textbf{ col} ()
+\item 
+\textbf{ Go} \textbf{ with} \textbf{ the} \textbf{ beginning} of \textbf{ timestep} \textbf{ if} \textbf{ isempty} (\textbf{ curr\+Index})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ process\+Modis\+Sipnet} \textbf{ Author}
+\item 
+function \textbf{ process\+Modis\+Sipnet} \textbf{ modified} \textbf{ Purpose}
+\item 
+function \textbf{ process\+Modis\+Sipnet} \textbf{ modified} \textbf{ average} \textbf{ it}(\textbf{ with} \textbf{ QC}) and \textbf{ write} \textbf{ it} \textbf{ out} \textbf{ to} a \textbf{ MODIS} \textbf{ file} \textbf{ for} \textbf{ use} \textbf{ by} \textbf{ SIPNET} \%\%\% \textbf{ Copy} \textbf{ other} \textbf{ sipnet} \textbf{ files} \textbf{ so} \textbf{ we} \textbf{ can} \textbf{ do} a data \textbf{ assimilation} \%\%\% \textbf{ We} \textbf{ do} a \textbf{ QC} \textbf{ mask} \textbf{ for} snow data \%\%\% \textbf{ link} \textbf{ to} data \textbf{ out\+Val} =\textbf{ dlmread}(\textbf{ file\+Name},\textquotesingle{},\textquotesingle{})
+\item 
+\textbf{ fid} =\textbf{ fopen}(\textbf{ file\+Name})
+\item 
+\textbf{ count} = 0
+\item 
+\textbf{ Loop} \textbf{ through} \textbf{ to} \textbf{ get} \textbf{ the} \textbf{ size} of \textbf{ things} \textbf{ test1} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ Subtract} \textbf{ one} \textbf{ for} \textbf{ the} \textbf{ last} \textbf{ value} \textbf{ Allocate} \textbf{ memory} \textbf{ for} \textbf{ matrices} \textbf{ num\+Total} = \textbf{ count}/6
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} \textbf{ LAIqc}
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} \textbf{ fpar\+Qc}
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} \textbf{ measurements}
+\item 
+\textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} and \textbf{ their} \textbf{ std} \textbf{ deviation} \textbf{ decday\+Modis} =\textbf{ zeros}(\textbf{ num\+Total},1)
+\item 
+\textbf{ year\+Modis} =\textbf{ zeros}(\textbf{ num\+Total},1)
+\item 
+\textbf{ Fpar\+\_\+1km} =\textbf{ zeros}(\textbf{ num\+Total},49)
+\item 
+\textbf{ Fpar\+Extra\+\_\+\+QC\+\_\+cellstr} =\textbf{ cellstr}(\textbf{ char}(\textbf{ zeros}(\textbf{ num\+Total},1)))
+\item 
+\textbf{ The} first \textbf{ one} is a \textbf{ headerline} \textbf{ loop} \textbf{ through} \textbf{ until} \textbf{ we} are \textbf{ done} \textbf{ for} \textbf{ i}
+\item 
+\textbf{ string\+Fpar\+Lai\+\_\+\+QC} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Fpar\+Std\+Dev\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Fpar\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Lai\+Std\+Dev\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ string\+Lai\+\_\+1km} =\textbf{ fgetl}(\textbf{ fid})
+\item 
+\textbf{ Tokenize} \textbf{ the} \textbf{ strings} [\textbf{ time\+Out}, \textbf{ element\+Name}, \textbf{ pixel\+Fpar\+\_\+\+QC}] =\textbf{ modis\+Tokenize\+String}(\textbf{ string\+Fpar\+Extra\+\_\+\+QC})
+\item 
+\textbf{ year\+In} =\textbf{ floor}(\textbf{ time\+Out}/10$^\wedge$3)
+\item 
+\textbf{ day\+In} = \textbf{ floor}((\textbf{ time\+Out}/10$^\wedge$3-\/\textbf{ year\+In})$\ast$10$^\wedge$3)
+\item 
+\textbf{ Fpar\+Result} =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar}))./100
+\item 
+\textbf{ Divide} \textbf{ by} \textbf{ to} \textbf{ get} a \textbf{ result}
+\item 
+\textbf{ Fpar\+Std\+Dev\+Result} =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar\+Std\+Dev}))./100
+\item 
+\textbf{ Do} \textbf{ the} \textbf{ QC} on \textbf{ the} data \textbf{ Fpar\+Extra\+\_\+\+QC} =\textbf{ modis\+FPARqc}(\textbf{ Fpar\+Extra\+\_\+\+QC\+\_\+cellstr})
+\item 
+\textbf{ Average} \textbf{ the} data \textbf{ according} \textbf{ to} \textbf{ the} \textbf{ pixels} \textbf{ tower\+Pixels} =[17 18 19 24 25 26 31 32 33]
+\item 
+\textbf{ avg\+Fpar\+\_\+1km} =\textbf{ grid\+Average}(\textbf{ Fpar\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})
+\item 
+\textbf{ avg\+Fpar\+Extra\+\_\+\+QC} =\textbf{ grid\+Average}(\textbf{ Fpar\+Extra\+\_\+\+QC},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})
+\item 
+\textbf{ avg\+Fpar\+Std\+Dev\+\_\+1km} =\textbf{ grid\+Average}(\textbf{ Fpar\+Std\+Dev\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})
+\item 
+\textbf{ Mask} \textbf{ the} \textbf{ QC} \textbf{ when} \textbf{ there} is snow \textbf{ avg\+Fpar\+Extra\+\_\+\+QCsnow\+Mask} =\textbf{ snow\+Validate}(\textbf{ year\+Modis},\textbf{ floor}(\textbf{ decday\+Modis}),\textbf{ avg\+Fpar\+Extra\+\_\+\+QC})
+\item 
+\textbf{ Load} \textbf{ up} \textbf{ SIPNET} \textbf{ data}
+\item 
+\textbf{ Load} \textbf{ up} \textbf{ SIPNET} \textbf{ variable} \textbf{ name} \textbf{ niwot} \textbf{ file\+Name} =\textquotesingle{}..\textbackslash{}..\textbackslash{}\textbf{ Sites\textbackslash{}\+Niwot\textbackslash{}niwot12\textbackslash{}niwot12.\+clim}\textquotesingle{}
+\item 
+\textbf{ niwot\+All\+Data} = \textbf{ load}("{}-\/ascii"{},\textbf{ file\+Name})
+\item 
+\textbf{ year\+Niwot} = \textbf{ niwot\+All\+Data}(\+:,2)
+\item 
+\textbf{ day\+Niwot} = \textbf{ niwot\+All\+Data}(\+:,3)
+\item 
+\textbf{ hour\+Niwot} = \textbf{ niwot\+All\+Data}(\+:,4)
+\item 
+\textbf{ decday\+Niwot} = \textbf{ day\+Niwot} + hour\+Niwot./24
+\item 
+\textbf{ cal\+Year\+Modis} =\textbf{ zeros}(length(\textbf{ decday\+Modis}),1)
+\item 
+\textbf{ cal\+Year\+Niwot} =\textbf{ zeros}(length(\textbf{ decday\+Niwot}),1)
+\item 
+\textbf{ overall\+Years} =1998\+:2009
+\item 
+\textbf{ index} =find(\textbf{ overall\+Years}(i)==\textbf{ year\+Niwot})
+\item 
+\textbf{ Output} \textbf{ the} data \textbf{ to} a \textbf{ file} \textbf{ file\+In\+Loc} = \textquotesingle{}..\textbackslash{}..\textbackslash{}\textbf{ Sites\textbackslash{}\+Niwot\textbackslash{}niwot12\textbackslash{}niwot12}\textquotesingle{}
+\item 
+\textbf{ file\+Out\+Loc} = \textquotesingle{}..\textbackslash{}..\textbackslash{}\textbf{ MODISdata\textbackslash{}niwot\+All\+Data\+MODIS}\textquotesingle{}
+\item 
+\textbf{ niwot\+Data} = \textbf{ load}("{}-\/ascii"{},[\textbf{ file\+In\+Loc} \textquotesingle{}.\textbf{ dat}\textquotesingle{}])
+\item 
+\textbf{ niwot\+QC} = \textbf{ load}("{}-\/ascii"{},[\textbf{ file\+In\+Loc} \textquotesingle{}.\textbf{ valid}\textquotesingle{}])
+\item 
+\textbf{ niwot\+Sigma} = \textbf{ load}("{}-\/ascii"{},[\textbf{ file\+In\+Loc} \textquotesingle{}.sigma\textquotesingle{}])
+\item 
+\textbf{ Add} on \textbf{ MODIS} data \textbf{ to} \textbf{ climate} \textbf{ file} \textbf{ data\+Out} = [ \textbf{ niwot\+Data} \textbf{ avg\+Fpar\+\_\+1km}]
+\item 
+\textbf{ qc\+Out} = [ \textbf{ niwot\+QC} \textbf{ avg\+Fpar\+Extra\+\_\+\+QCsnow\+Mask}]
+\item 
+\textbf{ sigma\+Out} = [ \textbf{ niwot\+Sigma} \textbf{ avg\+Fpar\+Std\+Dev\+\_\+1km}]
+\item 
+\textbf{ year\+In} \textbf{ will} \textbf{ be} a \textbf{ smaller} vector \textbf{ than} \textbf{ year\+Compare} [\textbf{ row}, \textbf{ col}] =\textbf{ size}(\textbf{ data\+In})
+\item 
+\textbf{ if} \textbf{ index\+Flag}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{process_modis_sipnet_8m_a957ba29ca077de4745e6840f6bd49d82} 
+\index{processModisSipnet.m@{processModisSipnet.m}!calYearModis@{calYearModis}}
+\index{calYearModis@{calYearModis}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{calYearModis()}
+{\footnotesize\ttfamily cal\+Year\+Modis (\begin{DoxyParamCaption}\item[{\textbf{ index}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a8e226dbc74e1dcae44e5684f55829619} 
+\index{processModisSipnet.m@{processModisSipnet.m}!calYearNiwot@{calYearNiwot}}
+\index{calYearNiwot@{calYearNiwot}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{calYearNiwot()}
+{\footnotesize\ttfamily cal\+Year\+Niwot (\begin{DoxyParamCaption}\item[{\textbf{ index}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a4b1029b61b1dbec36654d80e4133cf49} 
+\index{processModisSipnet.m@{processModisSipnet.m}!col@{col}}
+\index{col@{col}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{col()}
+{\footnotesize\ttfamily length(\textbf{ time\+Compare} col (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ grid\+Average.\+m}.
+
+\label{process_modis_sipnet_8m_a5eb0f6023a149d1ebf7e3b704dd1a795} 
+\index{processModisSipnet.m@{processModisSipnet.m}!copyfile@{copyfile}}
+\index{copyfile@{copyfile}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{copyfile()}
+{\footnotesize\ttfamily copyfile (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_aca328f66426a2ebd58fbbac7b924ad5c} 
+\index{processModisSipnet.m@{processModisSipnet.m}!decdayModis@{decdayModis}}
+\index{decdayModis@{decdayModis}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{decdayModis()}
+{\footnotesize\ttfamily decday\+Modis (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_aa7de728e3771f9b9db9b169ecbd66885} 
+\index{processModisSipnet.m@{processModisSipnet.m}!dlmwrite@{dlmwrite}}
+\index{dlmwrite@{dlmwrite}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{dlmwrite()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Make} \textbf{ sure} \textbf{ we} \textbf{ have} \textbf{ the} \textbf{ old} \textbf{ climate} \textbf{ file} \textbf{ w} \textbf{ o} \textbf{ MODIS} dlmwrite (\begin{DoxyParamCaption}\item[{\textbf{ data\+Out}}]{,  }\item[{\textquotesingle{}\textbf{ delimiter}\textquotesingle{}}]{,  }\item[{\textquotesingle{} \textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ precision}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\%8.\+4\textbf{ f}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a925d303f413e03e0d6c1ca6232b0d023} 
+\index{processModisSipnet.m@{processModisSipnet.m}!dlmwrite@{dlmwrite}}
+\index{dlmwrite@{dlmwrite}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{dlmwrite()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily dlmwrite (\begin{DoxyParamCaption}\item[{\textbf{ sigma\+Out}}]{,  }\item[{\textquotesingle{}\textbf{ delimiter}\textquotesingle{}}]{,  }\item[{\textquotesingle{} \textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ precision}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\%8.\+4\textbf{ f}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a1a35ecc54acbc8a5f3c14824a9e33a38} 
+\index{processModisSipnet.m@{processModisSipnet.m}!dlmwrite@{dlmwrite}}
+\index{dlmwrite@{dlmwrite}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{dlmwrite()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily dlmwrite (\begin{DoxyParamCaption}\item[{\textbf{ qc\+Out}}]{,  }\item[{\textquotesingle{}\textbf{ delimiter}\textquotesingle{}}]{,  }\item[{\textquotesingle{} \textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ precision}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\%8.\+4\textbf{ f}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a5f84f51058cdb4f43c29d2c875659f42} 
+\index{processModisSipnet.m@{processModisSipnet.m}!fclose@{fclose}}
+\index{fclose@{fclose}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{fclose()}
+{\footnotesize\ttfamily \textbf{ end} fclose (\begin{DoxyParamCaption}\item[{\textbf{ fid}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a658180c734f0e671a0f3da1156b10d1b} 
+\index{processModisSipnet.m@{processModisSipnet.m}!Fpar\_1km@{Fpar\_1km}}
+\index{Fpar\_1km@{Fpar\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{Fpar\_1km()}
+{\footnotesize\ttfamily Fpar\+\_\+1km (\begin{DoxyParamCaption}\item[{i}]{,  }\item[{\+:}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a7dd1ed3b9e178f8379218ccf84b646ac} 
+\index{processModisSipnet.m@{processModisSipnet.m}!FparStdDev\_1km@{FparStdDev\_1km}}
+\index{FparStdDev\_1km@{FparStdDev\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{FparStdDev\_1km()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Fpar\+Std\+Dev\+\_\+1km (\begin{DoxyParamCaption}\item[{i}]{,  }\item[{\+:}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a60d14f0d51c887f3db80803c32b550f0} 
+\index{processModisSipnet.m@{processModisSipnet.m}!FparStdDev\_1km@{FparStdDev\_1km}}
+\index{FparStdDev\_1km@{FparStdDev\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{FparStdDev\_1km()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Fpar\+Std\+Dev\+\_\+1km (\begin{DoxyParamCaption}\item[{\textbf{ index}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_afdab91c8ead096de007899dbb2434986} 
+\index{processModisSipnet.m@{processModisSipnet.m}!frewind@{frewind}}
+\index{frewind@{frewind}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{frewind()}
+{\footnotesize\ttfamily \textbf{ Restart} \textbf{ back} \textbf{ from} \textbf{ the} \textbf{ beginning} frewind (\begin{DoxyParamCaption}\item[{\textbf{ fid}}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ first}.
+
+\label{process_modis_sipnet_8m_a66de73cf04159d4aded2de5ffdb86e7e} 
+\index{processModisSipnet.m@{processModisSipnet.m}!isempty@{isempty}}
+\index{isempty@{isempty}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{isempty()}
+{\footnotesize\ttfamily \textbf{ Go} \textbf{ with} \textbf{ the} \textbf{ beginning} of \textbf{ timestep} \textbf{ if} isempty (\begin{DoxyParamCaption}\item[{\textbf{ curr\+Index}}]{ }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a32c9fdfdaf509aadca51f505f4f615b7} 
+\index{processModisSipnet.m@{processModisSipnet.m}!Nan@{Nan}}
+\index{Nan@{Nan}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{Nan()}
+{\footnotesize\ttfamily \textbf{ Replace} \textbf{ any} of \textbf{ the} \textbf{ std\+Dev} \textbf{ with} Nan (\begin{DoxyParamCaption}\item[{2.}]{48 = {\ttfamily 248~is~a~\textbf{ bit}~\textbf{ code}~\textbf{ saying}~\textbf{ that}~\textbf{ it}~\textbf{ couldn}~\textquotesingle{}\textbf{ t}~\textbf{ be}~\textbf{ determined}} }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_abe84d2f528b255d15657d4b65c312a92} 
+\index{processModisSipnet.m@{processModisSipnet.m}!niwotData@{niwotData}}
+\index{niwotData@{niwotData}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{niwotData()}
+{\footnotesize\ttfamily \textbf{ We} \textbf{ have} \textbf{ more} \textbf{ site} years of niwot\+Data (\begin{DoxyParamCaption}\item[{1998 -\/}]{2007 }\end{DoxyParamCaption})}
+
+\label{process_modis_sipnet_8m_a9dba6bcb2e6f3dc49d7f4dacc7b7c5f1} 
+\index{processModisSipnet.m@{processModisSipnet.m}!while@{while}}
+\index{while@{while}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{while()}
+{\footnotesize\ttfamily \textbf{ The} first \textbf{ one} is a \textbf{ headerline} while (\begin{DoxyParamCaption}\item[{\textbf{ test1$\sim$}}]{ = {\ttfamily -\/1} }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ first}.
+
+\label{process_modis_sipnet_8m_a9d8a40bc4fd9a59e3738564d076b1e06} 
+\index{processModisSipnet.m@{processModisSipnet.m}!yearModis@{yearModis}}
+\index{yearModis@{yearModis}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{yearModis()}
+{\footnotesize\ttfamily year\+Modis (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{process_modis_sipnet_8m_accb466edb510007fc4141592911daf92} 
+\index{processModisSipnet.m@{processModisSipnet.m}!Author@{Author}}
+\index{Author@{Author}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{Author}
+{\footnotesize\ttfamily function \textbf{ process\+Modis\+Sipnet} Author}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a949e077720f0d2d52f083d1e0cc44426} 
+\index{processModisSipnet.m@{processModisSipnet.m}!avgFpar\_1km@{avgFpar\_1km}}
+\index{avgFpar\_1km@{avgFpar\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{avgFpar\_1km}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ Make} \textbf{ them} into \textbf{ big} \textbf{ long} vectors corresponding \textbf{ to} \textbf{ the} \textbf{ time} avg\+Fpar\+\_\+1km =\textbf{ grid\+Average}(\textbf{ Fpar\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})}
+
+
+
+Definition at line \textbf{ 92} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_aa21d26a47b69adf5d7aafde211e9b9e0} 
+\index{processModisSipnet.m@{processModisSipnet.m}!avgFparExtra\_QC@{avgFparExtra\_QC}}
+\index{avgFparExtra\_QC@{avgFparExtra\_QC}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{avgFparExtra\_QC}
+{\footnotesize\ttfamily avg\+Fpar\+Extra\+\_\+\+QC =\textbf{ grid\+Average}(\textbf{ Fpar\+Extra\+\_\+\+QC},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})}
+
+
+
+Definition at line \textbf{ 93} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_adf929273fdc53d83f81962deb28cb035} 
+\index{processModisSipnet.m@{processModisSipnet.m}!avgFparExtra\_QCsnowMask@{avgFparExtra\_QCsnowMask}}
+\index{avgFparExtra\_QCsnowMask@{avgFparExtra\_QCsnowMask}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{avgFparExtra\_QCsnowMask}
+{\footnotesize\ttfamily avg\+Fpar\+Extra\+\_\+\+QCsnow\+Mask =\textbf{ snow\+Validate}(\textbf{ year\+Modis},\textbf{ floor}(\textbf{ decday\+Modis}),\textbf{ avg\+Fpar\+Extra\+\_\+\+QC})}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a1811ea1f94256041cb4f2bd850c638f5} 
+\index{processModisSipnet.m@{processModisSipnet.m}!avgFparStdDev\_1km@{avgFparStdDev\_1km}}
+\index{avgFparStdDev\_1km@{avgFparStdDev\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{avgFparStdDev\_1km}
+{\footnotesize\ttfamily avg\+Fpar\+Std\+Dev\+\_\+1km =\textbf{ grid\+Average}(\textbf{ Fpar\+Std\+Dev\+\_\+1km},\textquotesingle{}\textbf{ index}\textquotesingle{},\textbf{ tower\+Pixels})}
+
+
+
+Definition at line \textbf{ 94} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a6550a1a85c7377e25246048866aeccf3} 
+\index{processModisSipnet.m@{processModisSipnet.m}!calYearModis@{calYearModis}}
+\index{calYearModis@{calYearModis}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{calYearModis}
+{\footnotesize\ttfamily cal\+Year\+Modis =\textbf{ zeros}(length(\textbf{ decday\+Modis}),1)}
+
+
+
+Definition at line \textbf{ 113} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a4ea1d8c8a61e330e50a353e43235c159} 
+\index{processModisSipnet.m@{processModisSipnet.m}!calYearNiwot@{calYearNiwot}}
+\index{calYearNiwot@{calYearNiwot}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{calYearNiwot}
+{\footnotesize\ttfamily cal\+Year\+Niwot =\textbf{ zeros}(length(\textbf{ decday\+Niwot}),1)}
+
+
+
+Definition at line \textbf{ 114} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ae11b3deb3de3df7dc48e439074023e35} 
+\index{processModisSipnet.m@{processModisSipnet.m}!count@{count}}
+\index{count@{count}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{count}
+{\footnotesize\ttfamily count = 0}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_af014369202bc4a5bede70fe991977f3a} 
+\index{processModisSipnet.m@{processModisSipnet.m}!data@{data}}
+\index{data@{data}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{data}
+{\footnotesize\ttfamily \textbf{ Load} \textbf{ up} \textbf{ SIPNET} data}
+
+
+
+Definition at line \textbf{ 100} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a2e5e57837d85edd2b32a66f8b69f8e34} 
+\index{processModisSipnet.m@{processModisSipnet.m}!dataOut@{dataOut}}
+\index{dataOut@{dataOut}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{dataOut}
+{\footnotesize\ttfamily function data\+Out = [ \textbf{ niwot\+Data} \textbf{ avg\+Fpar\+\_\+1km}]}
+
+
+
+Definition at line \textbf{ 165} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_afe1af29cfe172fac020ba8fb58366c4d} 
+\index{processModisSipnet.m@{processModisSipnet.m}!dayIn@{dayIn}}
+\index{dayIn@{dayIn}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{dayIn}
+{\footnotesize\ttfamily day\+In = \textbf{ floor}((\textbf{ time\+Out}/10$^\wedge$3-\/\textbf{ year\+In})$\ast$10$^\wedge$3)}
+
+
+
+Definition at line \textbf{ 64} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a307a853019b8258a655e3c1021100c66} 
+\index{processModisSipnet.m@{processModisSipnet.m}!dayNiwot@{dayNiwot}}
+\index{dayNiwot@{dayNiwot}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{dayNiwot}
+{\footnotesize\ttfamily day\+Niwot = \textbf{ niwot\+All\+Data}(\+:,3)}
+
+
+
+Definition at line \textbf{ 107} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ac7fbbc298223a0b3f0e4abd610f40d5d} 
+\index{processModisSipnet.m@{processModisSipnet.m}!decdayModis@{decdayModis}}
+\index{decdayModis@{decdayModis}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{decdayModis}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} and \textbf{ their} \textbf{ std} \textbf{ deviation} decday\+Modis =\textbf{ zeros}(\textbf{ num\+Total},1)}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a8f7aff313bafb80841247859d63fbb87} 
+\index{processModisSipnet.m@{processModisSipnet.m}!decdayNiwot@{decdayNiwot}}
+\index{decdayNiwot@{decdayNiwot}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{decdayNiwot}
+{\footnotesize\ttfamily decday\+Niwot = \textbf{ day\+Niwot} + hour\+Niwot./24}
+
+
+
+Definition at line \textbf{ 110} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ae9011d40c6f13e68e6f07156e0da7c5d} 
+\index{processModisSipnet.m@{processModisSipnet.m}!fid@{fid}}
+\index{fid@{fid}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{fid}
+{\footnotesize\ttfamily fid =\textbf{ fopen}(\textbf{ file\+Name})}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a2fda41764a24a0130ce489ba34b9b9de} 
+\index{processModisSipnet.m@{processModisSipnet.m}!fileInLoc@{fileInLoc}}
+\index{fileInLoc@{fileInLoc}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{fileInLoc}
+{\footnotesize\ttfamily \textbf{ Output} \textbf{ the} data \textbf{ to} a \textbf{ file} file\+In\+Loc = \textquotesingle{}..\textbackslash{}..\textbackslash{}\textbf{ Sites\textbackslash{}\+Niwot\textbackslash{}niwot12\textbackslash{}niwot12}\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 158} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_aeeb0cf3628bde67eb5a29c02708cbbe1} 
+\index{processModisSipnet.m@{processModisSipnet.m}!fileName@{fileName}}
+\index{fileName@{fileName}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{fileName}
+{\footnotesize\ttfamily \textbf{ Load} \textbf{ up} \textbf{ SIPNET} \textbf{ variable} \textbf{ name} \textbf{ niwot} file\+Name =\textquotesingle{}..\textbackslash{}..\textbackslash{}\textbf{ Sites\textbackslash{}\+Niwot\textbackslash{}niwot12\textbackslash{}niwot12.\+clim}\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 101} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+
+
+Referenced by \textbf{ count\+Lines()}, \textbf{ main()}, \textbf{ read\+Data()}, \textbf{ read\+Indices\+File()}, and \textbf{ read\+Namelist\+Inputs()}.
+
+\label{process_modis_sipnet_8m_ade01b00c970a932408c880ba4068a2a8} 
+\index{processModisSipnet.m@{processModisSipnet.m}!fileOutLoc@{fileOutLoc}}
+\index{fileOutLoc@{fileOutLoc}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{fileOutLoc}
+{\footnotesize\ttfamily file\+Out\+Loc = \textquotesingle{}..\textbackslash{}..\textbackslash{}\textbf{ MODISdata\textbackslash{}niwot\+All\+Data\+MODIS}\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 159} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_adf2084a3cfabc550e716c39256b59bc3} 
+\index{processModisSipnet.m@{processModisSipnet.m}!Fpar\_1km@{Fpar\_1km}}
+\index{Fpar\_1km@{Fpar\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{Fpar\_1km}
+{\footnotesize\ttfamily Fpar\+\_\+1km =\textbf{ zeros}(\textbf{ num\+Total},49)}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a1e819df295f8c34b8c1821cfbbeb2c0a} 
+\index{processModisSipnet.m@{processModisSipnet.m}!FparExtra\_QC@{FparExtra\_QC}}
+\index{FparExtra\_QC@{FparExtra\_QC}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{FparExtra\_QC}
+{\footnotesize\ttfamily \textbf{ Do} \textbf{ the} \textbf{ QC} on \textbf{ the} data Fpar\+Extra\+\_\+\+QC =\textbf{ modis\+FPARqc}(\textbf{ Fpar\+Extra\+\_\+\+QC\+\_\+cellstr})}
+
+
+
+Definition at line \textbf{ 81} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ac27c10fb1b422e6bc1a6cef08ee00704} 
+\index{processModisSipnet.m@{processModisSipnet.m}!FparExtra\_QC\_cellstr@{FparExtra\_QC\_cellstr}}
+\index{FparExtra\_QC\_cellstr@{FparExtra\_QC\_cellstr}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{FparExtra\_QC\_cellstr}
+{\footnotesize\ttfamily Fpar\+Extra\+\_\+\+QC\+\_\+cellstr =\textbf{ cellstr}(\textbf{ char}(\textbf{ zeros}(\textbf{ num\+Total},1)))}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_af05407e2048e785cbbc27b873b2bfcd4} 
+\index{processModisSipnet.m@{processModisSipnet.m}!fparQc@{fparQc}}
+\index{fparQc@{fparQc}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{fparQc}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} fpar\+Qc}
+
+
+
+Definition at line \textbf{ 36} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_af770e1ecf62ca621da8a96adc7502152} 
+\index{processModisSipnet.m@{processModisSipnet.m}!FparResult@{FparResult}}
+\index{FparResult@{FparResult}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{FparResult}
+{\footnotesize\ttfamily Fpar\+Result =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar}))./100}
+
+
+
+Definition at line \textbf{ 70} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a762614d6d4f7e8779f868dbd4ac6997f} 
+\index{processModisSipnet.m@{processModisSipnet.m}!FparStdDevResult@{FparStdDevResult}}
+\index{FparStdDevResult@{FparStdDevResult}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{FparStdDevResult}
+{\footnotesize\ttfamily Fpar\+Std\+Dev\+Result =\textbf{ str2num}(\textbf{ char}(\textbf{ pixel\+Fpar\+Std\+Dev}))./100}
+
+
+
+Definition at line \textbf{ 71} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ac889b4cec8e5d67e7ba729a234198970} 
+\index{processModisSipnet.m@{processModisSipnet.m}!hourNiwot@{hourNiwot}}
+\index{hourNiwot@{hourNiwot}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{hourNiwot}
+{\footnotesize\ttfamily hour\+Niwot = \textbf{ niwot\+All\+Data}(\+:,4)}
+
+
+
+Definition at line \textbf{ 108} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a81b94ba50b782836960e54bcfa99fc88} 
+\index{processModisSipnet.m@{processModisSipnet.m}!i@{i}}
+\index{i@{i}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:numTotal}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ stringFparExtra\_QC=fgetl(fid)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 48} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a6784e1c334dfceb8f017667c0b0f6a3e} 
+\index{processModisSipnet.m@{processModisSipnet.m}!index@{index}}
+\index{index@{index}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{index}
+{\footnotesize\ttfamily index =find(\textbf{ overall\+Years}(i)==\textbf{ year\+Niwot})}
+
+
+
+Definition at line \textbf{ 143} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a5de924f0dedaa5fdcff473ead669aab3} 
+\index{processModisSipnet.m@{processModisSipnet.m}!indexFlag@{indexFlag}}
+\index{indexFlag@{indexFlag}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{indexFlag}
+{\footnotesize\ttfamily \textbf{ if} index\+Flag}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{==\ 1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ dataOut=ones(length(timeCompare),col)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 188} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a654f6461b0a795a57ca1b08f28f2d917} 
+\index{processModisSipnet.m@{processModisSipnet.m}!LAIqc@{LAIqc}}
+\index{LAIqc@{LAIqc}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{LAIqc}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} LAIqc}
+
+
+
+Definition at line \textbf{ 36} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a8b5cdd53840f7654f8471a1c03db4741} 
+\index{processModisSipnet.m@{processModisSipnet.m}!measurements@{measurements}}
+\index{measurements@{measurements}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{measurements}
+{\footnotesize\ttfamily \textbf{ One} \textbf{ each} \textbf{ for} and \textbf{ the} measurements}
+
+
+
+Definition at line \textbf{ 36} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ac9449a1b6410015e19ded14a5eb0edc1} 
+\index{processModisSipnet.m@{processModisSipnet.m}!niwotAllData@{niwotAllData}}
+\index{niwotAllData@{niwotAllData}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{niwotAllData}
+{\footnotesize\ttfamily niwot\+All\+Data = \textbf{ load}("{}-\/ascii"{},\textbf{ file\+Name})}
+
+
+
+Definition at line \textbf{ 102} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a492f0864090fc476b7a0b0cddad5f228} 
+\index{processModisSipnet.m@{processModisSipnet.m}!niwotData@{niwotData}}
+\index{niwotData@{niwotData}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{niwotData}
+{\footnotesize\ttfamily niwot\+Data = \textbf{ load}("{}-\/ascii"{},[\textbf{ file\+In\+Loc} \textquotesingle{}.\textbf{ dat}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 161} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a9d6a717b0aab05ca79010ce088b15aca} 
+\index{processModisSipnet.m@{processModisSipnet.m}!niwotQC@{niwotQC}}
+\index{niwotQC@{niwotQC}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{niwotQC}
+{\footnotesize\ttfamily niwot\+QC = \textbf{ load}("{}-\/ascii"{},[\textbf{ file\+In\+Loc} \textquotesingle{}.\textbf{ valid}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 162} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_aac95d1aae353f8d8330c8f05b3ee00bc} 
+\index{processModisSipnet.m@{processModisSipnet.m}!niwotSigma@{niwotSigma}}
+\index{niwotSigma@{niwotSigma}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{niwotSigma}
+{\footnotesize\ttfamily niwot\+Sigma = \textbf{ load}("{}-\/ascii"{},[\textbf{ file\+In\+Loc} \textquotesingle{}.sigma\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 163} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ab8c775ab68e44d83a1dbf67da17a2012} 
+\index{processModisSipnet.m@{processModisSipnet.m}!numTotal@{numTotal}}
+\index{numTotal@{numTotal}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{numTotal}
+{\footnotesize\ttfamily \textbf{ Subtract} \textbf{ one} \textbf{ for} \textbf{ the} \textbf{ last} \textbf{ value} \textbf{ Allocate} \textbf{ memory} \textbf{ for} \textbf{ matrices} num\+Total = \textbf{ count}/6}
+
+
+
+Definition at line \textbf{ 36} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_aa803ab9f4532281f9b51f33acfd90755} 
+\index{processModisSipnet.m@{processModisSipnet.m}!outVal@{outVal}}
+\index{outVal@{outVal}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{outVal}
+{\footnotesize\ttfamily function \textbf{ process\+Modis\+Sipnet} \textbf{ modified} \textbf{ average} \textbf{ it} (\textbf{ with} \textbf{ QC}) and \textbf{ write} \textbf{ it} \textbf{ out} \textbf{ to} a \textbf{ MODIS} \textbf{ file} \textbf{ for} \textbf{ use} \textbf{ by} \textbf{ SIPNET} \%\%\% \textbf{ Copy} \textbf{ other} \textbf{ sipnet} \textbf{ files} \textbf{ so} \textbf{ we} \textbf{ can} \textbf{ do} a data \textbf{ assimilation} \%\%\% \textbf{ We} \textbf{ do} a \textbf{ QC} \textbf{ mask} \textbf{ for} snow data \%\%\% \textbf{ link} \textbf{ to} data out\+Val =\textbf{ dlmread}(\textbf{ file\+Name},\textquotesingle{},\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a4d0b5b2e0b0657f35d6b4a24c6915b0b} 
+\index{processModisSipnet.m@{processModisSipnet.m}!overallYears@{overallYears}}
+\index{overallYears@{overallYears}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{overallYears}
+{\footnotesize\ttfamily overall\+Years =1998\+:2009}
+
+
+
+Definition at line \textbf{ 137} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a3c0733973afee059e29687748490f032} 
+\index{processModisSipnet.m@{processModisSipnet.m}!Purpose@{Purpose}}
+\index{Purpose@{Purpose}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{Purpose}
+{\footnotesize\ttfamily function \textbf{ process\+Modis\+Sipnet} \textbf{ modified} Purpose}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a0198c68112886718dc63fca79f67f959} 
+\index{processModisSipnet.m@{processModisSipnet.m}!qcOut@{qcOut}}
+\index{qcOut@{qcOut}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{qcOut}
+{\footnotesize\ttfamily qc\+Out = [ \textbf{ niwot\+QC} \textbf{ avg\+Fpar\+Extra\+\_\+\+QCsnow\+Mask}]}
+
+
+
+Definition at line \textbf{ 166} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a3d2338a1d6c50fca05bfd2d9eed6b2d7} 
+\index{processModisSipnet.m@{processModisSipnet.m}!result@{result}}
+\index{result@{result}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{result}
+{\footnotesize\ttfamily \textbf{ Divide} \textbf{ by} \textbf{ to} \textbf{ get} a result}
+
+
+
+Definition at line \textbf{ 70} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a7f200057c4baf8228b984d0b2530365d} 
+\index{processModisSipnet.m@{processModisSipnet.m}!sigmaOut@{sigmaOut}}
+\index{sigmaOut@{sigmaOut}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{sigmaOut}
+{\footnotesize\ttfamily sigma\+Out = [ \textbf{ niwot\+Sigma} \textbf{ avg\+Fpar\+Std\+Dev\+\_\+1km}]}
+
+
+
+Definition at line \textbf{ 167} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_aa1043055fd78851f431d0c891a1442a0} 
+\index{processModisSipnet.m@{processModisSipnet.m}!stringFpar\_1km@{stringFpar\_1km}}
+\index{stringFpar\_1km@{stringFpar\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{stringFpar\_1km}
+{\footnotesize\ttfamily string\+Fpar\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 52} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a474d43b69306ac3292942126a4234856} 
+\index{processModisSipnet.m@{processModisSipnet.m}!stringFparLai\_QC@{stringFparLai\_QC}}
+\index{stringFparLai\_QC@{stringFparLai\_QC}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{stringFparLai\_QC}
+{\footnotesize\ttfamily string\+Fpar\+Lai\+\_\+\+QC =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 50} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a7719243e0a7df00cb463f7a5c2ca9ae3} 
+\index{processModisSipnet.m@{processModisSipnet.m}!stringFparStdDev\_1km@{stringFparStdDev\_1km}}
+\index{stringFparStdDev\_1km@{stringFparStdDev\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{stringFparStdDev\_1km}
+{\footnotesize\ttfamily string\+Fpar\+Std\+Dev\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ac1f9ec96e8168e9d4635abb08c46e5b1} 
+\index{processModisSipnet.m@{processModisSipnet.m}!stringLai\_1km@{stringLai\_1km}}
+\index{stringLai\_1km@{stringLai\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{stringLai\_1km}
+{\footnotesize\ttfamily string\+Lai\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 54} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a460215750042736c2ba791cb4579f025} 
+\index{processModisSipnet.m@{processModisSipnet.m}!stringLaiStdDev\_1km@{stringLaiStdDev\_1km}}
+\index{stringLaiStdDev\_1km@{stringLaiStdDev\_1km}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{stringLaiStdDev\_1km}
+{\footnotesize\ttfamily string\+Lai\+Std\+Dev\+\_\+1km =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 53} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_abb559a9db2a76e855228ca52279eabe0} 
+\index{processModisSipnet.m@{processModisSipnet.m}!strings@{strings}}
+\index{strings@{strings}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{strings}
+{\footnotesize\ttfamily \textbf{ Tokenize} \textbf{ the} strings[\textbf{ time\+Out}, \textbf{ element\+Name}, \textbf{ pixel\+Fpar\+\_\+\+QC}] =\textbf{ modis\+Tokenize\+String}(\textbf{ string\+Fpar\+Extra\+\_\+\+QC})}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a42b72f913c3201fc62660d512f5ac746} 
+\index{processModisSipnet.m@{processModisSipnet.m}!test1@{test1}}
+\index{test1@{test1}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{test1}
+{\footnotesize\ttfamily test1 =\textbf{ fgetl}(\textbf{ fid})}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_ae10d41f4a5e5860343dad375269223c1} 
+\index{processModisSipnet.m@{processModisSipnet.m}!towerPixels@{towerPixels}}
+\index{towerPixels@{towerPixels}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{towerPixels}
+{\footnotesize\ttfamily \textbf{ Average} \textbf{ the} data \textbf{ according} \textbf{ to} \textbf{ the} \textbf{ pixels} tower\+Pixels =[17 18 19 24 25 26 31 32 33]}
+
+
+
+Definition at line \textbf{ 91} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_adaad4a424f101fa111caf1df1d18c482} 
+\index{processModisSipnet.m@{processModisSipnet.m}!yearCompare@{yearCompare}}
+\index{yearCompare@{yearCompare}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{yearCompare}
+{\footnotesize\ttfamily \textbf{ year\+In} \textbf{ will} \textbf{ be} a \textbf{ smaller} vector \textbf{ than} year\+Compare[\textbf{ row}, \textbf{ col}] =\textbf{ size}(\textbf{ data\+In})}
+
+
+
+Definition at line \textbf{ 185} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a784f73cd23a16069925b2d43f3a34d12} 
+\index{processModisSipnet.m@{processModisSipnet.m}!yearIn@{yearIn}}
+\index{yearIn@{yearIn}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{yearIn}
+{\footnotesize\ttfamily year\+In =\textbf{ floor}(\textbf{ time\+Out}/10$^\wedge$3)}
+
+
+
+Definition at line \textbf{ 63} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a09f74fa75a5788fa219f92dcd15049a2} 
+\index{processModisSipnet.m@{processModisSipnet.m}!yearModis@{yearModis}}
+\index{yearModis@{yearModis}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{yearModis}
+{\footnotesize\ttfamily year\+Modis =\textbf{ zeros}(\textbf{ num\+Total},1)}
+
+
+
+Definition at line \textbf{ 38} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+
+\label{process_modis_sipnet_8m_a414a92b378b6165bf4424e793eb3cdc0} 
+\index{processModisSipnet.m@{processModisSipnet.m}!yearNiwot@{yearNiwot}}
+\index{yearNiwot@{yearNiwot}!processModisSipnet.m@{processModisSipnet.m}}
+\doxysubsubsection{yearNiwot}
+{\footnotesize\ttfamily year\+Niwot = \textbf{ niwot\+All\+Data}(\+:,2)}
+
+
+
+Definition at line \textbf{ 106} of file \textbf{ process\+Modis\+Sipnet.\+m}.
+

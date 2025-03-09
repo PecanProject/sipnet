@@ -1,0 +1,189 @@
+\doxysection{sipnet.\+h File Reference}
+\label{sipnet_8h}\index{sipnet.h@{sipnet.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+{\ttfamily \#include "{}output\+Items.\+h"{}}\newline
+Include dependency graph for sipnet.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ EXTRA\+\_\+\+DATA\+\_\+\+TYPES}~0
+\item 
+\#\textbf{ define} \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}~5
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ print\+Model\+Components} (\textbf{ FILE} $\ast$\textbf{ out})
+\item 
+\textbf{ char} $\ast$$\ast$ \textbf{ get\+Data\+Type\+Names} ()
+\item 
+\textbf{ int} \textbf{ init\+Model} (\textbf{ Spatial\+Params} $\ast$$\ast$\textbf{ spatial\+Params}, \textbf{ int} $\ast$$\ast$\textbf{ steps}, \textbf{ char} $\ast$\textbf{ param\+File}, \textbf{ char} $\ast$\textbf{ clim\+File})
+\item 
+\textbf{ void} \textbf{ init\+Events} (\textbf{ char} $\ast$\textbf{ event\+File}, \textbf{ int} \textbf{ num\+Locs})
+\item 
+\textbf{ void} \textbf{ cleanup\+Model} (\textbf{ int} \textbf{ num\+Locs})
+\item 
+\textbf{ void} \textbf{ run\+Model\+No\+Out} (\textbf{ double} $\ast$$\ast$\textbf{ out\+Array}, \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ run\+Model\+Output} (\textbf{ FILE} $\ast$\textbf{ out}, \textbf{ Output\+Items} $\ast$\textbf{ output\+Items}, \textbf{ int} \textbf{ print\+Header}, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ sens\+Test} (\textbf{ FILE} $\ast$\textbf{ out}, \textbf{ Output\+Items} $\ast$\textbf{ output\+Items}, \textbf{ int} \textbf{ param\+Num}, \textbf{ double} \textbf{ low}, \textbf{ double} \textbf{ high}, \textbf{ int} \textbf{ num\+Runs}, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ setup\+Output\+Items} (\textbf{ Output\+Items} $\ast$\textbf{ output\+Items})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{sipnet_8h_ab7f5280fafc469bb1061ccfc5b86e12c} 
+\index{sipnet.h@{sipnet.h}!EXTRA\_DATA\_TYPES@{EXTRA\_DATA\_TYPES}}
+\index{EXTRA\_DATA\_TYPES@{EXTRA\_DATA\_TYPES}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{EXTRA\_DATA\_TYPES}
+{\footnotesize\ttfamily \#\textbf{ define} EXTRA\+\_\+\+DATA\+\_\+\+TYPES~0}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ sipnet.\+h}.
+
+\label{sipnet_8h_a98e46bf4352b17b36847535553080b60} 
+\index{sipnet.h@{sipnet.h}!MAX\_DATA\_TYPES@{MAX\_DATA\_TYPES}}
+\index{MAX\_DATA\_TYPES@{MAX\_DATA\_TYPES}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{MAX\_DATA\_TYPES}
+{\footnotesize\ttfamily \#\textbf{ define} MAX\+\_\+\+DATA\+\_\+\+TYPES~5}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ sipnet.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{sipnet_8h_a08ec54c820e36b47473164178295a1a8} 
+\index{sipnet.h@{sipnet.h}!cleanupModel@{cleanupModel}}
+\index{cleanupModel@{cleanupModel}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{cleanupModel()}
+{\footnotesize\ttfamily \textbf{ void} cleanup\+Model (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1916} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_8h_a50b2be5026bf5e3947eff9f09ed821db} 
+\index{sipnet.h@{sipnet.h}!getDataTypeNames@{getDataTypeNames}}
+\index{getDataTypeNames@{getDataTypeNames}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{getDataTypeNames()}
+{\footnotesize\ttfamily \textbf{ char} $\ast$$\ast$ get\+Data\+Type\+Names (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1832} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_8h_ad1341f3c91e77edfdb22320c7ba3ee77} 
+\index{sipnet.h@{sipnet.h}!initEvents@{initEvents}}
+\index{initEvents@{initEvents}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{initEvents()}
+{\footnotesize\ttfamily \textbf{ void} init\+Events (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{event\+File,  }\item[{\textbf{ int}}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3143} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ num\+Locs}, and \textbf{ read\+Event\+Data()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{sipnet_8h_aab8396814fda2fdceeb284a7dca28fae} 
+\index{sipnet.h@{sipnet.h}!initModel@{initModel}}
+\index{initModel@{initModel}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{initModel()}
+{\footnotesize\ttfamily \textbf{ int} init\+Model (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$$\ast$}]{spatial\+Params,  }\item[{\textbf{ int} $\ast$$\ast$}]{steps,  }\item[{\textbf{ char} $\ast$}]{param\+File,  }\item[{\textbf{ char} $\ast$}]{clim\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1894} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_8h_aed3527886ac1ed87fff8c530d8851819} 
+\index{sipnet.h@{sipnet.h}!printModelComponents@{printModelComponents}}
+\index{printModelComponents@{printModelComponents}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{printModelComponents()}
+{\footnotesize\ttfamily \textbf{ void} print\+Model\+Components (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1802} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_8h_a2ac1d1cf6a1203f72d581617a9618026} 
+\index{sipnet.h@{sipnet.h}!runModelNoOut@{runModelNoOut}}
+\index{runModelNoOut@{runModelNoOut}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{runModelNoOut()}
+{\footnotesize\ttfamily \textbf{ void} run\+Model\+No\+Out (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$$\ast$}]{out\+Array,  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1760} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_8h_a3dbfe6f24ba0a4169fce31f6b0363638} 
+\index{sipnet.h@{sipnet.h}!runModelOutput@{runModelOutput}}
+\index{runModelOutput@{runModelOutput}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{runModelOutput()}
+{\footnotesize\ttfamily \textbf{ void} run\+Model\+Output (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out,  }\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items,  }\item[{\textbf{ int}}]{print\+Header,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2822} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Climate\+Vars\+::day}, \textbf{ index}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ setup\+Model()}, \textbf{ terminate\+Output\+Item\+Lines()}, \textbf{ Climate\+Vars\+::time}, \textbf{ update\+State()}, \textbf{ write\+Output\+Item\+Labels()}, \textbf{ write\+Output\+Item\+Values()}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ sens\+Test()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{sipnet_8h_a1b37e0be44561cca24782fbd2e6a1689} 
+\index{sipnet.h@{sipnet.h}!sensTest@{sensTest}}
+\index{sensTest@{sensTest}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{sensTest()}
+{\footnotesize\ttfamily \textbf{ void} sens\+Test (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out,  }\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items,  }\item[{\textbf{ int}}]{param\+Num,  }\item[{\textbf{ double}}]{low,  }\item[{\textbf{ double}}]{high,  }\item[{\textbf{ int}}]{num\+Runs,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2911} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ fprintf()}, \textbf{ index}, \textbf{ run\+Model\+Output()}, \textbf{ set\+Spatial\+Param()}, \textbf{ value}, and \textbf{ write\+Output\+Item\+Labels()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{sipnet_8h_af9ce545d20f3285ad314db7ce52ee054} 
+\index{sipnet.h@{sipnet.h}!setupOutputItems@{setupOutputItems}}
+\index{setupOutputItems@{setupOutputItems}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{setupOutputItems()}
+{\footnotesize\ttfamily \textbf{ void} setup\+Output\+Items (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3095} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ add\+Output\+Item()}, \textbf{ Tracker\+Vars\+::gpp}, \textbf{ index}, \textbf{ Tracker\+Vars\+::nee}, \textbf{ Tracker\+Vars\+::tot\+Gpp}, \textbf{ Tracker\+Vars\+::tot\+Nee}, and \textbf{ trackers}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 5

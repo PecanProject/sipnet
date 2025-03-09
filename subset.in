@@ -1,0 +1,35 @@
+! Input file for the subsetData program
+
+INPUT_FILENAME = ../MODISdata/niwotAllDataModis
+! base name of files containing existing input data
+
+OUTPUT_FILENAME = ../MODISdata/testData/niwotMODIS_test
+! base name of desired output files, containing subset of input files
+
+START_YEAR = 2003
+START_DAY = 152
+! To start at the beginning of the record,
+!  specify START_YEAR = START_DAY = -1
+! START_DAY: Julian day of year
+! Jan 1 = 1
+! Feb 1 = 32
+! Mar 1 = 60
+! Apr 1 = 91
+! May 1 = 121
+! Jun 1 = 152
+! Jul 1 = 182
+! Aug 1 = 213
+! Sep 1 = 244
+! Oct 1 = 274
+! Nov 1 = 305
+! Dec 1 = 335
+
+NUM_DAYS = 30
+! To go to the end of the record, specify NUM_DAYS = -1
+
+AGGREGATION = none
+! Valid values: 'none', 'daily'
+! Used to create OUTPUT_FILENAME.agg, a file containing # of time steps
+!  per model/data aggregation (corresponding to estimate.in :
+!  FILE_FOR_AGG)
+

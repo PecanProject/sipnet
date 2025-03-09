@@ -1,0 +1,216 @@
+\doxysection{sens\+Test.\+c File Reference}
+\label{sens_test_8c}\index{sensTest.c@{sensTest.c}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}sipnet.\+h"{}}\newline
+{\ttfamily \#include "{}paramchange.\+h"{}}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+{\ttfamily \#include "{}namelist\+Input.\+h"{}}\newline
+Include dependency graph for sens\+Test.\+c\+:
+% FIG 0
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ FILE\+\_\+\+MAXNAME}~256
+\item 
+\#\textbf{ define} \textbf{ INPUT\+\_\+\+MAXNAME}~64
+\item 
+\#\textbf{ define} \textbf{ INPUT\+\_\+\+FILE}~"{}sens\+Test.\+in"{}
+\item 
+\#\textbf{ define} \textbf{ AGGREGATION\+\_\+\+EXT}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ UNAGGED\+\_\+\+WEIGHT}~0.\+0
+\item 
+\#\textbf{ define} \textbf{ LOC}~0
+\item 
+\#\textbf{ define} \textbf{ PARAM\+\_\+\+FILE}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ OPT\+\_\+\+INDICES\+\_\+\+EXT}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ VALID\+\_\+\+FRAC}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ usage} (\textbf{ char} $\ast$\textbf{ prog\+Name})
+\item 
+\textbf{ int} \textbf{ init\+Data\+Type\+Indices} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$])
+\item 
+\textbf{ int} \textbf{ parse\+Data\+Type\+Switches} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ int} \textbf{ data\+Type\+Switches}[$\,$])
+\item 
+\textbf{ int} \textbf{ main} (\textbf{ int} \textbf{ argc}, \textbf{ char} $\ast$\textbf{ argv}[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{sens_test_8c_a47f3b2019db931078fd96aa14a08dacd} 
+\index{sensTest.c@{sensTest.c}!AGGREGATION\_EXT@{AGGREGATION\_EXT}}
+\index{AGGREGATION\_EXT@{AGGREGATION\_EXT}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{AGGREGATION\_EXT}
+{\footnotesize\ttfamily \#\textbf{ define} AGGREGATION\+\_\+\+EXT~"{}"{}}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_a829499bd91e567d022bbdabc3ae7c62e} 
+\index{sensTest.c@{sensTest.c}!FILE\_MAXNAME@{FILE\_MAXNAME}}
+\index{FILE\_MAXNAME@{FILE\_MAXNAME}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{FILE\_MAXNAME}
+{\footnotesize\ttfamily \#\textbf{ define} FILE\+\_\+\+MAXNAME~256}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_a2a3ad4ebb43e29f804a1e524aca840b2} 
+\index{sensTest.c@{sensTest.c}!INPUT\_FILE@{INPUT\_FILE}}
+\index{INPUT\_FILE@{INPUT\_FILE}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{INPUT\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} INPUT\+\_\+\+FILE~"{}sens\+Test.\+in"{}}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_a8f37ae52567be5458f05af3c396b2811} 
+\index{sensTest.c@{sensTest.c}!INPUT\_MAXNAME@{INPUT\_MAXNAME}}
+\index{INPUT\_MAXNAME@{INPUT\_MAXNAME}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{INPUT\_MAXNAME}
+{\footnotesize\ttfamily \#\textbf{ define} INPUT\+\_\+\+MAXNAME~64}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_a0fee446a4a4ef6536664bc1ff47ff694} 
+\index{sensTest.c@{sensTest.c}!LOC@{LOC}}
+\index{LOC@{LOC}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{LOC}
+{\footnotesize\ttfamily \#\textbf{ define} LOC~0}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_a1f57f70c8d744e84c3bac91c837f5480} 
+\index{sensTest.c@{sensTest.c}!OPT\_INDICES\_EXT@{OPT\_INDICES\_EXT}}
+\index{OPT\_INDICES\_EXT@{OPT\_INDICES\_EXT}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{OPT\_INDICES\_EXT}
+{\footnotesize\ttfamily \#\textbf{ define} OPT\+\_\+\+INDICES\+\_\+\+EXT~"{}"{}}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_aac4cbf64d7084205e04bc1b1569baf05} 
+\index{sensTest.c@{sensTest.c}!PARAM\_FILE@{PARAM\_FILE}}
+\index{PARAM\_FILE@{PARAM\_FILE}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{PARAM\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} PARAM\+\_\+\+FILE~"{}"{}}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_a571515ad603a9c9669792d68a7004bae} 
+\index{sensTest.c@{sensTest.c}!UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}}
+\index{UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{UNAGGED\_WEIGHT}
+{\footnotesize\ttfamily \#\textbf{ define} UNAGGED\+\_\+\+WEIGHT~0.\+0}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ sens\+Test.\+c}.
+
+\label{sens_test_8c_ae6e2d964bcb52ad2af799a000ea36147} 
+\index{sensTest.c@{sensTest.c}!VALID\_FRAC@{VALID\_FRAC}}
+\index{VALID\_FRAC@{VALID\_FRAC}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{VALID\_FRAC}
+{\footnotesize\ttfamily \#\textbf{ define} VALID\+\_\+\+FRAC}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.5\ \textcolor{comment}{/*\ fraction\ of\ data\ points\ which\ must\ be\ valid}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ use\ data\ from\ a\ given\ time\ step\ */}}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 28} of file \textbf{ sens\+Test.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{sens_test_8c_a02c81e3a12dadf2d7ed0ffed9f3e21f6} 
+\index{sensTest.c@{sensTest.c}!initDataTypeIndices@{initDataTypeIndices}}
+\index{initDataTypeIndices@{initDataTypeIndices}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{initDataTypeIndices()}
+{\footnotesize\ttfamily \textbf{ int} init\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ sens\+Test.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{sens_test_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{sensTest.c@{sensTest.c}!main@{main}}
+\index{main@{main}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily \textbf{ int} main (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{argc,  }\item[{\textbf{ char} $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ sens\+Test.\+c}.
+
+
+
+References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ agged\+Difference()}, \textbf{ AGGREGATION\+\_\+\+EXT}, \textbf{ build\+File\+Name()}, \textbf{ cleanup\+Model()}, \textbf{ cleanup\+Paramchange()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ difference()}, \textbf{ DOUBLE\+\_\+\+TYPE}, \textbf{ exit()}, \textbf{ fclose()}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ file\+Name}, \textbf{ fprintf()}, \textbf{ free\+Output\+Info()}, \textbf{ get\+Data\+Type\+Names()}, \textbf{ i}, \textbf{ index}, \textbf{ init\+Data\+Type\+Indices()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ LOC}, \textbf{ locate\+Param()}, \textbf{ make\+Array()}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ NAMELIST\+\_\+\+INPUT\+\_\+\+MAXNAME}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Info()}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ OPT\+\_\+\+INDICES\+\_\+\+EXT}, \textbf{ PARAM\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ parse\+Data\+Type\+Switches()}, \textbf{ read\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ set\+Spatial\+Param()}, \textbf{ STRING\+\_\+\+TYPE}, \textbf{ UNAGGED\+\_\+\+WEIGHT}, \textbf{ unagged\+Weight}, \textbf{ usage()}, and \textbf{ VALID\+\_\+\+FRAC}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{sens_test_8c_af8c3a050f370170b56d3537673ce0541} 
+\index{sensTest.c@{sensTest.c}!parseDataTypeSwitches@{parseDataTypeSwitches}}
+\index{parseDataTypeSwitches@{parseDataTypeSwitches}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{parseDataTypeSwitches()}
+{\footnotesize\ttfamily \textbf{ int} parse\+Data\+Type\+Switches (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ int}}]{data\+Type\+Switches[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 59} of file \textbf{ sens\+Test.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{sens_test_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
+\index{sensTest.c@{sensTest.c}!usage@{usage}}
+\index{usage@{usage}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{usage()}
+{\footnotesize\ttfamily \textbf{ void} usage (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ sens\+Test.\+c}.
+
+
+
+References \textbf{ index}, and \textbf{ INPUT\+\_\+\+FILE}.
+
+
+
+Referenced by \textbf{ main()}.
+

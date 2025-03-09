@@ -1,0 +1,774 @@
+\doxysection{daylen.\+m File Reference}
+\label{daylen_8m}\index{daylen.m@{daylen.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ clear} (\textquotesingle{}\textbf{ all}\textquotesingle{})
+\item 
+\textbf{ close} (\textquotesingle{}\textbf{ all}\textquotesingle{}, \textquotesingle{}\textbf{ hidden}\textquotesingle{})
+\item 
+\textbf{ id} \textbf{ km\+:} (\textbf{ id} \textbf{ hr\+Offset})
+\item 
+\textbf{ id} \textbf{ par\+Frac} ()
+\item 
+\textbf{ add} \textbf{ to} \textbf{ put} \textbf{ us} in \textbf{ the} \textbf{ middle} of \textbf{ the} \textbf{ timestep} \textbf{ sza\+\_\+nrm} (k)
+\item 
+\textbf{ rad\+\_\+nrm} (k)
+\item 
+\textbf{ par\+A\+\_\+nrm} (k)
+\item 
+\textbf{ end} \textbf{ srise\+\_\+nrm} (\textbf{ doy})
+\item 
+\textbf{ don} \textbf{ t} \textbf{ bother} \textbf{ doing} \textbf{ offset} on \textbf{ srise} and \textbf{ sset} \textbf{ sset\+\_\+nrm} (\textbf{ doy})
+\item 
+\textbf{ because} \textbf{ we} \textbf{ only} \textbf{ care} \textbf{ about} \textbf{ their} \textbf{ difference} \textbf{ daylen\+\_\+nrm} (\textbf{ doy})
+\item 
+\textbf{ subtract} \textbf{ to} \textbf{ put} \textbf{ us} in \textbf{ the} \textbf{ middle} of \textbf{ the} \textbf{ timestep} \textbf{ sza\+\_\+leap} (k)
+\item 
+\textbf{ rad\+\_\+leap} (k)
+\item 
+\textbf{ par\+A\+\_\+leap} (k)
+\item 
+\textbf{ end} \textbf{ srise\+\_\+leap} (\textbf{ doy})
+\item 
+\textbf{ don} \textbf{ t} \textbf{ bother} \textbf{ doing} \textbf{ offset} on \textbf{ srise} and \textbf{ sset} \textbf{ sset\+\_\+leap} (\textbf{ doy})
+\item 
+\textbf{ because} \textbf{ we} \textbf{ only} \textbf{ care} \textbf{ about} \textbf{ their} \textbf{ difference} \textbf{ daylen\+\_\+leap} (\textbf{ doy})
+\item 
+\textbf{ rad\+\_\+nrm} (1\+:8688)\textquotesingle{}]
+\item 
+\textbf{ par\+A\+\_\+nrm} (1\+:8688)\textquotesingle{}]
+\item 
+\textbf{ daylen\+\_\+nrm} (1\+:181)\textquotesingle{}]
+\item 
+\textbf{ find}(\textbf{ par\+AY}(\textbf{ r} \textbf{ length} ()
+\item 
+\textbf{ SAVE} \textbf{ THE} \textbf{ DATA} \textbf{ save} (\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ potpar}\textquotesingle{}, \textquotesingle{}\textbf{ par\+AY}\textquotesingle{},\textquotesingle{}-\/\textbf{ ascii}\textquotesingle{})
+\item 
+\textbf{ save} (\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ daylen}\textquotesingle{}, \textquotesingle{}\textbf{ daylenY}\textquotesingle{},\textquotesingle{}-\/\textbf{ ascii}\textquotesingle{})
+\item 
+\textbf{ save} (\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ nlight}\textquotesingle{}, \textquotesingle{}\textbf{ nlight}\textquotesingle{},\textquotesingle{}-\/\textbf{ ascii}\textquotesingle{})
+\item 
+\textbf{ plot} (\textbf{ timeY}, \textbf{ par\+AY}, \textbf{ timeY}, \textbf{ par}) \% \textbf{ figure}
+\item 
+plot(\textbf{ xc}(87672-\/2\+:87672+2), \textquotesingle{}\textbf{ o}-\/\textquotesingle{}) \% \textbf{ xc}(87672-\/2 \textbf{ plot} (\textbf{ par\+AY}, \textbf{ par},\textquotesingle{}.\textquotesingle{},[0 2200],[0 2200], \textquotesingle{}\textbf{ r}\textquotesingle{}) \% \textbf{ figure}
+\item 
+\textbf{ hist} (\textbf{ log}(\textbf{ ratio}))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ nyears} =11
+\item 
+\textbf{ Harvard} \textbf{ forest}
+\item 
+\textbf{ Niwot} \textbf{ \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+\item 
+\textbf{ LBA} \textbf{ km}
+\item 
+\textbf{ lat\+Rad} = \textbf{ lat}$\ast$(\textbf{ pi}/180)
+\item 
+\textbf{ omega} = 0.\+2618
+\item 
+\textbf{ Niwot} \textbf{ \+\_\+\+\_\+pad1\+\_\+\+\_\+}
+\item 
+\textbf{ sun\+Frac} = 1.\+0
+\item 
+\textbf{ nt\+\_\+nrm} =24$\ast$365
+\item 
+\textbf{ nt\+\_\+leap} =24$\ast$366
+\item 
+\textbf{ NORMAL} \textbf{ YEARS} \textbf{ for} \textbf{ doy}
+\item 
+\textbf{ eccent} = 1.\+000110 + 0.\+034221$\ast$\textbf{ cos}(\textbf{ day\+Ang}) + 0.\+00128$\ast$\textbf{ sin}(\textbf{ day\+Ang}) + 0.\+000719$\ast$\textbf{ cos}(2$\ast$\textbf{ day\+Ang}) + 0.\+000077$\ast$\textbf{ sin}(2$\ast$\textbf{ day\+Ang})
+\item 
+\textbf{ decl} = (0.\+006918 -\/ 0.\+399912$\ast$\textbf{ cos}(\textbf{ day\+Ang}) + 0.\+070257$\ast$\textbf{ sin}(\textbf{ day\+Ang}) -\/ 0.\+006758$\ast$\textbf{ cos}(2$\ast$\textbf{ day\+Ang}) + 0.\+000907$\ast$\textbf{ sin}(2$\ast$\textbf{ day\+Ang}) -\/ 0.\+002697$\ast$\textbf{ cos}(3$\ast$\textbf{ day\+Ang}) + 0.\+00148$\ast$\textbf{ sin}(3$\ast$\textbf{ day\+Ang}))
+\item 
+\textbf{ for} \textbf{ hr}
+\item 
+\textbf{ k} = (\textbf{ doy} -\/ 1)$\ast$48 + \textbf{ hr}$\ast$2 + 1
+\item 
+\textbf{ t} =\textbf{ mod}(\textbf{ hr}+\textbf{ hr\+Offset},24)-\/12
+\item 
+\textbf{ end} \textbf{ HARVARD} \textbf{ FOREST}
+\item 
+\textbf{ par\+A\+\_\+1991} =\textbf{ par\+A\+\_\+nrm}(\textbf{ end}-\/1559\+:\textbf{ end})
+\item 
+\textbf{ daylen\+\_\+1991} =\textbf{ daylen\+\_\+nrm}(\textbf{ end}-\/1559\+:\textbf{ end})
+\item 
+\textbf{ radY} = [\textbf{ rad\+\_\+1991}\textquotesingle{}
+\item 
+\textbf{ rad\+\_\+leap}
+\item 
+\textbf{ rad\+\_\+nrm}
+\item 
+\textbf{ par\+AY} = [\textbf{ par\+A\+\_\+1991}\textquotesingle{}
+\item 
+\textbf{ par\+A\+\_\+leap}
+\item 
+\textbf{ par\+A\+\_\+nrm}
+\item 
+\textbf{ daylenY} = [\textbf{ daylen\+\_\+1991}\textquotesingle{}
+\item 
+\textbf{ daylen\+\_\+leap}
+\item 
+\textbf{ daylen\+\_\+nrm}
+\item 
+\textbf{ timeY} = 1\+:((24$\ast$(365$\ast$11 + 3))+1560)
+\item 
+\textbf{ NIWOT} \textbf{ \+\_\+\+\_\+pad2\+\_\+\+\_\+}
+\item 
+\textbf{ par\+A\+\_\+1998} = \textbf{ par\+A\+\_\+nrm}(\textbf{ end}-\/2927\+:\textbf{ end})
+\item 
+\textbf{ daylen\+\_\+1998} = \textbf{ daylen\+\_\+nrm}(\textbf{ end}-\/60\+:\textbf{ end})
+\item 
+days \textbf{ for}
+\item 
+days days \textbf{ for} \textbf{ and}
+\item 
+\textbf{ FOR} \textbf{ CALCULATING} \textbf{ STATISTICS} \textbf{ TO} \textbf{ CHECK} \textbf{ POTPAR}
+\item 
+\textbf{ w} =\textbf{ find}(\textbf{ par} $>$ 0 \& \textbf{ par\+AY} $>$ 0)
+\item 
+\textbf{ ratio} =(\textbf{ par}(\textbf{ w})./\textbf{ par\+AY}(\textbf{ w}))
+\item 
+\textbf{ med} =\textbf{ median}(\textbf{ ratio})
+\item 
+\textbf{ ndays} =length(\textbf{ par\+AY})/24
+\item 
+\textbf{ r} = (i-\/1)$\ast$48+1\+:i$\ast$48
+\item 
+\textbf{ end} \textbf{ nlight} =nlight\textquotesingle{}
+\item 
+\textbf{ figure}
+\item 
+\textbf{ xc} =\textbf{ xcorr}(\textbf{ par\+AY},\textbf{ par},\textquotesingle{}\textbf{ coeff}\textquotesingle{})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{daylen_8m_a090f2be744c060078a59010acf649eb2} 
+\index{daylen.m@{daylen.m}!clear@{clear}}
+\index{clear@{clear}!daylen.m@{daylen.m}}
+\doxysubsubsection{clear()}
+{\footnotesize\ttfamily clear (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ all}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_aa8bcc3da03d77816eb44a7dd6eb514dc} 
+\index{daylen.m@{daylen.m}!close@{close}}
+\index{close@{close}!daylen.m@{daylen.m}}
+\doxysubsubsection{close()}
+{\footnotesize\ttfamily close (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ all}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ hidden}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_aacf7c22d71ddbee2decce665ae8abb67} 
+\index{daylen.m@{daylen.m}!daylen\_leap@{daylen\_leap}}
+\index{daylen\_leap@{daylen\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylen\_leap()}
+{\footnotesize\ttfamily \textbf{ because} \textbf{ we} \textbf{ only} \textbf{ care} \textbf{ about} \textbf{ their} \textbf{ difference} daylen\+\_\+leap (\begin{DoxyParamCaption}\item[{\textbf{ doy}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_ac29abf892c059077cbcc4e9f316715c9} 
+\index{daylen.m@{daylen.m}!daylen\_nrm@{daylen\_nrm}}
+\index{daylen\_nrm@{daylen\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylen\_nrm()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily daylen\+\_\+nrm (\begin{DoxyParamCaption}\item[{1\+:181}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a2abdaffd87bb4d815759bec9d9aa0ba7} 
+\index{daylen.m@{daylen.m}!daylen\_nrm@{daylen\_nrm}}
+\index{daylen\_nrm@{daylen\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylen\_nrm()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ because} \textbf{ we} \textbf{ only} \textbf{ care} \textbf{ about} \textbf{ their} \textbf{ difference} daylen\+\_\+nrm (\begin{DoxyParamCaption}\item[{\textbf{ doy}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a27c22fdaf560bbd78a9b3ab725a7bdb3} 
+\index{daylen.m@{daylen.m}!hist@{hist}}
+\index{hist@{hist}!daylen.m@{daylen.m}}
+\doxysubsubsection{hist()}
+{\footnotesize\ttfamily hist (\begin{DoxyParamCaption}\item[{\textbf{ log}(\textbf{ ratio})}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a316db72a9bb268e3c5f8186582007711} 
+\index{daylen.m@{daylen.m}!km:@{km:}}
+\index{km:@{km:}!daylen.m@{daylen.m}}
+\doxysubsubsection{km:()}
+{\footnotesize\ttfamily \textbf{ id} km\+: (\begin{DoxyParamCaption}\item[{\textbf{ id}}]{hr\+Offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+\label{daylen_8m_a86e0024c249e4a09333409ec56451e1e} 
+\index{daylen.m@{daylen.m}!length@{length}}
+\index{length@{length}!daylen.m@{daylen.m}}
+\doxysubsubsection{length()}
+{\footnotesize\ttfamily \textbf{ find}(\textbf{ par\+AY}(\textbf{ r} length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+References \textbf{ i}.
+
+
+
+Referenced by \textbf{ fprintf()}, \textbf{ fprintf()}, \textbf{ if()}, \textbf{ if()}, \textbf{ intervaldn()}, \textbf{ means\+:()}, \textbf{ numlines()}, \textbf{ ones()}, \textbf{ read\+Clim\+Data()}, \textbf{ set\+All()}, \textbf{ set\+Possibly\+Spatial()}, \textbf{ simple\+Water\+Flow()}, \textbf{ soil\+Degradation()}, \textbf{ step\+Length()}, \textbf{ sum\+Array()}, and \textbf{ update\+Trackers()}.
+
+\label{daylen_8m_aa508842c2f25e4da80f80e5669e8063c} 
+\index{daylen.m@{daylen.m}!parA\_leap@{parA\_leap}}
+\index{parA\_leap@{parA\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{parA\_leap()}
+{\footnotesize\ttfamily par\+A\+\_\+leap (\begin{DoxyParamCaption}\item[{k}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a1a9c41c3d8f2de1082a5311a387dc2ed} 
+\index{daylen.m@{daylen.m}!parA\_nrm@{parA\_nrm}}
+\index{parA\_nrm@{parA\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{parA\_nrm()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily par\+A\+\_\+nrm (\begin{DoxyParamCaption}\item[{1\+:8688}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a42fe6f9482f1a9e0293a041cbae24349} 
+\index{daylen.m@{daylen.m}!parA\_nrm@{parA\_nrm}}
+\index{parA\_nrm@{parA\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{parA\_nrm()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily par\+A\+\_\+nrm (\begin{DoxyParamCaption}\item[{k}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a3a1dd4363c4bdf1c5469dac0f711d804} 
+\index{daylen.m@{daylen.m}!parFrac@{parFrac}}
+\index{parFrac@{parFrac}!daylen.m@{daylen.m}}
+\doxysubsubsection{parFrac()}
+{\footnotesize\ttfamily \textbf{ id} par\+Frac (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+\label{daylen_8m_a069ffbb19632fa858d77babe0c935cac} 
+\index{daylen.m@{daylen.m}!plot@{plot}}
+\index{plot@{plot}!daylen.m@{daylen.m}}
+\doxysubsubsection{plot()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily plot(\textbf{ xc}(87672-\/2\+:87672+2), \textquotesingle{}\textbf{ o}-\/\textquotesingle{}) \% \textbf{ xc}(87672-\/2 plot (\begin{DoxyParamCaption}\item[{\textbf{ par\+AY}}]{,  }\item[{\textbf{ par}}]{,  }\item[{\textquotesingle{}.\textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ r}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a6d5339de3ebf886230ca6d8e21a8ea6b} 
+\index{daylen.m@{daylen.m}!plot@{plot}}
+\index{plot@{plot}!daylen.m@{daylen.m}}
+\doxysubsubsection{plot()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily plot (\begin{DoxyParamCaption}\item[{\textbf{ timeY}}]{,  }\item[{\textbf{ par\+AY}}]{,  }\item[{\textbf{ timeY}}]{,  }\item[{\textbf{ par}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a957dfd1f9aedb9a57b76f0b70f72dff7} 
+\index{daylen.m@{daylen.m}!rad\_leap@{rad\_leap}}
+\index{rad\_leap@{rad\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{rad\_leap()}
+{\footnotesize\ttfamily rad\+\_\+leap (\begin{DoxyParamCaption}\item[{k}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_aa120fb0ae309c1110c4058545b692612} 
+\index{daylen.m@{daylen.m}!rad\_nrm@{rad\_nrm}}
+\index{rad\_nrm@{rad\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{rad\_nrm()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily rad\+\_\+nrm (\begin{DoxyParamCaption}\item[{1\+:8688}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_ad38d6a1a33db41861c73f052e7b408eb} 
+\index{daylen.m@{daylen.m}!rad\_nrm@{rad\_nrm}}
+\index{rad\_nrm@{rad\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{rad\_nrm()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily rad\+\_\+nrm (\begin{DoxyParamCaption}\item[{k}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a26679de0c0a1b57af41a3608233be6dc} 
+\index{daylen.m@{daylen.m}!save@{save}}
+\index{save@{save}!daylen.m@{daylen.m}}
+\doxysubsubsection{save()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily save (\begin{DoxyParamCaption}\item[{\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ daylen}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ daylenY}\textquotesingle{}}]{,  }\item[{\textquotesingle{}-\/\textbf{ ascii}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a1fb147b4943044da7b55918af234b531} 
+\index{daylen.m@{daylen.m}!save@{save}}
+\index{save@{save}!daylen.m@{daylen.m}}
+\doxysubsubsection{save()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily save (\begin{DoxyParamCaption}\item[{\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ nlight}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ nlight}\textquotesingle{}}]{,  }\item[{\textquotesingle{}-\/\textbf{ ascii}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a677411b94bb7ff573b14b97a633a05cb} 
+\index{daylen.m@{daylen.m}!save@{save}}
+\index{save@{save}!daylen.m@{daylen.m}}
+\doxysubsubsection{save()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ SAVE} \textbf{ THE} \textbf{ DATA} save (\begin{DoxyParamCaption}\item[{\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/\textbf{ potpar}\textquotesingle{}}]{,  }\item[{\textquotesingle{}\textbf{ par\+AY}\textquotesingle{}}]{,  }\item[{\textquotesingle{}-\/\textbf{ ascii}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a18410bd7b484557394430815c3e487c2} 
+\index{daylen.m@{daylen.m}!srise\_leap@{srise\_leap}}
+\index{srise\_leap@{srise\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{srise\_leap()}
+{\footnotesize\ttfamily \textbf{ end} srise\+\_\+leap (\begin{DoxyParamCaption}\item[{\textbf{ doy}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a13f3ca0f3319fbd000726d2609cbe0c1} 
+\index{daylen.m@{daylen.m}!srise\_nrm@{srise\_nrm}}
+\index{srise\_nrm@{srise\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{srise\_nrm()}
+{\footnotesize\ttfamily \textbf{ end} srise\+\_\+nrm (\begin{DoxyParamCaption}\item[{\textbf{ doy}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a3b1494ed61b1f2eab38f4afbdbfa0932} 
+\index{daylen.m@{daylen.m}!sset\_leap@{sset\_leap}}
+\index{sset\_leap@{sset\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{sset\_leap()}
+{\footnotesize\ttfamily \textbf{ don} \textbf{ t} \textbf{ bother} \textbf{ doing} \textbf{ offset} on \textbf{ srise} and \textbf{ sset} sset\+\_\+leap (\begin{DoxyParamCaption}\item[{\textbf{ doy}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_ae973a43fc5e45bf24321179b8fe089a7} 
+\index{daylen.m@{daylen.m}!sset\_nrm@{sset\_nrm}}
+\index{sset\_nrm@{sset\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{sset\_nrm()}
+{\footnotesize\ttfamily \textbf{ don} \textbf{ t} \textbf{ bother} \textbf{ doing} \textbf{ offset} on \textbf{ srise} and \textbf{ sset} sset\+\_\+nrm (\begin{DoxyParamCaption}\item[{\textbf{ doy}}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_a07a47d76beb3612d9c67f32647349ff7} 
+\index{daylen.m@{daylen.m}!sza\_leap@{sza\_leap}}
+\index{sza\_leap@{sza\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{sza\_leap()}
+{\footnotesize\ttfamily \textbf{ subtract} \textbf{ to} \textbf{ put} \textbf{ us} in \textbf{ the} \textbf{ middle} of \textbf{ the} \textbf{ timestep} sza\+\_\+leap (\begin{DoxyParamCaption}\item[{k}]{ }\end{DoxyParamCaption})}
+
+\label{daylen_8m_aa66d6cfade2dae4503d3a9a7080dd760} 
+\index{daylen.m@{daylen.m}!sza\_nrm@{sza\_nrm}}
+\index{sza\_nrm@{sza\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{sza\_nrm()}
+{\footnotesize\ttfamily \textbf{ add} \textbf{ to} \textbf{ put} \textbf{ us} in \textbf{ the} \textbf{ middle} of \textbf{ the} \textbf{ timestep} sza\+\_\+nrm (\begin{DoxyParamCaption}\item[{k}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{daylen_8m_a31d37ee1c610cba48316728c2c0747e8} 
+\index{daylen.m@{daylen.m}!\_\_pad0\_\_@{\_\_pad0\_\_}}
+\index{\_\_pad0\_\_@{\_\_pad0\_\_}!daylen.m@{daylen.m}}
+\doxysubsubsection{\_\_pad0\_\_}
+{\footnotesize\ttfamily \textbf{ Niwot} \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_ae1afb7be67c8bf7ddb9dfc08b8869bf9} 
+\index{daylen.m@{daylen.m}!\_\_pad1\_\_@{\_\_pad1\_\_}}
+\index{\_\_pad1\_\_@{\_\_pad1\_\_}!daylen.m@{daylen.m}}
+\doxysubsubsection{\_\_pad1\_\_}
+{\footnotesize\ttfamily \textbf{ Niwot} \+\_\+\+\_\+pad1\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a68ea73575f4fcc97014563343136f709} 
+\index{daylen.m@{daylen.m}!\_\_pad2\_\_@{\_\_pad2\_\_}}
+\index{\_\_pad2\_\_@{\_\_pad2\_\_}!daylen.m@{daylen.m}}
+\doxysubsubsection{\_\_pad2\_\_}
+{\footnotesize\ttfamily \textbf{ NIWOT} \+\_\+\+\_\+pad2\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 92} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_ac3678d20d7fc2c277981132bbd4c24a1} 
+\index{daylen.m@{daylen.m}!and@{and}}
+\index{and@{and}!daylen.m@{daylen.m}}
+\doxysubsubsection{and}
+{\footnotesize\ttfamily days days \textbf{ for} and}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ daylen.\+m}.
+
+
+
+Referenced by \textbf{ fprintf()}, \textbf{ it()}, \textbf{ tsoil()}, \textbf{ year()}, \textbf{ years()}, and \textbf{ years()}.
+
+\label{daylen_8m_a95ac91997551442b33a455a1698c7d2b} 
+\index{daylen.m@{daylen.m}!daylen\_1991@{daylen\_1991}}
+\index{daylen\_1991@{daylen\_1991}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylen\_1991}
+{\footnotesize\ttfamily daylen\+\_\+1991 =\textbf{ daylen\+\_\+nrm}(\textbf{ end}-\/1559\+:\textbf{ end})}
+
+
+
+Definition at line \textbf{ 84} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_ae64154738ccd9d8150a6be31660212b6} 
+\index{daylen.m@{daylen.m}!daylen\_1998@{daylen\_1998}}
+\index{daylen\_1998@{daylen\_1998}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylen\_1998}
+{\footnotesize\ttfamily daylen\+\_\+1998 = \textbf{ daylen\+\_\+nrm}(\textbf{ end}-\/60\+:\textbf{ end})}
+
+
+
+Definition at line \textbf{ 96} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_af257a4996982b84f415f143c14db0f7f} 
+\index{daylen.m@{daylen.m}!daylen\_leap@{daylen\_leap}}
+\index{daylen\_leap@{daylen\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylen\_leap}
+{\footnotesize\ttfamily daylen\+\_\+leap}
+
+
+
+Definition at line \textbf{ 88} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_af727b6e5cd1d1d444884061fc0e2e51d} 
+\index{daylen.m@{daylen.m}!daylen\_nrm@{daylen\_nrm}}
+\index{daylen\_nrm@{daylen\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylen\_nrm}
+{\footnotesize\ttfamily daylen\+\_\+nrm}
+
+
+
+Definition at line \textbf{ 88} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a9a1a6f548e11aa35956a219aaff38802} 
+\index{daylen.m@{daylen.m}!daylenY@{daylenY}}
+\index{daylenY@{daylenY}!daylen.m@{daylen.m}}
+\doxysubsubsection{daylenY}
+{\footnotesize\ttfamily daylenY = [\textbf{ daylen\+\_\+1991}\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 88} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_aa102d501a0e4611873bacc3476a8c39e} 
+\index{daylen.m@{daylen.m}!decl@{decl}}
+\index{decl@{decl}!daylen.m@{daylen.m}}
+\doxysubsubsection{decl}
+{\footnotesize\ttfamily decl = (0.\+006918 -\/ 0.\+399912$\ast$\textbf{ cos}(\textbf{ day\+Ang}) + 0.\+070257$\ast$\textbf{ sin}(\textbf{ day\+Ang}) -\/ 0.\+006758$\ast$\textbf{ cos}(2$\ast$\textbf{ day\+Ang}) + 0.\+000907$\ast$\textbf{ sin}(2$\ast$\textbf{ day\+Ang}) -\/ 0.\+002697$\ast$\textbf{ cos}(3$\ast$\textbf{ day\+Ang}) + 0.\+00148$\ast$\textbf{ sin}(3$\ast$\textbf{ day\+Ang}))}
+
+
+
+Definition at line \textbf{ 44} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_af6c0e74df71b06a9a03c134ae96b49c7} 
+\index{daylen.m@{daylen.m}!doy@{doy}}
+\index{doy@{doy}!daylen.m@{daylen.m}}
+\doxysubsubsection{doy}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ LEAP} \textbf{ YEARS} \textbf{ for} doy}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:365\ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ dayAng\ =\ 2*pi*(doy-\/1)/365}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 41} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_ab6480fe1d810055ba24a45bcec23e3ae} 
+\index{daylen.m@{daylen.m}!eccent@{eccent}}
+\index{eccent@{eccent}!daylen.m@{daylen.m}}
+\doxysubsubsection{eccent}
+{\footnotesize\ttfamily eccent = 1.\+000110 + 0.\+034221$\ast$\textbf{ cos}(\textbf{ day\+Ang}) + 0.\+00128$\ast$\textbf{ sin}(\textbf{ day\+Ang}) + 0.\+000719$\ast$\textbf{ cos}(2$\ast$\textbf{ day\+Ang}) + 0.\+000077$\ast$\textbf{ sin}(2$\ast$\textbf{ day\+Ang})}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a391e34f2de441d79152a7b3d6e4c9c86} 
+\index{daylen.m@{daylen.m}!figure@{figure}}
+\index{figure@{figure}!daylen.m@{daylen.m}}
+\doxysubsubsection{figure}
+{\footnotesize\ttfamily figure}
+
+
+
+Definition at line \textbf{ 143} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a9117e60cfa89bb932f07d245d903928a} 
+\index{daylen.m@{daylen.m}!for@{for}}
+\index{for@{for}!daylen.m@{daylen.m}}
+\doxysubsubsection{for}
+{\footnotesize\ttfamily days for}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a8be54981eeb3363b754e8870811a6ea5} 
+\index{daylen.m@{daylen.m}!forest@{forest}}
+\index{forest@{forest}!daylen.m@{daylen.m}}
+\doxysubsubsection{forest}
+{\footnotesize\ttfamily \textbf{ pi} \textbf{ Harvard} forest}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a04ebe88d7f7ec73c19abe860988f6c32} 
+\index{daylen.m@{daylen.m}!FOREST@{FOREST}}
+\index{FOREST@{FOREST}!daylen.m@{daylen.m}}
+\doxysubsubsection{FOREST}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ HARVARD} FOREST}
+
+
+
+Definition at line \textbf{ 80} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a16e394912ad039dac50597576db989c3} 
+\index{daylen.m@{daylen.m}!hr@{hr}}
+\index{hr@{hr}!daylen.m@{daylen.m}}
+\doxysubsubsection{hr}
+{\footnotesize\ttfamily \textbf{ for} hr}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:24}
+\DoxyCodeLine{\ \ \ \ \%\ \textcolor{keywordflow}{for}\ hr\ =\ 0.5:0.5:24\ \%\ every\ half\ hour\ -\/\ BAD:\ STARTS\ AT\ 0.5}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 45} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a1c73327b2882639bc9f5e416bb3cc7ac} 
+\index{daylen.m@{daylen.m}!k@{k}}
+\index{k@{k}!daylen.m@{daylen.m}}
+\doxysubsubsection{k}
+{\footnotesize\ttfamily \textbf{ for} k = (\textbf{ doy} -\/ 1)$\ast$48 + \textbf{ hr}$\ast$2 + 1}
+
+
+
+Definition at line \textbf{ 49} of file \textbf{ daylen.\+m}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ metropolis()}.
+
+\label{daylen_8m_a1bbe6f2e8b467653d5815803c1535bdd} 
+\index{daylen.m@{daylen.m}!km@{km}}
+\index{km@{km}!daylen.m@{daylen.m}}
+\doxysubsubsection{km}
+{\footnotesize\ttfamily \textbf{ LBA} km}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a3457b96b06fc68b966cf50c97f424a1c} 
+\index{daylen.m@{daylen.m}!latRad@{latRad}}
+\index{latRad@{latRad}!daylen.m@{daylen.m}}
+\doxysubsubsection{latRad}
+{\footnotesize\ttfamily lat\+Rad = \textbf{ lat}$\ast$(\textbf{ pi}/180)}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_aee3eefaf75816178a42c80cb229c131a} 
+\index{daylen.m@{daylen.m}!med@{med}}
+\index{med@{med}!daylen.m@{daylen.m}}
+\doxysubsubsection{med}
+{\footnotesize\ttfamily med =\textbf{ median}(\textbf{ ratio})}
+
+
+
+Definition at line \textbf{ 122} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a185281125cc37da1d9e5210eea12681f} 
+\index{daylen.m@{daylen.m}!ndays@{ndays}}
+\index{ndays@{ndays}!daylen.m@{daylen.m}}
+\doxysubsubsection{ndays}
+{\footnotesize\ttfamily ndays =length(\textbf{ par\+AY})/24}
+
+
+
+Definition at line \textbf{ 126} of file \textbf{ daylen.\+m}.
+
+
+
+Referenced by \textbf{ copy\+Subset()}.
+
+\label{daylen_8m_a8294cc9066c0a5a8b2cebb336a1c631c} 
+\index{daylen.m@{daylen.m}!nlight@{nlight}}
+\index{nlight@{nlight}!daylen.m@{daylen.m}}
+\doxysubsubsection{nlight}
+{\footnotesize\ttfamily \textbf{ end} nlight =nlight\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 134} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a4401a20cf8a099dd48ed228f00a9fd30} 
+\index{daylen.m@{daylen.m}!nt\_leap@{nt\_leap}}
+\index{nt\_leap@{nt\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{nt\_leap}
+{\footnotesize\ttfamily nt\+\_\+leap =24$\ast$366}
+
+
+
+Definition at line \textbf{ 38} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a2510dd2f60ef9ddd63a2420891e9903c} 
+\index{daylen.m@{daylen.m}!nt\_nrm@{nt\_nrm}}
+\index{nt\_nrm@{nt\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{nt\_nrm}
+{\footnotesize\ttfamily nt\+\_\+nrm =24$\ast$365}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a7a6b8b691e9a07849c516301f91baced} 
+\index{daylen.m@{daylen.m}!nyears@{nyears}}
+\index{nyears@{nyears}!daylen.m@{daylen.m}}
+\doxysubsubsection{nyears}
+{\footnotesize\ttfamily nyears =11}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_af6396b826521dad19a1761d9e32d5f82} 
+\index{daylen.m@{daylen.m}!omega@{omega}}
+\index{omega@{omega}!daylen.m@{daylen.m}}
+\doxysubsubsection{omega}
+{\footnotesize\ttfamily omega = 0.\+2618}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a7c12a8e3643a7ad330060029b823a11e} 
+\index{daylen.m@{daylen.m}!parA\_1991@{parA\_1991}}
+\index{parA\_1991@{parA\_1991}!daylen.m@{daylen.m}}
+\doxysubsubsection{parA\_1991}
+{\footnotesize\ttfamily par\+A\+\_\+1991 =\textbf{ par\+A\+\_\+nrm}(\textbf{ end}-\/1559\+:\textbf{ end})}
+
+
+
+Definition at line \textbf{ 83} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a0e0fd59313778c61aef8b55c2e688a3b} 
+\index{daylen.m@{daylen.m}!parA\_1998@{parA\_1998}}
+\index{parA\_1998@{parA\_1998}!daylen.m@{daylen.m}}
+\doxysubsubsection{parA\_1998}
+{\footnotesize\ttfamily par\+A\+\_\+1998 = \textbf{ par\+A\+\_\+nrm}(\textbf{ end}-\/2927\+:\textbf{ end})}
+
+
+
+Definition at line \textbf{ 95} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a0b35297684027af348b2ae07b69a281b} 
+\index{daylen.m@{daylen.m}!parA\_leap@{parA\_leap}}
+\index{parA\_leap@{parA\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{parA\_leap}
+{\footnotesize\ttfamily par\+A\+\_\+leap}
+
+
+
+Definition at line \textbf{ 87} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_aa9956adada3fa59929790b424150df0b} 
+\index{daylen.m@{daylen.m}!parA\_nrm@{parA\_nrm}}
+\index{parA\_nrm@{parA\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{parA\_nrm}
+{\footnotesize\ttfamily par\+A\+\_\+nrm}
+
+
+
+Definition at line \textbf{ 87} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a9e209a4adf0354cce1321983cc1df1ed} 
+\index{daylen.m@{daylen.m}!parAY@{parAY}}
+\index{parAY@{parAY}!daylen.m@{daylen.m}}
+\doxysubsubsection{parAY}
+{\footnotesize\ttfamily par\+AY = [\textbf{ par\+A\+\_\+1991}\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 87} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a483052cf2f9d42143c172e2b6b194c47} 
+\index{daylen.m@{daylen.m}!POTPAR@{POTPAR}}
+\index{POTPAR@{POTPAR}!daylen.m@{daylen.m}}
+\doxysubsubsection{POTPAR}
+{\footnotesize\ttfamily \textbf{ FOR} \textbf{ CALCULATING} \textbf{ STATISTICS} \textbf{ TO} \textbf{ CHECK} POTPAR}
+
+
+
+Definition at line \textbf{ 116} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a514f1b439f404f86f77090fa9edc96ce} 
+\index{daylen.m@{daylen.m}!r@{r}}
+\index{r@{r}!daylen.m@{daylen.m}}
+\doxysubsubsection{r}
+{\footnotesize\ttfamily r = (i-\/1)$\ast$48+1\+:i$\ast$48}
+
+
+
+Definition at line \textbf{ 131} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a73263ac7e40d64d3546faa2b845d2808} 
+\index{daylen.m@{daylen.m}!rad\_leap@{rad\_leap}}
+\index{rad\_leap@{rad\_leap}!daylen.m@{daylen.m}}
+\doxysubsubsection{rad\_leap}
+{\footnotesize\ttfamily rad\+\_\+leap}
+
+
+
+Definition at line \textbf{ 86} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_ade2e94d9958f41e0952441db05d8ccf3} 
+\index{daylen.m@{daylen.m}!rad\_nrm@{rad\_nrm}}
+\index{rad\_nrm@{rad\_nrm}!daylen.m@{daylen.m}}
+\doxysubsubsection{rad\_nrm}
+{\footnotesize\ttfamily rad\+\_\+nrm}
+
+
+
+Definition at line \textbf{ 86} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a7aa0cf64ac7b122aec5574187ed3d4fb} 
+\index{daylen.m@{daylen.m}!radY@{radY}}
+\index{radY@{radY}!daylen.m@{daylen.m}}
+\doxysubsubsection{radY}
+{\footnotesize\ttfamily radY = [\textbf{ rad\+\_\+1991}\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 86} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a33e97a0953b4f4a9f1b61cd9556e2350} 
+\index{daylen.m@{daylen.m}!ratio@{ratio}}
+\index{ratio@{ratio}!daylen.m@{daylen.m}}
+\doxysubsubsection{ratio}
+{\footnotesize\ttfamily ratio =(\textbf{ par}(\textbf{ w})./\textbf{ par\+AY}(\textbf{ w}))}
+
+
+
+Definition at line \textbf{ 121} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a6c28400e57308ba3927301aa10b09d53} 
+\index{daylen.m@{daylen.m}!sunFrac@{sunFrac}}
+\index{sunFrac@{sunFrac}!daylen.m@{daylen.m}}
+\doxysubsubsection{sunFrac}
+{\footnotesize\ttfamily sun\+Frac = 1.\+0}
+
+
+
+Definition at line \textbf{ 35} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_aaccc9105df5383111407fd5b41255e23} 
+\index{daylen.m@{daylen.m}!t@{t}}
+\index{t@{t}!daylen.m@{daylen.m}}
+\doxysubsubsection{t}
+{\footnotesize\ttfamily t =\textbf{ mod}(\textbf{ hr}+\textbf{ hr\+Offset},24)-\/12}
+
+
+
+Definition at line \textbf{ 50} of file \textbf{ daylen.\+m}.
+
+
+
+Referenced by \textbf{ seed\+Rand()}.
+
+\label{daylen_8m_a57228694ab04007dec1ae7ab121dcf63} 
+\index{daylen.m@{daylen.m}!timeY@{timeY}}
+\index{timeY@{timeY}!daylen.m@{daylen.m}}
+\doxysubsubsection{timeY}
+{\footnotesize\ttfamily and \textbf{ last} days of timeY = 1\+:((24$\ast$(365$\ast$11 + 3))+1560)}
+
+
+
+Definition at line \textbf{ 90} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_aad57484016654da87125db86f4227ea3} 
+\index{daylen.m@{daylen.m}!w@{w}}
+\index{w@{w}!daylen.m@{daylen.m}}
+\doxysubsubsection{w}
+{\footnotesize\ttfamily w =\textbf{ find}(\textbf{ par} $>$ 0 \& \textbf{ par\+AY} $>$ 0)}
+
+
+
+Definition at line \textbf{ 119} of file \textbf{ daylen.\+m}.
+
+\label{daylen_8m_a8ecf39fb02bd311cd04c72d89cbfb6d7} 
+\index{daylen.m@{daylen.m}!xc@{xc}}
+\index{xc@{xc}!daylen.m@{daylen.m}}
+\doxysubsubsection{xc}
+{\footnotesize\ttfamily xc =\textbf{ xcorr}(\textbf{ par\+AY},\textbf{ par},\textquotesingle{}\textbf{ coeff}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 147} of file \textbf{ daylen.\+m}.
+

@@ -1,0 +1,345 @@
+\doxysection{SIPNETopts\+In/ml-\/metrorun.c File Reference}
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c}\index{ml-\/metrorun.c@{ml-\/metrorun.c}}
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}sipnet.\+h"{}}\newline
+{\ttfamily \#include "{}ml-\/metro.\+h"{}}\newline
+{\ttfamily \#include "{}paramchange.\+h"{}}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+Include dependency graph for SIPNETopts\+In/ml-\/metrorun.c\+:
+% FIG 0
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ ADD\+\_\+\+PERCENT}~0.\+5
+\item 
+\#\textbf{ define} \textbf{ COMPARE\+\_\+\+INDICES\+\_\+\+FILE}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ FILE\+\_\+\+FOR\+\_\+\+AGG}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ UNAGGED\+\_\+\+WEIGHT}~0.\+0
+\item 
+\#\textbf{ define} \textbf{ NUM\+\_\+\+CHAINS}~10
+\item 
+\#\textbf{ define} \textbf{ ITER}~375000
+\item 
+\#\textbf{ define} \textbf{ SCALE\+\_\+\+FACTOR}~1.\+0
+\item 
+\#\textbf{ define} \textbf{ LOC}~-\/1
+\item 
+\#\textbf{ define} \textbf{ NUM\+\_\+\+RUNS}~1
+\item 
+\#\textbf{ define} \textbf{ NUM\+\_\+\+AT\+\_\+\+ONCE}~10000
+\item 
+\#\textbf{ define} \textbf{ PARAM\+\_\+\+FILE}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ RANDOM\+\_\+\+START}~0
+\item 
+\#\textbf{ define} \textbf{ NUM\+\_\+\+SPIN\+\_\+\+UPS}~125000
+\item 
+\#\textbf{ define} \textbf{ OPT\+\_\+\+INDICES\+\_\+\+FILE}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ VALID\+\_\+\+FRAC}
+\item 
+\#\textbf{ define} \textbf{ PARAM\+\_\+\+WEIGHT}~0.\+0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ usage} (\textbf{ char} $\ast$\textbf{ prog\+Name})
+\item 
+\textbf{ int} \textbf{ init\+Data\+Type\+Indices} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$])
+\item 
+\textbf{ int} \textbf{ set\+Data\+Type\+Indices} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$])
+\item 
+\textbf{ int} \textbf{ parse\+Data\+Type\+Indices} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ char} $\ast$\textbf{ argv}[$\,$], \textbf{ int} \textbf{ start\+Pos}, \textbf{ int} \textbf{ argc})
+\item 
+\textbf{ void} \textbf{ print\+Data\+Type\+Indices} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ FILE} $\ast$\textbf{ file\+Ptr})
+\item 
+\textbf{ int} \textbf{ main} (\textbf{ int} \textbf{ argc}, \textbf{ char} $\ast$\textbf{ argv}[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_af04cf5cbf62a377adf50ac4cda58565e} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!ADD\_PERCENT@{ADD\_PERCENT}}
+\index{ADD\_PERCENT@{ADD\_PERCENT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{ADD\_PERCENT}
+{\footnotesize\ttfamily \#\textbf{ define} ADD\+\_\+\+PERCENT~0.\+5}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a0dfd0a00fc0c1ad03ba5f78633a9d489} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!COMPARE\_INDICES\_FILE@{COMPARE\_INDICES\_FILE}}
+\index{COMPARE\_INDICES\_FILE@{COMPARE\_INDICES\_FILE}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{COMPARE\_INDICES\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} COMPARE\+\_\+\+INDICES\+\_\+\+FILE~"{}"{}}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_aee49b9b11699a4dc73322e195d5cbfd1} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!FILE\_FOR\_AGG@{FILE\_FOR\_AGG}}
+\index{FILE\_FOR\_AGG@{FILE\_FOR\_AGG}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{FILE\_FOR\_AGG}
+{\footnotesize\ttfamily \#\textbf{ define} FILE\+\_\+\+FOR\+\_\+\+AGG~"{}"{}}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_ab5b92945430bd0cb7a04673282cf70c3} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!ITER@{ITER}}
+\index{ITER@{ITER}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{ITER}
+{\footnotesize\ttfamily \#\textbf{ define} ITER~375000}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a0fee446a4a4ef6536664bc1ff47ff694} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!LOC@{LOC}}
+\index{LOC@{LOC}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{LOC}
+{\footnotesize\ttfamily \#\textbf{ define} LOC~-\/1}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_ac494c739e7dbee011df3c854dcaef0f5} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_AT\_ONCE@{NUM\_AT\_ONCE}}
+\index{NUM\_AT\_ONCE@{NUM\_AT\_ONCE}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_AT\_ONCE}
+{\footnotesize\ttfamily \#\textbf{ define} NUM\+\_\+\+AT\+\_\+\+ONCE~10000}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a0605f9a09e958f39cc32c1bd6b104d06} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_CHAINS@{NUM\_CHAINS}}
+\index{NUM\_CHAINS@{NUM\_CHAINS}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_CHAINS}
+{\footnotesize\ttfamily \#\textbf{ define} NUM\+\_\+\+CHAINS~10}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a7d9ece5c6456a4a706c878dce5235b93} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_RUNS@{NUM\_RUNS}}
+\index{NUM\_RUNS@{NUM\_RUNS}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_RUNS}
+{\footnotesize\ttfamily \#\textbf{ define} NUM\+\_\+\+RUNS~1}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_ad189eed1629de076c12449b6a5fb3497} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_SPIN\_UPS@{NUM\_SPIN\_UPS}}
+\index{NUM\_SPIN\_UPS@{NUM\_SPIN\_UPS}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_SPIN\_UPS}
+{\footnotesize\ttfamily \#\textbf{ define} NUM\+\_\+\+SPIN\+\_\+\+UPS~125000}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a2865d450852ab40d856efd76a112206c} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!OPT\_INDICES\_FILE@{OPT\_INDICES\_FILE}}
+\index{OPT\_INDICES\_FILE@{OPT\_INDICES\_FILE}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{OPT\_INDICES\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} OPT\+\_\+\+INDICES\+\_\+\+FILE~"{}"{}}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_aac4cbf64d7084205e04bc1b1569baf05} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!PARAM\_FILE@{PARAM\_FILE}}
+\index{PARAM\_FILE@{PARAM\_FILE}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{PARAM\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} PARAM\+\_\+\+FILE~"{}"{}}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_aab3e2a6d8c4182d2e6a087fd218388db} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!PARAM\_WEIGHT@{PARAM\_WEIGHT}}
+\index{PARAM\_WEIGHT@{PARAM\_WEIGHT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{PARAM\_WEIGHT}
+{\footnotesize\ttfamily \#\textbf{ define} PARAM\+\_\+\+WEIGHT~0.\+0}
+
+
+
+Definition at line \textbf{ 33} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a434c57b70cb7dd0ca18de4b844de85eb} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!RANDOM\_START@{RANDOM\_START}}
+\index{RANDOM\_START@{RANDOM\_START}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{RANDOM\_START}
+{\footnotesize\ttfamily \#\textbf{ define} RANDOM\+\_\+\+START~0}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_adb1f1d5b685f5a444190abe4ac18d972} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!SCALE\_FACTOR@{SCALE\_FACTOR}}
+\index{SCALE\_FACTOR@{SCALE\_FACTOR}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{SCALE\_FACTOR}
+{\footnotesize\ttfamily \#\textbf{ define} SCALE\+\_\+\+FACTOR~1.\+0}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a571515ad603a9c9669792d68a7004bae} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}}
+\index{UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{UNAGGED\_WEIGHT}
+{\footnotesize\ttfamily \#\textbf{ define} UNAGGED\+\_\+\+WEIGHT~0.\+0}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_ae6e2d964bcb52ad2af799a000ea36147} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!VALID\_FRAC@{VALID\_FRAC}}
+\index{VALID\_FRAC@{VALID\_FRAC}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{VALID\_FRAC}
+{\footnotesize\ttfamily \#\textbf{ define} VALID\+\_\+\+FRAC}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.5\ \textcolor{comment}{/*\ fraction\ of\ data\ points\ which\ must\ be\ valid}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ use\ data\ from\ a\ given\ time\ step\ */}}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 32} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a02c81e3a12dadf2d7ed0ffed9f3e21f6} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!initDataTypeIndices@{initDataTypeIndices}}
+\index{initDataTypeIndices@{initDataTypeIndices}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{initDataTypeIndices()}
+{\footnotesize\ttfamily \textbf{ int} init\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 95} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!main@{main}}
+\index{main@{main}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily \textbf{ int} main (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{argc,  }\item[{\textbf{ char} $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 230} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ ADD\+\_\+\+PERCENT}, \textbf{ agged\+Difference()}, \textbf{ cleanup\+Model()}, \textbf{ cleanup\+Paramchange()}, \textbf{ COMPARE\+\_\+\+INDICES\+\_\+\+FILE}, \textbf{ delete\+Spatial\+Params()}, \textbf{ difference()}, \textbf{ exit()}, \textbf{ fclose()}, \textbf{ FILE\+\_\+\+FOR\+\_\+\+AGG}, \textbf{ fprintf()}, \textbf{ index}, \textbf{ init\+Data\+Type\+Indices()}, \textbf{ init\+Model()}, \textbf{ ITER}, \textbf{ LOC}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ metropolis()}, \textbf{ NUM\+\_\+\+AT\+\_\+\+ONCE}, \textbf{ NUM\+\_\+\+CHAINS}, \textbf{ NUM\+\_\+\+RUNS}, \textbf{ NUM\+\_\+\+SPIN\+\_\+\+UPS}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ OPT\+\_\+\+INDICES\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+WEIGHT}, \textbf{ parse\+Data\+Type\+Indices()}, \textbf{ print\+Data\+Type\+Indices()}, \textbf{ print\+Model\+Components()}, \textbf{ RANDOM\+\_\+\+START}, \textbf{ read\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ SCALE\+\_\+\+FACTOR}, \textbf{ scale\+Factor}, \textbf{ seed\+Rand()}, \textbf{ UNAGGED\+\_\+\+WEIGHT}, \textbf{ unagged\+Weight}, \textbf{ usage()}, \textbf{ VALID\+\_\+\+FRAC}, and \textbf{ write\+Best\+Spatial\+Params()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a97dd8387bd19fdade6d298eeb4b6b6d1} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!parseDataTypeIndices@{parseDataTypeIndices}}
+\index{parseDataTypeIndices@{parseDataTypeIndices}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{parseDataTypeIndices()}
+{\footnotesize\ttfamily \textbf{ int} parse\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ char} $\ast$}]{argv[$\,$],  }\item[{\textbf{ int}}]{start\+Pos,  }\item[{\textbf{ int}}]{argc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 167} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ i}, \textbf{ index}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, and \textbf{ usage()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_a0d54c132fc816eca80b34dfd12ef60c5} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!printDataTypeIndices@{printDataTypeIndices}}
+\index{printDataTypeIndices@{printDataTypeIndices}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{printDataTypeIndices()}
+{\footnotesize\ttfamily \textbf{ void} print\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ FILE} $\ast$}]{file\+Ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 218} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ fprintf()}, \textbf{ get\+Data\+Type\+Names()}, \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_acef2d1876466a3dd5e22d55edd4d63a2} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!setDataTypeIndices@{setDataTypeIndices}}
+\index{setDataTypeIndices@{setDataTypeIndices}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{setDataTypeIndices()}
+{\footnotesize\ttfamily \textbf{ int} set\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 110} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ get\+Data\+Type\+Names()}, \textbf{ i}, \textbf{ index}, \textbf{ j}, and \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{_s_i_p_n_e_topts_in_2ml-metrorun_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!usage@{usage}}
+\index{usage@{usage}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{usage()}
+{\footnotesize\ttfamily \textbf{ void} usage (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 36} of file \textbf{ SIPNETopts\+In/ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ ADD\+\_\+\+PERCENT}, \textbf{ COMPARE\+\_\+\+INDICES\+\_\+\+FILE}, \textbf{ FILE\+\_\+\+FOR\+\_\+\+AGG}, \textbf{ get\+Data\+Type\+Names()}, \textbf{ i}, \textbf{ ITER}, \textbf{ LOC}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ NUM\+\_\+\+AT\+\_\+\+ONCE}, \textbf{ NUM\+\_\+\+CHAINS}, \textbf{ NUM\+\_\+\+RUNS}, \textbf{ NUM\+\_\+\+SPIN\+\_\+\+UPS}, \textbf{ OPT\+\_\+\+INDICES\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+WEIGHT}, \textbf{ RANDOM\+\_\+\+START}, \textbf{ SCALE\+\_\+\+FACTOR}, \textbf{ UNAGGED\+\_\+\+WEIGHT}, and \textbf{ VALID\+\_\+\+FRAC}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ parse\+Data\+Type\+Indices()}.
+
+Here is the call graph for this function\+:
+% FIG 5

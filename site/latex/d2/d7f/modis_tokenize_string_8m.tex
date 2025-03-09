@@ -1,0 +1,226 @@
+\doxysection{modis\+Tokenize\+String.\+m File Reference}
+\label{modis_tokenize_string_8m}\index{modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ time} (in \textbf{ Ayyyyddd})
+\item 
+\textbf{ time\+Out} (1)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ function} [\textbf{ time\+Out}, \textbf{ element\+Name}, \textbf{ pixel\+Values}]
+\item 
+\textbf{ tokenize} \textbf{ it}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ product}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} name and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ name}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ analyzed}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} \textbf{ generality}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} \textbf{ the} \textbf{ output} \textbf{ will} \textbf{ all} \textbf{ be} \textbf{ strings} \textbf{ Out} \textbf{ values}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} \textbf{ the} \textbf{ output} \textbf{ will} \textbf{ all} \textbf{ be} \textbf{ strings} \textbf{ Out} \textbf{ LAI}
+\item 
+\textbf{ tokenize} and \textbf{ return} \textbf{ the} pixel\+Values \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} \textbf{ the} \textbf{ output} \textbf{ will} \textbf{ all} \textbf{ be} \textbf{ strings} \textbf{ Out} and \textbf{ their} \textbf{ QC} \textbf{ values} \textbf{ pixel\+Values}
+\item 
+\textbf{ Make} a \textbf{ cellstring} of \textbf{ values} \textbf{ for} \textbf{ pixels} \textbf{ ignore} \textbf{ the} first \textbf{ two} \textbf{ tokens} [\textbf{ tok}, \textbf{ string\+In}] =\textbf{ strtok}(\textbf{ string\+In},\textquotesingle{},\textquotesingle{})
+\item 
+\textbf{ assign} \textbf{ time} \textbf{ value} [\textbf{ time\+Out}, \textbf{ string\+In}] =\textbf{ strtok}(\textbf{ string\+In},\textquotesingle{},\textquotesingle{})
+\item 
+\textbf{ Remove} \textbf{ the} \textbf{ A} \textbf{ designation} \textbf{ time\+Out} =\textbf{ str2num}(time\+Out)
+\item 
+\textbf{ Assign} \textbf{ the} \textbf{ element} \textbf{ Name} [\textbf{ element\+Name}, \textbf{ string\+In}] =\textbf{ strtok}(\textbf{ string\+In},\textquotesingle{},\textquotesingle{})
+\item 
+\textbf{ for} \textbf{ i}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{modis_tokenize_string_8m_a7e789e4a2063228ed23502a5c01156b9} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!time@{time}}
+\index{time@{time}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{time()}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} time (\begin{DoxyParamCaption}\item[{in}]{Ayyyyddd }\end{DoxyParamCaption})}
+
+\label{modis_tokenize_string_8m_aa3ff5491b3a20f4e3346659539604851} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!timeOut@{timeOut}}
+\index{timeOut@{timeOut}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{timeOut()}
+{\footnotesize\ttfamily time\+Out (\begin{DoxyParamCaption}\item[{1}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{modis_tokenize_string_8m_a86d0c5b62fb893b336c17567f422fee4} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!analyzed@{analyzed}}
+\index{analyzed@{analyzed}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{analyzed}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} analyzed}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_adc196a2220b17f42e79047649c78b574} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!function@{function}}
+\index{function@{function}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{function}
+{\footnotesize\ttfamily function[\textbf{ time\+Out}, \textbf{ element\+Name}, \textbf{ pixel\+Values}]}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=modisTokenizeString(stringIn)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\%\%\%\ Take\ a\ modis\ data\ \textcolor{keywordtype}{string}}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_a2dd683b3a07e6addf7a52e5cb3394b02} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!generality@{generality}}
+\index{generality@{generality}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{generality}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} generality}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_a6f6ccfcf58b31cb6412107d9d5281426} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!i@{i}}
+\index{i@{i}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ 1:49}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ [pixelValues\{i\},stringIn]=strtok(stringIn,\textcolor{charliteral}{','})}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 32} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_a9e1f492f79e5b330bfb71b502ef64c9f} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!it@{it}}
+\index{it@{it}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{it}
+{\footnotesize\ttfamily \textbf{ tokenize} it}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_a15ac54a1c2f965536795752e74d5e67c} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!LAI@{LAI}}
+\index{LAI@{LAI}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{LAI}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} \textbf{ the} \textbf{ output} \textbf{ will} \textbf{ all} \textbf{ be} \textbf{ strings} \textbf{ Out} LAI}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_a91f0d0e9e972a0a816aef59e8d02f317} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!name@{name}}
+\index{name@{name}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{name}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} name and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} name}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+
+
+Referenced by \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ add\+Output\+Item()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ initialize\+One\+Spatial\+Param()}, \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ locate\+Param()}, \textbf{ new\+Namelist\+Input\+Item()}, \textbf{ new\+Single\+Output\+Item()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ open\+File\+Ext()}, and \textbf{ read\+One\+Spatial\+Param()}.
+
+\label{modis_tokenize_string_8m_a73321a5b6e05d1bb524ea5a301a3c566} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!Name@{Name}}
+\index{Name@{Name}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{Name}
+{\footnotesize\ttfamily \textbf{ Assign} \textbf{ the} \textbf{ element} Name[\textbf{ element\+Name}, \textbf{ string\+In}] =\textbf{ strtok}(\textbf{ string\+In},\textquotesingle{},\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_aa1e6b981b0eaf3a38b15c6c405a8008f} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!pixelValues@{pixelValues}}
+\index{pixelValues@{pixelValues}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{pixelValues}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} pixel\+Values \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} \textbf{ the} \textbf{ output} \textbf{ will} \textbf{ all} \textbf{ be} \textbf{ strings} \textbf{ Out} and \textbf{ their} \textbf{ QC} \textbf{ values} pixel\+Values}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ a\ cellstring\ of\ pixel\ values\ \textcolor{keywordflow}{for}\ the\ element\ analyzed}
+\DoxyCodeLine{}
+\DoxyCodeLine{pixelValues=cellstr(\textcolor{keywordtype}{char}(zeros(49,1)))}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 12} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_a78c6b33f0e87a7fb33b792ef9f020488} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!product@{product}}
+\index{product@{product}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{product}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} product}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_aec2f4b40703bb4985acce99523c74b8c} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!timeOut@{timeOut}}
+\index{timeOut@{timeOut}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{timeOut}
+{\footnotesize\ttfamily \textbf{ Remove} \textbf{ the} \textbf{ A} \textbf{ designation} time\+Out =\textbf{ str2num}(time\+Out)}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_aaab1cf55796997385c27aff6a44d2f2a} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!tokens@{tokens}}
+\index{tokens@{tokens}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{tokens}
+{\footnotesize\ttfamily \textbf{ Convert} \textbf{ to} a \textbf{ number} \textbf{ Ignore} \textbf{ the} \textbf{ next} \textbf{ three} tokens =\textbf{ strtok}(\textbf{ string\+In},\textquotesingle{},\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+\label{modis_tokenize_string_8m_ac83117a630779d0ab8489a3dc9fa04a8} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!value@{value}}
+\index{value@{value}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{value}
+{\footnotesize\ttfamily \textbf{ assign} \textbf{ time} value[\textbf{ time\+Out}, \textbf{ string\+In}] =\textbf{ strtok}(\textbf{ string\+In},\textquotesingle{},\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ modis\+Tokenize\+String.\+m}.
+
+
+
+Referenced by \textbf{ add\+Value\+To\+Mean\+Tracker()}, \textbf{ check\+Spatial\+Param()}, \textbf{ load\+Spatial\+Params()}, \textbf{ main()}, \textbf{ read\+Chain\+Info()}, \textbf{ read\+One\+Spatial\+Param()}, \textbf{ read\+Spatial\+Params()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ sens\+Test()}, \textbf{ sens\+Test()}, \textbf{ set\+All()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Possibly\+Spatial()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, and \textbf{ write\+Chain\+Info()}.
+
+\label{modis_tokenize_string_8m_ad50771ef0221490c81aecd2e45e7aa2a} 
+\index{modisTokenizeString.m@{modisTokenizeString.m}!values@{values}}
+\index{values@{values}!modisTokenizeString.m@{modisTokenizeString.m}}
+\doxysubsubsection{values}
+{\footnotesize\ttfamily \textbf{ tokenize} and \textbf{ return} \textbf{ the} \textbf{ pixel\+Values} \textbf{ First} \textbf{ two} \textbf{ tokens} are \textbf{ just} \textbf{ the} \textbf{ long} \textbf{ name} and \textbf{ the} \textbf{ modis} \textbf{ followed} \textbf{ by} \textbf{ the} \textbf{ the} \textbf{ site} \textbf{ time} \textbf{ it} \textbf{ was} \textbf{ the} \textbf{ element} and a \textbf{ element} vector of \textbf{ results} \textbf{ for} \textbf{ the} \textbf{ output} \textbf{ will} \textbf{ all} \textbf{ be} \textbf{ strings} \textbf{ Out} values}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ modis\+Tokenize\+String.\+m}.
+

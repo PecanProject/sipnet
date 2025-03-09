@@ -1,0 +1,63 @@
+\doxysection{nnfwd.\+m}
+\label{nnfwd_8m_source}\index{nnfwd.m@{nnfwd.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ [y,sig]\ =\ nnfwd(net,x,recalc\_stats);}
+\DoxyCodeLine{00002\ \%}
+\DoxyCodeLine{00003\ \%\ \textcolor{keyword}{function}\ [y,sig]\ =\ nnfwd(net,x,recalc\_stats);}
+\DoxyCodeLine{00004\ \%}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ nin=net.nin;}
+\DoxyCodeLine{00007\ nout=net.nout;}
+\DoxyCodeLine{00008\ nstd=net.opt.nstd;}
+\DoxyCodeLine{00009\ meant=net.opt.meant;}
+\DoxyCodeLine{00010\ stdt=net.opt.stdt;}
+\DoxyCodeLine{00011\ minx=net.opt.minx;}
+\DoxyCodeLine{00012\ maxx=net.opt.maxx;}
+\DoxyCodeLine{00013\ invhess=net.invhess;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keywordflow}{if}\ (nargin==3\ \&\ recalc\_stats==1)}
+\DoxyCodeLine{00016\ \ \ \ \ meanx=mean(x);}
+\DoxyCodeLine{00017\ \ \ \ \ stdx=std(x);}
+\DoxyCodeLine{00018\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00019\ \ \ \ \ meanx=net.opt.meanx;}
+\DoxyCodeLine{00020\ \ \ \ \ stdx=net.opt.stdx;}
+\DoxyCodeLine{00021\ end}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \%addpath(\textcolor{stringliteral}{'/net/nfs/zurueck/home/braswell/matlab/netlab'});}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ nrep=1+2*(nin-\/1);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keywordflow}{for}\ i=1:nin}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ x(:,i)\ =\ (x(:,i)-\/meanx(i))./(nstd*stdx(i));}
+\DoxyCodeLine{00029\ end}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ y=mlpfwd(net,x);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keywordflow}{if}\ (nargout>1)}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ nx=length(x);}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ g\ =\ mlpderiv(net,x);}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ k\ =\ 1:nout}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ n\ =\ 1:nx}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ grad\ =\ g(n,:,k);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sig(n,k)\ =\ grad*invhess*grad\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00040\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ end}}
+\DoxyCodeLine{00041\ \textcolor{stringliteral}{\ \ \ \ \ \ \ end}}
+\DoxyCodeLine{00042\ \textcolor{stringliteral}{\ \ \ \ \ \ \ sig\ =\ 2*sqrt(ones(size(sig))./net.beta\ +\ sig);}}
+\DoxyCodeLine{00043\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00044\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00045\ \textcolor{stringliteral}{save\ g;}}
+\DoxyCodeLine{00046\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00047\ \textcolor{stringliteral}{for\ i=1:nout}}
+\DoxyCodeLine{00048\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ y(:,i)\ =\ y(:,i)*(nstd*stdt(i))\ +\ meant(i);}}
+\DoxyCodeLine{00049\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (nargout\ >\ 1)\ sig(:,i)\ =\ sig(:,i)*(nstd*stdt(i));end}}
+\DoxyCodeLine{00050\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00051\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00052\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00053\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00054\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00055\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00056\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00057\ \textcolor{stringliteral}{}}
+
+\end{DoxyCode}

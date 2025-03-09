@@ -1,0 +1,696 @@
+\doxysection{nnregress.\+m File Reference}
+\label{nnregress_8m}\index{nnregress.m@{nnregress.m}}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ using} \textbf{ beta. state} = \textbf{ ones}(1, 4)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ if} (\textbf{ nargin}$<$ 3$\vert$\textbf{ isempty}(\textbf{ nhidden})) \textbf{ nhidden}
+\item 
+\textbf{ Default} options vector \textbf{ options} (2)
+\item 
+\textbf{ Absolute} \textbf{ precision} \textbf{ for} weights \textbf{ options} (3)
+\item 
+\textbf{ Precision} \textbf{ for} \textbf{ error} function \textbf{ options} (14)
+\item 
+\textbf{ Number} of \textbf{ cycles} in \textbf{ inner} \textbf{ loop} \textbf{ options} (1)
+\item 
+\textbf{ if} (\textbf{ diag}==1) \textbf{ fprintf}(1
+\item 
+\textbf{ fprintf} (1, \textquotesingle{}\textbf{ nweights}=\%d\textbackslash{}n\textbackslash{}n\textquotesingle{}, \textbf{ nweights})
+\item 
+\textbf{ warning} (\textquotesingle{}\textbf{ off}\textquotesingle{})
+\item 
+\textbf{ if} ($\sim$\textbf{ isempty}(\textbf{ warnstate})$\vert$\textbf{ isnan}(net.\+alpha)$\vert$\textbf{ isnan}(\textbf{ net.\+beta})) \textbf{ y}
+\item 
+\textbf{ fprintf} (\textquotesingle{}\textbf{ Warning\+:no} evidence\textbackslash{}n\textquotesingle{})
+\item 
+\textbf{ warning} (\textquotesingle{}\textbf{ backtrace}\textquotesingle{})
+\item 
+\textbf{ if} ($\sim$\textbf{ isempty}(\textbf{ warnstate})$\vert$\textbf{ isnan}(net.\+alpha)$\vert$\textbf{ isnan}(\textbf{ net.\+beta})$\vert$\textbf{ isnan}(\textbf{ gamma})$\vert$net.\+alpha $>$900.) \textbf{ y}
+\item 
+\textbf{ fprintf} (1, \textquotesingle{}alpha=\%\textbf{ f} \textquotesingle{}, net.\+alpha)
+\item 
+\textbf{ fprintf} (1, \textquotesingle{}\textbf{ gamma}=\%\textbf{ f} \textquotesingle{}, \textbf{ gamma})
+\item 
+\textbf{ fprintf} (1, \textquotesingle{}\textbf{ error}=\%\textbf{ f} \textquotesingle{}, \textbf{ err}(\textbf{ end}))
+\item 
+\textbf{ fprintf} (1, \textquotesingle{}\textbf{ satisfy}=\%\textbf{ d} \%\textbf{ d} \%\textbf{ d} \%d\textbackslash{}n\textquotesingle{}, \textbf{ satisfy})
+\item 
+\textbf{ end} \textbf{ if} (\textbf{ sum}(\textbf{ satisfy})==4) \textbf{ break}
+\item 
+\textbf{ end} \textbf{ end} \textbf{ if} (k==\textbf{ nouter}) \textbf{ fprintf}(1
+\item 
+\textbf{ Evaluate} \textbf{ error} \textbf{ bars} \textbf{ if} (\textbf{ nargout} $>$ 2) \textbf{ hess}
+\item 
+\textbf{ sig} (n, k)
+\item 
+\textbf{ y} (\+:, i)
+\item 
+\textbf{ rsq} (i)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ function} [\textbf{ y}, net, \textbf{ sig}] = \textbf{ nnregress}(\textbf{ x},\textbf{ t},\textbf{ nhidden},\textbf{ nstd},\textbf{ diag})
+\item 
+\textbf{ end} \textbf{ whether} \textbf{ to} \textbf{ print} \textbf{ all} \textbf{ the} \textbf{ info} \textbf{ alpha\+\_\+init} = 0.\+005
+\item 
+\textbf{ Initial} \textbf{ prior} \textbf{ hyperparameter} \textbf{ beta\+\_\+init} = 100.
+\item 
+\textbf{ Initial} \textbf{ noise} \textbf{ hyperparameter} \textbf{ nouter} = 500
+\item 
+\textbf{ Max} \textbf{ number} of \textbf{ outer} \textbf{ loops} \textbf{ ninner} = 3
+\item 
+\textbf{ Number} of \textbf{ inner} \textbf{ loops} \textbf{ toler} = [.\+005 .\+005 .\+005 .\+005]
+\item 
+\textbf{ When} \textbf{ to} \textbf{ exit} \textbf{ outer} \textbf{ loop} \textbf{ options} = \textbf{ zeros}(1,18)
+\item 
+\textbf{ Suppress} \textbf{ warning} \textbf{ messages} [\textbf{ nx} \textbf{ nin}] = \textbf{ size}(\textbf{ x})
+\item 
+\textbf{ if}(\textbf{ nt} $\sim$=\textbf{ nx}) \textbf{ error}( \textquotesingle{}\textbf{ Incompatible} \textbf{ inputs} \textbf{ end} \textbf{ meanx} =mean(\textbf{ x})
+\item 
+\textbf{ stdx} =\textbf{ std}(\textbf{ x})
+\item 
+\textbf{ meant} =mean(\textbf{ t})
+\item 
+\textbf{ stdt} =\textbf{ std}(\textbf{ t})
+\item 
+\textbf{ for} \textbf{ i} =1\+:\textbf{ nin} \textbf{ x}(\+:,i) = (\textbf{ x}(\+:,i)-\/\textbf{ meanx}(i))./(\textbf{ nstd}$\ast$\textbf{ stdx}(i))
+\item 
+\textbf{ end} \textbf{ Create} and \textbf{ initialize} \textbf{ network} \textbf{ weight} vector \textbf{ net} = \textbf{ mlp}(\textbf{ nin}, \textbf{ nhidden}, \textbf{ nout}, \textquotesingle{}\textbf{ linear}\textquotesingle{}, \textbf{ alpha\+\_\+init}, \textbf{ beta\+\_\+init})
+\item 
+\textbf{ nweights} = \textbf{ nhidden}$\ast$(\textbf{ nin}+1) + \textbf{ nout}$\ast$(\textbf{ nhidden}+1)
+\item 
+\textbf{ s} \textbf{ n}
+\item 
+\textbf{ s} \textbf{ date}
+\item 
+\textbf{ for} \textbf{ k}
+\item 
+\textbf{ warnstate} =\textbf{ lastwarn}
+\item 
+\textbf{ sig} =0
+\item 
+net \textbf{ r2} =0
+\item 
+\textbf{ return}
+\item 
+\textbf{ end} [net, \textbf{ gamma}] = \textbf{ evidence}(net, \textbf{ x}, \textbf{ t}, \textbf{ ninner})
+\item 
+\textbf{ end} \textbf{ state} = [state
+\item 
+\textbf{ satisfy} = \textbf{ abs}(\textbf{ state}(\textbf{ end},\+:)-\/\textbf{ state}(\textbf{ end}-\/1,\+:))./mean(\textbf{ state}) $<$ \textbf{ toler}
+\item 
+\textbf{ err} =err./\textbf{ nx}
+\item 
+\textbf{ Cycle} \textbf{ d}
+\item 
+\textbf{ end} \textbf{ end} \textbf{ Warning}
+\item 
+\textbf{ end} \textbf{ Forward} \textbf{ estimation} \textbf{ y} = \textbf{ mlpfwd}(net, \textbf{ x})
+\item 
+\textbf{ invhess} = \textbf{ inv}(\textbf{ hess})
+\item 
+\textbf{ g} = \textbf{ mlpderiv}(net, \textbf{ x})
+\item 
+\textbf{ if}(\textbf{ nargout} $>$ 2) \textbf{ sig}(\textbf{ end} \textbf{ end} \textbf{ tout} =\textbf{ t}
+\item 
+\textbf{ R} \textbf{ \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+\item 
+\textbf{ end} \textbf{ end} \textbf{ Save} \textbf{ the} \textbf{ configuration} of \textbf{ this} \textbf{ regression} net \textbf{ opt} \textbf{ nstd} =nstd
+\item 
+net \textbf{ opt} \textbf{ ninner\+\_\+evi} =\textbf{ ninner}
+\item 
+net \textbf{ opt} \textbf{ ninner\+\_\+opt} =\textbf{ options}(14)
+\item 
+net \textbf{ opt} \textbf{ minx} =\textbf{ min}(\textbf{ x})
+\item 
+net \textbf{ opt} \textbf{ maxx} =max(\textbf{ x})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\label{nnregress_8m_a59fe719d7e1971b3480fade1bee7c734} 
+\index{nnregress.m@{nnregress.m}!beta. state@{beta. state}}
+\index{beta. state@{beta. state}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{beta. state}
+{\footnotesize\ttfamily \textbf{ using} beta. \textbf{ state} =  \textbf{ ones}(1,4)}
+
+
+
+Definition at line \textbf{ 46} of file \textbf{ nnregress.\+m}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{nnregress_8m_a8bfb89223c0c5758e0fa69d046cc1b5b} 
+\index{nnregress.m@{nnregress.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ Warning\+:no} evidence\textbackslash{}n\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a82907d94dd337999bc36aad5df129b3e} 
+\index{nnregress.m@{nnregress.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{1}]{,  }\item[{\textquotesingle{}}]{alpha = {\ttfamily \%\textbf{ f}~\textquotesingle{}},  }\item[{net.}]{alpha }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ net}.
+
+\label{nnregress_8m_a783381c029f553eaec7923aee9ec6083} 
+\index{nnregress.m@{nnregress.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{1}]{,  }\item[{\textquotesingle{}}]{error = {\ttfamily \%\textbf{ f}~\textquotesingle{}},  }\item[{\textbf{ err}(\textbf{ end})}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a4ce19d3fa0dddec2e1b0c8e3930b0a0c} 
+\index{nnregress.m@{nnregress.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{1}]{,  }\item[{\textquotesingle{}}]{gamma = {\ttfamily \%\textbf{ f}~\textquotesingle{}},  }\item[{\textbf{ gamma}}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a8c8c3522169d6e7c516eb8a3052bbe0e} 
+\index{nnregress.m@{nnregress.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{1}]{,  }\item[{\textquotesingle{}}]{nweights = {\ttfamily \%d\textbackslash{}n\textbackslash{}n\textquotesingle{}},  }\item[{\textbf{ nweights}}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ and}.
+
+\label{nnregress_8m_a5d5109c57da3e59c5ed546caade8b071} 
+\index{nnregress.m@{nnregress.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{1}]{,  }\item[{\textquotesingle{}}]{satisfy = {\ttfamily \%\textbf{ d}~\%\textbf{ d}~\%\textbf{ d}~\%d\textbackslash{}n\textquotesingle{}},  }\item[{\textbf{ satisfy}}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a680f042092307c1f5215f1cd80bcce63} 
+\index{nnregress.m@{nnregress.m}!if@{if}}
+\index{if@{if}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{\textbf{ diag}}]{ = {\ttfamily =~1} }\end{DoxyParamCaption})}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:nout}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r=corrcoef(t(:,i),y(:,i))}
+
+\end{DoxyCode}
+\label{nnregress_8m_aa4d6170cf23222e8b8d801faf496bf64} 
+\index{nnregress.m@{nnregress.m}!if@{if}}
+\index{if@{if}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ end} if (\begin{DoxyParamCaption}\item[{k}]{ = {\ttfamily =~\textbf{ nouter}} }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a693621df01193c1160cf8278e8199b9b} 
+\index{nnregress.m@{nnregress.m}!if@{if}}
+\index{if@{if}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a0ed62177abae2f289e8ff5bcfff758a6} 
+\index{nnregress.m@{nnregress.m}!if@{if}}
+\index{if@{if}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \textbf{ Evaluate} \textbf{ error} \textbf{ bars} if (\begin{DoxyParamCaption}\item[{\textbf{ nargout}}]{,  }\item[{2}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_afc3f2a4b4ea35dd1533f912bf683c8bc} 
+\index{nnregress.m@{nnregress.m}!if@{if}}
+\index{if@{if}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \textbf{ end} if (\begin{DoxyParamCaption}\item[{\textbf{ sum}(\textbf{ satisfy})}]{ = {\ttfamily =4} }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a0dddcd0846a7c397c1e069c8922f7780} 
+\index{nnregress.m@{nnregress.m}!if@{if}}
+\index{if@{if}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{$\sim$}]{isemptywarnstate)$\vert$isnan(net.\+alpha)$\vert$isnan(net.\+beta }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ net}.
+
+\label{nnregress_8m_a53a2be28d23811dbc4545896d3cca285} 
+\index{nnregress.m@{nnregress.m}!if@{if}}
+\index{if@{if}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{$\sim$\textbf{ isempty}(\textbf{ warnstate})$\vert$\textbf{ isnan}(net.\+alpha)$\vert$\textbf{ isnan}(\textbf{ net.\+beta})$\vert$\textbf{ isnan}(\textbf{ gamma})$\vert$net.}]{alpha,  }\item[{900.}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ net}.
+
+\label{nnregress_8m_abfe5a28ad20dc2192859d1976d83d33e} 
+\index{nnregress.m@{nnregress.m}!options@{options}}
+\index{options@{options}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{options()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \textbf{ Number} of \textbf{ cycles} in \textbf{ inner} \textbf{ loop} options (\begin{DoxyParamCaption}\item[{1}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a82d2fd73a4951f431e3b45b483e2fde2} 
+\index{nnregress.m@{nnregress.m}!options@{options}}
+\index{options@{options}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{options()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \textbf{ Precision} \textbf{ for} \textbf{ error} function options (\begin{DoxyParamCaption}\item[{14}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a8add23f8f9e4b48af87a746ae2d05677} 
+\index{nnregress.m@{nnregress.m}!options@{options}}
+\index{options@{options}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{options()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \textbf{ Default} options vector options (\begin{DoxyParamCaption}\item[{2}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a2c133807b62936cd6765a9833e73d35d} 
+\index{nnregress.m@{nnregress.m}!options@{options}}
+\index{options@{options}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{options()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \textbf{ Absolute} \textbf{ precision} \textbf{ for} weights options (\begin{DoxyParamCaption}\item[{3}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a1f9963ea3905fcfaa7fdd1fa5012653e} 
+\index{nnregress.m@{nnregress.m}!rsq@{rsq}}
+\index{rsq@{rsq}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{rsq()}
+{\footnotesize\ttfamily rsq (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a21b8d7b171c84d11eb1a602b453d29f8} 
+\index{nnregress.m@{nnregress.m}!sig@{sig}}
+\index{sig@{sig}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{sig()}
+{\footnotesize\ttfamily sig (\begin{DoxyParamCaption}\item[{n}]{,  }\item[{k}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a7a542e8f4fac60279235f984ac079a35} 
+\index{nnregress.m@{nnregress.m}!warning@{warning}}
+\index{warning@{warning}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{warning()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily warning (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ backtrace}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a5d23d942138158fedc69d079b0ac532f} 
+\index{nnregress.m@{nnregress.m}!warning@{warning}}
+\index{warning@{warning}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{warning()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily warning (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ off}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{nnregress_8m_a1825a243c7bc27e6e7c926632cb3c8e9} 
+\index{nnregress.m@{nnregress.m}!y@{y}}
+\index{y@{y}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{y()}
+{\footnotesize\ttfamily y (\begin{DoxyParamCaption}\item[{\+:}]{,  }\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{nnregress_8m_a5a8d90eb9dea8930df0b3e54dee0f7e7} 
+\index{nnregress.m@{nnregress.m}!\_\_pad0\_\_@{\_\_pad0\_\_}}
+\index{\_\_pad0\_\_@{\_\_pad0\_\_}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{\_\_pad0\_\_}
+{\footnotesize\ttfamily \textbf{ R} \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 118} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_aae2557a6cd3bcd64ba5aaf0d4629260b} 
+\index{nnregress.m@{nnregress.m}!alpha\_init@{alpha\_init}}
+\index{alpha\_init@{alpha\_init}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{alpha\_init}
+{\footnotesize\ttfamily net \textbf{ opt} alpha\+\_\+init = 0.\+005}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a1f2088f42e4440aa3af751b364ce5dba} 
+\index{nnregress.m@{nnregress.m}!beta\_init@{beta\_init}}
+\index{beta\_init@{beta\_init}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{beta\_init}
+{\footnotesize\ttfamily net \textbf{ opt} beta\+\_\+init = 100.}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_ad428c1df7c578815e5522dbbde7cdb17} 
+\index{nnregress.m@{nnregress.m}!d@{d}}
+\index{d@{d}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{d}
+{\footnotesize\ttfamily \textbf{ Cycle} d}
+
+
+
+Definition at line \textbf{ 72} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a4dce3960afacd803d8cb56f98b78822d} 
+\index{nnregress.m@{nnregress.m}!date@{date}}
+\index{date@{date}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{date}
+{\footnotesize\ttfamily \textbf{ s} date}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_ad35de1433dd77e527c3c3c680bda5b18} 
+\index{nnregress.m@{nnregress.m}!end@{end}}
+\index{end@{end}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{end}
+{\footnotesize\ttfamily end[net, \textbf{ gamma}] = \textbf{ evidence}(net, \textbf{ x}, \textbf{ t}, \textbf{ ninner})}
+
+
+
+Definition at line \textbf{ 58} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a52482fdd3721e7db69dc740aefee8ad4} 
+\index{nnregress.m@{nnregress.m}!err@{err}}
+\index{err@{err}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{err}
+{\footnotesize\ttfamily err =err./\textbf{ nx}}
+
+
+
+Definition at line \textbf{ 70} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a56bda43a2dff764df98a2b5aa1eb4f3d} 
+\index{nnregress.m@{nnregress.m}!function@{function}}
+\index{function@{function}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{function}
+{\footnotesize\ttfamily function[\textbf{ y}, net, \textbf{ sig}] = \textbf{ nnregress}(\textbf{ x},\textbf{ t},\textbf{ nhidden},\textbf{ nstd},\textbf{ diag})}
+
+
+
+Definition at line \textbf{ 1} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a73c18c59a39b18382081ec00bb456d43} 
+\index{nnregress.m@{nnregress.m}!g@{g}}
+\index{g@{g}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{g}
+{\footnotesize\ttfamily g = \textbf{ mlpderiv}(net, \textbf{ x})}
+
+
+
+Definition at line \textbf{ 91} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a8fed2dcd034f8308c2644ffdc540d741} 
+\index{nnregress.m@{nnregress.m}!i@{i}}
+\index{i@{i}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ Return} \textbf{ to} \textbf{ original} \textbf{ units} \textbf{ for} i =1\+:\textbf{ nin} \textbf{ x}(\+:,i) = (\textbf{ x}(\+:,i)-\/\textbf{ meanx}(i))./(\textbf{ nstd}$\ast$\textbf{ stdx}(i))}
+
+
+
+Definition at line \textbf{ 33} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a58e80b9b867ce9f60e700322cc2cbf29} 
+\index{nnregress.m@{nnregress.m}!invhess@{invhess}}
+\index{invhess@{invhess}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{invhess}
+{\footnotesize\ttfamily net invhess = \textbf{ inv}(\textbf{ hess})}
+
+
+
+Definition at line \textbf{ 90} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a1c73327b2882639bc9f5e416bb3cc7ac} 
+\index{nnregress.m@{nnregress.m}!k@{k}}
+\index{k@{k}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{k}
+{\footnotesize\ttfamily \textbf{ for} k}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ 1:nouter}
+\DoxyCodeLine{\ \ lastwarn(\textcolor{stringliteral}{''})}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 48} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a5436bc5fa69a848fd896f8ee08ad7eab} 
+\index{nnregress.m@{nnregress.m}!maxx@{maxx}}
+\index{maxx@{maxx}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{maxx}
+{\footnotesize\ttfamily net \textbf{ opt} maxx =max(\textbf{ x})}
+
+
+
+Definition at line \textbf{ 133} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a6721eeecc4bc2ef7c5a08fc36dab6e9d} 
+\index{nnregress.m@{nnregress.m}!meant@{meant}}
+\index{meant@{meant}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{meant}
+{\footnotesize\ttfamily net \textbf{ opt} meant =mean(\textbf{ t})}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a62e25c32a0628d3d8eca6e94d94ef7da} 
+\index{nnregress.m@{nnregress.m}!meanx@{meanx}}
+\index{meanx@{meanx}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{meanx}
+{\footnotesize\ttfamily net \textbf{ opt} meanx =mean(\textbf{ x})}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_abc59bff90ccbb77495456fab1f914066} 
+\index{nnregress.m@{nnregress.m}!messages@{messages}}
+\index{messages@{messages}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{messages}
+{\footnotesize\ttfamily \textbf{ Suppress} \textbf{ warning} messages[\textbf{ nx} \textbf{ nin}] = \textbf{ size}(\textbf{ x})}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a9fa6982e3a30ea62967934df721acb3b} 
+\index{nnregress.m@{nnregress.m}!minx@{minx}}
+\index{minx@{minx}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{minx}
+{\footnotesize\ttfamily net \textbf{ opt} minx =\textbf{ min}(\textbf{ x})}
+
+
+
+Definition at line \textbf{ 132} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a19920c74d88d5c432335c51e83e14d81} 
+\index{nnregress.m@{nnregress.m}!n@{n}}
+\index{n@{n}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{n}
+{\footnotesize\ttfamily \textbf{ s} n}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a055ae62802a8db7e7f24be1dce08c0b5} 
+\index{nnregress.m@{nnregress.m}!net@{net}}
+\index{net@{net}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{net}
+{\footnotesize\ttfamily net = \textbf{ mlp}(\textbf{ nin}, \textbf{ nhidden}, \textbf{ nout}, \textquotesingle{}\textbf{ linear}\textquotesingle{}, \textbf{ alpha\+\_\+init}, \textbf{ beta\+\_\+init})}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ nnregress.\+m}.
+
+
+
+Referenced by \textbf{ fprintf()}, \textbf{ if()}, \textbf{ if()}, \textbf{ r2a()}, and \textbf{ r2b()}.
+
+\label{nnregress_8m_aa85a210349dd7c5de9e8f6d15ab3538f} 
+\index{nnregress.m@{nnregress.m}!ninner@{ninner}}
+\index{ninner@{ninner}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{ninner}
+{\footnotesize\ttfamily \textbf{ Max} \textbf{ number} of \textbf{ outer} \textbf{ loops} ninner = 3}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_aaff2c176a16558144e19909843c75d95} 
+\index{nnregress.m@{nnregress.m}!ninner\_evi@{ninner\_evi}}
+\index{ninner\_evi@{ninner\_evi}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{ninner\_evi}
+{\footnotesize\ttfamily net \textbf{ opt} ninner\+\_\+evi =\textbf{ ninner}}
+
+
+
+Definition at line \textbf{ 126} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_acd47ae59764417ce773f5da67f390ed4} 
+\index{nnregress.m@{nnregress.m}!ninner\_opt@{ninner\_opt}}
+\index{ninner\_opt@{ninner\_opt}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{ninner\_opt}
+{\footnotesize\ttfamily net \textbf{ opt} ninner\+\_\+opt =\textbf{ options}(14)}
+
+
+
+Definition at line \textbf{ 127} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a3fa77a5c8396d65f2fd23ace71b1c416} 
+\index{nnregress.m@{nnregress.m}!nouter@{nouter}}
+\index{nouter@{nouter}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{nouter}
+{\footnotesize\ttfamily net \textbf{ opt} nouter = 500}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a74ca944e55c80d5ced1609576ed69141} 
+\index{nnregress.m@{nnregress.m}!nstd@{nstd}}
+\index{nstd@{nstd}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{nstd}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ end} \textbf{ Save} \textbf{ the} \textbf{ configuration} of \textbf{ this} \textbf{ regression} net \textbf{ opt} nstd =nstd}
+
+
+
+Definition at line \textbf{ 122} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a22b66879e616bc2c6bb985570c163a71} 
+\index{nnregress.m@{nnregress.m}!nweights@{nweights}}
+\index{nweights@{nweights}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{nweights}
+{\footnotesize\ttfamily nweights = \textbf{ nhidden}$\ast$(\textbf{ nin}+1) + \textbf{ nout}$\ast$(\textbf{ nhidden}+1)}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a6fe606e688f1e0652252c190c0ac5dcb} 
+\index{nnregress.m@{nnregress.m}!options@{options}}
+\index{options@{options}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{options}
+{\footnotesize\ttfamily \textbf{ When} \textbf{ to} \textbf{ exit} \textbf{ outer} \textbf{ loop} options = \textbf{ zeros}(1,18)}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a2ebd9d3ffdf8d0edc632d6ea8f001ed3} 
+\index{nnregress.m@{nnregress.m}!r2@{r2}}
+\index{r2@{r2}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{r2}
+{\footnotesize\ttfamily \textbf{ end} net r2 =0}
+
+
+
+Definition at line \textbf{ 54} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a9717e7bbecb906637e86cef6da3d83c2} 
+\index{nnregress.m@{nnregress.m}!return@{return}}
+\index{return@{return}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{return}
+{\footnotesize\ttfamily return}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a3f1de7be41205a634a7a3da38dba50ed} 
+\index{nnregress.m@{nnregress.m}!satisfy@{satisfy}}
+\index{satisfy@{satisfy}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{satisfy}
+{\footnotesize\ttfamily satisfy = \textbf{ abs}(\textbf{ state}(\textbf{ end},\+:)-\/\textbf{ state}(\textbf{ end}-\/1,\+:))./mean(\textbf{ state}) $<$ \textbf{ toler}}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_af68a9e744382cfceeccc610996a4c090} 
+\index{nnregress.m@{nnregress.m}!sig@{sig}}
+\index{sig@{sig}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{sig}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ end} sig =0}
+
+
+
+Definition at line \textbf{ 53} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a5f7219ef7df5f94a90e9c29ac183aace} 
+\index{nnregress.m@{nnregress.m}!state@{state}}
+\index{state@{state}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{state}
+{\footnotesize\ttfamily \textbf{ end} state = [state}
+
+
+
+Definition at line \textbf{ 68} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a3ca396819e26779a335d07747e67ae96} 
+\index{nnregress.m@{nnregress.m}!stdt@{stdt}}
+\index{stdt@{stdt}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{stdt}
+{\footnotesize\ttfamily net \textbf{ opt} stdt =\textbf{ std}(\textbf{ t})}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a03fc4ef32607ea1b29caaef8a12029ea} 
+\index{nnregress.m@{nnregress.m}!stdx@{stdx}}
+\index{stdx@{stdx}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{stdx}
+{\footnotesize\ttfamily net \textbf{ opt} stdx =\textbf{ std}(\textbf{ x})}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a931e12ead718e36cccf10528c3995d18} 
+\index{nnregress.m@{nnregress.m}!toler@{toler}}
+\index{toler@{toler}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{toler}
+{\footnotesize\ttfamily \textbf{ Number} of \textbf{ inner} \textbf{ loops} toler = [.\+005 .\+005 .\+005 .\+005]}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_aafd1738dea513fad803704966e418182} 
+\index{nnregress.m@{nnregress.m}!tout@{tout}}
+\index{tout@{tout}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{tout}
+{\footnotesize\ttfamily \textbf{ if} (\textbf{ nargout} $>$ 2) \textbf{ sig}( \textbf{ end} \textbf{ end} tout =\textbf{ t}}
+
+
+
+Definition at line \textbf{ 110} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a4ca6c085fb091a9b63ec3bb2835a9c48} 
+\index{nnregress.m@{nnregress.m}!Warning@{Warning}}
+\index{Warning@{Warning}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{Warning}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ end} Warning}
+
+
+
+Definition at line \textbf{ 81} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_abe113a1d15fa92b867196b0eece39e1b} 
+\index{nnregress.m@{nnregress.m}!warnstate@{warnstate}}
+\index{warnstate@{warnstate}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{warnstate}
+{\footnotesize\ttfamily warnstate =\textbf{ lastwarn}}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ nnregress.\+m}.
+
+\label{nnregress_8m_a9f0def881a853a5ce84e529badf7b7f6} 
+\index{nnregress.m@{nnregress.m}!y@{y}}
+\index{y@{y}!nnregress.m@{nnregress.m}}
+\doxysubsubsection{y}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ Forward} \textbf{ estimation} y = \textbf{ mlpfwd}(net, \textbf{ x})}
+
+
+
+Definition at line \textbf{ 85} of file \textbf{ nnregress.\+m}.
+

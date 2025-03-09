@@ -1,0 +1,90 @@
+\doxysection{sipnet\+Girdle.\+h}
+\label{sipnet_girdle_8h_source}\index{sipnetGirdle.h@{sipnetGirdle.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ header\ file\ for\ sipnet}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#ifndef\ SIPNET\_H}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ SIPNET\_H}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}spatialParams.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ EXTRA\_DATA\_TYPES\ 0}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ Allow\ the\ outputting\ of\ extra\ data\ types\ (e.g.\ GPP,\ Rtot)?}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ NOTE:\ Defining\ this\ flag\ as\ true\ will\ break\ the\ estimate\ program,\ since\ there\ will\ not\ be\ enough\ columns\ in\ the\ .dat\ file}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ \ However,\ this\ can\ be\ used\ for\ outputting\ additional\ data\ types\ when\ computing\ means\ and\ standard\ deviations\ across\ a\ number\ of\ parameter\ sets}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ number\ of\ different\ possible\ data\ types\ that\ can\ be\ output\ -\/\ depends\ on\ how\ EXTRA\_DATA\_TYPES\ is\ defined}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#if\ EXTRA\_DATA\_TYPES}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ MAX\_DATA\_TYPES\ 20}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ MAX\_DATA\_TYPES\ 3}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#endif\ }}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ write\ to\ file\ which\ model\ components\ are\ turned\ on}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ (i.e.\ the\ value\ of\ the\ \#DEFINE's\ at\ the\ top\ of\ file)}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ pre:\ out\ is\ open\ for\ writing}}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ printModelComponents(FILE\ *out);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ return\ an\ array[0..MAX\_DATA\_TYPES-\/1]\ of\ strings,}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ where\ arr[i]\ gives\ the\ name\ of\ data\ type\ i}}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{char}\ **getDataTypeNames();}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{/*\ do\ initializations\ that\ only\ have\ to\ be\ done\ once\ for\ all\ model\ runs:}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ read\ in\ climate\ data\ and\ initial\ parameter\ values}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ parameter\ values\ get\ stored\ in\ spatialParams\ (along\ with\ other\ parameter\ information),}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ which\ gets\ allocated\ and\ initialized\ here\ (thus\ requiring\ that\ spatialParams\ is\ passed\ in\ as\ a\ pointer\ to\ a\ pointer)}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ number\ of\ time\ steps\ in\ each\ location\ gets\ stored\ in\ steps\ vector,\ which\ gets\ dynamically\ allocated\ with\ malloc}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ (steps\ must\ be\ a\ pointer\ to\ a\ pointer\ so\ it\ can\ be\ malloc'ed)}}
+\DoxyCodeLine{00041\ \textcolor{comment}{}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ \ \ also\ set\ up\ pointers\ to\ different\ output\ data\ types}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ and\ setup\ meanNPP\ tracker}}
+\DoxyCodeLine{00044\ \textcolor{comment}{}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ initModel\ returns\ number\ of\ spatial\ locations}}
+\DoxyCodeLine{00046\ \textcolor{comment}{}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ paramFile\ is\ parameter\ data\ file}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ \ paramFile-\/spatial\ is\ file\ with\ parameter\ values\ of\ spatially-\/varying\ parameters\ (1st\ line\ contains\ number\ of\ locations)}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ \ \ climFile\ is\ climate\ data\ file}}
+\DoxyCodeLine{00050\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{int}\ initModel(SpatialParams\ **spatialParams,\ \textcolor{keywordtype}{int}\ **steps,\ \textcolor{keywordtype}{char}\ *paramFile,\ \textcolor{keywordtype}{char}\ *climFile,\ \textcolor{keywordtype}{char}\ *girdleFile);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{//\ call\ this\ when\ done\ running\ model:}}
+\DoxyCodeLine{00055\ \textcolor{comment}{//\ de-\/allocates\ space\ for\ climate\ linked\ list}}
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ (needs\ to\ know\ number\ of\ locations)}}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{void}\ cleanupModel(\textcolor{keywordtype}{int}\ numLocs);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{/*\ pre:\ outArray\ has\ dimensions\ of\ at\ least\ (\#\ model\ steps)\ x\ numDataTypes}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ dataTypeIndices[0..numDataTypes-\/1]\ gives\ indices\ of\ data\ types\ to\ use\ (see\ DATA\_TYPES\ array\ in\ sipnet.h)}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ }}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ run\ model\ with\ parameter\ values\ in\ spatialParams,\ don't\ output\ to\ file}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ instead,\ output\ some\ variables\ at\ each\ step\ into\ an\ array}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ Run\ at\ spatial\ location\ given\ by\ loc\ (0-\/indexing)}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ Note:\ can\ only\ run\ at\ one\ location:\ to\ run\ at\ all\ locations,\ must\ put\ runModelNoOut\ call\ in\ a\ loop}}
+\DoxyCodeLine{00067\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ runModelNoOut(\textcolor{keywordtype}{double}\ **outArray,\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*\ do\ one\ run\ of\ the\ model\ using\ parameter\ values\ in\ spatialParams,\ output\ results\ to\ out}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ \ \ If\ printHeader\ =\ 1,\ print\ a\ header\ for\ the\ output\ file,\ if\ 0\ don't}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ \ \ Run\ at\ spatial\ location\ given\ by\ loc\ (0-\/indexing)\ -\/\ or\ run\ everywhere\ if\ loc\ =\ -\/1}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ Note:\ number\ of\ locations\ given\ in\ spatialParams}}
+\DoxyCodeLine{00075\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ \textcolor{keywordtype}{int}\ printHeader,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{comment}{//\ do\ a\ sensitivity\ test\ on\ paramNum,\ varying\ from\ low\ to\ high,\ doing\ a\ total\ of\ numRuns\ runs}}
+\DoxyCodeLine{00080\ \textcolor{comment}{//\ run\ only\ at\ a\ single\ location\ (given\ by\ loc)}}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{void}\ sensTest(FILE\ *out,\ \textcolor{keywordtype}{int}\ paramNum,\ \textcolor{keywordtype}{double}\ low,\ \textcolor{keywordtype}{double}\ high,\ \textcolor{keywordtype}{int}\ numRuns,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc);\ }
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

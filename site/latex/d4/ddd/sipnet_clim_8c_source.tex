@@ -1,0 +1,116 @@
+\doxysection{sipnet\+Clim.\+c}
+\label{sipnet_clim_8c_source}\index{sipnetClim.c@{sipnetClim.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Bill\ Sacks}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ 6/28/02}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Put\ data\ in\ correct\ format\ for\ SiPnET}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName)\ \{}
+\DoxyCodeLine{00010\ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ fileName\ [location],\ where:\(\backslash\)n"{}},\ progName);}
+\DoxyCodeLine{00011\ \ \ printf(\textcolor{stringliteral}{"{}fileName\ is\ output\ file\ for\ climate\ data,\(\backslash\)n"{}});}
+\DoxyCodeLine{00012\ \ \ printf(\textcolor{stringliteral}{"{}location\ is\ location\ to\ be\ written\ to\ file,\ in\ 1st\ column\(\backslash\)n"{}});}
+\DoxyCodeLine{00013\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(if\ no\ location\ specified,\ use\ loc.\ 0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00014\ \}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00017\ FILE\ *openFile(\textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{char}\ *mode)\ \{}
+\DoxyCodeLine{00018\ \ \ FILE\ *f;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordflow}{if}\ ((f\ =\ fopen(name,\ mode))\ ==\ NULL)\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ opening\ \%s\ for\ \%s\(\backslash\)n"{}},\ name,\ mode);}
+\DoxyCodeLine{00022\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00023\ \ \ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \textcolor{keywordflow}{return}\ f;}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00029\ \ \ FILE\ *intervalLengthf,\ *tairf,\ *tsoilf,\ *parf,\ *waterInf,\ *vpdf,\ *vpdSoilf,\ *vpressf,\ *wspdf,\ *soilwetnessf,\ *out;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \textcolor{comment}{/*\ Harvard\ Forest:}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ int\ day\ =\ 1;}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ int\ year\ =\ 1992;}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ */}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \textcolor{keywordtype}{int}\ day\ =\ 305;}
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordtype}{int}\ year\ =\ 1998;}
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordtype}{float}\ time\ =\ 0.0;\ \textcolor{comment}{//\ time\ of\ start\ of\ interval\ (in\ hours)}}
+\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{int}\ leap\ =\ year\%4;\ \textcolor{comment}{//\ for\ leap\ year\ calculations}}
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordtype}{float}\ intervalLength;\ \textcolor{comment}{//\ in\ hours}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \textcolor{comment}{//\ climate\ variables:}}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{float}\ tair,\ tsoil,\ par,\ waterIn,\ vpd,\ vpdSoil,\ vpress,\ wspd,\ soilwetness;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \textcolor{keywordtype}{int}\ location;}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{char}\ *errc;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 2\ ||\ argc\ >\ 3)\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00050\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00051\ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ intervalLengthf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/intervaldn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00054\ \ \ tairf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/tairdn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00055\ \ \ tsoilf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/tsoildn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00056\ \ \ parf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/pardn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00057\ \ \ waterInf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/pptdn"{}},\ \textcolor{stringliteral}{"{}r"{}});\ \textcolor{comment}{//\ waterIn\ =\ precip.}}
+\DoxyCodeLine{00058\ \ \ vpdf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/vpddn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00059\ \ \ vpdSoilf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/vpdsoildn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00060\ \ \ vpressf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/vpressdn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00061\ \ \ wspdf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/wspddn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00062\ \ \ soilwetnessf\ =\ openFile(\textcolor{stringliteral}{"{}niwot/climate/soilwetnessdn"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00063\ \ \ out\ =\ openFile(argv[1],\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \textcolor{keywordflow}{if}\ (argc\ ==\ 3)\ \textcolor{comment}{//\ a\ location\ was\ specified}}
+\DoxyCodeLine{00066\ \ \ \ \ location\ =\ strtol(argv[2],\ \&errc,\ 0);}
+\DoxyCodeLine{00067\ \ \ \textcolor{keywordflow}{else}\ \textcolor{comment}{//\ use\ default\ location:\ 0}}
+\DoxyCodeLine{00068\ \ \ \ \ location\ =\ 0;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \textcolor{keywordflow}{while}\ (fscanf(intervalLengthf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&intervalLength)\ >\ 0)\ \{\ \textcolor{comment}{//\ while\ we\ haven't\ reached\ end\ of\ file}}
+\DoxyCodeLine{00071\ \ \ \ \ intervalLength\ /=\ 24.0;\ \textcolor{comment}{//\ convert\ from\ hours\ to\ days}}
+\DoxyCodeLine{00072\ \ \ \ \ fscanf(tairf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&tair);}
+\DoxyCodeLine{00073\ \ \ \ \ fscanf(tsoilf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&tsoil);}
+\DoxyCodeLine{00074\ \ \ \ \ fscanf(parf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&par);}
+\DoxyCodeLine{00075\ \ \ \ \ fscanf(waterInf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&waterIn);}
+\DoxyCodeLine{00076\ \ \ \ \ fscanf(vpdf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&vpd);}
+\DoxyCodeLine{00077\ \ \ \ \ fscanf(vpdSoilf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&vpdSoil);}
+\DoxyCodeLine{00078\ \ \ \ \ fscanf(vpressf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&vpress);}
+\DoxyCodeLine{00079\ \ \ \ \ fscanf(wspdf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&wspd);}
+\DoxyCodeLine{00080\ \ \ \ \ fscanf(soilwetnessf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&soilwetness);}
+\DoxyCodeLine{00081\ \ \ \ \ }
+\DoxyCodeLine{00082\ \ \ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\%d\(\backslash\)t\%4d\ \%3d\ \%5.2f\ \%4.3f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\(\backslash\)n"{}},\ location,\ year,\ day,\ time,\ intervalLength,\ tair,\ tsoil,\ par,\ waterIn,\ vpd,\ vpdSoil,\ vpress,\ wspd,\ soilwetness);}
+\DoxyCodeLine{00083\ \ \ \ \ }
+\DoxyCodeLine{00084\ \ \ \ \ time\ =\ time\ +\ intervalLength*24.0;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{while}\ (time\ >=\ 24.0)\ \{\ \textcolor{comment}{//\ next\ day}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ time\ =\ time\ -\/\ 24.0;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((day\ ==\ 365\ \&\&\ leap\ >\ 0)\ ||\ (day\ ==\ 366\ \&\&\ leap\ ==\ 0))\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ day\ =\ 1;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ year++;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ leap\ =\ year\%4;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ day++;}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \}}
+\DoxyCodeLine{00096\ \ \ }
+\DoxyCodeLine{00097\ \ \ fclose(intervalLengthf);}
+\DoxyCodeLine{00098\ \ \ fclose(tairf);}
+\DoxyCodeLine{00099\ \ \ fclose(tsoilf);}
+\DoxyCodeLine{00100\ \ \ fclose(parf);}
+\DoxyCodeLine{00101\ \ \ fclose(waterInf);}
+\DoxyCodeLine{00102\ \ \ fclose(vpdf);}
+\DoxyCodeLine{00103\ \ \ fclose(vpdSoilf);}
+\DoxyCodeLine{00104\ \ \ fclose(vpressf);}
+\DoxyCodeLine{00105\ \ \ fclose(wspdf);}
+\DoxyCodeLine{00106\ \ \ fclose(soilwetnessf);}
+\DoxyCodeLine{00107\ \ \ fclose(out);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00110\ \}}
+
+\end{DoxyCode}

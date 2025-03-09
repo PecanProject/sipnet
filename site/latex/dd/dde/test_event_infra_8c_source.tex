@@ -1,0 +1,237 @@
+\doxysection{test\+Event\+Infra.\+c}
+\label{test_event_infra_8c_source}\index{testEventInfra.c@{testEventInfra.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}modelStructures.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}../utils.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}../../../events.c"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keywordtype}{int}\ checkEvent(EventNode*\ event,\ \textcolor{keywordtype}{int}\ loc,\ \textcolor{keywordtype}{int}\ year,\ \textcolor{keywordtype}{int}\ day,\ \textcolor{keyword}{enum}\ EventType\ type)\ \{}
+\DoxyCodeLine{00010\ \ \ \textcolor{keywordtype}{int}\ success\ =}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{event}-\/>loc\ ==\ loc\ \&\&}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{event}-\/>year\ ==\ year\ \&\&}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{event}-\/>day\ ==\ day\ \&\&}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{event}-\/>type\ ==\ type;}
+\DoxyCodeLine{00015\ \ \ \textcolor{keywordflow}{if}\ (!success)\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ checking\ event\(\backslash\)n"{}});}
+\DoxyCodeLine{00017\ \ \ \ \ printEvent(event);}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00019\ \ \ \}}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00021\ \}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{int}\ checkHarvestParams(}
+\DoxyCodeLine{00024\ \ \ HarvestParams\ *params,\ \textcolor{keywordtype}{double}\ fracRemAbove,}
+\DoxyCodeLine{00025\ \ \ \textcolor{keywordtype}{double}\ fracRemBelow,}
+\DoxyCodeLine{00026\ \ \ \textcolor{keywordtype}{double}\ fracTransAbove,}
+\DoxyCodeLine{00027\ \ \ \textcolor{keywordtype}{double}\ fracTransBelow}
+\DoxyCodeLine{00028\ )\ \{}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordflow}{return}\ !(}
+\DoxyCodeLine{00030\ \ \ \ \ compareDoubles(params-\/>fractionRemovedAbove,\ fracRemAbove)\ \&\&}
+\DoxyCodeLine{00031\ \ \ \ \ compareDoubles(params-\/>fractionRemovedBelow,\ fracRemBelow)\ \&\&}
+\DoxyCodeLine{00032\ \ \ \ \ compareDoubles(params-\/>fractionTransferredAbove,\ fracTransAbove)\ \&\&}
+\DoxyCodeLine{00033\ \ \ \ \ compareDoubles(params-\/>fractionTransferredBelow,\ fracTransBelow)}
+\DoxyCodeLine{00034\ \ \ \ \ );}
+\DoxyCodeLine{00035\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ checkIrrigationParams(}
+\DoxyCodeLine{00038\ \ \ IrrigationParams\ *params,}
+\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{double}\ amountAdded,}
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordtype}{int}\ method}
+\DoxyCodeLine{00041\ \ \ )\ \{}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordflow}{return}\ !(}
+\DoxyCodeLine{00043\ \ \ \ \ compareDoubles(params-\/>amountAdded,\ amountAdded)\ \&\&}
+\DoxyCodeLine{00044\ \ \ \ \ params-\/>method\ ==\ method}
+\DoxyCodeLine{00045\ \ \ \ \ );}
+\DoxyCodeLine{00046\ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{int}\ checkFertilizationParams(}
+\DoxyCodeLine{00049\ \ \ FertilizationParams\ *params,}
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordtype}{double}\ orgN,}
+\DoxyCodeLine{00051\ \ \ \textcolor{keywordtype}{double}\ orgC,}
+\DoxyCodeLine{00052\ \ \ \textcolor{keywordtype}{double}\ minN}
+\DoxyCodeLine{00053\ )\ \{}
+\DoxyCodeLine{00054\ \ \ \textcolor{keywordflow}{return}\ !(}
+\DoxyCodeLine{00055\ \ \ \ \ compareDoubles(params-\/>orgN,\ orgN)\ \&\&}
+\DoxyCodeLine{00056\ \ \ \ \ compareDoubles(params-\/>orgC,\ orgC)\ \&\&}
+\DoxyCodeLine{00057\ \ \ \ \ compareDoubles(params-\/>minN,\ minN)}
+\DoxyCodeLine{00058\ \ \ \ \ );}
+\DoxyCodeLine{00059\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{int}\ checkPlantingParams(}
+\DoxyCodeLine{00062\ \ \ PlantingParams\ *params,\ \textcolor{keywordtype}{int}\ emergenceLag,\ \textcolor{keywordtype}{double}\ addedC,\ \textcolor{keywordtype}{double}\ addedN}
+\DoxyCodeLine{00063\ \ \ )\ \{}
+\DoxyCodeLine{00064\ \ \ \textcolor{keywordflow}{return}\ !(}
+\DoxyCodeLine{00065\ \ \ \ \ params-\/>emergenceLag\ ==\ emergenceLag\ \&\&}
+\DoxyCodeLine{00066\ \ \ \ \ compareDoubles(params-\/>addedC,\ addedC)\ \&\&}
+\DoxyCodeLine{00067\ \ \ \ \ compareDoubles(params-\/>addedN,\ addedN)}
+\DoxyCodeLine{00068\ \ \ \ \ );}
+\DoxyCodeLine{00069\ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{int}\ checkTillageParams(}
+\DoxyCodeLine{00072\ \ \ TillageParams\ *params,}
+\DoxyCodeLine{00073\ \ \ \textcolor{keywordtype}{double}\ fracLitterTransferred,}
+\DoxyCodeLine{00074\ \ \ \textcolor{keywordtype}{double}\ somDecompModifier,}
+\DoxyCodeLine{00075\ \ \ \textcolor{keywordtype}{double}\ litterDecompModifier}
+\DoxyCodeLine{00076\ \ \ )\ \{}
+\DoxyCodeLine{00077\ \ \ \textcolor{keywordflow}{return}\ !(}
+\DoxyCodeLine{00078\ \ \ \ \ compareDoubles(params-\/>fractionLitterTransferred,\ fracLitterTransferred)\ \&\&}
+\DoxyCodeLine{00079\ \ \ \ \ compareDoubles(params-\/>somDecompModifier,\ somDecompModifier)\ \&\&}
+\DoxyCodeLine{00080\ \ \ \ \ compareDoubles(params-\/>litterDecompModifier,\ litterDecompModifier)}
+\DoxyCodeLine{00081\ \ \ \ \ );}
+\DoxyCodeLine{00082\ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{int}\ init()\ \{}
+\DoxyCodeLine{00085\ \ \ \textcolor{comment}{//\ char\ *\ filename\ =\ "{}infra\_events\_simple.in"{};}}
+\DoxyCodeLine{00086\ \ \ \textcolor{comment}{//\ if\ (access(filename,\ F\_OK)\ ==\ -\/1)\ \{}}
+\DoxyCodeLine{00087\ \ \ \textcolor{comment}{//\ \ \ return\ 1;}}
+\DoxyCodeLine{00088\ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00089\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00090\ \ \ \textcolor{comment}{//\ return\ copyFile(filename,\ "{}events.in"{});}}
+\DoxyCodeLine{00091\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00092\ \}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{int}\ runTestSimple()\ \{}
+\DoxyCodeLine{00095\ \ \ \textcolor{comment}{//\ Simple\ test\ with\ one\ loc,\ one\ event\ per\ type}}
+\DoxyCodeLine{00096\ \ \ \textcolor{keywordtype}{int}\ numLocs\ =\ 1;}
+\DoxyCodeLine{00097\ \ \ EventNode**\ output\ =\ readEventData(\textcolor{stringliteral}{"{}infra\_events\_simple.in"{}},\ numLocs);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \textcolor{keywordflow}{if}\ (!output)\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00101\ \ \ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \textcolor{comment}{//\ check\ output\ is\ correct}}
+\DoxyCodeLine{00104\ \ \ \textcolor{keywordtype}{int}\ status\ =\ 0;}
+\DoxyCodeLine{00105\ \ \ EventNode\ *\textcolor{keyword}{event}\ =\ output[0];}
+\DoxyCodeLine{00106\ \ \ status\ |=\ checkEvent(event,\ 0,\ 2022,\ 40,\ IRRIGATION);}
+\DoxyCodeLine{00107\ \ \ status\ |=\ checkIrrigationParams((IrrigationParams*)event-\/>eventParams,\ 5,\ 0);}
+\DoxyCodeLine{00108\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00109\ \ \ status\ |=\ checkEvent(event,\ 0,\ 2022,\ 40,\ FERTILIZATION);}
+\DoxyCodeLine{00110\ \ \ status\ |=\ checkFertilizationParams((FertilizationParams*)event-\/>eventParams,\ 15,\ 5,10);}
+\DoxyCodeLine{00111\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00112\ \ \ status\ |=\ checkEvent(event,\ 0,\ 2022,\ 45,\ TILLAGE);}
+\DoxyCodeLine{00113\ \ \ status\ |=\ checkTillageParams((TillageParams*)event-\/>eventParams,\ 0.1,\ 0.2,\ 0.3);}
+\DoxyCodeLine{00114\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00115\ \ \ status\ |=\ checkEvent(event,\ 0,\ 2022,\ 46,\ PLANTING);}
+\DoxyCodeLine{00116\ \ \ status\ |=\ checkPlantingParams((PlantingParams*)event-\/>eventParams,\ 10,\ 10,\ 1);}
+\DoxyCodeLine{00117\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00118\ \ \ status\ |=\ checkEvent(event,\ 0,\ 2022,\ 250,\ HARVEST);}
+\DoxyCodeLine{00119\ \ \ status\ |=\ checkHarvestParams((HarvestParams*)event-\/>eventParams,\ 0.4,\ 0.1,\ 0.2,\ 0.3);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \textcolor{keywordflow}{return}\ status;}
+\DoxyCodeLine{00122\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ runTestMulti()\ \{}
+\DoxyCodeLine{00125\ \ \ \textcolor{comment}{//\ More\ complex\ test;\ multiple\ locations}}
+\DoxyCodeLine{00126\ \ \ \textcolor{keywordtype}{int}\ numLocs\ =\ 1;}
+\DoxyCodeLine{00127\ \ \ EventNode**\ output\ =\ readEventData(\textcolor{stringliteral}{"{}infra\_events\_multi.in"{}},\ numLocs);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \textcolor{keywordflow}{if}\ (!output)\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00131\ \ \ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \textcolor{comment}{//\ check\ output\ is\ correct}}
+\DoxyCodeLine{00134\ \ \ \textcolor{keywordtype}{int}\ status\ =\ 0;}
+\DoxyCodeLine{00135\ \ \ \textcolor{keywordtype}{int}\ loc\ =\ 0;}
+\DoxyCodeLine{00136\ \ \ EventNode\ *\textcolor{keyword}{event}\ =\ output[loc];}
+\DoxyCodeLine{00137\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 60,\ TILLAGE);}
+\DoxyCodeLine{00138\ \ \ status\ |=\ checkTillageParams((TillageParams*)event-\/>eventParams,\ 0.1,\ 0.2,\ 0.3);}
+\DoxyCodeLine{00139\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00140\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 65,\ PLANTING);}
+\DoxyCodeLine{00141\ \ \ status\ |=\ checkPlantingParams((PlantingParams*)event-\/>eventParams,\ 15,\ 20,\ 5);}
+\DoxyCodeLine{00142\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00143\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 70,\ IRRIGATION);}
+\DoxyCodeLine{00144\ \ \ status\ |=\ checkIrrigationParams((IrrigationParams*)event-\/>eventParams,\ 5,\ 1);}
+\DoxyCodeLine{00145\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00146\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 75,\ FERTILIZATION);}
+\DoxyCodeLine{00147\ \ \ status\ |=\ checkFertilizationParams((FertilizationParams*)event-\/>eventParams,\ 15,\ 10,5);}
+\DoxyCodeLine{00148\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00149\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 250,\ HARVEST);}
+\DoxyCodeLine{00150\ \ \ status\ |=\ checkHarvestParams((HarvestParams*)event-\/>eventParams,\ 0.1,\ 0.2,\ 0.3,\ 0.4);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ loc++;}
+\DoxyCodeLine{00153\ \ \ \textcolor{keyword}{event}\ =\ output[loc];}
+\DoxyCodeLine{00154\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 59,\ TILLAGE);}
+\DoxyCodeLine{00155\ \ \ status\ |=\ checkTillageParams((TillageParams*)event-\/>eventParams,\ 0.2,\ 0.3,\ 0.1);}
+\DoxyCodeLine{00156\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00157\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 64,\ PLANTING);}
+\DoxyCodeLine{00158\ \ \ status\ |=\ checkPlantingParams((PlantingParams*)event-\/>eventParams,\ 15,\ 20,\ 5);}
+\DoxyCodeLine{00159\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00160\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 69,\ IRRIGATION);}
+\DoxyCodeLine{00161\ \ \ status\ |=\ checkIrrigationParams((IrrigationParams*)event-\/>eventParams,\ 5,\ 0);}
+\DoxyCodeLine{00162\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00163\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 74,\ FERTILIZATION);}
+\DoxyCodeLine{00164\ \ \ status\ |=\ checkFertilizationParams((FertilizationParams*)event-\/>eventParams,\ 5,\ 15,10);}
+\DoxyCodeLine{00165\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00166\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 249,\ HARVEST);}
+\DoxyCodeLine{00167\ \ \ status\ |=\ checkHarvestParams((HarvestParams*)event-\/>eventParams,\ 0.2,\ 0.3,\ 0.4,\ 0.1);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ loc++;}
+\DoxyCodeLine{00170\ \ \ \textcolor{keyword}{event}\ =\ output[loc];}
+\DoxyCodeLine{00171\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 58,\ TILLAGE);}
+\DoxyCodeLine{00172\ \ \ status\ |=\ checkTillageParams((TillageParams*)event-\/>eventParams,\ 0.3,\ 0.1,\ 0.2);}
+\DoxyCodeLine{00173\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00174\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 63,\ PLANTING);}
+\DoxyCodeLine{00175\ \ \ status\ |=\ checkPlantingParams((PlantingParams*)event-\/>eventParams,\ 15,\ 20,\ 5);}
+\DoxyCodeLine{00176\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00177\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 68,\ IRRIGATION);}
+\DoxyCodeLine{00178\ \ \ status\ |=\ checkIrrigationParams((IrrigationParams*)event-\/>eventParams,\ 6,\ 1);}
+\DoxyCodeLine{00179\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00180\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 73,\ FERTILIZATION);}
+\DoxyCodeLine{00181\ \ \ status\ |=\ checkFertilizationParams((FertilizationParams*)event-\/>eventParams,\ 5,\ 10,15);}
+\DoxyCodeLine{00182\ \ \ \textcolor{keyword}{event}\ =\ \textcolor{keyword}{event}-\/>nextEvent;}
+\DoxyCodeLine{00183\ \ \ status\ |=\ checkEvent(event,\ loc,\ 2024,\ 248,\ HARVEST);}
+\DoxyCodeLine{00184\ \ \ status\ |=\ checkHarvestParams((HarvestParams*)event-\/>eventParams,\ 0.3,\ 0.4,\ 0.1,\ 0.2);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \textcolor{keywordflow}{return}\ status;}
+\DoxyCodeLine{00187\ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{keywordtype}{int}\ run()\ \{}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \textcolor{keywordtype}{int}\ status;}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ status\ =\ runTestSimple();}
+\DoxyCodeLine{00194\ \ \ \textcolor{keywordflow}{if}\ (status)\ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00196\ \ \ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ status\ =\ runTestMulti();}
+\DoxyCodeLine{00199\ \ \ \textcolor{keywordflow}{if}\ (status)\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00201\ \ \ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00204\ \}}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \textcolor{keywordtype}{void}\ cleanup()\ \{}
+\DoxyCodeLine{00207\ \ \ \textcolor{comment}{//\ Perform\ any\ cleanup\ as\ needed}}
+\DoxyCodeLine{00208\ \ \ \textcolor{comment}{//\ None\ needed\ here,\ we\ can\ leave\ the\ copied\ file}}
+\DoxyCodeLine{00209\ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{00212\ \ \ \textcolor{keywordtype}{int}\ status;}
+\DoxyCodeLine{00213\ \ \ status\ =\ init();}
+\DoxyCodeLine{00214\ \ \ \textcolor{keywordflow}{if}\ (status)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Test\ initialization\ failed\ with\ status\ \%d\(\backslash\)n"{}},\ status);}
+\DoxyCodeLine{00216\ \ \ \ \ exit(status);}
+\DoxyCodeLine{00217\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00218\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Test\ initialized\(\backslash\)n"{}});}
+\DoxyCodeLine{00219\ \ \ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ printf(\textcolor{stringliteral}{"{}Starting\ run()\(\backslash\)n"{}});}
+\DoxyCodeLine{00222\ \ \ status\ =\ run();}
+\DoxyCodeLine{00223\ \ \ \textcolor{keywordflow}{if}\ (status)\ \{}
+\DoxyCodeLine{00224\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Test\ run\ failed\ with\ status\ \%d\(\backslash\)n"{}},\ status);}
+\DoxyCodeLine{00225\ \ \ \ \ exit(status);}
+\DoxyCodeLine{00226\ \ \ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ printf(\textcolor{stringliteral}{"{}testEventInfra\ PASSED\(\backslash\)n"{}});}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ cleanup();}
+\DoxyCodeLine{00231\ \}}
+
+\end{DoxyCode}

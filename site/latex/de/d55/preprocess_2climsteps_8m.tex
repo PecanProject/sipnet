@@ -1,0 +1,1006 @@
+\doxysection{preprocess/climsteps.m File Reference}
+\label{preprocess_2climsteps_8m}\index{climsteps.m@{climsteps.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ climsteps} (\textbf{ step\+Length}, \textbf{ obs\+Step\+Length}, \textbf{ directory\+\_\+clim}, \textbf{ directory\+\_\+fluxes}) \% \textbf{ for} \textbf{ each} of \textbf{ tair}
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} \textbf{ hourly} (\textbf{ or} \textbf{ half}-\/hourly) data and \% \textbf{ aggregate} \textbf{ up} \textbf{ to} \textbf{ timesteps} of \textbf{ given} \textbf{ step\+Length}(in \% \textbf{ observational} \textbf{ time} \textbf{ steps}) \%(\textbf{ by} \textbf{ just} \textbf{ taking} \textbf{ the} mean \textbf{ across} a \textbf{ timestep}) \% \textbf{ Also} \textbf{ determine} \textbf{ valid} \textbf{ fraction} \textbf{ for} \textbf{ nee}
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} and \textbf{ soilwetness} \textbf{ Assumes} \textbf{ that} (\textbf{ total} \# \textbf{ observational} \textbf{ time} \textbf{ steps})/\textbf{ step\+Length} is an \textbf{ integer} \%(\textbf{ if} \textbf{ not}
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} and \textbf{ soilwetness} \textbf{ Assumes} \textbf{ throws} \textbf{ out} \textbf{ last} \textbf{ fraction} of a \textbf{ time} step \textbf{ obs\+Step\+Length} gives \textbf{ the} length of \textbf{ each} \textbf{ observational} \textbf{ time} \textbf{ step} (in \% \textbf{ seconds})(e.\+g. 3600 \textbf{ for} \textbf{ harvard}
+\item 
+[\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tairfill}\textquotesingle{}] \textbf{ load} ()
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ tair}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ vpd}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ vpdsoil}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ vpress}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ par}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ tsoil}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ wspd}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ ppt}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ nee}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ fh2o}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ soilwetness}\textquotesingle{})
+\item 
+\textbf{ or} \textbf{ for} \textbf{ each} \textbf{ point} \textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ neevalid}\textquotesingle{})
+\item 
+\textbf{ or} \textbf{ for} \textbf{ each} \textbf{ point} \textbf{ disp} (\textquotesingle{}\textbf{ loaded} \textbf{ fh2ovalid}\textquotesingle{})
+\item 
+\textbf{ disp} (\textquotesingle{}\textbf{ starting} \textbf{ loop}\textquotesingle{})
+\item 
+\textbf{ Note} \textbf{ we} \textbf{ print} \textbf{ to} \textbf{ file} \textbf{ as} \textbf{ we} \textbf{ rather} \textbf{ than} \textbf{ saving} \textbf{ to} vectors and \textbf{ then} \textbf{ just} \textbf{ printing} \textbf{ at} \textbf{ the} \textbf{ to} \textbf{ save} \textbf{ memory} (\textbf{ it} \% \textbf{ gets} \textbf{ slow} \textbf{ to} \textbf{ do} \textbf{ the} \textbf{ latter} \textbf{ with} \textbf{ large} vectors) \textbf{ for} i
+\item 
+\textbf{ indices} \textbf{ counts}[1, 2, 3] \textbf{ etc} \textbf{ fprintf} (\textbf{ tairf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ tair}(\textbf{ indices})))
+\item 
+\textbf{ fprintf} (\textbf{ vpdf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ vpd}(\textbf{ indices})))
+\item 
+\textbf{ fprintf} (\textbf{ vpdsoilf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ vpdsoil}(\textbf{ indices})))
+\item 
+\textbf{ fprintf} (\textbf{ vpressf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ vpress}(\textbf{ indices})))
+\item 
+\textbf{ fprintf} (\textbf{ parf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, \textbf{ sum}(\textbf{ par}(\textbf{ indices}) $\ast$obs\+Step\+Length./1.\textbf{ E6}))
+\item 
+\textbf{ par} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} \textbf{ fprintf} (\textbf{ tsoilf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ tsoil}(\textbf{ indices})))
+\item 
+\textbf{ fprintf} (\textbf{ wspdf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ wspd}(\textbf{ indices})))
+\item 
+\textbf{ pptstep} (i)
+\item 
+\textbf{ OLD} \textbf{ sum} (\textbf{ ppt}(\textbf{ indices})))
+\item 
+\textbf{ ppt} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} \textbf{ fprintf} (\textbf{ neef}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, \textbf{ sum}(\textbf{ nee}(\textbf{ indices})))
+\item 
+\textbf{ nee} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} \textbf{ fprintf} (\textbf{ fh2of}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, \textbf{ sum}(\textbf{ fh2o}(\textbf{ indices})))
+\item 
+\textbf{ fh2o} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} \textbf{ fprintf} (\textbf{ neevalidf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ neevalid}(\textbf{ indices})))
+\item 
+\textbf{ fraction} of \textbf{ valid} \textbf{ pts} in \textbf{ this} \textbf{ step} \textbf{ fprintf} (\textbf{ fh2ovalidf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, mean(\textbf{ fh2ovalid}(\textbf{ indices})))
+\item 
+\textbf{ the} \textbf{ measured} \textbf{ points} in \textbf{ this} \textbf{ step} \textbf{ if} (length(\textbf{ soilwetness\+\_\+measuredpts} $>$=1)) \% \textbf{ at} \textbf{ least} \textbf{ one} \textbf{ measured} \% \textbf{ point} \textbf{ fprintf}(\textbf{ soilwetnessf}
+\item 
+\textbf{ the} \textbf{ measured} \textbf{ points} in \textbf{ this} \textbf{ step} \textbf{ min} (mean(\textbf{ soilwetnessfrac}(\textbf{ soilwetness\+\_\+measuredpts})), 1))
+\item 
+\textbf{ don} \textbf{ t} \textbf{ let} \textbf{ soilwetness} \textbf{ go} \textbf{ higher} \textbf{ than} \textbf{ fprintf} (\textbf{ soilwetnessvalidf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, 1)
+\item 
+\textbf{ else} \textbf{ no} \textbf{ measured} \textbf{ points} \textbf{ fprintf} (\textbf{ soilwetnessf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, 0)
+\item 
+\textbf{ arbitrary} \textbf{ fprintf} (\textbf{ soilwetnessvalidf}, \textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}, 0)
+\item 
+\textbf{ end} \textbf{ end} \textbf{ fclose} (\textbf{ tairf})
+\item 
+\textbf{ fclose} (\textbf{ vpdf})
+\item 
+\textbf{ fclose} (\textbf{ vpdsoilf})
+\item 
+\textbf{ fclose} (\textbf{ vpressf})
+\item 
+\textbf{ fclose} (\textbf{ parf})
+\item 
+\textbf{ fclose} (\textbf{ tsoilf})
+\item 
+\textbf{ fclose} (\textbf{ wspdf})
+\item 
+\textbf{ fclose} (\textbf{ pptf})
+\item 
+\textbf{ fclose} (\textbf{ neef})
+\item 
+\textbf{ fclose} (\textbf{ fh2of})
+\item 
+\textbf{ fclose} (\textbf{ soilwetnessf})
+\item 
+\textbf{ fclose} (\textbf{ neevalidf})
+\item 
+\textbf{ fclose} (\textbf{ fh2ovalidf})
+\item 
+\textbf{ fclose} (\textbf{ soilwetnessvalidf})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ vpd} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdfill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ vpdsoil} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdsoilfill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ vpress} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpressfill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ par} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ parfill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ tsoil} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tsoilfill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ wspd} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ wspdfill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ ppt} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ precipfill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ nee} = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ neefill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function \textbf{ fh2o} = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ fh2ofill}\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ soilwetness} = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/soilwetness\textquotesingle{}])
+\item 
+\textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} and \textbf{ soilwetness} \textbf{ Assumes} \textbf{ throws} \textbf{ out} \textbf{ last} \textbf{ fraction} of a \textbf{ time} \textbf{ step} \textbf{ obs\+Step\+Length} gives \textbf{ the} length of \textbf{ each} \textbf{ observational} \textbf{ time} \textbf{ for} \textbf{ niwot} \textbf{ Input} and \textbf{ output} are \textbf{ from} \textbf{ the} \textbf{ given} \textbf{ directories} \textbf{ soilwetness\+\_\+upperlimit} = 0.\+95
+\item 
+\textbf{ neevalid} = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/neevalid\textquotesingle{}])
+\item 
+\textbf{ fh2ovalid} = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/fh2ovalid\textquotesingle{}])
+\item 
+\textbf{ soilwetness\+\_\+sorted}
+\item 
+\textbf{ maxsoilwetness}
+\item 
+\textbf{ soilwetnessfrac} = \textbf{ soilwetness}/\textbf{ maxsoilwetness}
+\item 
+\textbf{ nobssteps} = length(\textbf{ nee})
+\item 
+\textbf{ nsteps} = \textbf{ nobssteps}/\textbf{ step\+Length}
+\item 
+\textbf{ tairf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tairstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ vpdf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ vpdsoilf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdsoilstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ vpressf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpressstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ parf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ parstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ tsoilf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tsoilstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ wspdf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ wspdstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ pptf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ pptstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ neef} = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ neestep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ fh2of} = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ fh2ostep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ soilwetnessf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim}, \textquotesingle{}/\textbf{ soilwetnessstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ neevalidf} = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ neevalidstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ fh2ovalidf} = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ fh2ovalidstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ soilwetnessvalidf} = \textbf{ fopen}([\textbf{ directory\+\_\+clim}, \textquotesingle{}/\textbf{ soilwetnessvalidstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})
+\item 
+\textbf{ Note} \textbf{ \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+\item 
+\textbf{ Note} \textbf{ we} \textbf{ print} \textbf{ to} \textbf{ file} \textbf{ as} \textbf{ we} \textbf{ go}
+\item 
+\textbf{ Note} \textbf{ we} \textbf{ print} \textbf{ to} \textbf{ file} \textbf{ as} \textbf{ we} \textbf{ rather} \textbf{ than} \textbf{ saving} \textbf{ to} vectors and \textbf{ then} \textbf{ just} \textbf{ printing} \textbf{ at} \textbf{ the} \textbf{ end}
+\item 
+\textbf{ end} \textbf{ indices} = ((i-\/1)$\ast$\textbf{ step\+Length} + 1)\+:(i$\ast$\textbf{ step\+Length})
+\item 
+\textbf{ indices} \textbf{ counts}[1, 2, 3] \textbf{ then} [4, 5, 6]
+\item 
+\textbf{ OLD} \textbf{ \+\_\+\+\_\+pad1\+\_\+\+\_\+}
+\item 
+\textbf{ OLD} \textbf{ n}
+\item 
+\textbf{ soilwetness} \textbf{ \+\_\+\+\_\+pad2\+\_\+\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{preprocess_2climsteps_8m_a1a9f71efb25b35ea1679140f8985a9a4} 
+\index{climsteps.m@{climsteps.m}!climsteps@{climsteps}}
+\index{climsteps@{climsteps}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{climsteps()}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function climsteps (\begin{DoxyParamCaption}\item[{\textbf{ step\+Length}}]{,  }\item[{\textbf{ obs\+Step\+Length}}]{,  }\item[{\textbf{ directory\+\_\+clim}}]{,  }\item[{\textbf{ directory\+\_\+fluxes}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a4316f24c4f8a37c2118cc6192e510a9f} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [1/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ fh2o}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a7284e062ad95a266efdfb0e211349fc9} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [2/14]}}
+{\footnotesize\ttfamily \textbf{ or} \textbf{ for} \textbf{ each} \textbf{ point} disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ fh2ovalid}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_ae8e1127e523cf9421af2b2f806b2a767} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [3/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ nee}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a1bce0d4573af2d5c9fb54a1087553ec4} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [4/14]}}
+{\footnotesize\ttfamily \textbf{ or} \textbf{ for} \textbf{ each} \textbf{ point} disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ neevalid}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a6173d1376a2a63e5907a5ea1b19e0215} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [5/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ par}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a5d04879e87f98de701abe47538ef28fd} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [6/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ ppt}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a751d427c0ca4516460b4229262ace054} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [7/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ soilwetness}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a57cd57f2d179a388a021b7e27559cf57} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [8/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ tair}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a45cbaa2ec3c0c8a0066f5032f43f3b73} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [9/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ tsoil}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a25fcba0810c0a15c43c6d788e1eec48f} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [10/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ vpd}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a94f5c916daa30194c181d2048f46b276} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [11/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ vpdsoil}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a4f3f8a2b59b19c9d862fd78286ee0193} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [12/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ vpress}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a886d456bacffda9c506f226a17254253} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [13/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ loaded} \textbf{ wspd}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_aed92c790c720b2bf99e2fa0f1480ed47} 
+\index{climsteps.m@{climsteps.m}!disp@{disp}}
+\index{disp@{disp}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{disp()\hspace{0.1cm}{\footnotesize\ttfamily [14/14]}}
+{\footnotesize\ttfamily disp (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ starting} \textbf{ loop}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a9e1b4e32a9115aa47f0b2c4f0f07b107} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [1/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ fh2of}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a468fa34480662e65e29ac3b5214a6be1} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [2/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ fh2ovalidf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_aca768ad960b004e3b91e19a2ef95200a} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [3/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ neef}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a6ce5c69266bc7f423c34f2f634689be8} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [4/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ neevalidf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a5f54eabeb1e4de1f01df5819bf44fee5} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [5/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ parf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a4edbbca9b76dd153c94ecca9fb376c7e} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [6/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ pptf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a0c4e87a602657be49aecf7fc2db15d89} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [7/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ soilwetnessf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a107e85253cafc98c20a7e2ebfc27ce7d} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [8/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ soilwetnessvalidf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a09890cf585bffdc75d5810e054f62779} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [9/14]}}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ end} fclose (\begin{DoxyParamCaption}\item[{\textbf{ tairf}}]{ }\end{DoxyParamCaption})}
+
+
+
+Referenced by \textbf{ close\+Output\+Item\+File()}, \textbf{ copy\+File()}, \textbf{ copy\+File()}, \textbf{ count\+Lines()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ read\+Chain\+Info()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Girdling\+Data()}, \textbf{ read\+Indices\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ read\+Options()}, \textbf{ read\+Param\+Data()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Chain\+Info()}.
+
+\label{preprocess_2climsteps_8m_a0d7435b2eb0352b4b83b6bc34d89ac85} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [10/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ tsoilf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_aa5e0ce947ee5399138909c65a286d0cb} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [11/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ vpdf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a8462a7c988d4e976b4ba58b5b642e555} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [12/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ vpdsoilf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a18e6cfb7e9d5adb06192aedec196911c} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [13/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ vpressf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a82877d6814543f19664e89e472c3617f} 
+\index{climsteps.m@{climsteps.m}!fclose@{fclose}}
+\index{fclose@{fclose}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fclose()\hspace{0.1cm}{\footnotesize\ttfamily [14/14]}}
+{\footnotesize\ttfamily fclose (\begin{DoxyParamCaption}\item[{\textbf{ wspdf}}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_aa118e5363d12155c088a8be3dda1386a} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [1/14]}}
+{\footnotesize\ttfamily \textbf{ nee} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ fh2of}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{\textbf{ sum}(\textbf{ fh2o}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a867672319923c8deeead9a360ae9e6d9} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [2/14]}}
+{\footnotesize\ttfamily \textbf{ fraction} of \textbf{ valid} \textbf{ pts} in \textbf{ this} \textbf{ step} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ fh2ovalidf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ fh2ovalid}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a58040bdf5861df40e972cb00203b7e24} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [3/14]}}
+{\footnotesize\ttfamily \textbf{ ppt} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ neef}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{\textbf{ sum}(\textbf{ nee}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_abf86d327641010242b9ff98839760f38} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [4/14]}}
+{\footnotesize\ttfamily \textbf{ fh2o} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ neevalidf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ neevalid}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_adfb29b96a46af5fe908a2c2432986c79} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [5/14]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{\textbf{ parf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{\textbf{ sum}(\textbf{ par}(\textbf{ indices}) $\ast$obs\+Step\+Length./1.\textbf{ E6})}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_ab0bca38bf6ea1bf59c78591ff4037b0e} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [6/14]}}
+{\footnotesize\ttfamily \textbf{ else} \textbf{ no} \textbf{ measured} \textbf{ points} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ soilwetnessf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{0}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a146e4a5b187d3002d04c91bc7d35c3ff} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [7/14]}}
+{\footnotesize\ttfamily \textbf{ arbitrary} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ soilwetnessvalidf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{0}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_ad7d36403801821778ebbb99b8ea03115} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [8/14]}}
+{\footnotesize\ttfamily \textbf{ don} \textbf{ t} \textbf{ let} \textbf{ soilwetness} \textbf{ go} \textbf{ higher} \textbf{ than} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ soilwetnessvalidf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{1}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a2a9cd3ea7e5d9fc2d78b5bfbedc81007} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [9/14]}}
+{\footnotesize\ttfamily \textbf{ indices} \textbf{ counts}[1, 2, 3] \textbf{ etc} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ tairf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ tair}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{preprocess_2climsteps_8m_a2045e367563f3bc41eb55cca47e40b37} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [10/14]}}
+{\footnotesize\ttfamily \textbf{ par} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} fprintf (\begin{DoxyParamCaption}\item[{\textbf{ tsoilf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ tsoil}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{preprocess_2climsteps_8m_a331c999b8d037cbc9667950f7fbdc32a} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [11/14]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{\textbf{ vpdf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ vpd}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{preprocess_2climsteps_8m_a08bfaaf86ec28af9eda2b75eb8507842} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [12/14]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{\textbf{ vpdsoilf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ vpdsoil}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{preprocess_2climsteps_8m_a497076af23a1df3558c4426a46b8ad08} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [13/14]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{\textbf{ vpressf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ vpress}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{preprocess_2climsteps_8m_a92f3e9c70dc6e5f148b39c79b75a6110} 
+\index{climsteps.m@{climsteps.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fprintf()\hspace{0.1cm}{\footnotesize\ttfamily [14/14]}}
+{\footnotesize\ttfamily fprintf (\begin{DoxyParamCaption}\item[{\textbf{ wspdf}}]{,  }\item[{\textquotesingle{}\%.\+7e\textbackslash{}n\textquotesingle{}}]{,  }\item[{mean(\textbf{ wspd}(\textbf{ indices}))}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 5
+\label{preprocess_2climsteps_8m_a781316fc38ef890ac6404cba72aa7f92} 
+\index{climsteps.m@{climsteps.m}!hourly@{hourly}}
+\index{hourly@{hourly}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{hourly()}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} hourly (\begin{DoxyParamCaption}\item[{\textbf{ or} \textbf{ half}-\/}]{hourly }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_ac42981d43c4fd4ddaf48cffc8b60dd93} 
+\index{climsteps.m@{climsteps.m}!if@{if}}
+\index{if@{if}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{if()}
+{\footnotesize\ttfamily \textbf{ the} \textbf{ measured} \textbf{ points} in \textbf{ this} \textbf{ step} if (\begin{DoxyParamCaption}\item[{length(\textbf{ soilwetness\+\_\+measuredpts} $>$=1)}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a76ab42a48b0ea786b1a0f80568207907} 
+\index{climsteps.m@{climsteps.m}!load@{load}}
+\index{load@{load}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{load()}
+{\footnotesize\ttfamily [\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tairfill}\textquotesingle{}] load (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+\label{preprocess_2climsteps_8m_a768b7cdf5170a1a33b99208670c9ff43} 
+\index{climsteps.m@{climsteps.m}!memory@{memory}}
+\index{memory@{memory}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{memory()}
+{\footnotesize\ttfamily \textbf{ Note} \textbf{ we} \textbf{ print} \textbf{ to} \textbf{ file} \textbf{ as} \textbf{ we} \textbf{ rather} \textbf{ than} \textbf{ saving} \textbf{ to} vectors and \textbf{ then} \textbf{ just} \textbf{ printing} \textbf{ at} \textbf{ the} \textbf{ to} \textbf{ save} memory (\begin{DoxyParamCaption}\item[{\textbf{ it} \% \textbf{ gets} \textbf{ slow} \textbf{ to} \textbf{ do} \textbf{ the} \textbf{ latter} \textbf{ with} \textbf{ large}}]{vectors }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_a05df90d9c39902969aec8cb81a3c8da9} 
+\index{climsteps.m@{climsteps.m}!min@{min}}
+\index{min@{min}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{min()}
+{\footnotesize\ttfamily \textbf{ the} \textbf{ measured} \textbf{ points} in \textbf{ this} \textbf{ step} min (\begin{DoxyParamCaption}\item[{mean(\textbf{ soilwetnessfrac}(\textbf{ soilwetness\+\_\+measuredpts}))}]{,  }\item[{1}]{ }\end{DoxyParamCaption})}
+
+
+
+Referenced by \textbf{ read\+One\+Spatial\+Param()}, and \textbf{ read\+Spatial\+Params()}.
+
+\label{preprocess_2climsteps_8m_ae697cde12e8dbc5b8fe11b059f475f23} 
+\index{climsteps.m@{climsteps.m}!pptstep@{pptstep}}
+\index{pptstep@{pptstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{pptstep()}
+{\footnotesize\ttfamily pptstep (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_ae14c025ffefa02873aaaf58cad91c1cf} 
+\index{climsteps.m@{climsteps.m}!step@{step}}
+\index{step@{step}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{step()}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} and \textbf{ soilwetness} \textbf{ Assumes} \textbf{ throws} \textbf{ out} \textbf{ last} \textbf{ fraction} of a \textbf{ time} step \textbf{ obs\+Step\+Length} gives \textbf{ the} length of \textbf{ each} \textbf{ observational} \textbf{ time} step (\begin{DoxyParamCaption}\item[{in \%}]{seconds }\end{DoxyParamCaption})}
+
+\label{preprocess_2climsteps_8m_aee22d92d91dd5292c192a6b8128cb439} 
+\index{climsteps.m@{climsteps.m}!sum@{sum}}
+\index{sum@{sum}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{sum()}
+{\footnotesize\ttfamily \textbf{ OLD} sum (\begin{DoxyParamCaption}\item[{\textbf{ ppt}(\textbf{ indices})}]{ }\end{DoxyParamCaption})}
+
+
+
+Referenced by \textbf{ aggregates()}, \textbf{ read\+File\+For\+Agg()}, and \textbf{ sum\+Array()}.
+
+\label{preprocess_2climsteps_8m_a55cf6359bedbe416051ae1a3dad02875} 
+\index{climsteps.m@{climsteps.m}!that@{that}}
+\index{that@{that}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{that()}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} and \textbf{ soilwetness} \textbf{ Assumes} that (\begin{DoxyParamCaption}\item[{\textbf{ total} \# \textbf{ observational} \textbf{ time}}]{steps }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{preprocess_2climsteps_8m_a7f69560b45d2868c90647dc18e847731} 
+\index{climsteps.m@{climsteps.m}!\_\_pad0\_\_@{\_\_pad0\_\_}}
+\index{\_\_pad0\_\_@{\_\_pad0\_\_}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{\_\_pad0\_\_}
+{\footnotesize\ttfamily \textbf{ Note} \+\_\+\+\_\+pad0\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 80} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_aa2aca7c15c7e6623ada70c86d062637c} 
+\index{climsteps.m@{climsteps.m}!\_\_pad1\_\_@{\_\_pad1\_\_}}
+\index{\_\_pad1\_\_@{\_\_pad1\_\_}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{\_\_pad1\_\_}
+{\footnotesize\ttfamily \textbf{ OLD} \+\_\+\+\_\+pad1\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 97} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a809f935f70a0e6b26ac428b77a23e82d} 
+\index{climsteps.m@{climsteps.m}!\_\_pad2\_\_@{\_\_pad2\_\_}}
+\index{\_\_pad2\_\_@{\_\_pad2\_\_}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{\_\_pad2\_\_}
+{\footnotesize\ttfamily \textbf{ soilwetness} \+\_\+\+\_\+pad2\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 108} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_ac510032f772973be8a5e39ec04edac59} 
+\index{climsteps.m@{climsteps.m}!end@{end}}
+\index{end@{end}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{end}
+{\footnotesize\ttfamily \textbf{ Note} \textbf{ we} \textbf{ print} \textbf{ to} \textbf{ file} \textbf{ as} \textbf{ we} \textbf{ rather} \textbf{ than} \textbf{ saving} \textbf{ to} vectors and \textbf{ then} \textbf{ just} \textbf{ printing} \textbf{ at} \textbf{ the} end}
+
+
+
+Definition at line \textbf{ 81} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_aa9879f3369bcae2b676dcc54dd7dcfcd} 
+\index{climsteps.m@{climsteps.m}!fh2o@{fh2o}}
+\index{fh2o@{fh2o}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fh2o}
+{\footnotesize\ttfamily fh2o = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ fh2ofill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_ae6123fdcc673eaa75fd004803a2e319a} 
+\index{climsteps.m@{climsteps.m}!fh2of@{fh2of}}
+\index{fh2of@{fh2of}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fh2of}
+{\footnotesize\ttfamily fh2of = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ fh2ostep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 72} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a0e71e63274b6ef02c2f886933b98449c} 
+\index{climsteps.m@{climsteps.m}!fh2ovalid@{fh2ovalid}}
+\index{fh2ovalid@{fh2ovalid}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fh2ovalid}
+{\footnotesize\ttfamily fh2ovalid = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/fh2ovalid\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 50} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a9dfa9d68e09bbad641b7746ad75579d2} 
+\index{climsteps.m@{climsteps.m}!fh2ovalidf@{fh2ovalidf}}
+\index{fh2ovalidf@{fh2ovalidf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{fh2ovalidf}
+{\footnotesize\ttfamily fh2ovalidf = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ fh2ovalidstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a96f2fea946480d5b9b53a34ec1eac5b0} 
+\index{climsteps.m@{climsteps.m}!go@{go}}
+\index{go@{go}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{go}
+{\footnotesize\ttfamily \textbf{ Note} \textbf{ we} \textbf{ print} \textbf{ to} \textbf{ file} \textbf{ as} \textbf{ we} go}
+
+
+
+Definition at line \textbf{ 80} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a5a1f6848b4c1dceb7566ed0404c4567a} 
+\index{climsteps.m@{climsteps.m}!indices@{indices}}
+\index{indices@{indices}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{indices}
+{\footnotesize\ttfamily \textbf{ end} indices = ((i-\/1)$\ast$\textbf{ step\+Length} + 1)\+:(i$\ast$\textbf{ step\+Length})}
+
+
+
+Definition at line \textbf{ 87} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_a9b797810f75f5134c906687c98989231} 
+\index{climsteps.m@{climsteps.m}!maxsoilwetness@{maxsoilwetness}}
+\index{maxsoilwetness@{maxsoilwetness}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{maxsoilwetness}
+{\footnotesize\ttfamily maxsoilwetness}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ soilwetness\_sorted(round(soilwetness\_upperlimit*\ ...}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ length(soilwetness\_sorted)))}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 56} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_aebc345beb85c4ef4a8f9bd8d23845006} 
+\index{climsteps.m@{climsteps.m}!n@{n}}
+\index{n@{n}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{n}
+{\footnotesize\ttfamily \textbf{ the} \textbf{ measured} \textbf{ points} in \textbf{ this} \textbf{ step} n}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a0b0d0dba52c6ad92229a986be3b0d574} 
+\index{climsteps.m@{climsteps.m}!nee@{nee}}
+\index{nee@{nee}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{nee}
+{\footnotesize\ttfamily nee = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ neefill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_aa525fb1b86ebc7c80c65e1df81fd68d6} 
+\index{climsteps.m@{climsteps.m}!neef@{neef}}
+\index{neef@{neef}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{neef}
+{\footnotesize\ttfamily neef = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ neestep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 71} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_aa6cb8977d5ed1b9d4d431bab2902c4fc} 
+\index{climsteps.m@{climsteps.m}!neevalid@{neevalid}}
+\index{neevalid@{neevalid}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{neevalid}
+{\footnotesize\ttfamily neevalid = \textbf{ load}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/neevalid\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 47} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a132ea6bc386667897444d03eb9053c42} 
+\index{climsteps.m@{climsteps.m}!neevalidf@{neevalidf}}
+\index{neevalidf@{neevalidf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{neevalidf}
+{\footnotesize\ttfamily neevalidf = \textbf{ fopen}([\textbf{ directory\+\_\+fluxes} \textquotesingle{}/\textbf{ neevalidstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 74} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a97270503fa0e1011122a479f406b4552} 
+\index{climsteps.m@{climsteps.m}!nobssteps@{nobssteps}}
+\index{nobssteps@{nobssteps}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{nobssteps}
+{\footnotesize\ttfamily nobssteps = length(\textbf{ nee})}
+
+
+
+Definition at line \textbf{ 60} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a05ea39b6116339481c96145ca8c30c5a} 
+\index{climsteps.m@{climsteps.m}!nsteps@{nsteps}}
+\index{nsteps@{nsteps}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{nsteps}
+{\footnotesize\ttfamily nsteps = \textbf{ nobssteps}/\textbf{ step\+Length}}
+
+
+
+Definition at line \textbf{ 61} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a8a4e5ec5926f293767f3c555868e4c21} 
+\index{climsteps.m@{climsteps.m}!par@{par}}
+\index{par@{par}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{par}
+{\footnotesize\ttfamily par = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ parfill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a32462b7b803367751ed98fae1d348bbd} 
+\index{climsteps.m@{climsteps.m}!parf@{parf}}
+\index{parf@{parf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{parf}
+{\footnotesize\ttfamily parf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ parstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 67} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_aa47a1e47a9cc6ce631189295002f26e4} 
+\index{climsteps.m@{climsteps.m}!ppt@{ppt}}
+\index{ppt@{ppt}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{ppt}
+{\footnotesize\ttfamily ppt = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ precipfill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_ae6a68ff8bb62378acf0f8287c87aa889} 
+\index{climsteps.m@{climsteps.m}!pptf@{pptf}}
+\index{pptf@{pptf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{pptf}
+{\footnotesize\ttfamily pptf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ pptstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 70} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_aa6a6f51a5524cc760afb2b494c1713f3} 
+\index{climsteps.m@{climsteps.m}!soilwetness@{soilwetness}}
+\index{soilwetness@{soilwetness}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{soilwetness}
+{\footnotesize\ttfamily soilwetness = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/soilwetness\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a3a8fc5782ad7f72f9c09344f780a24cf} 
+\index{climsteps.m@{climsteps.m}!soilwetness\_sorted@{soilwetness\_sorted}}
+\index{soilwetness\_sorted@{soilwetness\_sorted}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{soilwetness\_sorted}
+{\footnotesize\ttfamily soilwetness\+\_\+sorted}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ ...}
+\DoxyCodeLine{\ \ \ \ \ \ sort(soilwetness(find(isfinite(soilwetness))))}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 54} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a23c95995795570dc55d754999d383664} 
+\index{climsteps.m@{climsteps.m}!soilwetness\_upperlimit@{soilwetness\_upperlimit}}
+\index{soilwetness\_upperlimit@{soilwetness\_upperlimit}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{soilwetness\_upperlimit}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} and \textbf{ soilwetness} \textbf{ Assumes} \textbf{ throws} \textbf{ out} \textbf{ last} \textbf{ fraction} of a \textbf{ time} \textbf{ step} \textbf{ obs\+Step\+Length} gives \textbf{ the} length of \textbf{ each} \textbf{ observational} \textbf{ time} \textbf{ for} \textbf{ niwot} \textbf{ Input} and \textbf{ output} are \textbf{ from} \textbf{ the} \textbf{ given} \textbf{ directories} soilwetness\+\_\+upperlimit = 0.\+95}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a4aa5517be929b5d9b7b4ddbdbd0c477d} 
+\index{climsteps.m@{climsteps.m}!soilwetnessf@{soilwetnessf}}
+\index{soilwetnessf@{soilwetnessf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{soilwetnessf}
+{\footnotesize\ttfamily soilwetnessf = \textbf{ fopen}([\textbf{ directory\+\_\+clim}, \textquotesingle{}/\textbf{ soilwetnessstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 73} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_a0826bb8cd302dee9ab5e30075c6bb0a6} 
+\index{climsteps.m@{climsteps.m}!soilwetnessfrac@{soilwetnessfrac}}
+\index{soilwetnessfrac@{soilwetnessfrac}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{soilwetnessfrac}
+{\footnotesize\ttfamily soilwetnessfrac = \textbf{ soilwetness}/\textbf{ maxsoilwetness}}
+
+
+
+Definition at line \textbf{ 58} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_ab85f32caebda98a074d868f032c11410} 
+\index{climsteps.m@{climsteps.m}!soilwetnessvalidf@{soilwetnessvalidf}}
+\index{soilwetnessvalidf@{soilwetnessvalidf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{soilwetnessvalidf}
+{\footnotesize\ttfamily soilwetnessvalidf = \textbf{ fopen}([\textbf{ directory\+\_\+clim}, \textquotesingle{}/\textbf{ soilwetnessvalidstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 76} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_aa5ab80ab5b02c0466ace2fb3bc95db69} 
+\index{climsteps.m@{climsteps.m}!tairf@{tairf}}
+\index{tairf@{tairf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tairf}
+{\footnotesize\ttfamily tairf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tairstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 63} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_aa438985bcc238d0180091ded4645f389} 
+\index{climsteps.m@{climsteps.m}!then@{then}}
+\index{then@{then}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{then}
+{\footnotesize\ttfamily \textbf{ indices} \textbf{ counts} [1,2,3] then[4, 5, 6]}
+
+
+
+Definition at line \textbf{ 88} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a55685d36dae9236af2b1b123b61a6928} 
+\index{climsteps.m@{climsteps.m}!tsoil@{tsoil}}
+\index{tsoil@{tsoil}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tsoil}
+{\footnotesize\ttfamily tsoil = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tsoilfill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a46821acd3ed91387aebd6f53b7ddd523} 
+\index{climsteps.m@{climsteps.m}!tsoilf@{tsoilf}}
+\index{tsoilf@{tsoilf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tsoilf}
+{\footnotesize\ttfamily tsoilf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ tsoilstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 68} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_ab17c95386db830e9b2fdd7fdc1b39a13} 
+\index{climsteps.m@{climsteps.m}!vpd@{vpd}}
+\index{vpd@{vpd}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpd}
+{\footnotesize\ttfamily vpd = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdfill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a407a128f9a4af5b8bd9e39028ecea25d} 
+\index{climsteps.m@{climsteps.m}!vpdf@{vpdf}}
+\index{vpdf@{vpdf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpdf}
+{\footnotesize\ttfamily vpdf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 64} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_a2cb3f0ede3501f9ffbbd5e75f9ff3b25} 
+\index{climsteps.m@{climsteps.m}!vpdsoil@{vpdsoil}}
+\index{vpdsoil@{vpdsoil}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpdsoil}
+{\footnotesize\ttfamily vpdsoil = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdsoilfill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a318a51d53214d9059b38763632fc9577} 
+\index{climsteps.m@{climsteps.m}!vpdsoilf@{vpdsoilf}}
+\index{vpdsoilf@{vpdsoilf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpdsoilf}
+{\footnotesize\ttfamily vpdsoilf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpdsoilstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 65} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a3c927e458ff27cd381e19c7cdfe8df7f} 
+\index{climsteps.m@{climsteps.m}!vpress@{vpress}}
+\index{vpress@{vpress}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpress}
+{\footnotesize\ttfamily vpress = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpressfill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_ac092c229177686d5ddaa6a5507d15d8d} 
+\index{climsteps.m@{climsteps.m}!vpressf@{vpressf}}
+\index{vpressf@{vpressf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpressf}
+{\footnotesize\ttfamily vpressf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ vpressstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 66} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{preprocess_2climsteps_8m_afdfcae71b986f1e0ca37a6abbb7ea7d7} 
+\index{climsteps.m@{climsteps.m}!wspd@{wspd}}
+\index{wspd@{wspd}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{wspd}
+{\footnotesize\ttfamily wspd = \textbf{ load}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ wspdfill}\textquotesingle{}])}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ preprocess/climsteps.\+m}.
+
+\label{preprocess_2climsteps_8m_a7188ea7bce539c67e31cdfbc1cb6d933} 
+\index{climsteps.m@{climsteps.m}!wspdf@{wspdf}}
+\index{wspdf@{wspdf}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{wspdf}
+{\footnotesize\ttfamily wspdf = \textbf{ fopen}([\textbf{ directory\+\_\+clim} \textquotesingle{}/\textbf{ wspdstep}\textquotesingle{}], \textquotesingle{}\textbf{ w}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ preprocess/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+

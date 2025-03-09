@@ -1,0 +1,128 @@
+\doxysection{sipnet\+Girdle.\+h File Reference}
+\label{sipnet_girdle_8h}\index{sipnetGirdle.h@{sipnetGirdle.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+Include dependency graph for sipnet\+Girdle.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ EXTRA\+\_\+\+DATA\+\_\+\+TYPES}~0
+\item 
+\#\textbf{ define} \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}~3
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ print\+Model\+Components} (\textbf{ FILE} $\ast$\textbf{ out})
+\item 
+\textbf{ char} $\ast$$\ast$ \textbf{ get\+Data\+Type\+Names} ()
+\item 
+\textbf{ int} \textbf{ init\+Model} (\textbf{ Spatial\+Params} $\ast$$\ast$\textbf{ spatial\+Params}, \textbf{ int} $\ast$$\ast$\textbf{ steps}, \textbf{ char} $\ast$\textbf{ param\+File}, \textbf{ char} $\ast$\textbf{ clim\+File}, \textbf{ char} $\ast$\textbf{ girdle\+File})
+\item 
+\textbf{ void} \textbf{ cleanup\+Model} (\textbf{ int} \textbf{ num\+Locs})
+\item 
+\textbf{ void} \textbf{ run\+Model\+No\+Out} (\textbf{ double} $\ast$$\ast$\textbf{ out\+Array}, \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ run\+Model\+Output} (\textbf{ FILE} $\ast$\textbf{ out}, \textbf{ int} \textbf{ print\+Header}, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ sens\+Test} (\textbf{ FILE} $\ast$\textbf{ out}, \textbf{ int} \textbf{ param\+Num}, \textbf{ double} \textbf{ low}, \textbf{ double} \textbf{ high}, \textbf{ int} \textbf{ num\+Runs}, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{sipnet_girdle_8h_ab7f5280fafc469bb1061ccfc5b86e12c} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!EXTRA\_DATA\_TYPES@{EXTRA\_DATA\_TYPES}}
+\index{EXTRA\_DATA\_TYPES@{EXTRA\_DATA\_TYPES}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{EXTRA\_DATA\_TYPES}
+{\footnotesize\ttfamily \#\textbf{ define} EXTRA\+\_\+\+DATA\+\_\+\+TYPES~0}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ sipnet\+Girdle.\+h}.
+
+\label{sipnet_girdle_8h_a98e46bf4352b17b36847535553080b60} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!MAX\_DATA\_TYPES@{MAX\_DATA\_TYPES}}
+\index{MAX\_DATA\_TYPES@{MAX\_DATA\_TYPES}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{MAX\_DATA\_TYPES}
+{\footnotesize\ttfamily \#\textbf{ define} MAX\+\_\+\+DATA\+\_\+\+TYPES~3}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ sipnet\+Girdle.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{sipnet_girdle_8h_a08ec54c820e36b47473164178295a1a8} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!cleanupModel@{cleanupModel}}
+\index{cleanupModel@{cleanupModel}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{cleanupModel()}
+{\footnotesize\ttfamily \textbf{ void} cleanup\+Model (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1916} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_girdle_8h_a50b2be5026bf5e3947eff9f09ed821db} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!getDataTypeNames@{getDataTypeNames}}
+\index{getDataTypeNames@{getDataTypeNames}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{getDataTypeNames()}
+{\footnotesize\ttfamily \textbf{ char} $\ast$$\ast$ get\+Data\+Type\+Names (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1832} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_girdle_8h_a77dacac7a0d314932ffab9975cbb43d9} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!initModel@{initModel}}
+\index{initModel@{initModel}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{initModel()}
+{\footnotesize\ttfamily \textbf{ int} init\+Model (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$$\ast$}]{spatial\+Params,  }\item[{\textbf{ int} $\ast$$\ast$}]{steps,  }\item[{\textbf{ char} $\ast$}]{param\+File,  }\item[{\textbf{ char} $\ast$}]{clim\+File,  }\item[{\textbf{ char} $\ast$}]{girdle\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2585} of file \textbf{ sipnet\+Girdle.\+c}.
+
+\label{sipnet_girdle_8h_aed3527886ac1ed87fff8c530d8851819} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!printModelComponents@{printModelComponents}}
+\index{printModelComponents@{printModelComponents}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{printModelComponents()}
+{\footnotesize\ttfamily \textbf{ void} print\+Model\+Components (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1802} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_girdle_8h_a2ac1d1cf6a1203f72d581617a9618026} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!runModelNoOut@{runModelNoOut}}
+\index{runModelNoOut@{runModelNoOut}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{runModelNoOut()}
+{\footnotesize\ttfamily \textbf{ void} run\+Model\+No\+Out (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$$\ast$}]{out\+Array,  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1760} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_girdle_8h_acf0244732d4eadad6cd97f0ee7e61fbe} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!runModelOutput@{runModelOutput}}
+\index{runModelOutput@{runModelOutput}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{runModelOutput()}
+{\footnotesize\ttfamily \textbf{ void} run\+Model\+Output (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out,  }\item[{\textbf{ int}}]{print\+Header,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1726} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+\label{sipnet_girdle_8h_a581c8a6619c678370bae24de1cc9b502} 
+\index{sipnetGirdle.h@{sipnetGirdle.h}!sensTest@{sensTest}}
+\index{sensTest@{sensTest}!sipnetGirdle.h@{sipnetGirdle.h}}
+\doxysubsubsection{sensTest()}
+{\footnotesize\ttfamily \textbf{ void} sens\+Test (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out,  }\item[{\textbf{ int}}]{param\+Num,  }\item[{\textbf{ double}}]{low,  }\item[{\textbf{ double}}]{high,  }\item[{\textbf{ int}}]{num\+Runs,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1781} of file \textbf{ sipnetv\+Jan2007.\+c}.
+

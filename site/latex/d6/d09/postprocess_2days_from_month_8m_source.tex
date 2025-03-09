@@ -1,0 +1,22 @@
+\doxysection{postprocess/days\+From\+Month.m}
+\label{postprocess_2days_from_month_8m_source}\index{daysFromMonth.m@{daysFromMonth.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ [first,last]\ =\ daysFromMonth(month,\ year)}
+\DoxyCodeLine{00002\ \ \ \ \ \%\ \textcolor{keywordflow}{for}\ a\ given\ month\ (1..12)\ and\ year}
+\DoxyCodeLine{00003\ \ \ \ \ \%\ return\ first\ and\ last\ days\ (julian\ days)\ of\ that\ year}
+\DoxyCodeLine{00004\ \ \ \ \ }
+\DoxyCodeLine{00005\ \ \ \ \ \%\ number\ of\ days\ per\ month\ in\ non-\/leap\ years\ and\ leap\ years:}
+\DoxyCodeLine{00006\ \ \ \ \ nonleapMonths\ =\ [31,28,31,30,31,30,31,31,30,31,30,31];}
+\DoxyCodeLine{00007\ \ \ \ \ leapMonths\ =\ [31,29,31,30,31,30,31,31,30,31,30,31];}
+\DoxyCodeLine{00008\ \ \ \ \ }
+\DoxyCodeLine{00009\ \ \ \ \ if\ (isLeapYear(year))}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ months\ =\ leapMonths;}
+\DoxyCodeLine{00011\ \ \ \ \ else}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ months\ =\ nonleapMonths;}
+\DoxyCodeLine{00013\ \ \ \ \ end}
+\DoxyCodeLine{00014\ \ \ \ \ }
+\DoxyCodeLine{00015\ \ \ \ \ first\ =\ sum(months(1:(month-\/1)))\ +\ 1;}
+\DoxyCodeLine{00016\ \ \ \ \ last\ =\ first\ +\ months(month)\ -\/\ 1;}
+
+\end{DoxyCode}

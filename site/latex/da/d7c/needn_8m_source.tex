@@ -1,0 +1,28 @@
+\doxysection{needn.\+m}
+\label{needn_8m_source}\index{needn.m@{needn.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ neefill=load(\textcolor{stringliteral}{'\string~/niwot/fluxes/neefill'});}
+\DoxyCodeLine{00003\ potpar=load(\textcolor{stringliteral}{'\string~/niwot/climate/potpar'});}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ q=potpar;}
+\DoxyCodeLine{00006\ q(find(q>0))=1;}
+\DoxyCodeLine{00007\ q=diff(q);}
+\DoxyCodeLine{00008\ q(end+1)=1;}
+\DoxyCodeLine{00009\ q=abs(q);}
+\DoxyCodeLine{00010\ w=find(q==1);}
+\DoxyCodeLine{00011\ i0=1;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keywordflow}{for}\ i=1:(2*ndays+1)}
+\DoxyCodeLine{00014\ \ \ \ \ wdn=i0:w(i);}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ needns(i)=sum(neefill(wdn));}
+\DoxyCodeLine{00016\ \ \ \ \ i0=w(i)+1;}
+\DoxyCodeLine{00017\ end}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ needns=needns\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00020\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00021\ \textcolor{stringliteral}{save\ \string~/niwot/fluxes/needn\ needns\ -\/ascii;}}
+\DoxyCodeLine{00022\ \textcolor{stringliteral}{}}
+
+\end{DoxyCode}

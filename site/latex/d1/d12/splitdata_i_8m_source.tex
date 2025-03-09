@@ -1,0 +1,39 @@
+\doxysection{splitdata\+I.\+m}
+\label{splitdata_i_8m_source}\index{splitdataI.m@{splitdataI.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ split\ =\ splitdataI(data)}
+\DoxyCodeLine{00002\ \%\ PRE:\ data\ has\ 2\ dimensions}
+\DoxyCodeLine{00003\ \%\ Split\ data\ into\ an\ 3-\/dimensional\ array,\ where\ split\ is\ performed}
+\DoxyCodeLine{00004\ \%\ based\ on\ first\ element\ of\ 2nd\ dimesion\ of\ data}
+\DoxyCodeLine{00005\ \%\ This\ element\ becomes\ the\ index\ of\ the\ first\ dimension\ of\ the\ split}
+\DoxyCodeLine{00006\ \%\ array\ and\ is\ dropped\ out\ of\ the\ array}
+\DoxyCodeLine{00007\ \%\ If\ smallest\ element\ is\ not\ 1,\ an\ offset\ is\ added\ to\ every\ element\ so}
+\DoxyCodeLine{00008\ \%\ first\ array\ index\ is\ 1}
+\DoxyCodeLine{00009\ \%\ e.g.\ if\ data\ =\ }
+\DoxyCodeLine{00010\ \%\ \ \ 0\ 2\ 3}
+\DoxyCodeLine{00011\ \%\ \ \ 1\ 6\ 7}
+\DoxyCodeLine{00012\ \%\ \ \ 0\ 4\ 5}
+\DoxyCodeLine{00013\ \%\ \ \ 1\ 8\ 9}
+\DoxyCodeLine{00014\ \%\ Then\ split(1,:,:)\ =\ }
+\DoxyCodeLine{00015\ \%\ \ \ 2\ 3}
+\DoxyCodeLine{00016\ \%\ \ \ 4\ 5}
+\DoxyCodeLine{00017\ \%\ And\ split(2,:,:)\ =\ }
+\DoxyCodeLine{00018\ \%\ \ \ 6\ 7}
+\DoxyCodeLine{00019\ \%\ \ \ 8\ 9}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ if\ (ndims(data)\ \string~=\ 2)}
+\DoxyCodeLine{00022\ \ \ \ \ fprintf('Error:\ data\ must\ have\ 2\ dimensions\(\backslash\)n');}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00025\ \ \ \ \ sMin\ =\ min(data(:,1));\ \%\ minimum\ index}
+\DoxyCodeLine{00026\ \ \ \ \ sMax\ =\ max(data(:,1));\ \%\ maximum\ index}
+\DoxyCodeLine{00027\ \ \ \ \ sOffset\ =\ 1\ -\/\ sMin;\ \%\ offset\ in\ going\ from\ data\ to\ array\ index\ (to\ start\ with\ 1)}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordflow}{for}\ sIndex=sMin:sMax\ \%\ loop\ through\ indices}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ i\ =\ find(data(:,1)\ ==\ sIndex);\ \%\ find\ rows\ with\ \textcolor{keyword}{this}\ index}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ split(sIndex\ +\ sOffset,:,:)\ =\ data(i,2:end);\ \%\ drop\ first\ element\ (the\ index)}
+\DoxyCodeLine{00031\ \ \ \ \ end}
+\DoxyCodeLine{00032\ \ \ end}
+\DoxyCodeLine{00033\ end}
+
+\end{DoxyCode}

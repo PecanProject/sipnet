@@ -1,0 +1,104 @@
+\doxysection{splitdata.\+m File Reference}
+\label{splitdata_8m}\index{splitdata.m@{splitdata.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textquotesingle{}\textbf{ Error\+:data} \textbf{ must} \textbf{ have} 2 dimensions\textbackslash{}n\textquotesingle{} \textbf{ fprintf} ()
+\item 
+\textbf{ split} (i,\+:,\+:)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ split}
+\item 
+\textbf{ return} \textbf{ elseif}(\textbf{ mod}(length(data(\+:, 1)), \textbf{ len}) $\sim$=0) \textbf{ fprintf}( \textquotesingle{}\textbf{ Error} \textbf{ return} \textbf{ else} \textbf{ n} = length(data(\+:,1))/\textbf{ len}
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ fin} = i$\ast$\textbf{ len}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{splitdata_8m_a1b55763cc205d6b6f157eefb24e20e4c} 
+\index{splitdata.m@{splitdata.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!splitdata.m@{splitdata.m}}
+\doxysubsubsection{fprintf()}
+{\footnotesize\ttfamily \textquotesingle{}\textbf{ Error\+:data} \textbf{ must} \textbf{ have} 2 dimensions\textbackslash{}n\textquotesingle{} fprintf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+References \textbf{ data}, \textbf{ first}, \textbf{ length()}, and \textbf{ where}.
+
+
+
+Referenced by \textbf{ copy\+Subset()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ output\+Transpose()}, \textbf{ print\+Data\+Type\+Indices()}, \textbf{ print\+Data\+Type\+Weight\+Indices()}, \textbf{ print\+Model\+Components()}, \textbf{ read\+Data()}, \textbf{ reset()}, \textbf{ seed\+Rand()}, \textbf{ sens\+Test()}, \textbf{ sens\+Test()}, \textbf{ terminate\+Output\+Item\+Lines()}, \textbf{ write\+Best\+Spatial\+Params()}, \textbf{ write\+Changeable\+Param\+Info()}, \textbf{ write\+Hist\+File()}, \textbf{ write\+Hist\+File\+Header()}, \textbf{ write\+Output\+Item\+Labels()}, and \textbf{ write\+Output\+Item\+Values()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{splitdata_8m_a4b705b9ba4861e7a9db7e63cee302bfd} 
+\index{splitdata.m@{splitdata.m}!split@{split}}
+\index{split@{split}!splitdata.m@{splitdata.m}}
+\doxysubsubsection{split()}
+{\footnotesize\ttfamily split (\begin{DoxyParamCaption}\item[{i}]{,  }\item[{\+:}]{,  }\item[{\+:}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ data}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{splitdata_8m_a280b8370c46c873b47e5441dd3a71290} 
+\index{splitdata.m@{splitdata.m}!fin@{fin}}
+\index{fin@{fin}!splitdata.m@{splitdata.m}}
+\doxysubsubsection{fin}
+{\footnotesize\ttfamily fin = i$\ast$\textbf{ len}}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ splitdata.\+m}.
+
+\label{splitdata_8m_a6f6ccfcf58b31cb6412107d9d5281426} 
+\index{splitdata.m@{splitdata.m}!i@{i}}
+\index{i@{i}!splitdata.m@{splitdata.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ 1:n}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ start\ =\ 1\ +\ (i-\/1)*len}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 15} of file \textbf{ splitdata.\+m}.
+
+\label{splitdata_8m_a870334fc8b377923f0b417ffc47f1b8a} 
+\index{splitdata.m@{splitdata.m}!n@{n}}
+\index{n@{n}!splitdata.m@{splitdata.m}}
+\doxysubsubsection{n}
+{\footnotesize\ttfamily \textbf{ return} \textbf{ elseif} (\textbf{ mod}(length(data(\+:,1)), \textbf{ len}) $\sim$= 0) \textbf{ fprintf}(\textquotesingle{}\textbf{ Error} \textbf{ return} \textbf{ else} n = length(data(\+:,1))/\textbf{ len}}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ splitdata.\+m}.
+
+\label{splitdata_8m_ac9237251f2074ccb16528e4f98397956} 
+\index{splitdata.m@{splitdata.m}!split@{split}}
+\index{split@{split}!splitdata.m@{splitdata.m}}
+\doxysubsubsection{split}
+{\footnotesize\ttfamily function split}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ splitdata(data,\ len)}
+\DoxyCodeLine{\%\ PRE:\ data\ has\ 2\ dimensions}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ splitdata.\+m}.
+

@@ -1,0 +1,225 @@
+\doxysection{monthly\+Sums.\+m File Reference}
+\label{monthly_sums_8m}\index{monthlySums.m@{monthlySums.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ if} (length(\textbf{ pts}) $>$ 0) \textbf{ monthly\+Data}(\textbf{ this\+Year}-\/first\+Year+1
+\item 
+\textbf{ we} \textbf{ ve} \textbf{ found} \textbf{ points} \textbf{ this} month \textbf{ end} \textbf{ if} \textbf{ fprintf} (\textquotesingle{}\textbf{ Year} \%\textbf{ d}, month \%\textbf{ d}, division \%\textbf{ d\+:found} \%\textbf{ d} points.\textbackslash{}n\textquotesingle{}, \textbf{ this\+Year}, \textbf{ this\+Month}, \textbf{ this\+Division}, length(\textbf{ pts}))
+\item 
+\textbf{ if} (\textbf{ this\+Month} $>$ 12) \textbf{ this\+Month}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ monthly\+Data}
+\item 
+function month \textbf{ j}
+\item 
+function month division k where first\+Year is first year in years vector \textbf{ PRE}
+\item 
+function month division k where first\+Year is first year in years vector in \textbf{ which} \textbf{ case} \textbf{ all} data \textbf{ from} a \textbf{ given} month and year are \textbf{ lumped} \textbf{ together}
+\item 
+\textbf{ otherwise}
+\item 
+\textbf{ divisions} \textbf{ allows}
+\item 
+\textbf{ divisions} \textbf{ e} \textbf{ g} \textbf{ separating} data into days and \textbf{ nights} \textbf{ first\+Year} = years(1)
+\item 
+\textbf{ num\+Divisions} = max(\textbf{ divisions})
+\item 
+\textbf{ this\+Year} = first\+Year
+\item 
+\textbf{ this\+Month} = \textbf{ month\+From\+Day}(days(1), first\+Year)
+\item 
+\textbf{ pts\+Last\+Month} = \textbf{ true}
+\item 
+\textbf{ haven} \textbf{ t} \textbf{ found} \textbf{ points} \textbf{ yet} \textbf{ this} month \textbf{ for} \textbf{ this\+Division}
+\item 
+\textbf{ haven} \textbf{ t} \textbf{ found} \textbf{ points} \textbf{ yet} \textbf{ this} month \textbf{ for} month and \textbf{ division}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{monthly_sums_8m_aa9eccc1315bebbc5c92b97fd091b69ee} 
+\index{monthlySums.m@{monthlySums.m}!fprintf@{fprintf}}
+\index{fprintf@{fprintf}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{fprintf()}
+{\footnotesize\ttfamily \textbf{ we} \textbf{ ve} \textbf{ found} \textbf{ points} \textbf{ this} month \textbf{ end} \textbf{ if} fprintf (\begin{DoxyParamCaption}\item[{\textquotesingle{}\textbf{ Year} \%}]{d,  }\item[{month \%}]{d,  }\item[{division \%\textbf{ d\+:found} \%\textbf{ d} points.\textbackslash{}n\textquotesingle{}}]{,  }\item[{\textbf{ this\+Year}}]{,  }\item[{\textbf{ this\+Month}}]{,  }\item[{\textbf{ this\+Division}}]{,  }\item[{length(\textbf{ pts})}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ length()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{monthly_sums_8m_ad0d5aaf7dc8493201fa576da2da33a33} 
+\index{monthlySums.m@{monthlySums.m}!if@{if}}
+\index{if@{if}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{length(\textbf{ pts})}]{,  }\item[{0}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ month}.
+
+\label{monthly_sums_8m_a55d2ab12a071c19537612a8bbe7edad8} 
+\index{monthlySums.m@{monthlySums.m}!if@{if}}
+\index{if@{if}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{\textbf{ this\+Month}}]{,  }\item[{12}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{monthly_sums_8m_a12241cc5b64bf6c6df5366ecaf0d1a31} 
+\index{monthlySums.m@{monthlySums.m}!allows@{allows}}
+\index{allows@{allows}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{allows}
+{\footnotesize\ttfamily \textbf{ divisions} allows}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a1e9139e74350f4114651f664f9763dc3} 
+\index{monthlySums.m@{monthlySums.m}!division@{division}}
+\index{division@{division}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{division}
+{\footnotesize\ttfamily \textbf{ haven} \textbf{ t} \textbf{ found} \textbf{ points} \textbf{ yet} \textbf{ this} month \textbf{ for} month and division}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a72b8df003ffd1590ab43b11958e5ec96} 
+\index{monthlySums.m@{monthlySums.m}!firstYear@{firstYear}}
+\index{firstYear@{firstYear}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{firstYear}
+{\footnotesize\ttfamily \textbf{ divisions} \textbf{ e} \textbf{ g} \textbf{ separating} data into days and \textbf{ nights} first\+Year = years(1)}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ monthly\+Sums.\+m}.
+
+
+
+Referenced by \textbf{ if()}, \textbf{ year()}, and \textbf{ years()}.
+
+\label{monthly_sums_8m_a40b18ceac8b2b63d39854c069a12dcdb} 
+\index{monthlySums.m@{monthlySums.m}!j@{j}}
+\index{j@{j}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{j}
+{\footnotesize\ttfamily function month j}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ monthly\+Sums.\+m}.
+
+
+
+Referenced by \textbf{ aggregates()}, \textbf{ compute\+Agged\+Data()}, \textbf{ main()}, \textbf{ output\+Transpose()}, \textbf{ read\+Items()}, \textbf{ set\+Data\+Type\+Indices()}, \textbf{ write\+Best\+Spatial\+Params()}, \textbf{ write\+Hist\+File()}, and \textbf{ write\+Hist\+File\+Bin()}.
+
+\label{monthly_sums_8m_abdd7de89d14baee63ef8b977bdfedb2d} 
+\index{monthlySums.m@{monthlySums.m}!monthlyData@{monthlyData}}
+\index{monthlyData@{monthlyData}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{monthlyData}
+{\footnotesize\ttfamily function monthly\+Data}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ monthlySums(data,\ years,\ days,\ divisions)}
+\DoxyCodeLine{\ \ \ \ \%\ divide\ data\ up\ into\ monthly\ sums}
+\DoxyCodeLine{\ \ \ \ \%\ monthlyData[i,j,k]\ gives\ sum\ of\ data\ in\ year\ (i+firstYear-\/1)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a656571434f20e81a0f1538d0385dd966} 
+\index{monthlySums.m@{monthlySums.m}!numDivisions@{numDivisions}}
+\index{numDivisions@{numDivisions}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{numDivisions}
+{\footnotesize\ttfamily num\+Divisions = max(\textbf{ divisions})}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_add9358f1f2e831e2906102c98d66905f} 
+\index{monthlySums.m@{monthlySums.m}!otherwise@{otherwise}}
+\index{otherwise@{otherwise}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{otherwise}
+{\footnotesize\ttfamily otherwise}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a888304c1f145389a4d2a972bc89aa0cf} 
+\index{monthlySums.m@{monthlySums.m}!PRE@{PRE}}
+\index{PRE@{PRE}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{PRE}
+{\footnotesize\ttfamily function month division k where first\+Year is first year in years vector PRE}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a6fc86c38beafa28c28ed3eadbfc4772e} 
+\index{monthlySums.m@{monthlySums.m}!ptsLastMonth@{ptsLastMonth}}
+\index{ptsLastMonth@{ptsLastMonth}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{ptsLastMonth}
+{\footnotesize\ttfamily pts\+Last\+Month = \textbf{ true}}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a534935a7402c967cc7b936e98d3de0f4} 
+\index{monthlySums.m@{monthlySums.m}!thisDivision@{thisDivision}}
+\index{thisDivision@{thisDivision}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{thisDivision}
+{\footnotesize\ttfamily this\+Division}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ 1:numDivisions}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \%\ points\ corresponding\ to\ \textcolor{keyword}{this}\ year}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 24} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a32d8fc62e651342654ba5d9d9a40010d} 
+\index{monthlySums.m@{monthlySums.m}!thisMonth@{thisMonth}}
+\index{thisMonth@{thisMonth}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{thisMonth}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ for} this\+Month = \textbf{ month\+From\+Day}(days(1), first\+Year)}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a80cc31587497dbcc33478199cdb05606} 
+\index{monthlySums.m@{monthlySums.m}!thisYear@{thisYear}}
+\index{thisYear@{thisYear}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{thisYear}
+{\footnotesize\ttfamily this\+Year = first\+Year}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ monthly\+Sums.\+m}.
+
+\label{monthly_sums_8m_a0b5356f4c7de64ff5532d251b40a1cb8} 
+\index{monthlySums.m@{monthlySums.m}!together@{together}}
+\index{together@{together}!monthlySums.m@{monthlySums.m}}
+\doxysubsubsection{together}
+{\footnotesize\ttfamily function month division k where first\+Year is first year in years vector in \textbf{ which} \textbf{ case} \textbf{ all} data \textbf{ from} a \textbf{ given} month and year are \textbf{ lumped} together}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ monthly\+Sums.\+m}.
+

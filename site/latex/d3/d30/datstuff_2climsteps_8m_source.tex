@@ -1,0 +1,54 @@
+\doxysection{datstuff/climsteps.m}
+\label{datstuff_2climsteps_8m_source}\index{climsteps.m@{climsteps.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \%\ Bill\ Sacks}
+\DoxyCodeLine{00002\ \%\ 10/20/03}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{function}\ climsteps(stepLength)}
+\DoxyCodeLine{00005\ \%\ \textcolor{keywordflow}{for\ each}\ of\ tair,\ vpd,\ par,\ tsoil,\ ppt,\ and\ nee,\ take\ hourly\ data\ and}
+\DoxyCodeLine{00006\ \%\ aggregate\ up\ to\ timesteps\ of\ given\ stepLength\ (in\ hours)}
+\DoxyCodeLine{00007\ \%\ (by\ just\ taking\ the\ mean\ across\ a\ timestep)}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \%\ Assumes\ that\ (total\ hours)/length\ is\ an\ integer\ }
+\DoxyCodeLine{00010\ \%\ (\textcolor{keywordflow}{if}\ not,\ \textcolor{keywordflow}{throws}\ out\ last\ fraction\ of\ a\ time\ step)}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ tair\ =\ load(\textcolor{stringliteral}{'data/tairfill'});}
+\DoxyCodeLine{00013\ vpd\ =\ load(\textcolor{stringliteral}{'data/vpdfill'});}
+\DoxyCodeLine{00014\ par\ =\ load(\textcolor{stringliteral}{'data/parfill'});}
+\DoxyCodeLine{00015\ tsoil\ =\ load(\textcolor{stringliteral}{'data/tsoilfill'});}
+\DoxyCodeLine{00016\ ppt\ =\ load(\textcolor{stringliteral}{'data/ppt'});}
+\DoxyCodeLine{00017\ nee\ =\ load(\textcolor{stringliteral}{'data/neefill'});}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ nhours\ =\ length(nee);}
+\DoxyCodeLine{00020\ nsteps\ =\ nhours/stepLength;}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keywordflow}{for}\ i\ =\ 1:nsteps}
+\DoxyCodeLine{00023\ \ \ \ \ indices\ =\ ((i-\/1)*stepLength\ +\ 1):(i*stepLength);}
+\DoxyCodeLine{00024\ \ \ \ \ \%\ indices\ counts\ [1,2,3]\ then\ [4,5,6],\ etc.}
+\DoxyCodeLine{00025\ \ \ \ \ tairstep(i)\ =\ mean(tair(indices));}
+\DoxyCodeLine{00026\ \ \ \ \ vpdstep(i)\ =\ mean(vpd(indices));}
+\DoxyCodeLine{00027\ \ \ \ \ parstep(i)\ =\ sum(par(indices)*3600./1.E6);}
+\DoxyCodeLine{00028\ \ \ \ \ \%\ par\ is\ input\ as\ sum\ over\ entire\ timestep}
+\DoxyCodeLine{00029\ \ \ \ \ tsoilstep(i)\ =\ mean(tsoil(indices));}
+\DoxyCodeLine{00030\ \ \ \ \ pptstep(i)\ =\ mean(ppt(indices));}
+\DoxyCodeLine{00031\ \ \ \ \ neestep(i)\ =\ sum(nee(indices));}
+\DoxyCodeLine{00032\ \ \ \ \ \%\ nee\ is\ input\ as\ sum\ over\ entire\ timestep}
+\DoxyCodeLine{00033\ end}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \%transpose\ all\ matrices:}
+\DoxyCodeLine{00036\ tairstep\ =\ tairstep\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00037\ \textcolor{stringliteral}{vpdstep\ =\ vpdstep'};}
+\DoxyCodeLine{00038\ parstep\ =\ parstep\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00039\ \textcolor{stringliteral}{tsoilstep\ =\ tsoilstep'};}
+\DoxyCodeLine{00040\ pptstep\ =\ pptstep\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00041\ \textcolor{stringliteral}{neestep\ =\ neestep'};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ save\ data/tairstep\ tairstep\ -\/ascii;}
+\DoxyCodeLine{00044\ save\ data/vpdstep\ vpdstep\ -\/ascii;}
+\DoxyCodeLine{00045\ save\ data/parstep\ parstep\ -\/ascii;}
+\DoxyCodeLine{00046\ save\ data/tsoilstep\ tsoilstep\ -\/ascii;}
+\DoxyCodeLine{00047\ save\ data/pptstep\ pptstep\ -\/ascii;}
+\DoxyCodeLine{00048\ save\ data/neestep\ neestep\ -\/ascii;}
+
+\end{DoxyCode}

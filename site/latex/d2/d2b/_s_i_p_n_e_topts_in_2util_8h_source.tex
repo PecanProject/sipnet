@@ -1,0 +1,60 @@
+\doxysection{SIPNETopts\+In/util.h}
+\label{_s_i_p_n_e_topts_in_2util_8h_source}\index{util.h@{util.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ Basic\ utility\ functions}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ Creation\ date:\ 8/17/04}}
+\DoxyCodeLine{00006\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ UTIL\_H}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ UTIL\_H}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00014\ FILE\ *openFile(\textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{char}\ *mode);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ if\ seed\ =\ 0,\ seed\ based\ on\ time,\ otherwise\ seed\ based\ on\ seed}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ if\ outF\ is\ specified\ (not\ NULL),\ write\ seed\ to\ file}}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{void}\ seedRand(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ seed,\ FILE\ *outF);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ returns\ an\ exponentially-\/distributed\ negative\ random\ number\ }}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{double}\ randm();}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ allocate\ space\ for\ an\ array\ of\ doubles\ of\ given\ size,}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ return\ pointer\ to\ start\ of\ array}}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{double}\ *makeArray(\textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{/*\ Dynamically\ allocate\ space\ for\ a\ 2-\/d\ array\ of\ doubles\ of\ given\ size,}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ return\ pointer\ to\ start\ of\ array}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ }}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ Ensures\ that\ array\ elements\ are\ continuous\ to\ increase\ efficiency}}
+\DoxyCodeLine{00032\ \textcolor{comment}{}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ \ To\ free\ array,\ first\ free(arr[0]),\ then\ free(arr)}}
+\DoxyCodeLine{00034\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{double}\ **make2DArray(\textcolor{keywordtype}{int}\ nrows,\ \textcolor{keywordtype}{int}\ ncols);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ same\ as\ make2DArray,\ but\ for\ ints}}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{int}\ **make2DIntArray(\textcolor{keywordtype}{int}\ nrows,\ \textcolor{keywordtype}{int}\ ncols);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{//\ free\ a\ 2D\ Array\ that\ was\ created\ using\ make2DArray}}
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ pre:\ arr\ has\ been\ cast\ to\ (void\ **)}}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ free2DArray(\textcolor{keywordtype}{void}\ **arr);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{//\ set\ each\ element\ of\ out[0..n-\/1]\ to\ corresponding\ element\ of\ in[0..n-\/1]}}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ assignArray(\textcolor{keywordtype}{double}\ *out,\ \textcolor{keywordtype}{double}\ *in,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{//\ return\ sum(array[0..length-\/1])}}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{double}\ sumArray(\textcolor{keywordtype}{double}\ *array,\ \textcolor{keywordtype}{int}\ length);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

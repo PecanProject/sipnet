@@ -1,0 +1,330 @@
+\doxysection{datstuff/climsteps.m File Reference}
+\label{datstuff_2climsteps_8m}\index{climsteps.m@{climsteps.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Bill} \textbf{ Sacks} function \textbf{ climsteps} (\textbf{ step\+Length}) \% \textbf{ for} \textbf{ each} of \textbf{ tair}
+\item 
+\textbf{ Bill} \textbf{ Sacks} function and \textbf{ take} \textbf{ hourly} data and \textbf{ aggregate} \textbf{ up} \textbf{ to} \textbf{ timesteps} of \textbf{ given} \textbf{ step\+Length} (in \textbf{ hours}) \%(\textbf{ by} \textbf{ just} \textbf{ taking} \textbf{ the} mean \textbf{ across} a \textbf{ timestep}) \% \textbf{ Assumes} \textbf{ that}(\textbf{ total} \textbf{ hours})/length is an \textbf{ integer} \%(\textbf{ if} \textbf{ not}
+\item 
+\textbf{ indices} \textbf{ counts}[1, 2, 3] \textbf{ etc} \textbf{ tairstep} (i)
+\item 
+\textbf{ vpdstep} (i)
+\item 
+\textbf{ parstep} (i)
+\item 
+\textbf{ par} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} \textbf{ tsoilstep} (i)
+\item 
+\textbf{ pptstep} (i)
+\item 
+\textbf{ neestep} (i)
+\item 
+\textbf{ id} \textbf{ ascii} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Bill} \textbf{ Sacks} function \textbf{ vpd} = \textbf{ load}(\textquotesingle{}data/\textbf{ vpdfill}\textquotesingle{})
+\item 
+\textbf{ Bill} \textbf{ Sacks} function \textbf{ par} = \textbf{ load}(\textquotesingle{}data/\textbf{ parfill}\textquotesingle{})
+\item 
+\textbf{ Bill} \textbf{ Sacks} function \textbf{ tsoil} = \textbf{ load}(\textquotesingle{}data/\textbf{ tsoilfill}\textquotesingle{})
+\item 
+\textbf{ Bill} \textbf{ Sacks} function \textbf{ ppt} = \textbf{ load}(\textquotesingle{}data/ppt\textquotesingle{})
+\item 
+\textbf{ Bill} \textbf{ Sacks} function and \textbf{ nee} = \textbf{ load}(\textquotesingle{}data/\textbf{ neefill}\textquotesingle{})
+\item 
+\textbf{ Bill} \textbf{ Sacks} function and \textbf{ take} \textbf{ hourly} data and \textbf{ aggregate} \textbf{ up} \textbf{ to} \textbf{ timesteps} of \textbf{ given} \textbf{ throws} \textbf{ out} \textbf{ last} \textbf{ fraction} of a \textbf{ time} \textbf{ step} \textbf{ tair} = \textbf{ load}(\textquotesingle{}data/\textbf{ tairfill}\textquotesingle{})
+\item 
+\textbf{ nhours} = length(\textbf{ nee})
+\item 
+\textbf{ nsteps} = \textbf{ nhours}/\textbf{ step\+Length}
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ indices} \textbf{ counts}[1, 2, 3] \textbf{ then} [4, 5, 6]
+\item 
+\textbf{ nee} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} \textbf{ end} \textbf{ transpose} \textbf{ all} \textbf{ matrices}
+\item 
+\textbf{ vpdstep} = vpdstep\textquotesingle{}
+\item 
+\textbf{ parstep} = parstep\textquotesingle{}
+\item 
+\textbf{ tsoilstep} = tsoilstep\textquotesingle{}
+\item 
+\textbf{ pptstep} = pptstep\textquotesingle{}
+\item 
+\textbf{ neestep} = neestep\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{datstuff_2climsteps_8m_a6c887455051134d95fca89c795c0a864} 
+\index{climsteps.m@{climsteps.m}!ascii@{ascii}}
+\index{ascii@{ascii}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{ascii()}
+{\footnotesize\ttfamily \textbf{ id} ascii (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+References \textbf{ data}.
+
+\label{datstuff_2climsteps_8m_a56b07b991034cbf5140967e5c33f78d2} 
+\index{climsteps.m@{climsteps.m}!climsteps@{climsteps}}
+\index{climsteps@{climsteps}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{climsteps()}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} function climsteps (\begin{DoxyParamCaption}\item[{\textbf{ step\+Length}}]{ }\end{DoxyParamCaption})}
+
+\label{datstuff_2climsteps_8m_ac93d80b19e74e62ed3e6f5935b5cf380} 
+\index{climsteps.m@{climsteps.m}!neestep@{neestep}}
+\index{neestep@{neestep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{neestep()}
+{\footnotesize\ttfamily neestep (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{datstuff_2climsteps_8m_a190817b92ab0671a28e375e140ad16e4} 
+\index{climsteps.m@{climsteps.m}!parstep@{parstep}}
+\index{parstep@{parstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{parstep()}
+{\footnotesize\ttfamily parstep (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{datstuff_2climsteps_8m_ae697cde12e8dbc5b8fe11b059f475f23} 
+\index{climsteps.m@{climsteps.m}!pptstep@{pptstep}}
+\index{pptstep@{pptstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{pptstep()}
+{\footnotesize\ttfamily pptstep (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{datstuff_2climsteps_8m_a35ed628f8963e61a793610257b391bd7} 
+\index{climsteps.m@{climsteps.m}!stepLength@{stepLength}}
+\index{stepLength@{stepLength}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{stepLength()}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} function and \textbf{ take} \textbf{ hourly} data and \textbf{ aggregate} \textbf{ up} \textbf{ to} \textbf{ timesteps} of \textbf{ given} step\+Length (\begin{DoxyParamCaption}\item[{in}]{hours }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ length()}, and \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{datstuff_2climsteps_8m_ac2ed065003b37813cd41d01f130d980c} 
+\index{climsteps.m@{climsteps.m}!tairstep@{tairstep}}
+\index{tairstep@{tairstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tairstep()}
+{\footnotesize\ttfamily \textbf{ indices} \textbf{ counts}[1, 2, 3] \textbf{ etc} tairstep (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{datstuff_2climsteps_8m_a45a2960bed9adac2fad9a466914a758b} 
+\index{climsteps.m@{climsteps.m}!tsoilstep@{tsoilstep}}
+\index{tsoilstep@{tsoilstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tsoilstep()}
+{\footnotesize\ttfamily \textbf{ par} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} tsoilstep (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{datstuff_2climsteps_8m_a99630a87312e8b83053f3104c7594636} 
+\index{climsteps.m@{climsteps.m}!vpdstep@{vpdstep}}
+\index{vpdstep@{vpdstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpdstep()}
+{\footnotesize\ttfamily vpdstep (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+
+
+\doxysubsection{Variable Documentation}
+\label{datstuff_2climsteps_8m_a6f6ccfcf58b31cb6412107d9d5281426} 
+\index{climsteps.m@{climsteps.m}!i@{i}}
+\index{i@{i}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ 1:nsteps}
+\DoxyCodeLine{\ \ \ \ indices\ =\ ((i-\/1)*stepLength\ +\ 1):(i*stepLength)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 22} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_aafcc38f7e9302ff4c56cd0013ff0722c} 
+\index{climsteps.m@{climsteps.m}!matrices@{matrices}}
+\index{matrices@{matrices}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{matrices}
+{\footnotesize\ttfamily \textbf{ nee} is \textbf{ input} \textbf{ as} \textbf{ sum} \textbf{ over} \textbf{ entire} \textbf{ timestep} \textbf{ end} \textbf{ transpose} \textbf{ all} matrices}
+
+
+
+Definition at line \textbf{ 35} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_a0b0d0dba52c6ad92229a986be3b0d574} 
+\index{climsteps.m@{climsteps.m}!nee@{nee}}
+\index{nee@{nee}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{nee}
+{\footnotesize\ttfamily nee = \textbf{ load}(\textquotesingle{}data/\textbf{ neefill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_a25941d756dee1f78a750d63b158071c3} 
+\index{climsteps.m@{climsteps.m}!neestep@{neestep}}
+\index{neestep@{neestep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{neestep}
+{\footnotesize\ttfamily neestep = neestep\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_aaa61a504b8206964aee99dd78cf0f188} 
+\index{climsteps.m@{climsteps.m}!nhours@{nhours}}
+\index{nhours@{nhours}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{nhours}
+{\footnotesize\ttfamily nhours = length(\textbf{ nee})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_a05ea39b6116339481c96145ca8c30c5a} 
+\index{climsteps.m@{climsteps.m}!nsteps@{nsteps}}
+\index{nsteps@{nsteps}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{nsteps}
+{\footnotesize\ttfamily nsteps = \textbf{ nhours}/\textbf{ step\+Length}}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_a8a4e5ec5926f293767f3c555868e4c21} 
+\index{climsteps.m@{climsteps.m}!par@{par}}
+\index{par@{par}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{par}
+{\footnotesize\ttfamily par = \textbf{ load}(\textquotesingle{}data/\textbf{ parfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ datstuff/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Light\+Eff2()}, \textbf{ calc\+Light\+Eff3()}, \textbf{ main()}, \textbf{ pot\+Psn()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{datstuff_2climsteps_8m_adbf7262b874e71776f3266ec261b95ed} 
+\index{climsteps.m@{climsteps.m}!parstep@{parstep}}
+\index{parstep@{parstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{parstep}
+{\footnotesize\ttfamily parstep = parstep\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 38} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_aa47a1e47a9cc6ce631189295002f26e4} 
+\index{climsteps.m@{climsteps.m}!ppt@{ppt}}
+\index{ppt@{ppt}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{ppt}
+{\footnotesize\ttfamily ppt = \textbf{ load}(\textquotesingle{}data/ppt\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_a230b8e9b782a223106f83cf2302022f4} 
+\index{climsteps.m@{climsteps.m}!pptstep@{pptstep}}
+\index{pptstep@{pptstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{pptstep}
+{\footnotesize\ttfamily pptstep = pptstep\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_aa3c51f994ae0417a8dd04f963078aec6} 
+\index{climsteps.m@{climsteps.m}!tair@{tair}}
+\index{tair@{tair}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tair}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} function and \textbf{ take} \textbf{ hourly} data and \textbf{ aggregate} \textbf{ up} \textbf{ to} \textbf{ timesteps} of \textbf{ given} \textbf{ throws} \textbf{ out} \textbf{ last} \textbf{ fraction} of a \textbf{ time} \textbf{ step} tair = \textbf{ load}(\textquotesingle{}data/\textbf{ tairfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ datstuff/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ main()}, \textbf{ pot\+Psn()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{datstuff_2climsteps_8m_aa438985bcc238d0180091ded4645f389} 
+\index{climsteps.m@{climsteps.m}!then@{then}}
+\index{then@{then}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{then}
+{\footnotesize\ttfamily \textbf{ indices} \textbf{ counts} [1,2,3] then[4, 5, 6]}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_a55685d36dae9236af2b1b123b61a6928} 
+\index{climsteps.m@{climsteps.m}!tsoil@{tsoil}}
+\index{tsoil@{tsoil}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tsoil}
+{\footnotesize\ttfamily tsoil = \textbf{ load}(\textquotesingle{}data/\textbf{ tsoilfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ datstuff/climsteps.\+m}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ main()}, \textbf{ read\+Clim\+Data()}, and \textbf{ soil\+Breakdown()}.
+
+\label{datstuff_2climsteps_8m_a778450f6951532035a71a06e17bc8f9f} 
+\index{climsteps.m@{climsteps.m}!tsoilstep@{tsoilstep}}
+\index{tsoilstep@{tsoilstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{tsoilstep}
+{\footnotesize\ttfamily tsoilstep = tsoilstep\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_ab17c95386db830e9b2fdd7fdc1b39a13} 
+\index{climsteps.m@{climsteps.m}!vpd@{vpd}}
+\index{vpd@{vpd}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpd}
+{\footnotesize\ttfamily vpd = \textbf{ load}(\textquotesingle{}data/\textbf{ vpdfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ datstuff/climsteps.\+m}.
+
+\label{datstuff_2climsteps_8m_aa145f44c2023c75a76ad4000c50b4a75} 
+\index{climsteps.m@{climsteps.m}!vpdstep@{vpdstep}}
+\index{vpdstep@{vpdstep}!climsteps.m@{climsteps.m}}
+\doxysubsubsection{vpdstep}
+{\footnotesize\ttfamily vpdstep = vpdstep\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ datstuff/climsteps.\+m}.
+

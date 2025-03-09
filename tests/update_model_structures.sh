@@ -7,7 +7,7 @@ STRUCTURES_FILE="modelStructures.h"
 
 # Get the path to the current directory's STRUCTURES_FILE - that is,
 # the production version
-PROD_MODEL_STRUCTURES="src/sipnet/${STRUCTURES_FILE}"
+PROD_MODEL_STRUCTURES="./${STRUCTURES_FILE}"
 
 # Check if the current directory has the base model_structures.h
 if [[ ! -f $PROD_MODEL_STRUCTURES ]]; then
@@ -49,7 +49,7 @@ FNR == NR {
 EOF
 
 # Find and process all target files in subdirectories
-find tests -type f -name "$STRUCTURES_FILE" -mindepth 1 | while read -r file; do
+find . -type f -name "$STRUCTURES_FILE" -mindepth 2 | while read -r file; do
     echo "Processing: $file"
 
     # Create a backup of the original file

@@ -1,0 +1,216 @@
+\doxysection{process\+Modis\+Sipnet.\+m}
+\label{process_modis_sipnet_8m_source}\index{processModisSipnet.m@{processModisSipnet.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ processModisSipnet}
+\DoxyCodeLine{00002\ \%\%\%\ Author:\ JMZ}
+\DoxyCodeLine{00003\ \%\%\%\ Date:\ \ \ 1/20/10,\ modified\ 5/16/11}
+\DoxyCodeLine{00004\ \%\%\%\ Purpose:\ Read\ in\ MODIS\ data,\ average\ it\ (with\ QC)\ and\ write\ it\ out\ to\ a\ MODIS\ file\ \textcolor{keywordflow}{for}\ use\ by\ SIPNET}
+\DoxyCodeLine{00005\ \%\%\%\ Copy\ other\ sipnet\ files\ so\ we\ can\ \textcolor{keywordflow}{do}\ a\ data\ assimilation}
+\DoxyCodeLine{00006\ \%\%\%\ We\ \textcolor{keywordflow}{do}\ a\ QC\ mask\ \textcolor{keywordflow}{for}\ snow\ data}
+\DoxyCodeLine{00007\ \%\%\%\ link\ to\ data:\ http:\textcolor{comment}{//daac.ornl.gov/cgi-\/bin/MODIS/GR\_col5\_1/mod\_viz.html}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \%\%\%\ helper\ functions:}
+\DoxyCodeLine{00010\ \%\%\%\ snowValidate.m}
+\DoxyCodeLine{00011\ \%\%\%\ modisTokenizeString.m}
+\DoxyCodeLine{00012\ \%\%\%\ modisFPARqc.m}
+\DoxyCodeLine{00013\ \%\%\%\ gridAverage.m}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ clear\ -\/v}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ fileName='additionalData\(\backslash\)modisData\(\backslash\)MOD15A2.fn\_usniwot1.txt';}
+\DoxyCodeLine{00018\ \%\%\ outVal=dlmread(fileName,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ fid=fopen(fileName);}
+\DoxyCodeLine{00023\ count\ =\ 0;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \%\%\%\ Loop\ through\ to\ \textcolor{keyword}{get}\ the\ size\ of\ things}
+\DoxyCodeLine{00026\ test1=fgetl(fid);\ \ \%\%\%\ The\ first\ one\ is\ a\ headerline}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordflow}{while}(test1\string~=-\/1)}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ test1=fgetl(fid);\ \ \%\%\%\ The\ first\ one\ is\ a\ headerline}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{00031\ end}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ count-\/-\/;\ \ \ \ \ \ \ \ \%\%\%\ Subtract\ one\ \textcolor{keywordflow}{for}\ the\ last\ value}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \%\%\%\ Allocate\ memory\ \textcolor{keywordflow}{for}\ matrices}
+\DoxyCodeLine{00036\ numTotal\ =\ count/6;\ \ \ \ \ \ \ \ \ \%\%\%\ One\ each\ \textcolor{keywordflow}{for}\ LAIqc,\ fparQc,\ and\ the\ measurements,\ and\ their\ std.\ deviation}
+\DoxyCodeLine{00037\ decdayModis=zeros(numTotal,1);}
+\DoxyCodeLine{00038\ yearModis=zeros(numTotal,1);}
+\DoxyCodeLine{00039\ Fpar\_1km=zeros(numTotal,49);}
+\DoxyCodeLine{00040\ FparExtra\_QC\_cellstr=cellstr(\textcolor{keywordtype}{char}(zeros(numTotal,1)));}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \%\%\%\ Restart\ back\ from\ the\ beginning}
+\DoxyCodeLine{00043\ frewind(fid);}
+\DoxyCodeLine{00044\ test1=fgetl(fid);\ \ \%\%\%\ The\ first\ one\ is\ a\ headerline}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \%\%\%\ loop\ through\ until\ we\ are\ done}
+\DoxyCodeLine{00048\ \textcolor{keywordflow}{for}\ i=1:numTotal}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ stringFparExtra\_QC=fgetl(fid);}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ stringFparLai\_QC=fgetl(fid);}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ stringFparStdDev\_1km=fgetl(fid);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ stringFpar\_1km=fgetl(fid);}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ stringLaiStdDev\_1km=fgetl(fid);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ stringLai\_1km=fgetl(fid);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \%\%\%\ Tokenize\ the\ strings}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ [timeOut,elementName,pixelFpar\_QC]=modisTokenizeString(stringFparExtra\_QC);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ [timeOut,elementName,pixelFpar]=modisTokenizeString(stringFpar\_1km);}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ [timeOut,elementName,pixelFparStdDev]=modisTokenizeString(stringFparStdDev\_1km);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ FparExtra\_QC\_cellstr\{i\}=pixelFpar\_QC\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00062\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00063\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yearIn=floor(timeOut/10\string^3);}}
+\DoxyCodeLine{00064\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ dayIn\ =\ floor((timeOut/10\string^3-\/yearIn)*10\string^3);}}
+\DoxyCodeLine{00065\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00066\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00067\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yearModis(i)=yearIn;}}
+\DoxyCodeLine{00068\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ decdayModis(i)=dayIn;}}
+\DoxyCodeLine{00069\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00070\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ FparResult=str2num(char(pixelFpar))./100;\ \ \ \ \ \ \ \ \ \ \%\%\%\ Divide\ by\ 100\ to\ get\ a\ result\ '};}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ FparStdDevResult=str2num(\textcolor{keywordtype}{char}(pixelFparStdDev))./100;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ Fpar\_1km(i,:)=FparResult\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00073\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ FparStdDev\_1km(i,:)=FparStdDevResult'};}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00076\ end}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ fclose(fid);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \%\%\%\ Do\ the\ QC\ on\ the\ data}
+\DoxyCodeLine{00081\ FparExtra\_QC=modisFPARqc(FparExtra\_QC\_cellstr);}
+\DoxyCodeLine{00082\ \%\%\%\%\%\%\%\%\%\%\%\%\%}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \%\%\%\ Replace\ any\ of\ the\ stdDev\ with\ Nan\ (2.48\ =\ 248\ is\ a\ bit\ code\ saying\ that\ it\ couldn\textcolor{stringliteral}{'t\ be\ determined)}}
+\DoxyCodeLine{00085\ \textcolor{stringliteral}{\%\%\%\ See\ NASA\ MOD15A2\ page\ for\ more\ details}}
+\DoxyCodeLine{00086\ \textcolor{stringliteral}{index=find(FparStdDev\_1km>1);}}
+\DoxyCodeLine{00087\ \textcolor{stringliteral}{FparStdDev\_1km(index)=1;}}
+\DoxyCodeLine{00088\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00089\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00090\ \textcolor{stringliteral}{\%\%\%\ Average\ the\ data\ according\ to\ the\ pixels}}
+\DoxyCodeLine{00091\ \textcolor{stringliteral}{towerPixels=[17\ 18\ 19\ 24\ 25\ 26\ 31\ 32\ 33];}}
+\DoxyCodeLine{00092\ \textcolor{stringliteral}{avgFpar\_1km=gridAverage(Fpar\_1km,'}index\textcolor{stringliteral}{',towerPixels);}}
+\DoxyCodeLine{00093\ \textcolor{stringliteral}{avgFparExtra\_QC=gridAverage(FparExtra\_QC,'}index\textcolor{stringliteral}{',towerPixels);\ \ \ \ \ \ }}
+\DoxyCodeLine{00094\ \textcolor{stringliteral}{avgFparStdDev\_1km=gridAverage(FparStdDev\_1km,'}index\textcolor{stringliteral}{',towerPixels);}}
+\DoxyCodeLine{00095\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00096\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00097\ \textcolor{stringliteral}{\%\%\%\ Mask\ the\ QC\ when\ there\ is\ snow}}
+\DoxyCodeLine{00098\ \textcolor{stringliteral}{avgFparExtra\_QCsnowMask=snowValidate(yearModis,floor(decdayModis),avgFparExtra\_QC);}}
+\DoxyCodeLine{00099\ \textcolor{stringliteral}{\ \ \ \ \ \ }}
+\DoxyCodeLine{00100\ \textcolor{stringliteral}{\%\%\%\ Load\ up\ SIPNET\ data,\ variable\ name\ niwot}}
+\DoxyCodeLine{00101\ \textcolor{stringliteral}{fileName='}..\(\backslash\)..\(\backslash\)Sites\(\backslash\)Niwot\(\backslash\)niwot12\(\backslash\)niwot12.clim\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00102\ \textcolor{stringliteral}{niwotAllData=\ load("{}-\/ascii"{},fileName);}}
+\DoxyCodeLine{00103\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00104\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00105\ \textcolor{stringliteral}{\ }}
+\DoxyCodeLine{00106\ \textcolor{stringliteral}{yearNiwot\ =\ niwotAllData(:,2);}}
+\DoxyCodeLine{00107\ \textcolor{stringliteral}{dayNiwot\ =\ niwotAllData(:,3);}}
+\DoxyCodeLine{00108\ \textcolor{stringliteral}{hourNiwot\ =\ niwotAllData(:,4);}}
+\DoxyCodeLine{00109\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00110\ \textcolor{stringliteral}{decdayNiwot\ =\ dayNiwot\ +\ hourNiwot./24;}}
+\DoxyCodeLine{00111\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00112\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00113\ \textcolor{stringliteral}{calYearModis=zeros(length(decdayModis),1);}}
+\DoxyCodeLine{00114\ \textcolor{stringliteral}{calYearNiwot=zeros(length(decdayNiwot),1);}}
+\DoxyCodeLine{00115\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00116\ \textcolor{stringliteral}{\%\%\%\ We\ have\ more\ site\ years\ of\ niwotData\ (1998\ -\/\ 2007)\ Leap\ years\ were\ in}}
+\DoxyCodeLine{00117\ \textcolor{stringliteral}{\%\%\%\ 2000\ and\ 2004\ and\ 2008}}
+\DoxyCodeLine{00118\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00119\ \textcolor{stringliteral}{\%\%\%\ Modis\ data\ begins\ in\ 2000.\ \ (See\ miscFiles/yearIndices.xlsx\ for\ index\ values)}}
+\DoxyCodeLine{00120\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00121\ \textcolor{stringliteral}{\%\%\%\ Year\ \ \ \ Date\ add}}
+\DoxyCodeLine{00122\ \textcolor{stringliteral}{\%\%\%\ 1998\ \ \ \ 0}}
+\DoxyCodeLine{00123\ \textcolor{stringliteral}{\%\%\%\ 1999\ \ \ \ 365}}
+\DoxyCodeLine{00124\ \textcolor{stringliteral}{\%\%\%\ 2000\ \ \ \ 730}}
+\DoxyCodeLine{00125\ \textcolor{stringliteral}{\%\%\%\ 2001\ \ \ \ 1096}}
+\DoxyCodeLine{00126\ \textcolor{stringliteral}{\%\%\%\ 2002\ \ \ \ 1461}}
+\DoxyCodeLine{00127\ \textcolor{stringliteral}{\%\%\%\ 2003\ \ \ \ 1826}}
+\DoxyCodeLine{00128\ \textcolor{stringliteral}{\%\%\%\ 2004\ \ \ \ 2191}}
+\DoxyCodeLine{00129\ \textcolor{stringliteral}{\%\%\%\ 2005\ \ \ \ 2557}}
+\DoxyCodeLine{00130\ \textcolor{stringliteral}{\%\%\%\ 2006\ \ \ \ 2922}}
+\DoxyCodeLine{00131\ \textcolor{stringliteral}{\%\%\%\ 2007\ \ \ \ 3287}}
+\DoxyCodeLine{00132\ \textcolor{stringliteral}{\%\%\%\ 2008\ \ \ \ 3652}}
+\DoxyCodeLine{00133\ \textcolor{stringliteral}{\%\%\%\ 2009\ \ \ \ 4018}}
+\DoxyCodeLine{00134\ \textcolor{stringliteral}{\%\%\%\ 2010\ \ \ \ 4383}}
+\DoxyCodeLine{00135\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00136\ \textcolor{stringliteral}{dayAdd=[0\ 365\ 730\ 1096\ 1461\ 1826\ 2191\ 2557\ 2922\ 3287\ 3652\ 4018];}}
+\DoxyCodeLine{00137\ \textcolor{stringliteral}{overallYears=1998:2009;}}
+\DoxyCodeLine{00138\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00139\ \textcolor{stringliteral}{for\ i=1:length(overallYears)}}
+\DoxyCodeLine{00140\ \textcolor{stringliteral}{\ \ \ \ index=find(overallYears(i)==yearModis);}}
+\DoxyCodeLine{00141\ \textcolor{stringliteral}{\ \ \ \ calYearModis(index)=dayAdd(i)+decdayModis(index);}}
+\DoxyCodeLine{00142\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{00143\ \textcolor{stringliteral}{\ \ \ \ index=find(overallYears(i)==yearNiwot);}}
+\DoxyCodeLine{00144\ \textcolor{stringliteral}{\ \ \ \ calYearNiwot(index)=dayAdd(i)+decdayNiwot(index);}}
+\DoxyCodeLine{00145\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00146\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00147\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00148\ \textcolor{stringliteral}{\%\%\%\ Make\ them\ into\ big\ long\ vectors\ corresponding\ to\ the\ time}}
+\DoxyCodeLine{00149\ \textcolor{stringliteral}{avgFpar\_1km=dataMake(calYearModis,avgFpar\_1km,calYearNiwot,1);}}
+\DoxyCodeLine{00150\ \textcolor{stringliteral}{avgFparExtra\_QCsnowMask=dataMake(calYearModis,avgFparExtra\_QCsnowMask,calYearNiwot,0);}}
+\DoxyCodeLine{00151\ \textcolor{stringliteral}{avgFparStdDev\_1km=dataMake(calYearModis,avgFparStdDev\_1km,calYearNiwot,1);}}
+\DoxyCodeLine{00152\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00153\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00154\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00155\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00156\ \textcolor{stringliteral}{\%\%\%\ Output\ the\ data\ to\ a\ file}}
+\DoxyCodeLine{00157\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00158\ \textcolor{stringliteral}{fileInLoc\ =\ '}..\(\backslash\)..\(\backslash\)Sites\(\backslash\)Niwot\(\backslash\)niwot12\(\backslash\)niwot12\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00159\ \textcolor{stringliteral}{fileOutLoc\ =\ '}..\(\backslash\)..\(\backslash\)MODISdata\(\backslash\)niwotAllDataMODIS\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00160\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00161\ \textcolor{stringliteral}{niwotData=\ load("{}-\/ascii"{},[fileInLoc\ '}.dat\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00162\ \textcolor{stringliteral}{niwotQC\ =\ load("{}-\/ascii"{},[fileInLoc\ '}.valid\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00163\ \textcolor{stringliteral}{niwotSigma\ =\ load("{}-\/ascii"{},[fileInLoc\ '}.sigma\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00164\ \textcolor{stringliteral}{\%\%\%\ Add\ on\ MODIS\ data\ to\ climate\ file}}
+\DoxyCodeLine{00165\ \textcolor{stringliteral}{dataOut\ =\ [\ niwotData\ avgFpar\_1km];}}
+\DoxyCodeLine{00166\ \textcolor{stringliteral}{qcOut\ =\ [\ niwotQC\ avgFparExtra\_QCsnowMask];}}
+\DoxyCodeLine{00167\ \textcolor{stringliteral}{sigmaOut\ =\ [\ niwotSigma\ avgFparStdDev\_1km];}}
+\DoxyCodeLine{00168\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00169\ \textcolor{stringliteral}{\%\%\%\ Make\ sure\ we\ have\ the\ old\ climate\ file\ w/o\ MODIS}}
+\DoxyCodeLine{00170\ \textcolor{stringliteral}{dlmwrite([fileOutLoc\ '}.dat\textcolor{stringliteral}{'],\ dataOut,'}delimiter\textcolor{stringliteral}{',\ '}\ \ \ \textcolor{charliteral}{','}precision\textcolor{stringliteral}{',\ '}\%8.4f\textcolor{stringliteral}{');}}
+\DoxyCodeLine{00171\ \textcolor{stringliteral}{dlmwrite([fileOutLoc\ '}.valid\textcolor{stringliteral}{'],\ qcOut,'}delimiter\textcolor{stringliteral}{',\ '}\ \ \ \textcolor{charliteral}{','}precision\textcolor{stringliteral}{',\ '}\%8.4f\textcolor{stringliteral}{');}}
+\DoxyCodeLine{00172\ \textcolor{stringliteral}{dlmwrite([fileOutLoc\ '}.sigma\textcolor{stringliteral}{'],\ sigmaOut,'}delimiter\textcolor{stringliteral}{',\ '}\ \ \ \textcolor{charliteral}{','}precision\textcolor{stringliteral}{',\ '}\%8.4f\textcolor{stringliteral}{');}}
+\DoxyCodeLine{00173\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00174\ \textcolor{stringliteral}{\%\%\%\ Copy\ remaining\ files}}
+\DoxyCodeLine{00175\ \textcolor{stringliteral}{copyfile([fileInLoc\ '}.spd\textcolor{stringliteral}{'],[fileOutLoc\ '}.spd\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00176\ \textcolor{stringliteral}{copyfile([fileInLoc\ '}.clim\textcolor{stringliteral}{'],[fileOutLoc\ '}.clim\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00177\ \textcolor{stringliteral}{copyfile([fileInLoc\ '}.spd\textcolor{stringliteral}{'],[fileOutLoc\ '}.spd\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00178\ \textcolor{stringliteral}{copyfile([fileInLoc\ '}.param\textcolor{stringliteral}{'],[fileOutLoc\ '}.param\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00179\ \textcolor{stringliteral}{copyfile([fileInLoc\ '}.param-\/spatial\textcolor{stringliteral}{'],[fileOutLoc\ '}.param-\/spatial\textcolor{stringliteral}{']);}}
+\DoxyCodeLine{00180\ \textcolor{stringliteral}{\ \ \ \ \ }}
+\DoxyCodeLine{00181\ \textcolor{stringliteral}{\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%}}
+\DoxyCodeLine{00182\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00183\ \textcolor{stringliteral}{function\ dataOut=dataMake(timeIn,dataIn,timeCompare,indexFlag)}}
+\DoxyCodeLine{00184\ \textcolor{stringliteral}{\ \ \ \ format\ long;}}
+\DoxyCodeLine{00185\ \textcolor{stringliteral}{\ \ \ \ \%\%\%\ yearIn\ will\ be\ a\ smaller\ vector\ than\ yearCompare}}
+\DoxyCodeLine{00186\ \textcolor{stringliteral}{\ \ \ }}
+\DoxyCodeLine{00187\ \textcolor{stringliteral}{\ \ \ \ [row,col]=size(dataIn);}}
+\DoxyCodeLine{00188\ \textcolor{stringliteral}{\ \ \ \ if\ indexFlag\ ==\ 1}}
+\DoxyCodeLine{00189\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ dataOut=ones(length(timeCompare),col);\ \ \ \ \ \ \%\%\%\ Make\ matrix\ of\ data\ points\ -\/}}
+\DoxyCodeLine{00190\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ We\ have\ a\ choice}}
+\DoxyCodeLine{00191\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\%\%\ for\ 1\ or\ zero.}}
+\DoxyCodeLine{00192\ \textcolor{stringliteral}{\ \ \ \ else}}
+\DoxyCodeLine{00193\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ dataOut=zeros(length(timeCompare),col);}}
+\DoxyCodeLine{00194\ \textcolor{stringliteral}{\ \ \ \ end}}
+\DoxyCodeLine{00195\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{00196\ \textcolor{stringliteral}{\ \ \ \ for\ i=1:length(timeCompare)-\/1}}
+\DoxyCodeLine{00197\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ currIndex\ =\ find(\ (timeCompare(i)\ <=\ timeIn)\ \&\ (timeIn\ <\ timeCompare(i+1)));\ \%\%\%\ Go\ with\ the\ beginning\ of\ timestep}}
+\DoxyCodeLine{00198\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00199\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ if\ isempty(currIndex)==0}}
+\DoxyCodeLine{00200\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ [i\ \ \ \ \ \ \ \ timeIn(currIndex)]}}
+\DoxyCodeLine{00201\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ [timeCompare(i)\ timeCompare(i+1)]}}
+\DoxyCodeLine{00202\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ dataOut(i)=nanmean(dataIn(currIndex));}}
+\DoxyCodeLine{00203\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ end}}
+\DoxyCodeLine{00204\ \textcolor{stringliteral}{\ \ \ \ end}}
+\DoxyCodeLine{00205\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00206\ \textcolor{stringliteral}{endfunction}}
+\DoxyCodeLine{00207\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00208\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00209\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00210\ \textcolor{stringliteral}{}}
+
+\end{DoxyCode}

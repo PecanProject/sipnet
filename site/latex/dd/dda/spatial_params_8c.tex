@@ -1,0 +1,678 @@
+\doxysection{spatial\+Params.\+c File Reference}
+\label{spatial_params_8c}\index{spatialParams.c@{spatialParams.c}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+Include dependency graph for spatial\+Params.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ int} \textbf{ all\+Params\+Initialized} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\item 
+\textbf{ void} \textbf{ set\+All} (\textbf{ double} $\ast$\textbf{ array}, \textbf{ int} length, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ void} \textbf{ check\+All\+Read} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\item 
+\textbf{ double} \textbf{ get\+Possibly\+Spatial} (\textbf{ double} $\ast$\textbf{ array}, \textbf{ int} loc, \textbf{ int} \textbf{ is\+Spatial})
+\item 
+\textbf{ void} \textbf{ set\+Possibly\+Spatial} (\textbf{ double} $\ast$\textbf{ array}, \textbf{ int} loc, \textbf{ double} \textbf{ value}, \textbf{ int} \textbf{ is\+Spatial}, \textbf{ int} length)
+\item 
+\textbf{ void} \textbf{ read\+Spatial\+Values} (\textbf{ double} $\ast$\textbf{ spatial\+Values}, \textbf{ FILE} $\ast$\textbf{ spatial\+Param\+File}, \textbf{ char} \textbf{ p\+Name}[\textbf{ PARAM\+\_\+\+MAXNAME}], \textbf{ int} \textbf{ num\+Locs})
+\item 
+\textbf{ Spatial\+Params} $\ast$ \textbf{ new\+Spatial\+Params} (\textbf{ int} max\+Parameters, \textbf{ int} \textbf{ num\+Locs})
+\item 
+\textbf{ void} \textbf{ initialize\+One\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ char} $\ast$\textbf{ name}, \textbf{ double} $\ast$external\+Loc, \textbf{ int} is\+Required)
+\item 
+\textbf{ void} \textbf{ read\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ FILE} $\ast$\textbf{ param\+File}, \textbf{ FILE} $\ast$\textbf{ spatial\+Param\+File})
+\item 
+\textbf{ int} \textbf{ get\+Num\+Parameters} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\item 
+\textbf{ int} \textbf{ get\+Num\+Params\+Read} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\item 
+\textbf{ int} \textbf{ locate\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ char} $\ast$\textbf{ name})
+\item 
+\textbf{ int} \textbf{ value\+Set} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ int} \textbf{ is\+Spatial} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ int} \textbf{ is\+Changeable} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ int} \textbf{ check\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ set\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Guess} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Min} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Max} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Sigma} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Knob} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ set\+Spatial\+Param\+Knob} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Best} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ set\+Spatial\+Param\+Best} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ void} \textbf{ set\+All\+Spatial\+Param\+Bests} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ int} \textbf{ random\+Changeable\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\item 
+\textbf{ void} \textbf{ load\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ reset\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ double} knob, \textbf{ int} \textbf{ random\+Reset})
+\item 
+\textbf{ void} \textbf{ write\+Best\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ char} $\ast$\textbf{ param\+File}, \textbf{ char} $\ast$\textbf{ spatial\+Param\+File})
+\item 
+\textbf{ void} \textbf{ write\+Changeable\+Param\+Info} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc, \textbf{ FILE} $\ast$\textbf{ outF})
+\item 
+\textbf{ void} \textbf{ delete\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{spatial_params_8c_ae6dfc60182b4583f79733354cbe3680d} 
+\index{spatialParams.c@{spatialParams.c}!allParamsInitialized@{allParamsInitialized}}
+\index{allParamsInitialized@{allParamsInitialized}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{allParamsInitialized()}
+{\footnotesize\ttfamily \textbf{ int} all\+Params\+Initialized (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ initialize\+One\+Spatial\+Param()}.
+
+\label{spatial_params_8c_abf043ffa33bae50cf7558ee07242ae12} 
+\index{spatialParams.c@{spatialParams.c}!checkAllRead@{checkAllRead}}
+\index{checkAllRead@{checkAllRead}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{checkAllRead()}
+{\footnotesize\ttfamily \textbf{ void} check\+All\+Read (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ read\+Spatial\+Params()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{spatial_params_8c_af80c34506d70fea40b26a5f33acec36b} 
+\index{spatialParams.c@{spatialParams.c}!checkSpatialParam@{checkSpatialParam}}
+\index{checkSpatialParam@{checkSpatialParam}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{checkSpatialParam()}
+{\footnotesize\ttfamily \textbf{ int} check\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 380} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ i}, \textbf{ index}, and \textbf{ value}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{spatial_params_8c_a404edabdefb1ee943ba2b58f9c0dac37} 
+\index{spatialParams.c@{spatialParams.c}!deleteSpatialParams@{deleteSpatialParams}}
+\index{deleteSpatialParams@{deleteSpatialParams}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{deleteSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} delete\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 675} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+\label{spatial_params_8c_ab47d15aa03a26db8d5adf56660506dc3} 
+\index{spatialParams.c@{spatialParams.c}!getNumParameters@{getNumParameters}}
+\index{getNumParameters@{getNumParameters}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getNumParameters()}
+{\footnotesize\ttfamily \textbf{ int} get\+Num\+Parameters (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 321} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ index}.
+
+\label{spatial_params_8c_a97cf86c5ecac6acca195329dc17f3715} 
+\index{spatialParams.c@{spatialParams.c}!getNumParamsRead@{getNumParamsRead}}
+\index{getNumParamsRead@{getNumParamsRead}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getNumParamsRead()}
+{\footnotesize\ttfamily \textbf{ int} get\+Num\+Params\+Read (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 327} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+\label{spatial_params_8c_ace067e115166bd724ba5081dbf1f6f27} 
+\index{spatialParams.c@{spatialParams.c}!getPossiblySpatial@{getPossiblySpatial}}
+\index{getPossiblySpatial@{getPossiblySpatial}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getPossiblySpatial()}
+{\footnotesize\ttfamily \textbf{ double} get\+Possibly\+Spatial (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{array,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ int}}]{is\+Spatial }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 66} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ index}, and \textbf{ is\+Spatial()}.
+
+
+
+Referenced by \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, and \textbf{ get\+Spatial\+Param\+Knob()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{spatial_params_8c_ac941eee725b3734909015835a7cad499} 
+\index{spatialParams.c@{spatialParams.c}!getSpatialParam@{getSpatialParam}}
+\index{getSpatialParam@{getSpatialParam}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getSpatialParam()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 389} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Possibly\+Spatial()}, \textbf{ i}, \textbf{ index}, and \textbf{ is\+Spatial()}.
+
+
+
+Referenced by \textbf{ load\+Spatial\+Params()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{spatial_params_8c_a94a43233b3bd74f11ffb40337f9f381a} 
+\index{spatialParams.c@{spatialParams.c}!getSpatialParamBest@{getSpatialParamBest}}
+\index{getSpatialParamBest@{getSpatialParamBest}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getSpatialParamBest()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Best (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 462} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Possibly\+Spatial()}, \textbf{ i}, \textbf{ index}, and \textbf{ is\+Spatial()}.
+
+
+
+Referenced by \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+Here is the call graph for this function\+:
+% FIG 5
+\label{spatial_params_8c_a3fd3e6da8773a40d79b9ed9d1249e787} 
+\index{spatialParams.c@{spatialParams.c}!getSpatialParamGuess@{getSpatialParamGuess}}
+\index{getSpatialParamGuess@{getSpatialParamGuess}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getSpatialParamGuess()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Guess (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 409} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Possibly\+Spatial()}, \textbf{ i}, \textbf{ index}, and \textbf{ is\+Spatial()}.
+
+
+
+Referenced by \textbf{ reset\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+Here is the call graph for this function\+:
+% FIG 6
+\label{spatial_params_8c_ad7590f3126ce3f3e99c877e70f2ddbba} 
+\index{spatialParams.c@{spatialParams.c}!getSpatialParamKnob@{getSpatialParamKnob}}
+\index{getSpatialParamKnob@{getSpatialParamKnob}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getSpatialParamKnob()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Knob (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 442} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Possibly\+Spatial()}, \textbf{ i}, \textbf{ index}, and \textbf{ is\+Spatial()}.
+
+
+
+Referenced by \textbf{ write\+Changeable\+Param\+Info()}.
+
+Here is the call graph for this function\+:
+% FIG 7
+\label{spatial_params_8c_a696f50b02206ae689549f1192f617cee} 
+\index{spatialParams.c@{spatialParams.c}!getSpatialParamMax@{getSpatialParamMax}}
+\index{getSpatialParamMax@{getSpatialParamMax}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getSpatialParamMax()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Max (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 425} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ check\+Spatial\+Param()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+\label{spatial_params_8c_af17b7d53571217e6a8ef835e21843c40} 
+\index{spatialParams.c@{spatialParams.c}!getSpatialParamMin@{getSpatialParamMin}}
+\index{getSpatialParamMin@{getSpatialParamMin}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getSpatialParamMin()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Min (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 417} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ check\+Spatial\+Param()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+\label{spatial_params_8c_a41ddc15d343155417a74921c10e57606} 
+\index{spatialParams.c@{spatialParams.c}!getSpatialParamSigma@{getSpatialParamSigma}}
+\index{getSpatialParamSigma@{getSpatialParamSigma}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{getSpatialParamSigma()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Sigma (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 433} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ write\+Best\+Spatial\+Params()}.
+
+\label{spatial_params_8c_a61c1fad867fe86d423ffdc201d9b2005} 
+\index{spatialParams.c@{spatialParams.c}!initializeOneSpatialParam@{initializeOneSpatialParam}}
+\index{initializeOneSpatialParam@{initializeOneSpatialParam}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{initializeOneSpatialParam()}
+{\footnotesize\ttfamily \textbf{ void} initialize\+One\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ char} $\ast$}]{name,  }\item[{\textbf{ double} $\ast$}]{external\+Loc,  }\item[{\textbf{ int}}]{is\+Required }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 156} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ all\+Params\+Initialized()}, \textbf{ exit()}, \textbf{ index}, and \textbf{ name}.
+
+
+
+Referenced by \textbf{ read\+Param\+Data()}.
+
+Here is the call graph for this function\+:
+% FIG 8
+\label{spatial_params_8c_a65b254c24bad51e48005a5ffed337508} 
+\index{spatialParams.c@{spatialParams.c}!isChangeable@{isChangeable}}
+\index{isChangeable@{isChangeable}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{isChangeable()}
+{\footnotesize\ttfamily \textbf{ int} is\+Changeable (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 372} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ reset\+Spatial\+Params()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+\label{spatial_params_8c_ae99fa2266ffe4ed506690f3cf382e26e} 
+\index{spatialParams.c@{spatialParams.c}!isSpatial@{isSpatial}}
+\index{isSpatial@{isSpatial}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{isSpatial()}
+{\footnotesize\ttfamily \textbf{ int} is\+Spatial (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 364} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ get\+Possibly\+Spatial()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Possibly\+Spatial()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+\label{spatial_params_8c_ad416c787f51b053e50264b97cc56f425} 
+\index{spatialParams.c@{spatialParams.c}!loadSpatialParams@{loadSpatialParams}}
+\index{loadSpatialParams@{loadSpatialParams}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{loadSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} load\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 533} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Spatial\+Param()}, \textbf{ i}, \textbf{ index}, \textbf{ value}, and \textbf{ value\+Set()}.
+
+Here is the call graph for this function\+:
+% FIG 9
+\label{spatial_params_8c_a2a4b342160164bbdc0fbca380e77388e} 
+\index{spatialParams.c@{spatialParams.c}!locateParam@{locateParam}}
+\index{locateParam@{locateParam}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{locateParam()}
+{\footnotesize\ttfamily \textbf{ int} locate\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ char} $\ast$}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 334} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ name}, and \textbf{ strcmp\+Ignore\+Case()}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ read\+Spatial\+Params()}.
+
+Here is the call graph for this function\+:
+% FIG 10
+\label{spatial_params_8c_a77573adc76bc4953dfce8c93b7c48d2e} 
+\index{spatialParams.c@{spatialParams.c}!newSpatialParams@{newSpatialParams}}
+\index{newSpatialParams@{newSpatialParams}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{newSpatialParams()}
+{\footnotesize\ttfamily \textbf{ Spatial\+Params} $\ast$ new\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{max\+Parameters,  }\item[{\textbf{ int}}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 131} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ Spatial\+Params\+Struct\+::max\+Parameters}, and \textbf{ num\+Locs}.
+
+\label{spatial_params_8c_a2c2b6f75fa605cf58c8139676ff68a5d} 
+\index{spatialParams.c@{spatialParams.c}!randomChangeableSpatialParam@{randomChangeableSpatialParam}}
+\index{randomChangeableSpatialParam@{randomChangeableSpatialParam}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{randomChangeableSpatialParam()}
+{\footnotesize\ttfamily \textbf{ int} random\+Changeable\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 516} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ index}.
+
+\label{spatial_params_8c_a86ceba1ec7971125c1acfbd00b866193} 
+\index{spatialParams.c@{spatialParams.c}!readSpatialParams@{readSpatialParams}}
+\index{readSpatialParams@{readSpatialParams}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{readSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} read\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ FILE} $\ast$}]{param\+File,  }\item[{\textbf{ FILE} $\ast$}]{spatial\+Param\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 200} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ check\+All\+Read()}, \textbf{ exit()}, \textbf{ i}, \textbf{ index}, \textbf{ locate\+Param()}, \textbf{ min()}, \textbf{ num\+Locs}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ read\+Spatial\+Values()}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ value}, and \textbf{ value\+Set()}.
+
+
+
+Referenced by \textbf{ read\+Param\+Data()}.
+
+Here is the call graph for this function\+:
+% FIG 11
+\label{spatial_params_8c_a0452960bf827934236dcf72d8e30e950} 
+\index{spatialParams.c@{spatialParams.c}!readSpatialValues@{readSpatialValues}}
+\index{readSpatialValues@{readSpatialValues}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{readSpatialValues()}
+{\footnotesize\ttfamily \textbf{ void} read\+Spatial\+Values (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{spatial\+Values,  }\item[{\textbf{ FILE} $\ast$}]{spatial\+Param\+File,  }\item[{\textbf{ char}}]{p\+Name[\+PARAM\+\_\+\+MAXNAME],  }\item[{\textbf{ int}}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 97} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ i}, \textbf{ index}, \textbf{ num\+Locs}, \textbf{ PARAM\+\_\+\+MAXNAME}, and \textbf{ strcmp\+Ignore\+Case()}.
+
+
+
+Referenced by \textbf{ read\+Spatial\+Params()}.
+
+Here is the call graph for this function\+:
+% FIG 12
+\label{spatial_params_8c_a929151fd6f56f4f0f94e234a73264fee} 
+\index{spatialParams.c@{spatialParams.c}!resetSpatialParams@{resetSpatialParams}}
+\index{resetSpatialParams@{resetSpatialParams}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{resetSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} reset\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ double}}]{knob,  }\item[{\textbf{ int}}]{random\+Reset }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 556} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ i}, \textbf{ index}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ num\+Locs}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ value}, and \textbf{ value\+Set()}.
+
+Here is the call graph for this function\+:
+% FIG 13
+\label{spatial_params_8c_ab81f54de2aa764b487efc4c6164859e4} 
+\index{spatialParams.c@{spatialParams.c}!setAll@{setAll}}
+\index{setAll@{setAll}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{setAll()}
+{\footnotesize\ttfamily \textbf{ void} set\+All (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{array,  }\item[{\textbf{ int}}]{length,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ length()}, and \textbf{ value}.
+
+
+
+Referenced by \textbf{ set\+Possibly\+Spatial()}.
+
+Here is the call graph for this function\+:
+% FIG 14
+\label{spatial_params_8c_aabec0ef262c5d4cd557d6713cbe3c0f7} 
+\index{spatialParams.c@{spatialParams.c}!setAllSpatialParamBests@{setAllSpatialParamBests}}
+\index{setAllSpatialParamBests@{setAllSpatialParamBests}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{setAllSpatialParamBests()}
+{\footnotesize\ttfamily \textbf{ void} set\+All\+Spatial\+Param\+Bests (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 482} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ get\+Spatial\+Param()}, \textbf{ i}, \textbf{ index}, \textbf{ is\+Spatial()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ value}, and \textbf{ value\+Set()}.
+
+Here is the call graph for this function\+:
+% FIG 15
+\label{spatial_params_8c_a6408e0394af508aa2c48021b712a2bdd} 
+\index{spatialParams.c@{spatialParams.c}!setPossiblySpatial@{setPossiblySpatial}}
+\index{setPossiblySpatial@{setPossiblySpatial}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{setPossiblySpatial()}
+{\footnotesize\ttfamily \textbf{ void} set\+Possibly\+Spatial (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{array,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}}]{value,  }\item[{\textbf{ int}}]{is\+Spatial,  }\item[{\textbf{ int}}]{length }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 78} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ is\+Spatial()}, \textbf{ length()}, \textbf{ set\+All()}, and \textbf{ value}.
+
+
+
+Referenced by \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, and \textbf{ set\+Spatial\+Param\+Knob()}.
+
+Here is the call graph for this function\+:
+% FIG 16
+\label{spatial_params_8c_a16ba110c016f1bf915e2cb39aa044b96} 
+\index{spatialParams.c@{spatialParams.c}!setSpatialParam@{setSpatialParam}}
+\index{setSpatialParam@{setSpatialParam}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{setSpatialParam()}
+{\footnotesize\ttfamily \textbf{ void} set\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 400} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ is\+Spatial()}, \textbf{ set\+Possibly\+Spatial()}, and \textbf{ value}.
+
+
+
+Referenced by \textbf{ reset\+Spatial\+Params()}.
+
+Here is the call graph for this function\+:
+% FIG 17
+\label{spatial_params_8c_a38345b7475085c422641bef990f69dcf} 
+\index{spatialParams.c@{spatialParams.c}!setSpatialParamBest@{setSpatialParamBest}}
+\index{setSpatialParamBest@{setSpatialParamBest}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{setSpatialParamBest()}
+{\footnotesize\ttfamily \textbf{ void} set\+Spatial\+Param\+Best (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 473} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ is\+Spatial()}, \textbf{ set\+Possibly\+Spatial()}, and \textbf{ value}.
+
+
+
+Referenced by \textbf{ reset\+Spatial\+Params()}, and \textbf{ set\+All\+Spatial\+Param\+Bests()}.
+
+Here is the call graph for this function\+:
+% FIG 18
+\label{spatial_params_8c_abc6f7aacc461f4e42800a04d616ebe57} 
+\index{spatialParams.c@{spatialParams.c}!setSpatialParamKnob@{setSpatialParamKnob}}
+\index{setSpatialParamKnob@{setSpatialParamKnob}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{setSpatialParamKnob()}
+{\footnotesize\ttfamily \textbf{ void} set\+Spatial\+Param\+Knob (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 453} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ is\+Spatial()}, \textbf{ set\+Possibly\+Spatial()}, and \textbf{ value}.
+
+
+
+Referenced by \textbf{ reset\+Spatial\+Params()}.
+
+Here is the call graph for this function\+:
+% FIG 19
+\label{spatial_params_8c_a8876cf8ea221bad5c83b564e7f5fedba} 
+\index{spatialParams.c@{spatialParams.c}!valueSet@{valueSet}}
+\index{valueSet@{valueSet}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{valueSet()}
+{\footnotesize\ttfamily \textbf{ int} value\+Set (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 355} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ load\+Spatial\+Params()}, \textbf{ read\+Spatial\+Params()}, \textbf{ reset\+Spatial\+Params()}, and \textbf{ set\+All\+Spatial\+Param\+Bests()}.
+
+\label{spatial_params_8c_ae918b13eb56eefd70054c089216b2106} 
+\index{spatialParams.c@{spatialParams.c}!writeBestSpatialParams@{writeBestSpatialParams}}
+\index{writeBestSpatialParams@{writeBestSpatialParams}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{writeBestSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} write\+Best\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ char} $\ast$}]{param\+File,  }\item[{\textbf{ char} $\ast$}]{spatial\+Param\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 599} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ fclose()}, \textbf{ fprintf()}, \textbf{ get\+Num\+Params\+Read()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ get\+Spatial\+Param\+Sigma()}, \textbf{ i}, \textbf{ index}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ j}, \textbf{ num\+Locs}, and \textbf{ open\+File()}.
+
+Here is the call graph for this function\+:
+% FIG 20
+\label{spatial_params_8c_a05555564c8b3f8f28e44341be3a11b31} 
+\index{spatialParams.c@{spatialParams.c}!writeChangeableParamInfo@{writeChangeableParamInfo}}
+\index{writeChangeableParamInfo@{writeChangeableParamInfo}!spatialParams.c@{spatialParams.c}}
+\doxysubsubsection{writeChangeableParamInfo()}
+{\footnotesize\ttfamily \textbf{ void} write\+Changeable\+Param\+Info (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ FILE} $\ast$}]{outF }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 640} of file \textbf{ spatial\+Params.\+c}.
+
+
+
+References \textbf{ count}, \textbf{ fprintf()}, \textbf{ get\+Num\+Params\+Read()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ i}, \textbf{ index}, \textbf{ is\+Changeable()}, and \textbf{ is\+Spatial()}.
+
+Here is the call graph for this function\+:
+% FIG 21

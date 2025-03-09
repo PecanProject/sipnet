@@ -20,3 +20,5 @@ docs/latex
 *.bak
 *~
 *.tmp
+docs/html/
+docs/api-refrence/html/

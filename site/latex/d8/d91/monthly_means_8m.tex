@@ -1,0 +1,128 @@
+\doxysection{monthly\+Means.\+m File Reference}
+\label{monthly_means_8m}\index{monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ using} \textbf{ divisions} = =length(data)) \%(\textbf{ note} \textbf{ that} \textbf{ divisions} \textbf{ can} \textbf{ be} \textbf{ all} \textbf{ ones}, in \textbf{ which} \textbf{ case} \textbf{ all} data \textbf{ from} a \% \textbf{ given} month and year are \textbf{ lumped} \textbf{ together}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ id} \textbf{ means\+:} (\textbf{ lengths}, years, days, \textbf{ divisions} monthly\+Sums)
+\item 
+\textbf{ avoid} \textbf{ divide} \textbf{ by} \textbf{ else} \textbf{ monthly\+Mean\+Data} (\textbf{ yr}, \textbf{ mo}, \textbf{ div})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ monthly\+Mean\+Data}
+\item 
+\textbf{ otherwise}
+\item 
+\textbf{ divisions} \textbf{ allows}
+\item 
+\textbf{ divisions} \textbf{ e} \textbf{ g} \textbf{ separating} data into days and \textbf{ nights} \textbf{ lengths} gives \textbf{ relative} \textbf{ weighting} of \textbf{ each} data \textbf{ point} \textbf{ data\+Weighted} = data .$\ast$ \textbf{ lengths}
+\item 
+\textbf{ data\+Weighted\+Monthly} = monthly\+Sums(\textbf{ data\+Weighted}, years, days, \textbf{ divisions})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\label{monthly_means_8m_ad72b1167697594c8d9ccefa7840733ee} 
+\index{monthlyMeans.m@{monthlyMeans.m}!divisions@{divisions}}
+\index{divisions@{divisions}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{divisions}
+{\footnotesize\ttfamily \textbf{ using} \textbf{ divisions} =  = length(data)) \% (\textbf{ note} \textbf{ that} \textbf{ divisions} \textbf{ can} \textbf{ be} \textbf{ all} \textbf{ ones}, in \textbf{ which} \textbf{ case} \textbf{ all} data \textbf{ from} a \% \textbf{ given} month and year are \textbf{ lumped} \textbf{ together}}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ monthly\+Means.\+m}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{monthly_means_8m_a81a2117527b3566a90c173de7caaaa01} 
+\index{monthlyMeans.m@{monthlyMeans.m}!means:@{means:}}
+\index{means:@{means:}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{means:()}
+{\footnotesize\ttfamily \textbf{ id} means\+: (\begin{DoxyParamCaption}\item[{\textbf{ lengths}}]{,  }\item[{years}]{,  }\item[{days}]{,  }\item[{\textbf{ divisions}}]{monthly\+Sums }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+References \textbf{ i}, \textbf{ length()}, \textbf{ mean()}, and \textbf{ years}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{monthly_means_8m_a5c0106111bd3bcd9369f375e9d2c555e} 
+\index{monthlyMeans.m@{monthlyMeans.m}!monthlyMeanData@{monthlyMeanData}}
+\index{monthlyMeanData@{monthlyMeanData}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{monthlyMeanData()}
+{\footnotesize\ttfamily \textbf{ avoid} \textbf{ divide} \textbf{ by} \textbf{ else} monthly\+Mean\+Data (\begin{DoxyParamCaption}\item[{\textbf{ yr}}]{,  }\item[{\textbf{ mo}}]{,  }\item[{\textbf{ div}}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ monthly\+Mean\+Data}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{monthly_means_8m_a12241cc5b64bf6c6df5366ecaf0d1a31} 
+\index{monthlyMeans.m@{monthlyMeans.m}!allows@{allows}}
+\index{allows@{allows}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{allows}
+{\footnotesize\ttfamily \textbf{ divisions} allows}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ monthly\+Means.\+m}.
+
+\label{monthly_means_8m_acca456c717106e46abdbf6cd2678ce9b} 
+\index{monthlyMeans.m@{monthlyMeans.m}!dataWeighted@{dataWeighted}}
+\index{dataWeighted@{dataWeighted}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{dataWeighted}
+{\footnotesize\ttfamily \textbf{ divisions} \textbf{ e} \textbf{ g} \textbf{ separating} data into days and \textbf{ nights} \textbf{ lengths} gives \textbf{ relative} \textbf{ weighting} of \textbf{ each} data \textbf{ point} data\+Weighted = data .$\ast$ \textbf{ lengths}}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ monthly\+Means.\+m}.
+
+\label{monthly_means_8m_ae9488ba9173d639eb9eeb09231478048} 
+\index{monthlyMeans.m@{monthlyMeans.m}!dataWeightedMonthly@{dataWeightedMonthly}}
+\index{dataWeightedMonthly@{dataWeightedMonthly}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{dataWeightedMonthly}
+{\footnotesize\ttfamily data\+Weighted\+Monthly = monthly\+Sums(\textbf{ data\+Weighted}, years, days, \textbf{ divisions})}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ monthly\+Means.\+m}.
+
+\label{monthly_means_8m_a321039444785a4a71ea430744e9eddde} 
+\index{monthlyMeans.m@{monthlyMeans.m}!monthlyMeanData@{monthlyMeanData}}
+\index{monthlyMeanData@{monthlyMeanData}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{monthlyMeanData}
+{\footnotesize\ttfamily function monthly\+Mean\+Data}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ monthlyMeans(data,\ years,\ days,\ divisions,\ lengths)}
+\DoxyCodeLine{\%\ divide\ data\ up\ into\ monthly\ means}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ monthly\+Means.\+m}.
+
+
+
+Referenced by \textbf{ monthly\+Mean\+Data()}.
+
+\label{monthly_means_8m_add9358f1f2e831e2906102c98d66905f} 
+\index{monthlyMeans.m@{monthlyMeans.m}!otherwise@{otherwise}}
+\index{otherwise@{otherwise}!monthlyMeans.m@{monthlyMeans.m}}
+\doxysubsubsection{otherwise}
+{\footnotesize\ttfamily otherwise}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ monthly\+Means.\+m}.
+

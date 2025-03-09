@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>SIPNET Documentation</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "README.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> SIPNET Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/running-sipnet/">Running SIPNET</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="developer-guide/code-structure/">Code Structure</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING/">Contributing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="api-reference/">API Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="CHANGELOG/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT/">Code of Conduct</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">SIPNET Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p>Typing 'make' in this directory will make the following executables:</p>
+<p>MAIN PROGRAMS:</p>
+<p>sipnet: The program used for forward runs of the model. Its operation is
+controlled by the file 'sipnet.in'. SIPNET can run in three different
+modes: 'standard', for a standard forward run; 'senstest', for
+performing a sensitivity test on a single parameter; and 'montecarlo',
+for running the model forward using an ensemble of parameter sets. See
+'sipnet.in' for further configuration options for each of these types of
+runs.</p>
+<p>estimate: The parameter estimation program for SIPNET. Its operation is
+controlled by the file 'estimate.in'.</p>
+<p>sensTest: A program that tests the sensitivity of the model-data fit to
+values of a parameter (essentially a one-dimensional parameter
+estimation). Its operation is controlled by the file 'sensTest.in'. </p>
+<p>VARIANTS OF ABOVE:
+(WJS 7-1-2007: These have not been fully tested for compatability with
+all of the changes of the last few months. In particular, options that
+require you to specify parameter indices (e.g. sensTest) may not behave
+as expected.)</p>
+<p>sipnetGirdle: A modified version of SIPNET. Its operation is controlled
+by command-line arguments. WJS (7-1-2007): I have not changed this
+program to stay up to date with the recent changes made to SIPNET, and
+have not tested it after making these changes. Use at your own risk!</p>
+<p>sensTestFull: sensTest as modified by John Zobitz. Its operation is
+controlled by command-line arguments. WJS (7-1-2007): I have not tested
+this program with the changes I have made over the last few months (in
+particular, the new version of spatialParams), and thus do not guarantee
+that it will work as expected. Use at your own risk!</p>
+<p>STAND-ALONE UTILITIES</p>
+<p>subsetData: A utility to subset a data record temporally. This utility
+can also perform daily aggregation on the data if so desired. Its
+operation is controlled by subset.in.</p>
+<p>transpose: A little utility to transpose a text file that contains a
+rectangular matrix of data. This may be necessary to read certain files
+into Excel (e.g. the single-variable output files). Its usage is
+'transpose filename'.</p>
+<p>OTHER UTILITIES (NOT BUILT WITH MAKEFILE)</p>
+<p>bintotxt.c, txttobin.c: Utilities to convert the hist file output from a
+estimate run from a binary file to a text file, and back again.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="user-guide/running-sipnet/" class="btn btn-neutral float-right" title="Running SIPNET">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="user-guide/running-sipnet/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-03-09 11:06:55.360766+00:00
+-->

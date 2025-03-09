@@ -1,0 +1,138 @@
+\doxysection{exit\+Handler.\+c File Reference}
+\label{exit_handler_8c}\index{exitHandler.c@{exitHandler.c}}
+{\ttfamily \#include $<$setjmp.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+Include dependency graph for exit\+Handler.\+c\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ test\+\_\+assert}(\textbf{ x})~(\textbf{ exit\+\_\+result} = \textbf{ exit\+\_\+result} \&\& (\textbf{ x}))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ exit} (\textbf{ int} \textbf{ code})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ static} \textbf{ int} \textbf{ expected\+\_\+code} = 1
+\item 
+\textbf{ static} \textbf{ int} \textbf{ should\+\_\+exit} = 1
+\item 
+\textbf{ static} \textbf{ int} \textbf{ really\+\_\+exit} = 0
+\item 
+\textbf{ static} \textbf{ jmp\+\_\+buf} \textbf{ jump\+\_\+env}
+\item 
+\textbf{ static} \textbf{ int} \textbf{ exit\+\_\+result} = 1
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{exit_handler_8c_a4722f594d96a55858fde41484fff2545} 
+\index{exitHandler.c@{exitHandler.c}!test\_assert@{test\_assert}}
+\index{test\_assert@{test\_assert}!exitHandler.c@{exitHandler.c}}
+\doxysubsubsection{test\_assert}
+{\footnotesize\ttfamily \#\textbf{ define} test\+\_\+assert(\begin{DoxyParamCaption}\item[{}]{\textbf{ x} }\end{DoxyParamCaption})~(\textbf{ exit\+\_\+result} = \textbf{ exit\+\_\+result} \&\& (\textbf{ x}))}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ exit\+Handler.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{exit_handler_8c_a7b17e5913b7dff48eec9ba3976ccfd3c} 
+\index{exitHandler.c@{exitHandler.c}!exit@{exit}}
+\index{exit@{exit}!exitHandler.c@{exitHandler.c}}
+\doxysubsubsection{exit()}
+{\footnotesize\ttfamily \textbf{ void} exit (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{code }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 36} of file \textbf{ exit\+Handler.\+c}.
+
+
+
+References \textbf{ expected\+\_\+code}, \textbf{ index}, \textbf{ jump\+\_\+env}, \textbf{ really\+\_\+exit}, \textbf{ should\+\_\+exit}, and \textbf{ test\+\_\+assert}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ check\+All\+Read()}, \textbf{ check\+Locations()}, \textbf{ check\+Status()}, \textbf{ copy\+Subset()}, \textbf{ create\+Event\+Node()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ goto\+Start()}, \textbf{ initialize\+One\+Spatial\+Param()}, \textbf{ main()}, \textbf{ main()}, \textbf{ new\+Namelist\+Input\+Item()}, \textbf{ new\+Single\+Output\+Item()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ parse\+Data\+Type\+Indices()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Items()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ read\+One\+Spatial\+Param()}, \textbf{ read\+Param\+Data()}, \textbf{ read\+Spatial\+Params()}, \textbf{ read\+Spatial\+Values()}, \textbf{ run\+Model\+No\+Out()}, and \textbf{ update\+State()}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{exit_handler_8c_a8c235227c008495362d998dd31ab005e} 
+\index{exitHandler.c@{exitHandler.c}!exit\_result@{exit\_result}}
+\index{exit\_result@{exit\_result}!exitHandler.c@{exitHandler.c}}
+\doxysubsubsection{exit\_result}
+{\footnotesize\ttfamily \textbf{ int} exit\+\_\+result = 1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ exit\+Handler.\+c}.
+
+
+
+Referenced by \textbf{ run()}.
+
+\label{exit_handler_8c_a1ee3461da48a31f26c7fdaa0dd4d7fea} 
+\index{exitHandler.c@{exitHandler.c}!expected\_code@{expected\_code}}
+\index{expected\_code@{expected\_code}!exitHandler.c@{exitHandler.c}}
+\doxysubsubsection{expected\_code}
+{\footnotesize\ttfamily \textbf{ int} expected\+\_\+code = 1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ exit\+Handler.\+c}.
+
+
+
+Referenced by \textbf{ exit()}, and \textbf{ run()}.
+
+\label{exit_handler_8c_afdc9541a4f17233db79253d19b441bc7} 
+\index{exitHandler.c@{exitHandler.c}!jump\_env@{jump\_env}}
+\index{jump\_env@{jump\_env}!exitHandler.c@{exitHandler.c}}
+\doxysubsubsection{jump\_env}
+{\footnotesize\ttfamily \textbf{ jmp\+\_\+buf} jump\+\_\+env\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ exit\+Handler.\+c}.
+
+
+
+Referenced by \textbf{ exit()}, and \textbf{ run()}.
+
+\label{exit_handler_8c_aa6010ee13f09f2e726039ae122540c3d} 
+\index{exitHandler.c@{exitHandler.c}!really\_exit@{really\_exit}}
+\index{really\_exit@{really\_exit}!exitHandler.c@{exitHandler.c}}
+\doxysubsubsection{really\_exit}
+{\footnotesize\ttfamily \textbf{ int} really\+\_\+exit = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ exit\+Handler.\+c}.
+
+
+
+Referenced by \textbf{ exit()}, and \textbf{ run()}.
+
+\label{exit_handler_8c_a313667e202f1f71ae6c629d86b652a47} 
+\index{exitHandler.c@{exitHandler.c}!should\_exit@{should\_exit}}
+\index{should\_exit@{should\_exit}!exitHandler.c@{exitHandler.c}}
+\doxysubsubsection{should\_exit}
+{\footnotesize\ttfamily \textbf{ int} should\+\_\+exit = 1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ exit\+Handler.\+c}.
+
+
+
+Referenced by \textbf{ exit()}, and \textbf{ run()}.
+

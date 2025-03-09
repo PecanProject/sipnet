@@ -1,0 +1,70 @@
+\doxysection{climdn.\+m}
+\label{climdn_8m_source}\index{climdn.m@{climdn.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ tairfill=load(\textcolor{stringliteral}{'\string~/niwot/climate/tairfill'});}
+\DoxyCodeLine{00003\ vpdfill=load(\textcolor{stringliteral}{'\string~/niwot/climate/vpdfill'});}
+\DoxyCodeLine{00004\ vpdsoilfill=load(\textcolor{stringliteral}{'\string~/niwot/climate/vpdsoilfill'});}
+\DoxyCodeLine{00005\ parfill=load(\textcolor{stringliteral}{'\string~/niwot/climate/parfill'});}
+\DoxyCodeLine{00006\ tsoilfill=load(\textcolor{stringliteral}{'\string~/niwot/climate/tsoilfill'});}
+\DoxyCodeLine{00007\ vpressfill=load(\textcolor{stringliteral}{'\string~/niwot/climate/vpressfill'});\ }
+\DoxyCodeLine{00008\ wspdfill=load(\textcolor{stringliteral}{'\string~/niwot/climate/wspdfill'});}
+\DoxyCodeLine{00009\ \%\ time=load(\textcolor{stringliteral}{'\string~/niwot/climate/timeday'});}
+\DoxyCodeLine{00010\ potpar=load(\textcolor{stringliteral}{'\string~/niwot/climate/potpar'});}
+\DoxyCodeLine{00011\ nlight=load(\textcolor{stringliteral}{'\string~/niwot/climate/nlight'});}
+\DoxyCodeLine{00012\ \%\ pptday=load(\textcolor{stringliteral}{'data/pptday'});}
+\DoxyCodeLine{00013\ ppt\ =\ load(\textcolor{stringliteral}{'\string~/niwot/climate/precipfill'});\ \%\ \textcolor{keywordflow}{for}\ Niwot,\ we\ have\ half-\/hourly\ precip}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ q=potpar;}
+\DoxyCodeLine{00016\ q(find(q>0))=1;}
+\DoxyCodeLine{00017\ q=diff(q);}
+\DoxyCodeLine{00018\ q(end+1)=1;}
+\DoxyCodeLine{00019\ q=abs(q);}
+\DoxyCodeLine{00020\ w=find(q==1);}
+\DoxyCodeLine{00021\ i0=1;}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \%\ pptwanklist=[1\ fix((1:(2*ndays+1))/2+.5)];}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordflow}{for}\ i=1:(2*ndays+1)}
+\DoxyCodeLine{00026\ \ \ \ \ wdn=i0:w(i);}
+\DoxyCodeLine{00027\ \ \ \ \ intervaldn(i)=length(wdn);}
+\DoxyCodeLine{00028\ \ \ \ \ tairdn(i)=mean(tairfill(wdn));}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ vpddn(i)=mean(vpdfill(wdn));}
+\DoxyCodeLine{00030\ \ \ \ \ vpdsoildn(i)=mean(vpdsoilfill(wdn));}
+\DoxyCodeLine{00031\ \ \ \ \ vpressdn(i)=mean(vpressfill(wdn));}
+\DoxyCodeLine{00032\ \ \ \ \ wspddn(i)=mean(wspdfill(wdn));}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \%\ pardn(i)=sum(parfill(wdn)*3600./1.E6);}
+\DoxyCodeLine{00034\ \ \ \ \ pardn(i)\ =\ sum(parfill(wdn)*1800./1.E6);\ \%\ use\ 1800\ multiplier\ \textcolor{keywordflow}{for}\ half-\/hour\ time\ steps}
+\DoxyCodeLine{00035\ \ \ \ \ if\ (mod(i,2)==1)\ pardn(i)=0;end}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ tsoildn(i)=mean(tsoilfill(wdn));}
+\DoxyCodeLine{00037\ \ \ \ \ \%\ pptdn(i)=pptday(pptwanklist(i))/2.;}
+\DoxyCodeLine{00038\ \ \ \ \ pptdn(i)\ =\ sum(ppt(wdn));}
+\DoxyCodeLine{00039\ \ \ \ \ i0=w(i)+1;}
+\DoxyCodeLine{00040\ end}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ tairdn=tairdn\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00043\ \textcolor{stringliteral}{vpddn=vpddn'};}
+\DoxyCodeLine{00044\ vpdsoildn=vpdsoildn\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00045\ \textcolor{stringliteral}{pardn=pardn'};}
+\DoxyCodeLine{00046\ tsoildn=tsoildn\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00047\ \textcolor{stringliteral}{vpressdn=vpressdn'};}
+\DoxyCodeLine{00048\ wspddn=wspddn\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00049\ \textcolor{stringliteral}{pptdn=pptdn'};}
+\DoxyCodeLine{00050\ intervaldn=intervaldn\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00051\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00052\ \textcolor{stringliteral}{save\ \string~/niwot/climate/tairdn\ tairdn\ -\/ascii;}}
+\DoxyCodeLine{00053\ \textcolor{stringliteral}{save\ \string~/niwot/climate/vpddn\ vpddn\ -\/ascii;}}
+\DoxyCodeLine{00054\ \textcolor{stringliteral}{save\ \string~/niwot/climate/vpdsoildn\ vpdsoildn\ -\/ascii;}}
+\DoxyCodeLine{00055\ \textcolor{stringliteral}{save\ \string~/niwot/climate/pardn\ pardn\ -\/ascii;}}
+\DoxyCodeLine{00056\ \textcolor{stringliteral}{save\ \string~/niwot/climate/tsoildn\ tsoildn\ -\/ascii;}}
+\DoxyCodeLine{00057\ \textcolor{stringliteral}{save\ \string~/niwot/climate/vpressdn\ vpressdn\ -\/ascii;}}
+\DoxyCodeLine{00058\ \textcolor{stringliteral}{save\ \string~/niwot/climate/wspddn\ wspddn\ -\/ascii;}}
+\DoxyCodeLine{00059\ \textcolor{stringliteral}{save\ \string~/niwot/climate/pptdn\ pptdn\ -\/ascii;}}
+\DoxyCodeLine{00060\ \textcolor{stringliteral}{save\ \string~/niwot/climate/intervaldn\ intervaldn\ -\/ascii}}
+\DoxyCodeLine{00061\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00062\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00063\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00064\ \textcolor{stringliteral}{}}
+
+\end{DoxyCode}

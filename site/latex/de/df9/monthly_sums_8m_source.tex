@@ -1,0 +1,46 @@
+\doxysection{monthly\+Sums.\+m}
+\label{monthly_sums_8m_source}\index{monthlySums.m@{monthlySums.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ monthlyData\ =\ monthlySums(data,\ years,\ days,\ divisions)}
+\DoxyCodeLine{00002\ \ \ \ \ \%\ divide\ data\ up\ into\ monthly\ sums}
+\DoxyCodeLine{00003\ \ \ \ \ \%\ monthlyData[i,j,k]\ gives\ sum\ of\ data\ in\ year\ (i+firstYear-\/1),\ month\ j,}
+\DoxyCodeLine{00004\ \ \ \ \ \%\ division\ k}
+\DoxyCodeLine{00005\ \ \ \ \ \%\ \ where\ firstYear\ is\ first\ year\ in\ years\ vector}
+\DoxyCodeLine{00006\ \ \ \ \ \%\ PRE:\ years\ and\ days\ are\ vectors\ giving\ year\ and\ julian\ day\ of}
+\DoxyCodeLine{00007\ \ \ \ \ \%\ corresponding\ position\ in\ data\ vector}
+\DoxyCodeLine{00008\ \ \ \ \ \%\ \ divisions\ is\ a\ vector\ giving\ divisions\ (1..n)\ of\ data\ into\ different}
+\DoxyCodeLine{00009\ \ \ \ \ \%\ \ categories\ (length(divisions)\ ==\ length(data))}
+\DoxyCodeLine{00010\ \ \ \ \ \%\ \ (note\ that\ divisions\ can\ be\ all\ ones,\ in\ which\ \textcolor{keywordflow}{case}\ all\ data\ from\ a}
+\DoxyCodeLine{00011\ \ \ \ \ \%\ \ given\ month\ and\ year\ are\ lumped\ together;\ otherwise,\ divisions\ allows,\ e.g.\ separating\ data\ into\ days\ and\ nights)}
+\DoxyCodeLine{00012\ \ \ \ \ }
+\DoxyCodeLine{00013\ \ \ \ \ firstYear\ =\ years(1);}
+\DoxyCodeLine{00014\ \ \ \ \ numDivisions\ =\ max(divisions);}
+\DoxyCodeLine{00015\ \ \ \ \ }
+\DoxyCodeLine{00016\ \ \ \ \ thisYear\ =\ firstYear;}
+\DoxyCodeLine{00017\ \ \ \ \ thisMonth\ =\ monthFromDay(days(1),\ firstYear);}
+\DoxyCodeLine{00018\ \ \ \ \ }
+\DoxyCodeLine{00019\ \ \ \ \ ptsLastMonth\ =\ \textcolor{keyword}{true};\ \%\ did\ we\ find\ pts\ last\ month\ (init.\ \textcolor{keyword}{true}\ so\ start\ loop)}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordflow}{while}\ (ptsLastMonth)}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \%\ first\ and\ last\ days\ of\ \textcolor{keyword}{this}\ month:}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ [first,last]\ =\ daysFromMonth(thisMonth,\ thisYear);\ \ \ \ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ ptsLastMonth\ =\ \textcolor{keyword}{false};\ \%\ haven\textcolor{stringliteral}{'t\ found\ points\ yet\ this\ month}}
+\DoxyCodeLine{00024\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ thisDivision\ =\ 1:numDivisions}}
+\DoxyCodeLine{00025\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \%\ points\ corresponding\ to\ this\ year,\ month\ and\ division:}}
+\DoxyCodeLine{00026\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ pts\ =\ find(years\ ==\ thisYear\ \&\ days\ >=\ first\ \&\ days\ <=\ last\ \&\ divisions\ ==\ thisDivision);}}
+\DoxyCodeLine{00027\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (length(pts)\ >\ 0)}}
+\DoxyCodeLine{00028\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ monthlyData(thisYear-\/firstYear+1,\ thisMonth,\ thisDivision)\ =\ sum(data(pts));}}
+\DoxyCodeLine{00029\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ptsLastMonth\ =\ true;\ \%\ we'}ve\ found\ points\ \textcolor{keyword}{this}\ month}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ end\ \%\textcolor{keywordflow}{if}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \%\ fprintf(\textcolor{stringliteral}{'Year\ \%d,\ month\ \%d,\ division\ \%d:\ found\ \%d\ points.\(\backslash\)n'},\ thisYear,\ thisMonth,\ thisDivision,\ length(pts));}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ end\ \%\textcolor{keywordflow}{for}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ thisMonth\ =\ thisMonth\ +\ 1;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (thisMonth\ >\ 12)}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ thisMonth\ =\ 1;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ thisYear\ =\ thisYear\ +\ 1;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ end}
+\DoxyCodeLine{00039\ \ \ \ \ end\ \%\textcolor{keywordflow}{while}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ }
+
+\end{DoxyCode}

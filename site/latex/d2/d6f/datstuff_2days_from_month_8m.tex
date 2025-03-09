@@ -1,0 +1,96 @@
+\doxysection{datstuff/days\+From\+Month.m File Reference}
+\label{datstuff_2days_from_month_8m}\index{daysFromMonth.m@{daysFromMonth.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ if} (\textbf{ is\+Leap\+Year}(year)) \textbf{ months}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ function} [first, \textbf{ last}]
+\item 
+\textbf{ leap\+Months} = [31,29,31,30,31,30,31,31,30,31,30,31]
+\item 
+\textbf{ else} \textbf{ months} = \textbf{ nonleap\+Months}
+\item 
+\textbf{ end} \textbf{ first} = \textbf{ sum}(\textbf{ months}(1\+:(month-\/1))) + 1
+\item 
+\textbf{ last} = first + \textbf{ months}(month) -\/ 1
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{datstuff_2days_from_month_8m_ae3421a65a37a974fe4de416a812e266f} 
+\index{daysFromMonth.m@{daysFromMonth.m}!if@{if}}
+\index{if@{if}!daysFromMonth.m@{daysFromMonth.m}}
+\doxysubsubsection{if()}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{\textbf{ is\+Leap\+Year}(year)}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{datstuff_2days_from_month_8m_a6c266e9606eae29a84d8d6623c9f5583} 
+\index{daysFromMonth.m@{daysFromMonth.m}!first@{first}}
+\index{first@{first}!daysFromMonth.m@{daysFromMonth.m}}
+\doxysubsubsection{first}
+{\footnotesize\ttfamily \textbf{ end} first = \textbf{ sum}(\textbf{ months}(1\+:(month-\/1))) + 1}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ datstuff/days\+From\+Month.\+m}.
+
+
+
+Referenced by \textbf{ fprintf()}, \textbf{ frewind()}, \textbf{ ones()}, \textbf{ split()}, \textbf{ while()}, and \textbf{ years()}.
+
+\label{datstuff_2days_from_month_8m_ac342ba72eb34e99400c7a460009960f7} 
+\index{daysFromMonth.m@{daysFromMonth.m}!function@{function}}
+\index{function@{function}!daysFromMonth.m@{daysFromMonth.m}}
+\doxysubsubsection{function}
+{\footnotesize\ttfamily function[first, \textbf{ last}]}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ daysFromMonth(month,\ year)}
+\DoxyCodeLine{\ \ \ \ \%\ \textcolor{keywordflow}{for}\ a\ given\ month\ (1..12)\ and\ year}
+\DoxyCodeLine{\ \ \ \ \%\ return\ first\ and\ last\ days\ (julian\ days)\ of\ that\ year}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \%\ number\ of\ days\ per\ month\ in\ non-\/leap\ years\ and\ leap\ years:}
+\DoxyCodeLine{\ \ \ \ nonleapMonths\ =\ [31,28,31,30,31,30,31,31,30,31,30,31]}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ datstuff/days\+From\+Month.\+m}.
+
+\label{datstuff_2days_from_month_8m_a13ff37efc743b2f76b3af2c5c09070fb} 
+\index{daysFromMonth.m@{daysFromMonth.m}!last@{last}}
+\index{last@{last}!daysFromMonth.m@{daysFromMonth.m}}
+\doxysubsubsection{last}
+{\footnotesize\ttfamily last = first + \textbf{ months}(month) -\/ 1}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ datstuff/days\+From\+Month.\+m}.
+
+\label{datstuff_2days_from_month_8m_a7b86686151f893e387424474f897bd3d} 
+\index{daysFromMonth.m@{daysFromMonth.m}!leapMonths@{leapMonths}}
+\index{leapMonths@{leapMonths}!daysFromMonth.m@{daysFromMonth.m}}
+\doxysubsubsection{leapMonths}
+{\footnotesize\ttfamily leap\+Months = [31,29,31,30,31,30,31,31,30,31,30,31]}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ datstuff/days\+From\+Month.\+m}.
+
+\label{datstuff_2days_from_month_8m_aa45149e43e92726a5e78dd220d054b6b} 
+\index{daysFromMonth.m@{daysFromMonth.m}!months@{months}}
+\index{months@{months}!daysFromMonth.m@{daysFromMonth.m}}
+\doxysubsubsection{months}
+{\footnotesize\ttfamily \textbf{ else} months = \textbf{ nonleap\+Months}}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ datstuff/days\+From\+Month.\+m}.
+

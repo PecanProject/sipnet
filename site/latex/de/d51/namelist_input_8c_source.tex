@@ -1,0 +1,278 @@
+\doxysection{namelist\+Input.\+c}
+\label{namelist_input_8c_source}\index{namelistInput.c@{namelistInput.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ namelistInput:\ structure\ and\ functions\ to\ provide\ some\ of\ the\ functionality}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ \ provided\ by\ FORTRAN's\ NAMELISTs}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ \ That\ is,\ read\ a\ bunch\ of\ input\ items\ from\ a\ file,\ where\ each\ item\ is\ given\ in\ one\ of\ the\ forms:}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ name\ =\ value}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ \ name:\ value}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ \ name\ value}}
+\DoxyCodeLine{00008\ \textcolor{comment}{}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ \ Creation\ date:\ 5/18/07}}
+\DoxyCodeLine{00011\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ <stdarg.h>}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}namelistInput.h"{}}\ \ \textcolor{comment}{//\ includes\ definition\ of\ structures}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ Private/helper\ functions:\ not\ defined\ in\ namelistInput.h}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ Allocate\ space\ for\ a\ new\ namelistInputItem\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ Name,\ type,\ ptr\ and\ maxlen\ will\ have\ the\ given\ values;\ nextItem\ will\ be\ null}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ Note\ that\ if\ type\ is\ anything\ other\ than\ STRING\_TYPE,\ maxlen\ is\ unused\ (but\ still\ must\ be\ supplied)}}
+\DoxyCodeLine{00026\ NamelistInputItem\ *newNamelistInputItem(\textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{void}\ *ptr,\ \textcolor{keywordtype}{int}\ maxlen)\ \ \{}
+\DoxyCodeLine{00027\ \ \ NamelistInputItem\ *namelistInputItem;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordflow}{if}\ (strlen(name)\ >=\ NAMELIST\_INPUT\_MAXNAME)\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ newNamelistInputItem:\ parameter\ name\ '\%s'\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},\ name,\ NAMELIST\_INPUT\_MAXNAME);}
+\DoxyCodeLine{00031\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00032\ \ \ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ namelistInputItem\ =\ (NamelistInputItem\ *)malloc(\textcolor{keyword}{sizeof}(NamelistInputItem));}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ strcpy(namelistInputItem-\/>name,\ name);}
+\DoxyCodeLine{00037\ \ \ namelistInputItem-\/>type\ =\ type;}
+\DoxyCodeLine{00038\ \ \ namelistInputItem-\/>ptr\ =\ ptr;}
+\DoxyCodeLine{00039\ \ \ namelistInputItem-\/>maxlen\ =\ maxlen;}
+\DoxyCodeLine{00040\ \ \ namelistInputItem-\/>wasRead\ =\ 0;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ namelistInputItem-\/>nextItem\ =\ NULL;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordflow}{return}\ namelistInputItem;}
+\DoxyCodeLine{00045\ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{//\ find\ input\ item\ with\ given\ name\ in\ namelistInputs\ list}}
+\DoxyCodeLine{00049\ \textcolor{comment}{//\ return\ a\ pointer\ to\ this\ input\ item}}
+\DoxyCodeLine{00050\ \textcolor{comment}{//\ if\ not\ found,\ return\ NULL}}
+\DoxyCodeLine{00051\ NamelistInputItem\ *locateNamelistInputItem(NamelistInputs\ *namelistInputs,\ \textcolor{keywordtype}{char}\ *name)\ \ \{\ }
+\DoxyCodeLine{00052\ \ \ NamelistInputItem\ *namelistInputItem;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ namelistInputItem\ =\ namelistInputs-\/>head;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \textcolor{keywordflow}{while}((namelistInputItem\ !=\ NULL)\ \&\&\ (strcmpIgnoreCase(namelistInputItem-\/>name,\ name)\ !=\ 0))\ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ namelistInputItem\ =\ namelistInputItem-\/>nextItem;}
+\DoxyCodeLine{00058\ \ \ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \textcolor{keywordflow}{return}\ namelistInputItem;}
+\DoxyCodeLine{00061\ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*************************************************/}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{//\ Public\ functions:\ defined\ in\ namelistInput.h}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{//\ allocate\ space\ for\ a\ new\ namelistInputs\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00070\ NamelistInputs\ *newNamelistInputs()\ \ \{}
+\DoxyCodeLine{00071\ \ \ NamelistInputs\ *namelistInputs;}
+\DoxyCodeLine{00072\ \ \ }
+\DoxyCodeLine{00073\ \ \ namelistInputs\ =\ (NamelistInputs\ *)malloc(\textcolor{keyword}{sizeof}(NamelistInputs));}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ namelistInputs-\/>head\ =\ newNamelistInputItem(\textcolor{stringliteral}{"{}"{}},\ -\/1,\ NULL,\ 0);\ \ \textcolor{comment}{//\ we'll\ keep\ a\ dummy\ item\ at\ the\ head\ of\ the\ list}}
+\DoxyCodeLine{00076\ \ \ namelistInputs-\/>tail\ =\ namelistInputs-\/>head;}
+\DoxyCodeLine{00077\ \ \ namelistInputs-\/>count\ =\ 0;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \textcolor{keywordflow}{return}\ namelistInputs;}
+\DoxyCodeLine{00080\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{/*\ Add\ a\ new\ namelistInputItem\ to\ the\ end\ of\ the\ list\ given\ by\ namelistInputs}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ \ \ strlen(name)\ must\ be\ <\ NAMELIST\_INPUT\_MAXNAME}}
+\DoxyCodeLine{00085\ \textcolor{comment}{\ \ \ type\ must\ be\ one\ of\ the\ types\ given\ by\ INPUT\_TYPES}}
+\DoxyCodeLine{00086\ \textcolor{comment}{\ \ \ ptr\ must\ be\ a\ pointer\ to\ the\ variable\ holding\ this\ parameter\ value}}
+\DoxyCodeLine{00087\ \textcolor{comment}{\ \ \ maxlen\ is\ ignored\ if\ type\ is\ anything\ other\ than\ STRING\_TYPE,\ but\ it\ still\ must\ be\ supplied}}
+\DoxyCodeLine{00088\ \textcolor{comment}{\ \ \ -\/\ it\ specifies\ the\ maximum\ string\ length\ of\ the\ variable\ pointed\ to\ by\ ptr\ (including\ the\ trailing\ '\(\backslash\)0')}}
+\DoxyCodeLine{00089\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{void}\ addNamelistInputItem(NamelistInputs\ *namelistInputs,\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{int}\ type,\ \textcolor{keywordtype}{void}\ *ptr,\ \textcolor{keywordtype}{int}\ maxlen)\ \ \{}
+\DoxyCodeLine{00091\ \ \ NamelistInputItem\ *namelistInputItem;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ namelistInputItem\ =\ newNamelistInputItem(name,\ type,\ ptr,\ maxlen);}
+\DoxyCodeLine{00094\ \ \ namelistInputs-\/>tail-\/>nextItem\ =\ namelistInputItem;}
+\DoxyCodeLine{00095\ \ \ namelistInputs-\/>tail\ =\ namelistInputItem;}
+\DoxyCodeLine{00096\ \ \ namelistInputs-\/>count++;}
+\DoxyCodeLine{00097\ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{comment}{/*\ Read\ all\ namelist\ inputs\ from\ file\ given\ by\ fileName,\ put\ them\ in\ the\ locations\ pointed\ to\ by\ each\ inputs'\ ptr\ variable}}
+\DoxyCodeLine{00101\ \textcolor{comment}{}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ Structure\ of\ input\ file:\ Each\ line\ contains:}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ \ \ \ \ name\ value}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ where\ the\ following\ are\ valid\ separators:\ space,\ tab,\ =,\ :}}
+\DoxyCodeLine{00105\ \textcolor{comment}{}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ \ \ A\ value\ of\ 'none'\ for\ a\ string\ type\ is\ translated\ into\ the\ empty\ string}}
+\DoxyCodeLine{00107\ \textcolor{comment}{}}
+\DoxyCodeLine{00108\ \textcolor{comment}{\ \ \ The\ order\ of\ input\ items\ in\ the\ input\ file\ does\ not\ matter}}
+\DoxyCodeLine{00109\ \textcolor{comment}{}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ \ \ !\ is\ a\ comment\ character:\ anything\ after\ a\ !\ on\ a\ line\ is\ ignored}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ readNamelistInputs(NamelistInputs\ *namelistInputs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fileName)\ \ \{}
+\DoxyCodeLine{00113\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *SEPARATORS\ =\ \textcolor{stringliteral}{"{}\ \(\backslash\)t=:"{}};\ \ \textcolor{comment}{//\ characters\ that\ can\ separate\ names\ from\ values\ in\ input\ file}}
+\DoxyCodeLine{00114\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *COMMENT\_CHARS\ =\ \textcolor{stringliteral}{"{}!"{}};\ \ \textcolor{comment}{//\ comment\ characters\ (ignore\ everything\ after\ this\ on\ a\ line)}}
+\DoxyCodeLine{00115\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *EMPTY\_STRING\ =\ \textcolor{stringliteral}{"{}none"{}};\ \ \textcolor{comment}{//\ if\ this\ is\ the\ value\ of\ a\ string\ type,\ we\ take\ it\ to\ mean\ the\ empty\ string}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ FILE\ *infile;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \textcolor{keywordtype}{char}\ line[1024];}
+\DoxyCodeLine{00120\ \ \ \textcolor{keywordtype}{char}\ allSeparators[16];}
+\DoxyCodeLine{00121\ \ \ \textcolor{keywordtype}{char}\ *inputName;\ \ \textcolor{comment}{//\ name\ of\ input\ item\ just\ read\ in}}
+\DoxyCodeLine{00122\ \ \ \textcolor{keywordtype}{char}\ *inputValue;\ \ \textcolor{comment}{//\ value\ of\ input\ item\ just\ read\ in,\ as\ a\ string}}
+\DoxyCodeLine{00123\ \ \ \textcolor{keywordtype}{char}\ *errc\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00124\ \ \ \textcolor{keywordtype}{int}\ isComment;}
+\DoxyCodeLine{00125\ \ \ NamelistInputItem\ *namelistInputItem;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ }
+\DoxyCodeLine{00128\ \ \ strcpy(allSeparators,\ SEPARATORS);}
+\DoxyCodeLine{00129\ \ \ strcat(allSeparators,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)r"{}});}
+\DoxyCodeLine{00130\ \ \ infile\ =\ openFile(fileName,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \textcolor{keywordflow}{while}(fgets(line,\ \textcolor{keyword}{sizeof}(line),\ infile)\ !=\ NULL)\ \ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{comment}{//\ remove\ trailing\ comments:}}
+\DoxyCodeLine{00134\ \ \ \ \ isComment\ =\ stripComment(line,\ COMMENT\_CHARS);}
+\DoxyCodeLine{00135\ \ \ \ \ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isComment)\ \ \{\ \ \textcolor{comment}{//\ if\ this\ isn't\ just\ a\ comment\ line\ or\ blank\ line\ \ \ \ }}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \textcolor{comment}{//\ tokenize\ line:}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ inputName\ =\ strtok(line,\ SEPARATORS);\ \ \textcolor{comment}{//\ make\ inputName\ point\ to\ first\ token}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ inputValue\ =\ strtok(NULL,\ allSeparators);\ \ \textcolor{comment}{//\ make\ inputValue\ point\ to\ next\ token\ (e.g.\ after\ the\ '=')}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \textcolor{comment}{//\ printf("{}\%s:\ <\%s>\(\backslash\)n"{},\ inputName,\ inputValue);}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ namelistInputItem\ =\ locateNamelistInputItem(namelistInputs,\ inputName);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (namelistInputItem\ ==\ NULL)\ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readNamelistInputs:\ Read\ unexpected\ input\ item:\ \%s\(\backslash\)n"{}},\ inputName);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \textcolor{comment}{//\ otherwise,\ we\ have\ found\ the\ item\ with\ this\ name}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (inputValue\ ==\ NULL)\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readNamelistInputs:\ No\ value\ given\ for\ input\ item\ \%s\(\backslash\)n"{}},\ inputName);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (namelistInputItem-\/>type)\ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ INT\_TYPE:}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ *(\textcolor{keywordtype}{int}\ *)(namelistInputItem-\/>ptr)\ =\ strtol(inputValue,\ \&errc,\ 0);\ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(errc)\ >\ 0)\ \ \{\ \ \textcolor{comment}{//\ invalid\ character(s)\ in\ input\ string}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readNamelistInputs:\ Invalid\ value\ for\ \%s:\ \%s\(\backslash\)n"{}},\ inputName,\ inputValue);}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ printf("{}\%d\ <\%s>\(\backslash\)n"{},\ (int)strlen(errc),\ errc);}}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ LONG\_TYPE:}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ *(\textcolor{keywordtype}{long}\ *)(namelistInputItem-\/>ptr)\ =\ strtol(inputValue,\ \&errc,\ 0);}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(errc)\ >\ 0)\ \ \{\ \ \textcolor{comment}{//\ invalid\ character(s)\ in\ input\ string}}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readNamelistInputs:\ Invalid\ value\ for\ \%s:\ \%s\(\backslash\)n"{}},\ inputName,\ inputValue);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ printf("{}\%d\ <\%s>\(\backslash\)n"{},\ (int)strlen(errc),\ errc);}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ DOUBLE\_TYPE:}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ *(\textcolor{keywordtype}{double}\ *)(namelistInputItem-\/>ptr)\ =\ strtod(inputValue,\ \&errc);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(errc)\ >\ 0)\ \ \{\ \ \textcolor{comment}{//\ invalid\ character(s)\ in\ input\ string}}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readNamelistInputs:\ Invalid\ value\ for\ \%s:\ \%s\(\backslash\)n"{}},\ inputName,\ inputValue);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ printf("{}\%d\ <\%s>\(\backslash\)n"{},\ (int)strlen(errc),\ errc);}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ STRING\_TYPE:}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmp(inputValue,\ EMPTY\_STRING)\ ==\ 0)\ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ the\ value\ is\ specified\ as\ the\ value\ which\ signifies\ the\ empty\ string}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ strcpy((\textcolor{keywordtype}{char}\ *)(namelistInputItem-\/>ptr),\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(inputValue)\ >=\ namelistInputItem-\/>maxlen)\ \ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readNamelistInputs:\ value\ '\%s'\ exceeds\ maximum\ length\ for\ \%s\ (\%d)\(\backslash\)n"{}},\ inputValue,\ inputName,\ namelistInputItem-\/>maxlen);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s,\ or\ change\ the\ maximum\ length,\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ strcpy((\textcolor{keywordtype}{char}\ *)(namelistInputItem-\/>ptr),\ inputValue);}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readNamelistInputs:\ Unrecognized\ type\ for\ \%s:\ \%d\(\backslash\)n"{}},\ inputName,\ namelistInputItem-\/>type);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ \ \ namelistInputItem-\/>wasRead\ =\ 1;}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ (!isComment)}}
+\DoxyCodeLine{00207\ \ \ \}\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ fclose(infile);}
+\DoxyCodeLine{00210\ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{comment}{/*\ If\ the\ input\ item\ with\ the\ given\ name\ wasn't\ read,}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ \ \ then\ kill\ the\ program\ and\ print\ an\ error\ message}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00216\ \textcolor{keywordtype}{void}\ dieIfNotRead(NamelistInputs\ *namelistInputs,\ \textcolor{keywordtype}{char}\ *name)\ \ \{}
+\DoxyCodeLine{00217\ \ \ NamelistInputItem\ *namelistInputItem;}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ namelistInputItem\ =\ locateNamelistInputItem(namelistInputs,\ name);}
+\DoxyCodeLine{00220\ \ \ \textcolor{keywordflow}{if}\ (namelistInputItem\ ==\ NULL)\ \ \{}
+\DoxyCodeLine{00221\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ dieIfNotRead:\ Can't\ find\ input\ item\ '\%s'\(\backslash\)n"{}},\ name);}
+\DoxyCodeLine{00222\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00223\ \ \ \}}
+\DoxyCodeLine{00224\ \ \ }
+\DoxyCodeLine{00225\ \ \ \textcolor{keywordflow}{if}\ (!(namelistInputItem-\/>wasRead))\ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ '\%s'\ must\ be\ present\ in\ input\ file\(\backslash\)n"{}},\ name);}
+\DoxyCodeLine{00227\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00228\ \ \ \}}
+\DoxyCodeLine{00229\ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \textcolor{comment}{/*\ For\ string\ types\ only:}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ \ \ Check\ to\ make\ sure\ the\ given\ item:}}
+\DoxyCodeLine{00234\ \textcolor{comment}{\ \ \ (1)\ was\ read\ from\ the\ input\ file}}
+\DoxyCodeLine{00235\ \textcolor{comment}{\ \ \ (2)\ was\ set\ to\ a\ non-\/empty\ value\ (i.e.\ wasn't\ set\ to\ 'none')}}
+\DoxyCodeLine{00236\ \textcolor{comment}{\ \ \ Kill\ the\ program\ and\ print\ an\ error\ message\ if\ either\ of\ these\ conditions\ are\ not\ met}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ */}\ }
+\DoxyCodeLine{00238\ \textcolor{keywordtype}{void}\ dieIfNotSet(NamelistInputs\ *namelistInputs,\ \textcolor{keywordtype}{char}\ *name)\ \ \{}
+\DoxyCodeLine{00239\ \ \ NamelistInputItem\ *namelistInputItem;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ namelistInputItem\ =\ locateNamelistInputItem(namelistInputs,\ name);}
+\DoxyCodeLine{00242\ \ \ \textcolor{keywordflow}{if}\ (namelistInputItem\ ==\ NULL)\ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ dieIfNotSet:\ Can't\ find\ input\ item\ '\%s'\(\backslash\)n"{}},\ name);}
+\DoxyCodeLine{00244\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00245\ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \textcolor{keywordflow}{if}\ (namelistInputItem-\/>type\ !=\ STRING\_TYPE)\ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ dieIfNotSet:\ \%s\ not\ of\ string\_type\(\backslash\)n"{}},\ name);}
+\DoxyCodeLine{00248\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ Use\ dieIfNotRead\ instead\(\backslash\)n"{}});}
+\DoxyCodeLine{00249\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00250\ \ \ \}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ dieIfNotRead(namelistInputs,\ name);}
+\DoxyCodeLine{00253\ \ \ \textcolor{keywordflow}{if}\ (strcmp((\textcolor{keywordtype}{char}\ *)namelistInputItem-\/>ptr,\ \textcolor{stringliteral}{"{}"{}})\ ==\ 0)\ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ '\%s'\ must\ not\ be\ set\ to\ 'none'\ or\ the\ empty\ string\(\backslash\)n"{}},\ name);}
+\DoxyCodeLine{00255\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00256\ \ \ \}}
+\DoxyCodeLine{00257\ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \textcolor{comment}{//\ free\ up\ space\ used\ by\ namelistInputs}}
+\DoxyCodeLine{00261\ \textcolor{keywordtype}{void}\ deleteNamelistInputs(NamelistInputs\ *namelistInputs)\ \ \{}
+\DoxyCodeLine{00262\ \ \ NamelistInputItem\ *curr,\ *temp;}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ curr\ =\ namelistInputs-\/>head;}
+\DoxyCodeLine{00265\ \ \ \textcolor{keywordflow}{while}(curr\ !=\ NULL)\ \ \{}
+\DoxyCodeLine{00266\ \ \ \ \ temp\ =\ curr;}
+\DoxyCodeLine{00267\ \ \ \ \ curr\ =\ curr-\/>nextItem;}
+\DoxyCodeLine{00268\ \ \ \ \ free(temp);}
+\DoxyCodeLine{00269\ \ \ \}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ free(namelistInputs);}
+\DoxyCodeLine{00272\ \}}
+
+\end{DoxyCode}

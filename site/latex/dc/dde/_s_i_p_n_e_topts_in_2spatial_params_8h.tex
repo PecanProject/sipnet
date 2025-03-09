@@ -1,0 +1,315 @@
+\doxysection{SIPNETopts\+In/spatial\+Params.h File Reference}
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h}\index{spatialParams.h@{spatialParams.h}}
+This graph shows which files directly or indirectly include this file\+:
+% FIG 0
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ One\+Spatial\+Param\+Struct}
+\item 
+struct \textbf{ Spatial\+Params\+Struct}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ typedef} \textbf{ struct} \textbf{ One\+Spatial\+Param\+Struct} \textbf{ One\+Spatial\+Param}
+\item 
+\textbf{ typedef} \textbf{ struct} \textbf{ Spatial\+Params\+Struct} \textbf{ Spatial\+Params}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Spatial\+Params} $\ast$ \textbf{ new\+Spatial\+Params} (\textbf{ int} num\+Parameters, \textbf{ int} \textbf{ num\+Locs})
+\item 
+\textbf{ int} \textbf{ all\+Params\+Read} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\item 
+\textbf{ void} \textbf{ read\+One\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ FILE} $\ast$\textbf{ param\+File}, \textbf{ FILE} $\ast$\textbf{ spatial\+Param\+File}, \textbf{ char} $\ast$\textbf{ name}, \textbf{ double} $\ast$external\+Loc)
+\item 
+\textbf{ int} \textbf{ is\+Spatial} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ int} \textbf{ is\+Changeable} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ int} \textbf{ check\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ set\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Guess} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Min} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Max} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Sigma} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i)
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Knob} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ set\+Spatial\+Param\+Knob} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ double} \textbf{ get\+Spatial\+Param\+Best} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ set\+Spatial\+Param\+Best} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} i, \textbf{ int} loc, \textbf{ double} \textbf{ value})
+\item 
+\textbf{ void} \textbf{ set\+All\+Spatial\+Param\+Bests} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ int} \textbf{ random\+Changeable\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\item 
+\textbf{ void} \textbf{ load\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ reset\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ double} knob, \textbf{ int} \textbf{ random\+Reset})
+\item 
+\textbf{ void} \textbf{ write\+Best\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ char} $\ast$\textbf{ param\+File}, \textbf{ char} $\ast$\textbf{ spatial\+Param\+File})
+\item 
+\textbf{ void} \textbf{ write\+Changeable\+Param\+Info} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc, \textbf{ FILE} $\ast$\textbf{ outF})
+\item 
+\textbf{ void} \textbf{ delete\+Spatial\+Params} (\textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a5085032835d78757574cca9e0c9dc87c} 
+\index{spatialParams.h@{spatialParams.h}!OneSpatialParam@{OneSpatialParam}}
+\index{OneSpatialParam@{OneSpatialParam}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{OneSpatialParam}
+{\footnotesize\ttfamily \textbf{ typedef} \textbf{ struct} \textbf{ One\+Spatial\+Param\+Struct} \textbf{ One\+Spatial\+Param}}
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_ad286ccbd7aac0f8e2f974ee6a60c60aa} 
+\index{spatialParams.h@{spatialParams.h}!SpatialParams@{SpatialParams}}
+\index{SpatialParams@{SpatialParams}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{SpatialParams}
+{\footnotesize\ttfamily \textbf{ typedef} \textbf{ struct} \textbf{ Spatial\+Params\+Struct} \textbf{ Spatial\+Params}}
+
+
+
+\doxysubsection{Function Documentation}
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a418ef292091eb3db947671cd7306aea4} 
+\index{spatialParams.h@{spatialParams.h}!allParamsRead@{allParamsRead}}
+\index{allParamsRead@{allParamsRead}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{allParamsRead()}
+{\footnotesize\ttfamily \textbf{ int} all\+Params\+Read (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 96} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_af80c34506d70fea40b26a5f33acec36b} 
+\index{spatialParams.h@{spatialParams.h}!checkSpatialParam@{checkSpatialParam}}
+\index{checkSpatialParam@{checkSpatialParam}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{checkSpatialParam()}
+{\footnotesize\ttfamily \textbf{ int} check\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 250} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a404edabdefb1ee943ba2b58f9c0dac37} 
+\index{spatialParams.h@{spatialParams.h}!deleteSpatialParams@{deleteSpatialParams}}
+\index{deleteSpatialParams@{deleteSpatialParams}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{deleteSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} delete\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 534} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_ac941eee725b3734909015835a7cad499} 
+\index{spatialParams.h@{spatialParams.h}!getSpatialParam@{getSpatialParam}}
+\index{getSpatialParam@{getSpatialParam}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{getSpatialParam()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 259} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a94a43233b3bd74f11ffb40337f9f381a} 
+\index{spatialParams.h@{spatialParams.h}!getSpatialParamBest@{getSpatialParamBest}}
+\index{getSpatialParamBest@{getSpatialParamBest}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{getSpatialParamBest()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Best (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 332} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a3fd3e6da8773a40d79b9ed9d1249e787} 
+\index{spatialParams.h@{spatialParams.h}!getSpatialParamGuess@{getSpatialParamGuess}}
+\index{getSpatialParamGuess@{getSpatialParamGuess}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{getSpatialParamGuess()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Guess (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 279} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_ad7590f3126ce3f3e99c877e70f2ddbba} 
+\index{spatialParams.h@{spatialParams.h}!getSpatialParamKnob@{getSpatialParamKnob}}
+\index{getSpatialParamKnob@{getSpatialParamKnob}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{getSpatialParamKnob()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Knob (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 312} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a696f50b02206ae689549f1192f617cee} 
+\index{spatialParams.h@{spatialParams.h}!getSpatialParamMax@{getSpatialParamMax}}
+\index{getSpatialParamMax@{getSpatialParamMax}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{getSpatialParamMax()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Max (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 295} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_af17b7d53571217e6a8ef835e21843c40} 
+\index{spatialParams.h@{spatialParams.h}!getSpatialParamMin@{getSpatialParamMin}}
+\index{getSpatialParamMin@{getSpatialParamMin}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{getSpatialParamMin()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Min (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 287} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a41ddc15d343155417a74921c10e57606} 
+\index{spatialParams.h@{spatialParams.h}!getSpatialParamSigma@{getSpatialParamSigma}}
+\index{getSpatialParamSigma@{getSpatialParamSigma}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{getSpatialParamSigma()}
+{\footnotesize\ttfamily \textbf{ double} get\+Spatial\+Param\+Sigma (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 303} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a65b254c24bad51e48005a5ffed337508} 
+\index{spatialParams.h@{spatialParams.h}!isChangeable@{isChangeable}}
+\index{isChangeable@{isChangeable}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{isChangeable()}
+{\footnotesize\ttfamily \textbf{ int} is\+Changeable (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 242} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_ae99fa2266ffe4ed506690f3cf382e26e} 
+\index{spatialParams.h@{spatialParams.h}!isSpatial@{isSpatial}}
+\index{isSpatial@{isSpatial}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{isSpatial()}
+{\footnotesize\ttfamily \textbf{ int} is\+Spatial (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 234} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_ad416c787f51b053e50264b97cc56f425} 
+\index{spatialParams.h@{spatialParams.h}!loadSpatialParams@{loadSpatialParams}}
+\index{loadSpatialParams@{loadSpatialParams}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{loadSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} load\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 400} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_af5e36d717bc31e1ccb0f18aac6736329} 
+\index{spatialParams.h@{spatialParams.h}!newSpatialParams@{newSpatialParams}}
+\index{newSpatialParams@{newSpatialParams}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{newSpatialParams()}
+{\footnotesize\ttfamily \textbf{ Spatial\+Params} $\ast$ new\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{num\+Parameters,  }\item[{\textbf{ int}}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 74} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a2c2b6f75fa605cf58c8139676ff68a5d} 
+\index{spatialParams.h@{spatialParams.h}!randomChangeableSpatialParam@{randomChangeableSpatialParam}}
+\index{randomChangeableSpatialParam@{randomChangeableSpatialParam}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{randomChangeableSpatialParam()}
+{\footnotesize\ttfamily \textbf{ int} random\+Changeable\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 383} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a3c628361c3a73187d7d189bf254f6d46} 
+\index{spatialParams.h@{spatialParams.h}!readOneSpatialParam@{readOneSpatialParam}}
+\index{readOneSpatialParam@{readOneSpatialParam}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{readOneSpatialParam()}
+{\footnotesize\ttfamily \textbf{ void} read\+One\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ FILE} $\ast$}]{param\+File,  }\item[{\textbf{ FILE} $\ast$}]{spatial\+Param\+File,  }\item[{\textbf{ char} $\ast$}]{name,  }\item[{\textbf{ double} $\ast$}]{external\+Loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 119} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a929151fd6f56f4f0f94e234a73264fee} 
+\index{spatialParams.h@{spatialParams.h}!resetSpatialParams@{resetSpatialParams}}
+\index{resetSpatialParams@{resetSpatialParams}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{resetSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} reset\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ double}}]{knob,  }\item[{\textbf{ int}}]{random\+Reset }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 421} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_aabec0ef262c5d4cd557d6713cbe3c0f7} 
+\index{spatialParams.h@{spatialParams.h}!setAllSpatialParamBests@{setAllSpatialParamBests}}
+\index{setAllSpatialParamBests@{setAllSpatialParamBests}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{setAllSpatialParamBests()}
+{\footnotesize\ttfamily \textbf{ void} set\+All\+Spatial\+Param\+Bests (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 351} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a16ba110c016f1bf915e2cb39aa044b96} 
+\index{spatialParams.h@{spatialParams.h}!setSpatialParam@{setSpatialParam}}
+\index{setSpatialParam@{setSpatialParam}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{setSpatialParam()}
+{\footnotesize\ttfamily \textbf{ void} set\+Spatial\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 270} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a38345b7475085c422641bef990f69dcf} 
+\index{spatialParams.h@{spatialParams.h}!setSpatialParamBest@{setSpatialParamBest}}
+\index{setSpatialParamBest@{setSpatialParamBest}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{setSpatialParamBest()}
+{\footnotesize\ttfamily \textbf{ void} set\+Spatial\+Param\+Best (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 343} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_abc6f7aacc461f4e42800a04d616ebe57} 
+\index{spatialParams.h@{spatialParams.h}!setSpatialParamKnob@{setSpatialParamKnob}}
+\index{setSpatialParamKnob@{setSpatialParamKnob}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{setSpatialParamKnob()}
+{\footnotesize\ttfamily \textbf{ void} set\+Spatial\+Param\+Knob (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{i,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}}]{value }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 323} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_ae918b13eb56eefd70054c089216b2106} 
+\index{spatialParams.h@{spatialParams.h}!writeBestSpatialParams@{writeBestSpatialParams}}
+\index{writeBestSpatialParams@{writeBestSpatialParams}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{writeBestSpatialParams()}
+{\footnotesize\ttfamily \textbf{ void} write\+Best\+Spatial\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ char} $\ast$}]{param\+File,  }\item[{\textbf{ char} $\ast$}]{spatial\+Param\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 461} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2spatial_params_8h_a05555564c8b3f8f28e44341be3a11b31} 
+\index{spatialParams.h@{spatialParams.h}!writeChangeableParamInfo@{writeChangeableParamInfo}}
+\index{writeChangeableParamInfo@{writeChangeableParamInfo}!spatialParams.h@{spatialParams.h}}
+\doxysubsubsection{writeChangeableParamInfo()}
+{\footnotesize\ttfamily \textbf{ void} write\+Changeable\+Param\+Info (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ FILE} $\ast$}]{outF }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 500} of file \textbf{ SIPNETopts\+In/spatial\+Params.\+c}.
+

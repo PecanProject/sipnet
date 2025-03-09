@@ -1,0 +1,74 @@
+\doxysection{test\+Event\+Infra\+Neg.\+c}
+\label{test_event_infra_neg_8c_source}\index{testEventInfraNeg.c@{testEventInfraNeg.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}modelStructures.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}../../../events.c"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}../exitHandler.c"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keywordtype}{int}\ run()\ \{}
+\DoxyCodeLine{00010\ \ \ \textcolor{keywordtype}{int}\ status\ =\ 0;}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \textcolor{comment}{//\ exit()\ handling\ params}}
+\DoxyCodeLine{00013\ \ \ \textcolor{keywordtype}{int}\ jmp\_rval;}
+\DoxyCodeLine{00014\ \ \ expected\_code\ =\ 1;}
+\DoxyCodeLine{00015\ \ \ exit\_result\ =\ 1;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \textcolor{comment}{//\ Step\ 0:\ make\ sure\ that\ we\ don't\ have\ a\ false\ positive\ on\ good\ data}}
+\DoxyCodeLine{00018\ \ \ should\_exit\ =\ 0;}
+\DoxyCodeLine{00019\ \ \ jmp\_rval\ =\ setjmp(jump\_env);}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordflow}{if}\ (!jmp\_rval)\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ readEventData(\textcolor{stringliteral}{"{}infra\_events\_simple.in"{}},\ 1);}
+\DoxyCodeLine{00022\ \ \ \}}
+\DoxyCodeLine{00023\ \ \ test\_assert(jmp\_rval==0);}
+\DoxyCodeLine{00024\ \ \ status\ |=\ !exit\_result;}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \textcolor{comment}{//\ First\ test}}
+\DoxyCodeLine{00027\ \ \ should\_exit\ =\ 1;}
+\DoxyCodeLine{00028\ \ \ jmp\_rval\ =\ setjmp(jump\_env);}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordflow}{if}\ (!jmp\_rval)\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ readEventData(\textcolor{stringliteral}{"{}infra\_events\_unknown.in"{}},\ 1);}
+\DoxyCodeLine{00031\ \ \ \}}
+\DoxyCodeLine{00032\ \ \ test\_assert(jmp\_rval==1);}
+\DoxyCodeLine{00033\ \ \ status\ |=\ !exit\_result;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \textcolor{comment}{//\ Second\ test}}
+\DoxyCodeLine{00036\ \ \ jmp\_rval\ =\ setjmp(jump\_env);}
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordflow}{if}\ (!jmp\_rval)\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ readEventData(\textcolor{stringliteral}{"{}infra\_events\_loc\_ooo.in"{}},\ 1);}
+\DoxyCodeLine{00039\ \ \ \}}
+\DoxyCodeLine{00040\ \ \ test\_assert(jmp\_rval==1);}
+\DoxyCodeLine{00041\ \ \ status\ |=\ !exit\_result;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \textcolor{comment}{//\ Third\ test}}
+\DoxyCodeLine{00044\ \ \ jmp\_rval\ =\ setjmp(jump\_env);}
+\DoxyCodeLine{00045\ \ \ \textcolor{keywordflow}{if}\ (!jmp\_rval)\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ readEventData(\textcolor{stringliteral}{"{}infra\_events\_date\_ooo.in"{}},\ 1);}
+\DoxyCodeLine{00047\ \ \ \}}
+\DoxyCodeLine{00048\ \ \ test\_assert(jmp\_rval==1);}
+\DoxyCodeLine{00049\ \ \ status\ |=\ !exit\_result;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \textcolor{comment}{//\ Allow\ a\ real\ exit,\ not\ that\ this\ is\ really\ needed}}
+\DoxyCodeLine{00052\ \ \ really\_exit\ =\ 1;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \textcolor{keywordflow}{return}\ status;}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{int}\ status;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ printf(\textcolor{stringliteral}{"{}Starting\ testEventInfraNeg:run()\(\backslash\)n"{}});}
+\DoxyCodeLine{00061\ \ \ status\ =\ run();}
+\DoxyCodeLine{00062\ \ \ \textcolor{keywordflow}{if}\ (status)\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Test\ run\ failed\ with\ status\ \%d\(\backslash\)n"{}},\ status);}
+\DoxyCodeLine{00064\ \ \ \ \ exit(status);}
+\DoxyCodeLine{00065\ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ printf(\textcolor{stringliteral}{"{}testEventInfra\ PASSED\(\backslash\)n"{}});}
+\DoxyCodeLine{00068\ \}}
+
+\end{DoxyCode}

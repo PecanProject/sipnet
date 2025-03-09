@@ -1,0 +1,87 @@
+! Input file to set up a sensTest run (using 'sensTest')
+! Note that you can also do a sensitivity test from within SIPNET; this
+!  is controlled by sipnet.in
+
+! Output will be put in FILENAME.senstest. Each line contains:
+!  paramVal  logLikelihood
+
+! --- FILE NAMES ---
+
+FILENAME = niwot
+! FILENAME.param is the file of parameter values and info
+!  (unless PARAM_FILE is specified below)
+! FILENAME.param-spatial is the file of spatially-varying parameters
+!  (first line must contain a single int: # of locations)
+!  (if PARAM_FILE is specified, then instead use PARAM_FILE-spatial for
+!  spatially-varying parameters)
+! FILENAME.clim is the file of climate data for each time step
+! FILENAME.dat is the file of measured data (one column per data type)
+! FILENAME.spd (steps per day) contains one line per location; each line
+!  begins with year and julian day of 1st point, followed by the number
+!  of steps in each day, terminated by -1
+! FILENAME.valid contains fraction of valid data points for each time
+!  step (one col. per data type)
+
+PARAM_FILE = none
+! If specified (not 'none'), use given file for parameter values and
+!  info, rather than FILENAME.param
+
+
+! --- INPUTS CONTROLLING PARAMETER CHANGES ---
+
+CHANGE_PARAM = none
+! Name of parameter to change
+
+LOW_VAL = 0
+HIGH_VAL = 1
+NUM_RUNS = 10
+! Parameter is varied from LOW_VAL to HIGH_VAL over a total of NUM_RUNS
+
+
+! --- DATA TYPES TO INCLUDE IN MODEL-DATA COMPARISONS ---
+
+! 1 = include in model-data comparisons; 0 = don't include
+OPT_NEE = 1
+OPT_EVAPOTRANSPIRATION = 0
+OPT_SOIL_WETNESS = 0
+
+
+! --- VARIABLES CONTROLLING MODEL-DATA COMPARISONS ---
+
+LOC = 0
+! Location to run at (can only perform a sensitivity test at a single
+!  location)
+
+VALID_FRAC = 0.5
+! Fraction of data points which must be valid to use data from a given
+!  time step
+
+OPT_INDICES_EXT = none
+! If not 'none', this gives the extension of the optimization indices
+!  file; the full filename is FILENAME.OPT_INDICES_EXT
+! File giving, for each location, start and end indices for optimization
+!  (one line per location, with each line containing two integers: start
+!  & end; if no file specified, use all points)
+!  (1-indexing; end = -1 means go to end)
+
+AGGREGATION_EXT = none
+! If not 'none', this gives the extension of the file containing number
+!  of time steps per model/data aggregation - i.e. aggregations that are
+!  performed prior to doing model-data comparisons in the optimization
+! The full filename is FILENAME.AGGREGATION_EXT
+! Each line contains aggregation info for one location, and each line
+!  is terminated with a -1
+!  Each value (i) on a given line is an integer giving the number of
+!  time steps in aggregation i in that time step
+!  (e.g. to run model-data comparison on a yearly aggregation, each
+!  value would be number of steps in year i)
+!  (if no file specified, will perform no aggregation)
+! Note that VALID_FRAC is ignored for aggregated data (assumed equal to
+!  0)
+
+UNAGGED_WEIGHT = 0.0
+! If aggregation is done, relative weight of unaggregated points in
+!  optimization (should probably be 0 or 1; 0 means only use aggregated
+!  points in optimization)
+
+

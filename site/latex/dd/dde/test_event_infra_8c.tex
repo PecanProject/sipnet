@@ -1,0 +1,263 @@
+\doxysection{test\+Event\+Infra.\+c File Reference}
+\label{test_event_infra_8c}\index{testEventInfra.c@{testEventInfra.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include "{}model\+Structures.\+h"{}}\newline
+{\ttfamily \#include "{}../utils.\+h"{}}\newline
+{\ttfamily \#include "{}../../../events.\+c"{}}\newline
+Include dependency graph for test\+Event\+Infra.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ int} \textbf{ check\+Event} (\textbf{ Event\+Node} $\ast$\textbf{ event}, \textbf{ int} loc, \textbf{ int} year, \textbf{ int} day, \textbf{ enum} \textbf{ Event\+Type} type)
+\item 
+\textbf{ int} \textbf{ check\+Harvest\+Params} (\textbf{ Harvest\+Params} $\ast$\textbf{ params}, \textbf{ double} \textbf{ frac\+Rem\+Above}, \textbf{ double} \textbf{ frac\+Rem\+Below}, \textbf{ double} \textbf{ frac\+Trans\+Above}, \textbf{ double} \textbf{ frac\+Trans\+Below})
+\item 
+\textbf{ int} \textbf{ check\+Irrigation\+Params} (\textbf{ Irrigation\+Params} $\ast$\textbf{ params}, \textbf{ double} amount\+Added, \textbf{ int} method)
+\item 
+\textbf{ int} \textbf{ check\+Fertilization\+Params} (\textbf{ Fertilization\+Params} $\ast$\textbf{ params}, \textbf{ double} orgN, \textbf{ double} orgC, \textbf{ double} minN)
+\item 
+\textbf{ int} \textbf{ check\+Planting\+Params} (\textbf{ Planting\+Params} $\ast$\textbf{ params}, \textbf{ int} emergence\+Lag, \textbf{ double} addedC, \textbf{ double} addedN)
+\item 
+\textbf{ int} \textbf{ check\+Tillage\+Params} (\textbf{ Tillage\+Params} $\ast$\textbf{ params}, \textbf{ double} \textbf{ frac\+Litter\+Transferred}, \textbf{ double} som\+Decomp\+Modifier, \textbf{ double} litter\+Decomp\+Modifier)
+\item 
+\textbf{ int} \textbf{ init} ()
+\item 
+\textbf{ int} \textbf{ run\+Test\+Simple} ()
+\item 
+\textbf{ int} \textbf{ run\+Test\+Multi} ()
+\item 
+\textbf{ int} \textbf{ run} ()
+\item 
+\textbf{ void} \textbf{ cleanup} ()
+\item 
+\textbf{ int} \textbf{ main} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{test_event_infra_8c_a73799a2f875b6d6f871aefdda0f23d74} 
+\index{testEventInfra.c@{testEventInfra.c}!checkEvent@{checkEvent}}
+\index{checkEvent@{checkEvent}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{checkEvent()}
+{\footnotesize\ttfamily \textbf{ int} check\+Event (\begin{DoxyParamCaption}\item[{\textbf{ Event\+Node} $\ast$}]{event,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ int}}]{year,  }\item[{\textbf{ int}}]{day,  }\item[{\textbf{ enum} \textbf{ Event\+Type}}]{type }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ day}, \textbf{ index}, \textbf{ print\+Event()}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ run\+Test\+Multi()}, and \textbf{ run\+Test\+Simple()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{test_event_infra_8c_a57b9c2fea24d2dee0cee499bba94f435} 
+\index{testEventInfra.c@{testEventInfra.c}!checkFertilizationParams@{checkFertilizationParams}}
+\index{checkFertilizationParams@{checkFertilizationParams}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{checkFertilizationParams()}
+{\footnotesize\ttfamily \textbf{ int} check\+Fertilization\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Fertilization\+Params} $\ast$}]{params,  }\item[{\textbf{ double}}]{orgN,  }\item[{\textbf{ double}}]{orgC,  }\item[{\textbf{ double}}]{minN }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 48} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ compare\+Doubles()}, and \textbf{ params}.
+
+
+
+Referenced by \textbf{ run\+Test\+Multi()}, and \textbf{ run\+Test\+Simple()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{test_event_infra_8c_ae8976318d91dcf7ab365cf814b5febc8} 
+\index{testEventInfra.c@{testEventInfra.c}!checkHarvestParams@{checkHarvestParams}}
+\index{checkHarvestParams@{checkHarvestParams}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{checkHarvestParams()}
+{\footnotesize\ttfamily \textbf{ int} check\+Harvest\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Harvest\+Params} $\ast$}]{params,  }\item[{\textbf{ double}}]{frac\+Rem\+Above,  }\item[{\textbf{ double}}]{frac\+Rem\+Below,  }\item[{\textbf{ double}}]{frac\+Trans\+Above,  }\item[{\textbf{ double}}]{frac\+Trans\+Below }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ compare\+Doubles()}, \textbf{ index}, and \textbf{ params}.
+
+
+
+Referenced by \textbf{ run\+Test\+Multi()}, and \textbf{ run\+Test\+Simple()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{test_event_infra_8c_a558df7395a461c9093cc11a03b1a1279} 
+\index{testEventInfra.c@{testEventInfra.c}!checkIrrigationParams@{checkIrrigationParams}}
+\index{checkIrrigationParams@{checkIrrigationParams}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{checkIrrigationParams()}
+{\footnotesize\ttfamily \textbf{ int} check\+Irrigation\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Irrigation\+Params} $\ast$}]{params,  }\item[{\textbf{ double}}]{amount\+Added,  }\item[{\textbf{ int}}]{method }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ compare\+Doubles()}, and \textbf{ params}.
+
+
+
+Referenced by \textbf{ run\+Test\+Multi()}, and \textbf{ run\+Test\+Simple()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{test_event_infra_8c_ad4338a12f42d18dcde569903e0c8ec7f} 
+\index{testEventInfra.c@{testEventInfra.c}!checkPlantingParams@{checkPlantingParams}}
+\index{checkPlantingParams@{checkPlantingParams}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{checkPlantingParams()}
+{\footnotesize\ttfamily \textbf{ int} check\+Planting\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Planting\+Params} $\ast$}]{params,  }\item[{\textbf{ int}}]{emergence\+Lag,  }\item[{\textbf{ double}}]{addedC,  }\item[{\textbf{ double}}]{addedN }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 61} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ compare\+Doubles()}, and \textbf{ params}.
+
+
+
+Referenced by \textbf{ run\+Test\+Multi()}, and \textbf{ run\+Test\+Simple()}.
+
+Here is the call graph for this function\+:
+% FIG 5
+\label{test_event_infra_8c_a5bf0ee0f6c8e291d5e54d5523ff3aab7} 
+\index{testEventInfra.c@{testEventInfra.c}!checkTillageParams@{checkTillageParams}}
+\index{checkTillageParams@{checkTillageParams}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{checkTillageParams()}
+{\footnotesize\ttfamily \textbf{ int} check\+Tillage\+Params (\begin{DoxyParamCaption}\item[{\textbf{ Tillage\+Params} $\ast$}]{params,  }\item[{\textbf{ double}}]{frac\+Litter\+Transferred,  }\item[{\textbf{ double}}]{som\+Decomp\+Modifier,  }\item[{\textbf{ double}}]{litter\+Decomp\+Modifier }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 71} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ compare\+Doubles()}, \textbf{ index}, and \textbf{ params}.
+
+
+
+Referenced by \textbf{ run\+Test\+Multi()}, and \textbf{ run\+Test\+Simple()}.
+
+Here is the call graph for this function\+:
+% FIG 6
+\label{test_event_infra_8c_a4b66d5e31b5dc18b314c8a68163263bd} 
+\index{testEventInfra.c@{testEventInfra.c}!cleanup@{cleanup}}
+\index{cleanup@{cleanup}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{cleanup()}
+{\footnotesize\ttfamily \textbf{ void} cleanup (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 206} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{test_event_infra_8c_a05848de25ac2dbec233935058a1d24b4} 
+\index{testEventInfra.c@{testEventInfra.c}!init@{init}}
+\index{init@{init}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{init()}
+{\footnotesize\ttfamily \textbf{ int} init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 84} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{test_event_infra_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+\index{testEventInfra.c@{testEventInfra.c}!main@{main}}
+\index{main@{main}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily \textbf{ int} main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 211} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ cleanup()}, \textbf{ exit()}, \textbf{ index}, \textbf{ init()}, and \textbf{ run()}.
+
+Here is the call graph for this function\+:
+% FIG 7
+\label{test_event_infra_8c_a58e8be2db2660128e4e6456a9c981fb5} 
+\index{testEventInfra.c@{testEventInfra.c}!run@{run}}
+\index{run@{run}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{run()}
+{\footnotesize\ttfamily \textbf{ int} run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 189} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ run\+Test\+Multi()}, and \textbf{ run\+Test\+Simple()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 8
+\label{test_event_infra_8c_ae5ef636e66fb0b9d103c2a12d7aaba05} 
+\index{testEventInfra.c@{testEventInfra.c}!runTestMulti@{runTestMulti}}
+\index{runTestMulti@{runTestMulti}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{runTestMulti()}
+{\footnotesize\ttfamily \textbf{ int} run\+Test\+Multi (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 124} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ check\+Event()}, \textbf{ check\+Fertilization\+Params()}, \textbf{ check\+Harvest\+Params()}, \textbf{ check\+Irrigation\+Params()}, \textbf{ check\+Planting\+Params()}, \textbf{ check\+Tillage\+Params()}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ index}, \textbf{ IRRIGATION}, \textbf{ num\+Locs}, \textbf{ PLANTING}, \textbf{ read\+Event\+Data()}, and \textbf{ TILLAGE}.
+
+
+
+Referenced by \textbf{ run()}.
+
+Here is the call graph for this function\+:
+% FIG 9
+\label{test_event_infra_8c_a7a61b1a4a00098f556b1d3f5a2505d99} 
+\index{testEventInfra.c@{testEventInfra.c}!runTestSimple@{runTestSimple}}
+\index{runTestSimple@{runTestSimple}!testEventInfra.c@{testEventInfra.c}}
+\doxysubsubsection{runTestSimple()}
+{\footnotesize\ttfamily \textbf{ int} run\+Test\+Simple (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 94} of file \textbf{ test\+Event\+Infra.\+c}.
+
+
+
+References \textbf{ check\+Event()}, \textbf{ check\+Fertilization\+Params()}, \textbf{ check\+Harvest\+Params()}, \textbf{ check\+Irrigation\+Params()}, \textbf{ check\+Planting\+Params()}, \textbf{ check\+Tillage\+Params()}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ index}, \textbf{ IRRIGATION}, \textbf{ num\+Locs}, \textbf{ PLANTING}, \textbf{ read\+Event\+Data()}, and \textbf{ TILLAGE}.
+
+
+
+Referenced by \textbf{ run()}.
+
+Here is the call graph for this function\+:
+% FIG 10

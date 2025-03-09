@@ -1,0 +1,43 @@
+\doxysection{plot\+Years.\+m}
+\label{plot_years_8m_source}\index{plotYears.m@{plotYears.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ plotYears(data,\ days,\ years,\ firstYear,\ lastYear,\ window,\ scaleFactor)}
+\DoxyCodeLine{00002\ \%\ Given\ a\ vector\ of\ data,\ and\ corresponding\ vector\ of\ years}
+\DoxyCodeLine{00003\ \%\ (where\ year(i)\ is\ the\ year\ of\ data(i))}
+\DoxyCodeLine{00004\ \%\ Plot\ data,\ multiplied\ by\ scaleFactor,\ \textcolor{keywordflow}{for\ each}\ year\ in\ a\ different\ color,\ }
+\DoxyCodeLine{00005\ \%\ vs.\ fractional\ day\ of\ year\ ((JD\ -\/\ 1)\ +\ (hour/24))\ (given\ by\ days\ vector)}
+\DoxyCodeLine{00006\ \%\ (value\ on\ x-\/axis\ gives\ fractional\ day\ at\ START\ of\ time\ step)}
+\DoxyCodeLine{00007\ \%\ Plot\ only\ data\ between\ firstYear\ and\ lastYear\ (if\ firstYear\ =\ -\/1,\ start}
+\DoxyCodeLine{00008\ \%\ at\ first\ year\ in\ data;\ \textcolor{keywordflow}{if}\ lastYear\ =\ -\/1,\ end\ at\ last\ year\ in\ vector)}
+\DoxyCodeLine{00009\ \%\ If\ window\ >\ 1,\ use\ a\ sliding\ mean\ window\ for\ plotting}
+\DoxyCodeLine{00010\ \%\ NOTE:\ As\ of\ now,\ can\ only\ handle\ 7\ years\ before\ we\ run\ out\ of\ colors!}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ colors\ =\ ['b','g','r','c','m','k','y'];\ \%\ \textcolor{keyword}{set}\ up\ vector\ to\ assign\ colors\ to\ ea.\ line}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keywordflow}{if}\ (firstYear\ ==\ -\/1)}
+\DoxyCodeLine{00015\ \ \ \ \ firstYear\ =\ min(years);}
+\DoxyCodeLine{00016\ end}
+\DoxyCodeLine{00017\ \textcolor{keywordflow}{if}\ (lastYear\ ==\ -\/1)}
+\DoxyCodeLine{00018\ \ \ \ \ lastYear\ =\ max(years);}
+\DoxyCodeLine{00019\ end}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ figure\ \%\ create\ a\ \textcolor{keyword}{new}\ figure}
+\DoxyCodeLine{00022\ hold\ on}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \%\ compute\ sliding\ mean\ (\textcolor{keywordflow}{if}\ window\ =\ 1,\ dataMean\ will\ equal\ data)}
+\DoxyCodeLine{00025\ dataMean\ =\ slidingMeanAllPtsCentered(data,\ window);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \%\ loop\ through\ years,\ plotting\ each\ line}
+\DoxyCodeLine{00028\ \textcolor{keywordflow}{for}\ yr\ =\ firstYear:lastYear}
+\DoxyCodeLine{00029\ \ \ \ \ i\ =\ find(years\ ==\ yr);}
+\DoxyCodeLine{00030\ \ \ \ \ dataYr\ =\ dataMean(i);\ \%\ find\ subset\ of\ data\ and\ days\ array}
+\DoxyCodeLine{00031\ \ \ \ \ daysYr\ =\ days(i);}
+\DoxyCodeLine{00032\ \ \ \ \ plot(daysYr,\ dataYr\ *\ scaleFactor,\ colors(yr\ -\/\ firstYear\ +\ 1));\ }
+\DoxyCodeLine{00033\ end}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ legend(int2str((firstYear:lastYear)\textcolor{stringliteral}{'));\ \%\ add\ appropriate\ legend\ to\ figure}}
+\DoxyCodeLine{00036\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00037\ \textcolor{stringliteral}{end}}
+
+\end{DoxyCode}

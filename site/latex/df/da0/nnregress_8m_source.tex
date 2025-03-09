@@ -1,0 +1,139 @@
+\doxysection{nnregress.\+m}
+\label{nnregress_8m_source}\index{nnregress.m@{nnregress.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ [y,\ net,\ sig]\ =\ nnregress(x,t,nhidden,nstd,diag);}
+\DoxyCodeLine{00002\ \%\ \textcolor{keyword}{function}\ [y,\ net,\ sig]\ =\ nnregress(x,t,nhidden,nstd,diag);}
+\DoxyCodeLine{00003\ \%\ This\ performs\ Bayesian\ nonlinear\ regression\ \textcolor{keyword}{using\ }an\ artificial}
+\DoxyCodeLine{00004\ \%\ neural\ network.\ Based\ on\ NetLib\ library.}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \%path(path,\textcolor{stringliteral}{'/net/home/bh/braswell/matlab/Netlab'});}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keywordflow}{if}\ (nargin\ <\ 3\ |\ isempty(nhidden))\ nhidden=7;end\ \ \%\ Number\ of\ hidden\ units.}
+\DoxyCodeLine{00011\ if\ (nargin\ <\ 4\ |\ isempty(nstd))\ nstd=2;end\ \ \ \ \ \ \ \ \%\ Scaling\ factor\ \textcolor{keywordflow}{for}\ normalization}
+\DoxyCodeLine{00012\ \textcolor{keywordflow}{if}\ (nargin\ <\ 5\ |\ isempty(diag))\ diag=1;end\ \ \ \ \ \ \ \ \%\ whether\ to\ print\ all\ the\ info}
+\DoxyCodeLine{00013\ alpha\_init\ =\ 0.005;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Initial\ prior\ hyperparameter}
+\DoxyCodeLine{00014\ beta\_init\ =\ 100.;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Initial\ noise\ hyperparameter}
+\DoxyCodeLine{00015\ nouter\ =\ 500;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Max\ number\ of\ outer\ loops}
+\DoxyCodeLine{00016\ ninner\ =\ 3;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Number\ of\ inner\ loops}
+\DoxyCodeLine{00017\ toler\ =\ [.005\ .005\ .005\ .005];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ When\ to\ exit\ outer\ loop}
+\DoxyCodeLine{00018\ options\ =\ zeros(1,18);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Default\ options\ vector}
+\DoxyCodeLine{00019\ options(2)\ =\ 1.0e-\/7;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Absolute\ precision\ \textcolor{keywordflow}{for}\ weights}
+\DoxyCodeLine{00020\ options(3)\ =\ 1.0e-\/7;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Precision\ \textcolor{keywordflow}{for}\ error\ \textcolor{keyword}{function}}
+\DoxyCodeLine{00021\ options(14)\ =\ 100;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Number\ of\ cycles\ in\ inner\ loop}
+\DoxyCodeLine{00022\ options(1)\ =\ -\/1;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ Suppress\ warning\ messages}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ [nx\ nin]\ =\ size(x);}
+\DoxyCodeLine{00025\ [nt\ nout]\ =\ size(t);}
+\DoxyCodeLine{00026\ \textcolor{keywordflow}{if}\ (nt\ \string~=\ nx)\ error(\textcolor{stringliteral}{'Incompatible\ inputs:\ nx\ \string~=\ nt'});end}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ meanx=mean(x);}
+\DoxyCodeLine{00029\ stdx=std(x);}
+\DoxyCodeLine{00030\ meant=mean(t);}
+\DoxyCodeLine{00031\ stdt=std(t);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keywordflow}{for}\ i=1:nin\ x(:,i)\ =\ (x(:,i)-\/meanx(i))./(nstd*stdx(i));end}
+\DoxyCodeLine{00034\ \textcolor{keywordflow}{for}\ i=1:nout\ t(:,i)\ =\ (t(:,i)-\/meant(i))./(nstd*stdt(i));end}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \%\ Create\ and\ initialize\ network\ weight\ vector.}
+\DoxyCodeLine{00037\ net\ =\ mlp(nin,\ nhidden,\ nout,\ \textcolor{stringliteral}{'linear'},\ alpha\_init,\ beta\_init);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ nweights\ =\ nhidden*(nin+1)\ +\ nout*(nhidden+1);}
+\DoxyCodeLine{00040\ \textcolor{keywordflow}{if}\ (diag\ ==\ 1)}
+\DoxyCodeLine{00041\ \ \ \ \ \ fprintf(1,\textcolor{stringliteral}{'\%s\(\backslash\)n'},date);}
+\DoxyCodeLine{00042\ \ \ \ \ \ fprintf(1,\textcolor{stringliteral}{'nweights=\ \%d\(\backslash\)n\(\backslash\)n'},nweights);}
+\DoxyCodeLine{00043\ end}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \%\ Train\ \textcolor{keyword}{using\ }scaled\ conjugate\ gradients,\ re-\/estimating\ alpha\ and\ beta.}
+\DoxyCodeLine{00046\ state=ones(1,4);}
+\DoxyCodeLine{00047\ warning(\textcolor{stringliteral}{'off'});}
+\DoxyCodeLine{00048\ \textcolor{keywordflow}{for}\ k\ =\ 1:nouter}
+\DoxyCodeLine{00049\ \ \ lastwarn(\textcolor{stringliteral}{''});}
+\DoxyCodeLine{00050\ \ \ [net\ options\ err]\ =\ netopt(net,\ options,\ x,\ t,\ \textcolor{stringliteral}{'scg'});}
+\DoxyCodeLine{00051\ \ \ warnstate=lastwarn;}
+\DoxyCodeLine{00052\ \ \ \textcolor{keywordflow}{if}\ (\string~isempty(warnstate)\ |\ isnan(net.alpha)\ |\ isnan(net.beta))}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ y=zeros(size(t));net=0;sig=0;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ net.r2=0;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ fprintf(\textcolor{stringliteral}{'Warning:\ no\ evidence\(\backslash\)n'});}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ warning(\textcolor{stringliteral}{'backtrace'});}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00058\ \ \ end}
+\DoxyCodeLine{00059\ \ \ [net,\ gamma]\ =\ evidence(net,\ x,\ t,\ ninner);}
+\DoxyCodeLine{00060\ \ \ warnstate=lastwarn;}
+\DoxyCodeLine{00061\ \ \ \textcolor{keywordflow}{if}\ (\string~isempty(warnstate)\ |\ isnan(net.alpha)\ |\ isnan(net.beta)\ |\ isnan(gamma)\ |\ net.alpha>900.)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ y=zeros(size(t));net=0;sig=0;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ fprintf(\textcolor{stringliteral}{'Warning:\ no\ evidence\(\backslash\)n'});}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ warning(\textcolor{stringliteral}{'backtrace'});}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ net.r2=0;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00067\ \ \ end}
+\DoxyCodeLine{00068\ \ \ state\ =\ [state;\ [net.alpha\ net.beta\ gamma\ err(end)]];}
+\DoxyCodeLine{00069\ \ \ satisfy\ =\ abs(state(end,:)-\/state(end-\/1,:))./mean(state)\ <\ toler;}
+\DoxyCodeLine{00070\ \ \ err=err./nx;}
+\DoxyCodeLine{00071\ \ \ \textcolor{keywordflow}{if}\ (diag\ ==\ 1)}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ fprintf(1,\ \textcolor{stringliteral}{'Cycle\ \%d:\ '},\ k);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ fprintf(1,\ \textcolor{stringliteral}{'alpha=\%f\ '},\ net.alpha);}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ fprintf(1,\ \textcolor{stringliteral}{'beta=\%f\ '},\ net.beta);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ fprintf(1,\ \textcolor{stringliteral}{'gamma=\%f\ '},\ gamma);}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ fprintf(1,\ \textcolor{stringliteral}{'error=\%f\ '},\ err(end));}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ fprintf(1,\ \textcolor{stringliteral}{'satisfy=\%d\ \%d\ \%d\ \%d\(\backslash\)n'},\ satisfy);}
+\DoxyCodeLine{00078\ \ \ end}
+\DoxyCodeLine{00079\ \ \ \textcolor{keywordflow}{if}\ (sum(satisfy)\ ==\ 4)\ \textcolor{keywordflow}{break};end}
+\DoxyCodeLine{00080\ end}
+\DoxyCodeLine{00081\ \textcolor{keywordflow}{if}\ (k\ ==\ nouter)\ fprintf(1,\textcolor{stringliteral}{'Warning:\ maximum\ outer\ loop\ iterations\ reached\(\backslash\)n'});end}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \%\ Forward\ estimation}
+\DoxyCodeLine{00085\ y\ =\ mlpfwd(net,\ x);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \%\ Evaluate\ error\ bars.}
+\DoxyCodeLine{00088\ if\ (nargout\ >\ 2)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ hess\ =\ mlphess(net,\ x,\ t);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ invhess\ =\ inv(hess);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ g\ =\ mlpderiv(net,\ x);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ k\ =\ 1:nout}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ n\ =\ 1:nx}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ grad\ =\ g(n,:,k);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sig(n,k)\ =\ grad*invhess*grad\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00097\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ end}}
+\DoxyCodeLine{00098\ \textcolor{stringliteral}{\ \ \ \ \ \ \ end}}
+\DoxyCodeLine{00099\ \textcolor{stringliteral}{\ \ \ \ \ \ \ sig\ =\ 2*sqrt(ones(size(sig))./net.beta\ +\ sig);}}
+\DoxyCodeLine{00100\ \textcolor{stringliteral}{\ \ \ \ \ \ \ net.invhess=invhess;}}
+\DoxyCodeLine{00101\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00102\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00103\ \textcolor{stringliteral}{\%\ Return\ to\ original\ units}}
+\DoxyCodeLine{00104\ \textcolor{stringliteral}{for\ i=1:nout}}
+\DoxyCodeLine{00105\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ t(:,i)\ =\ t(:,i)*(nstd*stdt(i))\ +\ meant(i);}}
+\DoxyCodeLine{00106\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ y(:,i)\ =\ y(:,i)*(nstd*stdt(i))\ +\ meant(i);}}
+\DoxyCodeLine{00107\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (nargout\ >\ 2)\ sig(:,i)\ =\ sig(:,i)*(nstd*stdt(i));end}}
+\DoxyCodeLine{00108\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00109\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00110\ \textcolor{stringliteral}{tout=t;}}
+\DoxyCodeLine{00111\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00112\ \textcolor{stringliteral}{if\ (diag==1\ |\ diag==2)}}
+\DoxyCodeLine{00113\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ i=1:nout}}
+\DoxyCodeLine{00114\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ r=corrcoef(t(:,i),y(:,i));}}
+\DoxyCodeLine{00115\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rsq(i)=r(2)\string^2;}}
+\DoxyCodeLine{00116\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ end}}
+\DoxyCodeLine{00117\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ net.r2=rsq;}}
+\DoxyCodeLine{00118\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (diag==1)\ fprintf(1,'}R\string^2:\ \%6.4f\(\backslash\)n\textcolor{stringliteral}{',rsq(i));end}}
+\DoxyCodeLine{00119\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00120\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00121\ \textcolor{stringliteral}{\%\ Save\ the\ configuration\ of\ this\ regression}}
+\DoxyCodeLine{00122\ \textcolor{stringliteral}{net.opt.nstd=nstd;}}
+\DoxyCodeLine{00123\ \textcolor{stringliteral}{net.opt.alpha\_init=alpha\_init;}}
+\DoxyCodeLine{00124\ \textcolor{stringliteral}{net.opt.beta\_init=beta\_init;}}
+\DoxyCodeLine{00125\ \textcolor{stringliteral}{net.opt.nouter=nouter;}}
+\DoxyCodeLine{00126\ \textcolor{stringliteral}{net.opt.ninner\_evi=ninner;}}
+\DoxyCodeLine{00127\ \textcolor{stringliteral}{net.opt.ninner\_opt=options(14);}}
+\DoxyCodeLine{00128\ \textcolor{stringliteral}{net.opt.meant=meant;}}
+\DoxyCodeLine{00129\ \textcolor{stringliteral}{net.opt.meanx=meanx;}}
+\DoxyCodeLine{00130\ \textcolor{stringliteral}{net.opt.stdt=stdt;}}
+\DoxyCodeLine{00131\ \textcolor{stringliteral}{net.opt.stdx=stdx;}}
+\DoxyCodeLine{00132\ \textcolor{stringliteral}{net.opt.minx=min(x);}}
+\DoxyCodeLine{00133\ \textcolor{stringliteral}{net.opt.maxx=max(x);}}
+
+\end{DoxyCode}

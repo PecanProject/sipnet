@@ -1,0 +1,42 @@
+\doxysection{grid\+Average.\+m}
+\label{grid_average_8m_source}\index{gridAverage.m@{gridAverage.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ outVal=gridAverage(input,varargin)}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \%\ Author:\ owner}
+\DoxyCodeLine{00004\ \%\ Created:\ Aug\ 19,\ 2009}
+\DoxyCodeLine{00005\ \%\ Purpose:\ Average\ out\ the\ values\ of\ a\ grid\ (primarily\ fPAR\ or\ QC\ data)\ to\ find\ the\ average\ values}
+\DoxyCodeLine{00006\ \%\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ It\ is\ assumed\ that\ each\ column\ is\ a\ pixel,\ each\ row\ a\ timestamp.}
+\DoxyCodeLine{00007\ \%\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ We\ \textcolor{keywordflow}{default}\ to\ an\ average\ over\ all\ values\ \textcolor{keywordflow}{if}\ no\ arguments\ are\ specified.\ \ \ \ \ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \%\%\%\ Types\ of\ averaging:}
+\DoxyCodeLine{00010\ \%\ \textcolor{stringliteral}{'all'}:\ average\ of\ all\ cells\ \ }
+\DoxyCodeLine{00011\ \%\ \textcolor{stringliteral}{'index'}:\ average\ of\ certain\ indices\ (needs\ a\ vector\ of\ inputs)}
+\DoxyCodeLine{00012\ \%\ \textcolor{stringliteral}{'gaussian'}:\ gaussian\ weighted\ average\ -\/-\/>\ Not\ yet\ implemented}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ [row,col]=size(input);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keywordflow}{if}\ nargin\ ==\ 1}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ avgType=\textcolor{stringliteral}{'all'};}
+\DoxyCodeLine{00020\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ avgType=deblank(varargin\{1\});}
+\DoxyCodeLine{00022\ endif}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keywordflow}{if}\ strcmp(avgType,\textcolor{stringliteral}{'all'})\ ==\ 1}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ outVal\ =\ nanmean(input\textcolor{charliteral}{')'};}
+\DoxyCodeLine{00026\ elseif\ strcmp(avgType,\textcolor{stringliteral}{'index'})\ ==\ 1}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ idxVector=varargin\{2\};}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ outVal\ =\ nanmean((input(:,idxVector))\textcolor{stringliteral}{')'};}
+\DoxyCodeLine{00029\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00030\ \ disp(\textcolor{stringliteral}{'I\ do\ not\ know\ what\ you\ want\ to\ do'});}
+\DoxyCodeLine{00031\ endif}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ endfunction}
+
+\end{DoxyCode}

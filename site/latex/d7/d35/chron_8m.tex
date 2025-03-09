@@ -1,0 +1,180 @@
+\doxysection{chron.\+m File Reference}
+\label{chron_8m}\index{chron.m@{chron.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ I0} (1)
+\item 
+\textbf{ I1} (1)
+\item 
+\textbf{ I1} (i)
+\item 
+\textbf{ year} (\textbf{ I0}(i)\+:\textbf{ I1}(i))
+\item 
+\textbf{ ystart\+:end} \textbf{ year} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ dayofyear} =\textbf{ load}(\textquotesingle{}data/\textbf{ time}\textquotesingle{})
+\item 
+\textbf{ N} =length(\textbf{ dayofyear})
+\item 
+\textbf{ timeday} =\textbf{ linspace}(1/48,((\textbf{ N}-\/0.\+5)/24),\textbf{ N})\textquotesingle{}
+\item 
+\textbf{ hourofday} =(\textbf{ mod}((1\+:\textbf{ N})-\/1,24)+0.\+5)\textquotesingle{}
+\item 
+\textbf{ ndaypyr} =[365,366,365,365,365,366,365,365,365,366,365,365]
+\item 
+\textbf{ nyear} =length(\textbf{ ndaypyr})
+\item 
+\textbf{ nhrpyr} =24$\ast$\textbf{ ndaypyr}
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ end} \textbf{ ystart} =7201
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{chron_8m_a2a36d619d9327282de67c3a7e766bb23} 
+\index{chron.m@{chron.m}!I0@{I0}}
+\index{I0@{I0}!chron.m@{chron.m}}
+\doxysubsubsection{I0()}
+{\footnotesize\ttfamily I0 (\begin{DoxyParamCaption}\item[{1}]{ }\end{DoxyParamCaption})}
+
+\label{chron_8m_aac10ba210dff341eb9b81ccb4282bab2} 
+\index{chron.m@{chron.m}!I1@{I1}}
+\index{I1@{I1}!chron.m@{chron.m}}
+\doxysubsubsection{I1()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily I1 (\begin{DoxyParamCaption}\item[{1}]{ }\end{DoxyParamCaption})}
+
+\label{chron_8m_a5b2a1ecfa421164f7bca6475cc6dc94f} 
+\index{chron.m@{chron.m}!I1@{I1}}
+\index{I1@{I1}!chron.m@{chron.m}}
+\doxysubsubsection{I1()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily I1 (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{chron_8m_ae72891d2ae9a03779dbfa3e324666f24} 
+\index{chron.m@{chron.m}!year@{year}}
+\index{year@{year}!chron.m@{chron.m}}
+\doxysubsubsection{year()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ ystart\+:end} year (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [virtual]}}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ neefill.\+m}.
+
+
+
+Referenced by \textbf{ aggregates()}, \textbf{ check\+Event()}, \textbf{ check\+Locations()}, \textbf{ copy\+Subset()}, \textbf{ create\+Event\+Node()}, \textbf{ goto\+Start()}, \textbf{ if()}, \textbf{ main()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ past\+Start()}, \textbf{ print\+Event()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Clim\+Line()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ year()}, \textbf{ years()}, and \textbf{ years()}.
+
+\label{chron_8m_aca266bb8b772e6e50082b0f1830d2823} 
+\index{chron.m@{chron.m}!year@{year}}
+\index{year@{year}!chron.m@{chron.m}}
+\doxysubsubsection{year()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily year (\begin{DoxyParamCaption}\item[{\textbf{ I0}(i)\+:\textbf{ I1}(i)}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{chron_8m_abb7a1bb6b7bc0cc76d49841605758a5d} 
+\index{chron.m@{chron.m}!dayofyear@{dayofyear}}
+\index{dayofyear@{dayofyear}!chron.m@{chron.m}}
+\doxysubsubsection{dayofyear}
+{\footnotesize\ttfamily dayofyear =\textbf{ load}(\textquotesingle{}data/\textbf{ time}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ chron.\+m}.
+
+\label{chron_8m_a751eafc96e2438688eb7efb9b35bc12e} 
+\index{chron.m@{chron.m}!hourofday@{hourofday}}
+\index{hourofday@{hourofday}!chron.m@{chron.m}}
+\doxysubsubsection{hourofday}
+{\footnotesize\ttfamily hourofday =(\textbf{ mod}((1\+:\textbf{ N})-\/1,24)+0.\+5)\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ chron.\+m}.
+
+\label{chron_8m_a81b94ba50b782836960e54bcfa99fc88} 
+\index{chron.m@{chron.m}!i@{i}}
+\index{i@{i}!chron.m@{chron.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=2:nyear\ }
+\DoxyCodeLine{\ \ \ \ I0(i)=I1(i-\/1)+1}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 14} of file \textbf{ chron.\+m}.
+
+
+
+Referenced by \textbf{ add\+Value\+To\+Mean\+Tracker()}, \textbf{ agged\+Difference()}, \textbf{ aggregates()}, \textbf{ assign\+Array()}, \textbf{ check\+All\+Read()}, \textbf{ check\+Spatial\+Param()}, \textbf{ compute\+Agged\+Data()}, \textbf{ copy\+Output\+Info()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ difference()}, \textbf{ free\+Output\+Info()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ get\+Spatial\+Param\+Sigma()}, \textbf{ index()}, \textbf{ init\+Data\+Type\+Indices()}, \textbf{ init\+Data\+Type\+Weights()}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ length()}, \textbf{ load\+Spatial\+Params()}, \textbf{ locate\+Param()}, \textbf{ main()}, \textbf{ make2\+DArray()}, \textbf{ make2\+DInt\+Array()}, \textbf{ means\+:()}, \textbf{ new\+Output\+Info()}, \textbf{ new\+Spatial\+Params()}, \textbf{ output\+Transpose()}, \textbf{ parse\+Data\+Type\+Indices()}, \textbf{ parse\+Data\+Type\+Switches()}, \textbf{ print\+Data\+Type\+Indices()}, \textbf{ print\+Data\+Type\+Weight\+Indices()}, \textbf{ read\+Chain\+Info()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+Data\+Line()}, \textbf{ read\+File()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Items()}, \textbf{ read\+One\+Spatial\+Param()}, \textbf{ read\+Spatial\+Params()}, \textbf{ read\+Spatial\+Values()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ set\+All()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Data\+Type\+Indices()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ setup\+Output\+Pointers()}, \textbf{ split()}, \textbf{ strcmp\+Ignore\+Case()}, \textbf{ sum\+Array()}, \textbf{ usage()}, \textbf{ value\+Set()}, \textbf{ write\+Best\+Spatial\+Params()}, \textbf{ write\+Chain\+Info()}, \textbf{ write\+Changeable\+Param\+Info()}, \textbf{ write\+Hist\+File()}, and \textbf{ write\+Hist\+File\+Bin()}.
+
+\label{chron_8m_a8cc2e7240164328fdc3f0e5e21032c56} 
+\index{chron.m@{chron.m}!N@{N}}
+\index{N@{N}!chron.m@{chron.m}}
+\doxysubsubsection{N}
+{\footnotesize\ttfamily N =length(\textbf{ dayofyear})}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ chron.\+m}.
+
+\label{chron_8m_af29852165a4cb2cd716dcc38d35bc651} 
+\index{chron.m@{chron.m}!ndaypyr@{ndaypyr}}
+\index{ndaypyr@{ndaypyr}!chron.m@{chron.m}}
+\doxysubsubsection{ndaypyr}
+{\footnotesize\ttfamily ndaypyr =[365,366,365,365,365,366,365,365,365,366,365,365]}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ chron.\+m}.
+
+\label{chron_8m_a9658cb3ef0a29992e64c6ce5eb815ac5} 
+\index{chron.m@{chron.m}!nhrpyr@{nhrpyr}}
+\index{nhrpyr@{nhrpyr}!chron.m@{chron.m}}
+\doxysubsubsection{nhrpyr}
+{\footnotesize\ttfamily nhrpyr =24$\ast$\textbf{ ndaypyr}}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ chron.\+m}.
+
+\label{chron_8m_aa102328d248891ffdc13c3fa25a2ddf0} 
+\index{chron.m@{chron.m}!nyear@{nyear}}
+\index{nyear@{nyear}!chron.m@{chron.m}}
+\doxysubsubsection{nyear}
+{\footnotesize\ttfamily nyear =length(\textbf{ ndaypyr})}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ chron.\+m}.
+
+\label{chron_8m_a3cb687361b7acf0286cc5807f9b75489} 
+\index{chron.m@{chron.m}!timeday@{timeday}}
+\index{timeday@{timeday}!chron.m@{chron.m}}
+\doxysubsubsection{timeday}
+{\footnotesize\ttfamily timeday =\textbf{ linspace}(1/48,((\textbf{ N}-\/0.\+5)/24),\textbf{ N})\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ chron.\+m}.
+
+\label{chron_8m_a33a223564446046507d7421100b9e920} 
+\index{chron.m@{chron.m}!ystart@{ystart}}
+\index{ystart@{ystart}!chron.m@{chron.m}}
+\doxysubsubsection{ystart}
+{\footnotesize\ttfamily \textbf{ end} ystart =7201}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ chron.\+m}.
+
