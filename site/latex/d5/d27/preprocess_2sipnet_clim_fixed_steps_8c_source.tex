@@ -1,0 +1,133 @@
+\doxysection{preprocess/sipnet\+Clim\+Fixed\+Steps.c}
+\label{preprocess_2sipnet_clim_fixed_steps_8c_source}\index{sipnetClimFixedSteps.c@{sipnetClimFixedSteps.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Bill\ Sacks}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ 10/20/03}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Modified\ 7/12/06}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ Put\ data\ in\ correct\ format\ for\ SiPnET}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ Assumes\ fixed\ time\ step\ lengths}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName)\ \{}
+\DoxyCodeLine{00013\ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ directory\ outFileName\ intervalLength\ [location],\ where:\(\backslash\)n"{}},\ progName);}
+\DoxyCodeLine{00014\ \ \ printf(\textcolor{stringliteral}{"{}directory\ is\ the\ directory\ containing\ the\ input\ climate\ data\(\backslash\)n"{}});}
+\DoxyCodeLine{00015\ \ \ printf(\textcolor{stringliteral}{"{}outFileName\ is\ output\ file\ for\ climate\ data,\(\backslash\)n"{}});}
+\DoxyCodeLine{00016\ \ \ printf(\textcolor{stringliteral}{"{}intervalLength\ is\ the\ length\ of\ each\ time\ step\ in\ seconds\ (e.g.\ 1/2\ hour\ =\ 1800\ sec.)\(\backslash\)n"{}});}
+\DoxyCodeLine{00017\ \ \ printf(\textcolor{stringliteral}{"{}location\ is\ location\ to\ be\ written\ to\ file,\ in\ 1st\ column\(\backslash\)n"{}});}
+\DoxyCodeLine{00018\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(if\ no\ location\ is\ specified,\ use\ loc.\ 0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00019\ \}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ opens\ file\ given\ by\ directory/name\ (or\ just\ name\ if\ directory\ is\ the\ empty\ string)}}
+\DoxyCodeLine{00023\ FILE\ *openFile(\textcolor{keywordtype}{char}\ *directory,\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{char}\ *mode)\ \{}
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordtype}{char}\ fullName[256];}
+\DoxyCodeLine{00025\ \ \ FILE\ *f;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \textcolor{keywordflow}{if}\ (strcmp(directory,\ \textcolor{stringliteral}{"{}"{}})\ ==\ 0)\ \textcolor{comment}{//\ no\ directory\ specified}}
+\DoxyCodeLine{00028\ \ \ \ \ strcpy(fullName,\ name);}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ strcpy(fullName,\ directory);\ }
+\DoxyCodeLine{00031\ \ \ \ \ strcat(fullName,\ \textcolor{stringliteral}{"{}/"{}});}
+\DoxyCodeLine{00032\ \ \ \ \ strcat(fullName,\ name);}
+\DoxyCodeLine{00033\ \ \ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordflow}{if}\ ((f\ =\ fopen(fullName,\ mode))\ ==\ NULL)\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ opening\ \%s\ for\ \%s\(\backslash\)n"{}},\ fullName,\ mode);}
+\DoxyCodeLine{00037\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00038\ \ \ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordflow}{return}\ f;}
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00044\ \ \ FILE\ *tairf,\ *tsoilf,\ *parf,\ *pptf,\ *vpdf,\ *vpdSoilf,\ *vpressf,\ *wspdf,\ *soilwetnessf,\ *out;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \textcolor{comment}{/*\ Harvard\ Forest:}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ int\ day\ =\ 1;}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ int\ year\ =\ 1992;}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ \ */}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \textcolor{keywordtype}{int}\ day\ =\ 305;}
+\DoxyCodeLine{00052\ \ \ \textcolor{keywordtype}{int}\ year\ =\ 1998;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \textcolor{keywordtype}{int}\ time\ =\ 0;\ \textcolor{comment}{//\ time\ of\ start\ of\ interval\ (in\ seconds)}}
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{int}\ leap\ =\ year\%4;\ \textcolor{comment}{//\ for\ leap\ year\ calculations}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \textcolor{comment}{//\ climate\ variables:}}
+\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{float}\ tair,\ tsoil,\ par,\ precip,\ vpd,\ vpdSoil,\ vpress,\ wspd,\ soilwetness;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \textcolor{keywordtype}{char}\ *directory,\ *outFileName;\ \textcolor{comment}{//\ pointers\ into\ the\ argv\ vector}}
+\DoxyCodeLine{00061\ \ \ \textcolor{keywordtype}{int}\ intervalLength,\ location;}
+\DoxyCodeLine{00062\ \ \ \textcolor{keywordtype}{char}\ *errc;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 4\ ||\ argc\ >\ 5)\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00066\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00067\ \ \ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \textcolor{comment}{//\ read\ arguments}}
+\DoxyCodeLine{00070\ \ \ directory\ =\ argv[1];}
+\DoxyCodeLine{00071\ \ \ outFileName\ =\ argv[2];}
+\DoxyCodeLine{00072\ \ \ intervalLength\ =\ strtol(argv[3],\ \&errc,\ 0);}
+\DoxyCodeLine{00073\ \ \ \textcolor{keywordflow}{if}\ (argc\ ==\ 5)\ \textcolor{comment}{//\ a\ location\ was\ specified}}
+\DoxyCodeLine{00074\ \ \ \ \ location\ =\ strtol(argv[4],\ \&errc,\ 0);}
+\DoxyCodeLine{00075\ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00076\ \ \ \ \ location\ =\ 0;}
+\DoxyCodeLine{00077\ \ \ \textcolor{comment}{//\ done\ reading\ arguments}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ tairf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}tairstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00080\ \ \ tsoilf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}tsoilstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00081\ \ \ parf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}parstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00082\ \ \ pptf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}pptstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00083\ \ \ vpdf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}vpdstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00084\ \ \ vpdSoilf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}vpdsoilstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00085\ \ \ vpressf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}vpressstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00086\ \ \ wspdf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}wspdstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00087\ \ \ soilwetnessf\ =\ openFile(directory,\ \textcolor{stringliteral}{"{}soilwetnessstep"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00088\ \ \ out\ =\ openFile(\textcolor{stringliteral}{"{}"{}},\ outFileName,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \textcolor{keywordflow}{while}\ (fscanf(tairf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&tair)\ >\ 0)\ \{\ \textcolor{comment}{//\ while\ we\ haven't\ reached\ end\ of\ file\ -\/\ assume\ all\ files\ have\ the\ same\ length}}
+\DoxyCodeLine{00091\ \ \ \ \ fscanf(tsoilf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&tsoil);}
+\DoxyCodeLine{00092\ \ \ \ \ fscanf(parf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&par);}
+\DoxyCodeLine{00093\ \ \ \ \ fscanf(pptf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&precip);}
+\DoxyCodeLine{00094\ \ \ \ \ fscanf(vpdf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&vpd);}
+\DoxyCodeLine{00095\ \ \ \ \ fscanf(vpdSoilf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&vpdSoil);}
+\DoxyCodeLine{00096\ \ \ \ \ fscanf(vpressf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&vpress);}
+\DoxyCodeLine{00097\ \ \ \ \ fscanf(wspdf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&wspd);}
+\DoxyCodeLine{00098\ \ \ \ \ fscanf(soilwetnessf,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&soilwetness);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\%d\(\backslash\)t\%4d\ \%3d\ \%5.2f\ \%8d\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\ \%8.4f\(\backslash\)n"{}},\ location,\ year,\ day,\ time/3600.,\ -\/intervalLength,\ tair,\ tsoil,\ par,\ precip,\ vpd,\ vpdSoil,\ vpress,\ wspd,\ soilwetness);\ \ \textcolor{comment}{//\ note\ that\ we\ output\ time\ in\ hours\ rather\ than\ seconds,\ and\ note\ that\ we\ output\ intervalLength\ as\ negative\ to\ indicate\ that\ it\ is\ in\ seconds}}
+\DoxyCodeLine{00101\ \ \ \ \ }
+\DoxyCodeLine{00102\ \ \ \ \ time\ =\ time\ +\ intervalLength;}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordflow}{while}\ (time\ >=\ 86400)\ \{\ \textcolor{comment}{//\ next\ day}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ time\ =\ time\ -\/\ 86400;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((day\ ==\ 365\ \&\&\ leap\ >\ 0)\ ||\ (day\ ==\ 366\ \&\&\ leap\ ==\ 0))\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ day\ =\ 1;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ year++;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ leap\ =\ year\%4;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ day++;}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ \ \ \}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ fclose(tairf);}
+\DoxyCodeLine{00116\ \ \ fclose(tsoilf);}
+\DoxyCodeLine{00117\ \ \ fclose(parf);}
+\DoxyCodeLine{00118\ \ \ fclose(pptf);}
+\DoxyCodeLine{00119\ \ \ fclose(vpdf);}
+\DoxyCodeLine{00120\ \ \ fclose(vpdSoilf);}
+\DoxyCodeLine{00121\ \ \ fclose(vpressf);}
+\DoxyCodeLine{00122\ \ \ fclose(wspdf);}
+\DoxyCodeLine{00123\ \ \ fclose(soilwetnessf);}
+\DoxyCodeLine{00124\ \ \ fclose(out);}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00127\ \}}
+
+\end{DoxyCode}

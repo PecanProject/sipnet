@@ -1,0 +1,275 @@
+\doxysection{nnfwd.\+m File Reference}
+\label{nnfwd_8m}\index{nnfwd.m@{nnfwd.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ if} (\textbf{ nargin}==3 \&\textbf{ recalc\+\_\+stats}==1) \textbf{ meanx}
+\item 
+\textbf{ end} \textbf{ addpath} (\textquotesingle{}/net/\textbf{ nfs}/\textbf{ zurueck}/home/braswell/matlab/\textbf{ netlab}\textquotesingle{})
+\item 
+\textbf{ if} (\textbf{ nargout} $>$1) \textbf{ nx}
+\item 
+\textbf{ sig} (n, k)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ function} [\textbf{ y}, \textbf{ sig}] = \textbf{ nnfwd}(net,\textbf{ x},\textbf{ recalc\+\_\+stats})
+\item 
+\textbf{ nin} =net.\+nin
+\item 
+\textbf{ nout} =net.\+nout
+\item 
+\textbf{ nstd} =net.\+opt.\+nstd
+\item 
+\textbf{ meant} =net.\+opt.\+meant
+\item 
+\textbf{ stdt} =net.\+opt.\+stdt
+\item 
+\textbf{ minx} =net.\+opt.\+minx
+\item 
+\textbf{ maxx} =net.\+opt.\+maxx
+\item 
+\textbf{ invhess} =net.\+invhess
+\item 
+\textbf{ stdx} =\textbf{ std}(\textbf{ x})
+\item 
+\textbf{ else} \textbf{ meanx} =net.\+opt.\+meanx
+\item 
+\textbf{ nrep} =1+2$\ast$(\textbf{ nin}-\/1)
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ end} \textbf{ y} =\textbf{ mlpfwd}(net,\textbf{ x})
+\item 
+\textbf{ g} = \textbf{ mlpderiv}(net,\textbf{ x})
+\item 
+\textbf{ for} \textbf{ k}
+\item 
+\textbf{ end} \textbf{ end} \textbf{ sig} = 2$\ast$\textbf{ sqrt}(\textbf{ ones}(\textbf{ size}(sig))./\textbf{ net.\+beta} + sig)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{nnfwd_8m_a6cdca645e8d9b5fdc874e7203414ddbd} 
+\index{nnfwd.m@{nnfwd.m}!addpath@{addpath}}
+\index{addpath@{addpath}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{addpath()}
+{\footnotesize\ttfamily \textbf{ end} addpath (\begin{DoxyParamCaption}\item[{\textquotesingle{}/net/\textbf{ nfs}/\textbf{ zurueck}/home/braswell/matlab/\textbf{ netlab}\textquotesingle{}}]{ }\end{DoxyParamCaption})}
+
+\label{nnfwd_8m_abc6c93bbfaa2b5ad1de0d7abf4f994d0} 
+\index{nnfwd.m@{nnfwd.m}!if@{if}}
+\index{if@{if}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{\textbf{ nargin}}]{ = {\ttfamily =3~\&\textbf{ recalc\+\_\+stats}==1} }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{nnfwd_8m_aaa4663169ba0fd5e2e145905e1c87bea} 
+\index{nnfwd.m@{nnfwd.m}!if@{if}}
+\index{if@{if}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{\textbf{ nargout}}]{,  }\item[{1}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ length()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{nnfwd_8m_a21b8d7b171c84d11eb1a602b453d29f8} 
+\index{nnfwd.m@{nnfwd.m}!sig@{sig}}
+\index{sig@{sig}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{sig()}
+{\footnotesize\ttfamily sig (\begin{DoxyParamCaption}\item[{n}]{,  }\item[{k}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{nnfwd_8m_ae8c6039ca9b11ad6e2270cb57ac76daf} 
+\index{nnfwd.m@{nnfwd.m}!function@{function}}
+\index{function@{function}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{function}
+{\footnotesize\ttfamily function[\textbf{ y}, \textbf{ sig}] = \textbf{ nnfwd}(net,\textbf{ x},\textbf{ recalc\+\_\+stats})}
+
+
+
+Definition at line \textbf{ 1} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_ac0635e410675929de2ff7f85ee1d0bb7} 
+\index{nnfwd.m@{nnfwd.m}!g@{g}}
+\index{g@{g}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{g}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ save} g = \textbf{ mlpderiv}(net,\textbf{ x})}
+
+
+
+Definition at line \textbf{ 35} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a6f6ccfcf58b31cb6412107d9d5281426} 
+\index{nnfwd.m@{nnfwd.m}!i@{i}}
+\index{i@{i}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:nin}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ x(:,i)\ =\ (x(:,i)-\/meanx(i))./(nstd*stdx(i))}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 27} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a58e80b9b867ce9f60e700322cc2cbf29} 
+\index{nnfwd.m@{nnfwd.m}!invhess@{invhess}}
+\index{invhess@{invhess}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{invhess}
+{\footnotesize\ttfamily net invhess =net.\+invhess}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a1c73327b2882639bc9f5e416bb3cc7ac} 
+\index{nnfwd.m@{nnfwd.m}!k@{k}}
+\index{k@{k}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{k}
+{\footnotesize\ttfamily \textbf{ for} k}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ 1:nout}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ n\ =\ 1:nx}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ grad\ =\ g(n,:,k)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 36} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a9ed3e2d6743288bd0d2bd665bd313f3d} 
+\index{nnfwd.m@{nnfwd.m}!maxx@{maxx}}
+\index{maxx@{maxx}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{maxx}
+{\footnotesize\ttfamily maxx =net.\+opt.\+maxx}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a6721eeecc4bc2ef7c5a08fc36dab6e9d} 
+\index{nnfwd.m@{nnfwd.m}!meant@{meant}}
+\index{meant@{meant}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{meant}
+{\footnotesize\ttfamily net \textbf{ opt} meant =net.\+opt.\+meant}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a62e25c32a0628d3d8eca6e94d94ef7da} 
+\index{nnfwd.m@{nnfwd.m}!meanx@{meanx}}
+\index{meanx@{meanx}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{meanx}
+{\footnotesize\ttfamily net \textbf{ opt} meanx =net.\+opt.\+meanx}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_ae953e00e4ed190e46daf07f9f3da2d52} 
+\index{nnfwd.m@{nnfwd.m}!minx@{minx}}
+\index{minx@{minx}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{minx}
+{\footnotesize\ttfamily minx =net.\+opt.\+minx}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a1765a35c6d16065c968e87afead5208c} 
+\index{nnfwd.m@{nnfwd.m}!nin@{nin}}
+\index{nin@{nin}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{nin}
+{\footnotesize\ttfamily nin =net.\+nin}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_ae63dd23e0d2e3a1fcf0b25b694520371} 
+\index{nnfwd.m@{nnfwd.m}!nout@{nout}}
+\index{nout@{nout}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{nout}
+{\footnotesize\ttfamily nout =net.\+nout}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a1054939a83776944c4a40757960b2a64} 
+\index{nnfwd.m@{nnfwd.m}!nrep@{nrep}}
+\index{nrep@{nrep}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{nrep}
+{\footnotesize\ttfamily nrep =1+2$\ast$(\textbf{ nin}-\/1)}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_ad845af9b10d077723e747dd1fb94d95f} 
+\index{nnfwd.m@{nnfwd.m}!nstd@{nstd}}
+\index{nstd@{nstd}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{nstd}
+{\footnotesize\ttfamily nstd =net.\+opt.\+nstd}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_af68a9e744382cfceeccc610996a4c090} 
+\index{nnfwd.m@{nnfwd.m}!sig@{sig}}
+\index{sig@{sig}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{sig}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ end} sig = 2$\ast$\textbf{ sqrt}(\textbf{ ones}(\textbf{ size}(sig))./\textbf{ net.\+beta} + sig)}
+
+
+
+Definition at line \textbf{ 42} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a3ca396819e26779a335d07747e67ae96} 
+\index{nnfwd.m@{nnfwd.m}!stdt@{stdt}}
+\index{stdt@{stdt}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{stdt}
+{\footnotesize\ttfamily net \textbf{ opt} stdt =net.\+opt.\+stdt}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_a03fc4ef32607ea1b29caaef8a12029ea} 
+\index{nnfwd.m@{nnfwd.m}!stdx@{stdx}}
+\index{stdx@{stdx}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{stdx}
+{\footnotesize\ttfamily net \textbf{ opt} stdx =\textbf{ std}(\textbf{ x})}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ nnfwd.\+m}.
+
+\label{nnfwd_8m_aa9b4a652922d86915477b2e4eb323a58} 
+\index{nnfwd.m@{nnfwd.m}!y@{y}}
+\index{y@{y}!nnfwd.m@{nnfwd.m}}
+\doxysubsubsection{y}
+{\footnotesize\ttfamily \textbf{ end} y =\textbf{ mlpfwd}(net,\textbf{ x})}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ nnfwd.\+m}.
+

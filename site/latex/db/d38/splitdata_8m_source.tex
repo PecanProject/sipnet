@@ -1,0 +1,27 @@
+\doxysection{splitdata.\+m}
+\label{splitdata_8m_source}\index{splitdata.m@{splitdata.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ split\ =\ splitdata(data,\ len)}
+\DoxyCodeLine{00002\ \%\ PRE:\ data\ has\ 2\ dimensions,\ where\ length\ of\ first\ dimension\ is\ a\ multiple}
+\DoxyCodeLine{00003\ \%\ of\ len}
+\DoxyCodeLine{00004\ \%\ Split\ data\ into\ an\ 3-\/dimensional\ array,\ where\ split\ is\ performed}
+\DoxyCodeLine{00005\ \%\ by\ splitting\ first\ dimension\ of\ data\ into\ len-\/length\ chunks}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \ \ if\ (ndims(data)\ \string~=\ 2)}
+\DoxyCodeLine{00008\ \ \ \ \ fprintf('Error:\ data\ must\ have\ 2\ dimensions\(\backslash\)n');}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{00010\ \ \ elseif\ (mod(length(data(:,1)),\ len)\ \string~=\ 0)}
+\DoxyCodeLine{00011\ \ \ \ \ fprintf(\textcolor{stringliteral}{'Error:\ length\ of\ first\ dimension\ of\ data\ must\ be\ a\ multiple\ of\ len\(\backslash\)n'});}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{00013\ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00014\ \ \ \ \ n\ =\ length(data(:,1))/len;}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordflow}{for}\ i\ =\ 1:n}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ start\ =\ 1\ +\ (i-\/1)*len;}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ fin\ =\ i*len;}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ split(i,:,:)=data(start:fin,:);}
+\DoxyCodeLine{00019\ \ \ \ \ end}
+\DoxyCodeLine{00020\ \ \ end}
+\DoxyCodeLine{00021\ end}
+
+\end{DoxyCode}

@@ -1,0 +1,289 @@
+\doxysection{subset\+Data.\+c File Reference}
+\label{subset_data_8c}\index{subsetData.c@{subsetData.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+{\ttfamily \#include "{}namelist\+Input.\+h"{}}\newline
+Include dependency graph for subset\+Data.\+c\+:
+% FIG 0
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ NAMELIST\+\_\+\+FILE}~"{}subset.\+in"{}
+\item 
+\#\textbf{ define} \textbf{ MAX\+\_\+\+LINE}~1024
+\item 
+\#\textbf{ define} \textbf{ MAX\+\_\+\+FILENAME}~256
+\item 
+\#\textbf{ define} \textbf{ MAX\+\_\+\+NAME}~64
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ AGGREGATION\+\_\+\+TYPES} \{ \textbf{ NO\+\_\+\+AGGREGATION}
+, \textbf{ DAILY\+\_\+\+AGGREGATION}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ check\+Status} (\textbf{ char} $\ast$\textbf{ status}, \textbf{ char} $\ast$\textbf{ message})
+\item 
+\textbf{ char} $\ast$ \textbf{ read\+Clim\+Line} (\textbf{ FILE} $\ast$\textbf{ f}, \textbf{ char} $\ast$\textbf{ line}, \textbf{ int} \textbf{ max\+Length}, \textbf{ int} $\ast$loc, \textbf{ int} $\ast$year, \textbf{ int} $\ast$day)
+\item 
+\textbf{ void} \textbf{ check\+Locations} (\textbf{ FILE} $\ast$\textbf{ clim\+Fin})
+\item 
+\textbf{ int} \textbf{ past\+Start} (\textbf{ int} year, \textbf{ int} day, \textbf{ int} start\+Year, \textbf{ int} start\+Day)
+\item 
+\textbf{ void} \textbf{ goto\+Start} (\textbf{ FILE} $\ast$\textbf{ clim\+Fin}, \textbf{ FILE} $\ast$\textbf{ data\+Fin}, \textbf{ FILE} $\ast$\textbf{ valid\+Fin}, \textbf{ FILE} $\ast$\textbf{ sigma\+Fin}, \textbf{ int} $\ast$start\+Year, \textbf{ int} $\ast$start\+Day)
+\item 
+\textbf{ void} \textbf{ copy\+Subset} (\textbf{ FILE} $\ast$\textbf{ clim\+Fin}, \textbf{ FILE} $\ast$\textbf{ data\+Fin}, \textbf{ FILE} $\ast$\textbf{ valid\+Fin}, \textbf{ FILE} $\ast$\textbf{ sigma\+Fin}, \textbf{ FILE} $\ast$\textbf{ clim\+Fout}, \textbf{ FILE} $\ast$\textbf{ data\+Fout}, \textbf{ FILE} $\ast$\textbf{ valid\+Fout}, \textbf{ FILE} $\ast$\textbf{ sigma\+Fout}, \textbf{ FILE} $\ast$\textbf{ spd\+Fout}, \textbf{ FILE} $\ast$\textbf{ agg\+Fout}, \textbf{ int} \textbf{ agg\+Type}, \textbf{ int} start\+Year, \textbf{ int} start\+Day, \textbf{ int} num\+Days)
+\item 
+\textbf{ void} \textbf{ copy\+File} (\textbf{ char} $\ast$\textbf{ in\+Filename}, \textbf{ char} $\ast$\textbf{ out\+Filename})
+\item 
+\textbf{ void} \textbf{ copy\+Other\+Files} (\textbf{ char} $\ast$\textbf{ in\+Filename}, \textbf{ char} $\ast$\textbf{ out\+Filename})
+\item 
+\textbf{ int} \textbf{ main} (\textbf{ int} \textbf{ argc}, \textbf{ char} $\ast$\textbf{ argv}[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{subset_data_8c_abe0ec333b60117063f9b9fd9f849cb08} 
+\index{subsetData.c@{subsetData.c}!MAX\_FILENAME@{MAX\_FILENAME}}
+\index{MAX\_FILENAME@{MAX\_FILENAME}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{MAX\_FILENAME}
+{\footnotesize\ttfamily \#\textbf{ define} MAX\+\_\+\+FILENAME~256}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ subset\+Data.\+c}.
+
+\label{subset_data_8c_a842ed03f27719bc87666bfd1f75415b8} 
+\index{subsetData.c@{subsetData.c}!MAX\_LINE@{MAX\_LINE}}
+\index{MAX\_LINE@{MAX\_LINE}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{MAX\_LINE}
+{\footnotesize\ttfamily \#\textbf{ define} MAX\+\_\+\+LINE~1024}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ subset\+Data.\+c}.
+
+\label{subset_data_8c_ac7c0207aa5a0e10d378be03b68041350} 
+\index{subsetData.c@{subsetData.c}!MAX\_NAME@{MAX\_NAME}}
+\index{MAX\_NAME@{MAX\_NAME}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{MAX\_NAME}
+{\footnotesize\ttfamily \#\textbf{ define} MAX\+\_\+\+NAME~64}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ subset\+Data.\+c}.
+
+\label{subset_data_8c_a04269ae49c711ff19abf076037b60abb} 
+\index{subsetData.c@{subsetData.c}!NAMELIST\_FILE@{NAMELIST\_FILE}}
+\index{NAMELIST\_FILE@{NAMELIST\_FILE}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{NAMELIST\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} NAMELIST\+\_\+\+FILE~"{}subset.\+in"{}}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ subset\+Data.\+c}.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\label{subset_data_8c_aef61c4baa510f040b8460cccc00c17f1} 
+\index{subsetData.c@{subsetData.c}!AGGREGATION\_TYPES@{AGGREGATION\_TYPES}}
+\index{AGGREGATION\_TYPES@{AGGREGATION\_TYPES}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{AGGREGATION\_TYPES}
+{\footnotesize\ttfamily \textbf{ enum} \textbf{ AGGREGATION\+\_\+\+TYPES}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_AGGREGATION@{NO\_AGGREGATION}!subsetData.c@{subsetData.c}}\index{subsetData.c@{subsetData.c}!NO\_AGGREGATION@{NO\_AGGREGATION}}}\label{subset_data_8c_aef61c4baa510f040b8460cccc00c17f1a23a8f3bc565e787c034b648eb2c2697b} 
+NO\+\_\+\+AGGREGATION&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DAILY\_AGGREGATION@{DAILY\_AGGREGATION}!subsetData.c@{subsetData.c}}\index{subsetData.c@{subsetData.c}!DAILY\_AGGREGATION@{DAILY\_AGGREGATION}}}\label{subset_data_8c_aef61c4baa510f040b8460cccc00c17f1abbc668498a82613fac2cb89327fce5bc} 
+DAILY\+\_\+\+AGGREGATION&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 35} of file \textbf{ subset\+Data.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{subset_data_8c_a21e40fa66ea361bb21b3f016896a05c5} 
+\index{subsetData.c@{subsetData.c}!checkLocations@{checkLocations}}
+\index{checkLocations@{checkLocations}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{checkLocations()}
+{\footnotesize\ttfamily \textbf{ void} check\+Locations (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{clim\+Fin }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ day}, \textbf{ exit()}, \textbf{ index}, \textbf{ MAX\+\_\+\+LINE}, \textbf{ read\+Clim\+Line()}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{subset_data_8c_ab14cee6bb907d7f1784c4ed34849c3b8} 
+\index{subsetData.c@{subsetData.c}!checkStatus@{checkStatus}}
+\index{checkStatus@{checkStatus}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{checkStatus()}
+{\footnotesize\ttfamily \textbf{ void} check\+Status (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{status,  }\item[{\textbf{ char} $\ast$}]{message }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ exit()}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ copy\+Subset()}, and \textbf{ goto\+Start()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{subset_data_8c_ae5f25619fa72061b0a68e8ad2d840f0a} 
+\index{subsetData.c@{subsetData.c}!copyFile@{copyFile}}
+\index{copyFile@{copyFile}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{copyFile()}
+{\footnotesize\ttfamily \textbf{ void} copy\+File (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{in\+Filename,  }\item[{\textbf{ char} $\ast$}]{out\+Filename }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 286} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ fclose()}, \textbf{ index}, and \textbf{ open\+File()}.
+
+
+
+Referenced by \textbf{ copy\+Other\+Files()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{subset_data_8c_a2ca93a5a758e934dbec0d31079b9cb67} 
+\index{subsetData.c@{subsetData.c}!copyOtherFiles@{copyOtherFiles}}
+\index{copyOtherFiles@{copyOtherFiles}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{copyOtherFiles()}
+{\footnotesize\ttfamily \textbf{ void} copy\+Other\+Files (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{in\+Filename,  }\item[{\textbf{ char} $\ast$}]{out\+Filename }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 304} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ copy\+File()}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{subset_data_8c_a015c9bbe26ddf4a7ce02576d07ae369b} 
+\index{subsetData.c@{subsetData.c}!copySubset@{copySubset}}
+\index{copySubset@{copySubset}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{copySubset()}
+{\footnotesize\ttfamily \textbf{ void} copy\+Subset (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{clim\+Fin,  }\item[{\textbf{ FILE} $\ast$}]{data\+Fin,  }\item[{\textbf{ FILE} $\ast$}]{valid\+Fin,  }\item[{\textbf{ FILE} $\ast$}]{sigma\+Fin,  }\item[{\textbf{ FILE} $\ast$}]{clim\+Fout,  }\item[{\textbf{ FILE} $\ast$}]{data\+Fout,  }\item[{\textbf{ FILE} $\ast$}]{valid\+Fout,  }\item[{\textbf{ FILE} $\ast$}]{sigma\+Fout,  }\item[{\textbf{ FILE} $\ast$}]{spd\+Fout,  }\item[{\textbf{ FILE} $\ast$}]{agg\+Fout,  }\item[{\textbf{ int}}]{agg\+Type,  }\item[{\textbf{ int}}]{start\+Year,  }\item[{\textbf{ int}}]{start\+Day,  }\item[{\textbf{ int}}]{num\+Days }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 168} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ check\+Status()}, \textbf{ DAILY\+\_\+\+AGGREGATION}, \textbf{ day}, \textbf{ exit()}, \textbf{ fprintf()}, \textbf{ index}, \textbf{ MAX\+\_\+\+LINE}, \textbf{ ndays}, \textbf{ NO\+\_\+\+AGGREGATION}, \textbf{ read\+Clim\+Line()}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 5
+\label{subset_data_8c_afa2c09010ed08ddb4110159b84f72c05} 
+\index{subsetData.c@{subsetData.c}!gotoStart@{gotoStart}}
+\index{gotoStart@{gotoStart}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{gotoStart()}
+{\footnotesize\ttfamily \textbf{ void} goto\+Start (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{clim\+Fin,  }\item[{\textbf{ FILE} $\ast$}]{data\+Fin,  }\item[{\textbf{ FILE} $\ast$}]{valid\+Fin,  }\item[{\textbf{ FILE} $\ast$}]{sigma\+Fin,  }\item[{\textbf{ int} $\ast$}]{start\+Year,  }\item[{\textbf{ int} $\ast$}]{start\+Day }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 109} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ check\+Status()}, \textbf{ day}, \textbf{ err}, \textbf{ exit()}, \textbf{ index}, \textbf{ MAX\+\_\+\+LINE}, \textbf{ past\+Start()}, \textbf{ read\+Clim\+Line()}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 6
+\label{subset_data_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{subsetData.c@{subsetData.c}!main@{main}}
+\index{main@{main}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily \textbf{ int} main (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{argc,  }\item[{\textbf{ char} $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 331} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ check\+Locations()}, \textbf{ copy\+Other\+Files()}, \textbf{ copy\+Subset()}, \textbf{ DAILY\+\_\+\+AGGREGATION}, \textbf{ die\+If\+Not\+Read()}, \textbf{ exit()}, \textbf{ fclose()}, \textbf{ goto\+Start()}, \textbf{ index}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ MAX\+\_\+\+FILENAME}, \textbf{ MAX\+\_\+\+NAME}, \textbf{ NAMELIST\+\_\+\+FILE}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ NO\+\_\+\+AGGREGATION}, \textbf{ open\+File\+Ext()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ strcmp\+Ignore\+Case()}, and \textbf{ STRING\+\_\+\+TYPE}.
+
+Here is the call graph for this function\+:
+% FIG 7
+\label{subset_data_8c_ab6d5a484c646b0519f75beef7ff1ac37} 
+\index{subsetData.c@{subsetData.c}!pastStart@{pastStart}}
+\index{pastStart@{pastStart}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{pastStart()}
+{\footnotesize\ttfamily \textbf{ int} past\+Start (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{year,  }\item[{\textbf{ int}}]{day,  }\item[{\textbf{ int}}]{start\+Year,  }\item[{\textbf{ int}}]{start\+Day }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 89} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ day}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ goto\+Start()}.
+
+\label{subset_data_8c_a5b0abd5931b15a92fa27271b98d837d4} 
+\index{subsetData.c@{subsetData.c}!readClimLine@{readClimLine}}
+\index{readClimLine@{readClimLine}!subsetData.c@{subsetData.c}}
+\doxysubsubsection{readClimLine()}
+{\footnotesize\ttfamily \textbf{ char} $\ast$ read\+Clim\+Line (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{f,  }\item[{\textbf{ char} $\ast$}]{line,  }\item[{\textbf{ int}}]{max\+Length,  }\item[{\textbf{ int} $\ast$}]{loc,  }\item[{\textbf{ int} $\ast$}]{year,  }\item[{\textbf{ int} $\ast$}]{day }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 53} of file \textbf{ subset\+Data.\+c}.
+
+
+
+References \textbf{ day}, \textbf{ f}, \textbf{ index}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ check\+Locations()}, \textbf{ copy\+Subset()}, and \textbf{ goto\+Start()}.
+

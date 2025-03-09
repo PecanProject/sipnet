@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>SIPNET Input and Output Parameters - SIPNET Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "SIPNET Input and Output Parameters";
+        var mkdocs_page_input_path = "sipnet_inputs_outputs.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> SIPNET Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/running-sipnet/">Running SIPNET</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../developer-guide/code-structure/">Code Structure</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING/">Contributing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api-reference/">API Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT/">Code of Conduct</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">SIPNET Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">SIPNET Input and Output Parameters</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="sipnet-input-and-output-parameters">SIPNET Input and Output Parameters</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-run-time-parameters">Run-time Parameters</a></li>
+<li><a href="#initial-state-values">Initial state values</a></li>
+<li><a href="#photosynthesis-parameters">Photosynthesis parameters</a></li>
+<li><a href="#phenology-related-parameters">Phenology-related parameters</a></li>
+<li><a href="#autotrophic-respiration-parameters">Autotrophic respiration parameters</a></li>
+<li><a href="#soil-respiration-parameters">Soil respiration parameters</a></li>
+<li><a href="#moisture-related-parameters">Moisture-related parameters</a></li>
+<li><a href="#quality-model-parameters">Quality model parameters</a></li>
+<li><a href="#2-compile-time-parameters">Compile-time parameters</a></li>
+<li><a href="#3-climate-driver-inputs">Climate driver inputs</a></li>
+<li><a href="#4-outputs">Outputs</a></li>
+</ol>
+<h2 id="1-run-time-parameters">1. Run-time Parameters</h2>
+<p>Model parameters that can change from one run to the next. These include initializations of state, allocations, and biophysical rate constants.  </p>
+<h3 id="initial-state-values">Initial state values</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: left;">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">plantWoodInit</td>
+<td style="text-align: left;">Initial wood carbon</td>
+<td style="text-align: left;">g C * m^-2 ground area</td>
+<td style="text-align: left;">above-ground + roots</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">laiInit</td>
+<td style="text-align: left;">initial leaf area</td>
+<td style="text-align: left;">m^2 leaves * m^-2 ground area</td>
+<td style="text-align: left;">multiply by leafCSpWt to get initial plant leaf C</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">litterInit</td>
+<td style="text-align: left;">Initial litter carbon</td>
+<td style="text-align: left;">g C * m^-2 ground area</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">soilInit</td>
+<td style="text-align: left;">Initial soil carbon</td>
+<td style="text-align: left;">g C * m^-2 ground area</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">litterWFracInit</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">unitless</td>
+<td style="text-align: left;">fraction of litterWHC</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">soilWFracInit</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">unitless</td>
+<td style="text-align: left;">fraction of soilWHC</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">snowInit</td>
+<td style="text-align: left;">Initial snow water</td>
+<td style="text-align: left;">cm water equiv.</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="photosynthesis-parameters">Photosynthesis parameters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: left;">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">aMax</td>
+<td style="text-align: left;">max photosynthesis</td>
+<td style="text-align: left;">nmol CO2 * g^-1 leaf * sec^-1</td>
+<td style="text-align: left;">assuming max. possible par, all intercepted, no temp, water or vpd stress</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">aMaxFrac</td>
+<td style="text-align: left;">avg. daily aMax as fraction of instantaneous</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">baseFolRespFrac</td>
+<td style="text-align: left;">basal foliage resp. rate</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">as % of max. net photosynth. rate</td>
+</tr>
+<tr>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">psnTMin</td>
+<td style="text-align: left;">min temp at which net photosynthesis occurs</td>
+<td style="text-align: left;">°C</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">psnTOpt</td>
+<td style="text-align: left;">optimal temp at which net photosynthesis occurs</td>
+<td style="text-align: left;">°C</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">dVpdSlope</td>
+<td style="text-align: left;">used to calculate VPD effect on Psn</td>
+<td style="text-align: left;">dimensionless</td>
+<td style="text-align: left;">dVpd = 1 - dVpdSlope * vpd^dVpdExp</td>
+</tr>
+<tr>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">dVpdExp</td>
+<td style="text-align: left;">used to calculate VPD effect on Psn</td>
+<td style="text-align: left;">dimensionless</td>
+<td style="text-align: left;">dVpd = 1 - dVpdSlope * vpd^dVpdExp</td>
+</tr>
+<tr>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">halfSatPar</td>
+<td style="text-align: left;">par at which photosynthesis occurs at 1/2 theoretical maximum</td>
+<td style="text-align: left;">Einsteins * m^-2 ground area * day^-1</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">attenuation</td>
+<td style="text-align: left;">light attenuation coefficient</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phenology-related-parameters">Phenology-related parameters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: left;">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">17</td>
+<td style="text-align: left;">leafOnDay</td>
+<td style="text-align: left;">day when leaves appear</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">18</td>
+<td style="text-align: left;">gddLeafOn</td>
+<td style="text-align: left;">with gdd-based phenology, gdd threshold for leaf appearance</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">soilTempLeafOn</td>
+<td style="text-align: left;">with soil temp-based phenology, soil temp threshold for leaf appearance</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">leafOffDay</td>
+<td style="text-align: left;">day when leaves disappear</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">21</td>
+<td style="text-align: left;">leafGrowth</td>
+<td style="text-align: left;">additional leaf growth at start of growing season</td>
+<td style="text-align: left;">g C * m^-2 ground</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">22</td>
+<td style="text-align: left;">fracLeafFall</td>
+<td style="text-align: left;">additional fraction of leaves that fall at end of growing season</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">leafAllocation</td>
+<td style="text-align: left;">fraction of NPP allocated to leaf growth</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">leafTurnoverRate</td>
+<td style="text-align: left;">average turnover rate of leaves</td>
+<td style="text-align: left;">fraction per day</td>
+<td style="text-align: left;">read in as per-year rate</td>
+</tr>
+</tbody>
+</table>
+<h3 id="autotrophic-respiration-parameters">Autotrophic respiration parameters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: left;">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">25</td>
+<td style="text-align: left;">baseVegResp</td>
+<td style="text-align: left;">vegetation maintenance respiration at 0°C</td>
+<td style="text-align: left;">g C respired * g^-1 plant C * day^-1</td>
+<td style="text-align: left;">read in as per-year rate   only counts plant wood C; leaves handled elsewhere (both above and below-ground: assumed for now to have same resp. rate)</td>
+</tr>
+<tr>
+<td style="text-align: left;">26</td>
+<td style="text-align: left;">vegRespQ10</td>
+<td style="text-align: left;">scalar determining effect of temp on veg. resp.</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">27</td>
+<td style="text-align: left;">growthRespFrac</td>
+<td style="text-align: left;">growth resp. as fraction of (GPP - woodResp - folResp)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">28</td>
+<td style="text-align: left;">frozenSoilFolREff</td>
+<td style="text-align: left;">amount that foliar resp. is shutdown if soil is frozen</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">0 = full shutdown, 1 = no shutdown</td>
+</tr>
+<tr>
+<td style="text-align: left;">29</td>
+<td style="text-align: left;">frozenSoilThreshold</td>
+<td style="text-align: left;">soil temperature below which frozenSoilFolREff and frozenSoilEff kick in</td>
+<td style="text-align: left;">°C</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="soil-respiration-parameters">Soil respiration parameters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: left;">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">litterBreakdownRate</td>
+<td style="text-align: left;">rate at which litter is converted to soil / respired at 0°C and max soil moisture</td>
+<td style="text-align: left;">g C broken down * g^-1 litter C * day^-1</td>
+<td style="text-align: left;">read in as per-year rate</td>
+</tr>
+<tr>
+<td style="text-align: left;">31</td>
+<td style="text-align: left;">fracLitterRespired</td>
+<td style="text-align: left;">of the litter broken down, fraction respired (the rest is transferred to soil pool)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">baseSoilResp</td>
+<td style="text-align: left;">soil respiration at 0°C and max soil moisture</td>
+<td style="text-align: left;">g C respired * g^-1 soil C * day^-1</td>
+<td style="text-align: left;">read in as per-year rate</td>
+</tr>
+<tr>
+<td style="text-align: left;">33</td>
+<td style="text-align: left;">baseSoilRespCold</td>
+<td style="text-align: left;">soil respiration at 0°C and max soil moisture when tsoil &lt; coldSoilThreshold</td>
+<td style="text-align: left;">g C respired * g^-1 soil C * day^-1</td>
+<td style="text-align: left;">read in as per-year rate</td>
+</tr>
+<tr>
+<td style="text-align: left;">34</td>
+<td style="text-align: left;">soilRespQ10</td>
+<td style="text-align: left;">scalar determining effect of temp on soil resp.</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">35</td>
+<td style="text-align: left;">soilRespQ10Cold</td>
+<td style="text-align: left;">scalar determining effect of temp on soil resp. when tsoil &lt; coldSoilThreshold</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">36</td>
+<td style="text-align: left;">coldSoilThreshold</td>
+<td style="text-align: left;">temp. at which use baseSoilRespCold and soilRespQ10Cold</td>
+<td style="text-align: left;">°C</td>
+<td style="text-align: left;">Not used if SEASONAL_R_SOIL  is 0</td>
+</tr>
+<tr>
+<td style="text-align: left;">37</td>
+<td style="text-align: left;">E0</td>
+<td style="text-align: left;">E0 in Lloyd-Taylor soil respiration function</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Not used if LLOYD_TAYLOR is 0</td>
+</tr>
+<tr>
+<td style="text-align: left;">38</td>
+<td style="text-align: left;">T0</td>
+<td style="text-align: left;">T0 in Lloyd-Taylor soil respiration function</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Not used if LLOYD_TAYLOR is 0</td>
+</tr>
+<tr>
+<td style="text-align: left;">39</td>
+<td style="text-align: left;">soilRespMoistEffect</td>
+<td style="text-align: left;">scalar determining effect of moisture on soil resp.</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="moisture-related-parameters">Moisture-related parameters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: left;">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">waterRemoveFrac</td>
+<td style="text-align: left;">fraction of plant available soil water which can be removed in one day without water stress occurring</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">41</td>
+<td style="text-align: left;">frozenSoilEff</td>
+<td style="text-align: left;">fraction of water that is available if soil is frozen (0 = none available, 1 = all still avail.)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">if frozenSoilEff = 0, then shut down psn. even if WATER_PSN = 0, if soil is frozen (if frozenSoilEff &gt; 0, it has no effect if WATER_PSN = 0)</td>
+</tr>
+<tr>
+<td style="text-align: left;">42</td>
+<td style="text-align: left;">wueConst</td>
+<td style="text-align: left;">water use efficiency constant</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">43</td>
+<td style="text-align: left;">litterWHC</td>
+<td style="text-align: left;">litter (evaporative layer) water holding capacity</td>
+<td style="text-align: left;">cm</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">44</td>
+<td style="text-align: left;">soilWHC</td>
+<td style="text-align: left;">soil (transpiration layer) water holding capacity</td>
+<td style="text-align: left;">cm</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">45</td>
+<td style="text-align: left;">immedEvapFrac</td>
+<td style="text-align: left;">fraction of rain that is immediately intercepted &amp; evaporated</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">46</td>
+<td style="text-align: left;">fastFlowFrac</td>
+<td style="text-align: left;">fraction of water entering soil that goes directly to drainage</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">47</td>
+<td style="text-align: left;">snowMelt</td>
+<td style="text-align: left;">rate at which snow melts</td>
+<td style="text-align: left;">cm water equiv./°C/day</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">48</td>
+<td style="text-align: left;">litWaterDrainRate</td>
+<td style="text-align: left;">rate at which litter water drains into lower layer when litter layer fully moisture-saturated</td>
+<td style="text-align: left;">c m water/day</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">49</td>
+<td style="text-align: left;">rdConst</td>
+<td style="text-align: left;">scalar determining amount of aerodynamic resistance</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">rSoilConst1</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">soil resistance = e^(rSoilConst1 - rSoilConst2 * W1) , where W1 = (litterWater/litterWHC)</td>
+</tr>
+<tr>
+<td style="text-align: left;">51</td>
+<td style="text-align: left;">rSoilConst2</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">soil resistance = e^(rSoilConst1 - rSoilConst2 * W1) , where W1 = (litterWater/litterWHC)</td>
+</tr>
+<tr>
+<td style="text-align: left;">52</td>
+<td style="text-align: left;">m_ballBerry</td>
+<td style="text-align: left;">slope for the Ball Berry relationship</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">53</td>
+<td style="text-align: left;">leafCSpWt</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">g C * m^-2 leaf area</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">54</td>
+<td style="text-align: left;">cFracLeaf</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">g leaf C * g^-1 leaf</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">55</td>
+<td style="text-align: left;">woodTurnoverRate</td>
+<td style="text-align: left;">average turnover rate of woody plant C</td>
+<td style="text-align: left;">fraction per day</td>
+<td style="text-align: left;">read in as per-year rate; leaf loss handled separately</td>
+</tr>
+</tbody>
+</table>
+<h3 id="quality-model-parameters">Quality model parameters</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: left;">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">56</td>
+<td style="text-align: left;">qualityLeaf</td>
+<td style="text-align: left;">value for leaf litter quality</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">57</td>
+<td style="text-align: left;">qualityWood</td>
+<td style="text-align: left;">value for wood litter quality</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">58</td>
+<td style="text-align: left;">efficiency</td>
+<td style="text-align: left;">conversion efficiency of ingested carbon</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">59</td>
+<td style="text-align: left;">maxIngestionRate</td>
+<td style="text-align: left;">maximum ingestion rate of the microbe</td>
+<td style="text-align: left;">hr-1</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">60</td>
+<td style="text-align: left;">halfSatIngestion</td>
+<td style="text-align: left;">half saturation ingestion rate of microbe</td>
+<td style="text-align: left;">mg C g-1 soil</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">61</td>
+<td style="text-align: left;">totNitrogen</td>
+<td style="text-align: left;">Percentage nitrogen in soil</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">62</td>
+<td style="text-align: left;">microbeNC</td>
+<td style="text-align: left;">microbe N:C ratio</td>
+<td style="text-align: left;">mg N / mg C</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">63</td>
+<td style="text-align: left;">microbeInit</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">mg C / g soil microbe</td>
+<td style="text-align: left;">initial carbon amount</td>
+</tr>
+<tr>
+<td style="text-align: left;">64</td>
+<td style="text-align: left;">fineRootFrac</td>
+<td style="text-align: left;">fraction of wood carbon allocated to fine roots</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">65</td>
+<td style="text-align: left;">coarseRootFrac</td>
+<td style="text-align: left;">fraction of wood carbon that is coarse roots</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">66</td>
+<td style="text-align: left;">fineRootAllocation</td>
+<td style="text-align: left;">fraction of NPP allocated to fine roots</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">67</td>
+<td style="text-align: left;">woodAllocation</td>
+<td style="text-align: left;">fraction of NPP allocated to wood</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">68</td>
+<td style="text-align: left;">fineRootExudation</td>
+<td style="text-align: left;">fraction of GPP exuded to the soil</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">69</td>
+<td style="text-align: left;">coarseRootExudation</td>
+<td style="text-align: left;">fraction of NPP exuded to the soil</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">70</td>
+<td style="text-align: left;">fineRootTurnoverRate</td>
+<td style="text-align: left;">turnover of fine roots</td>
+<td style="text-align: left;">per year rate</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">71</td>
+<td style="text-align: left;">coarseRootTurnoverRate</td>
+<td style="text-align: left;">turnover of coarse roots</td>
+<td style="text-align: left;">per year rate</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">72</td>
+<td style="text-align: left;">baseFineRootResp</td>
+<td style="text-align: left;">base respiration rate of fine roots</td>
+<td style="text-align: left;">per year rate</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">73</td>
+<td style="text-align: left;">baseCoarseRootResp</td>
+<td style="text-align: left;">base respiration rate of coarse roots</td>
+<td style="text-align: left;">per year rate</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">74</td>
+<td style="text-align: left;">fineRootQ10</td>
+<td style="text-align: left;">Q10 of fine roots</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">75</td>
+<td style="text-align: left;">coarseRootQ10</td>
+<td style="text-align: left;">Q10 of coarse roots</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">76</td>
+<td style="text-align: left;">baseMicrobeResp</td>
+<td style="text-align: left;">base respiration rate of microbes</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">77</td>
+<td style="text-align: left;">microbeQ10</td>
+<td style="text-align: left;">Q10 of coarse roots</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">78</td>
+<td style="text-align: left;">microbePulseEff</td>
+<td style="text-align: left;">fraction of exudates that microbes immediately use</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-compile-time-parameters">2. Compile-time parameters</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">CSV_OUTPUT 0</th>
+<th style="text-align: left;">0</th>
+<th style="text-align: left;">output .out file as a CSV file</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">ALTERNATIVE_TRANS 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we want to impliment alternative transpiration?</td>
+</tr>
+<tr>
+<td style="text-align: left;">BALL_BERRY 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">impliment a Ball Berry submodel to calculate gs from RH, CO2 and A</td>
+</tr>
+<tr>
+<td style="text-align: left;">PENMAN_MONTEITH_TRANS 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">impliment a transpiration calculation based on the Penman-Monteith Equation</td>
+</tr>
+<tr>
+<td style="text-align: left;">GROWTH_RESP 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">explicitly model growth resp., rather than including with maint. resp.</td>
+</tr>
+<tr>
+<td style="text-align: left;">LLOYD_TAYLOR 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">use Lloyd-Taylor model for soil respiration, in which temperature sensitivity decreases at higher temperatures?</td>
+</tr>
+<tr>
+<td style="text-align: left;">SEASONAL_R_SOIL 0 &amp;&amp; !LLOYD_TAYLOR</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil &lt; (some threshold)?</td>
+</tr>
+<tr>
+<td style="text-align: left;">WATER_PSN 1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">does soil moisture affect photosynthesis?</td>
+</tr>
+<tr>
+<td style="text-align: left;">WATER_HRESP 1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">does soil moisture affect heterotrophic respiration?</td>
+</tr>
+<tr>
+<td style="text-align: left;">DAYCENT_WATER_HRESP 0 &amp;&amp; WATER_HRESP</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">use DAYCENT soil moisture function?</td>
+</tr>
+<tr>
+<td style="text-align: left;">MODEL_WATER 1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">do we model soil water (and ignore soilWetness)?</td>
+</tr>
+<tr>
+<td style="text-align: left;">COMPLEX_WATER 1 &amp;&amp; MODEL_WATER</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">do we use a more complex water submodel? (model evaporation as well as transpiration)</td>
+</tr>
+<tr>
+<td style="text-align: left;">LITTER_WATER 0 &amp;&amp; (COMPLEX_WATER)</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we have a separate litter water layer, used for evaporation?</td>
+</tr>
+<tr>
+<td style="text-align: left;">LITTER_WATER_DRAINAGE 1 &amp;&amp; (LITTER_WATER)</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">does water from the top layer drain down into bottom layer even if top layer not overflowing?</td>
+</tr>
+<tr>
+<td style="text-align: left;">SNOW (1 || (COMPLEX_WATER)) &amp;&amp; MODEL_WATER</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">keep track of snowpack, rather than assuming all precip. is liquid</td>
+</tr>
+<tr>
+<td style="text-align: left;">GDD 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">use GDD to determine leaf growth? (note: mutually exclusive with SOIL_PHENOL)</td>
+</tr>
+<tr>
+<td style="text-align: left;">SOIL_PHENOL 0 &amp;&amp; !GDD</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)</td>
+</tr>
+<tr>
+<td style="text-align: left;">LITTER_POOL 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">have extra litter pool, in addition to soil c pool</td>
+</tr>
+<tr>
+<td style="text-align: left;">SOIL_MULTIPOOL 0 &amp;&amp; !LITTER_POOL</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we have a multipool approach to model soils?</td>
+</tr>
+<tr>
+<td style="text-align: left;">NUMBER_SOIL_CARBON_POOLS 3</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">number of pools we want to have. Equal to 1 if SOIL_MULTIPOOL is 0</td>
+</tr>
+<tr>
+<td style="text-align: left;">SOIL_QUALITY 0 &amp;&amp; SOIL_MULTIPOOL</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we have a soil quality submodel?</td>
+</tr>
+<tr>
+<td style="text-align: left;">MICROBES 0 &amp;&amp; !SOIL_MULTIPOOL</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we utilize microbes. This will only be an option if SOIL_MULTIPOOL is 0 and MICROBES is 1</td>
+</tr>
+<tr>
+<td style="text-align: left;">STOICHIOMETRY 0 &amp;&amp; MICROBES</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we utilize stoichometric considerations for the microbial pool?</td>
+</tr>
+<tr>
+<td style="text-align: left;">ROOTS 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we model root dynamics?</td>
+</tr>
+<tr>
+<td style="text-align: left;">MODIS 0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">do we use modis FPAR data to constrain GPP?</td>
+</tr>
+<tr>
+<td style="text-align: left;">C_WEIGHT 12.0</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">molecular weight of carbon</td>
+</tr>
+<tr>
+<td style="text-align: left;">MEAN_NPP_DAYS 5</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">over how many days do we keep the running mean</td>
+</tr>
+<tr>
+<td style="text-align: left;">MEAN_NPP_MAX_ENTRIES</td>
+<td style="text-align: left;">MEAN_NPP_DAYS*50</td>
+<td style="text-align: left;">assume that the most pts we can have is two per hour</td>
+</tr>
+<tr>
+<td style="text-align: left;">MEAN_GPP_SOIL_DAYS 5</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">over how many days do we keep the running mean</td>
+</tr>
+<tr>
+<td style="text-align: left;">MEAN_GPP_SOIL_MAX_ENTRIES</td>
+<td style="text-align: left;">MEAN_GPP_SOIL_DAYS*50</td>
+<td style="text-align: left;">assume that the most pts we can have is one per hour</td>
+</tr>
+<tr>
+<td style="text-align: left;">LAMBDA</td>
+<td style="text-align: left;">2501000</td>
+<td style="text-align: left;">latent heat of vaporization (J/kg)</td>
+</tr>
+<tr>
+<td style="text-align: left;">LAMBDA_S</td>
+<td style="text-align: left;">2835000</td>
+<td style="text-align: left;">latent heat of sublimation (J/kg)</td>
+</tr>
+<tr>
+<td style="text-align: left;">RHO</td>
+<td style="text-align: left;">1.3</td>
+<td style="text-align: left;">air density (kg/m^3)</td>
+</tr>
+<tr>
+<td style="text-align: left;">CP</td>
+<td style="text-align: left;">1005.</td>
+<td style="text-align: left;">specific heat of air (J/(kg K))</td>
+</tr>
+<tr>
+<td style="text-align: left;">GAMMA</td>
+<td style="text-align: left;">66</td>
+<td style="text-align: left;">psychometric constant (Pa/K)</td>
+</tr>
+<tr>
+<td style="text-align: left;">E_STAR_SNOW</td>
+<td style="text-align: left;">0.6</td>
+<td style="text-align: left;">approximate saturation vapor pressure at 0°C (kPa)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-climate-driver-inputs">3. Climate driver inputs</h2>
+<p>For each step of the model, for each location, the following inputs are needed.  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">1</th>
+<th style="text-align: left;">loc</th>
+<th style="text-align: left;">spatial location index</th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">maps to param-spatial file</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">year</td>
+<td style="text-align: left;">year of start of this timestep</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">e.g. 2010</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">day</td>
+<td style="text-align: left;">day of start of this timestep</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">1 = Jan 1</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">time</td>
+<td style="text-align: left;">time of start of this timestep</td>
+<td style="text-align: left;">hour fraction</td>
+<td style="text-align: left;">e.g. noon = 12.0, midnight = 0.0</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">length</td>
+<td style="text-align: left;">length of this timestep</td>
+<td style="text-align: left;">days</td>
+<td style="text-align: left;">allow variable-length timesteps</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">tair</td>
+<td style="text-align: left;">avg. air temp for this time step</td>
+<td style="text-align: left;">°C</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">tsoil</td>
+<td style="text-align: left;">avg. soil temp for this time step</td>
+<td style="text-align: left;">°C</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">par</td>
+<td style="text-align: left;">average par for this time step</td>
+<td style="text-align: left;">Einsteins * m^-2 ground area * day^-1</td>
+<td style="text-align: left;">input is in Einsteins * m^-2 ground area, summed over entire time step</td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">precip</td>
+<td style="text-align: left;">total precip. for this time step</td>
+<td style="text-align: left;">cm water equiv. - either rain or snow</td>
+<td style="text-align: left;">input is in mm</td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">vpd</td>
+<td style="text-align: left;">average vapor pressure deficit</td>
+<td style="text-align: left;">kPa</td>
+<td style="text-align: left;">input is in Pa</td>
+</tr>
+<tr>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">vpdSoil</td>
+<td style="text-align: left;">average vapor pressure deficit between soil and air</td>
+<td style="text-align: left;">kPa</td>
+<td style="text-align: left;">input is in Pa ; differs from vpd in that saturation vapor pressure calculated using Tsoil rather than Tair</td>
+</tr>
+<tr>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">vPress</td>
+<td style="text-align: left;">average vapor pressure in canopy airspace</td>
+<td style="text-align: left;">kPa</td>
+<td style="text-align: left;">input is in Pa</td>
+</tr>
+<tr>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">wspd</td>
+<td style="text-align: left;">avg. wind speed</td>
+<td style="text-align: left;">m/s</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">soilWetness</td>
+<td style="text-align: left;">fractional soil wetness</td>
+<td style="text-align: left;">fraction of saturation - between 0 and 1</td>
+<td style="text-align: left;">Not used if MODEL_WATER is 1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-outputs">4. Outputs</h2>
+<p>For each step of the model, for each location, the following outputs are generated.  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Parameter Name</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">loc</td>
+<td style="text-align: left;">spatial location index</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">year</td>
+<td style="text-align: left;">year of start of this timestep</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">day</td>
+<td style="text-align: left;">day of start of this timestep</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">time</td>
+<td style="text-align: left;">time of start of this timestep</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">plantWoodC</td>
+<td style="text-align: left;">carbon in wood</td>
+<td style="text-align: left;">g C/m^2</td>
+</tr>
+<tr>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">plantLeafC</td>
+<td style="text-align: left;">carbon in leaves</td>
+<td style="text-align: left;">g C/m^2</td>
+</tr>
+<tr>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">soil</td>
+<td style="text-align: left;">carbon in mineral soil</td>
+<td style="text-align: left;">g C/m^2</td>
+</tr>
+<tr>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">microbeC</td>
+<td style="text-align: left;">carbon in soil microbes</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">coarseRootC</td>
+<td style="text-align: left;">carbon in coarse roots</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">fineRootC</td>
+<td style="text-align: left;">carbon in fine roots</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">litter</td>
+<td style="text-align: left;">carbon in litter</td>
+<td style="text-align: left;">g C/m^2</td>
+</tr>
+<tr>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">litterWater</td>
+<td style="text-align: left;">moisture in litter layer</td>
+<td style="text-align: left;">cm</td>
+</tr>
+<tr>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">soilWater</td>
+<td style="text-align: left;">moisture in soil</td>
+<td style="text-align: left;">cm</td>
+</tr>
+<tr>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">soilWetnessFrac</td>
+<td style="text-align: left;">moisture in soil as fraction</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">snow</td>
+<td style="text-align: left;">snow water</td>
+<td style="text-align: left;">cm</td>
+</tr>
+<tr>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">npp</td>
+<td style="text-align: left;">net primary production</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">17</td>
+<td style="text-align: left;">nee</td>
+<td style="text-align: left;">net ecosystem production</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">18</td>
+<td style="text-align: left;">cumNEE</td>
+<td style="text-align: left;">cumulative nee</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">gpp</td>
+<td style="text-align: left;">gross ecosystem production</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">rAboveground</td>
+<td style="text-align: left;">plant respiration above ground</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">21</td>
+<td style="text-align: left;">rSoil</td>
+<td style="text-align: left;">soil respiration</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">22</td>
+<td style="text-align: left;">rRoot</td>
+<td style="text-align: left;">root respiration</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">rtot</td>
+<td style="text-align: left;">total respiration</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">fluxestranspiration</td>
+<td style="text-align: left;">transpiration</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+\doxysection{ml-\/metro.h File Reference}
+\label{ml-metro_8h}\index{ml-\/metro.h@{ml-\/metro.h}}
+{\ttfamily \#include "{}paramchange.\+h"{}}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+Include dependency graph for ml-\/metro.h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ metropolis} (\textbf{ char} $\ast$\textbf{ out\+Name\+Base}, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc, \textbf{ double}($\ast$\textbf{ likely})(\textbf{ double} $\ast$, \textbf{ Output\+Info} $\ast$, \textbf{ int}, \textbf{ Spatial\+Params} $\ast$, \textbf{ double}, \textbf{ void}($\ast$)(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int}), \textbf{ int}[$\,$], \textbf{ int}, \textbf{ int}, \textbf{ double}[$\,$]), \textbf{ void}($\ast$\textbf{ model})(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int}), \textbf{ double} \textbf{ add\+Fraction}, \textbf{ long} \textbf{ est\+Steps}, \textbf{ int} \textbf{ num\+At\+Once}, \textbf{ int} \textbf{ num\+Chains}, \textbf{ int} \textbf{ random\+Start}, \textbf{ long} \textbf{ num\+Spin\+Ups}, \textbf{ double} \textbf{ param\+Weight}, \textbf{ double} \textbf{ scale\+Factor}, \textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} \textbf{ cost\+Function}, \textbf{ double} \textbf{ data\+Type\+Weights}[$\,$], \textbf{ FILE} $\ast$\textbf{ user\+Out})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{ml-metro_8h_a3ba3195b055454f19d59a8751dde2058} 
+\index{ml-\/metro.h@{ml-\/metro.h}!metropolis@{metropolis}}
+\index{metropolis@{metropolis}!ml-\/metro.h@{ml-\/metro.h}}
+\doxysubsubsection{metropolis()}
+{\footnotesize\ttfamily \textbf{ void} metropolis (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{out\+Name\+Base,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ double}($\ast$)(\textbf{ double} $\ast$, \textbf{ Output\+Info} $\ast$, \textbf{ int}, \textbf{ Spatial\+Params} $\ast$, \textbf{ double}, \textbf{ void}($\ast$)(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int}), \textbf{ int}[$\,$], \textbf{ int}, \textbf{ int}, \textbf{ double}[$\,$])}]{likely,  }\item[{\textbf{ void}($\ast$)(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int})}]{model,  }\item[{\textbf{ double}}]{add\+Fraction,  }\item[{\textbf{ long}}]{est\+Steps,  }\item[{\textbf{ int}}]{num\+At\+Once,  }\item[{\textbf{ int}}]{num\+Chains,  }\item[{\textbf{ int}}]{random\+Start,  }\item[{\textbf{ long}}]{num\+Spin\+Ups,  }\item[{\textbf{ double}}]{param\+Weight,  }\item[{\textbf{ double}}]{scale\+Factor,  }\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{cost\+Function,  }\item[{\textbf{ double}}]{data\+Type\+Weights[$\,$],  }\item[{\textbf{ FILE} $\ast$}]{user\+Out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 301} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ A\+\_\+\+STAR}, \textbf{ check\+Spatial\+Param()}, \textbf{ DEC}, \textbf{ fclose()}, \textbf{ fprintf()}, \textbf{ free2\+DArray()}, \textbf{ free\+Output\+Info()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ is\+Spatial()}, \textbf{ k}, \textbf{ make2\+DArray()}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ new\+Output\+Info()}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ open\+File()}, \textbf{ randm()}, \textbf{ random\+Changeable\+Spatial\+Param()}, \textbf{ read\+Chain\+Info()}, \textbf{ reset()}, \textbf{ scale\+Factor}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ sum\+Array()}, \textbf{ THRESH}, \textbf{ write\+Chain\+Info()}, \textbf{ write\+Changeable\+Param\+Info()}, \textbf{ write\+Hist\+File\+Bin()}, and \textbf{ write\+Hist\+File\+Bin\+Header()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2

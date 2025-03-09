@@ -1,0 +1,89 @@
+\doxysection{runmean.\+h File Reference}
+\label{runmean_8h}\index{runmean.h@{runmean.h}}
+This graph shows which files directly or indirectly include this file\+:
+% FIG 0
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Mean\+Tracker\+Struct}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ typedef} \textbf{ struct} \textbf{ Mean\+Tracker\+Struct} \textbf{ Mean\+Tracker}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Mean\+Tracker} $\ast$ \textbf{ new\+Mean\+Tracker} (\textbf{ double} \textbf{ init\+Mean}, \textbf{ double} tot\+Weight, \textbf{ int} \textbf{ max\+Entries})
+\item 
+\textbf{ void} \textbf{ reset\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker}, \textbf{ double} \textbf{ init\+Mean})
+\item 
+\textbf{ int} \textbf{ add\+Value\+To\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker}, \textbf{ double} \textbf{ value}, \textbf{ double} \textbf{ weight})
+\item 
+\textbf{ double} \textbf{ get\+Mean\+Tracker\+Mean} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker})
+\item 
+\textbf{ void} \textbf{ deallocate\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$\textbf{ tracker})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\label{runmean_8h_a862dc9c131e58c68ea255d489fea5527} 
+\index{runmean.h@{runmean.h}!MeanTracker@{MeanTracker}}
+\index{MeanTracker@{MeanTracker}!runmean.h@{runmean.h}}
+\doxysubsubsection{MeanTracker}
+{\footnotesize\ttfamily \textbf{ typedef} \textbf{ struct} \textbf{ Mean\+Tracker\+Struct} \textbf{ Mean\+Tracker}}
+
+
+
+\doxysubsection{Function Documentation}
+\label{runmean_8h_a3b3e682c43d0a347c6eaf7de4cb68a16} 
+\index{runmean.h@{runmean.h}!addValueToMeanTracker@{addValueToMeanTracker}}
+\index{addValueToMeanTracker@{addValueToMeanTracker}!runmean.h@{runmean.h}}
+\doxysubsubsection{addValueToMeanTracker()}
+{\footnotesize\ttfamily \textbf{ int} add\+Value\+To\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker,  }\item[{\textbf{ double}}]{value,  }\item[{\textbf{ double}}]{weight }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 61} of file \textbf{ runmean.\+c}.
+
+\label{runmean_8h_ac19d52df9855de7455e094c7d9b11e79} 
+\index{runmean.h@{runmean.h}!deallocateMeanTracker@{deallocateMeanTracker}}
+\index{deallocateMeanTracker@{deallocateMeanTracker}!runmean.h@{runmean.h}}
+\doxysubsubsection{deallocateMeanTracker()}
+{\footnotesize\ttfamily \textbf{ void} deallocate\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 118} of file \textbf{ runmean.\+c}.
+
+\label{runmean_8h_aee80c094e5cc8830c70fd93fa14bb102} 
+\index{runmean.h@{runmean.h}!getMeanTrackerMean@{getMeanTrackerMean}}
+\index{getMeanTrackerMean@{getMeanTrackerMean}!runmean.h@{runmean.h}}
+\doxysubsubsection{getMeanTrackerMean()}
+{\footnotesize\ttfamily \textbf{ double} get\+Mean\+Tracker\+Mean (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ runmean.\+c}.
+
+\label{runmean_8h_a05982cf71148e3b1c4d8a2a14e0c93ab} 
+\index{runmean.h@{runmean.h}!newMeanTracker@{newMeanTracker}}
+\index{newMeanTracker@{newMeanTracker}!runmean.h@{runmean.h}}
+\doxysubsubsection{newMeanTracker()}
+{\footnotesize\ttfamily \textbf{ Mean\+Tracker} $\ast$ new\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ double}}]{init\+Mean,  }\item[{\textbf{ double}}]{tot\+Weight,  }\item[{\textbf{ int}}]{max\+Entries }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ runmean.\+c}.
+
+\label{runmean_8h_aafa097eaf82986761f1920d2a1ed2457} 
+\index{runmean.h@{runmean.h}!resetMeanTracker@{resetMeanTracker}}
+\index{resetMeanTracker@{resetMeanTracker}!runmean.h@{runmean.h}}
+\doxysubsubsection{resetMeanTracker()}
+{\footnotesize\ttfamily \textbf{ void} reset\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker,  }\item[{\textbf{ double}}]{init\+Mean }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ runmean.\+c}.
+

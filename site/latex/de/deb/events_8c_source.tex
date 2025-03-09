@@ -1,0 +1,237 @@
+\doxysection{events.\+c}
+\label{events_8c_source}\index{events.c@{events.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}events.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ printEvent(EventNode\ *event);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ EventNode\ *createEventNode(\textcolor{keywordtype}{int}\ loc,\ \textcolor{keywordtype}{int}\ year,\ \textcolor{keywordtype}{int}\ day,\ \textcolor{keywordtype}{int}\ eventType,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventParamsStr)\ \{}
+\DoxyCodeLine{00036\ \ \ EventNode\ *\textcolor{keyword}{event}\ =\ (EventNode\ *)malloc(\textcolor{keyword}{sizeof}(EventNode));}
+\DoxyCodeLine{00037\ \ \ \textcolor{keyword}{event}-\/>loc\ =\ loc;}
+\DoxyCodeLine{00038\ \ \ \textcolor{keyword}{event}-\/>year\ =\ year;}
+\DoxyCodeLine{00039\ \ \ \textcolor{keyword}{event}-\/>day\ =\ day;}
+\DoxyCodeLine{00040\ \ \ \textcolor{keyword}{event}-\/>type\ =\ eventType;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordflow}{switch}\ (eventType)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ fracRA,\ fracRB,\ fracTA,\ fracTB;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ HarvestParams\ *params\ =\ (HarvestParams\ *)malloc(\textcolor{keyword}{sizeof}(HarvestParams));}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ sscanf(eventParamsStr,\ \textcolor{stringliteral}{"{}\%lf\ \%lf\ \%lf\ \%lf"{}},\ \&fracRA,\ \&fracRB,\ \&fracTA,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \&fracTB);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ params-\/>fractionRemovedAbove\ =\ fracRA;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ params-\/>fractionRemovedBelow\ =\ fracRB;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ params-\/>fractionTransferredAbove\ =\ fracTA;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ params-\/>fractionTransferredBelow\ =\ fracTB;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \textcolor{keyword}{event}-\/>eventParams\ =\ params;}
+\DoxyCodeLine{00053\ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ amountAdded;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ method;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ IrrigationParams\ *params\ =}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ (IrrigationParams\ *)malloc(\textcolor{keyword}{sizeof}(IrrigationParams));}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ sscanf(eventParamsStr,\ \textcolor{stringliteral}{"{}\%lf\ \%d"{}},\ \&amountAdded,\ \&method);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ params-\/>amountAdded\ =\ amountAdded;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ params-\/>method\ =\ method;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \textcolor{keyword}{event}-\/>eventParams\ =\ params;}
+\DoxyCodeLine{00063\ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \textcolor{comment}{//\ If/when\ we\ try\ two\ N\ pools,\ enable\ the\ additional\ nh4\_no3\_frac\ param}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \textcolor{comment}{//\ (likely\ via\ compiler\ switch)}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ orgN,\ orgC,\ minN;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \textcolor{comment}{//\ double\ nh4\_no3\_frac;}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ FertilizationParams\ *params\ =}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ (FertilizationParams\ *)malloc(\textcolor{keyword}{sizeof}(FertilizationParams));}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ sscanf(eventParamsStr,\ \textcolor{stringliteral}{"{}\%lf\ \%lf\ \%lf"{}},\ \&orgN,\ \&orgC,\ \&minN);}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \textcolor{comment}{//\ scanf(eventParamsStr,\ "{}\%lf\ \%lf\ \%lf\ \%lf"{},\ \&org\_N,\ \&org\_C,\ \&min\_N,}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \textcolor{comment}{//\ \&nh4\_no3\_frac);}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ params-\/>orgN\ =\ orgN;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ params-\/>orgC\ =\ orgC;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ params-\/>minN\ =\ minN;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \textcolor{comment}{//\ params-\/>nh4\_no3\_frac\ =\ nh4\_nos\_frac;}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \textcolor{keyword}{event}-\/>eventParams\ =\ params;}
+\DoxyCodeLine{00079\ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ emergenceLag;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ addedC,\ addedN;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ PlantingParams\ *params\ =\ (PlantingParams\ *)malloc(\textcolor{keyword}{sizeof}(PlantingParams));}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ sscanf(eventParamsStr,\ \textcolor{stringliteral}{"{}\%d\ \%lf\ \%lf"{}},\ \&emergenceLag,\ \&addedC,\ \&addedN);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ params-\/>emergenceLag\ =\ emergenceLag;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ params-\/>addedC\ =\ addedC;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ params-\/>addedN\ =\ addedN;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \textcolor{keyword}{event}-\/>eventParams\ =\ params;}
+\DoxyCodeLine{00089\ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ fracLT,\ somDM,\ litterDM;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ TillageParams\ *params\ =\ (TillageParams\ *)malloc(\textcolor{keyword}{sizeof}(TillageParams));}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ sscanf(eventParamsStr,\ \textcolor{stringliteral}{"{}\%lf\ \%lf\ \%lf"{}},\ \&fracLT,\ \&somDM,\ \&litterDM);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ params-\/>fractionLitterTransferred\ =\ fracLT;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ params-\/>somDecompModifier\ =\ somDM;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ params-\/>litterDecompModifier\ =\ litterDM;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \textcolor{keyword}{event}-\/>eventParams\ =\ params;}
+\DoxyCodeLine{00098\ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \textcolor{comment}{//\ Unknown\ type,\ error\ and\ exit}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ reading\ from\ event\ file:\ unknown\ event\ type\ \%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ eventType);}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00104\ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \textcolor{keyword}{event}-\/>nextEvent\ =\ NULL;}
+\DoxyCodeLine{00107\ \ \ \textcolor{keywordflow}{return}\ event;}
+\DoxyCodeLine{00108\ \}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ event\_type\_t\ getEventType(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeStr)\ \{}
+\DoxyCodeLine{00111\ \ \ \textcolor{keywordflow}{if}\ (strcmp(eventTypeStr,\ \textcolor{stringliteral}{"{}irrig"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordflow}{return}\ IRRIGATION;}
+\DoxyCodeLine{00113\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strcmp(eventTypeStr,\ \textcolor{stringliteral}{"{}fert"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordflow}{return}\ FERTILIZATION;}
+\DoxyCodeLine{00115\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strcmp(eventTypeStr,\ \textcolor{stringliteral}{"{}plant"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordflow}{return}\ PLANTING;}
+\DoxyCodeLine{00117\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strcmp(eventTypeStr,\ \textcolor{stringliteral}{"{}till"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordflow}{return}\ TILLAGE;}
+\DoxyCodeLine{00119\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strcmp(eventTypeStr,\ \textcolor{stringliteral}{"{}harv"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{return}\ HARVEST;}
+\DoxyCodeLine{00121\ \ \ \}}
+\DoxyCodeLine{00122\ \ \ \textcolor{keywordflow}{return}\ UNKNOWN\_EVENT;}
+\DoxyCodeLine{00123\ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ EventNode\ **readEventData(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ numLocs)\ \{}
+\DoxyCodeLine{00126\ \ \ \textcolor{keywordtype}{int}\ loc,\ year,\ day,\ eventType;}
+\DoxyCodeLine{00127\ \ \ \textcolor{keywordtype}{int}\ currLoc,\ currYear,\ currDay;}
+\DoxyCodeLine{00128\ \ \ \textcolor{keywordtype}{int}\ EVENT\_LINE\_SIZE\ =\ 1024;}
+\DoxyCodeLine{00129\ \ \ \textcolor{keywordtype}{int}\ numBytes;}
+\DoxyCodeLine{00130\ \ \ \textcolor{keywordtype}{char}\ *eventParamsStr;}
+\DoxyCodeLine{00131\ \ \ \textcolor{keywordtype}{char}\ eventTypeStr[20];}
+\DoxyCodeLine{00132\ \ \ \textcolor{keywordtype}{char}\ line[EVENT\_LINE\_SIZE];}
+\DoxyCodeLine{00133\ \ \ EventNode\ *curr,\ *next;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ printf(\textcolor{stringliteral}{"{}Begin\ reading\ event\ data\ from\ file\ \%s\(\backslash\)n"{}},\ eventFile);}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ EventNode\ **events\ =}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ (EventNode\ **)calloc(\textcolor{keyword}{sizeof}(EventNode\ *),\ numLocs\ *\ \textcolor{keyword}{sizeof}(EventNode\ *));}
+\DoxyCodeLine{00139\ \ \ \textcolor{comment}{//\ status\ of\ the\ read}}
+\DoxyCodeLine{00140\ \ \ FILE\ *in\ =\ openFile(eventFile,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \textcolor{keywordflow}{if}\ (fgets(line,\ EVENT\_LINE\_SIZE,\ in)\ ==\ NULL)\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ no\ event\ data\ in\ \%s\(\backslash\)n"{}},\ eventFile);}
+\DoxyCodeLine{00144\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00145\ \ \ \}}
+\DoxyCodeLine{00146\ \ \ sscanf(line,\ \textcolor{stringliteral}{"{}\%d\ \%d\ \%d\ \%s\ \%n"{}},\ \&loc,\ \&year,\ \&day,\ eventTypeStr,\ \&numBytes);}
+\DoxyCodeLine{00147\ \ \ eventParamsStr\ =\ line\ +\ numBytes;}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ eventType\ =\ getEventType(eventTypeStr);}
+\DoxyCodeLine{00150\ \ \ \textcolor{keywordflow}{if}\ (eventType\ ==\ UNKNOWN\_EVENT)\ \{}
+\DoxyCodeLine{00151\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ unknown\ event\ type\ \%s\(\backslash\)n"{}},\ eventTypeStr);}
+\DoxyCodeLine{00152\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00153\ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ next\ =\ createEventNode(loc,\ year,\ day,\ eventType,\ eventParamsStr);}
+\DoxyCodeLine{00156\ \ \ events[loc]\ =\ next;}
+\DoxyCodeLine{00157\ \ \ currLoc\ =\ loc;}
+\DoxyCodeLine{00158\ \ \ currYear\ =\ year;}
+\DoxyCodeLine{00159\ \ \ currDay\ =\ day;}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \textcolor{keywordflow}{while}\ (fgets(line,\ EVENT\_LINE\_SIZE,\ in)\ !=\ NULL)\ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{comment}{//\ We\ have\ another\ event}}
+\DoxyCodeLine{00163\ \ \ \ \ curr\ =\ next;}
+\DoxyCodeLine{00164\ \ \ \ \ sscanf(line,\ \textcolor{stringliteral}{"{}\%d\ \%d\ \%d\ \%s\ \%n"{}},\ \&loc,\ \&year,\ \&day,\ eventTypeStr,\ \&numBytes);}
+\DoxyCodeLine{00165\ \ \ \ \ eventParamsStr\ =\ line\ +\ numBytes;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ eventType\ =\ getEventType(eventTypeStr);}
+\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordflow}{if}\ (eventType\ ==\ UNKNOWN\_EVENT)\ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ unknown\ event\ type\ \%s\(\backslash\)n"{}},\ eventTypeStr);}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00171\ \ \ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{comment}{//\ make\ sure\ location\ and\ time\ are\ non-\/decreasing}}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordflow}{if}\ (loc\ <\ currLoc)\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ reading\ event\ file:\ was\ reading\ location\ \%d,\ trying\ to\ "{}}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}read\ location\ \%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ currLoc,\ loc);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Event\ records\ for\ a\ given\ location\ should\ be\ contiguous,\ and\ "{}}}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}locations\ should\ be\ in\ ascending\ order\(\backslash\)n"{}});}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00181\ \ \ \ \ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordflow}{if}\ ((loc\ ==\ currLoc)\ \&\&\ ((year\ <\ currYear)\ ||\ (day\ <\ currDay)))\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ reading\ event\ file:\ for\ location\ \%d,\ last\ event\ was\ at\ "{}}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}(\%d,\ \%d)\ "{}},}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ currLoc,\ currYear,\ currDay);}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}next\ event\ is\ at\ (\%d,\ \%d)\(\backslash\)n"{}},\ year,\ day);}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Event\ records\ for\ a\ given\ location\ should\ be\ in\ time-\/ascending\ "{}}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}order\(\backslash\)n"{}});}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00190\ \ \ \ \ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ next\ =\ createEventNode(loc,\ year,\ day,\ eventType,\ eventParamsStr);}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordflow}{if}\ (currLoc\ ==\ loc)\ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \textcolor{comment}{//\ Same\ location,\ add\ the\ new\ event\ to\ this\ location's\ list}}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ curr-\/>nextEvent\ =\ next;}
+\DoxyCodeLine{00196\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \textcolor{comment}{//\ New\ location,\ update\ location\ and\ start\ a\ new\ list}}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ currLoc\ =\ loc;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ events[currLoc]\ =\ next;}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ fclose(in);}
+\DoxyCodeLine{00204\ \ \ \textcolor{keywordflow}{return}\ events;}
+\DoxyCodeLine{00205\ \}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \textcolor{keywordtype}{void}\ printEvent(EventNode\ *event)\ \{}
+\DoxyCodeLine{00208\ \ \ \textcolor{keywordflow}{if}\ (event\ ==\ NULL)\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00210\ \ \ \}}
+\DoxyCodeLine{00211\ \ \ \textcolor{keywordtype}{int}\ loc\ =\ \textcolor{keyword}{event}-\/>loc;}
+\DoxyCodeLine{00212\ \ \ \textcolor{keywordtype}{int}\ year\ =\ \textcolor{keyword}{event}-\/>year;}
+\DoxyCodeLine{00213\ \ \ \textcolor{keywordtype}{int}\ day\ =\ \textcolor{keyword}{event}-\/>day;}
+\DoxyCodeLine{00214\ \ \ \textcolor{keywordflow}{switch}\ (event-\/>type)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}IRRIGATION\ at\ loc\ \%d\ on\ \%d\ \%d,\ "{}},\ loc,\ year,\ day);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ IrrigationParams\ *\textcolor{keyword}{const}\ iParams\ =\ (IrrigationParams\ *)event-\/>eventParams;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ amount\ added\ \%4.2f\(\backslash\)n"{}},\ iParams-\/>amountAdded);}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}FERTILIZATION\ at\ loc\ \%d\ on\ \%d\ \%d,\ "{}},\ loc,\ year,\ day);}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ FertilizationParams\ *\textcolor{keyword}{const}\ fParams\ =}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ (FertilizationParams\ *)event-\/>eventParams;}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ org\ N\ \%4.2f,\ org\ C\ \%4.2f,\ min\ N\ \%4.2f\(\backslash\)n"{}},}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ fParams-\/>orgN,\ fParams-\/>orgC,\ fParams-\/>minN);}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}PLANTING\ at\ loc\ \%d\ on\ \%d\ \%d,\ "{}},\ loc,\ year,\ day);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ PlantingParams\ *\textcolor{keyword}{const}\ pParams\ =\ (PlantingParams\ *)event-\/>eventParams;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ emergence\ lag\ \%d,\ added\ C\ \%4.2f,\ added\ N\ \%4.2f\(\backslash\)n"{}},}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ pParams-\/>emergenceLag,\ pParams-\/>addedC,\ pParams-\/>addedN);}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}TILLAGE\ at\ loc\ \%d\ on\ \%d\ \%d,\ "{}},\ loc,\ year,\ day);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ TillageParams\ *\textcolor{keyword}{const}\ tParams\ =\ (TillageParams\ *)event-\/>eventParams;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ frac\ litter\ transferred\ \%4.2f,\ som\ decomp\ modifier\ "{}}}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\%4.2f,\ litter\ decomp\ modifier\ \%4.2f\(\backslash\)n"{}},}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ tParams-\/>fractionLitterTransferred,\ tParams-\/>somDecompModifier,}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ tParams-\/>litterDecompModifier);}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}HARVEST\ at\ loc\ \%d\ on\ \%d\ \%d,\ "{}},\ loc,\ year,\ day);}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ HarvestParams\ *\textcolor{keyword}{const}\ hParams\ =\ (HarvestParams\ *)event-\/>eventParams;}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ frac\ removed\ above\ \%4.2f,\ frac\ removed\ below\ \%4.2f,\ "{}}}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frac\ transferred\ above\ \%4.2f,\ frac\ transferred\ below\ \%4.2f\(\backslash\)n"{}},}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionRemovedAbove,\ hParams-\/>fractionRemovedBelow,}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionTransferredAbove,}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionTransferredBelow);}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ printing\ event:\ unknown\ type\ \%d\(\backslash\)n"{}},\ event-\/>type);}
+\DoxyCodeLine{00252\ \ \ \}}
+\DoxyCodeLine{00253\ \}}
+
+\end{DoxyCode}

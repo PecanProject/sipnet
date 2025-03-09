@@ -1,0 +1,186 @@
+\doxysection{namelist\+Input.\+c File Reference}
+\label{namelist_input_8c}\index{namelistInput.c@{namelistInput.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \#include "{}namelist\+Input.\+h"{}}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+Include dependency graph for namelist\+Input.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Namelist\+Input\+Item} $\ast$ \textbf{ new\+Namelist\+Input\+Item} (\textbf{ char} $\ast$\textbf{ name}, \textbf{ int} type, \textbf{ void} $\ast$ptr, \textbf{ int} maxlen)
+\item 
+\textbf{ Namelist\+Input\+Item} $\ast$ \textbf{ locate\+Namelist\+Input\+Item} (\textbf{ Namelist\+Inputs} $\ast$\textbf{ namelist\+Inputs}, \textbf{ char} $\ast$\textbf{ name})
+\item 
+\textbf{ Namelist\+Inputs} $\ast$ \textbf{ new\+Namelist\+Inputs} ()
+\item 
+\textbf{ void} \textbf{ add\+Namelist\+Input\+Item} (\textbf{ Namelist\+Inputs} $\ast$\textbf{ namelist\+Inputs}, \textbf{ char} $\ast$\textbf{ name}, \textbf{ int} type, \textbf{ void} $\ast$ptr, \textbf{ int} maxlen)
+\item 
+\textbf{ void} \textbf{ read\+Namelist\+Inputs} (\textbf{ Namelist\+Inputs} $\ast$\textbf{ namelist\+Inputs}, \textbf{ const} \textbf{ char} $\ast$\textbf{ file\+Name})
+\item 
+\textbf{ void} \textbf{ die\+If\+Not\+Read} (\textbf{ Namelist\+Inputs} $\ast$\textbf{ namelist\+Inputs}, \textbf{ char} $\ast$\textbf{ name})
+\item 
+\textbf{ void} \textbf{ die\+If\+Not\+Set} (\textbf{ Namelist\+Inputs} $\ast$\textbf{ namelist\+Inputs}, \textbf{ char} $\ast$\textbf{ name})
+\item 
+\textbf{ void} \textbf{ delete\+Namelist\+Inputs} (\textbf{ Namelist\+Inputs} $\ast$\textbf{ namelist\+Inputs})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{namelist_input_8c_ad016a2850c4d6d86e1bf8e1291846844} 
+\index{namelistInput.c@{namelistInput.c}!addNamelistInputItem@{addNamelistInputItem}}
+\index{addNamelistInputItem@{addNamelistInputItem}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{addNamelistInputItem()}
+{\footnotesize\ttfamily \textbf{ void} add\+Namelist\+Input\+Item (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist\+Inputs,  }\item[{\textbf{ char} $\ast$}]{name,  }\item[{\textbf{ int}}]{type,  }\item[{\textbf{ void} $\ast$}]{ptr,  }\item[{\textbf{ int}}]{maxlen }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 90} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ name}, and \textbf{ new\+Namelist\+Input\+Item()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{namelist_input_8c_a5c1ea9a0048939d12524f8895bdd951d} 
+\index{namelistInput.c@{namelistInput.c}!deleteNamelistInputs@{deleteNamelistInputs}}
+\index{deleteNamelistInputs@{deleteNamelistInputs}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{deleteNamelistInputs()}
+{\footnotesize\ttfamily \textbf{ void} delete\+Namelist\+Inputs (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist\+Inputs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 261} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ index}, and \textbf{ Namelist\+Input\+Item\+Struct\+::next\+Item}.
+
+\label{namelist_input_8c_ab1d47aa92c7e147232c807e5398f71b2} 
+\index{namelistInput.c@{namelistInput.c}!dieIfNotRead@{dieIfNotRead}}
+\index{dieIfNotRead@{dieIfNotRead}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{dieIfNotRead()}
+{\footnotesize\ttfamily \textbf{ void} die\+If\+Not\+Read (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist\+Inputs,  }\item[{\textbf{ char} $\ast$}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 216} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ index}, \textbf{ locate\+Namelist\+Input\+Item()}, and \textbf{ name}.
+
+
+
+Referenced by \textbf{ die\+If\+Not\+Set()}, and \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{namelist_input_8c_a772ff58a00c37e6ab6deb3adf4c80961} 
+\index{namelistInput.c@{namelistInput.c}!dieIfNotSet@{dieIfNotSet}}
+\index{dieIfNotSet@{dieIfNotSet}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{dieIfNotSet()}
+{\footnotesize\ttfamily \textbf{ void} die\+If\+Not\+Set (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist\+Inputs,  }\item[{\textbf{ char} $\ast$}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 238} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ die\+If\+Not\+Read()}, \textbf{ exit()}, \textbf{ index}, \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ name}, and \textbf{ STRING\+\_\+\+TYPE}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{namelist_input_8c_a1760d913193d3c293fc6151bb823a2f2} 
+\index{namelistInput.c@{namelistInput.c}!locateNamelistInputItem@{locateNamelistInputItem}}
+\index{locateNamelistInputItem@{locateNamelistInputItem}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{locateNamelistInputItem()}
+{\footnotesize\ttfamily \textbf{ Namelist\+Input\+Item} $\ast$ locate\+Namelist\+Input\+Item (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist\+Inputs,  }\item[{\textbf{ char} $\ast$}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ name}, \textbf{ Namelist\+Input\+Item\+Struct\+::next\+Item}, and \textbf{ strcmp\+Ignore\+Case()}.
+
+
+
+Referenced by \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, and \textbf{ read\+Namelist\+Inputs()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{namelist_input_8c_acb2ba057fb8ca7fafc5fc8fae20a0fed} 
+\index{namelistInput.c@{namelistInput.c}!newNamelistInputItem@{newNamelistInputItem}}
+\index{newNamelistInputItem@{newNamelistInputItem}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{newNamelistInputItem()}
+{\footnotesize\ttfamily \textbf{ Namelist\+Input\+Item} $\ast$ new\+Namelist\+Input\+Item (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{name,  }\item[{\textbf{ int}}]{type,  }\item[{\textbf{ void} $\ast$}]{ptr,  }\item[{\textbf{ int}}]{maxlen }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ index}, \textbf{ name}, and \textbf{ NAMELIST\+\_\+\+INPUT\+\_\+\+MAXNAME}.
+
+
+
+Referenced by \textbf{ add\+Namelist\+Input\+Item()}, and \textbf{ new\+Namelist\+Inputs()}.
+
+Here is the call graph for this function\+:
+% FIG 5
+\label{namelist_input_8c_a42f2f5ee62e3578da51384bd2e57905c} 
+\index{namelistInput.c@{namelistInput.c}!newNamelistInputs@{newNamelistInputs}}
+\index{newNamelistInputs@{newNamelistInputs}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{newNamelistInputs()}
+{\footnotesize\ttfamily \textbf{ Namelist\+Inputs} $\ast$ new\+Namelist\+Inputs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 70} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ Namelist\+Inputs\+Struct\+::head}, \textbf{ index}, and \textbf{ new\+Namelist\+Input\+Item()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 6
+\label{namelist_input_8c_aaa1a0ee6f8039a9093a037dabd221f02} 
+\index{namelistInput.c@{namelistInput.c}!readNamelistInputs@{readNamelistInputs}}
+\index{readNamelistInputs@{readNamelistInputs}!namelistInput.c@{namelistInput.c}}
+\doxysubsubsection{readNamelistInputs()}
+{\footnotesize\ttfamily \textbf{ void} read\+Namelist\+Inputs (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist\+Inputs,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{file\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 112} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ DOUBLE\+\_\+\+TYPE}, \textbf{ exit()}, \textbf{ fclose()}, \textbf{ file\+Name}, \textbf{ index}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ LONG\+\_\+\+TYPE}, \textbf{ open\+File()}, \textbf{ SEPARATORS}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ strip\+Comment()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 7

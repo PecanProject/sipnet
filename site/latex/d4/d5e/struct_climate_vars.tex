@@ -1,0 +1,301 @@
+\doxysection{Climate\+Vars Struct Reference}
+\label{struct_climate_vars}\index{ClimateVars@{ClimateVars}}
+
+
+Collaboration diagram for Climate\+Vars\+:
+% FIG 0
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ int} \textbf{ year}
+\item 
+\textbf{ int} \textbf{ day}
+\item 
+\textbf{ double} \textbf{ time}
+\item 
+\textbf{ double} \textbf{ length}
+\item 
+\textbf{ double} \textbf{ tair}
+\item 
+\textbf{ double} \textbf{ tsoil}
+\item 
+\textbf{ double} \textbf{ par}
+\item 
+\textbf{ double} \textbf{ precip}
+\item 
+\textbf{ double} \textbf{ vpd}
+\item 
+\textbf{ double} \textbf{ vpd\+Soil}
+\item 
+\textbf{ double} \textbf{ v\+Press}
+\item 
+\textbf{ double} \textbf{ wspd}
+\item 
+\textbf{ double} \textbf{ soil\+Wetness}
+\item 
+\textbf{ double} \textbf{ netrad}
+\item 
+\textbf{ double} \textbf{ soilheat}
+\item 
+\textbf{ Climate\+Node} $\ast$ \textbf{ next\+Clim}
+\item 
+\textbf{ double} \textbf{ gdd}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \textbf{ 125} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+\doxysubsection{Field Documentation}
+\label{struct_climate_vars_a667af43572d0da41e85e0cdfa0ebad19} 
+\index{ClimateVars@{ClimateVars}!day@{day}}
+\index{day@{day}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{day}
+{\footnotesize\ttfamily \textbf{ int} Climate\+Vars\+::day}
+
+
+
+Definition at line \textbf{ 127} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, \textbf{ run()}, \textbf{ run\+Model\+Output()}, \textbf{ run\+Model\+Output()}, and \textbf{ soil\+Degradation()}.
+
+\label{struct_climate_vars_a807944b57ddaa012b6d16ee23b05c97c} 
+\index{ClimateVars@{ClimateVars}!gdd@{gdd}}
+\index{gdd@{gdd}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{gdd}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::gdd}
+
+
+
+Definition at line \textbf{ 209} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ past\+Leaf\+Growth()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_ae8ee1625df0ae0c90b790664129509d9} 
+\index{ClimateVars@{ClimateVars}!length@{length}}
+\index{length@{length}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{length}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::length}
+
+
+
+Definition at line \textbf{ 129} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Precip()}, \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, \textbf{ evap\+Soil\+Fluxes()}, \textbf{ leaf\+Fluxes()}, \textbf{ read\+Clim\+Data()}, \textbf{ snow\+Pack()}, \textbf{ soil\+Degradation()}, \textbf{ trans\+Soil\+Drainage()}, \textbf{ update\+State()}, and \textbf{ update\+Trackers()}.
+
+\label{struct_climate_vars_aabb64803900612360c7e16312d2c90b0} 
+\index{ClimateVars@{ClimateVars}!netrad@{netrad}}
+\index{netrad@{netrad}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{netrad}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::netrad}
+
+
+
+Definition at line \textbf{ 145} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ moisture\+\_\+pm()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_a0cb378aaeccf2c6e14164c7ff3fd5472} 
+\index{ClimateVars@{ClimateVars}!nextClim@{nextClim}}
+\index{nextClim@{nextClim}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{nextClim}
+{\footnotesize\ttfamily \textbf{ Climate\+Node} $\ast$ Climate\+Vars\+::next\+Clim}
+
+
+
+Definition at line \textbf{ 152} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ free\+Climate\+List()}, \textbf{ read\+Clim\+Data()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ run\+Model\+Output()}, and \textbf{ run\+Model\+Output()}.
+
+\label{struct_climate_vars_a0a474e826ac7ccae1f48b9f98c0efad3} 
+\index{ClimateVars@{ClimateVars}!par@{par}}
+\index{par@{par}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{par}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::par}
+
+
+
+Definition at line \textbf{ 132} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ moisture\+\_\+pm()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_a439d5d5fcd57d320737a65c934878dea} 
+\index{ClimateVars@{ClimateVars}!precip@{precip}}
+\index{precip@{precip}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{precip}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::precip}
+
+
+
+Definition at line \textbf{ 134} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Precip()}, \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_ac1d258c78224ef6daf7e495034c4a276} 
+\index{ClimateVars@{ClimateVars}!soilheat@{soilheat}}
+\index{soilheat@{soilheat}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{soilheat}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::soilheat}
+
+
+
+Definition at line \textbf{ 146} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ moisture\+\_\+pm()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_a595c288c188133b3876b110da4728616} 
+\index{ClimateVars@{ClimateVars}!soilWetness@{soilWetness}}
+\index{soilWetness@{soilWetness}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{soilWetness}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::soil\+Wetness}
+
+
+
+Definition at line \textbf{ 144} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Clim\+Data()}, and \textbf{ soil\+Degradation()}.
+
+\label{struct_climate_vars_ad6427636af0774e1b630997668cbdef0} 
+\index{ClimateVars@{ClimateVars}!tair@{tair}}
+\index{tair@{tair}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{tair}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::tair}
+
+
+
+Definition at line \textbf{ 130} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Precip()}, \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, \textbf{ moisture\+\_\+pm()}, \textbf{ read\+Clim\+Data()}, \textbf{ snow\+Pack()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{struct_climate_vars_a54b1223b331b4f7dee5ce1045f9a5f74} 
+\index{ClimateVars@{ClimateVars}!time@{time}}
+\index{time@{time}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{time}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::time}
+
+
+
+Definition at line \textbf{ 128} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, \textbf{ run\+Model\+Output()}, and \textbf{ run\+Model\+Output()}.
+
+\label{struct_climate_vars_a663c6f37b55076b2b0e69e81d4968c53} 
+\index{ClimateVars@{ClimateVars}!tsoil@{tsoil}}
+\index{tsoil@{tsoil}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{tsoil}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::tsoil}
+
+
+
+Definition at line \textbf{ 131} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Root\+Resp()}, \textbf{ calculate\+Fluxes()}, \textbf{ moisture()}, \textbf{ moisture\+\_\+bwb()}, \textbf{ moisture\+\_\+pm()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, \textbf{ soil\+Degradation()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{struct_climate_vars_aabfeafa537599946c43604138692366e} 
+\index{ClimateVars@{ClimateVars}!vpd@{vpd}}
+\index{vpd@{vpd}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{vpd}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::vpd}
+
+
+
+Definition at line \textbf{ 136} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ moisture\+\_\+bwb()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_af4393d4ed72dde37a421fc17ca72bf9e} 
+\index{ClimateVars@{ClimateVars}!vpdSoil@{vpdSoil}}
+\index{vpdSoil@{vpdSoil}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{vpdSoil}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::vpd\+Soil}
+
+
+
+Definition at line \textbf{ 138} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ evap\+Soil\+Fluxes()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_a9a5aa1edb8aa02969428b5b526dc4621} 
+\index{ClimateVars@{ClimateVars}!vPress@{vPress}}
+\index{vPress@{vPress}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{vPress}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::v\+Press}
+
+
+
+Definition at line \textbf{ 141} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ moisture\+\_\+bwb()}, \textbf{ read\+Clim\+Data()}, and \textbf{ snow\+Pack()}.
+
+\label{struct_climate_vars_ab0e536df8f8c0b0496b4d04844771600} 
+\index{ClimateVars@{ClimateVars}!wspd@{wspd}}
+\index{wspd@{wspd}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{wspd}
+{\footnotesize\ttfamily \textbf{ double} Climate\+Vars\+::wspd}
+
+
+
+Definition at line \textbf{ 143} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ evap\+Soil\+Fluxes()}, \textbf{ moisture\+\_\+pm()}, \textbf{ read\+Clim\+Data()}, and \textbf{ snow\+Pack()}.
+
+\label{struct_climate_vars_af8774be1939b2c568f0e70ee49c0a3c9} 
+\index{ClimateVars@{ClimateVars}!year@{year}}
+\index{year@{year}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{year}
+{\footnotesize\ttfamily \textbf{ int} Climate\+Vars\+::year}
+
+
+
+Definition at line \textbf{ 126} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ leaf\+Fluxes()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, \textbf{ run()}, \textbf{ run\+Model\+Output()}, \textbf{ run\+Model\+Output()}, \textbf{ soil\+Degradation()}, and \textbf{ update\+Trackers()}.
+
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\textbf{ sipnetv\+Jan2007.\+c}\item 
+\textbf{ sipnetv\+Oct2006.\+c}\item 
+\textbf{ sipnet.\+c}\item 
+\textbf{ sipnet\+Girdle.\+c}\item 
+\textbf{ SIPNETopts\+In/sipnet.\+c}\item 
+\textbf{ SIPNETparams\+Change/sipnet.\+c}\end{DoxyCompactItemize}

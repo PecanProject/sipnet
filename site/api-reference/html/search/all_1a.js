@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['y_0',['y',['../df/da0/nnregress_8m.html#a1825a243c7bc27e6e7c926632cb3c8e9',1,'y(:, i):&#160;nnregress.m'],['../d7/dfe/nangap_8m.html#acd59683c409133fdea46a93bb35ac8ef',1,'y(find(y==missing)):&#160;nangap.m'],['../df/da0/nnregress_8m.html#a9f0def881a853a5ce84e529badf7b7f6',1,'y:&#160;nnregress.m'],['../da/d07/nnfwd_8m.html#aa9b4a652922d86915477b2e4eb323a58',1,'y:&#160;nnfwd.m'],['../d7/dfe/nangap_8m.html#a0abc9ddee91887084fd7f38e1bcb6f7f',1,'y:&#160;nangap.m']]],
+  ['year_1',['year',['../d6/d43/struct_event_node.html#a5ff7efad87a344e2b6bc26009fa44e80',1,'EventNode::year'],['../d0/d16/plot_years_8m.html#a38dce6dd819ea7df9feb426fd28ed4b3',1,'year((JD - 1)+(hour/24))(given by days vector) %(value on x-axis gives fractional day at START of time step) % Plot only data between firstYear and lastYear(if firstYear:&#160;plotYears.m'],['../d7/d35/chron_8m.html#ae72891d2ae9a03779dbfa3e324666f24',1,'year():&#160;neefill.m'],['../d7/d35/chron_8m.html#aca266bb8b772e6e50082b0f1830d2823',1,'year(I0(i):I1(i)):&#160;chron.m'],['../d8/df1/neefill_8m.html#ae0489283a56946bd2d49b032e07b93c1',1,'year:&#160;neefill.m'],['../d5/df7/struct_girdling_vars.html#afbdd348c69515e8170f750d543570abc',1,'GirdlingVars::year'],['../d4/d5e/struct_climate_vars.html#af8774be1939b2c568f0e70ee49c0a3c9',1,'ClimateVars::year']]],
+  ['yearcompare_2',['yearCompare',['../d6/d73/process_modis_sipnet_8m.html#adaad4a424f101fa111caf1df1d18c482',1,'processModisSipnet.m']]],
+  ['yeardaily_3',['yearDaily',['../d9/d5a/get_c_u_p_8m.html#a32a386a7999048b4ae9c16ec0262e891',1,'getCUP.m']]],
+  ['yearin_4',['yearin',['../d6/d73/process_modis_sipnet_8m.html#a784f73cd23a16069925b2d43f3a34d12',1,'yearIn:&#160;processModisSipnet.m'],['../d3/d97/process_modis_8m.html#a784f73cd23a16069925b2d43f3a34d12',1,'yearIn:&#160;processModis.m']]],
+  ['yearlygpp_5',['yearlyGpp',['../d3/d1f/struct_tracker_vars.html#a8bc158fd7d10277cff9ef213f3071429',1,'TrackerVars']]],
+  ['yearlylitter_6',['yearlyLitter',['../d3/d1f/struct_tracker_vars.html#a7b6568106f745032a1062ad3e879a3ea',1,'TrackerVars']]],
+  ['yearlynee_7',['yearlyNee',['../d3/d1f/struct_tracker_vars.html#ad4def11e315cb8c58970b9c8ac3e649e',1,'TrackerVars']]],
+  ['yearlynpp_8',['yearlyNpp',['../d3/d1f/struct_tracker_vars.html#a4707e4e79c5044ec4c6fc95d7a87cf26',1,'TrackerVars']]],
+  ['yearlyra_9',['yearlyRa',['../d3/d1f/struct_tracker_vars.html#a19157fb99702786c1264b4ef8b591a75',1,'TrackerVars']]],
+  ['yearlyrh_10',['yearlyRh',['../d3/d1f/struct_tracker_vars.html#ab75d62544d56d547dda0812d27c95cb8',1,'TrackerVars']]],
+  ['yearlyrtot_11',['yearlyRtot',['../d3/d1f/struct_tracker_vars.html#a9b53d8bff46a7f871093e07e62a63983',1,'TrackerVars']]],
+  ['yearmodis_12',['yearmodis',['../d3/d97/process_modis_8m.html#a09f74fa75a5788fa219f92dcd15049a2',1,'yearModis:&#160;processModis.m'],['../d6/d73/process_modis_sipnet_8m.html#a09f74fa75a5788fa219f92dcd15049a2',1,'yearModis:&#160;processModisSipnet.m'],['../d3/d97/process_modis_8m.html#a9d8a40bc4fd9a59e3738564d076b1e06',1,'yearModis(i):&#160;processModis.m'],['../d6/d73/process_modis_sipnet_8m.html#a9d8a40bc4fd9a59e3738564d076b1e06',1,'yearModis(i):&#160;processModisSipnet.m']]],
+  ['yearniwot_13',['yearNiwot',['../d6/d73/process_modis_sipnet_8m.html#a414a92b378b6165bf4424e793eb3cdc0',1,'processModisSipnet.m']]],
+  ['years_14',['years',['../d2/d81/struct_output_info_struct.html#a5d1bceda66aaa6a86b6d74e709bed4b5',1,'OutputInfoStruct::years'],['../d0/d16/plot_years_8m.html#acab01b92673f78b31f6b7ce0486c6fa7',1,'years:&#160;plotYears.m'],['../d9/d5a/get_c_u_p_8m.html#ae0ad90461326034e6484219272310ede',1,'years(where year(i) is the year of data(i)):&#160;getCUP.m'],['../d0/d16/plot_years_8m.html#a52fb37bb65ef0e3e7ec8c4bea2a71fca',1,'years(where year(i) is the year of data(i)) % Plot data:&#160;plotYears.m']]],
+  ['yr_15',['yr',['../d0/d16/plot_years_8m.html#a63075e375a5856fd8e505b6edeb7d549',1,'plotYears.m']]],
+  ['ystart_16',['ystart',['../d7/d35/chron_8m.html#a33a223564446046507d7421100b9e920',1,'chron.m']]]
+];

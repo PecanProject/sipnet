@@ -1,0 +1,77 @@
+\doxysection{test\+Event\+Irrigation.\+c File Reference}
+\label{test_event_irrigation_8c}\index{testEventIrrigation.c@{testEventIrrigation.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include "{}model\+Structures.\+h"{}}\newline
+{\ttfamily \#include "{}../utils.\+h"{}}\newline
+{\ttfamily \#include "{}../../../sipnet.\+c"{}}\newline
+Include dependency graph for test\+Event\+Irrigation.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ int} \textbf{ check\+Output} (\textbf{ double} soil\+Water, \textbf{ double} immed\+Evap)
+\item 
+\textbf{ int} \textbf{ run} ()
+\item 
+\textbf{ int} \textbf{ main} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{test_event_irrigation_8c_a649946700aa14e9245490b6064d34306} 
+\index{testEventIrrigation.c@{testEventIrrigation.c}!checkOutput@{checkOutput}}
+\index{checkOutput@{checkOutput}!testEventIrrigation.c@{testEventIrrigation.c}}
+\doxysubsubsection{checkOutput()}
+{\footnotesize\ttfamily \textbf{ int} check\+Output (\begin{DoxyParamCaption}\item[{\textbf{ double}}]{soil\+Water,  }\item[{\textbf{ double}}]{immed\+Evap }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ test\+Event\+Irrigation.\+c}.
+
+
+
+References \textbf{ compare\+Doubles()}, \textbf{ envi}, \textbf{ fluxes}, \textbf{ Flux\+Vars\+::immed\+Evap}, \textbf{ index}, and \textbf{ Environment\+::soil\+Water}.
+
+
+
+Referenced by \textbf{ run()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{test_event_irrigation_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+\index{testEventIrrigation.c@{testEventIrrigation.c}!main@{main}}
+\index{main@{main}!testEventIrrigation.c@{testEventIrrigation.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily \textbf{ int} main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 62} of file \textbf{ test\+Event\+Irrigation.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ index}, and \textbf{ run()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{test_event_irrigation_8c_a58e8be2db2660128e4e6456a9c981fb5} 
+\index{testEventIrrigation.c@{testEventIrrigation.c}!run@{run}}
+\index{run@{run}!testEventIrrigation.c@{testEventIrrigation.c}}
+\doxysubsubsection{run()}
+{\footnotesize\ttfamily \textbf{ int} run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ test\+Event\+Irrigation.\+c}.
+
+
+
+References \textbf{ check\+Output()}, \textbf{ climate}, \textbf{ Climate\+Vars\+::day}, \textbf{ envi}, \textbf{ fluxes}, \textbf{ Flux\+Vars\+::immed\+Evap}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ index}, \textbf{ num\+Locs}, \textbf{ params}, \textbf{ read\+Event\+Data()}, \textbf{ Environment\+::soil\+Water}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 3

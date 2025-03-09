@@ -1,0 +1,277 @@
+\doxysection{util.\+h File Reference}
+\label{util_8h}\index{util.h@{util.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+Include dependency graph for util.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ build\+File\+Name} (\textbf{ char} $\ast$\textbf{ filename}, \textbf{ const} \textbf{ char} $\ast$\textbf{ base}, \textbf{ const} \textbf{ char} $\ast$\textbf{ ext})
+\item 
+\textbf{ FILE} $\ast$ \textbf{ open\+File} (\textbf{ const} \textbf{ char} $\ast$\textbf{ name}, \textbf{ const} \textbf{ char} $\ast$\textbf{ mode})
+\item 
+\textbf{ FILE} $\ast$ \textbf{ open\+File\+Ext} (\textbf{ const} \textbf{ char} $\ast$\textbf{ name}, \textbf{ const} \textbf{ char} $\ast$\textbf{ ext}, \textbf{ const} \textbf{ char} $\ast$\textbf{ mode})
+\item 
+\textbf{ void} \textbf{ seed\+Rand} (\textbf{ unsigned} \textbf{ int} \textbf{ seed}, \textbf{ FILE} $\ast$\textbf{ outF})
+\item 
+\textbf{ double} \textbf{ randm} ()
+\item 
+\textbf{ double} $\ast$ \textbf{ make\+Array} (\textbf{ int} \textbf{ size})
+\item 
+\textbf{ double} $\ast$$\ast$ \textbf{ make2\+DArray} (\textbf{ int} \textbf{ nrows}, \textbf{ int} \textbf{ ncols})
+\item 
+\textbf{ int} $\ast$$\ast$ \textbf{ make2\+DInt\+Array} (\textbf{ int} \textbf{ nrows}, \textbf{ int} \textbf{ ncols})
+\item 
+\textbf{ void} \textbf{ free2\+DArray} (\textbf{ void} $\ast$$\ast$\textbf{ arr})
+\item 
+\textbf{ void} \textbf{ assign\+Array} (\textbf{ double} $\ast$\textbf{ out}, \textbf{ double} $\ast$in, \textbf{ int} n)
+\item 
+\textbf{ double} \textbf{ sum\+Array} (\textbf{ double} $\ast$\textbf{ array}, \textbf{ int} length)
+\item 
+\textbf{ int} \textbf{ strcmp\+Ignore\+Case} (\textbf{ const} \textbf{ char} $\ast$\textbf{ s1}, \textbf{ const} \textbf{ char} $\ast$\textbf{ s2})
+\item 
+\textbf{ int} \textbf{ strip\+Comment} (\textbf{ char} $\ast$\textbf{ line}, \textbf{ const} \textbf{ char} $\ast$\textbf{ comment\+Chars})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{util_8h_ac49fd8b4678d4f6f01e00d17b72ac028} 
+\index{util.h@{util.h}!assignArray@{assignArray}}
+\index{assignArray@{assignArray}!util.h@{util.h}}
+\doxysubsubsection{assignArray()}
+{\footnotesize\ttfamily \textbf{ void} assign\+Array (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{out,  }\item[{\textbf{ double} $\ast$}]{in,  }\item[{\textbf{ int}}]{n }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ n}.
+
+\label{util_8h_aaf26e57eedf3733a337d8d421ff599ef} 
+\index{util.h@{util.h}!buildFileName@{buildFileName}}
+\index{buildFileName@{buildFileName}!util.h@{util.h}}
+\doxysubsubsection{buildFileName()}
+{\footnotesize\ttfamily \textbf{ void} build\+File\+Name (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{filename,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{base,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{ext }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ open\+File\+Ext()}.
+
+\label{util_8h_a7611ac8af983ccdaaadddb7de7b53c2b} 
+\index{util.h@{util.h}!free2DArray@{free2DArray}}
+\index{free2DArray@{free2DArray}!util.h@{util.h}}
+\doxysubsubsection{free2DArray()}
+{\footnotesize\ttfamily \textbf{ void} free2\+DArray (\begin{DoxyParamCaption}\item[{\textbf{ void} $\ast$$\ast$}]{arr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 104} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ cleanup\+Paramchange()}, \textbf{ main()}, and \textbf{ metropolis()}.
+
+\label{util_8h_acfd51a4f4e38b658d40ac54b748a9b49} 
+\index{util.h@{util.h}!make2DArray@{make2DArray}}
+\index{make2DArray@{make2DArray}!util.h@{util.h}}
+\doxysubsubsection{make2DArray()}
+{\footnotesize\ttfamily \textbf{ double} $\ast$$\ast$ make2\+DArray (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{nrows,  }\item[{\textbf{ int}}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 72} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ main()}, \textbf{ metropolis()}, \textbf{ read\+Data()}, and \textbf{ read\+File\+For\+Agg()}.
+
+\label{util_8h_a09ddebbbbb5ccb732d7f88931d9d1b2f} 
+\index{util.h@{util.h}!make2DIntArray@{make2DIntArray}}
+\index{make2DIntArray@{make2DIntArray}!util.h@{util.h}}
+\doxysubsubsection{make2DIntArray()}
+{\footnotesize\ttfamily \textbf{ int} $\ast$$\ast$ make2\+DInt\+Array (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{nrows,  }\item[{\textbf{ int}}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 87} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ read\+Data()}.
+
+\label{util_8h_a21c26b5db93cc2c6817b9a953683280f} 
+\index{util.h@{util.h}!makeArray@{makeArray}}
+\index{makeArray@{makeArray}!util.h@{util.h}}
+\doxysubsubsection{makeArray()}
+{\footnotesize\ttfamily \textbf{ double} $\ast$ make\+Array (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{size }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 58} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ agged\+Difference()}, \textbf{ aggregates()}, \textbf{ difference()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ new\+Output\+Info()}, and \textbf{ read\+Data()}.
+
+\label{util_8h_a2a788020b8916d13ec26d4ad01c225f9} 
+\index{util.h@{util.h}!openFile@{openFile}}
+\index{openFile@{openFile}!util.h@{util.h}}
+\doxysubsubsection{openFile()}
+{\footnotesize\ttfamily \textbf{ FILE} $\ast$ open\+File (\begin{DoxyParamCaption}\item[{\textbf{ const} \textbf{ char} $\ast$}]{name,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ f}, \textbf{ index}, and \textbf{ name}.
+
+
+
+Referenced by \textbf{ open\+File\+Ext()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{util_8h_a4ec71fe2ea5006cccfae2cbf8ed19979} 
+\index{util.h@{util.h}!openFileExt@{openFileExt}}
+\index{openFileExt@{openFileExt}!util.h@{util.h}}
+\doxysubsubsection{openFileExt()}
+{\footnotesize\ttfamily \textbf{ FILE} $\ast$ open\+File\+Ext (\begin{DoxyParamCaption}\item[{\textbf{ const} \textbf{ char} $\ast$}]{name,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{ext,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ build\+File\+Name()}, \textbf{ f}, \textbf{ index}, \textbf{ name}, and \textbf{ open\+File()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{util_8h_aa45171d6958b18c8696fa7747d4c39ac} 
+\index{util.h@{util.h}!randm@{randm}}
+\index{randm@{randm}!util.h@{util.h}}
+\doxysubsubsection{randm()}
+{\footnotesize\ttfamily \textbf{ double} randm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 47} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ metropolis()}.
+
+\label{util_8h_ad2222db949c03ef23f3e1a192af45aef} 
+\index{util.h@{util.h}!seedRand@{seedRand}}
+\index{seedRand@{seedRand}!util.h@{util.h}}
+\doxysubsubsection{seedRand()}
+{\footnotesize\ttfamily \textbf{ void} seed\+Rand (\begin{DoxyParamCaption}\item[{\textbf{ unsigned} \textbf{ int}}]{seed,  }\item[{\textbf{ FILE} $\ast$}]{outF }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ fprintf()}, \textbf{ index}, \textbf{ t}, and \textbf{ time}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{util_8h_a46c453b73f4e8cd62264e4bfe8b6ae05} 
+\index{util.h@{util.h}!strcmpIgnoreCase@{strcmpIgnoreCase}}
+\index{strcmpIgnoreCase@{strcmpIgnoreCase}!util.h@{util.h}}
+\doxysubsubsection{strcmpIgnoreCase()}
+{\footnotesize\ttfamily \textbf{ int} strcmp\+Ignore\+Case (\begin{DoxyParamCaption}\item[{\textbf{ const} \textbf{ char} $\ast$}]{s1,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{s2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 161} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ result}.
+
+
+
+Referenced by \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ locate\+Param()}, \textbf{ main()}, and \textbf{ read\+Spatial\+Values()}.
+
+\label{util_8h_ab343ccfdac6191045fced6c36c0143f4} 
+\index{util.h@{util.h}!stripComment@{stripComment}}
+\index{stripComment@{stripComment}!util.h@{util.h}}
+\doxysubsubsection{stripComment()}
+{\footnotesize\ttfamily \textbf{ int} strip\+Comment (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{line,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{comment\+Chars }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 189} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ read\+Namelist\+Inputs()}, and \textbf{ read\+Spatial\+Params()}.
+
+\label{util_8h_a31f647ac0b82a2bb708fcdaaab1a498d} 
+\index{util.h@{util.h}!sumArray@{sumArray}}
+\index{sumArray@{sumArray}!util.h@{util.h}}
+\doxysubsubsection{sumArray()}
+{\footnotesize\ttfamily \textbf{ double} sum\+Array (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{array,  }\item[{\textbf{ int}}]{length }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 120} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ length()}, and \textbf{ sum()}.
+
+
+
+Referenced by \textbf{ metropolis()}, and \textbf{ reset()}.
+
+Here is the call graph for this function\+:
+% FIG 5

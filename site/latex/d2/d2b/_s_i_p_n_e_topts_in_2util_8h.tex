@@ -1,0 +1,121 @@
+\doxysection{SIPNETopts\+In/util.h File Reference}
+\label{_s_i_p_n_e_topts_in_2util_8h}\index{util.h@{util.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+Include dependency graph for SIPNETopts\+In/util.h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ FILE} $\ast$ \textbf{ open\+File} (\textbf{ char} $\ast$\textbf{ name}, \textbf{ char} $\ast$\textbf{ mode})
+\item 
+\textbf{ void} \textbf{ seed\+Rand} (\textbf{ unsigned} \textbf{ int} \textbf{ seed}, \textbf{ FILE} $\ast$\textbf{ outF})
+\item 
+\textbf{ double} \textbf{ randm} ()
+\item 
+\textbf{ double} $\ast$ \textbf{ make\+Array} (\textbf{ int} \textbf{ size})
+\item 
+\textbf{ double} $\ast$$\ast$ \textbf{ make2\+DArray} (\textbf{ int} \textbf{ nrows}, \textbf{ int} \textbf{ ncols})
+\item 
+\textbf{ int} $\ast$$\ast$ \textbf{ make2\+DInt\+Array} (\textbf{ int} \textbf{ nrows}, \textbf{ int} \textbf{ ncols})
+\item 
+\textbf{ void} \textbf{ free2\+DArray} (\textbf{ void} $\ast$$\ast$\textbf{ arr})
+\item 
+\textbf{ void} \textbf{ assign\+Array} (\textbf{ double} $\ast$\textbf{ out}, \textbf{ double} $\ast$in, \textbf{ int} n)
+\item 
+\textbf{ double} \textbf{ sum\+Array} (\textbf{ double} $\ast$\textbf{ array}, \textbf{ int} length)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{_s_i_p_n_e_topts_in_2util_8h_ac49fd8b4678d4f6f01e00d17b72ac028} 
+\index{util.h@{util.h}!assignArray@{assignArray}}
+\index{assignArray@{assignArray}!util.h@{util.h}}
+\doxysubsubsection{assignArray()}
+{\footnotesize\ttfamily \textbf{ void} assign\+Array (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{out,  }\item[{\textbf{ double} $\ast$}]{in,  }\item[{\textbf{ int}}]{n }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_a7611ac8af983ccdaaadddb7de7b53c2b} 
+\index{util.h@{util.h}!free2DArray@{free2DArray}}
+\index{free2DArray@{free2DArray}!util.h@{util.h}}
+\doxysubsubsection{free2DArray()}
+{\footnotesize\ttfamily \textbf{ void} free2\+DArray (\begin{DoxyParamCaption}\item[{\textbf{ void} $\ast$$\ast$}]{arr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 104} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_acfd51a4f4e38b658d40ac54b748a9b49} 
+\index{util.h@{util.h}!make2DArray@{make2DArray}}
+\index{make2DArray@{make2DArray}!util.h@{util.h}}
+\doxysubsubsection{make2DArray()}
+{\footnotesize\ttfamily \textbf{ double} $\ast$$\ast$ make2\+DArray (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{nrows,  }\item[{\textbf{ int}}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 72} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_a09ddebbbbb5ccb732d7f88931d9d1b2f} 
+\index{util.h@{util.h}!make2DIntArray@{make2DIntArray}}
+\index{make2DIntArray@{make2DIntArray}!util.h@{util.h}}
+\doxysubsubsection{make2DIntArray()}
+{\footnotesize\ttfamily \textbf{ int} $\ast$$\ast$ make2\+DInt\+Array (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{nrows,  }\item[{\textbf{ int}}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 87} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_a21c26b5db93cc2c6817b9a953683280f} 
+\index{util.h@{util.h}!makeArray@{makeArray}}
+\index{makeArray@{makeArray}!util.h@{util.h}}
+\doxysubsubsection{makeArray()}
+{\footnotesize\ttfamily \textbf{ double} $\ast$ make\+Array (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{size }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 58} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_a043eed78149456a0cf4a77a71a6e340b} 
+\index{util.h@{util.h}!openFile@{openFile}}
+\index{openFile@{openFile}!util.h@{util.h}}
+\doxysubsubsection{openFile()}
+{\footnotesize\ttfamily \textbf{ FILE} $\ast$ open\+File (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{name,  }\item[{\textbf{ char} $\ast$}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ bintotxt.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_aa45171d6958b18c8696fa7747d4c39ac} 
+\index{util.h@{util.h}!randm@{randm}}
+\index{randm@{randm}!util.h@{util.h}}
+\doxysubsubsection{randm()}
+{\footnotesize\ttfamily \textbf{ double} randm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 47} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_ad2222db949c03ef23f3e1a192af45aef} 
+\index{util.h@{util.h}!seedRand@{seedRand}}
+\index{seedRand@{seedRand}!util.h@{util.h}}
+\doxysubsubsection{seedRand()}
+{\footnotesize\ttfamily \textbf{ void} seed\+Rand (\begin{DoxyParamCaption}\item[{\textbf{ unsigned} \textbf{ int}}]{seed,  }\item[{\textbf{ FILE} $\ast$}]{outF }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ SIPNETopts\+In/util.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2util_8h_a31f647ac0b82a2bb708fcdaaab1a498d} 
+\index{util.h@{util.h}!sumArray@{sumArray}}
+\index{sumArray@{sumArray}!util.h@{util.h}}
+\doxysubsubsection{sumArray()}
+{\footnotesize\ttfamily \textbf{ double} sum\+Array (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{array,  }\item[{\textbf{ int}}]{length }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 120} of file \textbf{ SIPNETopts\+In/util.\+c}.
+

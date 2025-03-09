@@ -1,0 +1,131 @@
+\doxysection{modis\+FPARqc.\+m File Reference}
+\label{modis_f_p_a_rqc_8m}\index{modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+length(\textbf{ v} \textbf{ ones} ()
+\item 
+\textbf{ Termed} \textbf{ good} \textbf{ quality} \textbf{ v\+QC} (\textbf{ index})=0.\+8.$\ast$v\+QC(\textbf{ index})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ v\+QC}
+\item 
+function \textbf{ JZ} \textbf{ Modified}
+\item 
+\textbf{ num\+Cols} =length(\textbf{ v}\{1\})
+\item 
+\textbf{ v} =\textbf{ char}(v)
+\item 
+Test to see \textbf{ if} good quality by checking bit \textbf{ index} =find(bin2dec(\textbf{ v}(\+:,1\+:2))==1)
+\item 
+\textbf{ Reduce} \textbf{ factor}
+\item 
+\textbf{ Termed} \textbf{ not} \textbf{ produced}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{modis_f_p_a_rqc_8m_ab86e6a5d90167200c0290378fc5bfff8} 
+\index{modisFPARqc.m@{modisFPARqc.m}!ones@{ones}}
+\index{ones@{ones}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{ones()}
+{\footnotesize\ttfamily length(\textbf{ v} ones (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+References \textbf{ first}, and \textbf{ length()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{modis_f_p_a_rqc_8m_af7550b52becf5cf2f25d6d061b690aaf} 
+\index{modisFPARqc.m@{modisFPARqc.m}!vQC@{vQC}}
+\index{vQC@{vQC}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{vQC()}
+{\footnotesize\ttfamily \textbf{ Termed} \textbf{ good} \textbf{ quality} v\+QC (\begin{DoxyParamCaption}\item[{\textbf{ index}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{modis_f_p_a_rqc_8m_a05247424389888b475b8e530832983eb} 
+\index{modisFPARqc.m@{modisFPARqc.m}!factor@{factor}}
+\index{factor@{factor}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{factor}
+{\footnotesize\ttfamily \textbf{ Reduce} factor}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ modis\+FPARqc.\+m}.
+
+\label{modis_f_p_a_rqc_8m_a0f0f896ffda110a87f765841eb36f9b0} 
+\index{modisFPARqc.m@{modisFPARqc.m}!index@{index}}
+\index{index@{index}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{index}
+{\footnotesize\ttfamily Test user mask index =find(bin2dec(\textbf{ v}(\+:,1\+:2))==1)}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ modis\+FPARqc.\+m}.
+
+
+
+Referenced by \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ add\+Output\+Item()}, \textbf{ add\+Value\+To\+Mean\+Tracker()}, \textbf{ agged\+Difference()}, \textbf{ aggregates()}, \textbf{ all\+Params\+Initialized()}, \textbf{ all\+Params\+Read()}, \textbf{ assign\+Array()}, \textbf{ build\+File\+Name()}, \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Light\+Eff2()}, \textbf{ calc\+Light\+Eff3()}, \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Precip()}, \textbf{ calc\+Root\+Resp()}, \textbf{ calculate\+Fluxes()}, \textbf{ check\+All\+Read()}, \textbf{ check\+Event()}, \textbf{ check\+Harvest\+Params()}, \textbf{ check\+Locations()}, \textbf{ check\+Output()}, \textbf{ check\+Spatial\+Param()}, \textbf{ check\+Status()}, \textbf{ check\+Tillage\+Params()}, \textbf{ cleanup\+Paramchange()}, \textbf{ close\+Output\+Item\+File()}, \textbf{ compare\+Doubles()}, \textbf{ compute\+Agged\+Data()}, \textbf{ copy\+File()}, \textbf{ copy\+File()}, \textbf{ copy\+Other\+Files()}, \textbf{ copy\+Output\+Info()}, \textbf{ copy\+Subset()}, \textbf{ count\+Items()}, \textbf{ count\+Lines()}, \textbf{ deallocate\+Mean\+Tracker()}, \textbf{ delete\+Namelist\+Inputs()}, \textbf{ delete\+Output\+Items()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ difference()}, \textbf{ ensure\+Allocation()}, \textbf{ ensure\+Non\+Negative()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ evap\+Soil\+Fluxes()}, \textbf{ exit()}, \textbf{ free2\+DArray()}, \textbf{ free\+Climate\+List()}, \textbf{ free\+Output\+Info()}, \textbf{ get\+Data\+Type\+Names()}, \textbf{ get\+Gpp()}, \textbf{ get\+Mean\+Tracker\+Mean()}, \textbf{ get\+Num\+Parameters()}, \textbf{ get\+Num\+Params\+Read()}, \textbf{ get\+Possibly\+Spatial()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ get\+Spatial\+Param\+Sigma()}, \textbf{ goto\+Start()}, \textbf{ init\+Data\+Type\+Indices()}, \textbf{ init\+Events()}, \textbf{ initialize\+One\+Spatial\+Param()}, \textbf{ init\+Model()}, \textbf{ init\+Model()}, \textbf{ init\+Model()}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ litter\+Input\+Pool()}, \textbf{ load\+Spatial\+Params()}, \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ locate\+Param()}, \textbf{ main()}, \textbf{ main()}, \textbf{ make2\+DArray()}, \textbf{ make2\+DInt\+Array()}, \textbf{ make\+Array()}, \textbf{ microbe\+Growth()}, \textbf{ microbe\+Quality\+Efficiency()}, \textbf{ moisture()}, \textbf{ moisture\+\_\+bwb()}, \textbf{ moisture\+\_\+pm()}, \textbf{ new\+Mean\+Tracker()}, \textbf{ new\+Namelist\+Input\+Item()}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Info()}, \textbf{ new\+Output\+Items()}, \textbf{ new\+Single\+Output\+Item()}, \textbf{ new\+Spatial\+Params()}, \textbf{ new\+Spatial\+Params()}, \textbf{ next\+Unread\+Param()}, \textbf{ numlines()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ open\+File\+Ext()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ output\+Transpose()}, \textbf{ parse\+Data\+Type\+Indices()}, \textbf{ parse\+Data\+Type\+Switches()}, \textbf{ parse\+Spd\+Value()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ pot\+Psn()}, \textbf{ print\+Data\+Type\+Indices()}, \textbf{ print\+Model\+Components()}, \textbf{ randm()}, \textbf{ random\+Changeable\+Spatial\+Param()}, \textbf{ read\+Chain\+Info()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Clim\+Line()}, \textbf{ read\+Data()}, \textbf{ read\+Data\+Line()}, \textbf{ read\+File()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Girdling\+Data()}, \textbf{ read\+Indices\+File()}, \textbf{ read\+Items()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ read\+One\+Spatial\+Param()}, \textbf{ read\+Options()}, \textbf{ read\+Param\+Data()}, \textbf{ read\+Spatial\+Params()}, \textbf{ read\+Spatial\+Values()}, \textbf{ reset\+Mean\+Tracker()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ run()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ run\+Model\+Output()}, \textbf{ run\+Model\+Output()}, \textbf{ run\+Test\+Multi()}, \textbf{ run\+Test\+Simple()}, \textbf{ seed\+Rand()}, \textbf{ sens\+Test()}, \textbf{ sens\+Test()}, \textbf{ set\+All()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Data\+Type\+Indices()}, \textbf{ set\+Possibly\+Spatial()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ setup\+Model()}, \textbf{ setup\+Output\+Items()}, \textbf{ simple\+Water\+Flow()}, \textbf{ snow\+Pack()}, \textbf{ soil\+Degradation()}, \textbf{ soil\+Water\+Fluxes()}, \textbf{ strcmp\+Ignore\+Case()}, \textbf{ strip\+Comment()}, \textbf{ sum\+Array()}, \textbf{ terminate\+Output\+Item\+Lines()}, \textbf{ trans\+Soil\+Drainage()}, \textbf{ update\+State()}, \textbf{ update\+Trackers()}, \textbf{ usage()}, \textbf{ value\+Set()}, \textbf{ veg\+Resp()}, \textbf{ veg\+Resp2()}, \textbf{ write\+Best\+Spatial\+Params()}, \textbf{ write\+Chain\+Info()}, \textbf{ write\+Changeable\+Param\+Info()}, \textbf{ write\+Output\+Item\+Labels()}, and \textbf{ write\+Output\+Item\+Values()}.
+
+\label{modis_f_p_a_rqc_8m_a655a33d12d2daee5d3bee37305412192} 
+\index{modisFPARqc.m@{modisFPARqc.m}!Modified@{Modified}}
+\index{Modified@{Modified}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{Modified}
+{\footnotesize\ttfamily function \textbf{ JZ} Modified}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ modis\+FPARqc.\+m}.
+
+\label{modis_f_p_a_rqc_8m_aa0ad7aafeec3c34f5ceeb824bbea3050} 
+\index{modisFPARqc.m@{modisFPARqc.m}!numCols@{numCols}}
+\index{numCols@{numCols}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{numCols}
+{\footnotesize\ttfamily num\+Cols =length(\textbf{ v}\{1\})}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ modis\+FPARqc.\+m}.
+
+\label{modis_f_p_a_rqc_8m_a35b7fc910208c0277a95a7bc1bbced4b} 
+\index{modisFPARqc.m@{modisFPARqc.m}!produced@{produced}}
+\index{produced@{produced}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{produced}
+{\footnotesize\ttfamily \textbf{ Termed} \textbf{ not} produced}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ modis\+FPARqc.\+m}.
+
+\label{modis_f_p_a_rqc_8m_ac4055e3a20b6b3af3d10590ea446ef6c} 
+\index{modisFPARqc.m@{modisFPARqc.m}!v@{v}}
+\index{v@{v}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{v}
+{\footnotesize\ttfamily v =\textbf{ char}(v)}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ modis\+FPARqc.\+m}.
+
+\label{modis_f_p_a_rqc_8m_a420465e093a6f595f1c664fb5a026e02} 
+\index{modisFPARqc.m@{modisFPARqc.m}!vQC@{vQC}}
+\index{vQC@{vQC}!modisFPARqc.m@{modisFPARqc.m}}
+\doxysubsubsection{vQC}
+{\footnotesize\ttfamily \textbf{ Do} \textbf{ the} \textbf{ opposite} \textbf{ way} and \textbf{ then} \textbf{ transpose} v\+QC}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=modisFPARqc(v)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\%\ Author:\ AB}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ modis\+FPARqc.\+m}.
+

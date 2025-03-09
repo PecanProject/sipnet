@@ -1,0 +1,135 @@
+\doxysection{splitdata\+I.\+m File Reference}
+\label{splitdata_i_8m}\index{splitdataI.m@{splitdataI.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+offset in going from data to array \textbf{ index} (to \textbf{ start} with 1) \textbf{ for} s\+Index
+\item 
+\textbf{ find} \textbf{ rows} \textbf{ with} \textbf{ this} \textbf{ index} \textbf{ split} (\textbf{ s\+Index}+\textbf{ s\+Offset},\+:,\+:)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ split}
+\item 
+function where \textbf{ split} is \textbf{ performed} \textbf{ based} on first \textbf{ element} of \textbf{ dimesion} of data \textbf{ This} \textbf{ element} \textbf{ becomes} \textbf{ the} \textbf{ index} of \textbf{ the} first \textbf{ dimension} of \textbf{ the} \textbf{ split} \textbf{ array} and is \textbf{ dropped} \textbf{ out} of \textbf{ the} \textbf{ array} \textbf{ If} \textbf{ smallest} \textbf{ element} is \textbf{ not}
+\item 
+function where \textbf{ split} is \textbf{ performed} \textbf{ based} on first \textbf{ element} of \textbf{ dimesion} of data \textbf{ This} \textbf{ element} \textbf{ becomes} \textbf{ the} \textbf{ index} of \textbf{ the} first \textbf{ dimension} of \textbf{ the} \textbf{ split} \textbf{ array} and is \textbf{ dropped} \textbf{ out} of \textbf{ the} \textbf{ array} \textbf{ If} \textbf{ smallest} \textbf{ element} is an \textbf{ offset} is \textbf{ added} \textbf{ to} \textbf{ every} \textbf{ element} \textbf{ so} first \textbf{ array} \textbf{ index} is \textbf{ e} \textbf{ g} \textbf{ if} \textbf{ data}
+\item 
+\textbf{ return} \textbf{ else} \textbf{ s\+Min} = \textbf{ min}(data(\+:,1))
+\item 
+\textbf{ minimum} \textbf{ index} \textbf{ s\+Max} = max(data(\+:,1))
+\item 
+\textbf{ maximum} \textbf{ index} \textbf{ s\+Offset} = 1 -\/ \textbf{ s\+Min}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{splitdata_i_8m_a7ca03b9dea47cdab85d6570379f5e497} 
+\index{splitdataI.m@{splitdataI.m}!index@{index}}
+\index{index@{index}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{index()}
+{\footnotesize\ttfamily offset in going from data to array index (\begin{DoxyParamCaption}\item[{to \textbf{ start} with}]{1 }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ i}.
+
+\label{splitdata_i_8m_a19580231480c0e1e6d00ef3e8bbcd9d6} 
+\index{splitdataI.m@{splitdataI.m}!split@{split}}
+\index{split@{split}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{split()}
+{\footnotesize\ttfamily \textbf{ find} \textbf{ rows} \textbf{ with} \textbf{ this} \textbf{ index} split (\begin{DoxyParamCaption}\item[{\textbf{ s\+Index}+}]{s\+Offset,  }\item[{\+:}]{,  }\item[{\+:}]{ }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ first}, and \textbf{ i}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{splitdata_i_8m_a13481206445c309aaadf9291b1e624a8} 
+\index{splitdataI.m@{splitdataI.m}!data@{data}}
+\index{data@{data}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{data}
+{\footnotesize\ttfamily function where \textbf{ split} is \textbf{ performed} \textbf{ based} on first \textbf{ element} of \textbf{ dimesion} of data \textbf{ This} \textbf{ element} \textbf{ becomes} \textbf{ the} \textbf{ index} of \textbf{ the} first \textbf{ dimension} of \textbf{ the} \textbf{ split} \textbf{ array} and is \textbf{ dropped} \textbf{ out} of \textbf{ the} \textbf{ array} \textbf{ If} \textbf{ smallest} \textbf{ element} is an \textbf{ offset} is \textbf{ added} \textbf{ to} \textbf{ every} \textbf{ element} \textbf{ so} first \textbf{ array} \textbf{ index} is \textbf{ e} \textbf{ g} \textbf{ if} data}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ }
+\DoxyCodeLine{\%\ \ \ 0\ 2\ 3}
+\DoxyCodeLine{\%\ \ \ 1\ 6\ 7}
+\DoxyCodeLine{\%\ \ \ 0\ 4\ 5}
+\DoxyCodeLine{\%\ \ \ 1\ 8\ 9}
+\DoxyCodeLine{\%\ Then\ split(1,:,:)\ =\ }
+\DoxyCodeLine{\%\ \ \ 2\ 3}
+\DoxyCodeLine{\%\ \ \ 4\ 5}
+\DoxyCodeLine{\%\ And\ split(2,:,:)\ =\ }
+\DoxyCodeLine{\%\ \ \ 6\ 7}
+\DoxyCodeLine{\%\ \ \ 8\ 9}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ if\ (ndims(data)\ \string~=\ 2)}
+\DoxyCodeLine{\ \ \ \ fprintf(\textcolor{stringliteral}{'Error:\ data\ must\ have\ 2\ dimensions\(\backslash\)n'})}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 9} of file \textbf{ splitdata\+I.\+m}.
+
+\label{splitdata_i_8m_a57e2ebe53a1545b7511a515496c9191a} 
+\index{splitdataI.m@{splitdataI.m}!not@{not}}
+\index{not@{not}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{not}
+{\footnotesize\ttfamily function where \textbf{ split} is \textbf{ performed} \textbf{ based} on first \textbf{ element} of \textbf{ dimesion} of data \textbf{ This} \textbf{ element} \textbf{ becomes} \textbf{ the} \textbf{ index} of \textbf{ the} first \textbf{ dimension} of \textbf{ the} \textbf{ split} \textbf{ array} and is \textbf{ dropped} \textbf{ out} of \textbf{ the} \textbf{ array} \textbf{ If} \textbf{ smallest} \textbf{ element} is not}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ splitdata\+I.\+m}.
+
+\label{splitdata_i_8m_a529c7201ce5a74f08189ba1bf75bc774} 
+\index{splitdataI.m@{splitdataI.m}!sMax@{sMax}}
+\index{sMax@{sMax}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{sMax}
+{\footnotesize\ttfamily \textbf{ minimum} \textbf{ index} s\+Max = max(data(\+:,1))}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ splitdata\+I.\+m}.
+
+\label{splitdata_i_8m_aacf45e95479e02edb56beda12df6af4f} 
+\index{splitdataI.m@{splitdataI.m}!sMin@{sMin}}
+\index{sMin@{sMin}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{sMin}
+{\footnotesize\ttfamily \textbf{ return} \textbf{ else} s\+Min = \textbf{ min}(data(\+:,1))}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ splitdata\+I.\+m}.
+
+\label{splitdata_i_8m_a00f47c7d5caac1ed78f4736d427671e1} 
+\index{splitdataI.m@{splitdataI.m}!sOffset@{sOffset}}
+\index{sOffset@{sOffset}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{sOffset}
+{\footnotesize\ttfamily \textbf{ maximum} \textbf{ index} s\+Offset = 1 -\/ \textbf{ s\+Min}}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ splitdata\+I.\+m}.
+
+\label{splitdata_i_8m_ac9237251f2074ccb16528e4f98397956} 
+\index{splitdataI.m@{splitdataI.m}!split@{split}}
+\index{split@{split}!splitdataI.m@{splitdataI.m}}
+\doxysubsubsection{split}
+{\footnotesize\ttfamily function split}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ splitdataI(data)}
+\DoxyCodeLine{\%\ PRE:\ data\ has\ 2\ dimensions}
+\DoxyCodeLine{\%\ Split\ data\ into\ an\ 3-\/dimensional\ array}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ splitdata\+I.\+m}.
+

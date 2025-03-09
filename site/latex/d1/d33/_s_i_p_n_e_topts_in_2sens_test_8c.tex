@@ -1,0 +1,183 @@
+\doxysection{SIPNETopts\+In/sens\+Test.c File Reference}
+\label{_s_i_p_n_e_topts_in_2sens_test_8c}\index{sensTest.c@{sensTest.c}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}sipnet.\+h"{}}\newline
+{\ttfamily \#include "{}paramchange.\+h"{}}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+Include dependency graph for SIPNETopts\+In/sens\+Test.c\+:
+% FIG 0
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ FILE\+\_\+\+FOR\+\_\+\+AGG}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ UNAGGED\+\_\+\+WEIGHT}~0.\+0
+\item 
+\#\textbf{ define} \textbf{ LOC}~0
+\item 
+\#\textbf{ define} \textbf{ PARAM\+\_\+\+FILE}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ OPT\+\_\+\+INDICES\+\_\+\+FILE}~"{}"{}
+\item 
+\#\textbf{ define} \textbf{ VALID\+\_\+\+FRAC}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ usage} (\textbf{ char} $\ast$\textbf{ prog\+Name})
+\item 
+\textbf{ int} \textbf{ init\+Data\+Type\+Indices} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$])
+\item 
+\textbf{ int} \textbf{ parse\+Data\+Type\+Indices} (\textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ char} $\ast$\textbf{ argv}[$\,$], \textbf{ int} \textbf{ start\+Pos}, \textbf{ int} \textbf{ argc})
+\item 
+\textbf{ int} \textbf{ main} (\textbf{ int} \textbf{ argc}, \textbf{ char} $\ast$\textbf{ argv}[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_aee49b9b11699a4dc73322e195d5cbfd1} 
+\index{sensTest.c@{sensTest.c}!FILE\_FOR\_AGG@{FILE\_FOR\_AGG}}
+\index{FILE\_FOR\_AGG@{FILE\_FOR\_AGG}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{FILE\_FOR\_AGG}
+{\footnotesize\ttfamily \#\textbf{ define} FILE\+\_\+\+FOR\+\_\+\+AGG~"{}"{}}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_a0fee446a4a4ef6536664bc1ff47ff694} 
+\index{sensTest.c@{sensTest.c}!LOC@{LOC}}
+\index{LOC@{LOC}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{LOC}
+{\footnotesize\ttfamily \#\textbf{ define} LOC~0}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_a2865d450852ab40d856efd76a112206c} 
+\index{sensTest.c@{sensTest.c}!OPT\_INDICES\_FILE@{OPT\_INDICES\_FILE}}
+\index{OPT\_INDICES\_FILE@{OPT\_INDICES\_FILE}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{OPT\_INDICES\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} OPT\+\_\+\+INDICES\+\_\+\+FILE~"{}"{}}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_aac4cbf64d7084205e04bc1b1569baf05} 
+\index{sensTest.c@{sensTest.c}!PARAM\_FILE@{PARAM\_FILE}}
+\index{PARAM\_FILE@{PARAM\_FILE}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{PARAM\_FILE}
+{\footnotesize\ttfamily \#\textbf{ define} PARAM\+\_\+\+FILE~"{}"{}}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_a571515ad603a9c9669792d68a7004bae} 
+\index{sensTest.c@{sensTest.c}!UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}}
+\index{UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{UNAGGED\_WEIGHT}
+{\footnotesize\ttfamily \#\textbf{ define} UNAGGED\+\_\+\+WEIGHT~0.\+0}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_ae6e2d964bcb52ad2af799a000ea36147} 
+\index{sensTest.c@{sensTest.c}!VALID\_FRAC@{VALID\_FRAC}}
+\index{VALID\_FRAC@{VALID\_FRAC}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{VALID\_FRAC}
+{\footnotesize\ttfamily \#\textbf{ define} VALID\+\_\+\+FRAC}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0.5\ \textcolor{comment}{/*\ fraction\ of\ data\ points\ which\ must\ be\ valid}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ use\ data\ from\ a\ given\ time\ step\ */}}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 23} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_a02c81e3a12dadf2d7ed0ffed9f3e21f6} 
+\index{sensTest.c@{sensTest.c}!initDataTypeIndices@{initDataTypeIndices}}
+\index{initDataTypeIndices@{initDataTypeIndices}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{initDataTypeIndices()}
+{\footnotesize\ttfamily \textbf{ int} init\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 66} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{sensTest.c@{sensTest.c}!main@{main}}
+\index{main@{main}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily \textbf{ int} main (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{argc,  }\item[{\textbf{ char} $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 135} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+
+
+References \textbf{ agged\+Difference()}, \textbf{ cleanup\+Model()}, \textbf{ cleanup\+Paramchange()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ difference()}, \textbf{ exit()}, \textbf{ fclose()}, \textbf{ FILE\+\_\+\+FOR\+\_\+\+AGG}, \textbf{ file\+Name}, \textbf{ fprintf()}, \textbf{ free\+Output\+Info()}, \textbf{ index}, \textbf{ init\+Data\+Type\+Indices()}, \textbf{ init\+Model()}, \textbf{ LOC}, \textbf{ make\+Array()}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ new\+Output\+Info()}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ OPT\+\_\+\+INDICES\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+FILE}, \textbf{ parse\+Data\+Type\+Indices()}, \textbf{ read\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ set\+Spatial\+Param()}, \textbf{ UNAGGED\+\_\+\+WEIGHT}, \textbf{ unagged\+Weight}, \textbf{ usage()}, and \textbf{ VALID\+\_\+\+FRAC}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_a97dd8387bd19fdade6d298eeb4b6b6d1} 
+\index{sensTest.c@{sensTest.c}!parseDataTypeIndices@{parseDataTypeIndices}}
+\index{parseDataTypeIndices@{parseDataTypeIndices}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{parseDataTypeIndices()}
+{\footnotesize\ttfamily \textbf{ int} parse\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ char} $\ast$}]{argv[$\,$],  }\item[{\textbf{ int}}]{start\+Pos,  }\item[{\textbf{ int}}]{argc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 84} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ i}, \textbf{ index}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, and \textbf{ usage()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
+\index{sensTest.c@{sensTest.c}!usage@{usage}}
+\index{usage@{usage}!sensTest.c@{sensTest.c}}
+\doxysubsubsection{usage()}
+{\footnotesize\ttfamily \textbf{ void} usage (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ SIPNETopts\+In/sens\+Test.\+c}.
+
+
+
+References \textbf{ FILE\+\_\+\+FOR\+\_\+\+AGG}, \textbf{ get\+Data\+Type\+Names()}, \textbf{ i}, \textbf{ index}, \textbf{ LOC}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ OPT\+\_\+\+INDICES\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+FILE}, \textbf{ UNAGGED\+\_\+\+WEIGHT}, and \textbf{ VALID\+\_\+\+FRAC}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ parse\+Data\+Type\+Indices()}.
+
+Here is the call graph for this function\+:
+% FIG 3

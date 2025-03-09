@@ -1,0 +1,105 @@
+\doxysection{datstuff/month\+From\+Day.m File Reference}
+\label{datstuff_2month_from_day_8m}\index{monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ if} (\textbf{ is\+Leap\+Year}(year)) \textbf{ months}
+\item 
+\textbf{ last} day in \textbf{ given} month \textbf{ while} (day $>$ \textbf{ last\+Day}) month
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ month}
+\item 
+\textbf{ leap\+Months} = [31,29,31,30,31,30,31,31,30,31,30,31]
+\item 
+\textbf{ else} \textbf{ months} = \textbf{ nonleap\+Months}
+\item 
+\textbf{ start} \textbf{ by} \textbf{ assuming} \textbf{ it} \textbf{ s} \textbf{ January} \textbf{ last\+Day} = \textbf{ months}(month)
+\item 
+\textbf{ end} \textbf{ post}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{datstuff_2month_from_day_8m_ae3421a65a37a974fe4de416a812e266f} 
+\index{monthFromDay.m@{monthFromDay.m}!if@{if}}
+\index{if@{if}!monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection{if()}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{\textbf{ is\+Leap\+Year}(year)}]{ }\end{DoxyParamCaption})}
+
+\label{datstuff_2month_from_day_8m_a3b555eafc412f4ddd1b514451a238801} 
+\index{monthFromDay.m@{monthFromDay.m}!while@{while}}
+\index{while@{while}!monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection{while()}
+{\footnotesize\ttfamily \textbf{ last} day in \textbf{ given} month while (\begin{DoxyParamCaption}\item[{day}]{,  }\item[{\textbf{ last\+Day}}]{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{datstuff_2month_from_day_8m_a73ff3a88da9f322fb1655c02981f0d7b} 
+\index{monthFromDay.m@{monthFromDay.m}!lastDay@{lastDay}}
+\index{lastDay@{lastDay}!monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection{lastDay}
+{\footnotesize\ttfamily last\+Day = \textbf{ months}(month)}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ datstuff/month\+From\+Day.\+m}.
+
+\label{datstuff_2month_from_day_8m_a7b86686151f893e387424474f897bd3d} 
+\index{monthFromDay.m@{monthFromDay.m}!leapMonths@{leapMonths}}
+\index{leapMonths@{leapMonths}!monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection{leapMonths}
+{\footnotesize\ttfamily leap\+Months = [31,29,31,30,31,30,31,31,30,31,30,31]}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ datstuff/month\+From\+Day.\+m}.
+
+\label{datstuff_2month_from_day_8m_ab731581923d28bd643bc99a441348a08} 
+\index{monthFromDay.m@{monthFromDay.m}!month@{month}}
+\index{month@{month}!monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection{month}
+{\footnotesize\ttfamily \textbf{ did} \textbf{ we} \textbf{ find} \textbf{ pts} \textbf{ last} month}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ monthFromDay(day,\ year)}
+\DoxyCodeLine{\ \ \ \ \%\ \textcolor{keywordflow}{for}\ a\ given\ day\ of\ year\ (julian\ day)\ and\ year}
+\DoxyCodeLine{\ \ \ \ \%\ \textcolor{keywordflow}{return}\ month\ (1..12)\ corresponding\ to\ that\ day}
+\DoxyCodeLine{\ \ \ \ \%\ PRE:\ day\ <=\ 365\ if\ not\ leap\ year,\ day\ <=\ 366\ if\ leap\ year}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \%\ number\ of\ days\ per\ month\ in\ non-\/leap\ years\ and\ leap\ years:}
+\DoxyCodeLine{\ \ \ \ nonleapMonths\ =\ [31,28,31,30,31,30,31,31,30,31,30,31]}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ datstuff/month\+From\+Day.\+m}.
+
+
+
+Referenced by \textbf{ if()}.
+
+\label{datstuff_2month_from_day_8m_aa45149e43e92726a5e78dd220d054b6b} 
+\index{monthFromDay.m@{monthFromDay.m}!months@{months}}
+\index{months@{months}!monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection{months}
+{\footnotesize\ttfamily \textbf{ else} months = \textbf{ nonleap\+Months}}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ datstuff/month\+From\+Day.\+m}.
+
+\label{datstuff_2month_from_day_8m_aaa60dc5f9cc5c868a307926f2a292d9c} 
+\index{monthFromDay.m@{monthFromDay.m}!post@{post}}
+\index{post@{post}!monthFromDay.m@{monthFromDay.m}}
+\doxysubsubsection{post}
+{\footnotesize\ttfamily \textbf{ end} post}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ datstuff/month\+From\+Day.\+m}.
+

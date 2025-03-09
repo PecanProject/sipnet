@@ -1,0 +1,36 @@
+\doxysection{chron.\+m}
+\label{chron_8m_source}\index{chron.m@{chron.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ dayofyear=load(\textcolor{stringliteral}{'data/time'});}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ N=length(dayofyear);}
+\DoxyCodeLine{00005\ timeday=linspace(1/48,((N-\/0.5)/24),N)\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00006\ \textcolor{stringliteral}{hourofday=(mod((1:N)-\/1,24)+0.5)'};}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ ndaypyr=[365,366,365,365,365,366,365,365,365,366,365,365];}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ nyear=length(ndaypyr);}
+\DoxyCodeLine{00011\ nhrpyr=24*ndaypyr;}
+\DoxyCodeLine{00012\ I0(1)=1;}
+\DoxyCodeLine{00013\ I1(1)=nhrpyr(1);}
+\DoxyCodeLine{00014\ \textcolor{keywordflow}{for}\ i=2:nyear\ }
+\DoxyCodeLine{00015\ \ \ \ \ I0(i)=I1(i-\/1)+1;}
+\DoxyCodeLine{00016\ \ \ \ \ I1(i)=I0(i)+nhrpyr(i)-\/1;}
+\DoxyCodeLine{00017\ end}
+\DoxyCodeLine{00018\ \textcolor{keywordflow}{for}\ i=1:nyear}
+\DoxyCodeLine{00019\ \ \ \ \ yr=1991+i-\/1;}
+\DoxyCodeLine{00020\ \ \ \ \ year(I0(i):I1(i))=linspace(yr,yr+1-\/1/nhrpyr(i),nhrpyr(i));}
+\DoxyCodeLine{00021\ end}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ ystart=7201;\ \ (24*300+1)}
+\DoxyCodeLine{00024\ year=year(ystart:end)';}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ save\ data/dayofyear\ dayofyear\ -\/ascii\ \ \ \%\ \ fix(dayofyear)\ is\ 1\ on\ Jan.\ 1st}
+\DoxyCodeLine{00027\ save\ data/timeday\ timeday\ -\/ascii\ \ \ \ \ \ \ \%\ \ elapsed\ time\ for\ hourly\ interval\ midpoints}
+\DoxyCodeLine{00028\ save\ data/hourofday\ hourofday\ -\/ascii\ \ \ \%\ \ fix(hourofday)\ is\ 0.5\ for\ midnight-\/1:00AM}
+\DoxyCodeLine{00029\ save\ data/year\ year\ -\/ascii\ \ \ \ \ \ \ \ \ \ \ \ \ \%\ \ fix(year)\ is\ the\ year,\ for\ graphing\ only}
+\DoxyCodeLine{00030\ }
+
+\end{DoxyCode}

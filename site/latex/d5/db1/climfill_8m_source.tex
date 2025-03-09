@@ -1,0 +1,106 @@
+\doxysection{climfill.\+m}
+\label{climfill_8m_source}\index{climfill.m@{climfill.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ dat\{1\}=nangap(load(\textcolor{stringliteral}{'\string~/niwot/climate/tair'}));}
+\DoxyCodeLine{00003\ \%\ dat\{2\}=nangap(load(\textcolor{stringliteral}{'data/vpd'}));}
+\DoxyCodeLine{00004\ dat\{2\}=nangap(load(\textcolor{stringliteral}{'\string~/niwot/climate/rhum'}));}
+\DoxyCodeLine{00005\ dat\{3\}=nangap(load(\textcolor{stringliteral}{'\string~/niwot/climate/ppfd'}));}
+\DoxyCodeLine{00006\ dat\{4\}=nangap(load(\textcolor{stringliteral}{'\string~/niwot/climate/tsoil'}));}
+\DoxyCodeLine{00007\ dat\{5\}=nangap(load(\textcolor{stringliteral}{'\string~/niwot/climate/ustar'}));}
+\DoxyCodeLine{00008\ dat\{6\}=nangap(load(\textcolor{stringliteral}{'\string~/niwot/climate/wspd'}));}
+\DoxyCodeLine{00009\ dat\{7\}=nangap(load(\textcolor{stringliteral}{'\string~/niwot/climate/wdir'}));}
+\DoxyCodeLine{00010\ \%dat\{8\}=nangap(load(\textcolor{stringliteral}{'data/fh2o'}));}
+\DoxyCodeLine{00011\ numvars=7;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ potpar=load(\textcolor{stringliteral}{'\string~/niwot/climate/potpar'});}
+\DoxyCodeLine{00014\ hour=load(\textcolor{stringliteral}{'\string~/niwot/climate/hourofday'});\ \%\ note:\ Rob\ used\ hour\ in\ middle\ of\ time\ step;\ we\ use\ hour\ at\ start;\ shouldn\textcolor{stringliteral}{'t\ make\ a\ difference}}
+\DoxyCodeLine{00015\ \textcolor{stringliteral}{day=load('}\string~/niwot/climate/day\textcolor{stringliteral}{');\ \%\ note:\ Rob\ used\ continuous\ (fractional\ day);\ we\ use\ integer\ (equivalent\ to\ floor(dayofyear))}}
+\DoxyCodeLine{00016\ \textcolor{stringliteral}{\%time=load('}niwot/climate/timeday\textcolor{stringliteral}{');\ -\/\ time\ no\ longer\ used}}
+\DoxyCodeLine{00017\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00018\ \textcolor{stringliteral}{shour=sin(2*pi*hour/24.);}}
+\DoxyCodeLine{00019\ \textcolor{stringliteral}{chour=cos(2*pi*hour/24.);}}
+\DoxyCodeLine{00020\ \textcolor{stringliteral}{sday=sin(2*pi*(day-\/1)/365.25);}}
+\DoxyCodeLine{00021\ \textcolor{stringliteral}{cday=cos(2*pi*(day-\/1)/365.25);}}
+\DoxyCodeLine{00022\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00023\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00024\ \textcolor{stringliteral}{badcount=zeros(length(dat\{1\}),1);}}
+\DoxyCodeLine{00025\ \textcolor{stringliteral}{for\ i=1:numvars\ \ \ }}
+\DoxyCodeLine{00026\ \textcolor{stringliteral}{\ \ \ \ wg\{i\}=find(\string~isnan(dat\{i\}));}}
+\DoxyCodeLine{00027\ \textcolor{stringliteral}{\ \ \ \ wb\{i\}=find(isnan(dat\{i\}));}}
+\DoxyCodeLine{00028\ \textcolor{stringliteral}{\ \ \ \ nb(i)=length(wb\{i\});}}
+\DoxyCodeLine{00029\ \textcolor{stringliteral}{\ \ \ \ badcount(wb\{i\})=badcount(wb\{i\})+1;}}
+\DoxyCodeLine{00030\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00031\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00032\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00033\ \textcolor{stringliteral}{x=[shour\ chour\ sday\ cday];}}
+\DoxyCodeLine{00034\ \textcolor{stringliteral}{for\ i=1:numvars\ datfill\{i\}=dat\{i\};end}}
+\DoxyCodeLine{00035\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00036\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00037\ \textcolor{stringliteral}{for\ i=1:numvars\ }}
+\DoxyCodeLine{00038\ \textcolor{stringliteral}{\ \ \ \ if\ (nb(i)==0)\ \%\ no\ bad\ points\ -\/\ don'}t\ bother\ filling}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};\ \%\ go\ to\ next\ iteration\ of\ loop}
+\DoxyCodeLine{00040\ \ \ \ \ end}
+\DoxyCodeLine{00041\ \ \ \ \ [yg,net,sig]=nnregress(x(wg\{i\},:),dat\{i\}(wg\{i\}),5,1.5,1);}
+\DoxyCodeLine{00042\ \ \ \ \ r2a(i)=net.r2;}
+\DoxyCodeLine{00043\ \ \ \ \ relerra(i)=sqrt(mean((dat\{i\}(wg\{i\})-\/yg).\string^2))/sqrt(mean(dat\{i\}(wg\{i\}).\string^2));\ \ \ }
+\DoxyCodeLine{00044\ \ \ \ \ datfill\{i\}(wb\{i\})=nnfwd(net,x(wb\{i\},:));}
+\DoxyCodeLine{00045\ \ \ \ \ datmod\{i\}=nnfwd(net,x);}
+\DoxyCodeLine{00046\ end}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \%\ toterr=relerr.*nb;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ save\ climfill;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ D=cell2mat(datfill);}
+\DoxyCodeLine{00053\ \textcolor{keywordflow}{for}\ i=1:numvars\ datfill2\{i\}=datfill\{i\};end}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keywordflow}{for}\ i=1:numvars}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordflow}{if}\ (nb(i)==0)\ \%\ no\ bad\ points\ -\/\ don't\ bother\ filling}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ continue;\ \%\ go\ to\ next\ iteration\ of\ loop}
+\DoxyCodeLine{00058\ \ \ \ \ end}
+\DoxyCodeLine{00059\ \ \ \ \ vars=setdiff((1:numvars),i);}
+\DoxyCodeLine{00060\ \ \ \ \ X=[x\ D(:,vars)\ datmod\{i\}];}
+\DoxyCodeLine{00061\ \ \ \ \ \%X=[x\ D(:,vars)];}
+\DoxyCodeLine{00062\ \ \ \ \ [yg,net,sig]=nnregress(X(wg\{i\},:),datfill\{i\}(wg\{i\}),7,1.5,1);}
+\DoxyCodeLine{00063\ \ \ \ \ r2b(i)=net.r2;}
+\DoxyCodeLine{00064\ \ \ \ \ relerrb(i)=sqrt(mean((datfill\{i\}(wg\{i\})-\/yg).\string^2))/sqrt(mean(datfill\{i\}(wg\{i\}).\string^2));\ \ \ }
+\DoxyCodeLine{00065\ \ \ \ \ datfill2\{i\}(wb\{i\})=nnfwd(net,X(wb\{i\},:));}
+\DoxyCodeLine{00066\ \ \ \ \ datmod2\{i\}=nnfwd(net,X);}
+\DoxyCodeLine{00067\ end}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ save\ climfill;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ tairfill=datfill2\{1\};}
+\DoxyCodeLine{00072\ rhumfill=datfill2\{2\};}
+\DoxyCodeLine{00073\ parfill=datfill2\{3\};}
+\DoxyCodeLine{00074\ tsoilfill=datfill2\{4\};}
+\DoxyCodeLine{00075\ ustarfill=datfill2\{5\};}
+\DoxyCodeLine{00076\ wspdfill=datfill2\{6\};}
+\DoxyCodeLine{00077\ wdirfill=datfill2\{7\};}
+\DoxyCodeLine{00078\ \%fh2ofill=datfill2\{8\};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ rhumfill(find(rhumfill<0))=0;}
+\DoxyCodeLine{00081\ parfill(find(parfill<0))=0;}
+\DoxyCodeLine{00082\ wspdfill(find(wspdfill<0))=0;}
+\DoxyCodeLine{00083\ wdirfill(find(wdirfill>360\ |\ wdirfill<0))=0;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \%\ BUILD\ VPRESS,\ VPD,\ VPDSOIL}
+\DoxyCodeLine{00086\ [vpressfill,\ vpdfill,\ vpdsoilfill]\ =\ calcvpressNiwot(rhumfill,\ tairfill,\ tsoilfill);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ save\ \string~/niwot/climate/tairfill\ tairfill\ -\/ascii}
+\DoxyCodeLine{00089\ save\ \string~/niwot/climate/rhumfill\ rhumfill\ -\/ascii}
+\DoxyCodeLine{00090\ save\ \string~/niwot/climate/parfill\ parfill\ -\/ascii}
+\DoxyCodeLine{00091\ save\ \string~/niwot/climate/tsoilfill\ tsoilfill\ -\/ascii}
+\DoxyCodeLine{00092\ save\ \string~/niwot/climate/ustarfill\ ustarfill\ -\/ascii}
+\DoxyCodeLine{00093\ save\ \string~/niwot/climate/wspdfill\ wspdfill\ -\/ascii}
+\DoxyCodeLine{00094\ save\ \string~/niwot/climate/wdirfill\ wdirfill\ -\/ascii}
+\DoxyCodeLine{00095\ \%save\ data/fh2ofill\ fh2ofill\ -\/ascii}
+\DoxyCodeLine{00096\ save\ \string~/niwot/climate/vpressfill\ vpressfill\ -\/ascii}
+\DoxyCodeLine{00097\ save\ \string~/niwot/climate/vpdfill\ vpdfill\ -\/ascii}
+\DoxyCodeLine{00098\ save\ \string~/niwot/climate/vpdsoilfill\ vpdsoilfill\ -\/ascii}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ }
+
+\end{DoxyCode}

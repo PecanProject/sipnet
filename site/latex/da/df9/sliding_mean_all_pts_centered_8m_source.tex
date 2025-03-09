@@ -1,0 +1,55 @@
+\doxysection{sliding\+Mean\+All\+Pts\+Centered.\+m}
+\label{sliding_mean_all_pts_centered_8m_source}\index{slidingMeanAllPtsCentered.m@{slidingMeanAllPtsCentered.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \%\ Given\ data[1..n]}
+\DoxyCodeLine{00002\ \%\ and\ window,\ the\ size\ of\ the\ window}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \%\ \textcolor{keywordflow}{return}\ meanData[1..n],}
+\DoxyCodeLine{00005\ \%\ where,\ \textcolor{keywordflow}{if}\ window\ is\ even:}
+\DoxyCodeLine{00006\ \%\ \ \ meanData[i]\ =\ mean(data[i-\/(window/2):i+(window/2)-\/1])\ for\ \ window/2\ <\ i\ <=\ n\ -\/\ (window/2\ -\/\ 1),}
+\DoxyCodeLine{00007\ \%\ \ \ and\ this\ range\ is\ narrowed\ symmetrically\ if\ i\ outside\ this\ range\ (range}
+\DoxyCodeLine{00008\ \%\ \ \ kept\ even)}
+\DoxyCodeLine{00009\ \%\ \ \ Note\ that\ mean\ around\ 1st\ point\ will\ be\ NaN}
+\DoxyCodeLine{00010\ \%\ if\ window\ is\ odd:}
+\DoxyCodeLine{00011\ \%\ \ \ meanData[i]\ =\ mean(data[i-\/(window-\/1)/2:i+(window-\/1)/2])\ for}
+\DoxyCodeLine{00012\ \%\ \ \ (window-\/1)/2\ <\ i\ <=\ n\ -\/\ (window-\/1)/2}
+\DoxyCodeLine{00013\ \%\ \ \ and\ this\ range\ is\ narrowed\ symmetrically\ if\ i\ outside\ this\ range\ (range}
+\DoxyCodeLine{00014\ \%\ \ \ kept\ odd)}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \%\ Difference\ between\ this\ function\ and\ slidingMeanAllPts\ is\ that\ here\ we}
+\DoxyCodeLine{00017\ \%\ compute\ mean\ AROUND\ given\ point,\ NOT\ mean\ UP\ TO\ given\ point.}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ function\ meanData\ =\ slidingMeanAllPtsCentered(data,\ window)}
+\DoxyCodeLine{00020\ \ \ \ \ \%\ first\ do\ start\ points,\ with\ not\ enough\ points\ for\ given\ window}
+\DoxyCodeLine{00021\ \ \ \ \ startI\ =\ 1;\ \%\ start\ at\ first\ point\ in\ vector}
+\DoxyCodeLine{00022\ \ \ \ \ thisWindow\ =\ mod(window,2);\ \%\ start\ with\ a\ window\ of\ 0\ \textcolor{keywordflow}{if}\ window\ even,\ 1\ \textcolor{keywordflow}{if}\ window\ odd}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordflow}{if}\ (thisWindow\ ==\ 0)\ \%\ handle\ window\ size\ of\ 0\ specially}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ meanData(startI)\ =\ NaN;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ startI\ =\ startI\ +\ 1;\ \%\ we\textcolor{stringliteral}{'ll\ really\ start\ with\ point\ 2\ in\ vector}}
+\DoxyCodeLine{00026\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ thisWindow\ =\ thisWindow\ +\ 2;}}
+\DoxyCodeLine{00027\ \textcolor{stringliteral}{\ \ \ \ end}}
+\DoxyCodeLine{00028\ \textcolor{stringliteral}{\ \ \ \ for\ i\ =\ startI:floor(window/2)\ \%\ do\ start\ points,\ with\ not\ enough\ points\ for\ given\ window}}
+\DoxyCodeLine{00029\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \%\ take\ mean\ from\ first\ point\ to\ a\ symmetrical\ point\ on\ the\ other}}
+\DoxyCodeLine{00030\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \%\ side\ of\ i}}
+\DoxyCodeLine{00031\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ meanData(i)\ =\ mean(data(1:i+floor((thisWindow\ -\/\ 1)/2)));}}
+\DoxyCodeLine{00032\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ thisWindow\ =\ thisWindow\ +\ 2;\ \%\ increase\ window\ size\ for\ next\ point}}
+\DoxyCodeLine{00033\ \textcolor{stringliteral}{\ \ \ \ end}}
+\DoxyCodeLine{00034\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{00035\ \textcolor{stringliteral}{\ \ \ \ \%\ now\ do\ bulk\ of\ vector}}
+\DoxyCodeLine{00036\ \textcolor{stringliteral}{\ \ \ \ for\ i\ =\ (floor(window/2)\ +\ 1):(length(data)\ -\/\ floor((window\ -\/\ 1)/2))}}
+\DoxyCodeLine{00037\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \%\ compute\ mean\ around\ i}}
+\DoxyCodeLine{00038\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ meanData(i)\ =\ mean(data(i\ -\/\ floor(window/2):i\ +\ floor((window\ -\/\ 1)/2)));}}
+\DoxyCodeLine{00039\ \textcolor{stringliteral}{\ \ \ \ end}}
+\DoxyCodeLine{00040\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{00041\ \textcolor{stringliteral}{\ \ \ \ \%\ now\ do\ end\ points,\ with\ not\ enough\ points\ for\ given\ window}}
+\DoxyCodeLine{00042\ \textcolor{stringliteral}{\ \ \ \ thisWindow\ =\ window\ -\/\ 2;\ \%\ start\ with\ a\ window\ size\ 2\ smaller}}
+\DoxyCodeLine{00043\ \textcolor{stringliteral}{\ \ \ \ for\ i\ =\ (length(data)\ -\/\ floor((window\ -\/\ 1)/2)\ +\ 1):length(data)}}
+\DoxyCodeLine{00044\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \%\ take\ mean\ from\ the\ last\ point\ to\ a\ symmetrical\ point\ on\ the\ other}}
+\DoxyCodeLine{00045\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \%\ side\ of\ i}}
+\DoxyCodeLine{00046\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ meanData(i)\ =\ mean(data(i\ -\/\ floor(thisWindow/2):length(data)));}}
+\DoxyCodeLine{00047\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ thisWindow\ =\ thisWindow\ -\/\ 2;}}
+\DoxyCodeLine{00048\ \textcolor{stringliteral}{\ \ \ \ end}}
+\DoxyCodeLine{00049\ \textcolor{stringliteral}{end}}
+
+\end{DoxyCode}

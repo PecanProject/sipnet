@@ -1,0 +1,48 @@
+\doxysection{snow\+Validate.\+m}
+\label{snow_validate_8m_source}\index{snowValidate.m@{snowValidate.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ validIndices=snowValidate(year,dayOfYear,validIndices)}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \%\ Author:\ JMZ}
+\DoxyCodeLine{00004\ \%\ Created:\ June\ 17,\ 2010}
+\DoxyCodeLine{00005\ \%\ Purpose:\ mask\ fAPAR\ data\ \textcolor{keywordflow}{for}\ snow.\ \ This\ needs\ to\ be\ manually\ done.}
+\DoxyCodeLine{00006\ \%}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \%\ year\ dayEnd\ dayStart}
+\DoxyCodeLine{00011\ \%\ 1999\ \ \ 117\ \ \ \ \ 337}
+\DoxyCodeLine{00012\ \%\ 2000\ \ \ 88\ \ \ \ \ \ 310}
+\DoxyCodeLine{00013\ \%\ 2001\ \ \ 85\ \ \ \ \ \ 330}
+\DoxyCodeLine{00014\ \%\ 2002\ \ \ 124\ \ \ \ \ 328}
+\DoxyCodeLine{00015\ \%\ 2003\ \ \ 135\ \ \ \ \ 319}
+\DoxyCodeLine{00016\ \%\ 2004\ \ \ 91\ \ \ \ \ \ 324}
+\DoxyCodeLine{00017\ \%\ 2005\ \ \ 125\ \ \ \ \ 330}
+\DoxyCodeLine{00018\ \%\ 2006\ \ \ 99\ \ \ \ \ \ 331}
+\DoxyCodeLine{00019\ \%\ 2007\ \ \ 104\ \ \ \ \ 324}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ yearVector=[1999:2007];}
+\DoxyCodeLine{00023\ snowEnd=[117;88;85;124;135;91;125;99;104];}
+\DoxyCodeLine{00024\ snowStart=[337;310;330;328;319;324;330;331;324];}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keywordflow}{for}\ i=1:length(yearVector)}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ index=find(yearVector(i)==year);}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ currDayOfYear=dayOfYear(index);}
+\DoxyCodeLine{00032\ \ \ \ currValidIndices=validIndices(index);}
+\DoxyCodeLine{00033\ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ snowPreMelt=find(currDayOfYear\ <\ snowEnd(i));}
+\DoxyCodeLine{00035\ \ \ \ snowWinter=find(currDayOfYear\ >\ snowStart(i));}
+\DoxyCodeLine{00036\ \ \ \ }
+\DoxyCodeLine{00037\ \ \ \ currValidIndices(snowPreMelt)=0;}
+\DoxyCodeLine{00038\ \ \ \ currValidIndices(snowWinter)=0;}
+\DoxyCodeLine{00039\ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ validIndices(index)=currValidIndices;}
+\DoxyCodeLine{00041\ end}
+\DoxyCodeLine{00042\ \ \ \ }
+
+\end{DoxyCode}

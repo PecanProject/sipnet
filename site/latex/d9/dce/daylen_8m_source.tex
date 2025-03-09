@@ -1,0 +1,161 @@
+\doxysection{daylen.\+m}
+\label{daylen_8m_source}\index{daylen.m@{daylen.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \%\ clear(\textcolor{stringliteral}{'all'});}
+\DoxyCodeLine{00003\ \%\ close(\textcolor{stringliteral}{'all'},\textcolor{stringliteral}{'hidden'});}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \%\ nyears=11;}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \%\ Harvard\ forest:}
+\DoxyCodeLine{00008\ \%\ lat\ =\ 42.54;}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \%\ Niwot:}
+\DoxyCodeLine{00011\ lat\ =\ 40.03;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \%\ LBA\ km\ 83:}
+\DoxyCodeLine{00014\ \%\ lat\ =\ -\/3.01;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \%\ LBA\ km\ 67:}
+\DoxyCodeLine{00017\ \%\ lat\ =\ -\/2.51;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ latRad\ =\ lat*(pi/180);}
+\DoxyCodeLine{00020\ omega\ =\ 0.2618;\ \%\ pi/12}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \%\ Harvard\ forest:\ (IS\ THIS\ RIGHT???)}
+\DoxyCodeLine{00023\ \%\ hrOffset\ =\ -\/0.267;\ }
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \%\ Niwot:}
+\DoxyCodeLine{00026\ hrOffset\ =\ -\/0.036;\ \%\ (Long\ -\/\ CentralMeridian)/15}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \%\ LBA\ km\ 83:}
+\DoxyCodeLine{00029\ \%\ hrOffset\ =\ 0.361;\ \%\ (Long\ -\/\ CentralMeridian)/15}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \%\ LBA\ km\ 67:}
+\DoxyCodeLine{00032\ \%\ hrOffset\ =\ 0.362;\ \%\ (Long\ -\/\ CentralMeridian)/15}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ parFrac\ =\ 1.0;}
+\DoxyCodeLine{00035\ sunFrac\ =\ 1.0;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ nt\_nrm=24*365;}
+\DoxyCodeLine{00038\ nt\_leap=24*366;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \%NORMAL\ YEARS}
+\DoxyCodeLine{00041\ \textcolor{keywordflow}{for}\ doy=1:365\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ dayAng\ =\ 2*pi*(doy-\/1)/365;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ eccent\ =\ 1.000110\ +\ 0.034221*cos(dayAng)\ +\ 0.00128*sin(dayAng)\ +\ 0.000719*cos(2*dayAng)\ +\ 0.000077*sin(2*dayAng);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ decl\ =\ (0.006918\ -\/\ 0.399912*cos(dayAng)\ +\ 0.070257*sin(dayAng)\ -\/\ 0.006758*cos(2*dayAng)\ +\ 0.000907*sin(2*dayAng)\ -\/\ 0.002697*cos(3*dayAng)\ +\ 0.00148*sin(3*dayAng));}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \%\ \textcolor{keywordflow}{for}\ hr=1:24}
+\DoxyCodeLine{00046\ \ \ \ \ \%\ \textcolor{keywordflow}{for}\ hr\ =\ 0.5:0.5:24\ \%\ every\ half\ hour\ -\/\ BAD:\ STARTS\ AT\ 0.5,\ NOT\ 0}
+\DoxyCodeLine{00047\ \ \ \ \ for\ hr\ =\ 0:0.5:23.5\ \%\ every\ half\ hour}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ k\ =\ (doy-\/1)*24\ +\ hr;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ k\ =\ (doy\ -\/\ 1)*48\ +\ hr*2\ +\ 1;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ t=mod(hr+hrOffset,24)-\/12;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ t=mod((hr+0.25)+hrOffset,24)-\/12;\ \%\ add\ 0.25\ to\ put\ us\ in\ the\ middle\ of\ the\ timestep}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sza\_nrm(k)\ =\ acos(sin(latRad)*sin(decl)\ +\ cos(latRad)*cos(decl)*cos(omega*t));}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rad\_nrm(k)\ =\ max([0,parFrac*1367*eccent*(cos(decl)*cos(latRad)*cos(omega*t)\ +\ sin(decl)*sin(latRad))]);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ parA\_nrm(k)\ =\ (.18+(.62*sunFrac))*((rad\_nrm(k)*0.001*2.05*10000000)/10000);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ end\ \ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ srise\_nrm(doy)\ =\ -\/(acos(-\/tan(decl)*tan(latRad))/omega);\ \%\ don\textcolor{stringliteral}{'t\ bother\ doing\ offset\ on\ srise\ and\ sset}}
+\DoxyCodeLine{00057\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sset\_nrm(doy)\ =\ +(acos(-\/tan(decl)*tan(latRad))/omega);\ \%\ because\ we\ only\ care\ about\ their\ difference}}
+\DoxyCodeLine{00058\ \textcolor{stringliteral}{\ \ \ \ daylen\_nrm(doy)\ =\ sset\_nrm(doy)-\/srise\_nrm(doy);}}
+\DoxyCodeLine{00059\ \textcolor{stringliteral}{end}}
+\DoxyCodeLine{00060\ \textcolor{stringliteral}{\%LEAP\ YEARS}}
+\DoxyCodeLine{00061\ \textcolor{stringliteral}{for\ doy=1:366}}
+\DoxyCodeLine{00062\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ dayAng\ =\ 2*pi*(doy-\/1)/366;}}
+\DoxyCodeLine{00063\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ eccent\ =\ 1.000110\ +\ 0.034221*cos(dayAng)\ +\ 0.00128*sin(dayAng)\ +\ 0.000719*cos(2*dayAng)\ +\ 0.000077*sin(2*dayAng);}}
+\DoxyCodeLine{00064\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ decl\ =\ (0.006918\ -\/\ 0.399912*cos(dayAng)\ +\ 0.070257*sin(dayAng)\ -\/\ 0.006758*cos(2*dayAng)\ +\ 0.000907*sin(2*dayAng)\ -\/\ 0.002697*cos(3*dayAng)\ +\ 0.00148*sin(3*dayAng));}}
+\DoxyCodeLine{00065\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \%\ for\ hr=1:24}}
+\DoxyCodeLine{00066\ \textcolor{stringliteral}{\ \ \ \ for\ hr\ =\ 0.5:0.5:24\ \%\ every\ half\ hour}}
+\DoxyCodeLine{00067\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ k\ =\ (doy-\/1)*24\ +\ hr;}}
+\DoxyCodeLine{00068\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ k\ =\ (doy\ -\/\ 1)*48\ +\ hr*2;}}
+\DoxyCodeLine{00069\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ t=mod(hr+hrOffset,24)-\/12;}}
+\DoxyCodeLine{00070\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ t=mod((hr-\/0.25)+hrOffset,24)-\/12;\ \%\ subtract\ 0.25\ to\ put\ us\ in\ the\ middle\ of\ the\ timestep}}
+\DoxyCodeLine{00071\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sza\_leap(k)\ =\ acos(sin(latRad)*sin(decl)\ +\ cos(latRad)*cos(decl)*cos(omega*t));}}
+\DoxyCodeLine{00072\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ rad\_leap(k)\ =\ max([0,parFrac*1367*eccent*(cos(decl)*cos(latRad)*cos(omega*t)\ +\ sin(decl)*sin(latRad))]);}}
+\DoxyCodeLine{00073\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ parA\_leap(k)\ =\ (.18+(.62*sunFrac))*((rad\_leap(k)*0.001*2.05*10000000)/10000);}}
+\DoxyCodeLine{00074\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ end\ \ \ \ \ }}
+\DoxyCodeLine{00075\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ srise\_leap(doy)\ =\ -\/(acos(-\/tan(decl)*tan(latRad))/omega);\ \%\ don'}t\ bother\ doing\ offset\ on\ srise\ and\ sset}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ sset\_leap(doy)\ =\ +(acos(-\/tan(decl)*tan(latRad))/omega);\ \%\ because\ we\ only\ care\ about\ their\ difference}
+\DoxyCodeLine{00077\ \ \ \ \ daylen\_leap(doy)\ =\ sset\_leap(doy)-\/srise\_leap(doy);}
+\DoxyCodeLine{00078\ end}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \%\ HARVARD\ FOREST:}
+\DoxyCodeLine{00081\ \%\ INCLUDED\ ARE\ LAST\ 1560\ HOURS\ OF\ 1991}
+\DoxyCodeLine{00082\ \%\ rad\_1991=rad\_nrm(end-\/1559:end);}
+\DoxyCodeLine{00083\ \%\ parA\_1991=parA\_nrm(end-\/1559:end);}
+\DoxyCodeLine{00084\ \%\ daylen\_1991=daylen\_nrm(end-\/1559:end);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \%\ radY\ =\ [rad\_1991';rad\_leap';rad\_nrm';rad\_nrm';rad\_nrm';rad\_leap';rad\_nrm';rad\_nrm';rad\_nrm';rad\_leap';rad\_nrm';rad\_nrm'];}
+\DoxyCodeLine{00087\ \%\ parAY\ =\ [parA\_1991';parA\_leap';parA\_nrm';parA\_nrm';parA\_nrm';parA\_leap';parA\_nrm';\ parA\_nrm';parA\_nrm';parA\_leap';parA\_nrm';parA\_nrm'];}
+\DoxyCodeLine{00088\ \%\ daylenY\ =\ [daylen\_1991';daylen\_leap';daylen\_nrm';daylen\_nrm';daylen\_nrm';daylen\_leap';daylen\_nrm';daylen\_nrm';daylen\_nrm';daylen\_leap';daylen\_nrm';daylen\_nrm'];}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \%\ timeY\ =\ 1:((24*(365*11\ +\ 3))+1560);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \%\ NIWOT:}
+\DoxyCodeLine{00093\ \%\ INCLUDED\ ARE\ LAST\ 2928\ HALF-\/HOURS\ (61\ days)\ OF\ 1998}
+\DoxyCodeLine{00094\ rad\_1998\ =\ rad\_nrm(end-\/2927:end);}
+\DoxyCodeLine{00095\ parA\_1998\ =\ parA\_nrm(end-\/2927:end);}
+\DoxyCodeLine{00096\ daylen\_1998\ =\ daylen\_nrm(end-\/60:end);}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \%\ 365\ days\ \textcolor{keywordflow}{for}\ 1999,\ 2001,\ 2002,\ 2003;\ 366\ days\ \textcolor{keywordflow}{for}\ 2000\ and\ 2004;\ and\ last\ 61\ days}
+\DoxyCodeLine{00099\ \%\ of\ 1998}
+\DoxyCodeLine{00100\ timeY\ =\ 1:(48*(61+365*4+366*2));\ }
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ radY\ =\ [rad\_1998';rad\_nrm';rad\_leap';rad\_nrm';rad\_nrm';rad\_nrm';rad\_leap'];}
+\DoxyCodeLine{00103\ parAY\ =\ [parA\_1998';parA\_nrm';parA\_leap';parA\_nrm';parA\_nrm';parA\_nrm';parA\_leap'];}
+\DoxyCodeLine{00104\ daylenY\ =\ [daylen\_1998';daylen\_nrm';daylen\_leap';daylen\_nrm';daylen\_nrm';daylen\_nrm';daylen\_leap'];}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \%\ LBA\ km\ 83:}
+\DoxyCodeLine{00107\ \%\ INCLUDED\ ARE\ LAST\ 8880\ HALF-\/HOURS\ (185\ days)\ OF\ 2000\ AND\ FIRST\ 8688}
+\DoxyCodeLine{00108\ \%\ HALF-\/HOURS\ (181\ days)\ OF\ 2001}
+\DoxyCodeLine{00109\ \%\ timeY\ =\ 1:(48*366);}
+\DoxyCodeLine{00110\ \%\ radY\ =\ [rad\_leap(end-\/8879:end)';rad\_nrm(1:8688)'];}
+\DoxyCodeLine{00111\ \%\ parAY\ =\ [parA\_leap(end-\/8879:end)';parA\_nrm(1:8688)'];}
+\DoxyCodeLine{00112\ \%\ daylenY\ =\ [daylen\_leap(end-\/184:end)';daylen\_nrm(1:181)'];}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \%\ FOR\ CALCULATING\ STATISTICS\ TO\ CHECK\ POTPAR:}
+\DoxyCodeLine{00117\ \%\ par=load(\textcolor{stringliteral}{'niwot/climate/parfill'});}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \%\ w=find(par\ >\ 0\ \&\ parAY\ >\ 0);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \%\ ratio=(par(w)./parAY(w));}
+\DoxyCodeLine{00122\ \%\ med=median(ratio);}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \%\ ndays=length(parAY)/24;}
+\DoxyCodeLine{00127\ ndays\ =\ length(parAY)/48;\ \%\ half-\/hours}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ for\ i=1:ndays}
+\DoxyCodeLine{00130\ \ \ \ \ \%\ r=(i-\/1)*24+1:i*24;}
+\DoxyCodeLine{00131\ \ \ \ \ r\ =\ (i-\/1)*48+1:i*48;\ \%\ half-\/hours}
+\DoxyCodeLine{00132\ \ \ \ \ nlight(i)=length(find(parAY(r)>0));}
+\DoxyCodeLine{00133\ end}
+\DoxyCodeLine{00134\ nlight=nlight\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00135\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00136\ \textcolor{stringliteral}{\%\ SAVE\ THE\ DATA}}
+\DoxyCodeLine{00137\ \textcolor{stringliteral}{save('}\string~/niwot/climate/potpar\textcolor{charliteral}{','}parAY\textcolor{charliteral}{','}-\/ascii');}
+\DoxyCodeLine{00138\ save(\textcolor{stringliteral}{'\string~/niwot/climate/daylen'},\textcolor{stringliteral}{'daylenY'},\textcolor{stringliteral}{'-\/ascii'});}
+\DoxyCodeLine{00139\ save(\textcolor{stringliteral}{'\string~/niwot/climate/nlight'},\textcolor{stringliteral}{'nlight'},\textcolor{stringliteral}{'-\/ascii'});}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \%\ figure;}
+\DoxyCodeLine{00144\ \%\ plot(timeY,parAY,timeY,par)}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \%\ figure;}
+\DoxyCodeLine{00147\ \%\ xc=xcorr(parAY,par,\textcolor{stringliteral}{'coeff'});}
+\DoxyCodeLine{00148\ \%\ plot(xc(87672-\/2:87672+2),\textcolor{stringliteral}{'o-\/'})}
+\DoxyCodeLine{00149\ \%\ xc(87672-\/2:87672+2)}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \%\ figure;}
+\DoxyCodeLine{00152\ \%\ plot(parAY,par,\textcolor{charliteral}{'.'},[0\ 2200],[0\ 2200],\textcolor{charliteral}{'r'})}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \%\ figure;}
+\DoxyCodeLine{00155\ \%\ hist(log(ratio));}
+
+\end{DoxyCode}

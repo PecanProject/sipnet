@@ -1,0 +1,28 @@
+\doxysection{datstuff/month\+From\+Day.m}
+\label{datstuff_2month_from_day_8m_source}\index{monthFromDay.m@{monthFromDay.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ month\ =\ monthFromDay(day,\ year)}
+\DoxyCodeLine{00002\ \ \ \ \ \%\ \textcolor{keywordflow}{for}\ a\ given\ day\ of\ year\ (julian\ day)\ and\ year}
+\DoxyCodeLine{00003\ \ \ \ \ \%\ \textcolor{keywordflow}{return}\ month\ (1..12)\ corresponding\ to\ that\ day}
+\DoxyCodeLine{00004\ \ \ \ \ \%\ PRE:\ day\ <=\ 365\ if\ not\ leap\ year,\ day\ <=\ 366\ if\ leap\ year}
+\DoxyCodeLine{00005\ \ \ \ \ }
+\DoxyCodeLine{00006\ \ \ \ \ \%\ number\ of\ days\ per\ month\ in\ non-\/leap\ years\ and\ leap\ years:}
+\DoxyCodeLine{00007\ \ \ \ \ nonleapMonths\ =\ [31,28,31,30,31,30,31,31,30,31,30,31];}
+\DoxyCodeLine{00008\ \ \ \ \ leapMonths\ =\ [31,29,31,30,31,30,31,31,30,31,30,31];}
+\DoxyCodeLine{00009\ \ \ \ \ }
+\DoxyCodeLine{00010\ \ \ \ \ if\ (isLeapYear(year))}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ months\ =\ leapMonths;}
+\DoxyCodeLine{00012\ \ \ \ \ else}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ months\ =\ nonleapMonths;}
+\DoxyCodeLine{00014\ \ \ \ \ end}
+\DoxyCodeLine{00015\ \ \ \ \ }
+\DoxyCodeLine{00016\ \ \ \ \ month\ =\ 1;\ \%\ start\ by\ assuming\ it's\ January}
+\DoxyCodeLine{00017\ \ \ \ \ lastDay\ =\ months(month);\ \%\ last\ day\ in\ given\ month}
+\DoxyCodeLine{00018\ \ \ \ \ while\ (day\ >\ lastDay)}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ month\ =\ month\ +\ 1;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ lastDay\ =\ lastDay\ +\ months(month);}
+\DoxyCodeLine{00021\ \ \ \ \ end}
+\DoxyCodeLine{00022\ \ \ \ \ \%\ post:\ day\ <=\ lastDay,\ and\ month\ gives\ correct\ month}
+
+\end{DoxyCode}

@@ -1,0 +1,42 @@
+\doxysection{modis\+Tokenize\+String.\+m}
+\label{modis_tokenize_string_8m_source}\index{modisTokenizeString.m@{modisTokenizeString.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ [timeOut,elementName,pixelValues]=modisTokenizeString(stringIn)}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \%\%\%\ Take\ a\ modis\ data\ string,\ tokenize\ it,\ and\ \textcolor{keywordflow}{return}\ the\ pixelValues}
+\DoxyCodeLine{00004\ \%\%\%\ First\ two\ tokens\ are\ just\ the\ \textcolor{keywordtype}{long}\ name\ and\ the\ modis\ product,\ followed\ by\ the\ time\ (in\ Ayyyyddd),}
+\DoxyCodeLine{00005\ \%\%\%\ the\ site\ name,\ time\ it\ was\ analyzed,\ the\ element\ name,\ and\ a\ 49\ element\ vector\ of\ results}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \%\%\%\ \textcolor{keywordflow}{for}\ generality,\ the\ output\ will\ all\ be\ strings}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \%\%\%\ Out\ values:}
+\DoxyCodeLine{00010\ \%\%\%\ timeOut\ =\ a\ numeric\ time\ value\ (yyyyddd)}
+\DoxyCodeLine{00011\ \%\%\%\ elementName\ =\ name\ of\ the\ element\ analyzed\ (usually\ Fpar,\ LAI,\ and\ their\ QC\ values)}
+\DoxyCodeLine{00012\ \%\%\%\ pixelValues\ =\ a\ cellstring\ of\ pixel\ values\ \textcolor{keywordflow}{for}\ the\ element\ analyzed}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ pixelValues=cellstr(\textcolor{keywordtype}{char}(zeros(49,1)));\ \ \ \ \ \ \ \ \ \ \%\%\%\ Make\ a\ cellstring\ of\ values\ \textcolor{keywordflow}{for}\ pixels}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \%\%\%\ ignore\ the\ first\ two\ tokens}
+\DoxyCodeLine{00017\ [tok,stringIn]=strtok(stringIn,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00018\ [tok,stringIn]=strtok(stringIn,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \%\%\%\ assign\ time\ value}
+\DoxyCodeLine{00021\ [timeOut,stringIn]=strtok(stringIn,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00022\ timeOut(1)=[];\ \ \ \ \ \ \ \ \ \ \ \%\%\%\ Remove\ the\ \textcolor{charliteral}{'A'}\ designation}
+\DoxyCodeLine{00023\ timeOut=str2num(timeOut);\ \ \ \ \ \ \ \ \ \ \%\%\%\ Convert\ to\ a\ number}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \%\%\%\ Ignore\ the\ next\ three\ tokens}
+\DoxyCodeLine{00026\ [tok,stringIn]=strtok(stringIn,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00027\ [tok,stringIn]=strtok(stringIn,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \%\%\%\ Assign\ the\ element\ Name}
+\DoxyCodeLine{00030\ [elementName,stringIn]=strtok(stringIn,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordflow}{for}\ i\ =\ 1:49}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ [pixelValues\{i\},stringIn]=strtok(stringIn,\textcolor{charliteral}{','});}
+\DoxyCodeLine{00034\ end}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ endfunction}
+
+\end{DoxyCode}

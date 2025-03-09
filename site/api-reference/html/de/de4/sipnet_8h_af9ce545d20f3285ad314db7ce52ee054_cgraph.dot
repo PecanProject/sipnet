@@ -1,0 +1,20 @@
+digraph "setupOutputItems"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="setupOutputItems",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge1_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="addOutputItem",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$dd/d66/output_items_8c.html#aae7d85779ed17e486430634c3d4b84b6",tooltip=" "];
+  Node2 -> Node3 [id="edge2_Node000002_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="newSingleOutputItem",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$dd/d66/output_items_8c.html#af6f19a742a9ffe4e26766e24b1cc8bbe",tooltip=" "];
+  Node3 -> Node4 [id="edge3_Node000003_Node000004",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="exit",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$da/d39/exit_handler_8c.html#a7b17e5913b7dff48eec9ba3976ccfd3c",tooltip=" "];
+  Node2 -> Node5 [id="edge4_Node000002_Node000005",color="steelblue1",style="solid",tooltip=" "];
+  Node5 [id="Node000005",label="openOutputItemFile",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$dd/d66/output_items_8c.html#a2e378a5d44a266a8db113c90cdef349b",tooltip=" "];
+  Node5 -> Node6 [id="edge5_Node000005_Node000006",color="steelblue1",style="solid",tooltip=" "];
+  Node6 [id="Node000006",label="openFile",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$d9/d0c/bintotxt_8c.html#a043eed78149456a0cf4a77a71a6e340b",tooltip=" "];
+  Node6 -> Node4 [id="edge6_Node000006_Node000004",color="steelblue1",style="solid",tooltip=" "];
+}

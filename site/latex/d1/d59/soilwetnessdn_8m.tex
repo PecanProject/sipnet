@@ -1,0 +1,216 @@
+\doxysection{soilwetnessdn.\+m File Reference}
+\label{soilwetnessdn_8m}\index{soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ soilwetness}(\textbf{ find}(\textbf{ isfinite}(\textbf{ soilwetness} \textbf{ sort} ()
+\item 
+\textbf{ the} \textbf{ measured} \textbf{ pts} in \textbf{ this} \textbf{ step} \textbf{ if} (length(\textbf{ measuredpts})$>$=1) \% \textbf{ at} \textbf{ least} \textbf{ one} \textbf{ measured} \textbf{ point} \textbf{ soilwetnessdns}(i)
+\item 
+\textbf{ soilwetnessvaliddn} (i)
+\item 
+\textbf{ else} \textbf{ no} \textbf{ measured} \textbf{ pts} \textbf{ soilwetnessdns} (i)=0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Computes} \textbf{ dn} \textbf{ values} \textbf{ for} \textbf{ both} soilwetness and \textbf{ soilwetnessvalid} \textbf{ soilwetness} =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/soilwetness\textquotesingle{})
+\item 
+\textbf{ Computes} \textbf{ dn} \textbf{ values} \textbf{ for} \textbf{ both} \textbf{ soilwetness} and \textbf{ soilwetnessvalid} \textbf{ take} mean \textbf{ over} \textbf{ measured} \textbf{ values} in \textbf{ that} \textbf{ time} \textbf{ step}
+\item 
+\textbf{ Computes} \textbf{ dn} \textbf{ values} \textbf{ for} \textbf{ both} \textbf{ soilwetness} and soilwetnessvalid \textbf{ take} mean \textbf{ over} \textbf{ measured} \textbf{ values} in \textbf{ that} \textbf{ time} \textbf{ converted} \textbf{ to} \textbf{ fraction} \textbf{ filled} \textbf{ soilwetnessvalid}
+\item 
+\textbf{ intervaldn} =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/intervaldn\textquotesingle{})
+\item 
+\textbf{ hours} \textbf{ per} \textbf{ step} \textbf{ upperlimit} = 0.\+95
+\item 
+\textbf{ maxsoilwetness}
+\item 
+\textbf{ convert} \textbf{ to} \textbf{ fraction} \textbf{ filled} \textbf{ numsteps} =length(\textbf{ intervaldn})
+\item 
+\textbf{ start} =1
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ multiply} \textbf{ by} \textbf{ since} \textbf{ each} \textbf{ point} is \textbf{ hour} \textbf{ measuredpts} =\textbf{ find}(\textbf{ isfinite}(\textbf{ soilwetnessfrac}(\textbf{ start\+:fin}))) + (\textbf{ start} -\/ 1)
+\item 
+\textbf{ end} \textbf{ soilwetnessdns} = \textbf{ min}(soilwetnessdns, 1)
+\item 
+\textbf{ soilwetnessvaliddn} = soilwetnessvaliddn\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{soilwetnessdn_8m_a4aea27c9f3a994bb8811fb35a3ecd9d9} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!if@{if}}
+\index{if@{if}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{if()}
+{\footnotesize\ttfamily \textbf{ the} \textbf{ measured} \textbf{ pts} in \textbf{ this} \textbf{ step} if (\begin{DoxyParamCaption}\item[{length(\textbf{ measuredpts})$>$=}]{1 }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ length()}, and \textbf{ mean()}.
+
+Here is the call graph for this function\+:
+% FIG 0
+\label{soilwetnessdn_8m_add71a33a08753c027473e57c5e166ee9} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!soilwetnessdns@{soilwetnessdns}}
+\index{soilwetnessdns@{soilwetnessdns}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{soilwetnessdns()}
+{\footnotesize\ttfamily \textbf{ else} \textbf{ no} \textbf{ measured} \textbf{ pts} soilwetnessdns (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+\label{soilwetnessdn_8m_afa7cd3ff55a00d4424d7eff389a27289} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!soilwetnessvaliddn@{soilwetnessvaliddn}}
+\index{soilwetnessvaliddn@{soilwetnessvaliddn}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{soilwetnessvaliddn()}
+{\footnotesize\ttfamily soilwetnessvaliddn (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{soilwetnessdn_8m_a42ee48204133cb9b0a77ba2a21918e7f} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!sort@{sort}}
+\index{sort@{sort}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{sort()}
+{\footnotesize\ttfamily \textbf{ soilwetness}(\textbf{ find}(\textbf{ isfinite}(\textbf{ soilwetness} sort (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{soilwetnessdn_8m_a6f6ccfcf58b31cb6412107d9d5281426} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!i@{i}}
+\index{i@{i}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=1:numsteps}
+\DoxyCodeLine{\ \ \ \ fin=start\ +\ 2*intervaldn(i)\ -\/\ 1}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 17} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a030b6e30edb7386ac40c959e4f50457c} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!intervaldn@{intervaldn}}
+\index{intervaldn@{intervaldn}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{intervaldn}
+{\footnotesize\ttfamily intervaldn =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/intervaldn\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a9b797810f75f5134c906687c98989231} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!maxsoilwetness@{maxsoilwetness}}
+\index{maxsoilwetness@{maxsoilwetness}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{maxsoilwetness}
+{\footnotesize\ttfamily maxsoilwetness}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ sorted(round(upperlimit*length(sorted)))}
+\DoxyCodeLine{soilwetnessfrac=soilwetness/maxsoilwetness}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 11} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a17f92a92a1b541ee8be1c90060244ddc} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!measuredpts@{measuredpts}}
+\index{measuredpts@{measuredpts}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{measuredpts}
+{\footnotesize\ttfamily \textbf{ multiply} \textbf{ by} \textbf{ since} \textbf{ each} \textbf{ point} is \textbf{ hour} measuredpts =\textbf{ find}(\textbf{ isfinite}(\textbf{ soilwetnessfrac}(\textbf{ start\+:fin}))) + (\textbf{ start} -\/ 1)}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a6ca742172d21a73af15b7d48e32fa53d} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!numsteps@{numsteps}}
+\index{numsteps@{numsteps}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{numsteps}
+{\footnotesize\ttfamily \textbf{ convert} \textbf{ to} \textbf{ fraction} \textbf{ filled} numsteps =length(\textbf{ intervaldn})}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_aaa92b0af593f3613ddf6f4736c7bd3ac} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!soilwetness@{soilwetness}}
+\index{soilwetness@{soilwetness}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{soilwetness}
+{\footnotesize\ttfamily \textbf{ Computes} \textbf{ dn} \textbf{ values} \textbf{ for} \textbf{ both} soilwetness and \textbf{ soilwetnessvalid} \textbf{ take} mean \textbf{ over} \textbf{ measured} \textbf{ values} in \textbf{ that} \textbf{ time} \textbf{ converted} \textbf{ to} \textbf{ fraction} \textbf{ filled} \textbf{ if} \textbf{ NONE} soilwetness =\textbf{ load}(\textquotesingle{}$\sim$/\textbf{ niwot}/\textbf{ climate}/soilwetness\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ soilwetnessdn.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{soilwetnessdn_8m_a08f9c2ab73f3e0fd5a306e368bd05334} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!soilwetnessdns@{soilwetnessdns}}
+\index{soilwetnessdns@{soilwetnessdns}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{soilwetnessdns}
+{\footnotesize\ttfamily \textbf{ don} \textbf{ t} \textbf{ let} \textbf{ soilwetness} \textbf{ go} \textbf{ higher} \textbf{ than} soilwetnessdns = \textbf{ min}(soilwetnessdns, 1)}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a5ea425eb54789af95f0166db0dede35e} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!soilwetnessvalid@{soilwetnessvalid}}
+\index{soilwetnessvalid@{soilwetnessvalid}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{soilwetnessvalid}
+{\footnotesize\ttfamily \textbf{ Computes} \textbf{ dn} \textbf{ values} \textbf{ for} \textbf{ both} \textbf{ soilwetness} and soilwetnessvalid \textbf{ take} mean \textbf{ over} \textbf{ measured} \textbf{ values} in \textbf{ that} \textbf{ time} \textbf{ converted} \textbf{ to} \textbf{ fraction} \textbf{ filled} soilwetnessvalid}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a6d3787d8b2b715db0edf0d3753af314d} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!soilwetnessvaliddn@{soilwetnessvaliddn}}
+\index{soilwetnessvaliddn@{soilwetnessvaliddn}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{soilwetnessvaliddn}
+{\footnotesize\ttfamily soilwetnessvaliddn = soilwetnessvaliddn\textquotesingle{}}
+
+
+
+Definition at line \textbf{ 33} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a6ccb43153d359d83b3246b86d3fa1651} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!start@{start}}
+\index{start@{start}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{start}
+{\footnotesize\ttfamily \textbf{ end} start =1}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ soilwetnessdn.\+m}.
+
+\label{soilwetnessdn_8m_a7f5487c889d37b391aa6e8dc4f48d8ef} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!step@{step}}
+\index{step@{step}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{step}
+{\footnotesize\ttfamily \textbf{ Computes} \textbf{ dn} \textbf{ values} \textbf{ for} \textbf{ both} \textbf{ soilwetness} and \textbf{ soilwetnessvalid} \textbf{ take} mean \textbf{ over} \textbf{ measured} \textbf{ values} in \textbf{ that} \textbf{ time} step}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ soilwetnessdn.\+m}.
+
+
+
+Referenced by \textbf{ run\+Model\+No\+Out()}.
+
+\label{soilwetnessdn_8m_a6e7a77e92e53b9b70e8d924683fb54d2} 
+\index{soilwetnessdn.m@{soilwetnessdn.m}!upperlimit@{upperlimit}}
+\index{upperlimit@{upperlimit}!soilwetnessdn.m@{soilwetnessdn.m}}
+\doxysubsubsection{upperlimit}
+{\footnotesize\ttfamily \textbf{ hours} \textbf{ per} \textbf{ step} upperlimit = 0.\+95}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ soilwetnessdn.\+m}.
+

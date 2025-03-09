@@ -1,0 +1,86 @@
+\doxysection{plot\+Years.\+m File Reference}
+\label{plot_years_8m}\index{plotYears.m@{plotYears.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+function \textbf{ plot\+Years} (data, days, years, first\+Year, \textbf{ last\+Year}, \textbf{ window}, \textbf{ scale\+Factor}) \% \textbf{ Given} a vector of data
+\item 
+function and corresponding vector of \textbf{ years} (where year(i) is \textbf{ the} year of data(i)) \% \textbf{ Plot} data
+\item 
+function and corresponding vector of \textbf{ multiplied} \textbf{ by} \textbf{ for} \textbf{ each} year in a different \textbf{ vs} \textbf{ fractional} day of \textbf{ year} ((\textbf{ JD} -\/ 1)+(\textbf{ hour}/24))(\textbf{ given} \textbf{ by} days vector) \%(\textbf{ value} on \textbf{ x}-\/\textbf{ axis} gives \textbf{ fractional} day \textbf{ at} \textbf{ START} of \textbf{ time} \textbf{ step}) \% \textbf{ Plot} \textbf{ only} data \textbf{ between} first\+Year and \textbf{ last\+Year}(\textbf{ if} first\+Year
+\item 
+\textbf{ set} \textbf{ up} vector \textbf{ to} \textbf{ assign} \textbf{ colors} \textbf{ to} \textbf{ ea} \textbf{ line} \textbf{ if} (first\+Year==-\/1) first\+Year
+\item 
+\textbf{ end} \textbf{ if} (\textbf{ last\+Year}==-\/1) \textbf{ last\+Year}
+\item 
+\textbf{ end} \textbf{ figure} \textbf{ create} a \textbf{ new} \textbf{ figure} \textbf{ hold} on \textbf{ compute} \textbf{ sliding} \textbf{ mean} (\textbf{ if} \textbf{ window}=1, \textbf{ data\+Mean} \textbf{ will} \textbf{ equal} data) \textbf{ data\+Mean}
+\item 
+\textbf{ plot} (\textbf{ days\+Yr}, \textbf{ data\+Yr} $\ast$\textbf{ scale\+Factor}, \textbf{ colors}(\textbf{ yr} -\/ first\+Year+1))
+\item 
+\textbf{ end} \textbf{ legend} (\textbf{ int2str}((\textbf{ first\+Year\+:last\+Year})\textquotesingle{}))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+function and corresponding vector of \textbf{ multiplied} \textbf{ by} \textbf{ scale\+Factor}
+\item 
+function and corresponding vector of \textbf{ multiplied} \textbf{ by} \textbf{ for} \textbf{ each} year in a different \textbf{ color}
+\item 
+function and corresponding vector of \textbf{ multiplied} \textbf{ by} \textbf{ for} \textbf{ each} year in a different \textbf{ vs} \textbf{ fractional} day of \textbf{ start} \textbf{ at} first year in \textbf{ data}
+\item 
+\textbf{ if} \textbf{ last\+Year} = -\/1
+\item 
+\textbf{ if} \textbf{ end} \textbf{ at} \textbf{ last} year in vector \textbf{ If} \textbf{ window}
+\item 
+\textbf{ if} \textbf{ end} \textbf{ at} \textbf{ last} year in vector \textbf{ If} \textbf{ use} a \textbf{ sliding} mean \textbf{ window} \textbf{ for} \textbf{ plotting} \textbf{ NOTE}
+\item 
+\textbf{ if} \textbf{ end} \textbf{ at} \textbf{ last} year in vector \textbf{ If} \textbf{ use} a \textbf{ sliding} mean \textbf{ window} \textbf{ for} \textbf{ plotting} \textbf{ can} \textbf{ only} \textbf{ handle} years \textbf{ before} \textbf{ we} \textbf{ run} \textbf{ out} of \textbf{ colors} \textbf{ !colors} = [\textquotesingle{}\textbf{ b}\textquotesingle{},\textquotesingle{}\textbf{ g}\textquotesingle{},\textquotesingle{}\textbf{ r}\textquotesingle{},\textquotesingle{}\textbf{ c}\textquotesingle{},\textquotesingle{}\textbf{ m}\textquotesingle{},\textquotesingle{}k\textquotesingle{},\textquotesingle{}\textbf{ y}\textquotesingle{}]
+\item 
+\textbf{ loop} \textbf{ through} \textbf{ years}
+\item 
+\textbf{ loop} \textbf{ through} \textbf{ plotting} \textbf{ each} \textbf{ line} \textbf{ for} \textbf{ yr}
+\item 
+\textbf{ data\+Yr} = \textbf{ data\+Mean}(i)
+\item 
+\textbf{ find} \textbf{ subset} of data and days \textbf{ array} \textbf{ days\+Yr} = days(i)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{plot_years_8m_a63e15a4baff9ced414e704f4a0c201e1} 
+\index{plotYears.m@{plotYears.m}!if@{if}}
+\index{if@{if}!plotYears.m@{plotYears.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ set} \textbf{ up} vector \textbf{ to} \textbf{ assign} \textbf{ colors} \textbf{ to} \textbf{ ea} \textbf{ line} if (\begin{DoxyParamCaption}\item[{first\+Year}]{ = {\ttfamily =-\/1} }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ first\+Year}.
+
+\label{plot_years_8m_a3ad80a03f5e465339e292257de637bef} 
+\index{plotYears.m@{plotYears.m}!if@{if}}
+\index{if@{if}!plotYears.m@{plotYears.m}}
+\doxysubsubsection{if()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ end} if (\begin{DoxyParamCaption}\item[{\textbf{ last\+Year}}]{ = {\ttfamily =-\/1} }\end{DoxyParamCaption})}
+
+\label{plot_years_8m_a91401fc4201e5a8be60c7041b0a1d462} 
+\index{plotYears.m@{plotYears.m}!legend@{legend}}
+\index{legend@{legend}!plotYears.m@{plotYears.m}}
+\doxysubsubsection{legend()}
+{\footnotesize\ttfamily \textbf{ end} legend (\begin{DoxyParamCaption}\item[{\textbf{ int2str}((\textbf{ first\+Year\+:last\+Year})\textquotesingle{})}]{ }\end{DoxyParamCaption})}
+
+\label{plot_years_8m_ab56d6299463603e33e83b98a0d8d108c} 
+\index{plotYears.m@{plotYears.m}!mean@{mean}}
+\index{mean@{mean}!plotYears.m@{plotYears.m}}
+\doxysubsubsection{mean()}
+{\footnotesize\ttfamily \textbf{ end} \textbf{ figure} \textbf{ create} a \textbf{ new} \textbf{ figure} \textbf{ hold} on \textbf{ compute} \textbf{ sliding} mean (\begin{DoxyParamCaption}\item[{\textbf{ if}}]{window = {\ttfamily 1},  }\item[{\textbf{ data\+Mean} \textbf{ will} \textbf{ equal}}]{data }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ mean()}.
+
+
+
+Referenced by \textbf{ fprintf()}, \textbf{ fprintf()}, \textbf{ fprintf()}, \textbf{ fprintf()}, \textbf{ fprintf()}, \textbf{ fprintf()}, \textbf{ if()}, \textbf{ if()}, \textbf{ mean()}, \textbf{ means\+:()}, \textbf{ pptstep()}, \textbf{ relerra()}, \textbf{ relerrb()}, \textbf{ step\+Length()}, \textbf{ tairdn()}, \textbf{ tairstep()}, \textbf{ tsoildn()}, \textbf{ tsoilstep()}, \textbf{ validptsdn()}, \textbf{ vpddn()}, \textbf{ vpdsoildn()}, \textbf{ vpdstep()}, \textbf{ vpressdn()}, and \textbf{ wspddn()}.
+
+Here is the call graph for this function\+:

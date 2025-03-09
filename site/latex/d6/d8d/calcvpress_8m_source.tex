@@ -1,0 +1,21 @@
+\doxysection{calcvpress.\+m}
+\label{calcvpress_8m_source}\index{calcvpress.m@{calcvpress.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{function}\ [vpress,\ vpd,\ vpdsoil]\ =\ calcvpress(rhum,\ tair,\ tsoil)}
+\DoxyCodeLine{00002\ \%\ Given\ filled\ vectors\ of\ rhum,\ tair\ and\ tsoil\ (all\ same\ length),}
+\DoxyCodeLine{00003\ \%\ calculate\ \&\ \textcolor{keywordflow}{return}\ the\ air\ vapor\ pressure,}
+\DoxyCodeLine{00004\ \%\ vpd\ in\ air,\ and\ vpd\ in\ soil}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ esatair\ =\ zeros(size(rhum));}
+\DoxyCodeLine{00007\ esatair\ =\ 611*exp((2.5e6/461.5)*((1./273.15)-\/(1./(273.15+tair))));}
+\DoxyCodeLine{00008\ esatsoil\ =\ zeros(size(rhum));}
+\DoxyCodeLine{00009\ esatsoil\ =\ 611*exp((2.5e6/461.5)*((1./273.15)-\/(1./(273.15+tsoil))));}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ vpress\ =\ zeros(size(rhum));}
+\DoxyCodeLine{00012\ vpress\ =\ rhum\ .*\ esatair/100;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ vpd\ =\ esatair\ -\/\ vpress;}
+\DoxyCodeLine{00015\ vpdsoil\ =\ esatsoil\ -\/\ vpress;}
+
+\end{DoxyCode}

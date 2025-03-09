@@ -1,0 +1,253 @@
+\doxysection{util.\+c File Reference}
+\label{util_8c}\index{util.c@{util.c}}
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+Include dependency graph for util.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ build\+File\+Name} (\textbf{ char} $\ast$\textbf{ filename}, \textbf{ const} \textbf{ char} $\ast$\textbf{ base}, \textbf{ const} \textbf{ char} $\ast$\textbf{ ext})
+\item 
+\textbf{ FILE} $\ast$ \textbf{ open\+File} (\textbf{ const} \textbf{ char} $\ast$\textbf{ name}, \textbf{ const} \textbf{ char} $\ast$\textbf{ mode})
+\item 
+\textbf{ FILE} $\ast$ \textbf{ open\+File\+Ext} (\textbf{ const} \textbf{ char} $\ast$\textbf{ name}, \textbf{ const} \textbf{ char} $\ast$\textbf{ ext}, \textbf{ const} \textbf{ char} $\ast$\textbf{ mode})
+\item 
+\textbf{ void} \textbf{ seed\+Rand} (\textbf{ unsigned} \textbf{ int} \textbf{ seed}, \textbf{ FILE} $\ast$\textbf{ outF})
+\item 
+\textbf{ double} \textbf{ randm} ()
+\item 
+\textbf{ double} $\ast$ \textbf{ make\+Array} (\textbf{ int} \textbf{ size})
+\item 
+\textbf{ double} $\ast$$\ast$ \textbf{ make2\+DArray} (\textbf{ int} \textbf{ nrows}, \textbf{ int} \textbf{ ncols})
+\item 
+\textbf{ int} $\ast$$\ast$ \textbf{ make2\+DInt\+Array} (\textbf{ int} \textbf{ nrows}, \textbf{ int} \textbf{ ncols})
+\item 
+\textbf{ void} \textbf{ free2\+DArray} (\textbf{ void} $\ast$$\ast$\textbf{ arr})
+\item 
+\textbf{ void} \textbf{ assign\+Array} (\textbf{ double} $\ast$\textbf{ out}, \textbf{ double} $\ast$in, \textbf{ int} n)
+\item 
+\textbf{ double} \textbf{ sum\+Array} (\textbf{ double} $\ast$\textbf{ array}, \textbf{ int} length)
+\item 
+\textbf{ int} \textbf{ strcmp\+Ignore\+Case} (\textbf{ const} \textbf{ char} $\ast$\textbf{ s1}, \textbf{ const} \textbf{ char} $\ast$\textbf{ s2})
+\item 
+\textbf{ int} \textbf{ strip\+Comment} (\textbf{ char} $\ast$\textbf{ line}, \textbf{ const} \textbf{ char} $\ast$\textbf{ comment\+Chars})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{util_8c_ac49fd8b4678d4f6f01e00d17b72ac028} 
+\index{util.c@{util.c}!assignArray@{assignArray}}
+\index{assignArray@{assignArray}!util.c@{util.c}}
+\doxysubsubsection{assignArray()}
+{\footnotesize\ttfamily \textbf{ void} assign\+Array (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{out,  }\item[{\textbf{ double} $\ast$}]{in,  }\item[{\textbf{ int}}]{n }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 138} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ n}.
+
+\label{util_8c_aaf26e57eedf3733a337d8d421ff599ef} 
+\index{util.c@{util.c}!buildFileName@{buildFileName}}
+\index{buildFileName@{buildFileName}!util.c@{util.c}}
+\doxysubsubsection{buildFileName()}
+{\footnotesize\ttfamily \textbf{ void} build\+File\+Name (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{filename,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{base,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{ext }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ open\+File\+Ext()}.
+
+\label{util_8c_a7611ac8af983ccdaaadddb7de7b53c2b} 
+\index{util.c@{util.c}!free2DArray@{free2DArray}}
+\index{free2DArray@{free2DArray}!util.c@{util.c}}
+\doxysubsubsection{free2DArray()}
+{\footnotesize\ttfamily \textbf{ void} free2\+DArray (\begin{DoxyParamCaption}\item[{\textbf{ void} $\ast$$\ast$}]{arr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 131} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ index}.
+
+\label{util_8c_acfd51a4f4e38b658d40ac54b748a9b49} 
+\index{util.c@{util.c}!make2DArray@{make2DArray}}
+\index{make2DArray@{make2DArray}!util.c@{util.c}}
+\doxysubsubsection{make2DArray()}
+{\footnotesize\ttfamily \textbf{ double} $\ast$$\ast$ make2\+DArray (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{nrows,  }\item[{\textbf{ int}}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 99} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+\label{util_8c_a09ddebbbbb5ccb732d7f88931d9d1b2f} 
+\index{util.c@{util.c}!make2DIntArray@{make2DIntArray}}
+\index{make2DIntArray@{make2DIntArray}!util.c@{util.c}}
+\doxysubsubsection{make2DIntArray()}
+{\footnotesize\ttfamily \textbf{ int} $\ast$$\ast$ make2\+DInt\+Array (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{nrows,  }\item[{\textbf{ int}}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 114} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ i}, and \textbf{ index}.
+
+\label{util_8c_a21c26b5db93cc2c6817b9a953683280f} 
+\index{util.c@{util.c}!makeArray@{makeArray}}
+\index{makeArray@{makeArray}!util.c@{util.c}}
+\doxysubsubsection{makeArray()}
+{\footnotesize\ttfamily \textbf{ double} $\ast$ make\+Array (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{size }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 85} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ index}.
+
+\label{util_8c_a2a788020b8916d13ec26d4ad01c225f9} 
+\index{util.c@{util.c}!openFile@{openFile}}
+\index{openFile@{openFile}!util.c@{util.c}}
+\doxysubsubsection{openFile()}
+{\footnotesize\ttfamily \textbf{ FILE} $\ast$ open\+File (\begin{DoxyParamCaption}\item[{\textbf{ const} \textbf{ char} $\ast$}]{name,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ f}, \textbf{ index}, and \textbf{ name}.
+
+
+
+Referenced by \textbf{ open\+File\+Ext()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{util_8c_a4ec71fe2ea5006cccfae2cbf8ed19979} 
+\index{util.c@{util.c}!openFileExt@{openFileExt}}
+\index{openFileExt@{openFileExt}!util.c@{util.c}}
+\doxysubsubsection{openFileExt()}
+{\footnotesize\ttfamily \textbf{ FILE} $\ast$ open\+File\+Ext (\begin{DoxyParamCaption}\item[{\textbf{ const} \textbf{ char} $\ast$}]{name,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{ext,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ build\+File\+Name()}, \textbf{ f}, \textbf{ index}, \textbf{ name}, and \textbf{ open\+File()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{util_8c_aa45171d6958b18c8696fa7747d4c39ac} 
+\index{util.c@{util.c}!randm@{randm}}
+\index{randm@{randm}!util.c@{util.c}}
+\doxysubsubsection{randm()}
+{\footnotesize\ttfamily \textbf{ double} randm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 74} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ index}.
+
+\label{util_8c_ad2222db949c03ef23f3e1a192af45aef} 
+\index{util.c@{util.c}!seedRand@{seedRand}}
+\index{seedRand@{seedRand}!util.c@{util.c}}
+\doxysubsubsection{seedRand()}
+{\footnotesize\ttfamily \textbf{ void} seed\+Rand (\begin{DoxyParamCaption}\item[{\textbf{ unsigned} \textbf{ int}}]{seed,  }\item[{\textbf{ FILE} $\ast$}]{outF }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ fprintf()}, \textbf{ index}, \textbf{ t}, and \textbf{ time}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{util_8c_a46c453b73f4e8cd62264e4bfe8b6ae05} 
+\index{util.c@{util.c}!strcmpIgnoreCase@{strcmpIgnoreCase}}
+\index{strcmpIgnoreCase@{strcmpIgnoreCase}!util.c@{util.c}}
+\doxysubsubsection{strcmpIgnoreCase()}
+{\footnotesize\ttfamily \textbf{ int} strcmp\+Ignore\+Case (\begin{DoxyParamCaption}\item[{\textbf{ const} \textbf{ char} $\ast$}]{s1,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{s2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 161} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ result}.
+
+
+
+Referenced by \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ locate\+Param()}, \textbf{ main()}, and \textbf{ read\+Spatial\+Values()}.
+
+\label{util_8c_ab343ccfdac6191045fced6c36c0143f4} 
+\index{util.c@{util.c}!stripComment@{stripComment}}
+\index{stripComment@{stripComment}!util.c@{util.c}}
+\doxysubsubsection{stripComment()}
+{\footnotesize\ttfamily \textbf{ int} strip\+Comment (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{line,  }\item[{\textbf{ const} \textbf{ char} $\ast$}]{comment\+Chars }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 189} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ read\+Namelist\+Inputs()}, and \textbf{ read\+Spatial\+Params()}.
+
+\label{util_8c_a31f647ac0b82a2bb708fcdaaab1a498d} 
+\index{util.c@{util.c}!sumArray@{sumArray}}
+\index{sumArray@{sumArray}!util.c@{util.c}}
+\doxysubsubsection{sumArray()}
+{\footnotesize\ttfamily \textbf{ double} sum\+Array (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{array,  }\item[{\textbf{ int}}]{length }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 147} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, \textbf{ length()}, and \textbf{ sum()}.
+
+Here is the call graph for this function\+:
+% FIG 4

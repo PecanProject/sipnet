@@ -1,0 +1,24 @@
+\doxysection{validdn.\+m}
+\label{validdn_8m_source}\index{validdn.m@{validdn.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ clear\ validpts;}
+\DoxyCodeLine{00002\ clear\ validptsdn;}
+\DoxyCodeLine{00003\ validpts=load(\textcolor{stringliteral}{'\string~/niwot/fluxes/fh2ovalid'});\ \%\ 1\ or\ 0\ \textcolor{keywordflow}{for\ each}\ point}
+\DoxyCodeLine{00004\ intervaldn=load(\textcolor{stringliteral}{'\string~/niwot/climate/intervaldn'});\ \%\ hours\ per\ step}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ numsteps=length(intervaldn);}
+\DoxyCodeLine{00007\ start=1;}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keywordflow}{for}\ i=1:numsteps}
+\DoxyCodeLine{00010\ \ \ \ \ fin=start\ +\ 2*intervaldn(i)\ -\/\ 1;\ \%\ multiply\ by\ 2\ since\ each\ point\ is\ 1/2\ hour}
+\DoxyCodeLine{00011\ \ \ \ \ validptsdn(i)\ =\ mean(validpts(start:fin));\ \%\ fraction\ of\ valid\ pts\ in\ \textcolor{keyword}{this}\ step}
+\DoxyCodeLine{00012\ \ \ \ \ }
+\DoxyCodeLine{00013\ \ \ \ \ start\ =\ fin\ +\ 1;}
+\DoxyCodeLine{00014\ end}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ validptsdn\ =\ validptsdn\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00017\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00018\ \textcolor{stringliteral}{save\ \string~/niwot/fluxes/fh2ovaliddn\ validptsdn\ -\/ascii}}
+
+\end{DoxyCode}

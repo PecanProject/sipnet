@@ -1,0 +1,1016 @@
+\doxysection{paramchange.\+c}
+\label{paramchange_8c_source}\index{paramchange.c@{paramchange.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Bill\ Sacks}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ 7/9/02}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ functions\ shared\ by\ different\ parameter\ estimation\ methods}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}paramchange.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ the\ following\ variables\ are\ made\ global\ because\ they\ are\ computed\ once}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ at\ the\ beginning\ of\ the\ program,\ and\ then\ must\ stick\ around\ (unchanging)\ for\ the\ whole\ program}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ numLocs;\ \textcolor{comment}{/*\ number\ of\ spatial\ locations:\ first\ dimension\ of\ data,\ startOpt,\ endOpt,\ valid,\ numAggSteps,\ aggSteps,\ aggedData,\ aggInfo}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\ in\ readData\ */}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ ***data;\ \textcolor{comment}{/*\ read\ in\ once\ at\ start\ of\ program}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ compared\ with\ model\ data\ in\ difference\ function}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1st\ dimension\ is\ spatial\ location,\ 2nd\ is\ time\ step,\ 3rd\ is\ data\ type\ */}}
+\DoxyCodeLine{00021\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ ***sigmas;\ \textcolor{comment}{/*\ (dm)\ data\ uncertainty\ read\ in\ once\ at\ start\ of\ program}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ compared\ with\ model\ data\ in\ difference\ function}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1st\ dimension\ is\ spatial\ location,\ 2nd\ is\ time\ step,\ 3rd\ is\ data\ type\ */}}
+\DoxyCodeLine{00024\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ **model;\ \textcolor{comment}{//\ made\ global\ so\ don't\ have\ to\ re-\/allocate\ memory\ all\ the\ time}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ *startOpt,\ *endOpt;\ \textcolor{comment}{//\ starting\ and\ ending\ indices\ for\ optimization\ (1-\/indexing)\ (vector:\ spatial)}}
+\DoxyCodeLine{00026\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ ***valid;\ \textcolor{comment}{/*\ valid[i][j][k]\ indicates\ whether\ data[i][j][k]\ is\ valid\ (0\ =\ invalid,\ non-\/0\ =\ valid)}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (based\ on\ fraction\ of\ valid\ data\ points)\ */}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ *numAggSteps\ =\ NULL;\ \textcolor{comment}{/*\ size\ of\ 2nd\ dimension\ of\ aggSteps\ array\ (spatial)}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (explicitly\ initialized\ to\ NULL\ because\ we\ may\ never\ malloc\ this\ array)\ */}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ **aggSteps\ =\ NULL;\ \textcolor{comment}{/*\ array\ specifying\ how\ many\ steps\ make\ up\ each\ aggregated\ step\ (may\ be\ non-\/rectangular)}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 1st\ dimension\ is\ spatial\ location,\ 2nd\ is\ aggregated\ step}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (explicitly\ initialized\ to\ NULL\ because\ we\ may\ never\ malloc\ this\ array)\ */}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ ***aggedData\ =\ NULL;\ \textcolor{comment}{/*\ aggregated\ data\ (initialized\ to\ NULL\ b/c\ we\ may\ never\ malloc\ this\ array)}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ only\ holds\ data\ between\ startOpt\ and\ endOpt\ */}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ **aggedModel\ =\ NULL;\ \textcolor{comment}{/*\ aggregated\ model\ (intitialized\ to\ NULL\ b/c\ we\ may\ never\ malloc\ this\ array)}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ made\ global\ so\ don't\ have\ to\ re-\/allocate\ memory\ all\ the\ time}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ only\ holds\ model\ output\ between\ startOpt\ and\ endOpt\ */}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ unaggedWeight\ =\ 0.0;\ \textcolor{comment}{/*\ if\ aggregation\ is\ done,\ weight\ of\ unaggregated\ data\ in\ optimization}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (0\ -\/>\ only\ use\ aggregated\ data)\ */}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }AggregateInfoStruct\ \{\ \textcolor{comment}{//\ set\ at\ beginning\ of\ program}}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{int}\ startPt,\ endPt;\ \textcolor{comment}{//\ indices\ of\ data\ point\ to\ start\ and\ stop\ at\ (1-\/indexing)}}
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{int}\ *spd;\ \textcolor{comment}{//\ steps\ per\ day}}
+\DoxyCodeLine{00045\ \ \ \textcolor{keywordtype}{int}\ numDays;}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{int}\ startYear;\ \textcolor{comment}{//\ 4\ digit\ year}}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{int}\ startDay;\ \textcolor{comment}{//\ Julian\ day\ of\ year\ (1\ =\ Jan.\ 1)}}
+\DoxyCodeLine{00048\ \}\ AggregateInfo;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{static}\ AggregateInfo\ *aggInfo;\ \textcolor{comment}{//\ vector:\ spatial}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ Difference,\ version\ 4\ -\/\ READS\ IN\ SIGMAS\ (dm)\ ESTIMATES\ SIGMA,\ RETURNS\ AGGREGATE\ INFO}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ Run\ modelF\ with\ given\ parameters\ at\ location\ loc,\ compare\ output\ with\ measured\ data}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ using\ data\ types\ given\ by\ dataTypeIndices[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ Return\ a\ measure\ of\ the\ difference\ between\ measured\ and\ predicted\ data}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ (Higher\ =\ worse)}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ Return\ best\ sigma\ value\ for\ each\ data\ type\ in\ sigma[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ Return\ mean\ error,\ mean\ daily-\/aggregated\ error,\ and\ yearly-\/aggregated\ output\ for\ each\ year}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ and\ each\ data\ type\ in\ *outputInfo\ array}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ Pre:\ sigma\ and\ outputInfo\ are\ already\ malloced,\ as\ are\ outputInfo[*].years\ arrays}}
+\DoxyCodeLine{00062\ \textcolor{comment}{}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ Only\ use\ "{}valid"{}\ data\ points\ (as\ determined\ by\ validFrac\ in\ readData)}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ And\ only\ use\ points\ between\ startOpt\ and\ endOpt\ (set\ in\ readData)}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ [IGNORE\ paramWeight\ -\/\ just\ there\ to\ be\ consistent\ with\ old\ difference\ function]}}
+\DoxyCodeLine{00066\ \textcolor{comment}{}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ NOTE:\ this\ is\ actually\ the\ NEGATIVE\ log\ likelihood,\ discarding\ constant\ terms}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ to\ get\ true\ log\ likelihood,\ add\ n*log(sqrt(2*pi)),\ then\ multiply\ by\ -\/1}}
+\DoxyCodeLine{00069\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00070\ \textcolor{comment}{/*Added\ read\ in\ ***sigmas}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ *\ removed\ ***sigma\ from\ double\ difference(double\ \ *sigma,\ ***sigmas,\ OutputInfo\ *outputInfo,}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00073\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{double}\ difference(\textcolor{keywordtype}{double}\ \ *sigma,\ OutputInfo\ *outputInfo,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ loc,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{double}\ paramWeight,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*modelF)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ costFunction,\ \textcolor{keywordtype}{double}\ dataTypeWeights[])}
+\DoxyCodeLine{00078\ \{}
+\DoxyCodeLine{00079\ \ \ \textcolor{keywordtype}{int}\ i,\ dataNum;}
+\DoxyCodeLine{00080\ \ \ \textcolor{keywordtype}{double}\ *sumSquares;\ \textcolor{comment}{//\ one\ sum\ of\ squares\ value\ for\ each\ data\ type}}
+\DoxyCodeLine{00081\ \ \ \textcolor{keywordtype}{double}\ *DownWtSumSquares;\ \textcolor{comment}{//sum\ of\ square\ value\ downweighted\ by\ the\ number\ of\ data\ points\ \_dm\ 05\ 24\ 10}}
+\DoxyCodeLine{00082\ \ \ \textcolor{keywordtype}{int}\ *n;\ \textcolor{comment}{//\ number\ of\ data\ points\ used\ in\ each\ sumSquares}}
+\DoxyCodeLine{00083\ \ \ \textcolor{keywordtype}{double}\ logLike;\ \textcolor{comment}{//\ the\ log\ likelihood}}
+\DoxyCodeLine{00084\ \ \ \textcolor{keywordtype}{double}\ thisSigma;\ \textcolor{comment}{//(dm)\ declare\ thisSigma}}
+\DoxyCodeLine{00085\ \ \ \textcolor{comment}{//FILE\ *dbg;\ //(dm)\ debug\ file}}
+\DoxyCodeLine{00086\ \ \ sumSquares\ =\ makeArray(numDataTypes);}
+\DoxyCodeLine{00087\ \ \ DownWtSumSquares\ =\ makeArray(numDataTypes);}
+\DoxyCodeLine{00088\ \ \ n\ =\ (\textcolor{keywordtype}{int}\ *)malloc(numDataTypes\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ (*modelF)(model,\ numDataTypes,\ dataTypeIndices,\ spatialParams,\ loc);}
+\DoxyCodeLine{00091\ \ \ \textcolor{comment}{//\ run\ model,\ put\ results\ in\ model\ array}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \textcolor{comment}{//\ initialize\ sumSquares\ and\ count\ arrays}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ sumSquares[dataNum]\ =\ 0.0;}
+\DoxyCodeLine{00097\ \ \ \ \ DownWtSumSquares[dataNum]\ =\ 0.0;}
+\DoxyCodeLine{00098\ \ \ \ \ n[dataNum]\ =\ 0;}
+\DoxyCodeLine{00099\ \ \ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ startOpt[loc]\ -\/\ 1;\ i\ <\ endOpt[loc];\ i++)\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (valid[loc][i][dataNum])\ \{}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (costFunction==0)\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ thisSigma\ =\ sqrt(0.5);\ \textcolor{comment}{//\ set\ it\ to\ be\ the\ square\ root\ of\ 0.5\ to\ cancel\ out\ the\ expression\ below\ if\ we\ aren't\ estimating\ sigma.}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ thisSigma\ =\ sigmas[loc][i][dataNum];\ \ \textcolor{comment}{/*\ Now\ set\ it\ to\ be\ the\ sigma\ value\ read\ in\ */}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//output\ thissigma\ to\ screen\ to\ debug}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fprintf(stdout,"{}thisSigma\ =\ \%f\(\backslash\)n\(\backslash\)n"{},\ thisSigma);}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sigmas\ are\ read\ in\ and\ provide\ expected\ numbers\ but\ there\ are\ some\ missing\ data\ points??}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//output\ residual\ to\ the\ screen}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ FILE\ *fp=stdout;}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ stdout=fopen("{}out-\/snap"{},"{}w"{});}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ fprintf(stdout,"{}thisSigma\ =\ \%f\(\backslash\)n\(\backslash\)n"{},\ thisSigma);}}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//sometimes\ this\ results\ in\ the\ creation\ of\ an\ empty\ file\ -\/\ probably\ indicating\ that\ the\ sigmas\ are\ not\ being\ read\ in\ correctly}}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fprintf(stdout,"{}Square\ residual\ =\ \%f\(\backslash\)n\(\backslash\)n"{},\ (pow((model[i][dataNum]\ -\/\ data[loc][i][dataNum]),\ 2)));}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}Hello\ hello"{});}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ fclose(stdout);}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ stdout=fp;}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ sumSquares[dataNum]\ +=\ (pow((model[i][dataNum]\ -\/\ data[loc][i][dataNum]),\ 2)\ /\ (2.0*thisSigma*thisSigma));}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ n[dataNum]++;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \}}
+\DoxyCodeLine{00135\ \textcolor{comment}{//(removed\ dm)\ sumSquares[dataNum]\ +=\ pow((model[i][dataNum]\ -\/\ data[loc][i][dataNum]),\ 2);}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \textcolor{comment}{//\ calculate\ aggregate\ info\ on\ each\ data\ type}}
+\DoxyCodeLine{00138\ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)}
+\DoxyCodeLine{00139\ \ \ \ \ aggregates(outputInfo,\ model,\ loc,\ dataNum);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \textcolor{comment}{//\ Make\ sure\ we\ don't\ keep\ multiplying\ by\ zero\ for\ the\ product\ cost\ function}}
+\DoxyCodeLine{00142\ \ \ \textcolor{keywordflow}{if}\ (costFunction\ ==3)\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ logLike\ =\ 1;}
+\DoxyCodeLine{00144\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ logLike\ =\ 0;}
+\DoxyCodeLine{00146\ \ \ \}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00150\ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}
+\DoxyCodeLine{00151\ \ \ \ \ sigma[dataNum]\ =\ sqrt(sumSquares[dataNum]/(\textcolor{keywordtype}{double})(n[dataNum]));}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{comment}{/*\ we\ can\ estimate\ sigma[i]\ using\ just\ sumSquares[i]\ because\ sigma[i]\ is\ calculated\ by\ taking\ the\ partial\ derivative}}
+\DoxyCodeLine{00153\ \textcolor{comment}{\ \ \ \ \ \ \ of\ likelihood\ with\ respect\ to\ sigma[i],\ and\ this\ partial\ only\ depends\ on\ sumSquares[i]}}
+\DoxyCodeLine{00154\ \textcolor{comment}{\ \ \ \ \ \ \ //\ sigma[dataNum]\ \ is\ no\ longer\ used.\ \ Instead\ sigma\ is\ read\ in\ for\ each\ observation\ as\ dot.sigmas}}
+\DoxyCodeLine{00155\ \textcolor{comment}{\ \ \ \ */}}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordflow}{if}\ (costFunction\ ==\ 0)\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ n[dataNum]\ =\ 0,\ then\ the\ program\ will\ give\ an\ error\ here.\ \ This\ is\ just\ a\ test\ to\ make\ sure\ we\ are\ ok.}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (n[dataNum]\ !=\ 0)\ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logLike\ +=\ dataTypeWeights[dataTypeIndices[dataNum]]\ *\ n[dataNum]\ *\ log(sigma[dataNum]);}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logLike\ +=\ dataTypeWeights[dataTypeIndices[dataNum]]\ *\ sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}\ \textcolor{comment}{//\ (n[dataNum]\ !=\ 0}}
+\DoxyCodeLine{00162\ \ \ \ \ \}\ \textcolor{comment}{//\ (costFunction\ ==\ 0)}}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//+(n[dataNum]\ *\ log(sigmas[dataNum]));//\ logLike\ is\ the\ sum\ of\ the\ weighted\ sum\ of\ squares\ (j)\ for\ each\ data\ type}}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (costFunction==1)\ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ logLike\ +=\ dataTypeWeights[dataTypeIndices[dataNum]]*sumSquares[dataNum];\ \ \}}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (costFunction==2)\ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logLike\ +=numDataTypes\ *(sumSquares[dataNum]/(1+n[dataNum]));\ \}}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (costFunction\ ==3)\{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ logLike\ *=pow(sumSquares[dataNum],(1.0/numDataTypes));}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//(CF2)}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//DownWtSumSquares[dataNum]\ =(sumSquares[dataNum]/(1+n[dataNum]));\ //calculates\ the\ down-\/weighted\ sum\ of\ squares\ ***added\ 1\ to\ avoid\ division\ by\ zero?;}}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ logLike\ +=\ ((DownWtSumSquares[dataNum])*3.0);//logLike\ is\ sum\ of\ the\ Cost\ Functions\ for\ each\ data\ type\ divided\ by\ the\ number\ of\ data\ points\ used\ for\ each\ (CF2)}}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//(CF3)}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//logLike\ *=pow(sumSquares[dataNum],(1.0/5));//logLike\ is\ the\ product\ of\ the\ weighted\ sum\ of\ squares\ (j)\ for\ each\ data\ type\ -\/\ ???plus\ one\ to\ avoid\ a\ perfect\ fit\ causing\ the\ likelihood\ calculation\ to\ explode}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//????take\ the\ 7th\ root\ to\ bring\ back\ to\ a\ value\ similar\ to\ the\ individual\ costfuntions\ CF3}}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{comment}{//}}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//logLike\ +=\ log(thisSigma);//(dm)\ now\ the\ individual\ sigmas\ for\ each\ data\ point\ is\ added\ to\ the\ logLike\ //\ moved\ to\ line\ 101}}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sigmas\ are\ read\ in\ and\ provide\ expected\ numbers\ but\ there\ are\ some\ missing\ data\ points??}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//output\ residual\ to\ the\ screen}}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//FILE\ *fp=stdout;}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//stdout=fopen("{}out-\/snap"{},"{}w"{});}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fprintf(stdout,"{}Instant\ SumSquares\ =\ \%f\(\backslash\)n\(\backslash\)n"{},\ sumSquares[dataNum]);}}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fprintf(stdout,"{}logLike\ =\ \%f\(\backslash\)n\(\backslash\)n"{},\ logLike);}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//sometimes\ this\ results\ in\ the\ creation\ of\ an\ empty\ file\ -\/\ probably\ indicating\ that\ the\ sigmas\ are\ not\ being\ read\ in\ correctly}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fprintf(stdout,"{}Square\ residual\ =\ \%f\(\backslash\)n\(\backslash\)n"{},\ (pow((model[i][dataNum]\ -\/\ data[loc][i][dataNum]),\ 2)));}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}Hello\ hello"{});}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fclose(stdout);}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//stdout=fp;}}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{comment}{//logLike\ +=\ n[dataNum]\ *\ log(sigma[dataNum]);//change\ this\ -\/\ add\ to\ nested\ loop}}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{comment}{//logLike\ +=\ sumSquares[dataNum]);\ //change\ this\ -\/\ add\ to\ nested\ loop}}
+\DoxyCodeLine{00195\ \ \ \}}
+\DoxyCodeLine{00196\ \textcolor{comment}{/*remove\ the\ division\ by\ 2\ sigma\string^2\ in\ the\ calculation\ of\ logLike,\ near\ the\ bottom\ of\ the\ function}}
+\DoxyCodeLine{00197\ \textcolor{comment}{\ *\ (i.e.,\ you\ are\ now\ doing\ this\ division\ once\ per\ observation,\ rather\ than\ just\ once\ at\ the\ end)}}
+\DoxyCodeLine{00198\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ *\ (dm\ removed:)}}
+\DoxyCodeLine{00200\ \textcolor{comment}{\ *\ \ (2.0*(sigma[dataNum])*(sigma[dataNum])}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ \ */}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \textcolor{comment}{//debug;}}
+\DoxyCodeLine{00204\ \ \ \textcolor{comment}{//dbg\ =\ openFile(outFileName,\ "{}w"{});}}
+\DoxyCodeLine{00205\ \ \ \textcolor{comment}{//fprintf(stdout,"{}sumSquares\ =\ \%f\(\backslash\)n\(\backslash\)n"{},\ sumSquares[dataNum]);}}
+\DoxyCodeLine{00206\ \ \ \textcolor{comment}{//fprintf(dbg,\ "{}\(\backslash\)n\(\backslash\)n"{});}}
+\DoxyCodeLine{00207\ \ \ \textcolor{comment}{//fclose(dbg);}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ free(sumSquares);}
+\DoxyCodeLine{00210\ \ \ free(n);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \textcolor{comment}{//\ NOTE:\ this\ is\ actually\ the\ NEGATIVE\ log\ likelihood,\ discarding\ constant\ terms}}
+\DoxyCodeLine{00213\ \ \ \textcolor{comment}{//\ to\ get\ true\ log\ likelihood,\ add\ n*log(sqrt(2*pi)),\ then\ multiply\ by\ -\/1}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \textcolor{keywordflow}{return}\ logLike;}
+\DoxyCodeLine{00216\ \}}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{comment}{/*\ Difference,\ version\ 3\ -\/\ ESTIMATES\ SIGMA,\ RETURNS\ AGGREGATE\ INFO}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ \ \ Run\ modelF\ with\ given\ parameters\ at\ location\ loc,\ compare\ output\ with\ measured\ data}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ \ \ using\ data\ types\ given\ by\ dataTypeIndices[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ Return\ a\ measure\ of\ the\ difference\ between\ measured\ and\ predicted\ data}}
+\DoxyCodeLine{00222\ \textcolor{comment}{\ \ \ (Higher\ =\ worse)}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ \ \ Return\ best\ sigma\ value\ for\ each\ data\ type\ in\ sigma[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ \ \ Return\ mean\ error,\ mean\ daily-\/aggregated\ error,\ and\ yearly-\/aggregated\ output\ for\ each\ year}}
+\DoxyCodeLine{00225\ \textcolor{comment}{\ \ \ and\ each\ data\ type\ in\ *outputInfo\ array}}
+\DoxyCodeLine{00226\ \textcolor{comment}{\ \ \ Pre:\ sigma\ and\ outputInfo\ are\ already\ malloced,\ as\ are\ outputInfo[*].years\ arrays}}
+\DoxyCodeLine{00227\ \textcolor{comment}{}}
+\DoxyCodeLine{00228\ \textcolor{comment}{\ \ \ Only\ use\ "{}valid"{}\ data\ points\ (as\ determined\ by\ validFrac\ in\ readData)}}
+\DoxyCodeLine{00229\ \textcolor{comment}{\ \ \ And\ only\ use\ points\ between\ startOpt\ and\ endOpt\ (set\ in\ readData)}}
+\DoxyCodeLine{00230\ \textcolor{comment}{\ \ \ [IGNORE\ paramWeight\ -\/\ just\ there\ to\ be\ consistent\ with\ old\ difference\ function]}}
+\DoxyCodeLine{00231\ \textcolor{comment}{}}
+\DoxyCodeLine{00232\ \textcolor{comment}{\ \ \ NOTE:\ this\ is\ actually\ the\ NEGATIVE\ log\ likelihood,\ discarding\ constant\ terms}}
+\DoxyCodeLine{00233\ \textcolor{comment}{\ \ \ to\ get\ true\ log\ likelihood,\ add\ n*log(sqrt(2*pi)),\ then\ multiply\ by\ -\/1}}
+\DoxyCodeLine{00234\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{comment}{/*dm}}
+\DoxyCodeLine{00237\ \textcolor{comment}{\ \ double\ difference(double\ *sigma,\ OutputInfo\ *outputInfo,}}
+\DoxyCodeLine{00238\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ loc,\ SpatialParams\ *spatialParams,\ double\ paramWeight,}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ (*modelF)(double\ **,\ int,\ int\ *,\ SpatialParams\ *,\ int),}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ dataTypeIndices[],\ int\ numDataTypes)}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\{}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ \ int\ i,\ dataNum;}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ double\ *sumSquares;\ //\ one\ sum\ of\ squares\ value\ for\ each\ data\ type}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ int\ *n;\ //\ number\ of\ data\ points\ used\ in\ each\ sumSquares}}
+\DoxyCodeLine{00245\ \textcolor{comment}{\ \ double\ logLike;\ //\ the\ log\ likelihood}}
+\DoxyCodeLine{00246\ \textcolor{comment}{}}
+\DoxyCodeLine{00247\ \textcolor{comment}{\ \ sumSquares\ =\ makeArray(numDataTypes);}}
+\DoxyCodeLine{00248\ \textcolor{comment}{\ \ n\ =\ (int\ *)malloc(numDataTypes\ *\ sizeof(int));}}
+\DoxyCodeLine{00249\ \textcolor{comment}{}}
+\DoxyCodeLine{00250\ \textcolor{comment}{\ \ (*modelF)(model,\ numDataTypes,\ dataTypeIndices,\ spatialParams,\ loc);}}
+\DoxyCodeLine{00251\ \textcolor{comment}{\ \ //\ run\ model,\ put\ results\ in\ model\ array}}
+\DoxyCodeLine{00252\ \textcolor{comment}{}}
+\DoxyCodeLine{00253\ \textcolor{comment}{\ \ //\ initialize\ sumSquares\ and\ count\ arrays}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ \ for\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ \ \ \ sumSquares[dataNum]\ =\ 0.0;}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ \ \ \ n[dataNum]\ =\ 0;}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ \ \}}}
+\DoxyCodeLine{00258\ \textcolor{comment}{}}
+\DoxyCodeLine{00259\ \textcolor{comment}{\ \ for\ (i\ =\ startOpt[loc]\ -\/\ 1;\ i\ <\ endOpt[loc];\ i++)\ \{}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ \ \ \ for\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ \ \ \ \ \ if\ (valid[loc][i][dataNum])\ \{}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ \ \ \ \ \ \ \ sumSquares[dataNum]\ +=\ pow((model[i][dataNum]\ -\/\ data[loc][i][dataNum]),\ 2);}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ \ \ \ \ \ \ \ n[dataNum]++;}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ \ \ \ \ \ \}}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ \ \ \ \}}}
+\DoxyCodeLine{00266\ \textcolor{comment}{\ \ \}}}
+\DoxyCodeLine{00267\ \textcolor{comment}{}}
+\DoxyCodeLine{00268\ \textcolor{comment}{\ \ //\ calculate\ aggregate\ info\ on\ each\ data\ type}}
+\DoxyCodeLine{00269\ \textcolor{comment}{\ \ for\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)}}
+\DoxyCodeLine{00270\ \textcolor{comment}{\ \ \ \ aggregates(outputInfo,\ model,\ loc,\ dataNum);}}
+\DoxyCodeLine{00271\ \textcolor{comment}{}}
+\DoxyCodeLine{00272\ \textcolor{comment}{\ \ logLike\ =\ 0;}}
+\DoxyCodeLine{00273\ \textcolor{comment}{\ \ for\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}}
+\DoxyCodeLine{00274\ \textcolor{comment}{\ \ \ \ sigma[dataNum]\ =\ sqrt(sumSquares[dataNum]/(double)(n[dataNum]));}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\ \ \ \ //\ we\ can\ estimate\ sigma[i]\ using\ just\ sumSquares[i]\ because\ sigma[i]\ is\ calculated\ by\ taking\ the\ partial\ derivative}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ \ \ \ //\ \ \ of\ likelihood\ with\ respect\ to\ sigma[i],\ and\ this\ partial\ only\ depends\ on\ sumSquares[i]}}
+\DoxyCodeLine{00277\ \textcolor{comment}{\ \ \ \ */}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \textcolor{comment}{/*\ (dm)}}
+\DoxyCodeLine{00280\ \textcolor{comment}{logLike\ +=\ n[dataNum]\ *\ log(sigma[dataNum]);}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ \ \ \ logLike\ +=\ sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ \ \}}}
+\DoxyCodeLine{00283\ \textcolor{comment}{}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ \ free(sumSquares);}}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ \ free(n);}}
+\DoxyCodeLine{00286\ \textcolor{comment}{}}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ \ //\ NOTE:\ this\ is\ actually\ the\ NEGATIVE\ log\ likelihood,\ discarding\ constant\ terms}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ \ //\ to\ get\ true\ log\ likelihood,\ add\ n*log(sqrt(2*pi)),\ then\ multiply\ by\ -\/1}}
+\DoxyCodeLine{00289\ \textcolor{comment}{}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ \ return\ logLike;}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\}}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \textcolor{comment}{/*\ pre:\ **origArray\ contains\ original\ (unaggregated)\ data/model\ output}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ \ \ (origArray[i][j]\ is\ timestep\ i,\ data\ type\ j)}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ \ \ myNumAggSteps\ is\ number\ of\ aggregated\ time\ steps}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ \ \ myAggSteps\ is\ a\ vector\ [0..myNumAggSteps-\/1]\ containing\ number\ of\ time\ steps\ in\ each\ aggregated\ steps}}
+\DoxyCodeLine{00298\ \textcolor{comment}{\ \ \ myStartOpt\ is\ index\ of\ first\ time\ step\ used\ in\ optimization\ (1-\/indexed)}}
+\DoxyCodeLine{00299\ \textcolor{comment}{\ \ \ Note\ that\ myNumAggSteps,\ myAggSteps\ and\ myStartOpt\ are\ taken\ from\ global\ variables\ at\ a\ single\ spatial\ location}}
+\DoxyCodeLine{00300\ \textcolor{comment}{}}
+\DoxyCodeLine{00301\ \textcolor{comment}{\ \ \ aggregate\ data/model\ output\ (sum\ across\ each\ aggregated\ time\ step)}}
+\DoxyCodeLine{00302\ \textcolor{comment}{\ \ \ and\ return\ result\ in\ theAggedData}}
+\DoxyCodeLine{00303\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00304\ \textcolor{keywordtype}{void}\ computeAggedData(\textcolor{keywordtype}{double}\ **theAggedData,\ \textcolor{keywordtype}{double}\ **origArray,\ \textcolor{keywordtype}{int}\ myNumAggSteps,\ \textcolor{keywordtype}{int}\ *myAggSteps,\ \textcolor{keywordtype}{int}\ myStartOpt,\ \textcolor{keywordtype}{int}\ numDataTypes)\ \{}
+\DoxyCodeLine{00305\ \ \ \textcolor{keywordtype}{int}\ i,\ j,\ dataType,\ index;}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ index\ =\ myStartOpt\ -\/\ 1;\ \textcolor{comment}{//\ index\ into\ data\ array\ (myStartOpt\ is\ 1-\/indexed)}}
+\DoxyCodeLine{00308\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ myNumAggSteps;\ i++)\ \{}
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keywordflow}{for}\ (dataType\ =\ 0;\ dataType\ <\ numDataTypes;\ dataType++)}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ theAggedData[i][dataType]\ =\ 0.0;\ \textcolor{comment}{//\ reset\ sums}}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ myAggSteps[i];\ j++)\ \{\ \textcolor{comment}{//\ loop\ through\ all\ steps\ in\ this\ aggregated\ step}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (dataType\ =\ 0;\ dataType\ <\ numDataTypes;\ dataType++)\ \textcolor{comment}{//\ accumulate\ each\ sum}}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ theAggedData[i][dataType]\ +=\ origArray[index][dataType];}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ index++;}
+\DoxyCodeLine{00316\ \ \ \ \ \}}
+\DoxyCodeLine{00317\ \ \ \}}
+\DoxyCodeLine{00318\ \}}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \textcolor{comment}{/*\ Aggregated\ difference\ -\/\ ESTIMATES\ SIGMA,\ RETURNS\ AGGREGATE\ INFO}}
+\DoxyCodeLine{00322\ \textcolor{comment}{\ \ \ Same\ as\ difference\ function\ above,\ but\ aggregates\ model\ output\ to\ fewer\ steps}}
+\DoxyCodeLine{00323\ \textcolor{comment}{\ \ \ Total\ difference\ is\ a\ weighted\ sum\ of\ error\ on\ aggregated\ output\ vs.\ data}}
+\DoxyCodeLine{00324\ \textcolor{comment}{\ \ \ and\ error\ on\ unaggregated\ output\ vs.\ data\ (weight\ determined\ by\ global\ unaggedWeight)}}
+\DoxyCodeLine{00325\ \textcolor{comment}{}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ \ \ Run\ modelF\ with\ given\ parameters\ at\ location\ loc,\ compare\ output\ with\ measured\ data}}
+\DoxyCodeLine{00327\ \textcolor{comment}{\ \ \ using\ data\ types\ given\ by\ dataTypeIndices[0..numDataTypes/2-\/1]}}
+\DoxyCodeLine{00328\ \textcolor{comment}{\ \ \ Return\ a\ measure\ of\ the\ difference\ between\ measured\ and\ predicted\ data}}
+\DoxyCodeLine{00329\ \textcolor{comment}{\ \ \ (Higher\ =\ worse)}}
+\DoxyCodeLine{00330\ \textcolor{comment}{\ \ \ Assumes\ error\ is\ the\ same\ on\ each\ aggregated\ time\ step,}}
+\DoxyCodeLine{00331\ \textcolor{comment}{\ \ \ even\ if\ aggregation\ lengths\ are\ different}}
+\DoxyCodeLine{00332\ \textcolor{comment}{\ \ \ Return\ best\ sigma\ value\ for\ each\ data\ type\ in\ sigma[0..numDataTypes-\/1]}}
+\DoxyCodeLine{00333\ \textcolor{comment}{\ \ \ (where\ sigma[i]\ is\ sigma\ for\ data\ type\ given\ by\ dataTypeIndices[i\%(numDataTypes/2)];}}
+\DoxyCodeLine{00334\ \textcolor{comment}{\ \ \ if\ i\ <\ numDataTypes/2\ then\ sigma[i]\ gives\ sigma\ for\ unaggregated\ data;\ otherwise\ for\ aggregated\ data)}}
+\DoxyCodeLine{00335\ \textcolor{comment}{\ \ \ Return\ mean\ error,\ mean\ daily-\/aggregated\ error,\ and\ yearly-\/aggregated\ output\ for\ each\ year}}
+\DoxyCodeLine{00336\ \textcolor{comment}{\ \ \ and\ each\ data\ type\ in\ *outputInfo\ array\ (indexed\ like\ sigma\ array\ -\/\ see\ above)}}
+\DoxyCodeLine{00337\ \textcolor{comment}{}}
+\DoxyCodeLine{00338\ \textcolor{comment}{\ \ \ Pre:\ sigma\ and\ outputInfo\ are\ already\ malloced,\ as\ are\ outputInfo[*].years\ arrays}}
+\DoxyCodeLine{00339\ \textcolor{comment}{\ \ \ global\ *numAggSteps,\ **aggSteps\ and\ ***aggedData\ have\ all\ been\ set\ appropriately,}}
+\DoxyCodeLine{00340\ \textcolor{comment}{\ \ \ and\ global\ **aggedModel\ has\ been\ malloced\ appropriately}}
+\DoxyCodeLine{00341\ \textcolor{comment}{\ \ \ numDataTypes\ is\ actually\ TWICE\ the\ number\ of\ data\ types}}
+\DoxyCodeLine{00342\ \textcolor{comment}{\ \ \ (for\ each\ data\ type,\ one\ unaggregated\ and\ one\ aggregated)}}
+\DoxyCodeLine{00343\ \textcolor{comment}{}}
+\DoxyCodeLine{00344\ \textcolor{comment}{\ \ \ FOR\ NOW,\ WE\ IGNORE\ THE\ VALID\ FRACTION\ (THIS\ HASN'T\ BEEN\ AGGREGATED\ UP)}}
+\DoxyCodeLine{00345\ \textcolor{comment}{\ \ \ Only\ use\ points\ between\ startOpt\ and\ endOpt\ (set\ in\ readData)}}
+\DoxyCodeLine{00346\ \textcolor{comment}{\ \ \ (NOTE:\ UNTESTED\ FOR\ ANYTHING\ BUT\ STARTOPT=1,\ ENDOPT=-\/1\ (I.E.\ ALL\ POINTS))}}
+\DoxyCodeLine{00347\ \textcolor{comment}{\ \ \ [IGNORE\ paramWeight\ -\/\ just\ there\ to\ be\ consistent\ with\ difference\ function\ above]}}
+\DoxyCodeLine{00348\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \textcolor{comment}{//\ 6/9/11:\ For\ now\ we\ don't\ do\ anything\ with\ the\ cost\ function\ or\ data\ Type\ weights\ -\/\ we\ just\ want\ to\ make}}
+\DoxyCodeLine{00351\ \textcolor{comment}{//\ it\ consistent\ with\ the\ difference\ function\ above\ so\ we\ don't\ get\ an\ error.}}
+\DoxyCodeLine{00352\ \textcolor{keywordtype}{double}\ aggedDifference(\textcolor{keywordtype}{double}\ *sigma,\ OutputInfo\ *outputInfo,}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ loc,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{double}\ paramWeight,}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*modelF)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ costFunction,\ \textcolor{keywordtype}{double}\ dataTypeWeights[])}
+\DoxyCodeLine{00356\ \{}
+\DoxyCodeLine{00357\ \ \ \textcolor{keywordtype}{int}\ i,\ dataNum;}
+\DoxyCodeLine{00358\ \ \ \textcolor{keywordtype}{double}\ *sumSquares;\ \textcolor{comment}{//\ one\ sum\ of\ squares\ value\ for\ each\ data\ type}}
+\DoxyCodeLine{00359\ \ \ \textcolor{keywordtype}{int}\ *n;\ \textcolor{comment}{//\ number\ of\ data\ points\ used\ in\ each\ sumSquares}}
+\DoxyCodeLine{00360\ \ \ \textcolor{keywordtype}{double}\ logLike;\ \textcolor{comment}{//\ the\ log\ likelihood}}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ sumSquares\ =\ makeArray(numDataTypes);}
+\DoxyCodeLine{00363\ \ \ n\ =\ (\textcolor{keywordtype}{int}\ *)malloc(numDataTypes\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ (*modelF)(model,\ numDataTypes/2,\ dataTypeIndices,\ spatialParams,\ loc);}
+\DoxyCodeLine{00366\ \ \ \textcolor{comment}{//\ run\ model,\ put\ results\ in\ model\ array}}
+\DoxyCodeLine{00367\ \ \ \textcolor{comment}{//\ divide\ numDataTypes\ by\ 2\ so\ we\ have\ actual\ (unbifurcated)\ number\ of\ data\ types}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ computeAggedData(aggedModel,\ model,\ numAggSteps[loc],\ aggSteps[loc],\ startOpt[loc],\ numDataTypes/2);\ \textcolor{comment}{//\ aggregate\ model,\ filling\ aggedModel\ array}}
+\DoxyCodeLine{00370\ \ \ \textcolor{comment}{//\ again,\ divide\ numDataTypes\ by\ 2\ to\ give\ actual\ (unbifurcated)\ number\ of\ data\ types}}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \ \ \textcolor{comment}{//\ initialize\ sumSquares\ and\ count\ arrays}}
+\DoxyCodeLine{00373\ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}
+\DoxyCodeLine{00374\ \ \ \ \ sumSquares[dataNum]\ =\ 0.0;}
+\DoxyCodeLine{00375\ \ \ \ \ n[dataNum]\ =\ 0;}
+\DoxyCodeLine{00376\ \ \ \}}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ \textcolor{comment}{//\ compute\ sum\ of\ squares\ on\ unaggregated\ data:}}
+\DoxyCodeLine{00379\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ startOpt[loc]\ -\/\ 1;\ i\ <\ endOpt[loc];\ i++)\ \{}
+\DoxyCodeLine{00380\ \ \ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes/2;\ dataNum++)\ \{}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (valid[loc][i][dataNum])\ \{}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ sumSquares[dataNum]\ +=\ pow((model[i][dataNum]\ -\/\ data[loc][i][dataNum]),\ 2);}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ n[dataNum]++;}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00385\ \ \ \ \ \}}
+\DoxyCodeLine{00386\ \ \ \}}
+\DoxyCodeLine{00387\ }
+\DoxyCodeLine{00388\ \ \ \textcolor{comment}{//\ compute\ sum\ of\ squares\ on\ aggregated\ data\ (note:\ we\ don't\ check\ validity\ here\ -\/\ instead\ use\ all\ points):}}
+\DoxyCodeLine{00389\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numAggSteps[loc];\ i++)\ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes/2;\ dataNum++)\ \{}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ sumSquares[numDataTypes/2\ +\ dataNum]\ +=\ pow((aggedModel[i][dataNum]\ -\/\ aggedData[loc][i][dataNum]),\ 2);}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ n[numDataTypes/2\ +\ dataNum]++;}
+\DoxyCodeLine{00393\ \ \ \ \ \}}
+\DoxyCodeLine{00394\ \ \ \}}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \ \ \textcolor{comment}{//\ calculate\ aggregate\ info\ on\ each\ data\ type}}
+\DoxyCodeLine{00397\ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes/2;\ dataNum++)\ \{}
+\DoxyCodeLine{00398\ \ \ \ \ aggregates(outputInfo,\ model,\ loc,\ dataNum);}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ \textcolor{comment}{//\ copy\ aggregate\ info\ from\ position\ i\ to\ position\ (numDataTypes/2\ +\ i)}}
+\DoxyCodeLine{00401\ \ \ \ \ \textcolor{comment}{//\ (same\ data\ type,\ but\ aggregated\ -\/\ will\ have\ same\ aggregate\ info)}}
+\DoxyCodeLine{00402\ \ \ \ \ copyOutputInfo(\&(outputInfo[numDataTypes/2\ +\ dataNum]),\ \&(outputInfo[dataNum]));}
+\DoxyCodeLine{00403\ \ \ \}}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \ \ \textcolor{comment}{//\ compute\ log\ likelihood\ (actually,\ negative\ log\ likelihood,\ discarding\ constant\ terms):}}
+\DoxyCodeLine{00406\ \ \ logLike\ =\ 0;}
+\DoxyCodeLine{00407\ \ \ \textcolor{keywordflow}{for}\ (dataNum\ =\ 0;\ dataNum\ <\ numDataTypes;\ dataNum++)\ \{}
+\DoxyCodeLine{00408\ \ \ \ \ sigma[dataNum]\ =\ sqrt(sumSquares[dataNum]/(\textcolor{keywordtype}{double})(n[dataNum]));}
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{comment}{/*\ we\ can\ estimate\ sigma[i]\ using\ just\ sumSquares[i]\ because\ sigma[i]\ is\ calculated\ by\ taking\ the\ partial\ derivative}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ \ \ \ \ \ \ of\ likelihood\ with\ respect\ to\ sigma[i],\ and\ this\ partial\ only\ depends\ on\ sumSquares[i]}}
+\DoxyCodeLine{00411\ \textcolor{comment}{\ \ \ \ */}}
+\DoxyCodeLine{00412\ \ \ \ \ logLike\ +=\ n[dataNum]\ *\ log(sigma[dataNum]);}
+\DoxyCodeLine{00413\ \ \ \ \ logLike\ +=\ sumSquares[dataNum]/(2.0*(sigma[dataNum])*(sigma[dataNum]));}
+\DoxyCodeLine{00414\ }
+\DoxyCodeLine{00415\ \ \ \ \ \textcolor{keywordflow}{if}\ (dataNum\ ==\ numDataTypes/2\ -\/\ 1)\ \textcolor{comment}{//\ we\ just\ finished\ all\ unaggregated\ types}}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \textcolor{comment}{//\ apply\ unaggedWeight\ to\ current\ log\ likelihood}}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ logLike\ *=\ unaggedWeight;}
+\DoxyCodeLine{00418\ \ \ \}}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00420\ \ \ free(sumSquares);}
+\DoxyCodeLine{00421\ \ \ free(n);}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00423\ \ \ \textcolor{comment}{//\ NOTE:\ this\ is\ actually\ the\ NEGATIVE\ log\ likelihood,\ discarding\ constant\ terms}}
+\DoxyCodeLine{00424\ }
+\DoxyCodeLine{00425\ \ \ \textcolor{keywordflow}{return}\ logLike;}
+\DoxyCodeLine{00426\ \}}
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00428\ }
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \textcolor{comment}{/*\ Take\ array\ of\ model\ output,\ compare\ output\ with\ measured\ data\ -\/\ for\ given\ dataNum}}
+\DoxyCodeLine{00431\ \textcolor{comment}{\ \ \ (i.e.\ perform\ comparisons\ between\ model[*][dataNum]\ and\ data[loc][*][dataNum]}}
+\DoxyCodeLine{00432\ \textcolor{comment}{\ \ \ Return\ (in\ outputInfo[dataNum])\ mean\ error\ (per\ day),\ mean\ daily-\/aggregated\ error\ (per\ day)}}
+\DoxyCodeLine{00433\ \textcolor{comment}{\ \ \ Also\ fill\ years\ array\ with\ annual\ total\ NEE\ for\ each\ year}}
+\DoxyCodeLine{00434\ \textcolor{comment}{\ \ \ and\ set\ outputInfo.numYears,\ the\ size\ of\ the\ years\ array}}
+\DoxyCodeLine{00435\ \textcolor{comment}{\ \ \ Pre:\ outputInfo\ is\ already\ malloced,\ as\ are\ outputInfo[*].years\ arrays}}
+\DoxyCodeLine{00436\ \textcolor{comment}{\ \ \ (Can\ later\ use\ years\ array\ to\ find\ yearly-\/aggregated\ error\ and\ interannual\ variability)}}
+\DoxyCodeLine{00437\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00438\ \textcolor{keywordtype}{void}\ aggregates(OutputInfo\ *outputInfo,\ \textcolor{keywordtype}{double}\ **model,\ \textcolor{keywordtype}{int}\ loc,\ \textcolor{keywordtype}{int}\ dataNum)}
+\DoxyCodeLine{00439\ \{}
+\DoxyCodeLine{00440\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ DAYS\_IN\_YR[]\ =\ \{365,366\};\ \textcolor{comment}{/*\ given\ leapYr\ =\ 0\ or\ 1,\ DAYS\_IN\_YR[leapYr]}}
+\DoxyCodeLine{00441\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ represents\ the\ number\ of\ days\ in\ this\ year\ */}}
+\DoxyCodeLine{00442\ \ \ \textcolor{keywordtype}{int}\ i,\ j,\ day,\ julianDay,\ year;}
+\DoxyCodeLine{00443\ \ \ \textcolor{keywordtype}{int}\ leapYr;\ \textcolor{comment}{//\ 1\ if\ this\ is\ a\ leap\ year}}
+\DoxyCodeLine{00444\ \ \ \textcolor{keywordtype}{int}\ index;}
+\DoxyCodeLine{00445\ \ \ \textcolor{keywordtype}{double}\ *modelD,\ *dataD;\ \textcolor{comment}{//\ daily\ aggregations}}
+\DoxyCodeLine{00446\ \ \ \textcolor{keywordtype}{int}\ yearIndex;\ \textcolor{comment}{//\ starting\ at\ 0\ rather\ than\ being\ a\ 4-\/digit\ year}}
+\DoxyCodeLine{00447\ \ \ \textcolor{keywordtype}{double}\ sum;}
+\DoxyCodeLine{00448\ \ \ \textcolor{keywordtype}{double}\ netNeeM,\ netNeeD;\ \textcolor{comment}{//\ net\ model\ and\ data\ nee\ for\ this\ aggregated\ step}}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ modelD\ =\ makeArray(aggInfo[loc].numDays);}
+\DoxyCodeLine{00451\ \ \ dataD\ =\ makeArray(aggInfo[loc].numDays);}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ sum\ =\ 0.0;}
+\DoxyCodeLine{00454\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ aggInfo[loc].startPt\ -\/\ 1;\ i\ <\ aggInfo[loc].endPt;\ i++)\ \{}
+\DoxyCodeLine{00455\ \ \ \ \ sum\ +=\ fabs(model[i][dataNum]\ -\/\ data[loc][i][dataNum]);}
+\DoxyCodeLine{00456\ \ \ \}}
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \ \ outputInfo[dataNum].meanError\ =\ sum/aggInfo[loc].numDays;\ \textcolor{comment}{//\ mean\ error\ per\ day}}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ \ \ \textcolor{comment}{//\ fill\ daily\ aggregation\ arrays,\ compute\ error\ aggregated\ over\ days:}}
+\DoxyCodeLine{00461\ \ \ sum\ =\ 0.0;}
+\DoxyCodeLine{00462\ \ \ index\ =\ aggInfo[loc].startPt\ -\/\ 1;}
+\DoxyCodeLine{00463\ \ \ \textcolor{keywordflow}{for}\ (day\ =\ 0;\ day\ <\ aggInfo[loc].numDays;\ day++)\ \{}
+\DoxyCodeLine{00464\ \ \ \ \ netNeeM\ =\ netNeeD\ =\ 0.0;}
+\DoxyCodeLine{00465\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ aggInfo[loc].spd[day];\ j++)\ \{}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ netNeeM\ +=\ model[index][dataNum];}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ netNeeD\ +=\ data[loc][index][dataNum];}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ index++;}
+\DoxyCodeLine{00469\ \ \ \ \ \}}
+\DoxyCodeLine{00470\ \ \ \ \ modelD[day]\ =\ netNeeM;}
+\DoxyCodeLine{00471\ \ \ \ \ dataD[day]\ =\ netNeeD;}
+\DoxyCodeLine{00472\ \ \ \ \ sum\ +=\ fabs(netNeeM\ -\/\ netNeeD);}
+\DoxyCodeLine{00473\ \ \ \}}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \ \ outputInfo[dataNum].daysError\ =\ sum/aggInfo[loc].numDays;\ \textcolor{comment}{//\ mean\ daily-\/aggregated\ error\ per\ day}}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ }
+\DoxyCodeLine{00478\ \ \ \textcolor{comment}{//\ now\ do\ yearly\ and\ overall\ aggregation:}}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \ \ \textcolor{comment}{//\ first\ fill\ year\ arrays\ and\ find\ yearly\ aggregation:}}
+\DoxyCodeLine{00481\ \ \ day\ =\ 0;}
+\DoxyCodeLine{00482\ \ \ julianDay\ =\ aggInfo[loc].startDay;}
+\DoxyCodeLine{00483\ \ \ year\ =\ aggInfo[loc].startYear;}
+\DoxyCodeLine{00484\ \ \ leapYr\ =\ (year\ \%\ 4\ ==\ 0);\ \textcolor{comment}{//\ holds\ for\ 1900\ <\ year\ <\ 2100}}
+\DoxyCodeLine{00485\ \ \ yearIndex\ =\ 0;}
+\DoxyCodeLine{00486\ \ \ \textcolor{keywordflow}{while}\ (day\ <\ aggInfo[loc].numDays)\ \{}
+\DoxyCodeLine{00487\ \ \ \ \ netNeeM\ =\ 0.0;}
+\DoxyCodeLine{00488\ \ \ \ \ \textcolor{keywordflow}{while}\ (julianDay\ <=\ DAYS\_IN\_YR[leapYr]\ \&\&\ day\ <\ aggInfo[loc].numDays)\ \{}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \textcolor{comment}{//\ loop\ through\ current\ year}}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ netNeeM\ +=\ modelD[day];}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ day++;}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ julianDay++;}
+\DoxyCodeLine{00493\ \ \ \ \ \}}
+\DoxyCodeLine{00494\ \ \ \ \ \textcolor{comment}{//\ HAPPY\ NEW\ YEAR!}}
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \ \ \ \ outputInfo[dataNum].years[yearIndex]\ =\ netNeeM;\ \textcolor{comment}{//\ NEE\ over\ this\ whole\ year}}
+\DoxyCodeLine{00497\ \ \ \ \ \textcolor{comment}{//\ can\ later\ use\ this\ to\ find\ mean\ yearly-\/aggregated\ error\ per\ day\ and\ interannual\ variability}}
+\DoxyCodeLine{00498\ }
+\DoxyCodeLine{00499\ \ \ \ \ julianDay\ =\ 1;}
+\DoxyCodeLine{00500\ \ \ \ \ year++;}
+\DoxyCodeLine{00501\ \ \ \ \ yearIndex++;}
+\DoxyCodeLine{00502\ \ \ \ \ leapYr\ =\ (year\ \%\ 4\ ==\ 0);\ \textcolor{comment}{//\ holds\ for\ 1900\ <\ year\ <\ 2100}}
+\DoxyCodeLine{00503\ \ \ \}}
+\DoxyCodeLine{00504\ \ \ outputInfo[dataNum].numYears\ =\ yearIndex;\ \textcolor{comment}{//\ the\ actual\ number\ of\ years}}
+\DoxyCodeLine{00505\ }
+\DoxyCodeLine{00506\ \ \ free(modelD);}
+\DoxyCodeLine{00507\ \ \ free(dataD);}
+\DoxyCodeLine{00508\ \}}
+\DoxyCodeLine{00509\ }
+\DoxyCodeLine{00510\ }
+\DoxyCodeLine{00511\ \textcolor{comment}{//\ read\ one\ line\ of\ data\ from\ in\ to\ arr[0..numDataTypes\ -\/\ 1]}}
+\DoxyCodeLine{00512\ \textcolor{keywordtype}{void}\ readDataLine(FILE\ *in,\ \textcolor{keywordtype}{double}\ *arr,\ \textcolor{keywordtype}{int}\ numDataTypes)\ \{}
+\DoxyCodeLine{00513\ \ \ \textcolor{keywordtype}{char}\ line[256];}
+\DoxyCodeLine{00514\ \ \ \textcolor{keywordtype}{char}\ *remainder;\ \textcolor{comment}{//\ after\ each\ read,\ remainder\ points\ to\ start\ of\ remainder\ of\ line}}
+\DoxyCodeLine{00515\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \ \ fgets(line,\ \textcolor{keyword}{sizeof}(line),\ in);}
+\DoxyCodeLine{00518\ \ \ remainder\ =\ line;}
+\DoxyCodeLine{00519\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)\ \{}
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{comment}{//\ put\ next\ double\ in\ arr[i],\ set\ remainder\ to\ point\ to\ remainder\ of\ string:}}
+\DoxyCodeLine{00521\ \ \ \ \ arr[i]\ =\ strtod(remainder,\ \&remainder);}
+\DoxyCodeLine{00522\ \ \ \}}
+\DoxyCodeLine{00523\ }
+\DoxyCodeLine{00524\ \ \ \textcolor{comment}{//\ printf("{}\%f\(\backslash\)n"{},\ arr[numDataTypes-\/1]);}}
+\DoxyCodeLine{00525\ \}}
+\DoxyCodeLine{00526\ }
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00528\ \textcolor{comment}{//\ count\ \&\ return\ number\ of\ lines\ in\ given\ file}}
+\DoxyCodeLine{00529\ \textcolor{comment}{//\ (stop\ counting\ as\ soon\ as\ reach\ end\ of\ file\ or\ a\ blank\ line)}}
+\DoxyCodeLine{00530\ \textcolor{keywordtype}{int}\ countLines(\textcolor{keywordtype}{char}\ *fileName)\ \{}
+\DoxyCodeLine{00531\ \ \ FILE\ *f;}
+\DoxyCodeLine{00532\ \ \ \textcolor{keywordtype}{char}\ line[256];}
+\DoxyCodeLine{00533\ \ \ \textcolor{keywordtype}{int}\ numLines;}
+\DoxyCodeLine{00534\ }
+\DoxyCodeLine{00535\ \ \ f\ =\ openFile(fileName,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00536\ \ \ numLines\ =\ 0;}
+\DoxyCodeLine{00537\ \ \ \textcolor{keywordflow}{while}\ ((fgets(line,\ \textcolor{keyword}{sizeof}(line),\ f)\ !=\ NULL)\ \&\&\ (strcmp(line,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}})\ !=\ 0)\ \&\&\ (strcmp(line,\ \textcolor{stringliteral}{"{}\(\backslash\)r\(\backslash\)n"{}})\ !=\ 0))\ \textcolor{comment}{//\ read\ \&\ ignore}}
+\DoxyCodeLine{00538\ \ \ \ \ numLines++;}
+\DoxyCodeLine{00539\ }
+\DoxyCodeLine{00540\ \ \ fclose(f);}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \ \ \textcolor{keywordflow}{return}\ numLines;}
+\DoxyCodeLine{00543\ \}}
+\DoxyCodeLine{00544\ }
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \textcolor{comment}{/*\ Parse\ one\ string\ (spdString)\ from\ .spd\ file}}
+\DoxyCodeLine{00547\ \textcolor{comment}{\ \ \ Three\ possible\ options:}}
+\DoxyCodeLine{00548\ \textcolor{comment}{\ \ \ -\/\ If\ spdString\ is\ "{}-\/1"{},\ return\ -\/1,\ leave\ spd\ unchanged,\ set\ count\ to\ 0}}
+\DoxyCodeLine{00549\ \textcolor{comment}{\ \ \ -\/\ If\ spd\ is\ "{}\#n"{},\ where\ n\ is\ a\ positive\ integer\ (e.g.\ "{}\#100"{}),\ return\ 0,\ don't\ change\ spd\ (we'll\ use\ last\ spd\ value),\ set\ count\ to\ n}}
+\DoxyCodeLine{00550\ \textcolor{comment}{\ \ \ \ \ (this\ signifies\ that\ we\ should\ repeat\ previous\ value\ n\ times)}}
+\DoxyCodeLine{00551\ \textcolor{comment}{\ \ \ -\/\ Otherwise,\ spd\ must\ be\ a\ non-\/negative\ integer\ (in\ string\ format):\ return\ 1,\ set\ spd\ to\ the\ number,\ set\ count\ to\ 1}}
+\DoxyCodeLine{00552\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00553\ \textcolor{keywordtype}{int}\ parseSpdValue(\textcolor{keywordtype}{char}\ *spdString,\ \textcolor{keywordtype}{int}\ *spd,\ \textcolor{keywordtype}{int}\ *count)\ \{}
+\DoxyCodeLine{00554\ \ \ \textcolor{keywordtype}{char}\ *errc;}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00556\ \ \ \textcolor{keywordflow}{if}\ (strcmp(spdString,\ \textcolor{stringliteral}{"{}-\/1"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00557\ \ \ \ \ count\ =\ 0;}
+\DoxyCodeLine{00558\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00559\ \ \ \}}
+\DoxyCodeLine{00560\ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (spdString[0]\ ==\ \textcolor{charliteral}{'\#'})\ \{\ \textcolor{comment}{//\ spd\ is\ "{}\#n"{}\ (e.g.\ \#100)}}
+\DoxyCodeLine{00561\ \ \ \ \ *count\ =\ strtol(strtok(spdString,\ \textcolor{stringliteral}{"{}\#"{}}),\ \&errc,\ 0);\ \textcolor{comment}{//\ get\ rid\ of\ '\#',\ convert\ to\ integer}}
+\DoxyCodeLine{00562\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00563\ \ \ \}}
+\DoxyCodeLine{00564\ \ \ \textcolor{keywordflow}{else}\ \{\ \textcolor{comment}{//\ spd\ is\ an\ integer\ (in\ string\ format)}}
+\DoxyCodeLine{00565\ \ \ \ \ *spd\ =\ strtol(spdString,\ \&errc,\ 0);}
+\DoxyCodeLine{00566\ \ \ \ \ *count\ =\ 1;}
+\DoxyCodeLine{00567\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00568\ \ \ \}}
+\DoxyCodeLine{00569\ \}}
+\DoxyCodeLine{00570\ }
+\DoxyCodeLine{00571\ }
+\DoxyCodeLine{00572\ \textcolor{comment}{/*\ Read\ indices\ from\ fileName,\ put\ into\ startIndices\ and\ endIndices\ vectors\ (which\ have\ already\ been\ malloc'ed:\ vectors\ of\ size\ numLocs)}}
+\DoxyCodeLine{00573\ \textcolor{comment}{\ \ \ Format\ of\ file:\ numLocs\ lines,\ where\ each\ line\ contains\ two\ integers:\ start\ \&\ end}}
+\DoxyCodeLine{00574\ \textcolor{comment}{\ \ \ end\ =\ -\/1\ signifies\ go\ to\ end,\ in\ which\ case\ set\ end[i]\ =\ steps[i]\ (steps\ is\ an\ array[0..numLocs-\/1]\ giving\ \#\ of\ steps\ at\ each\ location)}}
+\DoxyCodeLine{00575\ \textcolor{comment}{\ \ \ if\ end[i]\ >\ steps[i],\ endIndices[i]\ set\ equal\ to\ steps[i]}}
+\DoxyCodeLine{00576\ \textcolor{comment}{\ \ \ FileName\ can\ be\ empty\ string\ ("{}"{}),\ in\ which\ case\ all\ startIndices\ are\ set\ to\ 1,\ and\ endIndices\ set\ equal\ to\ steps}}
+\DoxyCodeLine{00577\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00578\ \textcolor{keywordtype}{void}\ readIndicesFile(\textcolor{keywordtype}{char}\ *fileName,\ \textcolor{keywordtype}{int}\ *startIndices,\ \textcolor{keywordtype}{int}\ *endIndices,\ \textcolor{keywordtype}{int}\ numLocs,\ \textcolor{keywordtype}{int}\ *steps)\ \{}
+\DoxyCodeLine{00579\ \ \ FILE\ *in;}
+\DoxyCodeLine{00580\ \ \ \textcolor{keywordtype}{int}\ loc;}
+\DoxyCodeLine{00581\ \ \ \textcolor{keywordtype}{int}\ noFile\ =\ 1;\ \textcolor{comment}{//\ start\ by\ assuming\ there's\ no\ file}}
+\DoxyCodeLine{00582\ }
+\DoxyCodeLine{00583\ \ \ \textcolor{keywordflow}{if}\ (strcmp(fileName,\ \textcolor{stringliteral}{"{}"{}})\ !=\ 0)\ \{\ \textcolor{comment}{//\ there's\ a\ file}}
+\DoxyCodeLine{00584\ \ \ \ \ in\ =\ openFile(fileName,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00585\ \ \ \ \ noFile\ =\ 0;\ \textcolor{comment}{//\ false:\ there\ IS\ a\ file}}
+\DoxyCodeLine{00586\ \ \ \}}
+\DoxyCodeLine{00587\ }
+\DoxyCodeLine{00588\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)\ \{}
+\DoxyCodeLine{00589\ \ \ \ \ \textcolor{keywordflow}{if}\ (noFile)\ \{}
+\DoxyCodeLine{00590\ \ \ \ \ \ \ startIndices[loc]\ =\ 1;}
+\DoxyCodeLine{00591\ \ \ \ \ \ \ endIndices[loc]\ =\ steps[loc];}
+\DoxyCodeLine{00592\ \ \ \ \ \}}
+\DoxyCodeLine{00593\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ fscanf(in,\ \textcolor{stringliteral}{"{}\%d\ \%d"{}},\ \&(startIndices[loc]),\ \&(endIndices[loc]));}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (endIndices[loc]\ ==\ -\/1\ ||\ endIndices[loc]\ >\ steps[loc])}
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ endIndices[loc]\ =\ steps[loc];}
+\DoxyCodeLine{00597\ \ \ \ \ \}}
+\DoxyCodeLine{00598\ \ \ \}}
+\DoxyCodeLine{00599\ }
+\DoxyCodeLine{00600\ \ \ \textcolor{keywordflow}{if}\ (!noFile)\ \textcolor{comment}{//\ we\ opened\ a\ file}}
+\DoxyCodeLine{00601\ \ \ \ \ fclose(in);}
+\DoxyCodeLine{00602\ \}}
+\DoxyCodeLine{00603\ }
+\DoxyCodeLine{00604\ }
+\DoxyCodeLine{00605\ \textcolor{comment}{/*\ Read\ measured\ data\ (from\ fileName.dat)\ and\ valid\ fractions\ (from\ fileName.valid)\ into\ arrays\ (used\ to\ also\ read\ sigmas)}}
+\DoxyCodeLine{00606\ \textcolor{comment}{\ \ \ and\ set\ values\ in\ valid\ array\ (based\ on\ validFrac)}}
+\DoxyCodeLine{00607\ \textcolor{comment}{\ \ \ Each\ line\ in\ data\ (and\ valid)\ file\ has\ totNumDataTypes\ columns}}
+\DoxyCodeLine{00608\ \textcolor{comment}{\ \ \ and\ each\ file\ has\ one\ line\ for\ each\ time\ step\ at\ each\ of\ the\ myNumLocs\ location\ (all\ time\ steps\ for\ a\ single\ location\ are\ continuous),}}
+\DoxyCodeLine{00609\ \textcolor{comment}{\ \ \ with\ NO\ blank\ lines}}
+\DoxyCodeLine{00610\ \textcolor{comment}{\ \ \ where\ steps\ vector\ gives\ \#\ of\ time\ steps\ at\ each\ location\ (so\ total\ number\ of\ lines\ in\ data/valid\ files\ should\ equal\ sum\ of\ elements\ in\ steps\ vector)}}
+\DoxyCodeLine{00611\ \textcolor{comment}{\ \ \ dataTypeIndices\ give\ the\ numDataTypes\ indices\ of\ the\ data\ types\ that\ we'll\ actually\ use\ in\ optimization}}
+\DoxyCodeLine{00612\ \textcolor{comment}{\ \ \ Also\ read\ spd\ file\ (steps\ per\ day)\ (fileName.spd),\ which\ has\ one\ line\ for\ each\ location}}
+\DoxyCodeLine{00613\ \textcolor{comment}{\ \ \ Each\ line\ begins\ with\ the\ year\ of\ the\ first\ point,\ followed\ by\ the\ julian\ day\ of\ the\ first\ point,}}
+\DoxyCodeLine{00614\ \textcolor{comment}{\ \ \ followed\ by\ the\ number\ of\ steps\ per\ day\ for\ each\ day,\ terminated\ by\ -\/1}}
+\DoxyCodeLine{00615\ \textcolor{comment}{\ \ \ As\ a\ short-\/hand,\ \#n\ means\ repeat\ the\ last\ steps-\/per-\/day\ value\ n\ more\ times\ (e.g.\ "{}2\ \#3"{}\ is\ equivalent\ to\ "{}2\ 2\ 2\ 2"{})}}
+\DoxyCodeLine{00616\ \textcolor{comment}{}}
+\DoxyCodeLine{00617\ \textcolor{comment}{\ \ \ Also\ possibly\ read\ start\ and\ end\ indices\ for\ optimizations\ for\ each\ location\ (from\ optIndicesFile),}}
+\DoxyCodeLine{00618\ \textcolor{comment}{\ \ \ and\ start\ and\ end\ indices\ for\ final\ model-\/data\ comparisons\ for\ each\ location\ (from\ compareIndicesFile),}}
+\DoxyCodeLine{00619\ \textcolor{comment}{\ \ \ where\ these\ files\ have\ one\ line\ for\ each\ location,\ and\ each\ line\ contains\ two\ integers:\ start\ \&\ end;}}
+\DoxyCodeLine{00620\ \textcolor{comment}{\ \ \ if\ either\ of\ these\ file\ names\ is\ given\ as\ an\ empty\ string\ ("{}"{}),\ use\ all\ data\ points\ for\ optimizations\ or\ model-\/data\ comparisons.}}
+\DoxyCodeLine{00621\ \textcolor{comment}{\ \ \ NOTE:\ Both\ of\ these\ use\ 1-\/indexing;\ end\ =\ -\/1\ means\ go\ to\ end}}
+\DoxyCodeLine{00622\ \textcolor{comment}{}}
+\DoxyCodeLine{00623\ \textcolor{comment}{\ \ \ steps\ is\ an\ array\ giving\ the\ number\ of\ time\ steps\ at\ each\ of\ the\ myNumLocs\ locations}}
+\DoxyCodeLine{00624\ \textcolor{comment}{}}
+\DoxyCodeLine{00625\ \textcolor{comment}{\ \ \ This\ function\ also\ allocates\ space\ for\ model\ array}}
+\DoxyCodeLine{00626\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00627\ \textcolor{keywordtype}{void}\ readData(\textcolor{keywordtype}{char}\ *fileName,\ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ totNumDataTypes,\ \textcolor{keywordtype}{int}\ myNumLocs,\ \textcolor{keywordtype}{int}\ *steps,}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ validFrac,\ \textcolor{keywordtype}{char}\ *optIndicesFile,\ \textcolor{keywordtype}{char}\ *compareIndicesFile,\ FILE\ *outFile)}
+\DoxyCodeLine{00629\ \{}
+\DoxyCodeLine{00630\ \ \ \textcolor{keywordtype}{char}\ dataFile[64],\ spdFile[64],\ validFile[64],\ sigmaFile[64];\ \textcolor{comment}{//(dm)\ uncommented\ sigmaFile[64];}}
+\DoxyCodeLine{00631\ \ \ FILE\ *in1,\ *in2,\ *in3;}
+\DoxyCodeLine{00632\ \ \ \textcolor{keywordtype}{int}\ status;}
+\DoxyCodeLine{00633\ \ \ \textcolor{keywordtype}{int}\ index;}
+\DoxyCodeLine{00634\ \ \ \textcolor{keywordtype}{int}\ julianDay;}
+\DoxyCodeLine{00635\ \ \ \textcolor{keywordtype}{int}\ year,\ leapYr;}
+\DoxyCodeLine{00636\ \ \ \textcolor{keywordtype}{int}\ spd,\ startSpd,\ dataCount,\ startDataCount;}
+\DoxyCodeLine{00637\ \ \ \textcolor{keywordtype}{double}\ *oneLine;\ \textcolor{comment}{//\ data\ from\ one\ line\ of\ a\ file}}
+\DoxyCodeLine{00638\ \ \ \textcolor{keywordtype}{int}\ totSteps,\ maxSteps;\ \textcolor{comment}{//\ total\ number\ of\ time\ steps\ (sum\ over\ all\ locations),\ maximum\ number\ of\ time\ steps\ at\ any\ location}}
+\DoxyCodeLine{00639\ \ \ \textcolor{keywordtype}{int}\ numData;}
+\DoxyCodeLine{00640\ \ \ \textcolor{keywordtype}{int}\ i,\ loc;}
+\DoxyCodeLine{00641\ \ \ \textcolor{keywordtype}{char}\ spdString[32];\ \textcolor{comment}{//\ store\ one\ \#\ from\ spd\ file\ (in\ a\ string\ to\ allow\ for\ shorthands\ like\ \#<n>)}}
+\DoxyCodeLine{00642\ \ \ \textcolor{keywordtype}{int}\ count,\ startCount;}
+\DoxyCodeLine{00643\ \ \ \textcolor{keywordtype}{long}\ filePos;}
+\DoxyCodeLine{00644\ \ \ \textcolor{keywordtype}{int}\ *tempStartCompare,\ *tempEndCompare;\ \textcolor{comment}{//\ vectors\ holding\ compare\ indices\ temporarily,\ before\ they're\ put\ in\ aggInfo}}
+\DoxyCodeLine{00645\ }
+\DoxyCodeLine{00646\ \ \ numLocs\ =\ myNumLocs;\ \textcolor{comment}{//\ set\ global\ numLocs}}
+\DoxyCodeLine{00647\ }
+\DoxyCodeLine{00648\ \ \ strcpy(dataFile,\ fileName);}
+\DoxyCodeLine{00649\ \ \ strcpy(sigmaFile,\ fileName);\textcolor{comment}{//(dm)\ uncommented}}
+\DoxyCodeLine{00650\ \ \ strcpy(spdFile,\ fileName);}
+\DoxyCodeLine{00651\ \ \ strcpy(validFile,\ fileName);}
+\DoxyCodeLine{00652\ \ \ strcat(dataFile,\ \textcolor{stringliteral}{"{}.dat"{}});}
+\DoxyCodeLine{00653\ \ \ strcat(sigmaFile,\ \textcolor{stringliteral}{"{}.sigma"{}});\textcolor{comment}{//(dm)uncommented}}
+\DoxyCodeLine{00654\ \ \ strcat(spdFile,\ \textcolor{stringliteral}{"{}.spd"{}});}
+\DoxyCodeLine{00655\ \ \ strcat(validFile,\ \textcolor{stringliteral}{"{}.valid"{}});}
+\DoxyCodeLine{00656\ }
+\DoxyCodeLine{00657\ \ \ totSteps\ =\ 0;}
+\DoxyCodeLine{00658\ \ \ maxSteps\ =\ 0;}
+\DoxyCodeLine{00659\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)\ \{}
+\DoxyCodeLine{00660\ \ \ \ \ totSteps\ +=\ steps[loc];\ \textcolor{comment}{//\ count\ total\ number\ of\ data\ points\ expected}}
+\DoxyCodeLine{00661\ \ \ \ \ \textcolor{keywordflow}{if}\ (steps[loc]\ >\ maxSteps)}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ maxSteps\ =\ steps[loc];}
+\DoxyCodeLine{00663\ \ \ \}}
+\DoxyCodeLine{00664\ \ \ numData\ =\ countLines(dataFile);\ \textcolor{comment}{//\ determine\ number\ of\ data\ points\ in\ file}}
+\DoxyCodeLine{00665\ \ \ \textcolor{keywordflow}{if}\ (totSteps\ !=\ numData)\ \{}
+\DoxyCodeLine{00666\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ expected\ to\ read\ \%d\ data\ points\ from\ file,\ read\ \%d\ data\ points\(\backslash\)n"{}},\ totSteps,\ numData);}
+\DoxyCodeLine{00667\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00668\ \ \ \}}
+\DoxyCodeLine{00669\ }
+\DoxyCodeLine{00670\ \ \ in1\ =\ openFile(dataFile,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00671\ \ \textcolor{comment}{//(dm)\ removed\ in2\ =\ openFile(sigmaFile,\ "{}r"{});}}
+\DoxyCodeLine{00672\ \ \ in2\ =\ openFile(validFile,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00673\ \ \ in3\ =\ openFile(sigmaFile,\ \textcolor{stringliteral}{"{}r"{}});\textcolor{comment}{//better\ to\ add\ sigmaFile\ as\ in3\ as\ in2\ is\ already\ assigned\ to\ validFile}}
+\DoxyCodeLine{00674\ }
+\DoxyCodeLine{00675\ \ \ data\ =\ (\textcolor{keywordtype}{double}\ ***)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}\ **));}
+\DoxyCodeLine{00676\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00677\ \ \ \ \ data[loc]\ =\ make2DArray(steps[loc],\ numDataTypes);\ \textcolor{comment}{//\ make\ 2-\/d\ array\ just\ big\ enough\ for\ known\ \#\ of\ time\ steps\ in\ this\ location}}
+\DoxyCodeLine{00678\ \ \ model\ =\ make2DArray(numData,\ numDataTypes);}
+\DoxyCodeLine{00679\ }
+\DoxyCodeLine{00680\ \ \ \textcolor{comment}{//\ \ (dm)\ added\ code\ to\ read\ sigmas\ for\ each\ time\ step\ and\ each\ data\ type}}
+\DoxyCodeLine{00681\ \ \ sigmas\ =\ (\textcolor{keywordtype}{double}\ ***)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}\ **));}
+\DoxyCodeLine{00682\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00683\ \ \ \ \ sigmas[loc]\ =\ make2DArray(steps[loc],\ numDataTypes);\ \textcolor{comment}{//\ make\ 2-\/d\ array\ just\ big\ enough\ for\ known\ \#\ of\ time\ steps\ in\ this\ location}}
+\DoxyCodeLine{00684\ }
+\DoxyCodeLine{00685\ \ \ valid\ =\ (\textcolor{keywordtype}{int}\ ***)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}\ **));}
+\DoxyCodeLine{00686\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00687\ \ \ \ \ valid[loc]\ =\ make2DIntArray(numData,\ numDataTypes);\ \textcolor{comment}{//\ make\ 2-\/d\ array\ just\ big\ enough\ for\ known\ \#\ of\ time\ steps\ in\ this\ location}}
+\DoxyCodeLine{00688\ \ \ oneLine\ =\ makeArray(totNumDataTypes);}
+\DoxyCodeLine{00689\ }
+\DoxyCodeLine{00690\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)\ \{}
+\DoxyCodeLine{00691\ \ \ \ \ \textcolor{keywordflow}{for}\ (index\ =\ 0;\ index\ <\ steps[loc];\ index++)\ \{}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ readDataLine(in1,\ oneLine,\ totNumDataTypes);}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \textcolor{comment}{//\ assign\ data\ elements\ appropriately,\ based\ on\ which\ data\ types\ we're\ using:}}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ data[loc][index][i]\ =\ oneLine[dataTypeIndices[i]];}
+\DoxyCodeLine{00696\ }
+\DoxyCodeLine{00697\ \ \ \ \ \ \ readDataLine(in2,\ oneLine,\ totNumDataTypes);\ \textcolor{comment}{//\ read\ valid\ file}}
+\DoxyCodeLine{00698\ \ \ \ \ \ \ \textcolor{comment}{//\ assign\ valid\ elements\ appropriately,\ based\ on\ which\ data\ types\ we're\ using:}}
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ valid[loc][index][i]\ =\ (oneLine[dataTypeIndices[i]]\ >=\ validFrac);}
+\DoxyCodeLine{00701\ }
+\DoxyCodeLine{00702\ \ \ \ \ \ \ readDataLine(in3,\ oneLine,\ totNumDataTypes);\ \textcolor{comment}{//\ read\ sigmas\ file}}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \textcolor{comment}{//\ assign\ sigmas\ elements\ appropriately,\ based\ on\ which\ data\ types\ we're\ using:}}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \ \ sigmas[loc][index][i]\ =\ oneLine[dataTypeIndices[i]];}
+\DoxyCodeLine{00706\ \ \ \ \ \}}
+\DoxyCodeLine{00707\ \ \ \}}
+\DoxyCodeLine{00708\ }
+\DoxyCodeLine{00709\ \ \ free(oneLine);}
+\DoxyCodeLine{00710\ \ \ fclose(in1);}
+\DoxyCodeLine{00711\ \ \ fclose(in2);}
+\DoxyCodeLine{00712\ \ \ fclose(in3);}
+\DoxyCodeLine{00713\ }
+\DoxyCodeLine{00714\ \ \ startOpt\ =\ (\textcolor{keywordtype}{int}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00715\ \ \ endOpt\ =\ (\textcolor{keywordtype}{int}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00716\ \ \ readIndicesFile(optIndicesFile,\ startOpt,\ endOpt,\ numLocs,\ steps);}
+\DoxyCodeLine{00717\ }
+\DoxyCodeLine{00718\ \ \ \textcolor{comment}{//\ now\ find\ start\ day,\ start\ year,\ and\ steps\ per\ day}}
+\DoxyCodeLine{00719\ }
+\DoxyCodeLine{00720\ \ \ aggInfo\ =\ (AggregateInfo\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(AggregateInfo));}
+\DoxyCodeLine{00721\ }
+\DoxyCodeLine{00722\ \ \ tempStartCompare\ =\ (\textcolor{keywordtype}{int}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00723\ \ \ tempEndCompare\ =\ (\textcolor{keywordtype}{int}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00724\ \ \ readIndicesFile(compareIndicesFile,\ tempStartCompare,\ tempEndCompare,\ numLocs,\ steps);}
+\DoxyCodeLine{00725\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)\ \{}
+\DoxyCodeLine{00726\ \ \ \ \ aggInfo[loc].startPt\ =\ tempStartCompare[loc];}
+\DoxyCodeLine{00727\ \ \ \ \ aggInfo[loc].endPt\ =\ tempEndCompare[loc];}
+\DoxyCodeLine{00728\ \ \ \}}
+\DoxyCodeLine{00729\ \ \ free(tempStartCompare);}
+\DoxyCodeLine{00730\ \ \ free(tempEndCompare);}
+\DoxyCodeLine{00731\ }
+\DoxyCodeLine{00732\ \ \ in1\ =\ openFile(spdFile,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00733\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)\ \{}
+\DoxyCodeLine{00734\ \ \ \ \ aggInfo[loc].numDays\ =\ 0;}
+\DoxyCodeLine{00735\ }
+\DoxyCodeLine{00736\ \ \ \ \ \textcolor{keywordflow}{if}\ (fscanf(in1,\ \textcolor{stringliteral}{"{}\%d\ \%d"{}},\ \&year,\ \&julianDay)\ ==\ EOF)\ \{\ \textcolor{comment}{//\ read\ year\ and\ julianDay\ (make\ sure\ there's\ something\ to\ read!)}}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ unexpected\ EOF\ trying\ to\ read\ loc\ \#\%d\ from\ spd\ file\(\backslash\)n"{}},\ loc);}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00739\ \ \ \ \ \}}
+\DoxyCodeLine{00740\ \ \ \ \ leapYr\ =\ (year\ \%\ 4\ ==\ 0);\ \textcolor{comment}{//\ this\ holds\ for\ 1900\ <\ year\ <\ 2100}}
+\DoxyCodeLine{00741\ }
+\DoxyCodeLine{00742\ \ \ \ \ \textcolor{comment}{//\ find\ start\ point\ for\ comparisons:}}
+\DoxyCodeLine{00743\ \ \ \ \ dataCount\ =\ 0;}
+\DoxyCodeLine{00744\ \ \ \ \ fscanf(in1,\ \textcolor{stringliteral}{"{}\%s"{}},\ spdString);}
+\DoxyCodeLine{00745\ \ \ \ \ status\ =\ parseSpdValue(spdString,\ \&spd,\ \&count);}
+\DoxyCodeLine{00746\ \ \ \ \ \textcolor{keywordflow}{if}\ (status\ !=\ 1)\ \{\ \textcolor{comment}{//\ read\ -\/1\ or\ \#<n>:\ this\ is\ an\ error\ for\ first\ value}}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ read\ -\/1\ or\ \#<n>\ for\ first\ spd\ value\(\backslash\)n"{}});}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00749\ \ \ \ \ \}}
+\DoxyCodeLine{00750\ \ \ \ \ dataCount\ +=\ spd;}
+\DoxyCodeLine{00751\ \ \ \ \ count-\/-\/;\ \textcolor{comment}{//\ decrement\ count\ to\ note\ that\ we\ stored\ the\ spd\ value\ (now\ count\ will\ be\ 0)}}
+\DoxyCodeLine{00752\ \ \ \ \ \textcolor{keywordflow}{while}\ (dataCount\ <\ aggInfo[loc].startPt)\ \{}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ fscanf(in1,\ \textcolor{stringliteral}{"{}\%s"{}},\ spdString);}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ status\ =\ parseSpdValue(spdString,\ \&spd,\ \&count);}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (status\ ==\ -\/1)\ \{\ \textcolor{comment}{//\ error:\ we've\ reached\ end\ of\ data\ before\ finding\ start\ position!}}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ reading\ spd\ file:\ reached\ end\ of\ data\ before\ finding\ start\ position\(\backslash\)n"{}});}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00758\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00759\ }
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (count\ >\ 0\ \&\&\ dataCount\ <\ aggInfo[loc].startPt)\ \{\ \textcolor{comment}{//\ add\ correct\ number\ of\ spd's,\ but\ terminate\ if\ dataCount\ becomes\ >=\ startCompare}}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ dataCount\ +=\ spd;}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ julianDay++;}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((julianDay\ >\ 365\ \&\&\ !leapYr)\ ||\ (julianDay\ >\ 366))\ \{\ \textcolor{comment}{//\ HAPPY\ NEW\ YEAR!}}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ \ \ \ \ julianDay\ =\ 1;}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ \ \ \ \ year++;}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \ \ leapYr\ =\ (year\ \%\ 4\ ==\ 0);\ \textcolor{comment}{//\ holds\ for\ 1900\ <\ year\ <\ 2100}}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \}\ \textcolor{comment}{//\ if}}
+\DoxyCodeLine{00768\ }
+\DoxyCodeLine{00769\ \ \ \ \ \ \ \ \ count-\/-\/;\ \textcolor{comment}{//\ decrement\ count:\ we've\ added\ one\ spd.}}
+\DoxyCodeLine{00770\ \ \ \ \ \ \ \}\ \textcolor{comment}{//\ while}}
+\DoxyCodeLine{00771\ \ \ \ \ \}\ \textcolor{comment}{//\ outer\ while}}
+\DoxyCodeLine{00772\ \ \ \ \ \textcolor{comment}{//\ NOTE:\ may\ still\ have\ count\ >\ 0\ if\ we\ terminated\ while\ in\ the\ middle\ of\ processing\ a\ \#n;\ will\ deal\ with\ this\ in\ just\ a\ bit}}
+\DoxyCodeLine{00773\ }
+\DoxyCodeLine{00774\ \ \ \ \ \textcolor{comment}{//\ save\ position,\ dataCount,\ and\ remaining\ count\ and\ last\ spd\ read:\ we'll\ need\ this\ later,\ when\ rewind\ file\ and\ re-\/read\ spd's}}
+\DoxyCodeLine{00775\ \ \ \ \ filePos\ =\ ftell(in1);\ \textcolor{comment}{//\ get\ current\ position\ so\ we\ can\ rewind\ to\ here\ later}}
+\DoxyCodeLine{00776\ }
+\DoxyCodeLine{00777\ \ \ \ \ startCount\ =\ count;}
+\DoxyCodeLine{00778\ \ \ \ \ startSpd\ =\ spd;}
+\DoxyCodeLine{00779\ \ \ \ \ startDataCount\ =\ dataCount;}
+\DoxyCodeLine{00780\ }
+\DoxyCodeLine{00781\ \ \ \ \ aggInfo[loc].startYear\ =\ year;}
+\DoxyCodeLine{00782\ \ \ \ \ aggInfo[loc].startDay\ =\ julianDay;}
+\DoxyCodeLine{00783\ \ \ \ \ aggInfo[loc].numDays\ =\ 1;\ \textcolor{comment}{//\ we've\ found\ our\ first\ day}}
+\DoxyCodeLine{00784\ }
+\DoxyCodeLine{00785\ \ \ \ \ \textcolor{comment}{//\ now\ find\ number\ of\ days:}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \ \ \ \ \textcolor{keywordflow}{if}\ (count\ ==\ 0)\ \{\ \textcolor{comment}{//\ we\ did\ NOT\ stop\ above\ while\ loop\ in\ the\ middle\ of\ going\ through\ a\ \#<n>}}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ fscanf(in1,\ \textcolor{stringliteral}{"{}\%s"{}},\ spdString);}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ status\ =\ parseSpdValue(spdString,\ \&spd,\ \&count);}
+\DoxyCodeLine{00790\ \ \ \ \ \}}
+\DoxyCodeLine{00791\ \ \ \ \ \textcolor{comment}{//\ if\ count\ >\ 0,\ we\ just\ leave\ count\ and\ spd\ as\ they\ are\ -\/\ as\ if\ we\ just\ read\ \#count}}
+\DoxyCodeLine{00792\ \ \ \ \ \textcolor{keywordflow}{while}\ (dataCount\ <\ aggInfo[loc].endPt\ \&\&\ status\ !=\ -\/1)\ \{}
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (count\ >\ 0\ \&\&\ dataCount\ <\ aggInfo[loc].endPt)\ \{\ \textcolor{comment}{//\ add\ correct\ number\ of\ spd's,\ but\ terminate\ if\ dataCount\ becomes\ >=\ endCompare}}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ dataCount\ +=\ spd;}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ aggInfo[loc].numDays++;}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ count-\/-\/;}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \}\ \textcolor{comment}{//\ while}}
+\DoxyCodeLine{00798\ }
+\DoxyCodeLine{00799\ \ \ \ \ \ \ fscanf(in1,\ \textcolor{stringliteral}{"{}\%s"{}},\ spdString);}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ status\ =\ parseSpdValue(spdString,\ \&spd,\ \&count);}
+\DoxyCodeLine{00801\ \ \ \ \ \}\ \textcolor{comment}{//\ outer\ while}}
+\DoxyCodeLine{00802\ }
+\DoxyCodeLine{00803\ \ \ \ \ \textcolor{keywordflow}{if}\ (dataCount\ <\ aggInfo[loc].endPt)\ \{\ \textcolor{comment}{//\ we\ reached\ status\ ==\ -\/1\ before\ finding\ the\ end!}}
+\DoxyCodeLine{00804\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ reading\ spd\ file:\ reached\ end\ of\ data\ before\ dataCount\ reached\ end\ location\(\backslash\)n"{}});}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00806\ \ \ \ \ \}}
+\DoxyCodeLine{00807\ }
+\DoxyCodeLine{00808\ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}Location\ \#\%d:\ Post-\/comparisons:\ start\ year\ =\ \%d,\ start\ day\ =\ \%d,\ \#\ days\ =\ \%d\(\backslash\)n\(\backslash\)n"{}},}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \ \ \ \ loc,\ aggInfo[loc].startYear,\ aggInfo[loc].startDay,\ aggInfo[loc].numDays);}
+\DoxyCodeLine{00810\ }
+\DoxyCodeLine{00811\ \ \ \ \ aggInfo[loc].spd\ =\ (\textcolor{keywordtype}{int}\ *)malloc(aggInfo[loc].numDays\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00812\ }
+\DoxyCodeLine{00813\ \ \ \ \ fseek(in1,\ filePos,\ SEEK\_SET);\ \textcolor{comment}{/*\ rewind\ to\ just\ before\ first\ spd\ value\ after\ any\ we\ skipped\ to\ get\ to\ startCompare}}
+\DoxyCodeLine{00814\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ note:\ we\ have\ skipped\ one\ extra\ spd\ string\ -\/\ but\ this\ is\ recorded\ in\ saved\ values\ ("{}start*"{}\ variables)}}
+\DoxyCodeLine{00815\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SEEK\_SET\ makes\ offset\ from\ start\ of\ file;\ filePos\ is\ set\ above\ */}}
+\DoxyCodeLine{00816\ \ \ \ \ \textcolor{comment}{/*\ restore\ dataCount,\ count\ and\ spd\ from\ 1st\ pass\ through\ line}}
+\DoxyCodeLine{00817\ \textcolor{comment}{\ \ \ \ \ \ \ These\ were\ set\ when\ we\ were\ at\ position\ given\ by\ filePos}}
+\DoxyCodeLine{00818\ \textcolor{comment}{\ \ \ \ \ \ \ Note:\ we\ may\ have\ to\ deal\ with\ count\ >\ 0\ */}}
+\DoxyCodeLine{00819\ }
+\DoxyCodeLine{00820\ \ \ \ \ dataCount\ =\ startDataCount;}
+\DoxyCodeLine{00821\ \ \ \ \ count\ =\ startCount;}
+\DoxyCodeLine{00822\ \ \ \ \ spd\ =\ startSpd;}
+\DoxyCodeLine{00823\ }
+\DoxyCodeLine{00824\ \ \ \ \ aggInfo[loc].spd[0]\ =\ dataCount\ -\/\ aggInfo[loc].startPt\ +\ 1;\ \textcolor{comment}{//\ accounts\ for\ possible\ missing\ steps\ in\ first\ day}}
+\DoxyCodeLine{00825\ }
+\DoxyCodeLine{00826\ \ \ \ \ \textcolor{keywordflow}{if}\ (count\ ==\ 0)\ \{\ \textcolor{comment}{//\ we\ did\ NOT\ stop\ 1st\ pass\ in\ the\ middle\ of\ going\ through\ a\ \#n}}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ fscanf(in1,\ \textcolor{stringliteral}{"{}\%s"{}},\ spdString);}
+\DoxyCodeLine{00828\ \ \ \ \ \ \ status\ =\ parseSpdValue(spdString,\ \&spd,\ \&count);}
+\DoxyCodeLine{00829\ \ \ \ \ \}}
+\DoxyCodeLine{00830\ \ \ \ \ \textcolor{comment}{//\ if\ count\ >\ 0,\ we\ just\ leave\ count\ and\ spd\ as\ they\ are\ -\/\ as\ if\ we\ just\ read\ \#count}}
+\DoxyCodeLine{00831\ }
+\DoxyCodeLine{00832\ \ \ \ \ \textcolor{comment}{//\ now\ fill\ spd\ array:}}
+\DoxyCodeLine{00833\ \ \ \ \ index\ =\ 1;}
+\DoxyCodeLine{00834\ \ \ \ \ \textcolor{keywordflow}{while}\ (index\ <\ aggInfo[loc].numDays)\ \{}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (count\ >\ 0\ \&\&\ index\ <\ aggInfo[loc].numDays)\ \{\ \textcolor{comment}{//\ while\ loop\ needed\ to\ process\ \#n\ possibility}}
+\DoxyCodeLine{00836\ \ \ \ \ \ \ \ \ aggInfo[loc].spd[index]\ =\ spd;}
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ dataCount\ +=\ spd;}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ index++;}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ count-\/-\/;}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \}\ \textcolor{comment}{//\ while}}
+\DoxyCodeLine{00841\ }
+\DoxyCodeLine{00842\ \ \ \ \ \ \ fscanf(in1,\ \textcolor{stringliteral}{"{}\%s"{}},\ spdString);}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ status\ =\ parseSpdValue(spdString,\ \&spd,\ \&count);}
+\DoxyCodeLine{00844\ \ \ \ \ \}\ \textcolor{comment}{//\ outer\ while}}
+\DoxyCodeLine{00845\ }
+\DoxyCodeLine{00846\ \ \ \ \ aggInfo[loc].spd[aggInfo[loc].numDays\ -\/\ 1]\ -\/=\ (dataCount\ -\/\ aggInfo[loc].endPt);\ \textcolor{comment}{//\ account\ for\ possible\ missing\ steps\ in\ last\ day}}
+\DoxyCodeLine{00847\ }
+\DoxyCodeLine{00848\ \ \ \ \ \textcolor{keywordflow}{while}\ (status\ !=\ -\/1)\ \{\ \textcolor{comment}{//\ read\ values\ until\ we\ hit\ the\ -\/1\ marking\ end\ of\ this\ location\ (if\ we\ haven't\ already)}}
+\DoxyCodeLine{00849\ \ \ \ \ \ \ fscanf(in1,\ \textcolor{stringliteral}{"{}\%s"{}},\ spdString);}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ status\ =\ parseSpdValue(spdString,\ \&spd,\ \&count);}
+\DoxyCodeLine{00851\ \ \ \ \ \}}
+\DoxyCodeLine{00852\ \ \ \}\ \textcolor{comment}{//\ for\ (loc)}}
+\DoxyCodeLine{00853\ }
+\DoxyCodeLine{00854\ \ \ fclose(in1);}
+\DoxyCodeLine{00855\ \}}
+\DoxyCodeLine{00856\ }
+\DoxyCodeLine{00857\ }
+\DoxyCodeLine{00858\ \textcolor{comment}{/*\ pre:\ readData\ has\ been\ called\ (to\ set\ global\ startOpt,\ endOpt\ and\ numLocs\ appropriately)}}
+\DoxyCodeLine{00859\ \textcolor{comment}{}}
+\DoxyCodeLine{00860\ \textcolor{comment}{\ \ \ read\ number\ of\ time\ steps\ per\ each\ model-\/data\ aggregation\ from\ file}}
+\DoxyCodeLine{00861\ \textcolor{comment}{\ \ \ each\ line\ in\ fileForAgg\ contains\ aggregation\ info\ for\ one\ location,}}
+\DoxyCodeLine{00862\ \textcolor{comment}{\ \ \ where\ each\ value\ (i)\ on\ a\ given\ line\ is\ an\ integer\ giving\ the\ number\ of\ time\ steps\ in\ aggregation\ i\ in\ that\ time\ step}}
+\DoxyCodeLine{00863\ \textcolor{comment}{\ \ \ (e.g.\ to\ run\ model-\/data\ comparison\ on\ a\ yearly\ aggregation,\ each\ value\ would\ be\ number\ of\ steps\ in\ year\ i);}}
+\DoxyCodeLine{00864\ \textcolor{comment}{\ \ \ each\ line\ must\ be\ terminated\ with\ a\ -\/1}}
+\DoxyCodeLine{00865\ \textcolor{comment}{}}
+\DoxyCodeLine{00866\ \textcolor{comment}{\ \ \ if\ sum\ of\ all\ time\ steps\ (i.e.\ sum\ of\ all\ numbers\ on\ line)\ differs\ from\ total\ number\ of\ data,}}
+\DoxyCodeLine{00867\ \textcolor{comment}{\ \ \ exit\ with\ an\ error\ message}}
+\DoxyCodeLine{00868\ \textcolor{comment}{}}
+\DoxyCodeLine{00869\ \textcolor{comment}{\ \ \ otherwise,}}
+\DoxyCodeLine{00870\ \textcolor{comment}{\ \ \ set\ global\ numAggSteps\ (1-\/d\ array:\ spatial)\ and\ aggSteps\ (2-\/d\ array:\ spatial)\ and\ unaggedWeight\ appropriately}}
+\DoxyCodeLine{00871\ \textcolor{comment}{\ \ \ also\ compute\ aggedData\ array\ (of\ size\ numLocs\ x\ numAggSteps\ x\ numDataTypes)}}
+\DoxyCodeLine{00872\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00873\ \textcolor{keywordtype}{void}\ readFileForAgg(\textcolor{keywordtype}{char}\ *fileForAgg,\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{double}\ myUnaggedWeight)\ \{}
+\DoxyCodeLine{00874\ \ \ FILE\ *f;}
+\DoxyCodeLine{00875\ \ \ \textcolor{keywordtype}{int}\ curr,\ sum,\ count,\ maxCount;}
+\DoxyCodeLine{00876\ \ \ \textcolor{keywordtype}{int}\ i,\ loc;}
+\DoxyCodeLine{00877\ \ \ \textcolor{keywordtype}{long}\ filePos;\ \textcolor{comment}{//\ so\ we\ can\ rewind\ to\ a\ previous\ location\ in\ the\ file}}
+\DoxyCodeLine{00878\ }
+\DoxyCodeLine{00879\ \ \ numAggSteps\ =\ (\textcolor{keywordtype}{int}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00880\ \ \ aggSteps\ =\ (\textcolor{keywordtype}{int}\ **)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}\ *));}
+\DoxyCodeLine{00881\ \ \ aggedData\ =\ (\textcolor{keywordtype}{double}\ ***)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}\ **));}
+\DoxyCodeLine{00882\ }
+\DoxyCodeLine{00883\ \ \ f\ =\ openFile(fileForAgg,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00884\ }
+\DoxyCodeLine{00885\ \ \ maxCount\ =\ 0;}
+\DoxyCodeLine{00886\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)\ \{}
+\DoxyCodeLine{00887\ \ \ \ \ \textcolor{comment}{//\ first,\ find\ number\ of\ agged\ steps\ in\ this\ location:}}
+\DoxyCodeLine{00888\ \ \ \ \ filePos\ =\ ftell(f);\ \textcolor{comment}{//\ save\ current\ location}}
+\DoxyCodeLine{00889\ \ \ \ \ count\ =\ 0;}
+\DoxyCodeLine{00890\ \ \ \ \ fscanf(f,\ \textcolor{stringliteral}{"{}\%d"{}},\ \&curr);}
+\DoxyCodeLine{00891\ \ \ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ -\/1)\ \{\ \textcolor{comment}{//\ count\ number\ of\ values\ before\ next\ -\/1}}
+\DoxyCodeLine{00892\ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{00893\ \ \ \ \ \ \ fscanf(f,\ \textcolor{stringliteral}{"{}\%d"{}},\ \&curr);}
+\DoxyCodeLine{00894\ \ \ \ \ \}}
+\DoxyCodeLine{00895\ \ \ \ \ numAggSteps[loc]\ =\ count;}
+\DoxyCodeLine{00896\ \ \ \ \ aggSteps[loc]\ =\ (\textcolor{keywordtype}{int}\ *)malloc(count\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00897\ \ \ \ \ \textcolor{keywordflow}{if}\ (count\ >\ maxCount)}
+\DoxyCodeLine{00898\ \ \ \ \ \ \ maxCount\ =\ count;}
+\DoxyCodeLine{00899\ }
+\DoxyCodeLine{00900\ \ \ \ \ \textcolor{comment}{//\ now\ fill\ aggSteps[loc]\ vector}}
+\DoxyCodeLine{00901\ \ \ \ \ fseek(f,\ filePos,\ SEEK\_SET);\ \textcolor{comment}{//\ rewind\ to\ beginning\ of\ this\ location\ (SEEK\_SET\ makes\ offset\ from\ start\ of\ file)}}
+\DoxyCodeLine{00902\ \ \ \ \ sum\ =\ 0;\ \textcolor{comment}{//\ keep\ count\ of\ aggSteps\ to\ make\ sure\ we\ reach\ correct\ total}}
+\DoxyCodeLine{00903\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numAggSteps[loc];\ i++)\ \{\ \textcolor{comment}{//\ read\ each\ piece\ of\ data}}
+\DoxyCodeLine{00904\ \ \ \ \ \ \ fscanf(f,\ \textcolor{stringliteral}{"{}\%d"{}},\ \&curr);}
+\DoxyCodeLine{00905\ \ \ \ \ \ \ aggSteps[loc][i]\ =\ curr;}
+\DoxyCodeLine{00906\ \ \ \ \ \ \ sum\ +=\ curr;}
+\DoxyCodeLine{00907\ \ \ \ \ \}}
+\DoxyCodeLine{00908\ \ \ \ \ fscanf(f,\ \textcolor{stringliteral}{"{}\%d"{}},\ \&curr);\ \textcolor{comment}{//\ read\ final\ "{}-\/1"{}}}
+\DoxyCodeLine{00909\ }
+\DoxyCodeLine{00910\ \ \ \ \ \textcolor{keywordflow}{if}\ (sum\ !=\ (endOpt[loc]\ -\/\ startOpt[loc]\ +\ 1))\ \{}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ total\ number\ of\ data\ points\ specified\ in\ \%s\ for\ location\ \%d\ (\%d)\ differs\ from\ number\ implied\ by\(\backslash\)n"{}},\ fileForAgg,\ loc,\ sum);}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}startOpt\ =\ \%d\ and\ endOpt\ =\ \%d\ (\%d)\(\backslash\)n"{}},\ startOpt[loc],\ endOpt[loc],\ (endOpt[loc]\ -\/\ startOpt[loc]\ +\ 1));}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00914\ \ \ \ \ \}}
+\DoxyCodeLine{00915\ }
+\DoxyCodeLine{00916\ \ \ \ \ aggedData[loc]\ =\ make2DArray(numAggSteps[loc],\ numDataTypes);}
+\DoxyCodeLine{00917\ \ \ \ \ computeAggedData(aggedData[loc],\ data[loc],\ numAggSteps[loc],\ aggSteps[loc],\ startOpt[loc],\ numDataTypes);}
+\DoxyCodeLine{00918\ \ \ \}\ \textcolor{comment}{//\ for\ (loc)}}
+\DoxyCodeLine{00919\ }
+\DoxyCodeLine{00920\ \ \ fclose(f);}
+\DoxyCodeLine{00921\ }
+\DoxyCodeLine{00922\ \ \ aggedModel\ =\ make2DArray(maxCount,\ numDataTypes);}
+\DoxyCodeLine{00923\ \ \ unaggedWeight\ =\ myUnaggedWeight;}
+\DoxyCodeLine{00924\ \}}
+\DoxyCodeLine{00925\ }
+\DoxyCodeLine{00926\ }
+\DoxyCodeLine{00927\ \textcolor{comment}{//\ malloc\ space\ for\ outputInfo\ array[0..numDataTypes-\/1],\ and\ outputInfo[*].years\ arrays\ for\ a\ single\ location,\ loc}}
+\DoxyCodeLine{00928\ \textcolor{comment}{//\ make\ years\ arrays\ large\ enough\ to\ hold\ data\ from\ given\ location}}
+\DoxyCodeLine{00929\ OutputInfo\ *newOutputInfo(\textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00930\ \ \ OutputInfo\ *outputInfo;}
+\DoxyCodeLine{00931\ \ \ \textcolor{keywordtype}{int}\ years;}
+\DoxyCodeLine{00932\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00933\ }
+\DoxyCodeLine{00934\ \ \ outputInfo\ =\ (OutputInfo\ *)malloc(numDataTypes\ *\ \textcolor{keyword}{sizeof}(OutputInfo));}
+\DoxyCodeLine{00935\ }
+\DoxyCodeLine{00936\ \ \ years\ =\ aggInfo[loc].numDays/365\ +\ 2;\ \textcolor{comment}{//\ this\ is\ the\ most\ years\ that\ could\ be\ represented\ by\ this\ number\ of\ days}}
+\DoxyCodeLine{00937\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)}
+\DoxyCodeLine{00938\ \ \ \ \ outputInfo[i].years\ =\ makeArray(years);}
+\DoxyCodeLine{00939\ }
+\DoxyCodeLine{00940\ \ \ \textcolor{keywordflow}{return}\ outputInfo;}
+\DoxyCodeLine{00941\ \}}
+\DoxyCodeLine{00942\ }
+\DoxyCodeLine{00943\ \textcolor{comment}{//\ copy\ data\ from\ outputInfo\ ptr\ in\ to\ outputInfo\ ptr\ out}}
+\DoxyCodeLine{00944\ \textcolor{comment}{//\ PRE:\ outputInfo\ struct\ pointed\ to\ by\ out\ has\ already\ been\ malloced,\ as\ has\ its\ years\ array}}
+\DoxyCodeLine{00945\ \textcolor{keywordtype}{void}\ copyOutputInfo(OutputInfo\ *out,\ OutputInfo\ *in)\ \{}
+\DoxyCodeLine{00946\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00947\ }
+\DoxyCodeLine{00948\ \ \ out-\/>meanError\ =\ in-\/>meanError;}
+\DoxyCodeLine{00949\ \ \ out-\/>daysError\ =\ in-\/>daysError;}
+\DoxyCodeLine{00950\ \ \ out-\/>numYears\ =\ in-\/>numYears;}
+\DoxyCodeLine{00951\ }
+\DoxyCodeLine{00952\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ out-\/>numYears;\ i++)}
+\DoxyCodeLine{00953\ \ \ \ \ out-\/>years[i]\ =\ in-\/>years[i];}
+\DoxyCodeLine{00954\ \}}
+\DoxyCodeLine{00955\ }
+\DoxyCodeLine{00956\ \textcolor{comment}{//\ given\ an\ outputInfo\ array[0..numDataTypes-\/1]\ (dynamically\ allocated),\ free\ years\ and\ the\ array\ itself}}
+\DoxyCodeLine{00957\ \textcolor{keywordtype}{void}\ freeOutputInfo(OutputInfo\ *outputInfo,\ \textcolor{keywordtype}{int}\ numDataTypes)\ \{}
+\DoxyCodeLine{00958\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00959\ }
+\DoxyCodeLine{00960\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numDataTypes;\ i++)}
+\DoxyCodeLine{00961\ \ \ \ \ free(outputInfo[i].years);}
+\DoxyCodeLine{00962\ \ \ free(outputInfo);}
+\DoxyCodeLine{00963\ \}}
+\DoxyCodeLine{00964\ }
+\DoxyCodeLine{00965\ }
+\DoxyCodeLine{00966\ \textcolor{comment}{//\ call\ this\ when\ done\ program:}}
+\DoxyCodeLine{00967\ \textcolor{comment}{//\ free\ space\ used\ by\ global\ pointers}}
+\DoxyCodeLine{00968\ \textcolor{keywordtype}{void}\ cleanupParamchange()\ \{}
+\DoxyCodeLine{00969\ \ \ \textcolor{keywordtype}{int}\ loc;}
+\DoxyCodeLine{00970\ }
+\DoxyCodeLine{00971\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00972\ \ \ \ \ free2DArray((\textcolor{keywordtype}{void}\ **)data[loc]);}
+\DoxyCodeLine{00973\ \ \ free(data);}
+\DoxyCodeLine{00974\ }
+\DoxyCodeLine{00975\ \ \ free2DArray((\textcolor{keywordtype}{void}\ **)model);}
+\DoxyCodeLine{00976\ }
+\DoxyCodeLine{00977\ \ \ free(startOpt);}
+\DoxyCodeLine{00978\ \ \ free(endOpt);}
+\DoxyCodeLine{00979\ }
+\DoxyCodeLine{00980\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00981\ \ \ \ \ free2DArray((\textcolor{keywordtype}{void}\ **)valid[loc]);}
+\DoxyCodeLine{00982\ \ \ free(valid);}
+\DoxyCodeLine{00983\ }
+\DoxyCodeLine{00984\ \ \ \textcolor{comment}{//\ JZ\ ADD:\ Free\ sigma\ values}}
+\DoxyCodeLine{00985\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00986\ \ \ \ \ free2DArray((\textcolor{keywordtype}{void}\ **)sigmas[loc]);}
+\DoxyCodeLine{00987\ \ \ free(sigmas);}
+\DoxyCodeLine{00988\ }
+\DoxyCodeLine{00989\ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00990\ \ \ \ \ free(aggInfo[loc].spd);}
+\DoxyCodeLine{00991\ \ \ free(aggInfo);}
+\DoxyCodeLine{00992\ }
+\DoxyCodeLine{00993\ \ \ \textcolor{keywordflow}{if}\ (numAggSteps\ !=\ NULL)\ \textcolor{comment}{//\ we've\ malloced\ it}}
+\DoxyCodeLine{00994\ \ \ \ \ free(numAggSteps);}
+\DoxyCodeLine{00995\ }
+\DoxyCodeLine{00996\ \ \ \textcolor{keywordflow}{if}\ (aggSteps\ !=\ NULL)\ \{\ \textcolor{comment}{//\ we've\ malloced\ it}}
+\DoxyCodeLine{00997\ \ \ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{00998\ \ \ \ \ \ \ free(aggSteps[loc]);}
+\DoxyCodeLine{00999\ \ \ \ \ free(aggSteps);}
+\DoxyCodeLine{01000\ \ \ \}}
+\DoxyCodeLine{01001\ }
+\DoxyCodeLine{01002\ \ \ \textcolor{keywordflow}{if}\ (aggedData\ !=\ NULL)\ \{\ \textcolor{comment}{//\ we've\ malloced\ it}}
+\DoxyCodeLine{01003\ \ \ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)}
+\DoxyCodeLine{01004\ \ \ \ \ \ \ free2DArray((\textcolor{keywordtype}{void}\ **)aggedData[loc]);}
+\DoxyCodeLine{01005\ \ \ \ \ free(aggedData);}
+\DoxyCodeLine{01006\ \ \ \}}
+\DoxyCodeLine{01007\ }
+\DoxyCodeLine{01008\ \ \ \textcolor{keywordflow}{if}\ (aggedModel\ !=\ NULL)\ \textcolor{comment}{//\ we've\ malloced\ it}}
+\DoxyCodeLine{01009\ \ \ \ \ free2DArray((\textcolor{keywordtype}{void}\ **)aggedModel);}
+\DoxyCodeLine{01010\ \}}
+\DoxyCodeLine{01011\ }
+
+\end{DoxyCode}

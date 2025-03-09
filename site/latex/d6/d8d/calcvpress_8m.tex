@@ -1,0 +1,136 @@
+\doxysection{calcvpress.\+m File Reference}
+\label{calcvpress_8m}\index{calcvpress.m@{calcvpress.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ tair} and \textbf{ tsoil} (\textbf{ all} \textbf{ same} length)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ function} [\textbf{ vpress}, \textbf{ vpd}, \textbf{ vpdsoil}]
+\item 
+\textbf{ tair} and \textbf{ calculate} \&\textbf{ return} \textbf{ the} \textbf{ air} \textbf{ vapor} \textbf{ pressure}
+\item 
+\textbf{ tair} and \textbf{ calculate} \&\textbf{ return} \textbf{ the} air \textbf{ vapor} \textbf{ vpd} in \textbf{ air}
+\item 
+\textbf{ tair} and \textbf{ calculate} \&\textbf{ return} \textbf{ the} \textbf{ air} \textbf{ vapor} \textbf{ vpd} in and \textbf{ vpd} in soil \textbf{ esatair} = \textbf{ zeros}(\textbf{ size}(\textbf{ rhum}))
+\item 
+\textbf{ esatsoil} = \textbf{ zeros}(\textbf{ size}(\textbf{ rhum}))
+\item 
+\textbf{ vpress} = \textbf{ zeros}(\textbf{ size}(\textbf{ rhum}))
+\item 
+\textbf{ vpd} = \textbf{ esatair} -\/ \textbf{ vpress}
+\item 
+\textbf{ vpdsoil} = \textbf{ esatsoil} -\/ \textbf{ vpress}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{calcvpress_8m_a7f7ace41ef43253773e3bb248ea07321} 
+\index{calcvpress.m@{calcvpress.m}!tsoil@{tsoil}}
+\index{tsoil@{tsoil}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{tsoil()}
+{\footnotesize\ttfamily \textbf{ tair} and tsoil (\begin{DoxyParamCaption}\item[{\textbf{ all} \textbf{ same}}]{length }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ and}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{calcvpress_8m_ac09bf4da6cd7d75a7d8341cb4333bfaf} 
+\index{calcvpress.m@{calcvpress.m}!air@{air}}
+\index{air@{air}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{air}
+{\footnotesize\ttfamily \textbf{ tair} and \textbf{ calculate}\& \textbf{ return} \textbf{ the} air \textbf{ vapor} \textbf{ vpd} in air}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ calcvpress.\+m}.
+
+\label{calcvpress_8m_a19dde97bf66ccb942fe7dbc85773ef09} 
+\index{calcvpress.m@{calcvpress.m}!esatair@{esatair}}
+\index{esatair@{esatair}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{esatair}
+{\footnotesize\ttfamily esatair = \textbf{ zeros}(\textbf{ size}(\textbf{ rhum}))}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ calcvpress.\+m}.
+
+\label{calcvpress_8m_ab7396c5f1ae21500430eb796ce436309} 
+\index{calcvpress.m@{calcvpress.m}!esatsoil@{esatsoil}}
+\index{esatsoil@{esatsoil}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{esatsoil}
+{\footnotesize\ttfamily esatsoil = \textbf{ zeros}(\textbf{ size}(\textbf{ rhum}))}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ calcvpress.\+m}.
+
+\label{calcvpress_8m_abd7784c0d2f797911ed8a762e55c1130} 
+\index{calcvpress.m@{calcvpress.m}!function@{function}}
+\index{function@{function}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{function}
+{\footnotesize\ttfamily function[\textbf{ vpress}, \textbf{ vpd}, \textbf{ vpdsoil}]}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ calcvpress(rhum,\ tair,\ tsoil)}
+\DoxyCodeLine{\%\ Given\ filled\ vectors\ of\ rhum}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ calcvpress.\+m}.
+
+\label{calcvpress_8m_a274e8d094c5b8ef441124cf2bd1f6c0f} 
+\index{calcvpress.m@{calcvpress.m}!pressure@{pressure}}
+\index{pressure@{pressure}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{pressure}
+{\footnotesize\ttfamily \textbf{ tair} and \textbf{ calculate}\& \textbf{ return} \textbf{ the} \textbf{ air} \textbf{ vapor} pressure}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ calcvpress.\+m}.
+
+\label{calcvpress_8m_ab17c95386db830e9b2fdd7fdc1b39a13} 
+\index{calcvpress.m@{calcvpress.m}!vpd@{vpd}}
+\index{vpd@{vpd}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{vpd}
+{\footnotesize\ttfamily vpd = \textbf{ esatair} -\/ \textbf{ vpress}}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ calcvpress.\+m}.
+
+
+
+Referenced by \textbf{ main()}, \textbf{ moisture()}, \textbf{ moisture\+\_\+pm()}, \textbf{ pot\+Psn()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{calcvpress_8m_a2cb3f0ede3501f9ffbbd5e75f9ff3b25} 
+\index{calcvpress.m@{calcvpress.m}!vpdsoil@{vpdsoil}}
+\index{vpdsoil@{vpdsoil}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{vpdsoil}
+{\footnotesize\ttfamily vpdsoil = \textbf{ esatsoil} -\/ \textbf{ vpress}}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ calcvpress.\+m}.
+
+\label{calcvpress_8m_a3c927e458ff27cd381e19c7cdfe8df7f} 
+\index{calcvpress.m@{calcvpress.m}!vpress@{vpress}}
+\index{vpress@{vpress}!calcvpress.m@{calcvpress.m}}
+\doxysubsubsection{vpress}
+{\footnotesize\ttfamily vpress = \textbf{ zeros}(\textbf{ size}(\textbf{ rhum}))}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ calcvpress.\+m}.
+
+
+
+Referenced by \textbf{ main()}.
+

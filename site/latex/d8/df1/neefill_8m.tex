@@ -1,0 +1,570 @@
+\doxysection{neefill.\+m File Reference}
+\label{neefill_8m}\index{neefill.m@{neefill.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ nee} (1\+:\textbf{ end}-\/1)]
+\item 
+\textbf{ NIGHTTIME} \textbf{ NEE} (\textbf{ NIGHTTIME} \textbf{ RESP}) \textbf{ wg} =\textbf{ find}($\sim$\textbf{ isnan}(\textbf{ nee}) \& \textbf{ ustar}$>$0.\+25 \& \textbf{ potpar}==0)
+\item 
+\textbf{ respmod} (1)
+\item 
+\textbf{ respmod} (i)
+\item 
+\textbf{ neefill} (\textbf{ wb})
+\item 
+\textbf{ sigfill} (\textbf{ wg})=0.\+0
+\item 
+\textbf{ id} \textbf{ ascii} ()
+\item 
+\textbf{ par} (\textbf{ find}(\textbf{ potpar}==0))=0
+\item 
+\textquotesingle{}data/\textbf{ timeyears}\textquotesingle{} \textbf{ load} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ nee} =\textbf{ nangap}(\textbf{ load}(\textquotesingle{}data/nee\textquotesingle{}))
+\item 
+\textbf{ tair} =\textbf{ load}(\textquotesingle{}data/\textbf{ tairfill}\textquotesingle{})
+\item 
+\textbf{ vpd} =\textbf{ load}(\textquotesingle{}data/\textbf{ vpdfill}\textquotesingle{})
+\item 
+\textbf{ tsoil} =\textbf{ load}(\textquotesingle{}data/\textbf{ tsoilfill}\textquotesingle{})
+\item 
+\textbf{ par} =\textbf{ load}(\textquotesingle{}data/\textbf{ parfill}\textquotesingle{})
+\item 
+\textbf{ ustar} =\textbf{ load}(\textquotesingle{}data/\textbf{ ustarfill}\textquotesingle{})
+\item 
+\textbf{ fh2o} =\textbf{ load}(\textquotesingle{}data/\textbf{ fh2ofill}\textquotesingle{})
+\item 
+\textbf{ wspd} =\textbf{ load}(\textquotesingle{}data/\textbf{ wspdfill}\textquotesingle{})
+\item 
+\textbf{ wdir} =\textbf{ load}(\textquotesingle{}data/\textbf{ wdirfill}\textquotesingle{})
+\item 
+\textbf{ year} =\textbf{ load}(\textquotesingle{}data/year\textquotesingle{})
+\item 
+\textbf{ potpar} =\textbf{ load}(\textquotesingle{}data/potpar\textquotesingle{})
+\item 
+\textbf{ hour} =\textbf{ load}(\textquotesingle{}data/\textbf{ hourofday}\textquotesingle{})
+\item 
+\textbf{ day} =\textbf{ load}(\textquotesingle{}data/\textbf{ dayofyear}\textquotesingle{})
+\item 
+\textbf{ shour} =\textbf{ sin}(2$\ast$\textbf{ pi}$\ast$\textbf{ hour}/24.)
+\item 
+\textbf{ chour} =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$\textbf{ hour}/24.)
+\item 
+\textbf{ sday} =\textbf{ sin}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)
+\item 
+\textbf{ cday} =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)
+\item 
+\textbf{ neem1} =[\textbf{ NaN}
+\item 
+\textbf{ p} =[\textbf{ shour} \textbf{ chour} \textbf{ sday} \textbf{ cday} \textbf{ tair} \textbf{ vpd} \textbf{ tsoil} \textbf{ fh2o} \textbf{ wspd} \textbf{ wdir}]
+\item 
+\textbf{ pj} =[\textbf{ shour}(1) \textbf{ chour}(1) \textbf{ sday}(1) \textbf{ cday}(1) \textbf{ tair}(1) \textbf{ vpd}(1) \textbf{ tsoil}(1) \textbf{ fh2o}(1) 0.\+0 \textbf{ wspd}(1) \textbf{ wdir}(1)]
+\item 
+\textbf{ for} \textbf{ i}
+\item 
+\textbf{ end} \textbf{ neefill} =\textbf{ nee}
+\item 
+\textbf{ sigfill} =\textbf{ sigmod}
+\item 
+\textbf{ err} =\textbf{ nee}-\/\textbf{ neemod}
+\item 
+\textbf{ wg} =\textbf{ find}($\sim$\textbf{ isnan}(\textbf{ nee}) \& $\sim$\textbf{ isnan}(\textbf{ neem1}) \& \textbf{ ustar}$>$0.\+2)
+\item 
+\textbf{ wb} =\textbf{ find}(\textbf{ isnan}(\textbf{ nee}) $\vert$ \textbf{ isnan}(\textbf{ neem1}) $\vert$ \textbf{ ustar}$<$=0.\+2)
+\item 
+\textbf{ pg} =[\textbf{ hour}(\textbf{ wg}) day(\textbf{ wg}) \textbf{ tair}(\textbf{ wg}) \textbf{ par}(\textbf{ wg}) \textbf{ vpd}(\textbf{ wg}) \textbf{ tsoil}(\textbf{ wg}) \textbf{ neem1}(\textbf{ wg})]
+\item 
+\textbf{ tg} =\textbf{ nee}(\textbf{ wg})
+\item 
+\textbf{ R2}
+\item 
+\textbf{ n} =length(\textbf{ err})
+\item 
+\textbf{ i001} =\textbf{ fix}(0.\+001$\ast$n)
+\item 
+\textbf{ i999} =\textbf{ fix}(0.\+999$\ast$n)
+\item 
+\textbf{ f} =\textbf{ find}(\textbf{ sorterr}$>$\textbf{ sorterr}(\textbf{ i001}) \& \textbf{ sorterr}$<$\textbf{ sorterr}(\textbf{ i999}))
+\item 
+\textbf{ tg2} =\textbf{ tg}(\textbf{ isorterr}(\textbf{ f}))
+\item 
+\textbf{ pg2} =\textbf{ pg}(\textbf{ isorterr}(\textbf{ f}),\+:)
+\item 
+\textbf{ R} \textbf{ \+\_\+\+\_\+pad0\+\_\+\+\_\+} =\textbf{ nnregress}(\textbf{ pg},\textbf{ tg},7,1.,1)
+\item 
+\textbf{ wg2} =\textbf{ find}($\sim$\textbf{ isnan}(\textbf{ nee}) \& \textbf{ ustar}$>$0.\+2 \& \textbf{ timeyears}$>$=1997.\+0)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{neefill_8m_a6c887455051134d95fca89c795c0a864} 
+\index{neefill.m@{neefill.m}!ascii@{ascii}}
+\index{ascii@{ascii}!neefill.m@{neefill.m}}
+\doxysubsubsection{ascii()}
+{\footnotesize\ttfamily \textbf{ id} ascii (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+References \textbf{ data}.
+
+\label{neefill_8m_af0fad2ad5972817b9c19b5559f4a7171} 
+\index{neefill.m@{neefill.m}!load@{load}}
+\index{load@{load}!neefill.m@{neefill.m}}
+\doxysubsubsection{load()}
+{\footnotesize\ttfamily \textquotesingle{}data/\textbf{ timeyears}\textquotesingle{} load (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+References \textbf{ data}.
+
+\label{neefill_8m_ac28d39cf2ecdddc0e28d538cf9ecc182} 
+\index{neefill.m@{neefill.m}!nee@{nee}}
+\index{nee@{nee}!neefill.m@{neefill.m}}
+\doxysubsubsection{nee()}
+{\footnotesize\ttfamily nee (\begin{DoxyParamCaption}\item[{1\+:\textbf{ end}-\/}]{1 }\end{DoxyParamCaption})}
+
+\label{neefill_8m_aefb923ac7989e050de2590b74782099e} 
+\index{neefill.m@{neefill.m}!NEE@{NEE}}
+\index{NEE@{NEE}!neefill.m@{neefill.m}}
+\doxysubsubsection{NEE()}
+{\footnotesize\ttfamily \textbf{ NIGHTTIME} NEE (\begin{DoxyParamCaption}\item[{\textbf{ NIGHTTIME}}]{RESP }\end{DoxyParamCaption}) =\textbf{ find}($\sim$\textbf{ isnan}(\textbf{ nee}) \& \textbf{ ustar}$>$0.\+25 \& \textbf{ potpar}==0)}
+
+\label{neefill_8m_a948e96ecdc679d0d44ed4dba2a5e56c7} 
+\index{neefill.m@{neefill.m}!neefill@{neefill}}
+\index{neefill@{neefill}!neefill.m@{neefill.m}}
+\doxysubsubsection{neefill()}
+{\footnotesize\ttfamily neefill (\begin{DoxyParamCaption}\item[{\textbf{ wb}}]{ }\end{DoxyParamCaption})}
+
+\label{neefill_8m_a2d8829e718f067c8b933688a248db287} 
+\index{neefill.m@{neefill.m}!par@{par}}
+\index{par@{par}!neefill.m@{neefill.m}}
+\doxysubsubsection{par()}
+{\footnotesize\ttfamily par (\begin{DoxyParamCaption}\item[{\textbf{ find}(\textbf{ potpar}==0)}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+\label{neefill_8m_a7445f2190dd9cffb203be320e3957a5d} 
+\index{neefill.m@{neefill.m}!respmod@{respmod}}
+\index{respmod@{respmod}!neefill.m@{neefill.m}}
+\doxysubsubsection{respmod()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily respmod (\begin{DoxyParamCaption}\item[{1}]{ }\end{DoxyParamCaption})}
+
+\label{neefill_8m_a3b10d2999539aa857a3fe6b49e1abb05} 
+\index{neefill.m@{neefill.m}!respmod@{respmod}}
+\index{respmod@{respmod}!neefill.m@{neefill.m}}
+\doxysubsubsection{respmod()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily respmod (\begin{DoxyParamCaption}\item[{i}]{ }\end{DoxyParamCaption})}
+
+\label{neefill_8m_af446048e212f4802264ffa2095a7909a} 
+\index{neefill.m@{neefill.m}!sigfill@{sigfill}}
+\index{sigfill@{sigfill}!neefill.m@{neefill.m}}
+\doxysubsubsection{sigfill()}
+{\footnotesize\ttfamily sigfill (\begin{DoxyParamCaption}\item[{\textbf{ wg}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{neefill_8m_a5a8d90eb9dea8930df0b3e54dee0f7e7} 
+\index{neefill.m@{neefill.m}!\_\_pad0\_\_@{\_\_pad0\_\_}}
+\index{\_\_pad0\_\_@{\_\_pad0\_\_}!neefill.m@{neefill.m}}
+\doxysubsubsection{\_\_pad0\_\_}
+{\footnotesize\ttfamily \textbf{ R} \+\_\+\+\_\+pad0\+\_\+\+\_\+ =\textbf{ nnregress}(\textbf{ pg},\textbf{ tg},7,1.,1)}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_afb5bc55b6b599479066ff920f6823f12} 
+\index{neefill.m@{neefill.m}!cday@{cday}}
+\index{cday@{cday}!neefill.m@{neefill.m}}
+\doxysubsubsection{cday}
+{\footnotesize\ttfamily cday =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a888f991d6f653e7521f8df3b42d8d52b} 
+\index{neefill.m@{neefill.m}!chour@{chour}}
+\index{chour@{chour}!neefill.m@{neefill.m}}
+\doxysubsubsection{chour}
+{\footnotesize\ttfamily chour =\textbf{ cos}(2$\ast$\textbf{ pi}$\ast$\textbf{ hour}/24.)}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_ae8bf5a756cf15252b4e514a258bbbde9} 
+\index{neefill.m@{neefill.m}!day@{day}}
+\index{day@{day}!neefill.m@{neefill.m}}
+\doxysubsubsection{day}
+{\footnotesize\ttfamily day =\textbf{ load}(\textquotesingle{}data/\textbf{ dayofyear}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a35c114b5c15dfe73342013df07f7230c} 
+\index{neefill.m@{neefill.m}!err@{err}}
+\index{err@{err}!neefill.m@{neefill.m}}
+\doxysubsubsection{err}
+{\footnotesize\ttfamily \textbf{ SCREEN} \textbf{ OUTLINERS} err =\textbf{ nee}-\/\textbf{ neemod}}
+
+
+
+Definition at line \textbf{ 52} of file \textbf{ neefill.\+m}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ goto\+Start()}, and \textbf{ update\+State()}.
+
+\label{neefill_8m_a633de4b0c14ca52ea2432a3c8a5c4c31} 
+\index{neefill.m@{neefill.m}!f@{f}}
+\index{f@{f}!neefill.m@{neefill.m}}
+\doxysubsubsection{f}
+{\footnotesize\ttfamily f =\textbf{ find}(\textbf{ sorterr}$>$\textbf{ sorterr}(\textbf{ i001}) \& \textbf{ sorterr}$<$\textbf{ sorterr}(\textbf{ i999}))}
+
+
+
+Definition at line \textbf{ 86} of file \textbf{ neefill.\+m}.
+
+
+
+Referenced by \textbf{ count\+Lines()}, \textbf{ main()}, \textbf{ numlines()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ open\+File()}, \textbf{ open\+File\+Ext()}, \textbf{ output\+Transpose()}, \textbf{ read\+Clim\+Line()}, \textbf{ read\+File()}, and \textbf{ read\+File\+For\+Agg()}.
+
+\label{neefill_8m_a64ae3c4a9a2ed9de5babbc428ab4b260} 
+\index{neefill.m@{neefill.m}!fh2o@{fh2o}}
+\index{fh2o@{fh2o}!neefill.m@{neefill.m}}
+\doxysubsubsection{fh2o}
+{\footnotesize\ttfamily \textbf{ Bill} \textbf{ Sacks} \textbf{ Modified} function and \textbf{ take} fh2o =\textbf{ load}(\textquotesingle{}data/\textbf{ fh2ofill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a2f5f64dc14f3bf36059a21ca80fec1e5} 
+\index{neefill.m@{neefill.m}!hour@{hour}}
+\index{hour@{hour}!neefill.m@{neefill.m}}
+\doxysubsubsection{hour}
+{\footnotesize\ttfamily hour =\textbf{ load}(\textquotesingle{}data/\textbf{ hourofday}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a6f6ccfcf58b31cb6412107d9d5281426} 
+\index{neefill.m@{neefill.m}!i@{i}}
+\index{i@{i}!neefill.m@{neefill.m}}
+\doxysubsubsection{i}
+{\footnotesize\ttfamily \textbf{ for} i}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=2:length(nee)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ pj=[shour(i)\ chour(i)\ sday(i)\ cday(i)\ tair(i)\ vpd(i)\ tsoil(i)\ fh2o(i)\ respmod(i-\/1)\ wspd(i)\ wdir(i)]}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 41} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_ad2ad4d6e5d45ec2a3fccc3d2db8f83c7} 
+\index{neefill.m@{neefill.m}!i001@{i001}}
+\index{i001@{i001}!neefill.m@{neefill.m}}
+\doxysubsubsection{i001}
+{\footnotesize\ttfamily i001 =\textbf{ fix}(0.\+001$\ast$n)}
+
+
+
+Definition at line \textbf{ 84} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a061387692f0f309f2bdcf61d5267a8ad} 
+\index{neefill.m@{neefill.m}!i999@{i999}}
+\index{i999@{i999}!neefill.m@{neefill.m}}
+\doxysubsubsection{i999}
+{\footnotesize\ttfamily i999 =\textbf{ fix}(0.\+999$\ast$n)}
+
+
+
+Definition at line \textbf{ 85} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_aebc345beb85c4ef4a8f9bd8d23845006} 
+\index{neefill.m@{neefill.m}!n@{n}}
+\index{n@{n}!neefill.m@{neefill.m}}
+\doxysubsubsection{n}
+{\footnotesize\ttfamily \textbf{ the} \textbf{ measured} \textbf{ points} in \textbf{ this} \textbf{ step} n =length(\textbf{ err})}
+
+
+
+Definition at line \textbf{ 83} of file \textbf{ neefill.\+m}.
+
+
+
+Referenced by \textbf{ agged\+Difference()}, \textbf{ assign\+Array()}, \textbf{ count\+Items()}, and \textbf{ difference()}.
+
+\label{neefill_8m_a0b0d0dba52c6ad92229a986be3b0d574} 
+\index{neefill.m@{neefill.m}!nee@{nee}}
+\index{nee@{nee}!neefill.m@{neefill.m}}
+\doxysubsubsection{nee}
+{\footnotesize\ttfamily nee =\textbf{ nangap}(\textbf{ load}(\textquotesingle{}data/nee\textquotesingle{}))}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a545bc489e1055693cecbf6e97af6676d} 
+\index{neefill.m@{neefill.m}!neefill@{neefill}}
+\index{neefill@{neefill}!neefill.m@{neefill.m}}
+\doxysubsubsection{neefill}
+{\footnotesize\ttfamily neefill =\textbf{ nee}}
+
+
+
+Definition at line \textbf{ 47} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a47db19855a671068f1cfc8ad67d49909} 
+\index{neefill.m@{neefill.m}!neem1@{neem1}}
+\index{neem1@{neem1}!neefill.m@{neefill.m}}
+\doxysubsubsection{neem1}
+{\footnotesize\ttfamily neem1 =[\textbf{ NaN}}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_ac483f6ce851c9ecd9fb835ff7551737c} 
+\index{neefill.m@{neefill.m}!p@{p}}
+\index{p@{p}!neefill.m@{neefill.m}}
+\doxysubsubsection{p}
+{\footnotesize\ttfamily p =[\textbf{ shour} \textbf{ chour} \textbf{ sday} \textbf{ cday} \textbf{ tair} \textbf{ vpd} \textbf{ tsoil} \textbf{ fh2o} \textbf{ wspd} \textbf{ wdir}]}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a8a4e5ec5926f293767f3c555868e4c21} 
+\index{neefill.m@{neefill.m}!par@{par}}
+\index{par@{par}!neefill.m@{neefill.m}}
+\doxysubsubsection{par}
+{\footnotesize\ttfamily par =\textbf{ load}(\textquotesingle{}data/\textbf{ parfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a971658c8903b1b9727ce2bc9081d71b0} 
+\index{neefill.m@{neefill.m}!pg@{pg}}
+\index{pg@{pg}!neefill.m@{neefill.m}}
+\doxysubsubsection{pg}
+{\footnotesize\ttfamily pg =[\textbf{ hour}(\textbf{ wg}) day(\textbf{ wg}) \textbf{ tair}(\textbf{ wg}) \textbf{ par}(\textbf{ wg}) \textbf{ vpd}(\textbf{ wg}) \textbf{ tsoil}(\textbf{ wg}) \textbf{ neem1}(\textbf{ wg})]}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a48c1ae9148ab02303ea123bf3df07133} 
+\index{neefill.m@{neefill.m}!pg2@{pg2}}
+\index{pg2@{pg2}!neefill.m@{neefill.m}}
+\doxysubsubsection{pg2}
+{\footnotesize\ttfamily pg2 =\textbf{ pg}(\textbf{ isorterr}(\textbf{ f}),\+:)}
+
+
+
+Definition at line \textbf{ 88} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_acc5f5d0173e5bad166ad4876b74708c2} 
+\index{neefill.m@{neefill.m}!pj@{pj}}
+\index{pj@{pj}!neefill.m@{neefill.m}}
+\doxysubsubsection{pj}
+{\footnotesize\ttfamily pj =[\textbf{ shour}(1) \textbf{ chour}(1) \textbf{ sday}(1) \textbf{ cday}(1) \textbf{ tair}(1) \textbf{ vpd}(1) \textbf{ tsoil}(1) \textbf{ fh2o}(1) 0.\+0 \textbf{ wspd}(1) \textbf{ wdir}(1)]}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a975aa28cae0eea41b763f0442065cc3a} 
+\index{neefill.m@{neefill.m}!potpar@{potpar}}
+\index{potpar@{potpar}!neefill.m@{neefill.m}}
+\doxysubsubsection{potpar}
+{\footnotesize\ttfamily potpar =\textbf{ load}(\textquotesingle{}data/potpar\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_ab477549012f7889a894f39499202efdf} 
+\index{neefill.m@{neefill.m}!R2@{R2}}
+\index{R2@{R2}!neefill.m@{neefill.m}}
+\doxysubsubsection{R2}
+{\footnotesize\ttfamily R2}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=0.881}
+\DoxyCodeLine{p=[hour\ day\ tair\ par\ vpd\ tsoil\ neem1]}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 71} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a7e4a21b65ca3a4da94460f926e553508} 
+\index{neefill.m@{neefill.m}!sday@{sday}}
+\index{sday@{sday}!neefill.m@{neefill.m}}
+\doxysubsubsection{sday}
+{\footnotesize\ttfamily sday =\textbf{ sin}(2$\ast$\textbf{ pi}$\ast$(day-\/1)/365.\+25)}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a2b0421ff18d73bd03a2368ac41a721e6} 
+\index{neefill.m@{neefill.m}!shour@{shour}}
+\index{shour@{shour}!neefill.m@{neefill.m}}
+\doxysubsubsection{shour}
+{\footnotesize\ttfamily shour =\textbf{ sin}(2$\ast$\textbf{ pi}$\ast$\textbf{ hour}/24.)}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_afca42d6bbca431ca62d2a1d2bd839709} 
+\index{neefill.m@{neefill.m}!sigfill@{sigfill}}
+\index{sigfill@{sigfill}!neefill.m@{neefill.m}}
+\doxysubsubsection{sigfill}
+{\footnotesize\ttfamily sigfill =\textbf{ sigmod}}
+
+
+
+Definition at line \textbf{ 49} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_aa0af99fe5fc28fede7a32c728642cb16} 
+\index{neefill.m@{neefill.m}!tair@{tair}}
+\index{tair@{tair}!neefill.m@{neefill.m}}
+\doxysubsubsection{tair}
+{\footnotesize\ttfamily tair =\textbf{ load}(\textquotesingle{}data/\textbf{ tairfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a0ea2f5484a6700d7c01752b7384d17f6} 
+\index{neefill.m@{neefill.m}!tg@{tg}}
+\index{tg@{tg}!neefill.m@{neefill.m}}
+\doxysubsubsection{tg}
+{\footnotesize\ttfamily tg =\textbf{ nee}(\textbf{ wg})}
+
+
+
+Definition at line \textbf{ 70} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a064d52fa7da8cc679616b006c766f337} 
+\index{neefill.m@{neefill.m}!tg2@{tg2}}
+\index{tg2@{tg2}!neefill.m@{neefill.m}}
+\doxysubsubsection{tg2}
+{\footnotesize\ttfamily tg2 =\textbf{ tg}(\textbf{ isorterr}(\textbf{ f}))}
+
+
+
+Definition at line \textbf{ 87} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a55685d36dae9236af2b1b123b61a6928} 
+\index{neefill.m@{neefill.m}!tsoil@{tsoil}}
+\index{tsoil@{tsoil}!neefill.m@{neefill.m}}
+\doxysubsubsection{tsoil}
+{\footnotesize\ttfamily tsoil =\textbf{ load}(\textquotesingle{}data/\textbf{ tsoilfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_ac9d2b227abcc9fad58effa3b8c1a733b} 
+\index{neefill.m@{neefill.m}!ustar@{ustar}}
+\index{ustar@{ustar}!neefill.m@{neefill.m}}
+\doxysubsubsection{ustar}
+{\footnotesize\ttfamily ustar =\textbf{ load}(\textquotesingle{}data/\textbf{ ustarfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_ab17c95386db830e9b2fdd7fdc1b39a13} 
+\index{neefill.m@{neefill.m}!vpd@{vpd}}
+\index{vpd@{vpd}!neefill.m@{neefill.m}}
+\doxysubsubsection{vpd}
+{\footnotesize\ttfamily vpd =\textbf{ load}(\textquotesingle{}data/\textbf{ vpdfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 4} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_ad9aaea5ea641523aae2aadd70ea8bc24} 
+\index{neefill.m@{neefill.m}!wb@{wb}}
+\index{wb@{wb}!neefill.m@{neefill.m}}
+\doxysubsubsection{wb}
+{\footnotesize\ttfamily wb =\textbf{ find}(\textbf{ isnan}(\textbf{ nee}) $\vert$ \textbf{ isnan}(\textbf{ neem1}) $\vert$ \textbf{ ustar}$<$=0.\+2)}
+
+
+
+Definition at line \textbf{ 68} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_a5bb0da675a31edcc82e59be8854e08dc} 
+\index{neefill.m@{neefill.m}!wdir@{wdir}}
+\index{wdir@{wdir}!neefill.m@{neefill.m}}
+\doxysubsubsection{wdir}
+{\footnotesize\ttfamily wdir =\textbf{ load}(\textquotesingle{}data/\textbf{ wdirfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_aaf20a762ecda3ba16ed6252ceeb1c11b} 
+\index{neefill.m@{neefill.m}!wg@{wg}}
+\index{wg@{wg}!neefill.m@{neefill.m}}
+\doxysubsubsection{wg}
+{\footnotesize\ttfamily wg =\textbf{ find}($\sim$\textbf{ isnan}(\textbf{ nee}) \& $\sim$\textbf{ isnan}(\textbf{ neem1}) \& \textbf{ ustar}$>$0.\+2)}
+
+
+
+Definition at line \textbf{ 67} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_aab725170e7e3cacd4cab5f2488015aa5} 
+\index{neefill.m@{neefill.m}!wg2@{wg2}}
+\index{wg2@{wg2}!neefill.m@{neefill.m}}
+\doxysubsubsection{wg2}
+{\footnotesize\ttfamily wg2 =\textbf{ find}($\sim$\textbf{ isnan}(\textbf{ nee}) \& \textbf{ ustar}$>$0.\+2 \& \textbf{ timeyears}$>$=1997.\+0)}
+
+
+
+Definition at line \textbf{ 114} of file \textbf{ neefill.\+m}.
+
+\label{neefill_8m_afdfcae71b986f1e0ca37a6abbb7ea7d7} 
+\index{neefill.m@{neefill.m}!wspd@{wspd}}
+\index{wspd@{wspd}!neefill.m@{neefill.m}}
+\doxysubsubsection{wspd}
+{\footnotesize\ttfamily wspd =\textbf{ load}(\textquotesingle{}data/\textbf{ wspdfill}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ neefill.\+m}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{neefill_8m_ae0489283a56946bd2d49b032e07b93c1} 
+\index{neefill.m@{neefill.m}!year@{year}}
+\index{year@{year}!neefill.m@{neefill.m}}
+\doxysubsubsection{year}
+{\footnotesize\ttfamily year =\textbf{ load}(\textquotesingle{}data/year\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ neefill.\+m}.
+
+
+
+Referenced by \textbf{ aggregates()}, \textbf{ check\+Event()}, \textbf{ check\+Locations()}, \textbf{ copy\+Subset()}, \textbf{ create\+Event\+Node()}, \textbf{ goto\+Start()}, \textbf{ if()}, \textbf{ main()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ past\+Start()}, \textbf{ print\+Event()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Clim\+Line()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ year()}, \textbf{ years()}, and \textbf{ years()}.
+

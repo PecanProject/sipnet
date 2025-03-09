@@ -1,0 +1,43 @@
+\doxysection{utils.\+h}
+\label{utils_8h_source}\index{utils.h@{utils.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ UTILS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ UTILS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{extern}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ copyFile(\textcolor{keywordtype}{char}*\ src,\ \textcolor{keywordtype}{char}*\ dest)\ \{}
+\DoxyCodeLine{00008\ \ \ FILE\ *source\ =\ fopen(src,\ \textcolor{stringliteral}{"{}rb"{}});\ \textcolor{comment}{//\ Binary\ mode\ for\ compatibility}}
+\DoxyCodeLine{00009\ \ \ \textcolor{keywordflow}{if}\ (source\ ==\ NULL)\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ opening\ source\ file\ \%s"{}},\ src);}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00012\ \ \ \}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ FILE\ *destination\ =\ fopen(dest,\ \textcolor{stringliteral}{"{}wb"{}});}
+\DoxyCodeLine{00015\ \ \ \textcolor{keywordflow}{if}\ (destination\ ==\ NULL)\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ opening\ destination\ file\ \%s"{}},\ dest);}
+\DoxyCodeLine{00017\ \ \ \ \ fclose(source);}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00019\ \ \ \}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordtype}{char}\ buffer[4096];\ \textcolor{comment}{//\ 4KB\ buffer}}
+\DoxyCodeLine{00022\ \ \ \textcolor{keywordtype}{size\_t}\ bytesRead;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordflow}{while}\ ((bytesRead\ =\ fread(buffer,\ 1,\ \textcolor{keyword}{sizeof}(buffer),\ source))\ >\ 0)\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ fwrite(buffer,\ 1,\ bytesRead,\ destination);}
+\DoxyCodeLine{00026\ \ \ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ fclose(source);}
+\DoxyCodeLine{00029\ \ \ fclose(destination);}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00031\ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{extern}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ compareDoubles(\textcolor{keywordtype}{double}\ a,\ \textcolor{keywordtype}{double}\ b)\ \{}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordflow}{return}\ fabs(a-\/b)\ <\ 1e-\/6;}
+\DoxyCodeLine{00035\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//UTILS\_H}}
+
+\end{DoxyCode}

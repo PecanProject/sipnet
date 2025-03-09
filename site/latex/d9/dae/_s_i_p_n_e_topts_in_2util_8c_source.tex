@@ -1,0 +1,135 @@
+\doxysection{SIPNETopts\+In/util.c}
+\label{_s_i_p_n_e_topts_in_2util_8c_source}\index{util.c@{util.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ Basic\ utility\ functions}}
+\DoxyCodeLine{00002\ \textcolor{comment}{}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ Creation\ date:\ 8/17/04}}
+\DoxyCodeLine{00006\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <time.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00015\ FILE\ *openFile(\textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{char}\ *mode)\ \{}
+\DoxyCodeLine{00016\ \ \ FILE\ *f;}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \textcolor{keywordflow}{if}\ ((f\ =\ fopen(name,\ mode))\ ==\ NULL)\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ opening\ \%s\ for\ \%s\(\backslash\)n"{}},\ name,\ mode);}
+\DoxyCodeLine{00020\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00021\ \ \ \}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \textcolor{keywordflow}{return}\ f;}
+\DoxyCodeLine{00024\ \}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ if\ seed\ =\ 0,\ seed\ based\ on\ time,\ otherwise\ seed\ based\ on\ seed}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ if\ outF\ is\ specified\ (not\ NULL),\ write\ seed\ to\ file}}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ seedRand(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ seed,\ FILE\ *outF)\ \{}
+\DoxyCodeLine{00030\ \ \ time\_t\ t;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordflow}{if}\ (seed\ ==\ 0)\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ t\ =\ time(NULL);}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordflow}{if}\ (outF\ !=\ NULL)}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}Seeding\ random\ number\ generator\ with\ time:\ \%d\(\backslash\)n\(\backslash\)n"{}},\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})t);}
+\DoxyCodeLine{00036\ \ \ \ \ srandom(t);}
+\DoxyCodeLine{00037\ \ \ \}}
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordflow}{if}\ (outF\ !=\ NULL)}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}Seeding\ random\ number\ generator\ with\ \%d\(\backslash\)n\(\backslash\)n"{}},\ seed);}
+\DoxyCodeLine{00041\ \ \ \ \ srandom(seed);}
+\DoxyCodeLine{00042\ \ \ \}}
+\DoxyCodeLine{00043\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//\ returns\ an\ exponentially-\/distributed\ negative\ random\ number\ }}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{double}\ randm()\ \{}
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordtype}{double}\ val;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordflow}{do}\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ val\ =\ rand()/(RAND\_MAX\ +\ 1.0);}
+\DoxyCodeLine{00052\ \ \ \}\ \textcolor{keywordflow}{while}\ (val\ <=\ 0.0);\ \textcolor{comment}{//\ val\ should\ be\ <=\ 0.0\ once\ in\ a\ blue\ moon}}
+\DoxyCodeLine{00053\ \ \ \textcolor{keywordflow}{return}\ log(val);}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ allocate\ space\ for\ an\ array\ of\ doubles\ of\ given\ size,}}
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ return\ pointer\ to\ start\ of\ array}}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{double}\ *makeArray(\textcolor{keywordtype}{int}\ size)\ \{}
+\DoxyCodeLine{00059\ \ \ \textcolor{keywordtype}{double}\ *ptr;}
+\DoxyCodeLine{00060\ \ \ ptr\ =\ (\textcolor{keywordtype}{double}\ *)malloc(size\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00061\ \ \ \textcolor{keywordflow}{return}\ ptr;}
+\DoxyCodeLine{00062\ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{comment}{/*\ Dynamically\ allocate\ space\ for\ a\ 2-\/d\ array\ of\ doubles\ of\ given\ size,}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ \ \ return\ pointer\ to\ start\ of\ array}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ }}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ Ensures\ that\ array\ elements\ are\ continuous\ to\ increase\ efficiency}}
+\DoxyCodeLine{00069\ \textcolor{comment}{}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ To\ free\ array,\ first\ free(arr[0]),\ then\ free(arr)}}
+\DoxyCodeLine{00071\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{double}\ **make2DArray(\textcolor{keywordtype}{int}\ nrows,\ \textcolor{keywordtype}{int}\ ncols)\ \{}
+\DoxyCodeLine{00073\ \ \ \textcolor{keywordtype}{double}\ **arr;}
+\DoxyCodeLine{00074\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ arr\ =\ (\textcolor{keywordtype}{double}\ **)malloc(nrows\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}\ *));}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \textcolor{comment}{//\ assure\ that\ all\ space\ is\ allocated\ continuously:\ }}
+\DoxyCodeLine{00079\ \ \ arr[0]\ =\ (\textcolor{keywordtype}{double}\ *)malloc(nrows\ *\ ncols\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00080\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 1;\ i\ <\ nrows;\ i++)}
+\DoxyCodeLine{00081\ \ \ \ \ arr[i]\ =\ arr[0]\ +\ i*ncols;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \textcolor{keywordflow}{return}\ arr;}
+\DoxyCodeLine{00084\ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{comment}{//\ same\ as\ make2DArray,\ but\ for\ ints}}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{int}\ **make2DIntArray(\textcolor{keywordtype}{int}\ nrows,\ \textcolor{keywordtype}{int}\ ncols)\ \{}
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordtype}{int}\ **arr;}
+\DoxyCodeLine{00089\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ arr\ =\ (\textcolor{keywordtype}{int}\ **)malloc(nrows\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}\ *));}
+\DoxyCodeLine{00092\ \ \ }
+\DoxyCodeLine{00093\ \ \ \textcolor{comment}{//\ assure\ that\ all\ space\ is\ allocated\ continuously:}}
+\DoxyCodeLine{00094\ \ \ arr[0]\ =\ (\textcolor{keywordtype}{int}\ *)malloc(nrows\ *\ ncols\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00095\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 1;\ i\ <\ nrows;\ i++)}
+\DoxyCodeLine{00096\ \ \ \ \ arr[i]\ =\ arr[0]\ +\ i*ncols;}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \textcolor{keywordflow}{return}\ arr;}
+\DoxyCodeLine{00099\ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{comment}{//\ free\ a\ 2D\ Array\ that\ was\ created\ using\ make2DArray}}
+\DoxyCodeLine{00103\ \textcolor{comment}{//\ pre:\ arr\ has\ been\ cast\ to\ (void\ **)}}
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{void}\ free2DArray(\textcolor{keywordtype}{void}\ **arr)\ \{}
+\DoxyCodeLine{00105\ \ \ free(arr[0]);}
+\DoxyCodeLine{00106\ \ \ free(arr);}
+\DoxyCodeLine{00107\ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{comment}{//\ set\ each\ element\ of\ out[0..n-\/1]\ to\ corresponding\ element\ of\ in[0..n-\/1]}}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ assignArray(\textcolor{keywordtype}{double}\ *out,\ \textcolor{keywordtype}{double}\ *in,\ \textcolor{keywordtype}{int}\ n)\ \{}
+\DoxyCodeLine{00112\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ n;\ i++)}
+\DoxyCodeLine{00115\ \ \ \ \ out[i]\ =\ in[i];}
+\DoxyCodeLine{00116\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{comment}{//\ return\ sum(array[0..length-\/1])}}
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{double}\ sumArray(\textcolor{keywordtype}{double}\ *array,\ \textcolor{keywordtype}{int}\ length)\ \{}
+\DoxyCodeLine{00121\ \ \ \textcolor{keywordtype}{double}\ sum\ =\ 0;}
+\DoxyCodeLine{00122\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ length;\ i++)}
+\DoxyCodeLine{00125\ \ \ \ \ sum\ +=\ array[i];}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \textcolor{keywordflow}{return}\ sum;}
+\DoxyCodeLine{00128\ \}}
+\DoxyCodeLine{00129\ }
+
+\end{DoxyCode}

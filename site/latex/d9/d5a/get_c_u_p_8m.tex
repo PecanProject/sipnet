@@ -1,0 +1,146 @@
+\doxysection{get\+CUP.\+m File Reference}
+\label{get_c_u_p_8m}\index{getCUP.m@{getCUP.m}}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+and corresponding vector of \textbf{ years} (where year(i) is \textbf{ the} year of data(i))
+\item 
+and corresponding vector of where(\textbf{ pts\+Per\+Day}) data \textbf{ points} \textbf{ make} \textbf{ up} \textbf{ each} day in data and year vectors \% \textbf{ Note} \textbf{ if} (\textbf{ rows}==1) \textbf{ nee} = year\textquotesingle{}
+\item 
+\textbf{ find} \textbf{ daily} \textbf{ sums} (\textbf{ have} \textbf{ to} \textbf{ take} \textbf{ transpose} \textbf{ so} \textbf{ sum} \textbf{ along} \textbf{ correct} \textbf{ dimension}) \textbf{ year\+By\+Day}
+\item 
+\textbf{ annual\+Nee} (\textbf{ this\+Year} -\/ first\+Year+1)
+\item 
+\textbf{ cup} (\textbf{ this\+Year} -\/ first\+Year+1)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ function} [\textbf{ cup}, \textbf{ annual\+Nee}]
+\item 
+\textbf{ end} and \textbf{ do} \textbf{ the} \textbf{ same} \textbf{ for} year \textbf{ vector} [\textbf{ rows} \textbf{ cols}] = \textbf{ size}(year)
+\item 
+\textbf{ end} \textbf{ nee\+By\+Day} = \textbf{ splitdata}(\textbf{ nee},\textbf{ pts\+Per\+Day})
+\item 
+\textbf{ split} into days \textbf{ nee\+Daily} = \textbf{ sum}(\textbf{ nee\+By\+Day}\textquotesingle{})
+\item 
+\textbf{ split} into days \textbf{ year\+Daily} = \textbf{ year\+By\+Day}(\+:,1)
+\item 
+\textbf{ the} year of \textbf{ each} day is \textbf{ the} year of \textbf{ the} first \textbf{ hour} of \textbf{ the} day \textbf{ for} \textbf{ this\+Year}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{get_c_u_p_8m_a12e7cade8242dd6cc812f846aace6ca8} 
+\index{getCUP.m@{getCUP.m}!annualNee@{annualNee}}
+\index{annualNee@{annualNee}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{annualNee()}
+{\footnotesize\ttfamily annual\+Nee (\begin{DoxyParamCaption}\item[{\textbf{ this\+Year} -\/ first\+Year+}]{1 }\end{DoxyParamCaption})}
+
+\label{get_c_u_p_8m_a0fd28957a6ced4b1c6f711e7f727e1a8} 
+\index{getCUP.m@{getCUP.m}!cup@{cup}}
+\index{cup@{cup}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{cup()}
+{\footnotesize\ttfamily cup (\begin{DoxyParamCaption}\item[{\textbf{ this\+Year} -\/ first\+Year+}]{1 }\end{DoxyParamCaption})}
+
+\label{get_c_u_p_8m_ab46c802842a6fcf547928e5e3b070e4d} 
+\index{getCUP.m@{getCUP.m}!if@{if}}
+\index{if@{if}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{if()}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{\textbf{ rows}}]{ = {\ttfamily =1} }\end{DoxyParamCaption}) = year\textquotesingle{}}
+
+\label{get_c_u_p_8m_a84e3021a13ee039a8aa7ccc5043861a9} 
+\index{getCUP.m@{getCUP.m}!sums@{sums}}
+\index{sums@{sums}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{sums()}
+{\footnotesize\ttfamily \textbf{ find} \textbf{ daily} sums (\begin{DoxyParamCaption}\item[{\textbf{ have} \textbf{ to} \textbf{ take} \textbf{ transpose} \textbf{ so} \textbf{ sum} \textbf{ along} \textbf{ correct}}]{dimension }\end{DoxyParamCaption})}
+
+\label{get_c_u_p_8m_ae0ad90461326034e6484219272310ede} 
+\index{getCUP.m@{getCUP.m}!years@{years}}
+\index{years@{years}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{years()}
+{\footnotesize\ttfamily and corresponding vector of years (\begin{DoxyParamCaption}\item[{where }]{yeari) is the year of data(i }\end{DoxyParamCaption})}
+
+
+
+References \textbf{ and}, \textbf{ data}, \textbf{ day}, \textbf{ first}, \textbf{ first\+Year}, \textbf{ where}, \textbf{ year}, and \textbf{ years}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{get_c_u_p_8m_ab0fa5e3481dfcef8e99de99fe78e1850} 
+\index{getCUP.m@{getCUP.m}!function@{function}}
+\index{function@{function}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{function}
+{\footnotesize\ttfamily function[\textbf{ cup}, \textbf{ annual\+Nee}]}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ getCUP(nee,\ year,\ firstYear,\ lastYear,\ ptsPerDay)}
+\DoxyCodeLine{\%\ Given\ a\ vector\ of\ NEE\ data}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 1} of file \textbf{ get\+CUP.\+m}.
+
+\label{get_c_u_p_8m_a8e8cbdf907341ee57e43d49c3c29c7f0} 
+\index{getCUP.m@{getCUP.m}!neeByDay@{neeByDay}}
+\index{neeByDay@{neeByDay}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{neeByDay}
+{\footnotesize\ttfamily \textbf{ end} nee\+By\+Day = \textbf{ splitdata}(\textbf{ nee},\textbf{ pts\+Per\+Day})}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ get\+CUP.\+m}.
+
+\label{get_c_u_p_8m_a3ff132eefab231369513ca487186fa26} 
+\index{getCUP.m@{getCUP.m}!neeDaily@{neeDaily}}
+\index{neeDaily@{neeDaily}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{neeDaily}
+{\footnotesize\ttfamily \textbf{ split} into days nee\+Daily = \textbf{ sum}(\textbf{ nee\+By\+Day}\textquotesingle{})}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ get\+CUP.\+m}.
+
+\label{get_c_u_p_8m_aefb894d1965fb43fd57521c1b1fd1701} 
+\index{getCUP.m@{getCUP.m}!thisYear@{thisYear}}
+\index{thisYear@{thisYear}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{thisYear}
+{\footnotesize\ttfamily \textbf{ the} year of \textbf{ each} day is \textbf{ the} year of \textbf{ the} first \textbf{ hour} of \textbf{ the} day \textbf{ for} this\+Year}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ firstYear:lastYear}
+\DoxyCodeLine{\ \ \ \ i\ =\ find(yearDaily\ ==\ thisYear)}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 27} of file \textbf{ get\+CUP.\+m}.
+
+\label{get_c_u_p_8m_a5da4c1f5a413b6208b247c39ad4ab66d} 
+\index{getCUP.m@{getCUP.m}!vector@{vector}}
+\index{vector@{vector}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{vector}
+{\footnotesize\ttfamily \textbf{ end} and \textbf{ do} \textbf{ the} \textbf{ same} \textbf{ for} year vector[\textbf{ rows} \textbf{ cols}] = \textbf{ size}(year)}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ get\+CUP.\+m}.
+
+
+
+Referenced by \textbf{ !colors}, \textbf{ year()}, and \textbf{ years()}.
+
+\label{get_c_u_p_8m_a32a386a7999048b4ae9c16ec0262e891} 
+\index{getCUP.m@{getCUP.m}!yearDaily@{yearDaily}}
+\index{yearDaily@{yearDaily}!getCUP.m@{getCUP.m}}
+\doxysubsubsection{yearDaily}
+{\footnotesize\ttfamily \textbf{ split} into days year\+Daily = \textbf{ year\+By\+Day}(\+:,1)}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ get\+CUP.\+m}.
+

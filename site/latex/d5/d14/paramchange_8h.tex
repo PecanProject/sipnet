@@ -1,0 +1,236 @@
+\doxysection{paramchange.\+h File Reference}
+\label{paramchange_8h}\index{paramchange.h@{paramchange.h}}
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+Include dependency graph for paramchange.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Changeable\+Param\+Info}
+\item 
+struct \textbf{ Output\+Info\+Struct}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ typedef} \textbf{ struct} \textbf{ Changeable\+Param\+Info} \textbf{ PInfo}
+\item 
+\textbf{ typedef} \textbf{ struct} \textbf{ Output\+Info\+Struct} \textbf{ Output\+Info}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ double} \textbf{ difference} (\textbf{ double} $\ast$sigma, \textbf{ Output\+Info} $\ast$\textbf{ output\+Info}, \textbf{ int} loc, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ double} \textbf{ param\+Weight}, \textbf{ void}($\ast$\textbf{ modelF})(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int}), \textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} \textbf{ cost\+Function}, \textbf{ double} \textbf{ data\+Type\+Weights}[$\,$])
+\item 
+\textbf{ double} \textbf{ agged\+Difference} (\textbf{ double} $\ast$sigma, \textbf{ Output\+Info} $\ast$\textbf{ output\+Info}, \textbf{ int} loc, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ double} \textbf{ param\+Weight}, \textbf{ void}($\ast$\textbf{ modelF})(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int}), \textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} \textbf{ cost\+Function}, \textbf{ double} \textbf{ data\+Type\+Weights}[$\,$])
+\item 
+\textbf{ void} \textbf{ aggregates} (\textbf{ Output\+Info} $\ast$\textbf{ output\+Info}, \textbf{ double} $\ast$$\ast$\textbf{ model}, \textbf{ int} loc, \textbf{ int} \textbf{ data\+Num})
+\item 
+\textbf{ void} \textbf{ read\+Data} (\textbf{ char} $\ast$\textbf{ file\+Name}, \textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} \textbf{ tot\+Num\+Data\+Types}, \textbf{ int} \textbf{ my\+Num\+Locs}, \textbf{ int} $\ast$\textbf{ steps}, \textbf{ double} \textbf{ valid\+Frac}, \textbf{ char} $\ast$\textbf{ opt\+Indices\+File}, \textbf{ char} $\ast$\textbf{ compare\+Indices\+File}, \textbf{ FILE} $\ast$\textbf{ out\+File})
+\item 
+\textbf{ void} \textbf{ read\+File\+For\+Agg} (\textbf{ char} $\ast$\textbf{ file\+For\+Agg}, \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ double} \textbf{ my\+Unagged\+Weight})
+\item 
+\textbf{ Output\+Info} $\ast$ \textbf{ new\+Output\+Info} (\textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ copy\+Output\+Info} (\textbf{ Output\+Info} $\ast$\textbf{ out}, \textbf{ Output\+Info} $\ast$in)
+\item 
+\textbf{ void} \textbf{ free\+Output\+Info} (\textbf{ Output\+Info} $\ast$\textbf{ output\+Info}, \textbf{ int} \textbf{ num\+Data\+Types})
+\item 
+\textbf{ void} \textbf{ cleanup\+Paramchange} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\label{paramchange_8h_ac15783a01ea34b8d9816aba53209ce2e} 
+\index{paramchange.h@{paramchange.h}!OutputInfo@{OutputInfo}}
+\index{OutputInfo@{OutputInfo}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{OutputInfo}
+{\footnotesize\ttfamily \textbf{ typedef} \textbf{ struct} \textbf{ Output\+Info\+Struct} \textbf{ Output\+Info}}
+
+\label{paramchange_8h_ac2a5eb18c20fe08afbdfb809b665ce08} 
+\index{paramchange.h@{paramchange.h}!PInfo@{PInfo}}
+\index{PInfo@{PInfo}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{PInfo}
+{\footnotesize\ttfamily \textbf{ typedef} \textbf{ struct} \textbf{ Changeable\+Param\+Info} \textbf{ PInfo}}
+
+
+
+\doxysubsection{Function Documentation}
+\label{paramchange_8h_aaf4a74406a3f1ef2212c05de076571a9} 
+\index{paramchange.h@{paramchange.h}!aggedDifference@{aggedDifference}}
+\index{aggedDifference@{aggedDifference}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{aggedDifference()}
+{\footnotesize\ttfamily \textbf{ double} agged\+Difference (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{sigma,  }\item[{\textbf{ Output\+Info} $\ast$}]{output\+Info,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ double}}]{param\+Weight,  }\item[{\textbf{ void}($\ast$)(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int})}]{modelF,  }\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{cost\+Function,  }\item[{\textbf{ double}}]{data\+Type\+Weights[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 352} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ agged\+Data}, \textbf{ agged\+Model}, \textbf{ aggregates()}, \textbf{ agg\+Steps}, \textbf{ compute\+Agged\+Data()}, \textbf{ copy\+Output\+Info()}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ i}, \textbf{ index}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ n}, \textbf{ num\+Agg\+Steps}, \textbf{ start\+Opt}, \textbf{ unagged\+Weight}, and \textbf{ valid}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{paramchange_8h_a5149a58f135f318f2fc444287457cbcb} 
+\index{paramchange.h@{paramchange.h}!aggregates@{aggregates}}
+\index{aggregates@{aggregates}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{aggregates()}
+{\footnotesize\ttfamily \textbf{ void} aggregates (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Info} $\ast$}]{output\+Info,  }\item[{\textbf{ double} $\ast$$\ast$}]{model,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ int}}]{data\+Num }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 438} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ agg\+Info}, \textbf{ data}, \textbf{ day}, \textbf{ Aggregate\+Info\+Struct\+::end\+Pt}, \textbf{ i}, \textbf{ index}, \textbf{ j}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ Aggregate\+Info\+Struct\+::num\+Days}, \textbf{ Aggregate\+Info\+Struct\+::spd}, \textbf{ Aggregate\+Info\+Struct\+::start\+Day}, \textbf{ Aggregate\+Info\+Struct\+::start\+Pt}, \textbf{ Aggregate\+Info\+Struct\+::start\+Year}, \textbf{ sum()}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ agged\+Difference()}, and \textbf{ difference()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{paramchange_8h_ac6075d51cb0a0e3ba11a6e6b45c885cd} 
+\index{paramchange.h@{paramchange.h}!cleanupParamchange@{cleanupParamchange}}
+\index{cleanupParamchange@{cleanupParamchange}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{cleanupParamchange()}
+{\footnotesize\ttfamily \textbf{ void} cleanup\+Paramchange (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 968} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ agged\+Data}, \textbf{ agged\+Model}, \textbf{ agg\+Info}, \textbf{ agg\+Steps}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ free2\+DArray()}, \textbf{ index}, \textbf{ model}, \textbf{ num\+Agg\+Steps}, \textbf{ num\+Locs}, \textbf{ sigmas}, \textbf{ start\+Opt}, and \textbf{ valid}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{paramchange_8h_a8590e6a4e09c79942a5ce0933218c083} 
+\index{paramchange.h@{paramchange.h}!copyOutputInfo@{copyOutputInfo}}
+\index{copyOutputInfo@{copyOutputInfo}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{copyOutputInfo()}
+{\footnotesize\ttfamily \textbf{ void} copy\+Output\+Info (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Info} $\ast$}]{out,  }\item[{\textbf{ Output\+Info} $\ast$}]{in }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 945} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ Output\+Info\+Struct\+::days\+Error}, \textbf{ i}, \textbf{ index}, \textbf{ Output\+Info\+Struct\+::mean\+Error}, \textbf{ Output\+Info\+Struct\+::num\+Years}, and \textbf{ Output\+Info\+Struct\+::years}.
+
+
+
+Referenced by \textbf{ agged\+Difference()}.
+
+\label{paramchange_8h_a56e529386e650868ae87f72ab581a108} 
+\index{paramchange.h@{paramchange.h}!difference@{difference}}
+\index{difference@{difference}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{difference()}
+{\footnotesize\ttfamily \textbf{ double} difference (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$}]{sigma,  }\item[{\textbf{ Output\+Info} $\ast$}]{output\+Info,  }\item[{\textbf{ int}}]{loc,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ double}}]{param\+Weight,  }\item[{\textbf{ void}($\ast$)(\textbf{ double} $\ast$$\ast$, \textbf{ int}, \textbf{ int} $\ast$, \textbf{ Spatial\+Params} $\ast$, \textbf{ int})}]{modelF,  }\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{cost\+Function,  }\item[{\textbf{ double}}]{data\+Type\+Weights[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 74} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ aggregates()}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ i}, \textbf{ index}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ n}, \textbf{ sigmas}, \textbf{ start\+Opt}, and \textbf{ valid}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 5
+\label{paramchange_8h_abdf74e5a817db25f73396354747b4f89} 
+\index{paramchange.h@{paramchange.h}!freeOutputInfo@{freeOutputInfo}}
+\index{freeOutputInfo@{freeOutputInfo}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{freeOutputInfo()}
+{\footnotesize\ttfamily \textbf{ void} free\+Output\+Info (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Info} $\ast$}]{output\+Info,  }\item[{\textbf{ int}}]{num\+Data\+Types }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 957} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ i}, \textbf{ index}, and \textbf{ years}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ metropolis()}.
+
+\label{paramchange_8h_a1eb2a726a4f99ab2e8233b80b93e41ea} 
+\index{paramchange.h@{paramchange.h}!newOutputInfo@{newOutputInfo}}
+\index{newOutputInfo@{newOutputInfo}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{newOutputInfo()}
+{\footnotesize\ttfamily \textbf{ Output\+Info} $\ast$ new\+Output\+Info (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 929} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ agg\+Info}, \textbf{ i}, \textbf{ index}, \textbf{ make\+Array()}, \textbf{ Aggregate\+Info\+Struct\+::num\+Days}, and \textbf{ years}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ metropolis()}.
+
+Here is the call graph for this function\+:
+% FIG 6
+\label{paramchange_8h_ab2e314f4a756e7a3631c88cf2c347da6} 
+\index{paramchange.h@{paramchange.h}!readData@{readData}}
+\index{readData@{readData}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{readData()}
+{\footnotesize\ttfamily \textbf{ void} read\+Data (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{file\+Name,  }\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{tot\+Num\+Data\+Types,  }\item[{\textbf{ int}}]{my\+Num\+Locs,  }\item[{\textbf{ int} $\ast$}]{steps,  }\item[{\textbf{ double}}]{valid\+Frac,  }\item[{\textbf{ char} $\ast$}]{opt\+Indices\+File,  }\item[{\textbf{ char} $\ast$}]{compare\+Indices\+File,  }\item[{\textbf{ FILE} $\ast$}]{out\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 627} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ agg\+Info}, \textbf{ count}, \textbf{ count\+Lines()}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ Aggregate\+Info\+Struct\+::end\+Pt}, \textbf{ exit()}, \textbf{ fclose()}, \textbf{ file\+Name}, \textbf{ fprintf()}, \textbf{ i}, \textbf{ index}, \textbf{ make2\+DArray()}, \textbf{ make2\+DInt\+Array()}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ Aggregate\+Info\+Struct\+::num\+Days}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ parse\+Spd\+Value()}, \textbf{ read\+Data\+Line()}, \textbf{ read\+Indices\+File()}, \textbf{ sigmas}, \textbf{ Aggregate\+Info\+Struct\+::spd}, \textbf{ Aggregate\+Info\+Struct\+::start\+Day}, \textbf{ start\+Opt}, \textbf{ Aggregate\+Info\+Struct\+::start\+Pt}, \textbf{ Aggregate\+Info\+Struct\+::start\+Year}, \textbf{ valid}, and \textbf{ year}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 7
+\label{paramchange_8h_a849cd102825770b7b6f339c4ccaf5af7} 
+\index{paramchange.h@{paramchange.h}!readFileForAgg@{readFileForAgg}}
+\index{readFileForAgg@{readFileForAgg}!paramchange.h@{paramchange.h}}
+\doxysubsubsection{readFileForAgg()}
+{\footnotesize\ttfamily \textbf{ void} read\+File\+For\+Agg (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{file\+For\+Agg,  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ double}}]{my\+Unagged\+Weight }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 873} of file \textbf{ paramchange.\+c}.
+
+
+
+References \textbf{ agged\+Data}, \textbf{ agged\+Model}, \textbf{ agg\+Steps}, \textbf{ compute\+Agged\+Data()}, \textbf{ count}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ exit()}, \textbf{ f}, \textbf{ fclose()}, \textbf{ i}, \textbf{ index}, \textbf{ make2\+DArray()}, \textbf{ num\+Agg\+Steps}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ start\+Opt}, \textbf{ sum()}, and \textbf{ unagged\+Weight}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 8

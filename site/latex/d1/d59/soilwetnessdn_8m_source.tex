@@ -1,0 +1,42 @@
+\doxysection{soilwetnessdn.\+m}
+\label{soilwetnessdn_8m_source}\index{soilwetnessdn.m@{soilwetnessdn.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \%\ Computes\ dn\ values\ \textcolor{keywordflow}{for}\ both\ soilwetness\ and\ soilwetnessvalid}
+\DoxyCodeLine{00002\ \%\ soilwetness:\ \textcolor{keywordflow}{for\ each}\ time\ step,\ take\ mean\ over\ measured\ values\ in\ that}
+\DoxyCodeLine{00003\ \%\ time\ step,\ converted\ to\ fraction\ filled}
+\DoxyCodeLine{00004\ \%\ soilwetnessvalid:\ 1\ \textcolor{keywordflow}{if}\ ANY\ measured\ values\ in\ that\ time\ step,\ 0\ \textcolor{keywordflow}{if}\ NONE}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ soilwetness=load(\textcolor{stringliteral}{'\string~/niwot/climate/soilwetness'});\ }
+\DoxyCodeLine{00007\ intervaldn=load(\textcolor{stringliteral}{'\string~/niwot/climate/intervaldn'});\ \%\ hours\ per\ step}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ upperlimit\ =\ 0.95;\ \%\ take\ 95th\ percentile\ of\ 1/2-\/hourly\ soilwetness\ as\ max}
+\DoxyCodeLine{00010\ sorted\ =\ sort(soilwetness(find(isfinite(soilwetness))));}
+\DoxyCodeLine{00011\ maxsoilwetness\ =\ sorted(round(upperlimit*length(sorted)))}
+\DoxyCodeLine{00012\ soilwetnessfrac=soilwetness/maxsoilwetness;\ \%\ convert\ to\ fraction\ filled}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ numsteps=length(intervaldn);}
+\DoxyCodeLine{00015\ start=1;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keywordflow}{for}\ i=1:numsteps}
+\DoxyCodeLine{00018\ \ \ \ \ fin=start\ +\ 2*intervaldn(i)\ -\/\ 1;\ \%\ multiply\ by\ 2\ since\ each\ point\ is\ 1/2\ hour}
+\DoxyCodeLine{00019\ \ \ \ \ measuredpts=find(isfinite(soilwetnessfrac(start:fin)))\ +\ (start\ -\/\ 1);\ \%\ the\ measured\ pts\ in\ \textcolor{keyword}{this}\ step}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordflow}{if}\ (length(measuredpts)>=1)\ \%\ at\ least\ one\ measured\ point}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ soilwetnessdns(i)=mean(soilwetnessfrac(measuredpts));}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ soilwetnessvaliddn(i)=1;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordflow}{else}\ \%\ no\ measured\ pts}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ soilwetnessdns(i)=0;\ \%\ arbitrary}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ soilwetnessvaliddn(i)=0;}
+\DoxyCodeLine{00026\ \ \ \ \ end}
+\DoxyCodeLine{00027\ \ \ \ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ start\ =\ fin\ +\ 1;}
+\DoxyCodeLine{00029\ end}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ soilwetnessdns\ =\ min(soilwetnessdns,\ 1);\ \%\ don\textcolor{stringliteral}{'t\ let\ soilwetness\ go\ higher\ than\ 1}}
+\DoxyCodeLine{00032\ \textcolor{stringliteral}{soilwetnessdns\ =\ soilwetnessdns'};}
+\DoxyCodeLine{00033\ soilwetnessvaliddn\ =\ soilwetnessvaliddn\textcolor{stringliteral}{';}}
+\DoxyCodeLine{00034\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00035\ \textcolor{stringliteral}{save\ \string~/niwot/climate/soilwetnessdn\ soilwetnessdns\ -\/ascii}}
+\DoxyCodeLine{00036\ \textcolor{stringliteral}{save\ \string~/niwot/climate/soilwetnessvaliddn\ soilwetnessvaliddn\ -\/ascii}}
+
+\end{DoxyCode}

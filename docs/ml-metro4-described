@@ -1,0 +1,141 @@
+Description of ML-Metro4 code
+
+Bill Sacks, 11/3/03
+
+
+The main function is "metropolis"; the other functions in this file are either unimportant, self-explanatory, or both.	
+
+Input arguments:
+	outNameBase: string giving base file name for output files
+		(extensions like ".hist" appended to this base name)
+	np: number of parameters that will be modified
+	likely: function pointer to the likelihood function (described below)
+	pInfo: array of structures of type PInfo, which contains, for each parameter:
+		name (string): parameter's name
+		guess (double): initial guess value
+		min (double): minimum value of parameter's range
+		max (double): maximum value of parameter's range
+		sigma (double): standard dev. on parameter prior (currently unused, as we assume a uniform prior)
+	model: function pointer to the model function (described below)
+	addPercent: initial width of each parameter's range to search in a single step, expressed as a fraction of the total range (we use 0.5)
+	estSteps: how many iterations to run & record, once the optimization has stabilized (i.e. we've converged & finished numSpinUps) (we use 250000)
+	numAtOnce: to determine temperature convergence (described below), run for numAtOnce iterations, then check accept % - if not close to A_STAR, run for another numAtOnce iterations; also determines frequency of output to a user-readable output file (we use 10000)
+	numSpinUps: once temperatures have converged, number of additional iterations (spin-ups) to run before we start recording (we use 100000)
+	paramWeight: relative weight of parameter vs. data error (currently unused, as we use uniform priors and so don't take parameter error into account - i.e. we do not use a Bayesian estimator right now)
+	dataTypeIndices, numDataTypes: used to constrain the data types we use in optimization; these arguments would be unnecessary if we always used just one data type (e.g. NEE) or always used the same data types
+	restart: 1 if we're doing a restart from file, if, say, program crashed part-way through (this code has never been tested)
+	userOut: a file pointer to an open output file (user-readable file)
+
+Return value: pbest, the best point found
+
+The algorithm:
+
+Allocate space for various arrays (makeArray is a function defined elsewhere that simply malloc's space for an array)
+
+Create outputInfo array (holds information about the output of a given model run: for each data type used in optimization, mean error, daily-aggregated mean error, array containing total nee for each year, and size of the years array) (this could be modified to hold whatever information you deem important - or could be removed entirely)
+
+Initialize pdelta array (fraction of a parameter's range that can be searched in a single iteration)
+
+Initialize parameter values
+
+Compute likelihood using model run with initial parameter values (see below for descriptions of likely and model functions)
+(assignArray(ao, ai, n) sets each element of ao[0..n-1] to corresponding elt. of ai[0..n-1])
+
+Write header info to userOut and .hist file
+
+Begin Metropolis loop:
+
+Each time through, pick one random parameter to change and change it by a random amount, depending on the parameter's temperature. A parameter's temperature dictates the fraction of the parameter's range that we can jump in a single iteration (e.g. if p(1) has current value 5, min 0, max 10, and temperature 0.5, a single step could potentially bring the value of this parameter as low as 2.5 or as high as 7.5 - half the range is in the search window). Reject point if outside allowable range. 
+
+Otherwise, run model on new point and compute new log likelihood. If this is the best likelihood we've found so far update some "best" values. Compare new likelihood to likelihood of previous point. If new is better, accept. If worse, accept with probability proportional to difference in likelihoods (since we deal with log likelihoods, this difference is equivalent to the ratio of the actual - pre-log-transformed - likelihood). Note that randm() returns an exponentially-distributed negative random number (log(rand()/(RAND_MAX + 1))). What we do upon acceptance or rejection of a point depends on the stage of the algorithm.
+
+The looping is divided into three stages:
+
+1) Allow parameter temperatures to vary until we have converged on a target acceptance rate. This is the "simulated annealing" part of the algorithm. This helps avoid local optima in the error space, and helps us converge on the global optimum faster. We choose a target acceptance rate (A_STAR, generally 0.35 or 0.4), and an arbitrary amount that we decrease a parameter's temperature by whenever we reject a point for which this is the parameter that differs from the last point (we use DEC = 0.99). We then compute INC, the amount that we increase a parameter's temperature by whenever we accept a point for which this is tha parameter that differs from the last point, as DEC^((A_STAR - 1)/A_STAR). In this way, we have INC^A_STAR * DEC^(1 - A_STAR) = 1. This will tend to bring the acceptance rate of each parameter to A_STAR, as long as higher temperatures lead to a lower chance of acceptance, and lower temperatures lead to a higher chance of acceptance (which is usually the case). So, whenver a point is accepted, we increase the appropriate parameter's temperature by INC; whenever a point is rejected, we decrease the appropriate parameter's temperature by DEC (in a multiplicative fashion).
+
+We also define a threshold (we use THRESH = 0.005), which defines how close the overall acceptance rate has to get to A_STAR before we consider ourselves "converged." Every (numAtOnce) iterations, we check the acceptance rate over the last (numAtOnce) iterations; if we're within THRESH of A_STAR, we move onto stage 2. 
+
+2) The boring stage: just let the algorithm spin for (numSpinUps) iterations. This allows the parameter statistics (means and standard deviations) to settle down, which gives more statistically valid results.
+
+3) The recording stage: Run for an additional (estSteps) iterations. For each point that is accepted, write it to file (besides the parameter values of the point, we write some additional statistics, such as log likelihood, and other error statistics). Ignore (i.e. don't record) any point that is rejected.
+
+-- End Metropolis loop
+
+Return pbest, the best point found
+
+
+Important external functions:
+
+LIKELY:
+
+The function we use runs the model on a given parameter set and computes the NEGATIVE log likelihood of the output (it would be cleaner to return the positive log likelihood, and then not have to multiply by -1 in ml-metro4.c - we return negative log likelihood just to be consistent with some old, currently unused code). 
+
+Arguments:
+	double *sigma (output argument): return array of estimated data standard deviations, one for each data type
+	OutputInfo *outputInfo (output argument): return array of structures giving error statistics for each data type (e.g. daily-aggregated error, annual sums, etc.)
+	int numParams: number of parameters that can vary from one run to another
+	double params[]: array containing the value of each parameter
+	PInfo pInfo[]: parameter info (e.g. min & max values, standard deviations) - currently unused since we use uniform prior and don't use bayesian statistics
+	double paramweight: relative weight of parameters vs. data error - also currently unused since we don't use bayesian statistics
+	modelF: pointer to model function (described below)
+	int dataTypeIndices[]: array of the data types that we're using (unnecessary if you always use just one data type, or always use the same set of data types, but including a parameter like this allows you to vary which data types you optimize on from one run to another)
+	int numDataTypes: how many data types we're optimizing on (see note under dataTypeIndices)
+
+Return value: negative log likelihood
+
+The algorithm:
+
+Run model, store output in array
+
+Compute sum-of-squares error between model and data (actually, a separate error term for each data type used in optimization)
+
+Compute estimated data standard deviations based on sum-of-squares error (since we don't know, a priori, the standard deviation of the data, we compute an estimated standard deviation that maximizes the likelihood - see Sacks thesis for a more complete description)
+
+Compute various error statistics on this model run (e.g. daily-aggregated error, annual sums....)
+
+Compute estimated standard deviation (independently for each data type)
+
+Compute negative log likelihood (see Sacks thesis for equation) (total log likelihood is just sum of log likelihoods computed independently for each data type used in optimization)
+
+
+MODEL:
+	
+The driver for the model. Run model and store output in an array.
+
+Arguments:
+	double **outArray (output argument): 2D array of model output. outArray[i][j] stores output for time step i, data type j.
+	int numDataTypes: number of data types used in optimization (see note under dataTypeIndices in description of LIKELY function)
+	int dataTypeIndices[]: array of the data types we're using (see note under dataTypeIndices in description of LIKELY function)
+	int numChanges: number of parameters that are changeable from one run to another
+	double values[]: array holding values of changeable parameters
+	int indices[]: which model parameters the values in values[] refer to (this allows easy turning on or off of the modifiability of various parameters - e.g. a given parameter could be held fixed in one run, but allowed to vary in another)
+
+Return value: none, but model output is returned in outArray argument.
+
+
+
+
+
+References:
+
+Bishop C.M. (1995) Neural networks for pattern recognition. Oxford University Press, New York (pp. 427-429).
+	Metropolis algorithm description.
+
+Edwards A.W.F. (1972) Likelihood; an account of the statistical concept of likelihood and its application to scientific inference. University Press, Cambridge.
+	Description of maximum likelihood.
+
+Hurtt G.C. & Armstrong R.A. (1996) A pelagic ecosystem model calibrated with BATS data. Deep-Sea Research Part II-Tropical Studies in Oceanography 43: 653-683.
+	Source of original ML-Metro code (provided by George Hurtt).
+
+Hurtt G.C. & Armstrong R.A. (1999) A pelagic ecosystem model calibrated with BATS and OWSI data. Deep-Sea Research Part I-Oceanographic Research Papers 46: 27-61.
+	Source of original ML-Metro code (provided by George Hurtt).
+
+Metropolis N., Rosenbluth A.W., Rosenbluth M.N., Teller A.H. & Teller E. (1953) Equation of state calculations by fast computing machines. Journal of Chemical Physics 21: 1087-1092.
+	Original Metropolis algorithm paper.
+
+Press W.H., Teukolsky S.A., Vetterling W.T. & Flannery B.P. (1992) Numerical recipes in C: The art of scientific computing. Cambridge University Press, Cambridge.
+	General description of simulated annealing.
+
+See also:
+
+Sacks W.J. (2003) Parameter optimization in a forest model using hourly eddy flux measurements. Senior thesis in Environmental Studies, Williams College, Williamstown, MA.

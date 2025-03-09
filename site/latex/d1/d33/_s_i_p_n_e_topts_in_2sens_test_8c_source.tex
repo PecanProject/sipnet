@@ -1,0 +1,296 @@
+\doxysection{SIPNETopts\+In/sens\+Test.c}
+\label{_s_i_p_n_e_topts_in_2sens_test_8c_source}\index{sensTest.c@{sensTest.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Bill\ Sacks}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ 2/23/05}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ tests\ the\ sensitivity\ of\ model-\/data\ misfit\ to\ variations\ in\ a\ single\ parameter}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ this\ currently\ only\ runs\ at\ a\ single\ location,\ though\ it\ could\ be\ extended\ to\ run\ at\ all\ locations}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ (returning\ total\ likelihood\ summed\ across\ all\ locations)}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}sipnet.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}paramchange.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}spatialParams.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ important\ constants\ -\/\ default\ values:}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ FILE\_FOR\_AGG\ "{}"{}\ }\textcolor{comment}{//\ no\ file}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ UNAGGED\_WEIGHT\ 0.0\ }\textcolor{comment}{//\ if\ aggregation\ is\ done,\ give\ no\ weight\ to\ unaggregated\ points\ in\ optimization}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ LOC\ 0\ }\textcolor{comment}{//\ default\ is\ run\ at\ location\ 0}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ PARAM\_FILE\ "{}"{}\ }\textcolor{comment}{//\ file\ to\ use\ in\ place\ of\ fileName.param\ -\/\ empty\ string\ means\ use\ fileName.param}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ OPT\_INDICES\_FILE\ "{}"{}\ }\textcolor{comment}{//\ file\ giving\ start\ and\ end\ indices\ for\ optimization\ at\ each\ location;\ no\ file\ means\ use\ all\ points}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ VALID\_FRAC\ 0.5\ }\textcolor{comment}{/*\ fraction\ of\ data\ points\ which\ must\ be\ valid}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ use\ data\ from\ a\ given\ time\ step\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName)\ \{}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordtype}{char}\ **dataTypeNames\ =\ getDataTypeNames();\ \textcolor{comment}{//\ data\ types\ that\ can\ be\ used\ in\ optimization}}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ fileName\ paramNum\ minVal\ maxVal\ numRuns\ typeNum1\ [typeNum2\ ...],\ where:\(\backslash\)n"{}},\ progName);}
+\DoxyCodeLine{00032\ \ \ printf(\textcolor{stringliteral}{"{}fileName.param\ is\ the\ file\ of\ parameter\ values\ (unless\ -\/p\ option\ is\ specified)\(\backslash\)n"{}});}
+\DoxyCodeLine{00033\ \ \ printf(\textcolor{stringliteral}{"{}fileName.param-\/spatial\ is\ the\ file\ of\ spatilly-\/varying\ parameters\ (first\ line\ must\ contain\ a\ single\ int:\ \#\ of\ locations)\(\backslash\)n"{}});}
+\DoxyCodeLine{00034\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(if\ -\/p\ option\ is\ specified,\ then\ use\ \{paramFile\}-\/spatial\ for\ spatially-\/varying\ parameters)\(\backslash\)n"{}});}
+\DoxyCodeLine{00035\ \ \ printf(\textcolor{stringliteral}{"{}fileName.clim\ is\ the\ file\ of\ climate\ data\ for\ each\ time\ step\(\backslash\)n"{}});}
+\DoxyCodeLine{00036\ \ \ printf(\textcolor{stringliteral}{"{}fileName.dat\ is\ the\ file\ of\ measured\ data\ (one\ column\ per\ data\ type)\(\backslash\)n"{}});}
+\DoxyCodeLine{00037\ \ \ printf(\textcolor{stringliteral}{"{}fileName.spd\ [Steps\ Per\ Day]\ contains\ one\ line\ per\ location;\ each\ line\ begins\ with\ year\ and\ julian\ day\ of\ 1st\ point,\(\backslash\)n"{}});}
+\DoxyCodeLine{00038\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)tfollowed\ by\ the\ number\ of\ steps\ in\ each\ day,\ terminated\ by\ -\/1\(\backslash\)n"{}});}
+\DoxyCodeLine{00039\ \ \ printf(\textcolor{stringliteral}{"{}fileName.valid\ contains\ fraction\ of\ valid\ data\ points\ for\ each\ time\ step\ (one\ col.\ per\ data\ type)\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{00040\ \ \ printf(\textcolor{stringliteral}{"{}paramNum\ is\ the\ index\ (0-\/indexing)\ of\ the\ parameter\ to\ change\ in\ the\ sensitivity\ test\(\backslash\)n"{}});}
+\DoxyCodeLine{00041\ \ \ printf(\textcolor{stringliteral}{"{}parameter\ is\ varied\ from\ minVal\ to\ maxVal\ over\ a\ total\ of\ numRuns\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{00042\ \ \ printf(\textcolor{stringliteral}{"{}typeNum1\ (and,\ optionally,\ typeNum2\ ...)\ specify\ the\ data\ type(s)\ to\ use\ in\ optimization,\ as\ follows:\(\backslash\)n"{}});}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ MAX\_DATA\_TYPES;\ i++)}
+\DoxyCodeLine{00044\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%d:\ \%s\(\backslash\)n"{}},\ i,\ dataTypeNames[i]);\ }
+\DoxyCodeLine{00045\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)nOutput\ from\ sensitivity\ test\ put\ in\ fileName.senstest.\ Each\ line\ contains:\ paramVal\ \ logLikelihood\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{00046\ \ \ }
+\DoxyCodeLine{00047\ \ \ printf(\textcolor{stringliteral}{"{}The\ following\ are\ optional\ arguments,\ with\ their\ default\ values:\(\backslash\)n"{}});}
+\DoxyCodeLine{00048\ \ \ printf(\textcolor{stringliteral}{"{}[\ -\/f\ fileforAgg\ ]\ :\ specify\ a\ file\ containing\ \#\ of\ time\ steps\ per\ model/data\ aggregation\(\backslash\)n"{}});}
+\DoxyCodeLine{00049\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)twhere\ each\ line\ contains\ aggregation\ info\ for\ one\ location,\ and\ each\ line\ is\ terminated\ with\ a\ -\/1\(\backslash\)n"{}});}
+\DoxyCodeLine{00050\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)tEach\ value\ (i)\ on\ a\ given\ line\ is\ an\ integer\ giving\ the\ number\ of\ time\ steps\ in\ aggregation\ i\ in\ that\ time\ step\(\backslash\)n"{}});}
+\DoxyCodeLine{00051\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(e.g.\ to\ run\ model-\/data\ comparison\ on\ a\ yearly\ aggregation,\ each\ value\ would\ be\ number\ of\ steps\ in\ year\ i)\(\backslash\)n"{}});}
+\DoxyCodeLine{00052\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(if\ no\ file\ specified,\ will\ perform\ no\ aggregation)\ \{\%s\}\(\backslash\)n"{}},\ FILE\_FOR\_AGG);}
+\DoxyCodeLine{00053\ \ \ printf(\textcolor{stringliteral}{"{}[\ -\/g\ unAggedWeight\ ]\ :\ if\ aggregation\ is\ done,\ relative\ weight\ of\ unaggregated\ points\ in\ optimization\(\backslash\)n"{}});}
+\DoxyCodeLine{00054\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(should\ probably\ be\ 0\ or\ 1;\ 0\ means\ only\ use\ aggregated\ points\ in\ optimization)\ \{\%f\}\(\backslash\)n"{}},\ UNAGGED\_WEIGHT);}
+\DoxyCodeLine{00055\ \ \ printf(\textcolor{stringliteral}{"{}[\ -\/l\ loc\ ]\ :\ location\ to\ run\ at\ (can\ only\ perform\ sensitivity\ test\ at\ a\ single\ location)\ \{\%d\}\(\backslash\)n"{}},\ LOC);}
+\DoxyCodeLine{00056\ \ \ printf(\textcolor{stringliteral}{"{}[\ -\/p\ paramFile\ ]\ :\ instead\ of\ fileName.param,\ use\ given\ file\ for\ parameter\ values\ and\ info\ \{\%s\}\(\backslash\)n"{}},\ PARAM\_FILE);}
+\DoxyCodeLine{00057\ \ \ printf(\textcolor{stringliteral}{"{}[\ -\/t\ opTIndicesFile\ ]\ :\ file\ giving,\ for\ each\ location,\ start\ and\ end\ indices\ for\ optimization\(\backslash\)n"{}});}
+\DoxyCodeLine{00058\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(one\ line\ per\ location,\ with\ each\ line\ containing\ two\ integers:\ start\ \&\ end;\ if\ no\ file\ specified,\ use\ all\ points)\(\backslash\)n"{}});}
+\DoxyCodeLine{00059\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)t(1-\/indexing;\ end\ =\ -\/1\ means\ go\ to\ end)\ \{\%s\}\(\backslash\)n"{}},\ OPT\_INDICES\_FILE);}
+\DoxyCodeLine{00060\ \ \ printf(\textcolor{stringliteral}{"{}[\ -\/v\ validFrac\ ]\ :\ fraction\ of\ data\ points\ which\ must\ be\ valid\(\backslash\)n"{}});}
+\DoxyCodeLine{00061\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)tto\ use\ data\ from\ a\ given\ time\ step\ \{\%f\}\(\backslash\)n"{}},\ VALID\_FRAC);}
+\DoxyCodeLine{00062\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)nNOTE:\ On\ Mac,\ must\ specify\ optional\ arguments\ BEFORE\ any\ required\ arguments\(\backslash\)n"{}});}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{comment}{//\ initialize\ data\ indices\ array\ to\ [0,1,...,MAX\_DATA\_TYPES-\/1]}}
+\DoxyCodeLine{00066\ \textcolor{comment}{//\ returns\ size\ of\ array\ (=\ MAX\_DATA\_TYPES)}}
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{int}\ initDataTypeIndices(\textcolor{keywordtype}{int}\ dataTypeIndices[])\ \{}
+\DoxyCodeLine{00068\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00069\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ MAX\_DATA\_TYPES;\ i++)}
+\DoxyCodeLine{00070\ \ \ \ \ dataTypeIndices[i]\ =\ i;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \textcolor{keywordflow}{return}\ MAX\_DATA\_TYPES;}
+\DoxyCodeLine{00073\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{comment}{/*\ PRE:\ dataTypeIndices\ is\ at\ least\ big\ enough\ to\ hold\ MAX\_DATA\_TYPES\ ints}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ argv\ is\ vector\ of\ command-\/line\ arguments}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ startPos\ is\ index\ in\ argv\ where\ data\ type\ indices\ start}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ argc\ is\ total\ argument\ count\ (i.e.\ number\ of\ elements\ in\ argv[])}}
+\DoxyCodeLine{00080\ \textcolor{comment}{\ \ \ all\ arguments\ in\ argv\ from\ startPos\ to\ end\ are\ integers\ between\ 0\ and\ (MAX\_DATA\_TYPES\ -\/\ 1),\ with\ no\ repeats}}
+\DoxyCodeLine{00081\ \textcolor{comment}{}}
+\DoxyCodeLine{00082\ \textcolor{comment}{\ \ \ POST:\ fills\ dataTypeIndices\ with\ given\ integer\ arguments}}
+\DoxyCodeLine{00083\ \textcolor{comment}{\ \ \ returns\ number\ of\ data\ types}}
+\DoxyCodeLine{00084\ \textcolor{comment}{*/}\ \ \ }
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{int}\ parseDataTypeIndices(\textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{char}\ *argv[],\ \textcolor{keywordtype}{int}\ startPos,\ \textcolor{keywordtype}{int}\ argc)\ \{}
+\DoxyCodeLine{00086\ \ \ \textcolor{keywordtype}{int}\ numDataTypes;}
+\DoxyCodeLine{00087\ \ \ \textcolor{keywordtype}{int}\ i,\ pos;}
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordtype}{int}\ thisType;}
+\DoxyCodeLine{00089\ \ \ \textcolor{keywordtype}{char}\ *errc\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00090\ \ \ \textcolor{keywordtype}{int}\ usedArray[MAX\_DATA\_TYPES];\ \textcolor{comment}{//\ has\ a\ given\ data\ type\ already\ been\ chosen?}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ numDataTypes\ =\ (argc\ -\/\ startPos);\ \textcolor{comment}{//\ how\ many\ arguments\ are\ left?\ they\ should\ all\ be\ data\ type\ indices}}
+\DoxyCodeLine{00093\ \ \ \ \ }
+\DoxyCodeLine{00094\ \ \ \textcolor{comment}{//\ error\ checking:}}
+\DoxyCodeLine{00095\ \ \ \textcolor{keywordflow}{if}\ (numDataTypes\ <=\ 0)\ \{\ \textcolor{comment}{//\ uh-\/oh:\ no\ more\ arguments\ left}}
+\DoxyCodeLine{00096\ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00097\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00098\ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (numDataTypes\ >\ MAX\_DATA\_TYPES)\ \{\ \textcolor{comment}{//\ uh-\/oh:\ too\ many\ arguments\ left}}
+\DoxyCodeLine{00100\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ more\ than\ \%d\ data\ types\ specified\(\backslash\)n"{}},\ MAX\_DATA\_TYPES);}
+\DoxyCodeLine{00101\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00102\ \ \ \}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \textcolor{comment}{//\ initialize\ usedArray:}}
+\DoxyCodeLine{00105\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ MAX\_DATA\_TYPES;\ i++)}
+\DoxyCodeLine{00106\ \ \ \ \ usedArray[i]\ =\ 0;\ \textcolor{comment}{//\ false}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \textcolor{comment}{//\ read\ each\ data\ type:}}
+\DoxyCodeLine{00109\ \ \ i\ =\ 0;}
+\DoxyCodeLine{00110\ \ \ pos\ =\ startPos;}
+\DoxyCodeLine{00111\ \ \ \textcolor{keywordflow}{while}\ (i\ <\ numDataTypes)\ \{\ }
+\DoxyCodeLine{00112\ \ \ \ \ thisType\ =\ strtol(argv[pos],\ \&errc,\ 0);\ \textcolor{comment}{//\ convert\ string\ argument\ to\ integer}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{//\ error\ check:}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{if}\ (thisType\ <\ 0\ ||\ thisType\ >=\ MAX\_DATA\_TYPES)\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ data\ type\ \%d\ out\ of\ range\ [0..\%d]\(\backslash\)n"{}},\ thisType,\ MAX\_DATA\_TYPES\ -\/\ 1);}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (usedArray[thisType])\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ data\ type\ \%d\ specified\ twice\(\backslash\)n"{}},\ thisType);}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{//\ okay,\ thisType\ is\ valid}}
+\DoxyCodeLine{00125\ \ \ \ \ dataTypeIndices[i]\ =\ thisType;}
+\DoxyCodeLine{00126\ \ \ \ \ usedArray[thisType]\ =\ 1;\ \textcolor{comment}{//\ this\ index\ is\ used}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ i++;}
+\DoxyCodeLine{00129\ \ \ \ \ pos++;}
+\DoxyCodeLine{00130\ \ \ \}\ \textcolor{comment}{//\ end\ while\ (i\ <\ numDataTypes)}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \textcolor{keywordflow}{return}\ numDataTypes;}
+\DoxyCodeLine{00133\ \}}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00137\ \ \ SpatialParams\ *spatialParams;\ \textcolor{comment}{//\ the\ parameters\ used\ in\ the\ model\ (possibly\ spatially-\/varying)}}
+\DoxyCodeLine{00138\ \ \ \textcolor{keywordtype}{int}\ numLocs;\ \textcolor{comment}{/*\ number\ of\ spatial\ locations\ in\ the\ various\ files:\ read\ from\ spatial\ param.\ file}}
+\DoxyCodeLine{00139\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ note,\ though,\ that\ we\ only\ perform\ the\ sensitivity\ test\ at\ a\ single\ location\ */}}
+\DoxyCodeLine{00140\ \ \ \textcolor{keywordtype}{int}\ *steps;\ \textcolor{comment}{//\ number\ of\ time\ steps\ in\ each\ location}}
+\DoxyCodeLine{00141\ \ \ \textcolor{keywordtype}{char}\ option;}
+\DoxyCodeLine{00142\ \ \ \textcolor{keywordtype}{char}\ optIndicesFile[256]\ =\ OPT\_INDICES\_FILE;\ \textcolor{comment}{//\ optional\ file\ holding\ indices\ for\ optimizations}}
+\DoxyCodeLine{00143\ \ \ \textcolor{keywordtype}{char}\ fileForAgg[256]\ =\ FILE\_FOR\_AGG;\ \textcolor{comment}{//\ optional\ file\ for\ aggregating\ }}
+\DoxyCodeLine{00144\ \ \ \textcolor{keywordtype}{char}\ paramFile[256]\ =\ PARAM\_FILE;\ \textcolor{comment}{//\ if,\ after\ getting\ optional\ arguments,\ paramFile\ is\ "{}"{},\ set\ paramFile\ =\ fileName.param}}
+\DoxyCodeLine{00145\ \ \ \textcolor{keywordtype}{int}\ loc\ =\ LOC;}
+\DoxyCodeLine{00146\ \ \ \textcolor{keywordtype}{double}\ unaggedWeight\ =\ UNAGGED\_WEIGHT;}
+\DoxyCodeLine{00147\ \ \ \textcolor{keywordtype}{double}\ validFrac\ =\ VALID\_FRAC;}
+\DoxyCodeLine{00148\ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[MAX\_DATA\_TYPES];\ \textcolor{comment}{//\ MAX\_DATA\_TYPES\ defined\ in\ sipnet.c}}
+\DoxyCodeLine{00149\ \ \ \textcolor{keywordtype}{int}\ numDataTypes;\ \textcolor{comment}{//\ how\ many\ data\ types\ are\ we\ actually\ optimizing\ on?}}
+\DoxyCodeLine{00150\ \ \ \textcolor{keywordtype}{char}\ *errc\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00151\ \ \ FILE\ *output;}
+\DoxyCodeLine{00152\ \ \ FILE\ *nullOutput;\ \textcolor{comment}{//\ for\ output\ we\ don't\ want\ to\ see}}
+\DoxyCodeLine{00153\ \ \ \textcolor{keywordtype}{char}\ fileName[256];}
+\DoxyCodeLine{00154\ \ \ \textcolor{keywordtype}{char}\ outFileName[256];}
+\DoxyCodeLine{00155\ \ \ \textcolor{keywordtype}{char}\ climFile[256];\ \textcolor{comment}{//\ name\ of\ climate\ file}}
+\DoxyCodeLine{00156\ \ \ \textcolor{keywordtype}{char}\ optionsFile[256];\ \textcolor{comment}{//\ name\ of\ options\ file}}
+\DoxyCodeLine{00157\ \ \ double\ (*differenceFunc)(\textcolor{keywordtype}{double}\ *,\ OutputInfo\ *,\ int,\ SpatialParams\ *,\ double,}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ void\ (*)(\textcolor{keywordtype}{double}\ **,\ int,\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ int),\ \textcolor{keywordtype}{int}\ [],\ \textcolor{keywordtype}{int});}
+\DoxyCodeLine{00159\ \ \ \textcolor{comment}{//\ function\ pointer:\ the\ difference\ function\ to\ use\ (depends\ on\ whether\ we're\ aggregating\ model\ \&\ data)\ }}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ numDataTypes\ =\ initDataTypeIndices(dataTypeIndices);\ \textcolor{comment}{//\ initialize\ array\ to\ [0,1,...,MAX\_DATA\_TYPES-\/1]\ (default)}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \textcolor{comment}{//\ parameters\ used\ for\ performing\ the\ sensitivity\ test:}}
+\DoxyCodeLine{00164\ \ \ \textcolor{keywordtype}{int}\ paramNum;\ \textcolor{comment}{//\ index\ of\ parameter\ to\ change}}
+\DoxyCodeLine{00165\ \ \ \textcolor{keywordtype}{double}\ minVal,\ maxVal;\ \textcolor{comment}{//\ min\ and\ max\ parameter\ values\ to\ use}}
+\DoxyCodeLine{00166\ \ \ \textcolor{keywordtype}{int}\ numRuns,\ runNum;}
+\DoxyCodeLine{00167\ \ \ \textcolor{keywordtype}{double}\ changeAmt;\ \textcolor{comment}{//\ amount\ by\ which\ we\ change\ the\ param.\ value\ each\ run}}
+\DoxyCodeLine{00168\ \ \ \textcolor{keywordtype}{double}\ paramVal;\ \textcolor{comment}{//\ current\ value}}
+\DoxyCodeLine{00169\ \ \ \textcolor{keywordtype}{double}\ loglikely;\ \textcolor{comment}{//\ model-\/data\ error\ statistic}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \textcolor{keywordtype}{double}\ *sigma;\ \textcolor{comment}{//\ unused,\ but\ expected\ by\ likelihood\ function}}
+\DoxyCodeLine{00172\ \ \ OutputInfo\ *outputInfo;\ \textcolor{comment}{//\ unused,\ but\ expected\ by\ likelihood\ function}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \textcolor{comment}{//\ get\ command-\/line\ arguments:}}
+\DoxyCodeLine{00176\ \ \ \textcolor{keywordflow}{while}\ ((option\ =\ getopt(argc,\ argv,\ \textcolor{stringliteral}{"{}f:g:l:p:t:v:"{}}))\ !=\ -\/1)\ \{\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{comment}{//\ we\ have\ another\ optional\ argument}}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordflow}{switch}(option)\ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'f'}:}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ strcpy(fileForAgg,\ optarg);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'g'}:}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ unaggedWeight\ =\ strtod(optarg,\ \&errc);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'l'}:}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ loc\ =\ strtol(optarg,\ \&errc,\ 0);}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'p'}:}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ strcpy(paramFile,\ optarg);}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'t'}:}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ strcpy(optIndicesFile,\ optarg);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'v'}:}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ validFrac\ =\ strtod(optarg,\ \&errc);}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(errc)\ >\ 0)\ \{\ \textcolor{comment}{//\ invalid\ character(s)\ in\ argument}}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Invalid\ value:\ \%s\(\backslash\)n"{}},\ optarg);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00205\ \ \ \ \ \}}
+\DoxyCodeLine{00206\ \ \ \}}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \textcolor{comment}{//\ now\ optind\ points\ to\ first\ non-\/optional\ argument\ (i.e.\ fileName)}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ (optind\ +\ 6))\ \{\ \textcolor{comment}{//\ expecting\ at\ least\ 6\ more\ arguments,\ but\ there\ are\ fewer\ than\ that}}
+\DoxyCodeLine{00212\ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00213\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00214\ \ \ \}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \textcolor{comment}{//\ read\ remaining\ command-\/line\ arguments:}}
+\DoxyCodeLine{00217\ \ \ strcpy(fileName,\ argv[optind]);}
+\DoxyCodeLine{00218\ \ \ \textcolor{keywordflow}{if}\ (strcmp(paramFile,\ \textcolor{stringliteral}{"{}"{}})\ ==\ 0)\ \{\ \textcolor{comment}{//\ no\ alternative\ parameter\ file\ specified}}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{comment}{//\ set\ paramFile\ =\ \{fileName\}.param}}
+\DoxyCodeLine{00220\ \ \ \ \ strcpy(paramFile,\ fileName);}
+\DoxyCodeLine{00221\ \ \ \ \ strcat(paramFile,\ \textcolor{stringliteral}{"{}.param"{}});}
+\DoxyCodeLine{00222\ \ \ \}}
+\DoxyCodeLine{00223\ \ \ strcpy(climFile,\ fileName);}
+\DoxyCodeLine{00224\ \ \ strcat(climFile,\ \textcolor{stringliteral}{"{}.clim"{}});}
+\DoxyCodeLine{00225\ \ }
+\DoxyCodeLine{00226\ \ \ strcpy(optionsFile,\ fileName);}
+\DoxyCodeLine{00227\ \ \ strcat(optionsFile,\ \textcolor{stringliteral}{"{}.options"{}});}
+\DoxyCodeLine{00228\ \ \ }
+\DoxyCodeLine{00229\ \ \ strcpy(outFileName,\ fileName);}
+\DoxyCodeLine{00230\ \ \ strcat(outFileName,\ \textcolor{stringliteral}{"{}.senstest"{}});}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ paramNum\ =\ strtol(argv[optind+1],\ \&errc,\ 0);}
+\DoxyCodeLine{00233\ \ \ minVal\ =\ strtod(argv[optind+2],\ \&errc);}
+\DoxyCodeLine{00234\ \ \ maxVal\ =\ strtod(argv[optind+3],\ \&errc);}
+\DoxyCodeLine{00235\ \ \ numRuns\ =\ strtol(argv[optind+4],\ \&errc,\ 0);}
+\DoxyCodeLine{00236\ \ \ numDataTypes\ =\ parseDataTypeIndices(dataTypeIndices,\ argv,\ optind+5,\ argc);}
+\DoxyCodeLine{00237\ \ \ \textcolor{comment}{//\ done\ reading\ command-\/line\ arguments}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ changeAmt\ =\ (maxVal\ -\/\ minVal)/(\textcolor{keywordtype}{double})(numRuns\ -\/\ 1);}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ numLocs\ =\ initModel(\&spatialParams,\ \&steps,\ paramFile,\ climFile,optionsFile);}
+\DoxyCodeLine{00242\ \ \ \textcolor{comment}{//\ this\ is\ the\ number\ of\ locations\ in\ various\ files,\ but\ we'll\ only\ run\ at\ one\ location}}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ output\ =\ openFile(outFileName,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00245\ \ \ nullOutput\ =\ tmpfile();\ \textcolor{comment}{//\ for\ output\ we\ don't\ want\ to\ see}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ readData(fileName,\ dataTypeIndices,\ numDataTypes,\ MAX\_DATA\_TYPES,\ numLocs,\ steps,\ }
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ validFrac,\ optIndicesFile,\ \textcolor{stringliteral}{"{}"{}},\ nullOutput);\ \textcolor{comment}{//\ 2nd\ to\ last\ argument\ is\ compareIndicesFile,\ for\ which\ we\ have\ none}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \textcolor{keywordflow}{if}\ (strcmp(fileForAgg,\ \textcolor{stringliteral}{"{}"{}})\ !=\ 0)\ \{\ \textcolor{comment}{//\ there\ is\ a\ file\ for\ model-\/data\ aggregation}}
+\DoxyCodeLine{00251\ \ \ \ \ readFileForAgg(fileForAgg,\ numDataTypes,\ unaggedWeight);}
+\DoxyCodeLine{00252\ \ \ \ \ differenceFunc\ =\ aggedDifference;}
+\DoxyCodeLine{00253\ \ \ \ \ numDataTypes\ *=\ 2;\ \textcolor{comment}{/*\ A\ bifurcation\ of\ data\ types:\ each\ data\ type\ is\ split\ into\ two\ data\ types:}}
+\DoxyCodeLine{00254\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ an\ aggregated\ and\ an\ unaggregated.}}
+\DoxyCodeLine{00255\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ But\ this\ bifurcation\ only\ applies\ to\ the\ collection\ of\ statistics,\ not}}
+\DoxyCodeLine{00256\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ to\ the\ actual\ running\ of\ the\ model!}}
+\DoxyCodeLine{00257\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ We'll\ have\ to\ "{}remember"{}\ this\ in\ the\ aggedDifference\ function!}}
+\DoxyCodeLine{00258\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00259\ \ \ \}}
+\DoxyCodeLine{00260\ \ \ \textcolor{keywordflow}{else}\ \textcolor{comment}{//\ no\ model-\/data\ aggregation\ (default)}}
+\DoxyCodeLine{00261\ \ \ \ \ differenceFunc\ =\ difference;\ \textcolor{comment}{//\ plain\ old\ "{}vanilla"{}\ difference\ function}}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ sigma\ =\ makeArray(numDataTypes);\ \textcolor{comment}{//\ unused,\ but\ expected\ by\ the\ likelihood\ function}}
+\DoxyCodeLine{00264\ \ \ outputInfo\ =\ newOutputInfo(numDataTypes,\ loc);\ \textcolor{comment}{//\ unused,\ but\ expected\ by\ the\ likelihood\ function}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ paramVal\ =\ minVal;}
+\DoxyCodeLine{00267\ \ \ \textcolor{keywordflow}{for}\ (runNum\ =\ 0;\ runNum\ <\ numRuns;\ runNum++)\ \{}
+\DoxyCodeLine{00268\ \ \ \ \ setSpatialParam(spatialParams,\ paramNum,\ loc,\ paramVal);\ \textcolor{comment}{//\ set\ the\ parameter\ value}}
+\DoxyCodeLine{00269\ \ \ \ \ }
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{comment}{//\ run\ the\ model,\ compute\ log\ likelihood\ (model-\/data\ error\ statistic)}}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{comment}{//\ paramWeight\ (5th\ argument)\ =\ 0}}
+\DoxyCodeLine{00272\ \ \ \ \ loglikely\ =\ -\/1.0\ *\ (*differenceFunc)(sigma,\ outputInfo,\ loc,\ spatialParams,}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,\ runModelNoOut,\ dataTypeIndices,\ numDataTypes);}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ fprintf(output,\ \textcolor{stringliteral}{"{}\%f\(\backslash\)t\%f\(\backslash\)n"{}},\ paramVal,\ loglikely);\ }
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ paramVal\ +=\ changeAmt;}
+\DoxyCodeLine{00278\ \ \ \}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \textcolor{comment}{//\ free\ various\ pointers,\ close\ files,\ etc.:}}
+\DoxyCodeLine{00281\ \ \ cleanupModel(numLocs);}
+\DoxyCodeLine{00282\ \ \ cleanupParamchange();}
+\DoxyCodeLine{00283\ \ \ deleteSpatialParams(spatialParams);}
+\DoxyCodeLine{00284\ \ \ free(steps);}
+\DoxyCodeLine{00285\ \ \ free(sigma);}
+\DoxyCodeLine{00286\ \ \ freeOutputInfo(outputInfo,\ numDataTypes);}
+\DoxyCodeLine{00287\ \ \ fclose(output);\ }
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00290\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,176 @@
+\doxysection{transpose.\+c File Reference}
+\label{transpose_8c}\index{transpose.c@{transpose.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+Include dependency graph for transpose.\+c\+:
+% FIG 0
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ SEPARATORS}~"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r"{}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ usage} (\textbf{ char} $\ast$\textbf{ prog\+Name})
+\item 
+\textbf{ int} \textbf{ numlines} (\textbf{ FILE} $\ast$\textbf{ f}, \textbf{ int} $\ast$\textbf{ longest\+Line})
+\item 
+\textbf{ void} \textbf{ read\+File} (\textbf{ FILE} $\ast$\textbf{ f}, \textbf{ char} $\ast$$\ast$\textbf{ lines}, \textbf{ int} \textbf{ max\+Length})
+\item 
+\textbf{ int} \textbf{ count\+Items} (\textbf{ char} $\ast$\textbf{ line})
+\item 
+\textbf{ void} \textbf{ read\+Items} (\textbf{ char} $\ast$$\ast$\textbf{ lines}, \textbf{ char} $\ast$$\ast$$\ast$\textbf{ items}, \textbf{ int} \textbf{ num\+Lines}, \textbf{ int} \textbf{ num\+Items})
+\item 
+\textbf{ void} \textbf{ output\+Transpose} (\textbf{ FILE} $\ast$\textbf{ f}, \textbf{ char} $\ast$$\ast$$\ast$\textbf{ items}, \textbf{ int} \textbf{ num\+Lines}, \textbf{ int} \textbf{ num\+Items})
+\item 
+\textbf{ int} \textbf{ main} (\textbf{ int} \textbf{ argc}, \textbf{ char} $\ast$\textbf{ argv}[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{transpose_8c_a557b042aa353cdf74324fa04c52888b1} 
+\index{transpose.c@{transpose.c}!SEPARATORS@{SEPARATORS}}
+\index{SEPARATORS@{SEPARATORS}!transpose.c@{transpose.c}}
+\doxysubsubsection{SEPARATORS}
+{\footnotesize\ttfamily \#\textbf{ define} SEPARATORS~"{} \textbackslash{}t\textbackslash{}n\textbackslash{}r"{}}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ transpose.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{transpose_8c_a2088381b83013d475f3620bba77cd853} 
+\index{transpose.c@{transpose.c}!countItems@{countItems}}
+\index{countItems@{countItems}!transpose.c@{transpose.c}}
+\doxysubsubsection{countItems()}
+{\footnotesize\ttfamily \textbf{ int} count\+Items (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{line }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ transpose.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ n}, and \textbf{ SEPARATORS}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{transpose_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{transpose.c@{transpose.c}!main@{main}}
+\index{main@{main}!transpose.c@{transpose.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily \textbf{ int} main (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{argc,  }\item[{\textbf{ char} $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 137} of file \textbf{ transpose.\+c}.
+
+
+
+References \textbf{ count\+Items()}, \textbf{ exit()}, \textbf{ f}, \textbf{ fclose()}, \textbf{ i}, \textbf{ index}, \textbf{ numlines()}, \textbf{ open\+File()}, \textbf{ output\+Transpose()}, \textbf{ read\+File()}, \textbf{ read\+Items()}, and \textbf{ usage()}.
+
+Here is the call graph for this function\+:
+% FIG 1
+\label{transpose_8c_a1c9dccc59ccf3fb82ca0ecb091ea7c14} 
+\index{transpose.c@{transpose.c}!numlines@{numlines}}
+\index{numlines@{numlines}!transpose.c@{transpose.c}}
+\doxysubsubsection{numlines()}
+{\footnotesize\ttfamily \textbf{ int} numlines (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{f,  }\item[{\textbf{ int} $\ast$}]{longest\+Line }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ transpose.\+c}.
+
+
+
+References \textbf{ f}, \textbf{ index}, and \textbf{ length()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{transpose_8c_af6de32adecde5a94a2f1a9bb48848ccb} 
+\index{transpose.c@{transpose.c}!outputTranspose@{outputTranspose}}
+\index{outputTranspose@{outputTranspose}!transpose.c@{transpose.c}}
+\doxysubsubsection{outputTranspose()}
+{\footnotesize\ttfamily \textbf{ void} output\+Transpose (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{f,  }\item[{\textbf{ char} $\ast$$\ast$$\ast$}]{items,  }\item[{\textbf{ int}}]{num\+Lines,  }\item[{\textbf{ int}}]{num\+Items }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 125} of file \textbf{ transpose.\+c}.
+
+
+
+References \textbf{ f}, \textbf{ fprintf()}, \textbf{ i}, \textbf{ index}, and \textbf{ j}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{transpose_8c_aa47bbeed4188b8f05cc93b3b8ecabbdc} 
+\index{transpose.c@{transpose.c}!readFile@{readFile}}
+\index{readFile@{readFile}!transpose.c@{transpose.c}}
+\doxysubsubsection{readFile()}
+{\footnotesize\ttfamily \textbf{ void} read\+File (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{f,  }\item[{\textbf{ char} $\ast$$\ast$}]{lines,  }\item[{\textbf{ int}}]{max\+Length }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 62} of file \textbf{ transpose.\+c}.
+
+
+
+References \textbf{ f}, \textbf{ i}, and \textbf{ index}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{transpose_8c_ac7baaad9a0b659c32d141f73510e6dd4} 
+\index{transpose.c@{transpose.c}!readItems@{readItems}}
+\index{readItems@{readItems}!transpose.c@{transpose.c}}
+\doxysubsubsection{readItems()}
+{\footnotesize\ttfamily \textbf{ void} read\+Items (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$$\ast$}]{lines,  }\item[{\textbf{ char} $\ast$$\ast$$\ast$}]{items,  }\item[{\textbf{ int}}]{num\+Lines,  }\item[{\textbf{ int}}]{num\+Items }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 100} of file \textbf{ transpose.\+c}.
+
+
+
+References \textbf{ exit()}, \textbf{ i}, \textbf{ index}, \textbf{ j}, and \textbf{ SEPARATORS}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{transpose_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
+\index{transpose.c@{transpose.c}!usage@{usage}}
+\index{usage@{usage}!transpose.c@{transpose.c}}
+\doxysubsubsection{usage()}
+{\footnotesize\ttfamily \textbf{ void} usage (\begin{DoxyParamCaption}\item[{\textbf{ char} $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ transpose.\+c}.
+
+
+
+References \textbf{ index}.
+
+
+
+Referenced by \textbf{ main()}.
+

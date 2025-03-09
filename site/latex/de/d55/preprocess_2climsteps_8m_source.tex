@@ -1,0 +1,141 @@
+\doxysection{preprocess/climsteps.m}
+\label{preprocess_2climsteps_8m_source}\index{climsteps.m@{climsteps.m}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \%\ Bill\ Sacks}
+\DoxyCodeLine{00002\ \%\ 10/20/03}
+\DoxyCodeLine{00003\ \%\ Modified\ 7/12/06}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{keyword}{function}\ climsteps(stepLength,\ obsStepLength,\ directory\_clim,\ directory\_fluxes)}
+\DoxyCodeLine{00006\ \%\ \textcolor{keywordflow}{for\ each}\ of\ tair,\ vpd,\ vpdsoil,\ vpress,\ par,\ tsoil,\ wspd,\ ppt,\ nee,}
+\DoxyCodeLine{00007\ \%\ fh2o,\ and\ soilwetness,\ take\ hourly\ (or\ half-\/hourly)\ data\ and}
+\DoxyCodeLine{00008\ \%\ aggregate\ up\ to\ timesteps\ of\ given\ stepLength\ (in\ \#\ of}
+\DoxyCodeLine{00009\ \%\ observational\ time\ steps)}
+\DoxyCodeLine{00010\ \%\ (by\ just\ taking\ the\ mean\ across\ a\ timestep)}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \%\ Also\ determine\ valid\ fraction\ \textcolor{keywordflow}{for}\ nee,\ fh2o,\ and\ soilwetness}
+\DoxyCodeLine{00013\ \ \ }
+\DoxyCodeLine{00014\ \%\ Assumes\ that\ (total\ \#\ observational\ time\ steps)/stepLength\ is\ an\ integer\ }
+\DoxyCodeLine{00015\ \%\ (\textcolor{keywordflow}{if}\ not,\ \textcolor{keywordflow}{throws}\ out\ last\ fraction\ of\ a\ time\ step)}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \%\ obsStepLength\ gives\ the\ length\ of\ each\ observational\ time\ step\ (in}
+\DoxyCodeLine{00018\ \%\ seconds)\ (e.g.\ 3600\ \textcolor{keywordflow}{for}\ harvard,\ 1800\ \textcolor{keywordflow}{for}\ niwot)}
+\DoxyCodeLine{00019\ \ \ }
+\DoxyCodeLine{00020\ \%\ Input\ and\ output\ are\ from\ the\ given\ directories}
+\DoxyCodeLine{00021\ \ \ }
+\DoxyCodeLine{00022\ \ \ soilwetness\_upperlimit\ =\ 0.95;\ \%\ take\ 95th\ percentile\ of\ 1/2-\/hourly}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ soilwetness\ as\ max}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ tair\ =\ load([directory\_clim\ '/tairfill']);}
+\DoxyCodeLine{00026\ \ \ disp(\textcolor{stringliteral}{'loaded\ tair'});}
+\DoxyCodeLine{00027\ \ \ vpd\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/vpdfill'}]);}
+\DoxyCodeLine{00028\ \ \ disp(\textcolor{stringliteral}{'loaded\ vpd'});}
+\DoxyCodeLine{00029\ \ \ vpdsoil\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/vpdsoilfill'}]);}
+\DoxyCodeLine{00030\ \ \ disp(\textcolor{stringliteral}{'loaded\ vpdsoil'});}
+\DoxyCodeLine{00031\ \ \ vpress\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/vpressfill'}]);}
+\DoxyCodeLine{00032\ \ \ disp(\textcolor{stringliteral}{'loaded\ vpress'});}
+\DoxyCodeLine{00033\ \ \ par\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/parfill'}]);}
+\DoxyCodeLine{00034\ \ \ disp(\textcolor{stringliteral}{'loaded\ par'});}
+\DoxyCodeLine{00035\ \ \ tsoil\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/tsoilfill'}]);}
+\DoxyCodeLine{00036\ \ \ disp(\textcolor{stringliteral}{'loaded\ tsoil'});}
+\DoxyCodeLine{00037\ \ \ wspd\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/wspdfill'}]);}
+\DoxyCodeLine{00038\ \ \ disp(\textcolor{stringliteral}{'loaded\ wspd'});}
+\DoxyCodeLine{00039\ \ \ ppt\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/precipfill'}]);}
+\DoxyCodeLine{00040\ \ \ disp(\textcolor{stringliteral}{'loaded\ ppt'});}
+\DoxyCodeLine{00041\ \ \ nee\ =\ load([directory\_fluxes\ \textcolor{stringliteral}{'/neefill'}]);}
+\DoxyCodeLine{00042\ \ \ disp(\textcolor{stringliteral}{'loaded\ nee'});}
+\DoxyCodeLine{00043\ \ \ fh2o\ =\ load([directory\_fluxes\ \textcolor{stringliteral}{'/fh2ofill'}]);}
+\DoxyCodeLine{00044\ \ \ disp(\textcolor{stringliteral}{'loaded\ fh2o'});}
+\DoxyCodeLine{00045\ \ \ soilwetness\ =\ load([directory\_clim\ \textcolor{stringliteral}{'/soilwetness'}]);}
+\DoxyCodeLine{00046\ \ \ disp(\textcolor{stringliteral}{'loaded\ soilwetness'});}
+\DoxyCodeLine{00047\ \ \ neevalid\ =\ load([directory\_fluxes\ \textcolor{stringliteral}{'/neevalid'}]);\ \%\ 1\ or\ 0\ \textcolor{keywordflow}{for\ each}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ point}
+\DoxyCodeLine{00049\ \ \ disp(\textcolor{stringliteral}{'loaded\ neevalid'});}
+\DoxyCodeLine{00050\ \ \ fh2ovalid\ =\ load([directory\_fluxes\ \textcolor{stringliteral}{'/fh2ovalid'}]);\ \%\ 1\ or\ 0\ \textcolor{keywordflow}{for}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ each\ point}
+\DoxyCodeLine{00052\ \ \ disp(\textcolor{stringliteral}{'loaded\ fh2ovalid'});}
+\DoxyCodeLine{00053\ \ \ }
+\DoxyCodeLine{00054\ \ \ soilwetness\_sorted\ =\ ...}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ sort(soilwetness(find(isfinite(soilwetness))));}
+\DoxyCodeLine{00056\ \ \ maxsoilwetness\ =\ soilwetness\_sorted(round(soilwetness\_upperlimit*\ ...}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ length(soilwetness\_sorted)));}
+\DoxyCodeLine{00058\ \ \ soilwetnessfrac\ =\ soilwetness/maxsoilwetness;}
+\DoxyCodeLine{00059\ \ \ }
+\DoxyCodeLine{00060\ \ \ nobssteps\ =\ length(nee);}
+\DoxyCodeLine{00061\ \ \ nsteps\ =\ nobssteps/stepLength;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ tairf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/tairstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00064\ \ \ vpdf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/vpdstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00065\ \ \ vpdsoilf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/vpdsoilstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00066\ \ \ vpressf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/vpressstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00067\ \ \ parf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/parstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00068\ \ \ tsoilf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/tsoilstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00069\ \ \ wspdf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/wspdstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00070\ \ \ pptf\ =\ fopen([directory\_clim\ \textcolor{stringliteral}{'/pptstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00071\ \ \ neef\ =\ fopen([directory\_fluxes\ \textcolor{stringliteral}{'/neestep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00072\ \ \ fh2of\ =\ fopen([directory\_fluxes\ \textcolor{stringliteral}{'/fh2ostep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00073\ \ \ soilwetnessf\ =\ fopen([directory\_clim,\ \textcolor{stringliteral}{'/soilwetnessstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00074\ \ \ neevalidf\ =\ fopen([directory\_fluxes\ \textcolor{stringliteral}{'/neevalidstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00075\ \ \ fh2ovalidf\ =\ fopen([directory\_fluxes\ \textcolor{stringliteral}{'/fh2ovalidstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00076\ \ \ soilwetnessvalidf\ =\ fopen([directory\_clim,\ \textcolor{stringliteral}{'/soilwetnessvalidstep'}],\ \textcolor{charliteral}{'w'});}
+\DoxyCodeLine{00077\ \ \ }
+\DoxyCodeLine{00078\ \ \ disp(\textcolor{stringliteral}{'starting\ loop'});}
+\DoxyCodeLine{00079\ \ \ }
+\DoxyCodeLine{00080\ \ \ \%\ Note:\ in\ the\ loop,\ we\ print\ to\ file\ as\ we\ go,\ rather\ than\ saving}
+\DoxyCodeLine{00081\ \ \ \%\ to\ vectors\ and\ then\ just\ printing\ at\ the\ end,\ to\ save\ memory\ (it}
+\DoxyCodeLine{00082\ \ \ \%\ gets\ slow\ to\ \textcolor{keywordflow}{do}\ the\ latter\ with\ large\ vectors)}
+\DoxyCodeLine{00083\ \ \ \textcolor{keywordflow}{for}\ i\ =\ 1:nsteps}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{if}\ (mod(i,\ 1000)\ ==\ 0)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ disp(i);}
+\DoxyCodeLine{00086\ \ \ \ \ end}
+\DoxyCodeLine{00087\ \ \ \ \ indices\ =\ ((i-\/1)*stepLength\ +\ 1):(i*stepLength);}
+\DoxyCodeLine{00088\ \ \ \ \ \%\ indices\ counts\ [1,2,3]\ then\ [4,5,6],\ etc.}
+\DoxyCodeLine{00089\ \ \ \ \ fprintf(tairf,\ \textcolor{stringliteral}{'\%.7e\(\backslash\)n'},\ mean(tair(indices)));}
+\DoxyCodeLine{00090\ \ \ \ \ fprintf(vpdf,\ \textcolor{stringliteral}{'\%.7e\(\backslash\)n'},\ mean(vpd(indices)));}
+\DoxyCodeLine{00091\ \ \ \ \ fprintf(vpdsoilf,\ \textcolor{stringliteral}{'\%.7e\(\backslash\)n'},\ mean(vpdsoil(indices)));}
+\DoxyCodeLine{00092\ \ \ \ \ fprintf(vpressf,\ \textcolor{stringliteral}{'\%.7e\(\backslash\)n'},\ mean(vpress(indices)));}
+\DoxyCodeLine{00093\ \ \ \ \ fprintf(parf,\ \textcolor{stringliteral}{'\%.7e\(\backslash\)n'},\ sum(par(indices)*obsStepLength./1.E6));}
+\DoxyCodeLine{00094\ \ \ \ \ \%\ par\ is\ input\ as\ sum\ over\ entire\ timestep}
+\DoxyCodeLine{00095\ \ \ \ \ fprintf(tsoilf,\ \textcolor{stringliteral}{'\%.7e\(\backslash\)n'},\ mean(tsoil(indices)));}
+\DoxyCodeLine{00096\ \ \ \ \ fprintf(wspdf,\ \textcolor{stringliteral}{'\%.7e\(\backslash\)n'},\ mean(wspd(indices)));}
+\DoxyCodeLine{00097\ \ \ \ \ \%\ pptstep(i)\ =\ mean(ppt(indices));\ \ \%\ OLD:\ ppt\ used\ to\ be\ rate\ (I\ guess)}
+\DoxyCodeLine{00098\ \ \ \ \ fprintf(pptf,\ '\%.7e\(\backslash\)n',\ sum(ppt(indices)));\ }
+\DoxyCodeLine{00099\ \ \ \ \ \%\ ppt\ is\ input\ as\ sum\ over\ entire\ timestep}
+\DoxyCodeLine{00100\ \ \ \ \ fprintf(neef,\ '\%.7e\(\backslash\)n',\ sum(nee(indices)));}
+\DoxyCodeLine{00101\ \ \ \ \ \%\ nee\ is\ input\ as\ sum\ over\ entire\ timestep}
+\DoxyCodeLine{00102\ \ \ \ \ fprintf(fh2of,\ '\%.7e\(\backslash\)n',\ sum(fh2o(indices)));}
+\DoxyCodeLine{00103\ \ \ \ \ \%\ fh2o\ is\ input\ as\ sum\ over\ entire\ timestep}
+\DoxyCodeLine{00104\ \ \ \ \ fprintf(neevalidf,\ '\%.7e\(\backslash\)n',\ mean(neevalid(indices)));\ \%\ fraction\ of\ valid}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ pts\ in\ this\ step}
+\DoxyCodeLine{00106\ \ \ \ \ fprintf(fh2ovalidf,\ '\%.7e\(\backslash\)n',\ mean(fh2ovalid(indices)));}
+\DoxyCodeLine{00107\ \ \ \ \ }
+\DoxyCodeLine{00108\ \ \ \ \ \%\ soilwetness:\ handled\ a\ little\ differently:}
+\DoxyCodeLine{00109\ \ \ \ \ soilwetness\_measuredpts\ =\ find(isfinite(soilwetnessfrac(indices)))\ ...}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ +\ (indices(1)\ -\/\ 1);\ \%\ the\ measured\ points\ in\ this\ step}
+\DoxyCodeLine{00111\ \ \ \ \ if\ (length(soilwetness\_measuredpts\ >=\ 1))\ \%\ at\ least\ one\ measured}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \%\ point}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ fprintf(soilwetnessf,\ '\%.7e\(\backslash\)n',\ ...}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ min(mean(soilwetnessfrac(soilwetness\_measuredpts)),\ 1));\ \%\ don't\ let\ soilwetness\ go\ higher\ than\ 1}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ fprintf(soilwetnessvalidf,\ '\%.7e\(\backslash\)n',\ 1);}
+\DoxyCodeLine{00116\ \ \ \ \ else\ \%\ no\ measured\ points}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ fprintf(soilwetnessf,\ '\%.7e\(\backslash\)n',\ 0);\ \%\ arbitrary}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ fprintf(soilwetnessvalidf,\ '\%.7e\(\backslash\)n',\ 0);}
+\DoxyCodeLine{00119\ \ \ \ \ end}
+\DoxyCodeLine{00120\ \ \ end}
+\DoxyCodeLine{00121\ \ \ }
+\DoxyCodeLine{00122\ \ \ fclose(tairf);}
+\DoxyCodeLine{00123\ \ \ fclose(vpdf);}
+\DoxyCodeLine{00124\ \ \ fclose(vpdsoilf);}
+\DoxyCodeLine{00125\ \ \ fclose(vpressf);}
+\DoxyCodeLine{00126\ \ \ fclose(parf);}
+\DoxyCodeLine{00127\ \ \ fclose(tsoilf);}
+\DoxyCodeLine{00128\ \ \ fclose(wspdf);}
+\DoxyCodeLine{00129\ \ \ fclose(pptf);}
+\DoxyCodeLine{00130\ \ \ fclose(neef);}
+\DoxyCodeLine{00131\ \ \ fclose(fh2of);}
+\DoxyCodeLine{00132\ \ \ fclose(soilwetnessf);}
+\DoxyCodeLine{00133\ \ \ fclose(neevalidf);}
+\DoxyCodeLine{00134\ \ \ fclose(fh2ovalidf);}
+\DoxyCodeLine{00135\ \ \ fclose(soilwetnessvalidf);}
+
+\end{DoxyCode}

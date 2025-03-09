@@ -1,0 +1,87 @@
+%%% This file lists all the parameters and their basic function in SIPNET
+%%% Mainly used as a reference for the sensitivity tests
+
+1)  plantWoodInit			Initial wood carbon content (gC m-2)
+2)  laiInit				Initial leaf area indices (m2 leaf area/m2 ground area)
+3)  litterInit			Initial amount of litter (gC m-2)
+4)  soilInit			Initial amount of carbon in soil (gC m-2)
+5)  litterWFracInit		Fraction of water initially in the litter
+6)  soilWFracInit			Fraction of water initially in the soil
+7)  snowInit			Initial amount of snow (cm water equivalence)
+8)  aMax				4.790000	0	0.0000	34.000000	0.200000
+9)  aMaxFrac			0.760000	0	0.660000	0.860000	0.005000
+10) baseFolRespFrac		0.097000	0	0.050000	0.300000	0.005000
+11) psnTMin				Minimum temperature for photosynthesis (deg C)
+12) psnTOpt				Optimum temperature for photosynthesis (deg C)
+13) vegRespQ10			Q10 response for wood and leaves (unitless)
+14) growthRespFrac		0.200000	0	0.100000	0.300000	0.050000
+15) frozenSoilFolREff		0.000000	0	0.000000	1.000000	0.200000
+16) frozenSoilThreshold		0.106000	0	-5.000000	5.000000	0.500000
+17) dVpdSlope			0.127000	0	0.010000	0.250000	0.005000
+18) dVpdExp				2.000000	0	1.000000	3.000000	0.200000
+19) halfSatPar			7.400000	0	4.000000	27.000000	5.000000
+20) attenuation			0.500000	0	0.380000	0.620000	0.040000
+21) leafOnDay			144.000000	0	91.000000	181.000000	15.000000
+22) gddLeafOn			500.000000	0	100.000000	900.000000	200.000000
+23) soilTempLeafOn		Minimum soil temperature that the leaves need to be on?
+24) leafOffDay			Day of year when all the leaves become litter
+25) leafGrowth			0.000000	0	0.000000	252.000000	10.000000
+26) fracLeafFall			0.000000	0	0.000000	1.000000	0.100000
+27) leafAllocation		Amount of mean NPP from wood pool allocated to leaves
+28) leafTurnoverRate		Litterfall rate of leaves (yr -1)
+29) baseVegResp			0.027000	0	0.000600	0.060000	0.000020
+30) litterBreakdownRate		0.400000	0	0.130000	1.200000	0.100000
+31) fracLitterRespired		0.500000	0	0.400000	0.600000	0.100000
+32) baseSoilResp			Base soil respiration rate (yr-1)
+33) baseSoilRespEpsilon		0.000000	0	0.000000	1.000000	0.000050
+34) baseSoilRespCold		Base soil respiration rate cold soils (yr-1)
+35) baseSoilRespColdEpsilon	0.000000	0	0.000000	1.000000	0.000050
+36) soilRespQ10			Q10 response of soils
+37) soilRespQ10Epsilon		0.000000	0	0.000000	1.000000	0.050000
+38) soilRespQ10Cold		Q10 response of cold soils
+39) soilRespQ10ColdEpsilon	0.000000	0	0.000000	1.000000	0.050000
+40) coldSoilThreshold		Threshold between warm and cold soil respiration parameters (deg C)
+41) E0				Lloyd-Taylor activation energy  (???)
+42) T0				Lloyd-Taylor reference temperature (deg C)
+43) soilRespMoistEffect		1.000000	0	0.000000	2.000000	0.100000
+44) waterRemoveFrac		0.088000	0	0.001000	0.160000	0.008000
+45) frozenSoilEff			0.000000	0	0.000000	1.000000	0.200000
+46) wueConst			47.700000	0	0.010000	109.000000	0.500000
+47) litterWHC			Litter water holding capacity (cm water equiv)
+48) soilWHC				Soil water holding capacity (cm water equiv)
+49) immedEvapFrac			0.100000	0	0.000000	0.200000	0.025000
+50) fastFlowFrac			0.100000	0	0.000000	0.200000	0.025000
+51) snowMelt			0.150000	0	0.050000	0.250000	0.020000
+52) litWaterDrainRate		0.100000	0	0.010000	1.000000	0.100000
+53) rdConst				36.500000	0	1.000000	1500.000000	75.000000
+54) rSoilConst1			8.200000	0	0.000000	16.400000	2.000000
+55) rSoilConst2			4.300000	0	0.000000	8.600000	1.000000
+56) leafCSpWt			270.000000	0	63.000000	500.000000	0.000000
+57) cFracLeaf			Fraction of carbon in the leaves
+58) woodTurnoverRate			Turnover (litterfall) rate of wood (yr-1)
+59) qualityLeaf			Leaf quality for decomposition (unitless)
+60) qualityWood			Wood quality for decomposition (unitless)
+61) efficiency			Microbe efficiency to convert carbon to biomass
+62) efficiencyEpsilon		0.000000	0	0.000000	1.000000	0.001000
+63) maxIngestionRate		Maximium microbe ingestion rate (day-1)
+64) maxIngestionRateEpsilon	0.000000	0	0.000000	1.000000	0.010000
+65) halfSatIngestion		5000		0	0.000000	10000.00000	0.001000
+66) totNitrogen			Total amount of nitrogen in soil (mg C / g soil)
+67) microbeNC			Microbe N:C ratio (g N/ g C)
+68) microbeInit			Initial amount of microbes in soil (mg C / g soil)
+69) fineRootFrac			0.200000	0	0.000000	1.000000	0.001000
+70) coarseRootFrac		0.200000	0	0.000000	1.000000	0.001000
+71) fineRootAllocation		0.400000	0	0.000000	0.600000	0.001000
+72) woodAllocation		0.200000	0	0.000000	0.600000	0.001000
+73) fineRootExudation		0.0100000	0	0.000000	1.000000	0.001000
+74) coarseRootExudation		0.0100000	0	0.000000	1.000000	0.001000
+75) fineRootTurnoverRate	Turnover rate of fine roots (yr-1)
+76) coarseRootTurnoverRate	Turnover rate of coarse roots (yr-1)
+77) baseFineRootResp		Basal respiration rate of fine roots (yr-1)
+78) baseCoarseRootResp		Basal respiration rate of coarse roots (yr-1)
+79) fineRootQ10			Fine root respiration Q10
+80) coarseRootQ10			Coase root respiration Q10
+81) baseMicrobeResp		Basal microbial respiration rate (yr-1)
+82) microbeQ10			Microbe respiration Q10
+83) microbePulseEff		The efficiency that microbes convert GPP pulse to biomass
+84) m_ballBerry			3.890000	0	0.500000	8.000000	0.500000

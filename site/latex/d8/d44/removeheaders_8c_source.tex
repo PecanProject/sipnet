@@ -1,0 +1,67 @@
+\doxysection{removeheaders.\+c}
+\label{removeheaders_8c_source}\index{removeheaders.c@{removeheaders.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Bill\ Sacks}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ 11/21/03}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Given\ an\ input\ file\ <in>,\ remove\ any\ line\ that\ doesn't\ start\ with}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ "{}199"{}\ or\ "{}200"{}\ (i.e.\ a\ year)\ (allow\ possible\ leading\ whitespace)}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ Write\ result\ to\ <in-\/processed>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00013\ FILE\ *openFile(\textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{char}\ *mode)\ \{}
+\DoxyCodeLine{00014\ \ \ FILE\ *f;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \textcolor{keywordflow}{if}\ ((f\ =\ fopen(name,\ mode))\ ==\ NULL)\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ opening\ \%s\ for\ \%s\(\backslash\)n"{}},\ name,\ mode);}
+\DoxyCodeLine{00018\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00019\ \ \ \}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordflow}{return}\ f;}
+\DoxyCodeLine{00022\ \}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00026\ \ \ FILE\ *in,\ *out;}
+\DoxyCodeLine{00027\ \ \ \textcolor{keywordtype}{char}\ inName[64],\ outName[64];}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordtype}{char}\ line[512];}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{char}\ lineCopy[512];}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordtype}{char}\ *firstToken;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \textcolor{comment}{//\ we\ expect\ 2\ arguments\ (name\ of\ executable\ \&\ file\ name)}}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 2)\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ fileName\(\backslash\)n"{}},\ argv[0]);}
+\DoxyCodeLine{00035\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Where\ fileName\ is\ input\ file,\ output\ written\ to\ fileName-\/processed\(\backslash\)n"{}});}
+\DoxyCodeLine{00036\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00037\ \ \ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ strcpy(inName,\ argv[1]);}
+\DoxyCodeLine{00040\ \ \ strcpy(outName,\ inName);}
+\DoxyCodeLine{00041\ \ \ strcat(outName,\ \textcolor{stringliteral}{"{}-\/processed"{}});}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ in\ =\ openFile(inName,\ \textcolor{stringliteral}{"{}r"{}});\ \textcolor{comment}{//\ open\ for\ reading}}
+\DoxyCodeLine{00044\ \ \ out\ =\ openFile(outName,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \textcolor{comment}{//\ loop:\ read\ one\ line\ at\ a\ time\ until\ EOF}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordflow}{while}\ (fgets(line,\ \textcolor{keyword}{sizeof}(line),\ in)\ !=\ NULL)\ \{\ \textcolor{comment}{//\ while\ we\ haven't\ reached\ EOF}}
+\DoxyCodeLine{00049\ \ \ \ \ strcpy(lineCopy,\ line);\ \textcolor{comment}{//\ because\ strtok\ is\ destructive}}
+\DoxyCodeLine{00050\ \ \ \ \ firstToken\ =\ strtok(lineCopy,\ \textcolor{stringliteral}{"{}\ \(\backslash\)t"{}});\ \textcolor{comment}{//\ ignore\ spaces\ and\ tabs}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{if}\ (strncmp(firstToken,\ \textcolor{stringliteral}{"{}199"{}},\ 3)\ ==\ 0\ ||\ strncmp(firstToken,\ \textcolor{stringliteral}{"{}200"{}},\ 3)\ ==\ 0)}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \textcolor{comment}{//\ first\ three\ characters\ are\ "{}199"{}\ or\ "{}200"{}:\ write\ to\ processed\ file}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ fputs(line,\ out);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ }
+\DoxyCodeLine{00055\ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ fclose(in);}
+\DoxyCodeLine{00058\ \ \ fclose(out);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00061\ \}}
+
+\end{DoxyCode}

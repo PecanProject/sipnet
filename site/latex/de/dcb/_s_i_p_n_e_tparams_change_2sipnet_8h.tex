@@ -1,0 +1,196 @@
+\doxysection{SIPNETparams\+Change/sipnet.h File Reference}
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h}\index{sipnet.h@{sipnet.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include "{}spatial\+Params.\+h"{}}\newline
+Include dependency graph for SIPNETparams\+Change/sipnet.h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#\textbf{ define} \textbf{ EXTRA\+\_\+\+DATA\+\_\+\+TYPES}~0
+\item 
+\#\textbf{ define} \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}~3
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ void} \textbf{ print\+Model\+Components} (\textbf{ FILE} $\ast$\textbf{ out})
+\item 
+\textbf{ char} $\ast$$\ast$ \textbf{ get\+Data\+Type\+Names} ()
+\item 
+\textbf{ int} \textbf{ init\+Model} (\textbf{ Spatial\+Params} $\ast$$\ast$\textbf{ spatial\+Params}, \textbf{ int} $\ast$$\ast$\textbf{ steps}, \textbf{ char} $\ast$\textbf{ param\+File}, \textbf{ char} $\ast$\textbf{ clim\+File})
+\item 
+\textbf{ void} \textbf{ cleanup\+Model} (\textbf{ int} \textbf{ num\+Locs})
+\item 
+\textbf{ void} \textbf{ run\+Model\+No\+Out} (\textbf{ double} $\ast$$\ast$\textbf{ out\+Array}, \textbf{ int} \textbf{ num\+Data\+Types}, \textbf{ int} \textbf{ data\+Type\+Indices}[$\,$], \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ run\+Model\+Output} (\textbf{ FILE} $\ast$\textbf{ out}, \textbf{ int} \textbf{ print\+Header}, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\item 
+\textbf{ void} \textbf{ sens\+Test} (\textbf{ FILE} $\ast$\textbf{ out}, \textbf{ int} \textbf{ param\+Num}, \textbf{ double} \textbf{ low}, \textbf{ double} \textbf{ high}, \textbf{ int} \textbf{ num\+Runs}, \textbf{ Spatial\+Params} $\ast$\textbf{ spatial\+Params}, \textbf{ int} loc)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_ab7f5280fafc469bb1061ccfc5b86e12c} 
+\index{sipnet.h@{sipnet.h}!EXTRA\_DATA\_TYPES@{EXTRA\_DATA\_TYPES}}
+\index{EXTRA\_DATA\_TYPES@{EXTRA\_DATA\_TYPES}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{EXTRA\_DATA\_TYPES}
+{\footnotesize\ttfamily \#\textbf{ define} EXTRA\+\_\+\+DATA\+\_\+\+TYPES~0}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ SIPNETparams\+Change/sipnet.\+h}.
+
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_a98e46bf4352b17b36847535553080b60} 
+\index{sipnet.h@{sipnet.h}!MAX\_DATA\_TYPES@{MAX\_DATA\_TYPES}}
+\index{MAX\_DATA\_TYPES@{MAX\_DATA\_TYPES}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{MAX\_DATA\_TYPES}
+{\footnotesize\ttfamily \#\textbf{ define} MAX\+\_\+\+DATA\+\_\+\+TYPES~3}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ SIPNETparams\+Change/sipnet.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_a08ec54c820e36b47473164178295a1a8} 
+\index{sipnet.h@{sipnet.h}!cleanupModel@{cleanupModel}}
+\index{cleanupModel@{cleanupModel}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{cleanupModel()}
+{\footnotesize\ttfamily \textbf{ void} cleanup\+Model (\begin{DoxyParamCaption}\item[{\textbf{ int}}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1916} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+References \textbf{ deallocate\+Mean\+Tracker()}, \textbf{ free\+Climate\+List()}, \textbf{ mean\+FPAR}, \textbf{ mean\+GPP}, \textbf{ mean\+GPP}, \textbf{ mean\+GPP}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, and \textbf{ num\+Locs}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_a50b2be5026bf5e3947eff9f09ed821db} 
+\index{sipnet.h@{sipnet.h}!getDataTypeNames@{getDataTypeNames}}
+\index{getDataTypeNames@{getDataTypeNames}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{getDataTypeNames()}
+{\footnotesize\ttfamily \textbf{ char} $\ast$$\ast$ get\+Data\+Type\+Names (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1832} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+References \textbf{ index}, and \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}, \textbf{ print\+Data\+Type\+Indices()}, \textbf{ print\+Data\+Type\+Weight\+Indices()}, \textbf{ set\+Data\+Type\+Indices()}, and \textbf{ usage()}.
+
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_aab8396814fda2fdceeb284a7dca28fae} 
+\index{sipnet.h@{sipnet.h}!initModel@{initModel}}
+\index{initModel@{initModel}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{initModel()}
+{\footnotesize\ttfamily \textbf{ int} init\+Model (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$$\ast$}]{spatial\+Params,  }\item[{\textbf{ int} $\ast$$\ast$}]{steps,  }\item[{\textbf{ char} $\ast$}]{param\+File,  }\item[{\textbf{ char} $\ast$}]{clim\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1894} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+References \textbf{ index}, \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+MAX\+\_\+\+ENTRIES}, \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+MAX\+\_\+\+ENTRIES}, \textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+NPP\+\_\+\+MAX\+\_\+\+ENTRIES}, \textbf{ mean\+FPAR}, \textbf{ mean\+GPP}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, \textbf{ mean\+NPP}, \textbf{ new\+Mean\+Tracker()}, \textbf{ num\+Locs}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Output\+Pointers()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_aed3527886ac1ed87fff8c530d8851819} 
+\index{sipnet.h@{sipnet.h}!printModelComponents@{printModelComponents}}
+\index{printModelComponents@{printModelComponents}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{printModelComponents()}
+{\footnotesize\ttfamily \textbf{ void} print\+Model\+Components (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1802} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+References \textbf{ ALTERNATIVE\+\_\+\+TRANS}, \textbf{ BALL\+\_\+\+BERRY}, \textbf{ COMPLEX\+\_\+\+WATER}, \textbf{ Model\+Options\+Struct\+::\+COMPLEX\+\_\+\+WATER}, \textbf{ CSV\+\_\+\+OUTPUT}, \textbf{ DAYCENT\+\_\+\+WATER\+\_\+\+HRESP}, \textbf{ Model\+Options\+Struct\+::\+DAYCENT\+\_\+\+WATER\+\_\+\+HRESP}, \textbf{ fprintf()}, \textbf{ GDD}, \textbf{ Model\+Options\+Struct\+::\+GDD}, \textbf{ GROWTH\+\_\+\+RESP}, \textbf{ Model\+Options\+Struct\+::\+GROWTH\+\_\+\+RESP}, \textbf{ index}, \textbf{ LITTER\+\_\+\+POOL}, \textbf{ Model\+Options\+Struct\+::\+LITTER\+\_\+\+POOL}, \textbf{ LITTER\+\_\+\+WATER}, \textbf{ Model\+Options\+Struct\+::\+LITTER\+\_\+\+WATER}, \textbf{ LITTER\+\_\+\+WATER\+\_\+\+DRAINAGE}, \textbf{ Model\+Options\+Struct\+::\+LITTER\+\_\+\+WATER\+\_\+\+DRAINAGE}, \textbf{ LLOYD\+\_\+\+TAYLOR}, \textbf{ Model\+Options\+Struct\+::\+LLOYD\+\_\+\+TAYLOR}, \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS}, \textbf{ MICROBES}, \textbf{ MODEL\+\_\+\+WATER}, \textbf{ Model\+Options\+Struct\+::\+MODEL\+\_\+\+WATER}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ options}, \textbf{ PENMAN\+\_\+\+MONTEITH\+\_\+\+TRANS}, \textbf{ ROOTS}, \textbf{ SEASONAL\+\_\+\+R\+\_\+\+SOIL}, \textbf{ Model\+Options\+Struct\+::\+SEASONAL\+\_\+\+R\+\_\+\+SOIL}, \textbf{ SNOW}, \textbf{ Model\+Options\+Struct\+::\+SNOW}, \textbf{ SOIL\+\_\+\+MULTIPOOL}, \textbf{ SOIL\+\_\+\+PHENOL}, \textbf{ Model\+Options\+Struct\+::\+SOIL\+\_\+\+PHENOL}, \textbf{ SOIL\+\_\+\+QUALITY}, \textbf{ STOICHIOMETRY}, \textbf{ WATER\+\_\+\+HRESP}, \textbf{ Model\+Options\+Struct\+::\+WATER\+\_\+\+HRESP}, \textbf{ WATER\+\_\+\+PSN}, and \textbf{ Model\+Options\+Struct\+::\+WATER\+\_\+\+PSN}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 4
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_a2ac1d1cf6a1203f72d581617a9618026} 
+\index{sipnet.h@{sipnet.h}!runModelNoOut@{runModelNoOut}}
+\index{runModelNoOut@{runModelNoOut}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{runModelNoOut()}
+{\footnotesize\ttfamily \textbf{ void} run\+Model\+No\+Out (\begin{DoxyParamCaption}\item[{\textbf{ double} $\ast$$\ast$}]{out\+Array,  }\item[{\textbf{ int}}]{num\+Data\+Types,  }\item[{\textbf{ int}}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1760} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ climate}, \textbf{ climate}, \textbf{ climate}, \textbf{ climate}, \textbf{ climate}, \textbf{ exit()}, \textbf{ index}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ output\+Ptrs}, \textbf{ output\+Ptrs}, \textbf{ output\+Ptrs}, \textbf{ output\+Ptrs}, \textbf{ output\+Ptrs}, \textbf{ output\+Ptrs}, \textbf{ setup\+Model()}, \textbf{ step}, and \textbf{ update\+State()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 5
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_acf0244732d4eadad6cd97f0ee7e61fbe} 
+\index{sipnet.h@{sipnet.h}!runModelOutput@{runModelOutput}}
+\index{runModelOutput@{runModelOutput}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{runModelOutput()}
+{\footnotesize\ttfamily \textbf{ void} run\+Model\+Output (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out,  }\item[{\textbf{ int}}]{print\+Header,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1726} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ climate}, \textbf{ climate}, \textbf{ climate}, \textbf{ climate}, \textbf{ Climate\+Vars\+::day}, \textbf{ index}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ setup\+Model()}, \textbf{ Climate\+Vars\+::time}, \textbf{ update\+State()}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ sens\+Test()}.
+
+Here is the call graph for this function\+:
+% FIG 6
+\label{_s_i_p_n_e_tparams_change_2sipnet_8h_a581c8a6619c678370bae24de1cc9b502} 
+\index{sipnet.h@{sipnet.h}!sensTest@{sensTest}}
+\index{sensTest@{sensTest}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{sensTest()}
+{\footnotesize\ttfamily \textbf{ void} sens\+Test (\begin{DoxyParamCaption}\item[{\textbf{ FILE} $\ast$}]{out,  }\item[{\textbf{ int}}]{param\+Num,  }\item[{\textbf{ double}}]{low,  }\item[{\textbf{ double}}]{high,  }\item[{\textbf{ int}}]{num\+Runs,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{\textbf{ int}}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1781} of file \textbf{ sipnetv\+Jan2007.\+c}.
+
+
+
+References \textbf{ fprintf()}, \textbf{ index}, \textbf{ run\+Model\+Output()}, \textbf{ set\+Spatial\+Param()}, and \textbf{ value}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+% FIG 7
