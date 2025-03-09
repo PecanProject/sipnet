@@ -1,7 +1,12 @@
 ---
-latex_engine: pdflatex
-fontsize: 10pt
-geometry: margin=0.5in
+format:
+  html:
+    engine: katex
+  pdf:
+    geometry: margin=0.5in
+    header-includes:
+      - \usepackage{longtable}
+      - \usepackage{amsmath}
 ---
 
 # Input and Output Parameters (DRAFT)
