@@ -18,6 +18,7 @@ typedef enum IrrigationMethod
   FLOOD = 2 // placeholder, not supported yet
 } irrigation_method_t;
 
+#define NUM_HARVEST_PARAMS 4
 typedef struct HarvestParams
 {
   double fractionRemovedAbove;
@@ -26,12 +27,14 @@ typedef struct HarvestParams
   double fractionTransferredBelow; // to soil litter pool
 } HarvestParams;
 
+#define NUM_IRRIGATION_PARAMS 2
 typedef struct IrrigationParams
 {
   double amountAdded;
   irrigation_method_t method;
 } IrrigationParams;
 
+#define NUM_FERTILIZATION_PARAMS 3
 typedef struct FertilizationParams
 {
   double orgN;
@@ -40,6 +43,7 @@ typedef struct FertilizationParams
   // double nh4_no3_frac; for two-pool version
 } FertilizationParams;
 
+#define NUM_PLANTING_PARAMS 3
 typedef struct PlantingParams
 {
   int emergenceLag;
@@ -47,6 +51,7 @@ typedef struct PlantingParams
   double addedN;
 } PlantingParams;
 
+#define NUM_TILLAGE_PARAMS 3
 typedef struct TillageParams
 {
   double fractionLitterTransferred;
@@ -54,6 +59,7 @@ typedef struct TillageParams
   double litterDecompModifier;
 } TillageParams;
 
+#define NUM_EVENT_CORE_PARAMS 4
 typedef struct EventNode EventNode;
 struct EventNode
 {

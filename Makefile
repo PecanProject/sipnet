@@ -1,7 +1,7 @@
 CC=gcc
 LD=gcc
 AR=ar -rs
-CFLAGS=-Wall -Werror -g -I./src
+CFLAGS=-Wall -Werror -g -Isrc
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
@@ -42,8 +42,8 @@ CFILES=$(sort  \
     $(HISTUTIL_CFILES) \
     )
 
-SIPNET_LIB=libsipnet.a
-COMMON_LIB=libsipnet_common.a
+SIPNET_LIB=$(LIB_DIR)/libsipnet.a
+COMMON_LIB=$(LIB_DIR)/libsipnet_common.a
 
 # Doxygen
 DOXYFILE = docs/Doxyfile
@@ -55,7 +55,7 @@ DOXYGEN_LATEX_DIR = docs/latex
 .DEFAULT_GOAL := sipnet
 
 # the main executables - the original 'all' target
-exec: estimate sipnet transpose subsetData
+exec: estimate sipnet transpose subsetData histutil
 
 # with the default set to 'sipnet', we can have all do (close to) everything
 all: exec document
@@ -63,16 +63,20 @@ all: exec document
 # Only update docs if source files or Doxyfile have changed
 document: .doxygen.stamp
 
+# Reminder: this is the implicit build command
+# %.o: %.c
+# 	$(CC) $(CFLAGS) -c $< -o $@
+
 .doxygen.stamp: $(CFILES) $(DOXYFILE)
 	@echo "Running Doxygen..."
 	doxygen $(DOXYFILE)
 	@touch .doxygen.stamp
 
 $(COMMON_LIB): $(COMMON_OFILES)
-	$(AR) $(LIB_DIR)/$(COMMON_LIB) $(COMMON_OFILES)
+	$(AR) $(COMMON_LIB) $(COMMON_OFILES)
 
 $(SIPNET_LIB): $(SIPNET_OFILES)
-	$(AR) $(LIB_DIR)/$(SIPNET_LIB) $(SIPNET_OFILES)
+	$(AR) $(SIPNET_LIB) $(SIPNET_OFILES)
 
 sipnet: $(SIPNET_OFILES) $(COMMON_LIB)
 	$(LD) $(LDFLAGS) -o sipnet $(SIPNET_OFILES) $(LIBLINKS) $(SIPNET_LIBS)
@@ -92,7 +96,7 @@ histutil: $(HISTUTIL_OFILES) $(COMMON_LIB)
 
 clean:
 	rm -f $(ESTIMATE_OFILES) $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) $(COMMON_OFILES)
-	rm -f $(HISTUTIL_OFILES) $(LIB_DIR)/$(COMMON_LIB) $(LIB_DIR)/$(SIPNET_LIB)
+	rm -f $(HISTUTIL_OFILES) $(COMMON_LIB) $(SIPNET_LIB)
 	rm -f estimate sensTest sipnet transpose subsetData bintotxt txttobin
 	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
 
@@ -118,8 +122,9 @@ testclean: $(SIPNET_TEST_DIRS_CLEAN)
 $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
-.PHONY: all clean sipnet estimate transpose subsetData histutil \
-		$(SIPNET_LIB) $(COMMON_LIB) help document .doxygen.stamp \
+cleanall: clean testclean
+
+.PHONY: all clean histutil help document .doxygen.stamp exec cleanall \
 		test $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun
 
 help:
