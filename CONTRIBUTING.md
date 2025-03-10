@@ -26,11 +26,11 @@ Expectations for merging:
   
 ## Style Guide
 
-#### Clang
+### Clang
 
-TBD #31
+Use Clang Format. Details TBD. See #31 <!-- add info about our use of `clang-format` and `clang-tidy` -->
 
-#### Documentation
+### Documentation
 
 What goes in **Doxygen**:
 - Documentation for functions, classes, and parameters.

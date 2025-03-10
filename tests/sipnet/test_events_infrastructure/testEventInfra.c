@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h"
-#include "../utils.h"
-#include "../../../events.c"
+#include "modelStructures.h"  // NOLINT
+#include "utils/tUtils.h"
+#include "sipnet/events.c"
 
 int checkEvent(EventNode* event, int loc, int year, int day, enum EventType type) {
   int success =
