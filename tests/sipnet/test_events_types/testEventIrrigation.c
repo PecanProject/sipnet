@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h" // must include first
-#include "../utils.h"
-#include "../../../sipnet.c"
+#include "modelStructures.h"  // NOLINT
+#include "utils/tUtils.h"
+#include "sipnet/sipnet.c"
 
 int checkOutput(double soilWater, double immedEvap)
 {
