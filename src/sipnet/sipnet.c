@@ -214,6 +214,8 @@ struct ClimateVars {
   ClimateNode *nextClim;
 };
 
+#define NUM_CLIM_FILE_COLS 14
+
 // model parameters which can change from one run to the next
 // these include initializations of state
 // initial values are read in from a file, or calculated at start of model
@@ -614,12 +616,17 @@ int *readClimData(char *climFile, int numLocs) {
                   &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
   if (status == EOF) {
     printf("Error: no climate data in %s\n", climFile);
-    exit(1);
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
+  }
+
+  if (status != NUM_CLIM_FILE_COLS) {
+    printf("Error reading climate file: bad data on first line\n");
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
   if (loc != 0) {
-    printf("Error reading from climate file: first location must be loc. 0\n");
-    exit(1);
+    printf("Error reading climate file: first location must be loc. 0\n");
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
   firstClimates =
@@ -688,7 +695,14 @@ int *readClimData(char *climFile, int numLocs) {
     if (status != EOF) {
       // we have another climate record - check new location, compare with old
       // location (currLoc), make sure new location is valid, and act
-      // accordingly:
+      // accordingly
+
+      if (status != NUM_CLIM_FILE_COLS) {
+        printf("Error reading climate file: bad data near loc %d year %d"
+          " day %d\n", loc, year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
+
       if (loc == currLoc) {
         // still reading climate records from the same place: add a node at end
         // of linked list
@@ -769,9 +783,9 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
   paramF = openFile(paramFile, "r");
   spatialParamF = openFile(spatialParamFile, "r");
 
-  fscanf(spatialParamF, "%d", &numLocs);
+  int numRead = fscanf(spatialParamF, "%d", &numLocs);
 
-  if (numLocs < 1) {
+  if (numLocs < 1 || numRead != 1) {
     printf("Error: numLocs must be >= 1: read %d\n", numLocs);
     exit(1);
   }
