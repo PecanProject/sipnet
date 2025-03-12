@@ -156,14 +156,3 @@ depend::
 	makedepend $(CFILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-
-# Target to run SIPNET with a specific input file
-run_sipnet: 
-	./sipnet -i tests/smoke/sipnet.in
-
-# Target to create a release package
-release: sipnet
-	mkdir -p release
-	cp sipnet release/
-	tar -czvf release/sipnet.tar.gz -C release sipnet
-	rm release/sipnet
