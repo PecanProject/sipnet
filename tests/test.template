@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h"
+#include "modelStructures.h"  // NOLINT
 // make sure to #include modelStructures.h before bringing in sipnet code to be tested
 // sipnet directory #includes here
 

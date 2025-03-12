@@ -1,0 +1,30 @@
+name: cpp-linter
+
+on:
+  pull_request:
+    # This is overkill, but why not
+    # Note: this step is run on files that match this pattern AND are modified in the PR
+    paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.cxx', '**.hxx', '**.cc', '**.hh', '**CMakeLists.txt', 'meson.build', '**.cmake']
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version: 19
+          style: 'file'  # Use .clang-format config file
+          tidy-checks: '' # Use .clang-tidy config file
+          # only 'update' a single comment in a pull request thread.
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+      - name: analysis
+        if: steps.linter.outputs.checks-failed > 0
+        run: |
+            echo "${{ steps.linter.outputs.checks-failed }} linter checks failed" |
+
