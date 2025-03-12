@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - 'v*.*.*'  # Trigger on version tags
-  schedule:
-    - cron: '0 0 * * *'  
 
 jobs:
   release:
