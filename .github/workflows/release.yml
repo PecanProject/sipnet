@@ -17,8 +17,8 @@ jobs:
       - name: Build SIPNET
         run: make
 
-      # Create a GitHub Release (as a draft)
-      - name: Create Release
+      # Create GitHub Release and Upload Asset
+      - name: Create Release and Upload Asset
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
@@ -26,17 +26,7 @@ jobs:
           release_name: Release ${{ github.ref_name }}
           body: |
             This release includes binary builds for historical SIPNET versions.
-          draft: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Upload the SIPNET binary to the release
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./sipnet
-          asset_name: sipnet
-          asset_content_type: application/octet-stream
+          draft: true  # Create the release as a draft
+          files: ./sipnet  # Path to the compiled binary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
