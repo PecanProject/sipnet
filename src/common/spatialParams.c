@@ -17,8 +17,7 @@
 
 // return 1 if all maxParameters parameters have been initialized, 0 if not
 int allParamsInitialized(SpatialParams *spatialParams) {
-  if (spatialParams->numParameters ==
-      spatialParams->maxParameters) {
+  if (spatialParams->numParameters == spatialParams->maxParameters) {
     // all parameters have been initialized
     return 1;
   }
@@ -84,8 +83,7 @@ void setPossiblySpatial(double *array, int loc, double value, int isSpatial,
   if (isSpatial) {
     if (loc == -1) {
       setAll(array, length, value);
-    }
-    else {
+    } else {
       array[loc] = value;
     }
   } else {
@@ -619,13 +617,12 @@ void resetSpatialParams(SpatialParams *spatialParams, double knob,
           if ((randomReset == 0) || !isChangeable(spatialParams, i)) {
             // non-random: use guess value
             value = getSpatialParamGuess(spatialParams, i, loc);
-          }
-          else {
+          } else {
             // random: set parameter value to be somewhere between min and max
             value = getSpatialParamMin(spatialParams, i) +
                     (getSpatialParamMax(spatialParams, i) -
                      getSpatialParamMin(spatialParams, i)) *
-                        ((float)rand() / RAND_MAX);
+                        ((float)rand() / (float)RAND_MAX);
           }
           setSpatialParam(spatialParams, i, loc, value);
           setSpatialParamBest(spatialParams, i, loc, value);
@@ -635,13 +632,12 @@ void resetSpatialParams(SpatialParams *spatialParams, double knob,
         if ((randomReset == 0) || !isChangeable(spatialParams, i)) {
           // non-random: use guess value
           value = getSpatialParamGuess(spatialParams, i, 0);
-        }
-        else {
+        } else {
           // random: set parameter value to be somewhere between min and max
           value = getSpatialParamMin(spatialParams, i) +
                   (getSpatialParamMax(spatialParams, i) -
                    getSpatialParamMin(spatialParams, i)) *
-                      ((float)rand() / RAND_MAX);
+                      ((float)rand() / (float)RAND_MAX);
         }
         setSpatialParam(spatialParams, i, 0, value);
         setSpatialParamBest(spatialParams, i, 0, value);
@@ -717,8 +713,7 @@ void writeChangeableParamInfo(SpatialParams *spatialParams, int loc,
 
   if (loc == -1) {
     theLoc = 0;
-  }
-  else {
+  } else {
     theLoc = loc;
   }
 
@@ -733,8 +728,7 @@ void writeChangeableParamInfo(SpatialParams *spatialParams, int loc,
       if (loc == -1 && isSpatial(spatialParams, index)) {
         // we'll append a * to spatially-varying values
         strcpy(appendage, "*");
-      }
-      else {
+      } else {
         strcpy(appendage, "");
       }
 

@@ -60,7 +60,6 @@ typedef struct AggregateInfoStruct {  // set at beginning of program
 
 static AggregateInfo *aggInfo;  // vector: spatial
 
-
 /* Difference, version 4 - READS IN SIGMAS (dm) ESTIMATES SIGMA, RETURNS
    AGGREGATE INFO
    Run modelF with given parameters at location loc, compare output with
@@ -151,7 +150,7 @@ double difference(double *sigma, OutputInfo *outputInfo, int loc,
     }
   }
   //(removed dm) sumSquares[dataNum] += pow((model[i][dataNum] -
-  //data[loc][i][dataNum]), 2);
+  // data[loc][i][dataNum]), 2);
 
   // calculate aggregate info on each data type
   for (dataNum = 0; dataNum < numDataTypes; dataNum++) {
@@ -186,7 +185,7 @@ double difference(double *sigma, OutputInfo *outputInfo, int loc,
       }  // (n[dataNum] != 0
     }  // (costFunction == 0)
        //+(n[dataNum] * log(sigmas[dataNum]));// logLike is the sum of the
-       //weighted sum of squares (j) for each data type
+       // weighted sum of squares (j) for each data type
     else if (costFunction == 1) {
       logLike +=
           dataTypeWeights[dataTypeIndices[dataNum]] * sumSquares[dataNum];
@@ -208,7 +207,7 @@ double difference(double *sigma, OutputInfo *outputInfo, int loc,
     // the weighted sum of squares (j) for each data type - ???plus one to avoid
     // a perfect fit causing the likelihood calculation to explode
     //????take the 7th root to bring back to a value similar to the individual
-    //costfuntions CF3
+    // costfuntions CF3
 
     //
     // logLike += log(thisSigma);//(dm) now the individual sigmas for each data
@@ -503,7 +502,8 @@ double aggedDifference(double *sigma, OutputInfo *outputInfo, int loc,
    (Can later use years array to find yearly-aggregated error and interannual
    variability)
 */
-void aggregates(OutputInfo *outputInfo, double **localModel, int loc, int dataNum) {
+void aggregates(OutputInfo *outputInfo, double **localModel, int loc,
+                int dataNum) {
   const int DAYS_IN_YR[] = {365, 366}; /* given leapYr = 0 or 1,
                 DAYS_IN_YR[leapYr] represents the number of days in this year */
   int i, j, day, julianDay, year;
@@ -540,9 +540,8 @@ void aggregates(OutputInfo *outputInfo, double **localModel, int loc, int dataNu
     sum += fabs(netNeeM - netNeeD);
   }
 
-  outputInfo[dataNum].daysError = sum / aggInfo[loc].numDays;  // mean
-                                                               // daily-aggregated
-                                                               // error per day
+  // set mean daily-aggregated error per day
+  outputInfo[dataNum].daysError = sum / aggInfo[loc].numDays;
 
   // now do yearly and overall aggregation:
 
@@ -641,7 +640,6 @@ int parseSpdValue(char *spdString, int *spd, int *count) {
   *count = 1;
   return 1;
 }
-
 
 /* Read indices from fileName, put into startIndices and endIndices vectors
    (which have already been malloc'ed: vectors of size numLocs)
