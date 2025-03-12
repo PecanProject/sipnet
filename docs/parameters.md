@@ -499,7 +499,7 @@ Notes:
 1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
 1  2022  40  fert   100 50 0 0   # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
 1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
-1  2022  40  plant  10 10 1      # planting - planting occurs on day 40, after 10 days the plants have emerged with a size of 10 g C/m2 and 1 g N / m2
+1  2022  50  plant       # planting - emergence occurs on day 50
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 
