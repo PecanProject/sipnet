@@ -5,21 +5,21 @@ on:
     tags:
       - 'v*.*.*'  # Trigger on version tags
   schedule:
-    - cron: '0 0 * * *'  # Schedule cron
+    - cron: '0 0 * * *'  
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      # Checkout code
+      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Build SIPNET
+      # Build SIPNET binary
       - name: Build SIPNET
-        run: make  # Compile the SIPNET binary
+        run: make
 
-      # Create GitHub Release
+      # Create a GitHub Release (as a draft)
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -28,16 +28,17 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             This release includes binary builds for historical SIPNET versions.
-          draft: true  # Create the release as a draft
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Upload SIPNET binary to the release
+      # Upload the SIPNET binary to the release
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+        uses: actions/upload-release-asset@v1
         with:
-          tag_name: ${{ github.ref }}
-          files: |
-            ./sipnet 
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./sipnet
+          asset_name: sipnet
+          asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
