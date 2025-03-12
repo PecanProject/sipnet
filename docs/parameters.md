@@ -39,7 +39,6 @@ Numbered items are cross-referenced with original documentation.
     - [Climate](#climate)
       - [Examples of climate files:](#examples-of-climate-files)
     - [Agronomic Events](#agronomic-events)
-      - [Irrigation Events](#irrigation-events)
       - [Fertilization Events](#fertilization-events)
       - [Tillage Events](#tillage-events)
       - [Planting Events](#planting-events)
@@ -431,7 +430,7 @@ For managed ecosystems, the following inputs are provided in a file named `event
   - We may need events with duration later, spec TBD. Tillage is likely in this bucket.
 - The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required
 
-#### Irrigation Events
+
 | parameter   | col | req? |  description                                 |
 |-------------|:---:|:----:|----------------------------------------------|
 | amount      |  5  |  Y   |  Amount added (cm/d)                         |
@@ -449,6 +448,7 @@ Notes:
 - irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.
 
 #### Fertilization Events
+
 | parameter | col | req? | description                                                     |
 |-----------|:---:|:----:|-----------------------------------------------------------------|
 | org-N     |  5  |  Y   | g N / m2                                                        |
@@ -460,6 +460,7 @@ Notes:
   - notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools 
 
 #### Tillage Events
+
 | parameter                     | col | req? | description              |
 |-------------------------------|:---:|:----:|--------------------------|
 | SOM decomposition modifier    |  5  |  Y   | % increase in $K_{dec}$  |
@@ -473,6 +474,7 @@ Notes:
 #### Planting Events
 
 - model representation: 
+  - Other than `event_type = plant`, there are no additional parameters.
   - Emergence date is defined as the date on which $LAI=0.15$
   - Leaf $C$ is calculated from $SLW$ and other pools are calculated from allocation parameters $\alpha$
   - $N$ pools are calculated from $CN$ stoichiometric ratios.
