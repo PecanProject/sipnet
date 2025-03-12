@@ -20,10 +20,10 @@ jobs:
       # Create a GitHub Release (as a draft)
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           body: |
             This release includes binary builds for historical SIPNET versions.
           draft: true
