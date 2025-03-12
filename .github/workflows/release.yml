@@ -25,7 +25,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
           body: |
-            This release includes binary builds for historical SIPNET versions.
+            This release includes the latest SIPNET binary.
           draft: true  # Create the release as a draft
           files: ./sipnet  # Path to the compiled binary
         env:
