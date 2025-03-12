@@ -17,7 +17,7 @@ Pull requests should be made from feature branches to the `master` branch.
 Pull request descriptions should include a brief summary of the changes and links to related issues. 
 
 Expectations for merging:
-- Pass all integration tests 
+- Pass all unit and integration tests. 
 - Approved by at least one other developer before being merged.
 - Include updates and additions to 
   - Documentation
