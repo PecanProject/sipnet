@@ -1,0 +1,392 @@
+## Braswell et al 2005 Appendix A
+
+
+#### Wood Maintenance Respiration
+
+$$
+R_m = K_w C_W Q_{10}^{\frac{(T_{\text{air}} - 0)}{10}} \tag{A19}\label{eq:A19}
+$$
+
+Wood maintenance respiration ($R_m$) depends on the wood carbon content ($C_W$), a scaling constant ($K_w$), and the $Q_{10}$ factor for temperature sensitivity.
+
+#### Heterotrophic Respiration
+
+$$
+R_h = C_S K_h Q_{10}^{\frac{(T_{\text{soil}} - 0)}{10}} \left(\frac{W}{W_e}\right) \tag{A20}\label{eq:A20}
+$$
+
+Heterotrophic respiration ($R_h$) is a function of soil carbon content ($C_S$), a scaling factor ($K_h$), the $Q_{10}$ factor, and the ratio of soil moisture ($W$) to water holding capacity ($W_e$).
+
+## Flooding
+
+There are multiple options for representing flooding.
+
+Set indicator variable to 1 if the site is a wetland, 0 otherwise. Then
+
+1. if the site is a wetland, set the drainage to zero OR
+2. increase the threshold above which water drains e.g.
+ 
+𝐹drainage= max(𝑊soil − WHC, 0)
+
+becomes
+
+𝐹drainage= max(𝑊soil − k * WHC, 0)
+
+K could be a fixed value like 2 or 10. Or a site level parameter if warranted (e.g. based on soil type, or to allow different flood irrigation depths).
+
+## Splitting $N_\text{min}$ into $NH_4$$ and $NO_3$
+
+- $F_\text{nh4 fert}$
+- $F_\text{no3 fert}$
+
+
+### Variables (Pools, Fluxes, and Parameters)
+
+| Symbol         | Description                                                                 |
+|----------------|-----------------------------------------------------------------------------|
+| $$ R_{\text{leach,NO3}} $$ | Rate of nitrate leaching                                        |
+| $$ R_{\text{NH4,fert}} $$ | Rate of ammonium fertilization input                              |
+| $$ R_{\text{NO3,fert}} $$ | Rate of nitrate fertilization input    
+
+### Subscripts (Temporal, Spatial, or Contextual Identifiers) 
+| Subscript      | Description                                                                 |
+|--------------- |----------------------------------------------------------------------------- |
+| $$ _\text{nitr} $$ | nitrification                                             |
+| $$ _\text{denitr} $$ | denitrification       
+
+
+### Soil Ammonium
+
+$$
+\frac{dNH_4}{dt} = F_\text{min} \cdot N_S + F_\text{nh4 fert} - F_\text{nitr}
+$$
+
+### Soil Nitrate 
+
+$$
+\frac{dNO_3}{dt} = F_\text{nitr}  + F_\text{nh4 fert} - F_\text{denitr}
+$$
+
+### Nitrous Oxide
+
+$$
+\frac{dN_2O}{dt} = f_{N_2O_{nitr}} \cdot R_\text{nitr} + f_{N2O_{denitr}} \cdot R_\text{denitr}
+$$
+
+### Nitrification ($NH_4 \rightarrow NO_3 + N_2O$)
+
+$$
+R_\text{nitr} = K_\text{nitr} \cdot NH_4 \cdot D_{temp} \cdot D_{water}
+$$
+
+### Denitrification ($NO_3 \rightarrow N_2O$)
+
+$$
+R_\text{denitr} = K_\text{denitr} \cdot NO_3 \cdot D_\text{temp} \cdot D_\text{anaer}
+$$
+
+## Methane Oxidation ($CH_4 \rightarrow CO_2$)
+
+$$
+R_\text{methanogenesis} = K_\text{meth} \cdot C_\textrm{soil} \cdot D_{temp} \cdot D_{water} \cdot D_{\mathrm{O_2}}
+$$
+
+
+$$
+R_\text{methox} = K_\text{methox} \cdot CH_4 \cdot D_{temp} \cdot D_{water} \cdot D_{\mathrm{O_2}}
+$$
+
+$$
+F_\mathrm{CH_4} = R_\text{meth} - R_\text{methox}
+$$
+
+
+Where $F_\mathrm{CH_4}$ is the methane flux,
+which is the difference between the rate of methane production $R_\text{methanogenesis}$ and methane oxidation $R_\text{methox}$.
+
+Add methane oxidation to ecosystem $CO_2$ flux.
+
+$$
+F_\mathrm{CO_2} = F_\mathrm{CO_2}^\prime + R_\text{methox}
+$$
+
+Where $F^\prime$ is the flux $F$ prior to adding methane oxidation. 
+
+Assuming a 1:1 ratio of $CH_4$ to $CO_2$ production.
+
+
+#### Other processes related to $F_\mathrm{CH_4}$
+
+* diffusion, 
+* ebullition
+* plant transport
+
+## Nitrogen Fixation
+
+In model-structure, all fixed N goes directly to the soil mineral N pool. This is an important simplifying assumption that will likely need to be revisited:
+- For n fixing plants, most fixed N goes directly to the plant, not the soil. It will be more complicated to model this, as we will need to subtract this flux from plant N demand.
+
+### Carbon Cost of N fixation
+
+The carbon cost of N fixation is proportional to the rate of fixation $F_\text{n fix}$: 
+
+$$
+R_{A\text{nfix}} = K_\text{resp,nfix} \cdot F_\text{n fix}
+$$
+
+Then we need to update GPP:
+
+$$
+\text{GPP} = \text{GPP}^prime - R_{A\text{nfix}}
+$$
+
+Where $GPP^prime$ is GPP before adding the carbon cost of N fixation.
+
+Alternatively, could divert a fraction of root exudates. 
+
+### N fixation - Additions for Fixed Nitrogen Partitioning and Adjusted Plant Uptake
+
+A new PFT-specific parameter, $f_{\text{N fix, plant}}$ represents the fraction of fixed N that is allocated directly to plant uptake.
+
+**Total Fixed Nitrogen Flux**
+
+First compute the total fixed nitrogen flux:
+
+$$
+F^N_\text{fix, total} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}}
+\tag{19}\label{eq:n_fix_total}
+$$
+
+**Partitioning the Fixed Nitrogen Flux into plant N and soil mineral N**
+
+Partition the total fixed N flux into two components:
+- Direct allocation to plant uptake:
+$$
+F^N_\text{fix, plant} = f_{\text{N fix, plant}} \cdot F^N_\text{fix, total}
+\tag{19a}\label{eq:n_fix_plant}
+$$
+
+- Allocation to the mineral nitrogen pool:
+
+$$
+F^N_\text{fix, min} = (1 - f_{\text{N fix, plant}}) \cdot F^N_\text{fix, total}
+\tag{19b}\label{eq:n_fix_min}
+$$
+
+**Modified Mineral Nitrogen Balance**
+
+The soil mineral nitrogen balance is updated to include only the $F^N_\text{fix, min}$ component from nitrogen fixation:
+$$
+\frac{dN_\text{min}}{{dt}} = 
+  F^N_\text{litter,min} +
+  F^N_\text{soil,min} +
+  F^N_\text{fix, min} - 
+  F^N_\text{fert,min} - 
+  F^N_\mathrm{vol} - 
+  F^N_\text{leach} - 
+  F^N_\text{uptake, soil}
+\tag{15}\label{eq:mineral_n_dndt}
+$$
+
+**Adjusted Plant Nitrogen Uptake**
+
+Plant N demand is calculated as:
+$$
+\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,i}}}{dt}
+\tag{20}\label{eq:plant_n_demand}
+$$
+
+Since a fraction $ F^N_\text{fix, plant} $ is taken directly from fixation, the additional mineral N required from the soil is reduced accordingly. Define the soil mineral N uptake as:
+$$
+F^N_\text{uptake, soil} = \max\left( \frac{dN_\text{plant}}{dt} - F^N_\text{fix, plant}, \; 0 \right)
+\tag{20a}\label{eq:plant_n_uptake}
+$$
+
+For N fixing plants, the direct uptake $ F^N_\text{fix, plant} $ is added to the plant N pool, and only the residual demand $ F^N_\text{uptake, soil} $ is met by drawing down the soil mineral N.
+
+
+## Additional Moisture dependency functions $D_\text{water}$
+
+### $D_\text{water}$ That Captures the Transition from Water to O2 Limited Metabolism (Yan et al 2018)
+
+The formulation of Yan et al. (2018) is a piecewise function that transitions from moisture to O2 limited heterotrophic respiration.
+
+Although originally applied to RH, the function can be adapted to other processes that are moisture and O2 dependent.
+
+Equation 12 from Yan et al.:
+
+$$
+D_\text{water} = 
+\begin{cases} 
+\frac{K_{W_\text{soil}} + W_{\text{soil,opt}}}{K_{W_\text{soil}} + W_\text{soil}} \left(\frac{W_\text{soil}}{W_{\text{soil,opt}}}\right)^{1 + a n_s}, & \text{if } W_\text{soil} < W_{\text{soil,opt}} \\[10pt]
+\left(\frac{\phi - W_\text{soil}}{\phi - W_{\text{soil,opt}}}\right)^b, & \text{if } W_\text{soil} \geq W_{\text{soil,opt}}
+\end{cases}
+$$
+
+Where:
+
+- $W_\text{soil}$ is the soil moisture content.
+- $W_\text{soil,opt}$ is the optimal moisture content where $R_H$ peaks.
+- $\phi$ is the soil porosity, related to soil bulk density.
+- $K_{W_\text{soil}}$ is a moisture constant reflecting the impact of moisture content on SOC desorption.
+- $a$ is the SOC-microorganism collocation factor. Controls shape of limitation curve.
+- $n_s$ is the saturation exponent affecting DOC diffusion.
+- $b$ is the O2 supply restriction factor that controls the shape of the limitation curve associated with the decline in $R_H$ when moisture exceeds $W_\text{soil,opt}$.
+
+When $W_\text{soil} < W_\text{soil,opt}$, moisture limits SOC availability, and $R_H$ slowly increases as moisture increases to $W_\text{soil,opt}$. When $W_\text{soil} \geq W_\text{soil,opt}$ oxygen availability limits $R_H$, which declines as moisture increases beyond $W_\text{soil,opt}$. 
+
+The function captures the transition from a moisture-limited respiration rate (when soil moisture is low and SOC is the limiting factor) to an oxygen-limited respiration rate (when moisture exceeds $W_\text{soil,opt}$). The parameters $a$ and $b$ control the function's behavior in the respective regions of soil moisture.
+
+### DAYCENT Moisture Formulation 
+
+This function is already implemented in SIPNET.
+
+When using the DAYCENT formulation, the moisture effect is calculated as follows:
+
+$$
+F_{\text{DAYCENT}}(W) = \left( \frac{W_{\text{soil}} / W_{\text{WHC}} - 1.7}{0.55 - 1.7} \right)^{e_{\text{DAYCENT}}} \cdot \left( \frac{W_{\text{soil}} / W_{\text{WHC}} + 0.007}{0.55 + 0.007} \right)^{3.22}
+$$
+
+Where:
+
+- $W_{\text{soil}}$: Soil water content
+- $W_{\text{WHC}}$: Soil water holding capacity
+- $e_{\text{DAYCENT}}$: Exponent used in the DAYCENT formulation
+
+This function uses an empirical relationship to calculate the moisture effect based on soil water content relative to the soil water holding capacity, with specific parameters hard-coded.
+
+### Dependence of Anaerobic Metabolism Using Soil Moisture Content as a Proxy for $O_2$
+
+#### Gaussian
+
+Here $D_{\mathrm{f_{WHC}}}$ is modeled as a Gaussian function:
+
+$$
+D_{\mathrm{f_{WHC}}}= \exp\left(-\frac{(f_{WHC} - f_{WHC_\text{opt}})^2}{2\sigma^2}\right)
+$$
+
+Where:
+
+- $f_{WHC_\text{opt}}$ is the optimal moisture content at which anaerobic metabolism peaks,
+- $\sigma$ controls the width of the curve, reflecting how quickly anaerobic metabolism decreases on either side of $f_{WHC \text{opt}}$.
+
+With respect to N2O, a literature review by Wang et al 2023 https://doi.org/10.3389/fmicb.2022.1110151 provides N2O flux along with  pH, bulk density, % clay, %SOC, total N, [NH4], [NO3], T, and water-filled pore space ($f_{WHC}$) as covariates.
+
+Wang et al 2023 found that of pH, Bulk Density, Clay, SOC, Total N, NH4+ NO3- Temperature and $f_{WHC}$, only temperature and $f_{WHC}$ were significantly correlated with $F^N_\mathrm{N_2O}$.
+
+Figures 6 in Wang et al 2023 suggests for a gaussian, $f_{WHC_\text{opt}}\simeq 80\%$ and $\sigma\simeq 10\%$. For any function used, it would be prudent to estimate parameters from the provided supplementary data.
+
+### Beta
+
+$$
+D_{\text{moisture}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
+$$
+
+Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maiximum and width.
+
+
+
+#### Double Exponential
+
+$$
+D_{\text{moisture}} =
+\begin{cases}
+(1 - e^{-k(f_{WHC} - f_{WHC_\text{min}})}) & f_{WHC} \leq f_{WHC_\text{opt}} \\
+e^{-k(t - f_{WHC_\text{opt}}} & f_{WHC} > f_{WHC_\text{opt}}
+\end{cases}
+$$
+
+where:
+
+* k is a rate constant
+* $f_{WHC_\text{min}}$ is the minimum water-filled pore space for anaerobic metabolism
+* $f_{WHC_\text{opt}}$ is the optimal water-filled pore space for anaerobic metabolism
+
+
+#### Piecewise linear $D_{\text{water,anaer}}$
+
+$$
+D_\text{water} =
+\begin{cases}
+0, & \text{if } f_{WHC} \leq 50 \\
+\frac{f_{WHC} - 50}{45}, & \text{if } 50 < f_{WHC} \leq 95 \\
+-\frac{f_{WHC} - 95}{15} + 1, & \text{if } 95 < f_{WHC} < 110 \\
+0, & \text{if } f_{WHC} \geq 110
+\end{cases}
+$$
+
+Where $f_{WHC}=W_{soil}/W_{WHC}$ is the fraction of water holding capacity.
+
+### Summary of different functions of $D_\text{water,opt}$
+
+Available data suggest that there are many functions that could represent the relationship between $f_{\text{WHC}}$ and fluxes from anaerobic metabolism. 
+
+However, it is unlikely that available data will support the choice of one over others. A model with fewer parameters would be preferred, as would one that has some theoretical justification beyond shape. For example, 
+Yan et al (2018) propose a $D_\text{water}$ function that captures the transition from water to oxygen limited metabolism.
+
+
+Some options considered:
+
+- Piecewise linear function
+- Gaussian function (Wang et al 2023)
+- Beta
+- Double exponential function
+- Double logistic function
+- Adapt the parabolic $D_\text{temp, A}$ from SIPNET (Braswell et al 2005)
+
+
+| Function                            | Formula                                                                                 | Parameters                          | Notes                                                                                          |
+|-------------------------------------|-----------------------------------------------------------------------------------------|-------------------------------------|------------------------------------------------------------------------------------------------|
+| **Beta Function**                   | $\left( \frac{f_{\text{WHC}} - f_{\text{WHC,min}}}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right)^\beta \cdot \left( 1 - \frac{f_{\text{WHC}} - f_{\text{WHC,min}}}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right)^\gamma$ | 4 ($\beta, \gamma, f_{\text{WHC,min}}, f_{\text{WHC,max}}$) | Scaled to [0, 1] within $f_{\text{WHC,min}}$ and $f_{\text{WHC,max}}$. Peak shape controlled by $\beta$ and $\gamma$. |
+| **Gaussian Function**               | $e^{-\frac{\left( \frac{f_{\text{WHC}} - \mu}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right)^2}{2\sigma^2}}$       | 3 ($\mu, \sigma, f_{\text{WHC,max}}, f_{\text{WHC,min}}$) | Fixed maximum of 1. Centered at $\mu$, scaled to $f_{\text{WHC,min}}$ and $f_{\text{WHC,max}}$. Symmetric around $\mu$. |
+| **Piecewise Linear Function**       | $\begin{cases} m_1 \left( \frac{f_{\text{WHC}} - f_{\text{WHC,min}}}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right) + c_1, & f_{\text{WHC}} \leq f_{\text{WHC,mid}} \\ m_2 \left( \frac{f_{\text{WHC}} - f_{\text{WHC,min}}}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right) + c_2, & f_{\text{WHC}} > f_{\text{WHC,mid}} \end{cases}$ | 6 ($m_1, c_1, m_2, c_2, f_{\text{WHC,min}}, f_{\text{WHC,max}}$) | Two linear segments split at $f_{\text{WHC,mid}}$. Scaled to $f_{\text{WHC,min}}$ and $f_{\text{WHC,max}}$.                 |
+| **Double Exponential Function**     | $a_1 e^{b_1 \left( \frac{f_{\text{WHC}} - f_{\text{WHC,min}}}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right)} + a_2 e^{b_2 \left( \frac{f_{\text{WHC}} - f_{\text{WHC,min}}}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right)}$      | 4 ($a_1, b_1, a_2, b_2$)           | Scaled exponential components to $f_{\text{WHC,min}}$ and $f_{\text{WHC,max}}$.                                                  |
+| **Piecewise Double Exponential**    | $\begin{cases} (1 - e^{-k_1(f_{\text{WHC}} - f_{\text{WHC,min}})}), & f_{\text{WHC}} \leq f_{\text{WHC,opt}} \\ e^{-k_2(f_{\text{WHC}} - f_{\text{WHC,opt}})}, & f_{\text{WHC}} > f_{\text{WHC,opt}} \end{cases}$ | 4 ($k_1, k_2, f_{\text{WHC,opt}}, f_{\text{WHC,min}}$) | Piecewise rise (left of $f_{\text{WHC,opt}}$) and asymmetric exponential decay (right). Scaled to range.         |
+| **Double Logistic Function**        | $\frac{1}{1 + e^{-k_1 \left( \frac{f_{\text{WHC}} - x_1}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right)}} + \frac{1}{1 + e^{-k_2 \left( \frac{f_{\text{WHC}} - x_2}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} \right)}}$ | 6 ($k_1, x_1, k_2, x_2, f_{\text{WHC,min}}, f_{\text{WHC,max}}$) | Scaled logistic transitions split at $x_1$ and $x_2$. Scaled to $f_{\text{WHC,min}}$ and $f_{\text{WHC,max}}$.          |
+| **Parabolic (SIPNET)**              | $a \left( \frac{f_{\text{WHC}} - f_{\text{WHC,min}}}{f_{\text{WHC,max}} - f_{\text{WHC,min}}} - b \right)^2 + c$                                 | 5 ($a, b, c, f_{\text{WHC,min}}, f_{\text{WHC,max}}$) | Scaled to $f_{\text{WHC,min}}$ and $f_{\text{WHC,max}}$. Derived from SIPNET temperature-response function.             |
+
+## Effect of SOM on Soil Water Dynamics
+
+Note - almost certainly don't need this because the effect is small and the hydrology parameters (fraction of W>WHC that can be drained in a day) already account for SOM.
+
+Ideas other than those below to try: make effect a function of % change in SOM rather than absolute amount. 
+
+**SOM Effect on Water Holding Capacity**
+
+To account for the influence of soil organic matter (SOM) on soil water holding capacity ($W_{\text{WHC}}$), we will use a saturating relationship:
+
+$$
+W_{\text{WHC}} = W_{\text{WHC,0}} \cdot \left( 1 + k_{\text{SOM}} \cdot \frac{C_{\text{SOM}}}{C_{\text{SOM}} + C_{\text{sat}}} \right)
+$$
+
+$W_{\text{WHC,0}}$ is the soil water holding capacity at zero SOM, $k_{\text{SOM}}$ is the sensitivity of WHC to SOM, $C_{\text{SOM}}$ is the soil organic matter content, and $C_{\text{sat}}$ is the soil organic matter content at which WHC is saturated.
+
+_Note:_ This is based on Libohova et al. (2018), a synthesis of US soils data that reported relationships as the response of WHC as a volume fraction ($k_{\text{SOM,vol}$) with units of cm water / cm soil). To convert from %WHC to SIPNET units of cm water / 30cm soil it is necessary to multiply by the soil bulk density and soil depth:
+$k_{\text{SOM,cm}} = k_{\text{SOM,vol}} \cdot \rho_b \cdot d$ where $\rho_b$ is soil bulk density and $d$ is soil depth. 
+
+Libohova et al. (2018) suggests that $k_{\text{SOM,vol}}$ is ~ 1.5% change in WHC per 1% increase in SOC in sandy soils. In silty and clayey soils, the slope is ~ 0.6%. Assuming a bulk density of 1.3 g/cm^3 and a soil depth of 30 cm, this would correspond to $k_{\text{SOM,cm}}$ of 0.2 and 0.6 cm water / 30 cm soil, respectively.
+
+##### SOM effect on Drainage Rate
+
+The effect of SOM on the drainage rate  $f_{\text{drain}}$, is defined as the fraction of excess water drained per day, is adjusted as follows:
+
+
+$$
+f_{\text{drain}} = f_{\text{drain,0}} \cdot \exp\left( -k_{\text{SOM,drain}} \cdot C_{\text{SOM}} \right)
+$$
+
+
+Where $f_{\text{drain,0}}$ is the baseline drainage rate current model parameter, $k_{\text{SOM,drain}}$ is the coefficient controlling the sensitivity of drainage to SOM, and $C_{\text{SOM}}$ is the soil organic matter content. This is consistent with 
+
+
+## Agronomic Events
+
+### Tillage
+
+The tillage adjustment term $\alpha_{\text{tillage}}$ is set to 1 by default, and can be changed for one month to a value provided in the `events.in` file.
+
+Potential adjustments
+
+- Set the time until \alpha_{\text{tillage}} is reset to 1
+- Create an alternate tillage adjustement function that slowly decays back to 1 over time.
+- More complex tillage functions that depend on implement, depth, and other factors. Currently not used because these factors are not detectable from remote sensing._{\text{WHC}
