@@ -156,3 +156,19 @@ depend::
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
+SRC_FILES=README.md CONTRIBUTING.md CHANGELOG.md
+DEST_DIR=docs
+FINAL_DIR=$(DEST_DIR)/home  # Ensure home is inside docs
+
+movefiles:
+	@echo "Creating directories if they do not exist..."
+	@mkdir -p $(DEST_DIR) $(FINAL_DIR)  # Ensure docs/ and docs/home/ exist
+
+	@echo "Moving files to $(DEST_DIR)..."
+	@mv $(SRC_FILES) $(DEST_DIR)/  # Move all files to docs/
+
+	@echo "Moving README.md to $(FINAL_DIR)..."
+	@mv $(DEST_DIR)/README.md $(FINAL_DIR)/  # Move only README.md to docs/home/
+
+	@echo "Files successfully organized!"
+

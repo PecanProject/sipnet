@@ -6,7 +6,7 @@ nav:
       - Running SIPNET: user-guide/running-sipnet.md
   - Developer Guide:
       - Code Structure: developer-guide/code-structure.md
-  - Contributing: ../CONTRIBUTING.md
+  - Contributing: CONTRIBUTING.md
   - API Reference: index.md
   - Changelog: CHANGELOG.md
   - Code of Conduct: CODE_OF_CONDUCT.md
