@@ -5,7 +5,6 @@ CFLAGS=-Wall -Werror -g -Isrc
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
-MV=mv
 
 # Main executables
 COMMON_CFILES:=util.c paramchange.c namelistInput.c spatialParams.c
@@ -61,24 +60,17 @@ exec: estimate sipnet transpose subsetData histutil
 # with the default set to 'sipnet', we can have all do (close to) everything
 all: exec document
 
-# Build documentation with both Doxygen and Mkdocs
-document: .doxygen.stamp .mkdocs.stamp
-	@echo "Documentation updated."
+# Only update docs if source files or Doxyfile have changed
+document: .doxygen.stamp
 
-.doxygen.stamp: $(DOXYFILE) $(CFILES)
-	@if [ ! -d $(DOXYGEN_HTML_DIR) ] || [ $(DOXYFILE) -nt .doxygen.stamp ] || \
-	   find $(CFILES) -newer .doxygen.stamp | read dummy; then \
-		echo "Running Doxygen..."; \
-		doxygen $(DOXYFILE); \
-		touch .doxygen.stamp; \
-	else \
-		echo "Doxygen is up-to-date."; \
-	fi
+# Reminder: this is the implicit build command
+# %.o: %.c
+# 	$(CC) $(CFLAGS) -c $< -o $@
 
-.mkdocs.stamp:
-	@echo "Running Mkdocs to build site..."
-	mkdocs build
-	@touch .mkdocs.stamp
+.doxygen.stamp: $(CFILES) $(DOXYFILE)
+	@echo "Running Doxygen..."
+	doxygen $(DOXYFILE)
+	@touch .doxygen.stamp
 
 $(COMMON_LIB): $(COMMON_OFILES)
 	$(AR) $(COMMON_LIB) $(COMMON_OFILES)
@@ -132,7 +124,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 
 cleanall: clean testclean
 
-.PHONY: all clean histutil help document exec cleanall \
+.PHONY: all clean histutil help document .doxygen.stamp exec cleanall \
 		test $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun
 
 help:
