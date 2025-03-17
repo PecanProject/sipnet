@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Trigger on version tags
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Build SIPNET binary
+      - name: Build SIPNET
+        run: make
+
+      # Create GitHub Release and Upload Asset
+      - name: Create Release and Upload Asset
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            This release includes the latest SIPNET binary.
+          draft: true  # Create the release as a draft
+          files: ./sipnet  # Path to the compiled binary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
