@@ -5,7 +5,6 @@ CFLAGS=-Wall -Werror -g -Isrc
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
-MV=mv
 
 # Main executables
 COMMON_CFILES:=util.c paramchange.c namelistInput.c spatialParams.c
