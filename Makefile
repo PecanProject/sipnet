@@ -166,17 +166,17 @@ depend::
 
 SRC_FILES=README.md CONTRIBUTING.md CHANGELOG.md
 DEST_DIR=docs
-FINAL_DIR=$(DEST_DIR)/home  # Ensure home is inside docs
+FINAL_DIR=$(DEST_DIR)/home  
 
 movefiles:
 	@echo "Creating directories if they do not exist..."
-	@mkdir -p $(DEST_DIR) $(FINAL_DIR)  # Ensure docs/ and docs/home/ exist
+	@mkdir -p $(DEST_DIR) $(FINAL_DIR)  
 
 	@echo "Moving files to $(DEST_DIR)..."
-	@mv $(SRC_FILES) $(DEST_DIR)/  # Move all files to docs/
+	@mv $(SRC_FILES) $(DEST_DIR)/  
 
 	@echo "Moving README.md to $(FINAL_DIR)..."
-	@mv $(DEST_DIR)/README.md $(FINAL_DIR)/  # Move only README.md to docs/home/
+	@mv $(DEST_DIR)/README.md $(FINAL_DIR)/ 
 
 	@echo "Files successfully organized!"
 
