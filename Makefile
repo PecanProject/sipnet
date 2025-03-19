@@ -74,7 +74,7 @@ document: .doxygen.stamp .mkdocs.stamp
 		echo "Doxygen is up-to-date."; \
 	fi
 
-.mkdocs.stamp:
+.mkdocs.stamp: .doxygen.stamp
 	@echo "Running Mkdocs to build site..."
 	mkdocs build
 	@touch .mkdocs.stamp
