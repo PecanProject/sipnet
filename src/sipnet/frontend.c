@@ -107,7 +107,6 @@ int main(int argc, char *argv[]) {
       case 'h':
         usage(argv[0]);
         exit(1);
-        break;
       case 'i':
         if (strlen(optarg) >= INPUT_MAXNAME) {
           printf("ERROR: input filename %s exceeds maximum length of %d\n",
@@ -336,8 +335,7 @@ int main(int argc, char *argv[]) {
           for (i = 1; i < numChangeableParams; i++) {
             value = strtod(strtok(NULL, " \t"), &errc);
             // set value of changeable parameter #i
-            setSpatialParam(spatialParams, indices[i], loc,
-                            value);
+            setSpatialParam(spatialParams, indices[i], loc, value);
           }
 
           // do this model run:
