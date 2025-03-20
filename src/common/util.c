@@ -68,7 +68,7 @@ void seedRand(unsigned int seed, FILE *outF) {
 }
 
 // returns an exponentially-distributed negative random number
-double randm() {
+double randm(void) {
   double val;
 
   do {

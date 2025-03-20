@@ -36,7 +36,7 @@ typedef struct NamelistInputsStruct {
 } NamelistInputs;
 
 // allocate space for a new namelistInputs structure, return a pointer to it
-NamelistInputs *newNamelistInputs();
+NamelistInputs *newNamelistInputs(void);
 
 /* Add a new namelistInputItem to the end of the list given by namelistInputs
    strlen(name) must be < NAMELIST_INPUT_MAXNAME

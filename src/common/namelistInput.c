@@ -66,7 +66,7 @@ NamelistInputItem *locateNamelistInputItem(NamelistInputs *namelistInputs,
 // Public functions: defined in namelistInput.h
 
 // allocate space for a new namelistInputs structure, return a pointer to it
-NamelistInputs *newNamelistInputs() {
+NamelistInputs *newNamelistInputs(void) {
   NamelistInputs *namelistInputs;
 
   namelistInputs = (NamelistInputs *)malloc(sizeof(NamelistInputs));

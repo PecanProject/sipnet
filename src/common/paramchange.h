@@ -168,6 +168,6 @@ void freeOutputInfo(OutputInfo *outputInfo, int numDataTypes);
 
 // call this when done program:
 // free space used by global pointers
-void cleanupParamchange();
+void cleanupParamchange(void);
 
 #endif

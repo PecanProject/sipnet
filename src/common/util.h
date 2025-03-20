@@ -25,7 +25,7 @@ FILE *openFileExt(const char *name, const char *ext, const char *mode);
 void seedRand(unsigned int seed, FILE *outF);
 
 // returns an exponentially-distributed negative random number
-double randm();
+double randm(void);
 
 // allocate space for an array of doubles of given size,
 // return pointer to start of array
