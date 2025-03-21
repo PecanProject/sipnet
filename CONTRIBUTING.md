@@ -4,6 +4,14 @@ We welcome contributions to SIPNET. This document outlines the process for contr
 
 All contributors are expected to adhere to the PEcAn Project [Code of Conduct](https://github.com/PecanProject/pecan/blob/develop/CODE_OF_CONDUCT.md).
 
+## Setup
+
+<run install script>
+
+```shell
+tools/setup.sh
+```
+
 ## GitHub Workflow
 
 #### Branches
