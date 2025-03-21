@@ -123,30 +123,24 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // clang-format off
   // setup namelist input:
   namelistInputs = newNamelistInputs();
-  addNamelistInputItem(namelistInputs, "RUNTYPE", STRING_TYPE, runtype,
-                       RUNTYPE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "FILENAME", STRING_TYPE, fileName,
-                       FILE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "LOCATION", INT_TYPE, &loc, 0);
-  addNamelistInputItem(namelistInputs, "DO_MAIN_OUTPUT", INT_TYPE,
-                       &doMainOutput, 0);
-  addNamelistInputItem(namelistInputs, "DO_SINGLE_OUTPUTS", INT_TYPE,
-                       &doSingleOutputs, 0);
-  addNamelistInputItem(namelistInputs, "PRINT_HEADER", INT_TYPE, &printHeader,
-                       0);
-  addNamelistInputItem(namelistInputs, "CHANGE_PARAM", STRING_TYPE, changeParam,
-                       PARAM_MAXNAME);
+  addNamelistInputItem(namelistInputs, "RUNTYPE", STRING_TYPE, runtype,RUNTYPE_MAXNAME);
+  addNamelistInputItem(namelistInputs, "FILENAME", STRING_TYPE, fileName, FILE_MAXNAME);
+  addNamelistInputItem(namelistInputs, "LOCATION", INT_TYPE, &loc,0);
+  addNamelistInputItem(namelistInputs, "DO_MAIN_OUTPUT", INT_TYPE, &doMainOutput, 0);
+  addNamelistInputItem(namelistInputs, "DO_SINGLE_OUTPUTS", INT_TYPE, &doSingleOutputs, 0);
+  addNamelistInputItem(namelistInputs, "PRINT_HEADER", INT_TYPE, &printHeader,0);
+  addNamelistInputItem(namelistInputs, "CHANGE_PARAM", STRING_TYPE, changeParam,PARAM_MAXNAME);
   addNamelistInputItem(namelistInputs, "LOW_VAL", DOUBLE_TYPE, &lowVal, 0);
   addNamelistInputItem(namelistInputs, "HIGH_VAL", DOUBLE_TYPE, &highVal, 0);
   addNamelistInputItem(namelistInputs, "NUM_RUNS", INT_TYPE, &numRuns, 0);
-  addNamelistInputItem(namelistInputs, "MC_PARAM_FILE", STRING_TYPE,
-                       mcParamFile, FILE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "MC_OUTPUT", STRING_TYPE, mcOutFileBase,
-                       FILE_MAXNAME);
+  addNamelistInputItem(namelistInputs, "MC_PARAM_FILE", STRING_TYPE, mcParamFile, FILE_MAXNAME);
+  addNamelistInputItem(namelistInputs, "MC_OUTPUT", STRING_TYPE, mcOutFileBase,FILE_MAXNAME);
   addNamelistInputItem(namelistInputs, "NUM_TO_SKIP", INT_TYPE, &numToSkip, 0);
   addNamelistInputItem(namelistInputs, "STATS_ONLY", INT_TYPE, &statsOnly, 0);
+  // clang-format on
 
   // read from input file:
   readNamelistInputs(namelistInputs, inputFile);
