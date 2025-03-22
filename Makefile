@@ -61,8 +61,8 @@ exec: estimate sipnet transpose subsetData histutil
 all: exec document
 
 # Build documentation with both Doxygen and Mkdocs
-document: .doxygen.stamp .mkdocs.stamp
-	@echo "Documentation updated."
+document: .doxygen.stamp .mkdocs.stamp movefiles
+	@echo "Documentation updated and files are moved"
 
 .doxygen.stamp: $(DOXYFILE) $(CFILES)
 	@if [ ! -d $(DOXYGEN_HTML_DIR) ] || [ $(DOXYFILE) -nt .doxygen.stamp ] || \
@@ -163,19 +163,12 @@ depend::
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-SRC_FILES=README.md CONTRIBUTING.md CHANGELOG.md
+SRC_FILES=README.md CONTRIBUTING.md CHANGELOG.md CODE_OF_CONDUCT.md
 DEST_DIR=docs
-FINAL_DIR=$(DEST_DIR)/home  
 
 movefiles:
-	@echo "Creating directories if they do not exist..."
-	@mkdir -p $(DEST_DIR) $(FINAL_DIR)  
-
 	@echo "Moving files to $(DEST_DIR)..."
-	@mv $(SRC_FILES) $(DEST_DIR)/  
-
-	@echo "Moving README.md to $(FINAL_DIR)..."
-	@mv $(DEST_DIR)/README.md $(FINAL_DIR)/ 
+	@mv $(SRC_FILES) $(DEST_DIR)/
 
 	@echo "Files successfully organized!"
 
