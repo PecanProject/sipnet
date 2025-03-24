@@ -10,6 +10,8 @@ read -r -d '' help <<- EOF
 This repository requires you to install the clang-format command. This hook has
 been tested with clang-format-19, so remove all earlier versions and reinstall if
 problems occur:
+$ brew install git-clang-format
+or
 $ sudo apt-get remove clang-format-*
 $ sudo apt-get install clang-format-19
 You should now have clang-format-19 installed. To ensure that git finds this binary,
