@@ -3040,7 +3040,7 @@ char **getDataTypeNames(void) {
 #endif
 
   return DATA_TYPES;
-   }
+}
 
 //-------------------
 // Code block for Dave's Howland data changes - need to modify back

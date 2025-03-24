@@ -1,54 +1,49 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Runs clang-format on changed regions before commit.
+#
+# To install this, copy it to .git/hooks/pre-commit in your repo.
+# Remaining installation checks/instructions will be printed when you commit.
+#
 
-check_file() {
-  local file
-  local retval
-  file="${1}"
-  if [[ -f "$file" ]]; then
-    local status
-    status=`clang-format -n "$file" 2>&1 | wc -l`
-    status=${status//[^[:digit:]]/}
-    if [[ $status -gt 0 ]]; then
-      retval=1
-    else
-      retval=0
-    fi
+read -r -d '' help <<- EOF
+This repository requires you to install the clang-format command. This hook has
+been tested with clang-format-19, so remove all earlier versions and reinstall if
+problems occur:
+$ sudo apt-get remove clang-format-*
+$ sudo apt-get install clang-format-19
+You should now have clang-format-19 installed. To ensure that git finds this binary,
+update the configuration as follows:
+$ git config --global clangFormat.binary clang-format-19
+$ git config --global clangFormat.style file
+$ git config --global alias.clang-format clang-format-19
+EOF
+
+read -r -d '' error <<- EOF
+ERROR: the code to be committed is not formatted properly. You need to run one of
+these commands on your commit:
+$ git clang-format       # if all modifications are staged
+$ git clang-format -f    # reformat all modified files
+EOF
+
+check_clang_format() {
+  if hash git clang-format 2>/dev/null; then
+    return
   else
-    echo "File $file not found"
-    exit 2
-  fi
-  return $retval
-}
-
-format_file() {
-  local file
-  file="${1}"
-  if [[ -f "$file" ]]; then
-    echo "Formatting $file"
-    clang-format -i "$file"
-    #git add "$file"
+    echo "SETUP ERROR: no git clang-format executable found, or it is not executable"
+    echo "$help"
+    exit 1
   fi
 }
 
-echo "Checking format of modified files with clang-format"
-reformatted=0
-files=`git diff-index --cached --name-only HEAD | grep -iE '\.(cpp|cc|h|hpp)$'`
-echo "Checking files: "
-echo "${files[@]}"
-if [[ "${#files[@]}" ]]; then
-  for file in "${files[@]}" ; do
-    check_file "$file"
-    if (( $? )); then
-      format_file "$file";
-      reformatted=1
-    fi
-  done
-fi
+check_clang_format
 
-if (( "$reformatted" )); then
-  echo "Some files were reformatted. Check git status and review changes, then re-add them to the commit."
-  exit 1
-else
-  echo "All files passed the formatting check"
-  exit 1 # CHANGE BACK TO 0
-fi
+echo "Checking the format of modified files with clang-format"
+readonly out=$(git clang-format -v --diff)
+
+if [[ "$out" == *"no modified files to format"* ]]; then exit 0; fi
+if [[ "$out" == *"clang-format did not modify any files"* ]]; then exit 0; fi
+
+echo "$error"
+
+exit 1
