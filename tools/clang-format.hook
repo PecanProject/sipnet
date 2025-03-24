@@ -50,5 +50,5 @@ if (( "$reformatted" )); then
   exit 1
 else
   echo "All files passed the formatting check"
-  exit 0
+  exit 1 # CHANGE BACK TO 0
 fi
