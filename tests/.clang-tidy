@@ -1,0 +1,4 @@
+# Allow inclusion of *.c files in tests, and ease off of free() and NULL dereference checks
+Checks: '-bugprone-suspicious-include,
+-clang-analyzer-unix.Malloc,
+-clang-analyzer-core.NullDereference'

@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>  // for access()
 #include "exitCodes.h"
 #include "common/util.h"
 
@@ -159,17 +160,26 @@ EventNode **readEventData(char *eventFile, int numLocs) {
   char line[EVENT_LINE_SIZE];
   EventNode *curr, *next;
 
-  printf("Begin reading event data from file %s\n", eventFile);
-
   EventNode **events =
       (EventNode **)calloc(sizeof(EventNode *), numLocs * sizeof(EventNode *));
-  // status of the read
+
+  // Check for a non-empty file
+  if (access(eventFile, F_OK) != 0) {
+    // no file found, which is fine; we're done, a vector of NULL is what we
+    // want for events
+    printf("No event file found, assuming no events");
+    return events;
+  }
+
+  printf("Begin reading event data from file %s\n", eventFile);
+
   FILE *in = openFile(eventFile, "r");
 
   if (fgets(line, EVENT_LINE_SIZE, in) == NULL) {
-    printf("Error reading event file: no event data in %s\n", eventFile);
-    exit(1);
+    // Again, this is fine - just return the empty events array
+    return events;
   }
+
   int numRead = sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr,
                        &numBytes);
   if (numRead != NUM_EVENT_CORE_PARAMS) {
