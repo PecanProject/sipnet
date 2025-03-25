@@ -2517,7 +2517,7 @@ void updateTrackers(double oldSoilWater) {
 //
 // Process events for current location/year/day
 #if EVENT_HANDLER
-void processEvents() {
+void processEvents(void) {
   // If locEvent starts off NULL, this function will just fall through, as it
   // should.
   const int year = climate->year;
@@ -2532,7 +2532,7 @@ void processEvents() {
       printf("Agronomic event found for loc: %d year: %d day: %d that does not "
              "have a corresponding record in the climate file\n",
              locEvent->year, locEvent->year, locEvent->day);
-      exit(1);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     switch (locEvent->type) {
       // Implementation TBD, as we enable the various event types
