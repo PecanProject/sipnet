@@ -29,7 +29,7 @@ void printModelComponents(FILE *out);
 
 // return an array[0..MAX_DATA_TYPES-1] of strings,
 // where arr[i] gives the name of data type i
-char **getDataTypeNames();
+char **getDataTypeNames(void);
 
 /* do initializations that only have to be done once for all model runs:
    read in climate data and initial parameter values
