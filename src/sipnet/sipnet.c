@@ -699,7 +699,8 @@ int *readClimData(char *climFile, int numLocs) {
 
       if (status != NUM_CLIM_FILE_COLS) {
         printf("Error reading climate file: bad data near loc %d year %d"
-          " day %d\n", loc, year, day);
+               " day %d\n",
+               loc, year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
 
@@ -1007,8 +1008,8 @@ void freeClimateList(int numLocs) {
 
 // !!! functions for calculating auxiliary variables !!!
 
-// rather than returning a value, they have as parameters the variable(s) which they modify
-// so a single function can modify multiple variables
+// rather than returning a value, they have as parameters the variable(s) which
+// they modify so a single function can modify multiple variables
 
 /**
  * @brief Compute canopy light effect using Simpson's rule.
@@ -1016,9 +1017,10 @@ void freeClimateList(int numLocs) {
  * Similar to light attenuation in PnET, first calculate light
  * intensity and then the light effect `lightEFF` for each layer.
  *
- * Integrating Light Effect over the canopy, from top to bottom, approximated numerically using Simpson's method.
- * Simpson's rule requires an odd number of points, thus NUM_LAYERS must be EVEN because we loop
- * from layer = 0 to layer = NUM_LAYERS
+ * Integrating Light Effect over the canopy, from top to bottom, approximated
+ * numerically using Simpson's method. Simpson's rule requires an odd number of
+ * points, thus NUM_LAYERS must be EVEN because we loop from layer = 0 to layer
+ * = NUM_LAYERS
  *
  * Simpson's rule approximates the integral as:
  *   (h/3) * (y(0) + 4y(1) + 2y(2) + 4y(3) + ... + 2y(n-2) + 4y(n-1) + y(n)),
@@ -1035,8 +1037,7 @@ void freeClimateList(int numLocs) {
  * @param[in] lai Leaf area index (m^2 leaf/m^2 ground).
  * @param[in] par Incoming Photosynthetically Active Radiation (PAR).
  */
-void calcLightEff (double *lightEff, double lai, double par) {
-
+void calcLightEff(double *lightEff, double lai, double par) {
 
   // Information on the distribution of LAI with height is available
   // as of March 2007 ... contact Dr. Maggie Prater Maggie.Prater@colorado.edu
@@ -1409,7 +1410,7 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 // 0 = no, 1 = yes
 // note: there may be some fluctuations in this signal for some methods of
 // determining growing season start (e.g. for soil temp-based leaf growth)
-int pastLeafGrowth() {
+int pastLeafGrowth(void) {
 
 #if GDD
   return (climate->gdd >= params.gddLeafOn);  // growing degree days threshold
@@ -1433,7 +1434,7 @@ int pastLeafGrowth() {
 
 // have we passed the growing season-end leaf fall trigger this year?
 // 0 = no, 1 = yes
-int pastLeafFall() {
+int pastLeafFall(void) {
   return ((climate->day + climate->time / 24.0) >=
           params.leafOffDay);  // turn-off
                                // day
@@ -1824,7 +1825,7 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
 /////////////////
 
 // ensure that all the allocation to wood + leaves + fine roots < 1
-void ensureAllocation() {
+void ensureAllocation(void) {
   double allocationSum;
 
   allocationSum =
@@ -1952,7 +1953,7 @@ double microbeQualityEfficiency(double soilQuality) {
   return params.efficiency;  // Efficiency an increasing function of quality
 }
 
-void microbeGrowth() {
+void microbeGrowth(void) {
 #if SOIL_MULTIPOOL
   int counter;  // Counter of quality pools
   for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
@@ -1996,7 +1997,7 @@ int litterInputPool(double qualityComponent) {
   return (int)floor(qualityComponent * NUMBER_SOIL_CARBON_POOLS);
 }
 
-void soilDegradation() {
+void soilDegradation(void) {
 
   double soilWater;
 #if MODEL_WATER  // take soilWater from environment
@@ -2141,7 +2142,7 @@ double woodLitterF(double plantWoodC) {
                                                 // lost per day
 }
 
-void calculateFluxes() {
+void calculateFluxes(void) {
   // auxiliary variables:
   double baseFolResp;
   double potGrossPsn;  // potential photosynthesis, without water stress
@@ -2380,7 +2381,7 @@ void ensureNonNegative(double *var, double minVal) {
 //  ideally, the fluxes would be modified so that they did not make the stocks
 //  negative (otherwise the fluxes could be inconsistent with the changes in the
 //  stocks)
-void ensureNonNegativeStocks() {
+void ensureNonNegativeStocks(void) {
 
   ensureNonNegative(&(envi.plantWoodC), 0);
   ensureNonNegative(&(envi.plantLeafC), 0);
@@ -2585,7 +2586,7 @@ void processEvents() {
 // calculate all fluxes and update state for this time step
 // we calculate all fluxes before updating state in case flux calculations
 // depend on the old state
-void updateState() {
+void updateState(void) {
   double npp;  // net primary productivity, g C * m^-2 ground area * day^-1
   double oldSoilWater;  // how much soil water was there before we updated it?
                         // Used in trackers
@@ -2671,7 +2672,7 @@ void updateState() {
 // initialize phenology tracker structure, based on day of year of first climate
 // record (have the leaves come on yet this year? have they fallen off yet this
 // year?)
-void initPhenologyTrackers() {
+void initPhenologyTrackers(void) {
 
   phenologyTrackers.didLeafGrowth = pastLeafGrowth();  // first year: have we
                                                        // passed growing season
@@ -3008,7 +3009,7 @@ void printModelComponents(FILE *out) {
 
 //-----------------
 // Code for just FPAR data
-char **getDataTypeNames() {
+char **getDataTypeNames(void) {
   // NOTE: data type names shouldn't have spaces in them (for determining
   // corresponding input names in namelist input file, for estimate program)
 #if EXTRA_DATA_TYPES

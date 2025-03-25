@@ -1,7 +1,7 @@
 CC=gcc
 LD=gcc
 AR=ar -rs
-CFLAGS=-Wall -Werror -g -Isrc
+CFLAGS=-Wall -Werror -Wshadow -g -Isrc -Wstrict-prototypes
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
