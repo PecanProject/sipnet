@@ -160,8 +160,6 @@ EventNode **readEventData(char *eventFile, int numLocs) {
   char line[EVENT_LINE_SIZE];
   EventNode *curr, *next;
 
-  printf("Begin reading event data from file %s\n", eventFile);
-
   EventNode **events =
       (EventNode **)calloc(sizeof(EventNode *), numLocs * sizeof(EventNode *));
 
@@ -169,8 +167,11 @@ EventNode **readEventData(char *eventFile, int numLocs) {
   if (access(eventFile, F_OK) != 0) {
     // no file found, which is fine; we're done, a vector of NULL is what we
     // want for events
+    printf("No event file found, assuming no events");
     return events;
   }
+
+  printf("Begin reading event data from file %s\n", eventFile);
 
   FILE *in = openFile(eventFile, "r");
 
