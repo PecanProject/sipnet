@@ -26,6 +26,9 @@ ERROR: the code to be committed is not formatted properly. You need to run one o
 these commands on your commit:
 $ git clang-format       # if all modifications are staged
 $ git clang-format -f    # reformat all modified files
+
+Alternately, you may run 'git commit --no-verify' to bypass this check, but note that
+it will still run (and fail) in any submitted pull reviews
 EOF
 
 check_clang_format() {

@@ -21,40 +21,51 @@
 #define INPUT_FILE "estimate.in"
 
 #define ADD_FRACTION 0.5
-#define COMPARE_INDICES_EXT                                                    \
-  ""  // extension of file giving start and end indices for post-comparison at
-      // each location; no file means use all points
-#define AGGREGATION_EXT                                                        \
-  ""  // extension of file containing information for model/data aggregation; no
-      // file means don't do any aggregation
-#define UNAGGED_WEIGHT                                                         \
-  0.0  // if aggregation is done, give no weight to unaggregated points in
-       // optimization
-#define NUM_CHAINS                                                             \
-  10  // number of chains to run to convergence - pick best of these to use as
-      // start pt. for optimization
-#define ITER                                                                   \
-  375000  // number of metropolis iterations once we've converged and finished
-          // numSpinUps
+
+// extension of file giving start and end indices for post-comparison at
+// each location; no file means use all points
+#define COMPARE_INDICES_EXT ""
+
+// extension of file containing information for model/data aggregation; no
+// file means don't do any aggregation
+#define AGGREGATION_EXT ""
+
+// if aggregation is done, give no weight to unaggregated points in
+// optimization
+#define UNAGGED_WEIGHT 0.0
+
+// number of chains to run to convergence - pick best of these to use as
+// start pt. for optimization
+#define NUM_CHAINS 10
+
+// number of metropolis iterations once we've converged and finished numSpinUps
+#define ITER 375000
+
 #define SCALE_FACTOR 1.0  // multiply LL difference by this
 #define LOC (-1)  // default is run at all locations
 #define NUM_RUNS 1
-#define NUM_AT_ONCE 10000  // interval for checking convergence
-#define PARAM_FILE                                                             \
-  ""  // file to use in place of fileName.param - empty string means use
-      // fileName.param
-#define RANDOM_START                                                           \
-  0  // default is start with guess parameter values, NOT random parameter
-     // values
-#define NUM_SPIN_UPS                                                           \
-  125000  // once we've converged, additional number of iterations before we
-          // start recording
-#define OPT_INDICES_EXT                                                        \
-  ""  // extension of file giving start and end indices for optimization at each
-      // location; no file means use all points
-#define VALID_FRAC                                                             \
-  0.5 /* fraction of data points which must be valid                           \
-         to use data from a given time step */
+
+// interval for checking convergence
+#define NUM_AT_ONCE 10000
+
+// file to use in place of fileName.param - empty string means use
+// fileName.param
+#define PARAM_FILE ""
+
+// default is start with guess parameter values, NOT random parameter values
+#define RANDOM_START 0
+
+// once we've converged, additional number of iterations before we
+// start recording
+#define NUM_SPIN_UPS 125000
+
+// extension of file giving start and end indices for optimization at each
+// location; no file means use all points
+#define OPT_INDICES_EXT ""
+
+// fraction of data points which must be valid to use data from a given time
+// step
+#define VALID_FRAC 0.5
 #define PARAM_WEIGHT 0.0
 #define COST_FUNCTION 0  // Set different options for cost functions
 
@@ -381,10 +392,8 @@ int main(int argc, char *argv[]) {
       strcpy(thisFile, outFileName);  // just use base file name
     } else {
       sprintf(thisFile, "%s_%d_", outFileName, runNum);
-    } /* append runNum to base file name
-                      add extra underscore at end to separate run # from
-         location #
-                   */
+    }  // append runNum to base file name add extra underscore at end to
+       // separate run # from location #
 
     metropolis(thisFile, spatialParams, loc, differenceFunc, runModelNoOut,
                addFraction, iter, numAtOnce, numChains, randomStart, numSpinUps,

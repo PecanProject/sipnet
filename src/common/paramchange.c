@@ -325,8 +325,8 @@ logLike += n[dataNum] * log(sigma[dataNum]);
   free(n);
 
   // NOTE: this is actually the NEGATIVE log likelihood, discarding constant
-terms
-  // to get true log likelihood, add n*log(sqrt(2*pi)), then multiply by -1
+  // terms to get true log likelihood, add n*log(sqrt(2*pi)), then multiply
+  // by -1
 
   return logLike;
 }
@@ -478,8 +478,8 @@ double aggedDifference(double *sigma, OutputInfo *outputInfo, int loc,
         sumSquares[dataNum] / (2.0 * (sigma[dataNum]) * (sigma[dataNum]));
 
     if (dataNum == numDataTypes / 2 - 1) {
-      // we just finished all unaggregated types
-      // apply unaggedWeight to current log likelihood
+      // we just finished all unaggregated types, so apply unaggedWeight to
+      // current log likelihood
       logLike *= unaggedWeight;
     }
   }

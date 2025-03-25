@@ -12,7 +12,7 @@ tools/setup.sh
 ```
 to run the setup script, which will:
 1. Check to make sure that python is installed and is at least version 3.8
-2. Ensure that clang-format and clang-tidy are installed (and install them if not on MacOS)
+2. Ensure that clang-format and clang-tidy are installed (and install them if running on MacOS)
 3. Install the pre-commit hook, which checks the format of modified C files. This will help prevent PR failures due to formatting issues by finding those issues earlier.
 
 Note: This step is not necessary for changes to documentation, markdown files, config, etc.
@@ -50,6 +50,13 @@ to ensure code consistency and prevent (some) bad coding practices. Each tool ha
 To fix these errors:
 * if all changes are staged (via `git add`), run the command `git clang-format` to fix the formatting and re-commit
 * if not all changes are staged (likely a `git commit -a` command), either `git add` all the changes, or try `git clang-format -f` to reformat all modified files
+
+**clang-tidy** is one of the checks run on PR submission (along with building and testing) via the [cpp-linter](https://cpp-linter.github.io/cpp-linter-action/) 
+github action. If this action fails, a comment will be made in the PR detailing the issues found. **clang-format** is 
+also run by this action, so formatting issues that might have been bypassed on commit will be found here. You may attempt to have clang-tidy 
+automatically fix clang-tidy issues with the command:<br>
+```clang-tidy --fix <filename>```
+
 
 ## Documentation
 

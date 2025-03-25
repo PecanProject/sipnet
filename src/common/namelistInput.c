@@ -2,7 +2,10 @@
    provided by FORTRAN's NAMELISTs
 
    That is, read a bunch of input items from a file, where each item is given in
-   one of the forms: name = value name: value name value
+   one of the forms:
+    name = value
+    name: value
+    name value
 
    Author: Bill Sacks
    Creation date: 5/18/07
