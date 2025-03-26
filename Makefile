@@ -60,17 +60,24 @@ exec: estimate sipnet transpose subsetData histutil
 # with the default set to 'sipnet', we can have all do (close to) everything
 all: exec document
 
-# Only update docs if source files or Doxyfile have changed
-document: .doxygen.stamp
+# Build documentation with both Doxygen and Mkdocs
+document: .doxygen.stamp .mkdocs.stamp movefiles
+	@echo "Documentation updated and files are moved"
 
-# Reminder: this is the implicit build command
-# %.o: %.c
-# 	$(CC) $(CFLAGS) -c $< -o $@
+.doxygen.stamp: $(DOXYFILE) $(CFILES)
+	@if [ ! -d $(DOXYGEN_HTML_DIR) ] || [ $(DOXYFILE) -nt .doxygen.stamp ] || \
+	   find $(CFILES) -newer .doxygen.stamp | read dummy; then \
+		echo "Running Doxygen..."; \
+		doxygen $(DOXYFILE); \
+		touch .doxygen.stamp; \
+	else \
+		echo "Doxygen is up-to-date."; \
+	fi
 
-.doxygen.stamp: $(CFILES) $(DOXYFILE)
-	@echo "Running Doxygen..."
-	doxygen $(DOXYFILE)
-	@touch .doxygen.stamp
+.mkdocs.stamp: .doxygen.stamp
+	@echo "Running Mkdocs to build site..."
+	mkdocs build
+	@touch .mkdocs.stamp
 
 $(COMMON_LIB): $(COMMON_OFILES)
 	$(AR) $(COMMON_LIB) $(COMMON_OFILES)
@@ -124,7 +131,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 
 cleanall: clean testclean
 
-.PHONY: all clean histutil help document .doxygen.stamp exec cleanall \
+.PHONY: all clean histutil help document exec cleanall \
 		test $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun
 
 help:
@@ -155,4 +162,13 @@ depend::
 	makedepend $(CFILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
+
+SRC_FILES=README.md CONTRIBUTING.md CHANGELOG.md CODE_OF_CONDUCT.md
+DEST_DIR=docs
+
+movefiles:
+	@echo "Moving files to $(DEST_DIR)..."
+	@mv $(SRC_FILES) $(DEST_DIR)/
+
+	@echo "Files successfully organized!"
 
