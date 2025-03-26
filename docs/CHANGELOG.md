@@ -24,9 +24,15 @@ sections to include in release notes:
 
 ### Added
 
+- model structure and parameter documentation #42
+- Changelog #33
+- Build docs and push to gh-pages #41
+
 ### Fixed
 
 ### Changed
+
+- reorganized codebase, removed old sensitivity, ensemble, and fitting code as well as other study-specific code.
 
 ### Removed
 
