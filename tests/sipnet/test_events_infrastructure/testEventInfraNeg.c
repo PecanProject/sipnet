@@ -1,12 +1,11 @@
 
 #include <stdio.h>
-#include <stdlib.h>
 
-#include "modelStructures.h" //NOLINT
+#include "modelStructures.h"  //NOLINT
 #include "sipnet/events.c"
 #include "utils/exitHandler.c"
 
-int run() {
+int run(void) {
   int status = 0;
 
   // exit() handling params
@@ -19,68 +18,80 @@ int run() {
   if (!jmp_rval) {
     readEventData("infra_events_simple.in", 1);
   }
-  test_assert(jmp_rval==0);
+  test_assert(jmp_rval == 0);
   status |= !exit_result;
-  if (status) {printf("FAIL with infra_events_simple.in");}
+  if (status) {
+    printf("FAIL with infra_events_simple.in");
+  }
 
   // Remaining tests should exit()
   should_exit = 1;
 
   // First test
-  exit_result = 1; // reset for next test
+  exit_result = 1;  // reset for next test
   expected_code = EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
     readEventData("infra_events_unknown.in", 1);
   }
-  test_assert(jmp_rval==1);
+  test_assert(jmp_rval == 1);
   status |= !exit_result;
-  if (!exit_result) {printf("FAIL with infra_events_unknown.in\n");}
+  if (!exit_result) {
+    printf("FAIL with infra_events_unknown.in\n");
+  }
 
   // Second test
-  exit_result = 1; // reset for next test
+  exit_result = 1;  // reset for next test
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
     readEventData("infra_events_loc_ooo.in", 1);
   }
-  test_assert(jmp_rval==1);
+  test_assert(jmp_rval == 1);
   status |= !exit_result;
-  if (!exit_result) {printf("FAIL with infra_events_loc_ooo\n");}
+  if (!exit_result) {
+    printf("FAIL with infra_events_loc_ooo\n");
+  }
 
   // Third test
-  exit_result = 1; // reset for next test
+  exit_result = 1;  // reset for next test
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
     readEventData("infra_events_date_ooo.in", 1);
   }
-  test_assert(jmp_rval==1);
+  test_assert(jmp_rval == 1);
   status |= !exit_result;
-  if (!exit_result) {printf("FAIL with infra_events_date_ooo.in\n");}
+  if (!exit_result) {
+    printf("FAIL with infra_events_date_ooo.in\n");
+  }
 
   // Bad data tests - NAs in various places
   // Year NA, first line
-  exit_result = 1; // reset for next test
+  exit_result = 1;  // reset for next test
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
     readEventData("infra_events_bad_first.in", 1);
   }
-  test_assert(jmp_rval==1);
+  test_assert(jmp_rval == 1);
   status |= !exit_result;
-  if (!exit_result) {printf("FAIL with infra_events_bad_first.in\n");}
+  if (!exit_result) {
+    printf("FAIL with infra_events_bad_first.in\n");
+  }
 
   // NA in a till event
-  exit_result = 1; // reset for next test
+  exit_result = 1;  // reset for next test
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
     readEventData("infra_events_bad_till.in", 1);
   }
-  test_assert(jmp_rval==1);
+  test_assert(jmp_rval == 1);
   status |= !exit_result;
-  if (!exit_result) {printf("FAIL with infra_events_bad_till.in\n");}
+  if (!exit_result) {
+    printf("FAIL with infra_events_bad_till.in\n");
+  }
 
   // Allow a real exit, not that this is really needed
   really_exit = 1;
@@ -88,7 +99,7 @@ int run() {
   return status;
 }
 
-int main() {
+int main(void) {
   int status;
 
   printf("Starting testEventInfraNeg:run()\n");
