@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h" // must include first
+#include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
 #include "sipnet/sipnet.c"
 

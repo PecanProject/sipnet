@@ -1,8 +1,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-typedef enum EventType
-{
+typedef enum EventType {
   FERTILIZATION,
   HARVEST,
   IRRIGATION,
@@ -11,52 +10,51 @@ typedef enum EventType
   UNKNOWN_EVENT
 } event_type_t;
 
-typedef enum IrrigationMethod
-{
+typedef enum IrrigationMethod {
   CANOPY = 0,
   SOIL = 1,
-  FLOOD = 2 // placeholder, not supported yet
+  FLOOD = 2  // placeholder, not supported yet
 } irrigation_method_t;
 
-typedef struct HarvestParams
-{
+#define NUM_HARVEST_PARAMS 4
+typedef struct HarvestParams {
   double fractionRemovedAbove;
   double fractionRemovedBelow;
-  double fractionTransferredAbove; // to surface litter pool
-  double fractionTransferredBelow; // to soil litter pool
+  double fractionTransferredAbove;  // to surface litter pool
+  double fractionTransferredBelow;  // to soil litter pool
 } HarvestParams;
 
-typedef struct IrrigationParams
-{
+#define NUM_IRRIGATION_PARAMS 2
+typedef struct IrrigationParams {
   double amountAdded;
   irrigation_method_t method;
 } IrrigationParams;
 
-typedef struct FertilizationParams
-{
+#define NUM_FERTILIZATION_PARAMS 3
+typedef struct FertilizationParams {
   double orgN;
   double orgC;
   double minN;
   // double nh4_no3_frac; for two-pool version
 } FertilizationParams;
 
-typedef struct PlantingParams
-{
+#define NUM_PLANTING_PARAMS 3
+typedef struct PlantingParams {
   int emergenceLag;
   double addedC;
   double addedN;
 } PlantingParams;
 
-typedef struct TillageParams
-{
+#define NUM_TILLAGE_PARAMS 3
+typedef struct TillageParams {
   double fractionLitterTransferred;
   double somDecompModifier;
   double litterDecompModifier;
 } TillageParams;
 
+#define NUM_EVENT_CORE_PARAMS 4
 typedef struct EventNode EventNode;
-struct EventNode
-{
+struct EventNode {
   event_type_t type;
   int loc, year, day;
   void *eventParams;
@@ -65,11 +63,11 @@ struct EventNode
 
 /* Read event data from input filename (canonically events.in)
  *
- * Format: returned data is structured as an array of EventNode pointers, indexed by
- * location. Each element of the array is the first event for that location (or null
- * if there are no events). It is assumed that the events are ordered first by location
- * and then by year and day.
+ * Format: returned data is structured as an array of EventNode pointers,
+ * indexed by location. Each element of the array is the first event for that
+ * location (or null if there are no events). It is assumed that the events are
+ * ordered first by location and then by year and day.
  */
 EventNode **readEventData(char *eventFile, int numLocs);
 
-#endif // EVENTS_H
+#endif  // EVENTS_H

@@ -27,6 +27,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>  // for access()
+#include "exitCodes.h"
 #include "common/util.h"
 
 void printEvent(EventNode *event);
@@ -43,8 +45,13 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
     case HARVEST: {
       double fracRA, fracRB, fracTA, fracTB;
       HarvestParams *params = (HarvestParams *)malloc(sizeof(HarvestParams));
-      sscanf(eventParamsStr, "%lf %lf %lf %lf", &fracRA, &fracRB, &fracTA,
-             &fracTB);
+      int numRead = sscanf(eventParamsStr, "%lf %lf %lf %lf", &fracRA, &fracRB,
+                           &fracTA, &fracTB);
+      if (numRead != NUM_HARVEST_PARAMS) {
+        printf("Error parsing Harvest params for loc %d year %d day %d\n", loc,
+               year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
       params->fractionRemovedAbove = fracRA;
       params->fractionRemovedBelow = fracRB;
       params->fractionTransferredAbove = fracTA;
@@ -56,7 +63,12 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       int method;
       IrrigationParams *params =
           (IrrigationParams *)malloc(sizeof(IrrigationParams));
-      sscanf(eventParamsStr, "%lf %d", &amountAdded, &method);
+      int numRead = sscanf(eventParamsStr, "%lf %d", &amountAdded, &method);
+      if (numRead != NUM_IRRIGATION_PARAMS) {
+        printf("Error parsing Irrigation params for loc %d year %d day %d\n",
+               loc, year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
       params->amountAdded = amountAdded;
       params->method = method;
       event->eventParams = params;
@@ -68,7 +80,12 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       // double nh4_no3_frac;
       FertilizationParams *params =
           (FertilizationParams *)malloc(sizeof(FertilizationParams));
-      sscanf(eventParamsStr, "%lf %lf %lf", &orgN, &orgC, &minN);
+      int numRead = sscanf(eventParamsStr, "%lf %lf %lf", &orgN, &orgC, &minN);
+      if (numRead != NUM_FERTILIZATION_PARAMS) {
+        printf("Error parsing Fertilization params for loc %d year %d day %d\n",
+               loc, year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
       // scanf(eventParamsStr, "%lf %lf %lf %lf", &org_N, &org_C, &min_N,
       // &nh4_no3_frac);
       params->orgN = orgN;
@@ -81,7 +98,13 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       int emergenceLag;
       double addedC, addedN;
       PlantingParams *params = (PlantingParams *)malloc(sizeof(PlantingParams));
-      sscanf(eventParamsStr, "%d %lf %lf", &emergenceLag, &addedC, &addedN);
+      int numRead =
+          sscanf(eventParamsStr, "%d %lf %lf", &emergenceLag, &addedC, &addedN);
+      if (numRead != NUM_PLANTING_PARAMS) {
+        printf("Error parsing Planting params for loc %d year %d day %d\n", loc,
+               year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
       params->emergenceLag = emergenceLag;
       params->addedC = addedC;
       params->addedN = addedN;
@@ -90,7 +113,13 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
     case TILLAGE: {
       double fracLT, somDM, litterDM;
       TillageParams *params = (TillageParams *)malloc(sizeof(TillageParams));
-      sscanf(eventParamsStr, "%lf %lf %lf", &fracLT, &somDM, &litterDM);
+      int numRead =
+          sscanf(eventParamsStr, "%lf %lf %lf", &fracLT, &somDM, &litterDM);
+      if (numRead != NUM_TILLAGE_PARAMS) {
+        printf("Error parsing Tillage params for loc %d year %d day %d\n", loc,
+               year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
       params->fractionLitterTransferred = fracLT;
       params->somDecompModifier = somDM;
       params->litterDecompModifier = litterDM;
@@ -98,8 +127,7 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
     } break;
     default:
       // Unknown type, error and exit
-      printf("Error reading from event file: unknown event type %d\n",
-             eventType);
+      printf("Error reading event file: unknown event type %d\n", eventType);
       exit(1);
   }
 
@@ -132,24 +160,38 @@ EventNode **readEventData(char *eventFile, int numLocs) {
   char line[EVENT_LINE_SIZE];
   EventNode *curr, *next;
 
-  printf("Begin reading event data from file %s\n", eventFile);
-
   EventNode **events =
       (EventNode **)calloc(sizeof(EventNode *), numLocs * sizeof(EventNode *));
-  // status of the read
+
+  // Check for a non-empty file
+  if (access(eventFile, F_OK) != 0) {
+    // no file found, which is fine; we're done, a vector of NULL is what we
+    // want for events
+    printf("No event file found, assuming no events");
+    return events;
+  }
+
+  printf("Begin reading event data from file %s\n", eventFile);
+
   FILE *in = openFile(eventFile, "r");
 
   if (fgets(line, EVENT_LINE_SIZE, in) == NULL) {
-    printf("Error: no event data in %s\n", eventFile);
-    exit(1);
+    // Again, this is fine - just return the empty events array
+    return events;
   }
-  sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr, &numBytes);
+
+  int numRead = sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr,
+                       &numBytes);
+  if (numRead != NUM_EVENT_CORE_PARAMS) {
+    printf("Error reading event file: bad data on first line\n");
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
+  }
   eventParamsStr = line + numBytes;
 
   eventType = getEventType(eventTypeStr);
   if (eventType == UNKNOWN_EVENT) {
-    printf("Error: unknown event type %s\n", eventTypeStr);
-    exit(1);
+    printf("Error reading event file: unknown event type %s\n", eventTypeStr);
+    exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 
   next = createEventNode(loc, year, day, eventType, eventParamsStr);
@@ -161,13 +203,18 @@ EventNode **readEventData(char *eventFile, int numLocs) {
   while (fgets(line, EVENT_LINE_SIZE, in) != NULL) {
     // We have another event
     curr = next;
-    sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr, &numBytes);
+    numRead = sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr,
+                     &numBytes);
+    if (numRead != 4) {
+      printf("Error reading event file: bad data on first line\n");
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
+    }
     eventParamsStr = line + numBytes;
 
     eventType = getEventType(eventTypeStr);
     if (eventType == UNKNOWN_EVENT) {
-      printf("Error: unknown event type %s\n", eventTypeStr);
-      exit(1);
+      printf("Error reading event file: unknown event type %s\n", eventTypeStr);
+      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
     // make sure location and time are non-decreasing
@@ -177,7 +224,7 @@ EventNode **readEventData(char *eventFile, int numLocs) {
              currLoc, loc);
       printf("Event records for a given location should be contiguous, and "
              "locations should be in ascending order\n");
-      exit(1);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     if ((loc == currLoc) && ((year < currYear) || (day < currDay))) {
       printf("Error reading event file: for location %d, last event was at "
@@ -186,7 +233,7 @@ EventNode **readEventData(char *eventFile, int numLocs) {
       printf("next event is at (%d, %d)\n", year, day);
       printf("Event records for a given location should be in time-ascending "
              "order\n");
-      exit(1);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
 
     next = createEventNode(loc, year, day, eventType, eventParamsStr);
