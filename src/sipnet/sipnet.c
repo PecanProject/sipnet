@@ -172,6 +172,9 @@
 
 #define TINY 0.000001  // to avoid those nasty divide-by-zero errors
 
+// For planting events
+#define LAI_AT_EMERGENCE 0.15
+
 // end constant definitions
 
 // linked list of climate variables
@@ -2541,7 +2544,8 @@ void processEvents(void) {
         const double amount = irrParams->amountAdded;
         if (irrParams->method == CANOPY) {
           // Part of the irrigation evaporates, and the rest makes it to the
-          // soil Evaporated fraction
+          // soil
+          // Evaporated fraction
           const double evapAmount = params.immedEvapFrac * amount;
           fluxes.immedEvap += evapAmount;
           // Remainder goes to the soil
@@ -2555,14 +2559,56 @@ void processEvents(void) {
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
         }
       } break;
-      case PLANTING:
-        // TBD
-        printf("Planting events not yet implemented\n");
-        break;
-      case HARVEST:
-        // TBD
-        printf("Harvest events not yet implemented\n");
-        break;
+      case PLANTING: {
+        // This just doesn't work if leafAllocation is 0
+        if (params.leafAllocation == 0) {
+          printf("ERROR: leaf allocation is zero during planting event\n");
+          exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+        }
+        // Planting events have no params, so nothing to pull from the event
+
+        // On the emergence date (the date of this event, by definition), LAI
+        // is 15%; we use this to calculate leaf C, and allocation params to
+        // calculate C for other pools
+        double leafCAdded = LAI_AT_EMERGENCE * params.leafCSpWt;
+        double totalCAdded = leafCAdded / params.leafAllocation;
+        double woodCAdded = totalCAdded * params.woodAllocation;
+        double fineRootCAdded = totalCAdded * params.fineRootAllocation;
+        double coarseRootCAdded =
+            totalCAdded - leafCAdded - woodCAdded - fineRootCAdded;
+
+        // Update the pools
+        envi.plantLeafC += leafCAdded;
+        envi.plantWoodC += woodCAdded;
+        envi.fineRootC += fineRootCAdded;
+        envi.coarseRootC += coarseRootCAdded;
+        // FUTURE: allocate to N pools
+
+        // Reporting... ?
+
+      } break;
+      case HARVEST: {
+        // Harvest can both remove biomass and move biomass to the litter pool
+        const HarvestParams *harvParams = locEvent->eventParams;
+        const double fracRA = harvParams->fractionRemovedAbove;
+        const double fracTA = harvParams->fractionTransferredAbove;
+        const double fracRB = harvParams->fractionRemovedBelow;
+        const double fracTB = harvParams->fractionTransferredBelow;
+
+        // Litter:
+        envi.litter += fracTA * (envi.plantLeafC + envi.plantWoodC) +
+                       fracTB * (envi.fineRootC + envi.coarseRootC);
+        // Pool updates, counting both mass moved to litter and removed by
+        // harvest itself
+        envi.plantLeafC -= envi.plantLeafC * (fracRA + fracTA);
+        envi.plantWoodC -= envi.plantWoodC * (fracRA + fracTA);
+        envi.fineRootC -= envi.fineRootC * (fracRB + fracTB);
+        envi.coarseRootC -= envi.coarseRootC * (fracRB + fracTB);
+        // FUTURE: move biomass in N pools
+
+        // Reporting... ?
+
+      } break;
       case TILLAGE:
         // TBD
         printf("Tillage events not yet implemented\n");

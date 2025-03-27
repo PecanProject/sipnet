@@ -52,6 +52,13 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
                year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
+      // Validate the params
+      if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
+        printf("Invalid harvest event for loc %d year %d day %d; above and "
+               "below must each add to 1 or less",
+               loc, year, day);
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+      }
       params->fractionRemovedAbove = fracRA;
       params->fractionRemovedBelow = fracRB;
       params->fractionTransferredAbove = fracTA;
@@ -95,19 +102,9 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       event->eventParams = params;
     } break;
     case PLANTING: {
-      int emergenceLag;
-      double addedC, addedN;
+      // This will be an empty struct, but better to actually make that struct
+      // rather than having a dangling NULL pointer
       PlantingParams *params = (PlantingParams *)malloc(sizeof(PlantingParams));
-      int numRead =
-          sscanf(eventParamsStr, "%d %lf %lf", &emergenceLag, &addedC, &addedN);
-      if (numRead != NUM_PLANTING_PARAMS) {
-        printf("Error parsing Planting params for loc %d year %d day %d\n", loc,
-               year, day);
-        exit(EXIT_CODE_INPUT_FILE_ERROR);
-      }
-      params->emergenceLag = emergenceLag;
-      params->addedC = addedC;
-      params->addedN = addedN;
       event->eventParams = params;
     } break;
     case TILLAGE: {
@@ -273,9 +270,7 @@ void printEvent(EventNode *event) {
       break;
     case PLANTING:
       printf("PLANTING at loc %d on %d %d, ", loc, year, day);
-      PlantingParams *const pParams = (PlantingParams *)event->eventParams;
-      printf("with params: emergence lag %d, added C %4.2f, added N %4.2f\n",
-             pParams->emergenceLag, pParams->addedC, pParams->addedN);
+      printf("with params: (none - event date is date of emergence)\n");
       break;
     case TILLAGE:
       printf("TILLAGE at loc %d on %d %d, ", loc, year, day);
