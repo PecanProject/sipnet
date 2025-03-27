@@ -43,12 +43,7 @@ int checkFertilizationParams(FertilizationParams *params, double orgN,
            compareDoubles(params->minN, minN));
 }
 
-int checkPlantingParams(PlantingParams *params, int emergenceLag, double addedC,
-                        double addedN) {
-  return !(params->emergenceLag == emergenceLag &&
-           compareDoubles(params->addedC, addedC) &&
-           compareDoubles(params->addedN, addedN));
-}
+int checkPlantingParams(PlantingParams *params) { return params == NULL; }
 
 int checkTillageParams(TillageParams *params, double fracLitterTransferred,
                        double somDecompModifier, double litterDecompModifier) {
@@ -96,8 +91,7 @@ int runTestSimple(void) {
       checkTillageParams((TillageParams *)event->eventParams, 0.1, 0.2, 0.3);
   event = event->nextEvent;
   status |= checkEvent(event, 0, 2022, 46, PLANTING);
-  status |=
-      checkPlantingParams((PlantingParams *)event->eventParams, 10, 10, 1);
+  status |= checkPlantingParams((PlantingParams *)event->eventParams);
   event = event->nextEvent;
   status |= checkEvent(event, 0, 2022, 250, HARVEST);
   status |= checkHarvestParams((HarvestParams *)event->eventParams, 0.4, 0.1,
@@ -124,8 +118,7 @@ int runTestMulti(void) {
       checkTillageParams((TillageParams *)event->eventParams, 0.1, 0.2, 0.3);
   event = event->nextEvent;
   status |= checkEvent(event, loc, 2024, 65, PLANTING);
-  status |=
-      checkPlantingParams((PlantingParams *)event->eventParams, 15, 20, 5);
+  status |= checkPlantingParams((PlantingParams *)event->eventParams);
   event = event->nextEvent;
   status |= checkEvent(event, loc, 2024, 70, IRRIGATION);
   status |= checkIrrigationParams((IrrigationParams *)event->eventParams, 5, 1);
@@ -145,8 +138,7 @@ int runTestMulti(void) {
       checkTillageParams((TillageParams *)event->eventParams, 0.2, 0.3, 0.1);
   event = event->nextEvent;
   status |= checkEvent(event, loc, 2024, 64, PLANTING);
-  status |=
-      checkPlantingParams((PlantingParams *)event->eventParams, 15, 20, 5);
+  status |= checkPlantingParams((PlantingParams *)event->eventParams);
   event = event->nextEvent;
   status |= checkEvent(event, loc, 2024, 69, IRRIGATION);
   status |= checkIrrigationParams((IrrigationParams *)event->eventParams, 5, 0);
@@ -166,8 +158,7 @@ int runTestMulti(void) {
       checkTillageParams((TillageParams *)event->eventParams, 0.3, 0.1, 0.2);
   event = event->nextEvent;
   status |= checkEvent(event, loc, 2024, 63, PLANTING);
-  status |=
-      checkPlantingParams((PlantingParams *)event->eventParams, 15, 20, 5);
+  status |= checkPlantingParams((PlantingParams *)event->eventParams);
   event = event->nextEvent;
   status |= checkEvent(event, loc, 2024, 68, IRRIGATION);
   status |= checkIrrigationParams((IrrigationParams *)event->eventParams, 6, 1);
