@@ -10,8 +10,6 @@ read -r -d '' help <<- EOF
 This repository requires you to install the clang-format command. This hook has
 been tested with clang-format-19, so remove all earlier versions and reinstall if
 problems occur:
-$ brew install git-clang-format
-or
 $ sudo apt-get remove clang-format-*
 $ sudo apt-get install clang-format-19
 You should now have clang-format-19 installed. To ensure that git finds this binary,
@@ -19,6 +17,8 @@ update the configuration as follows:
 $ git config --global clangFormat.binary clang-format-19
 $ git config --global clangFormat.style file
 $ git config --global alias.clang-format clang-format-19
+
+On Mac, use the clang-format tools that ship with llvm. See setup.sh for advice.
 EOF
 
 read -r -d '' error <<- EOF
