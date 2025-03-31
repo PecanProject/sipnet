@@ -2570,11 +2570,11 @@ void processEvents(void) {
         // On the emergence date (the date of this event, by definition), LAI
         // is 15%; we use this to calculate leaf C, and allocation params to
         // calculate C for other pools
-        double leafCAdded = LAI_AT_EMERGENCE * params.leafCSpWt;
-        double totalCAdded = leafCAdded / params.leafAllocation;
-        double woodCAdded = totalCAdded * params.woodAllocation;
-        double fineRootCAdded = totalCAdded * params.fineRootAllocation;
-        double coarseRootCAdded =
+        const double leafCAdded = LAI_AT_EMERGENCE * params.leafCSpWt;
+        const double totalCAdded = leafCAdded / params.leafAllocation;
+        const double woodCAdded = totalCAdded * params.woodAllocation;
+        const double fineRootCAdded = totalCAdded * params.fineRootAllocation;
+        const double coarseRootCAdded =
             totalCAdded - leafCAdded - woodCAdded - fineRootCAdded;
 
         // Update the pools
@@ -2582,6 +2582,7 @@ void processEvents(void) {
         envi.plantWoodC += woodCAdded;
         envi.fineRootC += fineRootCAdded;
         envi.coarseRootC += coarseRootCAdded;
+
         // FUTURE: allocate to N pools
 
         // Reporting... ?
@@ -2600,11 +2601,12 @@ void processEvents(void) {
                        fracTB * (envi.fineRootC + envi.coarseRootC);
         // Pool updates, counting both mass moved to litter and removed by
         // harvest itself
-        envi.plantLeafC -= envi.plantLeafC * (fracRA + fracTA);
-        envi.plantWoodC -= envi.plantWoodC * (fracRA + fracTA);
-        envi.fineRootC -= envi.fineRootC * (fracRB + fracTB);
-        envi.coarseRootC -= envi.coarseRootC * (fracRB + fracTB);
-        // FUTURE: move biomass in N pools
+        envi.plantLeafC *= 1 - (fracRA + fracTA);
+        envi.plantWoodC *= 1 - (fracRA + fracTA);
+        envi.fineRootC *= 1 - (fracRB + fracTB);
+        envi.coarseRootC *= 1 - (fracRB + fracTB);
+
+        // FUTURE: move/remove biomass in N pools
 
         // Reporting... ?
 
@@ -3202,11 +3204,12 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
 /* Do initialization of event data if event handling is turned on.
  * Populates static event structs
  */
-void initEvents(char *eventFile, int numLocs) {
 #if EVENT_HANDLER
+void initEvents(char *eventFile, int numLocs) {
   events = readEventData(eventFile, numLocs);
-#endif
 }
+#endif
+
 // call this when done running model:
 // de-allocates space for climate linked list
 // (needs to know number of locations)
