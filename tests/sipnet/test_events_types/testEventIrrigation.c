@@ -6,16 +6,13 @@
 #include "utils/tUtils.h"
 #include "sipnet/sipnet.c"
 
-int checkOutput(double soilWater, double immedEvap)
-{
+int checkOutput(double soilWater, double immedEvap) {
   int status = 0;
-  if (!compareDoubles(soilWater, envi.soilWater))
-  {
+  if (!compareDoubles(soilWater, envi.soilWater)) {
     printf("Soil water is %f, expected %f\n", envi.soilWater, soilWater);
     status = 1;
   }
-  if (!compareDoubles(immedEvap, fluxes.immedEvap))
-  {
+  if (!compareDoubles(immedEvap, fluxes.immedEvap)) {
     printf("Immed evap is %f, expected %f\n", fluxes.immedEvap, immedEvap);
     status = 1;
   }
@@ -55,7 +52,7 @@ int run(void) {
   // (plus the five from the test above)
   status |= checkOutput(10, 2);
 
-  free( climate );
+  free(climate);
 
   return status;
 }
