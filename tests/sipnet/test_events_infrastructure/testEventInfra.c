@@ -214,11 +214,11 @@ int main(void) {
   printf("Starting run()\n");
   status = run();
   if (status) {
-    printf("Test run failed with status %d\n", status);
+    printf("FAILED testEventInfra with status %d\n", status);
     exit(status);
   }
 
-  printf("testEventInfra PASSED\n");
+  printf("PASSED testEventInfra\n");
 
   cleanup();
 }

@@ -164,7 +164,7 @@ EventNode **readEventData(char *eventFile, int numLocs) {
   if (access(eventFile, F_OK) != 0) {
     // no file found, which is fine; we're done, a vector of NULL is what we
     // want for events
-    printf("No event file found, assuming no events");
+    printf("No event file found, assuming no events\n");
     return events;
   }
 

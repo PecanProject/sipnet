@@ -378,7 +378,10 @@ typedef struct Parameters {
   double woodAllocation;  // fraction of NPP allocated to the roots
   double fineRootExudation;  // fraction of GPP exuded to the soil
   double coarseRootExudation;  // fraction of NPP exuded to the soil
-  // 6 parameters
+  // Calculated param
+  double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
+
+  // 7-1=6 parameters
 
   double fineRootTurnoverRate;  // turnover of fine roots (per year rate)
   double coarseRootTurnoverRate;  // turnover of coarse roots (per year rate)
@@ -874,6 +877,8 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
 
   initializeOneSpatialParam(spatialParams, "fineRootAllocation", &(params.fineRootAllocation), ROOTS);
   initializeOneSpatialParam(spatialParams, "woodAllocation", &(params.woodAllocation), ROOTS);
+  initializeOneSpatialParam(spatialParams, "coarseRootAllocation", &(params.fineRootAllocation), ROOTS);
+
   initializeOneSpatialParam(spatialParams, "fineRootExudation", &(params.fineRootExudation), ROOTS);
   initializeOneSpatialParam(spatialParams, "coarseRootExudation", &(params.coarseRootExudation), ROOTS);
   initializeOneSpatialParam(spatialParams, "fineRootTurnoverRate", &(params.fineRootTurnoverRate), ROOTS);
@@ -1827,23 +1832,16 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
 
 /////////////////
 
-// ensure that all the allocation to wood + leaves + fine roots < 1
+// ensure that all the allocation to wood + leaves + fine roots < 1,
+// and calculate coarse root allocation
 void ensureAllocation(void) {
-  double allocationSum;
+  params.coarseRootAllocation = 1 - params.leafAllocation -
+                                params.woodAllocation -
+                                params.fineRootAllocation;
 
-  allocationSum =
-      params.leafAllocation + params.woodAllocation + params.fineRootAllocation;
-
-  if (allocationSum > 1) {
-    params.woodAllocation = 0;
-
-    if (params.leafAllocation + params.fineRootAllocation > 1) {
-      params.fineRootAllocation = 0;
-
-      if (params.leafAllocation > 1) {
-        params.leafAllocation = 0;
-      }
-    }
+  if (params.coarseRootAllocation < 0) {
+    printf("ERROR: NPP allocation params must add to less than one\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
 
