@@ -19,7 +19,7 @@
 // Read in and process agronomic events. SIPNET expects a file named
 // <prefix>.events to exist, though unit tests may use other names.
 // Note: requires ROOTS to be activated.
-#define EVENT_HANDLER 1 && ROOTS
+#define EVENT_HANDLER 0 && ROOTS
 
 // have extra litter pool, in addition to soil c pool
 #define LITTER_POOL 0

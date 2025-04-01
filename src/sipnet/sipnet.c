@@ -877,7 +877,6 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
 
   initializeOneSpatialParam(spatialParams, "fineRootAllocation", &(params.fineRootAllocation), ROOTS);
   initializeOneSpatialParam(spatialParams, "woodAllocation", &(params.woodAllocation), ROOTS);
-  initializeOneSpatialParam(spatialParams, "coarseRootAllocation", &(params.fineRootAllocation), ROOTS);
 
   initializeOneSpatialParam(spatialParams, "fineRootExudation", &(params.fineRootExudation), ROOTS);
   initializeOneSpatialParam(spatialParams, "coarseRootExudation", &(params.coarseRootExudation), ROOTS);
