@@ -102,10 +102,10 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       event->eventParams = params;
     } break;
     case PLANTING: {
-      // This will be an empty struct, but better to actually make that struct
-      // rather than having a dangling NULL pointer
-      PlantingParams *params = (PlantingParams *)malloc(sizeof(PlantingParams));
-      event->eventParams = params;
+      // PlantingParams is an empty struct, but malloc'ing size 0 is "undefined
+      // behavior", which is best avoided. We'll just give it NULL, as this
+      // struct should not get accessed - there's nothing there!
+      event->eventParams = NULL;
     } break;
     case TILLAGE: {
       double fracLT, somDM, litterDM;

@@ -24,33 +24,59 @@ int checkEvent(EventNode *event, int loc, int year, int day,
 int checkHarvestParams(HarvestParams *params, double fracRemAbove,
                        double fracRemBelow, double fracTransAbove,
                        double fracTransBelow) {
-  return !(compareDoubles(params->fractionRemovedAbove, fracRemAbove) &&
-           compareDoubles(params->fractionRemovedBelow, fracRemBelow) &&
-           compareDoubles(params->fractionTransferredAbove, fracTransAbove) &&
-           compareDoubles(params->fractionTransferredBelow, fracTransBelow));
+  int status =
+      !(compareDoubles(params->fractionRemovedAbove, fracRemAbove) &&
+        compareDoubles(params->fractionRemovedBelow, fracRemBelow) &&
+        compareDoubles(params->fractionTransferredAbove, fracTransAbove) &&
+        compareDoubles(params->fractionTransferredBelow, fracTransBelow));
+  if (status) {
+    printf("checkHarvestParams failed\n");
+  }
+  return status;
 }
 
 int checkIrrigationParams(IrrigationParams *params, double amountAdded,
                           int method) {
-  return !(compareDoubles(params->amountAdded, amountAdded) &&
-           params->method == method);
+  int status = !(compareDoubles(params->amountAdded, amountAdded) &&
+                 params->method == method);
+  if (status) {
+    printf("checkIrrigationParams failed\n");
+  }
+  return status;
 }
 
 int checkFertilizationParams(FertilizationParams *params, double orgN,
                              double orgC, double minN) {
-  return !(compareDoubles(params->orgN, orgN) &&
-           compareDoubles(params->orgC, orgC) &&
-           compareDoubles(params->minN, minN));
+  int status = !(compareDoubles(params->orgN, orgN) &&
+                 compareDoubles(params->orgC, orgC) &&
+                 compareDoubles(params->minN, minN));
+  if (status) {
+    printf("checkFertilizationParams failed\n");
+  }
+  return status;
 }
 
-int checkPlantingParams(PlantingParams *params) { return params == NULL; }
+int checkPlantingParams(PlantingParams *params) {
+  int status = (params != NULL);
+  if (status) {
+    printf("checkPlantingParams failed (expected NULL, got %p (NULL prints as "
+           "%p))\n",
+           (void *)params, NULL);
+  }
+  return status;
+}
 
 int checkTillageParams(TillageParams *params, double fracLitterTransferred,
                        double somDecompModifier, double litterDecompModifier) {
-  return !(compareDoubles(params->fractionLitterTransferred,
-                          fracLitterTransferred) &&
-           compareDoubles(params->somDecompModifier, somDecompModifier) &&
-           compareDoubles(params->litterDecompModifier, litterDecompModifier));
+  int status =
+      !(compareDoubles(params->fractionLitterTransferred,
+                       fracLitterTransferred) &&
+        compareDoubles(params->somDecompModifier, somDecompModifier) &&
+        compareDoubles(params->litterDecompModifier, litterDecompModifier));
+  if (status) {
+    printf("checkTillageParams failed\n");
+  }
+  return status;
 }
 
 int init(void) { return 0; }
@@ -73,6 +99,7 @@ int runTestSimple(void) {
   EventNode **output = readEventData("infra_events_simple.in", numLocs);
 
   if (!output || !output[0]) {
+    printf("runTestSimple: events not read properly\n");
     return 1;
   }
 
@@ -105,7 +132,8 @@ int runTestMulti(void) {
   int numLocs = 1;
   EventNode **output = readEventData("infra_events_multi.in", numLocs);
 
-  if (!output) {
+  if (!output || !output[0]) {
+    printf("runTestMulti: events not read properly\n");
     return 1;
   }
 
@@ -176,24 +204,27 @@ int runTestMulti(void) {
 
 int run(void) {
 
+  int testStatus = 0;
   int status;
-
   status = runTestEmpty();
   if (status) {
-    return 1;
+    printf("runTestEmpty failed\n");
   }
+  testStatus |= status;
 
   status = runTestSimple();
   if (status) {
-    return 1;
+    printf("runTestSimple failed\n");
   }
+  testStatus |= status;
 
   status = runTestMulti();
   if (status) {
-    return 1;
+    printf("runTestMulti failed\n");
   }
+  testStatus |= status;
 
-  return 0;
+  return testStatus;
 }
 
 void cleanup(void) {

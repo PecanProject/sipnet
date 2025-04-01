@@ -45,7 +45,7 @@ int run(void) {
   double expLitter, expLeafC, expWoodC, expFineC, expCoarseC;
 
   // set up dummy climate
-  climate = malloc(numLocs * sizeof(climate));
+  climate = malloc(numLocs * sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
 

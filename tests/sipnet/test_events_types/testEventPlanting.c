@@ -39,7 +39,7 @@ int run(void) {
   double lai = LAI_AT_EMERGENCE;
 
   // set up dummy climate
-  climate = malloc(numLocs * sizeof(climate));
+  climate = malloc(numLocs * sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
 
