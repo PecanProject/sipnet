@@ -561,6 +561,7 @@ static double *outputPtrs[MAX_DATA_TYPES];  // pointers to different possible
 #if EVENT_HANDLER
 static EventNode **events;
 static EventNode *locEvent;  // current location event list
+static FILE *eventOutFile;
 #endif
 
 /* Read climate file into linked lists,
@@ -1005,6 +1006,27 @@ void freeClimateList(int numLocs) {
   // and finally deallocate the vector itself:
   free(firstClimates);
 }
+
+#if EVENT_HANDLER
+// de-allocate space used for events linked list
+void freeEventList(int numLocs) {
+  EventNode *curr, *prev;
+  int loc;
+
+  for (loc = 0; loc < numLocs; loc++) {
+    // loop through events, deallocating each linked list
+    curr = events[loc];
+    while (curr != NULL) {
+      prev = curr;
+      curr = curr->nextEvent;
+      free(prev);
+    }
+  }
+
+  // and finally deallocate the vector itself:
+  free(events);
+}
+#endif
 
 // !!! functions for calculating auxiliary variables !!!
 
@@ -2531,7 +2553,7 @@ void processEvents(void) {
     if (locEvent->year < year || locEvent->day < day) {
       printf("Agronomic event found for loc: %d year: %d day: %d that does not "
              "have a corresponding record in the climate file\n",
-             locEvent->year, locEvent->year, locEvent->day);
+             locEvent->loc, locEvent->year, locEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     switch (locEvent->type) {
@@ -2547,9 +2569,14 @@ void processEvents(void) {
           // Remainder goes to the soil
           const double soilAmount = amount - evapAmount;
           envi.soilWater += soilAmount;
+          writeEventOut(eventOutFile, locEvent,
+                        "fluxes.immedEvap %8.2f envi.soilWater %8.2f\n",
+                        fluxes.immedEvap, envi.soilWater);
         } else if (irrParams->method == SOIL) {
           // All goes to the soil
           envi.soilWater += amount;
+          writeEventOut(eventOutFile, locEvent, "envi.soilWater %8.2f\n",
+                        envi.soilWater);
         } else {
           printf("Unknown irrigation method type: %d\n", irrParams->method);
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -3156,17 +3183,23 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
 /* Do initialization of event data if event handling is turned on.
  * Populates static event structs
  */
-void initEvents(char *eventFile, int numLocs) {
 #if EVENT_HANDLER
+void initEvents(char *eventFile, int numLocs) {
   events = readEventData(eventFile, numLocs);
-#endif
+  eventOutFile = openEventOutFile();
 }
+#endif
+
 // call this when done running model:
-// de-allocates space for climate linked list
+// de-allocates space for climate and event linked lists
 // (needs to know number of locations)
 void cleanupModel(int numLocs) {
   freeClimateList(numLocs);
   deallocateMeanTracker(meanNPP);
   deallocateMeanTracker(meanGPP);
   deallocateMeanTracker(meanFPAR);
+#if EVENT_HANDLER
+  freeEventList(numLocs);
+  closeEventOutFile(eventOutFile);
+#endif
 }

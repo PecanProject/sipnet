@@ -298,3 +298,40 @@ void printEvent(EventNode *event) {
       printf("Error printing event: unknown type %d\n", event->type);
   }
 }
+
+const char *eventTypeToString(event_type_t type) {
+  switch (type) {
+    case IRRIGATION:
+      return "IRRIGATION";
+    case PLANTING:
+      return "PLANTING";
+    case HARVEST:
+      return "HARVEST";
+    case FERTILIZATION:
+      return "FERTILIZATION";
+    case TILLAGE:
+      return "TILLAGE";
+    default:
+      printf("ERROR: unknown event type in eventTypeToString (%d)", type);
+      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+  }
+}
+
+FILE *openEventOutFile(void) { return openFile(EVENT_OUT_FILE, "w"); }
+
+void writeEventOut(FILE *out, EventNode *event, const char *format, ...) {
+  va_list args;
+
+  // Spec:
+  // loc year day event_type <param name> <delta> [...<param name> <delta>]
+
+  // Standard prefix for all
+  fprintf(out, "%8d %4d %3d %s ", event->loc, event->year, event->day,
+          eventTypeToString(event->type));
+  // Variable output per event type
+  va_start(args, format);
+  vfprintf(out, format, args);
+  va_end(args);
+}
+
+void closeEventOutFile(FILE *file) { fclose(file); }

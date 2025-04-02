@@ -40,6 +40,6 @@ $(RUN_EXECUTABLES):
 	./$(basename $@)
 
 clean:
-	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) events.in
+	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) events.in events.out
 
 .PHONY: all tests clean run $(RUN_EXECUTABLES)

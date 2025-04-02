@@ -1,6 +1,12 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include <stdarg.h>
+
+#include "common/util.h"
+
+#define EVENT_OUT_FILE "events.out"
+
 typedef enum EventType {
   FERTILIZATION,
   HARVEST,
@@ -10,10 +16,12 @@ typedef enum EventType {
   UNKNOWN_EVENT
 } event_type_t;
 
+const char *eventTypeToString(event_type_t type);
+
 typedef enum IrrigationMethod {
   CANOPY = 0,
   SOIL = 1,
-  FLOOD = 2  // placeholder, not supported yet
+  FLOOD = 2  // NOLINT placeholder, not supported yet
 } irrigation_method_t;
 
 #define NUM_HARVEST_PARAMS 4
@@ -69,5 +77,11 @@ struct EventNode {
  * ordered first by location and then by year and day.
  */
 EventNode **readEventData(char *eventFile, int numLocs);
+
+FILE *openEventOutFile(void);
+
+void writeEventOut(FILE *out, EventNode *event, const char *format, ...);
+
+void closeEventOutFile(FILE *file);
 
 #endif  // EVENTS_H

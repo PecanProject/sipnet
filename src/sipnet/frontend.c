@@ -14,6 +14,7 @@
 #include "common/spatialParams.h"
 #include "common/util.h"
 
+#include "events.h"
 #include "sipnet.h"
 #include "outputItems.h"
 #include "modelStructures.h"
@@ -97,7 +98,7 @@ int main(int argc, char *argv[]) {
 
 #if EVENT_HANDLER
   // Extra filename if we are handing events
-  char eventFile[FILE_MAXNAME + 24];
+  char eventInFile[FILE_MAXNAME + 24];
 #endif
 
   // get command-line arguments:
@@ -174,9 +175,9 @@ int main(int argc, char *argv[]) {
   numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
 
 #if EVENT_HANDLER
-  strcpy(eventFile, fileName);
-  strcat(eventFile, ".event");
-  initEvents(eventFile, numLocs);
+  strcpy(eventInFile, fileName);
+  strcat(eventInFile, ".event");
+  initEvents(eventInFile, numLocs);
 #endif
 
   if (doSingleOutputs) {

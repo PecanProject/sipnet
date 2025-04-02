@@ -21,7 +21,7 @@ int checkOutput(double soilWater, double immedEvap)
   return 0;
 }
 
-int run() {
+int run(void) {
   int numLocs = 1;
   int status = 0;
 
@@ -37,7 +37,7 @@ int run() {
 
   //// ONE IRRIGATION EVENT
   // amount 5, method 1 (soil)
-  events = readEventData("events_one_irrig.in", numLocs);
+  initEvents("events_one_irrig.in", numLocs);
   setupEvents(0);
   processEvents();
   // should have 5 going to the soil
@@ -46,7 +46,7 @@ int run() {
   //// TWO IRRIGATION EVENTS
   // amount 3, method 1 (soil)
   // amount 4, method 0 (canopy)
-  events = readEventData("events_two_irrig.in", numLocs);
+  initEvents("events_two_irrig.in", numLocs);
   setupEvents(0);
   processEvents();
   // event 1: 3 to soil
@@ -59,7 +59,7 @@ int run() {
   return status;
 }
 
-int main() {
+int main(void) {
   printf("Starting run()\n");
   int status = run();
   if (status) {
