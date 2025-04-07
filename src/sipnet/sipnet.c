@@ -1835,8 +1835,10 @@ void ensureAllocation(void) {
                                 params.woodAllocation -
                                 params.fineRootAllocation;
 
-  if (params.coarseRootAllocation < 0) {
-    printf("ERROR: NPP allocation params must add to less than one\n");
+  if ((params.leafAllocation >= 1.0) || (params.woodAllocation >= 1.0) ||
+      (params.fineRootAllocation >= 1.0) || (params.coarseRootAllocation < 0)) {
+    printf("ERROR: NPP allocation params must be less than one individually "
+           "and add to less than one\n");
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
