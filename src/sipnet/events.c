@@ -17,7 +17,7 @@
  * - "irrig": Parameters = [amount added (cm/d), type (0=canopy, 1=soil, 2=flood)]
  * - "fert": Parameters = [Org-N (g/m²), Org-C (g/ha), Min-N (g/m²), Min-N2 (g/m²)]
  * - "till": Parameters = [SOM decomposition modifier, litter decomposition modifier]
- * - "plant": Parameters = [leaf C (g/m²), woo C (g/m²), fine root C (g/m²), corase root C (g/m²)]
+ * - "plant": Parameters = [leaf C (g/m²), wood C (g/m²), fine root C (g/m²), corase root C (g/m²)]
  * - "harv": Parameters = [fraction aboveground removed, fraction belowground removed, ...]
  * See test examples in `tests/sipnet/test_events_infrastructure/` and tests/sipnet/test_events_types/.
  */
