@@ -473,10 +473,16 @@ Notes:
 
 #### Planting Events
 
+| parameter     | col | req? | description                                  |
+|---------------|:---:|:----:|----------------------------------------------|
+| leaf-C        |  5  |  Y   | C added to leaf ppol (g C / m2)              |
+| wood-C        |  6  |  Y   | C added to above-ground wood pool (g C / m2) |
+| fine-root-C   |  7  |  Y   | C added to fine root pool (g C / m2)         |
+| coarse-root-C |  8  |  Y   | C added to coarse root pool (g C / m2)       |
+
 - model representation: 
-  - Other than `event_type = plant`, there are no additional parameters.
-  - Emergence date is defined as the date on which $LAI=0.15$
-  - Leaf $C$ is calculated from $SLW$ and other pools are calculated from allocation parameters $\alpha$
+  - Date of event is the date of emergence, not the date of actual planting 
+  - Increases size of carbon pools by the amount of each respective parameter
   - $N$ pools are calculated from $CN$ stoichiometric ratios.
 - notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.
 
@@ -499,9 +505,9 @@ Notes:
 
 ```
 1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
-1  2022  40  fert   100 50 0 0   # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
+1  2022  40  fert   10 5 0 0     # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
 1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
-1  2022  50  plant       # planting - emergence occurs on day 50
+1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 

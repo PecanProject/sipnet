@@ -17,9 +17,9 @@
  * - "irrig": Parameters = [amount added (cm/d), type (0=canopy, 1=soil, 2=flood)]
  * - "fert": Parameters = [Org-N (g/m²), Org-C (g/ha), Min-N (g/m²), Min-N2 (g/m²)]
  * - "till": Parameters = [SOM decomposition modifier, litter decomposition modifier]
- * - "plant": Parameters = [emergence lag (days), C (g/m²), N (g/m²)]]
+ * - "plant": Parameters = [leaf C (g/m²), woo C (g/m²), fine root C (g/m²), corase root C (g/m²)]
  * - "harv": Parameters = [fraction aboveground removed, fraction belowground removed, ...]
- * See test examples in `tests/sipnet/test_events_infrastructure/`.
+ * See test examples in `tests/sipnet/test_events_infrastructure/` and tests/sipnet/test_events_types/.
  */
 // clang-format on
 
@@ -102,10 +102,20 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       event->eventParams = params;
     } break;
     case PLANTING: {
-      // PlantingParams is an empty struct, but malloc'ing size 0 is "undefined
-      // behavior", which is best avoided. We'll just give it NULL, as this
-      // struct should not get accessed - there's nothing there!
-      event->eventParams = NULL;
+      double leafC, woodC, fineRootC, coarseRootC;
+      PlantingParams *params = (PlantingParams *)malloc(sizeof(PlantingParams));
+      int numRead = sscanf(eventParamsStr, "%lf %lf %lf %lf", &leafC, &woodC,
+                           &fineRootC, &coarseRootC);
+      if (numRead != NUM_PLANTING_PARAMS) {
+        printf("Error parsing Planting params for loc %d year %d day %d\n", loc,
+               year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
+      params->leafC = leafC;
+      params->woodC = woodC;
+      params->fineRootC = fineRootC;
+      params->coarseRootC = coarseRootC;
+      event->eventParams = params;
     } break;
     case TILLAGE: {
       double fracLT, somDM, litterDM;
@@ -270,7 +280,11 @@ void printEvent(EventNode *event) {
       break;
     case PLANTING:
       printf("PLANTING at loc %d on %d %d, ", loc, year, day);
-      printf("with params: (none - event date is date of emergence)\n");
+      PlantingParams *const pParams = (PlantingParams *)event->eventParams;
+      printf("with params: leaf C %4.2f, wood C %4.2f, fine root C %4.2f, "
+             "coarse root C %4.2f\n",
+             pParams->leafC, pParams->woodC, pParams->fineRootC,
+             pParams->coarseRootC);
       break;
     case TILLAGE:
       printf("TILLAGE at loc %d on %d %d, ", loc, year, day);

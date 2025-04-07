@@ -172,9 +172,6 @@
 
 #define TINY 0.000001  // to avoid those nasty divide-by-zero errors
 
-// For planting events
-#define LAI_AT_EMERGENCE 0.15
-
 // end constant definitions
 
 // linked list of climate variables
@@ -2557,32 +2554,19 @@ void processEvents(void) {
         }
       } break;
       case PLANTING: {
-        // This just doesn't work if leafAllocation is 0
-        if (params.leafAllocation == 0) {
-          printf("ERROR: leaf allocation is zero during planting event\n");
-          exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-        }
-        // Planting events have no params, so nothing to pull from the event
-
-        // On the emergence date (the date of this event, by definition), LAI
-        // is 15%; we use this to calculate leaf C, and allocation params to
-        // calculate C for other pools
-        const double leafCAdded = LAI_AT_EMERGENCE * params.leafCSpWt;
-        const double totalCAdded = leafCAdded / params.leafAllocation;
-        const double woodCAdded = totalCAdded * params.woodAllocation;
-        const double fineRootCAdded = totalCAdded * params.fineRootAllocation;
-        const double coarseRootCAdded =
-            totalCAdded - leafCAdded - woodCAdded - fineRootCAdded;
+        const PlantingParams *plantParams = locEvent->eventParams;
+        const double leafC = plantParams->leafC;
+        const double woodC = plantParams->woodC;
+        const double fineRootC = plantParams->fineRootC;
+        const double coarseRootC = plantParams->coarseRootC;
 
         // Update the pools
-        envi.plantLeafC += leafCAdded;
-        envi.plantWoodC += woodCAdded;
-        envi.fineRootC += fineRootCAdded;
-        envi.coarseRootC += coarseRootCAdded;
+        envi.plantLeafC += leafC;
+        envi.plantWoodC += woodC;
+        envi.fineRootC += fineRootC;
+        envi.coarseRootC += coarseRootC;
 
         // FUTURE: allocate to N pools
-
-        // Reporting... ?
 
       } break;
       case HARVEST: {
@@ -2604,8 +2588,6 @@ void processEvents(void) {
         envi.coarseRootC *= 1 - (fracRB + fracTB);
 
         // FUTURE: move/remove biomass in N pools
-
-        // Reporting... ?
 
       } break;
       case TILLAGE:

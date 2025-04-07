@@ -36,19 +36,11 @@ void initEnv(void) {
 int run(void) {
   int numLocs = 1;
   int status = 0;
-  double lai = LAI_AT_EMERGENCE;
 
   // set up dummy climate
   climate = malloc(numLocs * sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
-
-  // set up dummy envi/fluxes/params
-  params.leafCSpWt = 5.0;
-  params.leafAllocation = 0.1;
-  params.woodAllocation = 0.5;
-  params.fineRootAllocation = 0.1;
-  ensureAllocation();
 
   // init values
   initEnv();
@@ -57,20 +49,16 @@ int run(void) {
   events = readEventData("events_one_planting.in", numLocs);
   setupEvents(0);
   processEvents();
-  // should have 7.5g C, allocated as above to the four pools
-  double totC = lai * 5 / 0.1;
-  status |= checkOutput(1 + totC * 0.1, 2 + totC * 0.5, 3 + totC * 0.1,
-                        4 + totC * 0.3);
+  // added: leaf 10, wood 5, fine root 4, coarse root 3
+  status |= checkOutput(1 + 10, 2 + 5, 3 + 4, 4 + 3);
 
   //// TWO PLANTING EVENTS
   initEnv();
   events = readEventData("events_two_planting.in", numLocs);
   setupEvents(0);
   processEvents();
-  // Should have twice as much as before, as the plantings are the same
-  totC *= 2;
-  status |= checkOutput(1 + totC * 0.1, 2 + totC * 0.5, 3 + totC * 0.1,
-                        4 + totC * 0.3);
+  // leaf 10+9, wood 5+6, fine root 4+8, coarse root 3+4
+  status |= checkOutput(1 + 19, 2 + 11, 3 + 12, 4 + 7);
 
   return status;
 }
