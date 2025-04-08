@@ -476,7 +476,7 @@ Notes:
 
 | parameter     | col | req? | description                                  |
 |---------------|:---:|:----:|----------------------------------------------|
-| leaf-C        |  5  |  Y   | C added to leaf ppol (g C / m2)              |
+| leaf-C        |  5  |  Y   | C added to leaf pool (g C / m2)              |
 | wood-C        |  6  |  Y   | C added to above-ground wood pool (g C / m2) |
 | fine-root-C   |  7  |  Y   | C added to fine root pool (g C / m2)         |
 | coarse-root-C |  8  |  Y   | C added to coarse root pool (g C / m2)       |
