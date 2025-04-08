@@ -618,7 +618,7 @@ The choice of one month adjustment period is based on DayCent (Parton et al 2001
 
 A planting event is defined by its emergence date and directly specifies the amount of carbon added to each of four plant carbon pools: leaf, wood, fine root, and coarse root. On the emergence date, the model initializes the plant pools with the amounts of carbon specified in the events file.
 
-Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios followingn equation \eqref{eq:cn_stoich}.
+Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios following equation \eqref{eq:cn_stoich}.
 
 ### $\frak{Harvest}$
 
