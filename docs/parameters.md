@@ -125,6 +125,8 @@ Run-time parameters can change from one run to the next, or when the model is st
 |   | ${N_2O}_{\text{soil},0}$                         |                 | Nitrous oxide concentration in the soil   | g N m$^{-2}$                 |                                                   |
 |   | $C_{\text{fine root},0}$    |  fineRootFrac    | Initial fine root carbon                  | g C m$^{-2}$ | |
 |   | $C_{\text{coarse root},0}$  |   coarseRootFrac | Initial coarse root carbon                | g C m$^{-2}$                 |                                                   |
+|    | $C_{\text{leaf},0}$ | leafInit        | Initial leaf carbon                        | g C m$^{-2}$                 |                                                   |
+|    | $C_{\text{wood},0$ | woodInit        | Initial wood carbon                        | g C m$^{-2}$                 |                                                   |
 
 <!--not used in CCMMF
 
