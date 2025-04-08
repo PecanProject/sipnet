@@ -617,10 +617,10 @@ The choice of one month adjustment period is based on DayCent (Parton et al 2001
 ### $\frak{Planting \ and \ Emergence}$
 
 A planting event is defined by its emergence date and directly specifies the amount of carbon added to each of four plant pools. On the emergence date, the model initializes the plant pools with the amounts specified:
-- Leaf Carbon by the amount given as `leafC` (g C/m2)
-- Wood Carbon by the amount given as `woodC` (g C/m2)
-- Fine Root Carbon by the amount given as `fineRootC` (g C/m2)
-- Coarse Root Carbon by the amount given as `coarseRootC` (g C/m2)
+- Leaf Carbon by the amount given as `leafC` (g C / m2)
+- Wood Carbon by the amount given as `woodC` (g C / m2)
+- Fine Root Carbon by the amount given as `fineRootC` (g C / m2)
+- Coarse Root Carbon by the amount given as `coarseRootC` (g C / m2)
 
 Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios.
 
