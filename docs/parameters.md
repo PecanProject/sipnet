@@ -111,21 +111,19 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Initial state values
 
-|   | Symbol                                   | Parameter Name  | Definition                                | Units                          | notes                                             |
-| - | ---------------------------------------- | --------------- | ----------------------------------------- | ------------------------------ | ------------------------------------------------- |
-| 1 | $C_{\text{wood},0}$                    | plantWoodInit   | Initial wood carbon                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$        | above-ground + roots                              |
-| 2 | $LAI_0$                                  | laiInit         | Initial leaf area                         | m^2 leaves \* m^-2 ground area | multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$ |
- |
-| 3 | $C_{\text{litter},0}$                  | litterInit      | Initial litter carbon                     | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$        |                                                   |
-| 4 | $C_{\text{soil},0}$                    | soilInit        | Initial soil carbon                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$        |                                                   |
-| 5 | $W_{\text{litter},0}$                  | litterWFracInit |                                           | unitless                       | fraction of litterWHC                             |
-| 6 | $W_{\text{soil},0}$                              | soilWFracInit   |                                           | unitless                       | fraction of soilWHC                               |
-|   | $N_{\text{soil},0}$                              |                 | Initial soil organic nitrogen content     | g N m$^{-2}$                 |                                                   |
-|   | ${CH_4}_{\text{soil},0}$                         |                 | Initial methane concentration in the soil | g C m$^{-2}$                 |                                                   |
-|   | ${N_2O}_{\text{soil},0}$                         |                 | Nitrous oxide concentration in the soil   | g N m$^{-2}$                 |                                                   |
-|   | $C_{\text{fine root},0}$    |  fineRootFrac    | Initial fine root carbon                  | g C m$^{-2}$ | |
-|   | $C_{\text{coarse root},0}$  |   coarseRootFrac | Initial coarse root carbon                | g C m$^{-2}$                 |                                                   |
-         |                                                   |
+|    | Symbol                     | Parameter Name  | Definition                                                               | Units                                                | notes                                                                              |
+|----|----------------------------|-----------------|--------------------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------------------------------------|
+| 1  | $C_{\text{wood},0}$        | plantWoodInit   | Initial wood carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ | above-ground + roots                                                               |
+| 2  | $LAI_0$                    | laiInit         | Initial leaf area                                                        | m^2 leaves \* m^-2 ground area                       | multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$ |
+| 3  | $C_{\text{litter},0}$      | litterInit      | Initial litter carbon                                                    | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
+| 4  | $C_{\text{soil},0}$        | soilInit        | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
+| 5  | $W_{\text{litter},0}$      | litterWFracInit |                                                                          | unitless                                             | fraction of litterWHC                                                              |
+| 6  | $W_{\text{soil},0}$        | soilWFracInit   |                                                                          | unitless                                             | fraction of soilWHC                                                                |
+|    | $N_{\text{soil},0}$        |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
+|    | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
+|    | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
+|    | $C_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   | g C m$^{-2}$                                         |                                                                                    |
+|    | $C_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool | g C m$^{-2}$                                         |                                                                                    |
 
 <!--not used in CCMMF
 
