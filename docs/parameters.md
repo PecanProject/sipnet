@@ -123,7 +123,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 |    | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
 |    | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
 |    | $C_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   | g C m$^{-2}$                                         |                                                                                    |
-|    | $C_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool | g C m$^{-2}$                                         |                                                                                    |
+|    | $C_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                  |                                                                                    |
 
 <!--not used in CCMMF
 
