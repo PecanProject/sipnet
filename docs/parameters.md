@@ -68,12 +68,12 @@ Numbered items are cross-referenced with original documentation.
 | $VPD$      | Vapor Pressure Deficit                                                      |
 | $ET$       | Evapotranspiration                                                          |
 | $Q_{10}$   | Temperature sensitivity coefficient                                         |
-| $f$        | Fraction                                                                    |
+| $f$        | The fraction of a pool or flux other than NPP                               |
 | $F$        | Flux of carbon, nitrogen, or water                                          |
 | $D$        | Dependency or Damping Function                                              |
 | $N$        | Nitrogen                                                                    |
 | $C$        | Carbon                                                                      |
-| $\alpha$   | Allocation fraction                                                         |
+| $\alpha$   | The fraction of NPP allocated to a plant pool                               |
 | $k$        | Scaling factor |
 
 ### Subscripts (Temporal, Spatial, or Contextual Identifiers)
@@ -122,8 +122,8 @@ Run-time parameters can change from one run to the next, or when the model is st
 |    | $N_{\text{soil},0}$        |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
 |    | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
 |    | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
-|    | $C_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                      |                                                                                    |
-|    | $C_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                  |                                                                                    |
+|    | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                      |                                                                                    |
+|    | $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                  |                                                                                    |
 
 <!--not used in CCMMF
 
