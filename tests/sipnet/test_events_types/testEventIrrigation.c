@@ -6,27 +6,25 @@
 #include "utils/tUtils.h"
 #include "sipnet/sipnet.c"
 
-int checkOutput(double soilWater, double immedEvap)
-{
-  if (!compareDoubles(soilWater, envi.soilWater))
-  {
-    printf("Soil water is %f, expected %f\n", soilWater, envi.soilWater);
-    return 1;
+int checkOutput(double soilWater, double immedEvap) {
+  int status = 0;
+  if (!compareDoubles(soilWater, envi.soilWater)) {
+    printf("Soil water is %f, expected %f\n", envi.soilWater, soilWater);
+    status = 1;
   }
-  if (!compareDoubles(immedEvap, fluxes.immedEvap))
-  {
-    printf("Immed evap is %f, expected %f\n", immedEvap, fluxes.immedEvap);
-    return 1;
+  if (!compareDoubles(immedEvap, fluxes.immedEvap)) {
+    printf("Immed evap is %f, expected %f\n", fluxes.immedEvap, immedEvap);
+    status = 1;
   }
-  return 0;
+  return status;
 }
 
-int run() {
+int run(void) {
   int numLocs = 1;
   int status = 0;
 
   // set up dummy climate
-  climate = malloc( numLocs * sizeof( climate ) );
+  climate = malloc(numLocs * sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
 
@@ -54,18 +52,18 @@ int run() {
   // (plus the five from the test above)
   status |= checkOutput(10, 2);
 
-  free( climate );
+  free(climate);
 
   return status;
 }
 
-int main() {
+int main(void) {
   printf("Starting run()\n");
   int status = run();
   if (status) {
-    printf("Test run failed with status %d\n", status);
+    printf("FAILED testEventIrrigation with status %d\n", status);
     exit(status);
   }
 
-  printf("testEventIrrigation PASSED\n");
+  printf("PASSED testEventIrrigation\n");
 }
