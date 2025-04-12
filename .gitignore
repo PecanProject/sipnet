@@ -6,9 +6,11 @@ estimate
 subsetData
 transpose
 .doxygen.stamp
+.mkdocs.stamp
+site/*
 
 # documentation
-docs/html
+docs/api
 docs/latex
 
 # System-specific files

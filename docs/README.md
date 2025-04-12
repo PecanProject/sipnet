@@ -40,8 +40,8 @@ Do we want to list upcoming work? We could link to the issues page, and/or to th
 
 ## Contributing
 
-See the main [Contributing](/CONTRIBUTING.md) page
+See the main [Contributing](CONTRIBUTING.md) page
 
 ## License
 
-Distributed under the BSD 3-Clause license. See [LICENSE](/LICENSE) for more information.
+Distributed under the BSD 3-Clause license. See [LICENSE](https://github.com/PecanProject/sipnet/blob/master/LICENSE) for more information.
