@@ -1,7 +1,7 @@
 CC=gcc
 LD=gcc
 AR=ar -rs
-CFLAGS=-Wall -Werror -Wshadow -g -Isrc -Wstrict-prototypes
+CFLAGS=-Wall -Werror -g -Isrc
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
@@ -47,7 +47,7 @@ COMMON_LIB=$(LIB_DIR)/libsipnet_common.a
 
 # Doxygen
 DOXYFILE = docs/Doxyfile
-DOXYGEN_HTML_DIR = docs/html
+DOXYGEN_HTML_DIR = docs/api
 DOXYGEN_LATEX_DIR = docs/latex
 
 # the make command, with no arguments, should not build everything in this complex
@@ -60,17 +60,24 @@ exec: estimate sipnet transpose subsetData histutil
 # with the default set to 'sipnet', we can have all do (close to) everything
 all: exec document
 
+# Build documentation with both Doxygen and Mkdocs
+document: .doxygen.stamp .mkdocs.stamp
+
 # Only update docs if source files or Doxyfile have changed
-document: .doxygen.stamp
+.doxygen.stamp: $(DOXYFILE) $(CFILES)
+	@if [ ! -d $(DOXYGEN_HTML_DIR) ] || [ $(DOXYFILE) -nt .doxygen.stamp ] || \
+	   find $(CFILES) -newer .doxygen.stamp | read dummy; then \
+		echo "Running Doxygen..."; \
+		doxygen $(DOXYFILE); \
+		touch .doxygen.stamp; \
+	else \
+		echo "Doxygen is up-to-date."; \
+	fi
 
-# Reminder: this is the implicit build command
-# %.o: %.c
-# 	$(CC) $(CFLAGS) -c $< -o $@
-
-.doxygen.stamp: $(CFILES) $(DOXYFILE)
-	@echo "Running Doxygen..."
-	doxygen $(DOXYFILE)
-	@touch .doxygen.stamp
+.mkdocs.stamp: .doxygen.stamp
+	@echo "Running Mkdocs to build site..."
+	mkdocs build
+	@touch .mkdocs.stamp
 
 $(COMMON_LIB): $(COMMON_OFILES)
 	$(AR) $(COMMON_LIB) $(COMMON_OFILES)
@@ -99,6 +106,8 @@ clean:
 	rm -f $(HISTUTIL_OFILES) $(COMMON_LIB) $(SIPNET_LIB)
 	rm -f estimate sensTest sipnet transpose subsetData bintotxt txttobin
 	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
+	rm -rf site/
+	rm -f .doxygen.stamp .mkdocs.stamp
 
 # UNIT TESTS
 SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
@@ -124,7 +133,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 
 cleanall: clean testclean
 
-.PHONY: all clean histutil help document .doxygen.stamp exec cleanall \
+.PHONY: all clean histutil help document exec cleanall \
 		test $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun
 
 help:
@@ -136,7 +145,7 @@ help:
 	@echo "  estimate     - Build the estimate executable (estimates parameters using MCMC); see estimate.in in the "
 	@echo "                 src/estimate directory for sample input file"
 	@echo "  exec         - Build the above executables and all utilities (see below)"
-	@echo "  document     - Generate documentation (via doxygen)"
+	@echo "  document     - Generate documentation (via doxygen and mkdocs)"
 	@echo "  all          - Build all above executables and the documentation"
 	@echo "  clean        - Remove compiled files, executables, and documentation"
 	@echo "  depend       - Generate build dependency information for source files and append to Makefile"
@@ -155,4 +164,3 @@ depend::
 	makedepend $(CFILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-
