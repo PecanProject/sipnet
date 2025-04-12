@@ -6,6 +6,8 @@ estimate
 subsetData
 transpose
 .doxygen.stamp
+.mkdocs.stamp
+site/*
 
 # documentation
 docs/html
