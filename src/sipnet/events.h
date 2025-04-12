@@ -38,11 +38,12 @@ typedef struct FertilizationParams {
   // double nh4_no3_frac; for two-pool version
 } FertilizationParams;
 
-#define NUM_PLANTING_PARAMS 3
+#define NUM_PLANTING_PARAMS 4
 typedef struct PlantingParams {
-  int emergenceLag;
-  double addedC;
-  double addedN;
+  double leafC;
+  double woodC;
+  double fineRootC;
+  double coarseRootC;
 } PlantingParams;
 
 #define NUM_TILLAGE_PARAMS 3

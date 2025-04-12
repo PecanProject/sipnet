@@ -50,6 +50,7 @@ to ensure code consistency and prevent (some) bad coding practices. Each tool ha
 To fix these errors:
 * if all changes are staged (via `git add`), run the command `git clang-format` to fix the formatting and re-commit
 * if not all changes are staged (likely a `git commit -a` command), either `git add` all the changes, or try `git clang-format -f` to reformat all modified files
+* `clang-format` may also be run outside of `git`, as a means of updating a file's format regardless of modification status (see `clang-format --help`)
 
 **clang-tidy** is one of the checks run on PR submission (along with building and testing) via the [cpp-linter](https://cpp-linter.github.io/cpp-linter-action/) 
 github action. If this action fails, a comment will be made in the PR detailing the issues found. **clang-format** is 

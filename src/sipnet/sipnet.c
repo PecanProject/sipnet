@@ -375,7 +375,10 @@ typedef struct Parameters {
   double woodAllocation;  // fraction of NPP allocated to the roots
   double fineRootExudation;  // fraction of GPP exuded to the soil
   double coarseRootExudation;  // fraction of NPP exuded to the soil
-  // 6 parameters
+  // Calculated param
+  double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
+
+  // 7-1=6 parameters
 
   double fineRootTurnoverRate;  // turnover of fine roots (per year rate)
   double coarseRootTurnoverRate;  // turnover of coarse roots (per year rate)
@@ -871,6 +874,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
 
   initializeOneSpatialParam(spatialParams, "fineRootAllocation", &(params.fineRootAllocation), ROOTS);
   initializeOneSpatialParam(spatialParams, "woodAllocation", &(params.woodAllocation), ROOTS);
+
   initializeOneSpatialParam(spatialParams, "fineRootExudation", &(params.fineRootExudation), ROOTS);
   initializeOneSpatialParam(spatialParams, "coarseRootExudation", &(params.coarseRootExudation), ROOTS);
   initializeOneSpatialParam(spatialParams, "fineRootTurnoverRate", &(params.fineRootTurnoverRate), ROOTS);
@@ -1824,23 +1828,18 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
 
 /////////////////
 
-// ensure that all the allocation to wood + leaves + fine roots < 1
+// ensure that all the allocation to wood + leaves + fine roots < 1,
+// and calculate coarse root allocation
 void ensureAllocation(void) {
-  double allocationSum;
+  params.coarseRootAllocation = 1 - params.leafAllocation -
+                                params.woodAllocation -
+                                params.fineRootAllocation;
 
-  allocationSum =
-      params.leafAllocation + params.woodAllocation + params.fineRootAllocation;
-
-  if (allocationSum > 1) {
-    params.woodAllocation = 0;
-
-    if (params.leafAllocation + params.fineRootAllocation > 1) {
-      params.fineRootAllocation = 0;
-
-      if (params.leafAllocation > 1) {
-        params.leafAllocation = 0;
-      }
-    }
+  if ((params.leafAllocation >= 1.0) || (params.woodAllocation >= 1.0) ||
+      (params.fineRootAllocation >= 1.0) || (params.coarseRootAllocation < 0)) {
+    printf("ERROR: NPP allocation params must be less than one individually "
+           "and add to less than one\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
 
@@ -2541,7 +2540,8 @@ void processEvents(void) {
         const double amount = irrParams->amountAdded;
         if (irrParams->method == CANOPY) {
           // Part of the irrigation evaporates, and the rest makes it to the
-          // soil Evaporated fraction
+          // soil
+          // Evaporated fraction
           const double evapAmount = params.immedEvapFrac * amount;
           fluxes.immedEvap += evapAmount;
           // Remainder goes to the soil
@@ -2555,14 +2555,43 @@ void processEvents(void) {
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
         }
       } break;
-      case PLANTING:
-        // TBD
-        printf("Planting events not yet implemented\n");
-        break;
-      case HARVEST:
-        // TBD
-        printf("Harvest events not yet implemented\n");
-        break;
+      case PLANTING: {
+        const PlantingParams *plantParams = locEvent->eventParams;
+        const double leafC = plantParams->leafC;
+        const double woodC = plantParams->woodC;
+        const double fineRootC = plantParams->fineRootC;
+        const double coarseRootC = plantParams->coarseRootC;
+
+        // Update the pools
+        envi.plantLeafC += leafC;
+        envi.plantWoodC += woodC;
+        envi.fineRootC += fineRootC;
+        envi.coarseRootC += coarseRootC;
+
+        // FUTURE: allocate to N pools
+
+      } break;
+      case HARVEST: {
+        // Harvest can both remove biomass and move biomass to the litter pool
+        const HarvestParams *harvParams = locEvent->eventParams;
+        const double fracRA = harvParams->fractionRemovedAbove;
+        const double fracTA = harvParams->fractionTransferredAbove;
+        const double fracRB = harvParams->fractionRemovedBelow;
+        const double fracTB = harvParams->fractionTransferredBelow;
+
+        // Litter:
+        envi.litter += fracTA * (envi.plantLeafC + envi.plantWoodC) +
+                       fracTB * (envi.fineRootC + envi.coarseRootC);
+        // Pool updates, counting both mass moved to litter and removed by
+        // harvest itself
+        envi.plantLeafC *= 1 - (fracRA + fracTA);
+        envi.plantWoodC *= 1 - (fracRA + fracTA);
+        envi.fineRootC *= 1 - (fracRB + fracTB);
+        envi.coarseRootC *= 1 - (fracRB + fracTB);
+
+        // FUTURE: move/remove biomass in N pools
+
+      } break;
       case TILLAGE:
         // TBD
         printf("Tillage events not yet implemented\n");
@@ -3156,11 +3185,12 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
 /* Do initialization of event data if event handling is turned on.
  * Populates static event structs
  */
-void initEvents(char *eventFile, int numLocs) {
 #if EVENT_HANDLER
+void initEvents(char *eventFile, int numLocs) {
   events = readEventData(eventFile, numLocs);
-#endif
 }
+#endif
+
 // call this when done running model:
 // de-allocates space for climate linked list
 // (needs to know number of locations)
