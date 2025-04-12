@@ -107,6 +107,7 @@ clean:
 	rm -f estimate sensTest sipnet transpose subsetData bintotxt txttobin
 	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
 	rm -rf site/
+	rm -f .doxygen.stamp .mkdocs.stamp
 
 # UNIT TESTS
 SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
