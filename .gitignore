@@ -10,7 +10,7 @@ transpose
 site/*
 
 # documentation
-docs/html
+docs/api
 docs/latex
 
 # System-specific files

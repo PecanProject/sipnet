@@ -7,7 +7,7 @@ nav:
   - Developer Guide:
       - Code Structure: developer-guide/code-structure.md
   - Contributing: CONTRIBUTING.md
-  - API Reference: html/index.html
+  - API Reference: api/index.html
   - Changelog: CHANGELOG.md
   - Code of Conduct: CODE_OF_CONDUCT.md
 

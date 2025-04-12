@@ -1,16 +1,21 @@
-# Organization and Packages
+# SIPNET Source Code Documentation
+<!--This README is also used as the main page for Doxygen-generated documentation.-->
+
+This document provides an overview of the SIPNET model source code and utilities.  
+
+## Organization and Packages
 
 Organization strategy:
-* sipnet and derivative programs each have their own directory
-* stand-alone utilities all go into the `utilities` subdirectory
+* SIPNET and derivative programs each have their own directory
+* Stand-alone utilities all go into the `utilities` subdirectory
 
-## Main program - SIPNET
+### Main program - SIPNET
 
 [Add description here of SIPNET's "compilation switch" strategy - which hopefully
 will become command-line params at some point, but not yet. We need to doc the
 possible switches somewhere...]
 
-## SIPNET derivatives
+### SIPNET derivatives
 
 **estimate**: The parameter estimation program for SIPNET. Its operation is
 controlled by the file 'estimate.in'.
@@ -19,7 +24,7 @@ controlled by the file 'estimate.in'.
 values of a parameter (essentially a one-dimensional parameter
 estimation). Its operation is controlled by the file 'sensTest.in'.
 
-## Stand-alone Utilities 
+### Stand-alone Utilities 
 
 **subsetData**: A utility to subset a data record temporally. This utility
 can also perform daily aggregation on the data if so desired. Its

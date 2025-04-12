@@ -47,7 +47,7 @@ COMMON_LIB=$(LIB_DIR)/libsipnet_common.a
 
 # Doxygen
 DOXYFILE = docs/Doxyfile
-DOXYGEN_HTML_DIR = docs/html
+DOXYGEN_HTML_DIR = docs/api
 DOXYGEN_LATEX_DIR = docs/latex
 
 # the make command, with no arguments, should not build everything in this complex
