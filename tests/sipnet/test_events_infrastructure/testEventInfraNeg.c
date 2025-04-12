@@ -105,9 +105,10 @@ int main(void) {
   printf("Starting testEventInfraNeg:run()\n");
   status = run();
   if (status) {
-    printf("Test run FAILED with status %d\n", status);
+    really_exit = 1;
+    printf("FAILED testEventInfraNeg with status %d\n", status);
     exit(status);
   }
 
-  printf("testEventInfra PASSED\n");
+  printf("PASSED testEventInfraNeg\n");
 }
