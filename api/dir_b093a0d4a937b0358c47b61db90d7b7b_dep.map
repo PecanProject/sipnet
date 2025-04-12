@@ -1,0 +1,16 @@
+<map id="src" name="src">
+<area shape="rect" id="node2" href="dir_beb1ba2e48f9695d8c9e705525ad4074.html" title="common" alt="" coords="95,209,174,235"/>
+<area shape="rect" id="node3" href="dir_071664f761183e6d9c6d4a6ef3d370bd.html" title="estimate" alt="" coords="77,63,157,88"/>
+<area shape="poly" id="edge2" href="dir_000001_000000.html" alt="" coords="121,88,134,195,129,196,116,89"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000001_000000.html" title="5" alt="" coords="135,183,144,197"/>
+<area shape="rect" id="node4" href="dir_328cbd77cdc6567372cefee937781220.html" title="sipnet" alt="" coords="161,136,223,161"/>
+<area shape="poly" id="edge1" href="dir_000001_000004.html" alt="" coords="131,86,172,125,168,128,127,90"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000001_000004.html" title="1" alt="" coords="168,110,177,125"/>
+<area shape="poly" id="edge3" href="dir_000004_000000.html" alt="" coords="185,163,155,200,151,197,180,160"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000004_000000.html" title="7" alt="" coords="157,193,167,208"/>
+<area shape="rect" id="node5" href="dir_bcd460835e818ae2f4f28d69a76e8acb.html" title="utilities" alt="" coords="38,136,109,161"/>
+<area shape="poly" id="edge4" href="dir_000006_000000.html" alt="" coords="85,160,118,197,114,201,81,163"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000006_000000.html" title="5" alt="" coords="115,183,124,197"/>
+<area shape="rect" id="clust2" href="dir_b093a0d4a937b0358c47b61db90d7b7b.html" alt="" coords="27,52,235,245"/>
+<area shape="rect" id="clust1" href="dir_37ba5beefa33fb565c8c46d86b1ecb9e.html" title="sipnet" alt="" coords="16,16,245,256"/>
+</map>

@@ -1,0 +1,233 @@
+\doxysection{output\+Items.\+c File Reference}
+\label{output_items_8c}\index{outputItems.c@{outputItems.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include "{}output\+Items.\+h"{}}\newline
+{\ttfamily \#include "{}common/util.\+h"{}}\newline
+Include dependency graph for output\+Items.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{db/d10/output_items_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Single\+Output\+Item} $\ast$ \textbf{ new\+Single\+Output\+Item} (char $\ast$name, double $\ast$ptr)
+\item 
+void \textbf{ open\+Output\+Item\+File} (\textbf{ Single\+Output\+Item} $\ast$single\+Output\+Item, char $\ast$filename\+Base)
+\item 
+void \textbf{ close\+Output\+Item\+File} (\textbf{ Single\+Output\+Item} $\ast$single\+Output\+Item)
+\item 
+\textbf{ Output\+Items} $\ast$ \textbf{ new\+Output\+Items} (char $\ast$filename\+Base, char separator)
+\item 
+void \textbf{ add\+Output\+Item} (\textbf{ Output\+Items} $\ast$output\+Items, char $\ast$name, double $\ast$ptr)
+\item 
+void \textbf{ write\+Output\+Item\+Labels} (\textbf{ Output\+Items} $\ast$output\+Items, char $\ast$label)
+\item 
+void \textbf{ write\+Output\+Item\+Values} (\textbf{ Output\+Items} $\ast$output\+Items)
+\item 
+void \textbf{ terminate\+Output\+Item\+Lines} (\textbf{ Output\+Items} $\ast$output\+Items)
+\item 
+void \textbf{ delete\+Output\+Items} (\textbf{ Output\+Items} $\ast$output\+Items)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{output_items_8c_aae7d85779ed17e486430634c3d4b84b6} 
+\index{outputItems.c@{outputItems.c}!addOutputItem@{addOutputItem}}
+\index{addOutputItem@{addOutputItem}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{addOutputItem()}
+{\footnotesize\ttfamily void add\+Output\+Item (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items,  }\item[{char $\ast$}]{name,  }\item[{double $\ast$}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Output\+Items\+Struct\+::count}, \textbf{ Output\+Items\+Struct\+::filename\+Base}, \textbf{ new\+Single\+Output\+Item()}, \textbf{ Single\+Output\+Item\+Struct\+::next\+Item}, \textbf{ open\+Output\+Item\+File()}, and \textbf{ Output\+Items\+Struct\+::tail}.
+
+
+
+Referenced by \textbf{ setup\+Output\+Items()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d66/output_items_8c_aae7d85779ed17e486430634c3d4b84b6_cgraph}
+\end{center}
+\end{figure}
+\label{output_items_8c_a8ec899fb3e0b216b4f5a01aaf8232c9a} 
+\index{outputItems.c@{outputItems.c}!closeOutputItemFile@{closeOutputItemFile}}
+\index{closeOutputItemFile@{closeOutputItemFile}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{closeOutputItemFile()}
+{\footnotesize\ttfamily void close\+Output\+Item\+File (\begin{DoxyParamCaption}\item[{\textbf{ Single\+Output\+Item} $\ast$}]{single\+Output\+Item }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Single\+Output\+Item\+Struct\+::f}.
+
+
+
+Referenced by \textbf{ delete\+Output\+Items()}.
+
+\label{output_items_8c_a374d66f4329d8e3f3973fcc3e06850d2} 
+\index{outputItems.c@{outputItems.c}!deleteOutputItems@{deleteOutputItems}}
+\index{deleteOutputItems@{deleteOutputItems}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{deleteOutputItems()}
+{\footnotesize\ttfamily void delete\+Output\+Items (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 152} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ close\+Output\+Item\+File()}, \textbf{ Single\+Output\+Item\+Struct\+::f}, \textbf{ Output\+Items\+Struct\+::filename\+Base}, \textbf{ Output\+Items\+Struct\+::head}, and \textbf{ Single\+Output\+Item\+Struct\+::next\+Item}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=303pt]{dd/d66/output_items_8c_a374d66f4329d8e3f3973fcc3e06850d2_cgraph}
+\end{center}
+\end{figure}
+\label{output_items_8c_af48aa4e86a751aa76c9a108ffa5a1858} 
+\index{outputItems.c@{outputItems.c}!newOutputItems@{newOutputItems}}
+\index{newOutputItems@{newOutputItems}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{newOutputItems()}
+{\footnotesize\ttfamily \textbf{ Output\+Items} $\ast$ new\+Output\+Items (\begin{DoxyParamCaption}\item[{char $\ast$}]{filename\+Base,  }\item[{char}]{separator }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 72} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Output\+Items\+Struct\+::count}, \textbf{ Output\+Items\+Struct\+::filename\+Base}, \textbf{ Output\+Items\+Struct\+::head}, \textbf{ new\+Single\+Output\+Item()}, \textbf{ Output\+Items\+Struct\+::separator}, and \textbf{ Output\+Items\+Struct\+::tail}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=300pt]{dd/d66/output_items_8c_af48aa4e86a751aa76c9a108ffa5a1858_cgraph}
+\end{center}
+\end{figure}
+\label{output_items_8c_af6f19a742a9ffe4e26766e24b1cc8bbe} 
+\index{outputItems.c@{outputItems.c}!newSingleOutputItem@{newSingleOutputItem}}
+\index{newSingleOutputItem@{newSingleOutputItem}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{newSingleOutputItem()}
+{\footnotesize\ttfamily \textbf{ Single\+Output\+Item} $\ast$ new\+Single\+Output\+Item (\begin{DoxyParamCaption}\item[{char $\ast$}]{name,  }\item[{double $\ast$}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Single\+Output\+Item\+Struct\+::f}, \textbf{ Single\+Output\+Item\+Struct\+::name}, \textbf{ Single\+Output\+Item\+Struct\+::next\+Item}, \textbf{ OUTPUT\+\_\+\+ITEMS\+\_\+\+MAXNAME}, and \textbf{ Single\+Output\+Item\+Struct\+::ptr}.
+
+
+
+Referenced by \textbf{ add\+Output\+Item()}, and \textbf{ new\+Output\+Items()}.
+
+\label{output_items_8c_a2e378a5d44a266a8db113c90cdef349b} 
+\index{outputItems.c@{outputItems.c}!openOutputItemFile@{openOutputItemFile}}
+\index{openOutputItemFile@{openOutputItemFile}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{openOutputItemFile()}
+{\footnotesize\ttfamily void open\+Output\+Item\+File (\begin{DoxyParamCaption}\item[{\textbf{ Single\+Output\+Item} $\ast$}]{single\+Output\+Item,  }\item[{char $\ast$}]{filename\+Base }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Single\+Output\+Item\+Struct\+::f}, \textbf{ Single\+Output\+Item\+Struct\+::name}, and \textbf{ open\+File()}.
+
+
+
+Referenced by \textbf{ add\+Output\+Item()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=251pt]{dd/d66/output_items_8c_a2e378a5d44a266a8db113c90cdef349b_cgraph}
+\end{center}
+\end{figure}
+\label{output_items_8c_a8da9d880bfb3d75694f0bd0331da4e95} 
+\index{outputItems.c@{outputItems.c}!terminateOutputItemLines@{terminateOutputItemLines}}
+\index{terminateOutputItemLines@{terminateOutputItemLines}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{terminateOutputItemLines()}
+{\footnotesize\ttfamily void terminate\+Output\+Item\+Lines (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 139} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Single\+Output\+Item\+Struct\+::f}, \textbf{ Output\+Items\+Struct\+::head}, and \textbf{ Single\+Output\+Item\+Struct\+::next\+Item}.
+
+
+
+Referenced by \textbf{ run\+Model\+Output()}.
+
+\label{output_items_8c_a9b5ff0c7305b5b130b961610f78fcb5b} 
+\index{outputItems.c@{outputItems.c}!writeOutputItemLabels@{writeOutputItemLabels}}
+\index{writeOutputItemLabels@{writeOutputItemLabels}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{writeOutputItemLabels()}
+{\footnotesize\ttfamily void write\+Output\+Item\+Labels (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items,  }\item[{char $\ast$}]{label }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 114} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Single\+Output\+Item\+Struct\+::f}, \textbf{ Output\+Items\+Struct\+::head}, \textbf{ Single\+Output\+Item\+Struct\+::next\+Item}, and \textbf{ Output\+Items\+Struct\+::separator}.
+
+
+
+Referenced by \textbf{ run\+Model\+Output()}, and \textbf{ sens\+Test()}.
+
+\label{output_items_8c_aff124e2cd99c03e515ec36d64ba3b306} 
+\index{outputItems.c@{outputItems.c}!writeOutputItemValues@{writeOutputItemValues}}
+\index{writeOutputItemValues@{writeOutputItemValues}!outputItems.c@{outputItems.c}}
+\doxysubsubsection{writeOutputItemValues()}
+{\footnotesize\ttfamily void write\+Output\+Item\+Values (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 125} of file \textbf{ output\+Items.\+c}.
+
+
+
+References \textbf{ Single\+Output\+Item\+Struct\+::f}, \textbf{ Output\+Items\+Struct\+::head}, \textbf{ Single\+Output\+Item\+Struct\+::next\+Item}, \textbf{ Single\+Output\+Item\+Struct\+::ptr}, and \textbf{ Output\+Items\+Struct\+::separator}.
+
+
+
+Referenced by \textbf{ run\+Model\+Output()}.
+

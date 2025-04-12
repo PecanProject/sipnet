@@ -1,0 +1,174 @@
+\doxysection{output\+Items.\+c}
+\label{output_items_8c_source}\index{outputItems.c@{outputItems.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ outputItems:\ structures\ and\ functions\ to\ output\ single\ variables\ to\ files}}
+\DoxyCodeLine{00002\ \textcolor{comment}{}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ \ Creation\ date:\ 6/4/07}}
+\DoxyCodeLine{00005\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}outputItems.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}common/util.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ Private/helper\ functions:\ not\ defined\ in\ outputItems.h:}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*\ Allocate\ space\ for\ a\ new\ singleOutputItem\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ Name\ and\ ptr\ will\ have\ the\ given\ values;\ f\ and\ nextItem\ will\ be\ NULL}}
+\DoxyCodeLine{00017\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00018\ SingleOutputItem\ *newSingleOutputItem(\textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{double}\ *ptr)\ \{}
+\DoxyCodeLine{00019\ \ \ SingleOutputItem\ *singleOutputItem;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordflow}{if}\ (strlen(name)\ >=\ OUTPUT\_ITEMS\_MAXNAME)\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ newSingleOutputItem:\ name\ '\%s'\ exceeds\ maximum\ length\ of\ "{}}}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ name,\ OUTPUT\_ITEMS\_MAXNAME);}
+\DoxyCodeLine{00025\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00026\ \ \ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ singleOutputItem\ =\ (SingleOutputItem\ *)malloc(\textcolor{keyword}{sizeof}(SingleOutputItem));}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ strcpy(singleOutputItem-\/>name,\ name);}
+\DoxyCodeLine{00031\ \ \ singleOutputItem-\/>ptr\ =\ ptr;}
+\DoxyCodeLine{00032\ \ \ singleOutputItem-\/>f\ =\ NULL;}
+\DoxyCodeLine{00033\ \ \ singleOutputItem-\/>nextItem\ =\ NULL;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordflow}{return}\ singleOutputItem;}
+\DoxyCodeLine{00036\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*\ Open\ the\ file\ associated\ with\ this\ output\ file}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ \ -\/\ This\ file\ will\ be\ named\ <filenameBase>.<name>}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ openOutputItemFile(SingleOutputItem\ *singleOutputItem,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *filenameBase)\ \{}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{char}\ *filename;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ filename\ =\ (\textcolor{keywordtype}{char}\ *)malloc(}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ (strlen(filenameBase)\ +\ strlen(singleOutputItem-\/>name)\ +\ 2)\ *}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(char));}
+\DoxyCodeLine{00048\ \ \ strcpy(filename,\ filenameBase);}
+\DoxyCodeLine{00049\ \ \ strcat(filename,\ \textcolor{stringliteral}{"{}."{}});}
+\DoxyCodeLine{00050\ \ \ strcat(filename,\ singleOutputItem-\/>name);}
+\DoxyCodeLine{00051\ \ \ singleOutputItem-\/>f\ =\ openFile(filename,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ free(filename);}
+\DoxyCodeLine{00054\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ close\ the\ file\ associated\ with\ this\ output\ item}}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{void}\ closeOutputItemFile(SingleOutputItem\ *singleOutputItem)\ \{}
+\DoxyCodeLine{00058\ \ \ fclose(singleOutputItem-\/>f);}
+\DoxyCodeLine{00059\ \ \ singleOutputItem-\/>f\ =\ NULL;}
+\DoxyCodeLine{00060\ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{comment}{/*************************************************/}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ Public\ functions:\ defined\ in\ outputItems.h}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{/*\ Allocate\ space\ for\ a\ new\ outputItems\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ filenameBase\ is\ the\ base\ name\ of\ the\ files\ to\ which\ we'll\ output}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ \ -\/\ we'll\ output\ to\ <filenameBase>.<name>\ for\ each\ output\ item}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ separator\ is\ the\ character\ separating\ values\ in\ the\ output\ files\ (e.g.\ space,}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ tab,\ or\ comma)}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00072\ OutputItems\ *newOutputItems(\textcolor{keywordtype}{char}\ *filenameBase,\ \textcolor{keywordtype}{char}\ separator)\ \{}
+\DoxyCodeLine{00073\ \ \ OutputItems\ *outputItems;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ outputItems\ =\ (OutputItems\ *)malloc(\textcolor{keyword}{sizeof}(OutputItems));}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ outputItems-\/>head\ =\ newSingleOutputItem(\textcolor{stringliteral}{"{}"{}},\ NULL);\ \ \textcolor{comment}{//\ we'll\ keep\ a\ dummy\ item}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ at\ the\ head\ of\ the\ list}}
+\DoxyCodeLine{00079\ \ \ outputItems-\/>tail\ =\ outputItems-\/>head;}
+\DoxyCodeLine{00080\ \ \ outputItems-\/>count\ =\ 0;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ outputItems-\/>filenameBase\ =}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ (\textcolor{keywordtype}{char}\ *)malloc((strlen(filenameBase)\ +\ 1)\ *\ \textcolor{keyword}{sizeof}(char));}
+\DoxyCodeLine{00084\ \ \ strcpy(outputItems-\/>filenameBase,\ filenameBase);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ outputItems-\/>separator\ =\ separator;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordflow}{return}\ outputItems;}
+\DoxyCodeLine{00089\ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{comment}{/*\ Add\ a\ new\ singleOutputItem\ to\ the\ end\ of\ the\ list\ given\ by\ outputItems}}
+\DoxyCodeLine{00092\ \textcolor{comment}{\ \ \ strlen(name)\ must\ be\ <\ OUTPUT\_ITEMS\_MAXNAME}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ \ \ ptr\ must\ be\ a\ pointer\ to\ the\ variable\ holding\ this\ item\ (double)}}
+\DoxyCodeLine{00094\ \textcolor{comment}{}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ \ \ After\ calling\ this\ function,\ the\ file\ associated\ with\ this\ output\ item\ will}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ be\ open\ for\ writing}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{void}\ addOutputItem(OutputItems\ *outputItems,\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{double}\ *ptr)\ \{}
+\DoxyCodeLine{00099\ \ \ SingleOutputItem\ *singleOutputItem;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ singleOutputItem\ =\ newSingleOutputItem(name,\ ptr);}
+\DoxyCodeLine{00102\ \ \ openOutputItemFile(singleOutputItem,\ outputItems-\/>filenameBase);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ outputItems-\/>tail-\/>nextItem\ =\ singleOutputItem;}
+\DoxyCodeLine{00105\ \ \ outputItems-\/>tail\ =\ singleOutputItem;}
+\DoxyCodeLine{00106\ \ \ outputItems-\/>count++;}
+\DoxyCodeLine{00107\ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{comment}{/*\ For\ each\ output\ item,\ write\ a\ label,\ followed\ by\ a\ separator}}
+\DoxyCodeLine{00110\ \textcolor{comment}{\ \ \ This\ is\ intended\ for\ writing\ a\ single\ label\ at\ the\ start\ of\ each\ line}}
+\DoxyCodeLine{00111\ \textcolor{comment}{\ \ \ -\/\ For\ example,\ could\ write\ the\ location\ for\ spatial\ output,\ or\ the\ value\ of}}
+\DoxyCodeLine{00112\ \textcolor{comment}{\ \ \ some\ variable\ for\ a\ sensitivity\ test}}
+\DoxyCodeLine{00113\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{void}\ writeOutputItemLabels(OutputItems\ *outputItems,\ \textcolor{keywordtype}{char}\ *label)\ \{}
+\DoxyCodeLine{00115\ \ \ SingleOutputItem\ *singleOutputItem;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ singleOutputItem\ =\ outputItems-\/>head-\/>nextItem;}
+\DoxyCodeLine{00118\ \ \ \textcolor{keywordflow}{while}\ (singleOutputItem\ !=\ NULL)\ \{}
+\DoxyCodeLine{00119\ \ \ \ \ fprintf(singleOutputItem-\/>f,\ \textcolor{stringliteral}{"{}\%s\%c"{}},\ label,\ outputItems-\/>separator);}
+\DoxyCodeLine{00120\ \ \ \ \ singleOutputItem\ =\ singleOutputItem-\/>nextItem;}
+\DoxyCodeLine{00121\ \ \ \}}
+\DoxyCodeLine{00122\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \textcolor{comment}{//\ For\ each\ output\ item,\ write\ its\ current\ value,\ followed\ by\ a\ separator}}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ writeOutputItemValues(OutputItems\ *outputItems)\ \{}
+\DoxyCodeLine{00126\ \ \ SingleOutputItem\ *singleOutputItem;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ singleOutputItem\ =\ outputItems-\/>head-\/>nextItem;}
+\DoxyCodeLine{00129\ \ \ \textcolor{keywordflow}{while}\ (singleOutputItem\ !=\ NULL)\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ fprintf(singleOutputItem-\/>f,\ \textcolor{stringliteral}{"{}\%f\%c"{}},\ *(singleOutputItem-\/>ptr),}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ outputItems-\/>separator);}
+\DoxyCodeLine{00132\ \ \ \ \ singleOutputItem\ =\ singleOutputItem-\/>nextItem;}
+\DoxyCodeLine{00133\ \ \ \}}
+\DoxyCodeLine{00134\ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{comment}{/*\ For\ each\ output\ item,\ write\ a\ newline}}
+\DoxyCodeLine{00137\ \textcolor{comment}{\ \ \ This\ is\ intended\ to\ be\ called\ at\ the\ end\ of\ each\ run}}
+\DoxyCodeLine{00138\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{void}\ terminateOutputItemLines(OutputItems\ *outputItems)\ \{}
+\DoxyCodeLine{00140\ \ \ SingleOutputItem\ *singleOutputItem;}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ singleOutputItem\ =\ outputItems-\/>head-\/>nextItem;}
+\DoxyCodeLine{00143\ \ \ \textcolor{keywordflow}{while}\ (singleOutputItem\ !=\ NULL)\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ fprintf(singleOutputItem-\/>f,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00145\ \ \ \ \ singleOutputItem\ =\ singleOutputItem-\/>nextItem;}
+\DoxyCodeLine{00146\ \ \ \}}
+\DoxyCodeLine{00147\ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{comment}{/*\ Free\ up\ space\ used\ by\ outputItems}}
+\DoxyCodeLine{00150\ \textcolor{comment}{\ \ \ Also,\ close\ all\ files\ associated\ with\ the\ individual\ output\ items}}
+\DoxyCodeLine{00151\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{void}\ deleteOutputItems(OutputItems\ *outputItems)\ \{}
+\DoxyCodeLine{00153\ \ \ SingleOutputItem\ *curr,\ *temp;}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ curr\ =\ outputItems-\/>head;}
+\DoxyCodeLine{00156\ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ temp\ =\ curr;}
+\DoxyCodeLine{00158\ \ \ \ \ curr\ =\ curr-\/>nextItem;}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{keywordflow}{if}\ (temp-\/>f\ !=\ NULL)\ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ closeOutputItemFile(temp);}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ free(temp);}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ \ \ \}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ free(outputItems-\/>filenameBase);}
+\DoxyCodeLine{00167\ \ \ free(outputItems);}
+\DoxyCodeLine{00168\ \}}
+
+\end{DoxyCode}

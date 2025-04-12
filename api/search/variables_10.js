@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['ra_0',['ra',['../d3/d1f/struct_tracker_vars.html#ae535b6167ad2f7188e0c1d4157671758',1,'TrackerVars']]],
+  ['raboveground_1',['rAboveground',['../d3/d1f/struct_tracker_vars.html#aaa40f7e497f3570de6e06a45a55b9675',1,'TrackerVars']]],
+  ['rain_2',['rain',['../da/d95/struct_flux_vars.html#ad932dca54e1d9164621e6b94caa80f25',1,'FluxVars']]],
+  ['rcoarseroot_3',['rCoarseRoot',['../da/d95/struct_flux_vars.html#a0110ff60230e29109a0caa80702243b3',1,'FluxVars']]],
+  ['rdconst_4',['rdConst',['../d0/dbf/struct_parameters.html#afcecee4adf46ef1ec9584e5244f392e3',1,'Parameters']]],
+  ['readindices_5',['readIndices',['../d3/dc0/struct_spatial_params_struct.html#ac64cdc6bcf07f1f4d8933c7dee9d7c08',1,'SpatialParamsStruct']]],
+  ['rfineroot_6',['rFineRoot',['../da/d95/struct_flux_vars.html#a9f991b27d3f5893a6d8a004b5a608f8d',1,'FluxVars']]],
+  ['rh_7',['rh',['../d3/d1f/struct_tracker_vars.html#a27653e854114e74b6d5aec17ff5b4037',1,'TrackerVars']]],
+  ['rleaf_8',['rLeaf',['../da/d95/struct_flux_vars.html#ac0f8b0bf99efb773e8f67443121bdd86',1,'FluxVars']]],
+  ['rlitter_9',['rLitter',['../da/d95/struct_flux_vars.html#a11def2b79574bc863d317f1437f64c63',1,'FluxVars']]],
+  ['rroot_10',['rRoot',['../d3/d1f/struct_tracker_vars.html#a178a0bf41433db98f0441004c39bd878',1,'TrackerVars']]],
+  ['rsoil_11',['rsoil',['../da/d95/struct_flux_vars.html#a45787fbebded70737a56cff0c5a8b860',1,'FluxVars::rSoil'],['../d3/d1f/struct_tracker_vars.html#a7368bbc8b68e9053020157d850215483',1,'TrackerVars::rSoil']]],
+  ['rsoilconst1_12',['rSoilConst1',['../d0/dbf/struct_parameters.html#a813652a364f6058f1f5e13bbc8a09052',1,'Parameters']]],
+  ['rsoilconst2_13',['rSoilConst2',['../d0/dbf/struct_parameters.html#a062811c787dd972cbc38929a514a0a2d',1,'Parameters']]],
+  ['rtot_14',['rtot',['../d3/d1f/struct_tracker_vars.html#adf0cf7040532c1c0044ff78faa824981',1,'TrackerVars']]],
+  ['rveg_15',['rVeg',['../da/d95/struct_flux_vars.html#a78a5d006f66342f58b68ee21d149cc9a',1,'FluxVars']]],
+  ['rwood_16',['rWood',['../da/d95/struct_flux_vars.html#a3c51d0552452feb1d466eeeb1b9cd69e',1,'FluxVars']]]
+];

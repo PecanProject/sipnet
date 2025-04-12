@@ -1,0 +1,77 @@
+\doxysection{output\+Items.\+h}
+\label{output_items_8h_source}\index{outputItems.h@{outputItems.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ header\ file\ for\ outputItems.c}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#ifndef\ OUTPUT\_ITEMS\_H}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ OUTPUT\_ITEMS\_H}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ OUTPUT\_ITEMS\_MAXNAME\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\ \ 64\ \ }\textcolor{comment}{//\ maximum\ length\ of\ output\ item\ name,\ including\ the\ trailing\ '\(\backslash\)0'}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ structure\ to\ hold\ an\ output\ item,\ and\ a\ pointer\ to\ the\ next\ (for\ a\ linked}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ list)}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }SingleOutputItemStruct\ \{}
+\DoxyCodeLine{00014\ \ \ \textcolor{keywordtype}{char}\ name[OUTPUT\_ITEMS\_MAXNAME];\ \ \textcolor{comment}{//\ name\ of\ output\ item}}
+\DoxyCodeLine{00015\ \ \ \textcolor{keywordtype}{double}\ *ptr;\ \ \textcolor{comment}{//\ pointer\ to\ the\ variable\ holding\ this\ item}}
+\DoxyCodeLine{00016\ \ \ FILE\ *f;\ \ \textcolor{comment}{//\ output\ file\ for\ this\ output\ item}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \textcolor{keyword}{struct\ }SingleOutputItemStruct\ *nextItem;}
+\DoxyCodeLine{00019\ \}\ SingleOutputItem;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ structure\ to\ hold\ a\ bunch\ of\ SingleOutputItems}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ implemented\ as\ a\ linked\ list}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }OutputItemsStruct\ \{}
+\DoxyCodeLine{00024\ \ \ SingleOutputItem\ *head;}
+\DoxyCodeLine{00025\ \ \ SingleOutputItem\ *tail;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \textcolor{keywordtype}{int}\ count;\ \ \textcolor{comment}{//\ number\ of\ items\ in\ the\ list,\ not\ counting\ the\ dummy\ item\ at\ the}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ head}}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{char}\ *filenameBase;}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordtype}{char}\ separator;\ \ \textcolor{comment}{//\ character\ separating\ values\ in\ the\ output\ files\ (e.g.}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ space,\ tab,\ or\ comma)}}
+\DoxyCodeLine{00032\ \}\ OutputItems;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ Allocate\ space\ for\ a\ new\ outputItems\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ filenameBase\ is\ the\ base\ name\ of\ the\ files\ to\ which\ we'll\ output}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ -\/\ we'll\ output\ to\ <filenameBase>.<name>\ for\ each\ output\ item}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ separator\ is\ the\ character\ separating\ values\ in\ the\ output\ files\ (e.g.\ space,}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ tab,\ or\ comma)}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00040\ OutputItems\ *newOutputItems(\textcolor{keywordtype}{char}\ *filenameBase,\ \textcolor{keywordtype}{char}\ separator);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{comment}{/*\ Add\ a\ new\ singleOutputItem\ to\ the\ end\ of\ the\ list\ given\ by\ outputItems}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ strlen(name)\ must\ be\ <\ OUTPUT\_ITEMS\_MAXNAME}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ \ \ ptr\ must\ be\ a\ pointer\ to\ the\ variable\ holding\ this\ item\ (double)}}
+\DoxyCodeLine{00045\ \textcolor{comment}{}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ \ \ After\ calling\ this\ function,\ the\ file\ associated\ with\ this\ output\ item\ will}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ be\ open\ for\ writing}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ addOutputItem(OutputItems\ *outputItems,\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{double}\ *ptr);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{comment}{/*\ For\ each\ output\ item,\ write\ a\ label,\ followed\ by\ a\ separator}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ This\ is\ intended\ for\ writing\ a\ single\ label\ at\ the\ start\ of\ each\ line}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ -\/\ For\ example,\ could\ write\ the\ location\ for\ spatial\ output,\ or\ the\ value\ of}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ some\ variable\ for\ a\ sensitivity\ test}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ writeOutputItemLabels(OutputItems\ *outputItems,\ \textcolor{keywordtype}{char}\ *label);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ For\ each\ output\ item,\ write\ its\ current\ value,\ followed\ by\ a\ separator}}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ writeOutputItemValues(OutputItems\ *outputItems);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/*\ For\ each\ output\ item,\ write\ a\ newline}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ This\ is\ intended\ to\ be\ called\ at\ the\ end\ of\ each\ run}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ terminateOutputItemLines(OutputItems\ *outputItems);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{/*\ Free\ up\ space\ used\ by\ outputItems}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ Also,\ close\ all\ files\ associated\ with\ the\ individual\ output\ items}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ deleteOutputItems(OutputItems\ *outputItems);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

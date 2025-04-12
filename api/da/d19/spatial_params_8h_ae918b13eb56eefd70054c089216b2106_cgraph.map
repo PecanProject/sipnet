@@ -1,0 +1,23 @@
+<map id="writeBestSpatialParams" name="writeBestSpatialParams">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,183,183,208"/>
+<area shape="rect" id="Node000002" href="$dd/dda/spatial_params_8c.html#a97cf86c5ecac6acca195329dc17f3715" title=" " alt="" coords="239,7,393,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,181,150,115,187,76,229,42,244,35,246,39,232,47,190,80,154,118,106,184"/>
+<area shape="rect" id="Node000003" href="$dd/dda/spatial_params_8c.html#a94a43233b3bd74f11ffb40337f9f381a" title=" " alt="" coords="237,56,395,81"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="109,180,161,141,229,98,262,84,264,89,232,103,164,146,112,185"/>
+<area shape="rect" id="Node000005" href="$dd/dda/spatial_params_8c.html#ae99fa2266ffe4ed506690f3cf382e26e" title=" " alt="" coords="640,56,719,81"/>
+<area shape="poly" id="edge10_Node000001_Node000005" title=" " alt="" coords="125,180,173,161,230,143,339,118,449,97,626,72,626,77,450,103,341,123,231,149,175,166,126,185"/>
+<area shape="rect" id="Node000006" href="$dd/dda/spatial_params_8c.html#a696f50b02206ae689549f1192f617cee" title=" " alt="" coords="237,157,395,183"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="183,183,224,178,224,183,184,188"/>
+<area shape="rect" id="Node000007" href="$dd/dda/spatial_params_8c.html#af17b7d53571217e6a8ef835e21843c40" title=" " alt="" coords="239,207,393,232"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="184,202,226,207,226,212,183,208"/>
+<area shape="rect" id="Node000008" href="$dd/dda/spatial_params_8c.html#a41ddc15d343155417a74921c10e57606" title=" " alt="" coords="231,256,401,281"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="129,206,232,242,255,249,254,255,230,247,128,211"/>
+<area shape="rect" id="Node000009" href="$dd/dda/spatial_params_8c.html#a65b254c24bad51e48005a5ffed337508" title=" " alt="" coords="261,305,371,331"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="111,206,162,248,196,271,232,292,249,299,246,304,229,296,193,276,159,252,108,210"/>
+<area shape="rect" id="Node000010" href="$de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="277,355,355,380"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="106,207,154,271,190,309,232,341,265,355,263,360,229,346,187,313,150,275,101,210"/>
+<area shape="rect" id="Node000004" href="$dd/dda/spatial_params_8c.html#ace067e115166bd724ba5081dbf1f6f27" title=" " alt="" coords="449,5,592,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="368,53,455,31,456,37,369,58"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="396,66,626,66,626,71,396,71"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="562,28,628,50,626,55,561,33"/>
+</map>

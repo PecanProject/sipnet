@@ -1,0 +1,31 @@
+\doxysection{exit\+Codes.\+h}
+\label{exit_codes_8h_source}\index{exitCodes.h@{exitCodes.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ EXITCODES\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ EXITCODES\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Exit\ codes\ for\ SIPNET;\ most\ of\ the\ current\ uses\ of\ exit(1)\ should}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ get\ better\ codes,\ which\ will\ appear\ here.}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ Note\ for\ future:\ some\ codes\ typically\ have\ other\ meanings\ and\ should\ not\ be}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ used\ here\ (except\ for\ 0\ and\ 1,\ for\ which\ our\ meaning\ is\ the\ usual\ meaning).}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ Some\ somewhat-\/standard\ codes\ in\ use:}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ -\/\ 0-\/2,\ 126-\/165,\ and\ 255;\ see,\ e.g.,}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ https://tldp.org/LDP/abs/html/exitcodes.html}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ -\/\ 64-\/78,\ see\ https://man7.org/linux/man-\/pages/man3/sysexits.h.3head.html}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ The\ upshot\ here\ is\ that\ we\ should\ be\ a\ little\ sparing\ in\ our\ list\ of\ error}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ codes.}}
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00017\ \ \ EXIT\_CODE\_SUCCESS\ =\ 0,}
+\DoxyCodeLine{00018\ \ \ EXIT\_CODE\_FAILURE\ =\ 1,\ \ \textcolor{comment}{//\ generic\ failure}}
+\DoxyCodeLine{00019\ \ \ \textcolor{comment}{//\ code\ 2\ typically\ has\ a\ special\ meaning,\ see\ above}}
+\DoxyCodeLine{00020\ \ \ EXIT\_CODE\_BAD\_PARAMETER\_VALUE\ =\ 3,}
+\DoxyCodeLine{00021\ \ \ EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM\ =\ 4,}
+\DoxyCodeLine{00022\ \ \ EXIT\_CODE\_INPUT\_FILE\_ERROR\ =\ 5,}
+\DoxyCodeLine{00023\ \}\ exit\_code\_t;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

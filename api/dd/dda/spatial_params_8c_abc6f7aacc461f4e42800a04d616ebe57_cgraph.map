@@ -1,0 +1,10 @@
+<map id="setSpatialParamKnob" name="setSpatialParamKnob">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,167,55"/>
+<area shape="rect" id="Node000002" href="$dd/dda/spatial_params_8c.html#ae99fa2266ffe4ed506690f3cf382e26e" title=" " alt="" coords="404,5,483,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,34,390,19,390,24,167,39"/>
+<area shape="rect" id="Node000003" href="$dd/dda/spatial_params_8c.html#a6408e0394af508aa2c48021b712a2bdd" title=" " alt="" coords="215,55,356,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="167,50,201,54,200,59,166,55"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="326,52,390,32,391,37,327,57"/>
+<area shape="rect" id="Node000004" href="$dd/dda/spatial_params_8c.html#ab81f54de2aa764b487efc4c6164859e4" title=" " alt="" coords="414,55,473,80"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="356,65,400,65,400,70,356,70"/>
+</map>

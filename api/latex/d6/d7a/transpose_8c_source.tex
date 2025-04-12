@@ -1,0 +1,203 @@
+\doxysection{transpose.\+c}
+\label{transpose_8c_source}\index{transpose.c@{transpose.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ transpose:\ A\ stand-\/alone\ program}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ \ Usage:\ transpose\ file}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ \ Given\ a\ file\ that\ contains\ a\ rectangular\ matrix,\ replace\ the\ file\ with\ its}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ transpose}}
+\DoxyCodeLine{00006\ \textcolor{comment}{}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ \ \ Creation\ date:\ 6/5/07}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}common/util.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ SEPARATORS\ "{}\ \(\backslash\)t\(\backslash\)n\(\backslash\)r"{}\ \ }\textcolor{comment}{//\ valid\ separators\ between\ items\ on\ a\ line}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName)\ \{}
+\DoxyCodeLine{00019\ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ filename\(\backslash\)n"{}},\ progName);}
+\DoxyCodeLine{00020\ \ \ printf(\textcolor{stringliteral}{"{}Where\ filename\ is\ the\ file\ containing\ the\ data\ to\ transpose\(\backslash\)n"{}});}
+\DoxyCodeLine{00021\ \ \ printf(\textcolor{stringliteral}{"{}This\ file\ must\ contain\ a\ rectangular\ matrix\(\backslash\)n"{}});}
+\DoxyCodeLine{00022\ \}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ Count\ and\ return\ \#\ of\ lines\ in\ f}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ Also\ return\ character\ count\ of\ the\ longest\ line\ in\ longestLine}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ -\/\ includes\ extra\ character\ to\ hold\ '\(\backslash\)0'}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ Assume\ f\ is\ open\ for\ reading,\ and\ rewound}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{int}\ numlines(FILE\ *f,\ \textcolor{keywordtype}{int}\ *longestLine)\ \{}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordtype}{int}\ nl;}
+\DoxyCodeLine{00031\ \ \ \textcolor{keywordtype}{char}\ c;}
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{int}\ length;\ \ \textcolor{comment}{//\ length\ of\ this\ line}}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{int}\ longLine;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ nl\ =\ 0;}
+\DoxyCodeLine{00036\ \ \ length\ =\ 0;}
+\DoxyCodeLine{00037\ \ \ longLine\ =\ 0;}
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordflow}{while}\ ((c\ =\ fgetc(f))\ !=\ EOF)\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ length++;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordflow}{if}\ (c\ ==\ \textcolor{charliteral}{'\(\backslash\)n'})\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ nl++;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (length\ >\ longLine)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ longLine\ =\ length;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ length\ =\ 0;}
+\DoxyCodeLine{00046\ \ \ \ \ \}}
+\DoxyCodeLine{00047\ \ \ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ *longestLine\ =\ longLine\ +\ 1;\ \ \textcolor{comment}{//\ add\ 1\ to\ give\ space\ for\ '\(\backslash\)0'}}
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordflow}{return}\ nl;}
+\DoxyCodeLine{00051\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ Read\ file\ f\ into\ array\ of\ lines}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ PRE:\ f\ is\ open\ for\ reading\ and\ rewound}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ \ \ \ \ \ Each\ lines[i]\ is\ a\ character\ array\ of\ size\ maxLength,\ and\ lines}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ \ \ \ \ contains\ at\ least\ nl\ such\ character\ arrays,\ where\ nl\ is\ the\ number\ of}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ \ \ \ lines\ in\ the\ file}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ POST:\ lines[i][j]\ will\ contain\ the\ jth\ character\ on\ the\ ith\ line}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ The\ file\ pointer\ f\ will\ be\ at\ the\ end\ of\ the\ file}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ readFile(FILE\ *f,\ \textcolor{keywordtype}{char}\ **lines,\ \textcolor{keywordtype}{int}\ maxLength)\ \{}
+\DoxyCodeLine{00062\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ i\ =\ 0;}
+\DoxyCodeLine{00065\ \ \ \textcolor{keywordflow}{while}\ (fgets(lines[i],\ maxLength,\ f)\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00066\ \ \ \ \ i++;}
+\DoxyCodeLine{00067\ \ \ \}}
+\DoxyCodeLine{00068\ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/*\ Count\ and\ return\ number\ of\ items\ in\ line}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ \ \ \ -\/\ items\ are\ separated\ by\ SEPARATORS}}
+\DoxyCodeLine{00072\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{int}\ countItems(\textcolor{keywordtype}{char}\ *line)\ \{}
+\DoxyCodeLine{00074\ \ \ \textcolor{keywordtype}{int}\ n;}
+\DoxyCodeLine{00075\ \ \ \textcolor{keywordtype}{char}\ *s;}
+\DoxyCodeLine{00076\ \ \ \textcolor{keywordtype}{char}\ *lineCopy;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ lineCopy\ =\ (\textcolor{keywordtype}{char}\ *)malloc((strlen(line)\ +\ 1)\ *\ \textcolor{keyword}{sizeof}(char));}
+\DoxyCodeLine{00079\ \ \ strcpy(lineCopy,\ line);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ n\ =\ 0;}
+\DoxyCodeLine{00082\ \ \ s\ =\ strtok(lineCopy,\ SEPARATORS);}
+\DoxyCodeLine{00083\ \ \ \textcolor{keywordflow}{while}\ (s\ !=\ NULL)\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ n++;}
+\DoxyCodeLine{00085\ \ \ \ \ s\ =\ strtok(NULL,\ SEPARATORS);}
+\DoxyCodeLine{00086\ \ \ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ free(lineCopy);}
+\DoxyCodeLine{00089\ \ \ \textcolor{keywordflow}{return}\ n;}
+\DoxyCodeLine{00090\ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*\ Read\ individual\ items\ from\ lines\ into\ items}}
+\DoxyCodeLine{00093\ \textcolor{comment}{\ \ \ items[i][j]\ will\ hold\ a\ pointer\ to\ the\ jth\ item\ (j\ =\ 0..numItems-\/1)\ in\ the}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ \ \ ith\ line\ (i\ =\ 0..numLines-\/1)}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ \ \ \ -\/\ items\ are\ separated\ by\ SEPARATORS}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ There\ must\ be\ exactly\ numItems\ items\ on\ each\ line}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{void}\ readItems(\textcolor{keywordtype}{char}\ **lines,\ \textcolor{keywordtype}{char}\ ***items,\ \textcolor{keywordtype}{int}\ numLines,\ \textcolor{keywordtype}{int}\ numItems)\ \{}
+\DoxyCodeLine{00099\ \ \ \textcolor{keywordtype}{int}\ i,\ j;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numLines;\ i++)\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ items[i][0]\ =\ strtok(lines[i],\ SEPARATORS);}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 1;\ j\ <\ numItems;\ j++)\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ items[i][j]\ =\ strtok(NULL,\ SEPARATORS);}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{if}\ (items[i][numItems\ -\/\ 1]\ ==\ NULL)\ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ Too\ few\ items\ on\ line\ \%d\(\backslash\)n"{}},\ i\ +\ 1);}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{if}\ (strtok(NULL,\ SEPARATORS)\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ more\ items\ on\ the\ line!}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ Too\ many\ items\ on\ line\ \%d\(\backslash\)n"{}},\ i\ +\ 1);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \}}
+\DoxyCodeLine{00115\ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{comment}{/*\ Write\ out\ the\ transposed\ items\ to\ f}}
+\DoxyCodeLine{00118\ \textcolor{comment}{\ \ \ f\ must\ be\ open\ for\ writing}}
+\DoxyCodeLine{00119\ \textcolor{comment}{\ \ \ items[i][j]\ holds\ the\ jth\ item\ (j\ =\ 0..numItems-\/1)\ on\ the\ ith\ line}}
+\DoxyCodeLine{00120\ \textcolor{comment}{\ \ \ (i\ =\ 0..numLines-\/1)}}
+\DoxyCodeLine{00121\ \textcolor{comment}{}}
+\DoxyCodeLine{00122\ \textcolor{comment}{\ \ \ We\ output\ all\ items\ \#0\ on\ the\ first\ line,\ all\ items\ \#1\ on\ the\ second\ line,}}
+\DoxyCodeLine{00123\ \textcolor{comment}{\ \ \ etc.\ Items\ are\ separated\ by\ spaces\ in\ the\ output\ file.}}
+\DoxyCodeLine{00124\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ outputTranspose(FILE\ *f,\ \textcolor{keywordtype}{char}\ ***items,\ \textcolor{keywordtype}{int}\ numLines,\ \textcolor{keywordtype}{int}\ numItems)\ \{}
+\DoxyCodeLine{00126\ \ \ \textcolor{keywordtype}{int}\ i,\ j;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ numItems;\ j++)\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numLines;\ i++)\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ fprintf(f,\ \textcolor{stringliteral}{"{}\%s\ "{}},\ items[i][j]);}
+\DoxyCodeLine{00131\ \ \ \ \ \}}
+\DoxyCodeLine{00132\ \ \ \ \ fprintf(f,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00133\ \ \ \}}
+\DoxyCodeLine{00134\ \}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00137\ \ \ FILE\ *f;}
+\DoxyCodeLine{00138\ \ \ \textcolor{keywordtype}{char}\ *filename;\ \ \textcolor{comment}{//\ name\ of\ file\ to\ transpose}}
+\DoxyCodeLine{00139\ \ \ \textcolor{keywordtype}{char}\ *tmpName;\ \ \textcolor{comment}{//\ name\ of\ a\ temporary\ file}}
+\DoxyCodeLine{00140\ \ \ \textcolor{keywordtype}{int}\ nl;\ \ \textcolor{comment}{//\ number\ of\ lines}}
+\DoxyCodeLine{00141\ \ \ \textcolor{keywordtype}{int}\ longestLine;\ \ \textcolor{comment}{//\ length\ of\ longest\ line}}
+\DoxyCodeLine{00142\ \ \ \textcolor{keywordtype}{int}\ numItems;\ \ \textcolor{comment}{//\ number\ of\ items\ in\ each\ line}}
+\DoxyCodeLine{00143\ \ \ \textcolor{keywordtype}{char}\ **lines;\ \ \textcolor{comment}{//\ array\ of\ character\ arrays,\ holding\ all\ lines\ in\ file}}
+\DoxyCodeLine{00144\ \ \ \textcolor{keywordtype}{char}\ ***items;\ \textcolor{comment}{/*\ 2-\/d\ array\ of\ character\ pointers,\ holding\ pointers\ to}}
+\DoxyCodeLine{00145\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ various\ points\ in\ the\ lines\ array\ items[i][j]\ holds\ a}}
+\DoxyCodeLine{00146\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pointer\ to\ the\ jth\ item\ in\ the\ ith\ line\ */}}
+\DoxyCodeLine{00147\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \textcolor{keywordflow}{if}\ (argc\ !=\ 2)\ \{}
+\DoxyCodeLine{00150\ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00151\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00152\ \ \ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ filename\ =\ argv[1];}
+\DoxyCodeLine{00155\ \ \ f\ =\ openFile(filename,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ nl\ =\ numlines(f,\ \&longestLine);}
+\DoxyCodeLine{00158\ \ \ rewind(f);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \textcolor{comment}{//\ Allocate\ space\ to\ hold\ the\ file,\ line\ by\ line:}}
+\DoxyCodeLine{00161\ \ \ lines\ =\ (\textcolor{keywordtype}{char}\ **)malloc(nl\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}\ *));}
+\DoxyCodeLine{00162\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ nl;\ i++)\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ lines[i]\ =\ (\textcolor{keywordtype}{char}\ *)malloc(longestLine\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}));}
+\DoxyCodeLine{00164\ \ \ \}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ readFile(f,\ lines,\ longestLine);}
+\DoxyCodeLine{00167\ \ \ fclose(f);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \textcolor{comment}{//\ Allocate\ space\ to\ hold\ the\ individual\ items:}}
+\DoxyCodeLine{00170\ \ \ numItems\ =\ countItems(lines[0]);}
+\DoxyCodeLine{00171\ \ \ items\ =\ (\textcolor{keywordtype}{char}\ ***)malloc(nl\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}\ **));}
+\DoxyCodeLine{00172\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ nl;\ i++)\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ items[i]\ =\ (\textcolor{keywordtype}{char}\ **)malloc(numItems\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}\ *));}
+\DoxyCodeLine{00174\ \ \ \}}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ readItems(lines,\ items,\ nl,\ numItems);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \textcolor{comment}{//\ Output\ to\ file,\ replacing\ existing\ file:}}
+\DoxyCodeLine{00179\ \ \ tmpName\ =\ (\textcolor{keywordtype}{char}\ *)malloc((strlen(filename)\ +\ 5)\ *\ \textcolor{keyword}{sizeof}(char));}
+\DoxyCodeLine{00180\ \ \ strcpy(tmpName,\ filename);}
+\DoxyCodeLine{00181\ \ \ strcat(tmpName,\ \textcolor{stringliteral}{"{}.bak"{}});}
+\DoxyCodeLine{00182\ \ \ rename(filename,\ tmpName);\ \ \textcolor{comment}{//\ keep\ a\ backup\ in\ case\ things\ crash}}
+\DoxyCodeLine{00183\ \ \ f\ =\ openFile(filename,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00184\ \ \ outputTranspose(f,\ items,\ nl,\ numItems);}
+\DoxyCodeLine{00185\ \ \ fclose(f);}
+\DoxyCodeLine{00186\ \ \ remove(tmpName);}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \textcolor{comment}{//\ Free\ space:}}
+\DoxyCodeLine{00189\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ nl;\ i++)\ \{}
+\DoxyCodeLine{00190\ \ \ \ \ free(items[i]);}
+\DoxyCodeLine{00191\ \ \ \ \ free(lines[i]);}
+\DoxyCodeLine{00192\ \ \ \}}
+\DoxyCodeLine{00193\ \ \ free(items);}
+\DoxyCodeLine{00194\ \ \ free(lines);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00197\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,273 @@
+\doxysection{ml-\/metro5.c File Reference}
+\label{ml-metro5_8c}\index{ml-\/metro5.c@{ml-\/metro5.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$float.\+h$>$}\newline
+{\ttfamily \#include "{}common/util.\+h"{}}\newline
+{\ttfamily \#include "{}ml-\/metro.\+h"{}}\newline
+Include dependency graph for ml-\/metro5.c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/d6a/ml-metro5_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ A\+\_\+\+STAR}~0.\+4
+\item 
+\#define \textbf{ DEC}~0.\+99
+\item 
+\#define \textbf{ THRESH}~0.\+02
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ write\+Hist\+File\+Header} (FILE $\ast$hist\+File, int num\+Years, int np, int num\+Data\+Types)
+\item 
+void \textbf{ write\+Hist\+File} (FILE $\ast$hist\+File, double ltotnew, double $\ast$sigma, \textbf{ Output\+Info} $\ast$output\+Info, int num\+Data\+Types, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ write\+Hist\+File\+Bin\+Header} (FILE $\ast$hist\+File, int num\+Years, int np, int num\+Data\+Types)
+\item 
+void \textbf{ write\+Double\+As\+Float} (double num, FILE $\ast$outfile)
+\item 
+void \textbf{ write\+Hist\+File\+Bin} (FILE $\ast$hist\+File, double ltotnew, double $\ast$sigma, \textbf{ Output\+Info} $\ast$output\+Info, int num\+Data\+Types, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ reset} (\textbf{ Spatial\+Params} $\ast$spatial\+Params, double $\ast$loglikely, double $\ast$ltotnew, double $\ast$ltotold, double $\ast$ltotmax, double $\ast$$\ast$sigma, \textbf{ Output\+Info} $\ast$$\ast$output\+Info, int loc, int random\+Start, double add\+Fraction, FILE $\ast$user\+Out, double($\ast$likely)(double $\ast$, \textbf{ Output\+Info} $\ast$, int, \textbf{ Spatial\+Params} $\ast$, double, void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int[$\,$], int, int, double[$\,$]), double param\+Weight, void($\ast$\textbf{ model})(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int data\+Type\+Indices[$\,$], int num\+Data\+Types, int cost\+Function, double data\+Type\+Weights[$\,$])
+\item 
+void \textbf{ write\+Chain\+Info} (char $\ast$chain\+Info, double ltotold, double ltotmax, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ read\+Chain\+Info} (char $\ast$chain\+Info, double $\ast$ltotold, double $\ast$ltotmax, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ metropolis} (char $\ast$out\+Name\+Base, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc, double($\ast$likely)(double $\ast$, \textbf{ Output\+Info} $\ast$, int, \textbf{ Spatial\+Params} $\ast$, double, void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int[$\,$], int, int, double[$\,$]), void($\ast$\textbf{ model})(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), double add\+Fraction, long est\+Steps, int num\+At\+Once, int num\+Chains, int random\+Start, long num\+Spin\+Ups, double param\+Weight, double scale\+Factor, int data\+Type\+Indices[$\,$], int num\+Data\+Types, int cost\+Function, double data\+Type\+Weights[$\,$], FILE $\ast$user\+Out)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{ml-metro5_8c_a2faad8beecaf905a37b1e72272a7c6b2} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!A\_STAR@{A\_STAR}}
+\index{A\_STAR@{A\_STAR}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{A\_STAR}
+{\footnotesize\ttfamily \#define A\+\_\+\+STAR~0.\+4}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ ml-\/metro5.\+c}.
+
+\label{ml-metro5_8c_afe38ec6126e35e40049e27fdf4586ba5} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!DEC@{DEC}}
+\index{DEC@{DEC}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{DEC}
+{\footnotesize\ttfamily \#define DEC~0.\+99}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ ml-\/metro5.\+c}.
+
+\label{ml-metro5_8c_a0656018abfc9fa2821827415f5d5ea57} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!THRESH@{THRESH}}
+\index{THRESH@{THRESH}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{THRESH}
+{\footnotesize\ttfamily \#define THRESH~0.\+02}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{ml-metro5_8c_a3ba3195b055454f19d59a8751dde2058} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!metropolis@{metropolis}}
+\index{metropolis@{metropolis}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{metropolis()}
+{\footnotesize\ttfamily void metropolis (\begin{DoxyParamCaption}\item[{char $\ast$}]{out\+Name\+Base,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc,  }\item[{double($\ast$)(double $\ast$, \textbf{ Output\+Info} $\ast$, int, \textbf{ Spatial\+Params} $\ast$, double, void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int[$\,$], int, int, double[$\,$])}]{likely,  }\item[{void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int)}]{model,  }\item[{double}]{add\+Fraction,  }\item[{long}]{est\+Steps,  }\item[{int}]{num\+At\+Once,  }\item[{int}]{num\+Chains,  }\item[{int}]{random\+Start,  }\item[{long}]{num\+Spin\+Ups,  }\item[{double}]{param\+Weight,  }\item[{double}]{scale\+Factor,  }\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{num\+Data\+Types,  }\item[{int}]{cost\+Function,  }\item[{double}]{data\+Type\+Weights[$\,$],  }\item[{FILE $\ast$}]{user\+Out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 300} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ A\+\_\+\+STAR}, \textbf{ check\+Spatial\+Param()}, \textbf{ DEC}, \textbf{ free2\+DArray()}, \textbf{ free\+Output\+Info()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ is\+Spatial()}, \textbf{ make2\+DArray()}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ new\+Output\+Info()}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ open\+File()}, \textbf{ randm()}, \textbf{ random\+Changeable\+Spatial\+Param()}, \textbf{ read\+Chain\+Info()}, \textbf{ reset()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ sum\+Array()}, \textbf{ THRESH}, \textbf{ write\+Chain\+Info()}, \textbf{ write\+Changeable\+Param\+Info()}, \textbf{ write\+Hist\+File\+Bin()}, and \textbf{ write\+Hist\+File\+Bin\+Header()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/dd3/ml-metro5_8c_a3ba3195b055454f19d59a8751dde2058_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metro5_8c_a3bd4b05d87c01408bcf0c8814606d7c7} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!readChainInfo@{readChainInfo}}
+\index{readChainInfo@{readChainInfo}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{readChainInfo()}
+{\footnotesize\ttfamily void read\+Chain\+Info (\begin{DoxyParamCaption}\item[{char $\ast$}]{chain\+Info,  }\item[{double $\ast$}]{ltotold,  }\item[{double $\ast$}]{ltotmax,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 238} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ is\+Spatial()}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ open\+File()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, and \textbf{ set\+Spatial\+Param\+Knob()}.
+
+
+
+Referenced by \textbf{ metropolis()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/dd3/ml-metro5_8c_a3bd4b05d87c01408bcf0c8814606d7c7_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metro5_8c_aff2ecc73aa67a095ad6ed53ba95389d2} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!reset@{reset}}
+\index{reset@{reset}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{reset()}
+{\footnotesize\ttfamily void reset (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{double $\ast$}]{loglikely,  }\item[{double $\ast$}]{ltotnew,  }\item[{double $\ast$}]{ltotold,  }\item[{double $\ast$}]{ltotmax,  }\item[{double $\ast$$\ast$}]{sigma,  }\item[{\textbf{ Output\+Info} $\ast$$\ast$}]{output\+Info,  }\item[{int}]{loc,  }\item[{int}]{random\+Start,  }\item[{double}]{add\+Fraction,  }\item[{FILE $\ast$}]{user\+Out,  }\item[{double($\ast$)(double $\ast$, \textbf{ Output\+Info} $\ast$, int, \textbf{ Spatial\+Params} $\ast$, double, void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int[$\,$], int, int, double[$\,$])}]{likely,  }\item[{double}]{param\+Weight,  }\item[{void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int)}]{model,  }\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{num\+Data\+Types,  }\item[{int}]{cost\+Function,  }\item[{double}]{data\+Type\+Weights[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 125} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ model}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ reset\+Spatial\+Params()}, \textbf{ sum\+Array()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+
+
+
+Referenced by \textbf{ metropolis()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/dd3/ml-metro5_8c_aff2ecc73aa67a095ad6ed53ba95389d2_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metro5_8c_afd5c468929a44067d18c16da31dafd10} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!writeChainInfo@{writeChainInfo}}
+\index{writeChainInfo@{writeChainInfo}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{writeChainInfo()}
+{\footnotesize\ttfamily void write\+Chain\+Info (\begin{DoxyParamCaption}\item[{char $\ast$}]{chain\+Info,  }\item[{double}]{ltotold,  }\item[{double}]{ltotmax,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 177} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ is\+Spatial()}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, and \textbf{ open\+File()}.
+
+
+
+Referenced by \textbf{ metropolis()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/dd3/ml-metro5_8c_afd5c468929a44067d18c16da31dafd10_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metro5_8c_adc3dba579687cf18a74bed5aae630f2b} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!writeDoubleAsFloat@{writeDoubleAsFloat}}
+\index{writeDoubleAsFloat@{writeDoubleAsFloat}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{writeDoubleAsFloat()}
+{\footnotesize\ttfamily void write\+Double\+As\+Float (\begin{DoxyParamCaption}\item[{double}]{num,  }\item[{FILE $\ast$}]{outfile }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 74} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+Referenced by \textbf{ write\+Hist\+File\+Bin()}.
+
+\label{ml-metro5_8c_a36c98193636c26e1bede76e6ef75d649} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!writeHistFile@{writeHistFile}}
+\index{writeHistFile@{writeHistFile}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{writeHistFile()}
+{\footnotesize\ttfamily void write\+Hist\+File (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{hist\+File,  }\item[{double}]{ltotnew,  }\item[{double $\ast$}]{sigma,  }\item[{\textbf{ Output\+Info} $\ast$}]{output\+Info,  }\item[{int}]{num\+Data\+Types,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ get\+Spatial\+Param()}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, and \textbf{ Output\+Info\+Struct\+::num\+Years}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/dd3/ml-metro5_8c_a36c98193636c26e1bede76e6ef75d649_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metro5_8c_abea8fb47f2f2198d8ac07dbe19605526} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!writeHistFileBin@{writeHistFileBin}}
+\index{writeHistFileBin@{writeHistFileBin}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{writeHistFileBin()}
+{\footnotesize\ttfamily void write\+Hist\+File\+Bin (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{hist\+File,  }\item[{double}]{ltotnew,  }\item[{double $\ast$}]{sigma,  }\item[{\textbf{ Output\+Info} $\ast$}]{output\+Info,  }\item[{int}]{num\+Data\+Types,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 83} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ get\+Spatial\+Param()}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ Output\+Info\+Struct\+::num\+Years}, and \textbf{ write\+Double\+As\+Float()}.
+
+
+
+Referenced by \textbf{ metropolis()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/dd3/ml-metro5_8c_abea8fb47f2f2198d8ac07dbe19605526_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metro5_8c_a6d9a642e035ee39f136f13224f4cd299} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!writeHistFileBinHeader@{writeHistFileBinHeader}}
+\index{writeHistFileBinHeader@{writeHistFileBinHeader}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{writeHistFileBinHeader()}
+{\footnotesize\ttfamily void write\+Hist\+File\+Bin\+Header (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{hist\+File,  }\item[{int}]{num\+Years,  }\item[{int}]{np,  }\item[{int}]{num\+Data\+Types }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 60} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+Referenced by \textbf{ metropolis()}.
+
+\label{ml-metro5_8c_a350a48810f5e777803b271a95ad084ab} 
+\index{ml-\/metro5.c@{ml-\/metro5.c}!writeHistFileHeader@{writeHistFileHeader}}
+\index{writeHistFileHeader@{writeHistFileHeader}!ml-\/metro5.c@{ml-\/metro5.c}}
+\doxysubsubsection{writeHistFileHeader()}
+{\footnotesize\ttfamily void write\+Hist\+File\+Header (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{hist\+File,  }\item[{int}]{num\+Years,  }\item[{int}]{np,  }\item[{int}]{num\+Data\+Types }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ ml-\/metro5.\+c}.
+

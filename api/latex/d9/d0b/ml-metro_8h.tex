@@ -1,0 +1,54 @@
+\doxysection{ml-\/metro.h File Reference}
+\label{ml-metro_8h}\index{ml-\/metro.h@{ml-\/metro.h}}
+{\ttfamily \#include "{}common/paramchange.\+h"{}}\newline
+{\ttfamily \#include "{}common/spatial\+Params.\+h"{}}\newline
+Include dependency graph for ml-\/metro.h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=209pt]{d2/de6/ml-metro_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{d1/d03/ml-metro_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ metropolis} (char $\ast$out\+Name\+Base, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc, double($\ast$likely)(double $\ast$, \textbf{ Output\+Info} $\ast$, int, \textbf{ Spatial\+Params} $\ast$, double, void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int[$\,$], int, int, double[$\,$]), void($\ast$\textbf{ model})(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), double add\+Fraction, long est\+Steps, int num\+At\+Once, int num\+Chains, int random\+Start, long num\+Spin\+Ups, double param\+Weight, double scale\+Factor, int data\+Type\+Indices[$\,$], int num\+Data\+Types, int cost\+Function, double data\+Type\+Weights[$\,$], FILE $\ast$user\+Out)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{ml-metro_8h_a3ba3195b055454f19d59a8751dde2058} 
+\index{ml-\/metro.h@{ml-\/metro.h}!metropolis@{metropolis}}
+\index{metropolis@{metropolis}!ml-\/metro.h@{ml-\/metro.h}}
+\doxysubsubsection{metropolis()}
+{\footnotesize\ttfamily void metropolis (\begin{DoxyParamCaption}\item[{char $\ast$}]{out\+Name\+Base,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc,  }\item[{double($\ast$)(double $\ast$, \textbf{ Output\+Info} $\ast$, int, \textbf{ Spatial\+Params} $\ast$, double, void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int[$\,$], int, int, double[$\,$])}]{likely,  }\item[{void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int)}]{model,  }\item[{double}]{add\+Fraction,  }\item[{long}]{est\+Steps,  }\item[{int}]{num\+At\+Once,  }\item[{int}]{num\+Chains,  }\item[{int}]{random\+Start,  }\item[{long}]{num\+Spin\+Ups,  }\item[{double}]{param\+Weight,  }\item[{double}]{scale\+Factor,  }\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{num\+Data\+Types,  }\item[{int}]{cost\+Function,  }\item[{double}]{data\+Type\+Weights[$\,$],  }\item[{FILE $\ast$}]{user\+Out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 300} of file \textbf{ ml-\/metro5.\+c}.
+
+
+
+References \textbf{ A\+\_\+\+STAR}, \textbf{ check\+Spatial\+Param()}, \textbf{ DEC}, \textbf{ free2\+DArray()}, \textbf{ free\+Output\+Info()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ is\+Spatial()}, \textbf{ make2\+DArray()}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ new\+Output\+Info()}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ open\+File()}, \textbf{ randm()}, \textbf{ random\+Changeable\+Spatial\+Param()}, \textbf{ read\+Chain\+Info()}, \textbf{ reset()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ sum\+Array()}, \textbf{ THRESH}, \textbf{ write\+Chain\+Info()}, \textbf{ write\+Changeable\+Param\+Info()}, \textbf{ write\+Hist\+File\+Bin()}, and \textbf{ write\+Hist\+File\+Bin\+Header()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d9/d0b/ml-metro_8h_a3ba3195b055454f19d59a8751dde2058_cgraph}
+\end{center}
+\end{figure}

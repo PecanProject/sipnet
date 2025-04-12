@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Model structure - SIPNET Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Model structure";
+        var mkdocs_page_input_path = "model-structure.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> SIPNET Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/running-sipnet/">Running SIPNET</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../developer-guide/code-structure/">Code Structure</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING/">Contributing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT/">Code of Conduct</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">SIPNET Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Model structure</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <!-- 
+How to Number Equations 
+(Haven't figured out how to number only the new ones automatically)
+$$
+Y=mX+b \tag{1} \label{eq:line}
+$$
+
+In equation \eqref{eq:line}, $m$ is the slope and $b$ is the intercept.
+-->
+
+<h1 id="model-structure">Model Structure</h1>
+<p>Goal: simplified biogeochemical model that is capable of simulating GHG balance, including soil carbon, $CO_2$, $CH_4$, and $N_2O$ flux. Key validation criteria is the ability to correctly capture the response of these pools and fluxes to changes in agronomic management practices, both current and future. </p>
+<h3 id="design-approach">Design approach:</h3>
+<p>Start as simple as possible, add complexity as needed. When new features are considered, they should be evaluated alongside other possible model improvements that have been considered, and the overall list of project needs.</p>
+<h3 id="notes-on-notation">Notes on notation:</h3>
+<p>Fluxes are denoted by $F$, except that respiration is denoted by $R$ following convention and previous descriptions of SIPNET.</p>
+<p>Parameters and other information can be found in the Parameters documentation. <!-- or maybe combined here?--></p>
+<h3 id="scope">Scope</h3>
+<p>This document provides an overview of the SIPNET model’s structure. It was written to 
+- Consolidate the descriptions from multiple papers (notably Braswell et al 2005 and Zobitz et al 2008). 
+- Provide enough detail to support the addition of agronomic events, CH4, and N2O fluxes.
+- Focus on features currently in regular use.</p>
+<p>There are multiple ways to configure the model structure, and not all model structures are listed, notably the litter quality model. </p>
+<p>We aim to extend the scope of this document to be more comprehensive of the regularly used features.</p>
+<h3 id="mathfrakproposed-features">$\mathfrak{Proposed \ Features}$</h3>
+<p>Proposed features are indicated using the using $\mathfrak{Fraktur Font}$. Where an entire section is new, it is only used in the section heading. Otherwise, it is used for terms within equations. As these features are implemented, the <code>\mathfrak{}</code> commands should be removed.</p>
+<!-- to remove
+- remove \mathfrak{}
+component out of 
+-->
+<h2 id="carbon-dynamics">Carbon Dynamics</h2>
+<h3 id="maximum-photosynthetic-rate">Maximum Photosynthetic Rate</h3>
+<p>$$
+\text{GPP}<em>{\text{max}} = A</em>{\text{max}} \cdot A_d + R_{leaf,0} \tag{Braswell A6}\label{eq:A6}
+$$</p>
+<p>The daily maximum gross photosynthetic rate  $(\text{GPP}<em>{\text{max}})$ represents the maximum potential GPP under optimal conditions. It is modeled as the leaf-level maximum net assimilation rate  $(A</em>{\text{max}})$ multiplied by a scaling factor  $(A_d)$, plus foliar maintenance respiration at optimum temperature  $(R_{\text{leaf},0})$. The scaling factor $A_d$ accounts for daily variation in photosynthesis, representing the average fraction of $A_{\text{max}}$ that is realized over the course of a day. </p>
+<!-- R_leaf,0 is included in **Gross**PP because it is part of the C flux that is directly related to the plant's photosynthetic process.
+
+It is not immmediately clear to me why GPP is called Gross Photosynthetic Rate here, though this comes directly from Braswell et al. (2005). It seems that GPR (like its components Amax and R_leaf,0) are leaf level processes (units of /g leaf) while GPP is ecosystem scale (with units of /m2).
+
+Assuming implementation is correct because it derived from PnET and has been used in SIPNET by many people for many years.
+-->
+
+<h3 id="potential-photosynthesis">Potential Photosynthesis</h3>
+<p>$$
+\text{GPP}<em>{\text{pot}} = \text{GPP}</em>{\text{max}} \cdot 
+  D_{\text{temp}} \cdot 
+  D_{\text{VPD}} \cdot 
+  D_{\text{light}} 
+  \tag{Braswell A7}\label{eq:A7}
+$$</p>
+<p>The potential gross primary production  $(\text{GPP}<em>{\text{pot}})$ is calculated by reducing $\text{GPP}</em>{\text{max}}$ by temperature, vapor pressure deficit, and light.</p>
+<h3 id="adjusted-gross-primary-production">Adjusted Gross Primary Production</h3>
+<p>$$
+\text{GPP} = \text{GPP}<em>{\text{pot}} \cdot D</em>{\text{water}} \tag{Braswell A17}\label{eq:A17}
+$$</p>
+<p>The total adjusted gross primary production (GPP) is the product of potential GPP  $(\text{GPP}<em>{\text{pot}})$ and the water stress factor $D</em>{\text{water,}A}$.</p>
+<p>The water stress factor $D_{\text{water,}A}$ is defined in equation \eqref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.</p>
+<h3 id="plant-growth">Plant Growth</h3>
+<p>$$
+\text{NPP} = \text{GPP} - R_A \tag{1} \label{eq:npp}
+$$</p>
+<p>Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant biomass. NPP is allocated to plant biomass pools in proportion to their allocation parameters $\alpha_i$.</p>
+<p>$$
+\text{NPP}=\sum_{1}^{i} \frac{dC_{\text{plant,}i}}{dt} \tag{2} \label{eq:npp_summ}
+$$</p>
+<p>$$\small i \in {\text{leaf, wood, fine root, coarse root}}$$</p>
+<p>Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.</p>
+<p>$$
+dC_{\text{plant,}i} = \text{NPP} \cdot a_i \mathfrak{- 
+  F^C_{\text{harvest,removed,}i}} - F^C_{\text{litter,}i}
+  \tag{Zobitz 3}\label{eq:Z3}
+$$</p>
+<p>This results in the following constraints:
+- In the case of annuals, all biomass is either harvested and removed or added to litter pools. $F^C_{\text{harvest,removed,}i}$ is calculated by \eqref{eq:harvest}.
+- In the case of perennials, a fraction of the biomass remains except at the end of the perennial's life.</p>
+<p>$$\mathfrak{
+F^C_{\text{litter,}i} + F^C_{\text{harvest,removed,}i} =
+\begin{cases}
+1 &amp; \text{annuals} \
+\leq 1 &amp; \text{perennials}
+\end{cases}
+}$$</p>
+<h3 id="plant-death">Plant Death</h3>
+<p>Plant death is implemented as a harvest event with the fraction of biomass transferred to litter, $f_{\text{harvest,transfer,}i}$ set to 1.</p>
+<h3 id="wood-carbon">Wood Carbon</h3>
+<p>$$
+\frac{dC_\text{wood}}{dt} = \alpha_\text{wood}\cdot\text{NPP} - F^C_\text{litter,wood} \tag{Braswell A1}\label{eq:A1}
+$$</p>
+<p>Change in plant wood carbon  $(C_W)$ over time is determined by the fraction of net primary productivity allocated to wood, and wood litter production  $(F^C_\text{litter,wood})$.</p>
+<h3 id="leaf-carbon">Leaf Carbon</h3>
+<p>$$
+\frac{dC_\text{leaf}}{dt} = L - F^C_\text{litter,leaf} \tag{Braswell A2}\label{eq:A2}
+$$</p>
+<p>The change in plant leaf carbon  $(C_\text{leaf})$ over time is given by the balance of leaf production  $(L)$ and leaf litter production  $(F^C_\text{litter,leaf})$.</p>
+<h3 id="leaf-maintenance-respiration">Leaf Maintenance Respiration</h3>
+<p>$$
+R_\text{leaf,opt} = k_\text{leaf} \cdot A_{\text{max}} \cdot C_\text{leaf} \tag{Braswell A5}\label{eq:A5}
+$$</p>
+<p>Where $R_\text{leaf,opt}$ is leaf maintenance respiration at $T_\text{opt}$, proportional to the maximum photosynthetic rate $A_{\text{max}}$ with a scaling factor $k_\text{leaf}$ multiplied by the mass of leaf $C_\text{leaf}$.</p>
+<p>$$
+R_\text{leaf} = R_\text{leaf,opt} \cdot D_{\text{temp,Q10}} \tag{Braswell A18a}\label{eq:A18a}
+$$</p>
+<p>Actual foliar respiration  $(R_\text{leaf})$ is modeled as a function of the foliar respiration rate  $(R_\text{leaf,opt})$ at optimum temperature of leaf respiration $T_\text{opt}$ and the $Q_{10}$ temperature sensitivity factor.</p>
+<h3 id="wood-maintenance-respiration">Wood Maintenance Respiration</h3>
+<p>$$
+R_\text{wood} = K_\text{wood} \cdot C_\text{wood} \cdot D_{\text{temp,Q10}_v} \tag{Braswell A19}\label{eq:A19}
+$$</p>
+<p>Wood maintenance respiration  $(R_m)$ depends on the wood carbon content  $(C_\text{wood})$, a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling function $D_{\text{temp,Q10}_v}$.</p>
+<h3 id="litter-carbon">Litter Carbon</h3>
+<p>The change in the litter carbon pool over time is defined by the input of new litter and the loss to decomposition:</p>
+<p>$$
+\frac{dC_\text{litter}}{dt} =
+F^C_\text{litter} - F^C_{\text{decomp}}
+$$</p>
+<p>Where $F^C_\text{litter}$ is the carbon flux from plant biomass into the litter pool through senescence and harvest \eqref{eq:litter_flux}. $F^C_{\text{decomp,litter}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and decomposition \eqref{eq:decomp_carbon}.</p>
+<p>The flux of carbon from the plant to the litter pool is the sum litter produced through senescence, transfer of any biomass pools during harvest, and organic matter ammendments:</p>
+<p>$$
+F^C_\text{litter} = 
+  \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
+  \mathfrak{
+    \sum_{i} F^C_{\text{harvest,transfer,}i} +
+  F^C_\text{fert,org}
+  } 
+  \tag{3}\label{eq:litter_flux}
+$$</p>
+<!-- 
+_existing equation + harvest transfer and organic matter inputs
+-->
+<p>$$\small i \in {\text{leaf, wood, fine root, coarse root}}$$</p>
+<p>Where $K$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.</p>
+<p>The decomposition flux from litter carbon is divided into heterotrophic respiration and carbon transfer to soil:</p>
+<p>$$
+F^C_{\text{decomp}} = R_{H,\text{litter}} + F^C_{\text{soil}} \tag{4}\label{eq:decomp_carbon}
+$$</p>
+<p>Where $R_{H_{\text{litter}}}$ is heterotrophic respiration from litter \eqref{eq:rh_litter}, and $F^C_{\text{soil}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is based on the fraction of litter that is respired, $f_{R_H}$.</p>
+<p>$$
+R_{H_{\text{litter}}} = f_{R_H} \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{5}\label{eq:rh_litter}
+$$</p>
+<p>$$
+F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{6}\label{eq:soil_carbon}
+$$</p>
+<p>The rate of decomposition is a function of the litter carbon content and the decomposition rate $K_{\text{litter}}$ modified by temperature and moisture factors. $f_{R_H}$ is the fraction of litter carbon that is respired.</p>
+<h3 id="soil-carbon">Soil Carbon</h3>
+<p>$$
+\frac{dC_\text{soil}}{dt} = F^C_\text{soil} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
+$$</p>
+<p>The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined by the addition of litter carbon and the loss of carbon to heterotrophic respiration. This model assumes no loss of SOC to leaching or erosion.</p>
+<h3 id="heterotrophic-respiration-c_textsoillitter-rightarrow-co_2">Heterotrophic Respiration $(C_\text{soil,litter} \rightarrow CO_2)$</h3>
+<p>Total heterotrophic respiration is the sum of respiration from soil and litter pools:</p>
+<p>$$
+R_{H} = f_{R_H} \cdot 
+  \left(\sum_j  K_j \cdot C_j 
+    \mathfrak{\cdot D_{\text{tillage,}j}}
+    \right) \cdot 
+    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} 
+    \tag{7}\label{eq:rh}
+$$</p>
+<p>$$\small j \in {\text{soil, litter}}$$</p>
+<p>Where heterotrophic respiration, $R_H$, is a function of each carbon pool $C_j$ and its associated decomposition rate $K_{C_j}$ adjusted by the fraction allocated to respiration, $f_{R_H}$, and the temperature, moisture, tillage, and <em>CN</em> dependency  $(D_\star)$ functions.</p>
+<h3 id="frakmethane-production-c-rightarrow-ch_4">$\frak{Methane \ Production \ (C \rightarrow CH_4)}$</h3>
+<p>$$
+F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\mathrm{water, O_2} \cdot D_\text{temp}
+ \tag{8}\label{eq:ch4}
+$$</p>
+<p>$$\small j \in {\text{soil, litter}}$$</p>
+<p>The calculation of methane flux  $(F^C_{CH_4})$ is analagous to to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.</p>
+<h2 id="frakcarbonnitrogen-ratio-dynamics-cn">$\frak{Carbon:Nitrogen \ Ratio \ Dynamics (CN)}$</h2>
+<p>The carbon and nitrogen cycle are tightly coupled by the C:N ratios of plant and organic matter pools. The C:N ratio of plant biomass pools is fixed, while the C:N ratio of soil organic matter and litter pools is dynamic.</p>
+<h3 id="frakfixed-plant-cn-ratios">$\frak{Fixed \ Plant \ C:N \ Ratios}$</h3>
+<p>Plant biomass pools have a fixed CN ratio and are thus stoichiometrically coupled to carbon:</p>
+<p>$$
+N_i = \frac{C_i}{CN_{i}} \tag{9}\label{eq:cn_stoich}
+$$</p>
+<p>$$\small i \in {\text{leaf, wood, fine root, coarse root}}$$</p>
+<p>Where $i$ is the leaf, wood, fine root, or coarse root pool. This relationship applies to both pools $C,N$ and fluxes  $(F^C, F^N)$.</p>
+<p>Soil organic matter and litter pools have dynamic CN that is determined below.</p>
+<h3 id="frakdynamic-soil-organic-matter-and-litter-cn-ratios">$\frak{Dynamic \ Soil  \ Organic \ Matter \ and \ Litter \ C:N \ Ratios}$</h3>
+<p>The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.</p>
+<p>$$
+\frac{dCN_{\text{j}}}{dt} = \frac{1}{N_{\text{j}}} \left( \frac{dC_{\text{j}}}{dt} - CN_{\text{j}} \cdot \frac{dN_{\text{j}}}{dt} \right) \tag{10}\label{eq:cn}
+$$</p>
+<p>$$\small j \in {\text{soil, litter}}$$</p>
+<h3 id="frakcn-dependency-function-d_cn">$\frak{C:N \ Dependency \ Function \ (D_{CN})}$</h3>
+<p>To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.</p>
+<p>$$
+  D_{CN} = \frac{1}{1+k_CN \cdot CN} \tag{11}\label{eq:cn_dep}
+$$</p>
+<p>Where $k_CN$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio. This parameter represents the half-saturation constant of the Michaelis-Menten equation.</p>
+<h2 id="fraknitrogen-dynamics-fracdndt">$\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$</h2>
+<h3 id="frakplant-biomass-nitrogen">$\frak{Plant \ Biomass \ Nitrogen}$</h3>
+<p>Similar to the stoichiometric coupling of litter fluxes, the change in plant biomass N over time is stoichiometrically coupled to plant biomass C:</p>
+<p>$$
+  \frac{dN_{\text{plant,}i}}{dt} = \frac{dC_{\text{plant,}i}}{dt} / CN_{\text{plant,}i} \tag{12}\label{eq:plant_n}
+$$</p>
+<p>$$\small i \in {\text{leaf, wood, fine root, coarse root}}$$</p>
+<h3 id="fraklitter-nitrogen">$\frak{Litter \ Nitrogen}$</h3>
+<p>The change in litter nitrogen over time, $N_\text{litter}$ is determined by inputs including leaf and wood litter, nitrogen in organic matter amendments, and losses to mineralization:</p>
+<p>$$
+  \frac{dN_{\text{litter}}}{dt} = 
+  \sum_{i} F^N_{\text{litter,}i} +
+  F^N_\text{fert,org} - 
+  F^N_\text{litter,min} \tag{13}\label{eq:litter_dndt}
+$$</p>
+<p>$$\small i \in {\text{leaf, wood, fine root, coarse root}}$$</p>
+<p>The flux of nitrogen from living biomass to the litter pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool \eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content and the C:N ratio of the inputs.</p>
+<h3 id="fraksoil-organic-nitrogen">$\frak{Soil \ Organic \ Nitrogen}$</h3>
+<p>$$
+  \frac{dN_\text{org,soil}}{dt} = 
+   F^N_\text{litter} -
+   F^N_\text{soil,min} \tag{14}\label{eq:org_soil_dndt}
+$$</p>
+<p>The change in nitrogen pools in this model is proportional to the ratio of carbon to nitrogen in the pool. Equations for the evolution of soil and litter CN are below.</p>
+<h3 id="fraksoil-mineral-nitrogen-fn_textmin">$\frak{Soil \ Mineral \ Nitrogen \ F^N_\text{min}}$</h3>
+<p>Change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization, and losses to volatilization, leaching, and plant uptake:</p>
+<p>$$
+  \frac{dN_\text{min}}{{dt}} = 
+  F^N_\text{litter,min} +
+  F^N_\text{soil,min} +
+  F^N_\text{fix} - 
+  F^N_\text{fert,min} - 
+  F^N_\mathrm{vol} - 
+  F^N_\text{leach} - 
+  F^N_\text{uptake} 
+  \tag{15}\label{eq:mineral_n_dndt}
+$$</p>
+<p>Mineralization, fertilization, and fixation add to the mineral nitrogen pool. Losses include mineralization, volatilization, leaching, and plant uptake, described below:</p>
+<h3 id="frakn-mineralization-fn_textmin">$\frak{N \ Mineralization \ (F^N_\text{min})}$</h3>
+<p>Total nitrogen mineralization is proportional to the total heterotrophic respiration from soil and litter pools, divided by the C:N ratio of the pool. The effects of temperature, moisture, tillage, and C:N ratio on mineralization rate are captured in the calculation of $R_\text{H}$.</p>
+<p>$$
+  F^N_\text{min} = \sum_j \left( \frac{R_{H\text{j}}}{CN_{\text{j}}} \right) \tag{16}\label{eq:n_min}
+$$</p>
+<p>$$\small j \in {\text{soil, litter}}$$</p>
+<h3 id="fraknitrogen-volatilization-fn_textvol-n_textminsoil-rightarrow-n_2o">$\frak{Nitrogen \ Volatilization \ F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)}$</h3>
+<p>The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate. </p>
+<p>Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).</p>
+<p>A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$.</p>
+<p>$$
+F^N_\mathrm{N_2O vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n2o_vol}
+$$</p>
+<h3 id="fraknitrogen-leaching-fn_textleach">$\frak{Nitrogen \ Leaching \ F^N_\text{leach}}$</h3>
+<p>$$
+F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} \tag{18}\label{eq:n_leach}
+$$</p>
+<p>Where $F^N_\text{leach}$ is the fraction of $N_{min}$ in soil water that is available to be leached, $F^W_{drainage}$ is drainage.</p>
+<h3 id="fraknitrogen-fixation-fn_textfix">$\frak{Nitrogen \ Fixation \ F^N_\text{fix}}$</h3>
+<p>The rate at which N is fixed is a function of the NPP of the plant and a fixed parameter $K_\text{fix}$, and is modified by temperature.</p>
+<p>For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to be driven by plant growth, and also depend on temperature.</p>
+<p>$$
+F^N_\text{fix} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}} \tag{19}\label{eq:n_fix}
+$$</p>
+<p>Nitrogen fixation is represented by adding fixed nitrogen directly to the soil mineral nitrogen pool. This is a reasonable first approximation, consistent with the simplicity of the nitrogen limitation model where limitation only occurs when nitrogen demand exceeds supply. </p>
+<p>For nitrogen-fixing plants, most of the fixed nitrogen is directly used by the plant. It would be more complicated to model this by splitting, which could include splitting the fixed N into soil and plant pools and then meeting a portion of plant N demand with this flux.</p>
+<h3 id="frakplant-nitrogen-uptake-fn_textuptake">$\frak{Plant \ Nitrogen \ Uptake \ F^N_\text{uptake}}$</h3>
+<p>Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:</p>
+<p>$$
+F^N_\text{uptake}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} \tag{20}\label{eq:plant_n_demand}
+$$</p>
+<p>$$\small i \in {\text{leaf, wood, fine root, coarse root}}$$</p>
+<p>Each term in the sum is calculated according to equation \eqref{eq:plant_n}.</p>
+<h4 id="fraknitrogen-limitation-indicator-function-mathfraki_textn-limit">$\frak{Nitrogen \ Limitation \ Indicator \ Function \mathfrak{I_{\text{N limit}}}}$</h4>
+<p>What happens when plant N demand exceeds available N? This is N limitation, a challenging process to represent in biogeochemical models.</p>
+<p>The initial approach to representing N limitation in SIPNET will be simple, and the primary motivation for implementing this is to avoid mass imbalance. First we will identify the presence of nitrogen limitation with an indicator variable:</p>
+<p>$$
+I_{\text{N limit}} = \begin{cases}
+1, &amp; \text{if } \frac{dN_\text{plant}}{dt} \leq N_{\text{min}} \
+0, &amp; \text{if } \frac{dN_\text{plant}}{dt} &gt; N_{\text{min}}
+\end{cases} \tag{21}\label{eq:n_limit}
+$$</p>
+<p>When $I=0$, SIPNET will throw a warning and increase autotrophic respiration to $R_A=GPP$ to stop plant growth and associated N uptake:</p>
+<p>$$
+R_A = \max(R_A, I_{\text{N limit}} \cdot GPP) \tag{22}\label{eq:n_limit_ra}
+$$</p>
+<p>This will effectively stop plant growth and N uptake when there there is insufficient N.</p>
+<p>We do expect N limitation to occur, including in vineyards and woodlands, but we assume that effect of nitrogen limitation on plant growth will have a relatively smaller impact on GHG budgets at the county and state scales. This is because nitrogen limitation should be rare in California's intensively managed croplands because the cost of N fertilzer is low compared to the impact of N limitation on crop yield.</p>
+<p>If this scheme is too simple, we can adjust either the conditions under which N limitation occurs or develop an N dependency function based on the balance between plant N demand and N availability.</p>
+<h2 id="water-dynamics">Water Dynamics</h2>
+<h3 id="soil-water-storage">Soil Water Storage</h3>
+<p>$$
+\begin{aligned}
+\frac{dW_{\text{soil}}}{dt} &amp;= f_{\text{intercept}} \cdot \Bigl( F^W_{\text{precip}} + F^W_{\text{canopy irrigation}} \Bigr)\[1mm]
+&amp;\quad + \mathfrak{F^W_{\text{soil irrigation}}} - F^W_{\text{drainage}} - F^W_{\text{transpiration}}
+\end{aligned}
+\tag{Braswell A4}\label{eq:A4}
+$$</p>
+<p>The change in soil water content  $(W_{\text{soil}})$ is determined by precipitation $F^W_{\text{precip}}$ and losses due to drainage $F^W_{\text{drainage}}$ and transpiration $F^W_{\text{transpiration}}$.</p>
+<p>$F^W_{\text{precip}}$ is the precipitation rate prescribed at each time step in the <code>&lt;sitename&gt;.clim</code> file and fraction of precipitation intercepted by the canopy $f_{\text{intercept}}$.</p>
+<h3 id="drainage">Drainage</h3>
+<p>Under well-drained conditions, drainage occurs when soil water content  $(W_{\text{soil}})$ exceeds the soil water holding capacity  $(W_{\text{WHC}})$. Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}&lt;1$ reduced the rate of drainage, and flooding will will require a combination of a low $f_{\text{drain}}$ and sufficient size and / or frequency of $F^W_\text{irrigation}$ to maintain flooded conditions.</p>
+<p>$$
+F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0) \tag{23}\label{eq:drainage}
+$$</p>
+<p>This is adapted from the original SIPNET formulation (Braswell et al 2005), adding a new parameter that controls the drainage rate.</p>
+<h3 id="transpiration">Transpiration</h3>
+<h4 id="water-use-efficiency-wue">Water Use Efficiency (WUE)</h4>
+<p>$$
+\text{WUE} = \frac{K_{\text{WUE}}}{\text{VPD}} \tag{Braswell A13}\label{eq:A13}
+$$</p>
+<p>Water Use Efficiency (WUE) is defined as the ratio of a constant $K_{\text{WUE}}$ to the vapor pressure deficit (VPD).</p>
+<h4 id="potential-transpiration">Potential Transpiration</h4>
+<p>$$
+T_{\text{pot}} = \frac{\text{GPP}_{\text{pot}}}{\text{WUE}} \tag{Braswell A14}\label{eq:A14}
+$$</p>
+<p>Potential transpiration  $(T_{\text{pot}})$ is calculated as the potential gross primary production  $(\text{GPP}_{\text{pot}})$ divided by WUE.</p>
+<h4 id="actual-transpiration">Actual Transpiration</h4>
+<p>$$
+F^W_\text{trans} = \min(F^W_\text{trans, pot}, f \cdot W_\text{soil}) \tag{Braswell A15}\label{eq:A15}
+$$</p>
+<p>Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{pot}})$ and the fraction  $(f)$ of the total soil water  $(W_\text{soil})$ that is removable in one day.</p>
+<h2 id="dependence-functions-for-temperature-and-moisture">Dependence Functions for Temperature and Moisture</h2>
+<p>Metabolic processes including photosynthesis, autotrophic and heterotrophic respiration, decomposition, nitrogen volatilization, and methanogenesis are modified directly by temperature, soil moisture, and / or vapor pressure deficit.</p>
+<p>Below is a description of these functions.</p>
+<h3 id="temperature-dependence-functions-d_texttemp">Temperature Dependence Functions $D_\text{temp}$</h3>
+<h4 id="parabolic-function-for-photosynthesis-d_texttemp-a">Parabolic Function for Photosynthesis $D_\text{temp, A}$</h4>
+<p>Photosynthesis has a temperature optimum in the range of observed air temperatures as well as maximum and minimum temperatures of photosynthesis  $(A)$. SIPNET represents the temperature dependence of photosynthesis as a parabolic function. This function has a maximum at the temperature optimum, and decreases as temperature moves away from the optimum.</p>
+<p>$$
+D_\text{temp,A}=\max\left(\frac{(T_\text{max} - T_\text{air})(T_\text{air} - T_\text{min})}{\left(\frac{T_\text{max} - T_\text{min}}{2}\right)^2}, 0\right)
+\tag{Braswell A9}\label{eq:A9}
+$$</p>
+<p>Where $T_{\text{env}}$ may be soil or air temperature  $(T_\text{soil}$ or $T_\text{air})$. </p>
+<p>Becuase the function is symmetric around $T_\text{opt}$, the parameters $T_{\text{min}}$ and $T_{\text{opt}}$ are provided and $T_{\text{max}}$ is calculated internally as $T_{\text{max}} = 2 \cdot T_{\text{opt}} - T_{\text{min}}$.</p>
+<h4 id="exponential-function-for-respiration-d_texttempq10">Exponential Function for Respiration $D_{\text(temp,Q10)}$</h4>
+<p>The temperature response of autotrophic  $(R_a)$ and heterotrophic  $(R_H)$ respiration represented as an exponential relationship using a simplified Arrhenius function.</p>
+<p>$$
+D_{\text{temp,Q10}} = Q_{10}^{\frac{(T-T_\text{opt})}{10}} \tag{Braswell A18b}\label{eq:A18b} % Defined as part of eq A18
+$$</p>
+<p>The exponential function is a simplification of the Arrhenius function in which $Q_{10}$ is the temperature sensitivity parameter, $T$ is the temperature, and $T_{\text{opt}}$ is the optimal temperature for the process set to 0 for wood and soil respiration. (Note that this is part of the equation for leaf respiration in Braswell et al. (2005).</p>
+<p>We assume $T=T_\text{air}$ for leaf and wood respiration, and $T=T_\text{soil}$ for soil and root respiration. The optimal temperature for leaf respiration is the optimal temperature for photosynthesis, $T_{\text{opt}}=T_{\text{opt,A}}$, while $T_{\text{opt}}=0$ for wood, root, and soil respiration.</p>
+<p>This function provides two ways to reduce the number of parameters in the model. Braswell et al (2005) used two $Q_{10}$ values, one for $R_A$ and one for $R_H$ and these calibrated to the same value of 1.7. By contrast, Zobitz et al (2008) used four $Q_{10}$ values, one for both leaf and wood, and one each for coarse root, fine root, and soil. Notably, these four $Q_{10}$ values ranged from 1.4 to 5.8 when SIPNET was calibrated to $CO_2$ fluxes in a subalpine forest.</p>
+<h3 id="moisture-dependence-functions-d_water">Moisture dependence functions $D_{water}$</h3>
+<p>Moisture dependence functions are typically based on soil water content as a fraction of water holding capacity, also referred to as soil moisture or fractional soil wetness. We will represent this fraction of soil wetness as $f_\text{WHC}$.</p>
+<h4 id="soil-water-content-fraction">Soil Water Content Fraction</h4>
+<p>$$
+f_{\text{WHC}} = \frac{W_{\text{soil}}}{W_{\text{WHC}}} 
+$$</p>
+<p>Where</p>
+<ul>
+<li>$W_{\text{soil}}$: Soil water content</li>
+<li>$W_{\text{WHC}}$: Soil water holding capacity</li>
+</ul>
+<h4 id="water-stress-factor">Water Stress Factor</h4>
+<p>$$
+D_{\text{water,}A} = \frac{F^W_{\text{trans}}}{F^W_{\text{trans, pot}}} \tag{Braswell A16} \label{eq:A16}
+$$</p>
+<p>The water stress factor $(D_{\text{water,}A})$ is the ratio of actual transpiration  $(F^W_\text{trans})$ to potential transpiration  $(F^W_\text{trans, pot})$.</p>
+<h4 id="soil-respiration-moisture-dependence-d_textwaterr_h">Soil Respiration Moisture Dependence  $(D_{\text{water,}R_H})$</h4>
+<p>The moisture dependence of heterotrophic respiration is a linear function of soil water content when soil temperature is above freezing:</p>
+<p>$$
+D_{\text{water} R_H} = 
+\begin{cases}
+1, &amp; \text{if } T_{\text{soil}} \leq 0 \
+f_{\text{WHC}} &amp; \text{if } T_{\text{soil}} &gt; 0
+\end{cases} \tag{24}\label{eq:water_rh}
+$$</p>
+<h4 id="frakmoisture-dependence-for-anaerobic-metabolism-with-soil-moisture-optimum">$\frak{Moisture \ Dependence \ For \ Anaerobic \ Metabolism \ with \ Soil \ Moisture \ Optimum}$</h4>
+<p>There are many possible functions for the moisture dependence of anaerobic metabolism. The key feature is that there must be an optimum moisture level.</p>
+<p>Lets start with a two-parameter Beta function covering the range $50 &lt; f_{\text{WHC}} &lt; 120$.</p>
+<p><strong>Beta function</strong></p>
+<p>$$
+D_{\mathrm{moistur,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
+$$</p>
+<p>Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maiximum and width.</p>
+<p>For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.</p>
+<h2 id="frakagronomic-management-events">$\frak{Agronomic \ Management \ Events}$</h2>
+<p>All management events are specified in the <code>events.in</code>. Each event is a separate record that includes the date of the event, the type of event, and associated parameters.</p>
+<h3 id="frakfertilizer-and-organic-matter-additions">$\frak{Fertilizer \ and \ Organic \ Matter \ Additions}$</h3>
+<p>Additions of Mineral N, Organic N, and Organic C are represented by the fluxes $F^N_{\text{fert,min}}$, $F^N_{\text{fert,org}},$ and $F^C_{\text{fert,org}}$ that are specified in the <code>events.in</code> configuration file.</p>
+<p>Event parameters specified in the <code>events.in</code> file:</p>
+<ul>
+<li>Organic N added  $(F^N_{\text{fert,org}})$</li>
+<li>Organic C added  $(F^C_{\text{fert,org}})$</li>
+<li>Mineral N added  $(F^N_{\text{fert,min}})$</li>
+</ul>
+<p>These are added to the litter C and N and mineral N pools, respectively.</p>
+<p>Mineral N includes fertilizer supplied as NO3, NH4, and Urea-N. Urea-N is assumed to hydrolyze to ammonium and bicarbonate rapidly and is treated as a mineral N pool. This is a common assumption because of the high rate of this conversion, and is consistent the DayCent formulation (Parton et al TK-ref, other models and refs?). Only relatively recently did DayCent explicitly model Urea-N to NH4 in order to represent the impact of urease inhibitors (Gurung et al 2021) that slow down the rate.</p>
+<h3 id="fraktillage">$\frak{Tillage}$</h3>
+<p>To represent tillage, we define two new adjustment factors that modify the decomposition rates of litter $K_{\text{litter}}$ and soil organic matter $K_{\text{som}}$:</p>
+<p>Event parameters from the <code>events.in</code> file:</p>
+<ul>
+<li>SOM decomposition modifier $D_{K\text{,tillage,litter}}$  </li>
+<li>Litter decomposition modifier $D_{K\text{,tillage,som}}$ </li>
+</ul>
+<p>These values specified as fractions (e.g. 0.2 for 20% increase in decomposition rate). They are set to 0 by default and are expected to be &gt;0. They are set in the <code>events.in</code>, and are effective for one month after the tillage event.</p>
+<p>$$
+K^{\prime}<em>{\text{i}} = K</em>{\text{i}} \cdot (1+D_{K\text{,tillage,}i})
+$$</p>
+<p>Where $i$ is either litter or soil organic matter pool, and $K^{\prime}$ is the transiently adjusted decomposition rate.</p>
+<p>The choice of one month adjustment period is based on DayCent (Parton et al 2001).</p>
+<h3 id="frakplanting-and-emergence">$\frak{Planting \ and \ Emergence}$</h3>
+<p>A planting event is defined by its emergence date and directly specifies the amount of carbon added to each of four plant carbon pools: leaf, wood, fine root, and coarse root. On the emergence date, the model initializes the plant pools with the amounts of carbon specified in the events file.</p>
+<p>Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios following equation \eqref{eq:cn_stoich}.</p>
+<h3 id="frakharvest">$\frak{Harvest}$</h3>
+<p>A harvest event is specified by its date, the event type "harv", and the fractions of above and belowground carbon that is either transferred to litter or removed from the system.</p>
+<p>Because a harvest event only specifies the fraction of above and belowground carbon that is removed or transferred to litter, assume that the above terms apply to leaf + wood, and below applies to fine root + coarse root.</p>
+<p>The removed fraction is calculated as follows:</p>
+<p>$$
+F^C_{\text{harvest,removed}} = f_{\text{remove,above}} \cdot C_{\text{above}} + f_{\text{remove,below}} \cdot C_{\text{below}}
+$$</p>
+<p>The fraction transferred to litter is calculated as follows:</p>
+<p>$$
+F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} + f_{\text{transfer,below}} \cdot C_{\text{root}} \tag{28}\label{eq:harvest}
+$$</p>
+<p>This amount is then added to the litter flux in equation \eqref{eq:litter_flux}.</p>
+<h3 id="frakirrigation">$\frak{Irrigation}$</h3>
+<p>Event parameters:</p>
+<ul>
+<li>Irrigation rate  $(F^W_{\text{irrigation}})$, cm/day</li>
+<li>Irrigation type indicator  $(I_{\text{irrigation}})$:<ul>
+<li>Canopy irrigation (0): Water applied to the canopy, simulating rainfall.</li>
+<li>Soil irrigation (1): Water directly added to the soil.</li>
+</ul>
+</li>
+</ul>
+<!--    
+Note: Flooding not yet implemented
+*   Flooding (2): Special case of soil irrigation, where water fully saturates the soil and maintains flooding. -->
+
+<p><strong>Canopy irrigation</strong> is simulated in the same way as precipitation, where a fraction of irrigation is intercepted and evaporated, and the remainder is added to the soil water pool.</p>
+<p><strong>Soil irrigation</strong> adds water directly to the soil pool without interception. Flooded furrow irrigation' is a special case of soil irrigation, with a high rate of irrigation.</p>
+<!-- 
+**Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
+
+ Floodiing may also reduce the drainage parameter  $(f_{\text{drain}})$ close to zero \eq{eq:drainage}.
+
+$$
+F^W_{\text{irrigation}} = 
+\begin{cases}
+f_{\text{intercept}} \cdot F^W_{\text{irrigation}} & \text{canopy} \\
+F^W_{\text{irrigation}} & \text{soil} \\
+W_{\text{WHC}} - W_{\text{soil}} + F^W_{\text{irrigation}} & \text{flooding}
+\end{cases} \tag{28}\label{eq:irrigation}
+$$
+
+-->
+
+<h2 id="references">References</h2>
+<p>Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. Estimating Diurnal to Annual Ecosystem Parameters by Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem Exchange Observations. Global Change Biology 11 (2): 335–55. https://doi.org/10.1111/j.1365-2486.2005.00897.x.</p>
+<p>Libohova, Z., Seybold, C., Wysocki, D., Wills, S., Schoeneberger, P., Williams, C., Lindbo, D., Stott, D. and Owens, P.R., 2018. Reevaluating the effects of soil organic matter and other properties on available water-holding capacity using the National Cooperative Soil Survey Characterization Database. Journal of soil and water conservation, 73(4), pp.411-421.</p>
+<p>Manzoni, Stefano, and Amilcare Porporato. 2009. Soil Carbon and Nitrogen Mineralization: Theory and Models across Scales. Soil Biology and Biochemistry 41 (7): 1355–79. https://doi.org/10.1016/j.soilbio.2009.02.031.</p>
+<p>Parton, W. J., E. A. Holland, S. J. Del Grosso, M. D. Hartman, R. E. Martin, A. R. Mosier, D. S. Ojima, and D. S. Schimel. 2001. Generalized Model for NOx  and N2O Emissions from Soils. Journal of Geophysical Research: Atmospheres 106 (D15): 17403–19. https://doi.org/10.1029/2001JD900101.</p>
+<p>Wang H, Yan Z, Ju X, Song X, Zhang J, Li S and Zhu-Barker X (2023) Quantifying nitrous oxide production rates from nitrification and denitrification under various moisture conditions in agricultural soils: Laboratory study and literature synthesis. Front. Microbiol. 13:1110151. doi: 10.3389/fmicb.2022.1110151</p>
+<p>Zobitz, J. M., D. J. P. Moore, W. J. Sacks, R. K. Monson, D. R. Bowling, and D. S. Schimel. 2008. “Integration of Process-Based Soil Respiration Models with Whole-Ecosystem CO2 Measurements.” Ecosystems 11 (2): 250–69. https://doi.org/10.1007/s10021-007-9120-1.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Input and Output Parameters (DRAFT) - SIPNET Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Input and Output Parameters (DRAFT)";
+        var mkdocs_page_input_path = "parameters.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> SIPNET Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/running-sipnet/">Running SIPNET</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../developer-guide/code-structure/">Code Structure</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING/">Contributing</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT/">Code of Conduct</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">SIPNET Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Input and Output Parameters (DRAFT)</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="input-and-output-parameters-draft">Input and Output Parameters (DRAFT)</h1>
+<p>Note: this is a work in progress draft. Not all parameters listed will be used in the CCMMF formulation of the model. The "Notation" section should be consistent with model equations, some of the mathematical symbols in the tables may not be.</p>
+<p>Numbered items are cross-referenced with original documentation.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#input-and-output-parameters-draft">Input and Output Parameters (DRAFT)</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#notation">Notation</a><ul>
+<li><a href="#variables-pools-fluxes-and-parameters">Variables (Pools, Fluxes, and Parameters)</a></li>
+<li><a href="#subscripts-temporal-spatial-or-contextual-identifiers">Subscripts (Temporal, Spatial, or Contextual Identifiers)</a></li>
+</ul>
+</li>
+<li><a href="#run-time-parameters">Run-time Parameters</a><ul>
+<li><a href="#initial-state-values">Initial state values</a></li>
+<li><a href="#litter-quality-parameters">Litter Quality Parameters</a></li>
+<li><a href="#photosynthesis-parameters">Photosynthesis parameters</a></li>
+<li><a href="#phenology-related-parameters">Phenology-related parameters</a></li>
+<li><a href="#allocation-parameters">Allocation parameters</a></li>
+<li><a href="#autotrophic-respiration-parameters">Autotrophic respiration parameters</a></li>
+<li><a href="#soil-respiration-parameters">Soil respiration parameters</a></li>
+<li><a href="#nitrogen-cycle-parameters">Nitrogen Cycle Parameters</a></li>
+<li><a href="#methane-parameters">Methane parameters</a></li>
+<li><a href="#moisture-related-parameters">Moisture-related parameters</a></li>
+<li><a href="#tree-physiological-parameters">Tree physiological parameters</a></li>
+</ul>
+</li>
+<li><a href="#compile-time-parameters">Compile-time parameters</a></li>
+<li><a href="#drivers">Drivers</a><ul>
+<li><a href="#climate">Climate</a></li>
+<li><a href="#examples-of-climate-files">Examples of climate files:</a></li>
+<li><a href="#agronomic-events">Agronomic Events</a></li>
+<li><a href="#fertilization-events">Fertilization Events</a></li>
+<li><a href="#tillage-events">Tillage Events</a></li>
+<li><a href="#planting-events">Planting Events</a></li>
+<li><a href="#harvest-events">Harvest Events</a></li>
+<li><a href="#example-of-events-file">Example of events file:</a></li>
+</ul>
+</li>
+<li><a href="#outputs">Outputs</a></li>
+</ul>
+<h2 id="notation">Notation</h2>
+<h3 id="variables-pools-fluxes-and-parameters">Variables (Pools, Fluxes, and Parameters)</h3>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$C$</td>
+<td>Carbon pool</td>
+</tr>
+<tr>
+<td>$N$</td>
+<td>Nitrogen pool</td>
+</tr>
+<tr>
+<td>$CN$</td>
+<td>Carbon-to-Nitrogen ratio</td>
+</tr>
+<tr>
+<td>$W$</td>
+<td>Water pool or content</td>
+</tr>
+<tr>
+<td>$R$</td>
+<td>Respiration flux</td>
+</tr>
+<tr>
+<td>$A$</td>
+<td>Photosynthesis rate (net assimilation)</td>
+</tr>
+<tr>
+<td>$T$</td>
+<td>Temperature</td>
+</tr>
+<tr>
+<td>$K$</td>
+<td>Rate constant (e.g., for decomposition or respiration)</td>
+</tr>
+<tr>
+<td>$LAI$</td>
+<td>Leaf Area Index</td>
+</tr>
+<tr>
+<td>$PAR$</td>
+<td>Photosynthetically Active Radiation</td>
+</tr>
+<tr>
+<td>$GPP$</td>
+<td>Gross Primary Production</td>
+</tr>
+<tr>
+<td>$NPP$</td>
+<td>Net Primary Production</td>
+</tr>
+<tr>
+<td>$NEE$</td>
+<td>Net Ecosystem Exchange</td>
+</tr>
+<tr>
+<td>$VPD$</td>
+<td>Vapor Pressure Deficit</td>
+</tr>
+<tr>
+<td>$ET$</td>
+<td>Evapotranspiration</td>
+</tr>
+<tr>
+<td>$Q_{10}$</td>
+<td>Temperature sensitivity coefficient</td>
+</tr>
+<tr>
+<td>$f$</td>
+<td>The fraction of a pool or flux other than NPP</td>
+</tr>
+<tr>
+<td>$F$</td>
+<td>Flux of carbon, nitrogen, or water</td>
+</tr>
+<tr>
+<td>$D$</td>
+<td>Dependency or Damping Function</td>
+</tr>
+<tr>
+<td>$N$</td>
+<td>Nitrogen</td>
+</tr>
+<tr>
+<td>$C$</td>
+<td>Carbon</td>
+</tr>
+<tr>
+<td>$\alpha$</td>
+<td>The fraction of NPP allocated to a plant pool</td>
+</tr>
+<tr>
+<td>$k$</td>
+<td>Scaling factor</td>
+</tr>
+</tbody>
+</table>
+<h3 id="subscripts-temporal-spatial-or-contextual-identifiers">Subscripts (Temporal, Spatial, or Contextual Identifiers)</h3>
+<table>
+<thead>
+<tr>
+<th>Subscript</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$X_0$</td>
+<td>Initial value, default value, state at time zero</td>
+</tr>
+<tr>
+<td>$X_t$</td>
+<td>Value at time $t$</td>
+</tr>
+<tr>
+<td>$X_d$</td>
+<td>Daily value</td>
+</tr>
+<tr>
+<td>$X_\text{max}$</td>
+<td>Maximum value (e.g., temperature or rate)</td>
+</tr>
+<tr>
+<td>$X_\text{min}$</td>
+<td>Minimum value (e.g., temperature or rate)</td>
+</tr>
+<tr>
+<td>$X_\text{opt}$</td>
+<td>Optimal value (e.g., temperature or rate)</td>
+</tr>
+<tr>
+<td>$X_\text{avg}$</td>
+<td>Average value (e.g., over a timestep or spatial area)</td>
+</tr>
+<tr>
+<td>$X_\text{leaf}$</td>
+<td>leaf pools or fluxes</td>
+</tr>
+<tr>
+<td>$X_\text{wood}$</td>
+<td>wood pools or fluxes</td>
+</tr>
+<tr>
+<td>$X_\text{root}$</td>
+<td>root pool</td>
+</tr>
+<tr>
+<td>$X_\text{fine root}$</td>
+<td>fine root pool</td>
+</tr>
+<tr>
+<td>$X_\text{coarse root}$</td>
+<td>coarse root pool</td>
+</tr>
+<tr>
+<td>$X_\text{soil}$</td>
+<td>soil pools or processes</td>
+</tr>
+<tr>
+<td>$X_\text{litter}$</td>
+<td>litter pools or processes</td>
+</tr>
+<tr>
+<td>$X_\text{veg}$</td>
+<td>vegetation processes (general)</td>
+</tr>
+<tr>
+<td>$X_\text{resp}$</td>
+<td>respiration processes</td>
+</tr>
+<tr>
+<td>$X_\text{dec}$</td>
+<td>decomposition processes</td>
+</tr>
+<tr>
+<td>$X_\text{vol}$</td>
+<td>volatilization processes</td>
+</tr>
+<tr>
+<td>$X_\text{VPD}$</td>
+<td>vapor pressure deficit</td>
+</tr>
+<tr>
+<td>$X_\text{org}$</td>
+<td>organic forms</td>
+</tr>
+<tr>
+<td>$X_\text{mineral}$</td>
+<td>mineral forms</td>
+</tr>
+<tr>
+<td>$X_{\text{anaer}}$</td>
+<td>anaerobic soil conditions</td>
+</tr>
+</tbody>
+</table>
+<p>Subscripts may be used in combination, e.g. $X_{\text{soil,mineral},0}$.</p>
+<h2 id="run-time-parameters">Run-time Parameters</h2>
+<p>Run-time parameters can change from one run to the next, or when the model is stopped and restarted. These include initial state values and parameters related to plant physiology, soil physiology, and biogeochemical cycling.</p>
+<h3 id="initial-state-values">Initial state values</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>$C_{\text{wood},0}$</td>
+<td>plantWoodInit</td>
+<td>Initial wood carbon</td>
+<td>$\text{g C} \cdot \text{m}^{-2} \text{ ground area}$</td>
+<td>above-ground + roots</td>
+</tr>
+<tr>
+<td>2</td>
+<td>$LAI_0$</td>
+<td>laiInit</td>
+<td>Initial leaf area</td>
+<td>m^2 leaves * m^-2 ground area</td>
+<td>multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$</td>
+</tr>
+<tr>
+<td>3</td>
+<td>$C_{\text{litter},0}$</td>
+<td>litterInit</td>
+<td>Initial litter carbon</td>
+<td>$\text{g C} \cdot \text{m}^{-2} \text{ ground area}$</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>$C_{\text{soil},0}$</td>
+<td>soilInit</td>
+<td>Initial soil carbon</td>
+<td>$\text{g C} \cdot \text{m}^{-2} \text{ ground area}$</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>$W_{\text{litter},0}$</td>
+<td>litterWFracInit</td>
+<td></td>
+<td>unitless</td>
+<td>fraction of litterWHC</td>
+</tr>
+<tr>
+<td>6</td>
+<td>$W_{\text{soil},0}$</td>
+<td>soilWFracInit</td>
+<td></td>
+<td>unitless</td>
+<td>fraction of soilWHC</td>
+</tr>
+<tr>
+<td></td>
+<td>$N_{\text{soil},0}$</td>
+<td></td>
+<td>Initial soil organic nitrogen content</td>
+<td>g N m$^{-2}$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${CH_4}_{\text{soil},0}$</td>
+<td></td>
+<td>Initial methane concentration in the soil</td>
+<td>g C m$^{-2}$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${N_2O}_{\text{soil},0}$</td>
+<td></td>
+<td>Nitrous oxide concentration in the soil</td>
+<td>g N m$^{-2}$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>$f_{\text{fine root},0}$</td>
+<td>fineRootFrac</td>
+<td>Fraction of <code>plantWoodInit</code> allocated to initial fine root carbon pool</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>$f_{\text{coarse root},0}$</td>
+<td>coarseRootFrac</td>
+<td>Fraction of <code>plantWoodInit</code> allocated to initial coarse root carbon pool</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<!--not used in CCMMF
+
+| 7 |                                          | snowInit        | Initial snow water                        | cm water equiv.                |                                                   |
+|   |                                          | microbeInit     |                                           |                                |                                                   |
+
+-->
+
+<!--if separating N_min into NH4 and NO3
+
+### Initial state values 
+
+|   | Symbol                                   | Parameter Name  | Definition                                | Units                          | notes                                             |
+| - | ---------------------------------------- | --------------- | ----------------------------------------- | ------------------------------ | ------------------------------------------------- |
+|   | ${NH_4}_{\text{soil},0}$                         |                 | Initial soil ammonium content             | g N m$^{-2}$                 |                                                   |
+|   | ${NO_3}_{\text{soil},0}$                         |                 | Initial soil nitrate content              | g N m$^{-2}$                 |                                                   |
+
+-->
+
+<h3 id="litter-quality-parameters">Litter Quality Parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Name</th>
+<th>Description</th>
+<th>Units</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>$CN_{\textrm{litter}}$</td>
+<td></td>
+<td>Carbon to Nitrogen ratio of litter</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>$CN_{\textrm{wood}}$</td>
+<td></td>
+<td>Carbon to Nitrogen ratio of wood</td>
+<td></td>
+<td>CN_coarse_root = CN_wood</td>
+</tr>
+<tr>
+<td></td>
+<td>$CN_{\textrm{leaf}}$</td>
+<td></td>
+<td>Carbon to Nitrogen ratio of leaves</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>$CN_{\textrm{fine root}}$</td>
+<td></td>
+<td>Carbon to Nitrogen ratio of fine roots</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>$CN_{\textrm{coarse root}}$</td>
+<td></td>
+<td>Carbon to Nitrogen ratio of coarse roots</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>$k_\textit{CN}$</td>
+<td></td>
+<td>Decomposition CN scaling parameter</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="photosynthesis-parameters">Photosynthesis parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>$A_{\text{max}}$</td>
+<td>aMax</td>
+<td>Maximum net CO2 assimilation rate</td>
+<td>$\text{nmol CO}_2 \cdot \text{g}^{-1} \cdot \text{leaf} \cdot \text{s}^{-1}$</td>
+<td>assuming max. possible PAR, all intercepted, no temp, water or VPD stress</td>
+</tr>
+<tr>
+<td>9</td>
+<td>$f_{A_{\text{max},d}}$</td>
+<td>aMaxFrac</td>
+<td>avg. daily aMax as fraction of instantaneous</td>
+<td>fraction</td>
+<td>Avg. daily max photosynthesis as fraction of $A_{\text{max}}$</td>
+</tr>
+<tr>
+<td>10</td>
+<td>$R_\text{leaf,opt}$</td>
+<td>baseFolRespFrac</td>
+<td>basal Foliar maintenance respiration as fraction of $A_{\text{max}}$</td>
+<td>fraction</td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>$T_{\text{min}}$</td>
+<td>psnTMin</td>
+<td>Minimum temperature at which net photosynthesis occurs</td>
+<td>$^{\circ}\text{C}$</td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td>$T_{\text{opt}}$</td>
+<td>psnTOpt</td>
+<td>Optimum temperature at which net photosynthesis occurs</td>
+<td>$^{\circ}\text{C}$</td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>$K_\text{VPD}$</td>
+<td>dVpdSlope</td>
+<td>Slope of VPD–photosynthesis relationship</td>
+<td>$kPa^{-1}$</td>
+<td>dVpd = 1 - dVpdSlope * vpd^dVpdExp</td>
+</tr>
+<tr>
+<td>14</td>
+<td>$K_{\text{VPD}},{\text{exp}}$</td>
+<td>dVpdExp</td>
+<td>Exponent used to calculate VPD effect on Psn</td>
+<td>dimensionless</td>
+<td>dVpd = 1 - dVpdSlope * vpd^dVpdExp</td>
+</tr>
+<tr>
+<td>15</td>
+<td>$\text{PAR}_{1/2}$</td>
+<td>halfSatPar</td>
+<td>Half saturation point of PAR–photosynthesis relationship</td>
+<td>$m^{-2}$\ ground area $\cdot$ day$^{-1}$</td>
+<td>PAR at which photosynthesis occurs at 1/2 theoretical maximum</td>
+</tr>
+<tr>
+<td>16</td>
+<td>$k$</td>
+<td>attenuation</td>
+<td>Canopy PAR extinction coefficient</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phenology-related-parameters">Phenology-related parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>17</td>
+<td>$D_{\text{on}}$</td>
+<td>leafOnDay</td>
+<td>Day of year when leaves appear</td>
+<td>day of year</td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td></td>
+<td>gddLeafOn</td>
+<td>with gdd-based phenology, gdd threshold for leaf appearance</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>19</td>
+<td></td>
+<td>soilTempLeafOn</td>
+<td>with soil temp-based phenology, soil temp threshold for leaf appearance</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>20</td>
+<td>$D_{\text{off}}$</td>
+<td>leafOffDay</td>
+<td>Day of year for leaf drop</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>21</td>
+<td></td>
+<td>leafGrowth</td>
+<td>additional leaf growth at start of growing season</td>
+<td>$\text{g C} \cdot \text{m}^{-2} \text{ ground}$</td>
+<td></td>
+</tr>
+<tr>
+<td>22</td>
+<td></td>
+<td>fracLeafFall</td>
+<td>additional fraction of leaves that fall at end of growing season</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>$\alpha_\text{leaf}$</td>
+<td>leafAllocation</td>
+<td>fraction of NPP allocated to leaf growth</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>$K_{leaf}$</td>
+<td>leafTurnoverRate</td>
+<td>average turnover rate of leaves</td>
+<td>fraction per day</td>
+<td>read in as per-year rate</td>
+</tr>
+<tr>
+<td></td>
+<td>$L_{\text{max}}$</td>
+<td></td>
+<td>Maximum leaf area index obtained</td>
+<td>$\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$</td>
+<td>? from Braswell et al 2005; can't find in code</td>
+</tr>
+</tbody>
+</table>
+<h3 id="allocation-parameters">Allocation parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>64</td>
+<td></td>
+<td>fineRootFrac</td>
+<td>fraction of wood carbon allocated to fine root</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>65</td>
+<td></td>
+<td>coarseRootFrac</td>
+<td>fraction of wood carbon that is coarse root</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>66</td>
+<td>$\alpha_\text{fine root}$</td>
+<td>fineRootAllocation</td>
+<td>fraction of NPP allocated to fine roots</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>67</td>
+<td>$\alpha_\text{wood}$</td>
+<td>woodAllocation</td>
+<td>fraction of NPP allocated to wood</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<!--| 68 |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
+| 69 |                           | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
+-->
+
+<h3 id="autotrophic-respiration-parameters">Autotrophic respiration parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>25</td>
+<td>$R_{\text{a,wood},0}$</td>
+<td>baseVegResp</td>
+<td>Wood maintenance respiration rate at $0^\circ C$</td>
+<td>g C respired * g$^{-1}$ plant C * day$^{-1}$</td>
+<td>read in as per-year rate only counts plant wood C; leaves handled elsewhere (both above and below-ground: assumed for now to have same resp. rate)</td>
+</tr>
+<tr>
+<td>26</td>
+<td>$Q_{10v}$</td>
+<td>vegRespQ10</td>
+<td>Vegetation respiration Q10</td>
+<td></td>
+<td>Scalar determining effect of temp on veg. resp.</td>
+</tr>
+<tr>
+<td>27</td>
+<td></td>
+<td>growthRespFrac</td>
+<td>growth resp. as fraction of ($GPP - R_\text{a,wood} - R_\text{a,leaf}$)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>28</td>
+<td></td>
+<td>frozenSoilFolREff</td>
+<td>amount that foliar resp. is shutdown if soil is frozen</td>
+<td></td>
+<td>0 = full shutdown, 1 = no shutdown</td>
+</tr>
+<tr>
+<td>29</td>
+<td></td>
+<td>frozenSoilThreshold</td>
+<td>soil temperature below which frozenSoilFolREff and frozenSoilEff kick in</td>
+<td>°C</td>
+<td></td>
+</tr>
+<tr>
+<td>72</td>
+<td></td>
+<td>baseFineRootResp</td>
+<td>base respiration rate of fine roots</td>
+<td>$\text{y}^{-1}$</td>
+<td>per year rate</td>
+</tr>
+<tr>
+<td>73</td>
+<td></td>
+<td>baseCoarseRootResp</td>
+<td>base respiration rate of coarse roots</td>
+<td>$\text{y}^{-1}$</td>
+<td>per year rate</td>
+</tr>
+</tbody>
+</table>
+<h3 id="soil-respiration-parameters">Soil respiration parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>30</td>
+<td>$K_\text{litter}$</td>
+<td>litterBreakdownRate</td>
+<td>rate at which litter is converted to soil / respired at 0°C and max soil moisture</td>
+<td>g C broken down * g^-1 litter C * day^-1</td>
+<td>read in as per-year rate</td>
+</tr>
+<tr>
+<td>31</td>
+<td></td>
+<td>fracLitterRespired</td>
+<td>of the litter broken down, fraction respired (the rest is transferred to soil pool)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>32</td>
+<td>$K_{dec}$</td>
+<td>baseSoilResp</td>
+<td>Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil</td>
+<td>g C respired * g$^{-1}$ soil C * day$^{-1}$</td>
+<td>read in as per-year rate</td>
+</tr>
+<tr>
+<td>33</td>
+<td></td>
+<td>baseSoilRespCold</td>
+<td>soil respiration at 0°C and max soil moisture when tsoil &lt; coldSoilThreshold</td>
+<td>g C respired * g$^{-1}$ soil C * day$^{-1}$</td>
+<td>read in as per-year rate</td>
+</tr>
+<tr>
+<td>34</td>
+<td>$Q_{10s}$</td>
+<td>soilRespQ10</td>
+<td>Soil respiration Q10</td>
+<td></td>
+<td>scalar determining effect of temp on soil respiration</td>
+</tr>
+<tr>
+<td>35</td>
+<td></td>
+<td>soilRespQ10Cold</td>
+<td>scalar determining effect of temp on soil resp. when tsoil &lt; coldSoilThreshold</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>36</td>
+<td></td>
+<td>coldSoilThreshold</td>
+<td>temp. at which use baseSoilRespCold and soilRespQ10Cold</td>
+<td>°C</td>
+<td>Not used if SEASONAL_R_SOIL is 0</td>
+</tr>
+<tr>
+<td>37</td>
+<td></td>
+<td>E0</td>
+<td>E0 in Lloyd-Taylor soil respiration function</td>
+<td></td>
+<td>Not used if LLOYD_TAYLOR is 0</td>
+</tr>
+<tr>
+<td>38</td>
+<td></td>
+<td>T0</td>
+<td>T0 in Lloyd-Taylor soil respiration function</td>
+<td></td>
+<td>Not used if LLOYD_TAYLOR is 0</td>
+</tr>
+<tr>
+<td>39</td>
+<td></td>
+<td>soilRespMoistEffect</td>
+<td>scalar determining effect of moisture on soil resp.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>baseMicrobeResp</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>$R_{dec}$: Rate of decomposition $(\text{day}^{-1})$ </li>
+<li>$Q_{10dec}$: Temperature coefficient for $R_{dec}$ (unitless)</li>
+</ul>
+<h3 id="nitrogen-cycle-parameters">Nitrogen Cycle Parameters</h3>
+<!--
+- $K_{nitr}$: Rate constant for nitrification (day$^{-1}$)
+- $K_{denitr}$: Rate constant for denitrification (day$^{-1}$)
+-->
+
+<ul>
+<li>$K_{n,vol}$: Rate constant for volatilization (day-1)</li>
+<li>$f_{N2O_{vol}}$: Fraction of volatilization leading to N2O production</li>
+<li>$R_{min}$: Rate of mineralization (day-1)</li>
+<li>$I_\text{N limit}$: Indicator for nitrogen limitation</li>
+</ul>
+<!--- $f_{N2O_{nitr}}$: Fraction of nitrification leading to N$_2$O production
+- $f_{N2O_{denitr}}$: Fraction of denitrification leading to N$_2$O production
+-->
+
+<!--
+- $R_{nitr}$: Rate of nitrification (day$^{-1}$)
+- $R_{denitr}$: Rate of denitrification (day$^{-1}$)
+- $Q_{10nitr}$: Temperature coefficient for $R_{nitr}$ (unitless)
+- $Q_{10denitr}$: Temperature coefficient for $R_{denitr}$ (unitless)
+-->
+
+<h3 id="methane-parameters">Methane parameters</h3>
+<ul>
+<li>$R_{meth}$: Rate of methane production $(\text{day}^{-1})$</li>
+<li>$K_{meth}$: Rate constant for methane production under anaerobic conditions $(\text{day}^{-1})$</li>
+<li>$K_{methox}$: Rate constant, methane oxidation $(\text{day}^{-1})$</li>
+</ul>
+<h3 id="moisture-related-parameters">Moisture-related parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>40</td>
+<td>$f_{\text{trans,avail}}$</td>
+<td>waterRemoveFrac</td>
+<td>fraction of plant available soil water which can be removed in one day by transpiration without water stress occurring</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>new</td>
+<td>$f_\text{drain,0}$</td>
+<td>waterDrainFrac</td>
+<td>fraction of plant available soil water which can be removed in one day by drainage</td>
+<td>$d^{-1}$</td>
+<td>default 1 for well drained soils</td>
+</tr>
+<tr>
+<td>41</td>
+<td></td>
+<td>frozenSoilEff</td>
+<td>fraction of water that is available if soil is frozen (0 = none available, 1 = all still avail.)</td>
+<td></td>
+<td>if frozenSoilEff = 0, then shut down psn. even if WATER_PSN = 0, if soil is frozen (if frozenSoilEff &gt; 0, it has no effect if WATER_PSN = 0)</td>
+</tr>
+<tr>
+<td>42</td>
+<td></td>
+<td>wueConst</td>
+<td>water use efficiency constant</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>43</td>
+<td></td>
+<td>litterWHC</td>
+<td>litter (evaporative layer) water holding capacity</td>
+<td>cm</td>
+<td></td>
+</tr>
+<tr>
+<td>44</td>
+<td></td>
+<td>soilWHC</td>
+<td>soil (transpiration layer) water holding capacity</td>
+<td>cm</td>
+<td></td>
+</tr>
+<tr>
+<td>45</td>
+<td>$f_\text{intercept}</td>
+<td>immedEvapFrac</td>
+<td>fraction of rain that is immediately intercepted &amp; evaporated</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>46</td>
+<td></td>
+<td>fastFlowFrac</td>
+<td>fraction of water entering soil that goes directly to drainage</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>$k_\text{SOM,drain}$</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>47</td>
+<td></td>
+<td>snowMelt</td>
+<td>rate at which snow melts</td>
+<td>cm water equivavlent per degree Celsius per day</td>
+<td></td>
+</tr>
+<tr>
+<td>48</td>
+<td></td>
+<td>litWaterDrainRate</td>
+<td>rate at which litter rains into lower layer when litter layer fully moisture-saturated</td>
+<td>cm water/day</td>
+<td></td>
+</tr>
+<tr>
+<td>49</td>
+<td></td>
+<td>rdConst</td>
+<td>scalar determining amount of aerodynamic resistance</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>50</td>
+<td></td>
+<td>rSoilConst1</td>
+<td></td>
+<td></td>
+<td>soil resistance = e^(rSoilConst1 - rSoilConst2 * W1) , where W1 = (litterWater/litterWHC)</td>
+</tr>
+<tr>
+<td>51</td>
+<td></td>
+<td>rSoilConst2</td>
+<td></td>
+<td></td>
+<td>soil resistance = e^(rSoilConst1 - rSoilConst2 * W1) , where W1 = (litterWater/litterWHC)</td>
+</tr>
+<tr>
+<td>52</td>
+<td></td>
+<td>m_ballBerry</td>
+<td>slope for the Ball Berry relationship</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tree-physiological-parameters">Tree physiological parameters</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>53</td>
+<td>$SLW$</td>
+<td>leafCSpWt</td>
+<td></td>
+<td>g C * m^-2 leaf area</td>
+<td></td>
+</tr>
+<tr>
+<td>54</td>
+<td>$C_{frac}$</td>
+<td>cFracLeaf</td>
+<td></td>
+<td>g leaf C * g^-1 leaf</td>
+<td></td>
+</tr>
+<tr>
+<td>55</td>
+<td>$K_\text{wood}$</td>
+<td>woodTurnoverRate</td>
+<td>average turnover rate of woody plant C</td>
+<td>$\text{y}^{-1}$</td>
+<td>read in as per-year rate; leaf loss handled separately</td>
+</tr>
+<tr>
+<td>70</td>
+<td>$K_\text{fine root}$</td>
+<td>fineRootTurnoverRate</td>
+<td>turnover of fine roots</td>
+<td>$\text{y}^{-1}$</td>
+<td>per year rate</td>
+</tr>
+<tr>
+<td>71</td>
+<td>$K_\text{coarse root}$</td>
+<td>coarseRootTurnoverRate</td>
+<td>turnover of coarse roots</td>
+<td>yr^-1</td>
+<td>per year rate</td>
+</tr>
+</tbody>
+</table>
+<!--
+### Quality model parameters
+
+
+|    |  Symbol           | Parameter Name         | Definition                                         | Units                 | notes                         |
+| -- | ----------------- |  --------------------- | -------------------------------------------------- | --------------------- | ----------------------------- |
+| 56 |                   | qualityLeaf            | value for leaf litter quality                      |                       |                               |
+| 57 |                   | qualityWood            | value for wood litter quality                      |                       |                               |
+| 58 |                   | efficiency             | conversion efficiency of ingested carbon           |                       | Microbe & Stoichiometry model |
+| 59 |                   | maxIngestionRate       | maximum ingestion rate of the microbe              | hr-1                  | Microbe & Stoichiometry model |
+| 60 |                   | halfSatIngestion       | half saturation ingestion rate of microbe          | mg C g-1 soil         | Microbe & Stoichiometry model |
+| 61 |                   | totNitrogen            | Percentage nitrogen in soil                        |                       | Microbe & Stoichiometry model |
+| 62 |                   | microbeNC              | microbe N:C ratio                                  | mg N / mg C           | Microbe & Stoichiometry model |
+| 63 |                   | microbeInit            |                                                    | mg C / g soil microbe | initial carbon amount         |-->
+
+<!-- Not used in CCMMF (two Q10s , soil and veg); no microbes
+| 74 |                   | fineRootQ10            | Q10 of fine roots                                  |                       |                               |
+| 75 |                   | coarseRootQ10          | Q10 of coarse roots                                |                       |                               |
+| 76 |                   | baseMicrobeResp        | base respiration rate of microbes                  |                       |                               |
+| 77 |                   | microbeQ10             | Q10 of microbes                                |                       |                               |
+| 78 |                   | microbePulseEff        | fraction of exudates that microbes immediately use |                       | Pulsing parameters            |
+
+-->
+
+<h2 id="compile-time-parameters">Compile-time parameters</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter 0</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CSV_O</td>
+<td>0</td>
+<td>output .out file as a CSV file</td>
+</tr>
+<tr>
+<td>ALTERNATIVE_TRANS 0</td>
+<td>0</td>
+<td>do we want to implement alternative transpiration?</td>
+</tr>
+<tr>
+<td>BALL_BERRY 0</td>
+<td>0</td>
+<td>implement a Ball Berry submodel to calculate gs from RH, CO2 and A</td>
+</tr>
+<tr>
+<td>PENMAN_MONTEITH_TRANS 0</td>
+<td>0</td>
+<td>implement a transpiration calculation based on the Penman-Monteith Equation</td>
+</tr>
+<tr>
+<td>GROWTH_RESP 0</td>
+<td>0</td>
+<td>explicitly model growth resp., rather than including with maint. resp.</td>
+</tr>
+<tr>
+<td>LLOYD_TAYLOR 0</td>
+<td>0</td>
+<td>use Lloyd-Taylor model for soil respiration, in which temperature sensitivity decreases at higher temperatures?</td>
+</tr>
+<tr>
+<td>SEASONAL_R_SOIL 0 &amp;&amp; !LLOYD_TAYLOR</td>
+<td>0</td>
+<td>use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil &lt; (some threshold)?</td>
+</tr>
+<tr>
+<td>WATER_PSN 1</td>
+<td>1</td>
+<td>does soil moisture affect photosynthesis?</td>
+</tr>
+<tr>
+<td>WATER_HRESP 1</td>
+<td>1</td>
+<td>does soil moisture affect heterotrophic respiration?</td>
+</tr>
+<tr>
+<td>DAYCENT_WATER_HRESP 0 &amp;&amp; WATER_HRESP</td>
+<td>0</td>
+<td>use DAYCENT soil moisture function?</td>
+</tr>
+<tr>
+<td>MODEL_WATER 1</td>
+<td>1</td>
+<td>do we model soil water (and ignore soilWetness)?</td>
+</tr>
+<tr>
+<td>COMPLEX_WATER 1 &amp;&amp; MODEL_WATER</td>
+<td>1</td>
+<td>do we use a more complex water submodel? (model evaporation as well as transpiration)</td>
+</tr>
+<tr>
+<td>LITTER_WATER 0 &amp;&amp; (COMPLEX_WATER)</td>
+<td>0</td>
+<td>do we have a separate litter water layer, used for evaporation?</td>
+</tr>
+<tr>
+<td>LITTER_WATER_DRAINAGE 1 &amp;&amp; (LITTER_WATER)</td>
+<td>0</td>
+<td>does water from the top layer drain down into bottom layer even if top layer not overflowing?</td>
+</tr>
+<tr>
+<td>SNOW (1 || (COMPLEX_WATER)) &amp;&amp; MODEL_WATER</td>
+<td>1</td>
+<td>keep track of snowpack, rather than assuming all precip. is liquid</td>
+</tr>
+<tr>
+<td>GDD 0</td>
+<td>0</td>
+<td>use GDD to determine leaf growth? (note: mutually exclusive with SOIL_PHENOL)</td>
+</tr>
+<tr>
+<td>SOIL_PHENOL 0 &amp;&amp; !GDD</td>
+<td>0</td>
+<td>use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)</td>
+</tr>
+<tr>
+<td>LITTER_POOL 0</td>
+<td>0</td>
+<td>have extra litter pool, in addition to soil c pool</td>
+</tr>
+<tr>
+<td>SOIL_MULTIPOOL 0 &amp;&amp; !LITTER_POOL</td>
+<td>0</td>
+<td>do we have a multipool approach to model soils?</td>
+</tr>
+<tr>
+<td>NUMBER_SOIL_CARBON_POOLS 3</td>
+<td>3</td>
+<td>number of pools we want to have. Equal to 1 if SOIL_MULTIPOOL is 0</td>
+</tr>
+<tr>
+<td>SOIL_QUALITY 0 &amp;&amp; SOIL_MULTIPOOL</td>
+<td>0</td>
+<td>do we have a soil quality submodel?</td>
+</tr>
+<tr>
+<td>MICROBES 0 &amp;&amp; !SOIL_MULTIPOOL</td>
+<td>0</td>
+<td>do we utilize microbes. This will only be an option if SOIL_MULTIPOOL is 0 and MICROBES is 1</td>
+</tr>
+<tr>
+<td>STOICHIOMETRY 0 &amp;&amp; MICROBES</td>
+<td>0</td>
+<td>do we utilize stoichometric considerations for the microbial pool?</td>
+</tr>
+<tr>
+<td>ROOTS 0</td>
+<td>0</td>
+<td>do we model root dynamics? If no, roots are part of wood pool. If yes, split into coarse and fine roots</td>
+</tr>
+<tr>
+<td>MODIS 0</td>
+<td>0</td>
+<td>do we use modis FPAR data to constrain GPP?</td>
+</tr>
+<tr>
+<td>C_WEIGHT 12.0</td>
+<td>12</td>
+<td>molecular weight of carbon</td>
+</tr>
+<tr>
+<td>MEAN_NPP_DAYS 5</td>
+<td>5</td>
+<td>over how many days do we keep the running mean</td>
+</tr>
+<tr>
+<td>MEAN_NPP_MAX_ENTRIES</td>
+<td>MEAN_NPP_DAYS*50</td>
+<td>assume that the most pts we can have is two per hour</td>
+</tr>
+<tr>
+<td>MEAN_GPP_SOIL_DAYS 5</td>
+<td>5</td>
+<td>over how many days do we keep the running mean</td>
+</tr>
+<tr>
+<td>MEAN_GPP_SOIL_MAX_ENTRIES</td>
+<td>MEAN_GPP_SOIL_DAYS*50</td>
+<td>assume that the most pts we can have is one per hour</td>
+</tr>
+<tr>
+<td>LAMBDA</td>
+<td>2501000</td>
+<td>latent heat of vaporization (J/kg)</td>
+</tr>
+<tr>
+<td>LAMBDA_S</td>
+<td>2835000</td>
+<td>latent heat of sublimation (J/kg)</td>
+</tr>
+<tr>
+<td>RHO</td>
+<td>1.3</td>
+<td>air density (kg/m^3)</td>
+</tr>
+<tr>
+<td>CP</td>
+<td>1005.</td>
+<td>specific heat of air (J/(kg K))</td>
+</tr>
+<tr>
+<td>GAMMA</td>
+<td>66</td>
+<td>psychometric constant (Pa/K)</td>
+</tr>
+<tr>
+<td>E_STAR_SNOW</td>
+<td>0.6</td>
+<td>approximate saturation vapor pressure at 0°C (kPa)</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="drivers">Drivers</h2>
+<h3 id="climate">Climate</h3>
+<p>For each step of the model, for each location, the following inputs are needed. These are provided in a file named <code>&lt;sitename&gt;.clim</code> with the following columns:</p>
+<table>
+<thead>
+<tr>
+<th>col</th>
+<th>parameter</th>
+<th>description</th>
+<th>units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>loc</td>
+<td>spatial location index</td>
+<td></td>
+<td>maps to param-spatial file, can be 0 for a single site, as when used by PEcAn</td>
+</tr>
+<tr>
+<td>2</td>
+<td>year</td>
+<td>year of start of this timestep</td>
+<td></td>
+<td>integer, e.g. 2010</td>
+</tr>
+<tr>
+<td>3</td>
+<td>day</td>
+<td>day of start of this timestep</td>
+<td></td>
+<td>integer where 1 = Jan 1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>time</td>
+<td>time of start of this timestep</td>
+<td>hours after midnight</td>
+<td>e.g. noon = 12.0, midnight = 0.0, can be a fraction</td>
+</tr>
+<tr>
+<td>5</td>
+<td>length</td>
+<td>length of this timestep</td>
+<td>days</td>
+<td>variable-length timesteps allowed, typically not used</td>
+</tr>
+<tr>
+<td>6</td>
+<td>tair</td>
+<td>avg. air temp for this time step</td>
+<td>degrees Celsius</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>tsoil</td>
+<td>average soil temperature for this time step</td>
+<td>degrees Celsius</td>
+<td>can be estimated from Tair</td>
+</tr>
+<tr>
+<td>8</td>
+<td>par</td>
+<td>average photosynthetically active radiation (PAR) for this time step</td>
+<td>$\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$</td>
+<td>input is in Einsteins * m^-2 ground area, summed over entire time step</td>
+</tr>
+<tr>
+<td>9</td>
+<td>precip</td>
+<td>total precip. for this time step</td>
+<td>cm</td>
+<td>input is in mm; water equivilant - either rain or snow</td>
+</tr>
+<tr>
+<td>10</td>
+<td>vpd</td>
+<td>average vapor pressure deficit</td>
+<td>kPa</td>
+<td>input is in Pa, can be calculated from air temperature and relative humidity.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>vpdSoil</td>
+<td>average vapor pressure deficit between soil and air</td>
+<td>kPa</td>
+<td>input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair</td>
+</tr>
+<tr>
+<td>12</td>
+<td>vPress</td>
+<td>average vapor pressure in canopy airspace</td>
+<td>kPa</td>
+<td>input is in Pa</td>
+</tr>
+<tr>
+<td>13</td>
+<td>wspd</td>
+<td>avg. wind speed</td>
+<td>m/s</td>
+<td></td>
+</tr>
+<tr>
+<td>14</td>
+<td>soilWetness</td>
+<td>fractional soil wetness</td>
+<td>unitless (0-1)</td>
+<td>$f_\text{WHC}$; Used if <code>MODEL_WATER=0</code>; if <code>MODEL_WATER=1</code>, soil wetness is simulated</td>
+</tr>
+</tbody>
+</table>
+<h4 id="examples-of-climate-files">Examples of climate files:</h4>
+<p>Column names are not used, but are:</p>
+<pre><code>loc year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   soilWetness
+</code></pre>
+<p><strong>Half-hour time step</strong></p>
+<pre><code>0   1998 305  0.00    -1800   1.9000   1.2719   0.0000   0.0000 109.5364  77.5454 726.6196   1.6300   0.0000
+0   1998 305  0.50    -1800   1.9000   1.1832   0.0000   0.0000 109.5364  73.1254 726.6196   1.6300   0.0000
+0   1998 305  1.00    -1800   2.0300   1.1171   0.0000   0.0000 110.4243  63.9567 732.5092   0.6800   0.0000
+0   1998 305  1.50    -1800   2.0300   1.0439   0.0000   0.0000 110.4243  60.3450 732.5092   0.6800   0.0000
+</code></pre>
+<p><strong>Variable time step</strong></p>
+<pre><code>0     1998 305  0.00  0.292 1.5  0.8   0.0000 0.0000 105.8 70.1    711.6  0.9200 0.0000
+0     1998 305  7.00  0.417 3.6  1.8   5.6016 0.0000 125.7 23.5    809.4  1.1270 0.0000
+0     1998 305 17.00  0.583 1.9  1.3   0.0000 0.0000 108.1 75.9    732.7  1.1350 0.0000
+0     1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690 0.0000
+</code></pre>
+<h3 id="agronomic-events">Agronomic Events</h3>
+<p>For managed ecosystems, the following inputs are provided in a file named <code>events.in</code> with the following columns:</p>
+<table>
+<thead>
+<tr>
+<th>col</th>
+<th>parameter</th>
+<th>description</th>
+<th>units</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>loc</td>
+<td>spatial location index</td>
+<td></td>
+<td>maps to param-spatial file</td>
+</tr>
+<tr>
+<td>2</td>
+<td>year</td>
+<td>year of start of this timestep</td>
+<td></td>
+<td>e.g. 2010</td>
+</tr>
+<tr>
+<td>3</td>
+<td>day</td>
+<td>day of start of this timestep</td>
+<td>Day of year</td>
+<td>1 = Jan 1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>event_type</td>
+<td>type of event</td>
+<td></td>
+<td>one of plant, harv, till, fert, irrig</td>
+</tr>
+<tr>
+<td>5...n</td>
+<td>event_param</td>
+<td>parameter associated with event</td>
+<td></td>
+<td>see table below</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Agronomic events are stored in events.in, one event per row</li>
+<li>Events in the file are sorted first by location, and then chronologically</li>
+<li>Events are specified by year and day (no hourly timestamp)</li>
+<li>It is assumed that there is one (or more) records in the climate file for each location/day that appears in the events file</li>
+<li>We will throw an error if we find an event with no corresponding climate record</li>
+<li>Events are processed with the first climate record that occurs for the relevant location/day as an instantaneous one-time change</li>
+<li>We may need events with duration later, spec TBD. Tillage is likely in this bucket.</li>
+<li>The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th style="text-align: center;">col</th>
+<th style="text-align: center;">req?</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>amount</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">Y</td>
+<td>Amount added (cm/d)</td>
+</tr>
+<tr>
+<td>method</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">Y</td>
+<td>0=canopy<br>1=soil<br>2=flood (placeholder)</td>
+</tr>
+</tbody>
+</table>
+<p>Model representation: an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.</p>
+<p>Specifically: 
+- amount is listed as cm/d, but as events are specified per-day, this is treated as <code>cm</code> of water added on that day
+- For method=soil, this amount of water is added directly to the <code>soilWater</code> state variable 
+- For method=canopy, a fraction of the irrigation water (determined by input param <code>immedEvapFrac</code>) is added to the flux state variable <code>immedEvap</code>, with the remainder going to <code>soilWater</code>.
+- Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.</p>
+<p>Notes:
+- irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.</p>
+<h4 id="fertilization-events">Fertilization Events</h4>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th style="text-align: center;">col</th>
+<th style="text-align: center;">req?</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>org-N</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">Y</td>
+<td>g N / m2</td>
+</tr>
+<tr>
+<td>org-C</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">Y</td>
+<td>g C / m2</td>
+</tr>
+<tr>
+<td>min-N</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">Y</td>
+<td>g N / m2 (NH4+NO3 in one pool model; NH4 in two pool model)</td>
+</tr>
+<tr>
+<td>min-N2</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">Y*</td>
+<td>g N / m2 (*not unused in one pool model, NO3 in two pool model)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N or NH4.</li>
+<li>notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools </li>
+</ul>
+<h4 id="tillage-events">Tillage Events</h4>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th style="text-align: center;">col</th>
+<th style="text-align: center;">req?</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SOM decomposition modifier</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">Y</td>
+<td>% increase in $K_{dec}$</td>
+</tr>
+<tr>
+<td>litter decomposition modifier</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">Y</td>
+<td>% increase in $K_{lit}$</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>model representation:<ul>
+<li>increase k for one month, amount proportional to depth</li>
+<li>transfer litter C and N to soil pool</li>
+</ul>
+</li>
+<li>notes: could also alter bulk density and other soil properties</li>
+</ul>
+<h4 id="planting-events">Planting Events</h4>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th style="text-align: center;">col</th>
+<th style="text-align: center;">req?</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>leaf-C</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">Y</td>
+<td>C added to leaf pool (g C / m2)</td>
+</tr>
+<tr>
+<td>wood-C</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">Y</td>
+<td>C added to above-ground wood pool (g C / m2)</td>
+</tr>
+<tr>
+<td>fine-root-C</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">Y</td>
+<td>C added to fine root pool (g C / m2)</td>
+</tr>
+<tr>
+<td>coarse-root-C</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">Y</td>
+<td>C added to coarse root pool (g C / m2)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>model representation: </li>
+<li>Date of event is the date of emergence, not the date of actual planting </li>
+<li>Increases size of carbon pools by the amount of each respective parameter</li>
+<li>$N$ pools are calculated from $CN$ stoichiometric ratios.</li>
+<li>notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.</li>
+</ul>
+<h4 id="harvest-events">Harvest Events</h4>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th style="text-align: center;">col</th>
+<th style="text-align: center;">req?</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fraction of aboveground biomass removed</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">Y</td>
+<td></td>
+</tr>
+<tr>
+<td>fraction of belowground biomass removed</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">N</td>
+<td>default = 0</td>
+</tr>
+<tr>
+<td>fraction of aboveground biomass transferred to litter pool</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">N</td>
+<td>default = 1 - removed</td>
+</tr>
+<tr>
+<td>fraction of belowground biomass transferred to litter pool</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">N</td>
+<td>default = 1 - removed</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>model representation:</li>
+<li>biomass C and N pools are either removed or added to litter</li>
+<li>for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). </li>
+<li>for perennials, some biomass may remain (col 5 + col 7 &lt;= 1 and col 6 + col 8 &lt;= 1; remainder is living).</li>
+<li>root biomass is only removed for root crops</li>
+</ul>
+<h4 id="example-of-events-file">Example of events file:</h4>
+<pre><code>1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
+1  2022  40  fert   10 5 0 0     # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
+1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
+1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
+1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
+</code></pre>
+<h2 id="outputs">Outputs</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Symbol</th>
+<th>Parameter Name</th>
+<th>Definition</th>
+<th>Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td></td>
+<td>loc</td>
+<td>spatial location index</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td>year</td>
+<td>year of start of this timestep</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>day</td>
+<td>day of start of this timestep</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>time</td>
+<td>time of start of this timestep</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td>plantWoodC</td>
+<td>carbon in wood</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td>plantLeafC</td>
+<td>carbon in leaves</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>7</td>
+<td></td>
+<td>soil</td>
+<td>carbon in mineral soil</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>8</td>
+<td></td>
+<td>microbeC</td>
+<td>carbon in soil microbes</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>9</td>
+<td></td>
+<td>coarseRootC</td>
+<td>carbon in coarse roots</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>10</td>
+<td></td>
+<td>fineRootC</td>
+<td>carbon in fine roots</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>11</td>
+<td></td>
+<td>litter</td>
+<td>carbon in litter</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>12</td>
+<td></td>
+<td>litterWater</td>
+<td>moisture in litter layer</td>
+<td>cm</td>
+</tr>
+<tr>
+<td>13</td>
+<td></td>
+<td>soilWater</td>
+<td>moisture in soil</td>
+<td>cm</td>
+</tr>
+<tr>
+<td>14</td>
+<td>$f_\text{WHC}$</td>
+<td>soilWetnessFrac</td>
+<td>moisture in soil as fraction</td>
+<td></td>
+</tr>
+<tr>
+<td>15</td>
+<td></td>
+<td>snow</td>
+<td>snow water</td>
+<td>cm</td>
+</tr>
+<tr>
+<td>16</td>
+<td></td>
+<td>npp</td>
+<td>net primary production</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>17</td>
+<td></td>
+<td>nee</td>
+<td>net ecosystem production</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>18</td>
+<td></td>
+<td>cumNEE</td>
+<td>cumulative nee</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>19</td>
+<td>$GPP$</td>
+<td>gpp</td>
+<td>gross ecosystem production</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>20</td>
+<td>$R_{A,\text{above}}$</td>
+<td>rAboveground</td>
+<td>plant respiration above ground</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>21</td>
+<td>$R_H$</td>
+<td>rSoil</td>
+<td>soil respiration</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>22</td>
+<td>$R_{A\text{, root}}$</td>
+<td>rRoot</td>
+<td>root respiration</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>23</td>
+<td>$R$</td>
+<td>rtot</td>
+<td>total respiration</td>
+<td>g C/m$^2$</td>
+</tr>
+<tr>
+<td>24</td>
+<td></td>
+<td>fluxestranspiration</td>
+<td>transpiration</td>
+<td>cm</td>
+</tr>
+<tr>
+<td></td>
+<td>$F^N_\text{vol}$</td>
+<td>fluxesn2o</td>
+<td>Nitrous Oxide flux</td>
+<td>g N/m$^2$ / timestep</td>
+</tr>
+<tr>
+<td></td>
+<td>$F^C_{\text{CH}_4}$</td>
+<td>fluxesch4</td>
+<td>Methane Flux</td>
+<td>g C/m$^2$ / timestep</td>
+</tr>
+<tr>
+<td></td>
+<td>$F^N_\text{vol}$</td>
+<td>fluxesn2o</td>
+<td>Nitrous Oxide flux</td>
+<td>g N/m$^2$ / timestep</td>
+</tr>
+<tr>
+<td></td>
+<td>$F^C_{\text{CH}_4}$</td>
+<td>fluxesch4</td>
+<td>Methane Flux</td>
+<td>g C/m$^2$ / timestep</td>
+</tr>
+</tbody>
+</table>
+<!--
+
+|    | $F^C_\text{CH_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
+# unused content
+
+TODO: update and move the following terms used in model description to appropriate tables
+
+| Symbol          | Description  |
+|-----------------|-------------|
+| $F_{T,Q10}$ | Temperature dependence using Q10 relationship  |  
+| $F_{T,opt}$ | Temperature dependence based on optimal temperature |
+| $W_{\text{soil}}$ | Soil water content                                                   |
+| $W_{\text{WHC}}$ | Soil Water Holding Capacity                                           |
+| $f_{\text{anaer}}$ | Fraction of anaerobic soil                                           |
+| $R_{\text{mineralization,N}}$ | Rate of nitrogen mineralization                                 |
+| $R_{\text{leach,}N_{\text{mineral}}}$ | Rate of mineral nitrogen leaching                |
+| $R_{\text{vol,}N_{\text{mineral}}}$ | Rate of mineral nitrogen volatilization                  |
+| $R_{\text{fert,}N_{\text{mineral}}}$ | Rate of mineral nitrogen fertilization                   |
+| $R_{\text{fert,}N_{\text{org}}}$ | Rate of organic nitrogen fertilization input                    |
+| $R_{\text{meth}}$ | Rate of methane production                                           |
+| $R_{\text{methox}}$ | Rate of methane oxidation                                          |
+-->
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

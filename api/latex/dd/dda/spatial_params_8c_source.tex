@@ -1,0 +1,782 @@
+\doxysection{spatial\+Params.\+c}
+\label{spatial_params_8c_source}\index{spatialParams.c@{spatialParams.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ spatialParams:\ structure\ and\ functions\ to\ track\ and\ manipulate\ parameters}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ \ that\ may\ vary\ spatially}}
+\DoxyCodeLine{00003\ \textcolor{comment}{}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00005\ \textcolor{comment}{}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ \ Creation\ date:\ 8/13/04}}
+\DoxyCodeLine{00007\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}spatialParams.h"{}}\ \ \textcolor{comment}{//\ includes\ definition\ of\ SpatialParams\ structure,\ as\ well\ as\ OneSpatialParam\ structure}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Private/helper\ functions:\ not\ defined\ in\ spatialParams.h}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ return\ 1\ if\ all\ maxParameters\ parameters\ have\ been\ initialized,\ 0\ if\ not}}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{int}\ allParamsInitialized(SpatialParams\ *spatialParams)\ \{}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordflow}{if}\ (spatialParams-\/>numParameters\ ==\ spatialParams-\/>maxParameters)\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ all\ parameters\ have\ been\ initialized}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00023\ \ \ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00026\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ Set\ array[0..length-\/1]\ to\ all\ be\ equal\ to\ value}}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ setAll(\textcolor{keywordtype}{double}\ *array,\ \textcolor{keywordtype}{int}\ length,\ \textcolor{keywordtype}{double}\ value)\ \{}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ length;\ i++)\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ array[i]\ =\ value;}
+\DoxyCodeLine{00034\ \ \ \}}
+\DoxyCodeLine{00035\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ Checks\ to\ make\ sure\ that\ all\ parameters\ with\ isRequired=true\ have\ been\ read}}
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ If\ not,\ kills\ program}}
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ Writes\ out\ names\ of\ all\ parameters\ that\ weren't\ read\ (even\ if\ not\ required,}}
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ as\ a\ warning\ message)}}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ checkAllRead(SpatialParams\ *spatialParams)\ \{}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{int}\ okay;}
+\DoxyCodeLine{00044\ \ \ OneSpatialParam\ *param;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ okay\ =\ 1;\ \ \textcolor{comment}{//\ so\ far\ so\ good}}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ spatialParams-\/>numParameters;\ i++)\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ param\ =\ \&(spatialParams-\/>parameters[i]);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{if}\ (param-\/>value\ ==\ NULL)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (param-\/>isRequired)\ \{\ \ \textcolor{comment}{//\ should\ have\ been\ read\ but\ wasn't!}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ okay\ =\ 0;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ Didn't\ read\ required\ parameter\ \%s\(\backslash\)n"{}},\ param-\/>name);}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}WARNING:\ Didn't\ read\ parameter\ \%s\ (not\ flagged\ as\ required,\ so\ "{}}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}continuing)\(\backslash\)n"{}},}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ param-\/>name);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \textcolor{keywordflow}{if}\ (!okay)\ \{}
+\DoxyCodeLine{00062\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00063\ \ \ \}}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{/*\ If\ isSpatial\ =\ 0,\ return\ array[0]\ (ignore\ loc)}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ Otherwise,\ return\ array[loc]}}
+\DoxyCodeLine{00068\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{double}\ getPossiblySpatial(\textcolor{keywordtype}{double}\ *array,\ \textcolor{keywordtype}{int}\ loc,\ \textcolor{keywordtype}{int}\ isSpatial)\ \{}
+\DoxyCodeLine{00070\ \ \ \textcolor{keywordflow}{if}\ (isSpatial)\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{return}\ array[loc];}
+\DoxyCodeLine{00072\ \ \ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \textcolor{keywordflow}{return}\ array[0];}
+\DoxyCodeLine{00075\ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{/*\ If\ isSpatial\ =\ 0,\ set\ array[0]\ =\ value\ (ignore\ loc)}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ Otherwise,\ if\ loc\ =\ -\/1,\ set\ array[0..length-\/1]\ =\ value}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ Otherwise,\ set\ array[loc]\ =\ value}}
+\DoxyCodeLine{00080\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{void}\ setPossiblySpatial(\textcolor{keywordtype}{double}\ *array,\ \textcolor{keywordtype}{int}\ loc,\ \textcolor{keywordtype}{double}\ value,\ \textcolor{keywordtype}{int}\ isSpatial,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ length)\ \{}
+\DoxyCodeLine{00083\ \ \ \textcolor{keywordflow}{if}\ (isSpatial)\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ setAll(array,\ length,\ value);}
+\DoxyCodeLine{00086\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ array[loc]\ =\ value;}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ non-\/spatial}}
+\DoxyCodeLine{00091\ \ \ \ \ array[0]\ =\ value;}
+\DoxyCodeLine{00092\ \ \ \}}
+\DoxyCodeLine{00093\ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{comment}{/*\ Read\ array\ of\ spatial\ values\ from\ file,\ for\ a\ single\ parameter}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ \ \ Values\ are\ returned\ in\ the\ array\ spatialValues,\ which\ must\ be\ at\ least\ of}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ length\ numLocs\ spatialParamFile\ is\ the\ (already-\/open)\ file\ of\ spatial}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ parameters}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ -\/\ the\ file\ pointer\ should\ be\ pointing\ to\ the\ start\ of\ the\ line\ we\ want\ to}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ read\ pName\ gives\ the\ name\ of\ the\ parameter;\ we'll\ abort\ if\ the\ next\ parameter}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ does\ not\ have\ the\ name\ given\ by\ pName\ numLocs\ is\ the\ number\ of\ values\ to\ read}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{void}\ readSpatialValues(\textcolor{keywordtype}{double}\ *spatialValues,\ FILE\ *spatialParamFile,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ pName[PARAM\_MAXNAME],\ \textcolor{keywordtype}{int}\ numLocs)\ \{}
+\DoxyCodeLine{00105\ \ \ \textcolor{keywordtype}{char}\ pNameSpatial[PARAM\_MAXNAME];}
+\DoxyCodeLine{00106\ \ \ \textcolor{keywordtype}{int}\ status;}
+\DoxyCodeLine{00107\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \textcolor{comment}{//\ read\ name\ from\ spatialParamFile,\ make\ sure\ it's\ what\ we\ expect:}}
+\DoxyCodeLine{00110\ \ \ status\ =\ fscanf(spatialParamFile,\ \textcolor{stringliteral}{"{}\%s"{}},\ pNameSpatial);}
+\DoxyCodeLine{00111\ \ \ \textcolor{keywordflow}{if}\ (status\ ==\ EOF\ ||\ status\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ error\ reading}}
+\DoxyCodeLine{00112\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ trying\ to\ read\ \%s\ from\ spatialParamFile\(\backslash\)n"{}},\ pName);}
+\DoxyCodeLine{00113\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00114\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strcmpIgnoreCase(pName,\ pNameSpatial)\ !=\ 0)\ \{\ \ \textcolor{comment}{//\ compare,\ ignore}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ case}}
+\DoxyCodeLine{00116\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ read\ \%s\ from\ spatialParamFile,\ expected\ \%s\(\backslash\)n"{}},\ pNameSpatial,}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ pName);}
+\DoxyCodeLine{00118\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00119\ \ \ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \textcolor{comment}{//\ now\ read\ values\ and\ assign\ param-\/>value,\ guess,\ best,\ and\ knob:}}
+\DoxyCodeLine{00122\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numLocs;\ i++)\ \{}
+\DoxyCodeLine{00123\ \ \ \ \ status\ =\ fscanf(spatialParamFile,\ \textcolor{stringliteral}{"{}\%lf"{}},\ \&(spatialValues[i]));}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{if}\ (status\ ==\ EOF\ ||\ status\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ error\ reading}}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ did\ not\ find\ enough\ values\ in\ spatialParamFile\ for\ \%s\(\backslash\)n"{}},}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ pName);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00128\ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \}}
+\DoxyCodeLine{00130\ \}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \textcolor{comment}{/*************************************************/}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{comment}{//\ Public\ functions:\ defined\ in\ spatialParams.h}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{comment}{//\ allocate\ space\ for\ a\ new\ spatialParams\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00137\ SpatialParams\ *newSpatialParams(\textcolor{keywordtype}{int}\ maxParameters,\ \textcolor{keywordtype}{int}\ numLocs)\ \{}
+\DoxyCodeLine{00138\ \ \ SpatialParams\ *spatialParams;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ spatialParams\ =\ (SpatialParams\ *)malloc(\textcolor{keyword}{sizeof}(SpatialParams));}
+\DoxyCodeLine{00141\ \ \ spatialParams-\/>maxParameters\ =\ maxParameters;}
+\DoxyCodeLine{00142\ \ \ spatialParams-\/>numParameters\ =\ 0;\ \ \textcolor{comment}{//\ for\ now,\ anyway}}
+\DoxyCodeLine{00143\ \ \ spatialParams-\/>numParamsRead\ =\ 0;\ \ \textcolor{comment}{//\ for\ now,\ anyway}}
+\DoxyCodeLine{00144\ \ \ spatialParams-\/>numLocs\ =\ numLocs;}
+\DoxyCodeLine{00145\ \ \ spatialParams-\/>numChangeableParams\ =\ 0;\ \ \textcolor{comment}{//\ for\ now,\ anyway}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \textcolor{comment}{//\ allocate\ space\ for\ vectors\ within\ this\ structure:}}
+\DoxyCodeLine{00148\ \ \ spatialParams-\/>parameters\ =}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ (OneSpatialParam\ *)malloc(maxParameters\ *\ \textcolor{keyword}{sizeof}(OneSpatialParam));}
+\DoxyCodeLine{00150\ \ \ spatialParams-\/>readIndices\ =}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ (\textcolor{keywordtype}{int}\ *)malloc(maxParameters\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));\ \ \textcolor{comment}{//\ the\ biggest\ it\ could\ have}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ be}}
+\DoxyCodeLine{00153\ \ \ spatialParams-\/>changeableParamIndices\ =}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ (\textcolor{keywordtype}{int}\ *)malloc(maxParameters\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));\ \ \textcolor{comment}{//\ the\ biggest\ it\ could\ have}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ be}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \textcolor{keywordflow}{return}\ spatialParams;}
+\DoxyCodeLine{00158\ \}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{comment}{/*\ Initialize\ next\ spatial\ parameter:}}
+\DoxyCodeLine{00161\ \textcolor{comment}{\ \ \ Set\ name\ of\ parameter\ equal\ to\ "{}name"{},}}
+\DoxyCodeLine{00162\ \textcolor{comment}{\ \ \ \ and\ set\ parameter's\ externalLoc\ pointer\ to\ point\ to\ the\ location\ given\ by}}
+\DoxyCodeLine{00163\ \textcolor{comment}{\ \ \ "{}externalLoc"{}\ parameter\ Also\ set\ parameter's\ isRequired\ value:\ if\ true,\ then}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ \ \ we'll\ terminate\ execution\ if\ this\ parameter\ is\ not\ read\ from\ file\ Note:}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ \ \ acceptable\ to\ have\ externalLoc\ =\ NULL,\ but\ then\ it\ won't\ be\ assigned\ by}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ \ \ loadSpatialParams}}
+\DoxyCodeLine{00167\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{void}\ initializeOneSpatialParam(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{char}\ *name,}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ *externalLoc,\ \textcolor{keywordtype}{int}\ isRequired)\ \{}
+\DoxyCodeLine{00170\ \ \ \textcolor{keywordtype}{int}\ paramIndex;\ \ \textcolor{comment}{//\ index\ of\ next\ uninitialized\ parameter}}
+\DoxyCodeLine{00171\ \ \ OneSpatialParam\ *param;\ \ \textcolor{comment}{//\ a\ pointer\ to\ the\ next\ uninitialized\ parameter}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \textcolor{keywordflow}{if}\ (allParamsInitialized(spatialParams))\ \{\ \ \textcolor{comment}{//\ all\ parameters\ have\ been}}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ initialized!}}
+\DoxyCodeLine{00175\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ trying\ to\ initialize\ \%s:\ have\ already\ initialized\ all\ \%d\ "{}}}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}parameters\(\backslash\)n"{}},}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ name,\ spatialParams-\/>maxParameters);}
+\DoxyCodeLine{00178\ \ \ \ \ printf(}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Check\ value\ of\ maxParameters\ passed\ into\ newSpatialParams\ function\(\backslash\)n"{}});}
+\DoxyCodeLine{00180\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00181\ \ \ \}}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \textcolor{comment}{//\ otherwise,\ get\ the\ index\ of\ the\ next\ uninitialized\ parameter}}
+\DoxyCodeLine{00184\ \ \ paramIndex\ =\ spatialParams-\/>numParameters;}
+\DoxyCodeLine{00185\ \ \ \textcolor{comment}{//\ and\ set\ param\ to\ point\ to\ it\ for\ easier\ access}}
+\DoxyCodeLine{00186\ \ \ param\ =\ \&(spatialParams-\/>parameters[paramIndex]);}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ strcpy(param-\/>name,\ name);}
+\DoxyCodeLine{00189\ \ \ param-\/>externalLoc\ =\ externalLoc;}
+\DoxyCodeLine{00190\ \ \ param-\/>isRequired\ =\ isRequired;}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \textcolor{comment}{//\ set\ value\ pointer\ to\ be\ NULL\ (this\ will\ mark\ unread\ parameter)}}
+\DoxyCodeLine{00193\ \ \ param-\/>value\ =\ NULL;}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ spatialParams-\/>numParameters++;}
+\DoxyCodeLine{00196\ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \textcolor{comment}{/*\ Read\ all\ parameters\ from\ file,\ setting\ all\ values\ in\ spatialParams\ structure}}
+\DoxyCodeLine{00199\ \textcolor{comment}{\ \ \ appropriately}}
+\DoxyCodeLine{00200\ \textcolor{comment}{}}
+\DoxyCodeLine{00201\ \textcolor{comment}{\ \ \ Structure\ of\ paramFile:}}
+\DoxyCodeLine{00202\ \textcolor{comment}{\ \ \ \ \ \ name\ \ value\ \ changeable\ \ min\ \ max\ \ sigma}}
+\DoxyCodeLine{00203\ \textcolor{comment}{\ \ \ where\ value\ is\ a\ number\ if\ parameter\ is\ non-\/spatial,\ or\ *\ if\ parameter\ is}}
+\DoxyCodeLine{00204\ \textcolor{comment}{\ \ \ spatial;\ changeable\ is\ 0\ or\ 1\ (boolean)\ If\ parameter\ is\ spatial,\ look\ in}}
+\DoxyCodeLine{00205\ \textcolor{comment}{\ \ \ spatialParamFile\ for\ value,\ which\ has\ the\ following\ structure:\ name\ \ value}}
+\DoxyCodeLine{00206\ \textcolor{comment}{\ \ \ [value\ \ value...]\ where\ the\ number\ of\ values\ is\ equal\ to\ the\ number\ of}}
+\DoxyCodeLine{00207\ \textcolor{comment}{\ \ \ spatial\ locations}}
+\DoxyCodeLine{00208\ \textcolor{comment}{}}
+\DoxyCodeLine{00209\ \textcolor{comment}{\ \ \ The\ order\ of\ the\ parameters\ in\ paramFile\ does\ not\ matter,}}
+\DoxyCodeLine{00210\ \textcolor{comment}{\ \ \ \ but\ parameters\ must\ be\ specified\ in\ the\ same\ order\ in\ paramFile\ and}}
+\DoxyCodeLine{00211\ \textcolor{comment}{\ \ \ spatialParamFile}}
+\DoxyCodeLine{00212\ \textcolor{comment}{}}
+\DoxyCodeLine{00213\ \textcolor{comment}{\ \ \ !\ is\ a\ comment\ character\ in\ paramFile:\ anything\ after\ a\ !\ on\ a\ line\ is}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ \ \ ignored\ note,\ though,\ that\ comments\ are\ not\ currently\ allowed\ in}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ \ \ spatialParamFile}}
+\DoxyCodeLine{00216\ \textcolor{comment}{}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ \ \ PRE:\ paramFile\ is\ open\ and\ file\ pointer\ points\ to\ start\ of\ file}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ \ \ \ spatialParamFile\ is\ open\ and\ file\ pointer\ points\ to\ 2nd\ line\ (after\ the}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ \ \ numLocs\ line)}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00221\ \textcolor{keywordtype}{void}\ readSpatialParams(SpatialParams\ *spatialParams,\ FILE\ *paramFile,}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILE\ *spatialParamFile)\ \{}
+\DoxyCodeLine{00223\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *SEPARATORS\ =\ \textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)n\(\backslash\)r"{}};\ \ \textcolor{comment}{//\ characters\ that\ can\ separate\ values\ in}}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ parameter\ files}}
+\DoxyCodeLine{00225\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *COMMENT\_CHARS\ =\ \textcolor{stringliteral}{"{}!"{}};\ \ \textcolor{comment}{//\ comment\ characters\ (ignore\ everything}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ after\ this\ on\ a\ line)}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \textcolor{keywordtype}{char}\ line[256];}
+\DoxyCodeLine{00229\ \ \ \textcolor{keywordtype}{char}\ pName[PARAM\_MAXNAME];\ \ \textcolor{comment}{//\ parameter\ name}}
+\DoxyCodeLine{00230\ \ \ \textcolor{keywordtype}{int}\ paramIndex;}
+\DoxyCodeLine{00231\ \ \ OneSpatialParam\ *param;\ \ \textcolor{comment}{//\ a\ pointer\ to\ a\ single\ parameter,\ for\ easier\ access}}
+\DoxyCodeLine{00232\ \ \ \textcolor{keywordtype}{char}\ strValue[32];\ \ \textcolor{comment}{//\ before\ we\ know\ whether\ value\ is\ a\ number\ or\ "{}*"{}}}
+\DoxyCodeLine{00233\ \ \ \textcolor{keywordtype}{double}\ value,\ min,\ max,\ sigma;}
+\DoxyCodeLine{00234\ \ \ \textcolor{keywordtype}{double}\ *spatialValues;\ \ \textcolor{comment}{//\ temporary\ storage\ for\ values\ read\ from\ spatial}}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ param\ file}}
+\DoxyCodeLine{00236\ \ \ \textcolor{keywordtype}{int}\ changeable,\ spatiallyVarying;\ \ \textcolor{comment}{//\ is\ the\ parameter\ changeable?\ is\ it}}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spatially-\/varying?}}
+\DoxyCodeLine{00238\ \ \ \textcolor{keywordtype}{char}\ *errc;}
+\DoxyCodeLine{00239\ \ \ \textcolor{keywordtype}{int}\ isComment;}
+\DoxyCodeLine{00240\ \ \ \textcolor{keywordtype}{int}\ numLocs,\ i;}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00242\ \ \ numLocs\ =\ spatialParams-\/>numLocs;\ \ \textcolor{comment}{//\ for\ those\ parameters\ that\ are}}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spatially-\/varying}}
+\DoxyCodeLine{00244\ \ \ spatialValues\ =\ (\textcolor{keywordtype}{double}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \textcolor{keywordflow}{while}\ (fgets(line,\ \textcolor{keyword}{sizeof}(line),\ paramFile)\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or}}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ error}}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{comment}{//\ remove\ trailing\ comments:}}
+\DoxyCodeLine{00249\ \ \ \ \ isComment\ =\ stripComment(line,\ COMMENT\_CHARS);}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isComment)\ \{\ \ \textcolor{comment}{//\ if\ this\ isn't\ just\ a\ comment\ line\ or\ blank\ line}}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \textcolor{comment}{//\ tokenize\ line:}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ strcpy(pName,\ strtok(line,\ SEPARATORS));\ \ \textcolor{comment}{//\ copy\ first\ token\ into\ pName}}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ strcpy(strValue,\ strtok(NULL,\ SEPARATORS));\ \ \textcolor{comment}{//\ copy\ next\ token\ into}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ strValue;\ wait\ until\ later}}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ figure\ out\ if\ it's\ "{}*"{}}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ or\ a\ number}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ changeable\ =\ strtol(strtok(NULL,\ SEPARATORS),\ \&errc,\ 0);}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ min\ =\ strtod(strtok(NULL,\ SEPARATORS),\ \&errc);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ max\ =\ strtod(strtok(NULL,\ SEPARATORS),\ \&errc);}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ sigma\ =\ strtod(strtok(NULL,\ SEPARATORS),\ \&errc);}
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \textcolor{comment}{//\ now\ we\ need\ to\ see\ if\ we\ read\ in\ an\ actual\ value,\ or\ a\ "{}*"{}\ (if\ the}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \textcolor{comment}{//\ latter,\ it's\ a\ spatially-\/varying\ parameter)\ note\ that\ we\ read\ this}}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \textcolor{comment}{//\ before\ doing\ the\ error\ checking\ on\ paramIndex:}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \textcolor{comment}{//\ \ that\ way,\ even\ if\ we\ ignore\ this\ parameter,\ we've\ still\ read\ (and}}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \textcolor{comment}{//\ \ ignored)\ the\ corresponding\ line\ in\ the\ spatial\ param\ file,\ if\ it's\ a}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \textcolor{comment}{//\ \ spatially-\/varying\ parameter}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmp(strValue,\ \textcolor{stringliteral}{"{}*"{}})\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ we\ read\ "{}*"{}:\ this\ is\ a}}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spatially-\/varying\ parameter}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ readSpatialValues(spatialValues,\ spatialParamFile,\ pName,\ numLocs);}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ spatiallyVarying\ =\ 1;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ spatiallyVarying\ =\ 0;}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \ \ \ \ paramIndex\ =\ locateParam(spatialParams,\ pName);}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (paramIndex\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ not\ found}}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}WARNING:\ Ignoring\ parameter\ \%s:\ this\ parameter\ wasn't\ "{}}}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}initialized\ in\ the\ code\(\backslash\)n"{}},}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pName);}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (valueSet(spatialParams,\ paramIndex))\ \{}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ reading\ parameter\ file:\ read\ \%s,\ but\ this\ parameter\ has\ "{}}}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}already\ been\ set\(\backslash\)n"{}},}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pName);}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ otherwise,\ we're\ good\ to\ go}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\ param\ to\ point\ to\ the\ appropriate\ parameter,\ for\ easier\ access}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ param\ =\ \&(spatialParams-\/>parameters[paramIndex]);}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mark\ this\ as\ the\ next\ parameter\ read\ from\ file:}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ spatialParams-\/>readIndices[spatialParams-\/>numParamsRead]\ =\ paramIndex;}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ spatialParams-\/>numParamsRead++;}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ fill\ the\ new\ spatialParam\ structure\ with\ changeable,\ min,\ max,\ and}}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sigma}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ param-\/>isChangeable\ =\ changeable;}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ param-\/>min\ =\ min;}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ param-\/>max\ =\ max;}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ param-\/>sigma\ =\ sigma;}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (changeable)\ \{\ \ \textcolor{comment}{//\ we\ need\ to\ update\ info\ on\ changeable\ params\ in}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spatialParams}}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ spatialParams}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>changeableParamIndices[spatialParams-\/>numChangeableParams]\ =}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ paramIndex;}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ before\ we\ change\ it,\ spatialParams-\/>numChangeableParams\ is\ the}}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ index\ of\ the\ first\ free\ spot\ in\ the\ changeableParamIndices\ vector}}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ spatialParams-\/>numChangeableParams++;}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (spatiallyVarying)\ \{}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ param-\/>numLocs\ =\ numLocs;}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ allocate\ space:}}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ param-\/>value\ =\ (\textcolor{keywordtype}{double}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ param-\/>guess\ =\ (\textcolor{keywordtype}{double}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ param-\/>best\ =\ (\textcolor{keywordtype}{double}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ param-\/>knob\ =\ (\textcolor{keywordtype}{double}\ *)malloc(numLocs\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ now\ assign\ param-\/>value,\ guess,\ best,\ and\ knob\ (these\ were\ read}}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ above,\ in\ call\ to\ readSpatialValues):}}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numLocs;\ i++)\ \{}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ assign\ value,\ guess\ and\ best\ to\ all\ be\ the\ guess\ value\ initially:}}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ param-\/>value[i]\ =\ param-\/>guess[i]\ =\ param-\/>best[i]\ =}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ spatialValues[i];}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ param-\/>knob[i]\ =\ 0;\ \ \textcolor{comment}{//\ assign\ knob\ to\ be\ 0\ initially}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ for\ i}}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ spatially-\/varying}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ non-\/spatially-\/varying\ parameter}}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ param-\/>numLocs\ =\ 0;\ \ \textcolor{comment}{//\ signifies\ non-\/spatially-\/varying}}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ allocate\ space\ for\ a\ single\ value\ in\ each\ of\ param-\/>value,\ guess,}}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ best\ and\ knob:}}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ param-\/>value\ =\ (\textcolor{keywordtype}{double}\ *)malloc(\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ param-\/>guess\ =\ (\textcolor{keywordtype}{double}\ *)malloc(\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ param-\/>best\ =\ (\textcolor{keywordtype}{double}\ *)malloc(\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ param-\/>knob\ =\ (\textcolor{keywordtype}{double}\ *)malloc(\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ assign\ value,\ guess\ and\ best\ to\ all\ be\ the\ guess\ value\ initially:}}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ value\ =\ strtod(strValue,\ \&errc);\ \ \textcolor{comment}{//\ convert\ string\ value\ to\ double}}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ param-\/>value[0]\ =\ param-\/>guess[0]\ =\ param-\/>best[0]\ =\ value;}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ param-\/>knob[0]\ =\ 0;\ \ \textcolor{comment}{//\ assign\ knob\ to\ be\ 0\ initially}}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ non-\/spatially-\/varying}}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ (no\ errors\ in\ reading\ this\ line\ from\ parameter\ file)}}
+\DoxyCodeLine{00348\ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ !isComment}}
+\DoxyCodeLine{00349\ \ \ \}\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \ \ \textcolor{comment}{//\ check\ for\ error\ in\ reading:}}
+\DoxyCodeLine{00352\ \ \ \textcolor{keywordflow}{if}\ (ferror(paramFile))\ \{}
+\DoxyCodeLine{00353\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ reading\ file\ in\ readSpatialParams\(\backslash\)n"{}});}
+\DoxyCodeLine{00354\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ferror\ =\ \%d\(\backslash\)n"{}},\ ferror(paramFile));}
+\DoxyCodeLine{00355\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00356\ \ \ \}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ checkAllRead(spatialParams);\ \ \textcolor{comment}{//\ terminate\ program\ if\ some\ required\ parameters}}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ weren't\ read}}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \ \ free(spatialValues);}
+\DoxyCodeLine{00362\ \}\ \ \textcolor{comment}{//\ readSpatialParams}}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \textcolor{comment}{//\ Return\ numParameters,\ the\ actual\ number\ of\ parameters\ that\ have\ been}}
+\DoxyCodeLine{00365\ \textcolor{comment}{//\ initialized\ with\ initializeOneSpatialParam}}
+\DoxyCodeLine{00366\ \textcolor{keywordtype}{int}\ getNumParameters(SpatialParams\ *spatialParams)\ \{}
+\DoxyCodeLine{00367\ \ \ \textcolor{keywordflow}{return}\ spatialParams-\/>numParameters;}
+\DoxyCodeLine{00368\ \}}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \textcolor{comment}{//\ Return\ number\ of\ parameters\ that\ have\ been\ read\ in\ from\ file}}
+\DoxyCodeLine{00371\ \textcolor{keywordtype}{int}\ getNumParamsRead(SpatialParams\ *spatialParams)\ \{}
+\DoxyCodeLine{00372\ \ \ \textcolor{keywordflow}{return}\ spatialParams-\/>numParamsRead;}
+\DoxyCodeLine{00373\ \}}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \textcolor{comment}{//\ Find\ parameter\ with\ given\ name\ in\ the\ parameters\ vector}}
+\DoxyCodeLine{00376\ \textcolor{comment}{//\ If\ found,\ return\ index\ in\ vector,\ otherwise\ return\ -\/1}}
+\DoxyCodeLine{00377\ \textcolor{keywordtype}{int}\ locateParam(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{char}\ *name)\ \{}
+\DoxyCodeLine{00378\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00379\ \ \ \textcolor{keywordtype}{int}\ found;}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ i\ =\ 0;}
+\DoxyCodeLine{00382\ \ \ found\ =\ 0;}
+\DoxyCodeLine{00383\ \ \ \textcolor{keywordflow}{while}\ (i\ <\ spatialParams-\/>numParameters\ \&\&\ !found)\ \{}
+\DoxyCodeLine{00384\ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmpIgnoreCase(name,\ spatialParams-\/>parameters[i].name)\ ==\ 0)\ \{}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ found\ =\ 1;}
+\DoxyCodeLine{00386\ \ \ \ \ \}}
+\DoxyCodeLine{00387\ \ \ \ \ i++;}
+\DoxyCodeLine{00388\ \ \ \}}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00390\ \ \ \textcolor{keywordflow}{if}\ (found)\ \{}
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{keywordflow}{return}\ (i\ -\/\ 1);}
+\DoxyCodeLine{00392\ \ \ \}}
+\DoxyCodeLine{00393\ }
+\DoxyCodeLine{00394\ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00395\ \}}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ \textcolor{comment}{//\ Return\ 1\ if\ parameter\ i\ has\ had\ its\ value\ set,\ 0\ otherwise}}
+\DoxyCodeLine{00398\ \textcolor{keywordtype}{int}\ valueSet(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00399\ \ \ \textcolor{keywordflow}{return}\ (spatialParams-\/>parameters[i].value\ !=\ NULL);}
+\DoxyCodeLine{00400\ \}}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \textcolor{comment}{/*\ Return\ 1\ if\ parameter\ i\ varies\ spatially,\ 0\ if\ not}}
+\DoxyCodeLine{00403\ \textcolor{comment}{\ \ \ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters}}
+\DoxyCodeLine{00404\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00405\ \textcolor{keywordtype}{int}\ isSpatial(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00406\ \ \ \textcolor{keywordflow}{return}\ (spatialParams-\/>parameters[i].numLocs\ >\ 0);}
+\DoxyCodeLine{00407\ \}}
+\DoxyCodeLine{00408\ }
+\DoxyCodeLine{00409\ \textcolor{comment}{/*\ Return\ 1\ if\ parameter\ i\ is\ changeable,\ 0\ if\ not}}
+\DoxyCodeLine{00410\ \textcolor{comment}{\ \ \ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters}}
+\DoxyCodeLine{00411\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00412\ \textcolor{keywordtype}{int}\ isChangeable(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00413\ \ \ \textcolor{keywordflow}{return}\ spatialParams-\/>parameters[i].isChangeable;}
+\DoxyCodeLine{00414\ \}}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \textcolor{comment}{/*\ Check\ to\ see\ whether\ value\ is\ within\ allowable\ range\ of\ parameter\ i}}
+\DoxyCodeLine{00417\ \textcolor{comment}{\ \ \ Return\ 1\ if\ okay,\ 0\ if\ bad}}
+\DoxyCodeLine{00418\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00419\ \textcolor{keywordtype}{int}\ checkSpatialParam(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{double}\ value)\ \{}
+\DoxyCodeLine{00420\ \ \ \textcolor{keywordflow}{return}\ (value\ >=\ getSpatialParamMin(spatialParams,\ i)\ \&\&}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ value\ <=\ getSpatialParamMax(spatialParams,\ i));}
+\DoxyCodeLine{00422\ \}}
+\DoxyCodeLine{00423\ }
+\DoxyCodeLine{00424\ \textcolor{comment}{/*\ Return\ value\ of\ parameter\ i,\ location\ loc\ (if\ this\ parameter\ is\ non-\/spatial,}}
+\DoxyCodeLine{00425\ \textcolor{comment}{\ \ \ ignore\ loc)\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters\ if\ this\ parameter\ is}}
+\DoxyCodeLine{00426\ \textcolor{comment}{\ \ \ spatial,\ then\ 0\ <=\ loc\ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00427\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00428\ \textcolor{keywordtype}{double}\ getSpatialParam(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00429\ \ \ \textcolor{keywordflow}{return}\ getPossiblySpatial(spatialParams-\/>parameters[i].value,\ loc,}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isSpatial(spatialParams,\ i));}
+\DoxyCodeLine{00431\ \}}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \textcolor{comment}{/*\ Set\ parameter\ i,\ location\ loc\ to\ have\ given\ value}}
+\DoxyCodeLine{00434\ \textcolor{comment}{\ \ \ If\ parameter\ is\ non-\/spatial,\ ignore\ loc}}
+\DoxyCodeLine{00435\ \textcolor{comment}{\ \ \ If\ loc\ =\ -\/1,\ set\ this\ parameter\ at\ ALL\ LOCATIONS\ to\ have\ given\ value}}
+\DoxyCodeLine{00436\ \textcolor{comment}{\ \ \ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters}}
+\DoxyCodeLine{00437\ \textcolor{comment}{\ \ \ \ \ \ \ \ if\ this\ parameter\ is\ spatial,\ then\ -\/1\ <=\ loc\ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00438\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00439\ \textcolor{keywordtype}{void}\ setSpatialParam(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ loc,}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ value)\ \{}
+\DoxyCodeLine{00441\ \ \ setPossiblySpatial(spatialParams-\/>parameters[i].value,\ loc,\ value,}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isSpatial(spatialParams,\ i),\ spatialParams-\/>numLocs);}
+\DoxyCodeLine{00443\ \}}
+\DoxyCodeLine{00444\ }
+\DoxyCodeLine{00445\ \textcolor{comment}{/*\ Return\ guess\ value\ of\ parameter\ i,\ location\ loc\ (if\ this\ parameter\ is}}
+\DoxyCodeLine{00446\ \textcolor{comment}{\ \ \ non-\/spatial,\ ignore\ loc)\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters\ if\ this}}
+\DoxyCodeLine{00447\ \textcolor{comment}{\ \ \ parameter\ is\ spatial,\ then\ 0\ <=\ loc\ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00448\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00449\ \textcolor{keywordtype}{double}\ getSpatialParamGuess(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00450\ \ \ \textcolor{keywordflow}{return}\ getPossiblySpatial(spatialParams-\/>parameters[i].guess,\ loc,}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isSpatial(spatialParams,\ i));}
+\DoxyCodeLine{00452\ \}}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00454\ \textcolor{comment}{/*\ Return\ min.\ value\ of\ range\ of\ parameter\ i\ (note:\ this\ is\ constant\ across}}
+\DoxyCodeLine{00455\ \textcolor{comment}{\ \ \ space)\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters}}
+\DoxyCodeLine{00456\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00457\ \textcolor{keywordtype}{double}\ getSpatialParamMin(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00458\ \ \ \textcolor{keywordflow}{return}\ spatialParams-\/>parameters[i].min;}
+\DoxyCodeLine{00459\ \}}
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00461\ \textcolor{comment}{/*\ Return\ max.\ value\ of\ range\ of\ parameter\ i\ (note:\ this\ is\ constant\ across}}
+\DoxyCodeLine{00462\ \textcolor{comment}{\ \ \ space)\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters}}
+\DoxyCodeLine{00463\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00464\ \textcolor{keywordtype}{double}\ getSpatialParamMax(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00465\ \ \ \textcolor{keywordflow}{return}\ spatialParams-\/>parameters[i].max;}
+\DoxyCodeLine{00466\ \}}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \textcolor{comment}{/*\ Return\ sigma\ value\ of\ parameter\ i\ (note:\ this\ is\ constant\ across\ space)}}
+\DoxyCodeLine{00469\ \textcolor{comment}{\ \ \ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters}}
+\DoxyCodeLine{00470\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00471\ \textcolor{keywordtype}{double}\ getSpatialParamSigma(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i)\ \{}
+\DoxyCodeLine{00472\ \ \ \textcolor{keywordflow}{return}\ spatialParams-\/>parameters[i].sigma;}
+\DoxyCodeLine{00473\ \}}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \textcolor{comment}{/*\ Return\ knob\ value\ of\ parameter\ i,\ location\ loc\ (if\ this\ parameter\ is}}
+\DoxyCodeLine{00476\ \textcolor{comment}{\ \ \ non-\/spatial,\ ignore\ loc)\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters\ if\ this}}
+\DoxyCodeLine{00477\ \textcolor{comment}{\ \ \ parameter\ is\ spatial,\ then\ 0\ <=\ loc\ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00478\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00479\ \textcolor{keywordtype}{double}\ getSpatialParamKnob(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00480\ \ \ \textcolor{keywordflow}{return}\ getPossiblySpatial(spatialParams-\/>parameters[i].knob,\ loc,}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isSpatial(spatialParams,\ i));}
+\DoxyCodeLine{00482\ \}}
+\DoxyCodeLine{00483\ }
+\DoxyCodeLine{00484\ \textcolor{comment}{/*\ Set\ "{}knob"{}\ of\ parameter\ i,\ location\ loc\ to\ have\ given\ value}}
+\DoxyCodeLine{00485\ \textcolor{comment}{\ \ \ If\ parameter\ is\ non-\/spatial,\ ignore\ loc}}
+\DoxyCodeLine{00486\ \textcolor{comment}{\ \ \ If\ loc\ =\ -\/1,\ set\ knob\ value\ of\ this\ parameter\ at\ ALL\ LOCATIONS\ to\ have\ given}}
+\DoxyCodeLine{00487\ \textcolor{comment}{\ \ \ value\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters\ if\ this\ parameter\ is}}
+\DoxyCodeLine{00488\ \textcolor{comment}{\ \ \ spatial,\ then\ -\/1\ <=\ loc\ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00489\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00490\ \textcolor{keywordtype}{void}\ setSpatialParamKnob(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ loc,}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ value)\ \{}
+\DoxyCodeLine{00492\ \ \ setPossiblySpatial(spatialParams-\/>parameters[i].knob,\ loc,\ value,}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isSpatial(spatialParams,\ i),\ spatialParams-\/>numLocs);}
+\DoxyCodeLine{00494\ \}}
+\DoxyCodeLine{00495\ }
+\DoxyCodeLine{00496\ \textcolor{comment}{/*\ Return\ best\ value\ of\ parameter\ i,\ location\ loc\ (if\ this\ parameter\ is}}
+\DoxyCodeLine{00497\ \textcolor{comment}{\ \ \ non-\/spatial,\ ignore\ loc)\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters\ if\ this}}
+\DoxyCodeLine{00498\ \textcolor{comment}{\ \ \ parameter\ is\ spatial,\ then\ 0\ <=\ loc\ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00499\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00500\ \textcolor{keywordtype}{double}\ getSpatialParamBest(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00501\ \ \ \textcolor{keywordflow}{return}\ getPossiblySpatial(spatialParams-\/>parameters[i].best,\ loc,}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isSpatial(spatialParams,\ i));}
+\DoxyCodeLine{00503\ \}}
+\DoxyCodeLine{00504\ }
+\DoxyCodeLine{00505\ \textcolor{comment}{/*\ Set\ best\ value\ of\ parameter\ i,\ location\ loc\ to\ have\ given\ value}}
+\DoxyCodeLine{00506\ \textcolor{comment}{\ \ \ If\ parameter\ is\ non-\/spatial,\ ignore\ loc}}
+\DoxyCodeLine{00507\ \textcolor{comment}{\ \ \ If\ loc\ =\ -\/1,\ set\ best\ value\ of\ this\ parameter\ at\ ALL\ LOCATIONS\ to\ have\ given}}
+\DoxyCodeLine{00508\ \textcolor{comment}{\ \ \ value\ PRE:\ 0\ <=\ i\ <\ spatialParams-\/>numParameters\ if\ this\ parameter\ is}}
+\DoxyCodeLine{00509\ \textcolor{comment}{\ \ \ spatial,\ then\ -\/1\ <=\ loc\ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00510\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00511\ \textcolor{keywordtype}{void}\ setSpatialParamBest(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ loc,}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ value)\ \{}
+\DoxyCodeLine{00513\ \ \ setPossiblySpatial(spatialParams-\/>parameters[i].best,\ loc,\ value,}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ isSpatial(spatialParams,\ i),\ spatialParams-\/>numLocs);}
+\DoxyCodeLine{00515\ \}}
+\DoxyCodeLine{00516\ }
+\DoxyCodeLine{00517\ \textcolor{comment}{/*\ Set\ best\ value\ of\ all\ parameters\ at\ given\ location\ to\ be\ equal\ to\ their}}
+\DoxyCodeLine{00518\ \textcolor{comment}{\ \ \ current\ value\ (Note:\ ignores\ parameters\ that\ were\ never\ read\ in)\ If\ loc\ =\ -\/1,}}
+\DoxyCodeLine{00519\ \textcolor{comment}{\ \ \ set\ best\ value\ of\ all\ parameters\ at\ ALL\ locations\ to\ be\ equal\ to\ their}}
+\DoxyCodeLine{00520\ \textcolor{comment}{\ \ \ current\ value}}
+\DoxyCodeLine{00521\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00522\ \textcolor{keywordtype}{void}\ setAllSpatialParamBests(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00523\ \ \ \textcolor{keywordtype}{int}\ numParams;}
+\DoxyCodeLine{00524\ \ \ \textcolor{keywordtype}{int}\ firstLoc,\ lastLoc;}
+\DoxyCodeLine{00525\ \ \ \textcolor{keywordtype}{int}\ i,\ currLoc;}
+\DoxyCodeLine{00526\ \ \ \textcolor{keywordtype}{double}\ value;}
+\DoxyCodeLine{00527\ }
+\DoxyCodeLine{00528\ \ \ numParams\ =\ spatialParams-\/>numParameters;}
+\DoxyCodeLine{00529\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ set\ best\ at\ all\ locations}}
+\DoxyCodeLine{00530\ \ \ \ \ firstLoc\ =\ 0;}
+\DoxyCodeLine{00531\ \ \ \ \ lastLoc\ =\ spatialParams-\/>numLocs\ -\/\ 1;}
+\DoxyCodeLine{00532\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00533\ \ \ \ \ \textcolor{comment}{//\ set\ best\ at\ a\ single\ location}}
+\DoxyCodeLine{00534\ \ \ \ \ firstLoc\ =\ lastLoc\ =\ loc;}
+\DoxyCodeLine{00535\ \ \ \}}
+\DoxyCodeLine{00536\ }
+\DoxyCodeLine{00537\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numParams;\ i++)\ \{}
+\DoxyCodeLine{00538\ \ \ \ \ \textcolor{keywordflow}{if}\ (valueSet(spatialParams,\ i))\ \{\ \ \textcolor{comment}{//\ if\ valueSet\ is\ false,\ ignore\ this}}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ parameter\ (it\ was\ never\ read\ in)}}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isSpatial(spatialParams,\ i))\ \{}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ value\ =\ getSpatialParam(spatialParams,\ i,\ currLoc);}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ setSpatialParamBest(spatialParams,\ i,\ currLoc,\ value);}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ non-\/spatial}}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ value\ =\ getSpatialParam(spatialParams,\ i,\ 0);}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ setSpatialParamBest(spatialParams,\ i,\ 0,\ value);}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00549\ \ \ \ \ \}}
+\DoxyCodeLine{00550\ \ \ \}}
+\DoxyCodeLine{00551\ \}}
+\DoxyCodeLine{00552\ }
+\DoxyCodeLine{00553\ \textcolor{comment}{/*\ Return\ the\ index\ (into\ spatialParams-\/>parameters)\ of\ a\ randomly-\/chosen}}
+\DoxyCodeLine{00554\ \textcolor{comment}{\ \ \ spatial\ parameter\ that\ is\ changeable}}
+\DoxyCodeLine{00555\ \textcolor{comment}{\ \ \ PRE:\ random\ number\ generator\ has\ been\ seeded}}
+\DoxyCodeLine{00556\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00557\ \textcolor{keywordtype}{int}\ randomChangeableSpatialParam(SpatialParams\ *spatialParams)\ \{}
+\DoxyCodeLine{00558\ \ \ \textcolor{keywordtype}{int}\ rnd;}
+\DoxyCodeLine{00559\ }
+\DoxyCodeLine{00560\ \ \ rnd\ =\ (int)floor(}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ spatialParams-\/>numChangeableParams\ *}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ (rand()\ *\ 1.0\ /\ (RAND\_MAX\ +\ 1.0)));\ \ \textcolor{comment}{//\ 0\ <=\ rnd\ <}}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spatialParams-\/>numChangeableParams}}
+\DoxyCodeLine{00564\ }
+\DoxyCodeLine{00565\ \ \ \textcolor{keywordflow}{return}\ spatialParams-\/>changeableParamIndices[rnd];}
+\DoxyCodeLine{00566\ \}}
+\DoxyCodeLine{00567\ }
+\DoxyCodeLine{00568\ \textcolor{comment}{/*\ Load\ spatial\ parameters\ into\ memory\ locations\ pointed\ to\ by\ paramPtrs}}
+\DoxyCodeLine{00569\ \textcolor{comment}{\ \ \ For\ spatially-\/varying\ parameters,\ load\ value\ at\ location\ given\ by\ loc}}
+\DoxyCodeLine{00570\ \textcolor{comment}{\ \ \ (Purpose:\ load\ all\ parameters\ into\ a\ localized\ structure\ for\ a\ model\ run,\ to}}
+\DoxyCodeLine{00571\ \textcolor{comment}{\ \ make\ the\ model\ run\ more\ efficient)}}
+\DoxyCodeLine{00572\ \textcolor{comment}{}}
+\DoxyCodeLine{00573\ \textcolor{comment}{\ \ \ PRE:\ spatialParams-\/>parameters\ is\ loaded\ with\ param.\ values\ (particularly,\ at}}
+\DoxyCodeLine{00574\ \textcolor{comment}{\ \ given\ location)\ externalLoc\ pointers\ have\ been\ set\ for\ each\ parameter\ 0\ <=\ loc}}
+\DoxyCodeLine{00575\ \textcolor{comment}{\ \ <\ spatialParams-\/>numLocs}}
+\DoxyCodeLine{00576\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00577\ \textcolor{keywordtype}{void}\ loadSpatialParams(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{00578\ \ \ \textcolor{keywordtype}{int}\ i,\ numParams;}
+\DoxyCodeLine{00579\ \ \ \textcolor{keywordtype}{double}\ value;}
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \ \ numParams\ =\ spatialParams-\/>numParameters;}
+\DoxyCodeLine{00582\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numParams;\ i++)\ \{}
+\DoxyCodeLine{00583\ \ \ \ \ \textcolor{comment}{//\ externalLoc\ will\ equal\ NULL\ if\ it\ was\ assigned\ to\ NULL\ in}}
+\DoxyCodeLine{00584\ \ \ \ \ \textcolor{comment}{//\ readOneSpatialParam}}
+\DoxyCodeLine{00585\ \ \ \ \ \textcolor{keywordflow}{if}\ (valueSet(spatialParams,\ i)\ \&\&}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ spatialParams-\/>parameters[i].externalLoc\ !=\ NULL)\ \{}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ value\ =\ getSpatialParam(spatialParams,\ i,\ loc);}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \textcolor{comment}{//\ copy\ value\ into\ location\ pointed\ to\ by\ this\ externalLoc}}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ *(spatialParams-\/>parameters[i].externalLoc)\ =\ value;}
+\DoxyCodeLine{00590\ \ \ \ \ \}}
+\DoxyCodeLine{00591\ \ \ \}}
+\DoxyCodeLine{00592\ \}}
+\DoxyCodeLine{00593\ }
+\DoxyCodeLine{00594\ \textcolor{comment}{/*\ If\ randomReset\ =\ 0,\ set\ values\ of\ all\ parameters\ to\ be\ equal\ to\ guess\ values}}
+\DoxyCodeLine{00595\ \textcolor{comment}{\ \ \ If\ randomReset\ non-\/zero,\ set\ parameter\ values\ to\ be\ somewhere\ (chosen\ uniform}}
+\DoxyCodeLine{00596\ \textcolor{comment}{\ \ \ randomly)\ between\ min\ and\ max}}
+\DoxyCodeLine{00597\ \textcolor{comment}{\ \ \ \ -\/\ Note\ that\ non-\/changeable\ parameters\ will\ still\ be\ set\ to\ their\ guess}}
+\DoxyCodeLine{00598\ \textcolor{comment}{\ \ \ values,\ though\ (Note:\ ignores\ parameters\ that\ were\ never\ read\ in)\ (If}}
+\DoxyCodeLine{00599\ \textcolor{comment}{\ \ \ randomReset\ non-\/zero,\ random\ number\ generator\ must\ have\ been\ seeded)}}
+\DoxyCodeLine{00600\ \textcolor{comment}{\ \ \ Set\ best\ values\ of\ all\ parameters\ to\ be\ equal\ to\ current\ values\ Set\ knobs\ of}}
+\DoxyCodeLine{00601\ \textcolor{comment}{\ \ \ all\ parameters\ to\ be\ equal\ to\ knob\ argument}}
+\DoxyCodeLine{00602\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00603\ \textcolor{keywordtype}{void}\ resetSpatialParams(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{double}\ knob,}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ randomReset)\ \{}
+\DoxyCodeLine{00605\ \ \ \textcolor{keywordtype}{int}\ numParams,\ numLocs;}
+\DoxyCodeLine{00606\ \ \ \textcolor{keywordtype}{int}\ i,\ loc;}
+\DoxyCodeLine{00607\ \ \ \textcolor{keywordtype}{double}\ value;}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00609\ \ \ numParams\ =\ spatialParams-\/>numParameters;}
+\DoxyCodeLine{00610\ \ \ numLocs\ =\ spatialParams-\/>numLocs;}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numParams;\ i++)\ \{}
+\DoxyCodeLine{00613\ \ \ \ \ \textcolor{keywordflow}{if}\ (valueSet(spatialParams,\ i))\ \{\ \ \textcolor{comment}{//\ if\ valueSet\ is\ false,\ ignore\ this}}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ parameter\ (it\ was\ never\ read\ in)}}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isSpatial(spatialParams,\ i))\ \{}
+\DoxyCodeLine{00616\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (loc\ =\ 0;\ loc\ <\ numLocs;\ loc++)\ \{}
+\DoxyCodeLine{00617\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((randomReset\ ==\ 0)\ ||\ !isChangeable(spatialParams,\ i))\ \{}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ non-\/random:\ use\ guess\ value}}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ value\ =\ getSpatialParamGuess(spatialParams,\ i,\ loc);}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ random:\ set\ parameter\ value\ to\ be\ somewhere\ between\ min\ and\ max}}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ \ \ \ value\ =\ getSpatialParamMin(spatialParams,\ i)\ +}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (getSpatialParamMax(spatialParams,\ i)\ -\/}
+\DoxyCodeLine{00624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamMin(spatialParams,\ i))\ *}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((\textcolor{keywordtype}{float})rand()\ /\ (float)RAND\_MAX);}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \ \ setSpatialParam(spatialParams,\ i,\ loc,\ value);}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ setSpatialParamBest(spatialParams,\ i,\ loc,\ value);}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \ \ setSpatialParamKnob(spatialParams,\ i,\ loc,\ knob);}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00631\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ non-\/spatial}}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((randomReset\ ==\ 0)\ ||\ !isChangeable(spatialParams,\ i))\ \{}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ non-\/random:\ use\ guess\ value}}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ value\ =\ getSpatialParamGuess(spatialParams,\ i,\ 0);}
+\DoxyCodeLine{00635\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ random:\ set\ parameter\ value\ to\ be\ somewhere\ between\ min\ and\ max}}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \ \ value\ =\ getSpatialParamMin(spatialParams,\ i)\ +}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (getSpatialParamMax(spatialParams,\ i)\ -\/}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamMin(spatialParams,\ i))\ *}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((\textcolor{keywordtype}{float})rand()\ /\ (float)RAND\_MAX);}
+\DoxyCodeLine{00641\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00642\ \ \ \ \ \ \ \ \ setSpatialParam(spatialParams,\ i,\ 0,\ value);}
+\DoxyCodeLine{00643\ \ \ \ \ \ \ \ \ setSpatialParamBest(spatialParams,\ i,\ 0,\ value);}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ setSpatialParamKnob(spatialParams,\ i,\ 0,\ knob);}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ non-\/spatial}}
+\DoxyCodeLine{00646\ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ valueSet}}
+\DoxyCodeLine{00647\ \ \ \}\ \ \textcolor{comment}{//\ for\ i}}
+\DoxyCodeLine{00648\ \}\ \ \textcolor{comment}{//\ resetSpatialParams}}
+\DoxyCodeLine{00649\ }
+\DoxyCodeLine{00650\ \textcolor{comment}{/*\ Write\ best\ parameter\ values,\ and\ other\ parameter\ info,\ to\ files}}
+\DoxyCodeLine{00651\ \textcolor{comment}{\ \ \ \ (only\ write\ parameters\ that\ were\ read\ in,\ and\ in\ the\ same\ order\ that\ they}}
+\DoxyCodeLine{00652\ \textcolor{comment}{\ \ \ were\ read\ in)\ Note\ that\ other\ parameter\ info\ won't\ have\ changed\ since\ the}}
+\DoxyCodeLine{00653\ \textcolor{comment}{\ \ \ read\ -\/\ we\ just\ copy\ that\ over\ Write\ all\ parameter\ info\ to\ file\ with\ name}}
+\DoxyCodeLine{00654\ \textcolor{comment}{\ \ \ *paramFile,\ and\ spatially-\/varying\ parameter\ values\ to\ file\ with\ name}}
+\DoxyCodeLine{00655\ \textcolor{comment}{\ \ \ *spatialParamFile\ See\ readSpatialParams\ for\ file\ formats}}
+\DoxyCodeLine{00656\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00657\ \textcolor{keywordtype}{void}\ writeBestSpatialParams(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{char}\ *paramFile,}
+\DoxyCodeLine{00658\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *spatialParamFile)\ \{}
+\DoxyCodeLine{00659\ \ \ FILE\ *paramF,\ *spatialParamF;}
+\DoxyCodeLine{00660\ \ \ \textcolor{keywordtype}{int}\ numParamsRead,\ numLocs;}
+\DoxyCodeLine{00661\ \ \ \textcolor{keywordtype}{int}\ i,\ j,\ index;}
+\DoxyCodeLine{00662\ }
+\DoxyCodeLine{00663\ \ \ paramF\ =\ openFile(paramFile,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00664\ \ \ spatialParamF\ =\ openFile(spatialParamFile,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00665\ }
+\DoxyCodeLine{00666\ \ \ numParamsRead\ =\ getNumParamsRead(spatialParams);}
+\DoxyCodeLine{00667\ \ \ numLocs\ =\ spatialParams-\/>numLocs;}
+\DoxyCodeLine{00668\ }
+\DoxyCodeLine{00669\ \ \ fprintf(spatialParamF,\ \textcolor{stringliteral}{"{}\%d\(\backslash\)n"{}},\ numLocs);}
+\DoxyCodeLine{00670\ }
+\DoxyCodeLine{00671\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numParamsRead;\ i++)\ \{\ \ \textcolor{comment}{//\ loop\ through\ parameters}}
+\DoxyCodeLine{00672\ \ \ \ \ index\ =\ spatialParams-\/>readIndices[i];\ \ \textcolor{comment}{//\ allows\ us\ to\ just\ consider\ the}}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ parameters\ that\ were\ read\ in,\ in}}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ proper\ order}}
+\DoxyCodeLine{00675\ \ \ \ \ fprintf(paramF,\ \textcolor{stringliteral}{"{}\%s\(\backslash\)t"{}},\ spatialParams-\/>parameters[index].name);}
+\DoxyCodeLine{00676\ \ \ \ \ \textcolor{keywordflow}{if}\ (isSpatial(spatialParams,\ index))\ \{}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ fprintf(paramF,\ \textcolor{stringliteral}{"{}*\(\backslash\)t"{}});\ \ \textcolor{comment}{//\ write\ "{}*"{}\ in\ place\ of\ value,\ then\ write\ values}}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ spatialParamFile}}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ fprintf(spatialParamF,\ \textcolor{stringliteral}{"{}\%s"{}},\ spatialParams-\/>parameters[index].name);}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (j\ =\ 0;\ j\ <\ numLocs;\ j++)\ \{}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ loop\ through\ locations}}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ fprintf(spatialParamF,\ \textcolor{stringliteral}{"{}\(\backslash\)t\%f"{}},}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamBest(spatialParams,\ index,\ j));}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00685\ \ \ \ \ \ \ fprintf(spatialParamF,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00686\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \textcolor{comment}{//\ non-\/spatial:\ write\ value}}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ fprintf(paramF,\ \textcolor{stringliteral}{"{}\%f\(\backslash\)t"{}},\ getSpatialParamBest(spatialParams,\ index,\ 0));}
+\DoxyCodeLine{00689\ \ \ \ \ \}}
+\DoxyCodeLine{00690\ }
+\DoxyCodeLine{00691\ \ \ \ \ \textcolor{comment}{//\ now\ write\ other\ info\ to\ file\ (other\ info\ is\ always\ non-\/spatial):}}
+\DoxyCodeLine{00692\ \ \ \ \ fprintf(paramF,\ \textcolor{stringliteral}{"{}\%d\(\backslash\)t\%f\(\backslash\)t\%f\(\backslash\)t\%f\(\backslash\)n"{}},\ isChangeable(spatialParams,\ index),}
+\DoxyCodeLine{00693\ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamMin(spatialParams,\ index),}
+\DoxyCodeLine{00694\ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamMax(spatialParams,\ index),}
+\DoxyCodeLine{00695\ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamSigma(spatialParams,\ index));}
+\DoxyCodeLine{00696\ \ \ \}}
+\DoxyCodeLine{00697\ }
+\DoxyCodeLine{00698\ \ \ fclose(paramF);}
+\DoxyCodeLine{00699\ \ \ fclose(spatialParamF);}
+\DoxyCodeLine{00700\ \}}
+\DoxyCodeLine{00701\ }
+\DoxyCodeLine{00702\ \textcolor{comment}{/*\ Write\ name,\ guess,\ min\ \&\ max,\ value,\ best\ and\ knob\ of\ each\ changeable\ param}}
+\DoxyCodeLine{00703\ \textcolor{comment}{\ \ \ to\ file\ (only\ write\ parameters\ that\ were\ read\ in,\ and\ in\ the\ same\ order\ that}}
+\DoxyCodeLine{00704\ \textcolor{comment}{\ \ \ they\ were\ read\ in)\ If\ loc\ >=\ 0,\ write\ info\ for\ that\ location;\ if\ loc\ =\ -\/1,}}
+\DoxyCodeLine{00705\ \textcolor{comment}{\ \ \ write\ value\ at\ location\ 0,\ and\ append\ a\ *\ to\ spatial\ parameter\ values\ PRE:}}
+\DoxyCodeLine{00706\ \textcolor{comment}{\ \ \ outF\ is\ open\ for\ writing}}
+\DoxyCodeLine{00707\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00708\ \textcolor{keywordtype}{void}\ writeChangeableParamInfo(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc,}
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILE\ *outF)\ \{}
+\DoxyCodeLine{00710\ \ \ \textcolor{keywordtype}{int}\ i,\ index,\ numParamsRead,\ count;}
+\DoxyCodeLine{00711\ \ \ \textcolor{keywordtype}{int}\ theLoc;\ \ \textcolor{comment}{//\ location\ that\ we're\ printing\ info\ for}}
+\DoxyCodeLine{00712\ \ \ \textcolor{keywordtype}{char}\ appendage[2];}
+\DoxyCodeLine{00713\ }
+\DoxyCodeLine{00714\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{}
+\DoxyCodeLine{00715\ \ \ \ \ theLoc\ =\ 0;}
+\DoxyCodeLine{00716\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00717\ \ \ \ \ theLoc\ =\ loc;}
+\DoxyCodeLine{00718\ \ \ \}}
+\DoxyCodeLine{00719\ }
+\DoxyCodeLine{00720\ \ \ numParamsRead\ =\ getNumParamsRead(spatialParams);}
+\DoxyCodeLine{00721\ \ \ count\ =\ 0;\ \ \textcolor{comment}{//\ count\ of\ changeable\ parameters}}
+\DoxyCodeLine{00722\ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}Changeable\ Parameters:\(\backslash\)n"{}});}
+\DoxyCodeLine{00723\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numParamsRead;\ i++)\ \{}
+\DoxyCodeLine{00724\ \ \ \ \ \textcolor{comment}{//\ allows\ us\ to\ just\ consider\ the\ parameters\ that\ were\ read\ in,\ in}}
+\DoxyCodeLine{00725\ \ \ \ \ \textcolor{comment}{//\ the\ proper\ order}}
+\DoxyCodeLine{00726\ \ \ \ \ index\ =\ spatialParams-\/>readIndices[i];}
+\DoxyCodeLine{00727\ \ \ \ \ \textcolor{keywordflow}{if}\ (isChangeable(spatialParams,\ index))\ \{}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1\ \&\&\ isSpatial(spatialParams,\ index))\ \{}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we'll\ append\ a\ *\ to\ spatially-\/varying\ values}}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ strcpy(appendage,\ \textcolor{stringliteral}{"{}*"{}});}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ strcpy(appendage,\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00734\ }
+\DoxyCodeLine{00735\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}[\%d]\ \%s:\(\backslash\)t"{}},\ count,\ spatialParams-\/>parameters[index].name);}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}Value\ =\ \%f\%s\(\backslash\)t"{}},}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParam(spatialParams,\ index,\ theLoc),\ appendage);}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}Best\ =\ \%f\%s\(\backslash\)t"{}},}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamBest(spatialParams,\ index,\ theLoc),\ appendage);}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}Knob\ =\ \%f\%s\(\backslash\)t"{}},}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamKnob(spatialParams,\ index,\ theLoc),\ appendage);}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}Prior:\ \%f\%s\ "{}},}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamGuess(spatialParams,\ index,\ theLoc),\ appendage);}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ fprintf(outF,\ \textcolor{stringliteral}{"{}\ [\%f,\ \%f]\(\backslash\)n"{}},\ getSpatialParamMin(spatialParams,\ index),}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getSpatialParamMax(spatialParams,\ index));}
+\DoxyCodeLine{00746\ }
+\DoxyCodeLine{00747\ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{00748\ \ \ \ \ \}}
+\DoxyCodeLine{00749\ \ \ \}}
+\DoxyCodeLine{00750\ \}}
+\DoxyCodeLine{00751\ }
+\DoxyCodeLine{00752\ \textcolor{comment}{//\ Clean\ up:\ deallocate\ spatialParams\ and\ any\ other\ dynamically-\/allocated}}
+\DoxyCodeLine{00753\ \textcolor{comment}{//\ pointers\ that\ need\ deallocating}}
+\DoxyCodeLine{00754\ \textcolor{keywordtype}{void}\ deleteSpatialParams(SpatialParams\ *spatialParams)\ \{}
+\DoxyCodeLine{00755\ \ \ \textcolor{keywordtype}{int}\ numParameters,\ i;}
+\DoxyCodeLine{00756\ \ \ OneSpatialParam\ *param;}
+\DoxyCodeLine{00757\ }
+\DoxyCodeLine{00758\ \ \ \textcolor{comment}{//\ first\ loop\ through\ individual\ parameters,\ de-\/allocating\ space\ they\ use:}}
+\DoxyCodeLine{00759\ \ \ numParameters\ =\ spatialParams-\/>numParameters;}
+\DoxyCodeLine{00760\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ numParameters;\ i++)\ \{}
+\DoxyCodeLine{00761\ \ \ \ \ param\ =\ \&(spatialParams-\/>parameters[i]);}
+\DoxyCodeLine{00762\ \ \ \ \ \textcolor{keywordflow}{if}\ (param-\/>value\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ this\ parameter\ has\ been\ used\ -\/\ so\ space\ has}}
+\DoxyCodeLine{00763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ been\ allocated\ for\ its\ various\ values}}
+\DoxyCodeLine{00764\ \ \ \ \ \ \ free(param-\/>value);}
+\DoxyCodeLine{00765\ \ \ \ \ \ \ free(param-\/>guess);}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ free(param-\/>best);}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ free(param-\/>knob);}
+\DoxyCodeLine{00768\ \ \ \ \ \}}
+\DoxyCodeLine{00769\ \ \ \}}
+\DoxyCodeLine{00770\ }
+\DoxyCodeLine{00771\ \ \ \textcolor{comment}{//\ now\ free\ space\ used\ by\ spatialParams\ structure\ itself:}}
+\DoxyCodeLine{00772\ \ \ free(spatialParams-\/>parameters);}
+\DoxyCodeLine{00773\ \ \ free(spatialParams-\/>readIndices);}
+\DoxyCodeLine{00774\ \ \ free(spatialParams-\/>changeableParamIndices);}
+\DoxyCodeLine{00775\ \ \ free(spatialParams);}
+\DoxyCodeLine{00776\ \}}
+
+\end{DoxyCode}

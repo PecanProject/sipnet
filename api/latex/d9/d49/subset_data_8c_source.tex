@@ -1,0 +1,435 @@
+\doxysection{subset\+Data.\+c}
+\label{subset_data_8c_source}\index{subsetData.c@{subsetData.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ subsetData:\ A\ stand-\/alone\ program}}
+\DoxyCodeLine{00002\ \textcolor{comment}{}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ Given\ a\ set\ of\ SIPNET\ input\ files,}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ \ along\ with\ a\ start\ year,\ start\ day,\ and\ number\ of\ days,}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ create\ subsetted\ files\ (.clim,\ .dat,\ .valid,\ .sigma,\ .spd)}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ \ that\ start\ at\ the\ given\ date\ and\ extend\ for\ the\ given\ \#\ of\ days.}}
+\DoxyCodeLine{00007\ \textcolor{comment}{}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ \ \ To\ start\ at\ the\ beginning\ of\ the\ record,\ specify\ START\_YEAR\ =\ START\_DAY\ =\ -\/1}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ \ To\ go\ until\ the\ end\ of\ the\ record,\ specify\ NUM\_DAYS\ =\ -\/1}}
+\DoxyCodeLine{00010\ \textcolor{comment}{}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ \ Also\ create\ a\ file\ for\ aggregation\ (*.agg),\ using\ the\ "{}AGGREGATION"{}\ input}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ \ -\/\ Right\ now,\ set\ up\ to\ do\ no\ aggregation\ ("{}none"{})\ or\ daily\ aggregation}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ \ \ \ \ ("{}daily"{})}}
+\DoxyCodeLine{00014\ \textcolor{comment}{}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ \ Note\ that\ you\ could\ use\ this\ program\ to\ just\ create\ desired\ .spd\ and\ .agg}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ files\ without\ doing\ any\ subsetting\ (START\_YEAR\ =\ START\_DAY\ =\ NUM\_DAYS\ =\ -\/1)}}
+\DoxyCodeLine{00017\ \textcolor{comment}{}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ Note\ that\ this\ only\ works\ for\ input\ files\ with\ a\ single\ location\ (loc=0)}}
+\DoxyCodeLine{00019\ \textcolor{comment}{}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ Creation\ date:\ 6/6/07}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}common/namelistInput.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}common/util.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ NAMELIST\_FILE\ "{}subset.in"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ MAX\_LINE\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ 1024\ \ }\textcolor{comment}{//\ maximum\ line\ length\ for\ input\ files,\ including}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ terminating\ '\(\backslash\)0'}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ MAX\_FILENAME\ 256\ \ }\textcolor{comment}{//\ maximum\ length\ of\ input\ and\ output\ base\ file\ names}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ MAX\_NAME\ 64\ \ }\textcolor{comment}{//\ maxiumum\ length\ of\ other\ miscellaneous\ strings}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ named\ constants\ for\ the\ different\ time\ scales\ of\ aggregation}}
+\DoxyCodeLine{00038\ \textcolor{keyword}{enum}\ AGGREGATION\_TYPES\ \{\ NO\_AGGREGATION,\ DAILY\_AGGREGATION\ \};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ If\ status==NULL,\ print\ message\ and\ exit;\ otherwise\ do\ nothing}}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ checkStatus(\textcolor{keywordtype}{char}\ *status,\ \textcolor{keywordtype}{char}\ *message)\ \{}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordflow}{if}\ (status\ ==\ NULL)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%s"{}},\ message);}
+\DoxyCodeLine{00044\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00045\ \ \ \}}
+\DoxyCodeLine{00046\ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{/*\ Read\ next\ line\ from\ climate\ file\ f,\ which\ must\ be\ open\ for\ reading}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ \ \ Return\ the\ line\ in\ *line\ (up\ to\ maxLength\ characters)}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ Also\ return\ the\ location,\ year\ and\ day\ in\ their\ respective\ variables}}
+\DoxyCodeLine{00051\ \textcolor{comment}{}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ Return\ value:\ a\ pointer\ to\ line\ if\ read\ was\ successful,\ otherwise\ NULL}}
+\DoxyCodeLine{00053\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{char}\ *readClimLine(FILE\ *f,\ \textcolor{keywordtype}{char}\ *line,\ \textcolor{keywordtype}{int}\ maxLength,\ \textcolor{keywordtype}{int}\ *loc,\ \textcolor{keywordtype}{int}\ *year,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *day)\ \{}
+\DoxyCodeLine{00056\ \ \ \textcolor{keywordtype}{char}\ *status;\ \ \textcolor{comment}{//\ return\ value}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ status\ =\ fgets(line,\ maxLength,\ f);}
+\DoxyCodeLine{00059\ \ \ \textcolor{keywordflow}{if}\ (status\ !=\ NULL)\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ sscanf(line,\ \textcolor{stringliteral}{"{}\%d\ \%d\ \%d"{}},\ loc,\ year,\ day);}
+\DoxyCodeLine{00061\ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \textcolor{keywordflow}{return}\ status;}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{/*\ Make\ sure\ climFin\ only\ contains\ data\ for\ a\ single\ location}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ \ \ If\ not,\ die\ with\ an\ error\ message}}
+\DoxyCodeLine{00068\ \textcolor{comment}{}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ climFin\ should\ be\ open\ for\ reading\ and\ rewound;\ it\ is\ rewound\ before\ exiting}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ \ \ this\ function}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{void}\ checkLocations(FILE\ *climFin)\ \{}
+\DoxyCodeLine{00073\ \ \ \textcolor{keywordtype}{char}\ line[MAX\_LINE];}
+\DoxyCodeLine{00074\ \ \ \textcolor{keywordtype}{int}\ loc,\ year,\ day;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \textcolor{keywordflow}{while}\ (readClimLine(climFin,\ line,\ MAX\_LINE,\ \&loc,\ \&year,\ \&day)\ !=}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ NULL)\ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{if}\ (loc\ !=\ 0)\ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ Read\ loc\ =\ \%d,\ but\ input\ climate\ file\ must\ contain\ only\ "{}}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}location\ 0\(\backslash\)n"{}},}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ loc);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ rewind(climFin);}
+\DoxyCodeLine{00087\ \}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{comment}{/*\ return\ 1\ if\ (year,\ day)\ is\ on\ or\ after\ (startYear,\ startDay),}}
+\DoxyCodeLine{00090\ \textcolor{comment}{\ \ \ return\ 0\ otherwise}}
+\DoxyCodeLine{00091\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ pastStart(\textcolor{keywordtype}{int}\ year,\ \textcolor{keywordtype}{int}\ day,\ \textcolor{keywordtype}{int}\ startYear,\ \textcolor{keywordtype}{int}\ startDay)\ \{}
+\DoxyCodeLine{00093\ \ \ \textcolor{keywordflow}{return}\ ((year\ >\ startYear)\ ||\ ((year\ ==\ startYear)\ \&\&\ (day\ >=\ startDay)));}
+\DoxyCodeLine{00094\ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{comment}{/*\ Read\ lines\ from\ clim,\ data,\ valid\ and\ sigma\ files,}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ \ \ until\ we\ reach\ a\ point\ on\ or\ after\ the\ date\ given\ by\ startYear,\ startDay}}
+\DoxyCodeLine{00098\ \textcolor{comment}{\ \ \ (startDay\ is\ Julian\ day\ of\ year)}}
+\DoxyCodeLine{00099\ \textcolor{comment}{}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ startYear\ and\ startDay\ may\ be\ modified\ to\ hold\ the\ ACTUAL\ starting\ year\ and}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ day\ (which\ may\ be\ different\ from\ the\ values\ passed\ in\ -\/\ for\ example\ if\ these}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ values\ are\ -\/1,\ indicating\ that\ we\ should\ just\ start\ at\ the\ beginning)}}
+\DoxyCodeLine{00103\ \textcolor{comment}{}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ The\ three\ files\ should\ be\ open\ for\ reading\ and\ rewound}}
+\DoxyCodeLine{00105\ \textcolor{comment}{}}
+\DoxyCodeLine{00106\ \textcolor{comment}{\ \ \ At\ the\ completion\ of\ this\ function,\ the\ file\ pointers\ for\ the\ three\ files}}
+\DoxyCodeLine{00107\ \textcolor{comment}{\ \ \ will\ point\ to\ the\ start\ of\ the\ first\ line\ on\ or\ after\ the\ given\ date}}
+\DoxyCodeLine{00108\ \textcolor{comment}{}}
+\DoxyCodeLine{00109\ \textcolor{comment}{\ \ \ This\ is\ only\ implemented\ for\ files\ containing\ a\ single\ location}}
+\DoxyCodeLine{00110\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ gotoStart(FILE\ *climFin,\ FILE\ *dataFin,\ FILE\ *validFin,\ FILE\ *sigmaFin,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ *startYear,\ \textcolor{keywordtype}{int}\ *startDay)\ \{}
+\DoxyCodeLine{00113\ \ \ \textcolor{keywordtype}{char}\ line[MAX\_LINE];}
+\DoxyCodeLine{00114\ \ \ fpos\_t\ fpos;\ \ \textcolor{comment}{//\ file\ position\ in\ climFin,\ so\ we\ can\ "{}unread"{}\ the\ last\ line}}
+\DoxyCodeLine{00115\ \ \ \textcolor{keywordtype}{char}\ *status;}
+\DoxyCodeLine{00116\ \ \ \textcolor{keywordtype}{int}\ loc,\ year,\ day;}
+\DoxyCodeLine{00117\ \ \ \textcolor{keywordtype}{int}\ err;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \textcolor{comment}{//\ Read\ first\ line:}}
+\DoxyCodeLine{00120\ \ \ err\ =\ fgetpos(climFin,\ \&fpos);}
+\DoxyCodeLine{00121\ \ \ \textcolor{keywordflow}{if}\ (err)\ \{}
+\DoxyCodeLine{00122\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ in\ fgetpos\(\backslash\)n"{}});}
+\DoxyCodeLine{00123\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00124\ \ \ \}}
+\DoxyCodeLine{00125\ \ \ status\ =\ readClimLine(climFin,\ line,\ MAX\_LINE,\ \&loc,\ \&year,\ \&day);}
+\DoxyCodeLine{00126\ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ climate\ file:\ no\ valid\ data\(\backslash\)n"{}});}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \textcolor{comment}{//\ Keep\ reading\ lines\ until\ we\ find\ the\ start\ day:}}
+\DoxyCodeLine{00129\ \ \ \textcolor{keywordflow}{while}\ (!pastStart(year,\ day,\ *startYear,\ *startDay))\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ status\ =\ fgets(line,\ MAX\_LINE,\ dataFin);\ \ \textcolor{comment}{//\ read\ \&\ ignore\ line\ from\ data}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ file}}
+\DoxyCodeLine{00132\ \ \ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ data\ file:\ Unexpected\ EOF\ or\ error\(\backslash\)n"{}});}
+\DoxyCodeLine{00133\ \ \ \ \ status\ =\ fgets(line,\ MAX\_LINE,\ validFin);\ \ \textcolor{comment}{//\ read\ \&\ ignore\ line\ from\ valid}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ file}}
+\DoxyCodeLine{00135\ \ \ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ valid\ file:\ Unexpected\ EOF\ or\ error\(\backslash\)n"{}});}
+\DoxyCodeLine{00136\ \ \ \ \ status\ =\ fgets(line,\ MAX\_LINE,\ sigmaFin);\ \ \textcolor{comment}{//\ read\ \&\ ignore\ line\ from\ valid}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ file}}
+\DoxyCodeLine{00138\ \ \ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ sigma\ file:\ Unexpected\ EOF\ or\ error\(\backslash\)n"{}});}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{comment}{//\ read\ next\ line\ from\ climate\ file:}}
+\DoxyCodeLine{00141\ \ \ \ \ err\ =\ fgetpos(climFin,\ \&fpos);}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordflow}{if}\ (err)\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ in\ fgetpos\(\backslash\)n"{}});}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ \ \ \ \ status\ =\ readClimLine(climFin,\ line,\ MAX\_LINE,\ \&loc,\ \&year,\ \&day);}
+\DoxyCodeLine{00147\ \ \ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ climate\ file:\ reached\ EOF\ before\ "{}}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}finding\ desired\ start\ date\(\backslash\)n"{}});}
+\DoxyCodeLine{00149\ \ \ \}\ \ \textcolor{comment}{//\ while\ !pastStart}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \textcolor{comment}{//\ set\ actual\ starting\ year\ and\ day:}}
+\DoxyCodeLine{00152\ \ \ *startYear\ =\ year;}
+\DoxyCodeLine{00153\ \ \ *startDay\ =\ day;}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \textcolor{comment}{//\ now\ we've\ read\ one\ extra\ line\ from\ climate\ file:\ have\ to\ unread\ it:}}
+\DoxyCodeLine{00156\ \ \ err\ =\ fsetpos(climFin,\ \&fpos);}
+\DoxyCodeLine{00157\ \ \ \textcolor{keywordflow}{if}\ (err)\ \{}
+\DoxyCodeLine{00158\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ in\ fsetpos\(\backslash\)n"{}});}
+\DoxyCodeLine{00159\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00160\ \ \ \}}
+\DoxyCodeLine{00161\ \}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{comment}{/*\ Starting\ at\ current\ positions\ in\ climate,\ data,\ and\ valid\ input\ files,}}
+\DoxyCodeLine{00164\ \textcolor{comment}{\ \ \ copy\ from\ input\ files\ to\ output\ files\ until\ we've\ read\ numDays\ days}}
+\DoxyCodeLine{00165\ \textcolor{comment}{\ \ \ (numDays\ <=\ 0\ indicates\ that\ we\ should\ read\ until\ end\ of\ file).}}
+\DoxyCodeLine{00166\ \textcolor{comment}{\ \ \ Also\ create\ spdFout\ (steps\ per\ day;\ including\ leading\ startYear,\ startDay)}}
+\DoxyCodeLine{00167\ \textcolor{comment}{\ \ \ and\ aggFout\ (\#\ steps\ per\ aggregation\ time\ step)}}
+\DoxyCodeLine{00168\ \textcolor{comment}{\ \ \ \ -\/\ Aggregation\ time\ step\ determined\ by\ aggType\ (must\ be\ one\ of\ the}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ \ \ \ \ \ AGGREGATION\_TYPES)}}
+\DoxyCodeLine{00170\ \textcolor{comment}{\ \ \ \ -\/\ Right\ now,\ only\ implemented\ for\ NO\_AGGREGATION\ (1\ step\ per\ aggregation}}
+\DoxyCodeLine{00171\ \textcolor{comment}{\ \ \ \ \ \ step)\ and\ DAILY\_AGGREGATION}}
+\DoxyCodeLine{00172\ \textcolor{comment}{}}
+\DoxyCodeLine{00173\ \textcolor{comment}{\ \ \ All\ output\ files\ should\ be\ open\ for\ writing}}
+\DoxyCodeLine{00174\ \textcolor{comment}{}}
+\DoxyCodeLine{00175\ \textcolor{comment}{\ \ \ Assumes\ that\ there\ is\ at\ least\ one\ time\ step\ per\ day\ in\ the\ input\ files}}
+\DoxyCodeLine{00176\ \textcolor{comment}{\ \ \ \ (i.e.\ the\ interval\ between\ two\ time\ steps\ is\ not\ greater\ than\ a\ day)}}
+\DoxyCodeLine{00177\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ copySubset(FILE\ *climFin,\ FILE\ *dataFin,\ FILE\ *validFin,\ FILE\ *sigmaFin,}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILE\ *climFout,\ FILE\ *dataFout,\ FILE\ *validFout,}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILE\ *sigmaFout,\ FILE\ *spdFout,\ FILE\ *aggFout,\ \textcolor{keywordtype}{int}\ aggType,}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ startYear,\ \textcolor{keywordtype}{int}\ startDay,\ \textcolor{keywordtype}{int}\ numDays)\ \{}
+\DoxyCodeLine{00182\ \ \ \textcolor{keywordtype}{char}\ line[MAX\_LINE];}
+\DoxyCodeLine{00183\ \ \ \textcolor{keywordtype}{int}\ loc,\ year,\ day;}
+\DoxyCodeLine{00184\ \ \ \textcolor{keywordtype}{int}\ currYear,\ currDay;}
+\DoxyCodeLine{00185\ \ \ \textcolor{keywordtype}{int}\ ndays;\ \ \textcolor{comment}{//\ number\ of\ days\ we've\ read\ so\ far\ (including\ partial\ days)}}
+\DoxyCodeLine{00186\ \ \ \textcolor{keywordtype}{int}\ stepsThisDay;}
+\DoxyCodeLine{00187\ \ \ \textcolor{keywordtype}{int}\ done;}
+\DoxyCodeLine{00188\ \ \ \textcolor{keywordtype}{char}\ *status;}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ fprintf(spdFout,\ \textcolor{stringliteral}{"{}\%d\ \%d\ "{}},\ startYear,\ startDay);}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \textcolor{comment}{//\ read\ next\ line\ from\ climate\ file:}}
+\DoxyCodeLine{00193\ \ \ status\ =\ readClimLine(climFin,\ line,\ MAX\_LINE,\ \&loc,\ \&year,\ \&day);}
+\DoxyCodeLine{00194\ \ \ checkStatus(status,}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}ERROR\ reading\ climate\ file:\ no\ data\ found\ after\ start\ date\(\backslash\)n"{}});}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ ndays\ =\ 1;}
+\DoxyCodeLine{00198\ \ \ stepsThisDay\ =\ 1;}
+\DoxyCodeLine{00199\ \ \ done\ =\ 0;}
+\DoxyCodeLine{00200\ \ \ \textcolor{keywordflow}{while}\ (!done)\ \{}
+\DoxyCodeLine{00201\ \ \ \ \ currYear\ =\ year;}
+\DoxyCodeLine{00202\ \ \ \ \ currDay\ =\ day;}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \ \ \ \ fputs(line,\ climFout);}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{comment}{//\ read\ \&\ copy\ line\ from\ data\ file}}
+\DoxyCodeLine{00207\ \ \ \ \ status\ =\ fgets(line,\ MAX\_LINE,\ dataFin);}
+\DoxyCodeLine{00208\ \ \ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ data\ file:\ Unexpected\ EOF\ or\ error\(\backslash\)n"{}});}
+\DoxyCodeLine{00209\ \ \ \ \ fputs(line,\ dataFout);}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{comment}{//\ read\ \&\ copy\ line\ from\ valid\ file}}
+\DoxyCodeLine{00212\ \ \ \ \ status\ =\ fgets(line,\ MAX\_LINE,\ validFin);}
+\DoxyCodeLine{00213\ \ \ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ valid\ file:\ Unexpected\ EOF\ or\ error\(\backslash\)n"{}});}
+\DoxyCodeLine{00214\ \ \ \ \ fputs(line,\ validFout);}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{comment}{//\ read\ \&\ copy\ line\ from\ sigma\ file}}
+\DoxyCodeLine{00217\ \ \ \ \ status\ =\ fgets(line,\ MAX\_LINE,\ sigmaFin);}
+\DoxyCodeLine{00218\ \ \ \ \ checkStatus(status,\ \textcolor{stringliteral}{"{}ERROR\ reading\ sigma\ file:\ Unexpected\ EOF\ or\ error\(\backslash\)n"{}});}
+\DoxyCodeLine{00219\ \ \ \ \ fputs(line,\ sigmaFout);}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{comment}{//\ read\ next\ line\ from\ climate\ file:}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{comment}{//\ note\ that\ we\ copy\ it\ to\ output\ file\ at\ TOP\ of\ loop}}
+\DoxyCodeLine{00223\ \ \ \ \ status\ =\ readClimLine(climFin,\ line,\ MAX\_LINE,\ \&loc,\ \&year,\ \&day);}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordflow}{if}\ (status\ ==\ NULL)\ \{\ \ \textcolor{comment}{//\ EOF\ or\ error}}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \textcolor{comment}{//\ do\ final\ aggregation\ and\ spd\ file\ output:}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (aggType)\ \{}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ NO\_AGGREGATION:}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ fprintf(aggFout,\ \textcolor{stringliteral}{"{}1\ -\/1\(\backslash\)n"{}});}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ DAILY\_AGGREGATION:}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ fprintf(aggFout,\ \textcolor{stringliteral}{"{}\%d\ -\/1\(\backslash\)n"{}},\ stepsThisDay);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Invalid\ aggregation\ type:\ \%d\(\backslash\)n"{}},\ aggType);}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ fprintf(spdFout,\ \textcolor{stringliteral}{"{}\%d\ -\/1\(\backslash\)n"{}},\ stepsThisDay);}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((numDays\ <=\ 0)\ ||\ (ndays\ ==\ numDays))\ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ we\ have\ hit\ end\ of\ file\ or\ read\ enough\ days}}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ done\ =\ 1;}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ we\ haven't\ read\ enough\ days}}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ reading\ climate\ file:\ reached\ EOF\ or\ error\ after\ reading\ "{}}}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}only\ \%d\ of\ \%d\ days\(\backslash\)n"{}},}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ndays,\ numDays);}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Try\ choosing\ an\ earlier\ start\ date,\ or\ a\ smaller\ number\ of\ "{}}}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}days\(\backslash\)n"{}});}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00251\ \ \ \ \ \}}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((year\ -\/\ currYear\ >\ 1)\ ||}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ ((year\ -\/\ currYear\ ==\ 1)\ \&\&\ (currDay\ <\ 365\ ||\ day\ >\ 1))\ ||}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ ((year\ ==\ currYear)\ \&\&\ (day\ -\/\ currDay)\ >\ 1))\ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ we\ (1)\ advanced\ by\ more\ than\ 1\ year,\ or\ (2)\ advanced\ by\ one\ year,}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ but\ we\ either\ (a)\ weren't\ on\ day\ 365\ (or\ 366),\ or\ (b)\ now\ aren't\ on}}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ day\ 1,\ or\ (3)\ advanced\ by\ more\ than\ one\ day\ (note:\ we\ don't}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ explicitly\ check\ for\ climate\ going\ backwards:\ we\ assume\ this\ doesn't}}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ happen)}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ subsetData\ only\ implemented\ for\ input\ files\ with\ at\ "{}}}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}least\ one\ step\ per\ day\(\backslash\)n"{}});}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \textcolor{comment}{//\ possibly\ do\ aggregation\ file\ output:}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (aggType)\ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ NO\_AGGREGATION:}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ fprintf(aggFout,\ \textcolor{stringliteral}{"{}1\ "{}});}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ DAILY\_AGGREGATION:}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (day\ !=\ currDay)\ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ fprintf(aggFout,\ \textcolor{stringliteral}{"{}\%d\ "{}},\ stepsThisDay);}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Invalid\ aggregation\ type:\ \%d\(\backslash\)n"{}},\ aggType);}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (day\ !=\ currDay)\ \{}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ fprintf(spdFout,\ \textcolor{stringliteral}{"{}\%d\ "{}},\ stepsThisDay);}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ ndays++;}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ stepsThisDay\ =\ 1;}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ set\ new\ currDay\ and\ currYear\ at\ TOP\ of\ loop}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((numDays\ >\ 0)\ \&\&\ (ndays\ >\ numDays))\ \{\ \ \textcolor{comment}{//\ we've\ read\ numDays\ days}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ done\ =\ 1;}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ output\ end-\/of-\/line\ terminators\ to\ aggregation\ and\ spd\ files}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ Note\ that,\ because\ the\ only\ possible\ aggregations\ are}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ NO\_AGGREGATION\ and\ DAILY\_AGGREGATION,\ we\ will\ definitely\ have}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ already\ output\ the\ last\ agg.\ step\ to\ aggregation\ file.\ If\ we\ add}}
+\DoxyCodeLine{00295\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ another\ aggregation\ type\ (e.g.\ annual),\ we\ may\ need\ to\ output\ the}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ last\ value\ here\ before\ terminating\ the\ line}}
+\DoxyCodeLine{00297\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ fprintf(aggFout,\ \textcolor{stringliteral}{"{}-\/1\(\backslash\)n"{}});}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ fprintf(spdFout,\ \textcolor{stringliteral}{"{}-\/1\(\backslash\)n"{}});}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ day\ ==\ currDay}}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ stepsThisDay++;}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00304\ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ (not\ EOF\ or\ error)}}
+\DoxyCodeLine{00305\ \ \ \}\ \ \textcolor{comment}{//\ while\ !done}}
+\DoxyCodeLine{00306\ \}\ \ \textcolor{comment}{//\ copySubset}}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \textcolor{comment}{//\ copy\ contents\ of\ <inFilename>\ to\ <outFilename>}}
+\DoxyCodeLine{00309\ \textcolor{keywordtype}{void}\ copyFile(\textcolor{keywordtype}{char}\ *inFilename,\ \textcolor{keywordtype}{char}\ *outFilename)\ \{}
+\DoxyCodeLine{00310\ \ \ FILE\ *in,\ *out;}
+\DoxyCodeLine{00311\ \ \ \textcolor{keywordtype}{char}\ c;}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \ \ in\ =\ openFile(inFilename,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00314\ \ \ out\ =\ openFile(outFilename,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \textcolor{keywordflow}{while}\ ((c\ =\ fgetc(in))\ !=\ EOF)\ \{}
+\DoxyCodeLine{00317\ \ \ \ \ fputc(c,\ out);}
+\DoxyCodeLine{00318\ \ \ \}}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00320\ \ \ fclose(out);}
+\DoxyCodeLine{00321\ \ \ fclose(in);}
+\DoxyCodeLine{00322\ \}}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \textcolor{comment}{/*\ Copy\ contents\ of\ <inFilename>.param\ and\ .param-\/spatial}}
+\DoxyCodeLine{00325\ \textcolor{comment}{\ \ \ to\ <outFilename>.param\ and\ .param-\/spatial}}
+\DoxyCodeLine{00326\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00327\ \textcolor{keywordtype}{void}\ copyOtherFiles(\textcolor{keywordtype}{char}\ *inFilename,\ \textcolor{keywordtype}{char}\ *outFilename)\ \{}
+\DoxyCodeLine{00328\ \ \ \textcolor{keywordtype}{char}\ *inFullname,\ *outFullname;}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \ \ inFullname\ =\ (\textcolor{keywordtype}{char}\ *)malloc((strlen(inFilename)\ +\ 25)\ *\ \textcolor{keyword}{sizeof}(char));}
+\DoxyCodeLine{00331\ \ \ outFullname\ =\ (\textcolor{keywordtype}{char}\ *)malloc((strlen(outFilename)\ +\ 25)\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}));}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \textcolor{comment}{//\ copy\ .param\ file}}
+\DoxyCodeLine{00334\ \ \ strcpy(inFullname,\ inFilename);}
+\DoxyCodeLine{00335\ \ \ strcat(inFullname,\ \textcolor{stringliteral}{"{}.param"{}});}
+\DoxyCodeLine{00336\ \ \ strcpy(outFullname,\ outFilename);}
+\DoxyCodeLine{00337\ \ \ strcat(outFullname,\ \textcolor{stringliteral}{"{}.param"{}});}
+\DoxyCodeLine{00338\ \ \ copyFile(inFullname,\ outFullname);}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \textcolor{comment}{//\ copy\ .param-\/spatial\ file}}
+\DoxyCodeLine{00341\ \ \ strcpy(inFullname,\ inFilename);}
+\DoxyCodeLine{00342\ \ \ strcat(inFullname,\ \textcolor{stringliteral}{"{}.param-\/spatial"{}});}
+\DoxyCodeLine{00343\ \ \ strcpy(outFullname,\ outFilename);}
+\DoxyCodeLine{00344\ \ \ strcat(outFullname,\ \textcolor{stringliteral}{"{}.param-\/spatial"{}});}
+\DoxyCodeLine{00345\ \ \ copyFile(inFullname,\ outFullname);}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \ \ free(inFullname);}
+\DoxyCodeLine{00348\ \ \ free(outFullname);}
+\DoxyCodeLine{00349\ \}}
+\DoxyCodeLine{00350\ }
+\DoxyCodeLine{00351\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00352\ \ \ NamelistInputs\ *namelistInputs;}
+\DoxyCodeLine{00353\ \ \ \textcolor{keywordtype}{char}\ inFilename[MAX\_FILENAME];\ \ \textcolor{comment}{//\ base\ input\ file\ name}}
+\DoxyCodeLine{00354\ \ \ \textcolor{keywordtype}{char}\ outFilename[MAX\_FILENAME];\ \ \textcolor{comment}{//\ base\ output\ file\ name}}
+\DoxyCodeLine{00355\ \ \ \textcolor{keywordtype}{int}\ startYear,\ startDay,\ numDays;}
+\DoxyCodeLine{00356\ \ \ \textcolor{keywordtype}{char}\ aggTypeString[MAX\_NAME];}
+\DoxyCodeLine{00357\ \ \ \textcolor{keywordtype}{int}\ aggType;\ \ \textcolor{comment}{//\ one\ of\ AGGREGATION\_TYPES}}
+\DoxyCodeLine{00358\ \ \ FILE\ *climFin,\ *dataFin,\ *validFin,\ *sigmaFin,\ *climFout,\ *dataFout,}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ *validFout,\ *sigmaFout,\ *spdFout,\ *aggFout;}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \ \ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00362\ \ \ \textcolor{comment}{//\ setup\ namelist\ input:}}
+\DoxyCodeLine{00363\ \ \ namelistInputs\ =\ newNamelistInputs();}
+\DoxyCodeLine{00364\ \ \ addNamelistInputItem(namelistInputs,\ \textcolor{stringliteral}{"{}INPUT\_FILENAME"{}},\ STRING\_TYPE,\ inFilename,\ MAX\_FILENAME);}
+\DoxyCodeLine{00365\ \ \ addNamelistInputItem(namelistInputs,\ \textcolor{stringliteral}{"{}OUTPUT\_FILENAME"{}},\ STRING\_TYPE,\ outFilename,\ MAX\_FILENAME);}
+\DoxyCodeLine{00366\ \ \ addNamelistInputItem(namelistInputs,\ \textcolor{stringliteral}{"{}START\_YEAR"{}},\ INT\_TYPE,\ \&startYear,\ 0);}
+\DoxyCodeLine{00367\ \ \ addNamelistInputItem(namelistInputs,\ \textcolor{stringliteral}{"{}START\_DAY"{}},\ INT\_TYPE,\ \&startDay,\ 0);}
+\DoxyCodeLine{00368\ \ \ addNamelistInputItem(namelistInputs,\ \textcolor{stringliteral}{"{}NUM\_DAYS"{}},\ INT\_TYPE,\ \&numDays,\ 0);}
+\DoxyCodeLine{00369\ \ \ addNamelistInputItem(namelistInputs,\ \textcolor{stringliteral}{"{}AGGREGATION"{}},\ STRING\_TYPE,\ \&aggTypeString,\ MAX\_NAME);}
+\DoxyCodeLine{00370\ \ \ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00372\ \ \ \textcolor{comment}{//\ read\ from\ namelist\ file:}}
+\DoxyCodeLine{00373\ \ \ readNamelistInputs(namelistInputs,\ NAMELIST\_FILE);}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \textcolor{comment}{//\ and\ make\ sure\ we\ read\ everything:}}
+\DoxyCodeLine{00376\ \ \ dieIfNotRead(namelistInputs,\ \textcolor{stringliteral}{"{}INPUT\_FILENAME"{}});}
+\DoxyCodeLine{00377\ \ \ dieIfNotRead(namelistInputs,\ \textcolor{stringliteral}{"{}OUTPUT\_FILENAME"{}});}
+\DoxyCodeLine{00378\ \ \ dieIfNotRead(namelistInputs,\ \textcolor{stringliteral}{"{}START\_YEAR"{}});}
+\DoxyCodeLine{00379\ \ \ dieIfNotRead(namelistInputs,\ \textcolor{stringliteral}{"{}START\_DAY"{}});}
+\DoxyCodeLine{00380\ \ \ dieIfNotRead(namelistInputs,\ \textcolor{stringliteral}{"{}NUM\_DAYS"{}});}
+\DoxyCodeLine{00381\ \ \ dieIfNotRead(namelistInputs,\ \textcolor{stringliteral}{"{}AGGREGATION"{}});}
+\DoxyCodeLine{00382\ }
+\DoxyCodeLine{00383\ \ \ \textcolor{keywordflow}{if}\ (strcmp(aggTypeString,\ \textcolor{stringliteral}{"{}"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00384\ \ \ \ \ aggType\ =\ NO\_AGGREGATION;}
+\DoxyCodeLine{00385\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strcmpIgnoreCase(aggTypeString,\ \textcolor{stringliteral}{"{}daily"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00386\ \ \ \ \ aggType\ =\ DAILY\_AGGREGATION;}
+\DoxyCodeLine{00387\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00388\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Unrecognized\ aggregation:\ '\%s'\(\backslash\)n"{}},\ aggTypeString);}
+\DoxyCodeLine{00389\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00390\ \ \ \}}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \ \ \textcolor{comment}{//\ open\ files:}}
+\DoxyCodeLine{00393\ \ \ \textcolor{comment}{//\ input\ files:}}
+\DoxyCodeLine{00394\ \ \ climFin\ =\ openFileExt(inFilename,\ \textcolor{stringliteral}{"{}clim"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00395\ \ \ dataFin\ =\ openFileExt(inFilename,\ \textcolor{stringliteral}{"{}dat"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00396\ \ \ validFin\ =\ openFileExt(inFilename,\ \textcolor{stringliteral}{"{}valid"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00397\ \ \ sigmaFin\ =\ openFileExt(inFilename,\ \textcolor{stringliteral}{"{}sigma"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \textcolor{comment}{//\ output\ files:}}
+\DoxyCodeLine{00400\ \ \ climFout\ =\ openFileExt(outFilename,\ \textcolor{stringliteral}{"{}clim"{}},\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00401\ \ \ dataFout\ =\ openFileExt(outFilename,\ \textcolor{stringliteral}{"{}dat"{}},\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00402\ \ \ validFout\ =\ openFileExt(outFilename,\ \textcolor{stringliteral}{"{}valid"{}},\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00403\ \ \ sigmaFout\ =\ openFileExt(outFilename,\ \textcolor{stringliteral}{"{}sigma"{}},\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00404\ \ \ spdFout\ =\ openFileExt(outFilename,\ \textcolor{stringliteral}{"{}spd"{}},\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00405\ \ \ aggFout\ =\ openFileExt(outFilename,\ \textcolor{stringliteral}{"{}agg"{}},\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00406\ }
+\DoxyCodeLine{00407\ \ \ \textcolor{comment}{//\ do\ the\ work:}}
+\DoxyCodeLine{00408\ \ \ checkLocations(climFin);\ \ \textcolor{comment}{//\ make\ sure\ the\ climate\ file\ only\ contains\ one}}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ location}}
+\DoxyCodeLine{00410\ \ \ gotoStart(climFin,\ dataFin,\ validFin,\ sigmaFin,\ \&startYear,\ \&startDay);}
+\DoxyCodeLine{00411\ \ \ copySubset(climFin,\ dataFin,\ validFin,\ sigmaFin,\ climFout,\ dataFout,}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ validFout,\ sigmaFout,\ spdFout,\ aggFout,\ aggType,\ startYear,}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ startDay,\ numDays);}
+\DoxyCodeLine{00414\ \ \ copyOtherFiles(inFilename,\ outFilename);}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \ \ \textcolor{comment}{//\ close\ files:}}
+\DoxyCodeLine{00417\ \ \ fclose(climFin);}
+\DoxyCodeLine{00418\ \ \ fclose(dataFin);}
+\DoxyCodeLine{00419\ \ \ fclose(validFin);}
+\DoxyCodeLine{00420\ \ \ fclose(sigmaFin);}
+\DoxyCodeLine{00421\ \ \ fclose(climFout);}
+\DoxyCodeLine{00422\ \ \ fclose(dataFout);}
+\DoxyCodeLine{00423\ \ \ fclose(validFout);}
+\DoxyCodeLine{00424\ \ \ fclose(sigmaFout);}
+\DoxyCodeLine{00425\ \ \ fclose(spdFout);}
+\DoxyCodeLine{00426\ \ \ fclose(aggFout);}
+\DoxyCodeLine{00427\ }
+\DoxyCodeLine{00428\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00429\ \}}
+
+\end{DoxyCode}

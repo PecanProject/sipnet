@@ -1,0 +1,11 @@
+<map id="sipnet.h" name="sipnet.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="78,5,153,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="82,152,149,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,32,42,50,25,64,12,80,9,90,9,100,21,118,43,133,70,146,68,151,41,138,17,121,4,101,3,90,8,77,21,60,39,46,76,27"/>
+<area shape="rect" id="Node000003" href="$da/d19/spatial_params_8h.html" title=" " alt="" coords="22,79,209,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="118,31,118,65,113,65,113,31"/>
+<area shape="rect" id="Node000004" href="$da/db0/output_items_8h.html" title=" " alt="" coords="233,79,347,104"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="144,28,250,71,248,76,142,33"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="118,104,118,138,113,138,113,104"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="263,106,158,149,156,144,261,102"/>
+</map>

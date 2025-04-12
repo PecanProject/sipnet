@@ -1,0 +1,2011 @@
+\doxysection{sipnet.\+c File Reference}
+\label{sipnet_8c}\index{sipnet.c@{sipnet.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include "{}common/util.\+h"{}}\newline
+{\ttfamily \#include "{}sipnet.\+h"{}}\newline
+{\ttfamily \#include "{}runmean.\+h"{}}\newline
+{\ttfamily \#include "{}output\+Items.\+h"{}}\newline
+{\ttfamily \#include "{}model\+Structures.\+h"{}}\newline
+{\ttfamily \#include "{}events.\+h"{}}\newline
+{\ttfamily \#include "{}exit\+Codes.\+h"{}}\newline
+Include dependency graph for sipnet.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{da/d84/sipnet_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Climate\+Vars}
+\item 
+struct \textbf{ Parameters}
+\item 
+struct \textbf{ Environment}
+\item 
+struct \textbf{ Flux\+Vars}
+\item 
+struct \textbf{ Tracker\+Vars}
+\item 
+struct \textbf{ Phenology\+Trackers\+Struct}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ CSV\+\_\+\+OUTPUT}~0
+\item 
+\#define \textbf{ ALTERNATIVE\+\_\+\+TRANS}~0
+\item 
+\#define \textbf{ BALL\+\_\+\+BERRY}~0
+\item 
+\#define \textbf{ PENMAN\+\_\+\+MONTEITH\+\_\+\+TRANS}~0
+\item 
+\#define \textbf{ GROWTH\+\_\+\+RESP}~0
+\item 
+\#define \textbf{ LLOYD\+\_\+\+TAYLOR}~0
+\item 
+\#define \textbf{ SEASONAL\+\_\+\+R\+\_\+\+SOIL}~0 \&\& !\textbf{ LLOYD\+\_\+\+TAYLOR}
+\item 
+\#define \textbf{ WATER\+\_\+\+PSN}~1
+\item 
+\#define \textbf{ WATER\+\_\+\+HRESP}~1
+\item 
+\#define \textbf{ DAYCENT\+\_\+\+WATER\+\_\+\+HRESP}~0 \&\& \textbf{ WATER\+\_\+\+HRESP}
+\item 
+\#define \textbf{ MODEL\+\_\+\+WATER}~1
+\item 
+\#define \textbf{ COMPLEX\+\_\+\+WATER}~1 \&\& \textbf{ MODEL\+\_\+\+WATER}
+\item 
+\#define \textbf{ LITTER\+\_\+\+WATER}~0 \&\& (\textbf{ COMPLEX\+\_\+\+WATER})
+\item 
+\#define \textbf{ LITTER\+\_\+\+WATER\+\_\+\+DRAINAGE}~1 \&\& (\textbf{ LITTER\+\_\+\+WATER})
+\item 
+\#define \textbf{ LEAF\+\_\+\+WATER}~0 \&\& (\textbf{ COMPLEX\+\_\+\+WATER})
+\item 
+\#define \textbf{ SNOW}~(1 $\vert$$\vert$ (\textbf{ COMPLEX\+\_\+\+WATER})) \&\& \textbf{ MODEL\+\_\+\+WATER}
+\item 
+\#define \textbf{ GDD}~1
+\item 
+\#define \textbf{ SOIL\+\_\+\+PHENOL}~0 \&\& !\textbf{ GDD}
+\item 
+\#define \textbf{ SOIL\+\_\+\+MULTIPOOL}~0 \&\& !\textbf{ LITTER\+\_\+\+POOL}
+\item 
+\#define \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}~3
+\item 
+\#define \textbf{ SOIL\+\_\+\+QUALITY}~0 \&\& \textbf{ SOIL\+\_\+\+MULTIPOOL}
+\item 
+\#define \textbf{ MICROBES}~0 \&\& !\textbf{ SOIL\+\_\+\+MULTIPOOL}
+\item 
+\#define \textbf{ STOICHIOMETRY}~0 \&\& \textbf{ MICROBES}
+\item 
+\#define \textbf{ C\+\_\+\+WEIGHT}~12.\+0
+\item 
+\#define \textbf{ TEN\+\_\+6}~1000000.\+0
+\item 
+\#define \textbf{ TEN\+\_\+9}~1000000000.\+0
+\item 
+\#define \textbf{ SEC\+\_\+\+PER\+\_\+\+DAY}~86400.\+0
+\item 
+\#define \textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS}~5
+\item 
+\#define \textbf{ MEAN\+\_\+\+NPP\+\_\+\+MAX\+\_\+\+ENTRIES}~(\textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS} $\ast$ 50)
+\item 
+\#define \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS}~5
+\item 
+\#define \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+MAX\+\_\+\+ENTRIES}~(\textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS} $\ast$ 50)
+\item 
+\#define \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS}~1
+\item 
+\#define \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+MAX\+\_\+\+ENTRIES}~(\textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS} $\ast$ 24)
+\item 
+\#define \textbf{ LAMBDA}~2501000.
+\item 
+\#define \textbf{ LAMBDA\+\_\+S}~2835000.
+\item 
+\#define \textbf{ RHO}~1.\+3
+\item 
+\#define \textbf{ CP}~1005.
+\item 
+\#define \textbf{ GAMMA}~66.
+\item 
+\#define \textbf{ E\+\_\+\+STAR\+\_\+\+SNOW}~0.\+6
+\item 
+\#define \textbf{ TINY}~0.\+000001
+\item 
+\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}~14
+\item 
+\#define \textbf{ NUM\+\_\+\+PARAMS}~(sizeof(\textbf{ Params}) / sizeof(double))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \textbf{ Climate\+Vars} \textbf{ Climate\+Node}
+\item 
+typedef struct \textbf{ Parameters} \textbf{ Params}
+\item 
+typedef struct \textbf{ Environment} \textbf{ Envi}
+\item 
+typedef struct \textbf{ Flux\+Vars} \textbf{ Fluxes}
+\item 
+typedef struct \textbf{ Tracker\+Vars} \textbf{ Trackers}
+\item 
+typedef struct \textbf{ Phenology\+Trackers\+Struct} \textbf{ Phenology\+Trackers}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int $\ast$ \textbf{ read\+Clim\+Data} (char $\ast$clim\+File, int \textbf{ num\+Locs})
+\item 
+int \textbf{ read\+Param\+Data} (\textbf{ Spatial\+Params} $\ast$$\ast$spatial\+Params\+Ptr, char $\ast$param\+File, char $\ast$spatial\+Param\+File)
+\item 
+void \textbf{ output\+Header} (FILE $\ast$out)
+\item 
+void \textbf{ output\+State} (FILE $\ast$out, int loc, int year, int day, double time)
+\item 
+void \textbf{ output\+Statecsv} (FILE $\ast$out, int loc, int year, int day, double time)
+\item 
+void \textbf{ free\+Climate\+List} (int \textbf{ num\+Locs})
+\item 
+void \textbf{ calc\+Light\+Eff} (double $\ast$light\+Eff, double lai, double par)
+\begin{DoxyCompactList}\small\item\em Compute canopy light effect using Simpson\textquotesingle{}s rule. \end{DoxyCompactList}\item 
+void \textbf{ pot\+Psn} (double $\ast$pot\+Gross\+Psn, double $\ast$base\+Fol\+Resp, double lai, double tair, double vpd, double par, int day)
+\item 
+void \textbf{ moisture\+\_\+bwb} (double $\ast$trans, double $\ast$d\+Water, double pot\+Gross\+Psn, double vpd, double v\+Press, double plant\+LeafC, double leaf\+CSp\+Wt, double soil\+Water)
+\item 
+void \textbf{ moisture\+\_\+pm} (double $\ast$trans, double $\ast$d\+Water, double pot\+Gross\+Psn, double vpd, double soil\+Water)
+\item 
+void \textbf{ moisture} (double $\ast$trans, double $\ast$d\+Water, double pot\+Gross\+Psn, double vpd, double soil\+Water)
+\item 
+int \textbf{ past\+Leaf\+Growth} (void)
+\item 
+int \textbf{ past\+Leaf\+Fall} (void)
+\item 
+void \textbf{ leaf\+Fluxes} (double $\ast$leaf\+Creation, double $\ast$leaf\+Litter, double plant\+LeafC)
+\item 
+void \textbf{ simple\+Water\+Flow} (double $\ast$rain, double $\ast$snow\+Fall, double $\ast$immed\+Evap, double $\ast$snow\+Melt, double $\ast$sublimation, double $\ast$fast\+Flow, double $\ast$evaporation, double $\ast$top\+Drainage, double $\ast$bottom\+Drainage, double water, double snow, double precip, double temp, double length, double trans)
+\item 
+void \textbf{ calc\+Precip} (double $\ast$rain, double $\ast$snow\+Fall, double $\ast$immed\+Evap, double lai)
+\item 
+void \textbf{ snow\+Pack} (double $\ast$snow\+Melt, double $\ast$sublimation, double snow\+Fall)
+\item 
+void \textbf{ evap\+Soil\+Fluxes} (double $\ast$fast\+Flow, double $\ast$evaporation, double $\ast$drainage, double water, double whc, double net\+Rain, double snow\+Melt, double fluxes\+Out)
+\item 
+void \textbf{ trans\+Soil\+Drainage} (double $\ast$bottom\+Drainage, double top\+Drainage, double trans, double soil\+Water)
+\item 
+void \textbf{ soil\+Water\+Fluxes} (double $\ast$fast\+Flow, double $\ast$evaporation, double $\ast$top\+Drainage, double $\ast$bottom\+Drainage, double net\+Rain, double snow\+Melt, double trans, double litter\+Water, double soil\+Water)
+\item 
+void \textbf{ get\+Gpp} (double $\ast$gpp, double pot\+Gross\+Psn, double d\+Water)
+\item 
+void \textbf{ veg\+Resp} (double $\ast$fol\+Resp, double $\ast$wood\+Resp, double base\+Fol\+Resp)
+\item 
+void \textbf{ calc\+Root\+Resp} (double $\ast$root\+Resp, double resp\+Q10, double base\+Rate, double pool\+Size)
+\item 
+void \textbf{ veg\+Resp2} (double $\ast$fol\+Resp, double $\ast$wood\+Resp, double $\ast$growth\+Resp, double base\+Fol\+Resp, double gpp)
+\item 
+void \textbf{ ensure\+Allocation} (void)
+\item 
+void \textbf{ calc\+Maintenance\+Respiration} (double tsoil, double water, double whc)
+\item 
+double \textbf{ microbe\+Quality\+Efficiency} (double soil\+Quality)
+\item 
+void \textbf{ microbe\+Growth} (void)
+\item 
+int \textbf{ litter\+Input\+Pool} (double quality\+Component)
+\item 
+void \textbf{ soil\+Degradation} (void)
+\item 
+double \textbf{ wood\+LitterF} (double plant\+WoodC)
+\item 
+void \textbf{ calculate\+Fluxes} (void)
+\item 
+void \textbf{ init\+Trackers} (void)
+\item 
+void \textbf{ ensure\+Non\+Negative} (double $\ast$var, double min\+Val)
+\item 
+void \textbf{ ensure\+Non\+Negative\+Stocks} (void)
+\item 
+void \textbf{ update\+Trackers} (double old\+Soil\+Water)
+\item 
+void \textbf{ process\+Events} (void)
+\item 
+void \textbf{ update\+State} (void)
+\item 
+void \textbf{ init\+Phenology\+Trackers} (void)
+\item 
+void \textbf{ setup\+Model} (\textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ setup\+Events} (int curr\+Loc)
+\item 
+void \textbf{ run\+Model\+Output} (FILE $\ast$out, \textbf{ Output\+Items} $\ast$output\+Items, int print\+Header, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ run\+Model\+No\+Out} (double $\ast$$\ast$out\+Array, int num\+Data\+Types, int data\+Type\+Indices[$\,$], \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ sens\+Test} (FILE $\ast$out, \textbf{ Output\+Items} $\ast$output\+Items, int param\+Num, double low, double high, int num\+Runs, \textbf{ Spatial\+Params} $\ast$spatial\+Params, int loc)
+\item 
+void \textbf{ print\+Model\+Components} (FILE $\ast$out)
+\item 
+char $\ast$$\ast$ \textbf{ get\+Data\+Type\+Names} (void)
+\item 
+void \textbf{ setup\+Output\+Pointers} (void)
+\item 
+void \textbf{ setup\+Output\+Items} (\textbf{ Output\+Items} $\ast$output\+Items)
+\item 
+int \textbf{ init\+Model} (\textbf{ Spatial\+Params} $\ast$$\ast$spatial\+Params, int $\ast$$\ast$steps, char $\ast$param\+File, char $\ast$clim\+File)
+\item 
+void \textbf{ init\+Events} (char $\ast$event\+File, int \textbf{ num\+Locs})
+\item 
+void \textbf{ cleanup\+Model} (int \textbf{ num\+Locs})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static \textbf{ Climate\+Node} $\ast$$\ast$ \textbf{ first\+Climates}
+\item 
+static \textbf{ Params} \textbf{ params}
+\item 
+static \textbf{ Envi} \textbf{ envi}
+\item 
+static \textbf{ Trackers} \textbf{ trackers}
+\item 
+static \textbf{ Phenology\+Trackers} \textbf{ phenology\+Trackers}
+\item 
+static \textbf{ Mean\+Tracker} $\ast$ \textbf{ mean\+NPP}
+\item 
+static \textbf{ Mean\+Tracker} $\ast$ \textbf{ mean\+GPP}
+\item 
+static \textbf{ Mean\+Tracker} $\ast$ \textbf{ mean\+FPAR}
+\item 
+static \textbf{ Climate\+Node} $\ast$ \textbf{ climate}
+\item 
+static \textbf{ Fluxes} \textbf{ fluxes}
+\item 
+static double $\ast$ \textbf{ output\+Ptrs} [\textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}]
+\item 
+static \textbf{ Event\+Node} $\ast$$\ast$ \textbf{ events}
+\item 
+static \textbf{ Event\+Node} $\ast$ \textbf{ loc\+Event}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{sipnet_8c_a9476f4a1fa534937c3fe349a9400ca2f} 
+\index{sipnet.c@{sipnet.c}!ALTERNATIVE\_TRANS@{ALTERNATIVE\_TRANS}}
+\index{ALTERNATIVE\_TRANS@{ALTERNATIVE\_TRANS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{ALTERNATIVE\_TRANS}
+{\footnotesize\ttfamily \#define ALTERNATIVE\+\_\+\+TRANS~0}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a58ddc60e7ce08946229ec92581873a16} 
+\index{sipnet.c@{sipnet.c}!BALL\_BERRY@{BALL\_BERRY}}
+\index{BALL\_BERRY@{BALL\_BERRY}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{BALL\_BERRY}
+{\footnotesize\ttfamily \#define BALL\+\_\+\+BERRY~0}
+
+
+
+Definition at line \textbf{ 35} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_adab4e1be14327a9397852d62804c7b76} 
+\index{sipnet.c@{sipnet.c}!C\_WEIGHT@{C\_WEIGHT}}
+\index{C\_WEIGHT@{C\_WEIGHT}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{C\_WEIGHT}
+{\footnotesize\ttfamily \#define C\+\_\+\+WEIGHT~12.\+0}
+
+
+
+Definition at line \textbf{ 143} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_adb267dcc85838516962e2f5ca42a0aaf} 
+\index{sipnet.c@{sipnet.c}!COMPLEX\_WATER@{COMPLEX\_WATER}}
+\index{COMPLEX\_WATER@{COMPLEX\_WATER}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{COMPLEX\_WATER}
+{\footnotesize\ttfamily \#define COMPLEX\+\_\+\+WATER~1 \&\& \textbf{ MODEL\+\_\+\+WATER}}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a6594e57d1fff186da0a254a3742dcff7} 
+\index{sipnet.c@{sipnet.c}!CP@{CP}}
+\index{CP@{CP}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{CP}
+{\footnotesize\ttfamily \#define CP~1005.}
+
+
+
+Definition at line \textbf{ 167} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_af5b3f72b6e274e5402ce37045be3125e} 
+\index{sipnet.c@{sipnet.c}!CSV\_OUTPUT@{CSV\_OUTPUT}}
+\index{CSV\_OUTPUT@{CSV\_OUTPUT}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{CSV\_OUTPUT}
+{\footnotesize\ttfamily \#define CSV\+\_\+\+OUTPUT~0}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a753d3c3d39bfba0c814c24f2b62ab673} 
+\index{sipnet.c@{sipnet.c}!DAYCENT\_WATER\_HRESP@{DAYCENT\_WATER\_HRESP}}
+\index{DAYCENT\_WATER\_HRESP@{DAYCENT\_WATER\_HRESP}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{DAYCENT\_WATER\_HRESP}
+{\footnotesize\ttfamily \#define DAYCENT\+\_\+\+WATER\+\_\+\+HRESP~0 \&\& \textbf{ WATER\+\_\+\+HRESP}}
+
+
+
+Definition at line \textbf{ 68} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a3f70be9aae36e2c07886d14fcc89df0e} 
+\index{sipnet.c@{sipnet.c}!E\_STAR\_SNOW@{E\_STAR\_SNOW}}
+\index{E\_STAR\_SNOW@{E\_STAR\_SNOW}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{E\_STAR\_SNOW}
+{\footnotesize\ttfamily \#define E\+\_\+\+STAR\+\_\+\+SNOW~0.\+6}
+
+
+
+Definition at line \textbf{ 169} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a8659b9de3e544ff142b153b076f30fd5} 
+\index{sipnet.c@{sipnet.c}!GAMMA@{GAMMA}}
+\index{GAMMA@{GAMMA}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{GAMMA}
+{\footnotesize\ttfamily \#define GAMMA~66.}
+
+
+
+Definition at line \textbf{ 168} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a0edcc383fd1d020eca86572fac169cf3} 
+\index{sipnet.c@{sipnet.c}!GDD@{GDD}}
+\index{GDD@{GDD}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{GDD}
+{\footnotesize\ttfamily \#define GDD~1}
+
+
+
+Definition at line \textbf{ 106} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_ab0cd25831c6916da804fb2e50bbf461a} 
+\index{sipnet.c@{sipnet.c}!GROWTH\_RESP@{GROWTH\_RESP}}
+\index{GROWTH\_RESP@{GROWTH\_RESP}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{GROWTH\_RESP}
+{\footnotesize\ttfamily \#define GROWTH\+\_\+\+RESP~0}
+
+
+
+Definition at line \textbf{ 46} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a738607799d6938e1b15f463688029cd5} 
+\index{sipnet.c@{sipnet.c}!LAMBDA@{LAMBDA}}
+\index{LAMBDA@{LAMBDA}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{LAMBDA}
+{\footnotesize\ttfamily \#define LAMBDA~2501000.}
+
+
+
+Definition at line \textbf{ 164} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a48bb0d1ce90a74a63200a7edae9e4385} 
+\index{sipnet.c@{sipnet.c}!LAMBDA\_S@{LAMBDA\_S}}
+\index{LAMBDA\_S@{LAMBDA\_S}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{LAMBDA\_S}
+{\footnotesize\ttfamily \#define LAMBDA\+\_\+S~2835000.}
+
+
+
+Definition at line \textbf{ 165} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_ab419f3ed90ec18f9d957582fc5c1d068} 
+\index{sipnet.c@{sipnet.c}!LEAF\_WATER@{LEAF\_WATER}}
+\index{LEAF\_WATER@{LEAF\_WATER}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{LEAF\_WATER}
+{\footnotesize\ttfamily \#define LEAF\+\_\+\+WATER~0 \&\& (\textbf{ COMPLEX\+\_\+\+WATER})}
+
+
+
+Definition at line \textbf{ 97} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_ad0ee5982956330dfa1c00e75bbf4bda3} 
+\index{sipnet.c@{sipnet.c}!LITTER\_WATER@{LITTER\_WATER}}
+\index{LITTER\_WATER@{LITTER\_WATER}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{LITTER\_WATER}
+{\footnotesize\ttfamily \#define LITTER\+\_\+\+WATER~0 \&\& (\textbf{ COMPLEX\+\_\+\+WATER})}
+
+
+
+Definition at line \textbf{ 81} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a27d7081a9cf27d773c41c227be4a4b6a} 
+\index{sipnet.c@{sipnet.c}!LITTER\_WATER\_DRAINAGE@{LITTER\_WATER\_DRAINAGE}}
+\index{LITTER\_WATER\_DRAINAGE@{LITTER\_WATER\_DRAINAGE}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{LITTER\_WATER\_DRAINAGE}
+{\footnotesize\ttfamily \#define LITTER\+\_\+\+WATER\+\_\+\+DRAINAGE~1 \&\& (\textbf{ LITTER\+\_\+\+WATER})}
+
+
+
+Definition at line \textbf{ 92} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a0b2221f33fb6741ba6cbaec8ce9a584a} 
+\index{sipnet.c@{sipnet.c}!LLOYD\_TAYLOR@{LLOYD\_TAYLOR}}
+\index{LLOYD\_TAYLOR@{LLOYD\_TAYLOR}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{LLOYD\_TAYLOR}
+{\footnotesize\ttfamily \#define LLOYD\+\_\+\+TAYLOR~0}
+
+
+
+Definition at line \textbf{ 49} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a01ccad320475fb3ee761288b94394a51} 
+\index{sipnet.c@{sipnet.c}!MEAN\_FPAR\_DAYS@{MEAN\_FPAR\_DAYS}}
+\index{MEAN\_FPAR\_DAYS@{MEAN\_FPAR\_DAYS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MEAN\_FPAR\_DAYS}
+{\footnotesize\ttfamily \#define MEAN\+\_\+\+FPAR\+\_\+\+DAYS~1}
+
+
+
+Definition at line \textbf{ 159} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a8d9e4bf9fb2b202d84c96d381e99fc2b} 
+\index{sipnet.c@{sipnet.c}!MEAN\_FPAR\_MAX\_ENTRIES@{MEAN\_FPAR\_MAX\_ENTRIES}}
+\index{MEAN\_FPAR\_MAX\_ENTRIES@{MEAN\_FPAR\_MAX\_ENTRIES}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MEAN\_FPAR\_MAX\_ENTRIES}
+{\footnotesize\ttfamily \#define MEAN\+\_\+\+FPAR\+\_\+\+MAX\+\_\+\+ENTRIES~(\textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS} $\ast$ 24)}
+
+
+
+Definition at line \textbf{ 160} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a49a55e38e5b5f0bcd43a053113db877a} 
+\index{sipnet.c@{sipnet.c}!MEAN\_GPP\_SOIL\_DAYS@{MEAN\_GPP\_SOIL\_DAYS}}
+\index{MEAN\_GPP\_SOIL\_DAYS@{MEAN\_GPP\_SOIL\_DAYS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MEAN\_GPP\_SOIL\_DAYS}
+{\footnotesize\ttfamily \#define MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS~5}
+
+
+
+Definition at line \textbf{ 154} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a33a650b7e45310229e524b13caa60ffd} 
+\index{sipnet.c@{sipnet.c}!MEAN\_GPP\_SOIL\_MAX\_ENTRIES@{MEAN\_GPP\_SOIL\_MAX\_ENTRIES}}
+\index{MEAN\_GPP\_SOIL\_MAX\_ENTRIES@{MEAN\_GPP\_SOIL\_MAX\_ENTRIES}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MEAN\_GPP\_SOIL\_MAX\_ENTRIES}
+{\footnotesize\ttfamily \#define MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+MAX\+\_\+\+ENTRIES~(\textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS} $\ast$ 50)}
+
+
+
+Definition at line \textbf{ 155} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_af05089fe4b0d9b53754c3d701b806cb9} 
+\index{sipnet.c@{sipnet.c}!MEAN\_NPP\_DAYS@{MEAN\_NPP\_DAYS}}
+\index{MEAN\_NPP\_DAYS@{MEAN\_NPP\_DAYS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MEAN\_NPP\_DAYS}
+{\footnotesize\ttfamily \#define MEAN\+\_\+\+NPP\+\_\+\+DAYS~5}
+
+
+
+Definition at line \textbf{ 149} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a758a415b25b548820e2ba2fe9bcb42c5} 
+\index{sipnet.c@{sipnet.c}!MEAN\_NPP\_MAX\_ENTRIES@{MEAN\_NPP\_MAX\_ENTRIES}}
+\index{MEAN\_NPP\_MAX\_ENTRIES@{MEAN\_NPP\_MAX\_ENTRIES}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MEAN\_NPP\_MAX\_ENTRIES}
+{\footnotesize\ttfamily \#define MEAN\+\_\+\+NPP\+\_\+\+MAX\+\_\+\+ENTRIES~(\textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS} $\ast$ 50)}
+
+
+
+Definition at line \textbf{ 150} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_ae35ff8faeafbfcfd2d332eef5b436a6b} 
+\index{sipnet.c@{sipnet.c}!MICROBES@{MICROBES}}
+\index{MICROBES@{MICROBES}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MICROBES}
+{\footnotesize\ttfamily \#define MICROBES~0 \&\& !\textbf{ SOIL\+\_\+\+MULTIPOOL}}
+
+
+
+Definition at line \textbf{ 129} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a375e3d9724e32105ba640c7f09748f0d} 
+\index{sipnet.c@{sipnet.c}!MODEL\_WATER@{MODEL\_WATER}}
+\index{MODEL\_WATER@{MODEL\_WATER}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{MODEL\_WATER}
+{\footnotesize\ttfamily \#define MODEL\+\_\+\+WATER~1}
+
+
+
+Definition at line \textbf{ 71} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a3b03038a92137f9b02f379c65b9d0847} 
+\index{sipnet.c@{sipnet.c}!NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}}
+\index{NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{NUM\_CLIM\_FILE\_COLS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS~14}
+
+
+
+Definition at line \textbf{ 217} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a132d28b0774786b46faf261499aff357} 
+\index{sipnet.c@{sipnet.c}!NUM\_PARAMS@{NUM\_PARAMS}}
+\index{NUM\_PARAMS@{NUM\_PARAMS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{NUM\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+PARAMS~(sizeof(\textbf{ Params}) / sizeof(double))}
+
+
+
+Definition at line \textbf{ 404} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a405d31221a9005086af37e62abf7ab15} 
+\index{sipnet.c@{sipnet.c}!NUMBER\_SOIL\_CARBON\_POOLS@{NUMBER\_SOIL\_CARBON\_POOLS}}
+\index{NUMBER\_SOIL\_CARBON\_POOLS@{NUMBER\_SOIL\_CARBON\_POOLS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{NUMBER\_SOIL\_CARBON\_POOLS}
+{\footnotesize\ttfamily \#define NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS~3}
+
+
+
+Definition at line \textbf{ 120} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_af63724eb1a47f2fec9fa762705aece88} 
+\index{sipnet.c@{sipnet.c}!PENMAN\_MONTEITH\_TRANS@{PENMAN\_MONTEITH\_TRANS}}
+\index{PENMAN\_MONTEITH\_TRANS@{PENMAN\_MONTEITH\_TRANS}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{PENMAN\_MONTEITH\_TRANS}
+{\footnotesize\ttfamily \#define PENMAN\+\_\+\+MONTEITH\+\_\+\+TRANS~0}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a3bf4402b9e2ae88e4462c3689f5d22b8} 
+\index{sipnet.c@{sipnet.c}!RHO@{RHO}}
+\index{RHO@{RHO}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{RHO}
+{\footnotesize\ttfamily \#define RHO~1.\+3}
+
+
+
+Definition at line \textbf{ 166} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a6ddc4e60745293bab24287d35c02f23a} 
+\index{sipnet.c@{sipnet.c}!SEASONAL\_R\_SOIL@{SEASONAL\_R\_SOIL}}
+\index{SEASONAL\_R\_SOIL@{SEASONAL\_R\_SOIL}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{SEASONAL\_R\_SOIL}
+{\footnotesize\ttfamily \#define SEASONAL\+\_\+\+R\+\_\+\+SOIL~0 \&\& !\textbf{ LLOYD\+\_\+\+TAYLOR}}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a3aaee30ddedb3f6675aac341a66e39e2} 
+\index{sipnet.c@{sipnet.c}!SEC\_PER\_DAY@{SEC\_PER\_DAY}}
+\index{SEC\_PER\_DAY@{SEC\_PER\_DAY}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{SEC\_PER\_DAY}
+{\footnotesize\ttfamily \#define SEC\+\_\+\+PER\+\_\+\+DAY~86400.\+0}
+
+
+
+Definition at line \textbf{ 146} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_aa333391aab78ded801da8425068ce564} 
+\index{sipnet.c@{sipnet.c}!SNOW@{SNOW}}
+\index{SNOW@{SNOW}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{SNOW}
+{\footnotesize\ttfamily \#define SNOW~(1 $\vert$$\vert$ (\textbf{ COMPLEX\+\_\+\+WATER})) \&\& \textbf{ MODEL\+\_\+\+WATER}}
+
+
+
+Definition at line \textbf{ 101} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a4fc1134c99fc4cd2d109850b6afc858e} 
+\index{sipnet.c@{sipnet.c}!SOIL\_MULTIPOOL@{SOIL\_MULTIPOOL}}
+\index{SOIL\_MULTIPOOL@{SOIL\_MULTIPOOL}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{SOIL\_MULTIPOOL}
+{\footnotesize\ttfamily \#define SOIL\+\_\+\+MULTIPOOL~0 \&\& !\textbf{ LITTER\+\_\+\+POOL}}
+
+
+
+Definition at line \textbf{ 115} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a3d5c4396253d36a9a760795555216b9c} 
+\index{sipnet.c@{sipnet.c}!SOIL\_PHENOL@{SOIL\_PHENOL}}
+\index{SOIL\_PHENOL@{SOIL\_PHENOL}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{SOIL\_PHENOL}
+{\footnotesize\ttfamily \#define SOIL\+\_\+\+PHENOL~0 \&\& !\textbf{ GDD}}
+
+
+
+Definition at line \textbf{ 109} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_aebd39a2a591ddfc4ef09beaf22eb706a} 
+\index{sipnet.c@{sipnet.c}!SOIL\_QUALITY@{SOIL\_QUALITY}}
+\index{SOIL\_QUALITY@{SOIL\_QUALITY}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{SOIL\_QUALITY}
+{\footnotesize\ttfamily \#define SOIL\+\_\+\+QUALITY~0 \&\& \textbf{ SOIL\+\_\+\+MULTIPOOL}}
+
+
+
+Definition at line \textbf{ 125} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a6808c21bfa9ccd8e3b9656b349f0c26c} 
+\index{sipnet.c@{sipnet.c}!STOICHIOMETRY@{STOICHIOMETRY}}
+\index{STOICHIOMETRY@{STOICHIOMETRY}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{STOICHIOMETRY}
+{\footnotesize\ttfamily \#define STOICHIOMETRY~0 \&\& \textbf{ MICROBES}}
+
+
+
+Definition at line \textbf{ 133} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_af22ccbc85009d9be17ede79656d506fd} 
+\index{sipnet.c@{sipnet.c}!TEN\_6@{TEN\_6}}
+\index{TEN\_6@{TEN\_6}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{TEN\_6}
+{\footnotesize\ttfamily \#define TEN\+\_\+6~1000000.\+0}
+
+
+
+Definition at line \textbf{ 144} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_aebc6dd4f646b3b7b93755d749b8614f3} 
+\index{sipnet.c@{sipnet.c}!TEN\_9@{TEN\_9}}
+\index{TEN\_9@{TEN\_9}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{TEN\_9}
+{\footnotesize\ttfamily \#define TEN\+\_\+9~1000000000.\+0}
+
+
+
+Definition at line \textbf{ 145} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_acf1c38f71f39386356edb151a131ad11} 
+\index{sipnet.c@{sipnet.c}!TINY@{TINY}}
+\index{TINY@{TINY}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{TINY}
+{\footnotesize\ttfamily \#define TINY~0.\+000001}
+
+
+
+Definition at line \textbf{ 173} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_a5462ae0a8757c3565bed9a01dbcb8870} 
+\index{sipnet.c@{sipnet.c}!WATER\_HRESP@{WATER\_HRESP}}
+\index{WATER\_HRESP@{WATER\_HRESP}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{WATER\_HRESP}
+{\footnotesize\ttfamily \#define WATER\+\_\+\+HRESP~1}
+
+
+
+Definition at line \textbf{ 65} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_ac38b43f088271e7e59f2926392b91f29} 
+\index{sipnet.c@{sipnet.c}!WATER\_PSN@{WATER\_PSN}}
+\index{WATER\_PSN@{WATER\_PSN}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{WATER\_PSN}
+{\footnotesize\ttfamily \#define WATER\+\_\+\+PSN~1}
+
+
+
+Definition at line \textbf{ 62} of file \textbf{ sipnet.\+c}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\label{sipnet_8c_aed561e4afbcb4dd662b119e22716d716} 
+\index{sipnet.c@{sipnet.c}!ClimateNode@{ClimateNode}}
+\index{ClimateNode@{ClimateNode}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{ClimateNode}
+{\footnotesize\ttfamily typedef struct \textbf{ Climate\+Vars} \textbf{ Climate\+Node}}
+
+
+
+Definition at line \textbf{ 181} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_aae0795899c6c1f77c7f7d9aca2a20357} 
+\index{sipnet.c@{sipnet.c}!Envi@{Envi}}
+\index{Envi@{Envi}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{Envi}
+{\footnotesize\ttfamily typedef struct \textbf{ Environment} \textbf{ Envi}}
+
+\label{sipnet_8c_aa098d508f38c6014635e5efdffda2442} 
+\index{sipnet.c@{sipnet.c}!Fluxes@{Fluxes}}
+\index{Fluxes@{Fluxes}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{Fluxes}
+{\footnotesize\ttfamily typedef struct \textbf{ Flux\+Vars} \textbf{ Fluxes}}
+
+\label{sipnet_8c_a4ecd2fe2fb87baa30a67a3e7d86d5fa3} 
+\index{sipnet.c@{sipnet.c}!Params@{Params}}
+\index{Params@{Params}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{Params}
+{\footnotesize\ttfamily typedef struct \textbf{ Parameters} \textbf{ Params}}
+
+\label{sipnet_8c_a4ed61abd51873baf31f9c01cfde6b7f5} 
+\index{sipnet.c@{sipnet.c}!PhenologyTrackers@{PhenologyTrackers}}
+\index{PhenologyTrackers@{PhenologyTrackers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{PhenologyTrackers}
+{\footnotesize\ttfamily typedef struct \textbf{ Phenology\+Trackers\+Struct} \textbf{ Phenology\+Trackers}}
+
+\label{sipnet_8c_aea73df8f56cefd3ff079ed52622f5dac} 
+\index{sipnet.c@{sipnet.c}!Trackers@{Trackers}}
+\index{Trackers@{Trackers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{Trackers}
+{\footnotesize\ttfamily typedef struct \textbf{ Tracker\+Vars} \textbf{ Trackers}}
+
+
+
+\doxysubsection{Function Documentation}
+\label{sipnet_8c_ae696156039998aae1a1343b0478f6d76} 
+\index{sipnet.c@{sipnet.c}!calcLightEff@{calcLightEff}}
+\index{calcLightEff@{calcLightEff}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{calcLightEff()}
+{\footnotesize\ttfamily void calc\+Light\+Eff (\begin{DoxyParamCaption}\item[{double $\ast$}]{light\+Eff,  }\item[{double}]{lai,  }\item[{double}]{par }\end{DoxyParamCaption})}
+
+
+
+Compute canopy light effect using Simpson\textquotesingle{}s rule. 
+
+Similar to light attenuation in Pn\+ET, first calculate light intensity and then the light effect {\ttfamily light\+EFF} for each layer.
+
+Integrating Light Effect over the canopy, from top to bottom, approximated numerically using Simpson\textquotesingle{}s method. Simpson\textquotesingle{}s rule requires an odd number of points, thus NUM\+\_\+\+LAYERS must be EVEN because we loop from layer = 0 to layer = NUM\+\_\+\+LAYERS
+
+Simpson\textquotesingle{}s rule approximates the integral as\+: (h/3) $\ast$ (y(0) + 4y(1) + 2y(2) + 4y(3) + ... + 2y(n-\/2) + 4y(n-\/1) + y(n)), where h is the distance between each x value (here h = 1/\+NUM\+\_\+\+LAYERS). We keep track of the running sum in cum\+Light\+Eff.
+
+cum\+Lai is 0 at the canopy top and equals total LAI at the bottom.
+
+Note\+: SIPNET is not a multi-\/layer model; this function derives a canopy‐averaged light effect that is then used to calculate calculate GPP for the whole canopy.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em light\+Eff} & Canopy average light effect. \\
+\hline
+\mbox{\texttt{ in}}  & {\em lai} & Leaf area index (m$^\wedge$2 leaf/m$^\wedge$2 ground). \\
+\hline
+\mbox{\texttt{ in}}  & {\em par} & Incoming Photosynthetically Active Radiation (PAR). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \textbf{ 1044} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ add\+Value\+To\+Mean\+Tracker()}, \textbf{ Parameters\+::attenuation}, \textbf{ climate}, \textbf{ Parameters\+::half\+Sat\+Par}, \textbf{ Climate\+Vars\+::length}, \textbf{ mean\+FPAR}, and \textbf{ params}.
+
+
+
+Referenced by \textbf{ pot\+Psn()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_ae696156039998aae1a1343b0478f6d76_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a5b84c84a6a5b9a7adeda513fad237ce0} 
+\index{sipnet.c@{sipnet.c}!calcMaintenanceRespiration@{calcMaintenanceRespiration}}
+\index{calcMaintenanceRespiration@{calcMaintenanceRespiration}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{calcMaintenanceRespiration()}
+{\footnotesize\ttfamily void calc\+Maintenance\+Respiration (\begin{DoxyParamCaption}\item[{double}]{tsoil,  }\item[{double}]{water,  }\item[{double}]{whc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1848} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::base\+Microbe\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp\+Cold}, \textbf{ climate}, \textbf{ Parameters\+::cold\+Soil\+Threshold}, \textbf{ envi}, \textbf{ fluxes}, \textbf{ Flux\+Vars\+::maint\+Respiration}, \textbf{ Environment\+::microbeC}, \textbf{ Parameters\+::microbe\+Q10}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ params}, \textbf{ Environment\+::soil}, \textbf{ Parameters\+::soil\+Resp\+Moist\+Effect}, \textbf{ Parameters\+::soil\+Resp\+Q10}, \textbf{ Parameters\+::soil\+Resp\+Q10\+Cold}, and \textbf{ Climate\+Vars\+::tsoil}.
+
+
+
+Referenced by \textbf{ soil\+Degradation()}.
+
+\label{sipnet_8c_a5ff21882af3d7feea2b57d714c66e93c} 
+\index{sipnet.c@{sipnet.c}!calcPrecip@{calcPrecip}}
+\index{calcPrecip@{calcPrecip}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{calcPrecip()}
+{\footnotesize\ttfamily void calc\+Precip (\begin{DoxyParamCaption}\item[{double $\ast$}]{rain,  }\item[{double $\ast$}]{snow\+Fall,  }\item[{double $\ast$}]{immed\+Evap,  }\item[{double}]{lai }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1544} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ Parameters\+::leaf\+Pool\+Depth}, \textbf{ Climate\+Vars\+::length}, \textbf{ params}, \textbf{ Climate\+Vars\+::precip}, and \textbf{ Climate\+Vars\+::tair}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+\label{sipnet_8c_a5ac2aa2e3e8e9bf86283c643df0d214f} 
+\index{sipnet.c@{sipnet.c}!calcRootResp@{calcRootResp}}
+\index{calcRootResp@{calcRootResp}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{calcRootResp()}
+{\footnotesize\ttfamily void calc\+Root\+Resp (\begin{DoxyParamCaption}\item[{double $\ast$}]{root\+Resp,  }\item[{double}]{resp\+Q10,  }\item[{double}]{base\+Rate,  }\item[{double}]{pool\+Size }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1802} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, and \textbf{ Climate\+Vars\+::tsoil}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+\label{sipnet_8c_ad9da4c10d7ef093e8c67c89b91fff59f} 
+\index{sipnet.c@{sipnet.c}!calculateFluxes@{calculateFluxes}}
+\index{calculateFluxes@{calculateFluxes}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{calculateFluxes()}
+{\footnotesize\ttfamily void calculate\+Fluxes (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2144} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::base\+Coarse\+Root\+Resp}, \textbf{ Parameters\+::base\+Fine\+Root\+Resp}, \textbf{ Flux\+Vars\+::bottom\+Drainage}, \textbf{ calc\+Precip()}, \textbf{ calc\+Root\+Resp()}, \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Flux\+Vars\+::coarse\+Root\+Creation}, \textbf{ Parameters\+::coarse\+Root\+Exudation}, \textbf{ Flux\+Vars\+::coarse\+Root\+Loss}, \textbf{ Parameters\+::coarse\+Root\+Q10}, \textbf{ Parameters\+::coarse\+Root\+Turnover\+Rate}, \textbf{ Climate\+Vars\+::day}, \textbf{ envi}, \textbf{ Flux\+Vars\+::evaporation}, \textbf{ Flux\+Vars\+::fast\+Flow}, \textbf{ Parameters\+::fine\+Root\+Allocation}, \textbf{ Environment\+::fine\+RootC}, \textbf{ Flux\+Vars\+::fine\+Root\+Creation}, \textbf{ Parameters\+::fine\+Root\+Exudation}, \textbf{ Flux\+Vars\+::fine\+Root\+Loss}, \textbf{ Parameters\+::fine\+Root\+Q10}, \textbf{ Parameters\+::fine\+Root\+Turnover\+Rate}, \textbf{ fluxes}, \textbf{ Parameters\+::frac\+Litter\+Respired}, \textbf{ get\+Gpp()}, \textbf{ get\+Mean\+Tracker\+Mean()}, \textbf{ Flux\+Vars\+::immed\+Evap}, \textbf{ Parameters\+::leaf\+Allocation}, \textbf{ Flux\+Vars\+::leaf\+Creation}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ leaf\+Fluxes()}, \textbf{ Flux\+Vars\+::leaf\+Litter}, \textbf{ Climate\+Vars\+::length}, \textbf{ Environment\+::litter}, \textbf{ Parameters\+::litter\+Breakdown\+Rate}, \textbf{ Flux\+Vars\+::litter\+To\+Soil}, \textbf{ Environment\+::litter\+Water}, \textbf{ Parameters\+::litter\+WHC}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ Parameters\+::microbe\+Pulse\+Eff}, \textbf{ moisture()}, \textbf{ Climate\+Vars\+::par}, \textbf{ params}, \textbf{ Flux\+Vars\+::photosynthesis}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ pot\+Psn()}, \textbf{ Climate\+Vars\+::precip}, \textbf{ Flux\+Vars\+::rain}, \textbf{ Flux\+Vars\+::r\+Coarse\+Root}, \textbf{ Flux\+Vars\+::r\+Fine\+Root}, \textbf{ Flux\+Vars\+::r\+Leaf}, \textbf{ Flux\+Vars\+::r\+Litter}, \textbf{ Flux\+Vars\+::r\+Veg}, \textbf{ Flux\+Vars\+::r\+Wood}, \textbf{ simple\+Water\+Flow()}, \textbf{ Environment\+::snow}, \textbf{ Flux\+Vars\+::snow\+Fall}, \textbf{ Flux\+Vars\+::snow\+Melt}, \textbf{ snow\+Pack()}, \textbf{ Flux\+Vars\+::soil\+Pulse}, \textbf{ Parameters\+::soil\+Resp\+Q10}, \textbf{ Environment\+::soil\+Water}, \textbf{ soil\+Water\+Fluxes()}, \textbf{ Climate\+Vars\+::soil\+Wetness}, \textbf{ Parameters\+::soil\+WHC}, \textbf{ Flux\+Vars\+::sublimation}, \textbf{ Climate\+Vars\+::tair}, \textbf{ Flux\+Vars\+::top\+Drainage}, \textbf{ Flux\+Vars\+::transpiration}, \textbf{ Climate\+Vars\+::tsoil}, \textbf{ veg\+Resp()}, \textbf{ veg\+Resp2()}, \textbf{ Climate\+Vars\+::vpd}, \textbf{ Parameters\+::wood\+Allocation}, \textbf{ Flux\+Vars\+::wood\+Creation}, \textbf{ Flux\+Vars\+::wood\+Litter}, and \textbf{ wood\+Litter\+F()}.
+
+
+
+Referenced by \textbf{ update\+State()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_ad9da4c10d7ef093e8c67c89b91fff59f_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a08ec54c820e36b47473164178295a1a8} 
+\index{sipnet.c@{sipnet.c}!cleanupModel@{cleanupModel}}
+\index{cleanupModel@{cleanupModel}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{cleanupModel()}
+{\footnotesize\ttfamily void cleanup\+Model (\begin{DoxyParamCaption}\item[{int}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3197} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ deallocate\+Mean\+Tracker()}, \textbf{ free\+Climate\+List()}, \textbf{ mean\+FPAR}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, and \textbf{ num\+Locs}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=294pt]{dd/d09/sipnet_8c_a08ec54c820e36b47473164178295a1a8_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a70c224b11abdbdbb4632a547ef459fff} 
+\index{sipnet.c@{sipnet.c}!ensureAllocation@{ensureAllocation}}
+\index{ensureAllocation@{ensureAllocation}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{ensureAllocation()}
+{\footnotesize\ttfamily void ensure\+Allocation (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1833} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::coarse\+Root\+Allocation}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Parameters\+::fine\+Root\+Allocation}, \textbf{ Parameters\+::leaf\+Allocation}, \textbf{ params}, and \textbf{ Parameters\+::wood\+Allocation}.
+
+
+
+Referenced by \textbf{ setup\+Model()}.
+
+\label{sipnet_8c_ac9b31a3b89b0fd8bcca50ded6c094e14} 
+\index{sipnet.c@{sipnet.c}!ensureNonNegative@{ensureNonNegative}}
+\index{ensureNonNegative@{ensureNonNegative}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{ensureNonNegative()}
+{\footnotesize\ttfamily void ensure\+Non\+Negative (\begin{DoxyParamCaption}\item[{double $\ast$}]{var,  }\item[{double}]{min\+Val }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2367} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ ensure\+Non\+Negative\+Stocks()}.
+
+\label{sipnet_8c_ab671ed28e8a5d8606938d981f89a181d} 
+\index{sipnet.c@{sipnet.c}!ensureNonNegativeStocks@{ensureNonNegativeStocks}}
+\index{ensureNonNegativeStocks@{ensureNonNegativeStocks}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{ensureNonNegativeStocks()}
+{\footnotesize\ttfamily void ensure\+Non\+Negative\+Stocks (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2383} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Environment\+::coarse\+RootC}, \textbf{ ensure\+Non\+Negative()}, \textbf{ envi}, \textbf{ Environment\+::fine\+RootC}, \textbf{ Environment\+::litter}, \textbf{ Environment\+::litter\+Water}, \textbf{ Environment\+::microbeC}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Environment\+::snow}, \textbf{ Environment\+::soil}, \textbf{ Environment\+::soil\+Water}, and \textbf{ TINY}.
+
+
+
+Referenced by \textbf{ update\+State()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=339pt]{dd/d09/sipnet_8c_ab671ed28e8a5d8606938d981f89a181d_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a77c5d30cbb6d679e52a99eff1f712641} 
+\index{sipnet.c@{sipnet.c}!evapSoilFluxes@{evapSoilFluxes}}
+\index{evapSoilFluxes@{evapSoilFluxes}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{evapSoilFluxes()}
+{\footnotesize\ttfamily void evap\+Soil\+Fluxes (\begin{DoxyParamCaption}\item[{double $\ast$}]{fast\+Flow,  }\item[{double $\ast$}]{evaporation,  }\item[{double $\ast$}]{drainage,  }\item[{double}]{water,  }\item[{double}]{whc,  }\item[{double}]{net\+Rain,  }\item[{double}]{snow\+Melt,  }\item[{double}]{fluxes\+Out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1660} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ CP}, \textbf{ envi}, \textbf{ Parameters\+::fast\+Flow\+Frac}, \textbf{ GAMMA}, \textbf{ LAMBDA}, \textbf{ Climate\+Vars\+::length}, \textbf{ Parameters\+::lit\+Water\+Drain\+Rate}, \textbf{ params}, \textbf{ Parameters\+::rd\+Const}, \textbf{ RHO}, \textbf{ Parameters\+::r\+Soil\+Const1}, \textbf{ Parameters\+::r\+Soil\+Const2}, \textbf{ SEC\+\_\+\+PER\+\_\+\+DAY}, \textbf{ Environment\+::snow}, \textbf{ TINY}, \textbf{ Climate\+Vars\+::vpd\+Soil}, and \textbf{ Climate\+Vars\+::wspd}.
+
+
+
+Referenced by \textbf{ soil\+Water\+Fluxes()}.
+
+\label{sipnet_8c_ab780d817ab18239d11a00ce186690aac} 
+\index{sipnet.c@{sipnet.c}!freeClimateList@{freeClimateList}}
+\index{freeClimateList@{freeClimateList}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{freeClimateList()}
+{\footnotesize\ttfamily void free\+Climate\+List (\begin{DoxyParamCaption}\item[{int}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 996} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ first\+Climates}, \textbf{ Climate\+Vars\+::next\+Clim}, and \textbf{ num\+Locs}.
+
+
+
+Referenced by \textbf{ cleanup\+Model()}.
+
+\label{sipnet_8c_aaf4d7e4d73fbe3d045d726ce8b81e230} 
+\index{sipnet.c@{sipnet.c}!getDataTypeNames@{getDataTypeNames}}
+\index{getDataTypeNames@{getDataTypeNames}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{getDataTypeNames()}
+{\footnotesize\ttfamily char $\ast$$\ast$ get\+Data\+Type\+Names (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3041} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}, \textbf{ print\+Data\+Type\+Indices()}, and \textbf{ print\+Data\+Type\+Weight\+Indices()}.
+
+\label{sipnet_8c_a8c2f0ba72fdaae9e3836745acd5fc7eb} 
+\index{sipnet.c@{sipnet.c}!getGpp@{getGpp}}
+\index{getGpp@{getGpp}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{getGpp()}
+{\footnotesize\ttfamily void get\+Gpp (\begin{DoxyParamCaption}\item[{double $\ast$}]{gpp,  }\item[{double}]{pot\+Gross\+Psn,  }\item[{double}]{d\+Water }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1781} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+\label{sipnet_8c_ad1341f3c91e77edfdb22320c7ba3ee77} 
+\index{sipnet.c@{sipnet.c}!initEvents@{initEvents}}
+\index{initEvents@{initEvents}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{initEvents()}
+{\footnotesize\ttfamily void init\+Events (\begin{DoxyParamCaption}\item[{char $\ast$}]{event\+File,  }\item[{int}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3189} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ events}, \textbf{ num\+Locs}, and \textbf{ read\+Event\+Data()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_ad1341f3c91e77edfdb22320c7ba3ee77_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_aab8396814fda2fdceeb284a7dca28fae} 
+\index{sipnet.c@{sipnet.c}!initModel@{initModel}}
+\index{initModel@{initModel}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{initModel()}
+{\footnotesize\ttfamily int init\+Model (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$$\ast$}]{spatial\+Params,  }\item[{int $\ast$$\ast$}]{steps,  }\item[{char $\ast$}]{param\+File,  }\item[{char $\ast$}]{clim\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3165} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+MAX\+\_\+\+ENTRIES}, \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+MAX\+\_\+\+ENTRIES}, \textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+NPP\+\_\+\+MAX\+\_\+\+ENTRIES}, \textbf{ mean\+FPAR}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ new\+Mean\+Tracker()}, \textbf{ num\+Locs}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Output\+Pointers()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_aab8396814fda2fdceeb284a7dca28fae_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_aad2beee9ae0c418d4309624ba58d6c5c} 
+\index{sipnet.c@{sipnet.c}!initPhenologyTrackers@{initPhenologyTrackers}}
+\index{initPhenologyTrackers@{initPhenologyTrackers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{initPhenologyTrackers()}
+{\footnotesize\ttfamily void init\+Phenology\+Trackers (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2704} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Phenology\+Trackers\+Struct\+::did\+Leaf\+Fall}, \textbf{ Phenology\+Trackers\+Struct\+::did\+Leaf\+Growth}, \textbf{ Phenology\+Trackers\+Struct\+::last\+Year}, \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ phenology\+Trackers}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ setup\+Model()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=297pt]{dd/d09/sipnet_8c_aad2beee9ae0c418d4309624ba58d6c5c_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_af9cf81e2509a32497ab85f75e1edcf9e} 
+\index{sipnet.c@{sipnet.c}!initTrackers@{initTrackers}}
+\index{initTrackers@{initTrackers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{initTrackers()}
+{\footnotesize\ttfamily void init\+Trackers (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2326} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ envi}, \textbf{ Tracker\+Vars\+::evapotranspiration}, \textbf{ Tracker\+Vars\+::fa}, \textbf{ Tracker\+Vars\+::fpar}, \textbf{ Tracker\+Vars\+::fr}, \textbf{ Tracker\+Vars\+::gpp}, \textbf{ Tracker\+Vars\+::\+LAI}, \textbf{ Tracker\+Vars\+::nee}, \textbf{ Tracker\+Vars\+::npp}, \textbf{ params}, \textbf{ Tracker\+Vars\+::plant\+WoodC}, \textbf{ Tracker\+Vars\+::ra}, \textbf{ Tracker\+Vars\+::r\+Aboveground}, \textbf{ Tracker\+Vars\+::rh}, \textbf{ Tracker\+Vars\+::r\+Root}, \textbf{ Tracker\+Vars\+::r\+Soil}, \textbf{ Tracker\+Vars\+::rtot}, \textbf{ Parameters\+::soil\+Init}, \textbf{ Environment\+::soil\+Water}, \textbf{ Tracker\+Vars\+::soil\+Wetness\+Frac}, \textbf{ Parameters\+::soil\+WHC}, \textbf{ Tracker\+Vars\+::tot\+Gpp}, \textbf{ Tracker\+Vars\+::tot\+Nee}, \textbf{ Tracker\+Vars\+::tot\+Npp}, \textbf{ Tracker\+Vars\+::tot\+Ra}, \textbf{ Tracker\+Vars\+::tot\+Rh}, \textbf{ Tracker\+Vars\+::tot\+Rtot}, \textbf{ Tracker\+Vars\+::tot\+SoilC}, \textbf{ trackers}, \textbf{ Tracker\+Vars\+::yearly\+Gpp}, \textbf{ Tracker\+Vars\+::yearly\+Litter}, \textbf{ Tracker\+Vars\+::yearly\+Nee}, \textbf{ Tracker\+Vars\+::yearly\+Npp}, \textbf{ Tracker\+Vars\+::yearly\+Ra}, \textbf{ Tracker\+Vars\+::yearly\+Rh}, and \textbf{ Tracker\+Vars\+::yearly\+Rtot}.
+
+
+
+Referenced by \textbf{ setup\+Model()}.
+
+\label{sipnet_8c_a3141adc9db6e20c6bdb1a11f7d779d1b} 
+\index{sipnet.c@{sipnet.c}!leafFluxes@{leafFluxes}}
+\index{leafFluxes@{leafFluxes}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{leafFluxes()}
+{\footnotesize\ttfamily void leaf\+Fluxes (\begin{DoxyParamCaption}\item[{double $\ast$}]{leaf\+Creation,  }\item[{double $\ast$}]{leaf\+Litter,  }\item[{double}]{plant\+LeafC }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1452} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Phenology\+Trackers\+Struct\+::did\+Leaf\+Fall}, \textbf{ Phenology\+Trackers\+Struct\+::did\+Leaf\+Growth}, \textbf{ Parameters\+::frac\+Leaf\+Fall}, \textbf{ get\+Mean\+Tracker\+Mean()}, \textbf{ Phenology\+Trackers\+Struct\+::last\+Year}, \textbf{ Parameters\+::leaf\+Allocation}, \textbf{ Parameters\+::leaf\+Growth}, \textbf{ Parameters\+::leaf\+Turnover\+Rate}, \textbf{ Climate\+Vars\+::length}, \textbf{ mean\+NPP}, \textbf{ params}, \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ phenology\+Trackers}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=268pt]{dd/d09/sipnet_8c_a3141adc9db6e20c6bdb1a11f7d779d1b_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_ae384ea23c43c39e958759fc88eb3709c} 
+\index{sipnet.c@{sipnet.c}!litterInputPool@{litterInputPool}}
+\index{litterInputPool@{litterInputPool}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{litterInputPool()}
+{\footnotesize\ttfamily int litter\+Input\+Pool (\begin{DoxyParamCaption}\item[{double}]{quality\+Component }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1994} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}.
+
+
+
+Referenced by \textbf{ soil\+Degradation()}.
+
+\label{sipnet_8c_ae34066cedd29cf1680484a9a3036d119} 
+\index{sipnet.c@{sipnet.c}!microbeGrowth@{microbeGrowth}}
+\index{microbeGrowth@{microbeGrowth}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{microbeGrowth()}
+{\footnotesize\ttfamily void microbe\+Growth (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1955} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ envi}, \textbf{ fluxes}, \textbf{ Parameters\+::half\+Sat\+Ingestion}, \textbf{ Parameters\+::max\+Ingestion\+Rate}, \textbf{ Environment\+::microbeC}, \textbf{ Flux\+Vars\+::microbe\+Ingestion}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ params}, \textbf{ Environment\+::soil}, \textbf{ Tracker\+Vars\+::tot\+SoilC}, and \textbf{ trackers}.
+
+
+
+Referenced by \textbf{ soil\+Degradation()}.
+
+\label{sipnet_8c_aac27dbca0e915769cbcd1601536ae240} 
+\index{sipnet.c@{sipnet.c}!microbeQualityEfficiency@{microbeQualityEfficiency}}
+\index{microbeQualityEfficiency@{microbeQualityEfficiency}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{microbeQualityEfficiency()}
+{\footnotesize\ttfamily double microbe\+Quality\+Efficiency (\begin{DoxyParamCaption}\item[{double}]{soil\+Quality }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1950} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::efficiency}, and \textbf{ params}.
+
+\label{sipnet_8c_ae1cde3b069d0958828a9739fd94755db} 
+\index{sipnet.c@{sipnet.c}!moisture@{moisture}}
+\index{moisture@{moisture}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{moisture()}
+{\footnotesize\ttfamily void moisture (\begin{DoxyParamCaption}\item[{double $\ast$}]{trans,  }\item[{double $\ast$}]{d\+Water,  }\item[{double}]{pot\+Gross\+Psn,  }\item[{double}]{vpd,  }\item[{double}]{soil\+Water }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1362} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Parameters\+::frozen\+Soil\+Eff}, \textbf{ Parameters\+::frozen\+Soil\+Threshold}, \textbf{ params}, \textbf{ TINY}, \textbf{ Climate\+Vars\+::tsoil}, \textbf{ Parameters\+::water\+Remove\+Frac}, and \textbf{ Parameters\+::wue\+Const}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+\label{sipnet_8c_acc279bdd0b02c482eb0676a2db7513dd} 
+\index{sipnet.c@{sipnet.c}!moisture\_bwb@{moisture\_bwb}}
+\index{moisture\_bwb@{moisture\_bwb}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{moisture\_bwb()}
+{\footnotesize\ttfamily void moisture\+\_\+bwb (\begin{DoxyParamCaption}\item[{double $\ast$}]{trans,  }\item[{double $\ast$}]{d\+Water,  }\item[{double}]{pot\+Gross\+Psn,  }\item[{double}]{vpd,  }\item[{double}]{v\+Press,  }\item[{double}]{plant\+LeafC,  }\item[{double}]{leaf\+CSp\+Wt,  }\item[{double}]{soil\+Water }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1173} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ envi}, \textbf{ Parameters\+::frozen\+Soil\+Eff}, \textbf{ Parameters\+::frozen\+Soil\+Threshold}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ Parameters\+::m\+\_\+ball\+Berry}, \textbf{ params}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ TINY}, \textbf{ Climate\+Vars\+::tsoil}, \textbf{ Climate\+Vars\+::vpd}, \textbf{ Climate\+Vars\+::v\+Press}, and \textbf{ Parameters\+::water\+Remove\+Frac}.
+
+\label{sipnet_8c_af660487faf0711964c061ed1cac6005f} 
+\index{sipnet.c@{sipnet.c}!moisture\_pm@{moisture\_pm}}
+\index{moisture\_pm@{moisture\_pm}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{moisture\_pm()}
+{\footnotesize\ttfamily void moisture\+\_\+pm (\begin{DoxyParamCaption}\item[{double $\ast$}]{trans,  }\item[{double $\ast$}]{d\+Water,  }\item[{double}]{pot\+Gross\+Psn,  }\item[{double}]{vpd,  }\item[{double}]{soil\+Water }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1275} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ CP}, \textbf{ Parameters\+::frozen\+Soil\+Eff}, \textbf{ Parameters\+::frozen\+Soil\+Threshold}, \textbf{ GAMMA}, \textbf{ Climate\+Vars\+::par}, \textbf{ params}, \textbf{ Parameters\+::rd\+Const}, \textbf{ RHO}, \textbf{ Climate\+Vars\+::tair}, \textbf{ TINY}, \textbf{ Climate\+Vars\+::tsoil}, \textbf{ Parameters\+::water\+Remove\+Frac}, and \textbf{ Climate\+Vars\+::wspd}.
+
+\label{sipnet_8c_afe7a3ea0ba3ae1f21f777e75be954d88} 
+\index{sipnet.c@{sipnet.c}!outputHeader@{outputHeader}}
+\index{outputHeader@{outputHeader}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{outputHeader()}
+{\footnotesize\ttfamily void output\+Header (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 911} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ envi}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, and \textbf{ Environment\+::soil}.
+
+
+
+Referenced by \textbf{ run\+Model\+Output()}.
+
+\label{sipnet_8c_aafb7702a7e224d9e8402df7a2ca700b3} 
+\index{sipnet.c@{sipnet.c}!outputState@{outputState}}
+\index{outputState@{outputState}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{outputState()}
+{\footnotesize\ttfamily void output\+State (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{out,  }\item[{int}]{loc,  }\item[{int}]{year,  }\item[{int}]{day,  }\item[{double}]{time }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 937} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Environment\+::coarse\+RootC}, \textbf{ envi}, \textbf{ Tracker\+Vars\+::evapotranspiration}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Tracker\+Vars\+::fpar}, \textbf{ Tracker\+Vars\+::gpp}, \textbf{ Environment\+::litter}, \textbf{ Environment\+::litter\+Water}, \textbf{ Environment\+::microbeC}, \textbf{ Tracker\+Vars\+::nee}, \textbf{ Tracker\+Vars\+::npp}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Tracker\+Vars\+::ra}, \textbf{ Tracker\+Vars\+::r\+Aboveground}, \textbf{ Tracker\+Vars\+::rh}, \textbf{ Tracker\+Vars\+::r\+Root}, \textbf{ Tracker\+Vars\+::r\+Soil}, \textbf{ Tracker\+Vars\+::rtot}, \textbf{ Environment\+::snow}, \textbf{ Environment\+::soil}, \textbf{ Environment\+::soil\+Water}, \textbf{ Tracker\+Vars\+::soil\+Wetness\+Frac}, \textbf{ Tracker\+Vars\+::tot\+Nee}, \textbf{ Tracker\+Vars\+::tot\+SoilC}, \textbf{ trackers}, and \textbf{ Flux\+Vars\+::transpiration}.
+
+
+
+Referenced by \textbf{ run\+Model\+Output()}.
+
+\label{sipnet_8c_a09448fcaf9cde40650591db2d5725635} 
+\index{sipnet.c@{sipnet.c}!outputStatecsv@{outputStatecsv}}
+\index{outputStatecsv@{outputStatecsv}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{outputStatecsv()}
+{\footnotesize\ttfamily void output\+Statecsv (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{out,  }\item[{int}]{loc,  }\item[{int}]{year,  }\item[{int}]{day,  }\item[{double}]{time }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 974} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ envi}, \textbf{ Tracker\+Vars\+::evapotranspiration}, \textbf{ fluxes}, \textbf{ Tracker\+Vars\+::fpar}, \textbf{ Tracker\+Vars\+::gpp}, \textbf{ Environment\+::litter}, \textbf{ Environment\+::litter\+Water}, \textbf{ Tracker\+Vars\+::nee}, \textbf{ Tracker\+Vars\+::npp}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Tracker\+Vars\+::ra}, \textbf{ Tracker\+Vars\+::r\+Aboveground}, \textbf{ Tracker\+Vars\+::rh}, \textbf{ Tracker\+Vars\+::r\+Root}, \textbf{ Tracker\+Vars\+::r\+Soil}, \textbf{ Tracker\+Vars\+::rtot}, \textbf{ Environment\+::snow}, \textbf{ Environment\+::soil}, \textbf{ Environment\+::soil\+Water}, \textbf{ Tracker\+Vars\+::soil\+Wetness\+Frac}, \textbf{ Tracker\+Vars\+::tot\+Nee}, \textbf{ Tracker\+Vars\+::tot\+SoilC}, \textbf{ trackers}, and \textbf{ Flux\+Vars\+::transpiration}.
+
+\label{sipnet_8c_add14dcfd1c6af5d9c7305ab5a23d2215} 
+\index{sipnet.c@{sipnet.c}!pastLeafFall@{pastLeafFall}}
+\index{pastLeafFall@{pastLeafFall}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{pastLeafFall()}
+{\footnotesize\ttfamily int past\+Leaf\+Fall (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1441} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Climate\+Vars\+::day}, \textbf{ Parameters\+::leaf\+Off\+Day}, \textbf{ params}, and \textbf{ Climate\+Vars\+::time}.
+
+
+
+Referenced by \textbf{ init\+Phenology\+Trackers()}, and \textbf{ leaf\+Fluxes()}.
+
+\label{sipnet_8c_a6762b20491a2b3113f378901df537c68} 
+\index{sipnet.c@{sipnet.c}!pastLeafGrowth@{pastLeafGrowth}}
+\index{pastLeafGrowth@{pastLeafGrowth}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{pastLeafGrowth()}
+{\footnotesize\ttfamily int past\+Leaf\+Growth (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1417} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Climate\+Vars\+::day}, \textbf{ Climate\+Vars\+::gdd}, \textbf{ Parameters\+::gdd\+Leaf\+On}, \textbf{ Parameters\+::leaf\+On\+Day}, \textbf{ params}, \textbf{ Parameters\+::soil\+Temp\+Leaf\+On}, \textbf{ Climate\+Vars\+::time}, \textbf{ Climate\+Vars\+::tsoil}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ init\+Phenology\+Trackers()}, and \textbf{ leaf\+Fluxes()}.
+
+\label{sipnet_8c_a23a1722243c28c71c4f684cf6534fb9f} 
+\index{sipnet.c@{sipnet.c}!potPsn@{potPsn}}
+\index{potPsn@{potPsn}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{potPsn()}
+{\footnotesize\ttfamily void pot\+Psn (\begin{DoxyParamCaption}\item[{double $\ast$}]{pot\+Gross\+Psn,  }\item[{double $\ast$}]{base\+Fol\+Resp,  }\item[{double}]{lai,  }\item[{double}]{tair,  }\item[{double}]{vpd,  }\item[{double}]{par,  }\item[{int}]{day }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1136} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::a\+Max}, \textbf{ Parameters\+::a\+Max\+Frac}, \textbf{ Parameters\+::base\+Fol\+Resp\+Frac}, \textbf{ C\+\_\+\+WEIGHT}, \textbf{ calc\+Light\+Eff()}, \textbf{ Parameters\+::c\+Frac\+Leaf}, \textbf{ Parameters\+::d\+Vpd\+Exp}, \textbf{ Parameters\+::d\+Vpd\+Slope}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ params}, \textbf{ Parameters\+::psn\+TMax}, \textbf{ Parameters\+::psn\+TMin}, \textbf{ SEC\+\_\+\+PER\+\_\+\+DAY}, and \textbf{ TEN\+\_\+9}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_a23a1722243c28c71c4f684cf6534fb9f_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_aed3527886ac1ed87fff8c530d8851819} 
+\index{sipnet.c@{sipnet.c}!printModelComponents@{printModelComponents}}
+\index{printModelComponents@{printModelComponents}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{printModelComponents()}
+{\footnotesize\ttfamily void print\+Model\+Components (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{out }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2986} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ ALTERNATIVE\+\_\+\+TRANS}, \textbf{ BALL\+\_\+\+BERRY}, \textbf{ COMPLEX\+\_\+\+WATER}, \textbf{ CSV\+\_\+\+OUTPUT}, \textbf{ DAYCENT\+\_\+\+WATER\+\_\+\+HRESP}, \textbf{ GDD}, \textbf{ GROWTH\+\_\+\+RESP}, \textbf{ LITTER\+\_\+\+POOL}, \textbf{ LITTER\+\_\+\+WATER}, \textbf{ LITTER\+\_\+\+WATER\+\_\+\+DRAINAGE}, \textbf{ LLOYD\+\_\+\+TAYLOR}, \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS}, \textbf{ MICROBES}, \textbf{ MODEL\+\_\+\+WATER}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ PENMAN\+\_\+\+MONTEITH\+\_\+\+TRANS}, \textbf{ ROOTS}, \textbf{ SEASONAL\+\_\+\+R\+\_\+\+SOIL}, \textbf{ SNOW}, \textbf{ SOIL\+\_\+\+MULTIPOOL}, \textbf{ SOIL\+\_\+\+PHENOL}, \textbf{ SOIL\+\_\+\+QUALITY}, \textbf{ STOICHIOMETRY}, \textbf{ WATER\+\_\+\+HRESP}, and \textbf{ WATER\+\_\+\+PSN}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{sipnet_8c_afb4ad97daa6ca46b43b7eae3554c17fe} 
+\index{sipnet.c@{sipnet.c}!processEvents@{processEvents}}
+\index{processEvents@{processEvents}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{processEvents()}
+{\footnotesize\ttfamily void process\+Events (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2519} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ CANOPY}, \textbf{ climate}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Event\+Node\+::day}, \textbf{ Climate\+Vars\+::day}, \textbf{ envi}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ HARVEST}, \textbf{ Flux\+Vars\+::immed\+Evap}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Environment\+::litter}, \textbf{ loc\+Event}, \textbf{ Irrigation\+Params\+::method}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ params}, \textbf{ PLANTING}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ SOIL}, \textbf{ Environment\+::soil\+Water}, \textbf{ TILLAGE}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, \textbf{ Event\+Node\+::year}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ update\+State()}.
+
+\label{sipnet_8c_a7f73f9d495f52b35feaaaf9a471370ae} 
+\index{sipnet.c@{sipnet.c}!readClimData@{readClimData}}
+\index{readClimData@{readClimData}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{readClimData()}
+{\footnotesize\ttfamily int $\ast$ read\+Clim\+Data (\begin{DoxyParamCaption}\item[{char $\ast$}]{clim\+File,  }\item[{int}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 591} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Climate\+Vars\+::day}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ first\+Climates}, \textbf{ Climate\+Vars\+::gdd}, \textbf{ Climate\+Vars\+::length}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ Climate\+Vars\+::par}, \textbf{ Climate\+Vars\+::precip}, \textbf{ Climate\+Vars\+::soil\+Wetness}, \textbf{ Climate\+Vars\+::tair}, \textbf{ Climate\+Vars\+::time}, \textbf{ TINY}, \textbf{ Climate\+Vars\+::tsoil}, \textbf{ Climate\+Vars\+::vpd}, \textbf{ Climate\+Vars\+::vpd\+Soil}, \textbf{ Climate\+Vars\+::v\+Press}, \textbf{ Climate\+Vars\+::wspd}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ init\+Model()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{dd/d09/sipnet_8c_a7f73f9d495f52b35feaaaf9a471370ae_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a28969b6887eee8f92820233b3738e879} 
+\index{sipnet.c@{sipnet.c}!readParamData@{readParamData}}
+\index{readParamData@{readParamData}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{readParamData()}
+{\footnotesize\ttfamily int read\+Param\+Data (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$$\ast$}]{spatial\+Params\+Ptr,  }\item[{char $\ast$}]{param\+File,  }\item[{char $\ast$}]{spatial\+Param\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 780} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::a\+Max}, \textbf{ Parameters\+::a\+Max\+Frac}, \textbf{ Parameters\+::attenuation}, \textbf{ Parameters\+::base\+Coarse\+Root\+Resp}, \textbf{ Parameters\+::base\+Fine\+Root\+Resp}, \textbf{ Parameters\+::base\+Fol\+Resp\+Frac}, \textbf{ Parameters\+::base\+Microbe\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp\+Cold}, \textbf{ Parameters\+::base\+Veg\+Resp}, \textbf{ Parameters\+::c\+Frac\+Leaf}, \textbf{ Parameters\+::coarse\+Root\+Exudation}, \textbf{ Parameters\+::coarse\+Root\+Frac}, \textbf{ Parameters\+::coarse\+Root\+Q10}, \textbf{ Parameters\+::coarse\+Root\+Turnover\+Rate}, \textbf{ Parameters\+::cold\+Soil\+Threshold}, \textbf{ COMPLEX\+\_\+\+WATER}, \textbf{ DAYCENT\+\_\+\+WATER\+\_\+\+HRESP}, \textbf{ Parameters\+::d\+Vpd\+Exp}, \textbf{ Parameters\+::d\+Vpd\+Slope}, \textbf{ Parameters\+::\+E0}, \textbf{ Parameters\+::efficiency}, \textbf{ Parameters\+::fast\+Flow\+Frac}, \textbf{ Parameters\+::fine\+Root\+Allocation}, \textbf{ Parameters\+::fine\+Root\+Exudation}, \textbf{ Parameters\+::fine\+Root\+Frac}, \textbf{ Parameters\+::fine\+Root\+Q10}, \textbf{ Parameters\+::fine\+Root\+Turnover\+Rate}, \textbf{ Parameters\+::frac\+Leaf\+Fall}, \textbf{ Parameters\+::frac\+Litter\+Respired}, \textbf{ Parameters\+::frozen\+Soil\+Eff}, \textbf{ Parameters\+::frozen\+Soil\+Fol\+REff}, \textbf{ Parameters\+::frozen\+Soil\+Threshold}, \textbf{ GDD}, \textbf{ Parameters\+::gdd\+Leaf\+On}, \textbf{ GROWTH\+\_\+\+RESP}, \textbf{ Parameters\+::growth\+Resp\+Frac}, \textbf{ Parameters\+::half\+Sat\+Ingestion}, \textbf{ Parameters\+::half\+Sat\+Par}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ initialize\+One\+Spatial\+Param()}, \textbf{ Parameters\+::lai\+Init}, \textbf{ LEAF\+\_\+\+WATER}, \textbf{ Parameters\+::leaf\+Allocation}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ Parameters\+::leaf\+Growth}, \textbf{ Parameters\+::leaf\+Off\+Day}, \textbf{ Parameters\+::leaf\+On\+Day}, \textbf{ Parameters\+::leaf\+Pool\+Depth}, \textbf{ Parameters\+::leaf\+Turnover\+Rate}, \textbf{ LITTER\+\_\+\+POOL}, \textbf{ LITTER\+\_\+\+WATER\+\_\+\+DRAINAGE}, \textbf{ Parameters\+::litter\+Breakdown\+Rate}, \textbf{ Parameters\+::litter\+Init}, \textbf{ Parameters\+::litter\+WFrac\+Init}, \textbf{ Parameters\+::litter\+WHC}, \textbf{ Parameters\+::lit\+Water\+Drain\+Rate}, \textbf{ LLOYD\+\_\+\+TAYLOR}, \textbf{ Parameters\+::m\+\_\+ball\+Berry}, \textbf{ Parameters\+::max\+Ingestion\+Rate}, \textbf{ Parameters\+::microbe\+Init}, \textbf{ Parameters\+::microbe\+NC}, \textbf{ Parameters\+::microbe\+Pulse\+Eff}, \textbf{ Parameters\+::microbe\+Q10}, \textbf{ MICROBES}, \textbf{ new\+Spatial\+Params()}, \textbf{ NUM\+\_\+\+PARAMS}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ params}, \textbf{ PENMAN\+\_\+\+MONTEITH\+\_\+\+TRANS}, \textbf{ Parameters\+::plant\+Wood\+Init}, \textbf{ Parameters\+::psn\+TMin}, \textbf{ Parameters\+::psn\+TOpt}, \textbf{ Parameters\+::quality\+Leaf}, \textbf{ Parameters\+::quality\+Wood}, \textbf{ Parameters\+::rd\+Const}, \textbf{ read\+Spatial\+Params()}, \textbf{ ROOTS}, \textbf{ Parameters\+::r\+Soil\+Const1}, \textbf{ Parameters\+::r\+Soil\+Const2}, \textbf{ SEASONAL\+\_\+\+R\+\_\+\+SOIL}, \textbf{ SNOW}, \textbf{ Parameters\+::snow\+Init}, \textbf{ Parameters\+::snow\+Melt}, \textbf{ SOIL\+\_\+\+PHENOL}, \textbf{ SOIL\+\_\+\+QUALITY}, \textbf{ Parameters\+::soil\+Init}, \textbf{ Parameters\+::soil\+Resp\+Moist\+Effect}, \textbf{ Parameters\+::soil\+Resp\+Q10}, \textbf{ Parameters\+::soil\+Resp\+Q10\+Cold}, \textbf{ Parameters\+::soil\+Temp\+Leaf\+On}, \textbf{ Parameters\+::soil\+WFrac\+Init}, \textbf{ Parameters\+::soil\+WHC}, \textbf{ STOICHIOMETRY}, \textbf{ Parameters\+::\+T0}, \textbf{ Parameters\+::tot\+Nitrogen}, \textbf{ Parameters\+::veg\+Resp\+Q10}, \textbf{ WATER\+\_\+\+HRESP}, \textbf{ Parameters\+::water\+Remove\+Frac}, \textbf{ Parameters\+::wood\+Allocation}, \textbf{ Parameters\+::wood\+Turnover\+Rate}, and \textbf{ Parameters\+::wue\+Const}.
+
+
+
+Referenced by \textbf{ init\+Model()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_a28969b6887eee8f92820233b3738e879_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a2ac1d1cf6a1203f72d581617a9618026} 
+\index{sipnet.c@{sipnet.c}!runModelNoOut@{runModelNoOut}}
+\index{runModelNoOut@{runModelNoOut}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{runModelNoOut()}
+{\footnotesize\ttfamily void run\+Model\+No\+Out (\begin{DoxyParamCaption}\item[{double $\ast$$\ast$}]{out\+Array,  }\item[{int}]{num\+Data\+Types,  }\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2920} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ output\+Ptrs}, \textbf{ setup\+Model()}, and \textbf{ update\+State()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_a2ac1d1cf6a1203f72d581617a9618026_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a3dbfe6f24ba0a4169fce31f6b0363638} 
+\index{sipnet.c@{sipnet.c}!runModelOutput@{runModelOutput}}
+\index{runModelOutput@{runModelOutput}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{runModelOutput()}
+{\footnotesize\ttfamily void run\+Model\+Output (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{out,  }\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items,  }\item[{int}]{print\+Header,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2867} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Climate\+Vars\+::day}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ setup\+Events()}, \textbf{ setup\+Model()}, \textbf{ terminate\+Output\+Item\+Lines()}, \textbf{ Climate\+Vars\+::time}, \textbf{ update\+State()}, \textbf{ write\+Output\+Item\+Labels()}, \textbf{ write\+Output\+Item\+Values()}, and \textbf{ Climate\+Vars\+::year}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ sens\+Test()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_a3dbfe6f24ba0a4169fce31f6b0363638_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a1b37e0be44561cca24782fbd2e6a1689} 
+\index{sipnet.c@{sipnet.c}!sensTest@{sensTest}}
+\index{sensTest@{sensTest}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{sensTest()}
+{\footnotesize\ttfamily void sens\+Test (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{out,  }\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items,  }\item[{int}]{param\+Num,  }\item[{double}]{low,  }\item[{double}]{high,  }\item[{int}]{num\+Runs,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2956} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ run\+Model\+Output()}, \textbf{ set\+Spatial\+Param()}, and \textbf{ write\+Output\+Item\+Labels()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_a1b37e0be44561cca24782fbd2e6a1689_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a1e56442b92cdc1caea3ed264ddf30076} 
+\index{sipnet.c@{sipnet.c}!setupEvents@{setupEvents}}
+\index{setupEvents@{setupEvents}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{setupEvents()}
+{\footnotesize\ttfamily void setup\+Events (\begin{DoxyParamCaption}\item[{int}]{curr\+Loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2856} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ events}, and \textbf{ loc\+Event}.
+
+
+
+Referenced by \textbf{ run\+Model\+Output()}.
+
+\label{sipnet_8c_a0efad227d8e097ade293ef92ec87b26e} 
+\index{sipnet.c@{sipnet.c}!setupModel@{setupModel}}
+\index{setupModel@{setupModel}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{setupModel()}
+{\footnotesize\ttfamily void setup\+Model (\begin{DoxyParamCaption}\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{int}]{loc }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2734} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::base\+Coarse\+Root\+Resp}, \textbf{ Parameters\+::base\+Fine\+Root\+Resp}, \textbf{ Parameters\+::base\+Microbe\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp\+Cold}, \textbf{ Parameters\+::base\+Veg\+Resp}, \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Parameters\+::coarse\+Root\+Frac}, \textbf{ Parameters\+::coarse\+Root\+Turnover\+Rate}, \textbf{ ensure\+Allocation()}, \textbf{ envi}, \textbf{ Environment\+::fine\+RootC}, \textbf{ Parameters\+::fine\+Root\+Frac}, \textbf{ Parameters\+::fine\+Root\+Turnover\+Rate}, \textbf{ first\+Climates}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ init\+Trackers()}, \textbf{ Parameters\+::lai\+Init}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ Parameters\+::leaf\+Turnover\+Rate}, \textbf{ Environment\+::litter}, \textbf{ Parameters\+::litter\+Breakdown\+Rate}, \textbf{ Parameters\+::litter\+Init}, \textbf{ Environment\+::litter\+Water}, \textbf{ Parameters\+::litter\+WFrac\+Init}, \textbf{ Parameters\+::litter\+WHC}, \textbf{ load\+Spatial\+Params()}, \textbf{ Parameters\+::max\+Ingestion\+Rate}, \textbf{ mean\+FPAR}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ Environment\+::microbeC}, \textbf{ Parameters\+::microbe\+Init}, \textbf{ Parameters\+::microbe\+Pulse\+Eff}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ params}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Parameters\+::plant\+Wood\+Init}, \textbf{ Parameters\+::psn\+TMax}, \textbf{ Parameters\+::psn\+TMin}, \textbf{ Parameters\+::psn\+TOpt}, \textbf{ reset\+Mean\+Tracker()}, \textbf{ Environment\+::snow}, \textbf{ Parameters\+::snow\+Init}, \textbf{ Environment\+::soil}, \textbf{ Parameters\+::soil\+Init}, \textbf{ Environment\+::soil\+Water}, \textbf{ Parameters\+::soil\+WFrac\+Init}, \textbf{ Parameters\+::soil\+WHC}, \textbf{ Parameters\+::tot\+Nitrogen}, \textbf{ Tracker\+Vars\+::tot\+SoilC}, \textbf{ trackers}, and \textbf{ Parameters\+::wood\+Turnover\+Rate}.
+
+
+
+Referenced by \textbf{ run\+Model\+No\+Out()}, and \textbf{ run\+Model\+Output()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_a0efad227d8e097ade293ef92ec87b26e_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_af9ce545d20f3285ad314db7ce52ee054} 
+\index{sipnet.c@{sipnet.c}!setupOutputItems@{setupOutputItems}}
+\index{setupOutputItems@{setupOutputItems}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{setupOutputItems()}
+{\footnotesize\ttfamily void setup\+Output\+Items (\begin{DoxyParamCaption}\item[{\textbf{ Output\+Items} $\ast$}]{output\+Items }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3140} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ add\+Output\+Item()}, \textbf{ Tracker\+Vars\+::gpp}, \textbf{ Tracker\+Vars\+::nee}, \textbf{ Tracker\+Vars\+::tot\+Gpp}, \textbf{ Tracker\+Vars\+::tot\+Nee}, and \textbf{ trackers}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_af9ce545d20f3285ad314db7ce52ee054_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a71bf09e1fcb91e2c9943759635f763f0} 
+\index{sipnet.c@{sipnet.c}!setupOutputPointers@{setupOutputPointers}}
+\index{setupOutputPointers@{setupOutputPointers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{setupOutputPointers()}
+{\footnotesize\ttfamily void setup\+Output\+Pointers (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3094} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Tracker\+Vars\+::evapotranspiration}, \textbf{ Tracker\+Vars\+::fpar}, \textbf{ Tracker\+Vars\+::gpp}, \textbf{ Tracker\+Vars\+::nee}, \textbf{ Tracker\+Vars\+::npp}, \textbf{ output\+Ptrs}, \textbf{ Tracker\+Vars\+::ra}, \textbf{ Tracker\+Vars\+::rh}, \textbf{ Tracker\+Vars\+::rtot}, \textbf{ Tracker\+Vars\+::soil\+Wetness\+Frac}, \textbf{ Tracker\+Vars\+::tot\+Gpp}, \textbf{ Tracker\+Vars\+::tot\+Nee}, \textbf{ Tracker\+Vars\+::tot\+Npp}, \textbf{ Tracker\+Vars\+::tot\+Ra}, \textbf{ Tracker\+Vars\+::tot\+Rh}, \textbf{ Tracker\+Vars\+::tot\+Rtot}, \textbf{ trackers}, \textbf{ Tracker\+Vars\+::yearly\+Gpp}, \textbf{ Tracker\+Vars\+::yearly\+Nee}, \textbf{ Tracker\+Vars\+::yearly\+Npp}, \textbf{ Tracker\+Vars\+::yearly\+Ra}, \textbf{ Tracker\+Vars\+::yearly\+Rh}, and \textbf{ Tracker\+Vars\+::yearly\+Rtot}.
+
+
+
+Referenced by \textbf{ init\+Model()}.
+
+\label{sipnet_8c_a8760c2d181a729bf56e8372445b33aab} 
+\index{sipnet.c@{sipnet.c}!simpleWaterFlow@{simpleWaterFlow}}
+\index{simpleWaterFlow@{simpleWaterFlow}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{simpleWaterFlow()}
+{\footnotesize\ttfamily void simple\+Water\+Flow (\begin{DoxyParamCaption}\item[{double $\ast$}]{rain,  }\item[{double $\ast$}]{snow\+Fall,  }\item[{double $\ast$}]{immed\+Evap,  }\item[{double $\ast$}]{snow\+Melt,  }\item[{double $\ast$}]{sublimation,  }\item[{double $\ast$}]{fast\+Flow,  }\item[{double $\ast$}]{evaporation,  }\item[{double $\ast$}]{top\+Drainage,  }\item[{double $\ast$}]{bottom\+Drainage,  }\item[{double}]{water,  }\item[{double}]{snow,  }\item[{double}]{precip,  }\item[{double}]{temp,  }\item[{double}]{length,  }\item[{double}]{trans }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1499} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ params}, \textbf{ Parameters\+::snow\+Melt}, and \textbf{ Parameters\+::soil\+WHC}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+\label{sipnet_8c_a316ac45bcdc2d3372761d43e597874ab} 
+\index{sipnet.c@{sipnet.c}!snowPack@{snowPack}}
+\index{snowPack@{snowPack}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{snowPack()}
+{\footnotesize\ttfamily void snow\+Pack (\begin{DoxyParamCaption}\item[{double $\ast$}]{snow\+Melt,  }\item[{double $\ast$}]{sublimation,  }\item[{double}]{snow\+Fall }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1585} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ CP}, \textbf{ E\+\_\+\+STAR\+\_\+\+SNOW}, \textbf{ envi}, \textbf{ GAMMA}, \textbf{ LAMBDA\+\_\+S}, \textbf{ Climate\+Vars\+::length}, \textbf{ params}, \textbf{ Parameters\+::rd\+Const}, \textbf{ RHO}, \textbf{ SEC\+\_\+\+PER\+\_\+\+DAY}, \textbf{ Environment\+::snow}, \textbf{ Parameters\+::snow\+Melt}, \textbf{ Climate\+Vars\+::tair}, \textbf{ Climate\+Vars\+::v\+Press}, and \textbf{ Climate\+Vars\+::wspd}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+\label{sipnet_8c_a18edb857cbb1b173feeb13ebd0d50afe} 
+\index{sipnet.c@{sipnet.c}!soilDegradation@{soilDegradation}}
+\index{soilDegradation@{soilDegradation}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{soilDegradation()}
+{\footnotesize\ttfamily void soil\+Degradation (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1999} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Flux\+Vars\+::coarse\+Root\+Creation}, \textbf{ Flux\+Vars\+::coarse\+Root\+Loss}, \textbf{ Parameters\+::efficiency}, \textbf{ envi}, \textbf{ Environment\+::fine\+RootC}, \textbf{ Flux\+Vars\+::fine\+Root\+Creation}, \textbf{ Flux\+Vars\+::fine\+Root\+Loss}, \textbf{ fluxes}, \textbf{ Flux\+Vars\+::leaf\+Litter}, \textbf{ Climate\+Vars\+::length}, \textbf{ Environment\+::litter}, \textbf{ litter\+Input\+Pool()}, \textbf{ Flux\+Vars\+::litter\+To\+Soil}, \textbf{ Flux\+Vars\+::maint\+Respiration}, \textbf{ Environment\+::microbeC}, \textbf{ microbe\+Growth()}, \textbf{ Flux\+Vars\+::microbe\+Ingestion}, \textbf{ Parameters\+::microbe\+NC}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ params}, \textbf{ Parameters\+::quality\+Leaf}, \textbf{ Parameters\+::quality\+Wood}, \textbf{ Flux\+Vars\+::r\+Coarse\+Root}, \textbf{ Flux\+Vars\+::r\+Fine\+Root}, \textbf{ Flux\+Vars\+::r\+Litter}, \textbf{ Flux\+Vars\+::r\+Soil}, \textbf{ Environment\+::soil}, \textbf{ Flux\+Vars\+::soil\+Pulse}, \textbf{ Environment\+::soil\+Water}, \textbf{ Climate\+Vars\+::soil\+Wetness}, \textbf{ Parameters\+::soil\+WHC}, \textbf{ Parameters\+::tot\+Nitrogen}, \textbf{ Climate\+Vars\+::tsoil}, and \textbf{ Flux\+Vars\+::wood\+Litter}.
+
+
+
+Referenced by \textbf{ update\+State()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=329pt]{dd/d09/sipnet_8c_a18edb857cbb1b173feeb13ebd0d50afe_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a397c7c05612189c254b1186783c77676} 
+\index{sipnet.c@{sipnet.c}!soilWaterFluxes@{soilWaterFluxes}}
+\index{soilWaterFluxes@{soilWaterFluxes}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{soilWaterFluxes()}
+{\footnotesize\ttfamily void soil\+Water\+Fluxes (\begin{DoxyParamCaption}\item[{double $\ast$}]{fast\+Flow,  }\item[{double $\ast$}]{evaporation,  }\item[{double $\ast$}]{top\+Drainage,  }\item[{double $\ast$}]{bottom\+Drainage,  }\item[{double}]{net\+Rain,  }\item[{double}]{snow\+Melt,  }\item[{double}]{trans,  }\item[{double}]{litter\+Water,  }\item[{double}]{soil\+Water }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1761} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ evap\+Soil\+Fluxes()}, \textbf{ Parameters\+::litter\+WHC}, \textbf{ params}, \textbf{ Parameters\+::soil\+WHC}, and \textbf{ trans\+Soil\+Drainage()}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=278pt]{dd/d09/sipnet_8c_a397c7c05612189c254b1186783c77676_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_ae0e1d9ee4d9eb24f862611ec4a89e797} 
+\index{sipnet.c@{sipnet.c}!transSoilDrainage@{transSoilDrainage}}
+\index{transSoilDrainage@{transSoilDrainage}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{transSoilDrainage()}
+{\footnotesize\ttfamily void trans\+Soil\+Drainage (\begin{DoxyParamCaption}\item[{double $\ast$}]{bottom\+Drainage,  }\item[{double}]{top\+Drainage,  }\item[{double}]{trans,  }\item[{double}]{soil\+Water }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1741} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Climate\+Vars\+::length}, \textbf{ params}, and \textbf{ Parameters\+::soil\+WHC}.
+
+
+
+Referenced by \textbf{ soil\+Water\+Fluxes()}.
+
+\label{sipnet_8c_a972eedbc68ae911757b8efa8952aa1fc} 
+\index{sipnet.c@{sipnet.c}!updateState@{updateState}}
+\index{updateState@{updateState}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{updateState()}
+{\footnotesize\ttfamily void update\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2618} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ add\+Value\+To\+Mean\+Tracker()}, \textbf{ Flux\+Vars\+::bottom\+Drainage}, \textbf{ calculate\+Fluxes()}, \textbf{ climate}, \textbf{ Flux\+Vars\+::coarse\+Root\+Creation}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ envi}, \textbf{ Flux\+Vars\+::evaporation}, \textbf{ Flux\+Vars\+::fast\+Flow}, \textbf{ Flux\+Vars\+::fine\+Root\+Creation}, \textbf{ fluxes}, \textbf{ Flux\+Vars\+::immed\+Evap}, \textbf{ Flux\+Vars\+::leaf\+Creation}, \textbf{ Flux\+Vars\+::leaf\+Litter}, \textbf{ Climate\+Vars\+::length}, \textbf{ Environment\+::litter\+Water}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ Flux\+Vars\+::photosynthesis}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ process\+Events()}, \textbf{ Flux\+Vars\+::rain}, \textbf{ Flux\+Vars\+::r\+Coarse\+Root}, \textbf{ Flux\+Vars\+::r\+Fine\+Root}, \textbf{ Flux\+Vars\+::r\+Veg}, \textbf{ Environment\+::snow}, \textbf{ Flux\+Vars\+::snow\+Fall}, \textbf{ Flux\+Vars\+::snow\+Melt}, \textbf{ soil\+Degradation()}, \textbf{ Environment\+::soil\+Water}, \textbf{ Flux\+Vars\+::sublimation}, \textbf{ Flux\+Vars\+::top\+Drainage}, \textbf{ Flux\+Vars\+::transpiration}, \textbf{ update\+Trackers()}, \textbf{ Flux\+Vars\+::wood\+Creation}, and \textbf{ Flux\+Vars\+::wood\+Litter}.
+
+
+
+Referenced by \textbf{ run\+Model\+No\+Out()}, and \textbf{ run\+Model\+Output()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d09/sipnet_8c_a972eedbc68ae911757b8efa8952aa1fc_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a8b7178c18acaf22dffc942561473d6bb} 
+\index{sipnet.c@{sipnet.c}!updateTrackers@{updateTrackers}}
+\index{updateTrackers@{updateTrackers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{updateTrackers()}
+{\footnotesize\ttfamily void update\+Trackers (\begin{DoxyParamCaption}\item[{double}]{old\+Soil\+Water }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2425} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ envi}, \textbf{ Flux\+Vars\+::evaporation}, \textbf{ Tracker\+Vars\+::evapotranspiration}, \textbf{ Tracker\+Vars\+::fa}, \textbf{ fluxes}, \textbf{ Tracker\+Vars\+::fpar}, \textbf{ Tracker\+Vars\+::fr}, \textbf{ get\+Mean\+Tracker\+Mean()}, \textbf{ Tracker\+Vars\+::gpp}, \textbf{ Flux\+Vars\+::immed\+Evap}, \textbf{ Tracker\+Vars\+::\+LAI}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ Flux\+Vars\+::leaf\+Litter}, \textbf{ Climate\+Vars\+::length}, \textbf{ mean\+FPAR}, \textbf{ Tracker\+Vars\+::nee}, \textbf{ Tracker\+Vars\+::npp}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ params}, \textbf{ Flux\+Vars\+::photosynthesis}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Tracker\+Vars\+::plant\+WoodC}, \textbf{ Tracker\+Vars\+::ra}, \textbf{ Tracker\+Vars\+::r\+Aboveground}, \textbf{ Flux\+Vars\+::r\+Coarse\+Root}, \textbf{ Flux\+Vars\+::r\+Fine\+Root}, \textbf{ Tracker\+Vars\+::rh}, \textbf{ Flux\+Vars\+::r\+Leaf}, \textbf{ Flux\+Vars\+::r\+Litter}, \textbf{ Tracker\+Vars\+::r\+Root}, \textbf{ Flux\+Vars\+::r\+Soil}, \textbf{ Tracker\+Vars\+::r\+Soil}, \textbf{ Tracker\+Vars\+::rtot}, \textbf{ Flux\+Vars\+::r\+Veg}, \textbf{ Flux\+Vars\+::r\+Wood}, \textbf{ Environment\+::soil}, \textbf{ Environment\+::soil\+Water}, \textbf{ Tracker\+Vars\+::soil\+Wetness\+Frac}, \textbf{ Parameters\+::soil\+WHC}, \textbf{ Flux\+Vars\+::sublimation}, \textbf{ Tracker\+Vars\+::tot\+Gpp}, \textbf{ Tracker\+Vars\+::tot\+Nee}, \textbf{ Tracker\+Vars\+::tot\+Npp}, \textbf{ Tracker\+Vars\+::tot\+Ra}, \textbf{ Tracker\+Vars\+::tot\+Rh}, \textbf{ Tracker\+Vars\+::tot\+Rtot}, \textbf{ Tracker\+Vars\+::tot\+SoilC}, \textbf{ trackers}, \textbf{ Flux\+Vars\+::transpiration}, \textbf{ Climate\+Vars\+::year}, \textbf{ Tracker\+Vars\+::yearly\+Gpp}, \textbf{ Tracker\+Vars\+::yearly\+Litter}, \textbf{ Tracker\+Vars\+::yearly\+Nee}, \textbf{ Tracker\+Vars\+::yearly\+Npp}, \textbf{ Tracker\+Vars\+::yearly\+Ra}, \textbf{ Tracker\+Vars\+::yearly\+Rh}, and \textbf{ Tracker\+Vars\+::yearly\+Rtot}.
+
+
+
+Referenced by \textbf{ update\+State()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=291pt]{dd/d09/sipnet_8c_a8b7178c18acaf22dffc942561473d6bb_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a2d6b40f90dd338910f832524445b6c52} 
+\index{sipnet.c@{sipnet.c}!vegResp@{vegResp}}
+\index{vegResp@{vegResp}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{vegResp()}
+{\footnotesize\ttfamily void veg\+Resp (\begin{DoxyParamCaption}\item[{double $\ast$}]{fol\+Resp,  }\item[{double $\ast$}]{wood\+Resp,  }\item[{double}]{base\+Fol\+Resp }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1788} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::base\+Veg\+Resp}, \textbf{ climate}, \textbf{ envi}, \textbf{ Parameters\+::frozen\+Soil\+Fol\+REff}, \textbf{ Parameters\+::frozen\+Soil\+Threshold}, \textbf{ params}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Parameters\+::psn\+TOpt}, \textbf{ Climate\+Vars\+::tair}, \textbf{ Climate\+Vars\+::tsoil}, and \textbf{ Parameters\+::veg\+Resp\+Q10}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+\label{sipnet_8c_a750b724612dc74c3876dff1a08c05793} 
+\index{sipnet.c@{sipnet.c}!vegResp2@{vegResp2}}
+\index{vegResp2@{vegResp2}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{vegResp2()}
+{\footnotesize\ttfamily void veg\+Resp2 (\begin{DoxyParamCaption}\item[{double $\ast$}]{fol\+Resp,  }\item[{double $\ast$}]{wood\+Resp,  }\item[{double $\ast$}]{growth\+Resp,  }\item[{double}]{base\+Fol\+Resp,  }\item[{double}]{gpp }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 1810} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::base\+Veg\+Resp}, \textbf{ climate}, \textbf{ envi}, \textbf{ Parameters\+::frozen\+Soil\+Fol\+REff}, \textbf{ Parameters\+::frozen\+Soil\+Threshold}, \textbf{ get\+Mean\+Tracker\+Mean()}, \textbf{ Parameters\+::growth\+Resp\+Frac}, \textbf{ mean\+NPP}, \textbf{ params}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Parameters\+::psn\+TOpt}, \textbf{ Climate\+Vars\+::tair}, \textbf{ Climate\+Vars\+::tsoil}, and \textbf{ Parameters\+::veg\+Resp\+Q10}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=266pt]{dd/d09/sipnet_8c_a750b724612dc74c3876dff1a08c05793_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8c_a4fa75755604d209a86f737ba875af952} 
+\index{sipnet.c@{sipnet.c}!woodLitterF@{woodLitterF}}
+\index{woodLitterF@{woodLitterF}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{woodLitterF()}
+{\footnotesize\ttfamily double wood\+LitterF (\begin{DoxyParamCaption}\item[{double}]{plant\+WoodC }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 2139} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ params}, and \textbf{ Parameters\+::wood\+Turnover\+Rate}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{sipnet_8c_ac0c087b09a96464a0656d9cbfa24b5c8} 
+\index{sipnet.c@{sipnet.c}!climate@{climate}}
+\index{climate@{climate}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{climate}
+{\footnotesize\ttfamily \textbf{ Climate\+Node}$\ast$ climate\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 559} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Precip()}, \textbf{ calc\+Root\+Resp()}, \textbf{ calculate\+Fluxes()}, \textbf{ evap\+Soil\+Fluxes()}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ leaf\+Fluxes()}, \textbf{ moisture()}, \textbf{ moisture\+\_\+bwb()}, \textbf{ moisture\+\_\+pm()}, \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ process\+Events()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Model()}, \textbf{ snow\+Pack()}, \textbf{ soil\+Degradation()}, \textbf{ trans\+Soil\+Drainage()}, \textbf{ update\+State()}, \textbf{ update\+Trackers()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{sipnet_8c_a20b924acc4518082c0082b78140b99d6} 
+\index{sipnet.c@{sipnet.c}!envi@{envi}}
+\index{envi@{envi}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{envi}
+{\footnotesize\ttfamily \textbf{ Envi} envi\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 549} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ evap\+Soil\+Fluxes()}, \textbf{ init\+Trackers()}, \textbf{ microbe\+Growth()}, \textbf{ moisture\+\_\+bwb()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ process\+Events()}, \textbf{ setup\+Model()}, \textbf{ snow\+Pack()}, \textbf{ soil\+Degradation()}, \textbf{ update\+State()}, \textbf{ update\+Trackers()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{sipnet_8c_a4b03220c4f43d5828d14256aa92e0fcb} 
+\index{sipnet.c@{sipnet.c}!events@{events}}
+\index{events@{events}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{events}
+{\footnotesize\ttfamily \textbf{ Event\+Node}$\ast$$\ast$ events\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 565} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ init\+Events()}, \textbf{ read\+Event\+Data()}, and \textbf{ setup\+Events()}.
+
+\label{sipnet_8c_a5b348977747ee8ee07a90e1fe7cf1362} 
+\index{sipnet.c@{sipnet.c}!firstClimates@{firstClimates}}
+\index{firstClimates@{firstClimates}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{firstClimates}
+{\footnotesize\ttfamily \textbf{ Climate\+Node}$\ast$$\ast$ first\+Climates\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 542} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ free\+Climate\+List()}, \textbf{ read\+Clim\+Data()}, and \textbf{ setup\+Model()}.
+
+\label{sipnet_8c_a4916801e6466ad444c3a69863f1e615d} 
+\index{sipnet.c@{sipnet.c}!fluxes@{fluxes}}
+\index{fluxes@{fluxes}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{fluxes}
+{\footnotesize\ttfamily \textbf{ Fluxes} fluxes\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 560} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calculate\+Fluxes()}, \textbf{ microbe\+Growth()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ process\+Events()}, \textbf{ soil\+Degradation()}, \textbf{ update\+State()}, and \textbf{ update\+Trackers()}.
+
+\label{sipnet_8c_a91fe56575c42c1bd111288691cc8e0c2} 
+\index{sipnet.c@{sipnet.c}!locEvent@{locEvent}}
+\index{locEvent@{locEvent}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{locEvent}
+{\footnotesize\ttfamily \textbf{ Event\+Node}$\ast$ loc\+Event\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 566} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ process\+Events()}, and \textbf{ setup\+Events()}.
+
+\label{sipnet_8c_a9799089aea9d8622f21b874081f25246} 
+\index{sipnet.c@{sipnet.c}!meanFPAR@{meanFPAR}}
+\index{meanFPAR@{meanFPAR}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{meanFPAR}
+{\footnotesize\ttfamily \textbf{ Mean\+Tracker}$\ast$ mean\+FPAR\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 556} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ cleanup\+Model()}, \textbf{ init\+Model()}, \textbf{ setup\+Model()}, and \textbf{ update\+Trackers()}.
+
+\label{sipnet_8c_a1876aca55d30fc3a39531107b8d02aa5} 
+\index{sipnet.c@{sipnet.c}!meanGPP@{meanGPP}}
+\index{meanGPP@{meanGPP}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{meanGPP}
+{\footnotesize\ttfamily \textbf{ Mean\+Tracker}$\ast$ mean\+GPP\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 554} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ cleanup\+Model()}, \textbf{ init\+Model()}, \textbf{ setup\+Model()}, and \textbf{ update\+State()}.
+
+\label{sipnet_8c_a8fc6d385ac8b267f589de11f02b76da3} 
+\index{sipnet.c@{sipnet.c}!meanNPP@{meanNPP}}
+\index{meanNPP@{meanNPP}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{meanNPP}
+{\footnotesize\ttfamily \textbf{ Mean\+Tracker}$\ast$ mean\+NPP\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 552} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ cleanup\+Model()}, \textbf{ init\+Model()}, \textbf{ leaf\+Fluxes()}, \textbf{ setup\+Model()}, \textbf{ update\+State()}, and \textbf{ veg\+Resp2()}.
+
+\label{sipnet_8c_ad4d3551e31192ccec18047845bcca1f0} 
+\index{sipnet.c@{sipnet.c}!outputPtrs@{outputPtrs}}
+\index{outputPtrs@{outputPtrs}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{outputPtrs}
+{\footnotesize\ttfamily double$\ast$ output\+Ptrs[\textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}]\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 561} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ run\+Model\+No\+Out()}, and \textbf{ setup\+Output\+Pointers()}.
+
+\label{sipnet_8c_a02eb7524df3cdfd7ab32de5b40516106} 
+\index{sipnet.c@{sipnet.c}!params@{params}}
+\index{params@{params}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{params}
+{\footnotesize\ttfamily \textbf{ Params} params\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 548} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, \textbf{ create\+Event\+Node()}, \textbf{ ensure\+Allocation()}, \textbf{ evap\+Soil\+Fluxes()}, \textbf{ init\+Trackers()}, \textbf{ leaf\+Fluxes()}, \textbf{ microbe\+Growth()}, \textbf{ microbe\+Quality\+Efficiency()}, \textbf{ moisture()}, \textbf{ moisture\+\_\+bwb()}, \textbf{ moisture\+\_\+pm()}, \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ pot\+Psn()}, \textbf{ process\+Events()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ simple\+Water\+Flow()}, \textbf{ snow\+Pack()}, \textbf{ soil\+Degradation()}, \textbf{ soil\+Water\+Fluxes()}, \textbf{ trans\+Soil\+Drainage()}, \textbf{ update\+Trackers()}, \textbf{ veg\+Resp()}, \textbf{ veg\+Resp2()}, and \textbf{ wood\+Litter\+F()}.
+
+\label{sipnet_8c_a07b4e2bcae6e08b95736df4e0fff2af7} 
+\index{sipnet.c@{sipnet.c}!phenologyTrackers@{phenologyTrackers}}
+\index{phenologyTrackers@{phenologyTrackers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{phenologyTrackers}
+{\footnotesize\ttfamily \textbf{ Phenology\+Trackers} phenology\+Trackers\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 551} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ init\+Phenology\+Trackers()}, and \textbf{ leaf\+Fluxes()}.
+
+\label{sipnet_8c_a5a2cc7351ddb784563951904a8ea55cb} 
+\index{sipnet.c@{sipnet.c}!trackers@{trackers}}
+\index{trackers@{trackers}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{trackers}
+{\footnotesize\ttfamily \textbf{ Trackers} trackers\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \textbf{ 550} of file \textbf{ sipnet.\+c}.
+
+
+
+Referenced by \textbf{ init\+Trackers()}, \textbf{ microbe\+Growth()}, \textbf{ output\+State()}, \textbf{ output\+Statecsv()}, \textbf{ setup\+Model()}, \textbf{ setup\+Output\+Items()}, \textbf{ setup\+Output\+Pointers()}, and \textbf{ update\+Trackers()}.
+

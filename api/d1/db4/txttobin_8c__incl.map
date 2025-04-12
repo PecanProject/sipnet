@@ -1,0 +1,12 @@
+<map id="txttobin.c" name="txttobin.c">
+<area shape="rect" id="Node000001" title=" " alt="" coords="63,5,147,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="94,152,161,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,33,47,46,23,63,9,82,8,92,12,103,26,119,43,132,82,150,80,155,40,137,22,123,8,105,3,93,4,80,20,59,45,42,72,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="23,79,94,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="99,32,76,69,71,66,95,30"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="118,79,188,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="115,30,140,66,135,69,111,33"/>
+<area shape="rect" id="Node000005" href="$d8/d3c/util_8h.html" title=" " alt="" coords="212,79,328,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="132,28,232,71,230,76,130,33"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="248,106,164,148,162,143,246,102"/>
+</map>

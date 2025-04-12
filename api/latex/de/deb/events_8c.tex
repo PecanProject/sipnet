@@ -1,0 +1,146 @@
+\doxysection{events.\+c File Reference}
+\label{events_8c}\index{events.c@{events.c}}
+
+
+Handles reading, parsing, and storing agronomic events for SIPNET simulations.  
+
+
+{\ttfamily \#include "{}events.\+h"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}exit\+Codes.\+h"{}}\newline
+{\ttfamily \#include "{}common/util.\+h"{}}\newline
+Include dependency graph for events.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/d63/events_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ print\+Event} (\textbf{ Event\+Node} $\ast$event)
+\item 
+\textbf{ Event\+Node} $\ast$ \textbf{ create\+Event\+Node} (int loc, int year, int day, int event\+Type, const char $\ast$event\+Params\+Str)
+\item 
+\textbf{ event\+\_\+type\+\_\+t} \textbf{ get\+Event\+Type} (const char $\ast$event\+Type\+Str)
+\item 
+\textbf{ Event\+Node} $\ast$$\ast$ \textbf{ read\+Event\+Data} (char $\ast$event\+File, int \textbf{ num\+Locs})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Handles reading, parsing, and storing agronomic events for SIPNET simulations. 
+
+The {\ttfamily events.\+in} file specifies agronomic events with the following columns\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ col   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ parameter   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ units    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ col   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ parameter   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ units    }\\\cline{1-4}
+\endhead
+1   &loc   &spatial location index   &\\\cline{1-4}
+2   &year   &year of start of this timestep   &\\\cline{1-4}
+3   &day   &day of start of this timestep   &Day of year    \\\cline{1-4}
+4   &event\+\_\+type   &type of event   &(e.\+g., "{}irrig"{})    \\\cline{1-4}
+5...n   &event\+\_\+param   &parameters specific to the event type   &(varies)   \\\cline{1-4}
+\end{longtabu}
+
+
+Event types include\+:
+\begin{DoxyItemize}
+\item "{}irrig"{}\+: \doxyref{Parameters}{p.}{d0/dbf/struct_parameters} = [amount added (cm/d), type (0=canopy, 1=soil, 2=flood)]
+\item "{}fert"{}\+: \doxyref{Parameters}{p.}{d0/dbf/struct_parameters} = [Org-\/N (g/m²), Org-\/C (g/ha), Min-\/N (g/m²), Min-\/\+N2 (g/m²)]
+\item "{}till"{}\+: \doxyref{Parameters}{p.}{d0/dbf/struct_parameters} = [SOM decomposition modifier, litter decomposition modifier]
+\item "{}plant"{}\+: \doxyref{Parameters}{p.}{d0/dbf/struct_parameters} = [leaf C (g/m²), wood C (g/m²), fine root C (g/m²), corase root C (g/m²)]
+\item "{}harv"{}\+: \doxyref{Parameters}{p.}{d0/dbf/struct_parameters} = [fraction aboveground removed, fraction belowground removed, ...] See test examples in {\ttfamily tests/sipnet/test\+\_\+events\+\_\+infrastructure/} and tests/sipnet/test\+\_\+events\+\_\+types/. 
+\end{DoxyItemize}
+
+Definition in file \textbf{ events.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{events_8c_a3145169f83f9dc878adef2f12da419af} 
+\index{events.c@{events.c}!createEventNode@{createEventNode}}
+\index{createEventNode@{createEventNode}!events.c@{events.c}}
+\doxysubsubsection{createEventNode()}
+{\footnotesize\ttfamily \textbf{ Event\+Node} $\ast$ create\+Event\+Node (\begin{DoxyParamCaption}\item[{int}]{loc,  }\item[{int}]{year,  }\item[{int}]{day,  }\item[{int}]{event\+Type,  }\item[{const char $\ast$}]{event\+Params\+Str }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 36} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ Event\+Node\+::loc}, \textbf{ NUM\+\_\+\+FERTILIZATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+HARVEST\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+IRRIGATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+PLANTING\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+TILLAGE\+\_\+\+PARAMS}, \textbf{ params}, \textbf{ PLANTING}, and \textbf{ TILLAGE}.
+
+
+
+Referenced by \textbf{ read\+Event\+Data()}.
+
+\label{events_8c_a4314c765f6bbd615a94286919f475f41} 
+\index{events.c@{events.c}!getEventType@{getEventType}}
+\index{getEventType@{getEventType}!events.c@{events.c}}
+\doxysubsubsection{getEventType()}
+{\footnotesize\ttfamily \textbf{ event\+\_\+type\+\_\+t} get\+Event\+Type (\begin{DoxyParamCaption}\item[{const char $\ast$}]{event\+Type\+Str }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 145} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ PLANTING}, \textbf{ TILLAGE}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
+
+
+
+Referenced by \textbf{ read\+Event\+Data()}.
+
+\label{events_8c_aeda31871c170fe492587b17f70382344} 
+\index{events.c@{events.c}!printEvent@{printEvent}}
+\index{printEvent@{printEvent}!events.c@{events.c}}
+\doxysubsubsection{printEvent()}
+{\footnotesize\ttfamily void print\+Event (\begin{DoxyParamCaption}\item[{\textbf{ Event\+Node} $\ast$}]{event }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 261} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Tillage\+Params\+::fraction\+Litter\+Transferred}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Tillage\+Params\+::litter\+Decomp\+Modifier}, \textbf{ Event\+Node\+::loc}, \textbf{ Fertilization\+Params\+::minN}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ Fertilization\+Params\+::orgN}, \textbf{ PLANTING}, \textbf{ Tillage\+Params\+::som\+Decomp\+Modifier}, \textbf{ TILLAGE}, \textbf{ Event\+Node\+::type}, and \textbf{ Planting\+Params\+::woodC}.
+
+\label{events_8c_a23276d1145e6335ce7579bbbd6c27404} 
+\index{events.c@{events.c}!readEventData@{readEventData}}
+\index{readEventData@{readEventData}!events.c@{events.c}}
+\doxysubsubsection{readEventData()}
+{\footnotesize\ttfamily \textbf{ Event\+Node} $\ast$$\ast$ read\+Event\+Data (\begin{DoxyParamCaption}\item[{char $\ast$}]{event\+File,  }\item[{int}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 160} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ create\+Event\+Node()}, \textbf{ events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ get\+Event\+Type()}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ num\+Locs}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
+
+
+
+Referenced by \textbf{ init\+Events()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=270pt]{de/deb/events_8c_a23276d1145e6335ce7579bbbd6c27404_cgraph}
+\end{center}
+\end{figure}

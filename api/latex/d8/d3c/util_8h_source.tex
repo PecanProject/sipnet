@@ -1,0 +1,73 @@
+\doxysection{util.\+h}
+\label{util_8h_source}\index{util.h@{util.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ Basic\ utility\ functions}}
+\DoxyCodeLine{00002\ \textcolor{comment}{}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ Creation\ date:\ 8/17/04}}
+\DoxyCodeLine{00006\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ UTIL\_H}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ UTIL\_H}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ set\ filename\ =\ <base>.<ext>}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ assumes\ filename\ has\ been\ allocated\ and\ is\ large\ enough\ to\ hold\ result}}
+\DoxyCodeLine{00015\ \textcolor{keywordtype}{void}\ buildFileName(\textcolor{keywordtype}{char}\ *filename,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *base,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ext);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00018\ FILE\ *openFile(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ call\ openFile\ on\ a\ file\ with\ name\ <name>.<ext>\ (i.e.\ include\ an\ extension)}}
+\DoxyCodeLine{00021\ FILE\ *openFileExt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *ext,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ if\ seed\ =\ 0,\ seed\ based\ on\ time,\ otherwise\ seed\ based\ on\ seed}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ if\ outF\ is\ specified\ (not\ NULL),\ write\ seed\ to\ file}}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ seedRand(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ seed,\ FILE\ *outF);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ returns\ an\ exponentially-\/distributed\ negative\ random\ number}}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{double}\ randm(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ allocate\ space\ for\ an\ array\ of\ doubles\ of\ given\ size,}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ return\ pointer\ to\ start\ of\ array}}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{double}\ *makeArray(\textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ Dynamically\ allocate\ space\ for\ a\ 2-\/d\ array\ of\ doubles\ of\ given\ size,}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ return\ pointer\ to\ start\ of\ array}}
+\DoxyCodeLine{00036\ \textcolor{comment}{}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ Ensures\ that\ array\ elements\ are\ continuous\ to\ increase\ efficiency}}
+\DoxyCodeLine{00038\ \textcolor{comment}{}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ To\ free\ array,\ first\ free(arr[0]),\ then\ free(arr)}}
+\DoxyCodeLine{00040\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{double}\ **make2DArray(\textcolor{keywordtype}{int}\ nrows,\ \textcolor{keywordtype}{int}\ ncols);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ same\ as\ make2DArray,\ but\ for\ ints}}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{int}\ **make2DIntArray(\textcolor{keywordtype}{int}\ nrows,\ \textcolor{keywordtype}{int}\ ncols);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//\ free\ a\ 2D\ Array\ that\ was\ created\ using\ make2DArray}}
+\DoxyCodeLine{00047\ \textcolor{comment}{//\ pre:\ arr\ has\ been\ cast\ to\ (void\ **)}}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ free2DArray(\textcolor{keywordtype}{void}\ **arr);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{//\ set\ each\ element\ of\ out[0..n-\/1]\ to\ corresponding\ element\ of\ in[0..n-\/1]}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ assignArray(\textcolor{keywordtype}{double}\ *out,\ \textcolor{keywordtype}{double}\ *in,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{//\ return\ sum(array[0..length-\/1])}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{double}\ sumArray(\textcolor{keywordtype}{double}\ *array,\ \textcolor{keywordtype}{int}\ length);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ do\ an\ strcmp\ on\ s1\ and\ s2,\ ignoring\ case}}
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ (convert\ both\ to\ lower\ case\ before\ comparing)}}
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ return\ value\ is\ the\ same\ as\ for\ strcmp}}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{int}\ strcmpIgnoreCase(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *s2);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{//\ If\ line\ contains\ any\ character\ in\ the\ string\ commentChars,}}
+\DoxyCodeLine{00062\ \textcolor{comment}{//\ \ strip\ the\ comment\ off\ the\ line\ (i.e.\ replace\ first\ occurrence\ of}}
+\DoxyCodeLine{00063\ \textcolor{comment}{//\ \ commentChars\ with\ '\(\backslash\)0')}}
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ Return\ 1\ if\ line\ contains\ only\ a\ comment\ (or\ only\ blanks),\ 0\ otherwise}}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{int}\ stripComment(\textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *commentChars);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

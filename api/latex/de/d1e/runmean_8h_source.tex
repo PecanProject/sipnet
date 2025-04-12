@@ -1,0 +1,62 @@
+\doxysection{runmean.\+h}
+\label{runmean_8h_source}\index{runmean.h@{runmean.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ header\ file\ for\ runmean.c}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ includes\ definition\ of\ MeanTracker\ structure\ that\ is\ central\ to\ the}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ computation\ of\ a\ running\ mean}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#ifndef\ RUNMEAN\_H}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ RUNMEAN\_H}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }MeanTrackerStruct\ \{}
+\DoxyCodeLine{00009\ \ \ \textcolor{keywordtype}{double}\ *values;\ \ \textcolor{comment}{//\ parallel\ arrays\ of\ values}}
+\DoxyCodeLine{00010\ \ \ \textcolor{keywordtype}{double}\ *weights;\ \ \textcolor{comment}{//\ and\ weights}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \textcolor{comment}{//\ these\ will\ remain\ constant\ for\ any\ given\ MeanTracker:}}
+\DoxyCodeLine{00013\ \ \ \textcolor{keywordtype}{int}\ length;\ \ \textcolor{comment}{//\ length\ of\ arrays\ (i.e.\ capacity)}}
+\DoxyCodeLine{00014\ \ \ \textcolor{keywordtype}{double}\ totWeight;\ \ \textcolor{comment}{//\ at\ any\ time,\ sum\ of\ all\ weights\ of\ stored\ values\ =}}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ totWeight}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \textcolor{keywordtype}{int}\ start;\ \ \textcolor{comment}{//\ index\ of\ first\ (i.e.\ oldest)\ value}}
+\DoxyCodeLine{00018\ \ \ \textcolor{keywordtype}{int}\ last;\ \ \textcolor{comment}{//\ index\ of\ most\ recently-\/inserted\ value}}
+\DoxyCodeLine{00019\ \ \ \textcolor{keywordtype}{double}\ sum;\ \ \textcolor{comment}{//\ current\ weighted\ sum\ of\ all\ values\ stored\ in\ array}}
+\DoxyCodeLine{00020\ \ \ \textcolor{comment}{//\ we\ store\ this\ so\ it\ is\ easy\ to\ re-\/compute\ the\ sum\ when\ we\ insert\ a\ new}}
+\DoxyCodeLine{00021\ \ \ \textcolor{comment}{//\ value}}
+\DoxyCodeLine{00022\ \}\ MeanTracker;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ PRE:\ totWeight\ >\ 0,\ maxEntries\ >=\ 1}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ allocate\ space\ for\ and\ return\ a\ pointer\ to\ a\ new\ MeanTracker}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ New\ MeanTracker\ is\ initialized\ to\ have\ mean\ =\ initMean\ and\ appropriate\ total}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ weight\ Total\ weight\ will\ remain\ fixed\ once\ the\ MeanTracker\ is\ created}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ maxEntries\ gives\ the\ maximum\ number\ of\ individual\ values\ that\ can\ be\ stored}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ at\ once}}
+\DoxyCodeLine{00030\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00031\ MeanTracker\ *newMeanTracker(\textcolor{keywordtype}{double}\ initMean,\ \textcolor{keywordtype}{double}\ totWeight,\ \textcolor{keywordtype}{int}\ maxEntries);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*\ PRE:\ tracker\ has\ been\ created\ using\ newMeanTracker}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ \ \ \ \ \ \ so\ has\ malloced\ values\ and\ weights\ arrays,\ and\ has\ length\ and\ totWeight}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ set\ reset\ tracker\ to\ have\ a\ single\ entry,\ with\ mean\ initMean}}
+\DoxyCodeLine{00036\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ resetMeanTracker(MeanTracker\ *tracker,\ \textcolor{keywordtype}{double}\ initMean);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ PRE:\ weight\ >\ 0}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ Add\ current\ value\ as\ most\ recent\ value\ in\ tracker}}
+\DoxyCodeLine{00041\ \textcolor{comment}{}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ \ \ Return\ value:}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ 0\ if\ all\ okay}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ \ \ -\/1\ if\ error\ in\ inputs}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ -\/2\ if\ error\ because\ array\ is\ too\ short}}
+\DoxyCodeLine{00046\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{int}\ addValueToMeanTracker(MeanTracker\ *tracker,\ \textcolor{keywordtype}{double}\ value,\ \textcolor{keywordtype}{double}\ weight);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{//\ return\ the\ mean\ of\ values\ stored\ in\ tracker}}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{double}\ getMeanTrackerMean(MeanTracker\ *tracker);}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{//\ PRE:\ tracker\ has\ been\ created\ using\ newMeanTracker}}
+\DoxyCodeLine{00053\ \textcolor{comment}{//\ free\ all\ memory\ associated\ with\ tracker}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ deallocateMeanTracker(MeanTracker\ *tracker);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

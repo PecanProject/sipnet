@@ -1,0 +1,426 @@
+\doxysection{ml-\/metrorun.c File Reference}
+\label{ml-metrorun_8c}\index{ml-\/metrorun.c@{ml-\/metrorun.c}}
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}common/util.\+h"{}}\newline
+{\ttfamily \#include "{}common/namelist\+Input.\+h"{}}\newline
+{\ttfamily \#include "{}sipnet/sipnet.\+h"{}}\newline
+{\ttfamily \#include "{}ml-\/metro.\+h"{}}\newline
+Include dependency graph for ml-\/metrorun.c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{df/db0/ml-metrorun_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ FILE\+\_\+\+MAXNAME}~256
+\item 
+\#define \textbf{ INPUT\+\_\+\+MAXNAME}~64
+\item 
+\#define \textbf{ INPUT\+\_\+\+FILE}~"{}estimate.\+in"{}
+\item 
+\#define \textbf{ ADD\+\_\+\+FRACTION}~0.\+5
+\item 
+\#define \textbf{ COMPARE\+\_\+\+INDICES\+\_\+\+EXT}~"{}"{}
+\item 
+\#define \textbf{ AGGREGATION\+\_\+\+EXT}~"{}"{}
+\item 
+\#define \textbf{ UNAGGED\+\_\+\+WEIGHT}~0.\+0
+\item 
+\#define \textbf{ NUM\+\_\+\+CHAINS}~10
+\item 
+\#define \textbf{ ITER}~375000
+\item 
+\#define \textbf{ SCALE\+\_\+\+FACTOR}~1.\+0
+\item 
+\#define \textbf{ LOC}~(-\/1)
+\item 
+\#define \textbf{ NUM\+\_\+\+RUNS}~1
+\item 
+\#define \textbf{ NUM\+\_\+\+AT\+\_\+\+ONCE}~10000
+\item 
+\#define \textbf{ PARAM\+\_\+\+FILE}~"{}"{}
+\item 
+\#define \textbf{ RANDOM\+\_\+\+START}~0
+\item 
+\#define \textbf{ NUM\+\_\+\+SPIN\+\_\+\+UPS}~125000
+\item 
+\#define \textbf{ OPT\+\_\+\+INDICES\+\_\+\+EXT}~"{}"{}
+\item 
+\#define \textbf{ VALID\+\_\+\+FRAC}~0.\+5
+\item 
+\#define \textbf{ PARAM\+\_\+\+WEIGHT}~0.\+0
+\item 
+\#define \textbf{ COST\+\_\+\+FUNCTION}~0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ usage} (char $\ast$prog\+Name)
+\item 
+int \textbf{ init\+Data\+Type\+Indices} (int data\+Type\+Indices[$\,$])
+\item 
+void \textbf{ init\+Data\+Type\+Weights} (double data\+Type\+Weights[$\,$])
+\item 
+int \textbf{ parse\+Data\+Type\+Switches} (int data\+Type\+Indices[$\,$], int data\+Type\+Switches[$\,$])
+\item 
+void \textbf{ print\+Data\+Type\+Indices} (int data\+Type\+Indices[$\,$], int num\+Data\+Types, FILE $\ast$file\+Ptr)
+\item 
+void \textbf{ print\+Data\+Type\+Weight\+Indices} (int data\+Type\+Indices[$\,$], int num\+Data\+Types, double data\+Type\+Weights[$\,$], FILE $\ast$file\+Ptr)
+\item 
+int \textbf{ main} (int argc, char $\ast$argv[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{ml-metrorun_8c_a0285e1a0f269ad58d092da9f091da13d} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!ADD\_FRACTION@{ADD\_FRACTION}}
+\index{ADD\_FRACTION@{ADD\_FRACTION}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{ADD\_FRACTION}
+{\footnotesize\ttfamily \#define ADD\+\_\+\+FRACTION~0.\+5}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a47f3b2019db931078fd96aa14a08dacd} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!AGGREGATION\_EXT@{AGGREGATION\_EXT}}
+\index{AGGREGATION\_EXT@{AGGREGATION\_EXT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{AGGREGATION\_EXT}
+{\footnotesize\ttfamily \#define AGGREGATION\+\_\+\+EXT~"{}"{}}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_ae73cd75828488211ce3da688b8459737} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!COMPARE\_INDICES\_EXT@{COMPARE\_INDICES\_EXT}}
+\index{COMPARE\_INDICES\_EXT@{COMPARE\_INDICES\_EXT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{COMPARE\_INDICES\_EXT}
+{\footnotesize\ttfamily \#define COMPARE\+\_\+\+INDICES\+\_\+\+EXT~"{}"{}}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a4df82bdca9081c10219da672872123df} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!COST\_FUNCTION@{COST\_FUNCTION}}
+\index{COST\_FUNCTION@{COST\_FUNCTION}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{COST\_FUNCTION}
+{\footnotesize\ttfamily \#define COST\+\_\+\+FUNCTION~0}
+
+
+
+Definition at line \textbf{ 70} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a829499bd91e567d022bbdabc3ae7c62e} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!FILE\_MAXNAME@{FILE\_MAXNAME}}
+\index{FILE\_MAXNAME@{FILE\_MAXNAME}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{FILE\_MAXNAME}
+{\footnotesize\ttfamily \#define FILE\+\_\+\+MAXNAME~256}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a2a3ad4ebb43e29f804a1e524aca840b2} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!INPUT\_FILE@{INPUT\_FILE}}
+\index{INPUT\_FILE@{INPUT\_FILE}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{INPUT\_FILE}
+{\footnotesize\ttfamily \#define INPUT\+\_\+\+FILE~"{}estimate.\+in"{}}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a8f37ae52567be5458f05af3c396b2811} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!INPUT\_MAXNAME@{INPUT\_MAXNAME}}
+\index{INPUT\_MAXNAME@{INPUT\_MAXNAME}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{INPUT\_MAXNAME}
+{\footnotesize\ttfamily \#define INPUT\+\_\+\+MAXNAME~64}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_ab5b92945430bd0cb7a04673282cf70c3} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!ITER@{ITER}}
+\index{ITER@{ITER}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{ITER}
+{\footnotesize\ttfamily \#define ITER~375000}
+
+
+
+Definition at line \textbf{ 42} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a0fee446a4a4ef6536664bc1ff47ff694} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!LOC@{LOC}}
+\index{LOC@{LOC}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{LOC}
+{\footnotesize\ttfamily \#define LOC~(-\/1)}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_ac494c739e7dbee011df3c854dcaef0f5} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_AT\_ONCE@{NUM\_AT\_ONCE}}
+\index{NUM\_AT\_ONCE@{NUM\_AT\_ONCE}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_AT\_ONCE}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+AT\+\_\+\+ONCE~10000}
+
+
+
+Definition at line \textbf{ 49} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a0605f9a09e958f39cc32c1bd6b104d06} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_CHAINS@{NUM\_CHAINS}}
+\index{NUM\_CHAINS@{NUM\_CHAINS}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_CHAINS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CHAINS~10}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a7d9ece5c6456a4a706c878dce5235b93} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_RUNS@{NUM\_RUNS}}
+\index{NUM\_RUNS@{NUM\_RUNS}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_RUNS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+RUNS~1}
+
+
+
+Definition at line \textbf{ 46} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_ad189eed1629de076c12449b6a5fb3497} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!NUM\_SPIN\_UPS@{NUM\_SPIN\_UPS}}
+\index{NUM\_SPIN\_UPS@{NUM\_SPIN\_UPS}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{NUM\_SPIN\_UPS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+SPIN\+\_\+\+UPS~125000}
+
+
+
+Definition at line \textbf{ 60} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a1f57f70c8d744e84c3bac91c837f5480} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!OPT\_INDICES\_EXT@{OPT\_INDICES\_EXT}}
+\index{OPT\_INDICES\_EXT@{OPT\_INDICES\_EXT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{OPT\_INDICES\_EXT}
+{\footnotesize\ttfamily \#define OPT\+\_\+\+INDICES\+\_\+\+EXT~"{}"{}}
+
+
+
+Definition at line \textbf{ 64} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_aac4cbf64d7084205e04bc1b1569baf05} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!PARAM\_FILE@{PARAM\_FILE}}
+\index{PARAM\_FILE@{PARAM\_FILE}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{PARAM\_FILE}
+{\footnotesize\ttfamily \#define PARAM\+\_\+\+FILE~"{}"{}}
+
+
+
+Definition at line \textbf{ 53} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_aab3e2a6d8c4182d2e6a087fd218388db} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!PARAM\_WEIGHT@{PARAM\_WEIGHT}}
+\index{PARAM\_WEIGHT@{PARAM\_WEIGHT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{PARAM\_WEIGHT}
+{\footnotesize\ttfamily \#define PARAM\+\_\+\+WEIGHT~0.\+0}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a434c57b70cb7dd0ca18de4b844de85eb} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!RANDOM\_START@{RANDOM\_START}}
+\index{RANDOM\_START@{RANDOM\_START}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{RANDOM\_START}
+{\footnotesize\ttfamily \#define RANDOM\+\_\+\+START~0}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_adb1f1d5b685f5a444190abe4ac18d972} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!SCALE\_FACTOR@{SCALE\_FACTOR}}
+\index{SCALE\_FACTOR@{SCALE\_FACTOR}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{SCALE\_FACTOR}
+{\footnotesize\ttfamily \#define SCALE\+\_\+\+FACTOR~1.\+0}
+
+
+
+Definition at line \textbf{ 44} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_a571515ad603a9c9669792d68a7004bae} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}}
+\index{UNAGGED\_WEIGHT@{UNAGGED\_WEIGHT}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{UNAGGED\_WEIGHT}
+{\footnotesize\ttfamily \#define UNAGGED\+\_\+\+WEIGHT~0.\+0}
+
+
+
+Definition at line \textbf{ 35} of file \textbf{ ml-\/metrorun.\+c}.
+
+\label{ml-metrorun_8c_ae6e2d964bcb52ad2af799a000ea36147} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!VALID\_FRAC@{VALID\_FRAC}}
+\index{VALID\_FRAC@{VALID\_FRAC}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{VALID\_FRAC}
+{\footnotesize\ttfamily \#define VALID\+\_\+\+FRAC~0.\+5}
+
+
+
+Definition at line \textbf{ 68} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{ml-metrorun_8c_a02c81e3a12dadf2d7ed0ffed9f3e21f6} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!initDataTypeIndices@{initDataTypeIndices}}
+\index{initDataTypeIndices@{initDataTypeIndices}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{initDataTypeIndices()}
+{\footnotesize\ttfamily int init\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{int}]{data\+Type\+Indices[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 81} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{ml-metrorun_8c_aa5b0668b42ef9223ea42bcf9b1a15088} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!initDataTypeWeights@{initDataTypeWeights}}
+\index{initDataTypeWeights@{initDataTypeWeights}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{initDataTypeWeights()}
+{\footnotesize\ttfamily void init\+Data\+Type\+Weights (\begin{DoxyParamCaption}\item[{double}]{data\+Type\+Weights[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 92} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+\label{ml-metrorun_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!main@{main}}
+\index{main@{main}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 149} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ ADD\+\_\+\+FRACTION}, \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ agged\+Difference()}, \textbf{ AGGREGATION\+\_\+\+EXT}, \textbf{ build\+File\+Name()}, \textbf{ cleanup\+Model()}, \textbf{ cleanup\+Paramchange()}, \textbf{ COMPARE\+\_\+\+INDICES\+\_\+\+EXT}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ difference()}, \textbf{ DOUBLE\+\_\+\+TYPE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ get\+Data\+Type\+Names()}, \textbf{ init\+Data\+Type\+Indices()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ ITER}, \textbf{ LOC}, \textbf{ LONG\+\_\+\+TYPE}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ metropolis()}, \textbf{ NAMELIST\+\_\+\+INPUT\+\_\+\+MAXNAME}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ NUM\+\_\+\+AT\+\_\+\+ONCE}, \textbf{ NUM\+\_\+\+CHAINS}, \textbf{ NUM\+\_\+\+RUNS}, \textbf{ NUM\+\_\+\+SPIN\+\_\+\+UPS}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ OPT\+\_\+\+INDICES\+\_\+\+EXT}, \textbf{ PARAM\+\_\+\+FILE}, \textbf{ PARAM\+\_\+\+WEIGHT}, \textbf{ parse\+Data\+Type\+Switches()}, \textbf{ print\+Data\+Type\+Indices()}, \textbf{ print\+Data\+Type\+Weight\+Indices()}, \textbf{ print\+Model\+Components()}, \textbf{ RANDOM\+\_\+\+START}, \textbf{ read\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ SCALE\+\_\+\+FACTOR}, \textbf{ seed\+Rand()}, \textbf{ STRING\+\_\+\+TYPE}, \textbf{ UNAGGED\+\_\+\+WEIGHT}, \textbf{ unagged\+Weight}, \textbf{ usage()}, \textbf{ VALID\+\_\+\+FRAC}, and \textbf{ write\+Best\+Spatial\+Params()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{d2/d27/ml-metrorun_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metrorun_8c_af8c3a050f370170b56d3537673ce0541} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!parseDataTypeSwitches@{parseDataTypeSwitches}}
+\index{parseDataTypeSwitches@{parseDataTypeSwitches}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{parseDataTypeSwitches()}
+{\footnotesize\ttfamily int parse\+Data\+Type\+Switches (\begin{DoxyParamCaption}\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{data\+Type\+Switches[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 109} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{ml-metrorun_8c_a0d54c132fc816eca80b34dfd12ef60c5} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!printDataTypeIndices@{printDataTypeIndices}}
+\index{printDataTypeIndices@{printDataTypeIndices}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{printDataTypeIndices()}
+{\footnotesize\ttfamily void print\+Data\+Type\+Indices (\begin{DoxyParamCaption}\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{num\+Data\+Types,  }\item[{FILE $\ast$}]{file\+Ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 125} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ get\+Data\+Type\+Names()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=312pt]{d2/d27/ml-metrorun_8c_a0d54c132fc816eca80b34dfd12ef60c5_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metrorun_8c_a0916f5cb64dc9fdad2442f7e71845d68} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!printDataTypeWeightIndices@{printDataTypeWeightIndices}}
+\index{printDataTypeWeightIndices@{printDataTypeWeightIndices}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{printDataTypeWeightIndices()}
+{\footnotesize\ttfamily void print\+Data\+Type\+Weight\+Indices (\begin{DoxyParamCaption}\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{num\+Data\+Types,  }\item[{double}]{data\+Type\+Weights[$\,$],  }\item[{FILE $\ast$}]{file\+Ptr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 137} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ get\+Data\+Type\+Names()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=346pt]{d2/d27/ml-metrorun_8c_a0916f5cb64dc9fdad2442f7e71845d68_cgraph}
+\end{center}
+\end{figure}
+\label{ml-metrorun_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
+\index{ml-\/metrorun.c@{ml-\/metrorun.c}!usage@{usage}}
+\index{usage@{usage}!ml-\/metrorun.c@{ml-\/metrorun.c}}
+\doxysubsubsection{usage()}
+{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}\item[{char $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 72} of file \textbf{ ml-\/metrorun.\+c}.
+
+
+
+References \textbf{ INPUT\+\_\+\+FILE}.
+
+
+
+Referenced by \textbf{ main()}.
+

@@ -1,0 +1,173 @@
+\doxysection{frontend.\+c File Reference}
+\label{frontend_8c}\index{frontend.c@{frontend.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}common/namelist\+Input.\+h"{}}\newline
+{\ttfamily \#include "{}common/spatial\+Params.\+h"{}}\newline
+{\ttfamily \#include "{}common/util.\+h"{}}\newline
+{\ttfamily \#include "{}sipnet.\+h"{}}\newline
+{\ttfamily \#include "{}output\+Items.\+h"{}}\newline
+{\ttfamily \#include "{}model\+Structures.\+h"{}}\newline
+Include dependency graph for frontend.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d74/frontend_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ FILE\+\_\+\+MAXNAME}~256
+\item 
+\#define \textbf{ RUNTYPE\+\_\+\+MAXNAME}~16
+\item 
+\#define \textbf{ INPUT\+\_\+\+MAXNAME}~64
+\item 
+\#define \textbf{ INPUT\+\_\+\+FILE}~"{}sipnet.\+in"{}
+\item 
+\#define \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}~1
+\item 
+\#define \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}~0
+\item 
+\#define \textbf{ LOC}~  (-\/1)
+\item 
+\#define \textbf{ HEADER}~0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ usage} (char $\ast$prog\+Name)
+\item 
+int \textbf{ main} (int argc, char $\ast$argv[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{frontend_8c_ae4c12fc13f2b42ca16a2417a967d16c3} 
+\index{frontend.c@{frontend.c}!DO\_MAIN\_OUTPUT@{DO\_MAIN\_OUTPUT}}
+\index{DO\_MAIN\_OUTPUT@{DO\_MAIN\_OUTPUT}!frontend.c@{frontend.c}}
+\doxysubsubsection{DO\_MAIN\_OUTPUT}
+{\footnotesize\ttfamily \#define DO\+\_\+\+MAIN\+\_\+\+OUTPUT~1}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ frontend.\+c}.
+
+\label{frontend_8c_a81098b79a764bc9a91acebcf846dc70c} 
+\index{frontend.c@{frontend.c}!DO\_SINGLE\_OUTPUTS@{DO\_SINGLE\_OUTPUTS}}
+\index{DO\_SINGLE\_OUTPUTS@{DO\_SINGLE\_OUTPUTS}!frontend.c@{frontend.c}}
+\doxysubsubsection{DO\_SINGLE\_OUTPUTS}
+{\footnotesize\ttfamily \#define DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS~0}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ frontend.\+c}.
+
+\label{frontend_8c_a829499bd91e567d022bbdabc3ae7c62e} 
+\index{frontend.c@{frontend.c}!FILE\_MAXNAME@{FILE\_MAXNAME}}
+\index{FILE\_MAXNAME@{FILE\_MAXNAME}!frontend.c@{frontend.c}}
+\doxysubsubsection{FILE\_MAXNAME}
+{\footnotesize\ttfamily \#define FILE\+\_\+\+MAXNAME~256}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ frontend.\+c}.
+
+\label{frontend_8c_ab7770a7f0d95e67620ff6ed347a07a56} 
+\index{frontend.c@{frontend.c}!HEADER@{HEADER}}
+\index{HEADER@{HEADER}!frontend.c@{frontend.c}}
+\doxysubsubsection{HEADER}
+{\footnotesize\ttfamily \#define HEADER~0}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
+
+\label{frontend_8c_a2a3ad4ebb43e29f804a1e524aca840b2} 
+\index{frontend.c@{frontend.c}!INPUT\_FILE@{INPUT\_FILE}}
+\index{INPUT\_FILE@{INPUT\_FILE}!frontend.c@{frontend.c}}
+\doxysubsubsection{INPUT\_FILE}
+{\footnotesize\ttfamily \#define INPUT\+\_\+\+FILE~"{}sipnet.\+in"{}}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ frontend.\+c}.
+
+\label{frontend_8c_a8f37ae52567be5458f05af3c396b2811} 
+\index{frontend.c@{frontend.c}!INPUT\_MAXNAME@{INPUT\_MAXNAME}}
+\index{INPUT\_MAXNAME@{INPUT\_MAXNAME}!frontend.c@{frontend.c}}
+\doxysubsubsection{INPUT\_MAXNAME}
+{\footnotesize\ttfamily \#define INPUT\+\_\+\+MAXNAME~64}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ frontend.\+c}.
+
+\label{frontend_8c_a0fee446a4a4ef6536664bc1ff47ff694} 
+\index{frontend.c@{frontend.c}!LOC@{LOC}}
+\index{LOC@{LOC}!frontend.c@{frontend.c}}
+\doxysubsubsection{LOC}
+{\footnotesize\ttfamily \#define LOC~  (-\/1)}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ frontend.\+c}.
+
+\label{frontend_8c_a7316472e16c612c08c61ab2699b96d4c} 
+\index{frontend.c@{frontend.c}!RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}}
+\index{RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}!frontend.c@{frontend.c}}
+\doxysubsubsection{RUNTYPE\_MAXNAME}
+{\footnotesize\ttfamily \#define RUNTYPE\+\_\+\+MAXNAME~16}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ frontend.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{frontend_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{frontend.c@{frontend.c}!main@{main}}
+\index{main@{main}!frontend.c@{frontend.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ frontend.\+c}.
+
+
+
+References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ DOUBLE\+\_\+\+TYPE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ free2\+DArray()}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ LOC}, \textbf{ locate\+Param()}, \textbf{ make2\+DArray()}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ model}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ sens\+Test()}, \textbf{ set\+Spatial\+Param()}, \textbf{ setup\+Output\+Items()}, \textbf{ strcmp\+Ignore\+Case()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph}
+\end{center}
+\end{figure}
+\label{frontend_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
+\index{frontend.c@{frontend.c}!usage@{usage}}
+\index{usage@{usage}!frontend.c@{frontend.c}}
+\doxysubsubsection{usage()}
+{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}\item[{char $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 34} of file \textbf{ frontend.\+c}.
+
+
+
+References \textbf{ INPUT\+\_\+\+FILE}.
+
+
+
+Referenced by \textbf{ main()}.
+

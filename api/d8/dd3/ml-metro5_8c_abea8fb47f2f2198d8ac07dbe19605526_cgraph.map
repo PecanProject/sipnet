@@ -1,0 +1,12 @@
+<map id="writeHistFileBin" name="writeHistFileBin">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,56,131,81"/>
+<area shape="rect" id="Node000002" href="$dd/dda/spatial_params_8c.html#ac941eee725b3734909015835a7cad499" title=" " alt="" coords="189,31,319,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,58,175,51,176,57,131,63"/>
+<area shape="rect" id="Node000005" href="$d8/dd3/ml-metro5_8c.html#adc3dba579687cf18a74bed5aae630f2b" title=" " alt="" coords="179,80,329,105"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="131,74,165,79,164,84,131,79"/>
+<area shape="rect" id="Node000003" href="$dd/dda/spatial_params_8c.html#ace067e115166bd724ba5081dbf1f6f27" title=" " alt="" coords="377,5,520,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="318,32,363,26,364,32,319,38"/>
+<area shape="rect" id="Node000004" href="$dd/dda/spatial_params_8c.html#ae99fa2266ffe4ed506690f3cf382e26e" title=" " alt="" coords="568,31,647,56"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="319,41,554,41,554,46,319,46"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="521,27,555,32,554,38,520,32"/>
+</map>

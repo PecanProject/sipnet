@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Contributing - SIPNET Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Contributing";
+        var mkdocs_page_input_path = "CONTRIBUTING.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> SIPNET Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/running-sipnet/">Running SIPNET</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developer Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../developer-guide/code-structure/">Code Structure</a>
+                  </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Contributing</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#github-workflow">GitHub Workflow</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#branches">Branches</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pull-requests">Pull Requests</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#code-format-and-style">Code Format and Style</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#clang-tools">Clang Tools</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#compiling-sipnet-binaries">Compiling SIPNET binaries</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#releases">Releases</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CHANGELOG/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT/">Code of Conduct</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">SIPNET Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Contributing</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="contributing-to-sipnet">Contributing to SIPNET</h1>
+<p>We welcome contributions to SIPNET. This document outlines the process for contributing to the SIPNET project.</p>
+<p>All contributors are expected to adhere to the PEcAn Project <a href="https://github.com/PecanProject/pecan/blob/develop/CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
+<h2 id="setup">Setup</h2>
+<p>If changes are intended for any C-code files, please execute this command:</p>
+<pre><code class="language-shell">tools/setup.sh
+</code></pre>
+<p>to run the setup script, which will:
+1. Check to make sure that python is installed and is at least version 3.8
+2. Ensure that clang-format and clang-tidy are installed (and install them if running on MacOS)
+3. Install the pre-commit hook, which checks the format of modified C files. This will help prevent PR failures due to formatting issues by finding those issues earlier.</p>
+<p>Note: This step is not necessary for changes to documentation, markdown files, config, etc.</p>
+<h2 id="github-workflow">GitHub Workflow</h2>
+<h4 id="branches">Branches</h4>
+<p>The <code>master</code> branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches should be named to clearly indicate the purpose, and may be combined with an associated issue, e.g. <code>ISSUE#-feature-name</code>.</p>
+<h4 id="pull-requests">Pull Requests</h4>
+<p>Pull requests should be made from feature branches to the <code>master</code> branch. </p>
+<p>Pull request descriptions should include a brief summary of the changes and links to related issues. </p>
+<p>Expectations for merging:
+- Pass all unit and integration tests. 
+- Approved by at least one other developer before being merged.
+- Include updates and additions to 
+  - Documentation
+  - Tests
+  - CHANGELOG.md </p>
+<p>Pull requests must pass all required checks to be merged into master, including <a href="#code-format-and-style">code format and style</a> checks.</p>
+<h2 id="code-format-and-style">Code Format and Style</h2>
+<h3 id="clang-tools">Clang Tools</h3>
+<p>This repo uses <a href="https://clang.llvm.org/docs/ClangFormat.html">clang-format</a> and <a href="https://clang.llvm.org/extra/clang-tidy/index.html">clang-tidy</a>
+to ensure code consistency and prevent (some) bad coding practices. Each tool has a configuration file in the repo root directory.</p>
+<p><strong>clang-format</strong> is run on each modified C-language file on commit; the commit will fail if any of the format checks fail.
+To fix these errors:
+* if all changes are staged (via <code>git add</code>), run the command <code>git clang-format</code> to fix the formatting and re-commit
+* if not all changes are staged (likely a <code>git commit -a</code> command), either <code>git add</code> all the changes, or try <code>git clang-format -f</code> to reformat all modified files
+* <code>clang-format</code> may also be run outside of <code>git</code>, as a means of updating a file's format regardless of modification status (see <code>clang-format --help</code>)</p>
+<p><strong>clang-tidy</strong> is one of the checks run on PR submission (along with building and testing) via the <a href="https://cpp-linter.github.io/cpp-linter-action/">cpp-linter</a> 
+github action. If this action fails, a comment will be made in the PR detailing the issues found. <strong>clang-format</strong> is 
+also run by this action, so formatting issues that might have been bypassed on commit will be found here. You may attempt to have clang-tidy 
+automatically fix clang-tidy issues with the command:<br>
+<code>clang-tidy --fix &lt;filename&gt;</code></p>
+<h2 id="documentation">Documentation</h2>
+<p>What goes in <strong>Doxygen</strong>:
+- Documentation for functions, classes, and parameters.</p>
+<p>What goes in <strong>docs/*md</strong>:
+- User guides and tutorials.
+- Documentation of equations, theoretical basis, and parameters.</p>
+<h2 id="compiling-sipnet-binaries">Compiling SIPNET binaries</h2>
+<p>SIPNET uses <code>make</code> to build the model and documentation. There are also miscellaneous targets for running analysis workflows:</p>
+<pre><code class="language-sh"># build SIPNET executable
+make sipnet
+# build documentation
+make document
+# clean up build artifacts
+make clean
+# list all make commands
+make help
+</code></pre>
+<h2 id="testing">Testing</h2>
+<p>Any new features (that are worth keeping!) should be covered by tests.</p>
+<p>SIPNET also uses <code>make</code> to build and run its unit tests. This can be done with the following commands:</p>
+<pre><code class="language-shell"># Compile tests
+make test
+# Run tests
+make testrun
+# Clean after tests are run
+make testclean
+</code></pre>
+<p>If changes are made to the <code>modelStructure.h</code> file and unit tests are failing, try running the update script as shown below. Consider running this script even if unit tests <em>are not</em> failing.</p>
+<pre><code class="language-shell"># Run this command from the root directory to update unit test versions of modelStructures.h
+tests/update_model_structures.sh
+</code></pre>
+<h2 id="releases">Releases</h2>
+<ul>
+<li>Use <a href="https://semver.org/">Semantic Versioning v2</a> for SIPNET releases.</li>
+<li>Tag releases with the version number <code>vX.Y.Z</code>.</li>
+<li>Include content from <code>CHANGELOG.md</code> file.</li>
+<li>Add compiled SIPNET binaries.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../developer-guide/code-structure/" class="btn btn-neutral float-left" title="Code Structure"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../api/" class="btn btn-neutral float-right" title="API Reference">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../developer-guide/code-structure/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

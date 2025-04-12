@@ -1,0 +1,9 @@
+<map id="soilDegradation" name="soilDegradation">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,55,131,80"/>
+<area shape="rect" id="Node000002" href="$dd/d09/sipnet_8c.html#a5b84c84a6a5b9a7adeda513fad237ce0" title=" " alt="" coords="179,5,385,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,52,212,31,213,36,124,57"/>
+<area shape="rect" id="Node000003" href="$dd/d09/sipnet_8c.html#ae384ea23c43c39e958759fc88eb3709c" title=" " alt="" coords="225,55,339,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="131,65,211,65,211,70,131,70"/>
+<area shape="rect" id="Node000004" href="$dd/d09/sipnet_8c.html#ae34066cedd29cf1680484a9a3036d119" title=" " alt="" coords="221,104,343,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="124,77,213,98,212,103,123,83"/>
+</map>

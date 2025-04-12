@@ -1,0 +1,31 @@
+\doxysection{ml-\/metro.h}
+\label{ml-metro_8h_source}\index{ml-\/metro.h@{ml-\/metro.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ ML\_METRO\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ ML\_METRO\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}common/paramchange.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}common/spatialParams.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{/*\ Puts\ best\ parameters\ found\ in\ spatialParams}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ \ \ If\ loc\ =\ -\/1,\ run\ at\ all\ locations;\ if\ loc\ >=\ 0,\ run\ only\ at\ that\ single}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ \ \ location}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ \ randomStart\ is\ boolean:\ do\ we\ start\ each\ chain\ with\ a\ random\ param.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ \ set\ (as\ opposed\ to\ guess\ values)?}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ \ \ NOTE:\ anything\ but\ a\ scale\ factor\ of\ 1\ goes\ against\ theory\ */}}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{void}\ metropolis(}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{char}\ *outNameBase,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc,}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{double}\ (*likely)(\textcolor{keywordtype}{double}\ *,\ OutputInfo\ *,\ \textcolor{keywordtype}{int},\ SpatialParams\ *,\ \textcolor{keywordtype}{double},}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ (*)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}[],\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{double}[]),}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{void}\ (*model)(\textcolor{keywordtype}{double}\ **,\ \textcolor{keywordtype}{int},\ \textcolor{keywordtype}{int}\ *,\ SpatialParams\ *,\ \textcolor{keywordtype}{int}),}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{double}\ addFraction,\ \textcolor{keywordtype}{long}\ estSteps,\ \textcolor{keywordtype}{int}\ numAtOnce,\ \textcolor{keywordtype}{int}\ numChains,}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ randomStart,\ \textcolor{keywordtype}{long}\ numSpinUps,\ \textcolor{keywordtype}{double}\ paramWeight,\ \textcolor{keywordtype}{double}\ scaleFactor,}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \textcolor{keywordtype}{int}\ numDataTypes,\ \textcolor{keywordtype}{int}\ costFunction,}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{double}\ dataTypeWeights[],\ FILE\ *userOut);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

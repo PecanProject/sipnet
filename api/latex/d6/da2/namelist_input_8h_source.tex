@@ -1,0 +1,91 @@
+\doxysection{namelist\+Input.\+h}
+\label{namelist_input_8h_source}\index{namelistInput.h@{namelistInput.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ header\ file\ for\ namelistInput.c}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ includes\ definitions\ of\ NamelistInputItem,\ namelistInputs\ structures}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#ifndef\ NAMELIST\_INPUT\_H}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#define\ NAMELIST\_INPUT\_H}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ maximum\ length\ of\ a\ parameter\ name,\ including\ the\ trailing\ '\(\backslash\)0'}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ NAMELIST\_INPUT\_MAXNAME\ 64}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ define\ named\ constants\ for\ the\ different\ possible\ input\ types}}
+\DoxyCodeLine{00011\ \textcolor{keyword}{enum}\ INPUT\_TYPES\ \{\ INT\_TYPE,\ LONG\_TYPE,\ DOUBLE\_TYPE,\ STRING\_TYPE\ \};}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ structure\ to\ hold\ a\ namelist\ input\ item,\ and\ a\ pointer\ to\ the\ next\ (for\ a}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ linked\ list)}}
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }NamelistInputItemStruct\ \{}
+\DoxyCodeLine{00016\ \ \ \textcolor{keywordtype}{char}\ name[NAMELIST\_INPUT\_MAXNAME];\ \ \textcolor{comment}{//\ name\ of\ parameter\ (must\ match\ name}}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ given\ in\ input\ file)}}
+\DoxyCodeLine{00018\ \ \ \textcolor{keywordtype}{int}\ type;\ \ \textcolor{comment}{//\ type\ of\ parameter\ (one\ of\ INPUT\_TYPES)}}
+\DoxyCodeLine{00019\ \ \ \textcolor{keywordtype}{void}\ *ptr;\ \textcolor{comment}{/*\ pointer\ to\ the\ variable\ holding\ this\ parameter}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ (in\ the\ case\ of\ a\ string,\ ptr\ will\ be\ of\ type\ *char)\ */}}
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordtype}{int}\ maxlen;\ \textcolor{comment}{/*\ for\ STRING\_TYPE,\ holds\ the\ maximum\ string\ length\ (including\ the}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ trailing\ '\(\backslash\)0');\ ignored\ for\ other\ types\ */}}
+\DoxyCodeLine{00023\ \ \ \textcolor{keywordtype}{int}\ wasRead;\ \ \textcolor{comment}{//\ 1\ if\ this\ input\ item\ was\ read\ from\ the\ input\ file,\ 0\ if\ not}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \textcolor{keyword}{struct\ }NamelistInputItemStruct\ *nextItem;}
+\DoxyCodeLine{00026\ \}\ NamelistInputItem;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ structure\ to\ hold\ a\ bunch\ of\ NamelistInputItems}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ implemented\ as\ a\ linked\ list}}
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }NamelistInputsStruct\ \{}
+\DoxyCodeLine{00031\ \ \ NamelistInputItem\ *head;}
+\DoxyCodeLine{00032\ \ \ NamelistInputItem\ *tail;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{int}\ count;\ \ \textcolor{comment}{//\ number\ of\ items\ in\ the\ list,\ not\ counting\ the\ dummy\ item\ at\ the}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ head}}
+\DoxyCodeLine{00036\ \}\ NamelistInputs;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ allocate\ space\ for\ a\ new\ namelistInputs\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00039\ NamelistInputs\ *newNamelistInputs(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*\ Add\ a\ new\ namelistInputItem\ to\ the\ end\ of\ the\ list\ given\ by\ namelistInputs}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ \ \ strlen(name)\ must\ be\ <\ NAMELIST\_INPUT\_MAXNAME}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ type\ must\ be\ one\ of\ the\ types\ given\ by\ INPUT\_TYPES}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ \ \ ptr\ must\ be\ a\ pointer\ to\ the\ variable\ holding\ this\ parameter\ value}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ maxlen\ is\ ignored\ if\ type\ is\ anything\ other\ than\ STRING\_TYPE,\ but\ it\ still}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ \ \ must\ be\ supplied}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ -\/\ it\ specifies\ the\ maximum\ string\ length\ of\ the\ variable\ pointed\ to\ by\ ptr}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ \ (including\ the\ trailing\ '\(\backslash\)0')}}
+\DoxyCodeLine{00049\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ addNamelistInputItem(NamelistInputs\ *namelistInputs,\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{int}\ type,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *ptr,\ \textcolor{keywordtype}{int}\ maxlen);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ Read\ all\ namelist\ inputs\ from\ file\ given\ by\ fileName,\ put\ them\ in\ the}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ locations\ pointed\ to\ by\ each\ inputs'\ ptr\ variable}}
+\DoxyCodeLine{00055\ \textcolor{comment}{}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ Structure\ of\ input\ file:\ Each\ line\ contains:}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ \ \ name\ value}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ where\ the\ following\ are\ valid\ separators:\ space,\ tab,\ =,\ :}}
+\DoxyCodeLine{00059\ \textcolor{comment}{}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ A\ value\ of\ 'none'\ for\ a\ string\ type\ is\ translated\ into\ the\ empty\ string}}
+\DoxyCodeLine{00061\ \textcolor{comment}{}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ The\ order\ of\ input\ items\ in\ the\ input\ file\ does\ not\ matter}}
+\DoxyCodeLine{00063\ \textcolor{comment}{}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ !\ is\ a\ comment\ character:\ anything\ after\ a\ !\ on\ a\ line\ is\ ignored}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ readNamelistInputs(NamelistInputs\ *namelistInputs,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fileName);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{/*\ If\ the\ input\ item\ with\ the\ given\ name\ wasn't\ read,}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ then\ kill\ the\ program\ and\ print\ an\ error\ message}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ dieIfNotRead(NamelistInputs\ *namelistInputs,\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{comment}{/*\ For\ string\ types\ only:}}
+\DoxyCodeLine{00074\ \textcolor{comment}{\ \ \ Check\ to\ make\ sure\ the\ given\ item:}}
+\DoxyCodeLine{00075\ \textcolor{comment}{\ \ \ (1)\ was\ read\ from\ the\ input\ file}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ \ \ (2)\ was\ set\ to\ a\ non-\/empty\ value\ (i.e.\ wasn't\ set\ to\ 'none')}}
+\DoxyCodeLine{00077\ \textcolor{comment}{\ \ \ Kill\ the\ program\ and\ print\ an\ error\ message\ if\ either\ of\ these\ conditions\ are}}
+\DoxyCodeLine{00078\ \textcolor{comment}{\ \ \ not\ met}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ dieIfNotSet(NamelistInputs\ *namelistInputs,\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{comment}{//\ free\ up\ space\ used\ by\ namelistInputs}}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ deleteNamelistInputs(NamelistInputs\ *namelistInputs);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

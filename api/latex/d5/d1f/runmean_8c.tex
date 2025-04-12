@@ -1,0 +1,134 @@
+\doxysection{runmean.\+c File Reference}
+\label{runmean_8c}\index{runmean.c@{runmean.c}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include "{}runmean.\+h"{}}\newline
+Include dependency graph for runmean.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{d1/d89/runmean_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Mean\+Tracker} $\ast$ \textbf{ new\+Mean\+Tracker} (double init\+Mean, double tot\+Weight, int max\+Entries)
+\item 
+void \textbf{ reset\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$tracker, double init\+Mean)
+\item 
+int \textbf{ add\+Value\+To\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$tracker, double value, double weight)
+\item 
+double \textbf{ get\+Mean\+Tracker\+Mean} (\textbf{ Mean\+Tracker} $\ast$tracker)
+\item 
+void \textbf{ deallocate\+Mean\+Tracker} (\textbf{ Mean\+Tracker} $\ast$tracker)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{runmean_8c_a3b3e682c43d0a347c6eaf7de4cb68a16} 
+\index{runmean.c@{runmean.c}!addValueToMeanTracker@{addValueToMeanTracker}}
+\index{addValueToMeanTracker@{addValueToMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{addValueToMeanTracker()}
+{\footnotesize\ttfamily int add\+Value\+To\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker,  }\item[{double}]{value,  }\item[{double}]{weight }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 61} of file \textbf{ runmean.\+c}.
+
+
+
+References \textbf{ Mean\+Tracker\+Struct\+::last}, \textbf{ Mean\+Tracker\+Struct\+::length}, \textbf{ reset\+Mean\+Tracker()}, \textbf{ Mean\+Tracker\+Struct\+::start}, \textbf{ Mean\+Tracker\+Struct\+::sum}, \textbf{ Mean\+Tracker\+Struct\+::tot\+Weight}, \textbf{ Mean\+Tracker\+Struct\+::values}, and \textbf{ Mean\+Tracker\+Struct\+::weights}.
+
+
+
+Referenced by \textbf{ calc\+Light\+Eff()}, and \textbf{ update\+State()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=317pt]{d5/d1f/runmean_8c_a3b3e682c43d0a347c6eaf7de4cb68a16_cgraph}
+\end{center}
+\end{figure}
+\label{runmean_8c_ac19d52df9855de7455e094c7d9b11e79} 
+\index{runmean.c@{runmean.c}!deallocateMeanTracker@{deallocateMeanTracker}}
+\index{deallocateMeanTracker@{deallocateMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{deallocateMeanTracker()}
+{\footnotesize\ttfamily void deallocate\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 125} of file \textbf{ runmean.\+c}.
+
+
+
+References \textbf{ Mean\+Tracker\+Struct\+::values}, and \textbf{ Mean\+Tracker\+Struct\+::weights}.
+
+
+
+Referenced by \textbf{ cleanup\+Model()}.
+
+\label{runmean_8c_aee80c094e5cc8830c70fd93fa14bb102} 
+\index{runmean.c@{runmean.c}!getMeanTrackerMean@{getMeanTrackerMean}}
+\index{getMeanTrackerMean@{getMeanTrackerMean}!runmean.c@{runmean.c}}
+\doxysubsubsection{getMeanTrackerMean()}
+{\footnotesize\ttfamily double get\+Mean\+Tracker\+Mean (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 119} of file \textbf{ runmean.\+c}.
+
+
+
+References \textbf{ Mean\+Tracker\+Struct\+::sum}, and \textbf{ Mean\+Tracker\+Struct\+::tot\+Weight}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ leaf\+Fluxes()}, \textbf{ update\+Trackers()}, and \textbf{ veg\+Resp2()}.
+
+\label{runmean_8c_a05982cf71148e3b1c4d8a2a14e0c93ab} 
+\index{runmean.c@{runmean.c}!newMeanTracker@{newMeanTracker}}
+\index{newMeanTracker@{newMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{newMeanTracker()}
+{\footnotesize\ttfamily \textbf{ Mean\+Tracker} $\ast$ new\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{double}]{init\+Mean,  }\item[{double}]{tot\+Weight,  }\item[{int}]{max\+Entries }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ runmean.\+c}.
+
+
+
+References \textbf{ Mean\+Tracker\+Struct\+::length}, \textbf{ reset\+Mean\+Tracker()}, \textbf{ Mean\+Tracker\+Struct\+::tot\+Weight}, \textbf{ Mean\+Tracker\+Struct\+::values}, and \textbf{ Mean\+Tracker\+Struct\+::weights}.
+
+
+
+Referenced by \textbf{ init\+Model()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=281pt]{d5/d1f/runmean_8c_a05982cf71148e3b1c4d8a2a14e0c93ab_cgraph}
+\end{center}
+\end{figure}
+\label{runmean_8c_aafa097eaf82986761f1920d2a1ed2457} 
+\index{runmean.c@{runmean.c}!resetMeanTracker@{resetMeanTracker}}
+\index{resetMeanTracker@{resetMeanTracker}!runmean.c@{runmean.c}}
+\doxysubsubsection{resetMeanTracker()}
+{\footnotesize\ttfamily void reset\+Mean\+Tracker (\begin{DoxyParamCaption}\item[{\textbf{ Mean\+Tracker} $\ast$}]{tracker,  }\item[{double}]{init\+Mean }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 44} of file \textbf{ runmean.\+c}.
+
+
+
+References \textbf{ Mean\+Tracker\+Struct\+::last}, \textbf{ Mean\+Tracker\+Struct\+::start}, \textbf{ Mean\+Tracker\+Struct\+::sum}, \textbf{ Mean\+Tracker\+Struct\+::tot\+Weight}, \textbf{ Mean\+Tracker\+Struct\+::values}, and \textbf{ Mean\+Tracker\+Struct\+::weights}.
+
+
+
+Referenced by \textbf{ add\+Value\+To\+Mean\+Tracker()}, \textbf{ new\+Mean\+Tracker()}, and \textbf{ setup\+Model()}.
+

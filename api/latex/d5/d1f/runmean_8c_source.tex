@@ -1,0 +1,136 @@
+\doxysection{runmean.\+c}
+\label{runmean_8c_source}\index{runmean.c@{runmean.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ runmean:\ structure\ and\ functions\ to\ keep\ track\ of\ a\ running\ weighted\ mean}}
+\DoxyCodeLine{00002\ \textcolor{comment}{}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ Each\ value\ has\ an\ associated\ weight,\ and\ mean\ is\ computed\ over\ a\ given\ total}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ \ weight}}
+\DoxyCodeLine{00005\ \textcolor{comment}{}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00007\ \textcolor{comment}{}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ \ \ Creation\ date:\ 3/4/04}}
+\DoxyCodeLine{00009\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}runmean.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ includes\ definition\ of\ MeanTracker\ structure}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*\ PRE:\ totWeight\ >\ 0,\ maxEntries\ >=\ 1}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ allocate\ space\ for\ and\ return\ a\ pointer\ to\ a\ new\ MeanTracker}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ \ New\ MeanTracker\ is\ initialized\ to\ have\ mean\ =\ initMean\ and\ appropriate\ total}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ weight\ Total\ weight\ will\ remain\ fixed\ once\ the\ MeanTracker\ is\ created}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ maxEntries\ gives\ the\ maximum\ number\ of\ individual\ values\ that\ can\ be\ stored}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ at\ once}}
+\DoxyCodeLine{00021\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00022\ MeanTracker\ *newMeanTracker(\textcolor{keywordtype}{double}\ initMean,\ \textcolor{keywordtype}{double}\ totWeight,\ \textcolor{keywordtype}{int}\ maxEntries)\ \{}
+\DoxyCodeLine{00023\ \ \ MeanTracker\ *tracker;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \textcolor{comment}{//\ error\ check:}}
+\DoxyCodeLine{00026\ \ \ \textcolor{keywordflow}{if}\ (totWeight\ <=\ 0\ ||\ maxEntries\ <\ 1)\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00028\ \ \ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ tracker\ =\ (MeanTracker\ *)malloc(\textcolor{keyword}{sizeof}(MeanTracker));}
+\DoxyCodeLine{00031\ \ \ tracker-\/>values\ =\ (\textcolor{keywordtype}{double}\ *)malloc(maxEntries\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00032\ \ \ tracker-\/>weights\ =\ (\textcolor{keywordtype}{double}\ *)malloc(maxEntries\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00033\ \ \ tracker-\/>length\ =\ maxEntries;}
+\DoxyCodeLine{00034\ \ \ tracker-\/>totWeight\ =\ totWeight;}
+\DoxyCodeLine{00035\ \ \ resetMeanTracker(tracker,\ initMean);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordflow}{return}\ tracker;}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/*\ PRE:\ tracker\ has\ been\ created\ using\ newMeanTracker}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ \ \ \ \ \ \ \ so\ has\ malloced\ values\ and\ weights\ arrays,\ and\ has\ length\ and\ totWeight}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ \ \ set\ reset\ tracker\ to\ have\ a\ single\ entry,\ with\ mean\ initMean}}
+\DoxyCodeLine{00043\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ resetMeanTracker(MeanTracker\ *tracker,\ \textcolor{keywordtype}{double}\ initMean)\ \{}
+\DoxyCodeLine{00045\ \ \ \textcolor{comment}{//\ start\ with\ only\ one\ entry,\ with\ appropriate\ mean\ and\ total\ weight}}
+\DoxyCodeLine{00046\ \ \ \textcolor{comment}{//\ don't\ bother\ resetting\ other\ entries\ -\/\ we'll\ set\ them\ as\ we\ come\ to\ them}}
+\DoxyCodeLine{00047\ \ \ tracker-\/>start\ =\ tracker-\/>last\ =\ 0;}
+\DoxyCodeLine{00048\ \ \ tracker-\/>values[tracker-\/>start]\ =\ initMean;}
+\DoxyCodeLine{00049\ \ \ tracker-\/>weights[tracker-\/>start]\ =\ tracker-\/>totWeight;}
+\DoxyCodeLine{00050\ \ \ tracker-\/>sum\ =\ initMean\ *\ tracker-\/>totWeight;}
+\DoxyCodeLine{00051\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/*\ PRE:\ weight\ >\ 0}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ Add\ current\ value\ as\ most\ recent\ value\ in\ tracker}}
+\DoxyCodeLine{00055\ \textcolor{comment}{}}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ Return\ value:}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ 0\ if\ all\ okay}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ -\/1\ if\ error\ in\ inputs}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ -\/2\ if\ error\ because\ array\ is\ too\ short}}
+\DoxyCodeLine{00060\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{int}\ addValueToMeanTracker(MeanTracker\ *tracker,\ \textcolor{keywordtype}{double}\ value,\ \textcolor{keywordtype}{double}\ weight)\ \{}
+\DoxyCodeLine{00062\ \ \ \textcolor{keywordtype}{double}\ weightLeft;}
+\DoxyCodeLine{00063\ \ \ \textcolor{keywordtype}{int}\ i;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \textcolor{keywordflow}{if}\ (weight\ <=\ 0)\ \{\ \ \textcolor{comment}{//\ error}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;\ \ \textcolor{comment}{//\ don't\ change\ tracker\ at\ all}}
+\DoxyCodeLine{00067\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (weight\ >=\ tracker-\/>totWeight)\ \{\ \ \textcolor{comment}{//\ current\ value\ knocks\ out\ all}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ previous\ values}}
+\DoxyCodeLine{00069\ \ \ \ \ resetMeanTracker(tracker,\ value);}
+\DoxyCodeLine{00070\ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ 0\ <\ weight\ <\ totWeight:\ remove\ oldest\ values\ to\ make\ room\ for\ new}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (keeping\ total\ weight\ the\ same)}}
+\DoxyCodeLine{00072\ \ \ \ \ weightLeft\ =\ weight;\ \ \textcolor{comment}{//\ how\ much\ more\ do\ we\ have\ to\ subtract\ to\ make\ room?}}
+\DoxyCodeLine{00073\ \ \ \ \ i\ =\ tracker-\/>start;\ \ \textcolor{comment}{//\ current\ position}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{while}\ (weightLeft\ >\ 0)\ \{\ \ \textcolor{comment}{//\ while\ we\ still\ have\ to\ subtract\ more}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tracker-\/>weights[i]\ >\ weightLeft)\ \{\ \ \textcolor{comment}{//\ subtract\ a\ portion\ of\ this\ one}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ and\ we'll\ be\ done}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ tracker-\/>weights[i]\ -\/=\ weightLeft;\ \ \textcolor{comment}{//\ subtract\ correct\ portion\ from}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ current\ weight}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ tracker-\/>sum\ -\/=\ weightLeft\ *\ tracker-\/>values[i];\ \ \textcolor{comment}{//\ subtract\ correct}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ portion\ from\ sum}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ weightLeft\ =\ 0;\ \ \textcolor{comment}{//\ we're\ done}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ remove\ this\ value\ entirely\ to\ make\ room}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ tracker-\/>sum\ -\/=\ tracker-\/>weights[i]\ *\ tracker-\/>values[i];\ \ \textcolor{comment}{//\ update\ sum}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ weightLeft\ -\/=\ tracker-\/>weights[i];\ \ \textcolor{comment}{//\ we\ now\ have\ this\ much\ less\ weight}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ subtract}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ i\ =\ (i\ +\ 1)\ \%\ tracker-\/>length;\ \ \textcolor{comment}{//\ forget\ this\ value}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ note:\ we\ don't\ have\ to\ worry\ about\ going\ past\ last\ value,\ since\ 1)\ we}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ check\ for\ weight\ >=\ tracker-\/>totWeight,\ and\ 2)\ before\ starting\ this}}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ function,\ we\ know\ that\ sum(tracker-\/>weights[start..last]\ ==}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ tracker-\/>totWeight)}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00093\ \ \ \ \ \}\ \ \textcolor{comment}{//\ end\ while:\ now\ weightLeft\ =\ 0}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ tracker-\/>start\ =\ i;\ \ \textcolor{comment}{//\ move\ start\ position\ along\ to\ correct\ new\ position}}
+\DoxyCodeLine{00096\ \ \ \ \ i\ =\ (tracker-\/>last\ +\ 1)\ \%\ tracker-\/>length;\ \ \textcolor{comment}{//\ point\ to\ position\ of\ new}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ value}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ ==\ tracker-\/>start)\ \{\ \ \textcolor{comment}{//\ uh-\/oh:\ we've\ wrapped\ around\ and\ are\ out\ of}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ space!}}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \textcolor{comment}{//\ restore\ previous\ state\ and\ return\ error\ value}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \textcolor{comment}{//\ note:\ this\ will\ only\ happen\ if\ we\ only\ executed\ the\ while\ loop\ once,}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \textcolor{comment}{//\ and\ entered\ the\ first\ if\ block\ we\ can\ take\ advantage\ of\ this\ fact\ to}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \textcolor{comment}{//\ restore\ the\ old\ state}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ tracker-\/>weights[i]\ +=\ weight;\ \ \textcolor{comment}{//\ restore\ old\ weight\ here}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ tracker-\/>sum\ +=\ weight\ *\ tracker-\/>values[i];\ \ \textcolor{comment}{//\ restore\ old\ sum}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/2;\ \ \textcolor{comment}{//\ error}}
+\DoxyCodeLine{00107\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ there's\ enough\ space\ for\ the\ new\ value}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ tracker-\/>last\ =\ i;\ \ \textcolor{comment}{//\ increment\ tracker-\/>last\ to\ point\ to\ new\ value}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ tracker-\/>values[i]\ =\ value;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ tracker-\/>weights[i]\ =\ weight;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ tracker-\/>sum\ +=\ value\ *\ weight;\ \ \textcolor{comment}{//\ update\ sum\ appropriately}}
+\DoxyCodeLine{00112\ \ \ \ \ \}}
+\DoxyCodeLine{00113\ \ \ \}\ \ \textcolor{comment}{//\ end\ else\ (0\ <\ weight\ <\ totWeight)}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \textcolor{keywordflow}{return}\ 0;\ \ \textcolor{comment}{//\ all\ okay}}
+\DoxyCodeLine{00116\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{comment}{//\ return\ the\ mean\ of\ values\ stored\ in\ tracker}}
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{double}\ getMeanTrackerMean(MeanTracker\ *tracker)\ \{}
+\DoxyCodeLine{00120\ \ \ \textcolor{keywordflow}{return}\ tracker-\/>sum\ /\ tracker-\/>totWeight;}
+\DoxyCodeLine{00121\ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{//\ PRE:\ tracker\ has\ been\ created\ using\ newMeanTracker}}
+\DoxyCodeLine{00124\ \textcolor{comment}{//\ free\ all\ memory\ associated\ with\ tracker}}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ deallocateMeanTracker(MeanTracker\ *tracker)\ \{}
+\DoxyCodeLine{00126\ \ \ free(tracker-\/>values);}
+\DoxyCodeLine{00127\ \ \ free(tracker-\/>weights);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ free(tracker);}
+\DoxyCodeLine{00130\ \}}
+
+\end{DoxyCode}

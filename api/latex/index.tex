@@ -1,0 +1,21 @@
+\chapter{SIPNET Source Code Documentation}
+\label{index}\index{SIPNET Source Code Documentation@{SIPNET Source Code Documentation}}
+\label{index_md_sipnet_2sipnet_2src_2_r_e_a_d_m_e}%
+
+
+This document provides an overview of the SIPNET model source code and utilities. ~\newline
+\doxysection{Organization and Packages}\label{index_autotoc_md1}
+Organization strategy\+:
+\begin{DoxyItemize}
+\item SIPNET and derivative programs each have their own directory
+\item Stand-\/alone utilities all go into the {\ttfamily utilities} subdirectory
+\end{DoxyItemize}\doxysubsection{Main program -\/ SIPNET}\label{index_autotoc_md2}
+[Add description here of SIPNET\textquotesingle{}s "{}compilation switch"{} strategy -\/ which hopefully will become command-\/line params at some point, but not yet. We need to doc the possible switches somewhere...]\doxysubsection{SIPNET derivatives}\label{index_autotoc_md3}
+{\bfseries{estimate}}\+: The parameter estimation program for SIPNET. Its operation is controlled by the file \textquotesingle{}estimate.\+in\textquotesingle{}.
+
+{\bfseries{sens\+Test}}\+: [{\itshape ARCHIVED}] A program that tests the sensitivity of the model-\/data fit to values of a parameter (essentially a one-\/dimensional parameter estimation). Its operation is controlled by the file \textquotesingle{}sens\+Test.\+in\textquotesingle{}.\doxysubsection{Stand-\/alone Utilities}\label{index_autotoc_md4}
+{\bfseries{subset\+Data}}\+: A utility to subset a data record temporally. This utility can also perform daily aggregation on the data if so desired. Its operation is controlled by subset.\+in.
+
+{\bfseries{transpose}}\+: A little utility to transpose a text file that contains a rectangular matrix of data. This may be necessary to read certain files into Excel (e.\+g. the single-\/variable output files). Its usage is \textquotesingle{}transpose filename\textquotesingle{}.
+
+{\bfseries{bintotxt}}, {\bfseries{txttobin}}\+: Utilities to convert the hist file output from a estimate run from a binary file to a text file, and back again. 

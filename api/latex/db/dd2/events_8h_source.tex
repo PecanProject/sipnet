@@ -1,0 +1,80 @@
+\doxysection{events.\+h}
+\label{events_8h_source}\index{events.h@{events.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ EVENTS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ EVENTS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ EventType\ \{}
+\DoxyCodeLine{00005\ \ \ FERTILIZATION,}
+\DoxyCodeLine{00006\ \ \ HARVEST,}
+\DoxyCodeLine{00007\ \ \ IRRIGATION,}
+\DoxyCodeLine{00008\ \ \ PLANTING,}
+\DoxyCodeLine{00009\ \ \ TILLAGE,}
+\DoxyCodeLine{00010\ \ \ UNKNOWN\_EVENT}
+\DoxyCodeLine{00011\ \}\ event\_type\_t;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ IrrigationMethod\ \{}
+\DoxyCodeLine{00014\ \ \ CANOPY\ =\ 0,}
+\DoxyCodeLine{00015\ \ \ SOIL\ =\ 1,}
+\DoxyCodeLine{00016\ \ \ FLOOD\ =\ 2\ \ \textcolor{comment}{//\ placeholder,\ not\ supported\ yet}}
+\DoxyCodeLine{00017\ \}\ irrigation\_method\_t;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ NUM\_HARVEST\_PARAMS\ 4}}
+\DoxyCodeLine{00020\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }HarvestParams\ \{}
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordtype}{double}\ fractionRemovedAbove;}
+\DoxyCodeLine{00022\ \ \ \textcolor{keywordtype}{double}\ fractionRemovedBelow;}
+\DoxyCodeLine{00023\ \ \ \textcolor{keywordtype}{double}\ fractionTransferredAbove;\ \ \textcolor{comment}{//\ to\ surface\ litter\ pool}}
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordtype}{double}\ fractionTransferredBelow;\ \ \textcolor{comment}{//\ to\ soil\ litter\ pool}}
+\DoxyCodeLine{00025\ \}\ HarvestParams;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ NUM\_IRRIGATION\_PARAMS\ 2}}
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }IrrigationParams\ \{}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{double}\ amountAdded;}
+\DoxyCodeLine{00030\ \ \ irrigation\_method\_t\ method;}
+\DoxyCodeLine{00031\ \}\ IrrigationParams;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ NUM\_FERTILIZATION\_PARAMS\ 3}}
+\DoxyCodeLine{00034\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }FertilizationParams\ \{}
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordtype}{double}\ orgN;}
+\DoxyCodeLine{00036\ \ \ \textcolor{keywordtype}{double}\ orgC;}
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordtype}{double}\ minN;}
+\DoxyCodeLine{00038\ \ \ \textcolor{comment}{//\ double\ nh4\_no3\_frac;\ for\ two-\/pool\ version}}
+\DoxyCodeLine{00039\ \}\ FertilizationParams;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ NUM\_PLANTING\_PARAMS\ 4}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }PlantingParams\ \{}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{double}\ leafC;}
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{double}\ woodC;}
+\DoxyCodeLine{00045\ \ \ \textcolor{keywordtype}{double}\ fineRootC;}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{double}\ coarseRootC;}
+\DoxyCodeLine{00047\ \}\ PlantingParams;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ NUM\_TILLAGE\_PARAMS\ 3}}
+\DoxyCodeLine{00050\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }TillageParams\ \{}
+\DoxyCodeLine{00051\ \ \ \textcolor{keywordtype}{double}\ fractionLitterTransferred;}
+\DoxyCodeLine{00052\ \ \ \textcolor{keywordtype}{double}\ somDecompModifier;}
+\DoxyCodeLine{00053\ \ \ \textcolor{keywordtype}{double}\ litterDecompModifier;}
+\DoxyCodeLine{00054\ \}\ TillageParams;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ NUM\_EVENT\_CORE\_PARAMS\ 4}}
+\DoxyCodeLine{00057\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }EventNode\ EventNode;}
+\DoxyCodeLine{00058\ \textcolor{keyword}{struct\ }EventNode\ \{}
+\DoxyCodeLine{00059\ \ \ event\_type\_t\ type;}
+\DoxyCodeLine{00060\ \ \ \textcolor{keywordtype}{int}\ loc,\ year,\ day;}
+\DoxyCodeLine{00061\ \ \ \textcolor{keywordtype}{void}\ *eventParams;}
+\DoxyCodeLine{00062\ \ \ EventNode\ *nextEvent;}
+\DoxyCodeLine{00063\ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{comment}{/*\ Read\ event\ data\ from\ input\ filename\ (canonically\ events.in)}}
+\DoxyCodeLine{00066\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00067\ \textcolor{comment}{\ *\ Format:\ returned\ data\ is\ structured\ as\ an\ array\ of\ EventNode\ pointers,}}
+\DoxyCodeLine{00068\ \textcolor{comment}{\ *\ indexed\ by\ location.\ Each\ element\ of\ the\ array\ is\ the\ first\ event\ for\ that}}
+\DoxyCodeLine{00069\ \textcolor{comment}{\ *\ location\ (or\ null\ if\ there\ are\ no\ events).\ It\ is\ assumed\ that\ the\ events\ are}}
+\DoxyCodeLine{00070\ \textcolor{comment}{\ *\ ordered\ first\ by\ location\ and\ then\ by\ year\ and\ day.}}
+\DoxyCodeLine{00071\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00072\ EventNode\ **readEventData(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ numLocs);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ EVENTS\_H}}
+
+\end{DoxyCode}

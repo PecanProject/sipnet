@@ -1,0 +1,33 @@
+\doxysection{model\+Structures.\+h}
+\label{model_structures_8h_source}\index{modelStructures.h@{modelStructures.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ This\ file\ is\ intended\ to\ hold\ settings\ for\ different\ model\ structure\ options,}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ implemented\ as\ compile-\/time\ flags.\ The\ options\ are\ here\ (with\ nothing\ else)}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ to\ improve\ testability.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ If\ this\ file\ is\ changed,\ consider\ running\ tests/update\_model\_structures.sh\ to}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ update\ the\ corresponding\ unit\ test\ versions\ of\ this\ file.}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifndef\ MODEL\_STRUCTURES\_H}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ MODEL\_STRUCTURES\_H}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ Begin\ definitions\ for\ choosing\ different\ model\ structures}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ See\ also\ sipnet.c\ for\ other\ options\ (that\ should\ be\ moved\ here\ if/when}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ testing\ is\ added)}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ Whether\ we\ model\ root\ dynamics}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ ROOTS\ 1}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ Read\ in\ and\ process\ agronomic\ events.\ SIPNET\ expects\ a\ file\ named}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ <prefix>.events\ to\ exist,\ though\ unit\ tests\ may\ use\ other\ names.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ Note:\ requires\ ROOTS\ to\ be\ activated.}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ EVENT\_HANDLER\ 1\ \&\&\ ROOTS}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ have\ extra\ litter\ pool,\ in\ addition\ to\ soil\ c\ pool}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ LITTER\_POOL\ 0}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ MODEL\_STRUCTURES\_H}}
+
+\end{DoxyCode}

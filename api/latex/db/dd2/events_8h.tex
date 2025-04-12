@@ -1,0 +1,292 @@
+\doxysection{events.\+h File Reference}
+\label{events_8h}\index{events.h@{events.h}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=176pt]{d2/d46/events_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Harvest\+Params}
+\item 
+struct \textbf{ Irrigation\+Params}
+\item 
+struct \textbf{ Fertilization\+Params}
+\item 
+struct \textbf{ Planting\+Params}
+\item 
+struct \textbf{ Tillage\+Params}
+\item 
+struct \textbf{ Event\+Node}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ NUM\+\_\+\+HARVEST\+\_\+\+PARAMS}~4
+\item 
+\#define \textbf{ NUM\+\_\+\+IRRIGATION\+\_\+\+PARAMS}~2
+\item 
+\#define \textbf{ NUM\+\_\+\+FERTILIZATION\+\_\+\+PARAMS}~3
+\item 
+\#define \textbf{ NUM\+\_\+\+PLANTING\+\_\+\+PARAMS}~4
+\item 
+\#define \textbf{ NUM\+\_\+\+TILLAGE\+\_\+\+PARAMS}~3
+\item 
+\#define \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}~4
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \textbf{ Event\+Type} \textbf{ event\+\_\+type\+\_\+t}
+\item 
+typedef enum \textbf{ Irrigation\+Method} \textbf{ irrigation\+\_\+method\+\_\+t}
+\item 
+typedef struct \textbf{ Harvest\+Params} \textbf{ Harvest\+Params}
+\item 
+typedef struct \textbf{ Irrigation\+Params} \textbf{ Irrigation\+Params}
+\item 
+typedef struct \textbf{ Fertilization\+Params} \textbf{ Fertilization\+Params}
+\item 
+typedef struct \textbf{ Planting\+Params} \textbf{ Planting\+Params}
+\item 
+typedef struct \textbf{ Tillage\+Params} \textbf{ Tillage\+Params}
+\item 
+typedef struct \textbf{ Event\+Node} \textbf{ Event\+Node}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Event\+Type} \{ \newline
+\textbf{ FERTILIZATION}
+, \textbf{ HARVEST}
+, \textbf{ IRRIGATION}
+, \textbf{ PLANTING}
+, \newline
+\textbf{ TILLAGE}
+, \textbf{ UNKNOWN\+\_\+\+EVENT}
+ \}
+\item 
+enum \textbf{ Irrigation\+Method} \{ \textbf{ CANOPY} = 0
+, \textbf{ SOIL} = 1
+, \textbf{ FLOOD} = 2
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Event\+Node} $\ast$$\ast$ \textbf{ read\+Event\+Data} (char $\ast$event\+File, int \textbf{ num\+Locs})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{events_8h_a59bab2f313245e6b09e1be9a32cbba58} 
+\index{events.h@{events.h}!NUM\_EVENT\_CORE\_PARAMS@{NUM\_EVENT\_CORE\_PARAMS}}
+\index{NUM\_EVENT\_CORE\_PARAMS@{NUM\_EVENT\_CORE\_PARAMS}!events.h@{events.h}}
+\doxysubsubsection{NUM\_EVENT\_CORE\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS~4}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ events.\+h}.
+
+\label{events_8h_a577157a26356e85a347d0d1562d6cab6} 
+\index{events.h@{events.h}!NUM\_FERTILIZATION\_PARAMS@{NUM\_FERTILIZATION\_PARAMS}}
+\index{NUM\_FERTILIZATION\_PARAMS@{NUM\_FERTILIZATION\_PARAMS}!events.h@{events.h}}
+\doxysubsubsection{NUM\_FERTILIZATION\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+FERTILIZATION\+\_\+\+PARAMS~3}
+
+
+
+Definition at line \textbf{ 33} of file \textbf{ events.\+h}.
+
+\label{events_8h_acabc02747dc48744388736be3af1d389} 
+\index{events.h@{events.h}!NUM\_HARVEST\_PARAMS@{NUM\_HARVEST\_PARAMS}}
+\index{NUM\_HARVEST\_PARAMS@{NUM\_HARVEST\_PARAMS}!events.h@{events.h}}
+\doxysubsubsection{NUM\_HARVEST\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+HARVEST\+\_\+\+PARAMS~4}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ events.\+h}.
+
+\label{events_8h_a676b564144c19ab7ff65c43d5e22aa81} 
+\index{events.h@{events.h}!NUM\_IRRIGATION\_PARAMS@{NUM\_IRRIGATION\_PARAMS}}
+\index{NUM\_IRRIGATION\_PARAMS@{NUM\_IRRIGATION\_PARAMS}!events.h@{events.h}}
+\doxysubsubsection{NUM\_IRRIGATION\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+IRRIGATION\+\_\+\+PARAMS~2}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ events.\+h}.
+
+\label{events_8h_a76e5ab7fbbe77af5d74cfc87f47f4fa4} 
+\index{events.h@{events.h}!NUM\_PLANTING\_PARAMS@{NUM\_PLANTING\_PARAMS}}
+\index{NUM\_PLANTING\_PARAMS@{NUM\_PLANTING\_PARAMS}!events.h@{events.h}}
+\doxysubsubsection{NUM\_PLANTING\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+PLANTING\+\_\+\+PARAMS~4}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ events.\+h}.
+
+\label{events_8h_a2728fe61e5d0849fe7e64a9e0002aca3} 
+\index{events.h@{events.h}!NUM\_TILLAGE\_PARAMS@{NUM\_TILLAGE\_PARAMS}}
+\index{NUM\_TILLAGE\_PARAMS@{NUM\_TILLAGE\_PARAMS}!events.h@{events.h}}
+\doxysubsubsection{NUM\_TILLAGE\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+TILLAGE\+\_\+\+PARAMS~3}
+
+
+
+Definition at line \textbf{ 49} of file \textbf{ events.\+h}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\label{events_8h_a5fa6c5d64f2d553ef94c943fb42d2375} 
+\index{events.h@{events.h}!event\_type\_t@{event\_type\_t}}
+\index{event\_type\_t@{event\_type\_t}!events.h@{events.h}}
+\doxysubsubsection{event\_type\_t}
+{\footnotesize\ttfamily typedef enum \textbf{ Event\+Type} \textbf{ event\+\_\+type\+\_\+t}}
+
+\label{events_8h_aeda6b6ff6f205b24fdb70df1bde245a9} 
+\index{events.h@{events.h}!EventNode@{EventNode}}
+\index{EventNode@{EventNode}!events.h@{events.h}}
+\doxysubsubsection{EventNode}
+{\footnotesize\ttfamily typedef struct \textbf{ Event\+Node} \textbf{ Event\+Node}}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ events.\+h}.
+
+\label{events_8h_ac5109114e7210210fe70ea7c75503a08} 
+\index{events.h@{events.h}!FertilizationParams@{FertilizationParams}}
+\index{FertilizationParams@{FertilizationParams}!events.h@{events.h}}
+\doxysubsubsection{FertilizationParams}
+{\footnotesize\ttfamily typedef struct \textbf{ Fertilization\+Params} \textbf{ Fertilization\+Params}}
+
+\label{events_8h_a587fb0e382b974a1155780b7887fd87c} 
+\index{events.h@{events.h}!HarvestParams@{HarvestParams}}
+\index{HarvestParams@{HarvestParams}!events.h@{events.h}}
+\doxysubsubsection{HarvestParams}
+{\footnotesize\ttfamily typedef struct \textbf{ Harvest\+Params} \textbf{ Harvest\+Params}}
+
+\label{events_8h_a1360f975ae588530e31bfe3672b67c6a} 
+\index{events.h@{events.h}!irrigation\_method\_t@{irrigation\_method\_t}}
+\index{irrigation\_method\_t@{irrigation\_method\_t}!events.h@{events.h}}
+\doxysubsubsection{irrigation\_method\_t}
+{\footnotesize\ttfamily typedef enum \textbf{ Irrigation\+Method} \textbf{ irrigation\+\_\+method\+\_\+t}}
+
+\label{events_8h_a96045562b9e8110dfd71c3e9dc0b07f2} 
+\index{events.h@{events.h}!IrrigationParams@{IrrigationParams}}
+\index{IrrigationParams@{IrrigationParams}!events.h@{events.h}}
+\doxysubsubsection{IrrigationParams}
+{\footnotesize\ttfamily typedef struct \textbf{ Irrigation\+Params} \textbf{ Irrigation\+Params}}
+
+\label{events_8h_a7783a5d4f4deff466d6f1759288a5cff} 
+\index{events.h@{events.h}!PlantingParams@{PlantingParams}}
+\index{PlantingParams@{PlantingParams}!events.h@{events.h}}
+\doxysubsubsection{PlantingParams}
+{\footnotesize\ttfamily typedef struct \textbf{ Planting\+Params} \textbf{ Planting\+Params}}
+
+\label{events_8h_a879c4d63f5b1e30bdcbc9a35feccd457} 
+\index{events.h@{events.h}!TillageParams@{TillageParams}}
+\index{TillageParams@{TillageParams}!events.h@{events.h}}
+\doxysubsubsection{TillageParams}
+{\footnotesize\ttfamily typedef struct \textbf{ Tillage\+Params} \textbf{ Tillage\+Params}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\label{events_8h_a2628ea8d12e8b2563c32f05dc7fff6fa} 
+\index{events.h@{events.h}!EventType@{EventType}}
+\index{EventType@{EventType}!events.h@{events.h}}
+\doxysubsubsection{EventType}
+{\footnotesize\ttfamily enum \textbf{ Event\+Type}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FERTILIZATION@{FERTILIZATION}!events.h@{events.h}}\index{events.h@{events.h}!FERTILIZATION@{FERTILIZATION}}}\label{events_8h_a2628ea8d12e8b2563c32f05dc7fff6faa0ed1c7a9339ee8e256f21c11350794f7} 
+FERTILIZATION&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HARVEST@{HARVEST}!events.h@{events.h}}\index{events.h@{events.h}!HARVEST@{HARVEST}}}\label{events_8h_a2628ea8d12e8b2563c32f05dc7fff6faab80de92feeb9e0a27b49f6f8c9a8ad56} 
+HARVEST&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IRRIGATION@{IRRIGATION}!events.h@{events.h}}\index{events.h@{events.h}!IRRIGATION@{IRRIGATION}}}\label{events_8h_a2628ea8d12e8b2563c32f05dc7fff6faa4098975ad660147a95bd6e813a6fdbf3} 
+IRRIGATION&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PLANTING@{PLANTING}!events.h@{events.h}}\index{events.h@{events.h}!PLANTING@{PLANTING}}}\label{events_8h_a2628ea8d12e8b2563c32f05dc7fff6faa36fd4717f5fdc11db3faf781607853e0} 
+PLANTING&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TILLAGE@{TILLAGE}!events.h@{events.h}}\index{events.h@{events.h}!TILLAGE@{TILLAGE}}}\label{events_8h_a2628ea8d12e8b2563c32f05dc7fff6faaf0fe89e598a24b3330bcae33d4424394} 
+TILLAGE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UNKNOWN\_EVENT@{UNKNOWN\_EVENT}!events.h@{events.h}}\index{events.h@{events.h}!UNKNOWN\_EVENT@{UNKNOWN\_EVENT}}}\label{events_8h_a2628ea8d12e8b2563c32f05dc7fff6faa0c6699d58aaec87ae7a0887eea4e550c} 
+UNKNOWN\+\_\+\+EVENT&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 4} of file \textbf{ events.\+h}.
+
+\label{events_8h_ae3dfc47d6e114b5b803d0deb4b814d5c} 
+\index{events.h@{events.h}!IrrigationMethod@{IrrigationMethod}}
+\index{IrrigationMethod@{IrrigationMethod}!events.h@{events.h}}
+\doxysubsubsection{IrrigationMethod}
+{\footnotesize\ttfamily enum \textbf{ Irrigation\+Method}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CANOPY@{CANOPY}!events.h@{events.h}}\index{events.h@{events.h}!CANOPY@{CANOPY}}}\label{events_8h_ae3dfc47d6e114b5b803d0deb4b814d5ca9d5361cfbf6acc009db3abfef8e8dca8} 
+CANOPY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SOIL@{SOIL}!events.h@{events.h}}\index{events.h@{events.h}!SOIL@{SOIL}}}\label{events_8h_ae3dfc47d6e114b5b803d0deb4b814d5ca39f9e88f052fcebe53e1adf4130d88d8} 
+SOIL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FLOOD@{FLOOD}!events.h@{events.h}}\index{events.h@{events.h}!FLOOD@{FLOOD}}}\label{events_8h_ae3dfc47d6e114b5b803d0deb4b814d5cabea0d4d1d3cb879d84a3a2959399afc1} 
+FLOOD&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 13} of file \textbf{ events.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{events_8h_a23276d1145e6335ce7579bbbd6c27404} 
+\index{events.h@{events.h}!readEventData@{readEventData}}
+\index{readEventData@{readEventData}!events.h@{events.h}}
+\doxysubsubsection{readEventData()}
+{\footnotesize\ttfamily \textbf{ Event\+Node} $\ast$$\ast$ read\+Event\+Data (\begin{DoxyParamCaption}\item[{char $\ast$}]{event\+File,  }\item[{int}]{num\+Locs }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 160} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ create\+Event\+Node()}, \textbf{ events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ get\+Event\+Type()}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ num\+Locs}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
+
+
+
+Referenced by \textbf{ init\+Events()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=270pt]{db/dd2/events_8h_a23276d1145e6335ce7579bbbd6c27404_cgraph}
+\end{center}
+\end{figure}

@@ -1,0 +1,90 @@
+\doxysection{txttobin.\+c}
+\label{txttobin_8c_source}\index{txttobin.c@{txttobin.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Given\ an\ ascii\ file\ of\ floats,\ with\ n\ floats\ per\ line,}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ write\ binary\ file\ of\ floats,\ prefixed\ with\ n}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ (i.e.\ file\ contains\ n\ (integer),\ then\ (n*l)\ floats,\ where\ l\ =\ \#\ lines)}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}common/util.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00012\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ MAX\_LINE\ =\ 1024;}
+\DoxyCodeLine{00013\ \ \ FILE\ *in,\ *out;}
+\DoxyCodeLine{00014\ \ \ \textcolor{keywordtype}{char}\ inName[128],\ outName[128];}
+\DoxyCodeLine{00015\ \ \ \textcolor{keywordtype}{int}\ numPerLine;}
+\DoxyCodeLine{00016\ \ \ \textcolor{keywordtype}{int}\ i,\ skipLines;}
+\DoxyCodeLine{00017\ \ \ \textcolor{keywordtype}{long}\ numRead;}
+\DoxyCodeLine{00018\ \ \ \textcolor{keywordtype}{char}\ *status;}
+\DoxyCodeLine{00019\ \ \ \textcolor{keywordtype}{float}\ oneFloat;}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordtype}{char}\ line[MAX\_LINE];}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 2)\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ fileName\ [numLinesToSkip]\(\backslash\)n"{}},\ argv[0]);}
+\DoxyCodeLine{00024\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Where\ fileName\ is\ name\ of\ file\ to\ compress\(\backslash\)n"{}});}
+\DoxyCodeLine{00025\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ numLinesToSkip\ is\ number\ of\ initial\ lines\ in\ file\ to\ ignore\ "{}}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}(default:\ 0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00027\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Compressed\ file\ output\ in\ fileName.bin\(\backslash\)n"{}});}
+\DoxyCodeLine{00028\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00029\ \ \ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ strcpy(inName,\ argv[1]);}
+\DoxyCodeLine{00032\ \ \ strcpy(outName,\ inName);}
+\DoxyCodeLine{00033\ \ \ strcat(outName,\ \textcolor{stringliteral}{"{}.bin"{}});}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ in\ =\ openFile(inName,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00036\ \ \ out\ =\ openFile(outName,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordflow}{if}\ (argc\ >=\ 3)\ \{\ \ \textcolor{comment}{//\ there's\ a\ numLinesToSkip\ argument}}
+\DoxyCodeLine{00039\ \ \ \ \ skipLines\ =\ strtol(argv[2],\ \&status,\ 0);}
+\DoxyCodeLine{00040\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ skipLines\ =\ 0;}
+\DoxyCodeLine{00042\ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \textcolor{comment}{//\ first\ get\ number\ of\ floats\ per\ line:}}
+\DoxyCodeLine{00045\ \ \ \textcolor{comment}{//\ first\ skip\ skipLines:}}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ skipLines;\ i++)\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ fgets(line,\ MAX\_LINE,\ in);\ \ \textcolor{comment}{//\ read\ \&\ ignore}}
+\DoxyCodeLine{00048\ \ \ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \textcolor{comment}{//\ now\ we're\ ready\ to\ get\ first\ real\ line:}}
+\DoxyCodeLine{00051\ \ \ fgets(line,\ MAX\_LINE,\ in);}
+\DoxyCodeLine{00052\ \ \ numPerLine\ =\ 0;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ status\ =\ strtok(line,\ \textcolor{stringliteral}{"{}\ \(\backslash\)t"{}});}
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordflow}{while}\ (status\ !=\ NULL\ \&\&\ strcmp(status,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}})\ !=\ 0\ \&\&}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ strcmp(status,\ \textcolor{stringliteral}{"{}\(\backslash\)r\(\backslash\)n"{}})\ !=\ 0)\ \{\ \ \textcolor{comment}{//\ more\ tokens\ that\ aren't\ "{}\(\backslash\)n"{}}}
+\DoxyCodeLine{00057\ \ \ \ \ numPerLine++;}
+\DoxyCodeLine{00058\ \ \ \ \ status\ =\ strtok(NULL,\ \textcolor{stringliteral}{"{}\ \(\backslash\)t"{}});\ \ \textcolor{comment}{//\ find\ next\ token,\ if\ it\ exists}}
+\DoxyCodeLine{00059\ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ rewind(in);\ \ \textcolor{comment}{//\ go\ back\ to\ beginning}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \textcolor{comment}{//\ write\ numPerLine\ to\ file}}
+\DoxyCodeLine{00064\ \ \ fwrite(\&numPerLine,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}),\ 1,\ out);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \textcolor{comment}{//\ skip\ skipLines:}}
+\DoxyCodeLine{00067\ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ skipLines;\ i++)\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ fgets(line,\ MAX\_LINE,\ in);\ \ \textcolor{comment}{//\ read\ \&\ ignore}}
+\DoxyCodeLine{00069\ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ numRead\ =\ 0;}
+\DoxyCodeLine{00072\ \ \ \textcolor{keywordflow}{while}\ (fscanf(in,\ \textcolor{stringliteral}{"{}\%f"{}},\ \&oneFloat)\ >\ 0)\ \{\ \ \textcolor{comment}{//\ while\ there\ are\ more\ floats}}
+\DoxyCodeLine{00073\ \ \ \ \ numRead++;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{comment}{//\ write\ oneFloat\ to\ file}}
+\DoxyCodeLine{00075\ \ \ \ \ fwrite(\&oneFloat,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float}),\ 1,\ out);}
+\DoxyCodeLine{00076\ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ printf(\textcolor{stringliteral}{"{}Read\ a\ total\ of\ \%ld\ floats\(\backslash\)n"{}},\ numRead);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ fclose(in);}
+\DoxyCodeLine{00081\ \ \ fclose(out);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00084\ \}}
+
+\end{DoxyCode}

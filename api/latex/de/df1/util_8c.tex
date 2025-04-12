@@ -1,0 +1,239 @@
+\doxysection{util.\+c File Reference}
+\label{util_8c}\index{util.c@{util.c}}
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include "{}util.\+h"{}}\newline
+Include dependency graph for util.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d7d/util_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ build\+File\+Name} (char $\ast$filename, const char $\ast$base, const char $\ast$ext)
+\item 
+FILE $\ast$ \textbf{ open\+File} (const char $\ast$name, const char $\ast$mode)
+\item 
+FILE $\ast$ \textbf{ open\+File\+Ext} (const char $\ast$name, const char $\ast$ext, const char $\ast$mode)
+\item 
+void \textbf{ seed\+Rand} (unsigned int seed, FILE $\ast$outF)
+\item 
+double \textbf{ randm} (void)
+\item 
+double $\ast$ \textbf{ make\+Array} (int size)
+\item 
+double $\ast$$\ast$ \textbf{ make2\+DArray} (int nrows, int ncols)
+\item 
+int $\ast$$\ast$ \textbf{ make2\+DInt\+Array} (int nrows, int ncols)
+\item 
+void \textbf{ free2\+DArray} (void $\ast$$\ast$arr)
+\item 
+void \textbf{ assign\+Array} (double $\ast$out, double $\ast$in, int n)
+\item 
+double \textbf{ sum\+Array} (double $\ast$array, int length)
+\item 
+int \textbf{ strcmp\+Ignore\+Case} (const char $\ast$s1, const char $\ast$s2)
+\item 
+int \textbf{ strip\+Comment} (char $\ast$line, const char $\ast$comment\+Chars)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{util_8c_ac49fd8b4678d4f6f01e00d17b72ac028} 
+\index{util.c@{util.c}!assignArray@{assignArray}}
+\index{assignArray@{assignArray}!util.c@{util.c}}
+\doxysubsubsection{assignArray()}
+{\footnotesize\ttfamily void assign\+Array (\begin{DoxyParamCaption}\item[{double $\ast$}]{out,  }\item[{double $\ast$}]{in,  }\item[{int}]{n }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 134} of file \textbf{ util.\+c}.
+
+\label{util_8c_aaf26e57eedf3733a337d8d421ff599ef} 
+\index{util.c@{util.c}!buildFileName@{buildFileName}}
+\index{buildFileName@{buildFileName}!util.c@{util.c}}
+\doxysubsubsection{buildFileName()}
+{\footnotesize\ttfamily void build\+File\+Name (\begin{DoxyParamCaption}\item[{char $\ast$}]{filename,  }\item[{const char $\ast$}]{base,  }\item[{const char $\ast$}]{ext }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ main()}, and \textbf{ open\+File\+Ext()}.
+
+\label{util_8c_a7611ac8af983ccdaaadddb7de7b53c2b} 
+\index{util.c@{util.c}!free2DArray@{free2DArray}}
+\index{free2DArray@{free2DArray}!util.c@{util.c}}
+\doxysubsubsection{free2DArray()}
+{\footnotesize\ttfamily void free2\+DArray (\begin{DoxyParamCaption}\item[{void $\ast$$\ast$}]{arr }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 128} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ cleanup\+Paramchange()}, \textbf{ main()}, and \textbf{ metropolis()}.
+
+\label{util_8c_acfd51a4f4e38b658d40ac54b748a9b49} 
+\index{util.c@{util.c}!make2DArray@{make2DArray}}
+\index{make2DArray@{make2DArray}!util.c@{util.c}}
+\doxysubsubsection{make2DArray()}
+{\footnotesize\ttfamily double $\ast$$\ast$ make2\+DArray (\begin{DoxyParamCaption}\item[{int}]{nrows,  }\item[{int}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 95} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ main()}, \textbf{ metropolis()}, \textbf{ read\+Data()}, and \textbf{ read\+File\+For\+Agg()}.
+
+\label{util_8c_a09ddebbbbb5ccb732d7f88931d9d1b2f} 
+\index{util.c@{util.c}!make2DIntArray@{make2DIntArray}}
+\index{make2DIntArray@{make2DIntArray}!util.c@{util.c}}
+\doxysubsubsection{make2DIntArray()}
+{\footnotesize\ttfamily int $\ast$$\ast$ make2\+DInt\+Array (\begin{DoxyParamCaption}\item[{int}]{nrows,  }\item[{int}]{ncols }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ read\+Data()}.
+
+\label{util_8c_a21c26b5db93cc2c6817b9a953683280f} 
+\index{util.c@{util.c}!makeArray@{makeArray}}
+\index{makeArray@{makeArray}!util.c@{util.c}}
+\doxysubsubsection{makeArray()}
+{\footnotesize\ttfamily double $\ast$ make\+Array (\begin{DoxyParamCaption}\item[{int}]{size }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 82} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ agged\+Difference()}, \textbf{ aggregates()}, \textbf{ difference()}, \textbf{ metropolis()}, \textbf{ new\+Output\+Info()}, and \textbf{ read\+Data()}.
+
+\label{util_8c_a2a788020b8916d13ec26d4ad01c225f9} 
+\index{util.c@{util.c}!openFile@{openFile}}
+\index{openFile@{openFile}!util.c@{util.c}}
+\doxysubsubsection{openFile()}
+{\footnotesize\ttfamily FILE $\ast$ open\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{const char $\ast$}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ copy\+File()}, \textbf{ count\+Lines()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ open\+File\+Ext()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ read\+Chain\+Info()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Indices\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ read\+Param\+Data()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Chain\+Info()}.
+
+\label{util_8c_a4ec71fe2ea5006cccfae2cbf8ed19979} 
+\index{util.c@{util.c}!openFileExt@{openFileExt}}
+\index{openFileExt@{openFileExt}!util.c@{util.c}}
+\doxysubsubsection{openFileExt()}
+{\footnotesize\ttfamily FILE $\ast$ open\+File\+Ext (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{const char $\ast$}]{ext,  }\item[{const char $\ast$}]{mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ util.\+c}.
+
+
+
+References \textbf{ build\+File\+Name()}, and \textbf{ open\+File()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{de/df1/util_8c_a4ec71fe2ea5006cccfae2cbf8ed19979_cgraph}
+\end{center}
+\end{figure}
+\label{util_8c_a7c691c3c5db12904e93cc52d68cc2304} 
+\index{util.c@{util.c}!randm@{randm}}
+\index{randm@{randm}!util.c@{util.c}}
+\doxysubsubsection{randm()}
+{\footnotesize\ttfamily double randm (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 71} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ metropolis()}.
+
+\label{util_8c_ad2222db949c03ef23f3e1a192af45aef} 
+\index{util.c@{util.c}!seedRand@{seedRand}}
+\index{seedRand@{seedRand}!util.c@{util.c}}
+\doxysubsubsection{seedRand()}
+{\footnotesize\ttfamily void seed\+Rand (\begin{DoxyParamCaption}\item[{unsigned int}]{seed,  }\item[{FILE $\ast$}]{outF }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 52} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{util_8c_a46c453b73f4e8cd62264e4bfe8b6ae05} 
+\index{util.c@{util.c}!strcmpIgnoreCase@{strcmpIgnoreCase}}
+\index{strcmpIgnoreCase@{strcmpIgnoreCase}!util.c@{util.c}}
+\doxysubsubsection{strcmpIgnoreCase()}
+{\footnotesize\ttfamily int strcmp\+Ignore\+Case (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s1,  }\item[{const char $\ast$}]{s2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 157} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ locate\+Param()}, \textbf{ main()}, and \textbf{ read\+Spatial\+Values()}.
+
+\label{util_8c_ab343ccfdac6191045fced6c36c0143f4} 
+\index{util.c@{util.c}!stripComment@{stripComment}}
+\index{stripComment@{stripComment}!util.c@{util.c}}
+\doxysubsubsection{stripComment()}
+{\footnotesize\ttfamily int strip\+Comment (\begin{DoxyParamCaption}\item[{char $\ast$}]{line,  }\item[{const char $\ast$}]{comment\+Chars }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 188} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ read\+Namelist\+Inputs()}, and \textbf{ read\+Spatial\+Params()}.
+
+\label{util_8c_a31f647ac0b82a2bb708fcdaaab1a498d} 
+\index{util.c@{util.c}!sumArray@{sumArray}}
+\index{sumArray@{sumArray}!util.c@{util.c}}
+\doxysubsubsection{sumArray()}
+{\footnotesize\ttfamily double sum\+Array (\begin{DoxyParamCaption}\item[{double $\ast$}]{array,  }\item[{int}]{length }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 143} of file \textbf{ util.\+c}.
+
+
+
+Referenced by \textbf{ metropolis()}, and \textbf{ reset()}.
+
