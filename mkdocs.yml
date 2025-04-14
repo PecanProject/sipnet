@@ -4,7 +4,7 @@ nav:
   - Home: README.md
   - Model Description:
     - Parameters: parameters.md
-  - Model Description: model-description.md
+  - Model Specification: model-description.md
   - User Guide:
       - Running SIPNET: user-guide/running-sipnet.md
   - Developer Guide:
