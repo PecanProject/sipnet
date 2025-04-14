@@ -2,7 +2,8 @@ site_name: SIPNET Documentation
 
 nav:
   - Home: README.md
-  - Parameters: parameters.md
+  - Model Description:
+    - Parameters: parameters.md
   - Model Description: model-description.md
   - User Guide:
       - Running SIPNET: user-guide/running-sipnet.md
