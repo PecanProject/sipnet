@@ -14,16 +14,22 @@ nav:
   - Code of Conduct: CODE_OF_CONDUCT.md
 
 theme:
-  name: readthedocs
-  custom_dir: docs/overrides
-
-plugins:
-  - search
+  name: material
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true  
+  - admonition
+  - toc:
+      permalink: true
   
-# Inject MathJax to render LaTeX syntax without modifying MD files
+
 extra_javascript:
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - overrides/fix-mathjax-headings.js
+  
 
 
-
+extra:
+  arithmatex:
+    inline_syntax: ['\\(', '\\)']
+    block_syntax: ['\\[', '\\]']

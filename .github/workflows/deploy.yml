@@ -3,7 +3,7 @@ name: Publish Documentation
 on:
   push:
     branches:
-      - "master"
+      - "*"
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
 
       - name: Install MkDocs
         run: |
-          pip install mkdocs mkdocs-material
+          pip install mkdocs mkdocs-material pymdown-extensions
 
       - name: Generate Documentation
         run: make document
