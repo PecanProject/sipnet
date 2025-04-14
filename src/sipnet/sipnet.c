@@ -233,6 +233,7 @@ typedef struct Parameters {
   double soilInit;  // g C * m^-2 ground area
   double litterWFracInit;  // unitless: fraction of litterWHC
   double soilWFracInit;  // unitless: fraction of soilWHC
+  double soilWaterInit;  // cm soil water
   double snowInit;  // cm water equiv.
 
   // 7 parameters
@@ -806,6 +807,7 @@ int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
   initializeOneSpatialParam(spatialParams, "soilInit", &(params.soilInit), 1);
   initializeOneSpatialParam(spatialParams, "litterWFracInit", &(params.litterWFracInit), 1);
   initializeOneSpatialParam(spatialParams, "soilWFracInit", &(params.soilWFracInit), 1);
+  initializeOneSpatialParam(spatialParams, "soilWaterInit", &(params.soilWaterInit), 1);
   initializeOneSpatialParam(spatialParams, "snowInit", &(params.snowInit), 1);
   initializeOneSpatialParam(spatialParams, "aMax", &(params.aMax), 1);
   initializeOneSpatialParam(spatialParams, "aMaxFrac", &(params.aMaxFrac), 1);
@@ -2826,7 +2828,8 @@ void setupModel(SpatialParams *spatialParams, int loc) {
     envi.litterWater = params.litterWHC;
   }
 
-  envi.soilWater = params.soilWFracInit * params.soilWHC;
+  //envi.soilWater = params.soilWFracInit * params.soilWHC;
+  envi.soilWater = params.soilWaterInit;
   if (envi.soilWater < 0) {
     envi.soilWater = 0;
   } else if (envi.soilWater > params.soilWHC) {
