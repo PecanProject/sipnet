@@ -4,7 +4,7 @@ nav:
   - Home: README.md
   - Model Description:
     - Parameters: parameters.md
-  - Model Specification: model-structure.md
+    - Model Specification: model-structure.md
   - User Guide:
       - Running SIPNET: user-guide/running-sipnet.md
   - Developer Guide:
@@ -19,7 +19,6 @@ theme:
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true  
-  - admonition
   - toc:
       permalink: true
   
