@@ -2,6 +2,9 @@ site_name: SIPNET Documentation
 
 nav:
   - Home: README.md
+  - Model Description:
+    - Parameters: parameters.md
+    - Model Specification: model-structure.md
   - User Guide:
       - Running SIPNET: user-guide/running-sipnet.md
   - Developer Guide:
@@ -12,6 +15,20 @@ nav:
   - Code of Conduct: CODE_OF_CONDUCT.md
 
 theme:
-  name: readthedocs
+  name: material
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true  
+  - toc:
+      permalink: true
+  
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  
 
 
+extra:
+  arithmatex:
+    inline_syntax: ['\\(', '\\)']
+    block_syntax: ['\\[', '\\]']
