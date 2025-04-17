@@ -616,29 +616,9 @@ The choice of one month adjustment period is based on DayCent (Parton et al 2001
 
 ### $\frak{Planting \ and \ Emergence}$
 
-A planting event is now specified by its emergence date. The emergence date is defined as the date on which LAI = 0.15 $m^2/m^2$, and no additional event parameters are required. On the specified emergence date, the model sets the plant carbon and nitrogen pools at emergence using the following equations:
+A planting event is defined by its emergence date and directly specifies the amount of carbon added to each of four plant carbon pools: leaf, wood, fine root, and coarse root. On the emergence date, the model initializes the plant pools with the amounts of carbon specified in the events file.
 
-$$
-C_{\text{leaf,e}} = LAI_e \cdot SLW \tag{25}\label{eq:leaf_emergence_carbon}
-$$
-
-Then calculate total plant carbon at emergence:
-
-$$
-C_{\text{plant,e}} = \frac{C_{\text{leaf,e}}}{\alpha_{\text{leaf}}} \tag{26}\label{eq:plant_emergence_carbon}
-$$
-
-Next, allocate total plant carbon at emergence to each pool using the allocation coefficients \eqref{eq:Z3}. 
-
-
-$$
-C_{i,e} = C_{\text{plant,e}}\cdot \alpha_i \tag{27} \\
-$$
-
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
-
-
-Finally, nitrogen for each pool is calculated using equation \eqref{eq:cn_stoich}.
+Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios following equation \eqref{eq:cn_stoich}.
 
 ### $\frak{Harvest}$
 

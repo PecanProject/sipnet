@@ -17,8 +17,9 @@ typedef enum {
   EXIT_CODE_SUCCESS = 0,
   EXIT_CODE_FAILURE = 1,  // generic failure
   // code 2 typically has a special meaning, see above
-  EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM = 3,
-  EXIT_CODE_INPUT_FILE_ERROR = 4,
+  EXIT_CODE_BAD_PARAMETER_VALUE = 3,
+  EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM = 4,
+  EXIT_CODE_INPUT_FILE_ERROR = 5,
 } exit_code_t;
 
 #endif

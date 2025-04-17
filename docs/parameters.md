@@ -68,12 +68,12 @@ Numbered items are cross-referenced with original documentation.
 | $VPD$      | Vapor Pressure Deficit                                                      |
 | $ET$       | Evapotranspiration                                                          |
 | $Q_{10}$   | Temperature sensitivity coefficient                                         |
-| $f$        | Fraction                                                                    |
+| $f$        | The fraction of a pool or flux other than NPP                               |
 | $F$        | Flux of carbon, nitrogen, or water                                          |
 | $D$        | Dependency or Damping Function                                              |
 | $N$        | Nitrogen                                                                    |
 | $C$        | Carbon                                                                      |
-| $\alpha$   | Allocation fraction                                                         |
+| $\alpha$   | The fraction of NPP allocated to a plant pool                               |
 | $k$        | Scaling factor |
 
 ### Subscripts (Temporal, Spatial, or Contextual Identifiers)
@@ -111,20 +111,19 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Initial state values
 
-|   | Symbol                                   | Parameter Name  | Definition                                | Units                          | notes                                             |
-| - | ---------------------------------------- | --------------- | ----------------------------------------- | ------------------------------ | ------------------------------------------------- |
-| 1 | $C_{\text{wood},0}$                    | plantWoodInit   | Initial wood carbon                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$        | above-ground + roots                              |
-| 2 | $LAI_0$                                  | laiInit         | Initial leaf area                         | m^2 leaves \* m^-2 ground area | multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$ |
- |
-| 3 | $C_{\text{litter},0}$                  | litterInit      | Initial litter carbon                     | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$        |                                                   |
-| 4 | $C_{\text{soil},0}$                    | soilInit        | Initial soil carbon                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$        |                                                   |
-| 5 | $W_{\text{litter},0}$                  | litterWFracInit |                                           | unitless                       | fraction of litterWHC                             |
-| 6 | $W_{\text{soil},0}$                              | soilWFracInit   |                                           | unitless                       | fraction of soilWHC                               |
-|   | $N_{\text{soil},0}$                              |                 | Initial soil organic nitrogen content     | g N m$^{-2}$                 |                                                   |
-|   | ${CH_4}_{\text{soil},0}$                         |                 | Initial methane concentration in the soil | g C m$^{-2}$                 |                                                   |
-|   | ${N_2O}_{\text{soil},0}$                         |                 | Nitrous oxide concentration in the soil   | g N m$^{-2}$                 |                                                   |
-|   | $C_{\text{fine root},0}$    |  fineRootFrac    | Initial fine root carbon                  | g C m$^{-2}$ | |
-|   | $C_{\text{coarse root},0}$  |   coarseRootFrac | Initial coarse root carbon                | g C m$^{-2}$                 |                                                   |
+|    | Symbol                     | Parameter Name  | Definition                                                               | Units                                                | notes                                                                              |
+|----|----------------------------|-----------------|--------------------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------------------------------------|
+| 1  | $C_{\text{wood},0}$        | plantWoodInit   | Initial wood carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ | above-ground + roots                                                               |
+| 2  | $LAI_0$                    | laiInit         | Initial leaf area                                                        | m^2 leaves \* m^-2 ground area                       | multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$ |
+| 3  | $C_{\text{litter},0}$      | litterInit      | Initial litter carbon                                                    | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
+| 4  | $C_{\text{soil},0}$        | soilInit        | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
+| 5  | $W_{\text{litter},0}$      | litterWFracInit |                                                                          | unitless                                             | fraction of litterWHC                                                              |
+| 6  | $W_{\text{soil},0}$        | soilWFracInit   |                                                                          | unitless                                             | fraction of soilWHC                                                                |
+|    | $N_{\text{soil},0}$        |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
+|    | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
+|    | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
+|    | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                      |                                                                                    |
+|    | $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                  |                                                                                    |
 
 <!--not used in CCMMF
 
@@ -473,10 +472,16 @@ Notes:
 
 #### Planting Events
 
+| parameter     | col | req? | description                                  |
+|---------------|:---:|:----:|----------------------------------------------|
+| leaf-C        |  5  |  Y   | C added to leaf pool (g C / m2)              |
+| wood-C        |  6  |  Y   | C added to above-ground wood pool (g C / m2) |
+| fine-root-C   |  7  |  Y   | C added to fine root pool (g C / m2)         |
+| coarse-root-C |  8  |  Y   | C added to coarse root pool (g C / m2)       |
+
 - model representation: 
-  - Other than `event_type = plant`, there are no additional parameters.
-  - Emergence date is defined as the date on which $LAI=0.15$
-  - Leaf $C$ is calculated from $SLW$ and other pools are calculated from allocation parameters $\alpha$
+  - Date of event is the date of emergence, not the date of actual planting 
+  - Increases size of carbon pools by the amount of each respective parameter
   - $N$ pools are calculated from $CN$ stoichiometric ratios.
 - notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.
 
@@ -499,9 +504,9 @@ Notes:
 
 ```
 1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
-1  2022  40  fert   100 50 0 0   # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
+1  2022  40  fert   10 5 0 0     # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
 1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
-1  2022  50  plant       # planting - emergence occurs on day 50
+1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 
