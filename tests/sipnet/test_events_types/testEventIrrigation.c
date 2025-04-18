@@ -24,7 +24,7 @@ int run(void) {
   int status = 0;
 
   // set up dummy climate
-  climate = malloc(numLocs * sizeof(ClimateNode));
+  climate = (ClimateNode *)malloc(numLocs * sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
 
