@@ -51,8 +51,8 @@ fi
 
 ## CLANG TOOLS CHECK
 echo "Checking clang-tools installation"
-found_format=0
-found_tidy=0
+found_format=
+found_tidy=
 if clang-format --version >/dev/null 2>&1; then
   found_format=1;
 else
@@ -70,6 +70,7 @@ if [[ ! "$found_format" || ! "$found_tidy" ]]; then
     brew install llvm
     ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
     ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
+    ln -s "$(brew --prefix llvm)/bin/git-clang-format" "/usr/local/bin/git-clang-format"
   else
     echo "$linux"
   fi

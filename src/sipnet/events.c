@@ -17,9 +17,9 @@
  * - "irrig": Parameters = [amount added (cm/d), type (0=canopy, 1=soil, 2=flood)]
  * - "fert": Parameters = [Org-N (g/m²), Org-C (g/ha), Min-N (g/m²), Min-N2 (g/m²)]
  * - "till": Parameters = [SOM decomposition modifier, litter decomposition modifier]
- * - "plant": Parameters = [emergence lag (days), C (g/m²), N (g/m²)]]
+ * - "plant": Parameters = [leaf C (g/m²), wood C (g/m²), fine root C (g/m²), corase root C (g/m²)]
  * - "harv": Parameters = [fraction aboveground removed, fraction belowground removed, ...]
- * See test examples in `tests/sipnet/test_events_infrastructure/`.
+ * See test examples in `tests/sipnet/test_events_infrastructure/` and tests/sipnet/test_events_types/.
  */
 // clang-format on
 
@@ -51,6 +51,13 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
         printf("Error parsing Harvest params for loc %d year %d day %d\n", loc,
                year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
+      // Validate the params
+      if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
+        printf("Invalid harvest event for loc %d year %d day %d; above and "
+               "below must each add to 1 or less",
+               loc, year, day);
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
       params->fractionRemovedAbove = fracRA;
       params->fractionRemovedBelow = fracRB;
@@ -95,19 +102,19 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       event->eventParams = params;
     } break;
     case PLANTING: {
-      int emergenceLag;
-      double addedC, addedN;
+      double leafC, woodC, fineRootC, coarseRootC;
       PlantingParams *params = (PlantingParams *)malloc(sizeof(PlantingParams));
-      int numRead =
-          sscanf(eventParamsStr, "%d %lf %lf", &emergenceLag, &addedC, &addedN);
+      int numRead = sscanf(eventParamsStr, "%lf %lf %lf %lf", &leafC, &woodC,
+                           &fineRootC, &coarseRootC);
       if (numRead != NUM_PLANTING_PARAMS) {
         printf("Error parsing Planting params for loc %d year %d day %d\n", loc,
                year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
-      params->emergenceLag = emergenceLag;
-      params->addedC = addedC;
-      params->addedN = addedN;
+      params->leafC = leafC;
+      params->woodC = woodC;
+      params->fineRootC = fineRootC;
+      params->coarseRootC = coarseRootC;
       event->eventParams = params;
     } break;
     case TILLAGE: {
@@ -167,7 +174,7 @@ EventNode **readEventData(char *eventFile, int numLocs) {
   if (access(eventFile, F_OK) != 0) {
     // no file found, which is fine; we're done, a vector of NULL is what we
     // want for events
-    printf("No event file found, assuming no events");
+    printf("No event file found, assuming no events\n");
     return events;
   }
 
@@ -274,8 +281,10 @@ void printEvent(EventNode *event) {
     case PLANTING:
       printf("PLANTING at loc %d on %d %d, ", loc, year, day);
       PlantingParams *const pParams = (PlantingParams *)event->eventParams;
-      printf("with params: emergence lag %d, added C %4.2f, added N %4.2f\n",
-             pParams->emergenceLag, pParams->addedC, pParams->addedN);
+      printf("with params: leaf C %4.2f, wood C %4.2f, fine root C %4.2f, "
+             "coarse root C %4.2f\n",
+             pParams->leafC, pParams->woodC, pParams->fineRootC,
+             pParams->coarseRootC);
       break;
     case TILLAGE:
       printf("TILLAGE at loc %d on %d %d, ", loc, year, day);
