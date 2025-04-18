@@ -27,10 +27,11 @@
 #define INPUT_FILE "sipnet.in"
 #define DO_MAIN_OUTPUT 1
 #define DO_SINGLE_OUTPUTS 0
-#define LOC                                                                    \
-  (-1)  // default is run at all locations (but if doing a sens. test or monte
-        // carlo run, will default to running at loc. 0)
-#define HEADER 0  // // Make the default no printing of header files
+// Default is run at all locations (but if doing a sens. test or monte carlo
+// run, will default to running at loc. 0)
+#define LOC (-1)
+// Make the default no printing of header files
+#define HEADER 0
 
 void usage(char *progName) {
   printf("Usage: %s [-h] [-i inputFile]\n", progName);
@@ -95,11 +96,6 @@ int main(int argc, char *argv[]) {
   double **means;
   double **standarddevs;
   int dataTypeIndices[MAX_DATA_TYPES];
-
-#if EVENT_HANDLER
-  // Extra filename if we are handing events
-  char eventInFile[FILE_MAXNAME + 24];
-#endif
 
   // get command-line arguments:
   while ((option = getopt(argc, argv, "hi:")) != -1) {
@@ -175,9 +171,7 @@ int main(int argc, char *argv[]) {
   numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
 
 #if EVENT_HANDLER
-  strcpy(eventInFile, fileName);
-  strcat(eventInFile, ".event");
-  initEvents(eventInFile, numLocs);
+  initEvents(EVENT_IN_FILE, numLocs);
 #endif
 
   if (doSingleOutputs) {

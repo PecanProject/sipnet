@@ -5,6 +5,7 @@
 
 #include "common/util.h"
 
+#define EVENT_IN_FILE "events.in"
 #define EVENT_OUT_FILE "events.out"
 
 typedef enum EventType {

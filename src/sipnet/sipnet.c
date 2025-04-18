@@ -2571,12 +2571,12 @@ void processEvents(void) {
           envi.soilWater += soilAmount;
           writeEventOut(eventOutFile, locEvent,
                         "fluxes.immedEvap %8.2f envi.soilWater %8.2f\n",
-                        fluxes.immedEvap, envi.soilWater);
+                        evapAmount, soilAmount);
         } else if (irrParams->method == SOIL) {
           // All goes to the soil
           envi.soilWater += amount;
           writeEventOut(eventOutFile, locEvent, "envi.soilWater %8.2f\n",
-                        envi.soilWater);
+                        amount);
         } else {
           printf("Unknown irrigation method type: %d\n", irrParams->method);
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -2597,6 +2597,11 @@ void processEvents(void) {
 
         // FUTURE: allocate to N pools
 
+        writeEventOut(eventOutFile, locEvent,
+                      "envi.plantLeafC %8.2f envi.plantWoodC %8.2f "
+                      "envi.fineRootC %8.2f envi.coarseRootC %8.2f\n",
+                      leafC, woodC, fineRootC, coarseRootC);
+
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
@@ -2606,18 +2611,31 @@ void processEvents(void) {
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
 
-        // Litter:
-        envi.litter += fracTA * (envi.plantLeafC + envi.plantWoodC) +
-                       fracTB * (envi.fineRootC + envi.coarseRootC);
-        // Pool updates, counting both mass moved to litter and removed by
-        // harvest itself
-        envi.plantLeafC *= 1 - (fracRA + fracTA);
-        envi.plantWoodC *= 1 - (fracRA + fracTA);
-        envi.fineRootC *= 1 - (fracRB + fracTB);
-        envi.coarseRootC *= 1 - (fracRB + fracTB);
+        // Litter increase
+        const double litterAdd = fracTA * (envi.plantLeafC + envi.plantWoodC) +
+                                 fracTB * (envi.fineRootC + envi.coarseRootC);
+        // Pool reductions, counting both mass moved to litter and removed by
+        // the harvest itself. Above-ground changes:
+        const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
+        const double woodDelta = -envi.plantWoodC * (fracRA + fracTA);
+        // Below-ground changes:
+        const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
+        const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
+
+        // Pool updates:
+        envi.litter += litterAdd;
+        envi.plantLeafC += leafDelta;
+        envi.plantWoodC += woodDelta;
+        envi.fineRootC += fineDelta;
+        envi.coarseRootC += coarseDelta;
 
         // FUTURE: move/remove biomass in N pools
 
+        writeEventOut(eventOutFile, locEvent,
+                      "envi.litter %8.2f "
+                      "envi.plantLeafC %8.2f envi.plantWoodC %8.2f "
+                      "envi.fineRootC %8.2f envi.coarseRootC %8.2f\n",
+                      litterAdd, leafDelta, woodDelta, fineDelta, coarseDelta);
       } break;
       case TILLAGE:
         // TBD
