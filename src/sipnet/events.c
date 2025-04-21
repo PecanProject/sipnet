@@ -326,7 +326,14 @@ const char *eventTypeToString(event_type_t type) {
   }
 }
 
-FILE *openEventOutFile(void) { return openFile(EVENT_OUT_FILE, "w"); }
+FILE *openEventOutFile(int printHeader) {
+  FILE *eventFile = openFile(EVENT_OUT_FILE, "w");
+  if (printHeader) {
+    fprintf(eventFile, "loc year day event_type param_name delta "
+                       "[...param_name delta]\n");
+  }
+  return eventFile;
+}
 
 void writeEventOut(FILE *out, EventNode *event, const char *format, ...) {
   va_list args;

@@ -3231,9 +3231,9 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
  * Populates static event structs
  */
 #if EVENT_HANDLER
-void initEvents(char *eventFile, int numLocs) {
+void initEvents(char *eventFile, int numLocs, int printHeader) {
   events = readEventData(eventFile, numLocs);
-  eventOutFile = openEventOutFile();
+  eventOutFile = openEventOutFile(printHeader);
 }
 #endif
 

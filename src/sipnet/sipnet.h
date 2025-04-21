@@ -63,7 +63,7 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
  * @param eventFile Name of file containing event data
  * @param numLocs Number of locations in the event file.
  */
-void initEvents(char *eventFile, int numLocs);
+void initEvents(char *eventFile, int numLocs, int printHeader);
 
 // call this when done running model:
 // de-allocates space for climate linked list

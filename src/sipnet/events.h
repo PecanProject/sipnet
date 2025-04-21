@@ -80,7 +80,7 @@ struct EventNode {
  */
 EventNode **readEventData(char *eventFile, int numLocs);
 
-FILE *openEventOutFile(void);
+FILE *openEventOutFile(int printHeader);
 
 void writeEventOut(FILE *out, EventNode *event, const char *format, ...);
 

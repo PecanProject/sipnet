@@ -30,8 +30,6 @@
 // Default is run at all locations (but if doing a sens. test or monte carlo
 // run, will default to running at loc. 0)
 #define LOC (-1)
-// Make the default no printing of header files
-#define HEADER 0
 
 void usage(char *progName) {
   printf("Usage: %s [-h] [-i inputFile]\n", progName);
@@ -171,7 +169,7 @@ int main(int argc, char *argv[]) {
   numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
 
 #if EVENT_HANDLER
-  initEvents(EVENT_IN_FILE, numLocs);
+  initEvents(EVENT_IN_FILE, numLocs, printHeader);
 #endif
 
   if (doSingleOutputs) {

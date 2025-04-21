@@ -11,6 +11,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include "exitCodes.h"
 #include "util.h"
 
 // set filename = <base>.<ext>
@@ -27,7 +28,7 @@ FILE *openFile(const char *name, const char *mode) {
 
   if ((f = fopen(name, mode)) == NULL) {
     printf("Error opening %s for %s\n", name, mode);
-    exit(1);
+    exit(EXIT_CODE_FILE_OPEN_ERROR);
   }
 
   return f;
