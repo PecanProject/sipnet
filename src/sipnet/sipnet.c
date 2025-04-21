@@ -21,7 +21,7 @@
 #include "outputItems.h"
 #include "modelStructures.h"
 #include "events.h"
-#include "exitCodes.h"
+#include "common/exitCodes.h"
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)

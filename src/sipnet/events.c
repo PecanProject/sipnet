@@ -28,7 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>  // for access()
-#include "exitCodes.h"
+#include "common/exitCodes.h"
 #include "common/util.h"
 
 void printEvent(EventNode *event);
