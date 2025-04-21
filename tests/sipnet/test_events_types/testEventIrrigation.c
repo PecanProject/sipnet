@@ -35,7 +35,7 @@ int run(void) {
 
   //// ONE IRRIGATION EVENT
   // amount 5, method 1 (soil)
-  initEvents("events_one_irrig.in", numLocs);
+  initEvents("events_one_irrig.in", numLocs, 0);
   setupEvents(0);
   processEvents();
   // should have 5 going to the soil
@@ -44,7 +44,7 @@ int run(void) {
   //// TWO IRRIGATION EVENTS
   // amount 3, method 1 (soil)
   // amount 4, method 0 (canopy)
-  initEvents("events_two_irrig.in", numLocs);
+  initEvents("events_two_irrig.in", numLocs, 1);
   setupEvents(0);
   processEvents();
   // event 1: 3 to soil

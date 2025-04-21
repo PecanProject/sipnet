@@ -56,7 +56,7 @@ int run(void) {
   initEnv();
 
   //// ONE PLANTING EVENT
-  initEvents("events_one_harvest.in", numLocs);
+  initEvents("events_one_harvest.in", numLocs, 0);
   setupEvents(0);
   processEvents();
 
@@ -70,7 +70,7 @@ int run(void) {
 
   //// TWO HARVEST EVENTS
   initEnv();
-  initEvents("events_two_harvest.in", numLocs);
+  initEvents("events_two_harvest.in", numLocs, 1);
   setupEvents(0);
   processEvents();
   // First event same as above
