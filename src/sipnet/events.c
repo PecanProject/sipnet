@@ -329,8 +329,10 @@ const char *eventTypeToString(event_type_t type) {
 FILE *openEventOutFile(int printHeader) {
   FILE *eventFile = openFile(EVENT_OUT_FILE, "w");
   if (printHeader) {
-    fprintf(eventFile, "loc year day event_type param_name delta "
-                       "[...param_name delta]\n");
+    // Use format string analogous to the one in writeEventOut for
+    // better alignment (won't be perfect, but definitely better)
+    fprintf(eventFile, "%8s %4s %3s %12s %s", "loc", "year", "day",
+            "event_type", "param_name     delta [...param_name   delta]\n");
   }
   return eventFile;
 }
@@ -342,7 +344,7 @@ void writeEventOut(FILE *out, EventNode *event, const char *format, ...) {
   // loc year day event_type <param name> <delta> [...<param name> <delta>]
 
   // Standard prefix for all
-  fprintf(out, "%8d %4d %3d %s ", event->loc, event->year, event->day,
+  fprintf(out, "%8d %4d %3d %12s ", event->loc, event->year, event->day,
           eventTypeToString(event->type));
   // Variable output per event type
   va_start(args, format);
