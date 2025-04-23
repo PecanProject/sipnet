@@ -51,6 +51,12 @@ int checkOutputFile(const char *outputFile) {
 
   if (file1 == NULL || file2 == NULL) {
     printf("Error opening files\n");
+    if (file1) {
+      fclose(file1);
+    }
+    if (file2) {
+      fclose(file2);
+    }
     return 1;
   }
 
