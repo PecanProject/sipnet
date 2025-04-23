@@ -311,15 +311,15 @@ void printEvent(EventNode *event) {
 const char *eventTypeToString(event_type_t type) {
   switch (type) {
     case IRRIGATION:
-      return "IRRIGATION";
+      return "irrig";
     case PLANTING:
-      return "PLANTING";
+      return "plant";
     case HARVEST:
-      return "HARVEST";
+      return "harv";
     case FERTILIZATION:
-      return "FERTILIZATION";
+      return "fert";
     case TILLAGE:
-      return "TILLAGE";
+      return "till";
     default:
       printf("ERROR: unknown event type in eventTypeToString (%d)", type);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -331,8 +331,9 @@ FILE *openEventOutFile(int printHeader) {
   if (printHeader) {
     // Use format string analogous to the one in writeEventOut for
     // better alignment (won't be perfect, but definitely better)
-    fprintf(eventFile, "%8s %4s %3s %12s %s", "loc", "year", "day",
-            "event_type", "param_name     delta [...param_name   delta]\n");
+    fprintf(eventFile, "%3s  %4s  %3s  %-7s  %-20s %6s  %s", "loc", "year",
+            "day", "type", "param_name", "delta",
+            "[...param_name        delta]\n");
   }
   return eventFile;
 }
@@ -344,7 +345,7 @@ void writeEventOut(FILE *out, EventNode *event, const char *format, ...) {
   // loc year day event_type <param name> <delta> [...<param name> <delta>]
 
   // Standard prefix for all
-  fprintf(out, "%8d %4d %3d %12s ", event->loc, event->year, event->day,
+  fprintf(out, "%-3d  %4d  %3d  %-7s  ", event->loc, event->year, event->day,
           eventTypeToString(event->type));
   // Variable output per event type
   va_start(args, format);

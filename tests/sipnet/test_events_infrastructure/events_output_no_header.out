@@ -1,6 +1,6 @@
-       0 2024  65     PLANTING envi.plantLeafC    10.00 envi.plantWoodC     5.00 envi.fineRootC     4.00 envi.coarseRootC     3.00
-       0 2024  70   IRRIGATION envi.soilWater     5.00
-       0 2024 200      HARVEST envi.litter    12.40 envi.plantLeafC    -4.80 envi.plantWoodC    -3.20 envi.fineRootC    -4.80 envi.coarseRootC    -4.80
-       1 2024  65     PLANTING envi.plantLeafC    10.00 envi.plantWoodC     5.00 envi.fineRootC     4.00 envi.coarseRootC     3.00
-       1 2024  70   IRRIGATION fluxes.immedEvap     2.50 envi.soilWater     2.50
-       1 2024 200      HARVEST envi.litter    12.14 envi.plantLeafC   -10.32 envi.plantWoodC    -5.88 envi.fineRootC    -2.88 envi.coarseRootC    -2.48
+0    2024   65  plant    envi.plantLeafC       10.00  envi.plantWoodC        5.00  envi.fineRootC         4.00  envi.coarseRootC       3.00
+0    2024   70  irrig    envi.soilWater         5.00
+0    2024  200  harv     env.litter            12.40  envi.plantLeafC       -4.80  envi.plantWoodC       -3.20  envi.fineRootC        -4.80  envi.coarseRootC      -4.80
+1    2024   65  plant    envi.plantLeafC       10.00  envi.plantWoodC        5.00  envi.fineRootC         4.00  envi.coarseRootC       3.00
+1    2024   70  irrig    fluxes.immedEvap       2.50  envi.soilWater         2.50
+1    2024  200  harv     env.litter            12.14  envi.plantLeafC      -10.32  envi.plantWoodC       -5.88  envi.fineRootC        -2.88  envi.coarseRootC      -2.48

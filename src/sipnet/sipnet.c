@@ -2555,6 +2555,8 @@ void processEvents(void) {
              locEvent->loc, locEvent->year, locEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
+    // NOTE: for writeEventOut calls, try to stick to this format for
+    // name/value pairs: "%20s %6.2f  20s %6.2f  ..."
     switch (locEvent->type) {
       // Implementation TBD, as we enable the various event types
       case IRRIGATION: {
@@ -2569,14 +2571,14 @@ void processEvents(void) {
           // Remainder goes to the soil
           const double soilAmount = amount - evapAmount;
           envi.soilWater += soilAmount;
-          writeEventOut(eventOutFile, locEvent,
-                        "fluxes.immedEvap %8.2f envi.soilWater %8.2f\n",
-                        evapAmount, soilAmount);
+          writeEventOut(eventOutFile, locEvent, "%-20s %6.2f  %-20s %6.2f\n",
+                        "fluxes.immedEvap", evapAmount, "envi.soilWater",
+                        soilAmount);
         } else if (irrParams->method == SOIL) {
           // All goes to the soil
           envi.soilWater += amount;
-          writeEventOut(eventOutFile, locEvent, "envi.soilWater %8.2f\n",
-                        amount);
+          writeEventOut(eventOutFile, locEvent, "%-20s %6.2f\n",
+                        "envi.soilWater", amount);
         } else {
           printf("Unknown irrigation method type: %d\n", irrParams->method);
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -2598,10 +2600,10 @@ void processEvents(void) {
         // FUTURE: allocate to N pools
 
         writeEventOut(eventOutFile, locEvent,
-                      "envi.plantLeafC %8.2f envi.plantWoodC %8.2f "
-                      "envi.fineRootC %8.2f envi.coarseRootC %8.2f\n",
-                      leafC, woodC, fineRootC, coarseRootC);
-
+                      "%-20s %6.2f  %-20s %6.2f  %-20s %6.2f  %-20s %6.2f\n",
+                      "envi.plantLeafC", leafC, "envi.plantWoodC", woodC,
+                      "envi.fineRootC", fineRootC, "envi.coarseRootC",
+                      coarseRootC);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
@@ -2632,10 +2634,11 @@ void processEvents(void) {
         // FUTURE: move/remove biomass in N pools
 
         writeEventOut(eventOutFile, locEvent,
-                      "envi.litter %8.2f "
-                      "envi.plantLeafC %8.2f envi.plantWoodC %8.2f "
-                      "envi.fineRootC %8.2f envi.coarseRootC %8.2f\n",
-                      litterAdd, leafDelta, woodDelta, fineDelta, coarseDelta);
+                      "%-20s %6.2f  %-20s %6.2f  %-20s %6.2f  %-20s %6.2f  "
+                      "%-20s %6.2f\n",
+                      "env.litter", litterAdd, "envi.plantLeafC", leafDelta,
+                      "envi.plantWoodC", woodDelta, "envi.fineRootC", fineDelta,
+                      "envi.coarseRootC", coarseDelta);
       } break;
       case TILLAGE:
         // TBD
