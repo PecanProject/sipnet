@@ -1,4 +1,7 @@
 # Allow inclusion of *.c files in tests, and ease off of free() and NULL dereference checks
+# Also relax the insecure API restrictions
+InheritParentConfig: true
 Checks: '-bugprone-suspicious-include,
 -clang-analyzer-unix.Malloc,
--clang-analyzer-core.NullDereference'
+-clang-analyzer-core.NullDereference,
+-clang-analyzer-security.insecureAPI.*'

@@ -420,11 +420,11 @@ For managed ecosystems, the following inputs are provided in a file named `event
 | 4     | event_type  | type of event                      |             | one of plant, harv, till, fert, irrig |
 | 5...n | event_param | parameter associated with event    |             | see table below                       |
 
-- Agronomic events are stored in events.in, one event per row
+- Agronomic events are stored in `events.in`, one event per row
 - Events in the file are sorted first by location, and then chronologically
 - Events are specified by year and day (no hourly timestamp)
 - It is assumed that there is one (or more) records in the climate file for each location/day that appears in the events file
-  - We will throw an error if we find an event with no corresponding climate record
+  - SIPNET will throw an error if it finds an event with no corresponding climate record
 - Events are processed with the first climate record that occurs for the relevant location/day as an instantaneous one-time change
   - We may need events with duration later, spec TBD. Tillage is likely in this bucket.
 - The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required
@@ -500,7 +500,7 @@ Notes:
   - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
    - root biomass is only removed for root crops
  
-#### Example of events file:
+#### Example of events.in file:
 
 ```
 1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
@@ -510,6 +510,24 @@ Notes:
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 
+#### Events output
+
+SIPNET will create a file named `events.out` when event handling is enabled. This file 
+will have one row for each agronomic event that is processed. Each row lists location, 
+time, event type, and parameter name/value pairs for all state variables that the event
+affects. 
+
+Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
+up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
+```
+loc  year  day  type     param_name=delta[,param_name=delta,...]
+0    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
+0    2024   70  irrig    envi.soilWater=5.00
+0    2024  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
+1    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
+1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+```
 ## Outputs
 
 |    | Symbol      | Parameter Name     | Definition                     | Units       |
