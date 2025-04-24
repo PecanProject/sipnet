@@ -159,6 +159,8 @@ help:
 	@echo "  test         - Build the unit tests"
 	@echo "  testrun      - Run the unit tests"
 	@echo "  testclean    - Clean build artifacts and executables from the unit tests"
+	@echo "  cleanall     - Run both clean and testclean
+
 
 depend::
 	makedepend $(CFILES)

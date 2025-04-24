@@ -2533,12 +2533,22 @@ void updateTrackers(double oldSoilWater) {
   // step - assume linear
 }
 
-// This should be in events.h/c, but with all the global state defined in this
-// file, let's leave it here for now. Maybe someday we will factor that out.
-//
-// Process events for current location/year/day
+/*!
+ * \brief Process events for current location/year/day
+ *
+ * For a given year and day (as determined by the global `climate`
+ * pointer), process all events listed in the global `locEvents` pointer for the
+ * referenced location.
+ *
+ * For each event, modify state variables according to the model for that event,
+ * and write a row to events.out listing the modified variables and the delta
+ * applied.
+ */
 #if EVENT_HANDLER
 void processEvents(void) {
+  // This should be in events.h/c, but with all the global state defined in this
+  // file, let's leave it here for now. Maybe someday we will factor that out.
+
   // If locEvent starts off NULL, this function will just fall through, as it
   // should.
   const int year = climate->year;
@@ -2571,14 +2581,12 @@ void processEvents(void) {
           // Remainder goes to the soil
           const double soilAmount = amount - evapAmount;
           envi.soilWater += soilAmount;
-          writeEventOut(eventOutFile, locEvent, "%-20s %6.2f  %-20s %6.2f\n",
-                        "fluxes.immedEvap", evapAmount, "envi.soilWater",
-                        soilAmount);
+          writeEventOut(eventOutFile, locEvent, 2, "fluxes.immedEvap",
+                        evapAmount, "envi.soilWater", soilAmount);
         } else if (irrParams->method == SOIL) {
           // All goes to the soil
           envi.soilWater += amount;
-          writeEventOut(eventOutFile, locEvent, "%-20s %6.2f\n",
-                        "envi.soilWater", amount);
+          writeEventOut(eventOutFile, locEvent, 1, "envi.soilWater", amount);
         } else {
           printf("Unknown irrigation method type: %d\n", irrParams->method);
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -2599,11 +2607,9 @@ void processEvents(void) {
 
         // FUTURE: allocate to N pools
 
-        writeEventOut(eventOutFile, locEvent,
-                      "%-20s %6.2f  %-20s %6.2f  %-20s %6.2f  %-20s %6.2f\n",
-                      "envi.plantLeafC", leafC, "envi.plantWoodC", woodC,
-                      "envi.fineRootC", fineRootC, "envi.coarseRootC",
-                      coarseRootC);
+        writeEventOut(eventOutFile, locEvent, 4, "envi.plantLeafC", leafC,
+                      "envi.plantWoodC", woodC, "envi.fineRootC", fineRootC,
+                      "envi.coarseRootC", coarseRootC);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
@@ -2633,11 +2639,9 @@ void processEvents(void) {
 
         // FUTURE: move/remove biomass in N pools
 
-        writeEventOut(eventOutFile, locEvent,
-                      "%-20s %6.2f  %-20s %6.2f  %-20s %6.2f  %-20s %6.2f  "
-                      "%-20s %6.2f\n",
-                      "env.litter", litterAdd, "envi.plantLeafC", leafDelta,
-                      "envi.plantWoodC", woodDelta, "envi.fineRootC", fineDelta,
+        writeEventOut(eventOutFile, locEvent, 5, "env.litter", litterAdd,
+                      "envi.plantLeafC", leafDelta, "envi.plantWoodC",
+                      woodDelta, "envi.fineRootC", fineDelta,
                       "envi.coarseRootC", coarseDelta);
       } break;
       case TILLAGE:

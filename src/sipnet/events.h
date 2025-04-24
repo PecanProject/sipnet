@@ -17,8 +17,6 @@ typedef enum EventType {
   UNKNOWN_EVENT
 } event_type_t;
 
-const char *eventTypeToString(event_type_t type);
-
 typedef enum IrrigationMethod {
   CANOPY = 0,
   SOIL = 1,
@@ -71,7 +69,16 @@ struct EventNode {
   EventNode *nextEvent;
 };
 
-/* Read event data from input filename (canonically events.in)
+/*!
+ * Convert event enum value to corresponding string
+ *
+ * @param type enum value representing the event
+ * @return string version of event enum type
+ */
+const char *eventTypeToString(event_type_t type);
+
+/*!
+ * Read event data from input filename (canonically events.in)
  *
  * Format: returned data is structured as an array of EventNode pointers,
  * indexed by location. Each element of the array is the first event for that
@@ -80,10 +87,36 @@ struct EventNode {
  */
 EventNode **readEventData(char *eventFile, int numLocs);
 
+/*!
+ * Open the event output file and optionally write a header row
+ * @param printHeader Flag, non-zero value means write a header row
+ * @return FILE pointer to output file
+ */
 FILE *openEventOutFile(int printHeader);
 
-void writeEventOut(FILE *out, EventNode *event, const char *format, ...);
+/*!
+ * \brief Write a line to events.out for a single event
+ *
+ * Writes a single event to events.out. This is a variadic function which
+ * expects to receive 2*numParams values in (char*, double) pairs after the
+ * numParams argument.
+ *
+ * Output format:
+ *
+ * loc year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
+ *
+ * \param out       FILE pointer to events.out
+ * \param event     Pointer to event node
+ * \param numParams Number of param/value pairs to write
+ * \param ...       Pairs of (char*, double) arguments to write, 2*numParams
+ *                  values
+ */
+void writeEventOut(FILE *out, EventNode *event, int numParams, ...);
 
+/*!
+ * Close the event output file
+ * @param file FILE pointer for output file
+ */
 void closeEventOutFile(FILE *file);
 
 #endif  // EVENTS_H
