@@ -10,7 +10,7 @@
 \DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <string.h>}}
 \DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
 \DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <unistd.h>}\ \ \textcolor{comment}{//\ for\ access()}}
-\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}exitCodes.h"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}common/exitCodes.h"{}}}
 \DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}common/util.h"{}}}
 \DoxyCodeLine{00033\ }
 \DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ printEvent(EventNode\ *event);}
@@ -289,5 +289,55 @@
 \DoxyCodeLine{00307\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ printing\ event:\ unknown\ type\ \%d\(\backslash\)n"{}},\ event-\/>type);}
 \DoxyCodeLine{00308\ \ \ \}}
 \DoxyCodeLine{00309\ \}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeToString(event\_type\_t\ type)\ \{}
+\DoxyCodeLine{00312\ \ \ \textcolor{keywordflow}{switch}\ (type)\ \{}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}irrig"{}};}
+\DoxyCodeLine{00315\ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}plant"{}};}
+\DoxyCodeLine{00317\ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}harv"{}};}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}fert"{}};}
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}till"{}};}
+\DoxyCodeLine{00323\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ unknown\ event\ type\ in\ eventTypeToString\ (\%d)"{}},\ type);}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
+\DoxyCodeLine{00326\ \ \ \}}
+\DoxyCodeLine{00327\ \}}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ FILE\ *openEventOutFile(\textcolor{keywordtype}{int}\ printHeader)\ \{}
+\DoxyCodeLine{00330\ \ \ FILE\ *eventFile\ =\ openFile(EVENT\_OUT\_FILE,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00331\ \ \ \textcolor{keywordflow}{if}\ (printHeader)\ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{comment}{//\ Use\ format\ string\ analogous\ to\ the\ one\ in\ writeEventOut\ for}}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{comment}{//\ better\ alignment\ (won't\ be\ perfect,\ but\ definitely\ better)}}
+\DoxyCodeLine{00334\ \ \ \ \ fprintf(eventFile,\ \textcolor{stringliteral}{"{}\%3s\ \ \%4s\ \ \%3s\ \ \%-\/7s\ \ \%s"{}},\ \textcolor{stringliteral}{"{}loc"{}},\ \textcolor{stringliteral}{"{}year"{}},\ \textcolor{stringliteral}{"{}day"{}},\ \textcolor{stringliteral}{"{}type"{}},}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}param\_name=delta[,param\_name=delta,...]\(\backslash\)n"{}});}
+\DoxyCodeLine{00336\ \ \ \}}
+\DoxyCodeLine{00337\ \ \ \textcolor{keywordflow}{return}\ eventFile;}
+\DoxyCodeLine{00338\ \}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \textcolor{keywordtype}{void}\ writeEventOut(FILE\ *out,\ EventNode\ *event,\ \textcolor{keywordtype}{int}\ numParams,\ ...)\ \{}
+\DoxyCodeLine{00341\ \ \ va\_list\ args;}
+\DoxyCodeLine{00342\ \ \ \textcolor{keywordtype}{int}\ ind\ =\ 0;}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00344\ \ \ \textcolor{comment}{//\ Spec:}}
+\DoxyCodeLine{00345\ \ \ \textcolor{comment}{//\ loc\ year\ day\ event\_type\ <param\ name=delta>[,<param\ name>=<delta>,...]}}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \ \ \textcolor{comment}{//\ Standard\ prefix\ for\ all}}
+\DoxyCodeLine{00348\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\%-\/3d\ \ \%4d\ \ \%3d\ \ \%-\/7s\ \ "{}},\ event-\/>loc,\ event-\/>year,\ event-\/>day,}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ eventTypeToString(event-\/>type));}
+\DoxyCodeLine{00350\ \ \ \textcolor{comment}{//\ Variable\ output\ per\ event\ type}}
+\DoxyCodeLine{00351\ \ \ va\_start(args,\ numParams);}
+\DoxyCodeLine{00352\ \ \ \textcolor{keywordflow}{for}\ (ind\ =\ 0;\ ind\ <\ numParams\ -\/\ 1;\ ind++)\ \{}
+\DoxyCodeLine{00353\ \ \ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\%s=\%-\/.2f,"{}},\ va\_arg(args,\ \textcolor{keywordtype}{char}\ *),\ va\_arg(args,\ \textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00354\ \ \ \}}
+\DoxyCodeLine{00355\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\%s=\%-\/.2f\(\backslash\)n"{}},\ va\_arg(args,\ \textcolor{keywordtype}{char}\ *),\ va\_arg(args,\ \textcolor{keywordtype}{double}));}
+\DoxyCodeLine{00356\ \ \ va\_end(args);}
+\DoxyCodeLine{00357\ \}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00359\ \textcolor{keywordtype}{void}\ closeEventOutFile(FILE\ *file)\ \{\ fclose(file);\ \}}
 
 \end{DoxyCode}

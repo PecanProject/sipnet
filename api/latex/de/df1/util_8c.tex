@@ -6,6 +6,7 @@
 {\ttfamily \#include $<$math.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
 {\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include "{}exit\+Codes.\+h"{}}\newline
 {\ttfamily \#include "{}util.\+h"{}}\newline
 Include dependency graph for util.\+c\+:
 \nopagebreak
@@ -55,7 +56,7 @@ int \textbf{ strip\+Comment} (char $\ast$line, const char $\ast$comment\+Chars)
 
 
 
-Definition at line \textbf{ 134} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 135} of file \textbf{ util.\+c}.
 
 \label{util_8c_aaf26e57eedf3733a337d8d421ff599ef} 
 \index{util.c@{util.c}!buildFileName@{buildFileName}}
@@ -65,7 +66,7 @@ Definition at line \textbf{ 134} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 18} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 19} of file \textbf{ util.\+c}.
 
 
 
@@ -79,7 +80,7 @@ Referenced by \textbf{ main()}, and \textbf{ open\+File\+Ext()}.
 
 
 
-Definition at line \textbf{ 128} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 129} of file \textbf{ util.\+c}.
 
 
 
@@ -93,7 +94,7 @@ Referenced by \textbf{ cleanup\+Paramchange()}, \textbf{ main()}, and \textbf{ m
 
 
 
-Definition at line \textbf{ 95} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 96} of file \textbf{ util.\+c}.
 
 
 
@@ -107,7 +108,7 @@ Referenced by \textbf{ main()}, \textbf{ metropolis()}, \textbf{ read\+Data()}, 
 
 
 
-Definition at line \textbf{ 111} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 112} of file \textbf{ util.\+c}.
 
 
 
@@ -121,7 +122,7 @@ Referenced by \textbf{ read\+Data()}.
 
 
 
-Definition at line \textbf{ 82} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 83} of file \textbf{ util.\+c}.
 
 
 
@@ -135,11 +136,15 @@ Referenced by \textbf{ agged\+Difference()}, \textbf{ aggregates()}, \textbf{ di
 
 
 
-Definition at line \textbf{ 25} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 26} of file \textbf{ util.\+c}.
 
 
 
-Referenced by \textbf{ copy\+File()}, \textbf{ count\+Lines()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ open\+File\+Ext()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ read\+Chain\+Info()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Indices\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ read\+Param\+Data()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Chain\+Info()}.
+References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+FILE\+\_\+\+OPEN\+\_\+\+ERROR}.
+
+
+
+Referenced by \textbf{ copy\+File()}, \textbf{ count\+Lines()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ open\+Event\+Out\+File()}, \textbf{ open\+File\+Ext()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ read\+Chain\+Info()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Indices\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ read\+Param\+Data()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Chain\+Info()}.
 
 \label{util_8c_a4ec71fe2ea5006cccfae2cbf8ed19979} 
 \index{util.c@{util.c}!openFileExt@{openFileExt}}
@@ -149,7 +154,7 @@ Referenced by \textbf{ copy\+File()}, \textbf{ count\+Lines()}, \textbf{ main()}
 
 
 
-Definition at line \textbf{ 37} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 38} of file \textbf{ util.\+c}.
 
 
 
@@ -175,7 +180,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 71} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 72} of file \textbf{ util.\+c}.
 
 
 
@@ -189,7 +194,7 @@ Referenced by \textbf{ metropolis()}.
 
 
 
-Definition at line \textbf{ 52} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 53} of file \textbf{ util.\+c}.
 
 
 
@@ -203,7 +208,7 @@ Referenced by \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 157} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 158} of file \textbf{ util.\+c}.
 
 
 
@@ -217,7 +222,7 @@ Referenced by \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ locate\+Param(
 
 
 
-Definition at line \textbf{ 188} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 189} of file \textbf{ util.\+c}.
 
 
 
@@ -231,7 +236,7 @@ Referenced by \textbf{ read\+Namelist\+Inputs()}, and \textbf{ read\+Spatial\+Pa
 
 
 
-Definition at line \textbf{ 143} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 144} of file \textbf{ util.\+c}.
 
 
 

@@ -87,6 +87,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="../../d6/da2/namelist_input_8h_source.html">common/namelistInput.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../da/d19/spatial_params_8h_source.html">common/spatialParams.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d8/d3c/util_8h_source.html">common/util.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../de/de4/sipnet_8h_source.html">sipnet.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../da/db0/output_items_8h_source.html">outputItems.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d2/df4/model_structures_8h_source.html">modelStructures.h</a>&quot;</code><br />
@@ -95,35 +96,40 @@ Include dependency graph for frontend.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d5/d74/frontend_8c__incl.png" border="0" usemap="#afrontend_8c" alt=""/></div>
 <map name="afrontend_8c" id="afrontend_8c">
-<area shape="rect" title=" " alt="" coords="454,5,542,31"/>
-<area shape="rect" title=" " alt="" coords="590,225,657,251"/>
-<area shape="poly" title=" " alt="" coords="454,22,322,26,163,39,93,49,39,64,22,72,11,82,8,91,14,102,30,118,52,132,112,158,188,179,272,196,444,220,577,231,576,237,443,225,271,201,187,184,111,163,50,137,27,122,9,106,3,92,7,79,19,68,37,59,92,44,162,33,322,21,454,17"/>
-<area shape="rect" title=" " alt="" coords="24,79,95,104"/>
-<area shape="poly" title=" " alt="" coords="454,27,305,48,109,81,108,76,304,43,454,22"/>
-<area shape="rect" title=" " alt="" coords="119,79,190,104"/>
-<area shape="poly" title=" " alt="" coords="454,30,204,81,203,76,453,25"/>
-<area shape="rect" title=" " alt="" coords="214,79,282,104"/>
-<area shape="poly" title=" " alt="" coords="459,33,296,79,294,74,457,28"/>
-<area shape="rect" title=" " alt="" coords="306,79,381,104"/>
-<area shape="poly" title=" " alt="" coords="474,33,382,75,380,70,472,28"/>
-<area shape="rect" href="../../d6/da2/namelist_input_8h.html" title=" " alt="" coords="406,79,591,104"/>
-<area shape="poly" title=" " alt="" coords="501,31,501,65,496,65,496,31"/>
-<area shape="rect" href="../../da/d19/spatial_params_8h.html" title=" " alt="" coords="530,152,717,177"/>
-<area shape="poly" title=" " alt="" coords="544,25,589,43,610,58,627,77,634,92,636,108,633,139,628,138,631,109,629,94,623,80,607,62,587,48,542,30"/>
-<area shape="rect" href="../../d8/d3c/util_8h.html" title=" " alt="" coords="390,152,506,177"/>
-<area shape="poly" title=" " alt="" coords="535,28,566,41,594,58,610,80,611,92,606,106,591,119,566,131,508,151,506,146,564,126,588,114,601,102,606,92,605,82,590,62,563,46,533,33"/>
-<area shape="rect" href="../../de/de4/sipnet_8h.html" title=" " alt="" coords="717,79,792,104"/>
-<area shape="poly" title=" " alt="" coords="540,28,704,73,703,79,539,33"/>
-<area shape="rect" href="../../da/db0/output_items_8h.html" title=" " alt="" coords="792,152,906,177"/>
-<area shape="poly" title=" " alt="" coords="543,21,686,40,757,56,785,65,805,77,819,90,830,106,845,138,840,140,826,108,815,93,802,81,783,70,755,61,685,45,542,26"/>
-<area shape="rect" href="../../d2/df4/model_structures_8h.html" title=" " alt="" coords="866,79,1008,104"/>
-<area shape="poly" title=" " alt="" coords="543,24,853,74,853,79,542,29"/>
-<area shape="poly" title=" " alt="" coords="626,178,626,212,621,212,621,178"/>
-<area shape="poly" title=" " alt="" coords="477,175,583,218,581,222,475,180"/>
-<area shape="poly" title=" " alt="" coords="756,105,750,140,742,160,731,179,703,204,671,222,668,218,700,200,727,176,737,158,745,139,751,104"/>
-<area shape="poly" title=" " alt="" coords="735,106,658,148,655,143,732,102"/>
-<area shape="poly" title=" " alt="" coords="771,102,824,141,821,146,768,106"/>
-<area shape="poly" title=" " alt="" coords="813,180,671,225,669,220,812,175"/>
+<area shape="rect" title=" " alt="" coords="639,5,727,31"/>
+<area shape="rect" title=" " alt="" coords="291,225,357,251"/>
+<area shape="poly" title=" " alt="" coords="683,31,665,110,651,152,634,179,614,192,587,202,516,218,439,229,371,236,371,231,438,224,515,213,585,197,612,187,630,175,646,149,660,108,678,30"/>
+<area shape="rect" title=" " alt="" coords="685,79,755,104"/>
+<area shape="poly" title=" " alt="" coords="691,30,710,65,705,68,686,32"/>
+<area shape="rect" title=" " alt="" coords="779,79,850,104"/>
+<area shape="poly" title=" " alt="" coords="705,28,782,70,780,74,703,33"/>
+<area shape="rect" title=" " alt="" coords="874,79,942,104"/>
+<area shape="poly" title=" " alt="" coords="720,28,862,73,860,78,718,33"/>
+<area shape="rect" title=" " alt="" coords="967,79,1041,104"/>
+<area shape="poly" title=" " alt="" coords="728,26,953,76,952,81,726,31"/>
+<area shape="rect" href="../../d6/da2/namelist_input_8h.html" title=" " alt="" coords="1066,79,1251,104"/>
+<area shape="poly" title=" " alt="" coords="727,23,1069,74,1068,79,727,29"/>
+<area shape="rect" href="../../da/d19/spatial_params_8h.html" title=" " alt="" coords="5,152,192,177"/>
+<area shape="poly" title=" " alt="" coords="639,24,535,30,404,41,279,57,228,68,190,81,169,94,149,110,118,143,114,139,145,106,166,89,188,76,226,63,278,52,404,35,535,24,638,18"/>
+<area shape="rect" href="../../d8/d3c/util_8h.html" title=" " alt="" coords="405,152,521,177"/>
+<area shape="poly" title=" " alt="" coords="639,30,579,48,547,62,519,81,493,110,475,141,470,138,489,106,516,77,545,58,577,43,638,24"/>
+<area shape="rect" href="../../db/dd2/events_8h.html" title=" " alt="" coords="530,79,609,104"/>
+<area shape="poly" title=" " alt="" coords="666,33,601,74,598,69,663,28"/>
+<area shape="rect" href="../../de/de4/sipnet_8h.html" title=" " alt="" coords="201,79,276,104"/>
+<area shape="poly" title=" " alt="" coords="639,29,290,85,289,79,638,24"/>
+<area shape="rect" href="../../da/db0/output_items_8h.html" title=" " alt="" coords="267,152,381,177"/>
+<area shape="poly" title=" " alt="" coords="639,33,569,54,492,81,419,115,357,147,355,143,416,110,490,76,568,49,638,28"/>
+<area shape="rect" href="../../d2/df4/model_structures_8h.html" title=" " alt="" coords="1276,79,1417,104"/>
+<area shape="poly" title=" " alt="" coords="727,21,952,42,1262,76,1262,81,952,48,727,26"/>
+<area shape="poly" title=" " alt="" coords="136,175,278,220,277,225,134,180"/>
+<area shape="poly" title=" " alt="" coords="442,180,360,221,358,217,439,175"/>
+<area shape="poly" title=" " alt="" coords="554,106,493,147,490,142,551,102"/>
+<area shape="rect" title=" " alt="" coords="545,152,620,177"/>
+<area shape="poly" title=" " alt="" coords="574,104,581,138,575,139,569,105"/>
+<area shape="poly" title=" " alt="" coords="241,104,244,138,249,158,257,176,274,198,295,215,291,219,270,201,252,179,244,159,239,139,236,105"/>
+<area shape="poly" title=" " alt="" coords="217,106,135,148,132,143,215,102"/>
+<area shape="poly" title=" " alt="" coords="254,102,301,141,298,145,251,106"/>
+<area shape="poly" title=" " alt="" coords="327,178,327,212,321,212,321,178"/>
 </map>
 </div>
 </div>
@@ -143,10 +149,8 @@ Macros</h2></td></tr>
 <tr class="separator:ae4c12fc13f2b42ca16a2417a967d16c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81098b79a764bc9a91acebcf846dc70c" id="r_a81098b79a764bc9a91acebcf846dc70c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddf/frontend_8c.html#a81098b79a764bc9a91acebcf846dc70c">DO_SINGLE_OUTPUTS</a>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:a81098b79a764bc9a91acebcf846dc70c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fee446a4a4ef6536664bc1ff47ff694" id="r_a0fee446a4a4ef6536664bc1ff47ff694"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddf/frontend_8c.html#a0fee446a4a4ef6536664bc1ff47ff694">LOC</a>&#160;&#160;&#160;  (-1)</td></tr>
+<tr class="memitem:a0fee446a4a4ef6536664bc1ff47ff694" id="r_a0fee446a4a4ef6536664bc1ff47ff694"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddf/frontend_8c.html#a0fee446a4a4ef6536664bc1ff47ff694">LOC</a>&#160;&#160;&#160;(-1)</td></tr>
 <tr class="separator:a0fee446a4a4ef6536664bc1ff47ff694"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7770a7f0d95e67620ff6ed347a07a56" id="r_ab7770a7f0d95e67620ff6ed347a07a56"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/ddf/frontend_8c.html#ab7770a7f0d95e67620ff6ed347a07a56">HEADER</a>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:ab7770a7f0d95e67620ff6ed347a07a56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -168,7 +172,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00027">27</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00028">28</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
 </div>
 </div>
@@ -184,7 +188,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00028">28</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00029">29</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
 </div>
 </div>
@@ -200,23 +204,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00023">23</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
-
-</div>
-</div>
-<a id="ab7770a7f0d95e67620ff6ed347a07a56" name="ab7770a7f0d95e67620ff6ed347a07a56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7770a7f0d95e67620ff6ed347a07a56">&#9670;&#160;</a></span>HEADER</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HEADER&#160;&#160;&#160;0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">32</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00024">24</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
 </div>
 </div>
@@ -232,7 +220,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00026">26</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00027">27</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
 </div>
 </div>
@@ -248,7 +236,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00025">25</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00026">26</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
 </div>
 </div>
@@ -259,12 +247,12 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LOC&#160;&#160;&#160;  (-1)</td>
+          <td class="memname">#define LOC&#160;&#160;&#160;(-1)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00029">29</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">32</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
 </div>
 </div>
@@ -280,7 +268,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00024">24</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00025">25</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
 </div>
 </div>
@@ -313,129 +301,130 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00041">41</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00096">addNamelistInputItem()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03197">cleanupModel()</a>, <a class="el" href="../../dd/d66/output_items_8c_source.html#l00152">deleteOutputItems()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00754">deleteSpatialParams()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00238">dieIfNotRead()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00260">dieIfNotSet()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00027">DO_MAIN_OUTPUT</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00028">DO_SINGLE_OUTPUTS</a>, <a class="el" href="../../d6/da2/namelist_input_8h_source.html#l00011">DOUBLE_TYPE</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00023">FILE_MAXNAME</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00128">free2DArray()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">HEADER</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03189">initEvents()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03165">initModel()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00026">INPUT_FILE</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00025">INPUT_MAXNAME</a>, <a class="el" href="../../d6/da2/namelist_input_8h_source.html#l00011">INT_TYPE</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00029">LOC</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00377">locateParam()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00095">make2DArray()</a>, <a class="el" href="../../de/de4/sipnet_8h_source.html#l00022">MAX_DATA_TYPES</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00072">newNamelistInputs()</a>, <a class="el" href="../../dd/d66/output_items_8c_source.html#l00072">newOutputItems()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">numLocs</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00025">openFile()</a>, <a class="el" href="../../da/d19/spatial_params_8h_source.html#l00009">PARAM_MAXNAME</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00119">readNamelistInputs()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02920">runModelNoOut()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02867">runModelOutput()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00024">RUNTYPE_MAXNAME</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02956">sensTest()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00439">setSpatialParam()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03140">setupOutputItems()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00157">strcmpIgnoreCase()</a>, <a class="el" href="../../d6/da2/namelist_input_8h_source.html#l00011">STRING_TYPE</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00034">usage()</a>.</p>
+<p class="reference">References <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00096">addNamelistInputItem()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03250">cleanupModel()</a>, <a class="el" href="../../dd/d66/output_items_8c_source.html#l00152">deleteOutputItems()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00754">deleteSpatialParams()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00238">dieIfNotRead()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00260">dieIfNotSet()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00028">DO_MAIN_OUTPUT</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00029">DO_SINGLE_OUTPUTS</a>, <a class="el" href="../../d6/da2/namelist_input_8h_source.html#l00011">DOUBLE_TYPE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00008">EVENT_IN_FILE</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00024">FILE_MAXNAME</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00129">free2DArray()</a>, <a class="el" href="../../d2/df4/model_structures_8h_source.html#l00028">HEADER</a>, <a class="el" href="../../de/de4/sipnet_8h.html#a18ce55b6c4cc0f8fc4d0b5af670e8048">initEvents()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03217">initModel()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00027">INPUT_FILE</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00026">INPUT_MAXNAME</a>, <a class="el" href="../../d6/da2/namelist_input_8h_source.html#l00011">INT_TYPE</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">LOC</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00377">locateParam()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00096">make2DArray()</a>, <a class="el" href="../../de/de4/sipnet_8h_source.html#l00022">MAX_DATA_TYPES</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00072">newNamelistInputs()</a>, <a class="el" href="../../dd/d66/output_items_8c_source.html#l00072">newOutputItems()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">numLocs</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>, <a class="el" href="../../da/d19/spatial_params_8h_source.html#l00009">PARAM_MAXNAME</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00119">readNamelistInputs()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02972">runModelNoOut()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02919">runModelOutput()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00025">RUNTYPE_MAXNAME</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03008">sensTest()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00439">setSpatialParam()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03192">setupOutputItems()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00158">strcmpIgnoreCase()</a>, <a class="el" href="../../d6/da2/namelist_input_8h_source.html#l00011">STRING_TYPE</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00034">usage()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph.png" border="0" usemap="#ad9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph" alt=""/></div>
 <map name="ad9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph" id="ad9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph">
-<area shape="rect" title=" " alt="" coords="5,531,60,556"/>
+<area shape="rect" title=" " alt="" coords="5,532,60,557"/>
 <area shape="rect" href="../../de/d51/namelist_input_8c.html#ad016a2850c4d6d86e1bf8e1291846844" title=" " alt="" coords="108,5,276,31"/>
-<area shape="poly" title=" " alt="" coords="31,530,34,435,44,288,53,211,66,140,83,81,106,40,109,37,113,41,110,44,88,83,71,141,58,212,49,288,39,435,37,530"/>
+<area shape="poly" title=" " alt="" coords="31,532,34,436,44,288,53,211,66,140,83,81,106,40,109,37,113,41,110,44,88,83,71,141,58,212,49,289,39,436,37,532"/>
 <area shape="rect" href="../../dd/d09/sipnet_8c.html#a08ec54c820e36b47473164178295a1a8" title=" " alt="" coords="135,104,249,129"/>
-<area shape="poly" title=" " alt="" coords="32,530,37,452,50,334,72,217,87,171,106,139,121,127,124,131,110,142,92,173,77,219,55,335,42,452,37,531"/>
+<area shape="poly" title=" " alt="" coords="32,532,37,453,50,335,72,218,87,171,106,139,121,127,124,131,110,142,92,173,77,219,55,336,42,453,37,532"/>
 <area shape="rect" href="../../dd/d66/output_items_8c.html#a374d66f4329d8e3f3973fcc3e06850d2" title=" " alt="" coords="120,153,264,179"/>
-<area shape="poly" title=" " alt="" coords="32,530,39,460,53,358,75,256,89,216,106,188,109,185,113,189,110,192,94,218,80,258,58,359,44,461,38,531"/>
+<area shape="poly" title=" " alt="" coords="32,532,39,461,53,358,74,256,89,216,106,188,109,185,113,189,110,192,94,218,80,258,58,359,44,462,38,532"/>
 <area shape="rect" href="../../dd/dda/spatial_params_8c.html#a404edabdefb1ee943ba2b58f9c0dac37" title=" " alt="" coords="114,203,270,228"/>
-<area shape="poly" title=" " alt="" coords="31,530,31,479,39,404,48,362,62,320,81,281,106,246,122,232,126,236,110,249,85,284,67,322,53,363,44,404,36,479,36,530"/>
-<area shape="rect" href="../../de/d51/namelist_input_8c.html#ab1d47aa92c7e147232c807e5398f71b2" title=" " alt="" coords="357,303,463,328"/>
-<area shape="poly" title=" " alt="" coords="32,530,35,492,46,439,68,385,85,360,106,340,133,323,163,310,225,297,288,295,343,300,343,305,288,300,226,302,164,315,136,328,110,344,89,364,73,387,51,441,40,492,37,530"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a46c453b73f4e8cd62264e4bfe8b6ae05" title=" " alt="" coords="787,353,927,379"/>
-<area shape="poly" title=" " alt="" coords="31,531,31,486,40,422,49,388,63,355,81,325,106,300,130,286,161,276,237,266,329,268,430,278,534,293,633,312,793,347,792,353,632,317,533,298,429,283,329,273,237,272,162,281,132,291,110,304,86,328,67,358,54,390,45,423,37,486,36,531"/>
+<area shape="poly" title=" " alt="" coords="31,531,31,480,39,404,48,362,62,321,81,281,106,246,122,232,126,236,110,249,85,284,66,323,53,364,44,405,36,480,36,531"/>
+<area shape="rect" href="../../de/d51/namelist_input_8c.html#ab1d47aa92c7e147232c807e5398f71b2" title=" " alt="" coords="357,304,463,329"/>
+<area shape="poly" title=" " alt="" coords="32,531,35,493,46,440,68,385,85,361,106,340,133,323,163,310,225,297,288,296,343,301,343,306,288,301,226,303,164,316,136,328,110,344,89,364,73,388,51,441,40,493,37,532"/>
+<area shape="rect" href="../../de/df1/util_8c.html#a46c453b73f4e8cd62264e4bfe8b6ae05" title=" " alt="" coords="972,355,1112,380"/>
+<area shape="poly" title=" " alt="" coords="31,531,32,486,41,423,50,389,64,356,82,326,106,300,144,273,179,257,213,250,247,249,320,257,409,263,643,263,694,266,745,272,845,294,933,322,1000,347,998,352,931,327,843,299,744,278,693,271,643,269,409,269,319,262,246,254,213,255,180,262,146,278,110,304,86,329,68,359,55,391,46,424,37,487,36,532"/>
 <area shape="rect" href="../../de/d51/namelist_input_8c.html#a772ff58a00c37e6ab6deb3adf4c80961" title=" " alt="" coords="145,355,239,380"/>
-<area shape="poly" title=" " alt="" coords="35,530,57,468,78,430,106,397,130,382,133,386,110,401,83,433,62,470,40,532"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a7611ac8af983ccdaaadddb7de7b53c2b" title=" " alt="" coords="141,884,243,909"/>
-<area shape="poly" title=" " alt="" coords="38,556,46,620,61,712,82,803,96,839,110,863,130,879,127,883,106,866,91,841,77,805,56,713,41,621,33,557"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#ad1341f3c91e77edfdb22320c7ba3ee77" title=" " alt="" coords="149,505,235,531"/>
-<area shape="poly" title=" " alt="" coords="60,536,135,524,135,530,61,542"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="603,603,680,628"/>
-<area shape="poly" title=" " alt="" coords="60,543,243,562,496,591,589,605,588,610,496,597,242,567,60,548"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#aab8396814fda2fdceeb284a7dca28fae" title=" " alt="" coords="151,631,233,656"/>
-<area shape="poly" title=" " alt="" coords="56,554,161,621,158,625,53,559"/>
-<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a2a4b342160164bbdc0fbca380e77388e" title=" " alt="" coords="141,456,243,481"/>
-<area shape="poly" title=" " alt="" coords="48,528,75,509,107,490,126,482,128,487,109,495,78,513,51,533"/>
-<area shape="rect" href="../../de/df1/util_8c.html#acfd51a4f4e38b658d40ac54b748a9b49" title=" " alt="" coords="137,933,247,959"/>
-<area shape="poly" title=" " alt="" coords="37,556,43,630,57,739,78,848,93,890,110,919,125,931,122,935,106,922,88,893,73,849,51,740,38,631,32,556"/>
+<area shape="poly" title=" " alt="" coords="35,531,57,468,78,431,106,397,130,382,133,386,110,401,83,434,62,470,40,533"/>
+<area shape="rect" href="../../de/df1/util_8c.html#a7611ac8af983ccdaaadddb7de7b53c2b" title=" " alt="" coords="141,811,243,836"/>
+<area shape="poly" title=" " alt="" coords="37,558,40,601,50,663,72,730,89,762,110,789,130,805,127,809,106,793,84,764,67,732,45,664,34,602,31,558"/>
+<area shape="rect" href="../../de/de4/sipnet_8h.html#a18ce55b6c4cc0f8fc4d0b5af670e8048" title=" " alt="" coords="149,860,235,885"/>
+<area shape="poly" title=" " alt="" coords="38,557,46,618,61,705,83,790,96,823,110,846,122,855,136,862,134,867,119,860,106,849,91,826,78,792,56,706,41,619,33,558"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#aab8396814fda2fdceeb284a7dca28fae" title=" " alt="" coords="151,557,233,583"/>
+<area shape="poly" title=" " alt="" coords="61,546,137,559,136,564,60,552"/>
+<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="603,507,680,532"/>
+<area shape="poly" title=" " alt="" coords="60,541,589,519,589,524,60,546"/>
+<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a2a4b342160164bbdc0fbca380e77388e" title=" " alt="" coords="804,405,907,431"/>
+<area shape="poly" title=" " alt="" coords="40,530,66,496,85,479,107,465,164,445,242,431,334,422,434,416,634,411,790,413,790,419,634,417,435,421,335,427,243,437,166,451,109,470,89,483,70,500,44,533"/>
+<area shape="rect" href="../../de/df1/util_8c.html#acfd51a4f4e38b658d40ac54b748a9b49" title=" " alt="" coords="137,909,247,935"/>
+<area shape="poly" title=" " alt="" coords="38,557,44,627,58,729,80,829,94,868,110,895,125,907,122,911,106,898,89,871,75,831,53,729,39,627,32,558"/>
 <area shape="rect" href="../../de/d51/namelist_input_8c.html#aa508764797a7169c15ea87aeda6ae41d" title=" " alt="" coords="118,55,266,80"/>
-<area shape="poly" title=" " alt="" coords="32,530,36,443,47,311,56,242,69,178,85,126,106,90,109,86,113,90,110,93,90,128,74,180,61,243,52,311,41,443,37,530"/>
-<area shape="rect" href="../../dd/d66/output_items_8c.html#af48aa4e86a751aa76c9a108ffa5a1858" title=" " alt="" coords="127,983,257,1008"/>
-<area shape="poly" title=" " alt="" coords="37,556,42,639,54,763,63,827,76,887,91,935,110,968,117,974,113,978,106,972,86,938,70,888,58,828,48,763,36,639,32,556"/>
-<area shape="rect" href="../../de/d51/namelist_input_8c.html#aaa1a0ee6f8039a9093a037dabd221f02" title=" " alt="" coords="335,404,485,429"/>
-<area shape="poly" title=" " alt="" coords="37,529,62,485,82,460,107,441,159,419,215,407,270,403,321,403,321,409,270,408,215,412,161,424,109,446,85,464,66,488,42,532"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#a2ac1d1cf6a1203f72d581617a9618026" title=" " alt="" coords="348,804,472,829"/>
-<area shape="poly" title=" " alt="" coords="41,555,65,608,85,639,110,665,131,680,152,688,192,695,232,701,254,710,278,724,294,741,302,758,310,774,326,789,337,796,334,801,322,793,306,777,297,760,289,744,274,728,252,714,231,707,191,700,150,694,129,685,106,669,80,642,60,611,36,557"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#a3dbfe6f24ba0a4169fce31f6b0363638" title=" " alt="" coords="347,877,473,903"/>
-<area shape="poly" title=" " alt="" coords="38,556,44,590,56,635,77,683,92,705,110,724,130,738,150,745,190,748,232,749,254,755,278,768,295,785,304,803,311,820,326,839,369,869,366,873,322,843,307,823,299,805,291,788,274,772,252,760,231,754,190,753,149,751,128,743,106,728,88,708,73,686,51,637,38,591,33,557"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#a1b37e0be44561cca24782fbd2e6a1689" title=" " alt="" coords="153,783,231,808"/>
-<area shape="poly" title=" " alt="" coords="37,556,42,595,53,650,75,709,90,737,110,761,124,773,141,781,139,786,121,777,106,765,86,740,70,712,48,651,36,596,32,556"/>
-<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a16ba110c016f1bf915e2cb39aa044b96" title=" " alt="" coords="346,1007,474,1032"/>
-<area shape="poly" title=" " alt="" coords="36,556,37,605,45,675,54,713,67,751,86,786,110,817,130,833,150,841,191,844,234,846,256,854,278,869,291,886,298,903,302,936,306,968,313,983,326,997,335,1004,332,1008,322,1001,308,985,301,969,297,936,293,904,287,889,274,873,253,858,233,851,191,849,149,846,127,838,106,821,81,789,63,753,49,715,40,676,31,605,31,556"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#af9ce545d20f3285ad314db7ce52ee054" title=" " alt="" coords="123,1032,261,1057"/>
-<area shape="poly" title=" " alt="" coords="37,556,40,647,51,786,60,859,73,925,89,980,110,1018,114,1022,111,1026,106,1021,84,983,68,927,55,860,46,787,35,647,32,556"/>
-<area shape="rect" href="../../d9/ddf/frontend_8c.html#af3fc073cbe5282a8dcb2a1380512b3e8" title=" " alt="" coords="161,1081,223,1107"/>
-<area shape="poly" title=" " alt="" coords="37,556,39,656,48,810,57,890,70,964,88,1026,98,1049,110,1067,127,1080,149,1088,147,1093,125,1085,106,1070,94,1052,83,1028,65,966,52,891,43,810,33,656,31,557"/>
+<area shape="poly" title=" " alt="" coords="32,531,35,444,47,311,56,242,69,179,85,126,106,90,109,86,113,90,110,93,90,128,74,180,61,243,52,312,41,444,37,532"/>
+<area shape="rect" href="../../dd/d66/output_items_8c.html#af48aa4e86a751aa76c9a108ffa5a1858" title=" " alt="" coords="127,959,257,984"/>
+<area shape="poly" title=" " alt="" coords="37,557,43,636,55,752,77,868,92,914,110,944,117,950,113,954,106,948,87,916,72,869,50,753,37,636,32,558"/>
+<area shape="rect" href="../../de/d51/namelist_input_8c.html#aaa1a0ee6f8039a9093a037dabd221f02" title=" " alt="" coords="335,456,485,481"/>
+<area shape="poly" title=" " alt="" coords="49,530,75,513,107,498,161,484,217,474,321,466,321,471,218,479,162,489,109,503,78,517,52,534"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#a2ac1d1cf6a1203f72d581617a9618026" title=" " alt="" coords="348,757,472,783"/>
+<area shape="poly" title=" " alt="" coords="52,555,109,592,156,608,196,615,235,624,256,635,278,651,295,673,303,696,309,718,326,739,342,749,339,754,322,743,305,720,297,697,291,676,274,655,253,639,233,629,195,620,155,613,107,596,49,560"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#a3dbfe6f24ba0a4169fce31f6b0363638" title=" " alt="" coords="347,852,473,877"/>
+<area shape="poly" title=" " alt="" coords="42,556,66,603,86,629,110,650,132,663,153,669,193,670,234,673,255,680,278,695,297,718,305,742,312,766,326,792,352,819,380,842,376,846,348,823,322,796,307,768,300,743,293,721,274,699,253,685,233,678,193,676,152,674,130,668,106,655,82,632,62,606,37,559"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#a1b37e0be44561cca24782fbd2e6a1689" title=" " alt="" coords="153,709,231,735"/>
+<area shape="poly" title=" " alt="" coords="40,557,62,619,83,656,110,688,141,707,138,711,106,692,78,659,57,621,35,558"/>
+<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a16ba110c016f1bf915e2cb39aa044b96" title=" " alt="" coords="346,981,474,1007"/>
+<area shape="poly" title=" " alt="" coords="38,557,42,594,54,644,76,698,91,722,110,744,131,759,151,766,193,768,235,771,257,780,278,796,294,819,302,842,302,887,302,930,310,951,326,972,336,979,332,984,322,976,305,954,297,931,297,887,296,843,289,821,274,800,254,784,234,776,193,774,150,772,128,764,106,748,87,726,71,700,49,646,37,595,32,558"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#af9ce545d20f3285ad314db7ce52ee054" title=" " alt="" coords="123,1008,261,1033"/>
+<area shape="poly" title=" " alt="" coords="37,558,41,644,52,776,62,844,74,907,90,959,110,994,115,998,111,1002,106,997,85,961,69,908,57,845,47,776,36,645,32,558"/>
+<area shape="rect" href="../../d9/ddf/frontend_8c.html#af3fc073cbe5282a8dcb2a1380512b3e8" title=" " alt="" coords="161,1057,223,1083"/>
+<area shape="poly" title=" " alt="" coords="37,558,39,653,49,799,59,875,72,946,89,1004,110,1043,128,1056,149,1064,147,1069,125,1061,106,1046,84,1006,66,947,53,876,44,799,34,653,31,558"/>
 <area shape="rect" href="../../de/d51/namelist_input_8c.html#acb2ba057fb8ca7fafc5fc8fae20a0fed" title=" " alt="" coords="325,5,495,31"/>
 <area shape="poly" title=" " alt="" coords="277,15,311,15,311,21,277,21"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a9751770959684fd1795afaa844e7f132" title=" " alt="" coords="341,55,479,80"/>
+<area shape="poly" title=" " alt="" coords="248,101,339,80,340,86,249,107"/>
 <area shape="rect" href="../../d5/d1f/runmean_8c.html#ac19d52df9855de7455e094c7d9b11e79" title=" " alt="" coords="324,104,496,129"/>
 <area shape="poly" title=" " alt="" coords="249,114,310,114,310,119,249,119"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#ab780d817ab18239d11a00ce186690aac" title=" " alt="" coords="349,55,471,80"/>
-<area shape="poly" title=" " alt="" coords="248,101,339,80,340,86,249,107"/>
-<area shape="rect" href="../../dd/d66/output_items_8c.html#a8ec899fb3e0b216b4f5a01aaf8232c9a" title=" " alt="" coords="333,153,487,179"/>
-<area shape="poly" title=" " alt="" coords="264,163,319,163,319,169,264,169"/>
-<area shape="rect" href="../../de/d51/namelist_input_8c.html#a1760d913193d3c293fc6151bb823a2f2" title=" " alt="" coords="549,353,733,379"/>
-<area shape="poly" title=" " alt="" coords="464,324,570,348,569,353,463,330"/>
-<area shape="poly" title=" " alt="" coords="733,363,772,363,772,369,733,369"/>
-<area shape="poly" title=" " alt="" coords="239,354,343,328,344,334,240,359"/>
-<area shape="poly" title=" " alt="" coords="239,365,535,364,536,369,239,370"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a23276d1145e6335ce7579bbbd6c27404" title=" " alt="" coords="351,505,469,531"/>
-<area shape="poly" title=" " alt="" coords="235,515,337,515,337,521,235,521"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a3145169f83f9dc878adef2f12da419af" title=" " alt="" coords="574,504,709,529"/>
-<area shape="poly" title=" " alt="" coords="470,515,560,514,560,520,470,520"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a4314c765f6bbd615a94286919f475f41" title=" " alt="" coords="586,553,697,579"/>
-<area shape="poly" title=" " alt="" coords="470,528,573,549,572,554,469,533"/>
-<area shape="poly" title=" " alt="" coords="455,528,497,548,522,569,531,578,545,588,590,604,588,609,543,592,528,582,518,572,495,552,452,533"/>
-<area shape="rect" href="../../d5/d1f/runmean_8c.html#a05982cf71148e3b1c4d8a2a14e0c93ab" title=" " alt="" coords="345,755,475,780"/>
-<area shape="poly" title=" " alt="" coords="235,651,257,660,278,673,294,691,302,708,310,724,326,740,337,747,334,751,322,744,306,727,297,710,289,694,274,677,254,665,233,656"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#a7f73f9d495f52b35feaaaf9a471370ae" title=" " alt="" coords="354,607,466,632"/>
-<area shape="poly" title=" " alt="" coords="234,636,340,624,340,630,234,641"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#a28969b6887eee8f92820233b3738e879" title=" " alt="" coords="349,705,471,731"/>
-<area shape="poly" title=" " alt="" coords="227,654,325,690,352,699,350,704,323,695,225,659"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#ab780d817ab18239d11a00ce186690aac" title=" " alt="" coords="349,153,471,179"/>
+<area shape="poly" title=" " alt="" coords="249,127,340,148,339,153,248,132"/>
+<area shape="rect" href="../../dd/d66/output_items_8c.html#a8ec899fb3e0b216b4f5a01aaf8232c9a" title=" " alt="" coords="333,203,487,228"/>
+<area shape="poly" title=" " alt="" coords="249,176,340,197,339,202,248,181"/>
+<area shape="rect" href="../../de/d51/namelist_input_8c.html#a1760d913193d3c293fc6151bb823a2f2" title=" " alt="" coords="549,355,733,380"/>
+<area shape="poly" title=" " alt="" coords="464,326,570,349,569,354,463,331"/>
+<area shape="poly" title=" " alt="" coords="733,365,958,365,958,370,733,370"/>
+<area shape="poly" title=" " alt="" coords="239,354,342,330,344,335,240,359"/>
+<area shape="poly" title=" " alt="" coords="239,365,536,365,536,370,239,370"/>
+<area shape="rect" href="../../d5/d1f/runmean_8c.html#a05982cf71148e3b1c4d8a2a14e0c93ab" title=" " alt="" coords="576,704,707,729"/>
+<area shape="poly" title=" " alt="" coords="235,577,257,586,278,600,295,624,301,649,308,671,314,681,326,690,353,705,382,717,444,729,506,732,562,728,562,733,506,737,444,735,381,722,351,710,322,695,310,685,303,673,296,650,290,627,274,604,254,591,232,582"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#a7f73f9d495f52b35feaaaf9a471370ae" title=" " alt="" coords="354,557,466,583"/>
+<area shape="poly" title=" " alt="" coords="234,567,340,567,340,573,234,573"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#a28969b6887eee8f92820233b3738e879" title=" " alt="" coords="349,607,471,632"/>
+<area shape="poly" title=" " alt="" coords="234,577,341,601,340,606,233,582"/>
 <area shape="rect" href="../../dd/d09/sipnet_8c.html#a71bf09e1fcb91e2c9943759635f763f0" title=" " alt="" coords="333,656,487,681"/>
-<area shape="poly" title=" " alt="" coords="234,645,319,655,319,661,234,651"/>
-<area shape="rect" href="../../d5/d1f/runmean_8c.html#aafa097eaf82986761f1920d2a1ed2457" title=" " alt="" coords="788,728,925,753"/>
-<area shape="poly" title=" " alt="" coords="462,752,544,738,665,732,774,734,774,739,665,737,544,743,463,757"/>
-<area shape="poly" title=" " alt="" coords="466,616,589,614,589,619,466,621"/>
-<area shape="poly" title=" " alt="" coords="468,703,495,690,509,678,518,664,527,650,543,637,565,626,589,620,590,625,567,631,545,642,531,654,522,667,513,681,497,695,470,708"/>
-<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a61c1fad867fe86d423ffdc201d9b2005" title=" " alt="" coords="546,652,737,677"/>
-<area shape="poly" title=" " alt="" coords="465,703,572,678,573,683,467,708"/>
-<area shape="poly" title=" " alt="" coords="244,472,338,478,462,478,531,474,601,467,671,455,738,437,788,413,829,385,832,389,790,418,740,442,672,460,602,472,531,480,462,484,338,483,244,477"/>
+<area shape="poly" title=" " alt="" coords="235,580,277,600,302,621,311,631,325,641,342,649,340,654,323,646,308,635,298,625,275,604,233,585"/>
+<area shape="rect" href="../../d5/d1f/runmean_8c.html#aafa097eaf82986761f1920d2a1ed2457" title=" " alt="" coords="787,704,924,729"/>
+<area shape="poly" title=" " alt="" coords="707,714,773,714,773,719,707,719"/>
+<area shape="poly" title=" " alt="" coords="466,555,589,528,590,533,467,560"/>
+<area shape="poly" title=" " alt="" coords="468,604,495,592,509,580,518,567,527,554,543,541,565,531,589,524,590,529,567,536,545,546,531,557,522,570,513,583,497,596,470,609"/>
+<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a61c1fad867fe86d423ffdc201d9b2005" title=" " alt="" coords="546,605,737,631"/>
+<area shape="poly" title=" " alt="" coords="471,616,532,616,532,621,471,622"/>
+<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a77573adc76bc4953dfce8c93b7c48d2e" title=" " alt="" coords="570,655,713,680"/>
+<area shape="poly" title=" " alt="" coords="472,629,567,649,566,654,471,635"/>
+<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a86ceba1ec7971125c1acfbd00b866193" title=" " alt="" coords="569,556,713,581"/>
+<area shape="poly" title=" " alt="" coords="468,604,569,582,570,587,470,609"/>
+<area shape="poly" title=" " alt="" coords="710,553,737,541,831,439,835,443,740,545,712,558"/>
+<area shape="rect" href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4" title=" " alt="" coords="798,507,913,532"/>
+<area shape="poly" title=" " alt="" coords="696,553,785,533,787,538,698,559"/>
+<area shape="poly" title=" " alt="" coords="902,403,981,381,982,386,904,408"/>
 <area shape="poly" title=" " alt="" coords="248,52,339,31,340,36,249,57"/>
-<area shape="rect" href="../../dd/d66/output_items_8c.html#af6f19a742a9ffe4e26766e24b1cc8bbe" title=" " alt="" coords="560,1249,723,1275"/>
-<area shape="poly" title=" " alt="" coords="250,1006,277,1017,329,1057,412,1127,494,1197,545,1236,561,1242,559,1247,543,1240,491,1201,408,1131,326,1061,275,1022,248,1011"/>
-<area shape="poly" title=" " alt="" coords="468,401,569,379,570,384,470,406"/>
-<area shape="poly" title=" " alt="" coords="431,428,464,455,498,491,513,519,519,544,527,566,546,588,566,600,590,608,588,613,564,605,542,592,523,569,514,545,508,521,494,494,461,459,428,432"/>
-<area shape="rect" href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4" title=" " alt="" coords="584,403,699,428"/>
-<area shape="poly" title=" " alt="" coords="486,414,570,413,570,418,486,419"/>
+<area shape="rect" href="../../dd/d66/output_items_8c.html#af6f19a742a9ffe4e26766e24b1cc8bbe" title=" " alt="" coords="560,1200,723,1225"/>
+<area shape="poly" title=" " alt="" coords="247,982,277,993,356,1036,413,1077,469,1120,545,1168,596,1192,594,1197,543,1172,466,1125,410,1082,353,1040,275,998,245,987"/>
+<area shape="poly" title=" " alt="" coords="439,453,597,383,600,388,441,458"/>
+<area shape="poly" title=" " alt="" coords="470,479,590,505,588,511,468,484"/>
+<area shape="poly" title=" " alt="" coords="486,469,605,477,739,491,791,501,790,506,738,497,605,482,486,474"/>
 <area shape="rect" href="../../dd/d09/sipnet_8c.html#a0efad227d8e097ade293ef92ec87b26e" title=" " alt="" coords="592,753,691,779"/>
-<area shape="poly" title=" " alt="" coords="468,801,578,777,579,782,470,806"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#a972eedbc68ae911757b8efa8952aa1fc" title=" " alt="" coords="591,803,692,828"/>
-<area shape="poly" title=" " alt="" coords="472,814,577,813,577,818,472,819"/>
-<area shape="poly" title=" " alt="" coords="691,758,774,748,775,753,691,763"/>
-<area shape="poly" title=" " alt="" coords="436,875,494,839,508,825,517,812,527,800,543,788,577,773,579,778,545,792,530,804,521,816,512,829,498,843,439,880"/>
-<area shape="poly" title=" " alt="" coords="441,875,543,837,577,827,578,832,545,842,442,880"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#afe7a3ea0ba3ae1f21f777e75be954d88" title=" " alt="" coords="586,852,697,877"/>
-<area shape="poly" title=" " alt="" coords="474,880,572,870,573,875,474,886"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#aafb7702a7e224d9e8402df7a2ca700b3" title=" " alt="" coords="592,901,691,927"/>
-<area shape="poly" title=" " alt="" coords="474,894,579,905,578,910,474,899"/>
-<area shape="rect" href="../../dd/d09/sipnet_8c.html#a1e56442b92cdc1caea3ed264ddf30076" title=" " alt="" coords="590,951,693,976"/>
-<area shape="poly" title=" " alt="" coords="445,900,545,935,578,945,576,950,543,941,443,905"/>
+<area shape="poly" title=" " alt="" coords="472,766,578,764,578,770,472,772"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#a972eedbc68ae911757b8efa8952aa1fc" title="Process events for current location/year/day." alt="" coords="591,803,692,828"/>
+<area shape="poly" title=" " alt="" coords="473,779,578,800,577,806,471,785"/>
+<area shape="poly" title=" " alt="" coords="691,752,785,730,787,735,692,757"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#a70c224b11abdbdbb4632a547ef459fff" title=" " alt="" coords="790,753,921,779"/>
+<area shape="poly" title=" " alt="" coords="691,763,776,763,776,769,691,769"/>
+<area shape="poly" title=" " alt="" coords="429,850,479,819,543,788,578,776,580,781,545,792,482,823,432,854"/>
+<area shape="poly" title=" " alt="" coords="470,849,577,826,578,831,471,855"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#afe7a3ea0ba3ae1f21f777e75be954d88" title=" " alt="" coords="586,901,697,927"/>
+<area shape="poly" title=" " alt="" coords="471,875,573,897,572,902,470,880"/>
+<area shape="rect" href="../../dd/d09/sipnet_8c.html#aafb7702a7e224d9e8402df7a2ca700b3" title=" " alt="" coords="592,951,691,976"/>
+<area shape="poly" title=" " alt="" coords="441,875,497,904,521,921,545,936,579,948,578,953,543,940,518,925,495,908,438,880"/>
 <area shape="rect" href="../../dd/d66/output_items_8c.html#a8da9d880bfb3d75694f0bd0331da4e95" title=" " alt="" coords="544,1000,739,1025"/>
-<area shape="poly" title=" " alt="" coords="446,900,472,913,498,929,513,944,522,959,530,972,545,985,559,992,557,997,543,990,526,976,517,962,508,948,494,933,470,918,444,905"/>
-<area shape="rect" href="../../dd/d66/output_items_8c.html#a9b5ff0c7305b5b130b961610f78fcb5b" title=" " alt="" coords="556,1099,727,1124"/>
-<area shape="poly" title=" " alt="" coords="455,900,478,912,498,930,512,950,519,971,521,1010,524,1048,531,1066,546,1084,552,1089,549,1093,542,1088,527,1069,519,1049,515,1011,513,972,507,953,494,933,475,917,452,905"/>
-<area shape="rect" href="../../dd/d66/output_items_8c.html#aff124e2cd99c03e515ec36d64ba3b306" title=" " alt="" coords="555,1049,727,1075"/>
-<area shape="poly" title=" " alt="" coords="452,900,476,913,498,929,509,944,516,958,521,985,527,1010,534,1023,546,1035,554,1041,551,1045,542,1039,530,1026,522,1012,516,986,511,960,504,946,494,933,473,917,450,905"/>
-<area shape="poly" title=" " alt="" coords="229,806,277,825,372,869,370,874,275,830,227,810"/>
-<area shape="poly" title=" " alt="" coords="233,802,256,811,278,825,295,848,303,869,310,891,326,912,348,929,369,940,411,951,453,963,475,974,498,992,515,1017,522,1040,528,1063,546,1084,555,1090,552,1095,542,1088,524,1065,516,1042,510,1019,494,996,472,978,451,967,410,956,367,945,345,934,322,916,305,893,298,871,291,850,274,829,254,816,231,807"/>
-<area shape="poly" title=" " alt="" coords="232,800,256,810,278,825,292,844,300,862,304,896,308,931,314,949,326,967,344,984,366,998,363,1003,341,989,322,970,309,951,303,932,299,897,294,863,287,846,274,829,254,814,230,805"/>
-<area shape="rect" href="../../dd/dda/spatial_params_8c.html#ae99fa2266ffe4ed506690f3cf382e26e" title=" " alt="" coords="817,1175,896,1200"/>
-<area shape="poly" title=" " alt="" coords="430,1030,498,1085,520,1112,530,1123,545,1133,612,1159,682,1175,748,1183,804,1185,804,1191,748,1188,681,1180,610,1164,543,1138,527,1127,516,1115,494,1089,427,1034"/>
-<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a6408e0394af508aa2c48021b712a2bdd" title=" " alt="" coords="571,1200,712,1225"/>
-<area shape="poly" title=" " alt="" coords="433,1030,466,1054,498,1086,513,1112,520,1135,528,1157,546,1179,567,1192,564,1197,542,1183,523,1160,515,1137,509,1114,494,1089,462,1058,430,1034"/>
-<area shape="poly" title=" " alt="" coords="712,1202,804,1191,804,1196,713,1207"/>
-<area shape="rect" href="../../dd/d66/output_items_8c.html#aae7d85779ed17e486430634c3d4b84b6" title=" " alt="" coords="350,1216,470,1241"/>
-<area shape="poly" title=" " alt="" coords="255,1055,278,1067,392,1204,388,1207,274,1071,252,1060"/>
-<area shape="poly" title=" " alt="" coords="471,1235,547,1246,546,1251,470,1240"/>
+<area shape="poly" title=" " alt="" coords="450,875,475,887,498,904,514,926,522,947,529,967,546,985,556,992,553,996,542,989,524,969,517,949,509,928,494,908,472,892,448,880"/>
+<area shape="rect" href="../../dd/d66/output_items_8c.html#a9b5ff0c7305b5b130b961610f78fcb5b" title=" " alt="" coords="556,1049,727,1075"/>
+<area shape="poly" title=" " alt="" coords="454,875,477,887,498,904,510,922,517,939,521,973,526,1004,533,1020,546,1035,553,1040,550,1044,542,1039,528,1022,520,1006,516,973,512,941,506,924,494,908,474,892,451,880"/>
+<area shape="rect" href="../../dd/d66/output_items_8c.html#aff124e2cd99c03e515ec36d64ba3b306" title=" " alt="" coords="555,852,727,877"/>
+<area shape="poly" title=" " alt="" coords="474,862,542,862,542,867,474,867"/>
+<area shape="poly" title=" " alt="" coords="233,731,277,752,384,841,381,845,275,756,230,736"/>
+<area shape="poly" title=" " alt="" coords="232,727,256,737,278,752,291,770,299,787,303,820,307,854,314,870,326,887,347,906,367,917,408,929,451,940,474,950,498,967,513,985,522,1002,530,1019,546,1035,558,1042,555,1046,542,1039,526,1022,517,1005,509,988,494,971,471,955,449,945,406,934,365,922,343,910,322,890,309,873,302,855,298,821,294,788,287,772,274,756,254,741,230,732"/>
+<area shape="poly" title=" " alt="" coords="233,726,257,736,278,752,295,777,303,801,305,847,305,893,312,917,326,942,343,959,364,973,361,977,340,963,322,945,307,919,300,894,299,847,298,802,290,779,274,756,254,741,231,731"/>
+<area shape="rect" href="../../dd/dda/spatial_params_8c.html#ae99fa2266ffe4ed506690f3cf382e26e" title=" " alt="" coords="816,1124,895,1149"/>
+<area shape="poly" title=" " alt="" coords="432,1005,464,1029,498,1060,512,1082,519,1101,528,1118,545,1133,577,1147,610,1156,680,1162,746,1158,802,1148,803,1153,747,1163,680,1168,609,1161,575,1152,543,1138,524,1122,515,1104,507,1084,494,1064,461,1033,429,1009"/>
+<area shape="rect" href="../../dd/dda/spatial_params_8c.html#a6408e0394af508aa2c48021b712a2bdd" title=" " alt="" coords="571,1099,712,1124"/>
+<area shape="poly" title=" " alt="" coords="428,1005,478,1044,545,1084,567,1092,565,1097,543,1088,475,1048,425,1009"/>
+<area shape="poly" title=" " alt="" coords="713,1117,803,1128,802,1133,712,1122"/>
+<area shape="rect" href="../../dd/d66/output_items_8c.html#aae7d85779ed17e486430634c3d4b84b6" title=" " alt="" coords="350,1191,470,1216"/>
+<area shape="poly" title=" " alt="" coords="254,1031,278,1043,392,1178,388,1182,274,1047,252,1036"/>
+<area shape="poly" title=" " alt="" coords="470,1203,546,1206,546,1211,470,1208"/>
 </map>
 </div>
 
@@ -459,7 +448,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00034">34</a> of file <a class="el" href="../../d9/ddf/frontend_8c_source.html">frontend.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00026">INPUT_FILE</a>.</p>
+<p class="reference">References <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00027">INPUT_FILE</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00041">main()</a>.</p>
 

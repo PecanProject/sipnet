@@ -8,6 +8,7 @@
 {\ttfamily \#include "{}common/namelist\+Input.\+h"{}}\newline
 {\ttfamily \#include "{}common/spatial\+Params.\+h"{}}\newline
 {\ttfamily \#include "{}common/util.\+h"{}}\newline
+{\ttfamily \#include "{}events.\+h"{}}\newline
 {\ttfamily \#include "{}sipnet.\+h"{}}\newline
 {\ttfamily \#include "{}output\+Items.\+h"{}}\newline
 {\ttfamily \#include "{}model\+Structures.\+h"{}}\newline
@@ -34,9 +35,7 @@ Include dependency graph for frontend.\+c\+:
 \item 
 \#define \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}~0
 \item 
-\#define \textbf{ LOC}~  (-\/1)
-\item 
-\#define \textbf{ HEADER}~0
+\#define \textbf{ LOC}~(-\/1)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -56,7 +55,7 @@ int \textbf{ main} (int argc, char $\ast$argv[$\,$])
 
 
 
-Definition at line \textbf{ 27} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 28} of file \textbf{ frontend.\+c}.
 
 \label{frontend_8c_a81098b79a764bc9a91acebcf846dc70c} 
 \index{frontend.c@{frontend.c}!DO\_SINGLE\_OUTPUTS@{DO\_SINGLE\_OUTPUTS}}
@@ -66,7 +65,7 @@ Definition at line \textbf{ 27} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 28} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 29} of file \textbf{ frontend.\+c}.
 
 \label{frontend_8c_a829499bd91e567d022bbdabc3ae7c62e} 
 \index{frontend.c@{frontend.c}!FILE\_MAXNAME@{FILE\_MAXNAME}}
@@ -76,17 +75,7 @@ Definition at line \textbf{ 28} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 23} of file \textbf{ frontend.\+c}.
-
-\label{frontend_8c_ab7770a7f0d95e67620ff6ed347a07a56} 
-\index{frontend.c@{frontend.c}!HEADER@{HEADER}}
-\index{HEADER@{HEADER}!frontend.c@{frontend.c}}
-\doxysubsubsection{HEADER}
-{\footnotesize\ttfamily \#define HEADER~0}
-
-
-
-Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 24} of file \textbf{ frontend.\+c}.
 
 \label{frontend_8c_a2a3ad4ebb43e29f804a1e524aca840b2} 
 \index{frontend.c@{frontend.c}!INPUT\_FILE@{INPUT\_FILE}}
@@ -96,7 +85,7 @@ Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 26} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 27} of file \textbf{ frontend.\+c}.
 
 \label{frontend_8c_a8f37ae52567be5458f05af3c396b2811} 
 \index{frontend.c@{frontend.c}!INPUT\_MAXNAME@{INPUT\_MAXNAME}}
@@ -106,17 +95,17 @@ Definition at line \textbf{ 26} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 25} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 26} of file \textbf{ frontend.\+c}.
 
 \label{frontend_8c_a0fee446a4a4ef6536664bc1ff47ff694} 
 \index{frontend.c@{frontend.c}!LOC@{LOC}}
 \index{LOC@{LOC}!frontend.c@{frontend.c}}
 \doxysubsubsection{LOC}
-{\footnotesize\ttfamily \#define LOC~  (-\/1)}
+{\footnotesize\ttfamily \#define LOC~(-\/1)}
 
 
 
-Definition at line \textbf{ 29} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
 
 \label{frontend_8c_a7316472e16c612c08c61ab2699b96d4c} 
 \index{frontend.c@{frontend.c}!RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}}
@@ -126,7 +115,7 @@ Definition at line \textbf{ 29} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 24} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 25} of file \textbf{ frontend.\+c}.
 
 
 
@@ -143,7 +132,7 @@ Definition at line \textbf{ 41} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ DOUBLE\+\_\+\+TYPE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ free2\+DArray()}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ LOC}, \textbf{ locate\+Param()}, \textbf{ make2\+DArray()}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ model}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ sens\+Test()}, \textbf{ set\+Spatial\+Param()}, \textbf{ setup\+Output\+Items()}, \textbf{ strcmp\+Ignore\+Case()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
+References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ DOUBLE\+\_\+\+TYPE}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ free2\+DArray()}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ LOC}, \textbf{ locate\+Param()}, \textbf{ make2\+DArray()}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ model}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ sens\+Test()}, \textbf{ set\+Spatial\+Param()}, \textbf{ setup\+Output\+Items()}, \textbf{ strcmp\+Ignore\+Case()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
 
 Here is the call graph for this function\+:
 \nopagebreak

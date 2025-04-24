@@ -8,6 +8,5 @@ var searchData=
   ['evaporation_5',['evaporation',['../da/d95/struct_flux_vars.html#aadc31dee7abcba006826405092efa633',1,'FluxVars']]],
   ['evapotranspiration_6',['evapotranspiration',['../d3/d1f/struct_tracker_vars.html#a31a6c82bcca82fdbeadaabd1fe518d88',1,'TrackerVars']]],
   ['eventparams_7',['eventParams',['../d6/d43/struct_event_node.html#aafb393f7b6c27f4460aa3a905838dda8',1,'EventNode']]],
-  ['events_8',['events',['../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb',1,'sipnet.c']]],
-  ['externalloc_9',['externalLoc',['../d2/d2e/struct_one_spatial_param_struct.html#a7fc3276f2963124267133568ada7d4ed',1,'OneSpatialParamStruct']]]
+  ['externalloc_8',['externalLoc',['../d2/d2e/struct_one_spatial_param_struct.html#a7fc3276f2963124267133568ada7d4ed',1,'OneSpatialParamStruct']]]
 ];
