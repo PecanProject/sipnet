@@ -1,7 +1,6 @@
+#include <stdio.h>
 #include <setjmp.h>
 #include <unistd.h>
-
-//
 
 static int expected_code = 1;  // the expected value a tested function passes to exit
 static int should_exit = 1;    // set in test code; 1 if exit should have been called

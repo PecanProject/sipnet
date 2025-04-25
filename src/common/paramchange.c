@@ -398,9 +398,13 @@ void computeAggedData(double **theAggedData, double **origArray,
    above]
 */
 
+// Apr-25-2025: clang-tidy asserts that there are issues with this function,
+// and it is not currently being used. Disabling for now, not worth
+// spending time on.
 // 6/9/11: For now we don't do anything with the cost function or data Type
 // weights - we just want to make it consistent with the difference function
 // above so we don't get an error.
+#if 0
 double aggedDifference(double *sigma, OutputInfo *outputInfo, int loc,
                        SpatialParams *spatialParams, double paramWeight,
                        void (*modelF)(double **, int, int *, SpatialParams *,
@@ -492,6 +496,7 @@ double aggedDifference(double *sigma, OutputInfo *outputInfo, int loc,
 
   return logLike;
 }
+#endif
 
 /* Take array of model output, compare output with measured data - for given
    dataNum (i.e. perform comparisons between model[*][dataNum] and
@@ -679,6 +684,9 @@ void readIndicesFile(char *fileName, int *startIndices, int *endIndices,
   }
 }
 
+// Apr-25-2025: clang-tidy asserts that there are issues with this function,
+// and it is not currently being used. Disabling for now, not worth
+// spending time on.
 /* Read measured data (from fileName.dat) and valid fractions (from
    fileName.valid) into arrays (used to also read sigmas) and set values in
    valid array (based on validFrac) Each line in data (and valid) file has
@@ -707,6 +715,7 @@ void readIndicesFile(char *fileName, int *startIndices, int *endIndices,
 
    This function also allocates space for model array
 */
+#if 0
 void readData(char *fileName, int dataTypeIndices[], int numDataTypes,
               int totNumDataTypes, int myNumLocs, int *steps, double validFrac,
               char *optIndicesFile, char *compareIndicesFile, FILE *outFile) {
@@ -993,7 +1002,11 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes,
 
   fclose(in1);
 }
+#endif
 
+// Apr-25-2025: clang-tidy asserts that there are issues with this function,
+// and it is not currently being used. Disabling for now, not worth
+// spending time on.
 /* pre: readData has been called (to set global startOpt, endOpt and numLocs
    appropriately)
 
@@ -1012,6 +1025,7 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes,
    and unaggedWeight appropriately also compute aggedData array (of size numLocs
    x numAggSteps x numDataTypes)
 */
+#if 0
 void readFileForAgg(char *fileForAgg, int numDataTypes,
                     double myUnaggedWeight) {
   FILE *f;
@@ -1071,6 +1085,7 @@ void readFileForAgg(char *fileForAgg, int numDataTypes,
   aggedModel = make2DArray(maxCount, numDataTypes);
   unaggedWeight = myUnaggedWeight;
 }
+#endif
 
 // malloc space for outputInfo array[0..numDataTypes-1], and outputInfo[*].years
 // arrays for a single location, loc make years arrays large enough to hold data

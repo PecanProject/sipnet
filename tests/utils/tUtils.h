@@ -3,6 +3,8 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include "common/exitCodes.h"
 
 extern inline int copyFile(char* src, char* dest) {
   FILE *source = fopen(src, "rb"); // Binary mode for compatibility
@@ -22,7 +24,14 @@ extern inline int copyFile(char* src, char* dest) {
   size_t bytesRead;
 
   while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) {
+    if (ferror(source)) {
+      printf("Error reading file %s during file copy\n", src);
+      exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+    }
     fwrite(buffer, 1, bytesRead, destination);
+    if (feof(source)) {
+      break;
+    }
   }
 
   fclose(source);

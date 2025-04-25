@@ -204,7 +204,7 @@ int main(int argc, char *argv[]) {
   int i;
 
   // initialize array to [0,1,...,MAX_DATA_TYPES-1] (default)
-  numDataTypes = initDataTypeIndices(dataTypeIndices);
+  initDataTypeIndices(dataTypeIndices);  // return value not used
 
   // get command-line arguments:
   while ((option = getopt(argc, argv, "hi:")) != -1) {
