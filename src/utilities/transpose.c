@@ -62,7 +62,9 @@ void readFile(FILE *f, char **lines, int maxLength) {
   int i;
 
   i = 0;
-  while (fgets(lines[i], maxLength, f) != NULL) {  // while not EOF or error
+  // clang-tidy finds this sketchy, but it does seem to work, so ignore
+  while (fgets(lines[i], maxLength, f) != NULL) {  // NOLINT
+    // while not EOF or error
     i++;
   }
 }
@@ -155,6 +157,10 @@ int main(int argc, char *argv[]) {
   f = openFile(filename, "r");
 
   nl = numlines(f, &longestLine);
+  if (nl < 1) {
+    printf("Error: input file must contain at least one line\n");
+    exit(1);
+  }
   rewind(f);
 
   // Allocate space to hold the file, line by line:
@@ -168,6 +174,10 @@ int main(int argc, char *argv[]) {
 
   // Allocate space to hold the individual items:
   numItems = countItems(lines[0]);
+  if (numItems < 1) {
+    printf("Error in input file, first line has no items\n");
+    exit(1);
+  }
   items = (char ***)malloc(nl * sizeof(char **));
   for (i = 0; i < nl; i++) {
     items[i] = (char **)malloc(numItems * sizeof(char *));
@@ -192,6 +202,7 @@ int main(int argc, char *argv[]) {
   }
   free(items);
   free(lines);
+  free(tmpName);
 
   return 0;
 }

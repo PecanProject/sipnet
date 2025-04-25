@@ -38,6 +38,9 @@ typedef struct OutputInfoStruct {
    NOTE: this is actually the NEGATIVE log likelihood, discarding constant terms
    to get true log likelihood, add n*log(sqrt(2*pi)), then multiply by -1
 */
+// Function is disabled, SHOULD comment out here as well, but that breaks
+// compilation of estimate/ml-metrorun.c - which we don't care about and should
+// remove, but that's something for another day...
 double difference(double *sigma, OutputInfo *outputInfo, int loc,
                   SpatialParams *spatialParams, double paramWeight,
                   void (*modelF)(double **, int, int *, SpatialParams *, int),
@@ -81,6 +84,9 @@ double difference(double *sigma, OutputInfo *outputInfo, int loc,
 // weights - we just want to make it consistent with the difference function
 // above so we don't get an error.
 
+// Function is disabled, SHOULD comment out here as well, but that breaks
+// compilation of estimate/ml-metrorun.c - which we don't care about and should
+// remove, but that's something for another day...
 double aggedDifference(double *sigma, OutputInfo *outputInfo, int loc,
                        SpatialParams *spatialParams, double paramWeight,
                        void (*modelF)(double **, int, int *, SpatialParams *,
@@ -128,6 +134,9 @@ void aggregates(OutputInfo *outputInfo, double **localModel, int loc,
 
    This function also allocates space for model array
 */
+// Function is disabled, SHOULD comment out here as well, but that breaks
+// compilation of estimate/ml-metrorun.c - which we don't care about and should
+// remove, but that's something for another day...
 void readData(char *fileName, int dataTypeIndices[], int numDataTypes,
               int totNumDataTypes, int myNumLocs, int *steps, double validFrac,
               char *optIndicesFile, char *compareIndicesFile, FILE *outFile);
@@ -150,6 +159,9 @@ void readData(char *fileName, int dataTypeIndices[], int numDataTypes,
    and unaggedWeight appropriately also compute aggedData array (of size numLocs
    x numAggSteps x numDataTypes)
 */
+// Function is disabled, SHOULD comment out here as well, but that breaks
+// compilation of estimate/ml-metrorun.c - which we don't care about and should
+// remove, but that's something for another day...
 void readFileForAgg(char *fileForAgg, int numDataTypes, double myUnaggedWeight);
 
 // malloc space for outputInfo array[0..numDataTypes-1], and outputInfo[*].years

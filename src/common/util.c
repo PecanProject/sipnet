@@ -28,7 +28,7 @@ FILE *openFile(const char *name, const char *mode) {
 
   if ((f = fopen(name, mode)) == NULL) {
     printf("Error opening %s for %s\n", name, mode);
-    exit(EXIT_CODE_FILE_OPEN_ERROR);
+    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
   }
 
   return f;

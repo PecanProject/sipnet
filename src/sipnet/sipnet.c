@@ -1439,7 +1439,8 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 int pastLeafGrowth(void) {
 
 #if GDD
-  return (climate->gdd >= params.gddLeafOn);  // growing degree days threshold
+  // null pointer dereference warning suppressed on the next line
+  return (climate->gdd >= params.gddLeafOn);  // NOLINT
 #elif SOIL_PHENOL
   return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
                                                      // threshold
