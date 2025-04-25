@@ -1,7 +1,7 @@
 loc  year  day  type     param_name=delta[,param_name=delta,...]
 0    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
-0    2024   70  irrig    envi.soilWater=5.00
+0    2024   70  irrig    envi.soilWater=5.00,fluxes.immedEvap=0.00
 0    2024  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
 1    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
-1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+1    2024   70  irrig    envi.soilWater=2.50,fluxes.immedEvap=2.50
 1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
