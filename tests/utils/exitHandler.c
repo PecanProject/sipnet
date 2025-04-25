@@ -2,9 +2,12 @@
 #include <setjmp.h>
 #include <unistd.h>
 
-static int expected_code = 1;  // the expected value a tested function passes to exit
-static int should_exit = 1;    // set in test code; 1 if exit should have been called
-static int really_exit = 0;    // set to 1 to prevent stubbing behavior and actually exit
+static int expected_code = 1;  // the expected value a tested function passes to
+                               // exit
+static int should_exit = 1;  // set in test code; 1 if exit should have been
+                             // called
+static int really_exit = 0;  // set to 1 to prevent stubbing behavior and
+                             // actually exit
 
 static jmp_buf jump_env;
 
@@ -32,13 +35,11 @@ static int exit_result = 1;
 // test_assert(jmp_rval==1);
 
 // stub function
-void exit(int code)
-{
-  if (!really_exit)
-  {
+void exit(int code) {
+  if (!really_exit) {
     printf("Mocking the exit call\n");
-    test_assert(should_exit==1);
-    test_assert(expected_code==code);
+    test_assert(should_exit == 1);
+    test_assert(expected_code == code);
     longjmp(jump_env, 1);
   }
 
