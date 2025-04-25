@@ -45,9 +45,11 @@ static double **aggedModel = NULL; /* aggregated model (intitialized to NULL b/c
               we may never malloc this array) made global so don't have to
               re-allocate memory all the time only holds model output between
               startOpt and endOpt */
-static double unaggedWeight = 0.0; /* if aggregation is done, weight of
-              unaggregated data in optimization (0 -> only use aggregated data)
-            */
+// Commenting out as all uses are commented out
+// static double unaggedWeight = 0.0; /* if aggregation is done, weight of
+//              unaggregated data in optimization (0 -> only use aggregated
+//              data)
+//            */
 
 typedef struct AggregateInfoStruct {  // set at beginning of program
   int startPt, endPt;  // indices of data point to start and stop at
