@@ -31,8 +31,6 @@ double \textbf{ difference} (double $\ast$sigma, \textbf{ Output\+Info} $\ast$ou
 \item 
 void \textbf{ compute\+Agged\+Data} (double $\ast$$\ast$the\+Agged\+Data, double $\ast$$\ast$orig\+Array, int my\+Num\+Agg\+Steps, int $\ast$my\+Agg\+Steps, int my\+Start\+Opt, int num\+Data\+Types)
 \item 
-double \textbf{ agged\+Difference} (double $\ast$sigma, \textbf{ Output\+Info} $\ast$output\+Info, int loc, \textbf{ Spatial\+Params} $\ast$spatial\+Params, double param\+Weight, void($\ast$modelF)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int), int data\+Type\+Indices[$\,$], int num\+Data\+Types, int cost\+Function, double data\+Type\+Weights[$\,$])
-\item 
 void \textbf{ aggregates} (\textbf{ Output\+Info} $\ast$output\+Info, double $\ast$$\ast$local\+Model, int loc, int data\+Num)
 \item 
 void \textbf{ read\+Data\+Line} (FILE $\ast$in, double $\ast$arr, int num\+Data\+Types)
@@ -42,10 +40,6 @@ int \textbf{ count\+Lines} (char $\ast$file\+Name)
 int \textbf{ parse\+Spd\+Value} (char $\ast$spd\+String, int $\ast$spd, int $\ast$count)
 \item 
 void \textbf{ read\+Indices\+File} (char $\ast$file\+Name, int $\ast$start\+Indices, int $\ast$end\+Indices, int $\ast$steps)
-\item 
-void \textbf{ read\+Data} (char $\ast$file\+Name, int data\+Type\+Indices[$\,$], int num\+Data\+Types, int tot\+Num\+Data\+Types, int my\+Num\+Locs, int $\ast$steps, double valid\+Frac, char $\ast$opt\+Indices\+File, char $\ast$compare\+Indices\+File, FILE $\ast$out\+File)
-\item 
-void \textbf{ read\+File\+For\+Agg} (char $\ast$file\+For\+Agg, int num\+Data\+Types, double my\+Unagged\+Weight)
 \item 
 \textbf{ Output\+Info} $\ast$ \textbf{ new\+Output\+Info} (int num\+Data\+Types, int loc)
 \item 
@@ -80,8 +74,6 @@ static double $\ast$$\ast$$\ast$ \textbf{ agged\+Data} = NULL
 \item 
 static double $\ast$$\ast$ \textbf{ agged\+Model} = NULL
 \item 
-static double \textbf{ unagged\+Weight} = 0.\+0
-\item 
 static \textbf{ Aggregate\+Info} $\ast$ \textbf{ agg\+Info}
 \end{DoxyCompactItemize}
 
@@ -96,32 +88,6 @@ static \textbf{ Aggregate\+Info} $\ast$ \textbf{ agg\+Info}
 
 
 \doxysubsection{Function Documentation}
-\label{paramchange_8c_aaf4a74406a3f1ef2212c05de076571a9} 
-\index{paramchange.c@{paramchange.c}!aggedDifference@{aggedDifference}}
-\index{aggedDifference@{aggedDifference}!paramchange.c@{paramchange.c}}
-\doxysubsubsection{aggedDifference()}
-{\footnotesize\ttfamily double agged\+Difference (\begin{DoxyParamCaption}\item[{double $\ast$}]{sigma,  }\item[{\textbf{ Output\+Info} $\ast$}]{output\+Info,  }\item[{int}]{loc,  }\item[{\textbf{ Spatial\+Params} $\ast$}]{spatial\+Params,  }\item[{double}]{param\+Weight,  }\item[{void($\ast$)(double $\ast$$\ast$, int, int $\ast$, \textbf{ Spatial\+Params} $\ast$, int)}]{modelF,  }\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{num\+Data\+Types,  }\item[{int}]{cost\+Function,  }\item[{double}]{data\+Type\+Weights[$\,$] }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 404} of file \textbf{ paramchange.\+c}.
-
-
-
-References \textbf{ agged\+Data}, \textbf{ agged\+Model}, \textbf{ aggregates()}, \textbf{ agg\+Steps}, \textbf{ compute\+Agged\+Data()}, \textbf{ copy\+Output\+Info()}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ num\+Agg\+Steps}, \textbf{ start\+Opt}, \textbf{ unagged\+Weight}, and \textbf{ valid}.
-
-
-
-Referenced by \textbf{ main()}.
-
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{d7/d0b/paramchange_8c_aaf4a74406a3f1ef2212c05de076571a9_cgraph}
-\end{center}
-\end{figure}
 \label{paramchange_8c_a21fbe31a5911d0de047b58950a9805e1} 
 \index{paramchange.c@{paramchange.c}!aggregates@{aggregates}}
 \index{aggregates@{aggregates}!paramchange.c@{paramchange.c}}
@@ -130,7 +96,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 505} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 512} of file \textbf{ paramchange.\+c}.
 
 
 
@@ -138,7 +104,7 @@ References \textbf{ agg\+Info}, \textbf{ data}, \textbf{ Output\+Info\+Struct\+:
 
 
 
-Referenced by \textbf{ agged\+Difference()}, and \textbf{ difference()}.
+Referenced by \textbf{ difference()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -156,7 +122,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1123} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 1140} of file \textbf{ paramchange.\+c}.
 
 
 
@@ -182,11 +148,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 346} of file \textbf{ paramchange.\+c}.
-
-
-
-Referenced by \textbf{ agged\+Difference()}, and \textbf{ read\+File\+For\+Agg()}.
+Definition at line \textbf{ 348} of file \textbf{ paramchange.\+c}.
 
 \label{paramchange_8c_a8590e6a4e09c79942a5ce0933218c083} 
 \index{paramchange.c@{paramchange.c}!copyOutputInfo@{copyOutputInfo}}
@@ -196,15 +158,11 @@ Referenced by \textbf{ agged\+Difference()}, and \textbf{ read\+File\+For\+Agg()
 
 
 
-Definition at line \textbf{ 1098} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 1115} of file \textbf{ paramchange.\+c}.
 
 
 
 References \textbf{ Output\+Info\+Struct\+::days\+Error}, \textbf{ Output\+Info\+Struct\+::mean\+Error}, \textbf{ Output\+Info\+Struct\+::num\+Years}, and \textbf{ Output\+Info\+Struct\+::years}.
-
-
-
-Referenced by \textbf{ agged\+Difference()}.
 
 \label{paramchange_8c_a8a89c88fcf4370fc8966041870b7539a} 
 \index{paramchange.c@{paramchange.c}!countLines@{countLines}}
@@ -214,15 +172,11 @@ Referenced by \textbf{ agged\+Difference()}.
 
 
 
-Definition at line \textbf{ 598} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 605} of file \textbf{ paramchange.\+c}.
 
 
 
 References \textbf{ open\+File()}.
-
-
-
-Referenced by \textbf{ read\+Data()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -240,7 +194,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 88} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 90} of file \textbf{ paramchange.\+c}.
 
 
 
@@ -266,7 +220,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1112} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 1129} of file \textbf{ paramchange.\+c}.
 
 
 
@@ -280,7 +234,7 @@ Referenced by \textbf{ metropolis()}.
 
 
 
-Definition at line \textbf{ 1078} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 1095} of file \textbf{ paramchange.\+c}.
 
 
 
@@ -306,38 +260,8 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 625} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 632} of file \textbf{ paramchange.\+c}.
 
-
-
-Referenced by \textbf{ read\+Data()}.
-
-\label{paramchange_8c_ab2e314f4a756e7a3631c88cf2c347da6} 
-\index{paramchange.c@{paramchange.c}!readData@{readData}}
-\index{readData@{readData}!paramchange.c@{paramchange.c}}
-\doxysubsubsection{readData()}
-{\footnotesize\ttfamily void read\+Data (\begin{DoxyParamCaption}\item[{char $\ast$}]{file\+Name,  }\item[{int}]{data\+Type\+Indices[$\,$],  }\item[{int}]{num\+Data\+Types,  }\item[{int}]{tot\+Num\+Data\+Types,  }\item[{int}]{my\+Num\+Locs,  }\item[{int $\ast$}]{steps,  }\item[{double}]{valid\+Frac,  }\item[{char $\ast$}]{opt\+Indices\+File,  }\item[{char $\ast$}]{compare\+Indices\+File,  }\item[{FILE $\ast$}]{out\+File }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 710} of file \textbf{ paramchange.\+c}.
-
-
-
-References \textbf{ agg\+Info}, \textbf{ count\+Lines()}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ Aggregate\+Info\+Struct\+::end\+Pt}, \textbf{ make2\+DArray()}, \textbf{ make2\+DInt\+Array()}, \textbf{ make\+Array()}, \textbf{ model}, \textbf{ Aggregate\+Info\+Struct\+::num\+Days}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ parse\+Spd\+Value()}, \textbf{ read\+Data\+Line()}, \textbf{ read\+Indices\+File()}, \textbf{ sigmas}, \textbf{ Aggregate\+Info\+Struct\+::spd}, \textbf{ Aggregate\+Info\+Struct\+::start\+Day}, \textbf{ start\+Opt}, \textbf{ Aggregate\+Info\+Struct\+::start\+Pt}, \textbf{ Aggregate\+Info\+Struct\+::start\+Year}, and \textbf{ valid}.
-
-
-
-Referenced by \textbf{ main()}.
-
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=332pt]{d7/d0b/paramchange_8c_ab2e314f4a756e7a3631c88cf2c347da6_cgraph}
-\end{center}
-\end{figure}
 \label{paramchange_8c_a363bed66339924257cafd1a62de6eca7} 
 \index{paramchange.c@{paramchange.c}!readDataLine@{readDataLine}}
 \index{readDataLine@{readDataLine}!paramchange.c@{paramchange.c}}
@@ -346,38 +270,8 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 580} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 587} of file \textbf{ paramchange.\+c}.
 
-
-
-Referenced by \textbf{ read\+Data()}.
-
-\label{paramchange_8c_a849cd102825770b7b6f339c4ccaf5af7} 
-\index{paramchange.c@{paramchange.c}!readFileForAgg@{readFileForAgg}}
-\index{readFileForAgg@{readFileForAgg}!paramchange.c@{paramchange.c}}
-\doxysubsubsection{readFileForAgg()}
-{\footnotesize\ttfamily void read\+File\+For\+Agg (\begin{DoxyParamCaption}\item[{char $\ast$}]{file\+For\+Agg,  }\item[{int}]{num\+Data\+Types,  }\item[{double}]{my\+Unagged\+Weight }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 1015} of file \textbf{ paramchange.\+c}.
-
-
-
-References \textbf{ agged\+Data}, \textbf{ agged\+Model}, \textbf{ agg\+Steps}, \textbf{ compute\+Agged\+Data()}, \textbf{ data}, \textbf{ end\+Opt}, \textbf{ make2\+DArray()}, \textbf{ num\+Agg\+Steps}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ start\+Opt}, and \textbf{ unagged\+Weight}.
-
-
-
-Referenced by \textbf{ main()}.
-
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=282pt]{d7/d0b/paramchange_8c_a849cd102825770b7b6f339c4ccaf5af7_cgraph}
-\end{center}
-\end{figure}
 \label{paramchange_8c_ad6f52f0c525d1fc401cddeb1b8442dc3} 
 \index{paramchange.c@{paramchange.c}!readIndicesFile@{readIndicesFile}}
 \index{readIndicesFile@{readIndicesFile}!paramchange.c@{paramchange.c}}
@@ -386,15 +280,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 653} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 660} of file \textbf{ paramchange.\+c}.
 
 
 
 References \textbf{ num\+Locs}, and \textbf{ open\+File()}.
-
-
-
-Referenced by \textbf{ read\+Data()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -419,7 +309,7 @@ Definition at line \textbf{ 41} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, and \textbf{ read\+File\+For\+Agg()}.
+Referenced by \textbf{ cleanup\+Paramchange()}.
 
 \label{paramchange_8c_aa978572f04c389051e83c45c3ba27f5f} 
 \index{paramchange.c@{paramchange.c}!aggedModel@{aggedModel}}
@@ -433,7 +323,7 @@ Definition at line \textbf{ 44} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, and \textbf{ read\+File\+For\+Agg()}.
+Referenced by \textbf{ cleanup\+Paramchange()}.
 
 \label{paramchange_8c_ae7c2a358aab49ca2dfabce67a006472f} 
 \index{paramchange.c@{paramchange.c}!aggInfo@{aggInfo}}
@@ -443,11 +333,11 @@ Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, a
 
 
 
-Definition at line \textbf{ 61} of file \textbf{ paramchange.\+c}.
+Definition at line \textbf{ 63} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ aggregates()}, \textbf{ cleanup\+Paramchange()}, \textbf{ new\+Output\+Info()}, and \textbf{ read\+Data()}.
+Referenced by \textbf{ aggregates()}, \textbf{ cleanup\+Paramchange()}, and \textbf{ new\+Output\+Info()}.
 
 \label{paramchange_8c_a9aed0071248d36e9bbd2b73ffdc8ab75} 
 \index{paramchange.c@{paramchange.c}!aggSteps@{aggSteps}}
@@ -461,7 +351,7 @@ Definition at line \textbf{ 37} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, and \textbf{ read\+File\+For\+Agg()}.
+Referenced by \textbf{ cleanup\+Paramchange()}.
 
 \label{paramchange_8c_ad937bdb5348446aaacaa79cc27153ad5} 
 \index{paramchange.c@{paramchange.c}!data@{data}}
@@ -475,7 +365,7 @@ Definition at line \textbf{ 20} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ aggregates()}, \textbf{ cleanup\+Paramchange()}, \textbf{ difference()}, \textbf{ read\+Data()}, and \textbf{ read\+File\+For\+Agg()}.
+Referenced by \textbf{ aggregates()}, \textbf{ cleanup\+Paramchange()}, and \textbf{ difference()}.
 
 \label{paramchange_8c_afea8a27ddcddb61763af7092de7a4e0c} 
 \index{paramchange.c@{paramchange.c}!endOpt@{endOpt}}
@@ -489,7 +379,7 @@ Definition at line \textbf{ 28} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, \textbf{ difference()}, \textbf{ read\+Data()}, and \textbf{ read\+File\+For\+Agg()}.
+Referenced by \textbf{ cleanup\+Paramchange()}, and \textbf{ difference()}.
 
 \label{paramchange_8c_a5589cb4de75446499b2a4ba2b0476c05} 
 \index{paramchange.c@{paramchange.c}!model@{model}}
@@ -503,7 +393,7 @@ Definition at line \textbf{ 26} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, \textbf{ difference()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ read\+Data()}, and \textbf{ reset()}.
+Referenced by \textbf{ cleanup\+Paramchange()}, \textbf{ difference()}, \textbf{ main()}, \textbf{ metropolis()}, and \textbf{ reset()}.
 
 \label{paramchange_8c_aa1a162679c9bfe6062381fc3f319a87c} 
 \index{paramchange.c@{paramchange.c}!numAggSteps@{numAggSteps}}
@@ -517,7 +407,7 @@ Definition at line \textbf{ 34} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, and \textbf{ read\+File\+For\+Agg()}.
+Referenced by \textbf{ cleanup\+Paramchange()}.
 
 \label{paramchange_8c_a10565784ba087b6c3c60917134aa6bef} 
 \index{paramchange.c@{paramchange.c}!numLocs@{numLocs}}
@@ -531,7 +421,7 @@ Definition at line \textbf{ 17} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ cleanup\+Model()}, \textbf{ cleanup\+Paramchange()}, \textbf{ free\+Climate\+List()}, \textbf{ init\+Model()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ new\+Spatial\+Params()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+File\+For\+Agg()}, \textbf{ read\+Indices\+File()}, \textbf{ read\+Param\+Data()}, \textbf{ read\+Spatial\+Params()}, \textbf{ read\+Spatial\+Values()}, \textbf{ reset\+Spatial\+Params()}, and \textbf{ write\+Best\+Spatial\+Params()}.
+Referenced by \textbf{ cleanup\+Model()}, \textbf{ cleanup\+Paramchange()}, \textbf{ free\+Climate\+List()}, \textbf{ free\+Event\+List()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ main()}, \textbf{ metropolis()}, \textbf{ new\+Spatial\+Params()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+Indices\+File()}, \textbf{ read\+Param\+Data()}, \textbf{ read\+Spatial\+Params()}, \textbf{ read\+Spatial\+Values()}, \textbf{ reset\+Spatial\+Params()}, and \textbf{ write\+Best\+Spatial\+Params()}.
 
 \label{paramchange_8c_ac0b4d3ec8d8f5a39f0179edb537eb1df} 
 \index{paramchange.c@{paramchange.c}!sigmas@{sigmas}}
@@ -545,7 +435,7 @@ Definition at line \textbf{ 23} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ cleanup\+Paramchange()}, \textbf{ difference()}, and \textbf{ read\+Data()}.
+Referenced by \textbf{ cleanup\+Paramchange()}, and \textbf{ difference()}.
 
 \label{paramchange_8c_a31e4310f335ccb9a216a538e013c71a4} 
 \index{paramchange.c@{paramchange.c}!startOpt@{startOpt}}
@@ -559,21 +449,7 @@ Definition at line \textbf{ 28} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, \textbf{ difference()}, \textbf{ read\+Data()}, and \textbf{ read\+File\+For\+Agg()}.
-
-\label{paramchange_8c_a08951cb353529ae6fd979c1f4599b0b0} 
-\index{paramchange.c@{paramchange.c}!unaggedWeight@{unaggedWeight}}
-\index{unaggedWeight@{unaggedWeight}!paramchange.c@{paramchange.c}}
-\doxysubsubsection{unaggedWeight}
-{\footnotesize\ttfamily double unagged\+Weight = 0.\+0\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-Definition at line \textbf{ 48} of file \textbf{ paramchange.\+c}.
-
-
-
-Referenced by \textbf{ agged\+Difference()}, \textbf{ main()}, and \textbf{ read\+File\+For\+Agg()}.
+Referenced by \textbf{ cleanup\+Paramchange()}, and \textbf{ difference()}.
 
 \label{paramchange_8c_a8ccb03cc74365c66083796299f1aa979} 
 \index{paramchange.c@{paramchange.c}!valid@{valid}}
@@ -587,5 +463,5 @@ Definition at line \textbf{ 30} of file \textbf{ paramchange.\+c}.
 
 
 
-Referenced by \textbf{ agged\+Difference()}, \textbf{ cleanup\+Paramchange()}, \textbf{ difference()}, and \textbf{ read\+Data()}.
+Referenced by \textbf{ cleanup\+Paramchange()}, and \textbf{ difference()}.
 

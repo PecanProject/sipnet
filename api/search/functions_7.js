@@ -2,7 +2,7 @@ var searchData=
 [
   ['initdatatypeindices_0',['initDataTypeIndices',['../d2/d27/ml-metrorun_8c.html#a02c81e3a12dadf2d7ed0ffed9f3e21f6',1,'ml-metrorun.c']]],
   ['initdatatypeweights_1',['initDataTypeWeights',['../d2/d27/ml-metrorun_8c.html#aa5b0668b42ef9223ea42bcf9b1a15088',1,'ml-metrorun.c']]],
-  ['initevents_2',['initEvents',['../de/de4/sipnet_8h.html#a18ce55b6c4cc0f8fc4d0b5af670e8048',1,'sipnet.h']]],
+  ['initevents_2',['initevents',['../dd/d09/sipnet_8c.html#a18ce55b6c4cc0f8fc4d0b5af670e8048',1,'initEvents(char *eventFile, int numLocs, int printHeader):&#160;sipnet.c'],['../de/de4/sipnet_8h.html#a18ce55b6c4cc0f8fc4d0b5af670e8048',1,'initEvents(char *eventFile, int numLocs, int printHeader):&#160;sipnet.c']]],
   ['initializeonespatialparam_3',['initializeonespatialparam',['../dd/dda/spatial_params_8c.html#a61c1fad867fe86d423ffdc201d9b2005',1,'initializeOneSpatialParam(SpatialParams *spatialParams, char *name, double *externalLoc, int isRequired):&#160;spatialParams.c'],['../da/d19/spatial_params_8h.html#a61c1fad867fe86d423ffdc201d9b2005',1,'initializeOneSpatialParam(SpatialParams *spatialParams, char *name, double *externalLoc, int isRequired):&#160;spatialParams.c']]],
   ['initmodel_4',['initmodel',['../dd/d09/sipnet_8c.html#aab8396814fda2fdceeb284a7dca28fae',1,'initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char *climFile):&#160;sipnet.c'],['../de/de4/sipnet_8h.html#aab8396814fda2fdceeb284a7dca28fae',1,'initModel(SpatialParams **spatialParams, int **steps, char *paramFile, char *climFile):&#160;sipnet.c']]],
   ['initphenologytrackers_5',['initPhenologyTrackers',['../dd/d09/sipnet_8c.html#aad2beee9ae0c418d4309624ba58d6c5c',1,'sipnet.c']]],

@@ -130,8 +130,6 @@ Functions</h2></td></tr>
 <tr class="separator:a56e529386e650868ae87f72ab581a108"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad221c501372d00e63f0b38fe0b3fc294" id="r_ad221c501372d00e63f0b38fe0b3fc294"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#ad221c501372d00e63f0b38fe0b3fc294">computeAggedData</a> (double **theAggedData, double **origArray, int myNumAggSteps, int *myAggSteps, int myStartOpt, int numDataTypes)</td></tr>
 <tr class="separator:ad221c501372d00e63f0b38fe0b3fc294"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf4a74406a3f1ef2212c05de076571a9" id="r_aaf4a74406a3f1ef2212c05de076571a9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#aaf4a74406a3f1ef2212c05de076571a9">aggedDifference</a> (double *sigma, <a class="el" href="../../d5/d14/paramchange_8h.html#ac15783a01ea34b8d9816aba53209ce2e">OutputInfo</a> *outputInfo, int loc, <a class="el" href="../../da/d19/spatial_params_8h.html#ad286ccbd7aac0f8e2f974ee6a60c60aa">SpatialParams</a> *spatialParams, double paramWeight, void(*modelF)(double **, int, int *, <a class="el" href="../../da/d19/spatial_params_8h.html#ad286ccbd7aac0f8e2f974ee6a60c60aa">SpatialParams</a> *, int), int dataTypeIndices[], int numDataTypes, int costFunction, double dataTypeWeights[])</td></tr>
-<tr class="separator:aaf4a74406a3f1ef2212c05de076571a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21fbe31a5911d0de047b58950a9805e1" id="r_a21fbe31a5911d0de047b58950a9805e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#a21fbe31a5911d0de047b58950a9805e1">aggregates</a> (<a class="el" href="../../d5/d14/paramchange_8h.html#ac15783a01ea34b8d9816aba53209ce2e">OutputInfo</a> *outputInfo, double **localModel, int loc, int dataNum)</td></tr>
 <tr class="separator:a21fbe31a5911d0de047b58950a9805e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a363bed66339924257cafd1a62de6eca7" id="r_a363bed66339924257cafd1a62de6eca7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#a363bed66339924257cafd1a62de6eca7">readDataLine</a> (FILE *in, double *arr, int numDataTypes)</td></tr>
@@ -142,10 +140,6 @@ Functions</h2></td></tr>
 <tr class="separator:a27e8f453a6f4505487fcdde74200efc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6f52f0c525d1fc401cddeb1b8442dc3" id="r_ad6f52f0c525d1fc401cddeb1b8442dc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#ad6f52f0c525d1fc401cddeb1b8442dc3">readIndicesFile</a> (char *fileName, int *startIndices, int *endIndices, int *steps)</td></tr>
 <tr class="separator:ad6f52f0c525d1fc401cddeb1b8442dc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2e314f4a756e7a3631c88cf2c347da6" id="r_ab2e314f4a756e7a3631c88cf2c347da6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#ab2e314f4a756e7a3631c88cf2c347da6">readData</a> (char *fileName, int dataTypeIndices[], int numDataTypes, int totNumDataTypes, int myNumLocs, int *steps, double validFrac, char *optIndicesFile, char *compareIndicesFile, FILE *outFile)</td></tr>
-<tr class="separator:ab2e314f4a756e7a3631c88cf2c347da6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a849cd102825770b7b6f339c4ccaf5af7" id="r_a849cd102825770b7b6f339c4ccaf5af7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#a849cd102825770b7b6f339c4ccaf5af7">readFileForAgg</a> (char *fileForAgg, int numDataTypes, double myUnaggedWeight)</td></tr>
-<tr class="separator:a849cd102825770b7b6f339c4ccaf5af7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1eb2a726a4f99ab2e8233b80b93e41ea" id="r_a1eb2a726a4f99ab2e8233b80b93e41ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d14/paramchange_8h.html#ac15783a01ea34b8d9816aba53209ce2e">OutputInfo</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#a1eb2a726a4f99ab2e8233b80b93e41ea">newOutputInfo</a> (int numDataTypes, int loc)</td></tr>
 <tr class="separator:a1eb2a726a4f99ab2e8233b80b93e41ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8590e6a4e09c79942a5ce0933218c083" id="r_a8590e6a4e09c79942a5ce0933218c083"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#a8590e6a4e09c79942a5ce0933218c083">copyOutputInfo</a> (<a class="el" href="../../d5/d14/paramchange_8h.html#ac15783a01ea34b8d9816aba53209ce2e">OutputInfo</a> *out, <a class="el" href="../../d5/d14/paramchange_8h.html#ac15783a01ea34b8d9816aba53209ce2e">OutputInfo</a> *in)</td></tr>
@@ -179,8 +173,6 @@ Variables</h2></td></tr>
 <tr class="separator:af548790e7783c5abc975b1d39cc0d0d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa978572f04c389051e83c45c3ba27f5f" id="r_aa978572f04c389051e83c45c3ba27f5f"><td class="memItemLeft" align="right" valign="top">static double **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#aa978572f04c389051e83c45c3ba27f5f">aggedModel</a> = NULL</td></tr>
 <tr class="separator:aa978572f04c389051e83c45c3ba27f5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08951cb353529ae6fd979c1f4599b0b0" id="r_a08951cb353529ae6fd979c1f4599b0b0"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#a08951cb353529ae6fd979c1f4599b0b0">unaggedWeight</a> = 0.0</td></tr>
-<tr class="separator:a08951cb353529ae6fd979c1f4599b0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7c2a358aab49ca2dfabce67a006472f" id="r_ae7c2a358aab49ca2dfabce67a006472f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="../../d7/d0b/paramchange_8c.html#ad994bf7a10d3a8e76f2b2a4bb9ce8ead">AggregateInfo</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d0b/paramchange_8c.html#ae7c2a358aab49ca2dfabce67a006472f">aggInfo</a></td></tr>
 <tr class="separator:ae7c2a358aab49ca2dfabce67a006472f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -200,105 +192,6 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="aaf4a74406a3f1ef2212c05de076571a9" name="aaf4a74406a3f1ef2212c05de076571a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf4a74406a3f1ef2212c05de076571a9">&#9670;&#160;</a></span>aggedDifference()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double aggedDifference </td>
-          <td>(</td>
-          <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>sigma</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="../../d5/d14/paramchange_8h.html#ac15783a01ea34b8d9816aba53209ce2e">OutputInfo</a> *&#160;</td>
-          <td class="paramname"><em>outputInfo</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>loc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="../../da/d19/spatial_params_8h.html#ad286ccbd7aac0f8e2f974ee6a60c60aa">SpatialParams</a> *&#160;</td>
-          <td class="paramname"><em>spatialParams</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>paramWeight</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void(*)(double **, int, int *, <a class="el" href="../../da/d19/spatial_params_8h.html#ad286ccbd7aac0f8e2f974ee6a60c60aa">SpatialParams</a> *, int)&#160;</td>
-          <td class="paramname"><em>modelF</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>dataTypeIndices</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>numDataTypes</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>costFunction</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>dataTypeWeights</em>[]&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">404</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
-
-<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00041">aggedData</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00044">aggedModel</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00505">aggregates()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00037">aggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00346">computeAggedData()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01098">copyOutputInfo()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">endOpt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00034">numAggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">startOpt</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00048">unaggedWeight</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00030">valid</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>.</p>
-<div class="dynheader">
-Here is the call graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="../../d7/d0b/paramchange_8c_aaf4a74406a3f1ef2212c05de076571a9_cgraph.png" border="0" usemap="#ad7/d0b/paramchange_8c_aaf4a74406a3f1ef2212c05de076571a9_cgraph" alt=""/></div>
-<map name="ad7/d0b/paramchange_8c_aaf4a74406a3f1ef2212c05de076571a9_cgraph" id="ad7/d0b/paramchange_8c_aaf4a74406a3f1ef2212c05de076571a9_cgraph">
-<area shape="rect" title=" " alt="" coords="5,81,135,107"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#a21fbe31a5911d0de047b58950a9805e1" title=" " alt="" coords="211,5,305,31"/>
-<area shape="poly" title=" " alt="" coords="101,79,212,33,214,38,103,84"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a21c26b5db93cc2c6817b9a953683280f" title=" " alt="" coords="381,31,475,56"/>
-<area shape="poly" title=" " alt="" coords="134,82,367,49,368,54,135,88"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#ad221c501372d00e63f0b38fe0b3fc294" title=" " alt="" coords="183,107,333,132"/>
-<area shape="poly" title=" " alt="" coords="135,100,170,105,169,110,135,105"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#a8590e6a4e09c79942a5ce0933218c083" title=" " alt="" coords="197,156,319,181"/>
-<area shape="poly" title=" " alt="" coords="100,104,184,141,205,149,203,154,182,146,97,109"/>
-<area shape="poly" title=" " alt="" coords="306,22,368,32,367,37,305,28"/>
-</map>
-</div>
-
-</div>
-</div>
 <a id="a21fbe31a5911d0de047b58950a9805e1" name="a21fbe31a5911d0de047b58950a9805e1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a21fbe31a5911d0de047b58950a9805e1">&#9670;&#160;</a></span>aggregates()</h2>
 
@@ -337,11 +230,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00505">505</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00512">512</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00061">aggInfo</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00018">OutputInfoStruct::daysError</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00053">AggregateInfoStruct::endPt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00017">OutputInfoStruct::meanError</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00056">AggregateInfoStruct::numDays</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00020">OutputInfoStruct::numYears</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00055">AggregateInfoStruct::spd</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00058">AggregateInfoStruct::startDay</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00053">AggregateInfoStruct::startPt</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00057">AggregateInfoStruct::startYear</a>, and <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00019">OutputInfoStruct::years</a>.</p>
+<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00063">aggInfo</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00018">OutputInfoStruct::daysError</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00055">AggregateInfoStruct::endPt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00017">OutputInfoStruct::meanError</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00058">AggregateInfoStruct::numDays</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00020">OutputInfoStruct::numYears</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00057">AggregateInfoStruct::spd</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00060">AggregateInfoStruct::startDay</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00055">AggregateInfoStruct::startPt</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00059">AggregateInfoStruct::startYear</a>, and <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00019">OutputInfoStruct::years</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">difference()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">difference()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -371,9 +264,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">1123</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">1140</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00041">aggedData</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00044">aggedModel</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00061">aggInfo</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00037">aggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">endOpt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00129">free2DArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00034">numAggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">numLocs</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00023">sigmas</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">startOpt</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00030">valid</a>.</p>
+<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00041">aggedData</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00044">aggedModel</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00063">aggInfo</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00037">aggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">endOpt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00129">free2DArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00034">numAggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">numLocs</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00023">sigmas</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">startOpt</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00030">valid</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>.</p>
 <div class="dynheader">
@@ -439,9 +332,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00346">346</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00348">348</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
 </div>
 </div>
@@ -471,11 +362,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01098">1098</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01115">1115</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00018">OutputInfoStruct::daysError</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00017">OutputInfoStruct::meanError</a>, <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00020">OutputInfoStruct::numYears</a>, and <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00019">OutputInfoStruct::years</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>.</p>
 
 </div>
 </div>
@@ -495,11 +384,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00598">598</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00605">605</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -587,9 +474,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">88</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">90</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00505">aggregates()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">endOpt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00023">sigmas</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">startOpt</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00030">valid</a>.</p>
+<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00512">aggregates()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">endOpt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00023">sigmas</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">startOpt</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00030">valid</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>.</p>
 <div class="dynheader">
@@ -634,7 +521,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01112">1112</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01129">1129</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00300">metropolis()</a>.</p>
 
@@ -666,9 +553,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01078">1078</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01095">1095</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00061">aggInfo</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00056">AggregateInfoStruct::numDays</a>, and <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00019">OutputInfoStruct::years</a>.</p>
+<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00063">aggInfo</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00058">AggregateInfoStruct::numDays</a>, and <a class="el" href="../../d5/d14/paramchange_8h_source.html#l00019">OutputInfoStruct::years</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00300">metropolis()</a>.</p>
 <div class="dynheader">
@@ -716,117 +603,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00625">625</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>.</p>
-
-</div>
-</div>
-<a id="ab2e314f4a756e7a3631c88cf2c347da6" name="ab2e314f4a756e7a3631c88cf2c347da6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2e314f4a756e7a3631c88cf2c347da6">&#9670;&#160;</a></span>readData()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void readData </td>
-          <td>(</td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>fileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>dataTypeIndices</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>numDataTypes</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>totNumDataTypes</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>myNumLocs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>steps</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>validFrac</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>optIndicesFile</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>compareIndicesFile</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">FILE *&#160;</td>
-          <td class="paramname"><em>outFile</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">710</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
-
-<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00061">aggInfo</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00598">countLines()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">endOpt</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00053">AggregateInfoStruct::endPt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00096">make2DArray()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00112">make2DIntArray()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00083">makeArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">model</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00056">AggregateInfoStruct::numDays</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">numLocs</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00625">parseSpdValue()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00580">readDataLine()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00653">readIndicesFile()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00023">sigmas</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00055">AggregateInfoStruct::spd</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00058">AggregateInfoStruct::startDay</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">startOpt</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00053">AggregateInfoStruct::startPt</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00057">AggregateInfoStruct::startYear</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00030">valid</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>.</p>
-<div class="dynheader">
-Here is the call graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="../../d7/d0b/paramchange_8c_ab2e314f4a756e7a3631c88cf2c347da6_cgraph.png" border="0" usemap="#ad7/d0b/paramchange_8c_ab2e314f4a756e7a3631c88cf2c347da6_cgraph" alt=""/></div>
-<map name="ad7/d0b/paramchange_8c_ab2e314f4a756e7a3631c88cf2c347da6_cgraph" id="ad7/d0b/paramchange_8c_ab2e314f4a756e7a3631c88cf2c347da6_cgraph">
-<area shape="rect" title=" " alt="" coords="5,181,88,207"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#a8a89c88fcf4370fc8966041870b7539a" title=" " alt="" coords="154,5,246,31"/>
-<area shape="poly" title=" " alt="" coords="51,180,80,119,105,82,134,48,152,35,155,39,138,52,109,85,85,122,55,182"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="312,56,389,81"/>
-<area shape="poly" title=" " alt="" coords="53,180,84,135,107,111,135,92,175,76,219,66,298,62,298,67,219,72,177,81,137,96,111,115,88,139,57,183"/>
-<area shape="rect" href="../../de/df1/util_8c.html#acfd51a4f4e38b658d40ac54b748a9b49" title=" " alt="" coords="145,107,255,132"/>
-<area shape="poly" title=" " alt="" coords="67,179,135,141,149,135,151,140,137,146,69,184"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a09ddebbbbb5ccb732d7f88931d9d1b2f" title=" " alt="" coords="136,156,264,181"/>
-<area shape="poly" title=" " alt="" coords="88,185,122,179,123,184,89,190"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a21c26b5db93cc2c6817b9a953683280f" title=" " alt="" coords="153,205,247,231"/>
-<area shape="poly" title=" " alt="" coords="89,198,140,206,139,211,88,203"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#a27e8f453a6f4505487fcdde74200efc7" title=" " alt="" coords="141,255,259,280"/>
-<area shape="poly" title=" " alt="" coords="71,204,137,240,154,247,152,252,135,244,68,209"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#a363bed66339924257cafd1a62de6eca7" title=" " alt="" coords="145,304,255,329"/>
-<area shape="poly" title=" " alt="" coords="59,205,91,246,113,269,138,289,148,296,145,300,134,294,109,273,87,250,55,209"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#ad6f52f0c525d1fc401cddeb1b8442dc3" title=" " alt="" coords="140,353,260,379"/>
-<area shape="poly" title=" " alt="" coords="55,206,84,269,108,306,138,339,146,345,143,349,134,343,103,309,79,271,50,208"/>
-<area shape="poly" title=" " alt="" coords="240,28,300,49,298,54,238,33"/>
-<area shape="poly" title=" " alt="" coords="245,351,262,339,284,310,302,279,327,210,340,145,346,95,351,95,346,146,332,212,307,281,289,313,266,343,248,355"/>
-</map>
-</div>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00632">632</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
 </div>
 </div>
@@ -862,63 +639,7 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00580">580</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>.</p>
-
-</div>
-</div>
-<a id="a849cd102825770b7b6f339c4ccaf5af7" name="a849cd102825770b7b6f339c4ccaf5af7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a849cd102825770b7b6f339c4ccaf5af7">&#9670;&#160;</a></span>readFileForAgg()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void readFileForAgg </td>
-          <td>(</td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>fileForAgg</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>numDataTypes</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>myUnaggedWeight</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">1015</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
-
-<p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00041">aggedData</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00044">aggedModel</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00037">aggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00346">computeAggedData()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">data</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">endOpt</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00096">make2DArray()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00034">numAggSteps</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">numLocs</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">startOpt</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00048">unaggedWeight</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>.</p>
-<div class="dynheader">
-Here is the call graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="../../d7/d0b/paramchange_8c_a849cd102825770b7b6f339c4ccaf5af7_cgraph.png" border="0" usemap="#ad7/d0b/paramchange_8c_a849cd102825770b7b6f339c4ccaf5af7_cgraph" alt=""/></div>
-<map name="ad7/d0b/paramchange_8c_a849cd102825770b7b6f339c4ccaf5af7_cgraph" id="ad7/d0b/paramchange_8c_a849cd102825770b7b6f339c4ccaf5af7_cgraph">
-<area shape="rect" title=" " alt="" coords="5,55,124,80"/>
-<area shape="rect" href="../../d7/d0b/paramchange_8c.html#ad221c501372d00e63f0b38fe0b3fc294" title=" " alt="" coords="172,5,323,31"/>
-<area shape="poly" title=" " alt="" coords="112,52,185,32,187,37,113,57"/>
-<area shape="rect" href="../../de/df1/util_8c.html#acfd51a4f4e38b658d40ac54b748a9b49" title=" " alt="" coords="192,55,303,80"/>
-<area shape="poly" title=" " alt="" coords="124,65,178,65,178,70,124,70"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="209,104,286,129"/>
-<area shape="poly" title=" " alt="" coords="113,77,196,100,195,105,112,83"/>
-</map>
-</div>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00587">587</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
 </div>
 </div>
@@ -960,11 +681,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00653">653</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00660">660</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">numLocs</a>, and <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -1001,7 +720,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00041">41</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>.</p>
 
 </div>
 </div>
@@ -1027,7 +746,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00044">44</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>.</p>
 
 </div>
 </div>
@@ -1051,9 +770,9 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00061">61</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00063">63</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00505">aggregates()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01078">newOutputInfo()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00512">aggregates()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01095">newOutputInfo()</a>.</p>
 
 </div>
 </div>
@@ -1079,7 +798,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00037">37</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>.</p>
 
 </div>
 </div>
@@ -1105,7 +824,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00020">20</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00505">aggregates()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">difference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00512">aggregates()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">difference()</a>.</p>
 
 </div>
 </div>
@@ -1131,7 +850,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">28</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">difference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">difference()</a>.</p>
 
 </div>
 </div>
@@ -1157,7 +876,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00026">26</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">difference()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00041">main()</a>, <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00300">metropolis()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>, and <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00125">reset()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">difference()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00041">main()</a>, <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00300">metropolis()</a>, and <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00125">reset()</a>.</p>
 
 </div>
 </div>
@@ -1183,7 +902,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00034">34</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>.</p>
 
 </div>
 </div>
@@ -1209,7 +928,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00017">17</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03250">cleanupModel()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00997">freeClimateList()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03217">initModel()</a>, <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>, <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00300">metropolis()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00137">newSpatialParams()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00592">readClimData()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00160">readEventData()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00653">readIndicesFile()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00781">readParamData()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00221">readSpatialParams()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00103">readSpatialValues()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00603">resetSpatialParams()</a>, and <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00657">writeBestSpatialParams()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03251">cleanupModel()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00997">freeClimateList()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01016">freeEventList()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03242">initEvents()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03218">initModel()</a>, <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>, <a class="el" href="../../d8/dd3/ml-metro5_8c_source.html#l00300">metropolis()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00137">newSpatialParams()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00592">readClimData()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00160">readEventData()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00660">readIndicesFile()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00781">readParamData()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00221">readSpatialParams()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00103">readSpatialValues()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00603">resetSpatialParams()</a>, and <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00657">writeBestSpatialParams()</a>.</p>
 
 </div>
 </div>
@@ -1235,7 +954,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00023">23</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">difference()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">difference()</a>.</p>
 
 </div>
 </div>
@@ -1261,33 +980,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00028">28</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">difference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
-
-</div>
-</div>
-<a id="a08951cb353529ae6fd979c1f4599b0b0" name="a08951cb353529ae6fd979c1f4599b0b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08951cb353529ae6fd979c1f4599b0b0">&#9670;&#160;</a></span>unaggedWeight</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double unaggedWeight = 0.0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00048">48</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d2/d27/ml-metrorun_8c_source.html#l00149">main()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01015">readFileForAgg()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">difference()</a>.</p>
 
 </div>
 </div>
@@ -1313,7 +1006,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00030">30</a> of file <a class="el" href="../../d7/d0b/paramchange_8c_source.html">paramchange.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00404">aggedDifference()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01123">cleanupParamchange()</a>, <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00088">difference()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00710">readData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l01140">cleanupParamchange()</a>, and <a class="el" href="../../d7/d0b/paramchange_8c_source.html#l00090">difference()</a>.</p>
 
 </div>
 </div>

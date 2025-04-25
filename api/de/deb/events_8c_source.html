@@ -233,7 +233,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>  <span class="keywordtype">char</span> line[EVENT_LINE_SIZE];</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>  <a class="code hl_struct" href="../../d6/d43/struct_event_node.html">EventNode</a> *curr, *next;</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>  <a class="code hl_struct" href="../../d6/d43/struct_event_node.html">EventNode</a> **events =</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>  <a class="code hl_struct" href="../../d6/d43/struct_event_node.html">EventNode</a> **<a class="code hl_variable" href="../../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb">events</a> =</div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>      (<a class="code hl_struct" href="../../d6/d43/struct_event_node.html">EventNode</a> **)calloc(<span class="keyword">sizeof</span>(<a class="code hl_struct" href="../../d6/d43/struct_event_node.html">EventNode</a> *), <a class="code hl_variable" href="../../d7/d0b/paramchange_8c.html#a10565784ba087b6c3c60917134aa6bef">numLocs</a> * <span class="keyword">sizeof</span>(<a class="code hl_struct" href="../../d6/d43/struct_event_node.html">EventNode</a> *));</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>  <span class="comment">// Check for a non-empty file</span></div>
@@ -241,7 +241,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    <span class="comment">// no file found, which is fine; we&#39;re done, a vector of NULL is what we</span></div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <span class="comment">// want for events</span></div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    printf(<span class="stringliteral">&quot;No event file found, assuming no events\n&quot;</span>);</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <span class="keywordflow">return</span> events;</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="../../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb">events</a>;</div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>  }</div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>  printf(<span class="stringliteral">&quot;Begin reading event data from file %s\n&quot;</span>, eventFile);</div>
@@ -250,7 +250,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
 <div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>  <span class="keywordflow">if</span> (fgets(line, EVENT_LINE_SIZE, in) == NULL) {</div>
 <div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    <span class="comment">// Again, this is fine - just return the empty events array</span></div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordflow">return</span> events;</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="../../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb">events</a>;</div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  }</div>
 <div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>  <span class="keywordtype">int</span> numRead = sscanf(line, <span class="stringliteral">&quot;%d %d %d %s %n&quot;</span>, &amp;loc, &amp;year, &amp;day, eventTypeStr,</div>
@@ -268,7 +268,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>  }</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>  next = <a class="code hl_function" href="../../de/deb/events_8c.html#a3145169f83f9dc878adef2f12da419af">createEventNode</a>(loc, year, day, eventType, eventParamsStr);</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  events[loc] = next;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  <a class="code hl_variable" href="../../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb">events</a>[loc] = next;</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>  currLoc = loc;</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>  currYear = year;</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>  currDay = day;</div>
@@ -316,12 +316,12 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>      <span class="comment">// New location, update location and start a new list</span></div>
 <div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>      currLoc = loc;</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>      events[currLoc] = next;</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>      <a class="code hl_variable" href="../../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb">events</a>[currLoc] = next;</div>
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    }</div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>  }</div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span> </div>
 <div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>  fclose(in);</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>  <span class="keywordflow">return</span> events;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>  <span class="keywordflow">return</span> <a class="code hl_variable" href="../../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb">events</a>;</div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>}</div>
 </div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
@@ -461,6 +461,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="ttc" id="aexit_codes_8h_html_a2d967eed409413b06a8450ff977ab52aaeb564c7e98246576bc6e445c13450e61"><div class="ttname"><a href="../../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aaeb564c7e98246576bc6e445c13450e61">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a></div><div class="ttdeci">@ EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d8f/exit_codes_8h_source.html#l00021">exitCodes.h:21</a></div></div>
 <div class="ttc" id="aparamchange_8c_html_a10565784ba087b6c3c60917134aa6bef"><div class="ttname"><a href="../../d7/d0b/paramchange_8c.html#a10565784ba087b6c3c60917134aa6bef">numLocs</a></div><div class="ttdeci">static double numLocs</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d0b/paramchange_8c_source.html#l00017">paramchange.c:17</a></div></div>
 <div class="ttc" id="asipnet_8c_html_a02eb7524df3cdfd7ab32de5b40516106"><div class="ttname"><a href="../../dd/d09/sipnet_8c.html#a02eb7524df3cdfd7ab32de5b40516106">params</a></div><div class="ttdeci">static Params params</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d09/sipnet_8c_source.html#l00548">sipnet.c:548</a></div></div>
+<div class="ttc" id="asipnet_8c_html_a4b03220c4f43d5828d14256aa92e0fcb"><div class="ttname"><a href="../../dd/d09/sipnet_8c.html#a4b03220c4f43d5828d14256aa92e0fcb">events</a></div><div class="ttdeci">static EventNode ** events</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d09/sipnet_8c_source.html#l00565">sipnet.c:565</a></div></div>
 <div class="ttc" id="astruct_event_node_html"><div class="ttname"><a href="../../d6/d43/struct_event_node.html">EventNode</a></div><div class="ttdef"><b>Definition</b> <a href="../../db/dd2/events_8h_source.html#l00065">events.h:65</a></div></div>
 <div class="ttc" id="astruct_event_node_html_a015651e67c2e87ead1864efba1b1b8c6"><div class="ttname"><a href="../../d6/d43/struct_event_node.html#a015651e67c2e87ead1864efba1b1b8c6">EventNode::type</a></div><div class="ttdeci">event_type_t type</div><div class="ttdef"><b>Definition</b> <a href="../../db/dd2/events_8h_source.html#l00066">events.h:66</a></div></div>
 <div class="ttc" id="astruct_event_node_html_a4fb8f0c45fb719937863369292bff1ed"><div class="ttname"><a href="../../d6/d43/struct_event_node.html#a4fb8f0c45fb719937863369292bff1ed">EventNode::day</a></div><div class="ttdeci">int day</div><div class="ttdef"><b>Definition</b> <a href="../../db/dd2/events_8h_source.html#l00067">events.h:67</a></div></div>
