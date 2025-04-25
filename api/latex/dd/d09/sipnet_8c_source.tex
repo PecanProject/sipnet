@@ -2537,25 +2537,25 @@
 \DoxyCodeLine{02572\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:\ \{}
 \DoxyCodeLine{02573\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IrrigationParams\ *irrParams\ =\ locEvent-\/>eventParams;}
 \DoxyCodeLine{02574\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ amount\ =\ irrParams-\/>amountAdded;}
-\DoxyCodeLine{02575\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ CANOPY)\ \{}
-\DoxyCodeLine{02576\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Part\ of\ the\ irrigation\ evaporates,\ and\ the\ rest\ makes\ it\ to\ the}}
-\DoxyCodeLine{02577\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ soil}}
-\DoxyCodeLine{02578\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Evaporated\ fraction}}
-\DoxyCodeLine{02579\ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ evapAmount\ =\ params.immedEvapFrac\ *\ amount;}
-\DoxyCodeLine{02580\ \ \ \ \ \ \ \ \ \ \ fluxes.immedEvap\ +=\ evapAmount;}
-\DoxyCodeLine{02581\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Remainder\ goes\ to\ the\ soil}}
-\DoxyCodeLine{02582\ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ soilAmount\ =\ amount\ -\/\ evapAmount;}
-\DoxyCodeLine{02583\ \ \ \ \ \ \ \ \ \ \ envi.soilWater\ +=\ soilAmount;}
-\DoxyCodeLine{02584\ \ \ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 2,\ \textcolor{stringliteral}{"{}fluxes.immedEvap"{}},}
-\DoxyCodeLine{02585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ evapAmount,\ \textcolor{stringliteral}{"{}envi.soilWater"{}},\ soilAmount);}
-\DoxyCodeLine{02586\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ SOIL)\ \{}
-\DoxyCodeLine{02587\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ All\ goes\ to\ the\ soil}}
-\DoxyCodeLine{02588\ \ \ \ \ \ \ \ \ \ \ envi.soilWater\ +=\ amount;}
-\DoxyCodeLine{02589\ \ \ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 1,\ \textcolor{stringliteral}{"{}envi.soilWater"{}},\ amount);}
-\DoxyCodeLine{02590\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{02591\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Unknown\ irrigation\ method\ type:\ \%d\(\backslash\)n"{}},\ irrParams-\/>method);}
-\DoxyCodeLine{02592\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
-\DoxyCodeLine{02593\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02575\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ soilAmount,\ evapAmount;}
+\DoxyCodeLine{02576\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ CANOPY)\ \{}
+\DoxyCodeLine{02577\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Part\ of\ the\ irrigation\ evaporates,\ and\ the\ rest\ makes\ it\ to\ the}}
+\DoxyCodeLine{02578\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ soil.\ Evaporated\ fraction:}}
+\DoxyCodeLine{02579\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ params.immedEvapFrac\ *\ amount;}
+\DoxyCodeLine{02580\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soil\ fraction:}}
+\DoxyCodeLine{02581\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount\ -\/\ evapAmount;}
+\DoxyCodeLine{02582\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ SOIL)\ \{}
+\DoxyCodeLine{02583\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ All\ goes\ to\ the\ soil}}
+\DoxyCodeLine{02584\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ 0.0;}
+\DoxyCodeLine{02585\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount;}
+\DoxyCodeLine{02586\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{02587\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Unknown\ irrigation\ method\ type:\ \%d\(\backslash\)n"{}},\ irrParams-\/>method);}
+\DoxyCodeLine{02588\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
+\DoxyCodeLine{02589\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02590\ \ \ \ \ \ \ \ \ fluxes.immedEvap\ +=\ evapAmount;}
+\DoxyCodeLine{02591\ \ \ \ \ \ \ \ \ envi.soilWater\ +=\ soilAmount;}
+\DoxyCodeLine{02592\ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 2,\ \textcolor{stringliteral}{"{}envi.soilWater"{}},\ soilAmount,}
+\DoxyCodeLine{02593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.immedEvap"{}},\ evapAmount);}
 \DoxyCodeLine{02594\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
 \DoxyCodeLine{02595\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:\ \{}
 \DoxyCodeLine{02596\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ PlantingParams\ *plantParams\ =\ locEvent-\/>eventParams;}
