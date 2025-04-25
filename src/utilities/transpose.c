@@ -63,8 +63,8 @@ void readFile(FILE *f, char **lines, int maxLength) {
 
   i = 0;
   // clang-tidy finds this sketchy, but it does seem to work, so ignore
-  [[clang::suppress]]
-  while (fgets(lines[i], maxLength, f) != NULL) {  // while not EOF or error
+  while (fgets(lines[i], maxLength, f) != NULL) {  // NOLINT
+    // while not EOF or error
     i++;
   }
 }

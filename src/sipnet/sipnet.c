@@ -1440,9 +1440,7 @@ int pastLeafGrowth(void) {
 
 #if GDD
   // null pointer dereference warning suppressed on the next line
-  [[clang::suppress]] return (climate->gdd >= params.gddLeafOn);  // growing
-                                                                  // degree days
-                                                                  // threshold
+  return (climate->gdd >= params.gddLeafOn);  // NOLINT
 #elif SOIL_PHENOL
   return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
                                                      // threshold
