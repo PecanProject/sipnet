@@ -68,7 +68,7 @@ We might also want to have a verbosity option to control how much gets reported.
 ## Lesser Ideas (in either scope or importance)
 
 ### Have events work with ROOTS=0 (unless we remove that case!)
-The event handler requires `ROOTS` to be on; this is apparent in event modeling that 
+[Only if motivated by specific use case] The event handler requires `ROOTS` to be on; this is apparent in event modeling that 
 distinguishes between wood C, fine root C, and coarse root C (in addition to leaf C).
 Those three pools are (one or two?) when `ROOTS=0`. We punted on enabling event handling for
 that case.
