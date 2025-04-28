@@ -63,7 +63,29 @@ We might also want to have a verbosity option to control how much gets reported.
 
 ## Modeling Ideas
 
-### TBD
+### Features excluded in favor of simplicity
+
+May be revisited if motivated by specific use cases or to improve model skill
+
+If to improve model skill, improvements should be demonstrated under multiple conditions.
+
+* Multi-layer soil  
+* Rooting zone differences by crop type  
+* Sub-daily irrigation  
+* Represent subdaily irrigation as duration as well as amount.  
+* Additional Q10   
+* Split mineral N into NO3 and NH4 and explicitly represent nitrification and denitrification  
+* CH4 flux: account for diffusion, methane oxidation, ebullition, and plant transport  
+* Methanotrophy  
+* N immobillization  
+* Variable Plant CN Ratios  
+* Water holding capacity of SOM  
+* Fruit, nut, seed pools  
+* Orchard floor preparation practices  
+* Clay / Sand  
+* Lignin  
+* pH
+
 
 ## Lesser Ideas (in either scope or importance)
 
