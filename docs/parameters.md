@@ -15,37 +15,6 @@ Note: this is a work in progress draft. Not all parameters listed will be used i
 
 Numbered items are cross-referenced with original documentation.
 
-## Table of Contents
-
-- [Input and Output Parameters (DRAFT)](#input-and-output-parameters-draft)
-  - [Table of Contents](#table-of-contents)
-  - [Notation](#notation)
-    - [Variables (Pools, Fluxes, and Parameters)](#variables-pools-fluxes-and-parameters)
-    - [Subscripts (Temporal, Spatial, or Contextual Identifiers)](#subscripts-temporal-spatial-or-contextual-identifiers)
-  - [Run-time Parameters](#run-time-parameters)
-    - [Initial state values](#initial-state-values)
-    - [Litter Quality Parameters](#litter-quality-parameters)
-    - [Photosynthesis parameters](#photosynthesis-parameters)
-    - [Phenology-related parameters](#phenology-related-parameters)
-    - [Allocation parameters](#allocation-parameters)
-    - [Autotrophic respiration parameters](#autotrophic-respiration-parameters)
-    - [Soil respiration parameters](#soil-respiration-parameters)
-    - [Nitrogen Cycle Parameters](#nitrogen-cycle-parameters)
-    - [Methane parameters](#methane-parameters)
-    - [Moisture-related parameters](#moisture-related-parameters)
-    - [Tree physiological parameters](#tree-physiological-parameters)
-  - [Compile-time parameters](#compile-time-parameters)
-  - [Drivers](#drivers)
-    - [Climate](#climate)
-      - [Examples of climate files:](#examples-of-climate-files)
-    - [Agronomic Events](#agronomic-events)
-      - [Fertilization Events](#fertilization-events)
-      - [Tillage Events](#tillage-events)
-      - [Planting Events](#planting-events)
-      - [Harvest Events](#harvest-events)
-      - [Example of events file:](#example-of-events-file)
-  - [Outputs](#outputs)
-
 ## Notation
 
 ### Variables (Pools, Fluxes, and Parameters)
