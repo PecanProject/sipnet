@@ -72,11 +72,13 @@ What goes in **docs/*md**:
 
 Documentation is located at https://pecanproject.github.io/sipnet/, and can be rebuilt using `mkdocs`. A brief summary 
 of use is listed here, or see the Getting Started page for `mkdocs` [here](https://www.mkdocs.org/getting-started/) for
-more information. The third-paRTY theme can be found [here](https://github.com/squidfunk/mkdocs-material).
+more information. 
+
+Issue the following command to install `mkdocs` and the third-party extensions usedin SIPNET:
 ```
-pip install mkdocs
-pip install mkdocs-material
+pip install mkdocs mkdocs-material pymdown-extensions
 ```
+The `material` theme can be found [here](https://github.com/squidfunk/mkdocs-material).
 
 MkDocs comes with a built-in dev-server that lets you preview your documentation as you work on it. Make sure you're 
 in the same directory as the mkdocs.yml configuration file, and then start the server by running the mkdocs serve 
