@@ -98,7 +98,7 @@ The dev-server also supports auto-reloading, and will rebuild your documentation
 file, documentation directory, or theme directory changes.
 
 If the structure of the documentation has changed (e.g., adding or removing pages), update `mkdocs.yml` in the root 
-directory and issue this command to rebuild:
+directory to reflect these changes and issue this command to rebuild:
 
 ```
 mkdocs build
