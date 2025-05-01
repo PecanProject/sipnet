@@ -1,8 +1,8 @@
 # SIPNET
 
-
-
-SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is an ecosystem model designed to efficiently simulate carbon and water dynamics. Originally developed for assimilation of eddy covariance flux data in forest ecosystems, current development is focused on representing carbon balance and GHG fluxes and agricultural management practices.
+SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is an ecosystem model designed to efficiently simulate
+carbon and water dynamics. Originally developed for assimilation of eddy covariance flux data in forest ecosystems, 
+current development is focused on representing carbon balance and GHG fluxes and agricultural management practices.
 
 ## Getting Started
 
@@ -32,7 +32,9 @@ runs.
 
 ## Documentation
 
-[Describe building the doxygen documentation and what it contains]
+Documentation for SIPNET is published at [pecanproject.github.io/sipnet](https://pecanproject.github.io/sipnet/), which is built using `mkdocs`. See 
+the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTING page for more information
+about how to write and compile the documentation.
 
 ## Roadmap or Changelog section?
 

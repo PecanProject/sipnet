@@ -68,6 +68,42 @@ What goes in **docs/*md**:
 - User guides and tutorials.
 - Documentation of equations, theoretical basis, and parameters.
 
+### Building the Documentation with `mkdocs`
+
+Documentation is located at https://pecanproject.github.io/sipnet/, and can be rebuilt using `mkdocs`. A brief summary 
+of use is listed here, or see the Getting Started page for `mkdocs` [here](https://www.mkdocs.org/getting-started/) for
+more information. 
+
+Issue the following command to install `mkdocs` and the third-party extensions usedin SIPNET:
+```
+pip install mkdocs mkdocs-material pymdown-extensions
+```
+The `material` theme can be found [here](https://github.com/squidfunk/mkdocs-material).
+
+MkDocs comes with a built-in dev-server that lets you preview your documentation as you work on it. Make sure you're 
+in the same directory as the mkdocs.yml configuration file, and then start the server by running the mkdocs serve 
+command:
+
+```
+$ mkdocs serve
+INFO    -  Building documentation...
+INFO    -  Cleaning site directory
+INFO    -  Documentation built in 0.22 seconds
+INFO    -  [15:50:43] Watching paths for changes: 'docs', 'mkdocs.yml'
+INFO    -  [15:50:43] Serving on http://127.0.0.1:8000/
+```
+Open up http://127.0.0.1:8000/ in your browser, and you'll see the documentation home page.
+
+The dev-server also supports auto-reloading, and will rebuild your documentation whenever anything in the configuration
+file, documentation directory, or theme directory changes.
+
+If the structure of the documentation has changed (e.g., adding, moving, removing, or renaming pages), update `mkdocs.yml` in the root 
+directory to reflect these changes and issue this command to rebuild:
+
+```
+mkdocs build
+```
+
 ## Compiling SIPNET binaries
 
 SIPNET uses `make` to build the model and documentation. There are also miscellaneous targets for running analysis workflows:

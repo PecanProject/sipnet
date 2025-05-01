@@ -43,7 +43,7 @@ Numbered items are cross-referenced with original documentation.
       - [Tillage Events](#tillage-events)
       - [Planting Events](#planting-events)
       - [Harvest Events](#harvest-events)
-      - [Example of events file:](#example-of-events-file)
+      - [Example of events file:](#example-of-eventsin-file)
   - [Outputs](#outputs)
 
 ## Notation
