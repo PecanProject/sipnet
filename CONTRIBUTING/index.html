@@ -565,6 +565,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#building-the-documentation-with-mkdocs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building the Documentation with mkdocs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -767,6 +782,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#building-the-documentation-with-mkdocs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building the Documentation with mkdocs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -858,6 +888,31 @@ automatically fix clang-tidy issues with the command:<br>
 <p>What goes in <strong>docs/*md</strong>:
 - User guides and tutorials.
 - Documentation of equations, theoretical basis, and parameters.</p>
+<h3 id="building-the-documentation-with-mkdocs">Building the Documentation with <code>mkdocs</code><a class="headerlink" href="#building-the-documentation-with-mkdocs" title="Permanent link">&para;</a></h3>
+<p>Documentation is located at https://pecanproject.github.io/sipnet/, and can be rebuilt using <code>mkdocs</code>. A brief summary 
+of use is listed here, or see the Getting Started page for <code>mkdocs</code> <a href="https://www.mkdocs.org/getting-started/">here</a> for
+more information. </p>
+<p>Issue the following command to install <code>mkdocs</code> and the third-party extensions usedin SIPNET:</p>
+<pre><code>pip install mkdocs mkdocs-material pymdown-extensions
+</code></pre>
+<p>The <code>material</code> theme can be found <a href="https://github.com/squidfunk/mkdocs-material">here</a>.</p>
+<p>MkDocs comes with a built-in dev-server that lets you preview your documentation as you work on it. Make sure you're 
+in the same directory as the mkdocs.yml configuration file, and then start the server by running the mkdocs serve 
+command:</p>
+<pre><code>$ mkdocs serve
+INFO    -  Building documentation...
+INFO    -  Cleaning site directory
+INFO    -  Documentation built in 0.22 seconds
+INFO    -  [15:50:43] Watching paths for changes: 'docs', 'mkdocs.yml'
+INFO    -  [15:50:43] Serving on http://127.0.0.1:8000/
+</code></pre>
+<p>Open up http://127.0.0.1:8000/ in your browser, and you'll see the documentation home page.</p>
+<p>The dev-server also supports auto-reloading, and will rebuild your documentation whenever anything in the configuration
+file, documentation directory, or theme directory changes.</p>
+<p>If the structure of the documentation has changed (e.g., adding, moving, removing, or renaming pages), update <code>mkdocs.yml</code> in the root 
+directory to reflect these changes and issue this command to rebuild:</p>
+<pre><code>mkdocs build
+</code></pre>
 <h2 id="compiling-sipnet-binaries">Compiling SIPNET binaries<a class="headerlink" href="#compiling-sipnet-binaries" title="Permanent link">&para;</a></h2>
 <p>SIPNET uses <code>make</code> to build the model and documentation. There are also miscellaneous targets for running analysis workflows:</p>
 <pre><code class="language-sh"># build SIPNET executable
