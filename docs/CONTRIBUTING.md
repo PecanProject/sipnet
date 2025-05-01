@@ -97,7 +97,7 @@ Open up http://127.0.0.1:8000/ in your browser, and you'll see the documentation
 The dev-server also supports auto-reloading, and will rebuild your documentation whenever anything in the configuration
 file, documentation directory, or theme directory changes.
 
-If the structure of the documentation has changed (e.g., adding or removing pages), update `mkdocs.yml` in the root 
+If the structure of the documentation has changed (e.g., adding, moving, removing, or renaming pages), update `mkdocs.yml` in the root 
 directory to reflect these changes and issue this command to rebuild:
 
 ```
