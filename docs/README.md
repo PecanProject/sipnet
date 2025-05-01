@@ -32,7 +32,7 @@ runs.
 
 ## Documentation
 
-Documentation for SIPNET is located [here](https://pecanproject.github.io/sipnet/), which is built using `mkdocs`. See 
+Documentation for SIPNET is published at [pecanproject.github.io/sipnet](https://pecanproject.github.io/sipnet/), which is built using `mkdocs`. See 
 the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTING page for more information.
 
 ## Roadmap or Changelog section?
