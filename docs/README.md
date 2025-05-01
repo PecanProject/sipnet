@@ -33,7 +33,8 @@ runs.
 ## Documentation
 
 Documentation for SIPNET is published at [pecanproject.github.io/sipnet](https://pecanproject.github.io/sipnet/), which is built using `mkdocs`. See 
-the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTING page for more information.
+the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTING page for more information
+about how to write and compile the documentation.
 
 ## Roadmap or Changelog section?
 
