@@ -41,6 +41,60 @@ Pull requests must pass all required checks to be merged into master, including 
   
 ## Code Format and Style
 
+###  Clang Format Guidelines
+
+This project uses [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html) to ensure a consistent coding style across all C/C++ source files. The format rules are defined in the `.clang-format` file at the root of the repository.
+
+####  Install Clang Format
+
+If `clang-format` is not already installed on your system, you can install it using:
+
+- **macOS**  
+  ```bash
+  brew install clang-format
+  ```
+
+- **Ubuntu/Debian**  
+  ```bash
+  sudo apt install clang-format
+  ```
+
+- **Windows**  
+  Install via [LLVM releases](https://releases.llvm.org/download.html) or with Chocolatey:  
+  ```bash
+  choco install llvm
+  ```
+
+####  How to Format Code
+
+You can format individual files manually or auto-format all modified files before committing:
+
+- Format a single file:
+  ```bash
+  clang-format -i path/to/file.c
+  ```
+
+- Format all C/C++ files in a directory:
+  ```bash
+  find src -name "*.c" -o -name "*.h" | xargs clang-format -i
+  ```
+
+- Format all staged changes:
+  ```bash
+  git clang-format
+  ```
+
+####  Tip: Use the Pre-Commit Hook
+
+To avoid formatting-related CI failures, always run the setup script before your first commit:
+
+```bash
+tools/setup.sh
+```
+This installs a pre-commit hook that automatically checks formatting on staged C files.
+
+
+
 ### Clang Tools
 
 This repo uses [clang-format](https://clang.llvm.org/docs/ClangFormat.html) and [clang-tidy](https://clang.llvm.org/extra/clang-tidy/index.html)
