@@ -330,8 +330,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ## Input Files
 
-Note: example files are presented with column headings, but this option is often not used in practice.  
-
 ### Run Settings
 
 The `sipnet.in` file specifies run settings for SIPNET, including the run type, input file names, and output options. The file is self-documenting, with comments describing each option. Key features of interest include 
@@ -594,10 +592,6 @@ loc  year  day  type     param_name=delta[,param_name=delta,...]
 |    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
 |    | $F^N_\text{vol}$ |fluxesn2o      | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 |    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
-
-
-#### Example output file
-
 
 <!--
 
