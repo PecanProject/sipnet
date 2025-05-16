@@ -330,6 +330,8 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ## Input Files
 
+Note: example files are presented with column headings, but this option is often not used in practice.  
+
 ### Run Settings
 
 The `sipnet.in` file specifies run settings for SIPNET, including the run type, input file names, and output options. The file is self-documenting, with comments describing each option. Key features of interest include 
@@ -351,22 +353,25 @@ or documented._
 
 
 The SIPNET parameter file (`sipnet.param`) specifies model parameters and their properties for each simulation. 
-Each line in the file corresponds to a single parameter and contains five or six space-separated values:
-
-```
-<param_name> <value> <flag> <min> <max> <stddev>
-```
+Each line in the file corresponds to a single parameter and contains five or six space-separated values.
 
 | Column         | Description                                                                               |
 | -------------- | ----------------------------------------------------------------------------------------- |
-| Parameter Name | Name of the parameter (e.g., `laiInit`)                                                   |
-| Value          | Value of the parameter to use in the model                                                |
+| Parameter Name | Name of the parameter                                                  |
+| Value          | Value of the parameter to use in the model                             |
 | Flag           | Parameter estimation flag: <br> `0` = fixed (not estimated), <br> `1` = estimated (free)  |
-| Min            | Minimum allowable value during optimization                                               |
-| Max            | Maximum allowable value during optimization                                               |
-| Stddev         | (Optional) Standard deviation for prior distribution (used in Bayesian data assimilation) |
+| Min            | Minimum value for optimization                                         |
+| Max            | Maximum value for optimization                                         |
+| Stddev         | (Optional) Standard deviation for prior distribution                   |
 
-**Example:**
+#### Example `sipnet.param` file
+
+Column names are not used, but are:
+```
+param_name value flag min max stddev
+```
+
+
 ```
 plantWoodInit 110 0 6600 14000 200
 laiInit 0 0 0 5.2 0.2
@@ -382,13 +387,6 @@ aMax 95 1 0 200 0.2
 aMaxFrac 0.85 0 0.66 0.86 0.005
 ...
 ```
-
-For example, in the line
-```
-soilInit 7278.6 1 3300 19000 3000
-```
-the parameter `soilInit` is set to be estimated (`1`), with a value of `7278.6`, a minimum of `3300`, a maximum of `19000`, and a standard deviation of `3000`.
-
 
 
 ### Climate
@@ -596,6 +594,10 @@ loc  year  day  type     param_name=delta[,param_name=delta,...]
 |    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
 |    | $F^N_\text{vol}$ |fluxesn2o      | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 |    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
+
+
+#### Example output file
+
 
 <!--
 
