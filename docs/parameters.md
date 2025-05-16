@@ -327,7 +327,69 @@ Run-time parameters can change from one run to the next, or when the model is st
 | E\_STAR\_SNOW                                  | 0.6                       | approximate saturation vapor pressure at 0°C (kPa)                                                              |
 |                                                |                           |                                                                                                                 |
 
-## Drivers
+
+## Input Files
+
+### Run Settings
+
+The `sipnet.in` file specifies run settings for SIPNET, including the run type, input file names, and output options. The file is self-documenting, with comments describing each option. Key features of interest include 
+
+- `FILENAME` Set output filenames.
+- `PRINT_HEADER` Print header information to output files
+- `DO_SINGLE_OUTPUTS` Write each variable to a separate file
+
+Multi-site runs, sensitivity tests, and Monte Carlo runs are deprecated. Typically these analyses are handled 
+using the [PEcAn Framework](https://pecanproject.org/).
+
+### Parameters and Initial Conditions
+
+
+Both initial conditions and parameters are specified in a file named `sipnet.param`.
+
+_Note: A `sipnet.param-spatial` can be used for multi-site runs, but this is not currently used 
+or documented._
+
+
+The SIPNET parameter file (`sipnet.param`) specifies model parameters and their properties for each simulation. 
+Each line in the file corresponds to a single parameter and contains five or six space-separated values:
+
+```
+<param_name> <value> <flag> <min> <max> <stddev>
+```
+
+| Column         | Description                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------- |
+| Parameter Name | Name of the parameter (e.g., `laiInit`)                                                   |
+| Value          | Value of the parameter to use in the model                                                |
+| Flag           | Parameter estimation flag: <br> `0` = fixed (not estimated), <br> `1` = estimated (free)  |
+| Min            | Minimum allowable value during optimization                                               |
+| Max            | Maximum allowable value during optimization                                               |
+| Stddev         | (Optional) Standard deviation for prior distribution (used in Bayesian data assimilation) |
+
+**Example:**
+```
+plantWoodInit 110 0 6600 14000 200
+laiInit 0 0 0 5.2 0.2
+litterInit 200 0 130 1200 25
+soilInit 7000 1 3300 19000 3000
+litterWFracInit 0.5 0 0 1 0.1
+soilWFracInit 0.6 1 0 1 0.1
+snowInit 1 0 0 0 1
+microbeInit 0.5 0 0.02 1 0.001
+fineRootFrac 0.2 0 0 1 0.001
+coarseRootFrac 0.2 0 0 1 0.001
+aMax 95 1 0 200 0.2
+aMaxFrac 0.85 0 0.66 0.86 0.005
+...
+```
+
+For example, in the line
+```
+soilInit 7278.6 1 3300 19000 3000
+```
+the parameter `soilInit` is set to be estimated (`1`), with a value of `7278.6`, a minimum of `3300`, a maximum of `19000`, and a standard deviation of `3000`.
+
+
 
 ### Climate
 
@@ -350,7 +412,7 @@ For each step of the model, for each location, the following inputs are needed. 
 | 13 | wspd        | avg. wind speed                   | m/s         |                |
 | 14 | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
 
-#### Examples of climate files:
+#### Example `sipnet.clim` file:
 
 Column names are not used, but are:
 
@@ -375,7 +437,6 @@ loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   s
 0	  1998 305 17.00  0.583 1.9  1.3   0.0000 0.0000 108.1 75.9    732.7  1.1350 0.0000
 0	  1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690 0.0000
 ```
-
 
 ### Agronomic Events
 
@@ -469,7 +530,7 @@ Notes:
   - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
    - root biomass is only removed for root crops
  
-#### Example of events.in file:
+#### Example of `events.in` file:
 
 ```
 1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
@@ -481,10 +542,15 @@ Notes:
 
 #### Events output
 
-SIPNET will create a file named `events.out` when event handling is enabled. This file 
-will have one row for each agronomic event that is processed. Each row lists location, 
+SIPNET will create a file named `events.out` when event handling is enabled. 
+
+_Note: `events.out` is primarily intended as a log debugging and testing purposes; 
+the `events.in` contains the same information but is easier to parse for downstream analyses._
+
+This file will have one row for each agronomic event that is processed. Each row lists location, 
 time, event type, and parameter name/value pairs for all state variables that the event
 affects. 
+
 
 Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
 up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
@@ -497,6 +563,7 @@ loc  year  day  type     param_name=delta[,param_name=delta,...]
 1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
 1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 ```
+
 ## Outputs
 
 |    | Symbol      | Parameter Name     | Definition                     | Units       |
