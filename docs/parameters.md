@@ -540,8 +540,6 @@ Notes:
 
 SIPNET will create a file named `events.out` when event handling is enabled. 
 
-_Note: `events.out` is primarily intended as a log debugging and testing purposes; 
-the `events.in` contains the same information but is easier to parse for downstream analyses._
 
 This file will have one row for each agronomic event that is processed. Each row lists location, 
 time, event type, and parameter name/value pairs for all state variables that the event
