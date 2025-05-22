@@ -560,6 +560,8 @@ loc  year  day  type     param_name=delta[,param_name=delta,...]
 1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 ```
 
+_Note: `events.out` logs all parameters changed by an event for debugging and testing purposes; 
+For downstream analyses that only need the date and event type, `events.in` is equivalent and easier to parse._
 ## Outputs
 
 |    | Symbol      | Parameter Name     | Definition                     | Units       |
