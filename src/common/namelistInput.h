@@ -82,4 +82,10 @@ void dieIfNotSet(NamelistInputs *namelistInputs, char *name);
 // free up space used by namelistInputs
 void deleteNamelistInputs(NamelistInputs *namelistInputs);
 
+// find input item with given name in namelistInputs list
+// return a pointer to this input item
+// if not found, return NULL
+NamelistInputItem *locateNamelistInputItem(NamelistInputs *namelistInputs,
+                                           char *name);
+
 #endif
