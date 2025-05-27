@@ -2517,711 +2517,710 @@
 \DoxyCodeLine{02552\ }
 \DoxyCodeLine{02553\ \ \ \textcolor{comment}{//\ If\ locEvent\ starts\ off\ NULL,\ this\ function\ will\ just\ fall\ through,\ as\ it}}
 \DoxyCodeLine{02554\ \ \ \textcolor{comment}{//\ should.}}
-\DoxyCodeLine{02555\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ year\ =\ climate-\/>year;}
-\DoxyCodeLine{02556\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ day\ =\ climate-\/>day;}
+\DoxyCodeLine{02555\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ climYear\ =\ climate-\/>year;}
+\DoxyCodeLine{02556\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ climDay\ =\ climate-\/>day;}
 \DoxyCodeLine{02557\ }
 \DoxyCodeLine{02558\ \ \ \textcolor{comment}{//\ The\ events\ file\ has\ been\ tested\ on\ read,\ so\ we\ know\ this\ event\ list\ should}}
 \DoxyCodeLine{02559\ \ \ \textcolor{comment}{//\ be\ in\ chrono\ order.\ However,\ we\ need\ to\ check\ to\ make\ sure\ the\ current}}
 \DoxyCodeLine{02560\ \ \ \textcolor{comment}{//\ event\ is\ not\ in\ the\ past,\ as\ that\ would\ indicate\ an\ event\ that\ did\ not\ have}}
 \DoxyCodeLine{02561\ \ \ \textcolor{comment}{//\ a\ corresponding\ climate\ file\ record.}}
-\DoxyCodeLine{02562\ \ \ \textcolor{keywordflow}{while}\ (locEvent\ !=\ NULL\ \&\&\ locEvent-\/>year\ <=\ year\ \&\&\ locEvent-\/>day\ <=\ day)\ \{}
-\DoxyCodeLine{02563\ \ \ \ \ \textcolor{keywordflow}{if}\ (locEvent-\/>year\ <\ year\ ||\ locEvent-\/>day\ <\ day)\ \{}
-\DoxyCodeLine{02564\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Agronomic\ event\ found\ for\ loc:\ \%d\ year:\ \%d\ day:\ \%d\ that\ does\ not\ "{}}}
-\DoxyCodeLine{02565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}have\ a\ corresponding\ record\ in\ the\ climate\ file\(\backslash\)n"{}},}
-\DoxyCodeLine{02566\ \ \ \ \ \ \ \ \ \ \ \ \ \ locEvent-\/>loc,\ locEvent-\/>year,\ locEvent-\/>day);}
-\DoxyCodeLine{02567\ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
-\DoxyCodeLine{02568\ \ \ \ \ \}}
-\DoxyCodeLine{02569\ \ \ \ \ \textcolor{comment}{//\ NOTE:\ for\ writeEventOut\ calls,\ try\ to\ stick\ to\ this\ format\ for}}
-\DoxyCodeLine{02570\ \ \ \ \ \textcolor{comment}{//\ name/value\ pairs:\ "{}\%20s\ \%6.2f\ \ 20s\ \%6.2f\ \ ..."{}}}
-\DoxyCodeLine{02571\ \ \ \ \ \textcolor{keywordflow}{switch}\ (locEvent-\/>type)\ \{}
-\DoxyCodeLine{02572\ \ \ \ \ \ \ \textcolor{comment}{//\ Implementation\ TBD,\ as\ we\ enable\ the\ various\ event\ types}}
-\DoxyCodeLine{02573\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:\ \{}
-\DoxyCodeLine{02574\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IrrigationParams\ *irrParams\ =\ locEvent-\/>eventParams;}
-\DoxyCodeLine{02575\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ amount\ =\ irrParams-\/>amountAdded;}
-\DoxyCodeLine{02576\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ soilAmount,\ evapAmount;}
-\DoxyCodeLine{02577\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ CANOPY)\ \{}
-\DoxyCodeLine{02578\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Part\ of\ the\ irrigation\ evaporates,\ and\ the\ rest\ makes\ it\ to\ the}}
-\DoxyCodeLine{02579\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ soil.\ Evaporated\ fraction:}}
-\DoxyCodeLine{02580\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ params.immedEvapFrac\ *\ amount;}
-\DoxyCodeLine{02581\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soil\ fraction:}}
-\DoxyCodeLine{02582\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount\ -\/\ evapAmount;}
-\DoxyCodeLine{02583\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ SOIL)\ \{}
-\DoxyCodeLine{02584\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ All\ goes\ to\ the\ soil}}
-\DoxyCodeLine{02585\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ 0.0;}
-\DoxyCodeLine{02586\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount;}
-\DoxyCodeLine{02587\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{02588\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Unknown\ irrigation\ method\ type:\ \%d\(\backslash\)n"{}},\ irrParams-\/>method);}
-\DoxyCodeLine{02589\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
-\DoxyCodeLine{02590\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{02591\ \ \ \ \ \ \ \ \ fluxes.immedEvap\ +=\ evapAmount;}
-\DoxyCodeLine{02592\ \ \ \ \ \ \ \ \ envi.soilWater\ +=\ soilAmount;}
-\DoxyCodeLine{02593\ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 2,\ \textcolor{stringliteral}{"{}envi.soilWater"{}},\ soilAmount,}
-\DoxyCodeLine{02594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.immedEvap"{}},\ evapAmount);}
-\DoxyCodeLine{02595\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{02596\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:\ \{}
-\DoxyCodeLine{02597\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ PlantingParams\ *plantParams\ =\ locEvent-\/>eventParams;}
-\DoxyCodeLine{02598\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafC\ =\ plantParams-\/>leafC;}
-\DoxyCodeLine{02599\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodC\ =\ plantParams-\/>woodC;}
-\DoxyCodeLine{02600\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineRootC\ =\ plantParams-\/>fineRootC;}
-\DoxyCodeLine{02601\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseRootC\ =\ plantParams-\/>coarseRootC;}
-\DoxyCodeLine{02602\ }
-\DoxyCodeLine{02603\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ pools}}
-\DoxyCodeLine{02604\ \ \ \ \ \ \ \ \ envi.plantLeafC\ +=\ leafC;}
-\DoxyCodeLine{02605\ \ \ \ \ \ \ \ \ envi.plantWoodC\ +=\ woodC;}
-\DoxyCodeLine{02606\ \ \ \ \ \ \ \ \ envi.fineRootC\ +=\ fineRootC;}
-\DoxyCodeLine{02607\ \ \ \ \ \ \ \ \ envi.coarseRootC\ +=\ coarseRootC;}
-\DoxyCodeLine{02608\ }
-\DoxyCodeLine{02609\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ allocate\ to\ N\ pools}}
-\DoxyCodeLine{02610\ }
-\DoxyCodeLine{02611\ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 4,\ \textcolor{stringliteral}{"{}envi.plantLeafC"{}},\ leafC,}
-\DoxyCodeLine{02612\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.plantWoodC"{}},\ woodC,\ \textcolor{stringliteral}{"{}envi.fineRootC"{}},\ fineRootC,}
-\DoxyCodeLine{02613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.coarseRootC"{}},\ coarseRootC);}
-\DoxyCodeLine{02614\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{02615\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:\ \{}
-\DoxyCodeLine{02616\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Harvest\ can\ both\ remove\ biomass\ and\ move\ biomass\ to\ the\ litter\ pool}}
-\DoxyCodeLine{02617\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ HarvestParams\ *harvParams\ =\ locEvent-\/>eventParams;}
-\DoxyCodeLine{02618\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRA\ =\ harvParams-\/>fractionRemovedAbove;}
-\DoxyCodeLine{02619\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTA\ =\ harvParams-\/>fractionTransferredAbove;}
-\DoxyCodeLine{02620\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRB\ =\ harvParams-\/>fractionRemovedBelow;}
-\DoxyCodeLine{02621\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTB\ =\ harvParams-\/>fractionTransferredBelow;}
-\DoxyCodeLine{02622\ }
-\DoxyCodeLine{02623\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Litter\ increase}}
-\DoxyCodeLine{02624\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ litterAdd\ =\ fracTA\ *\ (envi.plantLeafC\ +\ envi.plantWoodC)\ +}
-\DoxyCodeLine{02625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fracTB\ *\ (envi.fineRootC\ +\ envi.coarseRootC);}
-\DoxyCodeLine{02626\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ reductions,\ counting\ both\ mass\ moved\ to\ litter\ and\ removed\ by}}
-\DoxyCodeLine{02627\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ harvest\ itself.\ Above-\/ground\ changes:}}
-\DoxyCodeLine{02628\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafDelta\ =\ -\/envi.plantLeafC\ *\ (fracRA\ +\ fracTA);}
-\DoxyCodeLine{02629\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodDelta\ =\ -\/envi.plantWoodC\ *\ (fracRA\ +\ fracTA);}
-\DoxyCodeLine{02630\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Below-\/ground\ changes:}}
-\DoxyCodeLine{02631\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineDelta\ =\ -\/envi.fineRootC\ *\ (fracRB\ +\ fracTB);}
-\DoxyCodeLine{02632\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseDelta\ =\ -\/envi.coarseRootC\ *\ (fracRB\ +\ fracTB);}
-\DoxyCodeLine{02633\ }
-\DoxyCodeLine{02634\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ updates:}}
-\DoxyCodeLine{02635\ \ \ \ \ \ \ \ \ envi.litter\ +=\ litterAdd;}
-\DoxyCodeLine{02636\ \ \ \ \ \ \ \ \ envi.plantLeafC\ +=\ leafDelta;}
-\DoxyCodeLine{02637\ \ \ \ \ \ \ \ \ envi.plantWoodC\ +=\ woodDelta;}
-\DoxyCodeLine{02638\ \ \ \ \ \ \ \ \ envi.fineRootC\ +=\ fineDelta;}
-\DoxyCodeLine{02639\ \ \ \ \ \ \ \ \ envi.coarseRootC\ +=\ coarseDelta;}
-\DoxyCodeLine{02640\ }
-\DoxyCodeLine{02641\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ move/remove\ biomass\ in\ N\ pools}}
-\DoxyCodeLine{02642\ }
-\DoxyCodeLine{02643\ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 5,\ \textcolor{stringliteral}{"{}env.litter"{}},\ litterAdd,}
-\DoxyCodeLine{02644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.plantLeafC"{}},\ leafDelta,\ \textcolor{stringliteral}{"{}envi.plantWoodC"{}},}
-\DoxyCodeLine{02645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ woodDelta,\ \textcolor{stringliteral}{"{}envi.fineRootC"{}},\ fineDelta,}
-\DoxyCodeLine{02646\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.coarseRootC"{}},\ coarseDelta);}
-\DoxyCodeLine{02647\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{02648\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:}
-\DoxyCodeLine{02649\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TBD}}
-\DoxyCodeLine{02650\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Tillage\ events\ not\ yet\ implemented\(\backslash\)n"{}});}
-\DoxyCodeLine{02651\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{02652\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:}
-\DoxyCodeLine{02653\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TBD}}
-\DoxyCodeLine{02654\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Fertilization\ events\ not\ yet\ implemented\(\backslash\)n"{}});}
-\DoxyCodeLine{02655\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{02656\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
-\DoxyCodeLine{02657\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Unknown\ event\ type\ (\%d)\ in\ processEvents()\(\backslash\)n"{}},\ locEvent-\/>type);}
-\DoxyCodeLine{02658\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
-\DoxyCodeLine{02659\ \ \ \ \ \}}
-\DoxyCodeLine{02660\ }
-\DoxyCodeLine{02661\ \ \ \ \ locEvent\ =\ locEvent-\/>nextEvent;}
-\DoxyCodeLine{02662\ \ \ \}}
-\DoxyCodeLine{02663\ \}}
-\DoxyCodeLine{02664\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02665\ }
-\DoxyCodeLine{02666\ \textcolor{comment}{//\ !!!\ main\ runner\ function\ !!!}}
-\DoxyCodeLine{02667\ }
-\DoxyCodeLine{02668\ \textcolor{comment}{//\ calculate\ all\ fluxes\ and\ update\ state\ for\ this\ time\ step}}
-\DoxyCodeLine{02669\ \textcolor{comment}{//\ we\ calculate\ all\ fluxes\ before\ updating\ state\ in\ case\ flux\ calculations}}
-\DoxyCodeLine{02670\ \textcolor{comment}{//\ depend\ on\ the\ old\ state}}
-\DoxyCodeLine{02671\ \textcolor{keywordtype}{void}\ updateState(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{02672\ \ \ \textcolor{keywordtype}{double}\ npp;\ \ \textcolor{comment}{//\ net\ primary\ productivity,\ g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1}}
-\DoxyCodeLine{02673\ \ \ \textcolor{keywordtype}{double}\ oldSoilWater;\ \ \textcolor{comment}{//\ how\ much\ soil\ water\ was\ there\ before\ we\ updated\ it?}}
-\DoxyCodeLine{02674\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Used\ in\ trackers}}
-\DoxyCodeLine{02675\ \ \ \textcolor{keywordtype}{int}\ err;}
-\DoxyCodeLine{02676\ \ \ oldSoilWater\ =\ envi.soilWater;}
-\DoxyCodeLine{02677\ }
-\DoxyCodeLine{02678\ \ \ calculateFluxes();}
-\DoxyCodeLine{02679\ }
-\DoxyCodeLine{02680\ \ \ \textcolor{comment}{//\ update\ the\ stocks,\ with\ fluxes\ adjusted\ for\ length\ of\ time\ step:}}
-\DoxyCodeLine{02681\ \ \ envi.plantWoodC\ +=\ (fluxes.photosynthesis\ +\ fluxes.woodCreation\ -\/}
-\DoxyCodeLine{02682\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fluxes.leafCreation\ -\/\ fluxes.woodLitter\ -\/\ fluxes.rVeg\ -\/}
-\DoxyCodeLine{02683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fluxes.coarseRootCreation\ -\/\ fluxes.fineRootCreation)\ *}
-\DoxyCodeLine{02684\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length;}
-\DoxyCodeLine{02685\ \ \ envi.plantLeafC\ +=}
-\DoxyCodeLine{02686\ \ \ \ \ \ \ (fluxes.leafCreation\ -\/\ fluxes.leafLitter)\ *\ climate-\/>length;}
-\DoxyCodeLine{02687\ }
-\DoxyCodeLine{02688\ \ \ soilDegradation();\ \ \textcolor{comment}{//\ This\ updates\ all\ the\ soil\ functions}}
-\DoxyCodeLine{02689\ }
-\DoxyCodeLine{02690\ \textcolor{preprocessor}{\#if\ MODEL\_WATER\ \ }\textcolor{comment}{//\ water\ pool\ updating\ happens\ here:}}
-\DoxyCodeLine{02691\ \textcolor{preprocessor}{\#if\ LITTER\_WATER\ \ }\textcolor{comment}{//\ (2\ soil\ water\ layers;\ litter\ water\ will\ only\ be\ on\ if}}
-\DoxyCodeLine{02692\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ complex\ water\ is\ also\ on)}}
-\DoxyCodeLine{02693\ \ \ envi.litterWater\ +=}
-\DoxyCodeLine{02694\ \ \ \ \ \ \ (fluxes.rain\ +\ fluxes.snowMelt\ -\/\ fluxes.immedEvap\ -\/\ fluxes.fastFlow\ -\/}
-\DoxyCodeLine{02695\ \ \ \ \ \ \ \ fluxes.evaporation\ -\/\ fluxes.topDrainage)\ *}
-\DoxyCodeLine{02696\ \ \ \ \ \ \ climate-\/>length;}
-\DoxyCodeLine{02697\ \ \ envi.soilWater\ +=}
-\DoxyCodeLine{02698\ \ \ \ \ \ \ (fluxes.topDrainage\ -\/\ fluxes.transpiration\ -\/\ fluxes.bottomDrainage)\ *}
-\DoxyCodeLine{02699\ \ \ \ \ \ \ climate-\/>length;}
-\DoxyCodeLine{02700\ \textcolor{preprocessor}{\#else\ \ }\textcolor{comment}{//\ LITTER\_WATER\ =\ 0\ (only\ one\ soil\ water\ layer)}}
-\DoxyCodeLine{02701\ \ \ \ \ \ \ \ \textcolor{comment}{//\ note:\ some\ of\ these\ fluxes\ will\ always\ be\ 0\ if\ complex}}
-\DoxyCodeLine{02702\ \ \ \ \ \ \ \ \textcolor{comment}{//\ water\ is\ off}}
-\DoxyCodeLine{02703\ \ \ envi.soilWater\ +=}
-\DoxyCodeLine{02704\ \ \ \ \ \ \ (fluxes.rain\ +\ fluxes.snowMelt\ -\/\ fluxes.immedEvap\ -\/\ fluxes.fastFlow\ -\/}
-\DoxyCodeLine{02705\ \ \ \ \ \ \ \ fluxes.evaporation\ -\/\ fluxes.transpiration\ -\/\ fluxes.bottomDrainage)\ *}
-\DoxyCodeLine{02706\ \ \ \ \ \ \ climate-\/>length;}
-\DoxyCodeLine{02707\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ LITTER\_WATER}}
-\DoxyCodeLine{02708\ }
-\DoxyCodeLine{02709\ \ \ \textcolor{comment}{//\ if\ COMPLEX\_WATER\ =\ 0\ or\ SNOW\ =\ 0,\ some\ or\ all\ of\ these\ fluxes\ will\ always}}
-\DoxyCodeLine{02710\ \ \ \textcolor{comment}{//\ be\ 0}}
-\DoxyCodeLine{02711\ \ \ envi.snow\ +=\ (fluxes.snowFall\ -\/\ fluxes.snowMelt\ -\/\ fluxes.sublimation)\ *}
-\DoxyCodeLine{02712\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length;}
-\DoxyCodeLine{02713\ }
-\DoxyCodeLine{02714\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ MODEL\_WATER}}
-\DoxyCodeLine{02715\ }
-\DoxyCodeLine{02716\ \ \ ensureNonNegativeStocks();}
-\DoxyCodeLine{02717\ }
-\DoxyCodeLine{02718\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
-\DoxyCodeLine{02719\ \ \ \textcolor{comment}{//\ Process\ events\ for\ this\ location/year/day,\ AFTER\ updates\ are\ made\ to\ fluxes}}
-\DoxyCodeLine{02720\ \ \ \textcolor{comment}{//\ and\ state\ variables\ above.\ Events\ are\ (currently,\ Jan\ 25,\ 2025)\ handled\ as}}
-\DoxyCodeLine{02721\ \ \ \textcolor{comment}{//\ instantaneous\ deltas\ to\ relevant\ state\ (envi\ and\ fluxes\ fields),}}
-\DoxyCodeLine{02722\ \ \ processEvents();}
-\DoxyCodeLine{02723\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02724\ }
-\DoxyCodeLine{02725\ \ \ npp\ =\ fluxes.photosynthesis\ -\/\ fluxes.rVeg\ -\/\ fluxes.rCoarseRoot\ -\/}
-\DoxyCodeLine{02726\ \ \ \ \ \ \ \ \ fluxes.rFineRoot;}
-\DoxyCodeLine{02727\ }
-\DoxyCodeLine{02728\ \ \ err\ =\ addValueToMeanTracker(meanNPP,\ npp,\ climate-\/>length);\ \ \textcolor{comment}{//\ update\ running}}
-\DoxyCodeLine{02729\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mean\ of\ NPP}}
-\DoxyCodeLine{02730\ \ \ \textcolor{keywordflow}{if}\ (err\ !=\ 0)\ \{}
-\DoxyCodeLine{02731\ \ \ \ \ printf(\textcolor{stringliteral}{"{}*******\ Error\ type\ \%d\ while\ trying\ to\ add\ value\ to\ NPP\ mean\ "{}}}
-\DoxyCodeLine{02732\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}tracker\ in\ sipnet:updateState()\ *******\(\backslash\)n"{}},}
-\DoxyCodeLine{02733\ \ \ \ \ \ \ \ \ \ \ \ err);}
-\DoxyCodeLine{02734\ \ \ \ \ printf(\textcolor{stringliteral}{"{}npp\ =\ \%f,\ climate-\/>length\ =\ \%f\(\backslash\)n"{}},\ npp,\ climate-\/>length);}
-\DoxyCodeLine{02735\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Suggestion:\ try\ changing\ MEAN\_NPP\_MAX\_ENTRIES\ in\ sipnet.c\(\backslash\)n"{}});}
-\DoxyCodeLine{02736\ \ \ \ \ exit(1);}
-\DoxyCodeLine{02737\ \ \ \}}
-\DoxyCodeLine{02738\ }
-\DoxyCodeLine{02739\ \ \ err\ =\ addValueToMeanTracker(meanGPP,\ fluxes.photosynthesis,}
-\DoxyCodeLine{02740\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length);\ \ \textcolor{comment}{//\ update\ running\ mean\ of\ GPP}}
-\DoxyCodeLine{02741\ \ \ \textcolor{keywordflow}{if}\ (err\ !=\ 0)\ \{}
-\DoxyCodeLine{02742\ \ \ \ \ printf(\textcolor{stringliteral}{"{}*******\ Error\ type\ \%d\ while\ trying\ to\ add\ value\ to\ GPP\ mean\ "{}}}
-\DoxyCodeLine{02743\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}tracker\ in\ sipnet:updateState()\ *******\(\backslash\)n"{}},}
-\DoxyCodeLine{02744\ \ \ \ \ \ \ \ \ \ \ \ err);}
-\DoxyCodeLine{02745\ \ \ \ \ printf(\textcolor{stringliteral}{"{}GPP\ =\ \%f,\ climate-\/>length\ =\ \%f\(\backslash\)n"{}},\ fluxes.photosynthesis,}
-\DoxyCodeLine{02746\ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length);}
-\DoxyCodeLine{02747\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Suggestion:\ try\ changing\ MEAN\_GPP\_SOIL\_MAX\_ENTRIES\ in\ sipnet.c\(\backslash\)n"{}});}
-\DoxyCodeLine{02748\ \ \ \ \ exit(1);}
-\DoxyCodeLine{02749\ \ \ \}}
-\DoxyCodeLine{02750\ }
-\DoxyCodeLine{02751\ \ \ updateTrackers(oldSoilWater);}
-\DoxyCodeLine{02752\ \}}
-\DoxyCodeLine{02753\ }
-\DoxyCodeLine{02754\ \textcolor{comment}{//\ initialize\ phenology\ tracker\ structure,\ based\ on\ day\ of\ year\ of\ first\ climate}}
-\DoxyCodeLine{02755\ \textcolor{comment}{//\ record\ (have\ the\ leaves\ come\ on\ yet\ this\ year?\ have\ they\ fallen\ off\ yet\ this}}
-\DoxyCodeLine{02756\ \textcolor{comment}{//\ year?)}}
-\DoxyCodeLine{02757\ \textcolor{keywordtype}{void}\ initPhenologyTrackers(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{02758\ }
-\DoxyCodeLine{02759\ \ \ phenologyTrackers.didLeafGrowth\ =\ pastLeafGrowth();\ \ \textcolor{comment}{//\ first\ year:\ have\ we}}
-\DoxyCodeLine{02760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ passed\ growing\ season}}
-\DoxyCodeLine{02761\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ start\ date?}}
-\DoxyCodeLine{02762\ \ \ phenologyTrackers.didLeafFall\ =\ pastLeafFall();\ \ \textcolor{comment}{//\ first\ year:\ have\ we\ passed}}
-\DoxyCodeLine{02763\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ growing\ season\ end\ date?}}
-\DoxyCodeLine{02764\ }
-\DoxyCodeLine{02765\ \ \ \textcolor{comment}{/*\ if\ we\ think\ we've\ done\ leaf\ fall\ this\ year\ but\ not\ leaf\ growth,\ something's}}
-\DoxyCodeLine{02766\ \textcolor{comment}{\ \ \ \ \ wrong\ this\ could\ happen\ if,\ e.g.\ we're\ using\ soil\ temp-\/based\ leaf\ growth,}}
-\DoxyCodeLine{02767\ \textcolor{comment}{\ \ \ \ \ and\ soil\ temp.\ on\ first\ day\ doesn't\ happen\ to\ pass\ threshold}}
-\DoxyCodeLine{02768\ \textcolor{comment}{\ \ \ \ \ fix\ this\ by\ setting\ didLeafGrowth\ to\ 1\ in\ this\ case}}
-\DoxyCodeLine{02769\ \textcolor{comment}{\ \ \ \ \ Note:\ this\ won't\ catch\ all\ potential\ problems\ (e.g.\ with\ soil\ temp-\/based}}
-\DoxyCodeLine{02770\ \textcolor{comment}{\ \ \ \ \ leaf\ growth,\ temp.\ on\ first\ day\ may\ not\ pass\ threshold,\ but\ it\ may\ not\ yet}}
-\DoxyCodeLine{02771\ \textcolor{comment}{\ \ \ \ \ be\ the\ end\ of\ the\ growing\ season;\ in\ this\ case\ we\ could\ accidentally\ grow}}
-\DoxyCodeLine{02772\ \textcolor{comment}{\ \ \ \ \ the\ leaves\ again\ once\ the\ temp.\ rises\ past\ the\ threshold\ again.\ Also,\ we'll}}
-\DoxyCodeLine{02773\ \textcolor{comment}{\ \ \ \ \ have\ problems\ with\ GDD-\/based\ growth\ if\ first\ day\ of\ simulation\ is\ not}}
-\DoxyCodeLine{02774\ \textcolor{comment}{\ \ \ \ \ Jan.\ 1.)}}
-\DoxyCodeLine{02775\ \textcolor{comment}{\ \ */}}
-\DoxyCodeLine{02776\ \ \ \textcolor{keywordflow}{if}\ (phenologyTrackers.didLeafFall\ \&\&\ !phenologyTrackers.didLeafGrowth)\ \{}
-\DoxyCodeLine{02777\ \ \ \ \ phenologyTrackers.didLeafGrowth\ =\ 1;}
-\DoxyCodeLine{02778\ \ \ \}}
-\DoxyCodeLine{02779\ \ \ \textcolor{comment}{//\ printf("{}stuff:\ \%8d\ \%8d\ \(\backslash\)n"{},phenologyTrackers.lastYear,\ climate-\/>year);}}
-\DoxyCodeLine{02780\ \ \ phenologyTrackers.lastYear\ =\ climate-\/>year;\ \ \textcolor{comment}{//\ set\ the\ year\ of\ the\ previous}}
-\DoxyCodeLine{02781\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (non-\/existent)\ time\ step\ to\ be}}
-\DoxyCodeLine{02782\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ this\ year}}
-\DoxyCodeLine{02783\ \}}
-\DoxyCodeLine{02784\ }
-\DoxyCodeLine{02785\ \textcolor{comment}{//\ Setup\ model\ to\ run\ at\ given\ location\ (0-\/indexing:\ if\ only\ one\ location,\ loc}}
-\DoxyCodeLine{02786\ \textcolor{comment}{//\ should\ be\ 0)}}
-\DoxyCodeLine{02787\ \textcolor{keywordtype}{void}\ setupModel(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
-\DoxyCodeLine{02788\ }
-\DoxyCodeLine{02789\ \ \ \textcolor{comment}{//\ load\ parameters\ into\ global\ param\ structure:\ spatialParams\ was\ told\ where}}
-\DoxyCodeLine{02790\ \ \ \textcolor{comment}{//\ to\ put\ values\ in\ readParamData}}
-\DoxyCodeLine{02791\ \ \ loadSpatialParams(spatialParams,\ loc);}
-\DoxyCodeLine{02792\ }
-\DoxyCodeLine{02793\ \ \ \textcolor{comment}{//\ a\ test:\ use\ constant\ (measured)\ soil\ respiration:}}
-\DoxyCodeLine{02794\ \ \ \textcolor{comment}{//\ make\ it\ so\ soil\ resp.\ is\ 5.2\ g\ C\ m-\/2\ day-\/1\ at\ 10\ degrees\ C,}}
-\DoxyCodeLine{02795\ \ \ \textcolor{comment}{//\ moisture-\/saturated\ soil,\ and\ soil\ C\ =\ init.\ soil\ C\ params.baseSoilResp\ =}}
-\DoxyCodeLine{02796\ \ \ \textcolor{comment}{//\ ((5.2\ *\ 365.0)/params.soilInit)/params.soilRespQ10;}}
-\DoxyCodeLine{02797\ }
-\DoxyCodeLine{02798\ \ \ \textcolor{comment}{//\ ensure\ that\ all\ the\ allocation\ parameters\ sum\ up\ to\ something\ less\ than}}
-\DoxyCodeLine{02799\ \ \ \textcolor{comment}{//\ one:}}
-\DoxyCodeLine{02800\ \textcolor{preprocessor}{\#if\ ROOTS}}
-\DoxyCodeLine{02801\ \ \ ensureAllocation();}
-\DoxyCodeLine{02802\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02803\ }
-\DoxyCodeLine{02804\ \textcolor{comment}{//\ If\ we\ aren't\ explicitly\ modeling\ microbe\ pool,\ then\ do\ not\ have\ a\ pulse\ to}}
-\DoxyCodeLine{02805\ \textcolor{comment}{//\ microbes,\ exudates\ go\ directly\ to\ the\ soil}}
-\DoxyCodeLine{02806\ \textcolor{preprocessor}{\#if\ !MICROBES}}
-\DoxyCodeLine{02807\ \ \ params.microbePulseEff\ =\ 0;}
-\DoxyCodeLine{02808\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02809\ }
-\DoxyCodeLine{02810\ \ \ \textcolor{comment}{//\ change\ units\ of\ parameters:}}
-\DoxyCodeLine{02811\ \ \ params.baseVegResp\ /=\ 365.0;\ \ \textcolor{comment}{//\ change\ from\ per-\/year\ to\ per-\/day\ rate}}
-\DoxyCodeLine{02812\ \ \ params.litterBreakdownRate\ /=\ 365.0;}
-\DoxyCodeLine{02813\ \ \ params.baseSoilResp\ /=\ 365.0;}
-\DoxyCodeLine{02814\ \ \ params.baseSoilRespCold\ /=\ 365.0;}
-\DoxyCodeLine{02815\ \ \ params.woodTurnoverRate\ /=\ 365.0;}
-\DoxyCodeLine{02816\ \ \ params.leafTurnoverRate\ /=\ 365.0;}
-\DoxyCodeLine{02817\ }
-\DoxyCodeLine{02818\ \ \ \textcolor{comment}{//\ calculate\ additional\ parameters:}}
-\DoxyCodeLine{02819\ \ \ params.psnTMax\ =}
-\DoxyCodeLine{02820\ \ \ \ \ \ \ params.psnTOpt\ +\ (params.psnTOpt\ -\/\ params.psnTMin);\ \ \textcolor{comment}{//\ assumed}}
-\DoxyCodeLine{02821\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ symmetrical}}
-\DoxyCodeLine{02822\ }
-\DoxyCodeLine{02823\ \textcolor{preprocessor}{\#if\ ROOTS}}
-\DoxyCodeLine{02824\ \ \ envi.plantWoodC\ =}
-\DoxyCodeLine{02825\ \ \ \ \ \ \ (1\ -\/\ params.coarseRootFrac\ -\/\ params.fineRootFrac)\ *\ params.plantWoodInit;}
-\DoxyCodeLine{02826\ \textcolor{preprocessor}{\#else}}
-\DoxyCodeLine{02827\ \ \ envi.plantWoodC\ =\ params.plantWoodInit;}
-\DoxyCodeLine{02828\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02829\ }
-\DoxyCodeLine{02830\ \ \ envi.plantLeafC\ =\ params.laiInit\ *\ params.leafCSpWt;}
-\DoxyCodeLine{02831\ \ \ envi.litter\ =\ params.litterInit;}
-\DoxyCodeLine{02832\ }
-\DoxyCodeLine{02833\ \ \ \textcolor{comment}{//\ If\ SOIL\_QUALITY,\ split\ initial\ soilCarbon\ equally\ among\ all\ the\ pools}}
-\DoxyCodeLine{02834\ \textcolor{preprocessor}{\#if\ SOIL\_MULTIPOOL}}
-\DoxyCodeLine{02835\ \ \ \textcolor{keywordtype}{int}\ counter;}
-\DoxyCodeLine{02836\ }
-\DoxyCodeLine{02837\ \ \ \textcolor{keywordflow}{for}\ (counter\ =\ 0;\ counter\ <\ NUMBER\_SOIL\_CARBON\_POOLS;\ counter++)\ \{}
-\DoxyCodeLine{02838\ }
-\DoxyCodeLine{02839\ \ \ \ \ envi.soil[counter]\ =\ params.soilInit\ /\ NUMBER\_SOIL\_CARBON\_POOLS;}
-\DoxyCodeLine{02840\ \ \ \}}
-\DoxyCodeLine{02841\ \ \ trackers.totSoilC\ =\ params.soilInit;}
-\DoxyCodeLine{02842\ \textcolor{preprocessor}{\#else}}
-\DoxyCodeLine{02843\ \ \ envi.soil\ =\ params.soilInit;}
-\DoxyCodeLine{02844\ }
-\DoxyCodeLine{02845\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02846\ }
-\DoxyCodeLine{02847\ \textcolor{preprocessor}{\#if\ SOIL\_QUALITY}}
-\DoxyCodeLine{02848\ \ \ params.maxIngestionRate\ =}
-\DoxyCodeLine{02849\ \ \ \ \ \ \ params.maxIngestionRate\ *\ 24\ *\ params.microbeInit\ /\ 1000;}
-\DoxyCodeLine{02850\ \ \ \textcolor{comment}{//\ change\ from\ per\ hour\ to\ per\ day\ rate,\ and\ then\ multiply\ by\ microbial}}
-\DoxyCodeLine{02851\ \ \ \textcolor{comment}{//\ concentration\ (mg\ C\ /\ g\ soil).}}
-\DoxyCodeLine{02852\ }
-\DoxyCodeLine{02853\ \textcolor{preprocessor}{\#else}}
-\DoxyCodeLine{02854\ \ \ \textcolor{comment}{//\ change\ from\ per\ hour\ to\ per\ day\ rate}}
-\DoxyCodeLine{02855\ \ \ params.maxIngestionRate\ =\ params.maxIngestionRate\ *\ 24;}
-\DoxyCodeLine{02856\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02857\ }
-\DoxyCodeLine{02858\ \ \ envi.microbeC\ =\ params.microbeInit\ *\ params.soilInit\ /\ 1000;\ \ \textcolor{comment}{//\ convert\ to\ gC}}
-\DoxyCodeLine{02859\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m-\/2}}
-\DoxyCodeLine{02860\ }
-\DoxyCodeLine{02861\ \ \ params.totNitrogen\ =\ params.totNitrogen\ *\ params.soilInit;\ \ \textcolor{comment}{//\ convert\ to\ gC}}
-\DoxyCodeLine{02862\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m-\/2}}
-\DoxyCodeLine{02863\ }
-\DoxyCodeLine{02864\ \ \ params.fineRootTurnoverRate\ /=\ 365.0;}
-\DoxyCodeLine{02865\ \ \ params.coarseRootTurnoverRate\ /=\ 365.0;}
-\DoxyCodeLine{02866\ }
-\DoxyCodeLine{02867\ \ \ params.baseCoarseRootResp\ /=\ 365.0;}
-\DoxyCodeLine{02868\ \ \ params.baseFineRootResp\ /=\ 365.0;}
-\DoxyCodeLine{02869\ \ \ params.baseMicrobeResp\ =\ params.baseMicrobeResp\ *\ 24;\ \ \textcolor{comment}{//\ change\ from\ per\ hour}}
-\DoxyCodeLine{02870\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ per\ day\ rate}}
-\DoxyCodeLine{02871\ }
-\DoxyCodeLine{02872\ \ \ envi.coarseRootC\ =\ params.coarseRootFrac\ *\ params.plantWoodInit;}
-\DoxyCodeLine{02873\ \ \ envi.fineRootC\ =\ params.fineRootFrac\ *\ params.plantWoodInit;}
-\DoxyCodeLine{02874\ }
-\DoxyCodeLine{02875\ \ \ envi.litterWater\ =\ params.litterWFracInit\ *\ params.litterWHC;}
-\DoxyCodeLine{02876\ \ \ \textcolor{keywordflow}{if}\ (envi.litterWater\ <\ 0)\ \{}
-\DoxyCodeLine{02877\ \ \ \ \ envi.litterWater\ =\ 0;}
-\DoxyCodeLine{02878\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.litterWater\ >\ params.litterWHC)\ \{}
-\DoxyCodeLine{02879\ \ \ \ \ envi.litterWater\ =\ params.litterWHC;}
-\DoxyCodeLine{02880\ \ \ \}}
-\DoxyCodeLine{02881\ }
-\DoxyCodeLine{02882\ \ \ envi.soilWater\ =\ params.soilWFracInit\ *\ params.soilWHC;}
-\DoxyCodeLine{02883\ \ \ \textcolor{keywordflow}{if}\ (envi.soilWater\ <\ 0)\ \{}
-\DoxyCodeLine{02884\ \ \ \ \ envi.soilWater\ =\ 0;}
-\DoxyCodeLine{02885\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.soilWater\ >\ params.soilWHC)\ \{}
-\DoxyCodeLine{02886\ \ \ \ \ envi.soilWater\ =\ params.soilWHC;}
-\DoxyCodeLine{02887\ \ \ \}}
-\DoxyCodeLine{02888\ }
-\DoxyCodeLine{02889\ \ \ envi.snow\ =\ params.snowInit;}
-\DoxyCodeLine{02890\ }
-\DoxyCodeLine{02891\ \ \ \textcolor{keywordflow}{if}\ (firstClimates[loc]\ !=\ NULL)\ \{}
-\DoxyCodeLine{02892\ \ \ \ \ climate\ =\ firstClimates[loc];\ \ \textcolor{comment}{//\ set\ climate\ ptr\ to\ point\ to\ first\ climate}}
-\DoxyCodeLine{02893\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ record\ in\ this\ location}}
-\DoxyCodeLine{02894\ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ no\ climate\ data\ for\ this\ location}}
-\DoxyCodeLine{02895\ \ \ \ \ climate\ =\ firstClimates[0];\ \ \textcolor{comment}{//\ use\ climate\ data\ from\ location\ 0}}
-\DoxyCodeLine{02896\ \ \ \}}
-\DoxyCodeLine{02897\ \ \ initTrackers();}
-\DoxyCodeLine{02898\ \ \ initPhenologyTrackers();}
-\DoxyCodeLine{02899\ \ \ resetMeanTracker(meanNPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
-\DoxyCodeLine{02900\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_NPP\_DAYS)\ of\ 0}}
-\DoxyCodeLine{02901\ \ \ resetMeanTracker(meanGPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
-\DoxyCodeLine{02902\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_GPP\_DAYS)\ of\ 0}}
-\DoxyCodeLine{02903\ \ \ resetMeanTracker(meanFPAR,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ FPAR\ (over\ last}}
-\DoxyCodeLine{02904\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_FPAR\_DAYS)\ of\ 0}}
-\DoxyCodeLine{02905\ \}}
-\DoxyCodeLine{02906\ }
-\DoxyCodeLine{02907\ \textcolor{comment}{//\ Setup\ events\ at\ given\ location}}
-\DoxyCodeLine{02908\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
-\DoxyCodeLine{02909\ \textcolor{keywordtype}{void}\ setupEvents(\textcolor{keywordtype}{int}\ currLoc)\ \{\ locEvent\ =\ events[currLoc];\ \}}
-\DoxyCodeLine{02910\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02911\ }
-\DoxyCodeLine{02912\ \textcolor{comment}{/*\ Do\ one\ run\ of\ the\ model\ using\ parameter\ values\ in\ spatialParams}}
-\DoxyCodeLine{02913\ \textcolor{comment}{\ \ \ If\ out\ !=\ NULL,\ output\ results\ to\ out}}
-\DoxyCodeLine{02914\ \textcolor{comment}{\ \ \ \ If\ printHeader\ =\ 1,\ print\ a\ header\ for\ the\ output\ file,\ if\ 0\ don't}}
-\DoxyCodeLine{02915\ \textcolor{comment}{\ \ \ If\ outputItems\ !=\ NULL,\ do\ additional\ outputting\ as\ given\ by\ this\ structure}}
-\DoxyCodeLine{02916\ \textcolor{comment}{\ \ \ (1\ variable\ per\ file)\ If\ loc\ ==\ -\/1,\ then\ print\ currLoc\ as\ first\ item\ on\ each}}
-\DoxyCodeLine{02917\ \textcolor{comment}{\ \ \ line\ Run\ at\ spatial\ location\ given\ by\ loc\ (0-\/indexing)\ -\/\ or\ run\ everywhere\ if}}
-\DoxyCodeLine{02918\ \textcolor{comment}{\ \ \ loc\ =\ -\/1\ Note:\ number\ of\ locations\ given\ in\ spatialParams}}
-\DoxyCodeLine{02919\ \textcolor{comment}{*/}}
-\DoxyCodeLine{02920\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader,}
-\DoxyCodeLine{02921\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
-\DoxyCodeLine{02922\ \ \ \textcolor{keywordtype}{int}\ firstLoc,\ lastLoc,\ currLoc;}
-\DoxyCodeLine{02923\ \ \ \textcolor{keywordtype}{char}\ label[64];}
-\DoxyCodeLine{02924\ }
-\DoxyCodeLine{02925\ \ \ \textcolor{keywordflow}{if}\ ((out\ !=\ NULL)\ \&\&\ printHeader)\ \{}
-\DoxyCodeLine{02926\ \ \ \ \ outputHeader(out);}
-\DoxyCodeLine{02927\ \ \ \}}
-\DoxyCodeLine{02928\ }
-\DoxyCodeLine{02929\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ run\ everywhere}}
-\DoxyCodeLine{02930\ \ \ \ \ firstLoc\ =\ 0;}
-\DoxyCodeLine{02931\ \ \ \ \ lastLoc\ =\ spatialParams-\/>numLocs\ -\/\ 1;}
-\DoxyCodeLine{02932\ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ just\ run\ at\ one\ point}}
-\DoxyCodeLine{02933\ \ \ \ \ firstLoc\ =\ lastLoc\ =\ loc;}
-\DoxyCodeLine{02934\ \ \ \}}
-\DoxyCodeLine{02935\ }
-\DoxyCodeLine{02936\ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
-\DoxyCodeLine{02937\ \ \ \ \ setupModel(spatialParams,\ currLoc);}
-\DoxyCodeLine{02938\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
-\DoxyCodeLine{02939\ \ \ \ \ setupEvents(currLoc);}
-\DoxyCodeLine{02940\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02941\ \ \ \ \ \textcolor{keywordflow}{if}\ ((loc\ ==\ -\/1)\ \&\&\ (outputItems\ !=\ NULL))\ \{\ \ \textcolor{comment}{//\ print\ the\ current\ location}}
-\DoxyCodeLine{02942\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ at\ the\ start\ of\ the\ line}}
-\DoxyCodeLine{02943\ \ \ \ \ \ \ sprintf(label,\ \textcolor{stringliteral}{"{}\%d"{}},\ currLoc);}
-\DoxyCodeLine{02944\ \ \ \ \ \ \ writeOutputItemLabels(outputItems,\ label);}
-\DoxyCodeLine{02945\ \ \ \ \ \}}
-\DoxyCodeLine{02946\ }
-\DoxyCodeLine{02947\ \ \ \ \ \textcolor{keywordflow}{while}\ (climate\ !=\ NULL)\ \{}
-\DoxyCodeLine{02948\ \ \ \ \ \ \ updateState();}
-\DoxyCodeLine{02949\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (out\ !=\ NULL)\ \{}
-\DoxyCodeLine{02950\ \ \ \ \ \ \ \ \ outputState(out,\ currLoc,\ climate-\/>year,\ climate-\/>day,\ climate-\/>time);}
-\DoxyCodeLine{02951\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{02952\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
-\DoxyCodeLine{02953\ \ \ \ \ \ \ \ \ writeOutputItemValues(outputItems);}
-\DoxyCodeLine{02954\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{02955\ \ \ \ \ \ \ climate\ =\ climate-\/>nextClim;}
-\DoxyCodeLine{02956\ \ \ \ \ \}}
-\DoxyCodeLine{02957\ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
-\DoxyCodeLine{02958\ \ \ \ \ \ \ terminateOutputItemLines(outputItems);}
-\DoxyCodeLine{02959\ \ \ \ \ \}}
-\DoxyCodeLine{02960\ \ \ \}}
-\DoxyCodeLine{02961\ \}}
-\DoxyCodeLine{02962\ }
-\DoxyCodeLine{02963\ \textcolor{comment}{/*\ pre:\ outArray\ has\ dimensions\ of\ at\ least\ (\#\ model\ steps)\ x\ numDataTypes}}
-\DoxyCodeLine{02964\ \textcolor{comment}{\ \ \ dataTypeIndices[0..numDataTypes-\/1]\ gives\ indices\ of\ data\ types\ to\ use\ (see}}
-\DoxyCodeLine{02965\ \textcolor{comment}{\ \ \ DATA\_TYPES\ array\ in\ sipnet.h)}}
-\DoxyCodeLine{02966\ \textcolor{comment}{}}
-\DoxyCodeLine{02967\ \textcolor{comment}{\ \ \ run\ model\ with\ parameter\ values\ in\ spatialParams,\ don't\ output\ to\ file}}
-\DoxyCodeLine{02968\ \textcolor{comment}{\ \ \ instead,\ output\ some\ variables\ at\ each\ step\ into\ an\ array}}
-\DoxyCodeLine{02969\ \textcolor{comment}{\ \ \ Run\ at\ spatial\ location\ given\ by\ loc\ (0-\/indexing)}}
-\DoxyCodeLine{02970\ \textcolor{comment}{\ \ \ Note:\ can\ only\ run\ at\ one\ location:\ to\ run\ at\ all\ locations,\ must\ put}}
-\DoxyCodeLine{02971\ \textcolor{comment}{\ \ \ runModelNoOut\ call\ in\ a\ loop}}
-\DoxyCodeLine{02972\ \textcolor{comment}{*/}}
-\DoxyCodeLine{02973\ \textcolor{keywordtype}{void}\ runModelNoOut(\textcolor{keywordtype}{double}\ **outArray,\ \textcolor{keywordtype}{int}\ numDataTypes,}
-\DoxyCodeLine{02974\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \ \textcolor{comment}{//\ NOLINT\ (const\ int[])}}
-\DoxyCodeLine{02975\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
-\DoxyCodeLine{02976\ \ \ \textcolor{keywordtype}{int}\ step\ =\ 0;}
-\DoxyCodeLine{02977\ \ \ \textcolor{keywordtype}{int}\ outputNum;}
-\DoxyCodeLine{02978\ }
-\DoxyCodeLine{02979\ \ \ setupModel(spatialParams,\ loc);}
-\DoxyCodeLine{02980\ }
-\DoxyCodeLine{02981\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
-\DoxyCodeLine{02982\ \ \ \textcolor{comment}{//\ Implementation\ TBD}}
-\DoxyCodeLine{02983\ \ \ printf(}
-\DoxyCodeLine{02984\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Event\ handler\ not\ yet\ implemented\ for\ running\ model\ with\ no\ output\(\backslash\)n"{}});}
-\DoxyCodeLine{02985\ \ \ exit(1);}
-\DoxyCodeLine{02986\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{02987\ }
-\DoxyCodeLine{02988\ \ \ \textcolor{comment}{//\ loop\ through\ every\ step\ of\ the\ model:}}
-\DoxyCodeLine{02989\ \ \ \textcolor{keywordflow}{while}\ (climate\ !=\ NULL)\ \{}
-\DoxyCodeLine{02990\ \ \ \ \ updateState();}
-\DoxyCodeLine{02991\ }
-\DoxyCodeLine{02992\ \ \ \ \ \textcolor{comment}{//\ loop\ through\ all\ desired\ outputs,\ putting\ each\ into\ outArray:}}
-\DoxyCodeLine{02993\ \ \ \ \ \textcolor{keywordflow}{for}\ (outputNum\ =\ 0;\ outputNum\ <\ numDataTypes;\ outputNum++)\ \{}
-\DoxyCodeLine{02994\ \ \ \ \ \ \ outArray[step][outputNum]\ =\ *(outputPtrs[dataTypeIndices[outputNum]]);}
-\DoxyCodeLine{02995\ \ \ \ \ \}}
-\DoxyCodeLine{02996\ }
-\DoxyCodeLine{02997\ \ \ \ \ step++;}
-\DoxyCodeLine{02998\ \ \ \ \ climate\ =\ climate-\/>nextClim;}
-\DoxyCodeLine{02999\ \ \ \}}
-\DoxyCodeLine{03000\ \}}
-\DoxyCodeLine{03001\ }
-\DoxyCodeLine{03002\ \textcolor{comment}{/*\ Do\ a\ sensitivity\ test\ on\ paramNum,\ varying\ from\ low\ to\ high,\ doing\ a\ total\ of}}
-\DoxyCodeLine{03003\ \textcolor{comment}{\ \ \ numRuns\ runs\ Run\ only\ at\ a\ single\ location\ (given\ by\ loc)\ If\ out\ !=\ NULL,}}
-\DoxyCodeLine{03004\ \textcolor{comment}{\ \ \ output\ results\ to\ out\ If\ outputItems\ !=\ NULL,\ do\ additional\ outputting\ as}}
-\DoxyCodeLine{03005\ \textcolor{comment}{\ \ \ given\ by\ this\ structure\ (1\ variable\ per\ file)\ Print\ parameter\ value\ as\ first}}
-\DoxyCodeLine{03006\ \textcolor{comment}{\ \ \ item\ on\ each\ line\ If\ out\ !=\ NULL,\ do\ main\ outputting\ to\ out\ If\ outputItems\ !=}}
-\DoxyCodeLine{03007\ \textcolor{comment}{\ \ \ NULL}}
-\DoxyCodeLine{03008\ \textcolor{comment}{*/}}
-\DoxyCodeLine{03009\ \textcolor{keywordtype}{void}\ sensTest(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ paramNum,\ \textcolor{keywordtype}{double}\ low,}
-\DoxyCodeLine{03010\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ high,\ \textcolor{keywordtype}{int}\ numRuns,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
-\DoxyCodeLine{03011\ \ \ \textcolor{keywordtype}{int}\ runNum;}
-\DoxyCodeLine{03012\ \ \ \textcolor{keywordtype}{double}\ changeAmt\ =\ (high\ -\/\ low)\ /\ (\textcolor{keywordtype}{double})(numRuns\ -\/\ 1);}
-\DoxyCodeLine{03013\ \ \ \textcolor{keywordtype}{double}\ value;\ \ \textcolor{comment}{//\ current\ parameter\ value}}
-\DoxyCodeLine{03014\ \ \ \textcolor{keywordtype}{char}\ label[64];}
-\DoxyCodeLine{03015\ }
-\DoxyCodeLine{03016\ \ \ value\ =\ low;}
-\DoxyCodeLine{03017\ \ \ \textcolor{keywordflow}{for}\ (runNum\ =\ 0;\ runNum\ <\ numRuns;\ runNum++)\ \{}
-\DoxyCodeLine{03018\ \ \ \ \ \textcolor{comment}{//\ printf("{}\%d\ \%f\(\backslash\)n"{},\ runNum,\ value);}}
-\DoxyCodeLine{03019\ \ \ \ \ \textcolor{comment}{//\ fprintf(out,\ "{}\#\ Value\ =\ \%f\(\backslash\)n"{},\ value);}}
-\DoxyCodeLine{03020\ \ \ \ \ setSpatialParam(spatialParams,\ paramNum,\ loc,\ value);}
-\DoxyCodeLine{03021\ }
-\DoxyCodeLine{03022\ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
-\DoxyCodeLine{03023\ \ \ \ \ \ \ sprintf(label,\ \textcolor{stringliteral}{"{}\%f"{}},\ value);}
-\DoxyCodeLine{03024\ \ \ \ \ \ \ writeOutputItemLabels(outputItems,\ label);}
-\DoxyCodeLine{03025\ \ \ \ \ \}}
-\DoxyCodeLine{03026\ }
-\DoxyCodeLine{03027\ \ \ \ \ runModelOutput(out,\ outputItems,\ 0,\ spatialParams,\ loc);}
-\DoxyCodeLine{03028\ }
-\DoxyCodeLine{03029\ \ \ \ \ \textcolor{keywordflow}{if}\ (out\ !=\ NULL)\ \{}
-\DoxyCodeLine{03030\ \ \ \ \ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}});}
-\DoxyCodeLine{03031\ \ \ \ \ \}}
-\DoxyCodeLine{03032\ \ \ \ \ value\ +=\ changeAmt;}
-\DoxyCodeLine{03033\ \ \ \}}
-\DoxyCodeLine{03034\ \}}
-\DoxyCodeLine{03035\ }
-\DoxyCodeLine{03036\ \textcolor{comment}{//\ write\ to\ file\ which\ model\ components\ are\ turned\ on}}
-\DoxyCodeLine{03037\ \textcolor{comment}{//\ (i.e.\ the\ value\ of\ the\ \#DEFINE's\ at\ the\ top\ of\ file)}}
-\DoxyCodeLine{03038\ \textcolor{comment}{//\ pre:\ out\ is\ open\ for\ writing}}
-\DoxyCodeLine{03039\ \textcolor{keywordtype}{void}\ printModelComponents(FILE\ *out)\ \{}
-\DoxyCodeLine{03040\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}Optional\ model\ components\ (0\ =\ off,\ 1\ =\ on):\(\backslash\)n"{}});}
-\DoxyCodeLine{03041\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}CSV\_OUTPUT\ =\ \%d\(\backslash\)n"{}},\ CSV\_OUTPUT);}
-\DoxyCodeLine{03042\ }
-\DoxyCodeLine{03043\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}ALTERNATIVE\_TRANS\ =\ \%d\(\backslash\)n"{}},\ ALTERNATIVE\_TRANS);}
-\DoxyCodeLine{03044\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}BALL\_BERRY\ =\ \%d\(\backslash\)n"{}},\ BALL\_BERRY);}
-\DoxyCodeLine{03045\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}PENMAN\_MONTEITH\_TRANS\ =\ \%d\(\backslash\)n"{}},\ PENMAN\_MONTEITH\_TRANS);}
-\DoxyCodeLine{03046\ }
-\DoxyCodeLine{03047\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}GROWTH\_RESP\ =\ \%d\(\backslash\)n"{}},\ GROWTH\_RESP);}
-\DoxyCodeLine{03048\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_POOL\ =\ \%d\(\backslash\)n"{}},\ LITTER\_POOL);}
-\DoxyCodeLine{03049\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LLOYD\_TAYLOR\ =\ \%d\(\backslash\)n"{}},\ LLOYD\_TAYLOR);}
-\DoxyCodeLine{03050\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SEASONAL\_R\_SOIL\ =\ \%d\(\backslash\)n"{}},\ SEASONAL\_R\_SOIL);}
-\DoxyCodeLine{03051\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}WATER\_PSN\ =\ \%d\(\backslash\)n"{}},\ WATER\_PSN);}
-\DoxyCodeLine{03052\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}WATER\_HRESP\ =\ \%d\(\backslash\)n"{}},\ WATER\_HRESP);}
-\DoxyCodeLine{03053\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}DAYCENT\_WATER\_HRESP\ =\ \%d\(\backslash\)n"{}},\ DAYCENT\_WATER\_HRESP);}
-\DoxyCodeLine{03054\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MODEL\_WATER\ =\ \%d\(\backslash\)n"{}},\ MODEL\_WATER);}
-\DoxyCodeLine{03055\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}COMPLEX\_WATER\ =\ \%d\(\backslash\)n"{}},\ COMPLEX\_WATER);}
-\DoxyCodeLine{03056\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_WATER\ =\ \%d\(\backslash\)n"{}},\ LITTER\_WATER);}
-\DoxyCodeLine{03057\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_WATER\_DRAINAGE\ =\ \%d\(\backslash\)n"{}},\ LITTER\_WATER\_DRAINAGE);}
-\DoxyCodeLine{03058\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SNOW\ =\ \%d\(\backslash\)n"{}},\ SNOW);}
-\DoxyCodeLine{03059\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}GDD\ =\ \%d\(\backslash\)n"{}},\ GDD);}
-\DoxyCodeLine{03060\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SOIL\_PHENOL\ =\ \%d\(\backslash\)n"{}},\ SOIL\_PHENOL);}
-\DoxyCodeLine{03061\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_POOL\ =\ \%d\(\backslash\)n"{}},\ LITTER\_POOL);}
-\DoxyCodeLine{03062\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SOIL\_MULTIPOOL\ =\ \%d\(\backslash\)n"{}},\ SOIL\_MULTIPOOL);}
-\DoxyCodeLine{03063\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}NUMBER\_SOIL\_CARBON\_POOLS\ =\ \%d\(\backslash\)n"{}},\ NUMBER\_SOIL\_CARBON\_POOLS);}
-\DoxyCodeLine{03064\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SOIL\_QUALITY\ =\ \%d\(\backslash\)n"{}},\ SOIL\_QUALITY);}
-\DoxyCodeLine{03065\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MICROBES\ =\ \%d\(\backslash\)n"{}},\ MICROBES);}
-\DoxyCodeLine{03066\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}STOICHIOMETRY\ =\ \%d\(\backslash\)n"{}},\ STOICHIOMETRY);}
-\DoxyCodeLine{03067\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}ROOTS\ =\ \%d\(\backslash\)n"{}},\ ROOTS);}
-\DoxyCodeLine{03068\ }
-\DoxyCodeLine{03069\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{03070\ }
-\DoxyCodeLine{03071\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}Tracker\ variables\ settings:\(\backslash\)n"{}});}
-\DoxyCodeLine{03072\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MEAN\_NPP\_DAYS\ =\ \%d\(\backslash\)n"{}},\ MEAN\_NPP\_DAYS);}
-\DoxyCodeLine{03073\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MEAN\_GPP\_SOIL\_DAYS\ =\ \%d\(\backslash\)n"{}},\ MEAN\_GPP\_SOIL\_DAYS);}
-\DoxyCodeLine{03074\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MEAN\_FPAR\_DAYS\ =\ \%d\(\backslash\)n"{}},\ MEAN\_FPAR\_DAYS);}
-\DoxyCodeLine{03075\ }
-\DoxyCodeLine{03076\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{03077\ \}}
-\DoxyCodeLine{03078\ }
-\DoxyCodeLine{03079\ \textcolor{comment}{//\ NOTE:\ if\ change\ \#\ of\ data\ types\ below,\ be\ sure\ to\ change\ MAX\_DATA\_TYPES\ in}}
-\DoxyCodeLine{03080\ \textcolor{comment}{//\ sipnet.h\ other\ than\ that,\ to\ change\ return-\/able\ data\ types,\ just\ have\ to}}
-\DoxyCodeLine{03081\ \textcolor{comment}{//\ change\ arrays\ in\ getDataTypeNames\ and\ setupOutputPointers}}
-\DoxyCodeLine{03082\ }
-\DoxyCodeLine{03083\ \textcolor{comment}{//\ Can\ get\ some\ extra\ data\ types\ by\ defining\ EXTRA\_DATA\_TYPES\ in\ sipnet.h}}
-\DoxyCodeLine{03084\ \textcolor{comment}{//\ Note\ that\ using\ extra\ data\ types\ will\ break\ the\ estimate\ program,\ since\ there}}
-\DoxyCodeLine{03085\ \textcolor{comment}{//\ will\ be\ the\ wrong\ \#\ of\ columns\ in\ the\ .dat\ file,}}
-\DoxyCodeLine{03086\ \textcolor{comment}{//\ \ but\ this\ can\ be\ used\ for\ outputting\ extra\ data\ types\ when\ computing\ means}}
-\DoxyCodeLine{03087\ \textcolor{comment}{//\ \ and\ standard\ dev's\ across\ a\ number\ of\ param.\ sets}}
-\DoxyCodeLine{03088\ }
-\DoxyCodeLine{03089\ \textcolor{comment}{//\ return\ an\ array[0..MAX\_DATA\_TYPES-\/1]\ of\ strings,}}
-\DoxyCodeLine{03090\ \textcolor{comment}{//\ where\ arr[i]\ gives\ the\ name\ of\ data\ type\ i}}
-\DoxyCodeLine{03091\ }
-\DoxyCodeLine{03092\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{03093\ \textcolor{comment}{//\ Code\ for\ just\ FPAR\ data}}
-\DoxyCodeLine{03094\ \textcolor{keywordtype}{char}\ **getDataTypeNames(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{03095\ \ \ \textcolor{comment}{//\ NOTE:\ data\ type\ names\ shouldn't\ have\ spaces\ in\ them\ (for\ determining}}
-\DoxyCodeLine{03096\ \ \ \textcolor{comment}{//\ corresponding\ input\ names\ in\ namelist\ input\ file,\ for\ estimate\ program)}}
-\DoxyCodeLine{03097\ \textcolor{preprocessor}{\#if\ EXTRA\_DATA\_TYPES}}
-\DoxyCodeLine{03098\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{\textcolor{stringliteral}{"{}EVAPOTRANSPIRATION"{}},}
-\DoxyCodeLine{03099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}NEE"{}},}
-\DoxyCodeLine{03100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SOIL\_WETNESS"{}},}
-\DoxyCodeLine{03101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}FPAR"{}}}
-\DoxyCodeLine{03102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}GPP"{}},}
-\DoxyCodeLine{03103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RTOT"{}},}
-\DoxyCodeLine{03104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RA"{}},}
-\DoxyCodeLine{03105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RH"{}},}
-\DoxyCodeLine{03106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}NPP"{}},}
-\DoxyCodeLine{03107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_GPP"{}},}
-\DoxyCodeLine{03108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_RTOT"{}},}
-\DoxyCodeLine{03109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_RA"{}},}
-\DoxyCodeLine{03110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_RH"{}},}
-\DoxyCodeLine{03111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_NPP"{}},}
-\DoxyCodeLine{03112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_NEE"{}},}
-\DoxyCodeLine{03113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_GPP"{}},}
-\DoxyCodeLine{03114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_RTOT"{}},}
-\DoxyCodeLine{03115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_RA"{}},}
-\DoxyCodeLine{03116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_RH"{}},}
-\DoxyCodeLine{03117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_NPP"{}},}
-\DoxyCodeLine{03118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_NEE"{}}\};}
-\DoxyCodeLine{03119\ \textcolor{preprocessor}{\#else}}
-\DoxyCodeLine{03120\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{}
-\DoxyCodeLine{03121\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}EVAPOTRANSPIRATION"{}},\ \textcolor{stringliteral}{"{}NEE"{}},\ \textcolor{stringliteral}{"{}SOIL\_WETNESS"{}},\ \textcolor{stringliteral}{"{}FAPAR"{}},\ \textcolor{stringliteral}{"{}YEARLY\_NEE"{}}\};}
-\DoxyCodeLine{03122\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{03123\ }
-\DoxyCodeLine{03124\ \ \ \textcolor{keywordflow}{return}\ DATA\_TYPES;}
-\DoxyCodeLine{03125\ \}}
-\DoxyCodeLine{03126\ }
-\DoxyCodeLine{03127\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
-\DoxyCodeLine{03128\ \textcolor{comment}{//\ Code\ block\ for\ Dave's\ Howland\ data\ changes\ -\/\ need\ to\ modify\ back}}
-\DoxyCodeLine{03129\ \textcolor{comment}{/*\ char\ **getDataTypeNames()\ \{}}
-\DoxyCodeLine{03130\ \textcolor{comment}{\ \ //\ NOTE:\ data\ type\ names\ shouldn't\ have\ spaces\ in\ them\ (for\ determining}}
-\DoxyCodeLine{03131\ \textcolor{comment}{corresponding\ input\ names\ in\ namelist\ input\ file,\ for\ estimate\ program)}}
-\DoxyCodeLine{03132\ \textcolor{comment}{}}
-\DoxyCodeLine{03133\ \textcolor{comment}{\#if\ EXTRA\_DATA\_TYPES}}
-\DoxyCodeLine{03134\ \textcolor{comment}{\ \ static\ char\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{"{}EVAPOTRANSPIRATION"{},\ "{}NEE"{},}}
-\DoxyCodeLine{03135\ \textcolor{comment}{"{}SOIL\_WETNESS"{},\ "{}GPP"{},\ "{}R\_SOIL"{},\ "{}ANNUAL\_LITTER"{},\ "{}LAI"{},\ "{}PLANT\_WOOD\_C"{},"{}RTOT"{},}}
-\DoxyCodeLine{03136\ \textcolor{comment}{"{}RA"{},\ "{}RH"{},\ "{}NPP"{},\ "{}YEARLY\_GPP"{},\ "{}YEARLY\_RTOT"{},\ "{}YEARLY\_RA"{},\ "{}YEARLY\_RH"{},}}
-\DoxyCodeLine{03137\ \textcolor{comment}{"{}YEARLY\_NPP"{},\ "{}YEARLY\_NEE"{},\ "{}TOT\_GPP"{},\ "{}TOT\_RTOT"{},\ "{}TOT\_RA"{},\ "{}TOT\_RH"{},}}
-\DoxyCodeLine{03138\ \textcolor{comment}{"{}TOT\_NPP"{},\ "{}TOT\_NEE"{}\};\ \#else\ static\ char\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{}}
-\DoxyCodeLine{03139\ \textcolor{comment}{"{}EVAPOTRANSPIRATION"{},\ "{}NEE"{},\ "{}SOIL\_WETNESS"{},\ "{}R\_SOIL"{},\ "{}ANNUAL\_LITTER"{},\ "{}LAI"{},}}
-\DoxyCodeLine{03140\ \textcolor{comment}{"{}PLANT\_WOOD\_C"{}\ \};\ \#endif}}
-\DoxyCodeLine{03141\ \textcolor{comment}{}}
-\DoxyCodeLine{03142\ \textcolor{comment}{\ \ return\ DATA\_TYPES;}}
-\DoxyCodeLine{03143\ \textcolor{comment}{\}}}
-\DoxyCodeLine{03144\ \textcolor{comment}{*/}}
-\DoxyCodeLine{03145\ }
-\DoxyCodeLine{03146\ \textcolor{comment}{//\ set\ outputPtrs\ array\ to\ point\ to\ appropriate\ values}}
-\DoxyCodeLine{03147\ \textcolor{keywordtype}{void}\ setupOutputPointers(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{03148\ \ \ \textcolor{keywordtype}{int}\ i;\ \ \textcolor{comment}{//\ keep\ track\ of\ current\ index\ into\ array}}
-\DoxyCodeLine{03149\ }
-\DoxyCodeLine{03150\ \ \ i\ =\ 0;}
-\DoxyCodeLine{03151\ \ \ \textcolor{comment}{//\ we\ post-\/increment\ i\ every\ time\ we\ assign\ an\ array\ element}}
-\DoxyCodeLine{03152\ \ \ outputPtrs[i++]\ =\ \&(trackers.evapotranspiration);}
-\DoxyCodeLine{03153\ \ \ outputPtrs[i++]\ =\ \&(trackers.nee);}
-\DoxyCodeLine{03154\ \ \ outputPtrs[i++]\ =\ \&(trackers.soilWetnessFrac);}
-\DoxyCodeLine{03155\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.rSoil);}}
-\DoxyCodeLine{03156\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.yearlyLitter);}}
-\DoxyCodeLine{03157\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.LAI);}}
-\DoxyCodeLine{03158\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.plantWoodC);}}
-\DoxyCodeLine{03159\ \ \ outputPtrs[i++]\ =\ \&(trackers.fpar);}
-\DoxyCodeLine{03160\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyNee);\ \ \textcolor{comment}{//\ NOLINT\ (i++\ incremented\ val\ never}}
-\DoxyCodeLine{03161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ used)}}
-\DoxyCodeLine{03162\ \textcolor{preprocessor}{\#if\ EXTRA\_DATA\_TYPES}}
-\DoxyCodeLine{03163\ }
-\DoxyCodeLine{03164\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.fpar);}}
-\DoxyCodeLine{03165\ }
-\DoxyCodeLine{03166\ \ \ outputPtrs[i++]\ =\ \&(trackers.gpp);}
-\DoxyCodeLine{03167\ \ \ outputPtrs[i++]\ =\ \&(trackers.rtot);}
-\DoxyCodeLine{03168\ \ \ outputPtrs[i++]\ =\ \&(trackers.ra);}
-\DoxyCodeLine{03169\ \ \ outputPtrs[i++]\ =\ \&(trackers.rh);}
-\DoxyCodeLine{03170\ \ \ outputPtrs[i++]\ =\ \&(trackers.npp);}
-\DoxyCodeLine{03171\ }
-\DoxyCodeLine{03172\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyGpp);}
-\DoxyCodeLine{03173\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyRtot);}
-\DoxyCodeLine{03174\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyRa);}
-\DoxyCodeLine{03175\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyRh);}
-\DoxyCodeLine{03176\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyNpp);}
-\DoxyCodeLine{03177\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.yearlyNee);}}
-\DoxyCodeLine{03178\ }
-\DoxyCodeLine{03179\ \ \ outputPtrs[i++]\ =\ \&(trackers.totGpp);}
-\DoxyCodeLine{03180\ \ \ outputPtrs[i++]\ =\ \&(trackers.totRtot);}
-\DoxyCodeLine{03181\ \ \ outputPtrs[i++]\ =\ \&(trackers.totRa);}
-\DoxyCodeLine{03182\ \ \ outputPtrs[i++]\ =\ \&(trackers.totRh);}
-\DoxyCodeLine{03183\ \ \ outputPtrs[i++]\ =\ \&(trackers.totNpp);}
-\DoxyCodeLine{03184\ \ \ outputPtrs[i++]\ =\ \&(trackers.totNee);}
-\DoxyCodeLine{03185\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{03186\ \}}
-\DoxyCodeLine{03187\ }
-\DoxyCodeLine{03188\ \textcolor{comment}{/*\ PRE:\ outputItems\ has\ been\ created\ with\ newOutputItems}}
-\DoxyCodeLine{03189\ \textcolor{comment}{}}
-\DoxyCodeLine{03190\ \textcolor{comment}{\ \ \ Setup\ outputItems\ structure}}
-\DoxyCodeLine{03191\ \textcolor{comment}{\ \ \ Each\ variable\ added\ will\ be\ output\ in\ a\ separate\ file\ ('*.varName')}}
-\DoxyCodeLine{03192\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{03193\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems)\ \{}
-\DoxyCodeLine{03194\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE"{}},\ \&(trackers.nee));}
-\DoxyCodeLine{03195\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE\_cum"{}},\ \&(trackers.totNee));}
-\DoxyCodeLine{03196\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP"{}},\ \&(trackers.gpp));}
-\DoxyCodeLine{03197\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP\_cum"{}},\ \&(trackers.totGpp));}
-\DoxyCodeLine{03198\ \}}
-\DoxyCodeLine{03199\ }
-\DoxyCodeLine{03200\ \textcolor{comment}{/*\ do\ initializations\ that\ only\ have\ to\ be\ done\ once\ for\ all\ model\ runs:}}
-\DoxyCodeLine{03201\ \textcolor{comment}{\ \ \ read\ in\ climate\ data\ and\ initial\ parameter\ values}}
-\DoxyCodeLine{03202\ \textcolor{comment}{\ \ \ parameter\ values\ get\ stored\ in\ spatialParams\ (along\ with\ other\ parameter}}
-\DoxyCodeLine{03203\ \textcolor{comment}{\ \ \ information),\ which\ gets\ allocated\ and\ initialized\ here\ (thus\ requiring\ that}}
-\DoxyCodeLine{03204\ \textcolor{comment}{\ \ \ spatialParams\ is\ passed\ in\ as\ a\ pointer\ to\ a\ pointer)\ number\ of\ time\ steps\ in}}
-\DoxyCodeLine{03205\ \textcolor{comment}{\ \ \ each\ location\ gets\ stored\ in\ steps\ vector,\ which\ gets\ dynamically\ allocated}}
-\DoxyCodeLine{03206\ \textcolor{comment}{\ \ \ with\ malloc\ (steps\ must\ be\ a\ pointer\ to\ a\ pointer\ so\ it\ can\ be\ malloc'ed)}}
-\DoxyCodeLine{03207\ \textcolor{comment}{}}
-\DoxyCodeLine{03208\ \textcolor{comment}{\ \ \ also\ set\ up\ pointers\ to\ different\ output\ data\ types}}
-\DoxyCodeLine{03209\ \textcolor{comment}{\ \ \ and\ setup\ meanNPP\ tracker}}
-\DoxyCodeLine{03210\ \textcolor{comment}{}}
-\DoxyCodeLine{03211\ \textcolor{comment}{\ \ \ initModel\ returns\ number\ of\ spatial\ locations}}
-\DoxyCodeLine{03212\ \textcolor{comment}{}}
-\DoxyCodeLine{03213\ \textcolor{comment}{\ \ \ paramFile\ is\ parameter\ data\ file}}
-\DoxyCodeLine{03214\ \textcolor{comment}{\ \ \ paramFile-\/spatial\ is\ file\ with\ parameter\ values\ of\ spatially-\/varying}}
-\DoxyCodeLine{03215\ \textcolor{comment}{\ \ \ parameters\ (1st\ line\ contains\ number\ of\ locations)\ climFile\ is\ climate\ data}}
-\DoxyCodeLine{03216\ \textcolor{comment}{\ \ \ file}}
-\DoxyCodeLine{03217\ \textcolor{comment}{*/}}
-\DoxyCodeLine{03218\ \textcolor{keywordtype}{int}\ initModel(SpatialParams\ **spatialParams,\ \textcolor{keywordtype}{int}\ **steps,\ \textcolor{keywordtype}{char}\ *paramFile,}
-\DoxyCodeLine{03219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *climFile)\ \{}
-\DoxyCodeLine{03220\ \ \ \textcolor{keywordtype}{char}\ spatialParamFile[256];}
-\DoxyCodeLine{03221\ \ \ \textcolor{keywordtype}{int}\ numLocs;}
-\DoxyCodeLine{03222\ }
-\DoxyCodeLine{03223\ \ \ strcpy(spatialParamFile,\ paramFile);}
-\DoxyCodeLine{03224\ \ \ strcat(spatialParamFile,\ \textcolor{stringliteral}{"{}-\/spatial"{}});}
-\DoxyCodeLine{03225\ }
-\DoxyCodeLine{03226\ \ \ numLocs\ =\ readParamData(spatialParams,\ paramFile,\ spatialParamFile);}
-\DoxyCodeLine{03227\ \ \ \textcolor{comment}{//\ printf("{}ERROR:\ input\ filename\ \%s\ "{},\ climFile);}}
-\DoxyCodeLine{03228\ \ \ *steps\ =\ readClimData(climFile,\ numLocs);}
-\DoxyCodeLine{03229\ }
-\DoxyCodeLine{03230\ \ \ setupOutputPointers();}
-\DoxyCodeLine{03231\ }
-\DoxyCodeLine{03232\ \ \ meanNPP\ =\ newMeanTracker(0,\ MEAN\_NPP\_DAYS,\ MEAN\_NPP\_MAX\_ENTRIES);}
-\DoxyCodeLine{03233\ \ \ meanGPP\ =\ newMeanTracker(0,\ MEAN\_GPP\_SOIL\_DAYS,\ MEAN\_GPP\_SOIL\_MAX\_ENTRIES);}
-\DoxyCodeLine{03234\ \ \ meanFPAR\ =\ newMeanTracker(0,\ MEAN\_FPAR\_DAYS,\ MEAN\_FPAR\_MAX\_ENTRIES);}
-\DoxyCodeLine{03235\ \ \ \textcolor{keywordflow}{return}\ numLocs;}
-\DoxyCodeLine{03236\ \}}
-\DoxyCodeLine{03237\ }
-\DoxyCodeLine{03238\ \textcolor{comment}{/*\ Do\ initialization\ of\ event\ data\ if\ event\ handling\ is\ turned\ on.}}
-\DoxyCodeLine{03239\ \textcolor{comment}{\ *\ Populates\ static\ event\ structs}}
-\DoxyCodeLine{03240\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{03241\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
-\DoxyCodeLine{03242\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ numLocs,\ \textcolor{keywordtype}{int}\ printHeader)\ \{}
-\DoxyCodeLine{03243\ \ \ events\ =\ readEventData(eventFile,\ numLocs);}
-\DoxyCodeLine{03244\ \ \ eventOutFile\ =\ openEventOutFile(printHeader);}
-\DoxyCodeLine{03245\ \}}
-\DoxyCodeLine{03246\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{03247\ }
-\DoxyCodeLine{03248\ \textcolor{comment}{//\ call\ this\ when\ done\ running\ model:}}
-\DoxyCodeLine{03249\ \textcolor{comment}{//\ de-\/allocates\ space\ for\ climate\ and\ event\ linked\ lists}}
-\DoxyCodeLine{03250\ \textcolor{comment}{//\ (needs\ to\ know\ number\ of\ locations)}}
-\DoxyCodeLine{03251\ \textcolor{keywordtype}{void}\ cleanupModel(\textcolor{keywordtype}{int}\ numLocs)\ \{}
-\DoxyCodeLine{03252\ \ \ freeClimateList(numLocs);}
-\DoxyCodeLine{03253\ \ \ deallocateMeanTracker(meanNPP);}
-\DoxyCodeLine{03254\ \ \ deallocateMeanTracker(meanGPP);}
-\DoxyCodeLine{03255\ \ \ deallocateMeanTracker(meanFPAR);}
-\DoxyCodeLine{03256\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
-\DoxyCodeLine{03257\ \ \ freeEventList(numLocs);}
-\DoxyCodeLine{03258\ \ \ closeEventOutFile(eventOutFile);}
-\DoxyCodeLine{03259\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{03260\ \}}
+\DoxyCodeLine{02562\ \ \ \textcolor{keywordflow}{while}\ (locEvent\ !=\ NULL\ \&\&\ locEvent-\/>year\ <=\ climYear\ \&\&}
+\DoxyCodeLine{02563\ \ \ \ \ \ \ \ \ \ locEvent-\/>day\ <=\ climDay)\ \{}
+\DoxyCodeLine{02564\ \ \ \ \ \textcolor{keywordflow}{if}\ (locEvent-\/>year\ <\ climYear\ ||\ locEvent-\/>day\ <\ climDay)\ \{}
+\DoxyCodeLine{02565\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Agronomic\ event\ found\ for\ loc:\ \%d\ year:\ \%d\ day:\ \%d\ that\ does\ not\ "{}}}
+\DoxyCodeLine{02566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}have\ a\ corresponding\ record\ in\ the\ climate\ file\(\backslash\)n"{}},}
+\DoxyCodeLine{02567\ \ \ \ \ \ \ \ \ \ \ \ \ \ locEvent-\/>loc,\ locEvent-\/>year,\ locEvent-\/>day);}
+\DoxyCodeLine{02568\ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
+\DoxyCodeLine{02569\ \ \ \ \ \}}
+\DoxyCodeLine{02570\ \ \ \ \ \textcolor{keywordflow}{switch}\ (locEvent-\/>type)\ \{}
+\DoxyCodeLine{02571\ \ \ \ \ \ \ \textcolor{comment}{//\ Implementation\ TBD,\ as\ we\ enable\ the\ various\ event\ types}}
+\DoxyCodeLine{02572\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:\ \{}
+\DoxyCodeLine{02573\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IrrigationParams\ *irrParams\ =\ locEvent-\/>eventParams;}
+\DoxyCodeLine{02574\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ amount\ =\ irrParams-\/>amountAdded;}
+\DoxyCodeLine{02575\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ soilAmount,\ evapAmount;}
+\DoxyCodeLine{02576\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ CANOPY)\ \{}
+\DoxyCodeLine{02577\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Part\ of\ the\ irrigation\ evaporates,\ and\ the\ rest\ makes\ it\ to\ the}}
+\DoxyCodeLine{02578\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ soil.\ Evaporated\ fraction:}}
+\DoxyCodeLine{02579\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ params.immedEvapFrac\ *\ amount;}
+\DoxyCodeLine{02580\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soil\ fraction:}}
+\DoxyCodeLine{02581\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount\ -\/\ evapAmount;}
+\DoxyCodeLine{02582\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ SOIL)\ \{}
+\DoxyCodeLine{02583\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ All\ goes\ to\ the\ soil}}
+\DoxyCodeLine{02584\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ 0.0;}
+\DoxyCodeLine{02585\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount;}
+\DoxyCodeLine{02586\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{02587\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Unknown\ irrigation\ method\ type:\ \%d\(\backslash\)n"{}},\ irrParams-\/>method);}
+\DoxyCodeLine{02588\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
+\DoxyCodeLine{02589\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02590\ \ \ \ \ \ \ \ \ fluxes.immedEvap\ +=\ evapAmount;}
+\DoxyCodeLine{02591\ \ \ \ \ \ \ \ \ envi.soilWater\ +=\ soilAmount;}
+\DoxyCodeLine{02592\ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 2,\ \textcolor{stringliteral}{"{}envi.soilWater"{}},\ soilAmount,}
+\DoxyCodeLine{02593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.immedEvap"{}},\ evapAmount);}
+\DoxyCodeLine{02594\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{02595\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:\ \{}
+\DoxyCodeLine{02596\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ PlantingParams\ *plantParams\ =\ locEvent-\/>eventParams;}
+\DoxyCodeLine{02597\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafC\ =\ plantParams-\/>leafC;}
+\DoxyCodeLine{02598\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodC\ =\ plantParams-\/>woodC;}
+\DoxyCodeLine{02599\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineRootC\ =\ plantParams-\/>fineRootC;}
+\DoxyCodeLine{02600\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseRootC\ =\ plantParams-\/>coarseRootC;}
+\DoxyCodeLine{02601\ }
+\DoxyCodeLine{02602\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ pools}}
+\DoxyCodeLine{02603\ \ \ \ \ \ \ \ \ envi.plantLeafC\ +=\ leafC;}
+\DoxyCodeLine{02604\ \ \ \ \ \ \ \ \ envi.plantWoodC\ +=\ woodC;}
+\DoxyCodeLine{02605\ \ \ \ \ \ \ \ \ envi.fineRootC\ +=\ fineRootC;}
+\DoxyCodeLine{02606\ \ \ \ \ \ \ \ \ envi.coarseRootC\ +=\ coarseRootC;}
+\DoxyCodeLine{02607\ }
+\DoxyCodeLine{02608\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ allocate\ to\ N\ pools}}
+\DoxyCodeLine{02609\ }
+\DoxyCodeLine{02610\ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 4,\ \textcolor{stringliteral}{"{}envi.plantLeafC"{}},\ leafC,}
+\DoxyCodeLine{02611\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.plantWoodC"{}},\ woodC,\ \textcolor{stringliteral}{"{}envi.fineRootC"{}},\ fineRootC,}
+\DoxyCodeLine{02612\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.coarseRootC"{}},\ coarseRootC);}
+\DoxyCodeLine{02613\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{02614\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:\ \{}
+\DoxyCodeLine{02615\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Harvest\ can\ both\ remove\ biomass\ and\ move\ biomass\ to\ the\ litter\ pool}}
+\DoxyCodeLine{02616\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ HarvestParams\ *harvParams\ =\ locEvent-\/>eventParams;}
+\DoxyCodeLine{02617\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRA\ =\ harvParams-\/>fractionRemovedAbove;}
+\DoxyCodeLine{02618\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTA\ =\ harvParams-\/>fractionTransferredAbove;}
+\DoxyCodeLine{02619\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRB\ =\ harvParams-\/>fractionRemovedBelow;}
+\DoxyCodeLine{02620\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTB\ =\ harvParams-\/>fractionTransferredBelow;}
+\DoxyCodeLine{02621\ }
+\DoxyCodeLine{02622\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Litter\ increase}}
+\DoxyCodeLine{02623\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ litterAdd\ =\ fracTA\ *\ (envi.plantLeafC\ +\ envi.plantWoodC)\ +}
+\DoxyCodeLine{02624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fracTB\ *\ (envi.fineRootC\ +\ envi.coarseRootC);}
+\DoxyCodeLine{02625\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ reductions,\ counting\ both\ mass\ moved\ to\ litter\ and\ removed\ by}}
+\DoxyCodeLine{02626\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ harvest\ itself.\ Above-\/ground\ changes:}}
+\DoxyCodeLine{02627\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafDelta\ =\ -\/envi.plantLeafC\ *\ (fracRA\ +\ fracTA);}
+\DoxyCodeLine{02628\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodDelta\ =\ -\/envi.plantWoodC\ *\ (fracRA\ +\ fracTA);}
+\DoxyCodeLine{02629\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Below-\/ground\ changes:}}
+\DoxyCodeLine{02630\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineDelta\ =\ -\/envi.fineRootC\ *\ (fracRB\ +\ fracTB);}
+\DoxyCodeLine{02631\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseDelta\ =\ -\/envi.coarseRootC\ *\ (fracRB\ +\ fracTB);}
+\DoxyCodeLine{02632\ }
+\DoxyCodeLine{02633\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ updates:}}
+\DoxyCodeLine{02634\ \ \ \ \ \ \ \ \ envi.litter\ +=\ litterAdd;}
+\DoxyCodeLine{02635\ \ \ \ \ \ \ \ \ envi.plantLeafC\ +=\ leafDelta;}
+\DoxyCodeLine{02636\ \ \ \ \ \ \ \ \ envi.plantWoodC\ +=\ woodDelta;}
+\DoxyCodeLine{02637\ \ \ \ \ \ \ \ \ envi.fineRootC\ +=\ fineDelta;}
+\DoxyCodeLine{02638\ \ \ \ \ \ \ \ \ envi.coarseRootC\ +=\ coarseDelta;}
+\DoxyCodeLine{02639\ }
+\DoxyCodeLine{02640\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ move/remove\ biomass\ in\ N\ pools}}
+\DoxyCodeLine{02641\ }
+\DoxyCodeLine{02642\ \ \ \ \ \ \ \ \ writeEventOut(eventOutFile,\ locEvent,\ 5,\ \textcolor{stringliteral}{"{}env.litter"{}},\ litterAdd,}
+\DoxyCodeLine{02643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.plantLeafC"{}},\ leafDelta,\ \textcolor{stringliteral}{"{}envi.plantWoodC"{}},}
+\DoxyCodeLine{02644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ woodDelta,\ \textcolor{stringliteral}{"{}envi.fineRootC"{}},\ fineDelta,}
+\DoxyCodeLine{02645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}envi.coarseRootC"{}},\ coarseDelta);}
+\DoxyCodeLine{02646\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{02647\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:}
+\DoxyCodeLine{02648\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TBD}}
+\DoxyCodeLine{02649\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Tillage\ events\ not\ yet\ implemented\(\backslash\)n"{}});}
+\DoxyCodeLine{02650\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{02651\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:}
+\DoxyCodeLine{02652\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TBD}}
+\DoxyCodeLine{02653\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Fertilization\ events\ not\ yet\ implemented\(\backslash\)n"{}});}
+\DoxyCodeLine{02654\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{02655\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{02656\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Unknown\ event\ type\ (\%d)\ in\ processEvents()\(\backslash\)n"{}},\ locEvent-\/>type);}
+\DoxyCodeLine{02657\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
+\DoxyCodeLine{02658\ \ \ \ \ \}}
+\DoxyCodeLine{02659\ }
+\DoxyCodeLine{02660\ \ \ \ \ locEvent\ =\ locEvent-\/>nextEvent;}
+\DoxyCodeLine{02661\ \ \ \}}
+\DoxyCodeLine{02662\ \}}
+\DoxyCodeLine{02663\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02664\ }
+\DoxyCodeLine{02665\ \textcolor{comment}{//\ !!!\ main\ runner\ function\ !!!}}
+\DoxyCodeLine{02666\ }
+\DoxyCodeLine{02667\ \textcolor{comment}{//\ calculate\ all\ fluxes\ and\ update\ state\ for\ this\ time\ step}}
+\DoxyCodeLine{02668\ \textcolor{comment}{//\ we\ calculate\ all\ fluxes\ before\ updating\ state\ in\ case\ flux\ calculations}}
+\DoxyCodeLine{02669\ \textcolor{comment}{//\ depend\ on\ the\ old\ state}}
+\DoxyCodeLine{02670\ \textcolor{keywordtype}{void}\ updateState(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{02671\ \ \ \textcolor{keywordtype}{double}\ npp;\ \ \textcolor{comment}{//\ net\ primary\ productivity,\ g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1}}
+\DoxyCodeLine{02672\ \ \ \textcolor{keywordtype}{double}\ oldSoilWater;\ \ \textcolor{comment}{//\ how\ much\ soil\ water\ was\ there\ before\ we\ updated\ it?}}
+\DoxyCodeLine{02673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Used\ in\ trackers}}
+\DoxyCodeLine{02674\ \ \ \textcolor{keywordtype}{int}\ err;}
+\DoxyCodeLine{02675\ \ \ oldSoilWater\ =\ envi.soilWater;}
+\DoxyCodeLine{02676\ }
+\DoxyCodeLine{02677\ \ \ calculateFluxes();}
+\DoxyCodeLine{02678\ }
+\DoxyCodeLine{02679\ \ \ \textcolor{comment}{//\ update\ the\ stocks,\ with\ fluxes\ adjusted\ for\ length\ of\ time\ step:}}
+\DoxyCodeLine{02680\ \ \ envi.plantWoodC\ +=\ (fluxes.photosynthesis\ +\ fluxes.woodCreation\ -\/}
+\DoxyCodeLine{02681\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fluxes.leafCreation\ -\/\ fluxes.woodLitter\ -\/\ fluxes.rVeg\ -\/}
+\DoxyCodeLine{02682\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fluxes.coarseRootCreation\ -\/\ fluxes.fineRootCreation)\ *}
+\DoxyCodeLine{02683\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length;}
+\DoxyCodeLine{02684\ \ \ envi.plantLeafC\ +=}
+\DoxyCodeLine{02685\ \ \ \ \ \ \ (fluxes.leafCreation\ -\/\ fluxes.leafLitter)\ *\ climate-\/>length;}
+\DoxyCodeLine{02686\ }
+\DoxyCodeLine{02687\ \ \ soilDegradation();\ \ \textcolor{comment}{//\ This\ updates\ all\ the\ soil\ functions}}
+\DoxyCodeLine{02688\ }
+\DoxyCodeLine{02689\ \textcolor{preprocessor}{\#if\ MODEL\_WATER\ \ }\textcolor{comment}{//\ water\ pool\ updating\ happens\ here:}}
+\DoxyCodeLine{02690\ \textcolor{preprocessor}{\#if\ LITTER\_WATER\ \ }\textcolor{comment}{//\ (2\ soil\ water\ layers;\ litter\ water\ will\ only\ be\ on\ if}}
+\DoxyCodeLine{02691\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ complex\ water\ is\ also\ on)}}
+\DoxyCodeLine{02692\ \ \ envi.litterWater\ +=}
+\DoxyCodeLine{02693\ \ \ \ \ \ \ (fluxes.rain\ +\ fluxes.snowMelt\ -\/\ fluxes.immedEvap\ -\/\ fluxes.fastFlow\ -\/}
+\DoxyCodeLine{02694\ \ \ \ \ \ \ \ fluxes.evaporation\ -\/\ fluxes.topDrainage)\ *}
+\DoxyCodeLine{02695\ \ \ \ \ \ \ climate-\/>length;}
+\DoxyCodeLine{02696\ \ \ envi.soilWater\ +=}
+\DoxyCodeLine{02697\ \ \ \ \ \ \ (fluxes.topDrainage\ -\/\ fluxes.transpiration\ -\/\ fluxes.bottomDrainage)\ *}
+\DoxyCodeLine{02698\ \ \ \ \ \ \ climate-\/>length;}
+\DoxyCodeLine{02699\ \textcolor{preprocessor}{\#else\ \ }\textcolor{comment}{//\ LITTER\_WATER\ =\ 0\ (only\ one\ soil\ water\ layer)}}
+\DoxyCodeLine{02700\ \ \ \ \ \ \ \ \textcolor{comment}{//\ note:\ some\ of\ these\ fluxes\ will\ always\ be\ 0\ if\ complex}}
+\DoxyCodeLine{02701\ \ \ \ \ \ \ \ \textcolor{comment}{//\ water\ is\ off}}
+\DoxyCodeLine{02702\ \ \ envi.soilWater\ +=}
+\DoxyCodeLine{02703\ \ \ \ \ \ \ (fluxes.rain\ +\ fluxes.snowMelt\ -\/\ fluxes.immedEvap\ -\/\ fluxes.fastFlow\ -\/}
+\DoxyCodeLine{02704\ \ \ \ \ \ \ \ fluxes.evaporation\ -\/\ fluxes.transpiration\ -\/\ fluxes.bottomDrainage)\ *}
+\DoxyCodeLine{02705\ \ \ \ \ \ \ climate-\/>length;}
+\DoxyCodeLine{02706\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ LITTER\_WATER}}
+\DoxyCodeLine{02707\ }
+\DoxyCodeLine{02708\ \ \ \textcolor{comment}{//\ if\ COMPLEX\_WATER\ =\ 0\ or\ SNOW\ =\ 0,\ some\ or\ all\ of\ these\ fluxes\ will\ always}}
+\DoxyCodeLine{02709\ \ \ \textcolor{comment}{//\ be\ 0}}
+\DoxyCodeLine{02710\ \ \ envi.snow\ +=\ (fluxes.snowFall\ -\/\ fluxes.snowMelt\ -\/\ fluxes.sublimation)\ *}
+\DoxyCodeLine{02711\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length;}
+\DoxyCodeLine{02712\ }
+\DoxyCodeLine{02713\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ MODEL\_WATER}}
+\DoxyCodeLine{02714\ }
+\DoxyCodeLine{02715\ \ \ ensureNonNegativeStocks();}
+\DoxyCodeLine{02716\ }
+\DoxyCodeLine{02717\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
+\DoxyCodeLine{02718\ \ \ \textcolor{comment}{//\ Process\ events\ for\ this\ location/year/day,\ AFTER\ updates\ are\ made\ to\ fluxes}}
+\DoxyCodeLine{02719\ \ \ \textcolor{comment}{//\ and\ state\ variables\ above.\ Events\ are\ (currently,\ Jan\ 25,\ 2025)\ handled\ as}}
+\DoxyCodeLine{02720\ \ \ \textcolor{comment}{//\ instantaneous\ deltas\ to\ relevant\ state\ (envi\ and\ fluxes\ fields),}}
+\DoxyCodeLine{02721\ \ \ processEvents();}
+\DoxyCodeLine{02722\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02723\ }
+\DoxyCodeLine{02724\ \ \ npp\ =\ fluxes.photosynthesis\ -\/\ fluxes.rVeg\ -\/\ fluxes.rCoarseRoot\ -\/}
+\DoxyCodeLine{02725\ \ \ \ \ \ \ \ \ fluxes.rFineRoot;}
+\DoxyCodeLine{02726\ }
+\DoxyCodeLine{02727\ \ \ err\ =\ addValueToMeanTracker(meanNPP,\ npp,\ climate-\/>length);\ \ \textcolor{comment}{//\ update\ running}}
+\DoxyCodeLine{02728\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mean\ of\ NPP}}
+\DoxyCodeLine{02729\ \ \ \textcolor{keywordflow}{if}\ (err\ !=\ 0)\ \{}
+\DoxyCodeLine{02730\ \ \ \ \ printf(\textcolor{stringliteral}{"{}*******\ Error\ type\ \%d\ while\ trying\ to\ add\ value\ to\ NPP\ mean\ "{}}}
+\DoxyCodeLine{02731\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}tracker\ in\ sipnet:updateState()\ *******\(\backslash\)n"{}},}
+\DoxyCodeLine{02732\ \ \ \ \ \ \ \ \ \ \ \ err);}
+\DoxyCodeLine{02733\ \ \ \ \ printf(\textcolor{stringliteral}{"{}npp\ =\ \%f,\ climate-\/>length\ =\ \%f\(\backslash\)n"{}},\ npp,\ climate-\/>length);}
+\DoxyCodeLine{02734\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Suggestion:\ try\ changing\ MEAN\_NPP\_MAX\_ENTRIES\ in\ sipnet.c\(\backslash\)n"{}});}
+\DoxyCodeLine{02735\ \ \ \ \ exit(1);}
+\DoxyCodeLine{02736\ \ \ \}}
+\DoxyCodeLine{02737\ }
+\DoxyCodeLine{02738\ \ \ err\ =\ addValueToMeanTracker(meanGPP,\ fluxes.photosynthesis,}
+\DoxyCodeLine{02739\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length);\ \ \textcolor{comment}{//\ update\ running\ mean\ of\ GPP}}
+\DoxyCodeLine{02740\ \ \ \textcolor{keywordflow}{if}\ (err\ !=\ 0)\ \{}
+\DoxyCodeLine{02741\ \ \ \ \ printf(\textcolor{stringliteral}{"{}*******\ Error\ type\ \%d\ while\ trying\ to\ add\ value\ to\ GPP\ mean\ "{}}}
+\DoxyCodeLine{02742\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}tracker\ in\ sipnet:updateState()\ *******\(\backslash\)n"{}},}
+\DoxyCodeLine{02743\ \ \ \ \ \ \ \ \ \ \ \ err);}
+\DoxyCodeLine{02744\ \ \ \ \ printf(\textcolor{stringliteral}{"{}GPP\ =\ \%f,\ climate-\/>length\ =\ \%f\(\backslash\)n"{}},\ fluxes.photosynthesis,}
+\DoxyCodeLine{02745\ \ \ \ \ \ \ \ \ \ \ \ climate-\/>length);}
+\DoxyCodeLine{02746\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Suggestion:\ try\ changing\ MEAN\_GPP\_SOIL\_MAX\_ENTRIES\ in\ sipnet.c\(\backslash\)n"{}});}
+\DoxyCodeLine{02747\ \ \ \ \ exit(1);}
+\DoxyCodeLine{02748\ \ \ \}}
+\DoxyCodeLine{02749\ }
+\DoxyCodeLine{02750\ \ \ updateTrackers(oldSoilWater);}
+\DoxyCodeLine{02751\ \}}
+\DoxyCodeLine{02752\ }
+\DoxyCodeLine{02753\ \textcolor{comment}{//\ initialize\ phenology\ tracker\ structure,\ based\ on\ day\ of\ year\ of\ first\ climate}}
+\DoxyCodeLine{02754\ \textcolor{comment}{//\ record\ (have\ the\ leaves\ come\ on\ yet\ this\ year?\ have\ they\ fallen\ off\ yet\ this}}
+\DoxyCodeLine{02755\ \textcolor{comment}{//\ year?)}}
+\DoxyCodeLine{02756\ \textcolor{keywordtype}{void}\ initPhenologyTrackers(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{02757\ }
+\DoxyCodeLine{02758\ \ \ phenologyTrackers.didLeafGrowth\ =\ pastLeafGrowth();\ \ \textcolor{comment}{//\ first\ year:\ have\ we}}
+\DoxyCodeLine{02759\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ passed\ growing\ season}}
+\DoxyCodeLine{02760\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ start\ date?}}
+\DoxyCodeLine{02761\ \ \ phenologyTrackers.didLeafFall\ =\ pastLeafFall();\ \ \textcolor{comment}{//\ first\ year:\ have\ we\ passed}}
+\DoxyCodeLine{02762\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ growing\ season\ end\ date?}}
+\DoxyCodeLine{02763\ }
+\DoxyCodeLine{02764\ \ \ \textcolor{comment}{/*\ if\ we\ think\ we've\ done\ leaf\ fall\ this\ year\ but\ not\ leaf\ growth,\ something's}}
+\DoxyCodeLine{02765\ \textcolor{comment}{\ \ \ \ \ wrong\ this\ could\ happen\ if,\ e.g.\ we're\ using\ soil\ temp-\/based\ leaf\ growth,}}
+\DoxyCodeLine{02766\ \textcolor{comment}{\ \ \ \ \ and\ soil\ temp.\ on\ first\ day\ doesn't\ happen\ to\ pass\ threshold}}
+\DoxyCodeLine{02767\ \textcolor{comment}{\ \ \ \ \ fix\ this\ by\ setting\ didLeafGrowth\ to\ 1\ in\ this\ case}}
+\DoxyCodeLine{02768\ \textcolor{comment}{\ \ \ \ \ Note:\ this\ won't\ catch\ all\ potential\ problems\ (e.g.\ with\ soil\ temp-\/based}}
+\DoxyCodeLine{02769\ \textcolor{comment}{\ \ \ \ \ leaf\ growth,\ temp.\ on\ first\ day\ may\ not\ pass\ threshold,\ but\ it\ may\ not\ yet}}
+\DoxyCodeLine{02770\ \textcolor{comment}{\ \ \ \ \ be\ the\ end\ of\ the\ growing\ season;\ in\ this\ case\ we\ could\ accidentally\ grow}}
+\DoxyCodeLine{02771\ \textcolor{comment}{\ \ \ \ \ the\ leaves\ again\ once\ the\ temp.\ rises\ past\ the\ threshold\ again.\ Also,\ we'll}}
+\DoxyCodeLine{02772\ \textcolor{comment}{\ \ \ \ \ have\ problems\ with\ GDD-\/based\ growth\ if\ first\ day\ of\ simulation\ is\ not}}
+\DoxyCodeLine{02773\ \textcolor{comment}{\ \ \ \ \ Jan.\ 1.)}}
+\DoxyCodeLine{02774\ \textcolor{comment}{\ \ */}}
+\DoxyCodeLine{02775\ \ \ \textcolor{keywordflow}{if}\ (phenologyTrackers.didLeafFall\ \&\&\ !phenologyTrackers.didLeafGrowth)\ \{}
+\DoxyCodeLine{02776\ \ \ \ \ phenologyTrackers.didLeafGrowth\ =\ 1;}
+\DoxyCodeLine{02777\ \ \ \}}
+\DoxyCodeLine{02778\ \ \ \textcolor{comment}{//\ printf("{}stuff:\ \%8d\ \%8d\ \(\backslash\)n"{},phenologyTrackers.lastYear,\ climate-\/>year);}}
+\DoxyCodeLine{02779\ \ \ phenologyTrackers.lastYear\ =\ climate-\/>year;\ \ \textcolor{comment}{//\ set\ the\ year\ of\ the\ previous}}
+\DoxyCodeLine{02780\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (non-\/existent)\ time\ step\ to\ be}}
+\DoxyCodeLine{02781\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ this\ year}}
+\DoxyCodeLine{02782\ \}}
+\DoxyCodeLine{02783\ }
+\DoxyCodeLine{02784\ \textcolor{comment}{//\ Setup\ model\ to\ run\ at\ given\ location\ (0-\/indexing:\ if\ only\ one\ location,\ loc}}
+\DoxyCodeLine{02785\ \textcolor{comment}{//\ should\ be\ 0)}}
+\DoxyCodeLine{02786\ \textcolor{keywordtype}{void}\ setupModel(SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{02787\ }
+\DoxyCodeLine{02788\ \ \ \textcolor{comment}{//\ load\ parameters\ into\ global\ param\ structure:\ spatialParams\ was\ told\ where}}
+\DoxyCodeLine{02789\ \ \ \textcolor{comment}{//\ to\ put\ values\ in\ readParamData}}
+\DoxyCodeLine{02790\ \ \ loadSpatialParams(spatialParams,\ loc);}
+\DoxyCodeLine{02791\ }
+\DoxyCodeLine{02792\ \ \ \textcolor{comment}{//\ a\ test:\ use\ constant\ (measured)\ soil\ respiration:}}
+\DoxyCodeLine{02793\ \ \ \textcolor{comment}{//\ make\ it\ so\ soil\ resp.\ is\ 5.2\ g\ C\ m-\/2\ day-\/1\ at\ 10\ degrees\ C,}}
+\DoxyCodeLine{02794\ \ \ \textcolor{comment}{//\ moisture-\/saturated\ soil,\ and\ soil\ C\ =\ init.\ soil\ C\ params.baseSoilResp\ =}}
+\DoxyCodeLine{02795\ \ \ \textcolor{comment}{//\ ((5.2\ *\ 365.0)/params.soilInit)/params.soilRespQ10;}}
+\DoxyCodeLine{02796\ }
+\DoxyCodeLine{02797\ \ \ \textcolor{comment}{//\ ensure\ that\ all\ the\ allocation\ parameters\ sum\ up\ to\ something\ less\ than}}
+\DoxyCodeLine{02798\ \ \ \textcolor{comment}{//\ one:}}
+\DoxyCodeLine{02799\ \textcolor{preprocessor}{\#if\ ROOTS}}
+\DoxyCodeLine{02800\ \ \ ensureAllocation();}
+\DoxyCodeLine{02801\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02802\ }
+\DoxyCodeLine{02803\ \textcolor{comment}{//\ If\ we\ aren't\ explicitly\ modeling\ microbe\ pool,\ then\ do\ not\ have\ a\ pulse\ to}}
+\DoxyCodeLine{02804\ \textcolor{comment}{//\ microbes,\ exudates\ go\ directly\ to\ the\ soil}}
+\DoxyCodeLine{02805\ \textcolor{preprocessor}{\#if\ !MICROBES}}
+\DoxyCodeLine{02806\ \ \ params.microbePulseEff\ =\ 0;}
+\DoxyCodeLine{02807\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02808\ }
+\DoxyCodeLine{02809\ \ \ \textcolor{comment}{//\ change\ units\ of\ parameters:}}
+\DoxyCodeLine{02810\ \ \ params.baseVegResp\ /=\ 365.0;\ \ \textcolor{comment}{//\ change\ from\ per-\/year\ to\ per-\/day\ rate}}
+\DoxyCodeLine{02811\ \ \ params.litterBreakdownRate\ /=\ 365.0;}
+\DoxyCodeLine{02812\ \ \ params.baseSoilResp\ /=\ 365.0;}
+\DoxyCodeLine{02813\ \ \ params.baseSoilRespCold\ /=\ 365.0;}
+\DoxyCodeLine{02814\ \ \ params.woodTurnoverRate\ /=\ 365.0;}
+\DoxyCodeLine{02815\ \ \ params.leafTurnoverRate\ /=\ 365.0;}
+\DoxyCodeLine{02816\ }
+\DoxyCodeLine{02817\ \ \ \textcolor{comment}{//\ calculate\ additional\ parameters:}}
+\DoxyCodeLine{02818\ \ \ params.psnTMax\ =}
+\DoxyCodeLine{02819\ \ \ \ \ \ \ params.psnTOpt\ +\ (params.psnTOpt\ -\/\ params.psnTMin);\ \ \textcolor{comment}{//\ assumed}}
+\DoxyCodeLine{02820\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ symmetrical}}
+\DoxyCodeLine{02821\ }
+\DoxyCodeLine{02822\ \textcolor{preprocessor}{\#if\ ROOTS}}
+\DoxyCodeLine{02823\ \ \ envi.plantWoodC\ =}
+\DoxyCodeLine{02824\ \ \ \ \ \ \ (1\ -\/\ params.coarseRootFrac\ -\/\ params.fineRootFrac)\ *\ params.plantWoodInit;}
+\DoxyCodeLine{02825\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{02826\ \ \ envi.plantWoodC\ =\ params.plantWoodInit;}
+\DoxyCodeLine{02827\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02828\ }
+\DoxyCodeLine{02829\ \ \ envi.plantLeafC\ =\ params.laiInit\ *\ params.leafCSpWt;}
+\DoxyCodeLine{02830\ \ \ envi.litter\ =\ params.litterInit;}
+\DoxyCodeLine{02831\ }
+\DoxyCodeLine{02832\ \ \ \textcolor{comment}{//\ If\ SOIL\_QUALITY,\ split\ initial\ soilCarbon\ equally\ among\ all\ the\ pools}}
+\DoxyCodeLine{02833\ \textcolor{preprocessor}{\#if\ SOIL\_MULTIPOOL}}
+\DoxyCodeLine{02834\ \ \ \textcolor{keywordtype}{int}\ counter;}
+\DoxyCodeLine{02835\ }
+\DoxyCodeLine{02836\ \ \ \textcolor{keywordflow}{for}\ (counter\ =\ 0;\ counter\ <\ NUMBER\_SOIL\_CARBON\_POOLS;\ counter++)\ \{}
+\DoxyCodeLine{02837\ }
+\DoxyCodeLine{02838\ \ \ \ \ envi.soil[counter]\ =\ params.soilInit\ /\ NUMBER\_SOIL\_CARBON\_POOLS;}
+\DoxyCodeLine{02839\ \ \ \}}
+\DoxyCodeLine{02840\ \ \ trackers.totSoilC\ =\ params.soilInit;}
+\DoxyCodeLine{02841\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{02842\ \ \ envi.soil\ =\ params.soilInit;}
+\DoxyCodeLine{02843\ }
+\DoxyCodeLine{02844\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02845\ }
+\DoxyCodeLine{02846\ \textcolor{preprocessor}{\#if\ SOIL\_QUALITY}}
+\DoxyCodeLine{02847\ \ \ params.maxIngestionRate\ =}
+\DoxyCodeLine{02848\ \ \ \ \ \ \ params.maxIngestionRate\ *\ 24\ *\ params.microbeInit\ /\ 1000;}
+\DoxyCodeLine{02849\ \ \ \textcolor{comment}{//\ change\ from\ per\ hour\ to\ per\ day\ rate,\ and\ then\ multiply\ by\ microbial}}
+\DoxyCodeLine{02850\ \ \ \textcolor{comment}{//\ concentration\ (mg\ C\ /\ g\ soil).}}
+\DoxyCodeLine{02851\ }
+\DoxyCodeLine{02852\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{02853\ \ \ \textcolor{comment}{//\ change\ from\ per\ hour\ to\ per\ day\ rate}}
+\DoxyCodeLine{02854\ \ \ params.maxIngestionRate\ =\ params.maxIngestionRate\ *\ 24;}
+\DoxyCodeLine{02855\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02856\ }
+\DoxyCodeLine{02857\ \ \ envi.microbeC\ =\ params.microbeInit\ *\ params.soilInit\ /\ 1000;\ \ \textcolor{comment}{//\ convert\ to\ gC}}
+\DoxyCodeLine{02858\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m-\/2}}
+\DoxyCodeLine{02859\ }
+\DoxyCodeLine{02860\ \ \ params.totNitrogen\ =\ params.totNitrogen\ *\ params.soilInit;\ \ \textcolor{comment}{//\ convert\ to\ gC}}
+\DoxyCodeLine{02861\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m-\/2}}
+\DoxyCodeLine{02862\ }
+\DoxyCodeLine{02863\ \ \ params.fineRootTurnoverRate\ /=\ 365.0;}
+\DoxyCodeLine{02864\ \ \ params.coarseRootTurnoverRate\ /=\ 365.0;}
+\DoxyCodeLine{02865\ }
+\DoxyCodeLine{02866\ \ \ params.baseCoarseRootResp\ /=\ 365.0;}
+\DoxyCodeLine{02867\ \ \ params.baseFineRootResp\ /=\ 365.0;}
+\DoxyCodeLine{02868\ \ \ params.baseMicrobeResp\ =\ params.baseMicrobeResp\ *\ 24;\ \ \textcolor{comment}{//\ change\ from\ per\ hour}}
+\DoxyCodeLine{02869\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ per\ day\ rate}}
+\DoxyCodeLine{02870\ }
+\DoxyCodeLine{02871\ \ \ envi.coarseRootC\ =\ params.coarseRootFrac\ *\ params.plantWoodInit;}
+\DoxyCodeLine{02872\ \ \ envi.fineRootC\ =\ params.fineRootFrac\ *\ params.plantWoodInit;}
+\DoxyCodeLine{02873\ }
+\DoxyCodeLine{02874\ \ \ envi.litterWater\ =\ params.litterWFracInit\ *\ params.litterWHC;}
+\DoxyCodeLine{02875\ \ \ \textcolor{keywordflow}{if}\ (envi.litterWater\ <\ 0)\ \{}
+\DoxyCodeLine{02876\ \ \ \ \ envi.litterWater\ =\ 0;}
+\DoxyCodeLine{02877\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.litterWater\ >\ params.litterWHC)\ \{}
+\DoxyCodeLine{02878\ \ \ \ \ envi.litterWater\ =\ params.litterWHC;}
+\DoxyCodeLine{02879\ \ \ \}}
+\DoxyCodeLine{02880\ }
+\DoxyCodeLine{02881\ \ \ envi.soilWater\ =\ params.soilWFracInit\ *\ params.soilWHC;}
+\DoxyCodeLine{02882\ \ \ \textcolor{keywordflow}{if}\ (envi.soilWater\ <\ 0)\ \{}
+\DoxyCodeLine{02883\ \ \ \ \ envi.soilWater\ =\ 0;}
+\DoxyCodeLine{02884\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.soilWater\ >\ params.soilWHC)\ \{}
+\DoxyCodeLine{02885\ \ \ \ \ envi.soilWater\ =\ params.soilWHC;}
+\DoxyCodeLine{02886\ \ \ \}}
+\DoxyCodeLine{02887\ }
+\DoxyCodeLine{02888\ \ \ envi.snow\ =\ params.snowInit;}
+\DoxyCodeLine{02889\ }
+\DoxyCodeLine{02890\ \ \ \textcolor{keywordflow}{if}\ (firstClimates[loc]\ !=\ NULL)\ \{}
+\DoxyCodeLine{02891\ \ \ \ \ climate\ =\ firstClimates[loc];\ \ \textcolor{comment}{//\ set\ climate\ ptr\ to\ point\ to\ first\ climate}}
+\DoxyCodeLine{02892\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ record\ in\ this\ location}}
+\DoxyCodeLine{02893\ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ no\ climate\ data\ for\ this\ location}}
+\DoxyCodeLine{02894\ \ \ \ \ climate\ =\ firstClimates[0];\ \ \textcolor{comment}{//\ use\ climate\ data\ from\ location\ 0}}
+\DoxyCodeLine{02895\ \ \ \}}
+\DoxyCodeLine{02896\ \ \ initTrackers();}
+\DoxyCodeLine{02897\ \ \ initPhenologyTrackers();}
+\DoxyCodeLine{02898\ \ \ resetMeanTracker(meanNPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
+\DoxyCodeLine{02899\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_NPP\_DAYS)\ of\ 0}}
+\DoxyCodeLine{02900\ \ \ resetMeanTracker(meanGPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
+\DoxyCodeLine{02901\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_GPP\_DAYS)\ of\ 0}}
+\DoxyCodeLine{02902\ \ \ resetMeanTracker(meanFPAR,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ FPAR\ (over\ last}}
+\DoxyCodeLine{02903\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_FPAR\_DAYS)\ of\ 0}}
+\DoxyCodeLine{02904\ \}}
+\DoxyCodeLine{02905\ }
+\DoxyCodeLine{02906\ \textcolor{comment}{//\ Setup\ events\ at\ given\ location}}
+\DoxyCodeLine{02907\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
+\DoxyCodeLine{02908\ \textcolor{keywordtype}{void}\ setupEvents(\textcolor{keywordtype}{int}\ currLoc)\ \{\ locEvent\ =\ events[currLoc];\ \}}
+\DoxyCodeLine{02909\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02910\ }
+\DoxyCodeLine{02911\ \textcolor{comment}{/*\ Do\ one\ run\ of\ the\ model\ using\ parameter\ values\ in\ spatialParams}}
+\DoxyCodeLine{02912\ \textcolor{comment}{\ \ \ If\ out\ !=\ NULL,\ output\ results\ to\ out}}
+\DoxyCodeLine{02913\ \textcolor{comment}{\ \ \ \ If\ printHeader\ =\ 1,\ print\ a\ header\ for\ the\ output\ file,\ if\ 0\ don't}}
+\DoxyCodeLine{02914\ \textcolor{comment}{\ \ \ If\ outputItems\ !=\ NULL,\ do\ additional\ outputting\ as\ given\ by\ this\ structure}}
+\DoxyCodeLine{02915\ \textcolor{comment}{\ \ \ (1\ variable\ per\ file)\ If\ loc\ ==\ -\/1,\ then\ print\ currLoc\ as\ first\ item\ on\ each}}
+\DoxyCodeLine{02916\ \textcolor{comment}{\ \ \ line\ Run\ at\ spatial\ location\ given\ by\ loc\ (0-\/indexing)\ -\/\ or\ run\ everywhere\ if}}
+\DoxyCodeLine{02917\ \textcolor{comment}{\ \ \ loc\ =\ -\/1\ Note:\ number\ of\ locations\ given\ in\ spatialParams}}
+\DoxyCodeLine{02918\ \textcolor{comment}{*/}}
+\DoxyCodeLine{02919\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader,}
+\DoxyCodeLine{02920\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{02921\ \ \ \textcolor{keywordtype}{int}\ firstLoc,\ lastLoc,\ currLoc;}
+\DoxyCodeLine{02922\ \ \ \textcolor{keywordtype}{char}\ label[64];}
+\DoxyCodeLine{02923\ }
+\DoxyCodeLine{02924\ \ \ \textcolor{keywordflow}{if}\ ((out\ !=\ NULL)\ \&\&\ printHeader)\ \{}
+\DoxyCodeLine{02925\ \ \ \ \ outputHeader(out);}
+\DoxyCodeLine{02926\ \ \ \}}
+\DoxyCodeLine{02927\ }
+\DoxyCodeLine{02928\ \ \ \textcolor{keywordflow}{if}\ (loc\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ run\ everywhere}}
+\DoxyCodeLine{02929\ \ \ \ \ firstLoc\ =\ 0;}
+\DoxyCodeLine{02930\ \ \ \ \ lastLoc\ =\ spatialParams-\/>numLocs\ -\/\ 1;}
+\DoxyCodeLine{02931\ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ just\ run\ at\ one\ point}}
+\DoxyCodeLine{02932\ \ \ \ \ firstLoc\ =\ lastLoc\ =\ loc;}
+\DoxyCodeLine{02933\ \ \ \}}
+\DoxyCodeLine{02934\ }
+\DoxyCodeLine{02935\ \ \ \textcolor{keywordflow}{for}\ (currLoc\ =\ firstLoc;\ currLoc\ <=\ lastLoc;\ currLoc++)\ \{}
+\DoxyCodeLine{02936\ \ \ \ \ setupModel(spatialParams,\ currLoc);}
+\DoxyCodeLine{02937\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
+\DoxyCodeLine{02938\ \ \ \ \ setupEvents(currLoc);}
+\DoxyCodeLine{02939\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02940\ \ \ \ \ \textcolor{keywordflow}{if}\ ((loc\ ==\ -\/1)\ \&\&\ (outputItems\ !=\ NULL))\ \{\ \ \textcolor{comment}{//\ print\ the\ current\ location}}
+\DoxyCodeLine{02941\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ at\ the\ start\ of\ the\ line}}
+\DoxyCodeLine{02942\ \ \ \ \ \ \ sprintf(label,\ \textcolor{stringliteral}{"{}\%d"{}},\ currLoc);}
+\DoxyCodeLine{02943\ \ \ \ \ \ \ writeOutputItemLabels(outputItems,\ label);}
+\DoxyCodeLine{02944\ \ \ \ \ \}}
+\DoxyCodeLine{02945\ }
+\DoxyCodeLine{02946\ \ \ \ \ \textcolor{keywordflow}{while}\ (climate\ !=\ NULL)\ \{}
+\DoxyCodeLine{02947\ \ \ \ \ \ \ updateState();}
+\DoxyCodeLine{02948\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (out\ !=\ NULL)\ \{}
+\DoxyCodeLine{02949\ \ \ \ \ \ \ \ \ outputState(out,\ currLoc,\ climate-\/>year,\ climate-\/>day,\ climate-\/>time);}
+\DoxyCodeLine{02950\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02951\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
+\DoxyCodeLine{02952\ \ \ \ \ \ \ \ \ writeOutputItemValues(outputItems);}
+\DoxyCodeLine{02953\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{02954\ \ \ \ \ \ \ climate\ =\ climate-\/>nextClim;}
+\DoxyCodeLine{02955\ \ \ \ \ \}}
+\DoxyCodeLine{02956\ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
+\DoxyCodeLine{02957\ \ \ \ \ \ \ terminateOutputItemLines(outputItems);}
+\DoxyCodeLine{02958\ \ \ \ \ \}}
+\DoxyCodeLine{02959\ \ \ \}}
+\DoxyCodeLine{02960\ \}}
+\DoxyCodeLine{02961\ }
+\DoxyCodeLine{02962\ \textcolor{comment}{/*\ pre:\ outArray\ has\ dimensions\ of\ at\ least\ (\#\ model\ steps)\ x\ numDataTypes}}
+\DoxyCodeLine{02963\ \textcolor{comment}{\ \ \ dataTypeIndices[0..numDataTypes-\/1]\ gives\ indices\ of\ data\ types\ to\ use\ (see}}
+\DoxyCodeLine{02964\ \textcolor{comment}{\ \ \ DATA\_TYPES\ array\ in\ sipnet.h)}}
+\DoxyCodeLine{02965\ \textcolor{comment}{}}
+\DoxyCodeLine{02966\ \textcolor{comment}{\ \ \ run\ model\ with\ parameter\ values\ in\ spatialParams,\ don't\ output\ to\ file}}
+\DoxyCodeLine{02967\ \textcolor{comment}{\ \ \ instead,\ output\ some\ variables\ at\ each\ step\ into\ an\ array}}
+\DoxyCodeLine{02968\ \textcolor{comment}{\ \ \ Run\ at\ spatial\ location\ given\ by\ loc\ (0-\/indexing)}}
+\DoxyCodeLine{02969\ \textcolor{comment}{\ \ \ Note:\ can\ only\ run\ at\ one\ location:\ to\ run\ at\ all\ locations,\ must\ put}}
+\DoxyCodeLine{02970\ \textcolor{comment}{\ \ \ runModelNoOut\ call\ in\ a\ loop}}
+\DoxyCodeLine{02971\ \textcolor{comment}{*/}}
+\DoxyCodeLine{02972\ \textcolor{keywordtype}{void}\ runModelNoOut(\textcolor{keywordtype}{double}\ **outArray,\ \textcolor{keywordtype}{int}\ numDataTypes,}
+\DoxyCodeLine{02973\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dataTypeIndices[],\ \ \textcolor{comment}{//\ NOLINT\ (const\ int[])}}
+\DoxyCodeLine{02974\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{02975\ \ \ \textcolor{keywordtype}{int}\ step\ =\ 0;}
+\DoxyCodeLine{02976\ \ \ \textcolor{keywordtype}{int}\ outputNum;}
+\DoxyCodeLine{02977\ }
+\DoxyCodeLine{02978\ \ \ setupModel(spatialParams,\ loc);}
+\DoxyCodeLine{02979\ }
+\DoxyCodeLine{02980\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
+\DoxyCodeLine{02981\ \ \ \textcolor{comment}{//\ Implementation\ TBD}}
+\DoxyCodeLine{02982\ \ \ printf(}
+\DoxyCodeLine{02983\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Event\ handler\ not\ yet\ implemented\ for\ running\ model\ with\ no\ output\(\backslash\)n"{}});}
+\DoxyCodeLine{02984\ \ \ exit(1);}
+\DoxyCodeLine{02985\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02986\ }
+\DoxyCodeLine{02987\ \ \ \textcolor{comment}{//\ loop\ through\ every\ step\ of\ the\ model:}}
+\DoxyCodeLine{02988\ \ \ \textcolor{keywordflow}{while}\ (climate\ !=\ NULL)\ \{}
+\DoxyCodeLine{02989\ \ \ \ \ updateState();}
+\DoxyCodeLine{02990\ }
+\DoxyCodeLine{02991\ \ \ \ \ \textcolor{comment}{//\ loop\ through\ all\ desired\ outputs,\ putting\ each\ into\ outArray:}}
+\DoxyCodeLine{02992\ \ \ \ \ \textcolor{keywordflow}{for}\ (outputNum\ =\ 0;\ outputNum\ <\ numDataTypes;\ outputNum++)\ \{}
+\DoxyCodeLine{02993\ \ \ \ \ \ \ outArray[step][outputNum]\ =\ *(outputPtrs[dataTypeIndices[outputNum]]);}
+\DoxyCodeLine{02994\ \ \ \ \ \}}
+\DoxyCodeLine{02995\ }
+\DoxyCodeLine{02996\ \ \ \ \ step++;}
+\DoxyCodeLine{02997\ \ \ \ \ climate\ =\ climate-\/>nextClim;}
+\DoxyCodeLine{02998\ \ \ \}}
+\DoxyCodeLine{02999\ \}}
+\DoxyCodeLine{03000\ }
+\DoxyCodeLine{03001\ \textcolor{comment}{/*\ Do\ a\ sensitivity\ test\ on\ paramNum,\ varying\ from\ low\ to\ high,\ doing\ a\ total\ of}}
+\DoxyCodeLine{03002\ \textcolor{comment}{\ \ \ numRuns\ runs\ Run\ only\ at\ a\ single\ location\ (given\ by\ loc)\ If\ out\ !=\ NULL,}}
+\DoxyCodeLine{03003\ \textcolor{comment}{\ \ \ output\ results\ to\ out\ If\ outputItems\ !=\ NULL,\ do\ additional\ outputting\ as}}
+\DoxyCodeLine{03004\ \textcolor{comment}{\ \ \ given\ by\ this\ structure\ (1\ variable\ per\ file)\ Print\ parameter\ value\ as\ first}}
+\DoxyCodeLine{03005\ \textcolor{comment}{\ \ \ item\ on\ each\ line\ If\ out\ !=\ NULL,\ do\ main\ outputting\ to\ out\ If\ outputItems\ !=}}
+\DoxyCodeLine{03006\ \textcolor{comment}{\ \ \ NULL}}
+\DoxyCodeLine{03007\ \textcolor{comment}{*/}}
+\DoxyCodeLine{03008\ \textcolor{keywordtype}{void}\ sensTest(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ paramNum,\ \textcolor{keywordtype}{double}\ low,}
+\DoxyCodeLine{03009\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ high,\ \textcolor{keywordtype}{int}\ numRuns,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc)\ \{}
+\DoxyCodeLine{03010\ \ \ \textcolor{keywordtype}{int}\ runNum;}
+\DoxyCodeLine{03011\ \ \ \textcolor{keywordtype}{double}\ changeAmt\ =\ (high\ -\/\ low)\ /\ (\textcolor{keywordtype}{double})(numRuns\ -\/\ 1);}
+\DoxyCodeLine{03012\ \ \ \textcolor{keywordtype}{double}\ value;\ \ \textcolor{comment}{//\ current\ parameter\ value}}
+\DoxyCodeLine{03013\ \ \ \textcolor{keywordtype}{char}\ label[64];}
+\DoxyCodeLine{03014\ }
+\DoxyCodeLine{03015\ \ \ value\ =\ low;}
+\DoxyCodeLine{03016\ \ \ \textcolor{keywordflow}{for}\ (runNum\ =\ 0;\ runNum\ <\ numRuns;\ runNum++)\ \{}
+\DoxyCodeLine{03017\ \ \ \ \ \textcolor{comment}{//\ printf("{}\%d\ \%f\(\backslash\)n"{},\ runNum,\ value);}}
+\DoxyCodeLine{03018\ \ \ \ \ \textcolor{comment}{//\ fprintf(out,\ "{}\#\ Value\ =\ \%f\(\backslash\)n"{},\ value);}}
+\DoxyCodeLine{03019\ \ \ \ \ setSpatialParam(spatialParams,\ paramNum,\ loc,\ value);}
+\DoxyCodeLine{03020\ }
+\DoxyCodeLine{03021\ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
+\DoxyCodeLine{03022\ \ \ \ \ \ \ sprintf(label,\ \textcolor{stringliteral}{"{}\%f"{}},\ value);}
+\DoxyCodeLine{03023\ \ \ \ \ \ \ writeOutputItemLabels(outputItems,\ label);}
+\DoxyCodeLine{03024\ \ \ \ \ \}}
+\DoxyCodeLine{03025\ }
+\DoxyCodeLine{03026\ \ \ \ \ runModelOutput(out,\ outputItems,\ 0,\ spatialParams,\ loc);}
+\DoxyCodeLine{03027\ }
+\DoxyCodeLine{03028\ \ \ \ \ \textcolor{keywordflow}{if}\ (out\ !=\ NULL)\ \{}
+\DoxyCodeLine{03029\ \ \ \ \ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}});}
+\DoxyCodeLine{03030\ \ \ \ \ \}}
+\DoxyCodeLine{03031\ \ \ \ \ value\ +=\ changeAmt;}
+\DoxyCodeLine{03032\ \ \ \}}
+\DoxyCodeLine{03033\ \}}
+\DoxyCodeLine{03034\ }
+\DoxyCodeLine{03035\ \textcolor{comment}{//\ write\ to\ file\ which\ model\ components\ are\ turned\ on}}
+\DoxyCodeLine{03036\ \textcolor{comment}{//\ (i.e.\ the\ value\ of\ the\ \#DEFINE's\ at\ the\ top\ of\ file)}}
+\DoxyCodeLine{03037\ \textcolor{comment}{//\ pre:\ out\ is\ open\ for\ writing}}
+\DoxyCodeLine{03038\ \textcolor{keywordtype}{void}\ printModelComponents(FILE\ *out)\ \{}
+\DoxyCodeLine{03039\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}Optional\ model\ components\ (0\ =\ off,\ 1\ =\ on):\(\backslash\)n"{}});}
+\DoxyCodeLine{03040\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}CSV\_OUTPUT\ =\ \%d\(\backslash\)n"{}},\ CSV\_OUTPUT);}
+\DoxyCodeLine{03041\ }
+\DoxyCodeLine{03042\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}ALTERNATIVE\_TRANS\ =\ \%d\(\backslash\)n"{}},\ ALTERNATIVE\_TRANS);}
+\DoxyCodeLine{03043\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}BALL\_BERRY\ =\ \%d\(\backslash\)n"{}},\ BALL\_BERRY);}
+\DoxyCodeLine{03044\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}PENMAN\_MONTEITH\_TRANS\ =\ \%d\(\backslash\)n"{}},\ PENMAN\_MONTEITH\_TRANS);}
+\DoxyCodeLine{03045\ }
+\DoxyCodeLine{03046\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}GROWTH\_RESP\ =\ \%d\(\backslash\)n"{}},\ GROWTH\_RESP);}
+\DoxyCodeLine{03047\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_POOL\ =\ \%d\(\backslash\)n"{}},\ LITTER\_POOL);}
+\DoxyCodeLine{03048\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LLOYD\_TAYLOR\ =\ \%d\(\backslash\)n"{}},\ LLOYD\_TAYLOR);}
+\DoxyCodeLine{03049\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SEASONAL\_R\_SOIL\ =\ \%d\(\backslash\)n"{}},\ SEASONAL\_R\_SOIL);}
+\DoxyCodeLine{03050\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}WATER\_PSN\ =\ \%d\(\backslash\)n"{}},\ WATER\_PSN);}
+\DoxyCodeLine{03051\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}WATER\_HRESP\ =\ \%d\(\backslash\)n"{}},\ WATER\_HRESP);}
+\DoxyCodeLine{03052\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}DAYCENT\_WATER\_HRESP\ =\ \%d\(\backslash\)n"{}},\ DAYCENT\_WATER\_HRESP);}
+\DoxyCodeLine{03053\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MODEL\_WATER\ =\ \%d\(\backslash\)n"{}},\ MODEL\_WATER);}
+\DoxyCodeLine{03054\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}COMPLEX\_WATER\ =\ \%d\(\backslash\)n"{}},\ COMPLEX\_WATER);}
+\DoxyCodeLine{03055\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_WATER\ =\ \%d\(\backslash\)n"{}},\ LITTER\_WATER);}
+\DoxyCodeLine{03056\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_WATER\_DRAINAGE\ =\ \%d\(\backslash\)n"{}},\ LITTER\_WATER\_DRAINAGE);}
+\DoxyCodeLine{03057\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SNOW\ =\ \%d\(\backslash\)n"{}},\ SNOW);}
+\DoxyCodeLine{03058\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}GDD\ =\ \%d\(\backslash\)n"{}},\ GDD);}
+\DoxyCodeLine{03059\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SOIL\_PHENOL\ =\ \%d\(\backslash\)n"{}},\ SOIL\_PHENOL);}
+\DoxyCodeLine{03060\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}LITTER\_POOL\ =\ \%d\(\backslash\)n"{}},\ LITTER\_POOL);}
+\DoxyCodeLine{03061\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SOIL\_MULTIPOOL\ =\ \%d\(\backslash\)n"{}},\ SOIL\_MULTIPOOL);}
+\DoxyCodeLine{03062\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}NUMBER\_SOIL\_CARBON\_POOLS\ =\ \%d\(\backslash\)n"{}},\ NUMBER\_SOIL\_CARBON\_POOLS);}
+\DoxyCodeLine{03063\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}SOIL\_QUALITY\ =\ \%d\(\backslash\)n"{}},\ SOIL\_QUALITY);}
+\DoxyCodeLine{03064\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MICROBES\ =\ \%d\(\backslash\)n"{}},\ MICROBES);}
+\DoxyCodeLine{03065\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}STOICHIOMETRY\ =\ \%d\(\backslash\)n"{}},\ STOICHIOMETRY);}
+\DoxyCodeLine{03066\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}ROOTS\ =\ \%d\(\backslash\)n"{}},\ ROOTS);}
+\DoxyCodeLine{03067\ }
+\DoxyCodeLine{03068\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{03069\ }
+\DoxyCodeLine{03070\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}Tracker\ variables\ settings:\(\backslash\)n"{}});}
+\DoxyCodeLine{03071\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MEAN\_NPP\_DAYS\ =\ \%d\(\backslash\)n"{}},\ MEAN\_NPP\_DAYS);}
+\DoxyCodeLine{03072\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MEAN\_GPP\_SOIL\_DAYS\ =\ \%d\(\backslash\)n"{}},\ MEAN\_GPP\_SOIL\_DAYS);}
+\DoxyCodeLine{03073\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}MEAN\_FPAR\_DAYS\ =\ \%d\(\backslash\)n"{}},\ MEAN\_FPAR\_DAYS);}
+\DoxyCodeLine{03074\ }
+\DoxyCodeLine{03075\ \ \ fprintf(out,\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{03076\ \}}
+\DoxyCodeLine{03077\ }
+\DoxyCodeLine{03078\ \textcolor{comment}{//\ NOTE:\ if\ change\ \#\ of\ data\ types\ below,\ be\ sure\ to\ change\ MAX\_DATA\_TYPES\ in}}
+\DoxyCodeLine{03079\ \textcolor{comment}{//\ sipnet.h\ other\ than\ that,\ to\ change\ return-\/able\ data\ types,\ just\ have\ to}}
+\DoxyCodeLine{03080\ \textcolor{comment}{//\ change\ arrays\ in\ getDataTypeNames\ and\ setupOutputPointers}}
+\DoxyCodeLine{03081\ }
+\DoxyCodeLine{03082\ \textcolor{comment}{//\ Can\ get\ some\ extra\ data\ types\ by\ defining\ EXTRA\_DATA\_TYPES\ in\ sipnet.h}}
+\DoxyCodeLine{03083\ \textcolor{comment}{//\ Note\ that\ using\ extra\ data\ types\ will\ break\ the\ estimate\ program,\ since\ there}}
+\DoxyCodeLine{03084\ \textcolor{comment}{//\ will\ be\ the\ wrong\ \#\ of\ columns\ in\ the\ .dat\ file,}}
+\DoxyCodeLine{03085\ \textcolor{comment}{//\ \ but\ this\ can\ be\ used\ for\ outputting\ extra\ data\ types\ when\ computing\ means}}
+\DoxyCodeLine{03086\ \textcolor{comment}{//\ \ and\ standard\ dev's\ across\ a\ number\ of\ param.\ sets}}
+\DoxyCodeLine{03087\ }
+\DoxyCodeLine{03088\ \textcolor{comment}{//\ return\ an\ array[0..MAX\_DATA\_TYPES-\/1]\ of\ strings,}}
+\DoxyCodeLine{03089\ \textcolor{comment}{//\ where\ arr[i]\ gives\ the\ name\ of\ data\ type\ i}}
+\DoxyCodeLine{03090\ }
+\DoxyCodeLine{03091\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{03092\ \textcolor{comment}{//\ Code\ for\ just\ FPAR\ data}}
+\DoxyCodeLine{03093\ \textcolor{keywordtype}{char}\ **getDataTypeNames(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{03094\ \ \ \textcolor{comment}{//\ NOTE:\ data\ type\ names\ shouldn't\ have\ spaces\ in\ them\ (for\ determining}}
+\DoxyCodeLine{03095\ \ \ \textcolor{comment}{//\ corresponding\ input\ names\ in\ namelist\ input\ file,\ for\ estimate\ program)}}
+\DoxyCodeLine{03096\ \textcolor{preprocessor}{\#if\ EXTRA\_DATA\_TYPES}}
+\DoxyCodeLine{03097\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{\textcolor{stringliteral}{"{}EVAPOTRANSPIRATION"{}},}
+\DoxyCodeLine{03098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}NEE"{}},}
+\DoxyCodeLine{03099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SOIL\_WETNESS"{}},}
+\DoxyCodeLine{03100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}FPAR"{}}}
+\DoxyCodeLine{03101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}GPP"{}},}
+\DoxyCodeLine{03102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RTOT"{}},}
+\DoxyCodeLine{03103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RA"{}},}
+\DoxyCodeLine{03104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}RH"{}},}
+\DoxyCodeLine{03105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}NPP"{}},}
+\DoxyCodeLine{03106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_GPP"{}},}
+\DoxyCodeLine{03107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_RTOT"{}},}
+\DoxyCodeLine{03108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_RA"{}},}
+\DoxyCodeLine{03109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_RH"{}},}
+\DoxyCodeLine{03110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_NPP"{}},}
+\DoxyCodeLine{03111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}YEARLY\_NEE"{}},}
+\DoxyCodeLine{03112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_GPP"{}},}
+\DoxyCodeLine{03113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_RTOT"{}},}
+\DoxyCodeLine{03114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_RA"{}},}
+\DoxyCodeLine{03115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_RH"{}},}
+\DoxyCodeLine{03116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_NPP"{}},}
+\DoxyCodeLine{03117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TOT\_NEE"{}}\};}
+\DoxyCodeLine{03118\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{03119\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{}
+\DoxyCodeLine{03120\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}EVAPOTRANSPIRATION"{}},\ \textcolor{stringliteral}{"{}NEE"{}},\ \textcolor{stringliteral}{"{}SOIL\_WETNESS"{}},\ \textcolor{stringliteral}{"{}FAPAR"{}},\ \textcolor{stringliteral}{"{}YEARLY\_NEE"{}}\};}
+\DoxyCodeLine{03121\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{03122\ }
+\DoxyCodeLine{03123\ \ \ \textcolor{keywordflow}{return}\ DATA\_TYPES;}
+\DoxyCodeLine{03124\ \}}
+\DoxyCodeLine{03125\ }
+\DoxyCodeLine{03126\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{03127\ \textcolor{comment}{//\ Code\ block\ for\ Dave's\ Howland\ data\ changes\ -\/\ need\ to\ modify\ back}}
+\DoxyCodeLine{03128\ \textcolor{comment}{/*\ char\ **getDataTypeNames()\ \{}}
+\DoxyCodeLine{03129\ \textcolor{comment}{\ \ //\ NOTE:\ data\ type\ names\ shouldn't\ have\ spaces\ in\ them\ (for\ determining}}
+\DoxyCodeLine{03130\ \textcolor{comment}{corresponding\ input\ names\ in\ namelist\ input\ file,\ for\ estimate\ program)}}
+\DoxyCodeLine{03131\ \textcolor{comment}{}}
+\DoxyCodeLine{03132\ \textcolor{comment}{\#if\ EXTRA\_DATA\_TYPES}}
+\DoxyCodeLine{03133\ \textcolor{comment}{\ \ static\ char\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{"{}EVAPOTRANSPIRATION"{},\ "{}NEE"{},}}
+\DoxyCodeLine{03134\ \textcolor{comment}{"{}SOIL\_WETNESS"{},\ "{}GPP"{},\ "{}R\_SOIL"{},\ "{}ANNUAL\_LITTER"{},\ "{}LAI"{},\ "{}PLANT\_WOOD\_C"{},"{}RTOT"{},}}
+\DoxyCodeLine{03135\ \textcolor{comment}{"{}RA"{},\ "{}RH"{},\ "{}NPP"{},\ "{}YEARLY\_GPP"{},\ "{}YEARLY\_RTOT"{},\ "{}YEARLY\_RA"{},\ "{}YEARLY\_RH"{},}}
+\DoxyCodeLine{03136\ \textcolor{comment}{"{}YEARLY\_NPP"{},\ "{}YEARLY\_NEE"{},\ "{}TOT\_GPP"{},\ "{}TOT\_RTOT"{},\ "{}TOT\_RA"{},\ "{}TOT\_RH"{},}}
+\DoxyCodeLine{03137\ \textcolor{comment}{"{}TOT\_NPP"{},\ "{}TOT\_NEE"{}\};\ \#else\ static\ char\ *DATA\_TYPES[MAX\_DATA\_TYPES]\ =\ \{}}
+\DoxyCodeLine{03138\ \textcolor{comment}{"{}EVAPOTRANSPIRATION"{},\ "{}NEE"{},\ "{}SOIL\_WETNESS"{},\ "{}R\_SOIL"{},\ "{}ANNUAL\_LITTER"{},\ "{}LAI"{},}}
+\DoxyCodeLine{03139\ \textcolor{comment}{"{}PLANT\_WOOD\_C"{}\ \};\ \#endif}}
+\DoxyCodeLine{03140\ \textcolor{comment}{}}
+\DoxyCodeLine{03141\ \textcolor{comment}{\ \ return\ DATA\_TYPES;}}
+\DoxyCodeLine{03142\ \textcolor{comment}{\}}}
+\DoxyCodeLine{03143\ \textcolor{comment}{*/}}
+\DoxyCodeLine{03144\ }
+\DoxyCodeLine{03145\ \textcolor{comment}{//\ set\ outputPtrs\ array\ to\ point\ to\ appropriate\ values}}
+\DoxyCodeLine{03146\ \textcolor{keywordtype}{void}\ setupOutputPointers(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{03147\ \ \ \textcolor{keywordtype}{int}\ i;\ \ \textcolor{comment}{//\ keep\ track\ of\ current\ index\ into\ array}}
+\DoxyCodeLine{03148\ }
+\DoxyCodeLine{03149\ \ \ i\ =\ 0;}
+\DoxyCodeLine{03150\ \ \ \textcolor{comment}{//\ we\ post-\/increment\ i\ every\ time\ we\ assign\ an\ array\ element}}
+\DoxyCodeLine{03151\ \ \ outputPtrs[i++]\ =\ \&(trackers.evapotranspiration);}
+\DoxyCodeLine{03152\ \ \ outputPtrs[i++]\ =\ \&(trackers.nee);}
+\DoxyCodeLine{03153\ \ \ outputPtrs[i++]\ =\ \&(trackers.soilWetnessFrac);}
+\DoxyCodeLine{03154\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.rSoil);}}
+\DoxyCodeLine{03155\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.yearlyLitter);}}
+\DoxyCodeLine{03156\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.LAI);}}
+\DoxyCodeLine{03157\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.plantWoodC);}}
+\DoxyCodeLine{03158\ \ \ outputPtrs[i++]\ =\ \&(trackers.fpar);}
+\DoxyCodeLine{03159\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyNee);\ \ \textcolor{comment}{//\ NOLINT\ (i++\ incremented\ val\ never}}
+\DoxyCodeLine{03160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ used)}}
+\DoxyCodeLine{03161\ \textcolor{preprocessor}{\#if\ EXTRA\_DATA\_TYPES}}
+\DoxyCodeLine{03162\ }
+\DoxyCodeLine{03163\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.fpar);}}
+\DoxyCodeLine{03164\ }
+\DoxyCodeLine{03165\ \ \ outputPtrs[i++]\ =\ \&(trackers.gpp);}
+\DoxyCodeLine{03166\ \ \ outputPtrs[i++]\ =\ \&(trackers.rtot);}
+\DoxyCodeLine{03167\ \ \ outputPtrs[i++]\ =\ \&(trackers.ra);}
+\DoxyCodeLine{03168\ \ \ outputPtrs[i++]\ =\ \&(trackers.rh);}
+\DoxyCodeLine{03169\ \ \ outputPtrs[i++]\ =\ \&(trackers.npp);}
+\DoxyCodeLine{03170\ }
+\DoxyCodeLine{03171\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyGpp);}
+\DoxyCodeLine{03172\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyRtot);}
+\DoxyCodeLine{03173\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyRa);}
+\DoxyCodeLine{03174\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyRh);}
+\DoxyCodeLine{03175\ \ \ outputPtrs[i++]\ =\ \&(trackers.yearlyNpp);}
+\DoxyCodeLine{03176\ \ \ \textcolor{comment}{//\ outputPtrs[i++]\ =\ \&(trackers.yearlyNee);}}
+\DoxyCodeLine{03177\ }
+\DoxyCodeLine{03178\ \ \ outputPtrs[i++]\ =\ \&(trackers.totGpp);}
+\DoxyCodeLine{03179\ \ \ outputPtrs[i++]\ =\ \&(trackers.totRtot);}
+\DoxyCodeLine{03180\ \ \ outputPtrs[i++]\ =\ \&(trackers.totRa);}
+\DoxyCodeLine{03181\ \ \ outputPtrs[i++]\ =\ \&(trackers.totRh);}
+\DoxyCodeLine{03182\ \ \ outputPtrs[i++]\ =\ \&(trackers.totNpp);}
+\DoxyCodeLine{03183\ \ \ outputPtrs[i++]\ =\ \&(trackers.totNee);}
+\DoxyCodeLine{03184\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{03185\ \}}
+\DoxyCodeLine{03186\ }
+\DoxyCodeLine{03187\ \textcolor{comment}{/*\ PRE:\ outputItems\ has\ been\ created\ with\ newOutputItems}}
+\DoxyCodeLine{03188\ \textcolor{comment}{}}
+\DoxyCodeLine{03189\ \textcolor{comment}{\ \ \ Setup\ outputItems\ structure}}
+\DoxyCodeLine{03190\ \textcolor{comment}{\ \ \ Each\ variable\ added\ will\ be\ output\ in\ a\ separate\ file\ ('*.varName')}}
+\DoxyCodeLine{03191\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{03192\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems)\ \{}
+\DoxyCodeLine{03193\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE"{}},\ \&(trackers.nee));}
+\DoxyCodeLine{03194\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE\_cum"{}},\ \&(trackers.totNee));}
+\DoxyCodeLine{03195\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP"{}},\ \&(trackers.gpp));}
+\DoxyCodeLine{03196\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP\_cum"{}},\ \&(trackers.totGpp));}
+\DoxyCodeLine{03197\ \}}
+\DoxyCodeLine{03198\ }
+\DoxyCodeLine{03199\ \textcolor{comment}{/*\ do\ initializations\ that\ only\ have\ to\ be\ done\ once\ for\ all\ model\ runs:}}
+\DoxyCodeLine{03200\ \textcolor{comment}{\ \ \ read\ in\ climate\ data\ and\ initial\ parameter\ values}}
+\DoxyCodeLine{03201\ \textcolor{comment}{\ \ \ parameter\ values\ get\ stored\ in\ spatialParams\ (along\ with\ other\ parameter}}
+\DoxyCodeLine{03202\ \textcolor{comment}{\ \ \ information),\ which\ gets\ allocated\ and\ initialized\ here\ (thus\ requiring\ that}}
+\DoxyCodeLine{03203\ \textcolor{comment}{\ \ \ spatialParams\ is\ passed\ in\ as\ a\ pointer\ to\ a\ pointer)\ number\ of\ time\ steps\ in}}
+\DoxyCodeLine{03204\ \textcolor{comment}{\ \ \ each\ location\ gets\ stored\ in\ steps\ vector,\ which\ gets\ dynamically\ allocated}}
+\DoxyCodeLine{03205\ \textcolor{comment}{\ \ \ with\ malloc\ (steps\ must\ be\ a\ pointer\ to\ a\ pointer\ so\ it\ can\ be\ malloc'ed)}}
+\DoxyCodeLine{03206\ \textcolor{comment}{}}
+\DoxyCodeLine{03207\ \textcolor{comment}{\ \ \ also\ set\ up\ pointers\ to\ different\ output\ data\ types}}
+\DoxyCodeLine{03208\ \textcolor{comment}{\ \ \ and\ setup\ meanNPP\ tracker}}
+\DoxyCodeLine{03209\ \textcolor{comment}{}}
+\DoxyCodeLine{03210\ \textcolor{comment}{\ \ \ initModel\ returns\ number\ of\ spatial\ locations}}
+\DoxyCodeLine{03211\ \textcolor{comment}{}}
+\DoxyCodeLine{03212\ \textcolor{comment}{\ \ \ paramFile\ is\ parameter\ data\ file}}
+\DoxyCodeLine{03213\ \textcolor{comment}{\ \ \ paramFile-\/spatial\ is\ file\ with\ parameter\ values\ of\ spatially-\/varying}}
+\DoxyCodeLine{03214\ \textcolor{comment}{\ \ \ parameters\ (1st\ line\ contains\ number\ of\ locations)\ climFile\ is\ climate\ data}}
+\DoxyCodeLine{03215\ \textcolor{comment}{\ \ \ file}}
+\DoxyCodeLine{03216\ \textcolor{comment}{*/}}
+\DoxyCodeLine{03217\ \textcolor{keywordtype}{int}\ initModel(SpatialParams\ **spatialParams,\ \textcolor{keywordtype}{int}\ **steps,\ \textcolor{keywordtype}{char}\ *paramFile,}
+\DoxyCodeLine{03218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *climFile)\ \{}
+\DoxyCodeLine{03219\ \ \ \textcolor{keywordtype}{char}\ spatialParamFile[256];}
+\DoxyCodeLine{03220\ \ \ \textcolor{keywordtype}{int}\ numLocs;}
+\DoxyCodeLine{03221\ }
+\DoxyCodeLine{03222\ \ \ strcpy(spatialParamFile,\ paramFile);}
+\DoxyCodeLine{03223\ \ \ strcat(spatialParamFile,\ \textcolor{stringliteral}{"{}-\/spatial"{}});}
+\DoxyCodeLine{03224\ }
+\DoxyCodeLine{03225\ \ \ numLocs\ =\ readParamData(spatialParams,\ paramFile,\ spatialParamFile);}
+\DoxyCodeLine{03226\ \ \ \textcolor{comment}{//\ printf("{}ERROR:\ input\ filename\ \%s\ "{},\ climFile);}}
+\DoxyCodeLine{03227\ \ \ *steps\ =\ readClimData(climFile,\ numLocs);}
+\DoxyCodeLine{03228\ }
+\DoxyCodeLine{03229\ \ \ setupOutputPointers();}
+\DoxyCodeLine{03230\ }
+\DoxyCodeLine{03231\ \ \ meanNPP\ =\ newMeanTracker(0,\ MEAN\_NPP\_DAYS,\ MEAN\_NPP\_MAX\_ENTRIES);}
+\DoxyCodeLine{03232\ \ \ meanGPP\ =\ newMeanTracker(0,\ MEAN\_GPP\_SOIL\_DAYS,\ MEAN\_GPP\_SOIL\_MAX\_ENTRIES);}
+\DoxyCodeLine{03233\ \ \ meanFPAR\ =\ newMeanTracker(0,\ MEAN\_FPAR\_DAYS,\ MEAN\_FPAR\_MAX\_ENTRIES);}
+\DoxyCodeLine{03234\ \ \ \textcolor{keywordflow}{return}\ numLocs;}
+\DoxyCodeLine{03235\ \}}
+\DoxyCodeLine{03236\ }
+\DoxyCodeLine{03237\ \textcolor{comment}{/*\ Do\ initialization\ of\ event\ data\ if\ event\ handling\ is\ turned\ on.}}
+\DoxyCodeLine{03238\ \textcolor{comment}{\ *\ Populates\ static\ event\ structs}}
+\DoxyCodeLine{03239\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{03240\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
+\DoxyCodeLine{03241\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ numLocs,\ \textcolor{keywordtype}{int}\ printHeader)\ \{}
+\DoxyCodeLine{03242\ \ \ events\ =\ readEventData(eventFile,\ numLocs);}
+\DoxyCodeLine{03243\ \ \ eventOutFile\ =\ openEventOutFile(printHeader);}
+\DoxyCodeLine{03244\ \}}
+\DoxyCodeLine{03245\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{03246\ }
+\DoxyCodeLine{03247\ \textcolor{comment}{//\ call\ this\ when\ done\ running\ model:}}
+\DoxyCodeLine{03248\ \textcolor{comment}{//\ de-\/allocates\ space\ for\ climate\ and\ event\ linked\ lists}}
+\DoxyCodeLine{03249\ \textcolor{comment}{//\ (needs\ to\ know\ number\ of\ locations)}}
+\DoxyCodeLine{03250\ \textcolor{keywordtype}{void}\ cleanupModel(\textcolor{keywordtype}{int}\ numLocs)\ \{}
+\DoxyCodeLine{03251\ \ \ freeClimateList(numLocs);}
+\DoxyCodeLine{03252\ \ \ deallocateMeanTracker(meanNPP);}
+\DoxyCodeLine{03253\ \ \ deallocateMeanTracker(meanGPP);}
+\DoxyCodeLine{03254\ \ \ deallocateMeanTracker(meanFPAR);}
+\DoxyCodeLine{03255\ \textcolor{preprocessor}{\#if\ EVENT\_HANDLER}}
+\DoxyCodeLine{03256\ \ \ freeEventList(numLocs);}
+\DoxyCodeLine{03257\ \ \ closeEventOutFile(eventOutFile);}
+\DoxyCodeLine{03258\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{03259\ \}}
 
 \end{DoxyCode}
