@@ -213,7 +213,9 @@ EventNode **readEventData(char *eventFile, int numLocs) {
     numRead = sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr,
                      &numBytes);
     if (numRead != 4) {
-      printf("Error reading event file: bad data on first line\n");
+      printf("Error reading event file: bad data on line after loc %d year %d "
+             "day %d\n",
+             currLoc, currYear, currDay);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     eventParamsStr = line + numBytes;
@@ -233,7 +235,8 @@ EventNode **readEventData(char *eventFile, int numLocs) {
              "locations should be in ascending order\n");
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
-    if ((loc == currLoc) && ((year < currYear) || (day < currDay))) {
+    if ((loc == currLoc) &&
+        ((year < currYear) || ((year == currYear) && (day < currDay)))) {
       printf("Error reading event file: for location %d, last event was at "
              "(%d, %d) ",
              currLoc, currYear, currDay);
@@ -252,6 +255,8 @@ EventNode **readEventData(char *eventFile, int numLocs) {
       currLoc = loc;
       events[currLoc] = next;
     }
+    currYear = year;
+    currDay = day;
   }
 
   fclose(in);
