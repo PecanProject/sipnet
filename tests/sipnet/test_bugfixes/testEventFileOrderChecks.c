@@ -1,10 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
 #include "utils/exitHandler.c"
 #include "sipnet/events.c"
+
+// These test points check the fix for issue
+// https://github.com/PecanProject/sipnet/issues/74
 
 int run(void) {
   int status = 0;
