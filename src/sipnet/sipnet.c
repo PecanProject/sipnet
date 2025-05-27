@@ -2552,22 +2552,21 @@ void processEvents(void) {
 
   // If locEvent starts off NULL, this function will just fall through, as it
   // should.
-  const int year = climate->year;
-  const int day = climate->day;
+  const int climYear = climate->year;
+  const int climDay = climate->day;
 
   // The events file has been tested on read, so we know this event list should
   // be in chrono order. However, we need to check to make sure the current
   // event is not in the past, as that would indicate an event that did not have
   // a corresponding climate file record.
-  while (locEvent != NULL && locEvent->year <= year && locEvent->day <= day) {
-    if (locEvent->year < year || locEvent->day < day) {
+  while (locEvent != NULL && locEvent->year <= climYear &&
+         locEvent->day <= climDay) {
+    if (locEvent->year < climYear || locEvent->day < climDay) {
       printf("Agronomic event found for loc: %d year: %d day: %d that does not "
              "have a corresponding record in the climate file\n",
              locEvent->loc, locEvent->year, locEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
-    // NOTE: for writeEventOut calls, try to stick to this format for
-    // name/value pairs: "%20s %6.2f  20s %6.2f  ..."
     switch (locEvent->type) {
       // Implementation TBD, as we enable the various event types
       case IRRIGATION: {
