@@ -35,7 +35,8 @@ Expectations for merging:
 - Include updates and additions to 
   - Documentation
   - Tests
-  - CHANGELOG.md 
+  - CHANGELOG.md
+  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented.
 
 Pull requests must pass all required checks to be merged into master, including [code format and style](#code-format-and-style) checks.
   
@@ -141,6 +142,7 @@ tests/update_model_structures.sh
 ## Releases
 
 - Use [Semantic Versioning v2](https://semver.org/) for SIPNET releases.
-- Tag releases with the version number `vX.Y.Z`.
-- Include content from `CHANGELOG.md` file.
-- Add compiled SIPNET binaries.
+  - Tag releases with the version number `vX.Y.Z`.
+  - Name version in `docs/CHANGELOG.md`
+- Include content from `docs/CHANGELOG.md` file in release description.
+- Attach Mac and Linux compiled SIPNET binaries to release.
