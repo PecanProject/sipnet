@@ -462,14 +462,47 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#drivers" class="md-nav__link">
+  <a href="#input-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Drivers
+      Input Files
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Drivers">
+    <nav class="md-nav" aria-label="Input Files">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run Settings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters-and-initial-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters and Initial Conditions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters and Initial Conditions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-sipnetparam-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example sipnet.param file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#climate" class="md-nav__link">
@@ -482,9 +515,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#examples-of-climate-files" class="md-nav__link">
+  <a href="#example-sipnetclim-file" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples of climate files:
+      Example sipnet.clim file:
     </span>
   </a>
   
@@ -1024,14 +1057,47 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#drivers" class="md-nav__link">
+  <a href="#input-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Drivers
+      Input Files
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Drivers">
+    <nav class="md-nav" aria-label="Input Files">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run Settings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters-and-initial-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters and Initial Conditions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters and Initial Conditions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-sipnetparam-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example sipnet.param file
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#climate" class="md-nav__link">
@@ -1044,9 +1110,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#examples-of-climate-files" class="md-nav__link">
+  <a href="#example-sipnetclim-file" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples of climate files:
+      Example sipnet.clim file:
     </span>
   </a>
   
@@ -2400,7 +2466,74 @@
 </tr>
 </tbody>
 </table>
-<h2 id="drivers">Drivers<a class="headerlink" href="#drivers" title="Permanent link">&para;</a></h2>
+<h2 id="input-files">Input Files<a class="headerlink" href="#input-files" title="Permanent link">&para;</a></h2>
+<h3 id="run-settings">Run Settings<a class="headerlink" href="#run-settings" title="Permanent link">&para;</a></h3>
+<p>The <code>sipnet.in</code> file specifies run settings for SIPNET, including the run type, input file names, and output options. The file is self-documenting, with comments describing each option. Key features of interest include </p>
+<ul>
+<li><code>FILENAME</code> Set output filenames.</li>
+<li><code>PRINT_HEADER</code> Print header information to output files</li>
+<li><code>DO_SINGLE_OUTPUTS</code> Write each variable to a separate file</li>
+</ul>
+<p>Multi-site runs, sensitivity tests, and Monte Carlo runs are no longer supported. Typically these analyses are handled 
+using the <a href="https://pecanproject.org/">PEcAn Framework</a>.</p>
+<h3 id="parameters-and-initial-conditions">Parameters and Initial Conditions<a class="headerlink" href="#parameters-and-initial-conditions" title="Permanent link">&para;</a></h3>
+<p>Both initial conditions and parameters are specified in a file named <code>sipnet.param</code>.</p>
+<p><em>Note: A <code>sipnet.param-spatial</code> can be used for multi-site runs, but this is not currently used 
+or documented.</em></p>
+<p>The SIPNET parameter file (<code>sipnet.param</code>) specifies model parameters and their properties for each simulation. 
+Each line in the file corresponds to a single parameter and contains five or six space-separated values.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Parameter Name</td>
+<td>Name of the parameter</td>
+</tr>
+<tr>
+<td>Value</td>
+<td>Value of the parameter to use in the model</td>
+</tr>
+<tr>
+<td>Flag</td>
+<td>Parameter estimation flag: <br> <code>0</code> = fixed (not estimated), <br> <code>1</code> = estimated (free)</td>
+</tr>
+<tr>
+<td>Min</td>
+<td>Minimum value for optimization</td>
+</tr>
+<tr>
+<td>Max</td>
+<td>Maximum value for optimization</td>
+</tr>
+<tr>
+<td>Stddev</td>
+<td>(Optional) Standard deviation for prior distribution</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example-sipnetparam-file">Example <code>sipnet.param</code> file<a class="headerlink" href="#example-sipnetparam-file" title="Permanent link">&para;</a></h4>
+<p>Column names are not used, but are:</p>
+<pre><code>param_name value flag min max stddev
+</code></pre>
+<pre><code>plantWoodInit 110 0 6600 14000 200
+laiInit 0 0 0 5.2 0.2
+litterInit 200 0 130 1200 25
+soilInit 7000 1 3300 19000 3000
+litterWFracInit 0.5 0 0 1 0.1
+soilWFracInit 0.6 1 0 1 0.1
+snowInit 1 0 0 0 1
+microbeInit 0.5 0 0.02 1 0.001
+fineRootFrac 0.2 0 0 1 0.001
+coarseRootFrac 0.2 0 0 1 0.001
+aMax 95 1 0 200 0.2
+aMaxFrac 0.85 0 0.66 0.86 0.005
+...
+</code></pre>
 <h3 id="climate">Climate<a class="headerlink" href="#climate" title="Permanent link">&para;</a></h3>
 <p>For each step of the model, for each location, the following inputs are needed. These are provided in a file named <code>&lt;sitename&gt;.clim</code> with the following columns:</p>
 <table>
@@ -2514,7 +2647,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="examples-of-climate-files">Examples of climate files:<a class="headerlink" href="#examples-of-climate-files" title="Permanent link">&para;</a></h4>
+<h4 id="example-sipnetclim-file">Example <code>sipnet.clim</code> file:<a class="headerlink" href="#example-sipnetclim-file" title="Permanent link">&para;</a></h4>
 <p>Column names are not used, but are:</p>
 <pre><code>loc year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   soilWetness
 </code></pre>
@@ -2784,7 +2917,7 @@
 <li>for perennials, some biomass may remain (col 5 + col 7 &lt;= 1 and col 6 + col 8 &lt;= 1; remainder is living).</li>
 <li>root biomass is only removed for root crops</li>
 </ul>
-<h4 id="example-of-eventsin-file">Example of events.in file:<a class="headerlink" href="#example-of-eventsin-file" title="Permanent link">&para;</a></h4>
+<h4 id="example-of-eventsin-file">Example of <code>events.in</code> file:<a class="headerlink" href="#example-of-eventsin-file" title="Permanent link">&para;</a></h4>
 <pre><code>1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
 1  2022  40  fert   10 5 0 0     # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
 1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
@@ -2792,8 +2925,8 @@
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 </code></pre>
 <h4 id="events-output">Events output<a class="headerlink" href="#events-output" title="Permanent link">&para;</a></h4>
-<p>SIPNET will create a file named <code>events.out</code> when event handling is enabled. This file 
-will have one row for each agronomic event that is processed. Each row lists location, 
+<p>SIPNET will create a file named <code>events.out</code> when event handling is enabled. </p>
+<p>This file will have one row for each agronomic event that is processed. Each row lists location, 
 time, event type, and parameter name/value pairs for all state variables that the event
 affects. </p>
 <p>Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
@@ -2806,6 +2939,8 @@ up to the param-values pairs, commas separating PV pairs, and <code>=</code> bet
 1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
 1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 </code></pre>
+<p><em>Note: <code>events.out</code> logs all parameters changed by an event for debugging and testing purposes; 
+For downstream analyses that only need the date and event type, <code>events.in</code> is equivalent and easier to parse.</em></p>
 <h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
