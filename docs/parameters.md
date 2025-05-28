@@ -338,7 +338,7 @@ The `sipnet.in` file specifies run settings for SIPNET, including the run type, 
 - `PRINT_HEADER` Print header information to output files
 - `DO_SINGLE_OUTPUTS` Write each variable to a separate file
 
-Multi-site runs, sensitivity tests, and Monte Carlo runs are deprecated. Typically these analyses are handled 
+Multi-site runs, sensitivity tests, and Monte Carlo runs are no longer supported. Typically these analyses are handled 
 using the [PEcAn Framework](https://pecanproject.org/).
 
 ### Parameters and Initial Conditions
