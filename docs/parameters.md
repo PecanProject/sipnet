@@ -15,37 +15,6 @@ Note: this is a work in progress draft. Not all parameters listed will be used i
 
 Numbered items are cross-referenced with original documentation.
 
-## Table of Contents
-
-- [Input and Output Parameters (DRAFT)](#input-and-output-parameters-draft)
-  - [Table of Contents](#table-of-contents)
-  - [Notation](#notation)
-    - [Variables (Pools, Fluxes, and Parameters)](#variables-pools-fluxes-and-parameters)
-    - [Subscripts (Temporal, Spatial, or Contextual Identifiers)](#subscripts-temporal-spatial-or-contextual-identifiers)
-  - [Run-time Parameters](#run-time-parameters)
-    - [Initial state values](#initial-state-values)
-    - [Litter Quality Parameters](#litter-quality-parameters)
-    - [Photosynthesis parameters](#photosynthesis-parameters)
-    - [Phenology-related parameters](#phenology-related-parameters)
-    - [Allocation parameters](#allocation-parameters)
-    - [Autotrophic respiration parameters](#autotrophic-respiration-parameters)
-    - [Soil respiration parameters](#soil-respiration-parameters)
-    - [Nitrogen Cycle Parameters](#nitrogen-cycle-parameters)
-    - [Methane parameters](#methane-parameters)
-    - [Moisture-related parameters](#moisture-related-parameters)
-    - [Tree physiological parameters](#tree-physiological-parameters)
-  - [Compile-time parameters](#compile-time-parameters)
-  - [Drivers](#drivers)
-    - [Climate](#climate)
-      - [Examples of climate files:](#examples-of-climate-files)
-    - [Agronomic Events](#agronomic-events)
-      - [Fertilization Events](#fertilization-events)
-      - [Tillage Events](#tillage-events)
-      - [Planting Events](#planting-events)
-      - [Harvest Events](#harvest-events)
-      - [Example of events file:](#example-of-events-file)
-  - [Outputs](#outputs)
-
 ## Notation
 
 ### Variables (Pools, Fluxes, and Parameters)
@@ -358,7 +327,65 @@ Run-time parameters can change from one run to the next, or when the model is st
 | E\_STAR\_SNOW                                  | 0.6                       | approximate saturation vapor pressure at 0°C (kPa)                                                              |
 |                                                |                           |                                                                                                                 |
 
-## Drivers
+
+## Input Files
+
+### Run Settings
+
+The `sipnet.in` file specifies run settings for SIPNET, including the run type, input file names, and output options. The file is self-documenting, with comments describing each option. Key features of interest include 
+
+- `FILENAME` Set output filenames.
+- `PRINT_HEADER` Print header information to output files
+- `DO_SINGLE_OUTPUTS` Write each variable to a separate file
+
+Multi-site runs, sensitivity tests, and Monte Carlo runs are no longer supported. Typically these analyses are handled 
+using the [PEcAn Framework](https://pecanproject.org/).
+
+### Parameters and Initial Conditions
+
+
+Both initial conditions and parameters are specified in a file named `sipnet.param`.
+
+_Note: A `sipnet.param-spatial` can be used for multi-site runs, but this is not currently used 
+or documented._
+
+
+The SIPNET parameter file (`sipnet.param`) specifies model parameters and their properties for each simulation. 
+Each line in the file corresponds to a single parameter and contains five or six space-separated values.
+
+| Column         | Description                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------- |
+| Parameter Name | Name of the parameter                                                  |
+| Value          | Value of the parameter to use in the model                             |
+| Flag           | Parameter estimation flag: <br> `0` = fixed (not estimated), <br> `1` = estimated (free)  |
+| Min            | Minimum value for optimization                                         |
+| Max            | Maximum value for optimization                                         |
+| Stddev         | (Optional) Standard deviation for prior distribution                   |
+
+#### Example `sipnet.param` file
+
+Column names are not used, but are:
+```
+param_name value flag min max stddev
+```
+
+
+```
+plantWoodInit 110 0 6600 14000 200
+laiInit 0 0 0 5.2 0.2
+litterInit 200 0 130 1200 25
+soilInit 7000 1 3300 19000 3000
+litterWFracInit 0.5 0 0 1 0.1
+soilWFracInit 0.6 1 0 1 0.1
+snowInit 1 0 0 0 1
+microbeInit 0.5 0 0.02 1 0.001
+fineRootFrac 0.2 0 0 1 0.001
+coarseRootFrac 0.2 0 0 1 0.001
+aMax 95 1 0 200 0.2
+aMaxFrac 0.85 0 0.66 0.86 0.005
+...
+```
+
 
 ### Climate
 
@@ -381,7 +408,7 @@ For each step of the model, for each location, the following inputs are needed. 
 | 13 | wspd        | avg. wind speed                   | m/s         |                |
 | 14 | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
 
-#### Examples of climate files:
+#### Example `sipnet.clim` file:
 
 Column names are not used, but are:
 
@@ -407,7 +434,6 @@ loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   s
 0	  1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690 0.0000
 ```
 
-
 ### Agronomic Events
 
 For managed ecosystems, the following inputs are provided in a file named `events.in` with the following columns:
@@ -420,11 +446,11 @@ For managed ecosystems, the following inputs are provided in a file named `event
 | 4     | event_type  | type of event                      |             | one of plant, harv, till, fert, irrig |
 | 5...n | event_param | parameter associated with event    |             | see table below                       |
 
-- Agronomic events are stored in events.in, one event per row
+- Agronomic events are stored in `events.in`, one event per row
 - Events in the file are sorted first by location, and then chronologically
 - Events are specified by year and day (no hourly timestamp)
 - It is assumed that there is one (or more) records in the climate file for each location/day that appears in the events file
-  - We will throw an error if we find an event with no corresponding climate record
+  - SIPNET will throw an error if it finds an event with no corresponding climate record
 - Events are processed with the first climate record that occurs for the relevant location/day as an instantaneous one-time change
   - We may need events with duration later, spec TBD. Tillage is likely in this bucket.
 - The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required
@@ -500,7 +526,7 @@ Notes:
   - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
    - root biomass is only removed for root crops
  
-#### Example of events file:
+#### Example of `events.in` file:
 
 ```
 1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
@@ -510,6 +536,30 @@ Notes:
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 
+#### Events output
+
+SIPNET will create a file named `events.out` when event handling is enabled. 
+
+
+This file will have one row for each agronomic event that is processed. Each row lists location, 
+time, event type, and parameter name/value pairs for all state variables that the event
+affects. 
+
+
+Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
+up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
+```
+loc  year  day  type     param_name=delta[,param_name=delta,...]
+0    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
+0    2024   70  irrig    envi.soilWater=5.00
+0    2024  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
+1    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
+1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+```
+
+_Note: `events.out` logs all parameters changed by an event for debugging and testing purposes; 
+For downstream analyses that only need the date and event type, `events.in` is equivalent and easier to parse._
 ## Outputs
 
 |    | Symbol      | Parameter Name     | Definition                     | Units       |

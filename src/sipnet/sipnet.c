@@ -21,7 +21,7 @@
 #include "outputItems.h"
 #include "modelStructures.h"
 #include "events.h"
-#include "exitCodes.h"
+#include "common/exitCodes.h"
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)
@@ -564,6 +564,7 @@ static double *outputPtrs[MAX_DATA_TYPES];  // pointers to different possible
 #if EVENT_HANDLER
 static EventNode **events;
 static EventNode *locEvent;  // current location event list
+static FILE *eventOutFile;
 #endif
 
 /* Read climate file into linked lists,
@@ -1010,6 +1011,27 @@ void freeClimateList(int numLocs) {
   free(firstClimates);
 }
 
+#if EVENT_HANDLER
+// de-allocate space used for events linked list
+void freeEventList(int numLocs) {
+  EventNode *curr, *prev;
+  int loc;
+
+  for (loc = 0; loc < numLocs; loc++) {
+    // loop through events, deallocating each linked list
+    curr = events[loc];
+    while (curr != NULL) {
+      prev = curr;
+      curr = curr->nextEvent;
+      free(prev);
+    }
+  }
+
+  // and finally deallocate the vector itself:
+  free(events);
+}
+#endif
+
 // !!! functions for calculating auxiliary variables !!!
 
 // rather than returning a value, they have as parameters the variable(s) which
@@ -1417,7 +1439,8 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 int pastLeafGrowth(void) {
 
 #if GDD
-  return (climate->gdd >= params.gddLeafOn);  // growing degree days threshold
+  // null pointer dereference warning suppressed on the next line
+  return (climate->gdd >= params.gddLeafOn);  // NOLINT
 #elif SOIL_PHENOL
   return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
                                                      // threshold
@@ -2511,26 +2534,37 @@ void updateTrackers(double oldSoilWater) {
   // step - assume linear
 }
 
-// This should be in events.h/c, but with all the global state defined in this
-// file, let's leave it here for now. Maybe someday we will factor that out.
-//
-// Process events for current location/year/day
+/*!
+ * \brief Process events for current location/year/day
+ *
+ * For a given year and day (as determined by the global `climate`
+ * pointer), process all events listed in the global `locEvents` pointer for the
+ * referenced location.
+ *
+ * For each event, modify state variables according to the model for that event,
+ * and write a row to events.out listing the modified variables and the delta
+ * applied.
+ */
 #if EVENT_HANDLER
 void processEvents(void) {
+  // This should be in events.h/c, but with all the global state defined in this
+  // file, let's leave it here for now. Maybe someday we will factor that out.
+
   // If locEvent starts off NULL, this function will just fall through, as it
   // should.
-  const int year = climate->year;
-  const int day = climate->day;
+  const int climYear = climate->year;
+  const int climDay = climate->day;
 
   // The events file has been tested on read, so we know this event list should
   // be in chrono order. However, we need to check to make sure the current
   // event is not in the past, as that would indicate an event that did not have
   // a corresponding climate file record.
-  while (locEvent != NULL && locEvent->year <= year && locEvent->day <= day) {
-    if (locEvent->year < year || locEvent->day < day) {
+  while (locEvent != NULL && locEvent->year <= climYear &&
+         locEvent->day <= climDay) {
+    if (locEvent->year < climYear || locEvent->day < climDay) {
       printf("Agronomic event found for loc: %d year: %d day: %d that does not "
              "have a corresponding record in the climate file\n",
-             locEvent->year, locEvent->year, locEvent->day);
+             locEvent->loc, locEvent->year, locEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     switch (locEvent->type) {
@@ -2538,22 +2572,25 @@ void processEvents(void) {
       case IRRIGATION: {
         const IrrigationParams *irrParams = locEvent->eventParams;
         const double amount = irrParams->amountAdded;
+        double soilAmount, evapAmount;
         if (irrParams->method == CANOPY) {
           // Part of the irrigation evaporates, and the rest makes it to the
-          // soil
-          // Evaporated fraction
-          const double evapAmount = params.immedEvapFrac * amount;
-          fluxes.immedEvap += evapAmount;
-          // Remainder goes to the soil
-          const double soilAmount = amount - evapAmount;
-          envi.soilWater += soilAmount;
+          // soil. Evaporated fraction:
+          evapAmount = params.immedEvapFrac * amount;
+          // Soil fraction:
+          soilAmount = amount - evapAmount;
         } else if (irrParams->method == SOIL) {
           // All goes to the soil
-          envi.soilWater += amount;
+          evapAmount = 0.0;
+          soilAmount = amount;
         } else {
           printf("Unknown irrigation method type: %d\n", irrParams->method);
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
         }
+        fluxes.immedEvap += evapAmount;
+        envi.soilWater += soilAmount;
+        writeEventOut(eventOutFile, locEvent, 2, "envi.soilWater", soilAmount,
+                      "fluxes.immedEvap", evapAmount);
       } break;
       case PLANTING: {
         const PlantingParams *plantParams = locEvent->eventParams;
@@ -2570,6 +2607,9 @@ void processEvents(void) {
 
         // FUTURE: allocate to N pools
 
+        writeEventOut(eventOutFile, locEvent, 4, "envi.plantLeafC", leafC,
+                      "envi.plantWoodC", woodC, "envi.fineRootC", fineRootC,
+                      "envi.coarseRootC", coarseRootC);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
@@ -2579,18 +2619,30 @@ void processEvents(void) {
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
 
-        // Litter:
-        envi.litter += fracTA * (envi.plantLeafC + envi.plantWoodC) +
-                       fracTB * (envi.fineRootC + envi.coarseRootC);
-        // Pool updates, counting both mass moved to litter and removed by
-        // harvest itself
-        envi.plantLeafC *= 1 - (fracRA + fracTA);
-        envi.plantWoodC *= 1 - (fracRA + fracTA);
-        envi.fineRootC *= 1 - (fracRB + fracTB);
-        envi.coarseRootC *= 1 - (fracRB + fracTB);
+        // Litter increase
+        const double litterAdd = fracTA * (envi.plantLeafC + envi.plantWoodC) +
+                                 fracTB * (envi.fineRootC + envi.coarseRootC);
+        // Pool reductions, counting both mass moved to litter and removed by
+        // the harvest itself. Above-ground changes:
+        const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
+        const double woodDelta = -envi.plantWoodC * (fracRA + fracTA);
+        // Below-ground changes:
+        const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
+        const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
+
+        // Pool updates:
+        envi.litter += litterAdd;
+        envi.plantLeafC += leafDelta;
+        envi.plantWoodC += woodDelta;
+        envi.fineRootC += fineDelta;
+        envi.coarseRootC += coarseDelta;
 
         // FUTURE: move/remove biomass in N pools
 
+        writeEventOut(eventOutFile, locEvent, 5, "env.litter", litterAdd,
+                      "envi.plantLeafC", leafDelta, "envi.plantWoodC",
+                      woodDelta, "envi.fineRootC", fineDelta,
+                      "envi.coarseRootC", coarseDelta);
       } break;
       case TILLAGE:
         // TBD
@@ -3186,17 +3238,22 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
  * Populates static event structs
  */
 #if EVENT_HANDLER
-void initEvents(char *eventFile, int numLocs) {
+void initEvents(char *eventFile, int numLocs, int printHeader) {
   events = readEventData(eventFile, numLocs);
+  eventOutFile = openEventOutFile(printHeader);
 }
 #endif
 
 // call this when done running model:
-// de-allocates space for climate linked list
+// de-allocates space for climate and event linked lists
 // (needs to know number of locations)
 void cleanupModel(int numLocs) {
   freeClimateList(numLocs);
   deallocateMeanTracker(meanNPP);
   deallocateMeanTracker(meanGPP);
   deallocateMeanTracker(meanFPAR);
+#if EVENT_HANDLER
+  freeEventList(numLocs);
+  closeEventOutFile(eventOutFile);
+#endif
 }

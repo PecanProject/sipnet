@@ -28,7 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>  // for access()
-#include "exitCodes.h"
+#include "common/exitCodes.h"
 #include "common/util.h"
 
 void printEvent(EventNode *event);
@@ -213,7 +213,9 @@ EventNode **readEventData(char *eventFile, int numLocs) {
     numRead = sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr,
                      &numBytes);
     if (numRead != 4) {
-      printf("Error reading event file: bad data on first line\n");
+      printf("Error reading event file: bad data on line after loc %d year %d "
+             "day %d\n",
+             currLoc, currYear, currDay);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     eventParamsStr = line + numBytes;
@@ -233,7 +235,8 @@ EventNode **readEventData(char *eventFile, int numLocs) {
              "locations should be in ascending order\n");
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
-    if ((loc == currLoc) && ((year < currYear) || (day < currDay))) {
+    if ((loc == currLoc) &&
+        ((year < currYear) || ((year == currYear) && (day < currDay)))) {
       printf("Error reading event file: for location %d, last event was at "
              "(%d, %d) ",
              currLoc, currYear, currDay);
@@ -252,6 +255,8 @@ EventNode **readEventData(char *eventFile, int numLocs) {
       currLoc = loc;
       events[currLoc] = next;
     }
+    currYear = year;
+    currDay = day;
   }
 
   fclose(in);
@@ -307,3 +312,53 @@ void printEvent(EventNode *event) {
       printf("Error printing event: unknown type %d\n", event->type);
   }
 }
+
+const char *eventTypeToString(event_type_t type) {
+  switch (type) {
+    case IRRIGATION:
+      return "irrig";
+    case PLANTING:
+      return "plant";
+    case HARVEST:
+      return "harv";
+    case FERTILIZATION:
+      return "fert";
+    case TILLAGE:
+      return "till";
+    default:
+      printf("ERROR: unknown event type in eventTypeToString (%d)", type);
+      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+  }
+}
+
+FILE *openEventOutFile(int printHeader) {
+  FILE *eventFile = openFile(EVENT_OUT_FILE, "w");
+  if (printHeader) {
+    // Use format string analogous to the one in writeEventOut for
+    // better alignment (won't be perfect, but definitely better)
+    fprintf(eventFile, "%3s  %4s  %3s  %-7s  %s", "loc", "year", "day", "type",
+            "param_name=delta[,param_name=delta,...]\n");
+  }
+  return eventFile;
+}
+
+void writeEventOut(FILE *out, EventNode *event, int numParams, ...) {
+  va_list args;
+  int ind = 0;
+
+  // Spec:
+  // loc year day event_type <param name=delta>[,<param name>=<delta>,...]
+
+  // Standard prefix for all
+  fprintf(out, "%-3d  %4d  %3d  %-7s  ", event->loc, event->year, event->day,
+          eventTypeToString(event->type));
+  // Variable output per event type
+  va_start(args, numParams);
+  for (ind = 0; ind < numParams - 1; ind++) {
+    fprintf(out, "%s=%-.2f,", va_arg(args, char *), va_arg(args, double));
+  }
+  fprintf(out, "%s=%-.2f\n", va_arg(args, char *), va_arg(args, double));
+  va_end(args);
+}
+
+void closeEventOutFile(FILE *file) { fclose(file); }
