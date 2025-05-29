@@ -6,16 +6,28 @@ All contributors are expected to adhere to the PEcAn Project [Code of Conduct](h
 
 ## Setup
 
-If changes are intended for any C-code files, please execute this command:
-```shell
-tools/setup.sh
-```
-to run the setup script, which will:
-1. Check to make sure that python is installed and is at least version 3.8
-2. Ensure that clang-format and clang-tidy are installed (and install them if running on MacOS)
-3. Install the pre-commit hook, which checks the format of modified C files. This will help prevent PR failures due to formatting issues by finding those issues earlier.
+1. Clone this repository:
 
-Note: This step is not necessary for changes to documentation, markdown files, config, etc.
+   ```bash
+   git clone git@github.com:PecanProject/sipnet
+   ```
+
+2. Run the setup script (once per clone):
+
+   ```bash
+   tools/setup.sh
+   ```
+
+The `tools/setup.sh` script verifies that Python ≥ 3.8 is available,
+ensures that `clang-format`, `clang-tidy`, and `git clang-format` are
+installed (it automatically installs them on macOS and prints installation
+instructions for Ubuntu/Debian), and then copies the clang pre‑commit hook into
+`.git/hooks` where it will check formatting on every commit; if issues are found it
+aborts the commit so you can run `git clang-format` and re‑stage the
+changes.
+
+*Note – running the script is unnecessary for documentation‑only edits,
+but it will save you time whenever you touch C/C++ code.*
 
 ## GitHub Workflow
 
@@ -37,81 +49,38 @@ Expectations for merging:
   - Tests
   - CHANGELOG.md 
 
-Pull requests must pass all required checks to be merged into master, including [code format and style](#code-format-and-style) checks.
+Pull requests must pass all required checks to be merged into master, including the code format and style checks described below.
   
-## Code Format and Style
+## Code Format & Style
 
-###  Clang Format Guidelines
+We follow the standard LLVM/Clang formatting rules. Formatting is automatic, and you rarely have to think about them:
 
-This project uses [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html) to ensure a consistent coding style across all C/C++ source files. The format rules are defined in the `.clang-format` file at the root of the repository.
+1. **Run the setup script once** (see *Setup* above).  
+   It installs a **pre‑commit hook** that blocks any commit whose C/C++
+   files are not already formatted.
 
-####  Install Clang Format
+2. **If the hook stops your commit**, run:
 
-If `clang-format` is not already installed on your system, you can install it using:
+   ```bash
+   # format only what you just staged
+   git clang-format
+   # restage fixes and commit again
+   git add -u
+   git commit
+   ```
 
-- **macOS**  
-  ```bash
-  brew install clang-format
-  ```
+3. **clang‑tidy static analysis** runs automatically in CI.  
+    If the bot leaves comments, adjust your code as instructed and push.
 
-- **Ubuntu/Debian**  
-  ```bash
-  sudo apt install clang-format
-  ```
-
-- **Windows**  
-  Install via [LLVM releases](https://releases.llvm.org/download.html) or with Chocolatey:  
-  ```bash
-  choco install llvm
-  ```
-
-####  How to Format Code
-
-You can format individual files manually or auto-format all modified files before committing:
-
-- Format a single file:
-  ```bash
-  clang-format -i path/to/file.c
-  ```
-
-- Format all C/C++ files in a directory:
-  ```bash
-  find src -name "*.c" -o -name "*.h" | xargs clang-format -i
-  ```
-
-- Format all staged changes:
-  ```bash
-  git clang-format
-  ```
-
-####  Tip: Use the Pre-Commit Hook
-
-To avoid formatting-related CI failures, always run the setup script before your first commit:
-
-```bash
-tools/setup.sh
-```
-This installs a pre-commit hook that automatically checks formatting on staged C files.
-
-
-
-### Clang Tools
-
-This repo uses [clang-format](https://clang.llvm.org/docs/ClangFormat.html) and [clang-tidy](https://clang.llvm.org/extra/clang-tidy/index.html)
-to ensure code consistency and prevent (some) bad coding practices. Each tool has a configuration file in the repo root directory.
-
-**clang-format** is run on each modified C-language file on commit; the commit will fail if any of the format checks fail.
-To fix these errors:
-* if all changes are staged (via `git add`), run the command `git clang-format` to fix the formatting and re-commit
-* if not all changes are staged (likely a `git commit -a` command), either `git add` all the changes, or try `git clang-format -f` to reformat all modified files
-* `clang-format` may also be run outside of `git`, as a means of updating a file's format regardless of modification status (see `clang-format --help`)
-
-**clang-tidy** is one of the checks run on PR submission (along with building and testing) via the [cpp-linter](https://cpp-linter.github.io/cpp-linter-action/) 
-github action. If this action fails, a comment will be made in the PR detailing the issues found. **clang-format** is 
-also run by this action, so formatting issues that might have been bypassed on commit will be found here. You may attempt to have clang-tidy 
-automatically fix clang-tidy issues with the command:<br>
-```clang-tidy --fix <filename>```
-
+    To run `clang-tidy` manually before committing or pushing changes, use the following command from the project root:
+    
+    ```bash
+    # Replace <path/to/filename.c> with the file you want to check
+    clang-tidy <path/to/filename.c> -- -I./src
+    ```
+    Adjust the include path (`-I./src`) as needed for your project structure.
+    
+The hook and CI will tell you what to fix.
 
 ## Documentation
 
