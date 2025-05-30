@@ -866,7 +866,8 @@
 - Include updates and additions to 
   - Documentation
   - Tests
-  - CHANGELOG.md </p>
+  - CHANGELOG.md
+  - For new model features related to the structure, remove relevant <code>\fraktur</code> font formatting from <code>docs/model-structure.md</code> to indicate that the feature has been implemented.</p>
 <p>Pull requests must pass all required checks to be merged into master, including <a href="#code-format-and-style">code format and style</a> checks.</p>
 <h2 id="code-format-and-style">Code Format and Style<a class="headerlink" href="#code-format-and-style" title="Permanent link">&para;</a></h2>
 <h3 id="clang-tools">Clang Tools<a class="headerlink" href="#clang-tools" title="Permanent link">&para;</a></h3>
@@ -942,8 +943,10 @@ tests/update_model_structures.sh
 <ul>
 <li>Use <a href="https://semver.org/">Semantic Versioning v2</a> for SIPNET releases.</li>
 <li>Tag releases with the version number <code>vX.Y.Z</code>.</li>
-<li>Include content from <code>CHANGELOG.md</code> file.</li>
-<li>Add compiled SIPNET binaries.</li>
+<li>Name version in <code>docs/CHANGELOG.md</code></li>
+<li>Include content from <code>docs/CHANGELOG.md</code> file in release description.</li>
+<li>Attach Mac and Linux compiled SIPNET binaries to release.</li>
+<li>Update <code>PROJECT_NUMBER</code> in <code>docs/Doxyfile</code></li>
 </ul>
 
 
