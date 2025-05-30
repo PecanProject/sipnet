@@ -146,3 +146,4 @@ tests/update_model_structures.sh
   - Name version in `docs/CHANGELOG.md`
 - Include content from `docs/CHANGELOG.md` file in release description.
 - Attach Mac and Linux compiled SIPNET binaries to release.
+- Update `PROJECT_NUMBER` in `docs/Doxyfile`
