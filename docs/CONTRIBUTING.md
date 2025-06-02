@@ -69,7 +69,7 @@ We follow the standard LLVM/Clang formatting rules. Formatting is automatic, a
    git add -u
    git commit
    ```
-
+If `git clang-format` fails because not all changes are staged (likely a `git commit -a` command), either `git add` all the changes, or try `git clang-format -f` to reformat all modified files
 3. **clang‑tidy static analysis** runs automatically in CI.  
     If the bot leaves comments, adjust your code as instructed and push.
 
