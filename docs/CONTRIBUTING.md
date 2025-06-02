@@ -22,7 +22,9 @@ The `tools/setup.sh` script verifies that Python ≥ 3.8 is available,
 ensures that `clang-format`, `clang-tidy`, and `git clang-format` are
 installed (it automatically installs them on macOS and prints installation
 instructions for Ubuntu/Debian), and then copies the clang pre‑commit hook into
-`.git/hooks` where it will check formatting on every commit; if issues are found it
+`.git/hooks`. 
+
+The pre-commit hook will check formatting on every commit; if issues are found it
 aborts the commit so you can run `git clang-format` and re‑stage the
 changes.
 
