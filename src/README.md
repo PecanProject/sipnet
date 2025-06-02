@@ -20,10 +20,6 @@ possible switches somewhere...]
 **estimate**: The parameter estimation program for SIPNET. Its operation is
 controlled by the file 'estimate.in'.
 
-**sensTest**: [*ARCHIVED*] A program that tests the sensitivity of the model-data fit to
-values of a parameter (essentially a one-dimensional parameter
-estimation). Its operation is controlled by the file 'sensTest.in'.
-
 ### Stand-alone Utilities 
 
 **subsetData**: A utility to subset a data record temporally. This utility

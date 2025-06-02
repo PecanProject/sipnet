@@ -2998,40 +2998,6 @@ void runModelNoOut(double **outArray, int numDataTypes,
   }
 }
 
-/* Do a sensitivity test on paramNum, varying from low to high, doing a total of
-   numRuns runs Run only at a single location (given by loc) If out != NULL,
-   output results to out If outputItems != NULL, do additional outputting as
-   given by this structure (1 variable per file) Print parameter value as first
-   item on each line If out != NULL, do main outputting to out If outputItems !=
-   NULL
-*/
-void sensTest(FILE *out, OutputItems *outputItems, int paramNum, double low,
-              double high, int numRuns, SpatialParams *spatialParams, int loc) {
-  int runNum;
-  double changeAmt = (high - low) / (double)(numRuns - 1);
-  double value;  // current parameter value
-  char label[64];
-
-  value = low;
-  for (runNum = 0; runNum < numRuns; runNum++) {
-    // printf("%d %f\n", runNum, value);
-    // fprintf(out, "# Value = %f\n", value);
-    setSpatialParam(spatialParams, paramNum, loc, value);
-
-    if (outputItems != NULL) {
-      sprintf(label, "%f", value);
-      writeOutputItemLabels(outputItems, label);
-    }
-
-    runModelOutput(out, outputItems, 0, spatialParams, loc);
-
-    if (out != NULL) {
-      fprintf(out, "\n\n");
-    }
-    value += changeAmt;
-  }
-}
-
 // write to file which model components are turned on
 // (i.e. the value of the #DEFINE's at the top of file)
 // pre: out is open for writing
