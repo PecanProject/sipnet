@@ -14,14 +14,11 @@ FILENAME = tests/smoke/niwot
 
 LOCATION = 0
 ! Location to run at (-1 means run at all locations)
-! (If doing a sensitivity test or monte carlo run, location defaults to
-!  0: can only do these types of runs at a single location)
 
 DO_MAIN_OUTPUT = 1
 ! If 1, do the primary output to FILENAME.out (time series of all output
 !  variables)
 ! If 0, suppress this output
-! Ignored for montecarlo run with statsonly (treated as 1)
 
 PRINT_HEADER = 0
 ! If 1, print header on main output file; if 0, don't print header
@@ -31,6 +28,5 @@ DO_SINGLE_OUTPUTS = 0
 ! If 1, do extra outputs: one variable per file (e.g. FILENAME.NEE)
 ! If 0, don't do these extra outputs
 ! (These extra outputs are setup in sipnet.c : setupOutputItems)
-! Ignored for montecarlo run with statsonly (treated as 0)
 ! For a spatial run (LOCATION = -1), the first value on each line is
 ! the location, followed by the time series

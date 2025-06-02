@@ -27,8 +27,7 @@
 #define INPUT_FILE "sipnet.in"
 #define DO_MAIN_OUTPUT 1
 #define DO_SINGLE_OUTPUTS 0
-// Default is run at all locations (but if doing a sens. test or monte carlo
-// run, will default to running at loc. 0)
+// Default is run at all locations
 #define LOC (-1)
 
 void checkRuntype(NamelistInputs *namelist, const char *inputFile) {
