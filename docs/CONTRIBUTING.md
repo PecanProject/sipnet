@@ -77,9 +77,8 @@ If `git clang-format` fails because not all changes are staged (likely a `git co
     
     ```bash
     # Replace <path/to/filename.c> with the file you want to check
-    clang-tidy <path/to/filename.c> -- -I./src
+    clang-tidy <path/to/filename.c>
     ```
-    Adjust the include path (`-I./src`) as needed for your project structure.
     
 The hook and CI will tell you what to fix.
 
