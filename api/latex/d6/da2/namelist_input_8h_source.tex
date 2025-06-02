@@ -86,6 +86,12 @@
 \DoxyCodeLine{00082\ \textcolor{comment}{//\ free\ up\ space\ used\ by\ namelistInputs}}
 \DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ deleteNamelistInputs(NamelistInputs\ *namelistInputs);}
 \DoxyCodeLine{00084\ }
-\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00085\ \textcolor{comment}{//\ find\ input\ item\ with\ given\ name\ in\ namelistInputs\ list}}
+\DoxyCodeLine{00086\ \textcolor{comment}{//\ return\ a\ pointer\ to\ this\ input\ item}}
+\DoxyCodeLine{00087\ \textcolor{comment}{//\ if\ not\ found,\ return\ NULL}}
+\DoxyCodeLine{00088\ NamelistInputItem\ *locateNamelistInputItem(NamelistInputs\ *namelistInputs,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

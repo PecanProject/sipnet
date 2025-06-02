@@ -99,26 +99,13 @@
 \DoxyCodeLine{00095\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader,}
 \DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc);}
 \DoxyCodeLine{00097\ }
-\DoxyCodeLine{00098\ \textcolor{comment}{/*\ Do\ a\ sensitivity\ test\ on\ paramNum,\ varying\ from\ low\ to\ high,\ doing\ a\ total}}
-\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \ of\ numRuns\ runs}}
-\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ Run\ only\ at\ a\ single\ location\ (given\ by\ loc)}}
-\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ If\ out\ !=\ NULL,\ output\ results\ to\ out}}
-\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ If\ outputItems\ !=\ NULL,\ do\ additional\ outputting\ as\ given\ by\ this}}
-\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ \ \ structure\ (1\ variable\ per\ file)}}
-\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ Print\ parameter\ value\ as\ first\ item\ on\ each\ line}}
-\DoxyCodeLine{00105\ \textcolor{comment}{\ \ \ If\ out\ !=\ NULL,\ do\ main\ outputting\ to\ out}}
-\DoxyCodeLine{00106\ \textcolor{comment}{\ \ \ If\ outputItems\ !=\ NULL}}
-\DoxyCodeLine{00107\ \textcolor{comment}{*/}}
-\DoxyCodeLine{00108\ \textcolor{keywordtype}{void}\ sensTest(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ paramNum,\ \textcolor{keywordtype}{double}\ low,}
-\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ high,\ \textcolor{keywordtype}{int}\ numRuns,\ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc);}
-\DoxyCodeLine{00110\ }
-\DoxyCodeLine{00111\ \textcolor{comment}{/*\ PRE:\ outputItems\ has\ been\ created\ with\ newOutputItems}}
-\DoxyCodeLine{00112\ \textcolor{comment}{}}
-\DoxyCodeLine{00113\ \textcolor{comment}{\ \ \ Setup\ outputItems\ structure}}
-\DoxyCodeLine{00114\ \textcolor{comment}{\ \ \ Each\ variable\ added\ will\ be\ output\ in\ a\ separate\ file\ ('*.varName')}}
-\DoxyCodeLine{00115\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems);}
-\DoxyCodeLine{00117\ }
-\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00098\ \textcolor{comment}{/*\ PRE:\ outputItems\ has\ been\ created\ with\ newOutputItems}}
+\DoxyCodeLine{00099\ \textcolor{comment}{}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ Setup\ outputItems\ structure}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ Each\ variable\ added\ will\ be\ output\ in\ a\ separate\ file\ ('*.varName')}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems);}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}

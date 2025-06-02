@@ -3,8 +3,8 @@
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
 {\ttfamily \#include $<$stdlib.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
-{\ttfamily \#include $<$math.\+h$>$}\newline
 {\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}common/exit\+Codes.\+h"{}}\newline
 {\ttfamily \#include "{}common/namelist\+Input.\+h"{}}\newline
 {\ttfamily \#include "{}common/spatial\+Params.\+h"{}}\newline
 {\ttfamily \#include "{}common/util.\+h"{}}\newline
@@ -39,6 +39,8 @@ Include dependency graph for frontend.\+c\+:
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
+\item 
+void \textbf{ check\+Runtype} (\textbf{ Namelist\+Inputs} $\ast$namelist, const char $\ast$input\+File)
 \item 
 void \textbf{ usage} (char $\ast$prog\+Name)
 \item 
@@ -105,7 +107,7 @@ Definition at line \textbf{ 26} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 31} of file \textbf{ frontend.\+c}.
 
 \label{frontend_8c_a7316472e16c612c08c61ab2699b96d4c} 
 \index{frontend.c@{frontend.c}!RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}}
@@ -120,6 +122,32 @@ Definition at line \textbf{ 25} of file \textbf{ frontend.\+c}.
 
 
 \doxysubsection{Function Documentation}
+\label{frontend_8c_a3895fa41741e70c5ccada04c2bc105fe} 
+\index{frontend.c@{frontend.c}!checkRuntype@{checkRuntype}}
+\index{checkRuntype@{checkRuntype}!frontend.c@{frontend.c}}
+\doxysubsubsection{checkRuntype()}
+{\footnotesize\ttfamily void check\+Runtype (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist,  }\item[{const char $\ast$}]{input\+File }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 33} of file \textbf{ frontend.\+c}.
+
+
+
+References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ Namelist\+Input\+Item\+Struct\+::ptr}, \textbf{ strcmp\+Ignore\+Case()}, and \textbf{ Namelist\+Input\+Item\+Struct\+::was\+Read}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d9/ddf/frontend_8c_a3895fa41741e70c5ccada04c2bc105fe_cgraph}
+\end{center}
+\end{figure}
 \label{frontend_8c_a0ddf1224851353fc92bfbff6f499fa97} 
 \index{frontend.c@{frontend.c}!main@{main}}
 \index{main@{main}!frontend.c@{frontend.c}}
@@ -128,11 +156,11 @@ Definition at line \textbf{ 25} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 41} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 60} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ DOUBLE\+\_\+\+TYPE}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ free2\+DArray()}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ LOC}, \textbf{ locate\+Param()}, \textbf{ make2\+DArray()}, \textbf{ MAX\+\_\+\+DATA\+\_\+\+TYPES}, \textbf{ model}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+No\+Out()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ sens\+Test()}, \textbf{ set\+Spatial\+Param()}, \textbf{ setup\+Output\+Items()}, \textbf{ strcmp\+Ignore\+Case()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
+References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ LOC}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ num\+Locs}, \textbf{ open\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ setup\+Output\+Items()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -150,7 +178,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 34} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 53} of file \textbf{ frontend.\+c}.
 
 
 

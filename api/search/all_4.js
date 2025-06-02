@@ -29,10 +29,11 @@ var searchData=
   ['exit_5fcode_5ffailure_26',['EXIT_CODE_FAILURE',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa9da5cc3a0fa51b516c7ec3e521b56767',1,'exitCodes.h']]],
   ['exit_5fcode_5ffile_5fopen_5for_5fread_5ferror_27',['EXIT_CODE_FILE_OPEN_OR_READ_ERROR',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa371fc63e842acdb9cbc7cb9d063610ca',1,'exitCodes.h']]],
   ['exit_5fcode_5finput_5ffile_5ferror_28',['EXIT_CODE_INPUT_FILE_ERROR',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa7eb1c855058ec6132256e87e3f51effc',1,'exitCodes.h']]],
-  ['exit_5fcode_5fsuccess_29',['EXIT_CODE_SUCCESS',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa3b6f3043ccb737e298ab6f23a30194de',1,'exitCodes.h']]],
-  ['exit_5fcode_5ft_30',['exit_code_t',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52a',1,'exitCodes.h']]],
-  ['exit_5fcode_5funknown_5fevent_5ftype_5for_5fparam_31',['EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aaeb564c7e98246576bc6e445c13450e61',1,'exitCodes.h']]],
-  ['exitcodes_2eh_32',['exitCodes.h',['../d6/d8f/exit_codes_8h.html',1,'']]],
-  ['externalloc_33',['externalLoc',['../d2/d2e/struct_one_spatial_param_struct.html#a7fc3276f2963124267133568ada7d4ed',1,'OneSpatialParamStruct']]],
-  ['extra_5fdata_5ftypes_34',['EXTRA_DATA_TYPES',['../de/de4/sipnet_8h.html#ab7f5280fafc469bb1061ccfc5b86e12c',1,'sipnet.h']]]
+  ['exit_5fcode_5finternal_5ferror_29',['EXIT_CODE_INTERNAL_ERROR',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aaa713ace940c191caa3499d1a072bd45b',1,'exitCodes.h']]],
+  ['exit_5fcode_5fsuccess_30',['EXIT_CODE_SUCCESS',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa3b6f3043ccb737e298ab6f23a30194de',1,'exitCodes.h']]],
+  ['exit_5fcode_5ft_31',['exit_code_t',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52a',1,'exitCodes.h']]],
+  ['exit_5fcode_5funknown_5fevent_5ftype_5for_5fparam_32',['EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM',['../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aaeb564c7e98246576bc6e445c13450e61',1,'exitCodes.h']]],
+  ['exitcodes_2eh_33',['exitCodes.h',['../d6/d8f/exit_codes_8h.html',1,'']]],
+  ['externalloc_34',['externalLoc',['../d2/d2e/struct_one_spatial_param_struct.html#a7fc3276f2963124267133568ada7d4ed',1,'OneSpatialParamStruct']]],
+  ['extra_5fdata_5ftypes_35',['EXTRA_DATA_TYPES',['../de/de4/sipnet_8h.html#ab7f5280fafc469bb1061ccfc5b86e12c',1,'sipnet.h']]]
 ];

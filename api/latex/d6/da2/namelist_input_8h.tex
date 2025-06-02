@@ -50,6 +50,8 @@ void \textbf{ die\+If\+Not\+Read} (\textbf{ Namelist\+Inputs} $\ast$namelist\+In
 void \textbf{ die\+If\+Not\+Set} (\textbf{ Namelist\+Inputs} $\ast$namelist\+Inputs, char $\ast$name)
 \item 
 void \textbf{ delete\+Namelist\+Inputs} (\textbf{ Namelist\+Inputs} $\ast$namelist\+Inputs)
+\item 
+\textbf{ Namelist\+Input\+Item} $\ast$ \textbf{ locate\+Namelist\+Input\+Item} (\textbf{ Namelist\+Inputs} $\ast$namelist\+Inputs, char $\ast$name)
 \end{DoxyCompactItemize}
 
 
@@ -203,6 +205,32 @@ Here is the call graph for this function\+:
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{d6/da2/namelist_input_8h_a772ff58a00c37e6ab6deb3adf4c80961_cgraph}
+\end{center}
+\end{figure}
+\label{namelist_input_8h_a1760d913193d3c293fc6151bb823a2f2} 
+\index{namelistInput.h@{namelistInput.h}!locateNamelistInputItem@{locateNamelistInputItem}}
+\index{locateNamelistInputItem@{locateNamelistInputItem}!namelistInput.h@{namelistInput.h}}
+\doxysubsubsection{locateNamelistInputItem()}
+{\footnotesize\ttfamily \textbf{ Namelist\+Input\+Item} $\ast$ locate\+Namelist\+Input\+Item (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist\+Inputs,  }\item[{char $\ast$}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 53} of file \textbf{ namelist\+Input.\+c}.
+
+
+
+References \textbf{ Namelist\+Inputs\+Struct\+::head}, \textbf{ Namelist\+Input\+Item\+Struct\+::name}, \textbf{ Namelist\+Input\+Item\+Struct\+::next\+Item}, and \textbf{ strcmp\+Ignore\+Case()}.
+
+
+
+Referenced by \textbf{ check\+Runtype()}, \textbf{ die\+If\+Not\+Read()}, \textbf{ die\+If\+Not\+Set()}, and \textbf{ read\+Namelist\+Inputs()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=323pt]{d6/da2/namelist_input_8h_a1760d913193d3c293fc6151bb823a2f2_cgraph}
 \end{center}
 \end{figure}
 \label{namelist_input_8h_aa508764797a7169c15ea87aeda6ae41d} 

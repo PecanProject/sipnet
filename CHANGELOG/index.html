@@ -1034,6 +1034,8 @@ sections to include in release notes:
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>reorganized codebase, removed old sensitivity, ensemble, and fitting code as well as other study-specific code.</li>
+<li>Breaking: removed obsolete run types senstest and montecarlo and associated code</li>
+<li>Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.</li>
 </ul>
 <h3 id="removed">Removed<a class="headerlink" href="#removed" title="Permanent link">&para;</a></h3>
 <h2 id="sipnet-130-event-handler"><strong>SIPNET 1.3.0 - "Event Handler"</strong><a class="headerlink" href="#sipnet-130-event-handler" title="Permanent link">&para;</a></h2>
