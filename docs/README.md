@@ -23,12 +23,8 @@ current development is focused on representing carbon balance and GHG fluxes and
 [Description of sipnet.in and different modes, some variation of the below paragraph]
 
 The program used for forward runs of the model. Its operation is
-controlled by the file 'sipnet.in'. SIPNET can run in three different
-modes: 'standard', for a standard forward run; 'senstest', for
-performing a sensitivity test on a single parameter; and 'montecarlo',
-for running the model forward using an ensemble of parameter sets. See
-'sipnet.in' for further configuration options for each of these types of
-runs.
+controlled by the file 'sipnet.in'; see that file for further configuration options.
+[Updated description TBD]
 
 ## Documentation
 

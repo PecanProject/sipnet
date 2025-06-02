@@ -32,9 +32,5 @@ DO_SINGLE_OUTPUTS = 0
 ! If 0, don't do these extra outputs
 ! (These extra outputs are setup in sipnet.c : setupOutputItems)
 ! Ignored for montecarlo run with statsonly (treated as 0)
-! For a spatial run (LOCATION = -1), with RUNTYPE = standard, the first
-!  value on each line is the location, followed by the time series
-! For RUNTYPE = senstest, the first value on each line is the parameter
-!  value, followed by the time series
-! For RUNTYPE = montecarlo, there is no leading label value - these
-!  files just contain the time series
+! For a spatial run (LOCATION = -1), the first value on each line is
+! the location, followed by the time series

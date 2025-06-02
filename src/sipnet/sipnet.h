@@ -95,19 +95,6 @@ void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[],
 void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader,
                     SpatialParams *spatialParams, int loc);
 
-/* Do a sensitivity test on paramNum, varying from low to high, doing a total
-     of numRuns runs
-   Run only at a single location (given by loc)
-   If out != NULL, output results to out
-   If outputItems != NULL, do additional outputting as given by this
-     structure (1 variable per file)
-   Print parameter value as first item on each line
-   If out != NULL, do main outputting to out
-   If outputItems != NULL
-*/
-void sensTest(FILE *out, OutputItems *outputItems, int paramNum, double low,
-              double high, int numRuns, SpatialParams *spatialParams, int loc);
-
 /* PRE: outputItems has been created with newOutputItems
 
    Setup outputItems structure

@@ -45,7 +45,7 @@ void checkRuntype(NamelistInputs *namelist, const char *inputFile) {
   if (strcmpIgnoreCase((char *)inputItem->ptr, "standard") != 0) {
     // Make sure this is not an old config with a different RUNTYPE set
     printf("SIPNET only supports the standard runtype mode; other options are "
-           "obsolete\n");
+           "obsolete and were last supported in v1.3.0\n");
     printf("Please fix %s and re-run\n", inputFile);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }

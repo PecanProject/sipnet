@@ -38,7 +38,7 @@ HISTUTIL_OFILES=$(HISTUTIL_CFILES:.c=.o)
 HISTUTIL_LIBS=-lsipnet_common
 
 CFILES=$(sort  \
-    $(ESTIMATE_CFILES) $(SENSTEST_CFILES) $(SIPNET_CFILES) $(TRANSPOSE_CFILES) $(SUBSET_DATA_CFILES) \
+    $(ESTIMATE_CFILES) $(SIPNET_CFILES) $(TRANSPOSE_CFILES) $(SUBSET_DATA_CFILES) \
     $(HISTUTIL_CFILES) \
     )
 
@@ -104,7 +104,7 @@ histutil: $(HISTUTIL_OFILES) $(COMMON_LIB)
 clean:
 	rm -f $(ESTIMATE_OFILES) $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) $(COMMON_OFILES)
 	rm -f $(HISTUTIL_OFILES) $(COMMON_LIB) $(SIPNET_LIB)
-	rm -f estimate sensTest sipnet transpose subsetData bintotxt txttobin
+	rm -f estimate sipnet transpose subsetData bintotxt txttobin
 	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
 	rm -rf site/
 	rm -f .doxygen.stamp .mkdocs.stamp

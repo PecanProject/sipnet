@@ -33,6 +33,8 @@ sections to include in release notes:
 ### Changed
 
 - reorganized codebase, removed old sensitivity, ensemble, and fitting code as well as other study-specific code.
+- Breaking: removed obsolete run types senstest and montecarlo and associated code
+- Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
 
 ### Removed
 
