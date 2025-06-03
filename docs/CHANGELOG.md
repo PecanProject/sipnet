@@ -26,22 +26,26 @@ sections to include in release notes:
 
 ### Added
 
-- model structure and parameter documentation #42
-- Changelog #33
-- Build docs and push to gh-pages #41
+- Model structure and parameter documentation (#42)
+- Changelog (#33)
+- Build docs and push to gh-pages (#41)
+- events.out file for agronomic event handling (#57)
 
 ### Fixed
+
+- Fixed OOM issue when reading bad data (#38, #45)
 - Event order checks no longer only compare to first record (#74, #77)
 
 ### Changed
 
-- Reorganized codebase, removed old sensitivity, ensemble, and fitting code as well as other study-specific code. (#69, #70, #76, #82)
+- Reorganized codebase (#34, #37)
 - Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
 
 ### Removed
 
-- Breaking: removed obsolete run types senstest and montecarlo and associated code
-- Removed obsolete estimate program and associated code
+- Removed many experimental sites, data, and executable code as part of reorg (#34, #37)
+- Removed obsolete run types senstest and montecarlo and associated code (#69, #76)
+- Removed obsolete estimate program and associated code (#70, #82)
 
 ### Git SHA
 [TBD]
