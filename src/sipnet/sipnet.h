@@ -7,27 +7,10 @@
 #include "common/spatialParams.h"
 #include "outputItems.h"
 
-#define EXTRA_DATA_TYPES 0
-// Allow the outputting of extra data types (e.g. GPP, Rtot)?
-//  This can be used for outputting additional data types when
-//  computing means and standard deviations across a number of parameter sets
-
-// number of different possible data types that can be output - depends on how
-// EXTRA_DATA_TYPES is defined
-#if EXTRA_DATA_TYPES
-#define MAX_DATA_TYPES 20
-#else
-#define MAX_DATA_TYPES 5
-#endif
-
 // write to file which model components are turned on
 // (i.e. the value of the #DEFINE's at the top of file)
 // pre: out is open for writing
 void printModelComponents(FILE *out);
-
-// return an array[0..MAX_DATA_TYPES-1] of strings,
-// where arr[i] gives the name of data type i
-char **getDataTypeNames(void);
 
 /* do initializations that only have to be done once for all model runs:
    read in climate data and initial parameter values
@@ -67,19 +50,6 @@ void initEvents(char *eventFile, int numLocs, int printHeader);
 // de-allocates space for climate linked list
 // (needs to know number of locations)
 void cleanupModel(int numLocs);
-
-/* pre: outArray has dimensions of at least (# model steps) x numDataTypes
-   dataTypeIndices[0..numDataTypes-1] gives indices of data types to use (see
-   DATA_TYPES array in sipnet.h)
-
-   run model with parameter values in spatialParams, don't output to file
-   instead, output some variables at each step into an array
-   Run at spatial location given by loc (0-indexing)
-   Note: can only run at one location: to run at all locations, must put
-   runModelNoOut call in a loop
-*/
-void runModelNoOut(double **outArray, int numDataTypes, int dataTypeIndices[],
-                   SpatialParams *spatialParams, int loc);
 
 /* Do one run of the model using parameter values in spatialParams
    If out != NULL, output results to out
