@@ -18,25 +18,37 @@ sections to include in release notes:
 ### Changed
 
 ### Removed
+
+### Git SHA
 -->
 
 ## [Unreleased]
 
 ### Added
 
-- model structure and parameter documentation #42
-- Changelog #33
-- Build docs and push to gh-pages #41
+- Model structure and parameter documentation (#42)
+- Changelog (#33)
+- Build docs and push to gh-pages (#41)
+- events.out file for agronomic event handling (#57)
 
 ### Fixed
 
+- Fixed OOM issue when reading bad data (#38, #45)
+- Event order checks no longer only compare to first record (#74, #77)
+
 ### Changed
 
-- reorganized codebase, removed old sensitivity, ensemble, and fitting code as well as other study-specific code.
-- Breaking: removed obsolete run types senstest and montecarlo and associated code
+- Reorganized codebase (#34, #37)
 - Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
 
 ### Removed
+
+- Removed many experimental sites, data, and executable code as part of reorg (#34, #37)
+- Removed obsolete run types senstest and montecarlo and associated code (#69, #76)
+- Removed obsolete estimate program and associated code (#70, #82)
+
+### Git SHA
+[TBD]
 
 ## **SIPNET 1.3.0 - "Event Handler"**
 
@@ -53,6 +65,7 @@ v1.3.0 represents the initial development of support for agricultural management
 - Update Doxyfile
 - Add `make help`.
 
+### Git SHA
 8ff893e61d69d0374bdf0fa14d156fd621c40eb4
 
 ## **SIPNET 1.2.1 - "Add LICENSE and minor fixes"**
@@ -67,6 +80,7 @@ v1.3.0 represents the initial development of support for agricultural management
 - Minor fixes prior to agricultural management implementation.
 - Bug fix for output formatting (identified by @Qianyuxuan).
 
+### Git SHA
 0c77ce863ac61113740c759dbe502a74e2d64edf
 
 ## **SIPNET 1.2.0 - "fAPAR assimilation"**
@@ -79,6 +93,7 @@ v1.3.0 represents the initial development of support for agricultural management
 
 Zobitz, J.M., David J.P. Moore, Tristan Quaife, Bobby H. Braswell, Andrew Bergeson, Jeremy A. Anthony, and Russell K. Monson. 2014. “Joint Data Assimilation of Satellite Reflectance and Net Ecosystem Exchange Data Constrains Ecosystem Carbon Fluxes at a High-Elevation Subalpine Forest.” Agricultural and Forest Meteorology 195–196 (September):73–88. https://doi.org/10.1016/j.agrformet.2014.04.011.
 
+### Git SHA
 97a225956775035506f573a29c7022de8d7d269d
 
 ## **SIPNET 1.1.0 - "Roots and Microbes"**
@@ -123,6 +138,7 @@ The model was designed to simulate the carbon and water cycles of a forest ecosy
 - Shut down photosynthesis and foliar respiration when soil temperature < threshold.
 - Partition autotrophic and heterotrophic respiration.
 
+### Git SHA
 47d6546e245384dbda7e981a3bc8b729d4f756fc
 
 ### Publications

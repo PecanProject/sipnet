@@ -25,8 +25,6 @@
 
 // begin definitions for choosing different model structures
 // (1 -> true, 0 -> false)
-#define CSV_OUTPUT 0
-// output .out file as a CSV file
 
 // alternative transpiration methods modified by Dave Moore
 #define ALTERNATIVE_TRANS 0
@@ -558,8 +556,6 @@ static MeanTracker *meanFPAR;  // running mean of FPAR of some fixed time for
 
 static ClimateNode *climate;  // current climate
 static Fluxes fluxes;
-static double *outputPtrs[MAX_DATA_TYPES];  // pointers to different possible
-                                            // outputs
 
 #if EVENT_HANDLER
 static EventNode **events;
@@ -970,27 +966,6 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
 
   // trackers.fa, trackers.fr,
   // fluxes.rLeaf*climate->length,trackers.evapotranspiration
-}
-
-void outputStatecsv(FILE *out, int loc, int year, int day, double time) {
-  fprintf(out, "%8d , %4d , %3d , %5.2f , %8.2f , %8.2f , ", loc, year, day,
-          time, envi.plantWoodC, envi.plantLeafC);
-
-#if SOIL_MULTIPOOL
-  fprintf(out, "%8.2f ,", trackers.totSoilC);
-#else
-  fprintf(out, "%8.2f ,", envi.soil);
-#endif
-
-  fprintf(
-      out,
-      "%8.2f , %8.3f, %8.2f , %8.3f , %8.2f , %8.2f , %8.2f , %8.2f , %8.2f , "
-      "%8.3f , %8.3f , %8.3f, %8.3f , %8.3f , %8.3f %8.8f %8.4f %8.4f\n",
-      envi.litter, envi.litterWater, envi.soilWater, trackers.soilWetnessFrac,
-      envi.snow, trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
-      trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
-      trackers.rh, trackers.rtot, trackers.evapotranspiration,
-      fluxes.transpiration, trackers.fpar);
 }
 
 // de-allocate space used for climate linked list
@@ -2959,51 +2934,11 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader,
   }
 }
 
-/* pre: outArray has dimensions of at least (# model steps) x numDataTypes
-   dataTypeIndices[0..numDataTypes-1] gives indices of data types to use (see
-   DATA_TYPES array in sipnet.h)
-
-   run model with parameter values in spatialParams, don't output to file
-   instead, output some variables at each step into an array
-   Run at spatial location given by loc (0-indexing)
-   Note: can only run at one location: to run at all locations, must put
-   runModelNoOut call in a loop
-*/
-void runModelNoOut(double **outArray, int numDataTypes,
-                   int dataTypeIndices[],  // NOLINT (const int[])
-                   SpatialParams *spatialParams, int loc) {
-  int step = 0;
-  int outputNum;
-
-  setupModel(spatialParams, loc);
-
-#if EVENT_HANDLER
-  // Implementation TBD
-  printf(
-      "Event handler not yet implemented for running model with no output\n");
-  exit(1);
-#endif
-
-  // loop through every step of the model:
-  while (climate != NULL) {
-    updateState();
-
-    // loop through all desired outputs, putting each into outArray:
-    for (outputNum = 0; outputNum < numDataTypes; outputNum++) {
-      outArray[step][outputNum] = *(outputPtrs[dataTypeIndices[outputNum]]);
-    }
-
-    step++;
-    climate = climate->nextClim;
-  }
-}
-
 // write to file which model components are turned on
 // (i.e. the value of the #DEFINE's at the top of file)
 // pre: out is open for writing
 void printModelComponents(FILE *out) {
   fprintf(out, "Optional model components (0 = off, 1 = on):\n");
-  fprintf(out, "CSV_OUTPUT = %d\n", CSV_OUTPUT);
 
   fprintf(out, "ALTERNATIVE_TRANS = %d\n", ALTERNATIVE_TRANS);
   fprintf(out, "BALL_BERRY = %d\n", BALL_BERRY);
@@ -3039,115 +2974,6 @@ void printModelComponents(FILE *out) {
   fprintf(out, "MEAN_FPAR_DAYS = %d\n", MEAN_FPAR_DAYS);
 
   fprintf(out, "\n");
-}
-
-// NOTE: if change # of data types below, be sure to change MAX_DATA_TYPES in
-// sipnet.h other than that, to change return-able data types, just have to
-// change arrays in getDataTypeNames and setupOutputPointers
-
-// Can get some extra data types by defining EXTRA_DATA_TYPES in sipnet.h
-// Note that using extra data types will break the estimate program, since there
-// will be the wrong # of columns in the .dat file,
-//  but this can be used for outputting extra data types when computing means
-//  and standard dev's across a number of param. sets
-
-// return an array[0..MAX_DATA_TYPES-1] of strings,
-// where arr[i] gives the name of data type i
-
-//-----------------
-// Code for just FPAR data
-char **getDataTypeNames(void) {
-  // NOTE: data type names shouldn't have spaces in them (for determining
-  // corresponding input names in namelist input file, for estimate program)
-#if EXTRA_DATA_TYPES
-  static char *DATA_TYPES[MAX_DATA_TYPES] = {"EVAPOTRANSPIRATION",
-                                             "NEE",
-                                             "SOIL_WETNESS",
-                                             "FPAR"
-                                             "GPP",
-                                             "RTOT",
-                                             "RA",
-                                             "RH",
-                                             "NPP",
-                                             "YEARLY_GPP",
-                                             "YEARLY_RTOT",
-                                             "YEARLY_RA",
-                                             "YEARLY_RH",
-                                             "YEARLY_NPP",
-                                             "YEARLY_NEE",
-                                             "TOT_GPP",
-                                             "TOT_RTOT",
-                                             "TOT_RA",
-                                             "TOT_RH",
-                                             "TOT_NPP",
-                                             "TOT_NEE"};
-#else
-  static char *DATA_TYPES[MAX_DATA_TYPES] = {
-      "EVAPOTRANSPIRATION", "NEE", "SOIL_WETNESS", "FAPAR", "YEARLY_NEE"};
-#endif
-
-  return DATA_TYPES;
-}
-
-//-------------------
-// Code block for Dave's Howland data changes - need to modify back
-/* char **getDataTypeNames() {
-  // NOTE: data type names shouldn't have spaces in them (for determining
-corresponding input names in namelist input file, for estimate program)
-
-#if EXTRA_DATA_TYPES
-  static char *DATA_TYPES[MAX_DATA_TYPES] = {"EVAPOTRANSPIRATION", "NEE",
-"SOIL_WETNESS", "GPP", "R_SOIL", "ANNUAL_LITTER", "LAI", "PLANT_WOOD_C","RTOT",
-"RA", "RH", "NPP", "YEARLY_GPP", "YEARLY_RTOT", "YEARLY_RA", "YEARLY_RH",
-"YEARLY_NPP", "YEARLY_NEE", "TOT_GPP", "TOT_RTOT", "TOT_RA", "TOT_RH",
-"TOT_NPP", "TOT_NEE"}; #else static char *DATA_TYPES[MAX_DATA_TYPES] = {
-"EVAPOTRANSPIRATION", "NEE", "SOIL_WETNESS", "R_SOIL", "ANNUAL_LITTER", "LAI",
-"PLANT_WOOD_C" }; #endif
-
-  return DATA_TYPES;
-}
-*/
-
-// set outputPtrs array to point to appropriate values
-void setupOutputPointers(void) {
-  int i;  // keep track of current index into array
-
-  i = 0;
-  // we post-increment i every time we assign an array element
-  outputPtrs[i++] = &(trackers.evapotranspiration);
-  outputPtrs[i++] = &(trackers.nee);
-  outputPtrs[i++] = &(trackers.soilWetnessFrac);
-  // outputPtrs[i++] = &(trackers.rSoil);
-  // outputPtrs[i++] = &(trackers.yearlyLitter);
-  // outputPtrs[i++] = &(trackers.LAI);
-  // outputPtrs[i++] = &(trackers.plantWoodC);
-  outputPtrs[i++] = &(trackers.fpar);
-  outputPtrs[i++] = &(trackers.yearlyNee);  // NOLINT (i++ incremented val never
-                                            // used)
-#if EXTRA_DATA_TYPES
-
-  // outputPtrs[i++] = &(trackers.fpar);
-
-  outputPtrs[i++] = &(trackers.gpp);
-  outputPtrs[i++] = &(trackers.rtot);
-  outputPtrs[i++] = &(trackers.ra);
-  outputPtrs[i++] = &(trackers.rh);
-  outputPtrs[i++] = &(trackers.npp);
-
-  outputPtrs[i++] = &(trackers.yearlyGpp);
-  outputPtrs[i++] = &(trackers.yearlyRtot);
-  outputPtrs[i++] = &(trackers.yearlyRa);
-  outputPtrs[i++] = &(trackers.yearlyRh);
-  outputPtrs[i++] = &(trackers.yearlyNpp);
-  // outputPtrs[i++] = &(trackers.yearlyNee);
-
-  outputPtrs[i++] = &(trackers.totGpp);
-  outputPtrs[i++] = &(trackers.totRtot);
-  outputPtrs[i++] = &(trackers.totRa);
-  outputPtrs[i++] = &(trackers.totRh);
-  outputPtrs[i++] = &(trackers.totNpp);
-  outputPtrs[i++] = &(trackers.totNee);
-#endif
 }
 
 /* PRE: outputItems has been created with newOutputItems
@@ -3189,10 +3015,7 @@ int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
   strcat(spatialParamFile, "-spatial");
 
   numLocs = readParamData(spatialParams, paramFile, spatialParamFile);
-  // printf("ERROR: input filename %s ", climFile);
   *steps = readClimData(climFile, numLocs);
-
-  setupOutputPointers();
 
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
   meanGPP = newMeanTracker(0, MEAN_GPP_SOIL_DAYS, MEAN_GPP_SOIL_MAX_ENTRIES);
