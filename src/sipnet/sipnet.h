@@ -9,9 +9,7 @@
 
 #define EXTRA_DATA_TYPES 0
 // Allow the outputting of extra data types (e.g. GPP, Rtot)?
-// NOTE: Defining this flag as true will break the estimate program, since there
-// will not be enough columns in the .dat file
-//  However, this can be used for outputting additional data types when
+//  This can be used for outputting additional data types when
 //  computing means and standard deviations across a number of parameter sets
 
 // number of different possible data types that can be output - depends on how

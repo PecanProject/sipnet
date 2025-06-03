@@ -1,7 +1,6 @@
 # build artifacts and executables
 # /sipnet instead of just sipnet to NOT ignore test dirs
 *.o
-estimate
 /sipnet
 subsetData
 transpose

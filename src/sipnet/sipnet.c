@@ -3046,10 +3046,8 @@ void printModelComponents(FILE *out) {
 // change arrays in getDataTypeNames and setupOutputPointers
 
 // Can get some extra data types by defining EXTRA_DATA_TYPES in sipnet.h
-// Note that using extra data types will break the estimate program, since there
-// will be the wrong # of columns in the .dat file,
-//  but this can be used for outputting extra data types when computing means
-//  and standard dev's across a number of param. sets
+// This can be used for outputting extra data types when computing means
+// and standard dev's across a number of param. sets
 
 // return an array[0..MAX_DATA_TYPES-1] of strings,
 // where arr[i] gives the name of data type i

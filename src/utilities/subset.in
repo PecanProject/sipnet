@@ -30,6 +30,6 @@ NUM_DAYS = 30
 AGGREGATION = none
 ! Valid values: 'none', 'daily'
 ! Used to create OUTPUT_FILENAME.agg, a file containing # of time steps
-!  per model/data aggregation (corresponding to estimate.in :
-!  FILE_FOR_AGG)
+!  per model/data aggregation
+
 
