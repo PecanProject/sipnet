@@ -31,7 +31,7 @@ sections to include in release notes:
 - Build docs and push to gh-pages #41
 
 ### Fixed
-- Event order checks no longer only compare to first record
+- Event order checks no longer only compare to first record (#74, #77)
 
 ### Changed
 
