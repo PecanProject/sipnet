@@ -35,7 +35,7 @@ sections to include in release notes:
 
 ### Changed
 
-- Reorganized codebase, removed old sensitivity, ensemble, and fitting code as well as other study-specific code.
+- Reorganized codebase, removed old sensitivity, ensemble, and fitting code as well as other study-specific code. (#69, #70, #76, #82)
 - Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
 
 ### Removed
