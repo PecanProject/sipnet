@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['fertilizationparams_0',['FertilizationParams',['../da/dde/struct_fertilization_params.html',1,'']]],
-  ['fluxvars_1',['FluxVars',['../da/d95/struct_flux_vars.html',1,'']]]
+  ['harvestparams_0',['HarvestParams',['../de/d7c/struct_harvest_params.html',1,'']]]
 ];

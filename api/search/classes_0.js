@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['aggregateinfostruct_0',['AggregateInfoStruct',['../d8/d73/struct_aggregate_info_struct.html',1,'']]]
+  ['climatevars_0',['ClimateVars',['../d4/d5e/struct_climate_vars.html',1,'']]]
 ];

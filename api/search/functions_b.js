@@ -6,6 +6,5 @@ var searchData=
   ['openoutputitemfile_3',['openOutputItemFile',['../dd/d66/output_items_8c.html#a2e378a5d44a266a8db113c90cdef349b',1,'outputItems.c']]],
   ['outputheader_4',['outputHeader',['../dd/d09/sipnet_8c.html#afe7a3ea0ba3ae1f21f777e75be954d88',1,'sipnet.c']]],
   ['outputstate_5',['outputState',['../dd/d09/sipnet_8c.html#aafb7702a7e224d9e8402df7a2ca700b3',1,'sipnet.c']]],
-  ['outputstatecsv_6',['outputStatecsv',['../dd/d09/sipnet_8c.html#a09448fcaf9cde40650591db2d5725635',1,'sipnet.c']]],
-  ['outputtranspose_7',['outputTranspose',['../d6/d7a/transpose_8c.html#af6de32adecde5a94a2f1a9bb48848ccb',1,'transpose.c']]]
+  ['outputtranspose_6',['outputTranspose',['../d6/d7a/transpose_8c.html#af6de32adecde5a94a2f1a9bb48848ccb',1,'transpose.c']]]
 ];

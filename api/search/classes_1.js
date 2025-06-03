@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['changeableparaminfo_0',['ChangeableParamInfo',['../db/d5b/struct_changeable_param_info.html',1,'']]],
-  ['climatevars_1',['ClimateVars',['../d4/d5e/struct_climate_vars.html',1,'']]]
+  ['environment_0',['Environment',['../de/d30/struct_environment.html',1,'']]],
+  ['eventnode_1',['EventNode',['../d6/d43/struct_event_node.html',1,'']]]
 ];

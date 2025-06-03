@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['parameters_0',['Parameters',['../d0/dbf/struct_parameters.html',1,'']]],
-  ['phenologytrackersstruct_1',['PhenologyTrackersStruct',['../d4/d42/struct_phenology_trackers_struct.html',1,'']]],
-  ['plantingparams_2',['PlantingParams',['../d4/dbd/struct_planting_params.html',1,'']]]
+  ['singleoutputitemstruct_0',['SingleOutputItemStruct',['../dd/df9/struct_single_output_item_struct.html',1,'']]],
+  ['spatialparamsstruct_1',['SpatialParamsStruct',['../d3/dc0/struct_spatial_params_struct.html',1,'']]]
 ];

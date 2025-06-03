@@ -27,9 +27,9 @@ double \textbf{ get\+Possibly\+Spatial} (double $\ast$array, int loc, int \textb
 \item 
 void \textbf{ set\+Possibly\+Spatial} (double $\ast$array, int loc, double value, int \textbf{ is\+Spatial}, int length)
 \item 
-void \textbf{ read\+Spatial\+Values} (double $\ast$spatial\+Values, FILE $\ast$spatial\+Param\+File, char p\+Name[\textbf{ PARAM\+\_\+\+MAXNAME}], int \textbf{ num\+Locs})
+void \textbf{ read\+Spatial\+Values} (double $\ast$spatial\+Values, FILE $\ast$spatial\+Param\+File, char p\+Name[\textbf{ PARAM\+\_\+\+MAXNAME}], int num\+Locs)
 \item 
-\textbf{ Spatial\+Params} $\ast$ \textbf{ new\+Spatial\+Params} (int max\+Parameters, int \textbf{ num\+Locs})
+\textbf{ Spatial\+Params} $\ast$ \textbf{ new\+Spatial\+Params} (int max\+Parameters, int num\+Locs)
 \item 
 void \textbf{ initialize\+One\+Spatial\+Param} (\textbf{ Spatial\+Params} $\ast$spatial\+Params, char $\ast$name, double $\ast$external\+Loc, int is\+Required)
 \item 
@@ -136,10 +136,6 @@ Definition at line \textbf{ 419} of file \textbf{ spatial\+Params.\+c}.
 
 References \textbf{ get\+Spatial\+Param\+Max()}, and \textbf{ get\+Spatial\+Param\+Min()}.
 
-
-
-Referenced by \textbf{ metropolis()}.
-
 Here is the call graph for this function\+:
 \nopagebreak
 \begin{figure}[H]
@@ -240,7 +236,7 @@ References \textbf{ get\+Possibly\+Spatial()}, \textbf{ is\+Spatial()}, \textbf{
 
 
 
-Referenced by \textbf{ load\+Spatial\+Params()}, \textbf{ metropolis()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ write\+Chain\+Info()}, \textbf{ write\+Changeable\+Param\+Info()}, \textbf{ write\+Hist\+File()}, and \textbf{ write\+Hist\+File\+Bin()}.
+Referenced by \textbf{ load\+Spatial\+Params()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, and \textbf{ write\+Changeable\+Param\+Info()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -266,7 +262,7 @@ References \textbf{ One\+Spatial\+Param\+Struct\+::best}, \textbf{ get\+Possibly
 
 
 
-Referenced by \textbf{ write\+Best\+Spatial\+Params()}, \textbf{ write\+Chain\+Info()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+Referenced by \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -318,7 +314,7 @@ References \textbf{ get\+Possibly\+Spatial()}, \textbf{ is\+Spatial()}, \textbf{
 
 
 
-Referenced by \textbf{ metropolis()}, \textbf{ write\+Chain\+Info()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+Referenced by \textbf{ write\+Changeable\+Param\+Info()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -344,7 +340,7 @@ References \textbf{ One\+Spatial\+Param\+Struct\+::max}, and \textbf{ Spatial\+P
 
 
 
-Referenced by \textbf{ check\+Spatial\+Param()}, \textbf{ metropolis()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+Referenced by \textbf{ check\+Spatial\+Param()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
 
 \label{spatial_params_8c_af17b7d53571217e6a8ef835e21843c40} 
 \index{spatialParams.c@{spatialParams.c}!getSpatialParamMin@{getSpatialParamMin}}
@@ -362,7 +358,7 @@ References \textbf{ One\+Spatial\+Param\+Struct\+::min}, and \textbf{ Spatial\+P
 
 
 
-Referenced by \textbf{ check\+Spatial\+Param()}, \textbf{ metropolis()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+Referenced by \textbf{ check\+Spatial\+Param()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
 
 \label{spatial_params_8c_a41ddc15d343155417a74921c10e57606} 
 \index{spatialParams.c@{spatialParams.c}!getSpatialParamSigma@{getSpatialParamSigma}}
@@ -442,7 +438,7 @@ References \textbf{ One\+Spatial\+Param\+Struct\+::num\+Locs}, and \textbf{ Spat
 
 
 
-Referenced by \textbf{ get\+Possibly\+Spatial()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ metropolis()}, \textbf{ read\+Chain\+Info()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Possibly\+Spatial()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ write\+Best\+Spatial\+Params()}, \textbf{ write\+Chain\+Info()}, and \textbf{ write\+Changeable\+Param\+Info()}.
+Referenced by \textbf{ get\+Possibly\+Spatial()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ reset\+Spatial\+Params()}, \textbf{ set\+All\+Spatial\+Param\+Bests()}, \textbf{ set\+Possibly\+Spatial()}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, \textbf{ write\+Best\+Spatial\+Params()}, and \textbf{ write\+Changeable\+Param\+Info()}.
 
 \label{spatial_params_8c_ad416c787f51b053e50264b97cc56f425} 
 \index{spatialParams.c@{spatialParams.c}!loadSpatialParams@{loadSpatialParams}}
@@ -508,7 +504,7 @@ Definition at line \textbf{ 137} of file \textbf{ spatial\+Params.\+c}.
 
 
 
-References \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ Spatial\+Params\+Struct\+::max\+Parameters}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Parameters}, \textbf{ Spatial\+Params\+Struct\+::num\+Params\+Read}, \textbf{ Spatial\+Params\+Struct\+::parameters}, and \textbf{ Spatial\+Params\+Struct\+::read\+Indices}.
+References \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ Spatial\+Params\+Struct\+::max\+Parameters}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Parameters}, \textbf{ Spatial\+Params\+Struct\+::num\+Params\+Read}, \textbf{ Spatial\+Params\+Struct\+::parameters}, and \textbf{ Spatial\+Params\+Struct\+::read\+Indices}.
 
 
 
@@ -528,10 +524,6 @@ Definition at line \textbf{ 557} of file \textbf{ spatial\+Params.\+c}.
 
 References \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, and \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}.
 
-
-
-Referenced by \textbf{ metropolis()}.
-
 \label{spatial_params_8c_a86ceba1ec7971125c1acfbd00b866193} 
 \index{spatialParams.c@{spatialParams.c}!readSpatialParams@{readSpatialParams}}
 \index{readSpatialParams@{readSpatialParams}!spatialParams.c@{spatialParams.c}}
@@ -544,7 +536,7 @@ Definition at line \textbf{ 221} of file \textbf{ spatial\+Params.\+c}.
 
 
 
-References \textbf{ One\+Spatial\+Param\+Struct\+::best}, \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ check\+All\+Read()}, \textbf{ One\+Spatial\+Param\+Struct\+::guess}, \textbf{ One\+Spatial\+Param\+Struct\+::is\+Changeable}, \textbf{ One\+Spatial\+Param\+Struct\+::knob}, \textbf{ locate\+Param()}, \textbf{ One\+Spatial\+Param\+Struct\+::max}, \textbf{ One\+Spatial\+Param\+Struct\+::min}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ num\+Locs}, \textbf{ One\+Spatial\+Param\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Params\+Read}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ Spatial\+Params\+Struct\+::parameters}, \textbf{ Spatial\+Params\+Struct\+::read\+Indices}, \textbf{ read\+Spatial\+Values()}, \textbf{ SEPARATORS}, \textbf{ One\+Spatial\+Param\+Struct\+::sigma}, \textbf{ strip\+Comment()}, \textbf{ One\+Spatial\+Param\+Struct\+::value}, and \textbf{ value\+Set()}.
+References \textbf{ One\+Spatial\+Param\+Struct\+::best}, \textbf{ Spatial\+Params\+Struct\+::changeable\+Param\+Indices}, \textbf{ check\+All\+Read()}, \textbf{ One\+Spatial\+Param\+Struct\+::guess}, \textbf{ One\+Spatial\+Param\+Struct\+::is\+Changeable}, \textbf{ One\+Spatial\+Param\+Struct\+::knob}, \textbf{ locate\+Param()}, \textbf{ One\+Spatial\+Param\+Struct\+::max}, \textbf{ One\+Spatial\+Param\+Struct\+::min}, \textbf{ Spatial\+Params\+Struct\+::num\+Changeable\+Params}, \textbf{ One\+Spatial\+Param\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Params\+Read}, \textbf{ PARAM\+\_\+\+MAXNAME}, \textbf{ Spatial\+Params\+Struct\+::parameters}, \textbf{ Spatial\+Params\+Struct\+::read\+Indices}, \textbf{ read\+Spatial\+Values()}, \textbf{ SEPARATORS}, \textbf{ One\+Spatial\+Param\+Struct\+::sigma}, \textbf{ strip\+Comment()}, \textbf{ One\+Spatial\+Param\+Struct\+::value}, and \textbf{ value\+Set()}.
 
 
 
@@ -570,7 +562,7 @@ Definition at line \textbf{ 103} of file \textbf{ spatial\+Params.\+c}.
 
 
 
-References \textbf{ num\+Locs}, \textbf{ PARAM\+\_\+\+MAXNAME}, and \textbf{ strcmp\+Ignore\+Case()}.
+References \textbf{ PARAM\+\_\+\+MAXNAME}, and \textbf{ strcmp\+Ignore\+Case()}.
 
 
 
@@ -596,11 +588,7 @@ Definition at line \textbf{ 603} of file \textbf{ spatial\+Params.\+c}.
 
 
 
-References \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Parameters}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, and \textbf{ value\+Set()}.
-
-
-
-Referenced by \textbf{ reset()}.
+References \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Parameters}, \textbf{ set\+Spatial\+Param()}, \textbf{ set\+Spatial\+Param\+Best()}, \textbf{ set\+Spatial\+Param\+Knob()}, and \textbf{ value\+Set()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -637,10 +625,6 @@ Definition at line \textbf{ 522} of file \textbf{ spatial\+Params.\+c}.
 
 
 References \textbf{ get\+Spatial\+Param()}, \textbf{ is\+Spatial()}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Parameters}, \textbf{ set\+Spatial\+Param\+Best()}, and \textbf{ value\+Set()}.
-
-
-
-Referenced by \textbf{ metropolis()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -692,7 +676,7 @@ References \textbf{ is\+Spatial()}, \textbf{ Spatial\+Params\+Struct\+::num\+Loc
 
 
 
-Referenced by \textbf{ metropolis()}, \textbf{ read\+Chain\+Info()}, and \textbf{ reset\+Spatial\+Params()}.
+Referenced by \textbf{ reset\+Spatial\+Params()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -718,7 +702,7 @@ References \textbf{ One\+Spatial\+Param\+Struct\+::best}, \textbf{ is\+Spatial()
 
 
 
-Referenced by \textbf{ read\+Chain\+Info()}, \textbf{ reset\+Spatial\+Params()}, and \textbf{ set\+All\+Spatial\+Param\+Bests()}.
+Referenced by \textbf{ reset\+Spatial\+Params()}, and \textbf{ set\+All\+Spatial\+Param\+Bests()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -744,7 +728,7 @@ References \textbf{ is\+Spatial()}, \textbf{ One\+Spatial\+Param\+Struct\+::knob
 
 
 
-Referenced by \textbf{ metropolis()}, \textbf{ read\+Chain\+Info()}, and \textbf{ reset\+Spatial\+Params()}.
+Referenced by \textbf{ reset\+Spatial\+Params()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -784,11 +768,7 @@ Definition at line \textbf{ 657} of file \textbf{ spatial\+Params.\+c}.
 
 
 
-References \textbf{ get\+Num\+Params\+Read()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ get\+Spatial\+Param\+Sigma()}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ One\+Spatial\+Param\+Struct\+::name}, \textbf{ num\+Locs}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ open\+File()}, \textbf{ Spatial\+Params\+Struct\+::parameters}, and \textbf{ Spatial\+Params\+Struct\+::read\+Indices}.
-
-
-
-Referenced by \textbf{ main()}.
+References \textbf{ get\+Num\+Params\+Read()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ get\+Spatial\+Param\+Sigma()}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ One\+Spatial\+Param\+Struct\+::name}, \textbf{ Spatial\+Params\+Struct\+::num\+Locs}, \textbf{ open\+File()}, \textbf{ Spatial\+Params\+Struct\+::parameters}, and \textbf{ Spatial\+Params\+Struct\+::read\+Indices}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -811,10 +791,6 @@ Definition at line \textbf{ 708} of file \textbf{ spatial\+Params.\+c}.
 
 
 References \textbf{ get\+Num\+Params\+Read()}, \textbf{ get\+Spatial\+Param()}, \textbf{ get\+Spatial\+Param\+Best()}, \textbf{ get\+Spatial\+Param\+Guess()}, \textbf{ get\+Spatial\+Param\+Knob()}, \textbf{ get\+Spatial\+Param\+Max()}, \textbf{ get\+Spatial\+Param\+Min()}, \textbf{ is\+Changeable()}, \textbf{ is\+Spatial()}, \textbf{ One\+Spatial\+Param\+Struct\+::name}, \textbf{ Spatial\+Params\+Struct\+::parameters}, and \textbf{ Spatial\+Params\+Struct\+::read\+Indices}.
-
-
-
-Referenced by \textbf{ metropolis()}, and \textbf{ reset()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
