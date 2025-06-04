@@ -341,7 +341,7 @@ $$
   \frac{dN_\text{min}}{{dt}} = 
   F^N_\text{litter,min} +
   F^N_\text{soil,min} +
-  F^N_\text{fix} - 
+  F^N_\text{fix} +  
   F^N_\text{fert,min} - 
   F^N_\mathrm{vol} - 
   F^N_\text{leach} - 
