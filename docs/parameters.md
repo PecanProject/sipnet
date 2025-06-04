@@ -479,7 +479,7 @@ Notes:
 | org-N     |  5  |  Y   | g N / m2                                                        |
 | org-C     |  6  |  Y   | g C / m2                                                        |
 | min-N     |  7  |  Y   | g N / m2 (NH4+NO3 in one pool model; NH4 in two pool model)     |
-| min-N2    |  8  |  Y*  | g N / m2 (*not unused in one pool model, NO3 in two pool model) |
+<!--| min-N2    |  8  |  Y*  | g N / m2 (*not unused in one pool model, NO3 in two pool model) |-->
 
   - model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N or NH4.
   - notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools 
