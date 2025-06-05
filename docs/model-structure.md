@@ -341,7 +341,7 @@ $$
   \frac{dN_\text{min}}{{dt}} = 
   F^N_\text{litter,min} +
   F^N_\text{soil,min} +
-  F^N_\text{fix} - 
+  F^N_\text{fix} +  
   F^N_\text{fert,min} - 
   F^N_\mathrm{vol} - 
   F^N_\text{leach} - 
@@ -382,7 +382,7 @@ $$
 F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} \tag{18}\label{eq:n_leach}
 $$
 
-Where $F^N_\text{leach}$ is the fraction of $N_{min}$ in soil water that is available to be leached, $F^W_{drainage}$ is drainage.
+Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available to be leached, $F^W_{drainage}$ is drainage.
 
 ### $\frak{Nitrogen \ Fixation \ F^N_\text{fix}}$
 

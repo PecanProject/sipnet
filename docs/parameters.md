@@ -88,7 +88,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 4  | $C_{\text{soil},0}$        | soilInit        | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
 | 5  | $W_{\text{litter},0}$      | litterWFracInit |                                                                          | unitless                                             | fraction of litterWHC                                                              |
 | 6  | $W_{\text{soil},0}$        | soilWFracInit   |                                                                          | unitless                                             | fraction of soilWHC                                                                |
-|    | $N_{\text{soil},0}$        |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
+|    | $N_{\text{min},0}$         |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
 |    | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
 |    | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
 |    | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                      |                                                                                    |
@@ -464,12 +464,14 @@ For managed ecosystems, the following inputs are provided in a file named `event
 Model representation: an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.
 
 Specifically: 
+
 - amount is listed as cm/d, but as events are specified per-day, this is treated as `cm` of water added on that day
 - For method=soil, this amount of water is added directly to the `soilWater` state variable 
 - For method=canopy, a fraction of the irrigation water (determined by input param `immedEvapFrac`) is added to the flux state variable `immedEvap`, with the remainder going to `soilWater`.
 - Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.
 
 Notes:
+
 - irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.
 
 #### Fertilization Events
@@ -478,10 +480,11 @@ Notes:
 |-----------|:---:|:----:|-----------------------------------------------------------------|
 | org-N     |  5  |  Y   | g N / m2                                                        |
 | org-C     |  6  |  Y   | g C / m2                                                        |
-| min-N     |  7  |  Y   | g N / m2 (NH4+NO3 in one pool model; NH4 in two pool model)     |
-| min-N2    |  8  |  Y*  | g N / m2 (*not unused in one pool model, NO3 in two pool model) |
+| min-N     |  7  |  Y   | g N / m2                                                        | <!--(NH4+NO3 in one pool model; NH4 in two pool model)-->
+<!--| min-N2    |  8  |  Y*  | g N / m2 (*not unused in one pool model, NO3 in two pool model) |-->
 
-  - model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N or NH4.
+  - model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.
+<!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
   - notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools 
 
 #### Tillage Events
@@ -529,8 +532,8 @@ Notes:
 #### Example of `events.in` file:
 
 ```
-1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
-1  2022  40  fert   10 5 0 0     # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
+1  2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
+1  2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
 1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
 1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
