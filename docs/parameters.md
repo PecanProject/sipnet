@@ -536,9 +536,9 @@ Notes:
 #### Example of `events.in` file:
 
 ```
+2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
 2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
 2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
-2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
 2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
 2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
