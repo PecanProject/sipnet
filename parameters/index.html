@@ -1494,9 +1494,25 @@
 </tr>
 <tr>
 <td></td>
-<td><span class="arithmatex">\(N_{\text{soil},0}\)</span></td>
+<td><span class="arithmatex">\(N_{\text{org, litter},0}\)</span></td>
+<td></td>
+<td>Initial litter organic nitrogen content</td>
+<td>g N m<span class="arithmatex">\(^{-2}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><span class="arithmatex">\(N_{\text{org, soil},0}\)</span></td>
 <td></td>
 <td>Initial soil organic nitrogen content</td>
+<td>g N m<span class="arithmatex">\(^{-2}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><span class="arithmatex">\(N_{\text{min, soil},0}\)</span></td>
+<td></td>
+<td>Initial soil mineral nitrogen content</td>
 <td>g N m<span class="arithmatex">\(^{-2}\)</span></td>
 <td></td>
 </tr>
@@ -2748,13 +2764,17 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 </tbody>
 </table>
 <p>Model representation: an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.</p>
-<p>Specifically: 
-- amount is listed as cm/d, but as events are specified per-day, this is treated as <code>cm</code> of water added on that day
-- For method=soil, this amount of water is added directly to the <code>soilWater</code> state variable 
-- For method=canopy, a fraction of the irrigation water (determined by input param <code>immedEvapFrac</code>) is added to the flux state variable <code>immedEvap</code>, with the remainder going to <code>soilWater</code>.
-- Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.</p>
-<p>Notes:
-- irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.</p>
+<p>Specifically: </p>
+<ul>
+<li>amount is listed as cm/d, but as events are specified per-day, this is treated as <code>cm</code> of water added on that day</li>
+<li>For method=soil, this amount of water is added directly to the <code>soilWater</code> state variable </li>
+<li>For method=canopy, a fraction of the irrigation water (determined by input param <code>immedEvapFrac</code>) is added to the flux state variable <code>immedEvap</code>, with the remainder going to <code>soilWater</code>.</li>
+<li>Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.</li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li>irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.</li>
+</ul>
 <h4 id="fertilization-events">Fertilization Events<a class="headerlink" href="#fertilization-events" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -2782,18 +2802,17 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 <td>min-N</td>
 <td style="text-align: center;">7</td>
 <td style="text-align: center;">Y</td>
-<td>g N / m2 (NH4+NO3 in one pool model; NH4 in two pool model)</td>
-</tr>
-<tr>
-<td>min-N2</td>
-<td style="text-align: center;">8</td>
-<td style="text-align: center;">Y*</td>
-<td>g N / m2 (*not unused in one pool model, NO3 in two pool model)</td>
+<td>g N / m2</td>
 </tr>
 </tbody>
 </table>
+<!--| min-N2    |  8  |  Y*  | g N / m2 (*not unused in one pool model, NO3 in two pool model) |-->
+
 <ul>
-<li>model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N or NH4.</li>
+<li>model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.</li>
+</ul>
+<!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
+<ul>
 <li>notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools </li>
 </ul>
 <h4 id="tillage-events">Tillage Events<a class="headerlink" href="#tillage-events" title="Permanent link">&para;</a></h4>
@@ -2918,8 +2937,8 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 <li>root biomass is only removed for root crops</li>
 </ul>
 <h4 id="example-of-eventsin-file">Example of <code>events.in</code> file:<a class="headerlink" href="#example-of-eventsin-file" title="Permanent link">&para;</a></h4>
-<pre><code>1  2022  40  irrig  5   1        # 5cm canopy irrigation on day 40
-1  2022  40  fert   10 5 0 0     # fertilized with 10 g / m2 NO3-N and 5 g / m2 NH4-N on day 40
+<pre><code>1  2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
+1  2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
 1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
 1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
 1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
