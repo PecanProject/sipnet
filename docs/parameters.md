@@ -88,11 +88,13 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 4  | $C_{\text{soil},0}$        | soilInit        | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
 | 5  | $W_{\text{litter},0}$      | litterWFracInit |                                                                          | unitless                                             | fraction of litterWHC                                                              |
 | 6  | $W_{\text{soil},0}$        | soilWFracInit   |                                                                          | unitless                                             | fraction of soilWHC                                                                |
-|    | $N_{\text{soil},0}$        |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
-|    | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
-|    | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
-|    | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                      |                                                                                    |
-|    | $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                  |                                                                                    |
+| 7  | $N_{\text{org, litter},0}$ |                 | Initial litter organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
+| 8  | $N_{\text{org, soil},0}$   |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
+| 9  | $N_{\text{min},0}$         |                 | Initial soil mineral nitrogen content                                    | g N m$^{-2}$                                         |  
+| 10 | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
+| 11 | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
+| 12 | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                      |                                                                                    |
+| 13 | $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                  |                                                                                    |
 
 <!--not used in CCMMF
 
@@ -139,29 +141,29 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Phenology-related parameters
 
-|    | Symbol             | Parameter Name   | Definition                                                              | Units                              | notes                                          |
-| -- | ------------------ | ---------------- | ----------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------------- |
-| 17 | $D_{\text{on}}$  | leafOnDay        | Day of year when leaves appear                                          | day of year                        |                                                |
-| 18 |                    | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                    |                                                |
-| 19 |                    | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                    |                                                |
-| 20 | $D_{\text{off}}$ | leafOffDay       | Day of year for leaf drop                                               |                                    |                                                |
-| 21 |                    | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$                 |                                                |
-| 22 |                    | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                    |                                                |
-| 23 | $\alpha_\text{leaf}$       | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                    |                                                |
-| 24 | $K_{leaf}$    | leafTurnoverRate | average turnover rate of leaves                                         | fraction per day                   | read in as per-year rate                       |
-|    | $L_{\text{max}}$ |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
+|    | Symbol               | Parameter Name   | Definition                                                              | Units                              | notes                                          |
+| -- |----------------------| ---------------- | ----------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------------- |
+| 17 | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                        |                                                |
+| 18 |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                    |                                                |
+| 19 |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                    |                                                |
+| 20 | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                    |                                                |
+| 21 |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$                 |                                                |
+| 22 |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                    |                                                |
+| 23 | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                    |                                                |
+| 24 | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | fraction per day                   | read in as per-year rate                       |
+|    | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
 
 
 ### Allocation parameters
 
-|    | Symbol                    | Parameter Name      | Definition                                     | Units | notes              |
-|----|---------------------------|---------------------|------------------------------------------------|-------|--------------------|
-| 64 |                           | fineRootFrac        | fraction of wood carbon allocated to fine root |       |                    |
-| 65 |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |       |                    |
-| 66 | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |       |                    |
-| 67 | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |       |                    |
-<!--| 68 |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
-| 69 |                           | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
+|      | Symbol                     | Parameter Name      | Definition                                     | Units | notes              |
+|------|----------------------------|---------------------|------------------------------------------------|-------|--------------------|
+| 64   |                            | fineRootFrac        | fraction of wood carbon allocated to fine root |       |                    |
+| 65   |                            | coarseRootFrac      | fraction of wood carbon that is coarse root    |       |                    |
+| 66   | $\alpha_\text{fine root}$  | fineRootAllocation  | fraction of NPP allocated to fine roots        |       |                    |
+| 67   | $\alpha_\text{wood}$       | woodAllocation      | fraction of NPP allocated to wood              |       |                    |
+ <!-- | 68                         |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
+| 68   |                            | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
 -->
 
 ### Autotrophic respiration parameters
@@ -389,25 +391,25 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 
 ### Climate
 
-For each step of the model, for each location, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns:
+For each step of the model, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns:
 
 | col | parameter | description | units | notes |
-| -- | ----------- | --------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 1  | loc         | spatial location index          |               | maps to param-spatial file, can be 0 for a single site, as when used by PEcAn |
-| 2  | year        | year of start of this timestep  |               | integer, e.g. 2010|
-| 3  | day         | day of start of this timestep   |               | integer where 1 = Jan 1|
-| 4  | time        | time of start of this timestep  | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
-| 5  | length      | length of this timestep         | days          | variable-length timesteps allowed, typically not used |
-| 6  | tair        | avg. air temp for this time step| degrees Celsius |     |
-| 7  | tsoil       | average soil temperature for this time step  | degrees Celsius| can be estimated from Tair  |
-| 8  | par         | average photosynthetically active radiation (PAR) for this time step  | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$  | input is in Einsteins \* m^-2 ground area, summed over entire time step |
-| 9  | precip      | total precip. for this time step| cm            | input is in mm; water equivilant - either rain or snow   |
-| 10 | vpd         | average vapor pressure deficit   | kPa          | input is in Pa, can be calculated from air temperature and relative humidity.|
-| 11 | vpdSoil     | average vapor pressure deficit between soil and air | kPa | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
-| 12 | vPress      | average vapor pressure in canopy airspace | kPa | input is in Pa |
-| 13 | wspd        | avg. wind speed                   | m/s         |                |
-| 14 | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
+|-----| ----------- | --------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 1   | year        | year of start of this timestep  |               | integer, e.g. 2010|
+| 2   | day         | day of start of this timestep   |               | integer where 1 = Jan 1|
+| 3   | time        | time of start of this timestep  | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
+| 4   | length      | length of this timestep         | days          | variable-length timesteps allowed, typically not used |
+| 5   | tair        | avg. air temp for this time step| degrees Celsius |     |
+| 6   | tsoil       | average soil temperature for this time step  | degrees Celsius| can be estimated from Tair  |
+| 7   | par         | average photosynthetically active radiation (PAR) for this time step  | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$  | input is in Einsteins \* m^-2 ground area, summed over entire time step |
+| 8   | precip      | total precip. for this time step| cm            | input is in mm; water equivilant - either rain or snow   |
+| 9   | vpd         | average vapor pressure deficit   | kPa          | input is in Pa, can be calculated from air temperature and relative humidity.|
+| 10  | vpdSoil     | average vapor pressure deficit between soil and air | kPa | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
+| 11  | vPress      | average vapor pressure in canopy airspace | kPa | input is in Pa |
+| 12  | wspd        | avg. wind speed                   | m/s         |                |
+| 13  | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
 
+Note: An older format for this file included location as the first column. 
 #### Example `sipnet.clim` file:
 
 Column names are not used, but are:

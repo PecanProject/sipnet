@@ -1,13 +1,13 @@
 CC=gcc
 LD=gcc
 AR=ar -rs
-CFLAGS=-Wall -Werror -g -Isrc
+CFLAGS=-Wall -Werror -g -Isrc -Wno-c2x-extensions
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
 
 # Main executables
-COMMON_CFILES:=util.c namelistInput.c spatialParams.c
+COMMON_CFILES:=util.c namelistInput.c modelParams.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
 

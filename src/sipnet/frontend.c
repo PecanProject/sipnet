@@ -11,7 +11,7 @@
 
 #include "common/exitCodes.h"
 #include "common/namelistInput.h"
-#include "common/spatialParams.h"
+#include "common/modelParams.h"
 #include "common/util.h"
 
 #include "events.h"
@@ -27,8 +27,6 @@
 #define INPUT_FILE "sipnet.in"
 #define DO_MAIN_OUTPUT 1
 #define DO_SINGLE_OUTPUTS 0
-// Default is run at all locations
-#define LOC (-1)
 
 void checkRuntype(NamelistInputs *namelist, const char *inputFile) {
   NamelistInputItem *inputItem = locateNamelistInputItem(namelist, "RUNTYPE");
@@ -61,11 +59,14 @@ int main(int argc, char *argv[]) {
   char inputFile[INPUT_MAXNAME] = INPUT_FILE;
   NamelistInputs *namelistInputs;
 
+  // for compatibility
+  int loc;
+
   FILE *out;
   int option;  // reading in optional arguments
 
-  SpatialParams *spatialParams;  // the parameters used in the model (possibly
-                                 // spatially-varying)
+  ModelParams *modelParams;  // the parameters used in the model (possibly
+                             // spatially-varying)
   OutputItems *outputItems;  // structure to hold information for output to
                              // single-variable files (if doSingleOutputs is
                              // true)
@@ -76,10 +77,6 @@ int main(int argc, char *argv[]) {
                                       // variables?
   int doSingleOutputs = DO_SINGLE_OUTPUTS;  // do we do extra outputting of
                                             // single-variable files?
-  int loc = LOC;  // location to run at (set through optional -l argument)
-  int numLocs;  // read in initModel
-  int *steps;  // number of time steps in each location
-
   int printHeader = HEADER;
 
   char fileName[FILE_MAXNAME];
@@ -114,7 +111,7 @@ int main(int argc, char *argv[]) {
   namelistInputs = newNamelistInputs();
   addNamelistInputItem(namelistInputs, "RUNTYPE", STRING_TYPE, runtype, RUNTYPE_MAXNAME);
   addNamelistInputItem(namelistInputs, "FILENAME", STRING_TYPE, fileName, FILE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "LOCATION", INT_TYPE, &loc,0);
+  addNamelistInputItem(namelistInputs, "LOCATION", INT_TYPE, &loc, 0);
   addNamelistInputItem(namelistInputs, "DO_MAIN_OUTPUT", INT_TYPE, &doMainOutput, 0);
   addNamelistInputItem(namelistInputs, "DO_SINGLE_OUTPUTS", INT_TYPE, &doSingleOutputs, 0);
   addNamelistInputItem(namelistInputs, "PRINT_HEADER", INT_TYPE, &printHeader,0);
@@ -135,10 +132,10 @@ int main(int argc, char *argv[]) {
   strcat(paramFile, ".param");
   strcpy(climFile, fileName);
   strcat(climFile, ".clim");
-  numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
+  initModel(&modelParams, paramFile, climFile);
 
 #if EVENT_HANDLER
-  initEvents(EVENT_IN_FILE, numLocs, printHeader);
+  initEvents(EVENT_IN_FILE, printHeader);
 #endif
 
   if (doSingleOutputs) {
@@ -157,18 +154,16 @@ int main(int argc, char *argv[]) {
     out = NULL;
   }
 
-  runModelOutput(out, outputItems, printHeader, spatialParams, loc);
+  runModelOutput(out, outputItems, printHeader);
 
   if (doMainOutput) {
     fclose(out);
   }
 
-  cleanupModel(numLocs);
-  deleteSpatialParams(spatialParams);
+  cleanupModel();
   if (outputItems != NULL) {
     deleteOutputItems(outputItems);
   }
-  free(steps);
 
   return 0;
 }
