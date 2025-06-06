@@ -592,16 +592,15 @@ void readClimData(const char *climFile) {
   // for format check
   int firstLoc, dummyLoc;
   int expectedNumCols = NUM_CLIM_FILE_COLS;
-  ssize_t numCharsRead;
-  char *firstLine;
+  char *firstLine = NULL;
+  size_t lineCap = 0;
   int hasLoc = 0;
 
   in = openFile(climFile, "r");
 
   // Check format of first line to see if location is still specified (we will
   // ignore it if so)
-  numCharsRead = getline(&firstLine, 0, in);
-  if (numCharsRead == -1) {  // EOF
+  if (getline(&firstLine, &lineCap, in) == -1) {  // EOF
     printf("Error: no climate data in %s\n", climFile);
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
@@ -690,7 +689,7 @@ void readClimData(const char *climFile) {
       // location (currLoc), make sure new location is valid, and act
       // accordingly
 
-      if (status != NUM_CLIM_FILE_COLS) {
+      if (status != expectedNumCols) {
         printf("Error reading climate file: bad data near year %d day %d\n",
                year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
