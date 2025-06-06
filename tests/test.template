@@ -29,13 +29,16 @@ int main() {
   int status;
   status = init();
   if (status) {
-    printf("Test initialization failed with status %d\b", status);
+    printf("FAILED <testname> initialization with status %d\b", status);
   }
 
   status = run();
   if (status) {
-    printf("Test run failed with status %d\b", status);
+    printf("FAILED <testname> with status %d\n", status);
+    exit(status);
   }
+
+  printf("PASSED <testname>\n");
 
   cleanup();
 }

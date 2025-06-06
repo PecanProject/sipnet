@@ -57,45 +57,6 @@ void runLoc(void) {
   climate = climStart;
 }
 
-int checkOutputFile(const char *outputFile) {
-  FILE *file2 = fopen(outputFile, "rb");
-  FILE *file1 = fopen("events.out", "rb");
-
-  if (file1 == NULL || file2 == NULL) {
-    printf("Error opening files\n");
-    if (file1) {
-      fclose(file1);
-    }
-    if (file2) {
-      fclose(file2);
-    }
-    return 1;
-  }
-
-  int char1, char2;
-  int status = 0;
-
-  while (1) {
-    char1 = fgetc(file1);
-    char2 = fgetc(file2);
-
-    if (char1 == EOF && char2 == EOF) {
-      break;
-    } else if (char1 == EOF || char2 == EOF || char1 != char2) {
-      char command[80];
-      sprintf(command, "diff %s %s", outputFile, "events.out");
-      system(command);
-      status = 1;
-      break;
-    }
-  }
-
-  fclose(file1);
-  fclose(file2);
-
-  return status;
-}
-
 int runTest(const char *prefix, int header) {
   int status = 0;
 
@@ -111,7 +72,7 @@ int runTest(const char *prefix, int header) {
   runLoc();
 
   closeEventOutFile(eventOutFile);
-  status = checkOutputFile(output);
+  status = diffFiles(output, "events.out");
 
   return status;
 }
