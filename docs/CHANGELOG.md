@@ -46,6 +46,9 @@ sections to include in release notes:
 - Removed many experimental sites, data, and executable code as part of reorg (#34, #37)
 - Removed obsolete run types senstest and montecarlo and associated code (#69, #76)
 - Removed obsolete estimate program and associated code (#70, #82)
+- Removed multi-site support:
+    - Output files no longer have a location column
+    - Input climate files with location as the first column can still be read, though a warning will be thrown. Climate files with multiple location will error.
 
 ### Git SHA
 [TBD]

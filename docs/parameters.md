@@ -409,7 +409,10 @@ For each step of the model, the following inputs are needed. These are provided 
 | 12  | wspd        | avg. wind speed                   | m/s         |                |
 | 13  | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
 
-Note: An older format for this file included location as the first column. 
+Note: An older format for this file included location as the first column. Files with this older format can still be read by sipnet:
+* SIPNET will print a warning indicating that it is ignoring the location column
+* If there is more than one location specified in the file, SIPNET will error and halt
+
 #### Example `sipnet.clim` file:
 
 Column names are not used, but are:
@@ -442,18 +445,17 @@ For managed ecosystems, the following inputs are provided in a file named `event
 
 | col   | parameter   | description                        | units       | notes                                 |
 |-------|-------------|------------------------------------|-------------|---------------------------------------|
-| 1     | loc         | spatial location index             |             | maps to param-spatial file            |
-| 2     | year        | year of start of this timestep     |             | e.g. 2010                             |
-| 3     | day         | day of start of this timestep      | Day of year | 1 = Jan 1                             |
-| 4     | event_type  | type of event                      |             | one of plant, harv, till, fert, irrig |
-| 5...n | event_param | parameter associated with event    |             | see table below                       |
+| 1     | year        | year of start of this timestep     |             | e.g. 2010                             |
+| 2     | day         | day of start of this timestep      | Day of year | 1 = Jan 1                             |
+| 3     | event_type  | type of event                      |             | one of plant, harv, till, fert, irrig |
+| 4...n | event_param | parameter associated with event    |             | see table below                       |
 
 - Agronomic events are stored in `events.in`, one event per row
-- Events in the file are sorted first by location, and then chronologically
+- Events in the file must be sorted chronologically
 - Events are specified by year and day (no hourly timestamp)
-- It is assumed that there is one (or more) records in the climate file for each location/day that appears in the events file
+- It is assumed that there is one (or more) records in the climate file for each year/day that appears in the events file
   - SIPNET will throw an error if it finds an event with no corresponding climate record
-- Events are processed with the first climate record that occurs for the relevant location/day as an instantaneous one-time change
+- Events are processed with the first climate record that occurs for the relevant year/day as an instantaneous one-time change
   - We may need events with duration later, spec TBD. Tillage is likely in this bucket.
 - The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required
 
@@ -534,11 +536,11 @@ Notes:
 #### Example of `events.in` file:
 
 ```
-1  2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
-1  2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
-1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
-1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
-1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
+2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
+2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
+2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
+2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
+2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 
 #### Events output
@@ -546,57 +548,57 @@ Notes:
 SIPNET will create a file named `events.out` when event handling is enabled. 
 
 
-This file will have one row for each agronomic event that is processed. Each row lists location, 
-time, event type, and parameter name/value pairs for all state variables that the event
+This file will have one row for each agronomic event that is processed. Each row lists year, 
+day, event type, and parameter name/value pairs for all state variables that the event
 affects. 
 
 
 Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
 up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
 ```
-loc  year  day  type     param_name=delta[,param_name=delta,...]
-0    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
-0    2024   70  irrig    envi.soilWater=5.00
-0    2024  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
-1    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
-1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
-1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+year  day  type     param_name=delta[,param_name=delta,...]
+2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
+2023   70  irrig    envi.soilWater=5.00
+2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
+2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
+2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 ```
 
 _Note: `events.out` logs all parameters changed by an event for debugging and testing purposes; 
 For downstream analyses that only need the date and event type, `events.in` is equivalent and easier to parse._
+
 ## Outputs
 
-|    | Symbol      | Parameter Name     | Definition                     | Units       |
-| -- | ----------- | ------------------ | ------------------------------ | ----------- |
-| 1  |             |loc                 | spatial location index         |             |
-| 2  |             |year                | year of start of this timestep |             |
-| 3  |             |day                 | day of start of this timestep  |             |
-| 4  |             |time                | time of start of this timestep |             |
-| 5  |             |plantWoodC          | carbon in wood                 | g C/m$^2$   |
-| 6  |             |plantLeafC          | carbon in leaves               | g C/m$^2$   |
-| 7  |             |soil                | carbon in mineral soil         | g C/m$^2$   |
-| 8  |             |microbeC            | carbon in soil microbes        | g C/m$^2$   |
-| 9  |             |coarseRootC         | carbon in coarse roots         | g C/m$^2$   |
-| 10 |             |fineRootC           | carbon in fine roots           | g C/m$^2$   |
-| 11 |             |litter              | carbon in litter               | g C/m$^2$   |
-| 12 |             |litterWater         | moisture in litter layer       | cm          |
-| 13 |             |soilWater           | moisture in soil               | cm          |
-| 14 |$f_\text{WHC}$|soilWetnessFrac    | moisture in soil as fraction   |             |
-| 15 |             |snow                | snow water                     | cm          |
-| 16 |             |npp                 | net primary production         | g C/m$^2$   |
-| 17 |             |nee                 | net ecosystem production       | g C/m$^2$   |
-| 18 |             |cumNEE              | cumulative nee                 | g C/m$^2$   |
-| 19 |  $GPP$      |gpp                 | gross ecosystem production     | g C/m$^2$   |
-| 20 |  $R_{A,\text{above}}$ |rAboveground  | plant respiration above ground | g C/m$^2$   |
-| 21 |  $R_H$      |rSoil               | soil respiration               | g C/m$^2$   |
-| 22 |  $R_{A\text{, root}}$  |rRoot               | root respiration     | g C/m$^2$   |
-| 23 |  $R$        |rtot                | total respiration              | g C/m$^2$   |
-| 24 |             |fluxestranspiration | transpiration                  | cm          |
-|    | $F^N_\text{vol}$ |fluxesn2o      | Nitrous Oxide flux             | g N/m$^2$ / timestep |
-|    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
-|    | $F^N_\text{vol}$ |fluxesn2o      | Nitrous Oxide flux             | g N/m$^2$ / timestep |
-|    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
+|    | Symbol               | Parameter Name      | Definition                     | Units                |
+|----|----------------------|---------------------|--------------------------------|----------------------|
+| 1  |                      | year                | year of start of this timestep |                      |
+| 2  |                      | day                 | day of start of this timestep  |                      |
+| 3  |                      | time                | time of start of this timestep |                      |
+| 4  |                      | plantWoodC          | carbon in wood                 | g C/m$^2$            |
+| 5  |                      | plantLeafC          | carbon in leaves               | g C/m$^2$            |
+| 6  |                      | soil                | carbon in mineral soil         | g C/m$^2$            |
+| 7  |                      | microbeC            | carbon in soil microbes        | g C/m$^2$            |
+| 8  |                      | coarseRootC         | carbon in coarse roots         | g C/m$^2$            |
+| 9  |                      | fineRootC           | carbon in fine roots           | g C/m$^2$            |
+| 10 |                      | litter              | carbon in litter               | g C/m$^2$            |
+| 11 |                      | litterWater         | moisture in litter layer       | cm                   |
+| 12 |                      | soilWater           | moisture in soil               | cm                   |
+| 13 | $f_\text{WHC}$       | soilWetnessFrac     | moisture in soil as fraction   |                      |
+| 14 |                      | snow                | snow water                     | cm                   |
+| 15 |                      | npp                 | net primary production         | g C/m$^2$            |
+| 16 |                      | nee                 | net ecosystem production       | g C/m$^2$            |
+| 17 |                      | cumNEE              | cumulative nee                 | g C/m$^2$            |
+| 18 | $GPP$                | gpp                 | gross ecosystem production     | g C/m$^2$            |
+| 19 | $R_{A,\text{above}}$ | rAboveground        | plant respiration above ground | g C/m$^2$            |
+| 20 | $R_H$                | rSoil               | soil respiration               | g C/m$^2$            |
+| 21 | $R_{A\text{, root}}$ | rRoot               | root respiration               | g C/m$^2$            |
+| 22 | $R$                  | rtot                | total respiration              | g C/m$^2$            |
+| 23 |                      | fluxestranspiration | transpiration                  | cm                   |
+| 24 | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
+| 25 | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
+| 26 | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
+| 27 | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 
 <!--
 
