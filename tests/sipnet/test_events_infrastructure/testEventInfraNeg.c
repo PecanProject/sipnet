@@ -16,7 +16,7 @@ int run(void) {
   exit_result = 1;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
-    readEventData("infra_events_simple.in", 1);
+    readEventData("infra_events_simple.in");
   }
   test_assert(jmp_rval == 0);
   status |= !exit_result;
@@ -32,7 +32,7 @@ int run(void) {
   expected_code = EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
-    readEventData("infra_events_unknown.in", 1);
+    readEventData("infra_events_unknown.in");
   }
   test_assert(jmp_rval == 1);
   status |= !exit_result;
@@ -45,20 +45,7 @@ int run(void) {
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
-    readEventData("infra_events_loc_ooo.in", 1);
-  }
-  test_assert(jmp_rval == 1);
-  status |= !exit_result;
-  if (!exit_result) {
-    printf("FAIL with infra_events_loc_ooo\n");
-  }
-
-  // Third test
-  exit_result = 1;  // reset for next test
-  expected_code = EXIT_CODE_INPUT_FILE_ERROR;
-  jmp_rval = setjmp(jump_env);
-  if (!jmp_rval) {
-    readEventData("infra_events_date_ooo.in", 1);
+    readEventData("infra_events_date_ooo.in");
   }
   test_assert(jmp_rval == 1);
   status |= !exit_result;
@@ -72,7 +59,7 @@ int run(void) {
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
-    readEventData("infra_events_bad_first.in", 1);
+    readEventData("infra_events_bad_first.in");
   }
   test_assert(jmp_rval == 1);
   status |= !exit_result;
@@ -85,7 +72,7 @@ int run(void) {
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
-    readEventData("infra_events_bad_till.in", 1);
+    readEventData("infra_events_bad_till.in");
   }
   test_assert(jmp_rval == 1);
   status |= !exit_result;

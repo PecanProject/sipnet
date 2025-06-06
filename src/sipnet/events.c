@@ -208,7 +208,7 @@ EventNode *readEventData(char *eventFile) {
     curr = next;
     numRead = sscanf(line, "%d %d %s %n",  // NOLINT
                      &year, &day, eventTypeStr, &numBytes);
-    if (numRead != 4) {
+    if (numRead != NUM_EVENT_CORE_PARAMS) {
       printf(
           "Error reading event file: bad data on line after year %d day %d\n",
           currYear, currDay);

@@ -34,11 +34,10 @@ void initEnv(void) {
 }
 
 int run(void) {
-  int numLocs = 1;
   int status = 0;
 
   // set up dummy climate
-  climate = (ClimateNode *)malloc(numLocs * sizeof(ClimateNode));
+  climate = (ClimateNode *)malloc(sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
 
@@ -46,16 +45,16 @@ int run(void) {
   initEnv();
 
   //// ONE PLANTING EVENT
-  initEvents("events_one_planting.in", numLocs, 0);
-  setupEvents(0);
+  initEvents("events_one_planting.in", 0);
+  setupEvents();
   processEvents();
   // added: leaf 10, wood 5, fine root 4, coarse root 3
   status |= checkOutput(1 + 10, 2 + 5, 3 + 4, 4 + 3);
 
   //// TWO PLANTING EVENTS
   initEnv();
-  initEvents("events_two_planting.in", numLocs, 1);
-  setupEvents(0);
+  initEvents("events_two_planting.in", 1);
+  setupEvents();
   processEvents();
   // leaf 10+9, wood 5+6, fine root 4+8, coarse root 3+4
   status |= checkOutput(1 + 19, 2 + 11, 3 + 12, 4 + 7);
