@@ -71,11 +71,8 @@ ModelParams *newModelParams(int maxParams) {
   // allocate space for vectors within this structure:
   modelParams->params =
       (OneModelParam *)malloc(maxParams * sizeof(OneModelParam));
-  modelParams->readIndices = (int *)malloc(maxParams * sizeof(int));  // the
-                                                                      // biggest
-                                                                      // it
-                                                                      // could
-                                                                      // be
+  // Allocate enough space for reading all params
+  modelParams->readIndices = (int *)malloc(maxParams * sizeof(int));
 
   return modelParams;
 }
@@ -102,6 +99,7 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
   strcpy(param->name, name);
   param->value = externalLoc;
   param->isRequired = isRequired;
+  param->isRead = 0;
 
   modelParams->numParams++;
 }
