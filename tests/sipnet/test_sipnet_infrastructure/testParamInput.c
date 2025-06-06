@@ -30,6 +30,8 @@ int runTest(const char *root) {
     remove(outName);
   }
 
+  deleteModelParams(modelParams);
+
   return status;
 }
 

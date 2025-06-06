@@ -107,15 +107,7 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
 }
 
 void checkParamFormat(char *line, const char *sep) {
-  // strtok modifies string, so we need a copy
-  char lineCopy[256];
-  strcpy(lineCopy, line);
-  int numParams = 0;
-  char *par = strtok(lineCopy, sep);
-  while (par != NULL) {
-    ++numParams;
-    par = strtok(NULL, sep);
-  }
+  int numParams = countFields(line, sep);
   if (numParams > 2) {
     printf("WARNING: extra columns in .param file are being ignored (found %d "
            "columns)\n",

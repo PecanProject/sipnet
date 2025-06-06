@@ -85,7 +85,7 @@ int checkParam(ModelParams *params, int i, double value);
 */
 double getParam(ModelParams *params, int i);
 
-// Clean up: deallocate spatialParams and any other dynamically-allocated
+// Clean up: deallocate modelParams and any other dynamically-allocated
 // pointers that need deallocating
 void deleteModelParams(ModelParams *params);
 

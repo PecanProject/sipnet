@@ -590,11 +590,13 @@ void readClimData(const char *climFile) {
   int status;  // status of the read
 
   // for format check
-  int firstLoc, dummyLoc;
+  int firstLoc, dummyLoc, numFields;
   int expectedNumCols = NUM_CLIM_FILE_COLS;
   char *firstLine = NULL;
   size_t lineCap = 0;
   int hasLoc = 0;
+  const char *SEPARATORS = " \t\n\r";  // characters that can separate values in
+                                       // parameter files
 
   in = openFile(climFile, "r");
 
@@ -604,16 +606,22 @@ void readClimData(const char *climFile) {
     printf("Error: no climate data in %s\n", climFile);
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
-  status = sscanf(firstLine,  // NOLINT
-                  "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                  &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
-                  &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
-  if (status == expectedNumCols + 1) {
-    printf("WARNING: ignoring location column in %s\n", climFile);
+
+  numFields = countFields(firstLine, SEPARATORS);
+  if (numFields == expectedNumCols + 1) {
+    printf("WARNING: ignoring location column in %s (found %d cols)\n",
+           climFile, numFields);
     ++expectedNumCols;
     hasLoc = 1;
+  }
+
+  if (hasLoc) {
+    status = sscanf(firstLine,  // NOLINT
+                    "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+                    &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
+                    &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
   } else {
-    status = fscanf(in,  // NOLINT
+    status = sscanf(firstLine,  // NOLINT
                     "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
                     &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
                     &vpdSoil, &vPress, &wspd, &soilWetness);
@@ -685,10 +693,6 @@ void readClimData(const char *climFile) {
                       &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
     }
     if (status != EOF) {
-      // we have another climate record - check new location, compare with old
-      // location (currLoc), make sure new location is valid, and act
-      // accordingly
-
       if (status != expectedNumCols) {
         printf("Error reading climate file: bad data near year %d day %d\n",
                year, day);
@@ -696,8 +700,9 @@ void readClimData(const char *climFile) {
       }
       // Check for older file with multiple locations - that's an error now
       if (dummyLoc != firstLoc) {
-        printf("Error reading climate file: multiple locations not "
-               "supported\n");
+        printf("Error reading climate file %s: multiple locations not "
+               "supported\n",
+               climFile);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
 
