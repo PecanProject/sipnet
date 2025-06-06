@@ -8,7 +8,8 @@
 void writeParams(const char *fname);
 
 int runTest(const char *root) {
-  ModelParams *modelParams;
+  ModelParams *modelParams = newModelParams(NUM_PARAMS);
+
   char inName[50];
   char outName[50];
   char expName[50];
