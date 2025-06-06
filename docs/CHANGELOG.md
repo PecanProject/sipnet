@@ -40,15 +40,15 @@ sections to include in release notes:
 
 - Reorganized codebase (#34, #37)
 - Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
-
+- Deprecated: "LOCATION" is obsolete. Will be ignored with warning. (#92)
+- Deprecated: All columns in *.param except for name and value. Will be ignored with warning. (#92)
+- Deprecated: location column in input climate files. Will be ignored with warning. (#92)
 ### Removed
 
 - Removed many experimental sites, data, and executable code as part of reorg (#34, #37)
 - Removed obsolete run types senstest and montecarlo and associated code (#69, #76)
 - Removed obsolete estimate program and associated code (#70, #82)
-- Removed multi-site support:
-    - Output files no longer have a location column
-    - Input climate files with location as the first column can still be read, though a warning will be thrown. Climate files with multiple location will error.
+- Removed multi-site support; in particular, output files no longer have a location column (#92)
 
 ### Git SHA
 [TBD]
@@ -151,5 +151,3 @@ Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. 
 Sacks, William J., David S. Schimel, and Russell K. Monson. 2007. “Coupling between Carbon Cycling and Climate in a High-Elevation, Subalpine Forest: A Model-Data Fusion Analysis.” Oecologia 151 (1): 54–68. https://doi.org/10.1007/s00442-006-0565-2.
 
 Sacks, William J., David S. Schimel, Russell K. Monson, and Bobby H. Braswell. 2006. “Model‐data Synthesis of Diurnal and Seasonal CO2 Fluxes at Niwot Ridge, Colorado.” Global Change Biology 12 (2): 240–59. https://doi.org/10.1111/j.1365-2486.2005.01059.x.
-
-
