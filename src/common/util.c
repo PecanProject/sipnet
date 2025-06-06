@@ -200,3 +200,16 @@ int stripComment(char *line, const char *commentChars) {
   lenTrim = strlen(line) - strspn(line, " \t\n\r");
   return (lenTrim == 0);
 }
+
+int countFields(const char *line, const char *sep) {
+  // strtok modifies string, so we need a copy
+  char lineCopy[256];
+  strcpy(lineCopy, line);
+  int numParams = 0;
+  char *par = strtok(lineCopy, sep);
+  while (par != NULL) {
+    ++numParams;
+    par = strtok(NULL, sep);
+  }
+  return numParams;
+}

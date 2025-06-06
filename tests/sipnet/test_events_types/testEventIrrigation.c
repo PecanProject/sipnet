@@ -20,11 +20,10 @@ int checkOutput(double soilWater, double immedEvap) {
 }
 
 int run(void) {
-  int numLocs = 1;
   int status = 0;
 
   // set up dummy climate
-  climate = (ClimateNode *)malloc(numLocs * sizeof(ClimateNode));
+  climate = (ClimateNode *)malloc(sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
 
@@ -35,8 +34,8 @@ int run(void) {
 
   //// ONE IRRIGATION EVENT
   // amount 5, method 1 (soil)
-  initEvents("events_one_irrig.in", numLocs, 0);
-  setupEvents(0);
+  initEvents("events_one_irrig.in", 0);
+  setupEvents();
   processEvents();
   // should have 5 going to the soil
   status |= checkOutput(5, 0);
@@ -44,8 +43,8 @@ int run(void) {
   //// TWO IRRIGATION EVENTS
   // amount 3, method 1 (soil)
   // amount 4, method 0 (canopy)
-  initEvents("events_two_irrig.in", numLocs, 1);
-  setupEvents(0);
+  initEvents("events_two_irrig.in", 1);
+  setupEvents();
   processEvents();
   // event 1: 3 to soil
   // event 2: 2=4*0.5 to evap, the rest (2) to soil

@@ -64,4 +64,6 @@ int strcmpIgnoreCase(const char *s1, const char *s2);
 // Return 1 if line contains only a comment (or only blanks), 0 otherwise
 int stripComment(char *line, const char *commentChars);
 
+int countFields(const char *line, const char *sep);
+
 #endif

@@ -23,21 +23,33 @@ void init(void) {
   ClimateNode *climate1 = (ClimateNode *)malloc(sizeof(ClimateNode));
   ClimateNode *climate2 = (ClimateNode *)malloc(sizeof(ClimateNode));
   ClimateNode *climate3 = (ClimateNode *)malloc(sizeof(ClimateNode));
-  climate1->year = 2024;
+  climate1->year = 2023;
   climate1->day = 65;
-  climate2->year = 2024;
+  climate2->year = 2023;
   climate2->day = 70;
-  climate3->year = 2024;
+  climate3->year = 2023;
   climate3->day = 200;
+  ClimateNode *climate4 = (ClimateNode *)malloc(sizeof(ClimateNode));
+  ClimateNode *climate5 = (ClimateNode *)malloc(sizeof(ClimateNode));
+  ClimateNode *climate6 = (ClimateNode *)malloc(sizeof(ClimateNode));
+  climate4->year = 2024;
+  climate4->day = 65;
+  climate5->year = 2024;
+  climate5->day = 70;
+  climate6->year = 2024;
+  climate6->day = 200;
 
+  climate5->nextClim = climate6;
+  climate4->nextClim = climate5;
+  climate3->nextClim = climate4;
   climate2->nextClim = climate3;
   climate1->nextClim = climate2;
   climate = climate1;
 }
 
-void runLoc(int loc) {
+void runLoc(void) {
   ClimateNode *climStart = climate;
-  setupEvents(loc);
+  setupEvents();
   while (climate != NULL) {
     processEvents();
     climate = climate->nextClim;
@@ -45,48 +57,8 @@ void runLoc(int loc) {
   climate = climStart;
 }
 
-int checkOutputFile(const char *outputFile) {
-  FILE *file2 = fopen(outputFile, "rb");
-  FILE *file1 = fopen("events.out", "rb");
-
-  if (file1 == NULL || file2 == NULL) {
-    printf("Error opening files\n");
-    if (file1) {
-      fclose(file1);
-    }
-    if (file2) {
-      fclose(file2);
-    }
-    return 1;
-  }
-
-  int char1, char2;
-  int status = 0;
-
-  while (1) {
-    char1 = fgetc(file1);
-    char2 = fgetc(file2);
-
-    if (char1 == EOF && char2 == EOF) {
-      break;
-    } else if (char1 == EOF || char2 == EOF || char1 != char2) {
-      char command[80];
-      sprintf(command, "diff %s %s", outputFile, "events.out");
-      system(command);
-      status = 1;
-      break;
-    }
-  }
-
-  fclose(file1);
-  fclose(file2);
-
-  return status;
-}
-
 int runTest(const char *prefix, int header) {
   int status = 0;
-  int numLocs = 1;
 
   char input[30];
   char output[30];
@@ -96,12 +68,11 @@ int runTest(const char *prefix, int header) {
   strcpy(output, prefix);
   strcat(output, ".out");
 
-  initEvents(input, numLocs, header);
-  runLoc(0);
-  runLoc(1);
+  initEvents(input, header);
+  runLoc();
 
   closeEventOutFile(eventOutFile);
-  status = checkOutputFile(output);
+  status = diffFiles(output, "events.out");
 
   return status;
 }
