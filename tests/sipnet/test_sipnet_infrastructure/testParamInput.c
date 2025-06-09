@@ -3,9 +3,16 @@
 
 #include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
+#include "utils/exitHandler.c"
 #include "sipnet/sipnet.c"
 
 void writeParams(const char *fname);
+
+void runNegTest(const char *fName) {
+  // Pretty much guaranteed to leak memory, but that should be ok for a test
+  ModelParams *modelParams = newModelParams(NUM_PARAMS);
+  readParamData(&modelParams, fName);
+}
 
 int runTest(const char *root) {
   ModelParams *modelParams = newModelParams(NUM_PARAMS);
@@ -37,15 +44,36 @@ int runTest(const char *root) {
 }
 
 int run() {
-  int success = 0;
+  int status = 0;
+
+  // exit() handling params
+  int jmp_rval;
+
+  // Step 0: all positive tests to run
+  really_exit = 1;
 
   // First test - standard read
-  success |= runTest("standard");
+  status |= runTest("standard");
 
   // Second test - legacy read (param file with location column)
-  success |= runTest("with_est");
+  status |= runTest("with_est");
 
-  return success;
+  // Third test - error on '*' value
+  really_exit = 0;
+  should_exit = 1;
+  exit_result = 1;  // reset for next test
+  expected_code = EXIT_CODE_BAD_PARAMETER_VALUE;
+  jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    runNegTest("spatial_val.param");
+  }
+  test_assert(jmp_rval == 1);
+  status |= !exit_result;
+  if (!exit_result) {
+    printf("FAIL with spatial_val.param\n");
+  }
+
+  return status;
 }
 
 int main() {

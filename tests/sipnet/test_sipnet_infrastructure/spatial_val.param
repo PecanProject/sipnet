@@ -1,0 +1,114 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Sipnet parameter files
+!!! Modified from the original version by Bill Sacks (wsacks@wisc.edu)
+!!! By John Zobitz (zobitz@math.utah.edu)
+
+!!! NOTE: Not all parameters are utilized for a given model structure.
+!!! Format: parameterName value
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Initial pool values
+plantWoodInit		1.01
+laiInit				1.02
+litterInit			1.03
+soilInit			1.04
+litterWFracInit		1.05
+soilWFracInit		*      !! this is an error
+snowInit			1.07
+microbeInit			1.08
+fineRootFrac		1.09
+coarseRootFrac		1.10
+!!!!!!!!!!!!!!!
+
+!!! Photosynthetic parameters
+aMax				2.01
+aMaxFrac			2.02
+psnTMin				2.03
+psnTOpt				2.04
+dVpdSlope			2.05
+dVpdExp				2.06
+halfSatPar			2.07
+attenuation			2.08
+
+!!!!!! Respiration parameters
+
+!!! Base rates
+baseVegResp			3.01
+baseFolRespFrac		3.02
+baseSoilResp		3.03
+baseSoilRespCold	3.04
+baseFineRootResp	3.05
+baseCoarseRootResp	3.06
+baseMicrobeResp		3.07
+
+!!! Q10s
+vegRespQ10			4.01
+fineRootQ10			4.02
+coarseRootQ10		4.03
+soilRespQ10			4.04
+soilRespQ10Cold		4.05
+microbeQ10			4.06
+
+!!! Misc
+growthRespFrac		5.01
+E0					5.02
+T0					5.03
+coldSoilThreshold	5.04
+frozenSoilFolREff	5.05
+frozenSoilThreshold	5.06
+soilRespMoistEffect	5.07
+
+!!! Phenology parameters
+leafOnDay			6.01
+gddLeafOn			6.02
+soilTempLeafOn		6.03
+leafOffDay			6.04
+leafGrowth			6.05
+fracLeafFall		6.06
+
+!!! Litter parameters
+woodTurnoverRate	    7.01
+leafTurnoverRate	    7.02
+fineRootTurnoverRate	7.03
+coarseRootTurnoverRate	7.04
+litterBreakdownRate	    7.05
+fracLitterRespired	    7.06
+
+!!! Allocation parameters  (These MUST sum to less than one)
+fineRootAllocation	8.01
+woodAllocation		8.02
+leafAllocation		8.03
+
+!! Water-related parameters
+waterRemoveFrac		9.01
+frozenSoilEff		9.02
+wueConst			9.03
+litterWHC			9.04
+soilWHC				9.05
+immedEvapFrac		9.06
+fastFlowFrac		9.07
+snowMelt			9.08
+litWaterDrainRate	9.09
+rdConst				9.10
+rSoilConst1			9.11
+rSoilConst2			9.12
+m_ballBerry			9.13
+leafCSpWt			9.14
+cFracLeaf			9.15
+
+!!! Quality submodel parameters
+qualityLeaf			10.01
+qualityWood			10.02
+
+!!! Microbe & Stoichiometry model parameters
+efficiency			11.01
+maxIngestionRate	11.02
+halfSatIngestion	11.03
+totNitrogen			11.04
+microbeNC			11.05
+
+!!! Pulsing parameters
+fineRootExudation	12.01
+coarseRootExudation	12.02
+microbePulseEff		12.03
+!!!!!!!!!!!!!!!

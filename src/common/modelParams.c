@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "exitCodes.h"
 #include "modelParams.h"
 #include "util.h"
 
@@ -147,6 +148,14 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
       strcpy(pName, strtok(line, SEPARATORS));  // copy first token into pName
 
       strcpy(strValue, strtok(NULL, SEPARATORS));
+
+      if (strcmp(strValue, "*") == 0) {
+        // This used to mean "spatially varying" when sipnet supported multiple
+        // sites, but now this is an error
+        printf("Error reading parameter %s; '*' is no longer supported\n",
+               pName);
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+      }
       value = strtod(strValue, &errc);
       paramIndex = locateParam(modelParams, pName);
 
@@ -158,7 +167,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
         printf("Error reading parameter file: read %s, but this parameter has "
                "already been set\n",
                pName);
-        exit(1);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
       } else {  // otherwise, we're good to go
         // set param to point to the appropriate parameter, for easier access
         param = &(modelParams->params[paramIndex]);
