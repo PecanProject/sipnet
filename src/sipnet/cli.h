@@ -6,8 +6,12 @@
 
 #include "context.h"
 
+// This file encapsulates management of the cli - that is, parsing the command
+// line options, and managing what those options are
+
+// The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 struct option long_options[] = {
-    // These options set a flag
+    // These options set a flag (and they need to be at the top here)
     // name              has_arg            flag         val
     {"print_header", no_argument, &ctx.tmpFlag, 1},
     {"no_print_header", no_argument, &ctx.tmpFlag, 0},
@@ -20,11 +24,17 @@ struct option long_options[] = {
     {"version", no_argument, 0, 'v'},
     {0, 0, 0, 0}};
 
-char *argNameMap[] = {
+// The run-time option names do not match their corresponding fields in Context,
+// so we need a way to get from one to the other. There is a check in
+// initContext() that verifies that these all work. The #define here is for
+// that check.
+#define NUM_FLAG_OPTIONS 4
+char *argNameMap[NUM_FLAG_OPTIONS] = {
     // Must follow same order as long_options above; only need flag opts here
     // Gives corresponding name in Context struct
     "printHeader", "printHeader", "dumpConfig", "dumpConfig"};
 
+// Print the help message when requested
 void usage(char *progName) {
   // clang-format off
   printf("Usage: %s [OPTIONS]", progName);
@@ -51,8 +61,10 @@ void usage(char *progName) {
   // clang-format on
 }
 
+// Print the version when requested
 void version(void) { printf("SIPNET version 2.0.0\n"); }
 
+// Parses command-line options using getopt_long
 void parseCommandLineArgs(int argc, char *argv[]) {
   /* getopt_long stores the option index here. */
   int longIndex = 0;

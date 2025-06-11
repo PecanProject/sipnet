@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "common/exitCodes.h"
+#include "cli.h"
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
 #define RUN_TYPE_STANDARD "standard"
@@ -31,6 +32,18 @@ void initContext(void) {
   CREATE_CHAR_CONTEXT(outFile, "OUT_FILE", "", CTX_DEFAULT);
   CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT);
   CREATE_CHAR_CONTEXT(outConfigFile, "OUT_CONFIG_FILE", "", CTX_DEFAULT);
+
+  // Safety check: make sure the elements of the cli argNameMap are actually
+  // valid members - that is, that we can successfully find a metadata for each
+  // one. This protects against changing a field name here and forgetting to
+  // update that map
+  for (int ind = 0; ind < NUM_FLAG_OPTIONS; ++ind) {
+    struct context_metadata *s = getContextMetadata(argNameMap[ind]);
+    if (s == NULL) {
+      printf("Internal error: cli param mismatch with Context\n");
+      exit(EXIT_CODE_INTERNAL_ERROR);
+    }
+  }
 }
 
 void nameToKey(const char *name) {
@@ -108,7 +121,7 @@ void updateCharContext(const char *name, const char *value,
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   if (hasSourcePrecedence(s, source)) {
-    strcpy((char *)s->value, value);
+    strncpy((char *)s->value, value, CONTEXT_CHAR_MAXLEN);
     s->source = source;
   }
 }

@@ -40,33 +40,6 @@ void checkRuntype(void) {
   }
 }
 
-// void parseCommandLineArgs(int argc, char *argv[]) {
-//   int option;
-//   // get command-line arguments:
-//   while ((option = getopt(argc, argv, "hi:")) != -1) {
-//     // we have another optional argument
-//     switch (option) {
-//       case 'h':
-//         usage(argv[0]);
-//         exit(1);
-//       case 'i':
-//         if (strlen(optarg) >= FILENAME_MAXLEN) {
-//           printf("ERROR: input filename %s exceeds maximum length of %d\n",
-//                  optarg, FILENAME_MAXLEN);
-//           printf("Either change the name or increase INPUT_MAXNAME in "
-//                  "frontend.c\n");
-//           exit(1);
-//         }
-//         strcpy(ctx.inputFile, optarg);
-//         break;
-//       default:
-//         usage(argv[0]);
-//         exit(1);
-//     }
-//   }
-//
-// }
-
 void readInputFile(const char *fileName) {
   const char *SEPARATORS = " \t=:";  // characters that can separate names from
                                      // values in input file
@@ -184,10 +157,16 @@ int main(int argc, char *argv[]) {
   readInputFile(ctx.inputFile);
 
   // 4. Run some checks
-  // Make sure FILENAME is set; everything else is optional (not necessary or
-  // has a default)
+  // Make sure FILENAME is set and well-sized; everything else is optional (not
+  // necessary or has a default)
   if (strcmp(ctx.fileName, "") == 0) {
     printf("Error: fileName must be set for SIPNET to run\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
+    // We need room to append .clim, .param, etc
+    printf("Error: fileName is too long; max length is %d characters\n",
+           FILENAME_MAXLEN - 10);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 

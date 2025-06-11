@@ -14,7 +14,8 @@
 #include "common/uthash.h"
 
 typedef enum ContextSource {
-  // These are in order of precedence, higher value wins
+  // These are in order of precedence, higher value wins. CALCULATED should be
+  // orthogonal to CONTEXT_FILE and COMMAND_LINE.
   CTX_DEFAULT = 0,
   CTX_CONTEXT_FILE = 1,
   CTX_COMMAND_LINE = 2,
@@ -28,7 +29,7 @@ struct context_metadata {
   char printName[CONTEXT_CHAR_MAXLEN];
   context_source_t source;
   context_type_t type;
-  void *value;
+  void *value;  // pointer to the member of Context that holds the value
   UT_hash_handle hh;  // makes this structure hashable
 };
 
