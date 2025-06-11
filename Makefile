@@ -7,11 +7,11 @@ LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
 
 # Main executables
-COMMON_CFILES:=util.c namelistInput.c spatialParams.c
+COMMON_CFILES:=util.c spatialParams.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
 
-SIPNET_CFILES:=sipnet.c frontend.c runmean.c outputItems.c events.c
+SIPNET_CFILES:=sipnet.c frontend.c runmean.c outputItems.c events.c context.c
 SIPNET_CFILES:=$(addprefix src/sipnet/, $(SIPNET_CFILES))
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNET_LIBS=-lsipnet_common
@@ -143,3 +143,14 @@ depend::
 	makedepend $(CFILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
+
+src/sipnet/context.o: src/sipnet/context.h
+src/sipnet/events.o: src/sipnet/events.h
+src/sipnet/frontend.o: src/sipnet/cli.h src/sipnet/context.h
+src/sipnet/frontend.o: src/sipnet/events.h src/sipnet/sipnet.h
+src/sipnet/frontend.o: src/sipnet/outputItems.h src/sipnet/modelStructures.h
+src/sipnet/outputItems.o: src/sipnet/outputItems.h
+src/sipnet/runmean.o: src/sipnet/runmean.h
+src/sipnet/sipnet.o: src/sipnet/sipnet.h src/sipnet/outputItems.h
+src/sipnet/sipnet.o: src/sipnet/runmean.h src/sipnet/modelStructures.h
+src/sipnet/sipnet.o: src/sipnet/events.h
