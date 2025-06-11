@@ -11,6 +11,8 @@
 #define DEFAULT_INPUT_FILE "sipnet.in"
 #define RUN_TYPE_STANDARD "standard"
 
+struct Context ctx;
+
 // Temp space for name-to-key conversions
 static char keyName[CONTEXT_CHAR_MAXLEN];
 

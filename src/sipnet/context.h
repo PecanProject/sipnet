@@ -33,7 +33,7 @@ struct context_metadata {
   UT_hash_handle hh;  // makes this structure hashable
 };
 
-typedef struct {
+struct Context {
   char inputFile[CONTEXT_CHAR_MAXLEN];
   char runType[CONTEXT_CHAR_MAXLEN];
   char fileName[CONTEXT_CHAR_MAXLEN];
@@ -55,15 +55,15 @@ typedef struct {
 
   // Hash map storing metadata for context values
   struct context_metadata *metaMap;
-} Context;
+};
+
+// The one and only Context struct
+extern struct Context ctx;
 
 /*!
  * Initialize the global context struct with default values
  */
 void initContext(void);
-
-// The one and only Context struct
-Context ctx;
 
 context_source_t getContextSource(const char *name);
 
