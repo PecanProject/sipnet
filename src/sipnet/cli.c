@@ -1,5 +1,7 @@
 #include "cli.h"
 
+#include "common/exitCodes.h"
+
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 struct option long_options[] = {
     // These options set a flag (and they need to be at the top here)
@@ -68,7 +70,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         break;
       case 'h':
         usage(argv[0]);
-        exit(1);
+        exit(EXIT_CODE_SUCCESS);
       case 'i':
         if (strlen(optarg) >= FILENAME_MAXLEN) {
           printf("ERROR: input filename %s exceeds maximum length of %d\n",
@@ -81,10 +83,10 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         break;
       case 'v':
         version();
-        break;
+        exit(EXIT_CODE_SUCCESS);
       default:
         usage(argv[0]);
-        exit(1);
+        exit(EXIT_CODE_BAD_CLI_ARGUMENT);
     }
   }
 }
