@@ -36,7 +36,7 @@ void initContext(void) {
   // Safety check: make sure the elements of the cli argNameMap are actually
   // valid members - that is, that we can successfully find a metadata for each
   // one. This protects against changing a field name here and forgetting to
-  // update that map
+  // update that map.
   for (int ind = 0; ind < NUM_FLAG_OPTIONS; ++ind) {
     struct context_metadata *s = getContextMetadata(argNameMap[ind]);
     if (s == NULL) {
@@ -46,6 +46,10 @@ void initContext(void) {
   }
 }
 
+// With all the different permutations of spellings for config params, lets
+// strip names down by removing chars like dashes and underscores, and
+// converting to lowercase. This will allow different versions to still find
+// the relevant metadata, while retaining uniqueness.
 void nameToKey(const char *name) {
   int keyInd = 0;
   // Drop all non-alphanumeric chars (eg '-', '_'), and convert to lowercase
@@ -67,7 +71,7 @@ struct context_metadata *getContextMetadata(const char *name) {
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s);
   if (s == NULL) {
-    printf("Error finding metadata; context for param %s not found\n", name);
+    printf("Internal error: context metadata for param %s not found\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   return s;
@@ -81,12 +85,10 @@ void createContextMetadata(const char *name, const char *printName,
   HASH_FIND_STR(ctx.metaMap, keyName, s);
   if (s == NULL) {
     s = (struct context_metadata *)malloc(sizeof *s);
-    printf("Creating context meta for key %s (from param %s)\n", keyName, name);
     strcpy(s->keyName, keyName);
     HASH_ADD_STR(ctx.metaMap, keyName, s);
   } else {
-    printf("Internal error: context param %s is attempting to be re-created\n",
-           name);
+    printf("Internal error: attempt to recreate context param %s\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   strcpy(s->printName, printName);
@@ -98,7 +100,6 @@ void createContextMetadata(const char *name, const char *printName,
 void updateIntContext(const char *name, int value, context_source_t source) {
   struct context_metadata *s;
   nameToKey(name);
-  printf("Searching for meta for key %s (from param %s)\n", keyName, name);
   HASH_FIND_STR(ctx.metaMap, keyName, s); /* name already in the hash? */
   if (s == NULL) {
     printf("Internal error: no context param %s found\n", name);
@@ -114,7 +115,6 @@ void updateCharContext(const char *name, const char *value,
                        context_source_t source) {
   struct context_metadata *s;
   nameToKey(name);
-  printf("Searching for meta for key %s (from param %s)\n", keyName, name);
   HASH_FIND_STR(ctx.metaMap, keyName, s); /* name already in the hash? */
   if (s == NULL) {
     printf("Internal error: no context param %s found\n", name);
@@ -132,6 +132,7 @@ int hasSourcePrecedence(struct context_metadata *s,
   return (s->source < newSource);
 }
 
+// Get a printable version of source enum for dumpConfig()
 char *getContextSourceString(context_source_t src) {
   switch (src) {
     case CTX_DEFAULT:
@@ -154,7 +155,9 @@ int by_name(const struct context_metadata *a,
 }
 
 void printConfig(FILE *outFile) {
+  // Sort alphabetically for consistency
   HASH_SORT(ctx.metaMap, by_name);  // NOLINT
+
   struct context_metadata *s;
 
   // Header
@@ -178,6 +181,7 @@ void printConfig(FILE *outFile) {
     } else {
       // The height of paranoia
       printf("Internal error, unknown found for context param\n");
+      exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
 }

@@ -19,17 +19,6 @@
 #include "outputItems.h"
 #include "modelStructures.h"
 
-// important constants - default values:
-
-// #define FILE_MAXNAME 256
-// #define RUNTYPE_MAXNAME 16
-// #define INPUT_MAXNAME 64
-// #define INPUT_FILE "sipnet.in"
-// #define DO_MAIN_OUTPUT 1
-// #define DO_SINGLE_OUTPUTS 0
-//// Default is run at all locations
-// #define LOC (-1)
-
 void checkRuntype(void) {
   if (strcmpIgnoreCase(ctx.runType, "standard") != 0) {
     // Make sure this is not an old config with a different RUNTYPE set

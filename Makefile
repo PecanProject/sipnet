@@ -11,7 +11,7 @@ COMMON_CFILES:=util.c spatialParams.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
 
-SIPNET_CFILES:=sipnet.c frontend.c runmean.c outputItems.c events.c context.c
+SIPNET_CFILES:=sipnet.c frontend.c runmean.c outputItems.c events.c context.c cli.c
 SIPNET_CFILES:=$(addprefix src/sipnet/, $(SIPNET_CFILES))
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNET_LIBS=-lsipnet_common
