@@ -61,17 +61,17 @@ void readInputFile(const char *fileName) {
       inputValue = strtok(NULL, allSeparators);  // make inputValue point to
                                                  // next token (e.g. after the
                                                  // '=')
+      struct context_metadata *ctx_meta = getContextMetadata(inputName);
+      if (ctx_meta == NULL) {
+        printf("Warning: ignoring input file parameter %s\n", inputName);
+        continue;
+      }
+
       if (inputValue == NULL) {
         printf("Error in input file: No value given for input item %s\n",
                inputName);
         printf("Please fix %s and re-run\n", fileName);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-      }
-
-      struct context_metadata *ctx_meta = getContextMetadata(inputName);
-      if (ctx_meta == NULL) {
-        printf("Warning: ignoring input file parameter %s\n", inputName);
-        continue;
       }
 
       switch (ctx_meta->type) {
