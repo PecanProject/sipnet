@@ -154,10 +154,9 @@ void readNamelistInputs(NamelistInputs *namelistInputs, const char *fileName) {
 
       namelistInputItem = locateNamelistInputItem(namelistInputs, inputName);
       if (namelistInputItem == NULL) {
-        printf("ERROR in readNamelistInputs: Read unexpected input item: %s\n",
-               inputName);
-        printf("Please fix %s and re-run\n", fileName);
-        exit(1);
+        printf("WARNING: ignoring unknown parameter %s in %s\n", inputName,
+               fileName);
+        continue;
       }
       // otherwise, we have found the item with this name
 
