@@ -143,14 +143,3 @@ depend::
 	makedepend $(CFILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-
-src/sipnet/context.o: src/sipnet/context.h
-src/sipnet/events.o: src/sipnet/events.h
-src/sipnet/frontend.o: src/sipnet/cli.h src/sipnet/context.h
-src/sipnet/frontend.o: src/sipnet/events.h src/sipnet/sipnet.h
-src/sipnet/frontend.o: src/sipnet/outputItems.h src/sipnet/modelStructures.h
-src/sipnet/outputItems.o: src/sipnet/outputItems.h
-src/sipnet/runmean.o: src/sipnet/runmean.h
-src/sipnet/sipnet.o: src/sipnet/sipnet.h src/sipnet/outputItems.h
-src/sipnet/sipnet.o: src/sipnet/runmean.h src/sipnet/modelStructures.h
-src/sipnet/sipnet.o: src/sipnet/events.h
