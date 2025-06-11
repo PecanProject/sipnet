@@ -1,9 +1,10 @@
 name: Publish Documentation
 
 on:
-  push:
-    branches:
-      - "master"
+  pull_request:
+    paths:
+      - "mkdocs.yml"
+      - "docs/**"
 
 jobs:
   build:
@@ -20,12 +21,21 @@ jobs:
         run: |
           pip install mkdocs mkdocs-material pymdown-extensions
 
-      - name: Generate Documentation
-        run: make document
+      - name: Build Documentation
+        run: mkdocs build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: site  
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          netlify deploy --prod --dir=site --message="Preview for PR #${{ github.event.pull_request.number }}" --alias="preview-${{ github.event.pull_request.number }}"
+
+      - name: Comment Netlify Preview Link
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          PREVIEW_URL="https://preview-${PR_NUMBER}--your-netlify-site.netlify.app"
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{\"body\": \"Netlify preview available at: ${PREVIEW_URL}\"}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments
