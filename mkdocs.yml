@@ -32,3 +32,6 @@ extra:
   arithmatex:
     inline_syntax: ['\\(', '\\)']
     block_syntax: ['\\[', '\\]']
+
+repo_url: https://github.com/PecanProject/sipnet
+edit_uri: edit/master/docs/
