@@ -201,7 +201,7 @@ int stripComment(char *line, const char *commentChars) {
   return (lenTrim == 0);
 }
 
-//count number of fields in a string separated by delimiter 'sep'
+// count number of fields in a string separated by delimiter 'sep'
 int countFields(const char *line, const char *sep) {
   // strtok modifies string, so we need a copy
   char lineCopy[256];
