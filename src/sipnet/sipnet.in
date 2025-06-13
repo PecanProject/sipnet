@@ -10,9 +10,6 @@ FILENAME = Sites/Niwot/niwot
 ! FILENAME.param is the file of parameter values & initial conditions
 ! FILENAME.clim is the file of climate data for each time step
 
-LOCATION = 0
-! LOCATION is obsolete; this value is ignored
-
 DO_MAIN_OUTPUT = 1
 ! If 1, do the primary output to FILENAME.out (time series of all output
 !  variables)

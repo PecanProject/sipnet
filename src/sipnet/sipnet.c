@@ -1094,95 +1094,94 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
                                             // photosynthesis in this time step
 }
 
-// Unused - remove?
-// void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double
-// vpd,
-//                  double vPress, double plantLeafC, double leafCSpWt,
-//                  double soilWater) {
-//  /*moisture_bwb:  Calculates moisture use by using a Ball Woodrow Berry
-//   * Instead of A (net photosynthesis) we are driving the Ball Woodrow Berry
-//   * equation with potGrossPsn units: g C * m^-2 ground area * day^-1
-//   * formulation which estimates gs from A */
-//  double potTrans;  // potential transpiration in the absense of plant water
-//                    // stress (cm H20 * day^-1)
-//  double removableWater;
-//  double gs_canopy;  // gs stomatal conductance... canopy level
-//  double CO2_stom = 380;
-//  double vPress_sat;  // Saturating Vapor Press (sum of VPD and vPress)
-//  double RH_pcent;  // Relative Humidity - the ratio of vPress to saturating
-//                    // vapor pressure
-//  double lai_int;  // calculate lai from current plantLeafC and the leafCSpwt
-//  */ lai_int = envi.plantLeafC / params.leafCSpWt;
-//  /*  We do not require lai since potGrossPsn is in units of
-//   *  g C * m^-2 ground area * day^-1 */
-//  vPress_sat = climate->vPress + climate->vpd;  // calculate saturating vapor
-//                                                // pressure
-//  RH_pcent = climate->vPress / vPress_sat;  // calculate relative humidity for
-//                                            // ball berry
-//
-//  //  double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20
-//  transpired
-//
-//  if (potGrossPsn < TINY) {  // avoid divide by 0
-//    *trans = 0.0;  // no photosynthesis -> no transpiration
-//    *dWater = 1;  // dWater doesn't matter, since we don't have any
-//                  // photosynthesis
-//  } else {
-//    /*Ball Berry Equation
-//     * unit issues:
-//     * potGrossPsn should be converted to
-//     * micro mol c02 per m^2 leaf area
-//     * there are 1/12 mol of carbon in a gram
-//     * potGrossPsn/12*1000*LAI = umol carbon dioxide per
-//     * m^2
-//     * */
-//
-//    gs_canopy = params.m_ballBerry * potGrossPsn / 12 * 1000 * lai_int *
-//                (RH_pcent / CO2_stom);
-//
-//    // gcan = m*A*RelHum/CO2;
-//    // mol  / m^2 leaf area
-//
-//    potTrans = (gs_canopy * climate->vpd) / lai_int * 20 / 1000;
-//    /* gs_canopy*climate_>vpd is the transpiration rate mol/m^2 leaf area per
-//     * day dividing by lai_init converts to mol per m^2 ground area there are
-//     * 20g water per mol multiply by the density of water 1cm^3/g multipy by
-//     * 100cm and divide by 10^6cm^3
-//     *
-//     *  must convert to cm3 per cm2 land area.
-//     */
-//    removableWater = soilWater * params.waterRemoveFrac;
-//    if (climate->tsoil < params.frozenSoilThreshold) {
-//      // frozen soil - less or no water available
-//      /* frozen soil effect: fraction of water available if soil is frozen
-//       * (assume amt. of water avail. w/ frozen soil scales linearly with amt.
-//       * of water avail. in thawed soil) */
-//      removableWater *= params.frozenSoilEff;
-//    }
-//    if (removableWater >= potTrans) {
-//      *trans = potTrans;
-//    } else {
-//      *trans = removableWater;
-//    }
-//
-// #if WATER_PSN  // we're modeling water stress
-//    *dWater = *trans / potTrans;  // from PnET: equivalent to setting
-//    DWATER_MAX
-//                                  // = 1
-// #else  // WATER_PSN = 0
-//    if (climate->tsoil < params.frozenSoilThreshold &&
-//        params.frozenSoilEff == 0)
-//      // (note: can't have partial shutdown of psn with frozen soil if
-//      WATER_PSN
-//      // = 0)
-//      *dWater = 0;  // still allow total shut down of psn. if soil is frozen
-//    else  // either soil is thawed, or frozenSoilEff > 0
-//      *dWater = 1;  // no water stress, even if *trans/potTrans < 1
-// #endif  // WATER_PSN
-//    // printf("Remove %f potT %f dW %f vpd %f \n", removableWater, potTrans,
-//    // *dWater, climate->vpd);
-//  }
-//}
+void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
+                  double vPress, double plantLeafC, double leafCSpWt,
+                  double soilWater) {
+  /*moisture_bwb:  Calculates moisture use by using a Ball Woodrow Berry
+   * Instead of A (net photosynthesis) we are driving the Ball Woodrow Berry
+   * equation with potGrossPsn units: g C * m^-2 ground area * day^-1
+   * formulation which estimates gs from A */
+  double potTrans;  // potential transpiration in the absense of plant water
+                    // stress (cm H20 * day^-1)
+  double removableWater;
+  double gs_canopy;  // gs stomatal conductance... canopy level
+  double CO2_stom = 380;
+  double vPress_sat;  // Saturating Vapor Press (sum of VPD and vPress)
+  double RH_pcent;  // Relative Humidity - the ratio of vPress to saturating
+                    // vapor pressure
+  double lai_int;  // calculate lai from current plantLeafC and the leafCSpwt
+  */ lai_int = envi.plantLeafC / params.leafCSpWt;
+  /*  We do not require lai since potGrossPsn is in units of
+   *  g C * m^-2 ground area * day^-1 */
+  vPress_sat = climate->vPress + climate->vpd;  // calculate saturating vapor
+                                                // pressure
+  RH_pcent = climate->vPress / vPress_sat;  // calculate relative humidity for
+                                            // ball berry
+
+  //  double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20
+  transpired
+
+      if (potGrossPsn < TINY) {  // avoid divide by 0
+    *trans = 0.0;  // no photosynthesis -> no transpiration
+    *dWater = 1;  // dWater doesn't matter, since we don't have any
+                  // photosynthesis
+  }
+  else {
+    /*Ball Berry Equation
+     * unit issues:
+     * potGrossPsn should be converted to
+     * micro mol c02 per m^2 leaf area
+     * there are 1/12 mol of carbon in a gram
+     * potGrossPsn/12*1000*LAI = umol carbon dioxide per
+     * m^2
+     * */
+
+    gs_canopy = params.m_ballBerry * potGrossPsn / 12 * 1000 * lai_int *
+                (RH_pcent / CO2_stom);
+
+    // gcan = m*A*RelHum/CO2;
+    // mol  / m^2 leaf area
+
+    potTrans = (gs_canopy * climate->vpd) / lai_int * 20 / 1000;
+    /* gs_canopy*climate_>vpd is the transpiration rate mol/m^2 leaf area per
+     * day dividing by lai_init converts to mol per m^2 ground area there are
+     * 20g water per mol multiply by the density of water 1cm^3/g multipy by
+     * 100cm and divide by 10^6cm^3
+     *
+     *  must convert to cm3 per cm2 land area.
+     */
+    removableWater = soilWater * params.waterRemoveFrac;
+    if (climate->tsoil < params.frozenSoilThreshold) {
+      // frozen soil - less or no water available
+      /* frozen soil effect: fraction of water available if soil is frozen
+       * (assume amt. of water avail. w/ frozen soil scales linearly with amt.
+       * of water avail. in thawed soil) */
+      removableWater *= params.frozenSoilEff;
+    }
+    if (removableWater >= potTrans) {
+      *trans = potTrans;
+    } else {
+      *trans = removableWater;
+    }
+
+#if WATER_PSN  // we're modeling water stress
+    *dWater = *trans / potTrans;  // from PnET: equivalent to setting
+    DWATER_MAX
+    // = 1
+#else  // WATER_PSN = 0
+    if (climate->tsoil < params.frozenSoilThreshold &&
+        params.frozenSoilEff == 0)
+      // (note: can't have partial shutdown of psn with frozen soil if
+      WATER_PSN
+    // = 0)
+    *dWater = 0;  // still allow total shut down of psn. if soil is frozen
+    else  // either soil is thawed, or frozenSoilEff > 0
+        *dWater = 1;  // no water stress, even if *trans/potTrans < 1
+#endif  // WATER_PSN
+    // printf("Remove %f potT %f dW %f vpd %f \n", removableWater, potTrans,
+    // *dWater, climate->vpd);
+  }
+}
 
 /* it would be preferable to include CO2 concentration as an input variable in
  * the climate file
@@ -1199,98 +1198,96 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
 // Penman Monteith method of estimating transiration and water use
 //  Started Nov 2006 - coding commenced Nov 20th
 
-// Unused - remove?
-// void moisture_pm(double *trans, double *dWater, double potGrossPsn, double
-// vpd,
-//                 double soilWater) {
-//  double potTrans;  // potential transpiration in the absense of plant water
-//                    // stress (cm H20 * day^-1)
-//  double removableWater;
-//  // not used   double wue; // water use efficiency, in mg CO2 fixed * g^-1
-//  H20
-//  // transpired
-//  double gapfraction = 17;  // gap fraction = 17% - the Penman Monteith
-//  Equation
-//                            // doesn't appear to be sensitive to gapfraction;
-//  double rCanConst = 30.8;  // Rcan = rCanConst/windspeed - 30.8 ;
-//  // is the median rCanConst to achieve the measured Rcan of 8.5 s/m;
-//  double DELTA;  // Delta is calculated as d Vsat/ d Tair;
-//
-//  /*
-//   * required constants and other values
-//   * Rn // Net radiation // read in from clim file
-//   * G // soil heat flux // read in from clim file
-//   * RHO // DENSITY OF (DRY) AIR (KG M-3)
-//   * CP // SPECIFIC HEAT OF AIR AT CONST PRESSURE (J KG-1 K-1)
-//   * VPD // VAPOR PRESSURE DEFICIT (PA)
-//   * rb - BULK AERODYNAMIC RESISTANCE (S/M)
-//   * rc - CANOPY AERODYNAMIC RESISTANCE (S/M)
-//   * LAMDA //LATENT HEAT OF VAPORIZATION OF WATER (J Kg-1) - 2450 @20C
-//   * GAMMA // PSYCHROMETRIC CONSTANT Kg M-2 S
-//   * DELTA slope of the saturation vapour pressure vs Temperature relationship
-//   */
-//  if (potGrossPsn < TINY) {  // avoid divide by 0
-//    *trans = 0.0;  // no photosynthesis -> no transpiration
-//    *dWater = 1;  // dWater doesn't matter, since we don't have any
-//                  // photosynthesis
-//  } else {
-//    DELTA = (2508.3 / ((climate->tair + 237.3) * (climate->tair + 237.3)) *
-//             exp((17.3 * climate->tair) / (climate->tair + 237.3)));
-//    potTrans =
-//        (DELTA * ((1 - gapfraction / 100) * climate->par - climate->tsoil) +
-//         (RHO * CP * vpd) / (rCanConst / climate->wspd)) /
-//        (DELTA + GAMMA * (1 + (params.rdConst / climate->wspd) /
-//                                  (rCanConst / climate->wspd)));
-//
-//    /*
-//     * the aerodynamic resistance - of the canopy can be calculated as
-//     follows:
-//     * rc = [ln((Zm-d)/Zom)*ln((Zh-d)/Zoh)] / k*k*wspd ;
-//     *
-//     * rc aerodynamic resistance [s m-1],
-//     * Zm height of wind measurements [m],
-//     * Zh height of humidity measurements [m],
-//     * d zero plane displacement height [m],
-//     * Zom roughness length governing momentum transfer [m],
-//     * Zoh roughness length governing transfer of heat and vapour [m],
-//     * k von Karman's constant, 0.41 [-],
-//     * wspd wind speed at height z [m s-1].
-//     */
-//    removableWater = soilWater * params.waterRemoveFrac;
-//    if (climate->tsoil < params.frozenSoilThreshold) {
-//      // frozen soil - less or no water available
-//      removableWater *= params.frozenSoilEff;
-//    }
-//    /* frozen soil effect: fraction of water available if soil is frozen
-//    (assume
-//     * amt. of water avail. w/ frozen soil scales linearly with amt. of water
-//     * avail. in thawed soil) */
-//    if (removableWater >= potTrans) {
-//      *trans = potTrans;
-//    } else {
-//      *trans = removableWater;
-//    }
-//
-// #if WATER_PSN  // we're modeling water stress
-//    *dWater = *trans / potTrans;  // from PnET: equivalent to setting
-//    DWATER_MAX
-//                                  // = 1
-// #else  // WATER_PSN = 0
-//    if (climate->tsoil < params.frozenSoilThreshold &&
-//        params.frozenSoilEff == 0)
-//      // (note: can't have partial shutdown of psn with frozen soil if
-//      WATER_PSN
-//      // = 0)
-//      *dWater = 0;  // still allow total shut down of psn. if soil is frozen
-//    else  // either soil is thawed, or frozenSoilEff > 0
-//      *dWater = 1;  // no water stress, even if *trans/potTrans < 1
-// #endif  // WATER_PSN
-//    // printf("PotGrossPsn: %f dWater %f potTrans %f\n", potGrossPsn, *dWater,
-//    // potTrans);
-//  }
-//
-//  // printf("%f\n", *dWater);
-//}
+void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd,
+                 double soilWater) {
+  double potTrans;  // potential transpiration in the absense of plant water
+                    // stress (cm H20 * day^-1)
+  double removableWater;
+  // not used   double wue; // water use efficiency, in mg CO2 fixed * g^-1
+  H20
+      // transpired
+      double gapfraction = 17;  // gap fraction = 17% - the Penman Monteith
+  Equation
+      // doesn't appear to be sensitive to gapfraction;
+      double rCanConst = 30.8;  // Rcan = rCanConst/windspeed - 30.8 ;
+  // is the median rCanConst to achieve the measured Rcan of 8.5 s/m;
+  double DELTA;  // Delta is calculated as d Vsat/ d Tair;
+
+  /*
+   * required constants and other values
+   * Rn // Net radiation // read in from clim file
+   * G // soil heat flux // read in from clim file
+   * RHO // DENSITY OF (DRY) AIR (KG M-3)
+   * CP // SPECIFIC HEAT OF AIR AT CONST PRESSURE (J KG-1 K-1)
+   * VPD // VAPOR PRESSURE DEFICIT (PA)
+   * rb - BULK AERODYNAMIC RESISTANCE (S/M)
+   * rc - CANOPY AERODYNAMIC RESISTANCE (S/M)
+   * LAMDA //LATENT HEAT OF VAPORIZATION OF WATER (J Kg-1) - 2450 @20C
+   * GAMMA // PSYCHROMETRIC CONSTANT Kg M-2 S
+   * DELTA slope of the saturation vapour pressure vs Temperature relationship
+   */
+  if (potGrossPsn < TINY) {  // avoid divide by 0
+    *trans = 0.0;  // no photosynthesis -> no transpiration
+    *dWater = 1;  // dWater doesn't matter, since we don't have any
+                  // photosynthesis
+  } else {
+    DELTA = (2508.3 / ((climate->tair + 237.3) * (climate->tair + 237.3)) *
+             exp((17.3 * climate->tair) / (climate->tair + 237.3)));
+    potTrans =
+        (DELTA * ((1 - gapfraction / 100) * climate->par - climate->tsoil) +
+         (RHO * CP * vpd) / (rCanConst / climate->wspd)) /
+        (DELTA + GAMMA * (1 + (params.rdConst / climate->wspd) /
+                                  (rCanConst / climate->wspd)));
+
+    /*
+     * the aerodynamic resistance - of the canopy can be calculated as
+     follows:
+     * rc = [ln((Zm-d)/Zom)*ln((Zh-d)/Zoh)] / k*k*wspd ;
+     *
+     * rc aerodynamic resistance [s m-1],
+     * Zm height of wind measurements [m],
+     * Zh height of humidity measurements [m],
+     * d zero plane displacement height [m],
+     * Zom roughness length governing momentum transfer [m],
+     * Zoh roughness length governing transfer of heat and vapour [m],
+     * k von Karman's constant, 0.41 [-],
+     * wspd wind speed at height z [m s-1].
+     */
+    removableWater = soilWater * params.waterRemoveFrac;
+    if (climate->tsoil < params.frozenSoilThreshold) {
+      // frozen soil - less or no water available
+      removableWater *= params.frozenSoilEff;
+    }
+    /* frozen soil effect: fraction of water available if soil is frozen
+    (assume
+     * amt. of water avail. w/ frozen soil scales linearly with amt. of water
+     * avail. in thawed soil) */
+    if (removableWater >= potTrans) {
+      *trans = potTrans;
+    } else {
+      *trans = removableWater;
+    }
+
+#if WATER_PSN  // we're modeling water stress
+    *dWater = *trans / potTrans;  // from PnET: equivalent to setting
+    DWATER_MAX
+    // = 1
+#else  // WATER_PSN = 0
+    if (climate->tsoil < params.frozenSoilThreshold &&
+        params.frozenSoilEff == 0)
+      // (note: can't have partial shutdown of psn with frozen soil if
+      WATER_PSN
+    // = 0)
+    *dWater = 0;  // still allow total shut down of psn. if soil is frozen
+    else  // either soil is thawed, or frozenSoilEff > 0
+        *dWater = 1;  // no water stress, even if *trans/potTrans < 1
+#endif  // WATER_PSN
+    // printf("PotGrossPsn: %f dWater %f potTrans %f\n", potGrossPsn, *dWater,
+    // potTrans);
+  }
+
+  // printf("%f\n", *dWater);
+}
 
 // calculate transpiration (cm H20 * day^-1)
 // and dWater (factor between 0 and 1)
