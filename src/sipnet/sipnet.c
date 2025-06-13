@@ -1109,8 +1109,8 @@ void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
   double vPress_sat;  // Saturating Vapor Press (sum of VPD and vPress)
   double RH_pcent;  // Relative Humidity - the ratio of vPress to saturating
                     // vapor pressure
-  double lai_int;  // calculate lai from current plantLeafC and the leafCSpwt
-  */ lai_int = envi.plantLeafC / params.leafCSpWt;
+  double lai_int;  // calculate lai from current plantLeafC and the leafCSpwt */
+  lai_int = envi.plantLeafC / params.leafCSpWt;
   /*  We do not require lai since potGrossPsn is in units of
    *  g C * m^-2 ground area * day^-1 */
   vPress_sat = climate->vPress + climate->vpd;  // calculate saturating vapor
@@ -1118,15 +1118,13 @@ void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
   RH_pcent = climate->vPress / vPress_sat;  // calculate relative humidity for
                                             // ball berry
 
-  //  double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20
-  transpired
+  //  double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
 
-      if (potGrossPsn < TINY) {  // avoid divide by 0
+  if (potGrossPsn < TINY) {  // avoid divide by 0
     *trans = 0.0;  // no photosynthesis -> no transpiration
     *dWater = 1;  // dWater doesn't matter, since we don't have any
                   // photosynthesis
-  }
-  else {
+  } else {
     /*Ball Berry Equation
      * unit issues:
      * potGrossPsn should be converted to
@@ -1165,18 +1163,16 @@ void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
     }
 
 #if WATER_PSN  // we're modeling water stress
-    *dWater = *trans / potTrans;  // from PnET: equivalent to setting
-    DWATER_MAX
-    // = 1
+    *dWater = *trans / potTrans;  // from PnET: equivalent to setting DWATER_MAX
+                                  // = 1
 #else  // WATER_PSN = 0
     if (climate->tsoil < params.frozenSoilThreshold &&
         params.frozenSoilEff == 0)
-      // (note: can't have partial shutdown of psn with frozen soil if
-      WATER_PSN
-    // = 0)
-    *dWater = 0;  // still allow total shut down of psn. if soil is frozen
+      // (note: can't have partial shutdown of psn with frozen soil if WATER_PSN
+      // = 0)
+      *dWater = 0;  // still allow total shut down of psn. if soil is frozen
     else  // either soil is thawed, or frozenSoilEff > 0
-        *dWater = 1;  // no water stress, even if *trans/potTrans < 1
+      *dWater = 1;  // no water stress, even if *trans/potTrans < 1
 #endif  // WATER_PSN
     // printf("Remove %f potT %f dW %f vpd %f \n", removableWater, potTrans,
     // *dWater, climate->vpd);
@@ -1195,6 +1191,8 @@ void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
  * we will assume this is 370 and I may edit the Climate input file to include
  * CO2 in future. BALL_BERRY_m is hardcoded into the equation at 3.89  */
 
+// printf("%d\n", gs_canopy);
+
 // Penman Monteith method of estimating transiration and water use
 //  Started Nov 2006 - coding commenced Nov 20th
 
@@ -1203,13 +1201,11 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd,
   double potTrans;  // potential transpiration in the absense of plant water
                     // stress (cm H20 * day^-1)
   double removableWater;
-  // not used   double wue; // water use efficiency, in mg CO2 fixed * g^-1
-  H20
-      // transpired
-      double gapfraction = 17;  // gap fraction = 17% - the Penman Monteith
-  Equation
-      // doesn't appear to be sensitive to gapfraction;
-      double rCanConst = 30.8;  // Rcan = rCanConst/windspeed - 30.8 ;
+  // not used   double wue; // water use efficiency, in mg CO2 fixed * g^-1 H20
+  // transpired
+  double gapfraction = 17;  // gap fraction = 17% - the Penman Monteith Equation
+                            // doesn't appear to be sensitive to gapfraction;
+  double rCanConst = 30.8;  // Rcan = rCanConst/windspeed - 30.8 ;
   // is the median rCanConst to achieve the measured Rcan of 8.5 s/m;
   double DELTA;  // Delta is calculated as d Vsat/ d Tair;
 
@@ -1240,8 +1236,7 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd,
                                   (rCanConst / climate->wspd)));
 
     /*
-     * the aerodynamic resistance - of the canopy can be calculated as
-     follows:
+     * the aerodynamic resistance - of the canopy can be calculated as follows:
      * rc = [ln((Zm-d)/Zom)*ln((Zh-d)/Zoh)] / k*k*wspd ;
      *
      * rc aerodynamic resistance [s m-1],
@@ -1258,8 +1253,7 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd,
       // frozen soil - less or no water available
       removableWater *= params.frozenSoilEff;
     }
-    /* frozen soil effect: fraction of water available if soil is frozen
-    (assume
+    /* frozen soil effect: fraction of water available if soil is frozen (assume
      * amt. of water avail. w/ frozen soil scales linearly with amt. of water
      * avail. in thawed soil) */
     if (removableWater >= potTrans) {
@@ -1269,18 +1263,16 @@ void moisture_pm(double *trans, double *dWater, double potGrossPsn, double vpd,
     }
 
 #if WATER_PSN  // we're modeling water stress
-    *dWater = *trans / potTrans;  // from PnET: equivalent to setting
-    DWATER_MAX
-    // = 1
+    *dWater = *trans / potTrans;  // from PnET: equivalent to setting DWATER_MAX
+                                  // = 1
 #else  // WATER_PSN = 0
     if (climate->tsoil < params.frozenSoilThreshold &&
         params.frozenSoilEff == 0)
-      // (note: can't have partial shutdown of psn with frozen soil if
-      WATER_PSN
-    // = 0)
-    *dWater = 0;  // still allow total shut down of psn. if soil is frozen
+      // (note: can't have partial shutdown of psn with frozen soil if WATER_PSN
+      // = 0)
+      *dWater = 0;  // still allow total shut down of psn. if soil is frozen
     else  // either soil is thawed, or frozenSoilEff > 0
-        *dWater = 1;  // no water stress, even if *trans/potTrans < 1
+      *dWater = 1;  // no water stress, even if *trans/potTrans < 1
 #endif  // WATER_PSN
     // printf("PotGrossPsn: %f dWater %f potTrans %f\n", potGrossPsn, *dWater,
     // potTrans);
