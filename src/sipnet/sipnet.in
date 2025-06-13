@@ -8,8 +8,6 @@ RUNTYPE = standard
 
 FILENAME = Sites/Niwot/niwot
 ! FILENAME.param is the file of parameter values & initial conditions
-! FILENAME.param-spatial is the file of spatially-varying parameters
-!  (first line must contain a single integer: # of locations)
 ! FILENAME.clim is the file of climate data for each time step
 
 LOCATION = 0
