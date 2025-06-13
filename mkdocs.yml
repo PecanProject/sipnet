@@ -16,15 +16,15 @@ nav:
 
 theme:
   name: material
-  custom_dir: docs/overrides
   features:
     - content.action.edit
-    - content.action.view
-    - navigation.top
+  icon:
+    edit: material/pencil 
   palette:
     - scheme: default
-      primary: indigo
-      accent: indigo
+      primary: green
+      accent: light green
+        
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true  
@@ -32,14 +32,9 @@ markdown_extensions:
       permalink: true
   
 
-extra_css:
-  - stylesheets/extra.css
-
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   
-
-
 extra:
   arithmatex:
     inline_syntax: ['\\(', '\\)']
