@@ -141,29 +141,29 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Phenology-related parameters
 
-|    | Symbol             | Parameter Name   | Definition                                                              | Units                              | notes                                          |
-| -- | ------------------ | ---------------- | ----------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------------- |
-| 17 | $D_{\text{on}}$  | leafOnDay        | Day of year when leaves appear                                          | day of year                        |                                                |
-| 18 |                    | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                    |                                                |
-| 19 |                    | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                    |                                                |
-| 20 | $D_{\text{off}}$ | leafOffDay       | Day of year for leaf drop                                               |                                    |                                                |
-| 21 |                    | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$                 |                                                |
-| 22 |                    | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                    |                                                |
-| 23 | $\alpha_\text{leaf}$       | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                    |                                                |
-| 24 | $K_{leaf}$    | leafTurnoverRate | average turnover rate of leaves                                         | fraction per day                   | read in as per-year rate                       |
-|    | $L_{\text{max}}$ |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
+|    | Symbol               | Parameter Name   | Definition                                                              | Units                              | notes                                          |
+| -- |----------------------| ---------------- | ----------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------------- |
+| 17 | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                        |                                                |
+| 18 |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                    |                                                |
+| 19 |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                    |                                                |
+| 20 | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                    |                                                |
+| 21 |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$                 |                                                |
+| 22 |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                    |                                                |
+| 23 | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                    |                                                |
+| 24 | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | fraction per day                   | read in as per-year rate                       |
+|    | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
 
 
 ### Allocation parameters
 
-|    | Symbol                    | Parameter Name      | Definition                                     | Units | notes              |
-|----|---------------------------|---------------------|------------------------------------------------|-------|--------------------|
-| 64 |                           | fineRootFrac        | fraction of wood carbon allocated to fine root |       |                    |
-| 65 |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |       |                    |
-| 66 | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |       |                    |
-| 67 | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |       |                    |
-<!--| 68 |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
-| 69 |                           | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
+|      | Symbol                     | Parameter Name      | Definition                                     | Units | notes              |
+|------|----------------------------|---------------------|------------------------------------------------|-------|--------------------|
+| 64   |                            | fineRootFrac        | fraction of wood carbon allocated to fine root |       |                    |
+| 65   |                            | coarseRootFrac      | fraction of wood carbon that is coarse root    |       |                    |
+| 66   | $\alpha_\text{fine root}$  | fineRootAllocation  | fraction of NPP allocated to fine roots        |       |                    |
+| 67   | $\alpha_\text{wood}$       | woodAllocation      | fraction of NPP allocated to wood              |       |                    |
+ <!-- | 68                         |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
+| 68   |                            | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
 -->
 
 ### Autotrophic respiration parameters
@@ -348,10 +348,6 @@ using the [PEcAn Framework](https://pecanproject.org/).
 
 Both initial conditions and parameters are specified in a file named `sipnet.param`.
 
-_Note: A `sipnet.param-spatial` can be used for multi-site runs, but this is not currently used 
-or documented._
-
-
 The SIPNET parameter file (`sipnet.param`) specifies model parameters and their properties for each simulation. 
 Each line in the file corresponds to a single parameter and contains five or six space-separated values.
 
@@ -359,56 +355,57 @@ Each line in the file corresponds to a single parameter and contains five or six
 | -------------- | ----------------------------------------------------------------------------------------- |
 | Parameter Name | Name of the parameter                                                  |
 | Value          | Value of the parameter to use in the model                             |
-| Flag           | Parameter estimation flag: <br> `0` = fixed (not estimated), <br> `1` = estimated (free)  |
-| Min            | Minimum value for optimization                                         |
-| Max            | Maximum value for optimization                                         |
-| Stddev         | (Optional) Standard deviation for prior distribution                   |
 
 #### Example `sipnet.param` file
 
 Column names are not used, but are:
-```
-param_name value flag min max stddev
-```
-
 
 ```
-plantWoodInit 110 0 6600 14000 200
-laiInit 0 0 0 5.2 0.2
-litterInit 200 0 130 1200 25
-soilInit 7000 1 3300 19000 3000
-litterWFracInit 0.5 0 0 1 0.1
-soilWFracInit 0.6 1 0 1 0.1
-snowInit 1 0 0 0 1
-microbeInit 0.5 0 0.02 1 0.001
-fineRootFrac 0.2 0 0 1 0.001
-coarseRootFrac 0.2 0 0 1 0.001
-aMax 95 1 0 200 0.2
-aMaxFrac 0.85 0 0.66 0.86 0.005
+param_name value
+```
+
+The first lines in `sipnet.param` could be:
+
+```
+plantWoodInit 110
+laiInit 0
+litterInit 200
+soilInit 7000
+litterWFracInit 0.5
+soilWFracInit 0.6
+snowInit 1
+microbeInit 0.5
+fineRootFrac 0.2
+coarseRootFrac 0.2
+aMax 95
+aMaxFrac 0.85
 ...
 ```
 
 
 ### Climate
 
-For each step of the model, for each location, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns:
+For each step of the model, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns:
 
 | col | parameter | description | units | notes |
-| -- | ----------- | --------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 1  | loc         | spatial location index          |               | maps to param-spatial file, can be 0 for a single site, as when used by PEcAn |
-| 2  | year        | year of start of this timestep  |               | integer, e.g. 2010|
-| 3  | day         | day of start of this timestep   |               | integer where 1 = Jan 1|
-| 4  | time        | time of start of this timestep  | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
-| 5  | length      | length of this timestep         | days          | variable-length timesteps allowed, typically not used |
-| 6  | tair        | avg. air temp for this time step| degrees Celsius |     |
-| 7  | tsoil       | average soil temperature for this time step  | degrees Celsius| can be estimated from Tair  |
-| 8  | par         | average photosynthetically active radiation (PAR) for this time step  | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$  | input is in Einsteins \* m^-2 ground area, summed over entire time step |
-| 9  | precip      | total precip. for this time step| cm            | input is in mm; water equivilant - either rain or snow   |
-| 10 | vpd         | average vapor pressure deficit   | kPa          | input is in Pa, can be calculated from air temperature and relative humidity.|
-| 11 | vpdSoil     | average vapor pressure deficit between soil and air | kPa | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
-| 12 | vPress      | average vapor pressure in canopy airspace | kPa | input is in Pa |
-| 13 | wspd        | avg. wind speed                   | m/s         |                |
-| 14 | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
+|-----| ----------- | --------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 1   | year        | year of start of this timestep  |               | integer, e.g. 2010|
+| 2   | day         | day of start of this timestep   |               | integer where 1 = Jan 1|
+| 3   | time        | time of start of this timestep  | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
+| 4   | length      | length of this timestep         | days          | variable-length timesteps allowed, typically not used |
+| 5   | tair        | avg. air temp for this time step| degrees Celsius |     |
+| 6   | tsoil       | average soil temperature for this time step  | degrees Celsius| can be estimated from Tair  |
+| 7   | par         | average photosynthetically active radiation (PAR) for this time step  | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$  | input is in Einsteins \* m^-2 ground area, summed over entire time step |
+| 8   | precip      | total precip. for this time step| cm            | input is in mm; water equivilant - either rain or snow   |
+| 9   | vpd         | average vapor pressure deficit   | kPa          | input is in Pa, can be calculated from air temperature and relative humidity.|
+| 10  | vpdSoil     | average vapor pressure deficit between soil and air | kPa | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
+| 11  | vPress      | average vapor pressure in canopy airspace | kPa | input is in Pa |
+| 12  | wspd        | avg. wind speed                   | m/s         |                |
+| 13  | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
+
+Note: An older format for this file included location as the first column. Files with this older format can still be read by sipnet:
+* SIPNET will print a warning indicating that it is ignoring the location column
+* If there is more than one location specified in the file, SIPNET will error and halt
 
 #### Example `sipnet.clim` file:
 
@@ -442,18 +439,17 @@ For managed ecosystems, the following inputs are provided in a file named `event
 
 | col   | parameter   | description                        | units       | notes                                 |
 |-------|-------------|------------------------------------|-------------|---------------------------------------|
-| 1     | loc         | spatial location index             |             | maps to param-spatial file            |
-| 2     | year        | year of start of this timestep     |             | e.g. 2010                             |
-| 3     | day         | day of start of this timestep      | Day of year | 1 = Jan 1                             |
-| 4     | event_type  | type of event                      |             | one of plant, harv, till, fert, irrig |
-| 5...n | event_param | parameter associated with event    |             | see table below                       |
+| 1     | year        | year of start of this timestep     |             | e.g. 2010                             |
+| 2     | day         | day of start of this timestep      | Day of year | 1 = Jan 1                             |
+| 3     | event_type  | type of event                      |             | one of plant, harv, till, fert, irrig |
+| 4...n | event_param | parameter associated with event    |             | see table below                       |
 
 - Agronomic events are stored in `events.in`, one event per row
-- Events in the file are sorted first by location, and then chronologically
+- Events in the file must be sorted chronologically
 - Events are specified by year and day (no hourly timestamp)
-- It is assumed that there is one (or more) records in the climate file for each location/day that appears in the events file
+- It is assumed that there is one (or more) records in the climate file for each year/day that appears in the events file
   - SIPNET will throw an error if it finds an event with no corresponding climate record
-- Events are processed with the first climate record that occurs for the relevant location/day as an instantaneous one-time change
+- Events are processed with the first climate record that occurs for the relevant year/day as an instantaneous one-time change
   - We may need events with duration later, spec TBD. Tillage is likely in this bucket.
 - The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required
 
@@ -534,11 +530,11 @@ Notes:
 #### Example of `events.in` file:
 
 ```
-1  2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
-1  2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
-1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
-1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
-1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
+2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
+2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
+2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
+2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
+2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 
 #### Events output
@@ -546,57 +542,57 @@ Notes:
 SIPNET will create a file named `events.out` when event handling is enabled. 
 
 
-This file will have one row for each agronomic event that is processed. Each row lists location, 
-time, event type, and parameter name/value pairs for all state variables that the event
+This file will have one row for each agronomic event that is processed. Each row lists year, 
+day, event type, and parameter name/value pairs for all state variables that the event
 affects. 
 
 
 Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
 up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
 ```
-loc  year  day  type     param_name=delta[,param_name=delta,...]
-0    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
-0    2024   70  irrig    envi.soilWater=5.00
-0    2024  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
-1    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
-1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
-1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+year  day  type     param_name=delta[,param_name=delta,...]
+2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
+2023   70  irrig    envi.soilWater=5.00
+2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
+2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
+2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 ```
 
 _Note: `events.out` logs all parameters changed by an event for debugging and testing purposes; 
 For downstream analyses that only need the date and event type, `events.in` is equivalent and easier to parse._
+
 ## Outputs
 
-|    | Symbol      | Parameter Name     | Definition                     | Units       |
-| -- | ----------- | ------------------ | ------------------------------ | ----------- |
-| 1  |             |loc                 | spatial location index         |             |
-| 2  |             |year                | year of start of this timestep |             |
-| 3  |             |day                 | day of start of this timestep  |             |
-| 4  |             |time                | time of start of this timestep |             |
-| 5  |             |plantWoodC          | carbon in wood                 | g C/m$^2$   |
-| 6  |             |plantLeafC          | carbon in leaves               | g C/m$^2$   |
-| 7  |             |soil                | carbon in mineral soil         | g C/m$^2$   |
-| 8  |             |microbeC            | carbon in soil microbes        | g C/m$^2$   |
-| 9  |             |coarseRootC         | carbon in coarse roots         | g C/m$^2$   |
-| 10 |             |fineRootC           | carbon in fine roots           | g C/m$^2$   |
-| 11 |             |litter              | carbon in litter               | g C/m$^2$   |
-| 12 |             |litterWater         | moisture in litter layer       | cm          |
-| 13 |             |soilWater           | moisture in soil               | cm          |
-| 14 |$f_\text{WHC}$|soilWetnessFrac    | moisture in soil as fraction   |             |
-| 15 |             |snow                | snow water                     | cm          |
-| 16 |             |npp                 | net primary production         | g C/m$^2$   |
-| 17 |             |nee                 | net ecosystem production       | g C/m$^2$   |
-| 18 |             |cumNEE              | cumulative nee                 | g C/m$^2$   |
-| 19 |  $GPP$      |gpp                 | gross ecosystem production     | g C/m$^2$   |
-| 20 |  $R_{A,\text{above}}$ |rAboveground  | plant respiration above ground | g C/m$^2$   |
-| 21 |  $R_H$      |rSoil               | soil respiration               | g C/m$^2$   |
-| 22 |  $R_{A\text{, root}}$  |rRoot               | root respiration     | g C/m$^2$   |
-| 23 |  $R$        |rtot                | total respiration              | g C/m$^2$   |
-| 24 |             |fluxestranspiration | transpiration                  | cm          |
-|    | $F^N_\text{vol}$ |fluxesn2o      | Nitrous Oxide flux             | g N/m$^2$ / timestep |
-|    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
-|    | $F^N_\text{vol}$ |fluxesn2o      | Nitrous Oxide flux             | g N/m$^2$ / timestep |
-|    | $F^C_{\text{CH}_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
+|    | Symbol               | Parameter Name      | Definition                     | Units                |
+|----|----------------------|---------------------|--------------------------------|----------------------|
+| 1  |                      | year                | year of start of this timestep |                      |
+| 2  |                      | day                 | day of start of this timestep  |                      |
+| 3  |                      | time                | time of start of this timestep |                      |
+| 4  |                      | plantWoodC          | carbon in wood                 | g C/m$^2$            |
+| 5  |                      | plantLeafC          | carbon in leaves               | g C/m$^2$            |
+| 6  |                      | soil                | carbon in mineral soil         | g C/m$^2$            |
+| 7  |                      | microbeC            | carbon in soil microbes        | g C/m$^2$            |
+| 8  |                      | coarseRootC         | carbon in coarse roots         | g C/m$^2$            |
+| 9  |                      | fineRootC           | carbon in fine roots           | g C/m$^2$            |
+| 10 |                      | litter              | carbon in litter               | g C/m$^2$            |
+| 11 |                      | litterWater         | moisture in litter layer       | cm                   |
+| 12 |                      | soilWater           | moisture in soil               | cm                   |
+| 13 | $f_\text{WHC}$       | soilWetnessFrac     | moisture in soil as fraction   |                      |
+| 14 |                      | snow                | snow water                     | cm                   |
+| 15 |                      | npp                 | net primary production         | g C/m$^2$            |
+| 16 |                      | nee                 | net ecosystem production       | g C/m$^2$            |
+| 17 |                      | cumNEE              | cumulative nee                 | g C/m$^2$            |
+| 18 | $GPP$                | gpp                 | gross ecosystem production     | g C/m$^2$            |
+| 19 | $R_{A,\text{above}}$ | rAboveground        | plant respiration above ground | g C/m$^2$            |
+| 20 | $R_H$                | rSoil               | soil respiration               | g C/m$^2$            |
+| 21 | $R_{A\text{, root}}$ | rRoot               | root respiration               | g C/m$^2$            |
+| 22 | $R$                  | rtot                | total respiration              | g C/m$^2$            |
+| 23 |                      | fluxestranspiration | transpiration                  | cm                   |
+| 24 | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
+| 25 | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
+| 26 | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
+| 27 | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 
 <!--
 

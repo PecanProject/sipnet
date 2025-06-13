@@ -12,9 +12,6 @@ FILENAME = tests/smoke/niwot
 !  (first line must contain a single integer: # of locations)
 ! FILENAME.clim is the file of climate data for each time step
 
-LOCATION = 0
-! Location to run at (-1 means run at all locations)
-
 DO_MAIN_OUTPUT = 1
 ! If 1, do the primary output to FILENAME.out (time series of all output
 !  variables)

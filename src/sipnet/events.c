@@ -3,23 +3,10 @@
  * @file events.c
  * @brief Handles reading, parsing, and storing agronomic events for SIPNET simulations.
  *
- * The `events.in` file specifies agronomic events with the following columns:
- * | col | parameter   | description                                | units            |
- * |-----|-------------|--------------------------------------------|------------------|
- * | 1   | loc         | spatial location index                     |                  |
- * | 2   | year        | year of start of this timestep             |                  |
- * | 3   | day         | day of start of this timestep              | Day of year      |
- * | 4   | event_type  | type of event                              | (e.g., "irrig")  |
- * | 5...n| event_param| parameters specific to the event type      | (varies)         |
- *
- *
- * Event types include:
- * - "irrig": Parameters = [amount added (cm/d), type (0=canopy, 1=soil, 2=flood)]
- * - "fert": Parameters = [Org-N (g/m²), Org-C (g/ha), Min-N (g/m²), Min-N2 (g/m²)]
- * - "till": Parameters = [SOM decomposition modifier, litter decomposition modifier]
- * - "plant": Parameters = [leaf C (g/m²), wood C (g/m²), fine root C (g/m²), corase root C (g/m²)]
- * - "harv": Parameters = [fraction aboveground removed, fraction belowground removed, ...]
- * See test examples in `tests/sipnet/test_events_infrastructure/` and tests/sipnet/test_events_types/.
+ * The `events.in` file specifies agronomic events. See the input documentation
+ * (currently parameters.md) for information on the format of that file. Also,
+ * see test examples in `tests/sipnet/test_events_infrastructure/` and
+ * tests/sipnet/test_events_types/.
  */
 // clang-format on
 
@@ -33,10 +20,9 @@
 
 void printEvent(EventNode *event);
 
-EventNode *createEventNode(int loc, int year, int day, int eventType,
+EventNode *createEventNode(int year, int day, int eventType,
                            const char *eventParamsStr) {
   EventNode *event = (EventNode *)malloc(sizeof(EventNode));
-  event->loc = loc;
   event->year = year;
   event->day = day;
   event->type = eventType;
@@ -45,18 +31,18 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
     case HARVEST: {
       double fracRA, fracRB, fracTA, fracTB;
       HarvestParams *params = (HarvestParams *)malloc(sizeof(HarvestParams));
-      int numRead = sscanf(eventParamsStr, "%lf %lf %lf %lf", &fracRA, &fracRB,
-                           &fracTA, &fracTB);
+      int numRead =
+          sscanf(eventParamsStr,  // NOLINT
+                 "%lf %lf %lf %lf", &fracRA, &fracRB, &fracTA, &fracTB);
       if (numRead != NUM_HARVEST_PARAMS) {
-        printf("Error parsing Harvest params for loc %d year %d day %d\n", loc,
-               year, day);
+        printf("Error parsing Harvest params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       // Validate the params
       if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
-        printf("Invalid harvest event for loc %d year %d day %d; above and "
-               "below must each add to 1 or less",
-               loc, year, day);
+        printf("Invalid harvest event for year %d day %d; above and below must "
+               "each add to 1 or less",
+               year, day);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
       params->fractionRemovedAbove = fracRA;
@@ -70,10 +56,11 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       int method;
       IrrigationParams *params =
           (IrrigationParams *)malloc(sizeof(IrrigationParams));
-      int numRead = sscanf(eventParamsStr, "%lf %d", &amountAdded, &method);
+      int numRead = sscanf(eventParamsStr,  // NOLINT
+                           "%lf %d", &amountAdded, &method);
       if (numRead != NUM_IRRIGATION_PARAMS) {
-        printf("Error parsing Irrigation params for loc %d year %d day %d\n",
-               loc, year, day);
+        printf("Error parsing Irrigation params for year %d day %d\n", year,
+               day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       params->amountAdded = amountAdded;
@@ -87,10 +74,11 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
       // double nh4_no3_frac;
       FertilizationParams *params =
           (FertilizationParams *)malloc(sizeof(FertilizationParams));
-      int numRead = sscanf(eventParamsStr, "%lf %lf %lf", &orgN, &orgC, &minN);
+      int numRead = sscanf(eventParamsStr,  // NOLINT
+                           "%lf %lf %lf", &orgN, &orgC, &minN);
       if (numRead != NUM_FERTILIZATION_PARAMS) {
-        printf("Error parsing Fertilization params for loc %d year %d day %d\n",
-               loc, year, day);
+        printf("Error parsing Fertilization params for year %d day %d\n", year,
+               day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       // scanf(eventParamsStr, "%lf %lf %lf %lf", &org_N, &org_C, &min_N,
@@ -104,11 +92,11 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
     case PLANTING: {
       double leafC, woodC, fineRootC, coarseRootC;
       PlantingParams *params = (PlantingParams *)malloc(sizeof(PlantingParams));
-      int numRead = sscanf(eventParamsStr, "%lf %lf %lf %lf", &leafC, &woodC,
-                           &fineRootC, &coarseRootC);
+      int numRead =
+          sscanf(eventParamsStr,  // NOLINT
+                 "%lf %lf %lf %lf", &leafC, &woodC, &fineRootC, &coarseRootC);
       if (numRead != NUM_PLANTING_PARAMS) {
-        printf("Error parsing Planting params for loc %d year %d day %d\n", loc,
-               year, day);
+        printf("Error parsing Planting params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       params->leafC = leafC;
@@ -120,11 +108,10 @@ EventNode *createEventNode(int loc, int year, int day, int eventType,
     case TILLAGE: {
       double fracLT, somDM, litterDM;
       TillageParams *params = (TillageParams *)malloc(sizeof(TillageParams));
-      int numRead =
-          sscanf(eventParamsStr, "%lf %lf %lf", &fracLT, &somDM, &litterDM);
+      int numRead = sscanf(eventParamsStr,  // NOLINT
+                           "%lf %lf %lf", &fracLT, &somDM, &litterDM);
       if (numRead != NUM_TILLAGE_PARAMS) {
-        printf("Error parsing Tillage params for loc %d year %d day %d\n", loc,
-               year, day);
+        printf("Error parsing Tillage params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       params->fractionLitterTransferred = fracLT;
@@ -157,18 +144,16 @@ event_type_t getEventType(const char *eventTypeStr) {
   return UNKNOWN_EVENT;
 }
 
-EventNode **readEventData(char *eventFile, int numLocs) {
-  int loc, year, day, eventType;
-  int currLoc, currYear, currDay;
+EventNode *readEventData(char *eventFile) {
+  int year, day, eventType;
+  int currYear, currDay;
   int EVENT_LINE_SIZE = 1024;
   int numBytes;
   char *eventParamsStr;
   char eventTypeStr[20];
   char line[EVENT_LINE_SIZE];
   EventNode *curr, *next;
-
-  EventNode **events =
-      (EventNode **)calloc(sizeof(EventNode *), numLocs * sizeof(EventNode *));
+  EventNode *events = NULL;
 
   // Check for a non-empty file
   if (access(eventFile, F_OK) != 0) {
@@ -187,8 +172,8 @@ EventNode **readEventData(char *eventFile, int numLocs) {
     return events;
   }
 
-  int numRead = sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr,
-                       &numBytes);
+  int numRead = sscanf(line,  // NOLINT
+                       "%d %d %s %n", &year, &day, eventTypeStr, &numBytes);
   if (numRead != NUM_EVENT_CORE_PARAMS) {
     printf("Error reading event file: bad data on first line\n");
     exit(EXIT_CODE_INPUT_FILE_ERROR);
@@ -201,21 +186,20 @@ EventNode **readEventData(char *eventFile, int numLocs) {
     exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 
-  next = createEventNode(loc, year, day, eventType, eventParamsStr);
-  events[loc] = next;
-  currLoc = loc;
+  events = createEventNode(year, day, eventType, eventParamsStr);
+  next = events;
   currYear = year;
   currDay = day;
 
   while (fgets(line, EVENT_LINE_SIZE, in) != NULL) {
     // We have another event
     curr = next;
-    numRead = sscanf(line, "%d %d %d %s %n", &loc, &year, &day, eventTypeStr,
-                     &numBytes);
-    if (numRead != 4) {
-      printf("Error reading event file: bad data on line after loc %d year %d "
-             "day %d\n",
-             currLoc, currYear, currDay);
+    numRead = sscanf(line, "%d %d %s %n",  // NOLINT
+                     &year, &day, eventTypeStr, &numBytes);
+    if (numRead != NUM_EVENT_CORE_PARAMS) {
+      printf(
+          "Error reading event file: bad data on line after year %d day %d\n",
+          currYear, currDay);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     eventParamsStr = line + numBytes;
@@ -226,35 +210,16 @@ EventNode **readEventData(char *eventFile, int numLocs) {
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
-    // make sure location and time are non-decreasing
-    if (loc < currLoc) {
-      printf("Error reading event file: was reading location %d, trying to "
-             "read location %d\n",
-             currLoc, loc);
-      printf("Event records for a given location should be contiguous, and "
-             "locations should be in ascending order\n");
-      exit(EXIT_CODE_INPUT_FILE_ERROR);
-    }
-    if ((loc == currLoc) &&
-        ((year < currYear) || ((year == currYear) && (day < currDay)))) {
-      printf("Error reading event file: for location %d, last event was at "
-             "(%d, %d) ",
-             currLoc, currYear, currDay);
+    if ((year < currYear) || ((year == currYear) && (day < currDay))) {
+      printf("Error reading event file: last event was at (%d, %d) ", currYear,
+             currDay);
       printf("next event is at (%d, %d)\n", year, day);
-      printf("Event records for a given location should be in time-ascending "
-             "order\n");
+      printf("Event records must be in time-ascending order\n");
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
 
-    next = createEventNode(loc, year, day, eventType, eventParamsStr);
-    if (currLoc == loc) {
-      // Same location, add the new event to this location's list
-      curr->nextEvent = next;
-    } else {
-      // New location, update location and start a new list
-      currLoc = loc;
-      events[currLoc] = next;
-    }
+    next = createEventNode(year, day, eventType, eventParamsStr);
+    curr->nextEvent = next;
     currYear = year;
     currDay = day;
   }
@@ -267,24 +232,23 @@ void printEvent(EventNode *event) {
   if (event == NULL) {
     return;
   }
-  int loc = event->loc;
   int year = event->year;
   int day = event->day;
   switch (event->type) {
     case IRRIGATION:
-      printf("IRRIGATION at loc %d on %d %d, ", loc, year, day);
+      printf("IRRIGATION on %d %d, ", year, day);
       IrrigationParams *const iParams = (IrrigationParams *)event->eventParams;
       printf("with params: amount added %4.2f\n", iParams->amountAdded);
       break;
     case FERTILIZATION:
-      printf("FERTILIZATION at loc %d on %d %d, ", loc, year, day);
+      printf("FERTILIZATION on %d %d, ", year, day);
       FertilizationParams *const fParams =
           (FertilizationParams *)event->eventParams;
       printf("with params: org N %4.2f, org C %4.2f, min N %4.2f\n",
              fParams->orgN, fParams->orgC, fParams->minN);
       break;
     case PLANTING:
-      printf("PLANTING at loc %d on %d %d, ", loc, year, day);
+      printf("PLANTING on %d %d, ", year, day);
       PlantingParams *const pParams = (PlantingParams *)event->eventParams;
       printf("with params: leaf C %4.2f, wood C %4.2f, fine root C %4.2f, "
              "coarse root C %4.2f\n",
@@ -292,7 +256,7 @@ void printEvent(EventNode *event) {
              pParams->coarseRootC);
       break;
     case TILLAGE:
-      printf("TILLAGE at loc %d on %d %d, ", loc, year, day);
+      printf("TILLAGE at on %d %d, ", year, day);
       TillageParams *const tParams = (TillageParams *)event->eventParams;
       printf("with params: frac litter transferred %4.2f, som decomp modifier "
              "%4.2f, litter decomp modifier %4.2f\n",
@@ -300,7 +264,7 @@ void printEvent(EventNode *event) {
              tParams->litterDecompModifier);
       break;
     case HARVEST:
-      printf("HARVEST at loc %d on %d %d, ", loc, year, day);
+      printf("HARVEST on %d %d, ", year, day);
       HarvestParams *const hParams = (HarvestParams *)event->eventParams;
       printf("with params: frac removed above %4.2f, frac removed below %4.2f, "
              "frac transferred above %4.2f, frac transferred below %4.2f\n",
@@ -336,7 +300,7 @@ FILE *openEventOutFile(int printHeader) {
   if (printHeader) {
     // Use format string analogous to the one in writeEventOut for
     // better alignment (won't be perfect, but definitely better)
-    fprintf(eventFile, "%3s  %4s  %3s  %-7s  %s", "loc", "year", "day", "type",
+    fprintf(eventFile, "%4s  %3s  %-7s  %s", "year", "day", "type",
             "param_name=delta[,param_name=delta,...]\n");
   }
   return eventFile;
@@ -347,10 +311,10 @@ void writeEventOut(FILE *out, EventNode *event, int numParams, ...) {
   int ind = 0;
 
   // Spec:
-  // loc year day event_type <param name=delta>[,<param name>=<delta>,...]
+  // year day event_type <param name=delta>[,<param name>=<delta>,...]
 
   // Standard prefix for all
-  fprintf(out, "%-3d  %4d  %3d  %-7s  ", event->loc, event->year, event->day,
+  fprintf(out, "%4d  %3d  %-7s  ", event->year, event->day,
           eventTypeToString(event->type));
   // Variable output per event type
   va_start(args, numParams);
