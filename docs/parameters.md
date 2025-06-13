@@ -348,10 +348,6 @@ using the [PEcAn Framework](https://pecanproject.org/).
 
 Both initial conditions and parameters are specified in a file named `sipnet.param`.
 
-_Note: A `sipnet.param-spatial` can be used for multi-site runs, but this is not currently used 
-or documented._
-
-
 The SIPNET parameter file (`sipnet.param`) specifies model parameters and their properties for each simulation. 
 Each line in the file corresponds to a single parameter and contains five or six space-separated values.
 
@@ -359,32 +355,30 @@ Each line in the file corresponds to a single parameter and contains five or six
 | -------------- | ----------------------------------------------------------------------------------------- |
 | Parameter Name | Name of the parameter                                                  |
 | Value          | Value of the parameter to use in the model                             |
-| Flag           | Parameter estimation flag: <br> `0` = fixed (not estimated), <br> `1` = estimated (free)  |
-| Min            | Minimum value for optimization                                         |
-| Max            | Maximum value for optimization                                         |
-| Stddev         | (Optional) Standard deviation for prior distribution                   |
 
 #### Example `sipnet.param` file
 
 Column names are not used, but are:
-```
-param_name value flag min max stddev
-```
-
 
 ```
-plantWoodInit 110 0 6600 14000 200
-laiInit 0 0 0 5.2 0.2
-litterInit 200 0 130 1200 25
-soilInit 7000 1 3300 19000 3000
-litterWFracInit 0.5 0 0 1 0.1
-soilWFracInit 0.6 1 0 1 0.1
-snowInit 1 0 0 0 1
-microbeInit 0.5 0 0.02 1 0.001
-fineRootFrac 0.2 0 0 1 0.001
-coarseRootFrac 0.2 0 0 1 0.001
-aMax 95 1 0 200 0.2
-aMaxFrac 0.85 0 0.66 0.86 0.005
+param_name value
+```
+
+The first lines in `sipnet.param` could be:
+
+```
+plantWoodInit 110
+laiInit 0
+litterInit 200
+soilInit 7000
+litterWFracInit 0.5
+soilWFracInit 0.6
+snowInit 1
+microbeInit 0.5
+fineRootFrac 0.2
+coarseRootFrac 0.2
+aMax 95
+aMaxFrac 0.85
 ...
 ```
 
