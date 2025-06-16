@@ -29,10 +29,8 @@ FILE *openFile(const char *name, const char *mode) {
 
   if ((f = fopen(name, mode)) == NULL) {
     const char *mode_word =
-      (!strcmp(mode, "r") || !strcmp(mode, "rb")) ? "reading" : "writing";
-    fprintf(stderr,
-            "Error %s '%s': %s\n",
-            mode_word, name, strerror(errno));
+        (!strcmp(mode, "r") || !strcmp(mode, "rb")) ? "reading" : "writing";
+    fprintf(stderr, "Error %s '%s': %s\n", mode_word, name, strerror(errno));
     exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
   }
 
