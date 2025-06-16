@@ -2,6 +2,8 @@
 
 #include "common/exitCodes.h"
 
+#include "version.h"
+
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 struct option long_options[] = {
     // These options set a flag (and they need to be at the top here)
@@ -52,7 +54,7 @@ void usage(char *progName) {
 }
 
 // Print the version when requested
-void version(void) { printf("SIPNET version 2.0.0\n"); }
+void version(void) { printf("SIPNET version %s\n", VERSION_STRING); }
 
 // Parses command-line options using getopt_long
 void parseCommandLineArgs(int argc, char *argv[]) {

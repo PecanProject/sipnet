@@ -1,0 +1,6 @@
+#ifndef SIPNET_VERSION_H
+#define SIPNET_VERSION_H
+
+#define VERSION_STRING "2.0.0"
+
+#endif  // SIPNET_VERSION_H
