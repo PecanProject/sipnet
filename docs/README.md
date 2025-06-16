@@ -4,6 +4,26 @@ SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is an ecosystem 
 carbon and water dynamics. Originally developed for assimilation of eddy covariance flux data in forest ecosystems, 
 current development is focused on representing carbon balance and GHG fluxes and agricultural management practices.
 
+## Quick Start
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/PecanProject/sipnet.git
+   cd sipnet
+   ```
+2. Build the SIPNET executable:
+   ```bash
+    make
+    ```
+3. Run a test simulation:
+   ```bash
+   ./src/sipnet -i tests/smoke/sipnet.in
+   ```
+4. Check the output:
+   ```bash
+   cat tests/smoke/niwot.out
+   ```
+
 ## Getting Started
 
 ### Installing
