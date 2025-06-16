@@ -30,6 +30,7 @@ sections to include in release notes:
 - Changelog (#33)
 - Build docs and push to gh-pages (#41)
 - events.out file for agronomic event handling (#57)
+- utility `tools/trim_first_chars.sh` to trim the first n characters from every row in a file, useful for updating old input files to remove location column
 
 ### Fixed
 
@@ -43,6 +44,7 @@ sections to include in release notes:
 - Deprecated: "LOCATION" is obsolete. Will be ignored with warning. (#92)
 - Deprecated: All columns in *.param except for name and value. Will be ignored with warning. (#92)
 - Deprecated: location column in input climate files. Will be ignored with warning. (#92)
+
 ### Removed
 
 - Removed many experimental sites, data, and executable code as part of reorg (#34, #37)
