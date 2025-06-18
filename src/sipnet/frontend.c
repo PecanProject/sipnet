@@ -118,9 +118,6 @@ int main(int argc, char *argv[]) {
 
   FILE *out, *outConfig;
 
-  // for compatibility
-  int loc;
-  
   ModelParams *modelParams;  // the parameters used in the model (possibly
                              // spatially-varying)
   OutputItems *outputItems;  // structure to hold information for output to
@@ -188,7 +185,7 @@ int main(int argc, char *argv[]) {
   }
 
   // 6. Initialize model, events, outputItems
-  initModel(&spatialParams, &steps, paramFile, climFile);
+  initModel(&modelParams, paramFile, climFile);
 
 #if EVENT_HANDLER
   initEvents(EVENT_IN_FILE, ctx.printHeader);
