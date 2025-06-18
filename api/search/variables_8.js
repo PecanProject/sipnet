@@ -2,6 +2,6 @@ var searchData=
 [
   ['immedevap_0',['immedEvap',['../da/d95/struct_flux_vars.html#a26be0e90d951e971cd37205be94e334e',1,'FluxVars']]],
   ['immedevapfrac_1',['immedEvapFrac',['../d0/dbf/struct_parameters.html#ad8ff616ed8e0c60319ba1fabdcc2f57a',1,'Parameters']]],
-  ['ischangeable_2',['isChangeable',['../d2/d2e/struct_one_spatial_param_struct.html#afc8003f7e3609831733d6dda5e5fc890',1,'OneSpatialParamStruct']]],
-  ['isrequired_3',['isRequired',['../d2/d2e/struct_one_spatial_param_struct.html#a158af73e90e9d8c3e03972d86454dc16',1,'OneSpatialParamStruct']]]
+  ['isread_2',['isRead',['../df/d3a/struct_one_model_param_struct.html#aae9c9d3717b68c0dc390e4cefd383936',1,'OneModelParamStruct']]],
+  ['isrequired_3',['isRequired',['../df/d3a/struct_one_model_param_struct.html#ae14cb1365d13b3caf7c86514a411d026',1,'OneModelParamStruct']]]
 ];

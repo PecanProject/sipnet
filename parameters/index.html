@@ -1904,12 +1904,19 @@
 <td></td>
 <td></td>
 </tr>
+<tr>
+<td><!-- | 68                         |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
+| 68   |                            | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
+-->
+</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </tbody>
 </table>
-<!--| 68 |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
-| 69 |                           | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
--->
-
 <h3 id="autotrophic-respiration-parameters">Autotrophic respiration parameters<a class="headerlink" href="#autotrophic-respiration-parameters" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2548,8 +2555,6 @@
 using the <a href="https://pecanproject.org/">PEcAn Framework</a>.</p>
 <h3 id="parameters-and-initial-conditions">Parameters and Initial Conditions<a class="headerlink" href="#parameters-and-initial-conditions" title="Permanent link">&para;</a></h3>
 <p>Both initial conditions and parameters are specified in a file named <code>sipnet.param</code>.</p>
-<p><em>Note: A <code>sipnet.param-spatial</code> can be used for multi-site runs, but this is not currently used 
-or documented.</em></p>
 <p>The SIPNET parameter file (<code>sipnet.param</code>) specifies model parameters and their properties for each simulation. 
 Each line in the file corresponds to a single parameter and contains five or six space-separated values.</p>
 <table>
@@ -2568,44 +2573,29 @@ Each line in the file corresponds to a single parameter and contains five or six
 <td>Value</td>
 <td>Value of the parameter to use in the model</td>
 </tr>
-<tr>
-<td>Flag</td>
-<td>Parameter estimation flag: <br> <code>0</code> = fixed (not estimated), <br> <code>1</code> = estimated (free)</td>
-</tr>
-<tr>
-<td>Min</td>
-<td>Minimum value for optimization</td>
-</tr>
-<tr>
-<td>Max</td>
-<td>Maximum value for optimization</td>
-</tr>
-<tr>
-<td>Stddev</td>
-<td>(Optional) Standard deviation for prior distribution</td>
-</tr>
 </tbody>
 </table>
 <h4 id="example-sipnetparam-file">Example <code>sipnet.param</code> file<a class="headerlink" href="#example-sipnetparam-file" title="Permanent link">&para;</a></h4>
 <p>Column names are not used, but are:</p>
-<pre><code>param_name value flag min max stddev
+<pre><code>param_name value
 </code></pre>
-<pre><code>plantWoodInit 110 0 6600 14000 200
-laiInit 0 0 0 5.2 0.2
-litterInit 200 0 130 1200 25
-soilInit 7000 1 3300 19000 3000
-litterWFracInit 0.5 0 0 1 0.1
-soilWFracInit 0.6 1 0 1 0.1
-snowInit 1 0 0 0 1
-microbeInit 0.5 0 0.02 1 0.001
-fineRootFrac 0.2 0 0 1 0.001
-coarseRootFrac 0.2 0 0 1 0.001
-aMax 95 1 0 200 0.2
-aMaxFrac 0.85 0 0.66 0.86 0.005
+<p>The first lines in <code>sipnet.param</code> could be:</p>
+<pre><code>plantWoodInit 110
+laiInit 0
+litterInit 200
+soilInit 7000
+litterWFracInit 0.5
+soilWFracInit 0.6
+snowInit 1
+microbeInit 0.5
+fineRootFrac 0.2
+coarseRootFrac 0.2
+aMax 95
+aMaxFrac 0.85
 ...
 </code></pre>
 <h3 id="climate">Climate<a class="headerlink" href="#climate" title="Permanent link">&para;</a></h3>
-<p>For each step of the model, for each location, the following inputs are needed. These are provided in a file named <code>&lt;sitename&gt;.clim</code> with the following columns:</p>
+<p>For each step of the model, the following inputs are needed. These are provided in a file named <code>&lt;sitename&gt;.clim</code> with the following columns:</p>
 <table>
 <thead>
 <tr>
@@ -2619,97 +2609,90 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 <tbody>
 <tr>
 <td>1</td>
-<td>loc</td>
-<td>spatial location index</td>
-<td></td>
-<td>maps to param-spatial file, can be 0 for a single site, as when used by PEcAn</td>
-</tr>
-<tr>
-<td>2</td>
 <td>year</td>
 <td>year of start of this timestep</td>
 <td></td>
 <td>integer, e.g. 2010</td>
 </tr>
 <tr>
-<td>3</td>
+<td>2</td>
 <td>day</td>
 <td>day of start of this timestep</td>
 <td></td>
 <td>integer where 1 = Jan 1</td>
 </tr>
 <tr>
-<td>4</td>
+<td>3</td>
 <td>time</td>
 <td>time of start of this timestep</td>
 <td>hours after midnight</td>
 <td>e.g. noon = 12.0, midnight = 0.0, can be a fraction</td>
 </tr>
 <tr>
-<td>5</td>
+<td>4</td>
 <td>length</td>
 <td>length of this timestep</td>
 <td>days</td>
 <td>variable-length timesteps allowed, typically not used</td>
 </tr>
 <tr>
-<td>6</td>
+<td>5</td>
 <td>tair</td>
 <td>avg. air temp for this time step</td>
 <td>degrees Celsius</td>
 <td></td>
 </tr>
 <tr>
-<td>7</td>
+<td>6</td>
 <td>tsoil</td>
 <td>average soil temperature for this time step</td>
 <td>degrees Celsius</td>
 <td>can be estimated from Tair</td>
 </tr>
 <tr>
-<td>8</td>
+<td>7</td>
 <td>par</td>
 <td>average photosynthetically active radiation (PAR) for this time step</td>
 <td><span class="arithmatex">\(\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}\)</span></td>
 <td>input is in Einsteins * m^-2 ground area, summed over entire time step</td>
 </tr>
 <tr>
-<td>9</td>
+<td>8</td>
 <td>precip</td>
 <td>total precip. for this time step</td>
 <td>cm</td>
 <td>input is in mm; water equivilant - either rain or snow</td>
 </tr>
 <tr>
-<td>10</td>
+<td>9</td>
 <td>vpd</td>
 <td>average vapor pressure deficit</td>
 <td>kPa</td>
 <td>input is in Pa, can be calculated from air temperature and relative humidity.</td>
 </tr>
 <tr>
-<td>11</td>
+<td>10</td>
 <td>vpdSoil</td>
 <td>average vapor pressure deficit between soil and air</td>
 <td>kPa</td>
 <td>input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair</td>
 </tr>
 <tr>
-<td>12</td>
+<td>11</td>
 <td>vPress</td>
 <td>average vapor pressure in canopy airspace</td>
 <td>kPa</td>
 <td>input is in Pa</td>
 </tr>
 <tr>
-<td>13</td>
+<td>12</td>
 <td>wspd</td>
 <td>avg. wind speed</td>
 <td>m/s</td>
 <td></td>
 </tr>
 <tr>
-<td>14</td>
+<td>13</td>
 <td>soilWetness</td>
 <td>fractional soil wetness</td>
 <td>unitless (0-1)</td>
@@ -2717,6 +2700,9 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 </tr>
 </tbody>
 </table>
+<p>Note: An older format for this file included location as the first column. Files with this older format can still be read by sipnet:
+* SIPNET will print a warning indicating that it is ignoring the location column
+* If there is more than one location specified in the file, SIPNET will error and halt</p>
 <h4 id="example-sipnetclim-file">Example <code>sipnet.clim</code> file:<a class="headerlink" href="#example-sipnetclim-file" title="Permanent link">&para;</a></h4>
 <p>Column names are not used, but are:</p>
 <pre><code>loc year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   soilWetness
@@ -2748,34 +2734,27 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 <tbody>
 <tr>
 <td>1</td>
-<td>loc</td>
-<td>spatial location index</td>
-<td></td>
-<td>maps to param-spatial file</td>
-</tr>
-<tr>
-<td>2</td>
 <td>year</td>
 <td>year of start of this timestep</td>
 <td></td>
 <td>e.g. 2010</td>
 </tr>
 <tr>
-<td>3</td>
+<td>2</td>
 <td>day</td>
 <td>day of start of this timestep</td>
 <td>Day of year</td>
 <td>1 = Jan 1</td>
 </tr>
 <tr>
-<td>4</td>
+<td>3</td>
 <td>event_type</td>
 <td>type of event</td>
 <td></td>
 <td>one of plant, harv, till, fert, irrig</td>
 </tr>
 <tr>
-<td>5...n</td>
+<td>4...n</td>
 <td>event_param</td>
 <td>parameter associated with event</td>
 <td></td>
@@ -2785,11 +2764,11 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 </table>
 <ul>
 <li>Agronomic events are stored in <code>events.in</code>, one event per row</li>
-<li>Events in the file are sorted first by location, and then chronologically</li>
+<li>Events in the file must be sorted chronologically</li>
 <li>Events are specified by year and day (no hourly timestamp)</li>
-<li>It is assumed that there is one (or more) records in the climate file for each location/day that appears in the events file</li>
+<li>It is assumed that there is one (or more) records in the climate file for each year/day that appears in the events file</li>
 <li>SIPNET will throw an error if it finds an event with no corresponding climate record</li>
-<li>Events are processed with the first climate record that occurs for the relevant location/day as an instantaneous one-time change</li>
+<li>Events are processed with the first climate record that occurs for the relevant year/day as an instantaneous one-time change</li>
 <li>We may need events with duration later, spec TBD. Tillage is likely in this bucket.</li>
 <li>The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required</li>
 </ul>
@@ -2991,26 +2970,26 @@ aMaxFrac 0.85 0 0.66 0.86 0.005
 <li>root biomass is only removed for root crops</li>
 </ul>
 <h4 id="example-of-eventsin-file">Example of <code>events.in</code> file:<a class="headerlink" href="#example-of-eventsin-file" title="Permanent link">&para;</a></h4>
-<pre><code>1  2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
-1  2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
-1  2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
-1  2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
-1  2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
+<pre><code>2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
+2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
+2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
+2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
+2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 </code></pre>
 <h4 id="events-output">Events output<a class="headerlink" href="#events-output" title="Permanent link">&para;</a></h4>
 <p>SIPNET will create a file named <code>events.out</code> when event handling is enabled. </p>
-<p>This file will have one row for each agronomic event that is processed. Each row lists location, 
-time, event type, and parameter name/value pairs for all state variables that the event
+<p>This file will have one row for each agronomic event that is processed. Each row lists year, 
+day, event type, and parameter name/value pairs for all state variables that the event
 affects. </p>
 <p>Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
 up to the param-values pairs, commas separating PV pairs, and <code>=</code> between param and value.</p>
-<pre><code>loc  year  day  type     param_name=delta[,param_name=delta,...]
-0    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
-0    2024   70  irrig    envi.soilWater=5.00
-0    2024  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
-1    2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
-1    2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
-1    2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+<pre><code>year  day  type     param_name=delta[,param_name=delta,...]
+2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
+2023   70  irrig    envi.soilWater=5.00
+2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
+2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
+2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 </code></pre>
 <p><em>Note: <code>events.out</code> logs all parameters changed by an event for debugging and testing purposes; 
 For downstream analyses that only need the date and event type, <code>events.in</code> is equivalent and easier to parse.</em></p>
@@ -3029,194 +3008,187 @@ For downstream analyses that only need the date and event type, <code>events.in<
 <tr>
 <td>1</td>
 <td></td>
-<td>loc</td>
-<td>spatial location index</td>
-<td></td>
-</tr>
-<tr>
-<td>2</td>
-<td></td>
 <td>year</td>
 <td>year of start of this timestep</td>
 <td></td>
 </tr>
 <tr>
-<td>3</td>
+<td>2</td>
 <td></td>
 <td>day</td>
 <td>day of start of this timestep</td>
 <td></td>
 </tr>
 <tr>
-<td>4</td>
+<td>3</td>
 <td></td>
 <td>time</td>
 <td>time of start of this timestep</td>
 <td></td>
 </tr>
 <tr>
-<td>5</td>
+<td>4</td>
 <td></td>
 <td>plantWoodC</td>
 <td>carbon in wood</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>6</td>
+<td>5</td>
 <td></td>
 <td>plantLeafC</td>
 <td>carbon in leaves</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>7</td>
+<td>6</td>
 <td></td>
 <td>soil</td>
 <td>carbon in mineral soil</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>8</td>
+<td>7</td>
 <td></td>
 <td>microbeC</td>
 <td>carbon in soil microbes</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>9</td>
+<td>8</td>
 <td></td>
 <td>coarseRootC</td>
 <td>carbon in coarse roots</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>10</td>
+<td>9</td>
 <td></td>
 <td>fineRootC</td>
 <td>carbon in fine roots</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>11</td>
+<td>10</td>
 <td></td>
 <td>litter</td>
 <td>carbon in litter</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>12</td>
+<td>11</td>
 <td></td>
 <td>litterWater</td>
 <td>moisture in litter layer</td>
 <td>cm</td>
 </tr>
 <tr>
-<td>13</td>
+<td>12</td>
 <td></td>
 <td>soilWater</td>
 <td>moisture in soil</td>
 <td>cm</td>
 </tr>
 <tr>
-<td>14</td>
+<td>13</td>
 <td><span class="arithmatex">\(f_\text{WHC}\)</span></td>
 <td>soilWetnessFrac</td>
 <td>moisture in soil as fraction</td>
 <td></td>
 </tr>
 <tr>
-<td>15</td>
+<td>14</td>
 <td></td>
 <td>snow</td>
 <td>snow water</td>
 <td>cm</td>
 </tr>
 <tr>
-<td>16</td>
+<td>15</td>
 <td></td>
 <td>npp</td>
 <td>net primary production</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>17</td>
+<td>16</td>
 <td></td>
 <td>nee</td>
 <td>net ecosystem production</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>18</td>
+<td>17</td>
 <td></td>
 <td>cumNEE</td>
 <td>cumulative nee</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>19</td>
+<td>18</td>
 <td><span class="arithmatex">\(GPP\)</span></td>
 <td>gpp</td>
 <td>gross ecosystem production</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>20</td>
+<td>19</td>
 <td><span class="arithmatex">\(R_{A,\text{above}}\)</span></td>
 <td>rAboveground</td>
 <td>plant respiration above ground</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>21</td>
+<td>20</td>
 <td><span class="arithmatex">\(R_H\)</span></td>
 <td>rSoil</td>
 <td>soil respiration</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>22</td>
+<td>21</td>
 <td><span class="arithmatex">\(R_{A\text{, root}}\)</span></td>
 <td>rRoot</td>
 <td>root respiration</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>23</td>
+<td>22</td>
 <td><span class="arithmatex">\(R\)</span></td>
 <td>rtot</td>
 <td>total respiration</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span></td>
 </tr>
 <tr>
-<td>24</td>
+<td>23</td>
 <td></td>
 <td>fluxestranspiration</td>
 <td>transpiration</td>
 <td>cm</td>
 </tr>
 <tr>
-<td></td>
+<td>24</td>
 <td><span class="arithmatex">\(F^N_\text{vol}\)</span></td>
 <td>fluxesn2o</td>
 <td>Nitrous Oxide flux</td>
 <td>g N/m<span class="arithmatex">\(^2\)</span> / timestep</td>
 </tr>
 <tr>
-<td></td>
+<td>25</td>
 <td><span class="arithmatex">\(F^C_{\text{CH}_4}\)</span></td>
 <td>fluxesch4</td>
 <td>Methane Flux</td>
 <td>g C/m<span class="arithmatex">\(^2\)</span> / timestep</td>
 </tr>
 <tr>
-<td></td>
+<td>26</td>
 <td><span class="arithmatex">\(F^N_\text{vol}\)</span></td>
 <td>fluxesn2o</td>
 <td>Nitrous Oxide flux</td>
 <td>g N/m<span class="arithmatex">\(^2\)</span> / timestep</td>
 </tr>
 <tr>
-<td></td>
+<td>27</td>
 <td><span class="arithmatex">\(F^C_{\text{CH}_4}\)</span></td>
 <td>fluxesch4</td>
 <td>Methane Flux</td>

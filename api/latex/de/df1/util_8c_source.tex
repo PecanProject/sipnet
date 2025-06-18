@@ -204,5 +204,19 @@
 \DoxyCodeLine{00200\ \ \ lenTrim\ =\ strlen(line)\ -\/\ strspn(line,\ \textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)n\(\backslash\)r"{}});}
 \DoxyCodeLine{00201\ \ \ \textcolor{keywordflow}{return}\ (lenTrim\ ==\ 0);}
 \DoxyCodeLine{00202\ \}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{comment}{//\ count\ number\ of\ fields\ in\ a\ string\ separated\ by\ delimiter\ 'sep'}}
+\DoxyCodeLine{00205\ \textcolor{keywordtype}{int}\ countFields(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sep)\ \{}
+\DoxyCodeLine{00206\ \ \ \textcolor{comment}{//\ strtok\ modifies\ string,\ so\ we\ need\ a\ copy}}
+\DoxyCodeLine{00207\ \ \ \textcolor{keywordtype}{char}\ lineCopy[256];}
+\DoxyCodeLine{00208\ \ \ strcpy(lineCopy,\ line);}
+\DoxyCodeLine{00209\ \ \ \textcolor{keywordtype}{int}\ numParams\ =\ 0;}
+\DoxyCodeLine{00210\ \ \ \textcolor{keywordtype}{char}\ *par\ =\ strtok(lineCopy,\ sep);}
+\DoxyCodeLine{00211\ \ \ \textcolor{keywordflow}{while}\ (par\ !=\ NULL)\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ ++numParams;}
+\DoxyCodeLine{00213\ \ \ \ \ par\ =\ strtok(NULL,\ sep);}
+\DoxyCodeLine{00214\ \ \ \}}
+\DoxyCodeLine{00215\ \ \ \textcolor{keywordflow}{return}\ numParams;}
+\DoxyCodeLine{00216\ \}}
 
 \end{DoxyCode}

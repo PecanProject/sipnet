@@ -1,21 +1,11 @@
 var searchData=
 [
-  ['m_5fballberry_0',['m_ballBerry',['../d0/dbf/struct_parameters.html#a40cf5a0ac22f59f85f98434b88960bc9',1,'Parameters']]],
-  ['maintrespiration_1',['maintRespiration',['../da/d95/struct_flux_vars.html#a020fa058874c3be7b8a97e6c3213dba2',1,'FluxVars']]],
-  ['max_2',['max',['../d2/d2e/struct_one_spatial_param_struct.html#a108acdd1c856707af05f002d9a9c759a',1,'OneSpatialParamStruct']]],
-  ['maxingestionrate_3',['maxIngestionRate',['../d0/dbf/struct_parameters.html#a53f4b8c46baf160702bc37cd0200e549',1,'Parameters']]],
-  ['maxlen_4',['maxlen',['../dc/de7/struct_namelist_input_item_struct.html#acb74f813b359aa70ac92a354064faf1e',1,'NamelistInputItemStruct']]],
-  ['maxparameters_5',['maxParameters',['../d3/dc0/struct_spatial_params_struct.html#a95a51b462e31529ce0d605d60d905266',1,'SpatialParamsStruct']]],
-  ['meanfpar_6',['meanFPAR',['../dd/d09/sipnet_8c.html#a9799089aea9d8622f21b874081f25246',1,'sipnet.c']]],
-  ['meangpp_7',['meanGPP',['../dd/d09/sipnet_8c.html#a1876aca55d30fc3a39531107b8d02aa5',1,'sipnet.c']]],
-  ['meannpp_8',['meanNPP',['../dd/d09/sipnet_8c.html#a8fc6d385ac8b267f589de11f02b76da3',1,'sipnet.c']]],
-  ['method_9',['method',['../d1/df7/struct_irrigation_params.html#a9f116f758128253053a5329d77e1b051',1,'IrrigationParams']]],
-  ['microbec_10',['microbeC',['../de/d30/struct_environment.html#a92d247749ee850c984df72594fe9fa33',1,'Environment']]],
-  ['microbeingestion_11',['microbeIngestion',['../da/d95/struct_flux_vars.html#a6c3cd176bbe08c486204d9cf02b30842',1,'FluxVars']]],
-  ['microbeinit_12',['microbeInit',['../d0/dbf/struct_parameters.html#af7b091f6eb964802bd93fb58bd0ee53a',1,'Parameters']]],
-  ['microbenc_13',['microbeNC',['../d0/dbf/struct_parameters.html#a95af90e9da2777e888e8ef69f223081a',1,'Parameters']]],
-  ['microbepulseeff_14',['microbePulseEff',['../d0/dbf/struct_parameters.html#add6c3b296497d10d0dfba127cd29b8e0',1,'Parameters']]],
-  ['microbeq10_15',['microbeQ10',['../d0/dbf/struct_parameters.html#a323aec3509858d5d3cc9b0c1d0c26237',1,'Parameters']]],
-  ['min_16',['min',['../d2/d2e/struct_one_spatial_param_struct.html#a4cfe2f10365e36bca42d796f6dbdc162',1,'OneSpatialParamStruct']]],
-  ['minn_17',['minN',['../da/dde/struct_fertilization_params.html#aaecae5a6504bc2a5726cc022d6644612',1,'FertilizationParams']]]
+  ['name_0',['name',['../df/d3a/struct_one_model_param_struct.html#a80c78b291ebc06ac9ccb58c6814e0f0e',1,'OneModelParamStruct::name'],['../dc/de7/struct_namelist_input_item_struct.html#a4745b6e75da29feaba50c6d57c0becad',1,'NamelistInputItemStruct::name'],['../dd/df9/struct_single_output_item_struct.html#aa41c180b0c9900f0eab87e78598faf0a',1,'SingleOutputItemStruct::name']]],
+  ['nee_1',['nee',['../d3/d1f/struct_tracker_vars.html#a8b32589de454079b7d9e578f737373e7',1,'TrackerVars']]],
+  ['nextclim_2',['nextClim',['../d4/d5e/struct_climate_vars.html#ab542473c23dec94db4eb707e33a1e1df',1,'ClimateVars']]],
+  ['nextevent_3',['nextEvent',['../d6/d43/struct_event_node.html#a5f73b9d29f86c2f634273d18a08c947a',1,'EventNode']]],
+  ['nextitem_4',['nextitem',['../dc/de7/struct_namelist_input_item_struct.html#ae215831b0dacec661b836fd3d03ef8ad',1,'NamelistInputItemStruct::nextItem'],['../dd/df9/struct_single_output_item_struct.html#a4e7cab99e2d9f9c460dbc6af7e0962c6',1,'SingleOutputItemStruct::nextItem']]],
+  ['npp_5',['npp',['../d3/d1f/struct_tracker_vars.html#a6391c6b6a5f95d40c7a42b577cae1c41',1,'TrackerVars']]],
+  ['numparams_6',['numParams',['../d8/dae/struct_model_params_struct.html#afaa276662aebf01c9ed5abca07956cda',1,'ModelParamsStruct']]],
+  ['numparamsread_7',['numParamsRead',['../d8/dae/struct_model_params_struct.html#a685a4cacf7bdf46a0e1d91b6f5cca613',1,'ModelParamsStruct']]]
 ];

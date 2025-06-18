@@ -1,30 +1,5 @@
 var searchData=
 [
-  ['packages_0',['Organization and Packages',['../index.html#autotoc_md1',1,'']]],
-  ['par_1',['par',['../d4/d5e/struct_climate_vars.html#a0a474e826ac7ccae1f48b9f98c0efad3',1,'ClimateVars']]],
-  ['param_5fmaxname_2',['PARAM_MAXNAME',['../da/d19/spatial_params_8h.html#a341f1a4cba602b1642f7f46dc87aa791',1,'spatialParams.h']]],
-  ['parameters_3',['parameters',['../d0/dbf/struct_parameters.html',1,'Parameters'],['../d3/dc0/struct_spatial_params_struct.html#ab3425c25ae587ab0b6dd2e703e0144a6',1,'SpatialParamsStruct::parameters']]],
-  ['params_4',['params',['../dd/d09/sipnet_8c.html#a02eb7524df3cdfd7ab32de5b40516106',1,'params:&#160;sipnet.c'],['../dd/d09/sipnet_8c.html#a4ecd2fe2fb87baa30a67a3e7d86d5fa3',1,'Params:&#160;sipnet.c']]],
-  ['pastleaffall_5',['pastLeafFall',['../dd/d09/sipnet_8c.html#add14dcfd1c6af5d9c7305ab5a23d2215',1,'sipnet.c']]],
-  ['pastleafgrowth_6',['pastLeafGrowth',['../dd/d09/sipnet_8c.html#a6762b20491a2b3113f378901df537c68',1,'sipnet.c']]],
-  ['paststart_7',['pastStart',['../d9/d49/subset_data_8c.html#ab6d5a484c646b0519f75beef7ff1ac37',1,'subsetData.c']]],
-  ['penman_5fmonteith_5ftrans_8',['PENMAN_MONTEITH_TRANS',['../dd/d09/sipnet_8c.html#af63724eb1a47f2fec9fa762705aece88',1,'sipnet.c']]],
-  ['phenologytrackers_9',['phenologytrackers',['../dd/d09/sipnet_8c.html#a07b4e2bcae6e08b95736df4e0fff2af7',1,'phenologyTrackers:&#160;sipnet.c'],['../dd/d09/sipnet_8c.html#a4ed61abd51873baf31f9c01cfde6b7f5',1,'PhenologyTrackers:&#160;sipnet.c']]],
-  ['phenologytrackersstruct_10',['PhenologyTrackersStruct',['../d4/d42/struct_phenology_trackers_struct.html',1,'']]],
-  ['photosynthesis_11',['photosynthesis',['../da/d95/struct_flux_vars.html#a1c0acd440f7092c6ce72f995cd80c7f9',1,'FluxVars']]],
-  ['planting_12',['PLANTING',['../db/dd2/events_8h.html#a2628ea8d12e8b2563c32f05dc7fff6faa36fd4717f5fdc11db3faf781607853e0',1,'events.h']]],
-  ['plantingparams_13',['plantingparams',['../d4/dbd/struct_planting_params.html',1,'PlantingParams'],['../db/dd2/events_8h.html#a7783a5d4f4deff466d6f1759288a5cff',1,'PlantingParams:&#160;events.h']]],
-  ['plantleafc_14',['plantLeafC',['../de/d30/struct_environment.html#a90dc0461aa33bac8b0a236a736169f4f',1,'Environment']]],
-  ['plantwoodc_15',['plantwoodc',['../d3/d1f/struct_tracker_vars.html#ab037dd3b1af2bd2625e2591923d98a13',1,'TrackerVars::plantWoodC'],['../de/d30/struct_environment.html#ab648e7470b571b841f42344a52bea970',1,'Environment::plantWoodC']]],
-  ['plantwoodinit_16',['plantWoodInit',['../d0/dbf/struct_parameters.html#aaf9ff11261c3bc55ec3e589586d27236',1,'Parameters']]],
-  ['potpsn_17',['potPsn',['../dd/d09/sipnet_8c.html#a23a1722243c28c71c4f684cf6534fb9f',1,'sipnet.c']]],
-  ['precip_18',['precip',['../d4/d5e/struct_climate_vars.html#a439d5d5fcd57d320737a65c934878dea',1,'ClimateVars']]],
-  ['printevent_19',['printEvent',['../de/deb/events_8c.html#aeda31871c170fe492587b17f70382344',1,'events.c']]],
-  ['printmodelcomponents_20',['printmodelcomponents',['../de/de4/sipnet_8h.html#aed3527886ac1ed87fff8c530d8851819',1,'printModelComponents(FILE *out):&#160;sipnet.c'],['../dd/d09/sipnet_8c.html#aed3527886ac1ed87fff8c530d8851819',1,'printModelComponents(FILE *out):&#160;sipnet.c']]],
-  ['processevents_21',['processEvents',['../dd/d09/sipnet_8c.html#afb4ad97daa6ca46b43b7eae3554c17fe',1,'sipnet.c']]],
-  ['program_20sipnet_22',['Main program - SIPNET',['../index.html#autotoc_md2',1,'']]],
-  ['psntmax_23',['psnTMax',['../d0/dbf/struct_parameters.html#a287351fb3690d58cb411eb382193a53f',1,'Parameters']]],
-  ['psntmin_24',['psnTMin',['../d0/dbf/struct_parameters.html#aaa97622a58d811383643cdf59e4f00a0',1,'Parameters']]],
-  ['psntopt_25',['psnTOpt',['../d0/dbf/struct_parameters.html#aec6fce175d708d220b62159e3c1e2cf9',1,'Parameters']]],
-  ['ptr_26',['ptr',['../dd/df9/struct_single_output_item_struct.html#a8895e1a29bdf97fa0049ee4e0f7982bc',1,'SingleOutputItemStruct::ptr'],['../dc/de7/struct_namelist_input_item_struct.html#ad96d21c943db42cc16153e8cedc1e76c',1,'NamelistInputItemStruct::ptr']]]
+  ['qualityleaf_0',['qualityLeaf',['../d0/dbf/struct_parameters.html#a0e810d3fb42383d5771ecd88edb37aef',1,'Parameters']]],
+  ['qualitywood_1',['qualityWood',['../d0/dbf/struct_parameters.html#ae06862739bdd0cdbb2cabc47744eecdd',1,'Parameters']]]
 ];

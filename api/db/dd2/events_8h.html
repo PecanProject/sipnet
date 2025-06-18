@@ -146,7 +146,7 @@ Macros</h2></td></tr>
 <tr class="separator:a76e5ab7fbbe77af5d74cfc87f47f4fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2728fe61e5d0849fe7e64a9e0002aca3" id="r_a2728fe61e5d0849fe7e64a9e0002aca3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a2728fe61e5d0849fe7e64a9e0002aca3">NUM_TILLAGE_PARAMS</a>&#160;&#160;&#160;3</td></tr>
 <tr class="separator:a2728fe61e5d0849fe7e64a9e0002aca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59bab2f313245e6b09e1be9a32cbba58" id="r_a59bab2f313245e6b09e1be9a32cbba58"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a59bab2f313245e6b09e1be9a32cbba58">NUM_EVENT_CORE_PARAMS</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memitem:a59bab2f313245e6b09e1be9a32cbba58" id="r_a59bab2f313245e6b09e1be9a32cbba58"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a59bab2f313245e6b09e1be9a32cbba58">NUM_EVENT_CORE_PARAMS</a>&#160;&#160;&#160;3</td></tr>
 <tr class="separator:a59bab2f313245e6b09e1be9a32cbba58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -191,11 +191,11 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:adaf5398f33e074025777106e1211e3c6" id="r_adaf5398f33e074025777106e1211e3c6"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#adaf5398f33e074025777106e1211e3c6">eventTypeToString</a> (<a class="el" href="../../db/dd2/events_8h.html#a5fa6c5d64f2d553ef94c943fb42d2375">event_type_t</a> type)</td></tr>
 <tr class="separator:adaf5398f33e074025777106e1211e3c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23276d1145e6335ce7579bbbd6c27404" id="r_a23276d1145e6335ce7579bbbd6c27404"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a23276d1145e6335ce7579bbbd6c27404">readEventData</a> (char *eventFile, int numLocs)</td></tr>
-<tr class="separator:a23276d1145e6335ce7579bbbd6c27404"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb0aecb501956ec964a98b0310035c54" id="r_adb0aecb501956ec964a98b0310035c54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#adb0aecb501956ec964a98b0310035c54">readEventData</a> (char *eventFile)</td></tr>
+<tr class="separator:adb0aecb501956ec964a98b0310035c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89e0951d47d80ebfe47bf24c892ae03b" id="r_a89e0951d47d80ebfe47bf24c892ae03b"><td class="memItemLeft" align="right" valign="top">FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a89e0951d47d80ebfe47bf24c892ae03b">openEventOutFile</a> (int printHeader)</td></tr>
 <tr class="separator:a89e0951d47d80ebfe47bf24c892ae03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9bd841e389dc48f66a90ba59466ee08" id="r_ae9bd841e389dc48f66a90ba59466ee08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#ae9bd841e389dc48f66a90ba59466ee08">writeEventOut</a> (FILE *out, <a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *event, int numParams,...)</td></tr>
+<tr class="memitem:ae9bd841e389dc48f66a90ba59466ee08" id="r_ae9bd841e389dc48f66a90ba59466ee08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#ae9bd841e389dc48f66a90ba59466ee08">writeEventOut</a> (FILE *out, <a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *<a class="el" href="../../dd/d09/sipnet_8c.html#a7ae35c8e87cf86f85a3ee4485027cde0">event</a>, int numParams,...)</td></tr>
 <tr class="memdesc:ae9bd841e389dc48f66a90ba59466ee08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a line to events.out for a single event.  <br /></td></tr>
 <tr class="separator:ae9bd841e389dc48f66a90ba59466ee08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9751770959684fd1795afaa844e7f132" id="r_a9751770959684fd1795afaa844e7f132"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a9751770959684fd1795afaa844e7f132">closeEventOutFile</a> (FILE *file)</td></tr>
@@ -241,12 +241,12 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define NUM_EVENT_CORE_PARAMS&#160;&#160;&#160;4</td>
+          <td class="memname">#define NUM_EVENT_CORE_PARAMS&#160;&#160;&#160;3</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00063">63</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00062">62</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
 
 </div>
 </div>
@@ -310,7 +310,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00048">48</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00047">47</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
 
 </div>
 </div>
@@ -326,7 +326,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00056">56</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00055">55</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
 
 </div>
 </div>
@@ -357,7 +357,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00064">64</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/dd2/events_8h_source.html#l00063">63</a> of file <a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>.</p>
 
 </div>
 </div>
@@ -514,9 +514,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00364">364</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00328">328</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03039">cleanupModel()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02887">cleanupModel()</a>.</p>
 
 </div>
 </div>
@@ -544,11 +544,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string version of event enum type </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00316">316</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00280">280</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00345">writeEventOut()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00309">writeEventOut()</a>.</p>
 
 </div>
 </div>
@@ -575,11 +575,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>FILE pointer to output file </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00334">334</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00298">298</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00009">EVENT_OUT_FILE</a>, and <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03030">initEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02880">initEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -593,46 +593,36 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
-<a id="a23276d1145e6335ce7579bbbd6c27404" name="a23276d1145e6335ce7579bbbd6c27404"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23276d1145e6335ce7579bbbd6c27404">&#9670;&#160;</a></span>readEventData()</h2>
+<a id="adb0aecb501956ec964a98b0310035c54" name="adb0aecb501956ec964a98b0310035c54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb0aecb501956ec964a98b0310035c54">&#9670;&#160;</a></span>readEventData()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> ** readEventData </td>
+          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> * readEventData </td>
           <td>(</td>
           <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>eventFile</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>eventFile</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>numLocs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Read event data from input filename (canonically events.in)</p>
-<p>Format: returned data is structured as an array of <a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> pointers, indexed by location. Each element of the array is the first event for that location (or null if there are no events). It is assumed that the events are ordered first by location and then by year and day. </p>
+<p>Format: returned data is structured as an linked list of <a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> pointers. It is assumed that the events are ordered by year and day. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00160">160</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00147">147</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00036">createEventNode()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00561">events</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00145">getEventType()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00069">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00063">NUM_EVENT_CORE_PARAMS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00023">createEventNode()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00560">events</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00132">getEventType()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00062">NUM_EVENT_CORE_PARAMS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00026">openFile()</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l03030">initEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02880">initEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../db/dd2/events_8h_a23276d1145e6335ce7579bbbd6c27404_cgraph.png" border="0" usemap="#adb/dd2/events_8h_a23276d1145e6335ce7579bbbd6c27404_cgraph" alt=""/></div>
-<map name="adb/dd2/events_8h_a23276d1145e6335ce7579bbbd6c27404_cgraph" id="adb/dd2/events_8h_a23276d1145e6335ce7579bbbd6c27404_cgraph">
+<div class="center"><img src="../../db/dd2/events_8h_adb0aecb501956ec964a98b0310035c54_cgraph.png" border="0" usemap="#adb/dd2/events_8h_adb0aecb501956ec964a98b0310035c54_cgraph" alt=""/></div>
+<map name="adb/dd2/events_8h_adb0aecb501956ec964a98b0310035c54_cgraph" id="adb/dd2/events_8h_adb0aecb501956ec964a98b0310035c54_cgraph">
 <area shape="rect" title=" " alt="" coords="5,55,124,80"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a3145169f83f9dc878adef2f12da419af" title=" " alt="" coords="172,5,307,31"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209" title=" " alt="" coords="172,5,307,31"/>
 <area shape="poly" title=" " alt="" coords="110,52,179,32,181,37,111,57"/>
 <area shape="rect" href="../../de/deb/events_8c.html#a4314c765f6bbd615a94286919f475f41" title=" " alt="" coords="184,55,295,80"/>
 <area shape="poly" title=" " alt="" coords="124,65,170,65,170,70,124,70"/>
@@ -684,7 +674,7 @@ Here is the call graph for this function:</div>
 <p>Write a line to events.out for a single event. </p>
 <p>Writes a single event to events.out. This is a variadic function which expects to receive 2*numParams values in (char*, double) pairs after the numParams argument.</p>
 <p>Output format:</p>
-<p>loc year day event_type &lt;param_name&gt;=&lt;delta&gt;[,&lt;param_name&gt;=&lt;delta&gt;,...]</p>
+<p>year day event_type &lt;param_name&gt;=&lt;delta&gt;[,&lt;param_name&gt;=&lt;delta&gt;,...]</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">out</td><td>FILE pointer to events.out </td></tr>
@@ -695,11 +685,11 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00345">345</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00309">309</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::day</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00316">eventTypeToString()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::loc</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::type</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::year</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00561">event</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00280">eventTypeToString()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02524">processEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02438">processEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">

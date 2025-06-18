@@ -1,0 +1,98 @@
+\doxysection{model\+Params.\+h}
+\label{model_params_8h_source}\index{modelParams.h@{modelParams.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MODEL\_PARAMS\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MODEL\_PARAMS\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ MODEL\_PARAM\_MAXNAME\ 64}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ struct\ to\ hold\ a\ single\ param}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }OneModelParamStruct\ \{}
+\DoxyCodeLine{00010\ \ \ \textcolor{keywordtype}{char}\ name[MODEL\_PARAM\_MAXNAME];\ \ \textcolor{comment}{//\ name\ of\ parameter}}
+\DoxyCodeLine{00011\ \ \ \textcolor{keywordtype}{int}\ isRequired;\ \ \textcolor{comment}{//\ 0\ or\ 1;\ 1\ indicates\ that\ we\ should\ terminate\ run\ if\ this}}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ parameter\ isn't\ specified\ in\ input\ file}}
+\DoxyCodeLine{00013\ \ \ \textcolor{keywordtype}{double}\ *value;\ \ \textcolor{comment}{//\ a\ pointer\ to\ this\ param's\ (external\ location)\ value}}
+\DoxyCodeLine{00014\ \ \ \textcolor{keywordtype}{int}\ isRead;\ \ \textcolor{comment}{//\ whether\ this\ param\ has\ been\ read}}
+\DoxyCodeLine{00015\ \}\ OneModelParam;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ModelParamsStruct\ \{}
+\DoxyCodeLine{00018\ \ \ OneModelParam\ *params;\ \ \textcolor{comment}{//\ vector\ of\ parameters,\ dynamically-\/allocated}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (stored\ in\ order\ in\ which\ they\ were\ initialized)}}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordtype}{int}\ maxParams;\ \ \textcolor{comment}{//\ maximum\ number\ of\ parameters}}
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordtype}{int}\ numParams;\ \ \textcolor{comment}{//\ actual\ number\ of\ parameters\ (tracks\ \#\ that\ have\ been}}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ initialized\ with\ initializeOneSpatialParam)}}
+\DoxyCodeLine{00023\ \ \ \textcolor{keywordtype}{int}\ numParamsRead;\ \ \textcolor{comment}{//\ tracks\ number\ of\ parameters\ that\ have\ been\ read\ in\ from}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ file}}
+\DoxyCodeLine{00025\ \ \ \textcolor{keywordtype}{int}\ *readIndices;\ \ \textcolor{comment}{//\ indices\ (in\ parameters\ vector)\ of\ the\ parameters\ read}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ from\ file,\ in\ the\ order\ in\ which\ they\ were\ read\ (this}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ will\ allow\ us\ to\ output\ parameters\ in\ the\ same\ order}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ later)}}
+\DoxyCodeLine{00029\ \}\ ModelParams;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ allocate\ space\ for\ a\ new\ spatialParams\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00032\ ModelParams\ *newModelParams(\textcolor{keywordtype}{int}\ maxParameters);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*\ Initialize\ next\ parameter:}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ Set\ name\ of\ parameter\ equal\ to\ "{}name"{},}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ and\ set\ parameter's\ value\ pointer\ to\ point\ to\ the\ location\ given\ by}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ "{}externalLoc"{}\ parameter\ (required\ to\ be\ non-\/NULL)}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ Also\ set\ parameter's\ isRequired\ value:\ if\ true,\ then\ we'll\ terminate}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ execution\ if\ this\ parameter\ is\ not\ read\ from\ file}}
+\DoxyCodeLine{00040\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ initializeOneModelParam(ModelParams\ *params,\ \textcolor{keywordtype}{char}\ *name,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ *externalLoc,\ \textcolor{keywordtype}{int}\ isRequired);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{comment}{/*\ Read\ all\ parameters\ from\ file,\ setting\ all\ values\ in\ Params\ structure}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ appropriately}}
+\DoxyCodeLine{00046\ \textcolor{comment}{}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ Structure\ of\ paramFile:}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ \ \ \ \ name\ \ value}}
+\DoxyCodeLine{00049\ \textcolor{comment}{}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ The\ order\ of\ the\ parameters\ in\ paramFile\ does\ not\ matter.}}
+\DoxyCodeLine{00051\ \textcolor{comment}{}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ !\ is\ a\ comment\ character\ in\ paramFile:\ anything\ after\ a\ !\ on\ a\ line\ is}}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ ignored}}
+\DoxyCodeLine{00054\ \textcolor{comment}{}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ PRE:\ paramFile\ is\ open\ and\ file\ pointer\ points\ to\ start\ of\ file}}
+\DoxyCodeLine{00056\ \textcolor{comment}{}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ NOTE:\ for\ compatibility\ with\ the\ prior\ format,\ the\ following\ structure\ is}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ also\ acceptable:\ name\ \ value\ \ changeable\ \ min\ \ max\ \ sigma\ When\ encountered,}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ the\ extra\ columns\ are\ ignored\ and\ a\ warning\ is\ generated.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ readModelParams(ModelParams\ *params,\ FILE\ *paramFile);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ Return\ numParameters,\ the\ actual\ number\ of\ parameters\ that\ have\ been}}
+\DoxyCodeLine{00065\ \textcolor{comment}{//\ initialized\ with\ initializeOneSpatialParam}}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{int}\ getNumModelParams(ModelParams\ *params);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{//\ Return\ number\ of\ parameters\ that\ have\ been\ read\ in\ from\ file}}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ getNumModelParamsRead(ModelParams\ *params);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{//\ Find\ parameter\ with\ given\ name\ in\ the\ parameters\ vector}}
+\DoxyCodeLine{00072\ \textcolor{comment}{//\ If\ found,\ return\ index\ in\ vector,\ otherwise\ return\ -\/1}}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{int}\ locateParam(ModelParams\ *params,\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{comment}{//\ Return\ 1\ if\ parameter\ i\ has\ had\ its\ value\ set,\ 0\ otherwise}}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{int}\ valueSet(ModelParams\ *params,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/*\ Check\ to\ see\ whether\ value\ is\ within\ allowable\ range\ of\ parameter\ i}}
+\DoxyCodeLine{00079\ \textcolor{comment}{\ \ \ Return\ 1\ if\ okay,\ 0\ if\ bad}}
+\DoxyCodeLine{00080\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ checkParam(ModelParams\ *params,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{double}\ value);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{/*\ Return\ value\ of\ parameter\ i}}
+\DoxyCodeLine{00084\ \textcolor{comment}{\ \ \ PRE:\ 0\ <=\ i\ <\ modelParams-\/>numParameters}}
+\DoxyCodeLine{00085\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{double}\ getParam(ModelParams\ *params,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{//\ Clean\ up:\ deallocate\ modelParams\ and\ any\ other\ dynamically-\/allocated}}
+\DoxyCodeLine{00089\ \textcolor{comment}{//\ pointers\ that\ need\ deallocating}}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{void}\ deleteModelParams(ModelParams\ *params);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -142,6 +142,8 @@ Functions</h2></td></tr>
 <tr class="separator:a46c453b73f4e8cd62264e4bfe8b6ae05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab343ccfdac6191045fced6c36c0143f4" id="r_ab343ccfdac6191045fced6c36c0143f4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4">stripComment</a> (char *line, const char *commentChars)</td></tr>
 <tr class="separator:ab343ccfdac6191045fced6c36c0143f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87a0923ef9b7dde5f205f1501f851822" id="r_a87a0923ef9b7dde5f205f1501f851822"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822">countFields</a> (const char *line, const char *sep)</td></tr>
+<tr class="separator:a87a0923ef9b7dde5f205f1501f851822"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ac49fd8b4678d4f6f01e00d17b72ac028" name="ac49fd8b4678d4f6f01e00d17b72ac028"></a>
@@ -215,6 +217,38 @@ Functions</h2></td></tr>
 <p class="definition">Definition at line <a class="el" href="../../de/df1/util_8c_source.html#l00019">19</a> of file <a class="el" href="../../de/df1/util_8c_source.html">util.c</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../de/df1/util_8c_source.html#l00038">openFileExt()</a>.</p>
+
+</div>
+</div>
+<a id="a87a0923ef9b7dde5f205f1501f851822" name="a87a0923ef9b7dde5f205f1501f851822"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87a0923ef9b7dde5f205f1501f851822">&#9670;&#160;</a></span>countFields()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int countFields </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>sep</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../de/df1/util_8c_source.html#l00205">205</a> of file <a class="el" href="../../de/df1/util_8c_source.html">util.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../d2/de5/model_params_8c_source.html#l00108">checkParamFormat()</a>, and <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00577">readClimData()</a>.</p>
 
 </div>
 </div>
@@ -348,7 +382,7 @@ Functions</h2></td></tr>
 
 <p class="reference">References <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00023">EXIT_CODE_FILE_OPEN_OR_READ_ERROR</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d9/d49/subset_data_8c_source.html#l00309">copyFile()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00060">main()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00334">openEventOutFile()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00038">openFileExt()</a>, <a class="el" href="../../dd/d66/output_items_8c_source.html#l00041">openOutputItemFile()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00588">readClimData()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00160">readEventData()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00119">readNamelistInputs()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00777">readParamData()</a>, and <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00657">writeBestSpatialParams()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d9/d49/subset_data_8c_source.html#l00309">copyFile()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00058">main()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00298">openEventOutFile()</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00038">openFileExt()</a>, <a class="el" href="../../dd/d66/output_items_8c_source.html#l00041">openOutputItemFile()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00577">readClimData()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00147">readEventData()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00119">readNamelistInputs()</a>, and <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00734">readParamData()</a>.</p>
 
 </div>
 </div>
@@ -482,7 +516,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../de/df1/util_8c_source.html#l00158">158</a> of file <a class="el" href="../../de/df1/util_8c_source.html">util.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00033">checkRuntype()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00053">locateNamelistInputItem()</a>, <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00377">locateParam()</a>, <a class="el" href="../../d9/d49/subset_data_8c_source.html#l00351">main()</a>, and <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00103">readSpatialValues()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00031">checkRuntype()</a>, <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00053">locateNamelistInputItem()</a>, <a class="el" href="../../d2/de5/model_params_8c_source.html#l00205">locateParam()</a>, and <a class="el" href="../../d9/d49/subset_data_8c_source.html#l00351">main()</a>.</p>
 
 </div>
 </div>
@@ -514,7 +548,7 @@ Here is the call graph for this function:</div>
 
 <p class="definition">Definition at line <a class="el" href="../../de/df1/util_8c_source.html#l00189">189</a> of file <a class="el" href="../../de/df1/util_8c_source.html">util.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00119">readNamelistInputs()</a>, and <a class="el" href="../../dd/dda/spatial_params_8c_source.html#l00221">readSpatialParams()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d2/de5/model_params_8c_source.html#l00117">readModelParams()</a>, and <a class="el" href="../../de/d51/namelist_input_8c_source.html#l00119">readNamelistInputs()</a>.</p>
 
 </div>
 </div>

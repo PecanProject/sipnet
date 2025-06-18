@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['onespatialparam_0',['OneSpatialParam',['../da/d19/spatial_params_8h.html#a5085032835d78757574cca9e0c9dc87c',1,'spatialParams.h']]],
+  ['onemodelparam_0',['OneModelParam',['../d3/ddd/model_params_8h.html#a31bb15d02cbf0a3dc34fe172e22e039d',1,'modelParams.h']]],
   ['outputitems_1',['OutputItems',['../da/db0/output_items_8h.html#ae81b76924896b328454618a392eba5a2',1,'outputItems.h']]]
 ];

@@ -46,43 +46,42 @@
 \DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{double}\ orgN;}
 \DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{double}\ orgC;}
 \DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{double}\ minN;}
-\DoxyCodeLine{00045\ \ \ \textcolor{comment}{//\ double\ nh4\_no3\_frac;\ for\ two-\/pool\ version}}
-\DoxyCodeLine{00046\ \}\ FertilizationParams;}
-\DoxyCodeLine{00047\ }
-\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ NUM\_PLANTING\_PARAMS\ 4}}
-\DoxyCodeLine{00049\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }PlantingParams\ \{}
-\DoxyCodeLine{00050\ \ \ \textcolor{keywordtype}{double}\ leafC;}
-\DoxyCodeLine{00051\ \ \ \textcolor{keywordtype}{double}\ woodC;}
-\DoxyCodeLine{00052\ \ \ \textcolor{keywordtype}{double}\ fineRootC;}
-\DoxyCodeLine{00053\ \ \ \textcolor{keywordtype}{double}\ coarseRootC;}
-\DoxyCodeLine{00054\ \}\ PlantingParams;}
-\DoxyCodeLine{00055\ }
-\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ NUM\_TILLAGE\_PARAMS\ 3}}
-\DoxyCodeLine{00057\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }TillageParams\ \{}
-\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{double}\ fractionLitterTransferred;}
-\DoxyCodeLine{00059\ \ \ \textcolor{keywordtype}{double}\ somDecompModifier;}
-\DoxyCodeLine{00060\ \ \ \textcolor{keywordtype}{double}\ litterDecompModifier;}
-\DoxyCodeLine{00061\ \}\ TillageParams;}
-\DoxyCodeLine{00062\ }
-\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ NUM\_EVENT\_CORE\_PARAMS\ 4}}
-\DoxyCodeLine{00064\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }EventNode\ EventNode;}
-\DoxyCodeLine{00065\ \textcolor{keyword}{struct\ }EventNode\ \{}
-\DoxyCodeLine{00066\ \ \ event\_type\_t\ type;}
-\DoxyCodeLine{00067\ \ \ \textcolor{keywordtype}{int}\ loc,\ year,\ day;}
-\DoxyCodeLine{00068\ \ \ \textcolor{keywordtype}{void}\ *eventParams;}
-\DoxyCodeLine{00069\ \ \ EventNode\ *nextEvent;}
-\DoxyCodeLine{00070\ \};}
-\DoxyCodeLine{00071\ }
-\DoxyCodeLine{00078\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeToString(event\_type\_t\ type);}
-\DoxyCodeLine{00079\ }
-\DoxyCodeLine{00088\ EventNode\ **readEventData(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ numLocs);}
-\DoxyCodeLine{00089\ }
-\DoxyCodeLine{00095\ FILE\ *openEventOutFile(\textcolor{keywordtype}{int}\ printHeader);}
-\DoxyCodeLine{00096\ }
-\DoxyCodeLine{00114\ \textcolor{keywordtype}{void}\ writeEventOut(FILE\ *out,\ EventNode\ *event,\ \textcolor{keywordtype}{int}\ numParams,\ ...);}
-\DoxyCodeLine{00115\ }
-\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ closeEventOutFile(FILE\ *file);}
-\DoxyCodeLine{00121\ }
-\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ EVENTS\_H}}
+\DoxyCodeLine{00045\ \}\ FertilizationParams;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ NUM\_PLANTING\_PARAMS\ 4}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }PlantingParams\ \{}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordtype}{double}\ leafC;}
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordtype}{double}\ woodC;}
+\DoxyCodeLine{00051\ \ \ \textcolor{keywordtype}{double}\ fineRootC;}
+\DoxyCodeLine{00052\ \ \ \textcolor{keywordtype}{double}\ coarseRootC;}
+\DoxyCodeLine{00053\ \}\ PlantingParams;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ NUM\_TILLAGE\_PARAMS\ 3}}
+\DoxyCodeLine{00056\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }TillageParams\ \{}
+\DoxyCodeLine{00057\ \ \ \textcolor{keywordtype}{double}\ fractionLitterTransferred;}
+\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{double}\ somDecompModifier;}
+\DoxyCodeLine{00059\ \ \ \textcolor{keywordtype}{double}\ litterDecompModifier;}
+\DoxyCodeLine{00060\ \}\ TillageParams;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ NUM\_EVENT\_CORE\_PARAMS\ 3}}
+\DoxyCodeLine{00063\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }EventNode\ EventNode;}
+\DoxyCodeLine{00064\ \textcolor{keyword}{struct\ }EventNode\ \{}
+\DoxyCodeLine{00065\ \ \ event\_type\_t\ type;}
+\DoxyCodeLine{00066\ \ \ \textcolor{keywordtype}{int}\ year,\ day;}
+\DoxyCodeLine{00067\ \ \ \textcolor{keywordtype}{void}\ *eventParams;}
+\DoxyCodeLine{00068\ \ \ EventNode\ *nextEvent;}
+\DoxyCodeLine{00069\ \};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeToString(event\_type\_t\ type);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00085\ EventNode\ *readEventData(\textcolor{keywordtype}{char}\ *eventFile);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00092\ FILE\ *openEventOutFile(\textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ writeEventOut(FILE\ *out,\ EventNode\ *event,\ \textcolor{keywordtype}{int}\ numParams,\ ...);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ closeEventOutFile(FILE\ *file);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ EVENTS\_H}}
 
 \end{DoxyCode}

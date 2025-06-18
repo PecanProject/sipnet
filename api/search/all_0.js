@@ -4,7 +4,7 @@ var searchData=
   ['addoutputitem_1',['addoutputitem',['../dd/d66/output_items_8c.html#aae7d85779ed17e486430634c3d4b84b6',1,'addOutputItem(OutputItems *outputItems, char *name, double *ptr):&#160;outputItems.c'],['../da/db0/output_items_8h.html#aae7d85779ed17e486430634c3d4b84b6',1,'addOutputItem(OutputItems *outputItems, char *name, double *ptr):&#160;outputItems.c']]],
   ['addvaluetomeantracker_2',['addvaluetomeantracker',['../de/d1e/runmean_8h.html#a3b3e682c43d0a347c6eaf7de4cb68a16',1,'addValueToMeanTracker(MeanTracker *tracker, double value, double weight):&#160;runmean.c'],['../d5/d1f/runmean_8c.html#a3b3e682c43d0a347c6eaf7de4cb68a16',1,'addValueToMeanTracker(MeanTracker *tracker, double value, double weight):&#160;runmean.c']]],
   ['aggregation_5ftypes_3',['AGGREGATION_TYPES',['../d9/d49/subset_data_8c.html#aef61c4baa510f040b8460cccc00c17f1',1,'subsetData.c']]],
-  ['allparamsinitialized_4',['allParamsInitialized',['../dd/dda/spatial_params_8c.html#ae6dfc60182b4583f79733354cbe3680d',1,'spatialParams.c']]],
+  ['allparamsinitialized_4',['allParamsInitialized',['../d2/de5/model_params_8c.html#a04ee45f4b72af2f09fba0f827a6fa1e3',1,'modelParams.c']]],
   ['alone_20utilities_5',['Stand-alone Utilities',['../index.html#autotoc_md3',1,'']]],
   ['alternative_5ftrans_6',['ALTERNATIVE_TRANS',['../dd/d09/sipnet_8c.html#a9476f4a1fa534937c3fe349a9400ca2f',1,'sipnet.c']]],
   ['amax_7',['aMax',['../d0/dbf/struct_parameters.html#af778ff1a6c8db38febc0eae926c8d980',1,'Parameters']]],

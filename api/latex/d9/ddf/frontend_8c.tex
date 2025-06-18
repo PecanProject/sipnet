@@ -6,7 +6,7 @@
 {\ttfamily \#include $<$unistd.\+h$>$}\newline
 {\ttfamily \#include "{}common/exit\+Codes.\+h"{}}\newline
 {\ttfamily \#include "{}common/namelist\+Input.\+h"{}}\newline
-{\ttfamily \#include "{}common/spatial\+Params.\+h"{}}\newline
+{\ttfamily \#include "{}common/model\+Params.\+h"{}}\newline
 {\ttfamily \#include "{}common/util.\+h"{}}\newline
 {\ttfamily \#include "{}events.\+h"{}}\newline
 {\ttfamily \#include "{}sipnet.\+h"{}}\newline
@@ -34,8 +34,6 @@ Include dependency graph for frontend.\+c\+:
 \#define \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}~1
 \item 
 \#define \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}~0
-\item 
-\#define \textbf{ LOC}~(-\/1)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -99,16 +97,6 @@ Definition at line \textbf{ 27} of file \textbf{ frontend.\+c}.
 
 Definition at line \textbf{ 26} of file \textbf{ frontend.\+c}.
 
-\label{frontend_8c_a0fee446a4a4ef6536664bc1ff47ff694} 
-\index{frontend.c@{frontend.c}!LOC@{LOC}}
-\index{LOC@{LOC}!frontend.c@{frontend.c}}
-\doxysubsubsection{LOC}
-{\footnotesize\ttfamily \#define LOC~(-\/1)}
-
-
-
-Definition at line \textbf{ 31} of file \textbf{ frontend.\+c}.
-
 \label{frontend_8c_a7316472e16c612c08c61ab2699b96d4c} 
 \index{frontend.c@{frontend.c}!RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}}
 \index{RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}!frontend.c@{frontend.c}}
@@ -130,7 +118,7 @@ Definition at line \textbf{ 25} of file \textbf{ frontend.\+c}.
 
 
 
-Definition at line \textbf{ 33} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 31} of file \textbf{ frontend.\+c}.
 
 
 
@@ -156,11 +144,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 60} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 58} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ delete\+Spatial\+Params()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ LOC}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ setup\+Output\+Items()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
+References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ setup\+Output\+Items()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -178,7 +166,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 53} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 51} of file \textbf{ frontend.\+c}.
 
 
 

@@ -8,7 +8,7 @@
 \DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ SIPNET\_H}}
 \DoxyCodeLine{00005\ }
 \DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
-\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}common/spatialParams.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}common/modelParams.h"{}}}
 \DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}outputItems.h"{}}}
 \DoxyCodeLine{00009\ }
 \DoxyCodeLine{00010\ \textcolor{comment}{//\ write\ to\ file\ which\ model\ components\ are\ turned\ on}}
@@ -16,64 +16,17 @@
 \DoxyCodeLine{00012\ \textcolor{comment}{//\ pre:\ out\ is\ open\ for\ writing}}
 \DoxyCodeLine{00013\ \textcolor{keywordtype}{void}\ printModelComponents(FILE\ *out);}
 \DoxyCodeLine{00014\ }
-\DoxyCodeLine{00015\ \textcolor{comment}{/*\ do\ initializations\ that\ only\ have\ to\ be\ done\ once\ for\ all\ model\ runs:}}
-\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ read\ in\ climate\ data\ and\ initial\ parameter\ values}}
-\DoxyCodeLine{00017\ \textcolor{comment}{\ \ \ parameter\ values\ get\ stored\ in\ spatialParams\ (along\ with\ other\ parameter}}
-\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ information),\ which\ gets\ allocated\ and\ initialized\ here\ (thus\ requiring\ that}}
-\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ spatialParams\ is\ passed\ in\ as\ a\ pointer\ to\ a\ pointer)\ number\ of\ time\ steps\ in}}
-\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ each\ location\ gets\ stored\ in\ steps\ vector,\ which\ gets\ dynamically\ allocated}}
-\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ with\ malloc\ (steps\ must\ be\ a\ pointer\ to\ a\ pointer\ so\ it\ can\ be\ malloc'ed)}}
-\DoxyCodeLine{00022\ \textcolor{comment}{}}
-\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ also\ set\ up\ pointers\ to\ different\ output\ data\ types}}
-\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ and\ setup\ meanNPP\ tracker}}
-\DoxyCodeLine{00025\ \textcolor{comment}{}}
-\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ initModel\ returns\ number\ of\ spatial\ locations}}
-\DoxyCodeLine{00027\ \textcolor{comment}{}}
-\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ paramFile\ is\ parameter\ data\ file}}
-\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ paramFile-\/spatial\ is\ file\ with\ parameter\ values\ of\ spatially-\/varying}}
-\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ parameters\ (1st\ line\ contains\ number\ of\ locations)}}
-\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ climFile\ is\ climate\ data\ file}}
-\DoxyCodeLine{00032\ \textcolor{comment}{*/}}
-\DoxyCodeLine{00033\ \textcolor{keywordtype}{int}\ initModel(SpatialParams\ **spatialParams,\ \textcolor{keywordtype}{int}\ **steps,\ \textcolor{keywordtype}{char}\ *paramFile,}
-\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *climFile);}
-\DoxyCodeLine{00035\ }
-\DoxyCodeLine{00036\ \textcolor{comment}{/*}}
-\DoxyCodeLine{00037\ \textcolor{comment}{\ *\ Read\ in\ event\ data\ for\ all\ the\ model\ runs}}
-\DoxyCodeLine{00038\ \textcolor{comment}{\ *}}
-\DoxyCodeLine{00039\ \textcolor{comment}{\ *\ Read\ in\ event\ data\ from\ a\ file\ with\ the\ following\ specification:}}
-\DoxyCodeLine{00040\ \textcolor{comment}{\ *\ -\/\ one\ line\ per\ event}}
-\DoxyCodeLine{00041\ \textcolor{comment}{\ *\ -\/\ all\ events\ are\ ordered\ first\ by\ location\ (ascending)\ and\ then\ by\ year/day}}
-\DoxyCodeLine{00042\ \textcolor{comment}{\ *\ (ascending)}}
-\DoxyCodeLine{00043\ \textcolor{comment}{\ *}}
-\DoxyCodeLine{00044\ \textcolor{comment}{\ *\ @param\ eventFile\ Name\ of\ file\ containing\ event\ data}}
-\DoxyCodeLine{00045\ \textcolor{comment}{\ *\ @param\ numLocs\ Number\ of\ locations\ in\ the\ event\ file.}}
-\DoxyCodeLine{00046\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ numLocs,\ \textcolor{keywordtype}{int}\ printHeader);}
-\DoxyCodeLine{00048\ }
-\DoxyCodeLine{00049\ \textcolor{comment}{//\ call\ this\ when\ done\ running\ model:}}
-\DoxyCodeLine{00050\ \textcolor{comment}{//\ de-\/allocates\ space\ for\ climate\ linked\ list}}
-\DoxyCodeLine{00051\ \textcolor{comment}{//\ (needs\ to\ know\ number\ of\ locations)}}
-\DoxyCodeLine{00052\ \textcolor{keywordtype}{void}\ cleanupModel(\textcolor{keywordtype}{int}\ numLocs);}
-\DoxyCodeLine{00053\ }
-\DoxyCodeLine{00054\ \textcolor{comment}{/*\ Do\ one\ run\ of\ the\ model\ using\ parameter\ values\ in\ spatialParams}}
-\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ If\ out\ !=\ NULL,\ output\ results\ to\ out}}
-\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ If\ printHeader\ =\ 1,\ print\ a\ header\ for\ the\ output\ file,\ if\ 0\ don't}}
-\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ If\ outputItems\ !=\ NULL,\ do\ additional\ outputting\ as\ given\ by\ this}}
-\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ structure\ (1\ variable\ per\ file)}}
-\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ If\ loc\ ==\ -\/1,\ then\ print\ currLoc\ as\ first\ item\ on\ each\ line}}
-\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ Run\ at\ spatial\ location\ given\ by\ loc\ (0-\/indexing)\ -\/\ or\ run\ everywhere\ if\ loc}}
-\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ =\ -\/1\ Note:\ number\ of\ locations\ given\ in\ spatialParams}}
-\DoxyCodeLine{00062\ \textcolor{comment}{*/}}
-\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader,}
-\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SpatialParams\ *spatialParams,\ \textcolor{keywordtype}{int}\ loc);}
-\DoxyCodeLine{00065\ }
-\DoxyCodeLine{00066\ \textcolor{comment}{/*\ PRE:\ outputItems\ has\ been\ created\ with\ newOutputItems}}
-\DoxyCodeLine{00067\ \textcolor{comment}{}}
-\DoxyCodeLine{00068\ \textcolor{comment}{\ \ \ Setup\ outputItems\ structure}}
-\DoxyCodeLine{00069\ \textcolor{comment}{\ \ \ Each\ variable\ added\ will\ be\ output\ in\ a\ separate\ file\ ('*.varName')}}
-\DoxyCodeLine{00070\ \textcolor{comment}{\ */}}
-\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems);}
-\DoxyCodeLine{00072\ }
-\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ initModel(ModelParams\ **modelParams,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *paramFile,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *climFile);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ cleanupModel(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#endif}}
 
 \end{DoxyCode}
