@@ -715,9 +715,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#drainage" class="md-nav__link">
+  <a href="#frakdrainage" class="md-nav__link">
     <span class="md-ellipsis">
-      Drainage
+      \(\frak{Drainage}\)
     </span>
   </a>
   
@@ -1545,9 +1545,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#drainage" class="md-nav__link">
+  <a href="#frakdrainage" class="md-nav__link">
     <span class="md-ellipsis">
-      Drainage
+      \(\frak{Drainage}\)
     </span>
   </a>
   
@@ -2079,7 +2079,7 @@ R_A = \max(R_A, I_{\text{N limit}} \cdot GPP) \tag{22}\label{eq:n_limit_ra}
 \]</div>
 <p>The change in soil water content  <span class="arithmatex">\((W_{\text{soil}})\)</span> is determined by precipitation <span class="arithmatex">\(F^W_{\text{precip}}\)</span> and losses due to drainage <span class="arithmatex">\(F^W_{\text{drainage}}\)</span> and transpiration <span class="arithmatex">\(F^W_{\text{transpiration}}\)</span>.</p>
 <p><span class="arithmatex">\(F^W_{\text{precip}}\)</span> is the precipitation rate prescribed at each time step in the <code>&lt;sitename&gt;.clim</code> file and fraction of precipitation intercepted by the canopy <span class="arithmatex">\(f_{\text{intercept}}\)</span>.</p>
-<h3 id="drainage">Drainage<a class="headerlink" href="#drainage" title="Permanent link">&para;</a></h3>
+<h3 id="frakdrainage"><span class="arithmatex">\(\frak{Drainage}\)</span><a class="headerlink" href="#frakdrainage" title="Permanent link">&para;</a></h3>
 <p>Under well-drained conditions, drainage occurs when soil water content  <span class="arithmatex">\((W_{\text{soil}})\)</span> exceeds the soil water holding capacity  <span class="arithmatex">\((W_{\text{WHC}})\)</span>. Beyond this point, additional water drains off at a rate controlled by the drainage parameter <span class="arithmatex">\(f_{\text{drain}}\)</span>. For well drained soils, this <span class="arithmatex">\(f_{\text{drain}}=1\)</span>. Setting <span class="arithmatex">\(f_{\text{drain}}&lt;1\)</span> reduced the rate of drainage, and flooding will will require a combination of a low <span class="arithmatex">\(f_{\text{drain}}\)</span> and sufficient size and / or frequency of <span class="arithmatex">\(F^W_\text{irrigation}\)</span> to maintain flooded conditions.</p>
 <div class="arithmatex">\[
 F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0) \tag{23}\label{eq:drainage}
