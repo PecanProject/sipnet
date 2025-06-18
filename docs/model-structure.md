@@ -454,7 +454,7 @@ $F^W_{\text{precip}}$ is the precipitation rate prescribed at each time step in 
 
 
 
-### Drainage
+### $\frak{Drainage}$
 
 Under well-drained conditions, drainage occurs when soil water content  $(W_{\text{soil}})$ exceeds the soil water holding capacity  $(W_{\text{WHC}})$. Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduced the rate of drainage, and flooding will will require a combination of a low $f_{\text{drain}}$ and sufficient size and / or frequency of $F^W_\text{irrigation}$ to maintain flooded conditions.
 
