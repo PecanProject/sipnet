@@ -40,12 +40,11 @@ void initEnv(void) {
 }
 
 int run(void) {
-  int numLocs = 1;
   int status = 0;
   double expLitter, expLeafC, expWoodC, expFineC, expCoarseC;
 
   // set up dummy climate
-  climate = (ClimateNode *)malloc(numLocs * sizeof(ClimateNode));
+  climate = (ClimateNode *)malloc(sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
 
@@ -56,8 +55,8 @@ int run(void) {
   initEnv();
 
   //// ONE PLANTING EVENT
-  initEvents("events_one_harvest.in", numLocs, 0);
-  setupEvents(0);
+  initEvents("events_one_harvest.in", 0);
+  setupEvents();
   processEvents();
 
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
@@ -70,8 +69,8 @@ int run(void) {
 
   //// TWO HARVEST EVENTS
   initEnv();
-  initEvents("events_two_harvest.in", numLocs, 1);
-  setupEvents(0);
+  initEvents("events_two_harvest.in", 1);
+  setupEvents();
   processEvents();
   // First event same as above
   expLitter = 1 + 0.3 * (2 + 3) + 0.4 * (4 + 5);

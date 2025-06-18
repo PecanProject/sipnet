@@ -3,7 +3,7 @@ ROOT_DIR=../../..
 
 CC=gcc
 LD=gcc
-CFLAGS=-Wall -g -I$(ROOT_DIR)/src -I$(ROOT_DIR)/tests
+CFLAGS=-Wall -g -I$(ROOT_DIR)/src -I$(ROOT_DIR)/tests -Wno-c2x-extensions
 LDFLAGS=-L$(ROOT_DIR)/libs
 LDLIBS=-lsipnet -lsipnet_common -lm
 

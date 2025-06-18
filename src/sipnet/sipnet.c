@@ -212,7 +212,7 @@ struct ClimateVars {
   ClimateNode *nextClim;
 };
 
-#define NUM_CLIM_FILE_COLS 14
+#define NUM_CLIM_FILE_COLS 13
 
 // model parameters which can change from one run to the next
 // these include initializations of state
@@ -537,8 +537,7 @@ typedef struct PhenologyTrackersStruct { /* variables to track each year's
 // made global so they can be initialized in a separate function
 // so they only have to be initialized once
 
-static ClimateNode **firstClimates;  // a vector of pointers to first climates
-                                     // of each point in space
+static ClimateNode *firstClimate;  // pointers to first climate
 
 // more global variables:
 // these are global to increase efficiency (avoid lots of parameter passing)
@@ -558,44 +557,30 @@ static ClimateNode *climate;  // current climate
 static Fluxes fluxes;
 
 #if EVENT_HANDLER
-static EventNode **events;
-static EventNode *locEvent;  // current location event list
+static EventNode *events;
+static EventNode *event;
 static FILE *eventOutFile;
 #endif
 
-/* Read climate file into linked lists,
-   make firstClimates be a vector where each element is a pointer to the head of
-   a list corresponding to one spatial location
+/*!
+ * Read climate file into linked list
+ *
+ * Each line of the climate file represents one time step, with the following
+ * format:
+ *    year day time intervalLength tair tsoil par precip vpd vpdSoil vPress wspd
+ soilWetness
+ *
+ * NOTE: there should be NO blank lines in the file.
 
-   return an array containing the number of time steps in each location
-   (dynamically allocated with malloc)
-
-   numLocs = number of spatial locations: there should be one set of entries in
-   climFile for each location, or a location can be skipped, and we'll use
-   climate at location 0 for that location, too
-
-   format of climFile:
-   each line represents one time step, with the following format:
-
-   location year day time intervalLength tair tsoil par precip vpd vpdSoil
-   vPress wspd soilWetness
-
-   NOTE: there should be NO blank lines in file, even between different spatial
-   locations; all entries for a given location should be contiguous, and
-   locations should be in ascending order. There may be locations for which
-   there is no climate data, in which case we use climate from location 0
-*/
-int *readClimData(char *climFile, int numLocs) {
+ * @param climFile Name of climate file
+ */
+void readClimData(const char *climFile) {
   FILE *in;
   ClimateNode *curr, *next;
-  int loc, year, day;
+  int year, day;
   int lastYear = -1;
   double time, length;  // time in hours, length in days (or fraction of day)
   double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
-  int currLoc;
-  int count;
-  int i;
-  int *steps;  // # of time steps in each location
 
 #if GDD
   double thisGdd;  // growing degree days of this time step
@@ -604,49 +589,56 @@ int *readClimData(char *climFile, int numLocs) {
 
   int status;  // status of the read
 
-  steps = (int *)malloc(numLocs * sizeof(int));
-  for (i = 0; i < numLocs; i++) {
-    steps[i] = 0;  // 0 will denote nothing read
-  }
+  // for format check
+  int firstLoc, dummyLoc, numFields;
+  int expectedNumCols = NUM_CLIM_FILE_COLS;
+  char *firstLine = NULL;
+  size_t lineCap = 0;
+  int hasLoc = 0;
+  const char *SEPARATORS = " \t\n\r";  // characters that can separate values in
+                                       // parameter files
 
   in = openFile(climFile, "r");
 
-  status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                  &loc, &year, &day, &time, &length, &tair, &tsoil, &par,
-                  &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
-  if (status == EOF) {
+  // Check format of first line to see if location is still specified (we will
+  // ignore it if so)
+  if (getline(&firstLine, &lineCap, in) == -1) {  // EOF
     printf("Error: no climate data in %s\n", climFile);
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
-  if (status != NUM_CLIM_FILE_COLS) {
+  numFields = countFields(firstLine, SEPARATORS);
+  if (numFields == expectedNumCols + 1) {
+    printf("WARNING: ignoring location column in %s (found %d cols)\n",
+           climFile, numFields);
+    ++expectedNumCols;
+    hasLoc = 1;
+  }
+
+  if (hasLoc) {
+    status = sscanf(firstLine,  // NOLINT
+                    "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+                    &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
+                    &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+  } else {
+    status = sscanf(firstLine,  // NOLINT
+                    "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
+                    &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
+                    &vpdSoil, &vPress, &wspd, &soilWetness);
+  }
+  free(firstLine);
+
+  if (status != expectedNumCols) {
     printf("Error reading climate file: bad data on first line\n");
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
-  if (loc != 0) {
-    printf("Error reading climate file: first location must be loc. 0\n");
-    exit(EXIT_CODE_INPUT_FILE_ERROR);
-  }
+  firstClimate = (ClimateNode *)malloc(sizeof(ClimateNode));
+  next = firstClimate;
 
-  firstClimates =
-      (ClimateNode **)malloc(numLocs * sizeof(ClimateNode *));  // vector of
-                                                                // heads
-  for (currLoc = 0; currLoc < numLocs; currLoc++) {
-    firstClimates[currLoc] = NULL;  // default is null
-  }
-  // if firstClimates[i] stays null for some i, that means we didn't read any
-  // climate data for location i, so use climate from location 0
-
-  currLoc = loc;
-  // allocate space for head
-  firstClimates[currLoc] = (ClimateNode *)malloc(sizeof(ClimateNode));
-  next = firstClimates[currLoc];
-  count = 0;
   while (status != EOF) {
     // we have another day's climate
     curr = next;
-    count++;  // # of time steps in this location
 
     curr->year = year;
     curr->day = day;
@@ -688,223 +680,169 @@ int *readClimData(char *climFile, int numLocs) {
 
     lastYear = year;
 
-    status = fscanf(in, "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                    &loc, &year, &day, &time, &length, &tair, &tsoil, &par,
-                    &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
-
+    if (hasLoc) {
+      status =
+          fscanf(in,  // NOLINT
+                 "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+                 &dummyLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
+                 &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+    } else {
+      status = fscanf(in,  // NOLINT
+                      "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+                      &year, &day, &time, &length, &tair, &tsoil, &par, &precip,
+                      &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+    }
     if (status != EOF) {
-      // we have another climate record - check new location, compare with old
-      // location (currLoc), make sure new location is valid, and act
-      // accordingly
-
-      if (status != NUM_CLIM_FILE_COLS) {
-        printf("Error reading climate file: bad data near loc %d year %d"
-               " day %d\n",
-               loc, year, day);
+      if (status != expectedNumCols) {
+        printf("Error reading climate file: bad data near year %d day %d\n",
+               year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
+      // Check for older file with multiple locations - that's an error now
+      if (dummyLoc != firstLoc) {
+        printf("Error reading climate file %s: multiple locations not "
+               "supported\n",
+               climFile);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
 
-      if (loc == currLoc) {
-        // still reading climate records from the same place: add a node at end
-        // of linked list
-        next = (ClimateNode *)malloc(sizeof(ClimateNode));
-        curr->nextClim = next;
-        // set this down here rather than at top of loop so head treated the
-        // same as rest of list
-      } else if (loc >= numLocs) {  // (loc == numLocs is an error since we use
-                                    // 0-indexing)
-        printf("Error reading climate file: trying to read location %d, but "
-               "numLocs = %d\n",
-               loc, numLocs);
-        exit(1);
-      } else if (loc > currLoc) {
-        // we've advanced to the next location (note: possible that we skipped
-        // some locations: this is OK)
-        curr->nextClim = NULL;  // terminate last linked list
-        steps[currLoc] = count;  // record the number of time steps for last
-                                 // location
-        lastYear = -1;
-        count = 0;  // reset count of # of time steps
-#if GDD
-        gdd = 0;  // reset growing degree days
-#endif
-        currLoc = loc;
-        firstClimates[currLoc] =
-            (ClimateNode *)malloc(sizeof(ClimateNode));  // allocate space for
-                                                         // head
-        next = firstClimates[currLoc];  // we'll start writing to next
-                                        // linked list
-      } else {  // loc < currLoc
-        printf("Error reading climate file: was reading location %d, trying to "
-               "read location %d\n",
-               currLoc, loc);
-        printf("Climate records for a given location should be contiguous, and "
-               "locations should be in ascending order\n");
-        exit(1);
-      }
+      // still reading climate records from the same place: add a node at end
+      // of linked list
+      next = (ClimateNode *)malloc(sizeof(ClimateNode));
+      curr->nextClim = next;
+      // set this down here rather than at top of loop so head treated the
+      // same as rest of list
     } else {  // status == EOF - no more records
       curr->nextClim = NULL;  // terminate this last linked list
-      steps[currLoc] = count;  // record the number of time steps for last
-                               // location
     }
-
   }  // end while
 
   fclose(in);
-
-  for (i = 0; i < numLocs; i++) {
-    if (steps[i] == 0) {  // nothing read for this location
-      steps[i] = steps[0];  // this location will duplicate location 0
-    }
-  }
-  return steps;
 }
 
-// allocate & initialize spatialParamsPtr (a pointer to a SpatialParams pointer
-// to allow for allocation) read in parameter file, put parameters (and other
-// info) in spatialParams return numLocs (read from first line of spatialParams
-// file)
-
-// note that the last argument in the "initializeOneSpatialParam" function
-// indicates whether the given parameter is required
-//  1 -> must be in param file, 0 -> optional
-//  parameters that are required for the model to run should be flagged as 1 to
-//  allow for error checking if a parameter is only required with certain
-//  options, this argument can be set to a boolean value that evaluates to true
-//  iff these options are enabled for maximum convenience, all parameters can be
-//  flagged as 0 (i.e. optional), but you are taking your life into your own
-//  hands if you do so
-int readParamData(SpatialParams **spatialParamsPtr, char *paramFile,
-                  char *spatialParamFile) {
-  FILE *paramF, *spatialParamF;
-  SpatialParams *spatialParams;  // a local variable to prevent lots of
-                                 // unnecessary dereferences
-  int numLocs;
-
+/*!
+ * Read initial model parameter values from param file
+ *
+ * Note that the last argument in the "initializeOneModelParam" function
+ * indicates whether the given parameter is required:
+ *   1 -> must be in param file
+ *   0 -> optional
+ *
+ * @param modelParamsPtr ModelParams struct, will be alloc'd here
+ * @param paramFile Name of parameter file
+ */
+void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
+  FILE *paramF;
+  ModelParams *modelParams;  // to prevent lots of
+                             // unnecessary dereferences
   paramF = openFile(paramFile, "r");
-  spatialParamF = openFile(spatialParamFile, "r");
 
-  int numRead = fscanf(spatialParamF, "%d", &numLocs);
-
-  if (numLocs < 1 || numRead != 1) {
-    printf("Error: numLocs must be >= 1: read %d\n", numLocs);
-    exit(1);
-  }
-
-  *spatialParamsPtr = newSpatialParams(NUM_PARAMS, numLocs);
-  spatialParams = *spatialParamsPtr;  // to prevent lots of unnecessary
-                                      // dereferences
+  *modelParamsPtr = newModelParams(NUM_PARAMS);
+  modelParams = *modelParamsPtr;  // to prevent lots of unnecessary dereferences
 
   // clang-format off
   // NOLINTBEGIN
-  initializeOneSpatialParam(spatialParams, "plantWoodInit", &(params.plantWoodInit), 1);
-  initializeOneSpatialParam(spatialParams, "laiInit", &(params.laiInit), 1);
-  initializeOneSpatialParam(spatialParams, "litterInit", &(params.litterInit), 1);
-  initializeOneSpatialParam(spatialParams, "soilInit", &(params.soilInit), 1);
-  initializeOneSpatialParam(spatialParams, "litterWFracInit", &(params.litterWFracInit), 1);
-  initializeOneSpatialParam(spatialParams, "soilWFracInit", &(params.soilWFracInit), 1);
-  initializeOneSpatialParam(spatialParams, "snowInit", &(params.snowInit), 1);
-  initializeOneSpatialParam(spatialParams, "aMax", &(params.aMax), 1);
-  initializeOneSpatialParam(spatialParams, "aMaxFrac", &(params.aMaxFrac), 1);
-  initializeOneSpatialParam(spatialParams, "baseFolRespFrac", &(params.baseFolRespFrac), 1);
+  initializeOneModelParam(modelParams, "plantWoodInit", &(params.plantWoodInit), 1);
+  initializeOneModelParam(modelParams, "laiInit", &(params.laiInit), 1);
+  initializeOneModelParam(modelParams, "litterInit", &(params.litterInit), 1);
+  initializeOneModelParam(modelParams, "soilInit", &(params.soilInit), 1);
+  initializeOneModelParam(modelParams, "litterWFracInit", &(params.litterWFracInit), 1);
+  initializeOneModelParam(modelParams, "soilWFracInit", &(params.soilWFracInit), 1);
+  initializeOneModelParam(modelParams, "snowInit", &(params.snowInit), 1);
+  initializeOneModelParam(modelParams, "aMax", &(params.aMax), 1);
+  initializeOneModelParam(modelParams, "aMaxFrac", &(params.aMaxFrac), 1);
+  initializeOneModelParam(modelParams, "baseFolRespFrac", &(params.baseFolRespFrac), 1);
 
-  initializeOneSpatialParam(spatialParams, "psnTMin", &(params.psnTMin), 1);
-  initializeOneSpatialParam(spatialParams, "psnTOpt", &(params.psnTOpt), 1);
-  initializeOneSpatialParam(spatialParams, "vegRespQ10", &(params.vegRespQ10), 1);
-  initializeOneSpatialParam(spatialParams, "growthRespFrac", &(params.growthRespFrac), GROWTH_RESP);
-  initializeOneSpatialParam(spatialParams, "frozenSoilFolREff", &(params.frozenSoilFolREff), 1);
-  initializeOneSpatialParam(spatialParams, "frozenSoilThreshold", &(params.frozenSoilThreshold), 1);
-  initializeOneSpatialParam(spatialParams, "dVpdSlope", &(params.dVpdSlope), 1);
-  initializeOneSpatialParam(spatialParams, "dVpdExp", &(params.dVpdExp), 1);
-  initializeOneSpatialParam(spatialParams, "halfSatPar", &(params.halfSatPar), 1);
-  initializeOneSpatialParam(spatialParams, "attenuation", &(params.attenuation), 1);
+  initializeOneModelParam(modelParams, "psnTMin", &(params.psnTMin), 1);
+  initializeOneModelParam(modelParams, "psnTOpt", &(params.psnTOpt), 1);
+  initializeOneModelParam(modelParams, "vegRespQ10", &(params.vegRespQ10), 1);
+  initializeOneModelParam(modelParams, "growthRespFrac", &(params.growthRespFrac), GROWTH_RESP);
+  initializeOneModelParam(modelParams, "frozenSoilFolREff", &(params.frozenSoilFolREff), 1);
+  initializeOneModelParam(modelParams, "frozenSoilThreshold", &(params.frozenSoilThreshold), 1);
+  initializeOneModelParam(modelParams, "dVpdSlope", &(params.dVpdSlope), 1);
+  initializeOneModelParam(modelParams, "dVpdExp", &(params.dVpdExp), 1);
+  initializeOneModelParam(modelParams, "halfSatPar", &(params.halfSatPar), 1);
+  initializeOneModelParam(modelParams, "attenuation", &(params.attenuation), 1);
 
-  initializeOneSpatialParam(spatialParams, "leafOnDay", &(params.leafOnDay), !((GDD) || (SOIL_PHENOL)));
-  initializeOneSpatialParam(spatialParams, "gddLeafOn", &(params.gddLeafOn), GDD);
-  initializeOneSpatialParam(spatialParams, "soilTempLeafOn", &(params.soilTempLeafOn), SOIL_PHENOL);
-  initializeOneSpatialParam(spatialParams, "leafOffDay", &(params.leafOffDay), 1);
-  initializeOneSpatialParam(spatialParams, "leafGrowth", &(params.leafGrowth), 1);
-  initializeOneSpatialParam(spatialParams, "fracLeafFall", &(params.fracLeafFall), 1);
-  initializeOneSpatialParam(spatialParams, "leafAllocation", &(params.leafAllocation), 1);
-  initializeOneSpatialParam(spatialParams, "leafTurnoverRate", &(params.leafTurnoverRate), 1);
-  initializeOneSpatialParam(spatialParams, "baseVegResp", &(params.baseVegResp), 1);
-  initializeOneSpatialParam(spatialParams, "litterBreakdownRate", &(params.litterBreakdownRate), LITTER_POOL);
+  initializeOneModelParam(modelParams, "leafOnDay", &(params.leafOnDay), !((GDD) || (SOIL_PHENOL)));
+  initializeOneModelParam(modelParams, "gddLeafOn", &(params.gddLeafOn), GDD);
+  initializeOneModelParam(modelParams, "soilTempLeafOn", &(params.soilTempLeafOn), SOIL_PHENOL);
+  initializeOneModelParam(modelParams, "leafOffDay", &(params.leafOffDay), 1);
+  initializeOneModelParam(modelParams, "leafGrowth", &(params.leafGrowth), 1);
+  initializeOneModelParam(modelParams, "fracLeafFall", &(params.fracLeafFall), 1);
+  initializeOneModelParam(modelParams, "leafAllocation", &(params.leafAllocation), 1);
+  initializeOneModelParam(modelParams, "leafTurnoverRate", &(params.leafTurnoverRate), 1);
+  initializeOneModelParam(modelParams, "baseVegResp", &(params.baseVegResp), 1);
+  initializeOneModelParam(modelParams, "litterBreakdownRate", &(params.litterBreakdownRate), LITTER_POOL);
 
-  initializeOneSpatialParam(spatialParams, "fracLitterRespired", &(params.fracLitterRespired), LITTER_POOL);
-  initializeOneSpatialParam(spatialParams, "baseSoilResp", &(params.baseSoilResp), 1);
-  initializeOneSpatialParam(spatialParams, "baseSoilRespCold", &(params.baseSoilRespCold), SEASONAL_R_SOIL);
-  initializeOneSpatialParam(spatialParams, "soilRespQ10", &(params.soilRespQ10), 1);
-  initializeOneSpatialParam(spatialParams, "soilRespQ10Cold", &(params.soilRespQ10Cold), SEASONAL_R_SOIL);
-  initializeOneSpatialParam(spatialParams, "coldSoilThreshold", &(params.coldSoilThreshold), SEASONAL_R_SOIL);
+  initializeOneModelParam(modelParams, "fracLitterRespired", &(params.fracLitterRespired), LITTER_POOL);
+  initializeOneModelParam(modelParams, "baseSoilResp", &(params.baseSoilResp), 1);
+  initializeOneModelParam(modelParams, "baseSoilRespCold", &(params.baseSoilRespCold), SEASONAL_R_SOIL);
+  initializeOneModelParam(modelParams, "soilRespQ10", &(params.soilRespQ10), 1);
+  initializeOneModelParam(modelParams, "soilRespQ10Cold", &(params.soilRespQ10Cold), SEASONAL_R_SOIL);
+  initializeOneModelParam(modelParams, "coldSoilThreshold", &(params.coldSoilThreshold), SEASONAL_R_SOIL);
 
-  initializeOneSpatialParam(spatialParams, "E0", &(params.E0), LLOYD_TAYLOR);
-  initializeOneSpatialParam(spatialParams, "T0", &(params.T0), LLOYD_TAYLOR);
-  initializeOneSpatialParam(spatialParams, "soilRespMoistEffect", &(params.soilRespMoistEffect), ((WATER_HRESP) && !(DAYCENT_WATER_HRESP)));
-  initializeOneSpatialParam(spatialParams, "waterRemoveFrac", &(params.waterRemoveFrac), 1);
-  initializeOneSpatialParam(spatialParams, "frozenSoilEff", &(params.frozenSoilEff), 1);
-  initializeOneSpatialParam(spatialParams, "wueConst", &(params.wueConst), 1);
-  initializeOneSpatialParam(spatialParams, "litterWHC", &(params.litterWHC), 1);
-  initializeOneSpatialParam(spatialParams, "soilWHC", &(params.soilWHC), 1);
-  initializeOneSpatialParam(spatialParams, "immedEvapFrac", &(params.immedEvapFrac), COMPLEX_WATER);
-  initializeOneSpatialParam(spatialParams, "fastFlowFrac", &(params.fastFlowFrac), COMPLEX_WATER);
-  initializeOneSpatialParam(spatialParams, "leafPoolDepth", &(params.leafPoolDepth), LEAF_WATER);
+  initializeOneModelParam(modelParams, "E0", &(params.E0), LLOYD_TAYLOR);
+  initializeOneModelParam(modelParams, "T0", &(params.T0), LLOYD_TAYLOR);
+  initializeOneModelParam(modelParams, "soilRespMoistEffect", &(params.soilRespMoistEffect), ((WATER_HRESP) && !(DAYCENT_WATER_HRESP)));
+  initializeOneModelParam(modelParams, "waterRemoveFrac", &(params.waterRemoveFrac), 1);
+  initializeOneModelParam(modelParams, "frozenSoilEff", &(params.frozenSoilEff), 1);
+  initializeOneModelParam(modelParams, "wueConst", &(params.wueConst), 1);
+  initializeOneModelParam(modelParams, "litterWHC", &(params.litterWHC), 1);
+  initializeOneModelParam(modelParams, "soilWHC", &(params.soilWHC), 1);
+  initializeOneModelParam(modelParams, "immedEvapFrac", &(params.immedEvapFrac), COMPLEX_WATER);
+  initializeOneModelParam(modelParams, "fastFlowFrac", &(params.fastFlowFrac), COMPLEX_WATER);
+  initializeOneModelParam(modelParams, "leafPoolDepth", &(params.leafPoolDepth), LEAF_WATER);
 
-  initializeOneSpatialParam(spatialParams, "snowMelt", &(params.snowMelt), SNOW);
-  initializeOneSpatialParam(spatialParams, "litWaterDrainRate", &(params.litWaterDrainRate), LITTER_WATER_DRAINAGE);
-  initializeOneSpatialParam(spatialParams, "rdConst", &(params.rdConst), (COMPLEX_WATER) || (PENMAN_MONTEITH_TRANS));
-  initializeOneSpatialParam(spatialParams, "rSoilConst1", &(params.rSoilConst1), COMPLEX_WATER);
-  initializeOneSpatialParam(spatialParams, "rSoilConst2", &(params.rSoilConst2), COMPLEX_WATER);
-  initializeOneSpatialParam(spatialParams, "leafCSpWt", &(params.leafCSpWt), 1);
-  initializeOneSpatialParam(spatialParams, "cFracLeaf", &(params.cFracLeaf), 1);
-  initializeOneSpatialParam(spatialParams, "woodTurnoverRate", &(params.woodTurnoverRate), 1);
-  initializeOneSpatialParam(spatialParams, "qualityLeaf", &(params.qualityLeaf), SOIL_QUALITY);
-  initializeOneSpatialParam(spatialParams, "qualityWood", &(params.qualityWood), SOIL_QUALITY);
+  initializeOneModelParam(modelParams, "snowMelt", &(params.snowMelt), SNOW);
+  initializeOneModelParam(modelParams, "litWaterDrainRate", &(params.litWaterDrainRate), LITTER_WATER_DRAINAGE);
+  initializeOneModelParam(modelParams, "rdConst", &(params.rdConst), (COMPLEX_WATER) || (PENMAN_MONTEITH_TRANS));
+  initializeOneModelParam(modelParams, "rSoilConst1", &(params.rSoilConst1), COMPLEX_WATER);
+  initializeOneModelParam(modelParams, "rSoilConst2", &(params.rSoilConst2), COMPLEX_WATER);
+  initializeOneModelParam(modelParams, "leafCSpWt", &(params.leafCSpWt), 1);
+  initializeOneModelParam(modelParams, "cFracLeaf", &(params.cFracLeaf), 1);
+  initializeOneModelParam(modelParams, "woodTurnoverRate", &(params.woodTurnoverRate), 1);
+  initializeOneModelParam(modelParams, "qualityLeaf", &(params.qualityLeaf), SOIL_QUALITY);
+  initializeOneModelParam(modelParams, "qualityWood", &(params.qualityWood), SOIL_QUALITY);
 
-  initializeOneSpatialParam(spatialParams, "efficiency", &(params.efficiency), (SOIL_QUALITY) || (MICROBES));
-  initializeOneSpatialParam(spatialParams, "maxIngestionRate", &(params.maxIngestionRate), (SOIL_QUALITY) || (MICROBES));
-  initializeOneSpatialParam(spatialParams, "halfSatIngestion", &(params.halfSatIngestion), MICROBES);
-  initializeOneSpatialParam(spatialParams, "totNitrogen", &(params.totNitrogen), STOICHIOMETRY);
-  initializeOneSpatialParam(spatialParams, "microbeNC", &(params.microbeNC), STOICHIOMETRY);
-  initializeOneSpatialParam(spatialParams, "microbeInit", &(params.microbeInit), (SOIL_QUALITY) || (MICROBES));
-  initializeOneSpatialParam(spatialParams, "fineRootFrac", &(params.fineRootFrac), ROOTS);
-  initializeOneSpatialParam(spatialParams, "coarseRootFrac", &(params.coarseRootFrac), ROOTS);
+  initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), (SOIL_QUALITY) || (MICROBES));
+  initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), (SOIL_QUALITY) || (MICROBES));
+  initializeOneModelParam(modelParams, "halfSatIngestion", &(params.halfSatIngestion), MICROBES);
+  initializeOneModelParam(modelParams, "totNitrogen", &(params.totNitrogen), STOICHIOMETRY);
+  initializeOneModelParam(modelParams, "microbeNC", &(params.microbeNC), STOICHIOMETRY);
+  initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), (SOIL_QUALITY) || (MICROBES));
+  initializeOneModelParam(modelParams, "fineRootFrac", &(params.fineRootFrac), ROOTS);
+  initializeOneModelParam(modelParams, "coarseRootFrac", &(params.coarseRootFrac), ROOTS);
 
-  initializeOneSpatialParam(spatialParams, "fineRootAllocation", &(params.fineRootAllocation), ROOTS);
-  initializeOneSpatialParam(spatialParams, "woodAllocation", &(params.woodAllocation), ROOTS);
+  initializeOneModelParam(modelParams, "fineRootAllocation", &(params.fineRootAllocation), ROOTS);
+  initializeOneModelParam(modelParams, "woodAllocation", &(params.woodAllocation), ROOTS);
 
-  initializeOneSpatialParam(spatialParams, "fineRootExudation", &(params.fineRootExudation), ROOTS);
-  initializeOneSpatialParam(spatialParams, "coarseRootExudation", &(params.coarseRootExudation), ROOTS);
-  initializeOneSpatialParam(spatialParams, "fineRootTurnoverRate", &(params.fineRootTurnoverRate), ROOTS);
-  initializeOneSpatialParam(spatialParams, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate), ROOTS);
-  initializeOneSpatialParam(spatialParams, "baseFineRootResp", &(params.baseFineRootResp), ROOTS);
-  initializeOneSpatialParam(spatialParams, "baseCoarseRootResp", &(params.baseCoarseRootResp), ROOTS);
-  initializeOneSpatialParam(spatialParams, "fineRootQ10", &(params.fineRootQ10), ROOTS);
-  initializeOneSpatialParam(spatialParams, "coarseRootQ10", &(params.coarseRootQ10), ROOTS);
+  initializeOneModelParam(modelParams, "fineRootExudation", &(params.fineRootExudation), ROOTS);
+  initializeOneModelParam(modelParams, "coarseRootExudation", &(params.coarseRootExudation), ROOTS);
+  initializeOneModelParam(modelParams, "fineRootTurnoverRate", &(params.fineRootTurnoverRate), ROOTS);
+  initializeOneModelParam(modelParams, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate), ROOTS);
+  initializeOneModelParam(modelParams, "baseFineRootResp", &(params.baseFineRootResp), ROOTS);
+  initializeOneModelParam(modelParams, "baseCoarseRootResp", &(params.baseCoarseRootResp), ROOTS);
+  initializeOneModelParam(modelParams, "fineRootQ10", &(params.fineRootQ10), ROOTS);
+  initializeOneModelParam(modelParams, "coarseRootQ10", &(params.coarseRootQ10), ROOTS);
 
-  initializeOneSpatialParam(spatialParams, "baseMicrobeResp", &(params.baseMicrobeResp), MICROBES);
-  initializeOneSpatialParam(spatialParams, "microbeQ10", &(params.microbeQ10), MICROBES);
-  initializeOneSpatialParam(spatialParams, "microbePulseEff", &(params.microbePulseEff), (ROOTS) && (MICROBES) );
-  initializeOneSpatialParam(spatialParams, "m_ballBerry", &(params.m_ballBerry), 1);
+  initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), MICROBES);
+  initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), MICROBES);
+  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), (ROOTS) && (MICROBES) );
+  initializeOneModelParam(modelParams, "m_ballBerry", &(params.m_ballBerry), 1);
   // NOLINTEND
   // clang-format on
 
-  readSpatialParams(spatialParams, paramF, spatialParamF);
+  readModelParams(modelParams, paramF);
 
   fclose(paramF);
-  fclose(spatialParamF);
-
-  return numLocs;
 }
 
-// pre: out is open for writing
-// print header line to output file
-
-// I wish someone who write a .header file to automatically output the correct
-// header
-
-// Not only that ...I'd like the options used in the model run to be added to
-// the file;
-
+/*!
+ * Print header row to output file
+ *
+ * @param out File pointer for output
+ */
 void outputHeader(FILE *out) {
   fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; "
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
@@ -929,12 +867,17 @@ void outputHeader(FILE *out) {
                "evapotranspiration fluxestranspiration fPAR\n");
 }
 
-// pre: out is open for writing
-// print current state to output file
-void outputState(FILE *out, int loc, int year, int day, double time) {
+/*!
+ * Print current state values to output file
+ * @param out File pointer for output
+ * @param year
+ * @param day
+ * @param time
+ */
+void outputState(FILE *out, int year, int day, double time) {
 
-  fprintf(out, "%8d %4d %3d %5.2f %8.2f %8.2f ", loc, year, day, time,
-          envi.plantWoodC, envi.plantLeafC);
+  fprintf(out, "%4d %3d %5.2f %8.2f %8.2f ", year, day, time, envi.plantWoodC,
+          envi.plantLeafC);
 
 #if SOIL_MULTIPOOL
   int counter;
@@ -969,41 +912,28 @@ void outputState(FILE *out, int loc, int year, int day, double time) {
 }
 
 // de-allocate space used for climate linked list
-void freeClimateList(int numLocs) {
+void freeClimateList() {
   ClimateNode *curr, *prev;
-  int loc;
 
-  for (loc = 0; loc < numLocs; loc++) {  // loop through firstClimates,
-                                         // deallocating each linked list
-    curr = firstClimates[loc];
-    while (curr != NULL) {
-      prev = curr;
-      curr = curr->nextClim;
-      free(prev);
-    }
+  curr = firstClimate;
+  while (curr != NULL) {
+    prev = curr;
+    curr = curr->nextClim;
+    free(prev);
   }
-  // and finally deallocate the vector itself:
-  free(firstClimates);
 }
 
 #if EVENT_HANDLER
 // de-allocate space used for events linked list
-void freeEventList(int numLocs) {
+void freeEventList() {
   EventNode *curr, *prev;
-  int loc;
 
-  for (loc = 0; loc < numLocs; loc++) {
-    // loop through events, deallocating each linked list
-    curr = events[loc];
-    while (curr != NULL) {
-      prev = curr;
-      curr = curr->nextEvent;
-      free(prev);
-    }
+  curr = events;
+  while (curr != NULL) {
+    prev = curr;
+    curr = curr->nextEvent;
+    free(prev);
   }
-
-  // and finally deallocate the vector itself:
-  free(events);
 }
 #endif
 
@@ -1012,7 +942,7 @@ void freeEventList(int numLocs) {
 // rather than returning a value, they have as parameters the variable(s) which
 // they modify so a single function can modify multiple variables
 
-/**
+/*!
  * @brief Compute canopy light effect using Simpson's rule.
  *
  * Similar to light attenuation in PnET, first calculate light
@@ -1131,7 +1061,7 @@ void calcLightEff(double *lightEff, double lai, double par) {
 // day^-1) and base foliar respiration without temp, water, etc. (g C * m^-2
 // ground area * day^-1)
 void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
-            double vpd, double par, int day) {
+            double vpd, double par, int /*day*/) {
   double grossAMax;  // maximum possible gross respiration (nmol CO2 * g^-1 leaf
                      // * sec^-1)
   double dTemp, dVpd, lightEff;  // decrease in photosynth. due to temp, vpd and
@@ -1162,9 +1092,6 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
   *potGrossPsn = grossAMax * dTemp * dVpd * lightEff * conversion;
   *baseFolResp = respPerGram * conversion;  // do foliar resp. even if no
                                             // photosynthesis in this time step
-
-  // printf("%f %f %f %f %f %f ", climate->length, grossAMax, conversion, dTemp,
-  // dVpd, lightEff);
 }
 
 void moisture_bwb(double *trans, double *dWater, double potGrossPsn, double vpd,
@@ -1806,7 +1733,7 @@ void calcRootResp(double *rootResp, double respQ10, double baseRate,
 // calculate foliar resp., wood maint. resp. and growth resp., all in g C * m^-2
 // ground area * day^-1 growth resp. modeled in a very simple way
 void vegResp2(double *folResp, double *woodResp, double *growthResp,
-              double baseFolResp, double gpp) {
+              double baseFolResp, double /*gpp*/) {
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
   if (climate->tsoil < params.frozenSoilThreshold) {
@@ -1945,10 +1872,11 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 #endif
 }
 
-double microbeQualityEfficiency(double soilQuality) {
-
-  return params.efficiency;  // Efficiency an increasing function of quality
-}
+// Unused - remove?
+// double microbeQualityEfficiency(double soilQuality) {
+//
+//   return params.efficiency;  // Efficiency an increasing function of quality
+// }
 
 void microbeGrowth(void) {
 #if SOIL_MULTIPOOL
@@ -2432,20 +2360,6 @@ void updateTrackers(double oldSoilWater) {
     trackers.yearlyNee = 0.0;
 
     lastYear = climate->year;
-
-    // At start of 1999, reset cumulative trackers
-    // Note that this is only for one specific application: we don't usually
-    // want to do this
-    /*
-    if (climate->year == 1999) {
-      trackers.totGpp = 0.0;
-      trackers.totRtot = 0.0;
-      trackers.totRa = 0.0;
-      trackers.totRh = 0.0;
-      trackers.totNpp = 0.0;
-      trackers.totNee = 0.0;
-    }
-    */
   }
 
   trackers.gpp = fluxes.photosynthesis * climate->length;
@@ -2513,7 +2427,7 @@ void updateTrackers(double oldSoilWater) {
  * \brief Process events for current location/year/day
  *
  * For a given year and day (as determined by the global `climate`
- * pointer), process all events listed in the global `locEvents` pointer for the
+ * pointer), process all events listed in the global `events` pointer for the
  * referenced location.
  *
  * For each event, modify state variables according to the model for that event,
@@ -2525,7 +2439,7 @@ void processEvents(void) {
   // This should be in events.h/c, but with all the global state defined in this
   // file, let's leave it here for now. Maybe someday we will factor that out.
 
-  // If locEvent starts off NULL, this function will just fall through, as it
+  // If event starts off NULL, this function will just fall through, as it
   // should.
   const int climYear = climate->year;
   const int climDay = climate->day;
@@ -2534,18 +2448,17 @@ void processEvents(void) {
   // be in chrono order. However, we need to check to make sure the current
   // event is not in the past, as that would indicate an event that did not have
   // a corresponding climate file record.
-  while (locEvent != NULL && locEvent->year <= climYear &&
-         locEvent->day <= climDay) {
-    if (locEvent->year < climYear || locEvent->day < climDay) {
-      printf("Agronomic event found for loc: %d year: %d day: %d that does not "
+  while (event != NULL && event->year <= climYear && event->day <= climDay) {
+    if (event->year < climYear || event->day < climDay) {
+      printf("Agronomic event found for year: %d day: %d that does not "
              "have a corresponding record in the climate file\n",
-             locEvent->loc, locEvent->year, locEvent->day);
+             event->year, event->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
-    switch (locEvent->type) {
+    switch (event->type) {
       // Implementation TBD, as we enable the various event types
       case IRRIGATION: {
-        const IrrigationParams *irrParams = locEvent->eventParams;
+        const IrrigationParams *irrParams = event->eventParams;
         const double amount = irrParams->amountAdded;
         double soilAmount, evapAmount;
         if (irrParams->method == CANOPY) {
@@ -2564,11 +2477,11 @@ void processEvents(void) {
         }
         fluxes.immedEvap += evapAmount;
         envi.soilWater += soilAmount;
-        writeEventOut(eventOutFile, locEvent, 2, "envi.soilWater", soilAmount,
+        writeEventOut(eventOutFile, event, 2, "envi.soilWater", soilAmount,
                       "fluxes.immedEvap", evapAmount);
       } break;
       case PLANTING: {
-        const PlantingParams *plantParams = locEvent->eventParams;
+        const PlantingParams *plantParams = event->eventParams;
         const double leafC = plantParams->leafC;
         const double woodC = plantParams->woodC;
         const double fineRootC = plantParams->fineRootC;
@@ -2582,13 +2495,13 @@ void processEvents(void) {
 
         // FUTURE: allocate to N pools
 
-        writeEventOut(eventOutFile, locEvent, 4, "envi.plantLeafC", leafC,
+        writeEventOut(eventOutFile, event, 4, "envi.plantLeafC", leafC,
                       "envi.plantWoodC", woodC, "envi.fineRootC", fineRootC,
                       "envi.coarseRootC", coarseRootC);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
-        const HarvestParams *harvParams = locEvent->eventParams;
+        const HarvestParams *harvParams = event->eventParams;
         const double fracRA = harvParams->fractionRemovedAbove;
         const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
@@ -2614,7 +2527,7 @@ void processEvents(void) {
 
         // FUTURE: move/remove biomass in N pools
 
-        writeEventOut(eventOutFile, locEvent, 5, "env.litter", litterAdd,
+        writeEventOut(eventOutFile, event, 5, "env.litter", litterAdd,
                       "envi.plantLeafC", leafDelta, "envi.plantWoodC",
                       woodDelta, "envi.fineRootC", fineDelta,
                       "envi.coarseRootC", coarseDelta);
@@ -2628,11 +2541,11 @@ void processEvents(void) {
         printf("Fertilization events not yet implemented\n");
         break;
       default:
-        printf("Unknown event type (%d) in processEvents()\n", locEvent->type);
+        printf("Unknown event type (%d) in processEvents()\n", event->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
-    locEvent = locEvent->nextEvent;
+    event = event->nextEvent;
   }
 }
 #endif
@@ -2758,11 +2671,7 @@ void initPhenologyTrackers(void) {
 
 // Setup model to run at given location (0-indexing: if only one location, loc
 // should be 0)
-void setupModel(SpatialParams *spatialParams, int loc) {
-
-  // load parameters into global param structure: spatialParams was told where
-  // to put values in readParamData
-  loadSpatialParams(spatialParams, loc);
+void setupModel(void) {
 
   // a test: use constant (measured) soil respiration:
   // make it so soil resp. is 5.2 g C m-2 day-1 at 10 degrees C,
@@ -2862,12 +2771,8 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
   envi.snow = params.snowInit;
 
-  if (firstClimates[loc] != NULL) {
-    climate = firstClimates[loc];  // set climate ptr to point to first climate
-                                   // record in this location
-  } else {  // no climate data for this location
-    climate = firstClimates[0];  // use climate data from location 0
-  }
+  climate = firstClimate;
+
   initTrackers();
   initPhenologyTrackers();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
@@ -2880,57 +2785,32 @@ void setupModel(SpatialParams *spatialParams, int loc) {
 
 // Setup events at given location
 #if EVENT_HANDLER
-void setupEvents(int currLoc) { locEvent = events[currLoc]; }
+void setupEvents() { event = events; }
 #endif
 
-/* Do one run of the model using parameter values in spatialParams
-   If out != NULL, output results to out
-    If printHeader = 1, print a header for the output file, if 0 don't
-   If outputItems != NULL, do additional outputting as given by this structure
-   (1 variable per file) If loc == -1, then print currLoc as first item on each
-   line Run at spatial location given by loc (0-indexing) - or run everywhere if
-   loc = -1 Note: number of locations given in spatialParams
-*/
-void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader,
-                    SpatialParams *spatialParams, int loc) {
-  int firstLoc, lastLoc, currLoc;
-  char label[64];
-
+// See sipnet.h
+void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
   if ((out != NULL) && printHeader) {
     outputHeader(out);
   }
 
-  if (loc == -1) {  // run everywhere
-    firstLoc = 0;
-    lastLoc = spatialParams->numLocs - 1;
-  } else {  // just run at one point
-    firstLoc = lastLoc = loc;
-  }
-
-  for (currLoc = firstLoc; currLoc <= lastLoc; currLoc++) {
-    setupModel(spatialParams, currLoc);
+  setupModel();
 #if EVENT_HANDLER
-    setupEvents(currLoc);
+  setupEvents();
 #endif
-    if ((loc == -1) && (outputItems != NULL)) {  // print the current location
-                                                 // at the start of the line
-      sprintf(label, "%d", currLoc);
-      writeOutputItemLabels(outputItems, label);
-    }
 
-    while (climate != NULL) {
-      updateState();
-      if (out != NULL) {
-        outputState(out, currLoc, climate->year, climate->day, climate->time);
-      }
-      if (outputItems != NULL) {
-        writeOutputItemValues(outputItems);
-      }
-      climate = climate->nextClim;
+  while (climate != NULL) {
+    updateState();
+    if (out != NULL) {
+      outputState(out, climate->year, climate->day, climate->time);
     }
     if (outputItems != NULL) {
-      terminateOutputItemLines(outputItems);
+      writeOutputItemValues(outputItems);
     }
+    climate = climate->nextClim;
+  }
+  if (outputItems != NULL) {
+    terminateOutputItemLines(outputItems);
   }
 }
 
@@ -2976,11 +2856,7 @@ void printModelComponents(FILE *out) {
   fprintf(out, "\n");
 }
 
-/* PRE: outputItems has been created with newOutputItems
-
-   Setup outputItems structure
-   Each variable added will be output in a separate file ('*.varName')
- */
+// See sipnet.h
 void setupOutputItems(OutputItems *outputItems) {
   addOutputItem(outputItems, "NEE", &(trackers.nee));
   addOutputItem(outputItems, "NEE_cum", &(trackers.totNee));
@@ -2988,61 +2864,33 @@ void setupOutputItems(OutputItems *outputItems) {
   addOutputItem(outputItems, "GPP_cum", &(trackers.totGpp));
 }
 
-/* do initializations that only have to be done once for all model runs:
-   read in climate data and initial parameter values
-   parameter values get stored in spatialParams (along with other parameter
-   information), which gets allocated and initialized here (thus requiring that
-   spatialParams is passed in as a pointer to a pointer) number of time steps in
-   each location gets stored in steps vector, which gets dynamically allocated
-   with malloc (steps must be a pointer to a pointer so it can be malloc'ed)
-
-   also set up pointers to different output data types
-   and setup meanNPP tracker
-
-   initModel returns number of spatial locations
-
-   paramFile is parameter data file
-   paramFile-spatial is file with parameter values of spatially-varying
-   parameters (1st line contains number of locations) climFile is climate data
-   file
-*/
-int initModel(SpatialParams **spatialParams, int **steps, char *paramFile,
-              char *climFile) {
-  char spatialParamFile[256];
-  int numLocs;
-
-  strcpy(spatialParamFile, paramFile);
-  strcat(spatialParamFile, "-spatial");
-
-  numLocs = readParamData(spatialParams, paramFile, spatialParamFile);
-  *steps = readClimData(climFile, numLocs);
+// See sipnet.h
+void initModel(ModelParams **modelParams, const char *paramFile,
+               const char *climFile) {
+  readParamData(modelParams, paramFile);
+  readClimData(climFile);
 
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
   meanGPP = newMeanTracker(0, MEAN_GPP_SOIL_DAYS, MEAN_GPP_SOIL_MAX_ENTRIES);
   meanFPAR = newMeanTracker(0, MEAN_FPAR_DAYS, MEAN_FPAR_MAX_ENTRIES);
-  return numLocs;
 }
 
-/* Do initialization of event data if event handling is turned on.
- * Populates static event structs
- */
 #if EVENT_HANDLER
-void initEvents(char *eventFile, int numLocs, int printHeader) {
-  events = readEventData(eventFile, numLocs);
+// See sipnet.h
+void initEvents(char *eventFile, int printHeader) {
+  events = readEventData(eventFile);
   eventOutFile = openEventOutFile(printHeader);
 }
 #endif
 
-// call this when done running model:
-// de-allocates space for climate and event linked lists
-// (needs to know number of locations)
-void cleanupModel(int numLocs) {
-  freeClimateList(numLocs);
+// See sipnet.h
+void cleanupModel() {
+  freeClimateList();
   deallocateMeanTracker(meanNPP);
   deallocateMeanTracker(meanGPP);
   deallocateMeanTracker(meanFPAR);
 #if EVENT_HANDLER
-  freeEventList(numLocs);
+  freeEventList();
   closeEventOutFile(eventOutFile);
 #endif
 }

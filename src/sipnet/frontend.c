@@ -9,7 +9,7 @@
 #include <string.h>
 
 #include "common/exitCodes.h"
-#include "common/spatialParams.h"
+#include "common/modelParams.h"
 #include "common/util.h"
 
 #include "cli.h"
@@ -116,19 +116,16 @@ void readInputFile(const char *fileName) {
 
 int main(int argc, char *argv[]) {
 
-  int LOC = 0;
-
   FILE *out, *outConfig;
 
-  SpatialParams *spatialParams;  // the parameters used in the model (possibly
-                                 // spatially-varying)
+  // for compatibility
+  int loc;
+  
+  ModelParams *modelParams;  // the parameters used in the model (possibly
+                             // spatially-varying)
   OutputItems *outputItems;  // structure to hold information for output to
                              // single-variable files (if doSingleOutputs is
                              // true)
-
-  int loc = LOC;  // location to run at (set through optional -l argument)
-  int numLocs;  // read in initModel
-  int *steps;  // number of time steps in each location
 
   // char fileName[FILENAME_MAXLEN - 8];
   char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
@@ -191,10 +188,10 @@ int main(int argc, char *argv[]) {
   }
 
   // 6. Initialize model, events, outputItems
-  numLocs = initModel(&spatialParams, &steps, paramFile, climFile);
+  initModel(&spatialParams, &steps, paramFile, climFile);
 
 #if EVENT_HANDLER
-  initEvents(EVENT_IN_FILE, numLocs, ctx.printHeader);
+  initEvents(EVENT_IN_FILE, ctx.printHeader);
 #endif
 
   if (ctx.doSingleOutputs) {
@@ -205,19 +202,17 @@ int main(int argc, char *argv[]) {
   }
 
   // 7. Do the run!
-  runModelOutput(out, outputItems, ctx.printHeader, spatialParams, loc);
+  runModelOutput(out, outputItems, ctx.printHeader);
 
   // 8. Cleanup
   if (ctx.doMainOutput) {
     fclose(out);
   }
 
-  cleanupModel(numLocs);
-  deleteSpatialParams(spatialParams);
+  cleanupModel();
   if (outputItems != NULL) {
     deleteOutputItems(outputItems);
   }
-  free(steps);
 
   return EXIT_CODE_SUCCESS;
 }

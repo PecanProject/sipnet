@@ -16,6 +16,15 @@ nav:
 
 theme:
   name: material
+  features:
+    - content.action.edit
+  icon:
+    edit: material/pencil 
+  palette:
+    - scheme: default
+      primary: green
+      accent: light green
+        
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true  
@@ -26,8 +35,6 @@ markdown_extensions:
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   
-
-
 extra:
   arithmatex:
     inline_syntax: ['\\(', '\\)']

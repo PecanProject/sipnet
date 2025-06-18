@@ -42,7 +42,6 @@ typedef struct FertilizationParams {
   double orgN;
   double orgC;
   double minN;
-  // double nh4_no3_frac; for two-pool version
 } FertilizationParams;
 
 #define NUM_PLANTING_PARAMS 4
@@ -60,11 +59,11 @@ typedef struct TillageParams {
   double litterDecompModifier;
 } TillageParams;
 
-#define NUM_EVENT_CORE_PARAMS 4
+#define NUM_EVENT_CORE_PARAMS 3
 typedef struct EventNode EventNode;
 struct EventNode {
   event_type_t type;
-  int loc, year, day;
+  int year, day;
   void *eventParams;
   EventNode *nextEvent;
 };
@@ -80,12 +79,10 @@ const char *eventTypeToString(event_type_t type);
 /*!
  * Read event data from input filename (canonically events.in)
  *
- * Format: returned data is structured as an array of EventNode pointers,
- * indexed by location. Each element of the array is the first event for that
- * location (or null if there are no events). It is assumed that the events are
- * ordered first by location and then by year and day.
+ * Format: returned data is structured as an linked list of EventNode pointers.
+ * It is assumed that the events are ordered by year and day.
  */
-EventNode **readEventData(char *eventFile, int numLocs);
+EventNode *readEventData(char *eventFile);
 
 /*!
  * Open the event output file and optionally write a header row
@@ -103,7 +100,7 @@ FILE *openEventOutFile(int printHeader);
  *
  * Output format:
  *
- * loc year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
+ * year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
  *
  * \param out       FILE pointer to events.out
  * \param event     Pointer to event node
