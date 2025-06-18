@@ -20,7 +20,7 @@ int run(void) {
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
-    readEventData("infra_events_year_boundary.in", 1);
+    readEventData("infra_events_year_boundary.in");
   }
   test_assert(jmp_rval == 0);
   status |= !exit_result;
@@ -34,7 +34,7 @@ int run(void) {
   expected_code = EXIT_CODE_INPUT_FILE_ERROR;
   jmp_rval = setjmp(jump_env);
   if (!jmp_rval) {
-    readEventData("infra_events_bad_order.in", 1);
+    readEventData("infra_events_bad_order.in");
   }
   test_assert(jmp_rval == 1);
   status |= !exit_result;
