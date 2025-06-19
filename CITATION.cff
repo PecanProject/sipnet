@@ -37,10 +37,10 @@ authors:
   - family-names: Fer
     given-names: Istem
     orcid: "https://orcid.org/0000-0001-8236-303X"
-  - family-names: Michael
-    given-names: Longfritz
   - family-names: (other contributors)
     given-names: See https://github.com/PecanProject/sipnet/graphs/contributors
+  - family-names: Michael
+    given-names: Longfritz
 
 repository-code: https://github.com/PecanProject/sipnet
 keywords:
