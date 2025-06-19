@@ -11,6 +11,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 #include "exitCodes.h"
 #include "util.h"
 
@@ -27,7 +28,9 @@ FILE *openFile(const char *name, const char *mode) {
   FILE *f;
 
   if ((f = fopen(name, mode)) == NULL) {
-    printf("Error opening %s for %s\n", name, mode);
+    const char *mode_word =
+        (!strcmp(mode, "r") || !strcmp(mode, "rb")) ? "reading" : "writing";
+    fprintf(stderr, "Error %s '%s': %s\n", mode_word, name, strerror(errno));
     exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
   }
 

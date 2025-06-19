@@ -7,63 +7,116 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>  // for command-line arguments
 
 #include "common/exitCodes.h"
-#include "common/namelistInput.h"
 #include "common/modelParams.h"
 #include "common/util.h"
 
+#include "cli.h"
+#include "context.h"
 #include "events.h"
 #include "sipnet.h"
 #include "outputItems.h"
 #include "modelStructures.h"
 
-// important constants - default values:
-
-#define FILE_MAXNAME 256
-#define RUNTYPE_MAXNAME 16
-#define INPUT_MAXNAME 64
-#define INPUT_FILE "sipnet.in"
-#define DO_MAIN_OUTPUT 1
-#define DO_SINGLE_OUTPUTS 0
-
-void checkRuntype(NamelistInputs *namelist, const char *inputFile) {
-  NamelistInputItem *inputItem = locateNamelistInputItem(namelist, "RUNTYPE");
-  if (inputItem == NULL) {
-    // Well, something really broke
-    printf("ERROR: did not find NameListInputItem RUNTYPE\n");
-    exit(EXIT_CODE_INTERNAL_ERROR);
-  }
-  if (!(inputItem->wasRead)) {
-    strcpy((char *)inputItem->ptr, "standard");
-    return;
-  }
-  if (strcmpIgnoreCase((char *)inputItem->ptr, "standard") != 0) {
+void checkRuntype(void) {
+  if (strcmpIgnoreCase(ctx.runType, "standard") != 0) {
     // Make sure this is not an old config with a different RUNTYPE set
     printf("SIPNET only supports the standard runtype mode; other options are "
            "obsolete and were last supported in v1.3.0\n");
-    printf("Please fix %s and re-run\n", inputFile);
+    printf("Please fix %s and re-run\n", ctx.inputFile);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
 
-void usage(char *progName) {
-  printf("Usage: %s [-h] [-i inputFile]\n", progName);
-  printf("[-h] : Print this usage message and exit\n");
-  printf("[-i inputFile]: Use given input file to configure the run\n");
-  printf("\tDefault: %s\n", INPUT_FILE);
+void readInputFile(const char *fileName) {
+  const char *SEPARATORS = " \t=:";  // characters that can separate names from
+                                     // values in input file
+  const char *COMMENT_CHARS = "!";  // comment characters (ignore everything
+                                    // after this on a line)
+  const char *EMPTY_STRING = "none";  // if this is the value of a string type,
+                                      // we take it to mean the empty string
+
+  FILE *infile;
+
+  char line[1024];
+  char allSeparators[16];
+  char *inputName;  // name of input item just read in
+  char *inputValue;  // value of input item just read in, as a string
+  char *errc = "";
+  int isComment;
+
+  strcpy(allSeparators, SEPARATORS);
+  strcat(allSeparators, "\n\r");
+  infile = openFile(fileName, "r");
+
+  while (fgets(line, sizeof(line), infile) != NULL) {  // while not EOF or error
+    // remove trailing comments:
+    isComment = stripComment(line, COMMENT_CHARS);
+
+    if (!isComment) {  // if this isn't just a comment line or blank line
+      // tokenize line:
+      inputName = strtok(line, SEPARATORS);  // make inputName point to first
+                                             // token
+      inputValue = strtok(NULL, allSeparators);  // make inputValue point to
+                                                 // next token (e.g. after the
+                                                 // '=')
+      struct context_metadata *ctx_meta = getContextMetadata(inputName);
+      if (ctx_meta == NULL) {
+        printf("Warning: ignoring input file parameter %s\n", inputName);
+        continue;
+      }
+
+      if (inputValue == NULL) {
+        printf("Error in input file: No value given for input item %s\n",
+               inputName);
+        printf("Please fix %s and re-run\n", fileName);
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+      }
+
+      switch (ctx_meta->type) {
+        case CTX_INT: {
+          int intVal = strtol(inputValue, &errc, 0);  // NOLINT
+          if (strlen(errc) > 0) {  // invalid character(s) in input string
+            printf("ERROR in input file: Invalid value for %s: %s\n", inputName,
+                   inputValue);
+            printf("Please fix %s and re-run\n", fileName);
+            exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+          }
+          updateIntContext(inputName, intVal, CTX_CONTEXT_FILE);
+        } break;
+        case CTX_CHAR: {
+          if (strcmp(inputValue, EMPTY_STRING) == 0) {
+            // if the value is specified as the value which signifies the
+            // empty string
+            updateCharContext(inputName, "", CTX_CONTEXT_FILE);
+          } else {
+            if (strlen(inputValue) >= CONTEXT_CHAR_MAXLEN) {
+              printf("ERROR in input file: value '%s' exceeds maximum "
+                     "length for %s (%d)\n",
+                     inputValue, inputName, CONTEXT_CHAR_MAXLEN);
+              printf(
+                  "Please fix %s, or change the maximum length, and re-run\n",
+                  fileName);
+              exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+            }
+            updateCharContext(inputName, inputValue, CTX_CONTEXT_FILE);
+          }
+        } break;
+        default:
+          printf("ERROR in readInputFile: Unrecognized type for %s: %d\n",
+                 inputName, ctx_meta->type);
+          exit(EXIT_CODE_INTERNAL_ERROR);
+      }
+    }  // if (!isComment)
+  }  // while not EOF or error
+
+  fclose(infile);
 }
 
 int main(int argc, char *argv[]) {
-  char inputFile[INPUT_MAXNAME] = INPUT_FILE;
-  NamelistInputs *namelistInputs;
 
-  // for compatibility
-  int loc;
-
-  FILE *out;
-  int option;  // reading in optional arguments
+  FILE *out, *outConfig;
 
   ModelParams *modelParams;  // the parameters used in the model (possibly
                              // spatially-varying)
@@ -71,92 +124,85 @@ int main(int argc, char *argv[]) {
                              // single-variable files (if doSingleOutputs is
                              // true)
 
-  char runtype[RUNTYPE_MAXNAME];
+  // char fileName[FILENAME_MAXLEN - 8];
+  char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
+  char paramFile[FILENAME_MAXLEN], climFile[FILENAME_MAXLEN];
 
-  int doMainOutput = DO_MAIN_OUTPUT;  // do we do main outputting of all
-                                      // variables?
-  int doSingleOutputs = DO_SINGLE_OUTPUTS;  // do we do extra outputting of
-                                            // single-variable files?
-  int printHeader = HEADER;
+  // 1. Initialize Context with default values
+  initContext();
 
-  char fileName[FILE_MAXNAME];
-  char outFile[FILE_MAXNAME + 24];
-  char paramFile[FILE_MAXNAME + 24], climFile[FILE_MAXNAME + 24];
+  // 2. Parse command line args
+  parseCommandLineArgs(argc, argv);
 
-  // get command-line arguments:
-  while ((option = getopt(argc, argv, "hi:")) != -1) {
-    // we have another optional argument
-    switch (option) {
-      case 'h':
-        usage(argv[0]);
-        exit(1);
-      case 'i':
-        if (strlen(optarg) >= INPUT_MAXNAME) {
-          printf("ERROR: input filename %s exceeds maximum length of %d\n",
-                 optarg, INPUT_MAXNAME);
-          printf("Either change the name or increase INPUT_MAXNAME in "
-                 "frontend.c\n");
-          exit(1);
-        }
-        strcpy(inputFile, optarg);
-        break;
-      default:
-        usage(argv[0]);
-        exit(1);
-    }
-  }
-
-  // clang-format off
-  // setup namelist input:
-  namelistInputs = newNamelistInputs();
-  addNamelistInputItem(namelistInputs, "RUNTYPE", STRING_TYPE, runtype, RUNTYPE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "FILENAME", STRING_TYPE, fileName, FILE_MAXNAME);
-  addNamelistInputItem(namelistInputs, "LOCATION", INT_TYPE, &loc, 0);
-  addNamelistInputItem(namelistInputs, "DO_MAIN_OUTPUT", INT_TYPE, &doMainOutput, 0);
-  addNamelistInputItem(namelistInputs, "DO_SINGLE_OUTPUTS", INT_TYPE, &doSingleOutputs, 0);
-  addNamelistInputItem(namelistInputs, "PRINT_HEADER", INT_TYPE, &printHeader,0);
-  // clang-format on
-
+  // 3. Read input config file
+  // Note: command-line args have precedence
   // read from input file:
-  readNamelistInputs(namelistInputs, inputFile);
+  readInputFile(ctx.inputFile);
 
-  // Make sure FILENAME is set; everything else is optional (not necessary or
-  // has a default)
-  dieIfNotSet(namelistInputs, "FILENAME");
+  // 4. Run some checks
+  // Make sure FILENAME is set and well-sized; everything else is optional (not
+  // necessary or has a default)
+  if (strcmp(ctx.fileName, "") == 0) {
+    printf("Error: fileName must be set for SIPNET to run\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
+    // We need room to append .clim, .param, etc
+    printf("Error: fileName is too long; max length is %d characters\n",
+           FILENAME_MAXLEN - 10);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
 
   // Handle RUNTYPE as an obsolete param; if it isn't set, consider it to be
   // set to "standard"; and make sure it is that if set
-  checkRuntype(namelistInputs, inputFile);
+  checkRuntype();
 
-  strcpy(paramFile, fileName);
+  // 5. Set calculated filenames
+  strcpy(paramFile, ctx.fileName);
   strcat(paramFile, ".param");
-  strcpy(climFile, fileName);
+  updateCharContext("paramFile", paramFile, CTX_CALCULATED);
+  strcpy(climFile, ctx.fileName);
   strcat(climFile, ".clim");
+  updateCharContext("climFile", climFile, CTX_CALCULATED);
+  if (ctx.doMainOutput) {
+    strcpy(outFile, ctx.fileName);
+    strcat(outFile, ".out");
+    updateCharContext("outFile", outFile, CTX_CALCULATED);
+    out = openFile(outFile, "w");
+  } else {
+    out = NULL;
+  }
+  // Lastly - do after all other config processing
+  if (ctx.dumpConfig) {
+    strcpy(outConfigFile, ctx.fileName);
+    strcat(outConfigFile, ".config");
+    updateCharContext("outConfigFile", outConfigFile, CTX_CALCULATED);
+    outConfig = openFile(outConfigFile, "w");
+    printConfig(outConfig);
+    fclose(outConfig);
+  } else {
+    outConfig = NULL;
+  }
+
+  // 6. Initialize model, events, outputItems
   initModel(&modelParams, paramFile, climFile);
 
 #if EVENT_HANDLER
-  initEvents(EVENT_IN_FILE, printHeader);
+  initEvents(EVENT_IN_FILE, ctx.printHeader);
 #endif
 
-  if (doSingleOutputs) {
-    outputItems = newOutputItems(fileName, ' ');
+  if (ctx.doSingleOutputs) {
+    outputItems = newOutputItems(ctx.fileName, ' ');
     setupOutputItems(outputItems);
   } else {
     outputItems = NULL;
   }
 
-  // Do the run!
-  if (doMainOutput) {
-    strcpy(outFile, fileName);
-    strcat(outFile, ".out");
-    out = openFile(outFile, "w");
-  } else {
-    out = NULL;
-  }
+  // 7. Do the run!
+  runModelOutput(out, outputItems, ctx.printHeader);
 
-  runModelOutput(out, outputItems, printHeader);
-
-  if (doMainOutput) {
+  // 8. Cleanup
+  if (ctx.doMainOutput) {
     fclose(out);
   }
 
@@ -165,5 +211,5 @@ int main(int argc, char *argv[]) {
     deleteOutputItems(outputItems);
   }
 
-  return 0;
+  return EXIT_CODE_SUCCESS;
 }

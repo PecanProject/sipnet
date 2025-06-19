@@ -7,11 +7,11 @@ LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
 
 # Main executables
-COMMON_CFILES:=util.c namelistInput.c modelParams.c
+COMMON_CFILES:=util.c modelParams.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
 
-SIPNET_CFILES:=sipnet.c frontend.c runmean.c outputItems.c events.c
+SIPNET_CFILES:=sipnet.c frontend.c runmean.c outputItems.c events.c context.c cli.c
 SIPNET_CFILES:=$(addprefix src/sipnet/, $(SIPNET_CFILES))
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNET_LIBS=-lsipnet_common
