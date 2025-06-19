@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['namelistinput_2ec_0',['namelistInput.c',['../de/d51/namelist_input_8c.html',1,'']]],
-  ['namelistinput_2eh_1',['namelistInput.h',['../d6/da2/namelist_input_8h.html',1,'']]]
+  ['modelparams_2ec_0',['modelParams.c',['../d2/de5/model_params_8c.html',1,'']]],
+  ['modelparams_2eh_1',['modelParams.h',['../d3/ddd/model_params_8h.html',1,'']]],
+  ['modelstructures_2eh_2',['modelStructures.h',['../d2/df4/model_structures_8h.html',1,'']]]
 ];

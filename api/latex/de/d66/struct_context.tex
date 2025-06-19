@@ -1,0 +1,258 @@
+\doxysection{Context Struct Reference}
+\label{struct_context}\index{Context@{Context}}
+
+
+{\ttfamily \#include $<$context.\+h$>$}
+
+
+
+Collaboration diagram for Context\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{db/d9f/struct_context__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+char \textbf{ input\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ run\+Type} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ file\+Name} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+int \textbf{ location}
+\item 
+int \textbf{ do\+Main\+Output}
+\item 
+int \textbf{ do\+Single\+Outputs}
+\item 
+int \textbf{ print\+Header}
+\item 
+char \textbf{ param\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ clim\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ out\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+int \textbf{ dump\+Config}
+\item 
+char \textbf{ out\+Config\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+int \textbf{ tmp\+Flag}
+\item 
+struct \textbf{ context\+\_\+metadata} $\ast$ \textbf{ meta\+Map}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \textbf{ 36} of file \textbf{ context.\+h}.
+
+
+
+\doxysubsection{Field Documentation}
+\label{struct_context_a6f08d84f4904ae85592b0a9e17c43377} 
+\index{Context@{Context}!climFile@{climFile}}
+\index{climFile@{climFile}!Context@{Context}}
+\doxysubsubsection{climFile}
+{\footnotesize\ttfamily char Context\+::clim\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_ab496f3b56135a259d94de2e90935b5e7} 
+\index{Context@{Context}!doMainOutput@{doMainOutput}}
+\index{doMainOutput@{doMainOutput}!Context@{Context}}
+\doxysubsubsection{doMainOutput}
+{\footnotesize\ttfamily int Context\+::do\+Main\+Output}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_a82d97d2b1415236afb8f0faafa3449bf} 
+\index{Context@{Context}!doSingleOutputs@{doSingleOutputs}}
+\index{doSingleOutputs@{doSingleOutputs}!Context@{Context}}
+\doxysubsubsection{doSingleOutputs}
+{\footnotesize\ttfamily int Context\+::do\+Single\+Outputs}
+
+
+
+Definition at line \textbf{ 42} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_aec9dbbdc704a6ef46b62d57e1892742b} 
+\index{Context@{Context}!dumpConfig@{dumpConfig}}
+\index{dumpConfig@{dumpConfig}!Context@{Context}}
+\doxysubsubsection{dumpConfig}
+{\footnotesize\ttfamily int Context\+::dump\+Config}
+
+
+
+Definition at line \textbf{ 47} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_a53bd09e12a982936d5c969319c09d9ef} 
+\index{Context@{Context}!fileName@{fileName}}
+\index{fileName@{fileName}!Context@{Context}}
+\doxysubsubsection{fileName}
+{\footnotesize\ttfamily char Context\+::file\+Name[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_a37b56fdee3db0a788df677781d1c19cf} 
+\index{Context@{Context}!inputFile@{inputFile}}
+\index{inputFile@{inputFile}!Context@{Context}}
+\doxysubsubsection{inputFile}
+{\footnotesize\ttfamily char Context\+::input\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ check\+Runtype()}, \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_abe056b99691cadd4e5d53af99910ffc5} 
+\index{Context@{Context}!location@{location}}
+\index{location@{location}!Context@{Context}}
+\doxysubsubsection{location}
+{\footnotesize\ttfamily int Context\+::location}
+
+
+
+Definition at line \textbf{ 40} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_ab1032381865186a8a31a945b8894dfc9} 
+\index{Context@{Context}!metaMap@{metaMap}}
+\index{metaMap@{metaMap}!Context@{Context}}
+\doxysubsubsection{metaMap}
+{\footnotesize\ttfamily struct \textbf{ context\+\_\+metadata}$\ast$ Context\+::meta\+Map}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+
+\label{struct_context_a08a0406bde2d60cc36c9133a80f9ff4c} 
+\index{Context@{Context}!outConfigFile@{outConfigFile}}
+\index{outConfigFile@{outConfigFile}!Context@{Context}}
+\doxysubsubsection{outConfigFile}
+{\footnotesize\ttfamily char Context\+::out\+Config\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 48} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_aef11cb4f744cba49840e28b81e723b78} 
+\index{Context@{Context}!outFile@{outFile}}
+\index{outFile@{outFile}!Context@{Context}}
+\doxysubsubsection{outFile}
+{\footnotesize\ttfamily char Context\+::out\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 46} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_adae7f5b970583472b7f89b05e4e8bde7} 
+\index{Context@{Context}!paramFile@{paramFile}}
+\index{paramFile@{paramFile}!Context@{Context}}
+\doxysubsubsection{paramFile}
+{\footnotesize\ttfamily char Context\+::param\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 44} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_ac0c4d6c6a47e31724551e2d2af149bf5} 
+\index{Context@{Context}!printHeader@{printHeader}}
+\index{printHeader@{printHeader}!Context@{Context}}
+\doxysubsubsection{printHeader}
+{\footnotesize\ttfamily int Context\+::print\+Header}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_a5adbf165d204d31cdc2a3e331351ef73} 
+\index{Context@{Context}!runType@{runType}}
+\index{runType@{runType}!Context@{Context}}
+\doxysubsubsection{runType}
+{\footnotesize\ttfamily char Context\+::run\+Type[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 38} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ check\+Runtype()}, and \textbf{ init\+Context()}.
+
+\label{struct_context_a7e8b5f01de62693a021dccda234c5660} 
+\index{Context@{Context}!tmpFlag@{tmpFlag}}
+\index{tmpFlag@{tmpFlag}!Context@{Context}}
+\doxysubsubsection{tmpFlag}
+{\footnotesize\ttfamily int Context\+::tmp\+Flag}
+
+
+
+Definition at line \textbf{ 54} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ parse\+Command\+Line\+Args()}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\textbf{ context.\+h}\end{DoxyCompactItemize}

@@ -288,6 +288,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#getting-started" class="md-nav__link">
     <span class="md-ellipsis">
       Getting Started
@@ -706,6 +715,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#getting-started" class="md-nav__link">
     <span class="md-ellipsis">
       Getting Started
@@ -802,6 +820,22 @@
 <p>SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is an ecosystem model designed to efficiently simulate
 carbon and water dynamics. Originally developed for assimilation of eddy covariance flux data in forest ecosystems, 
 current development is focused on representing carbon balance and GHG fluxes and agricultural management practices.</p>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Clone the repository:
+   <code>bash
+   git clone https://github.com/PecanProject/sipnet.git
+   cd sipnet</code></li>
+<li>Build the SIPNET executable:
+   <code>bash
+    make</code></li>
+<li>Run a test simulation:
+   <code>bash
+   ./src/sipnet -i tests/smoke/sipnet.in</code></li>
+<li>Check the output:
+   <code>bash
+   cat tests/smoke/niwot.out</code></li>
+</ol>
 <h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
 <h3 id="installing">Installing<a class="headerlink" href="#installing" title="Permanent link">&para;</a></h3>
 <p>[What's required?]</p>

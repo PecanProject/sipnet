@@ -1,0 +1,164 @@
+\doxysection{cli.\+c File Reference}
+\label{cli_8c}\index{cli.c@{cli.c}}
+{\ttfamily \#include "{}cli.\+h"{}}\newline
+{\ttfamily \#include "{}common/exit\+Codes.\+h"{}}\newline
+{\ttfamily \#include "{}version.\+h"{}}\newline
+Include dependency graph for cli.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d8/df7/cli_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}~4
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ usage} (char $\ast$prog\+Name)
+\item 
+void \textbf{ version} (void)
+\item 
+void \textbf{ parse\+Command\+Line\+Args} (int argc, char $\ast$argv[$\,$])
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct option \textbf{ long\+\_\+options} [$\,$]
+\item 
+char $\ast$ \textbf{ arg\+Name\+Map} [\textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}]
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{cli_8c_a8b32b08e25527f9577c9fef0a9a485ae} 
+\index{cli.c@{cli.c}!NUM\_FLAG\_OPTIONS@{NUM\_FLAG\_OPTIONS}}
+\index{NUM\_FLAG\_OPTIONS@{NUM\_FLAG\_OPTIONS}!cli.c@{cli.c}}
+\doxysubsubsection{NUM\_FLAG\_OPTIONS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+FLAG\+\_\+\+OPTIONS~4}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ cli.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{cli_8c_ab2dacbbb35dc2c2e91c7ad158c9211f1} 
+\index{cli.c@{cli.c}!parseCommandLineArgs@{parseCommandLineArgs}}
+\index{parseCommandLineArgs@{parseCommandLineArgs}!cli.c@{cli.c}}
+\doxysubsubsection{parseCommandLineArgs()}
+{\footnotesize\ttfamily void parse\+Command\+Line\+Args (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 60} of file \textbf{ cli.\+c}.
+
+
+
+References \textbf{ arg\+Name\+Map}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+COMMAND\+\_\+\+LINE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+CLI\+\_\+\+ARGUMENT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ long\+\_\+options}, \textbf{ Context\+::tmp\+Flag}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, \textbf{ usage()}, and \textbf{ version()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/def/cli_8c_ab2dacbbb35dc2c2e91c7ad158c9211f1_cgraph}
+\end{center}
+\end{figure}
+\label{cli_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
+\index{cli.c@{cli.c}!usage@{usage}}
+\index{usage@{usage}!cli.c@{cli.c}}
+\doxysubsubsection{usage()}
+{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}\item[{char $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ cli.\+c}.
+
+
+
+Referenced by \textbf{ parse\+Command\+Line\+Args()}.
+
+\label{cli_8c_af986bd0575ec9b913dfab4b8422509ae} 
+\index{cli.c@{cli.c}!version@{version}}
+\index{version@{version}!cli.c@{cli.c}}
+\doxysubsubsection{version()}
+{\footnotesize\ttfamily void version (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ cli.\+c}.
+
+
+
+References \textbf{ VERSION\+\_\+\+STRING}.
+
+
+
+Referenced by \textbf{ parse\+Command\+Line\+Args()}.
+
+
+
+\doxysubsection{Variable Documentation}
+\label{cli_8c_a4a55451fdf9c7ec3826cf0b1dbdafcb4} 
+\index{cli.c@{cli.c}!argNameMap@{argNameMap}}
+\index{argNameMap@{argNameMap}!cli.c@{cli.c}}
+\doxysubsubsection{argNameMap}
+{\footnotesize\ttfamily char$\ast$ arg\+Name\+Map[\textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}]}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}printHeader"{}},\ \textcolor{stringliteral}{"{}printHeader"{}},\ \textcolor{stringliteral}{"{}dumpConfig"{}},\ \textcolor{stringliteral}{"{}dumpConfig"{}}\}}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 24} of file \textbf{ cli.\+c}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ parse\+Command\+Line\+Args()}.
+
+\label{cli_8c_ab5b68aa8f898c499ca2c3092ecd9e552} 
+\index{cli.c@{cli.c}!long\_options@{long\_options}}
+\index{long\_options@{long\_options}!cli.c@{cli.c}}
+\doxysubsubsection{long\_options}
+{\footnotesize\ttfamily struct option long\+\_\+options[$\,$]}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}print\_header"{}},\ no\_argument,\ \&ctx.tmpFlag,\ 1\},}
+\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}no\_print\_header"{}},\ no\_argument,\ \&ctx.tmpFlag,\ 0\},}
+\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}dump\_config"{}},\ no\_argument,\ \&ctx.tmpFlag,\ 1\},}
+\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}no\_dump\_config"{}},\ no\_argument,\ \&ctx.tmpFlag,\ 0\},}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}input\_file"{}},\ required\_argument,\ 0,\ \textcolor{charliteral}{'i'}\},}
+\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}help"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'h'}\},}
+\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}version"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'v'}\},}
+\DoxyCodeLine{\ \ \ \ \{0,\ 0,\ 0,\ 0\}\}}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 8} of file \textbf{ cli.\+c}.
+
+
+
+Referenced by \textbf{ parse\+Command\+Line\+Args()}.
+

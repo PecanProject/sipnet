@@ -6,6 +6,7 @@
 {\ttfamily \#include $<$math.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
 {\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
 {\ttfamily \#include "{}exit\+Codes.\+h"{}}\newline
 {\ttfamily \#include "{}util.\+h"{}}\newline
 Include dependency graph for util.\+c\+:
@@ -58,7 +59,7 @@ int \textbf{ count\+Fields} (const char $\ast$line, const char $\ast$sep)
 
 
 
-Definition at line \textbf{ 135} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 138} of file \textbf{ util.\+c}.
 
 \label{util_8c_aaf26e57eedf3733a337d8d421ff599ef} 
 \index{util.c@{util.c}!buildFileName@{buildFileName}}
@@ -68,7 +69,7 @@ Definition at line \textbf{ 135} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 19} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 20} of file \textbf{ util.\+c}.
 
 
 
@@ -82,7 +83,7 @@ Referenced by \textbf{ open\+File\+Ext()}.
 
 
 
-Definition at line \textbf{ 205} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 208} of file \textbf{ util.\+c}.
 
 
 
@@ -96,7 +97,7 @@ Referenced by \textbf{ check\+Param\+Format()}, and \textbf{ read\+Clim\+Data()}
 
 
 
-Definition at line \textbf{ 129} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 132} of file \textbf{ util.\+c}.
 
 \label{util_8c_acfd51a4f4e38b658d40ac54b748a9b49} 
 \index{util.c@{util.c}!make2DArray@{make2DArray}}
@@ -106,7 +107,7 @@ Definition at line \textbf{ 129} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 96} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 99} of file \textbf{ util.\+c}.
 
 \label{util_8c_a09ddebbbbb5ccb732d7f88931d9d1b2f} 
 \index{util.c@{util.c}!make2DIntArray@{make2DIntArray}}
@@ -116,7 +117,7 @@ Definition at line \textbf{ 96} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 112} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 115} of file \textbf{ util.\+c}.
 
 \label{util_8c_a21c26b5db93cc2c6817b9a953683280f} 
 \index{util.c@{util.c}!makeArray@{makeArray}}
@@ -126,7 +127,7 @@ Definition at line \textbf{ 112} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 83} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 86} of file \textbf{ util.\+c}.
 
 \label{util_8c_a2a788020b8916d13ec26d4ad01c225f9} 
 \index{util.c@{util.c}!openFile@{openFile}}
@@ -136,7 +137,7 @@ Definition at line \textbf{ 83} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 26} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 27} of file \textbf{ util.\+c}.
 
 
 
@@ -144,7 +145,7 @@ References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+FILE\+\_\+\+OPEN\+\_\+\+OR\+\_\+\+RE
 
 
 
-Referenced by \textbf{ copy\+File()}, \textbf{ main()}, \textbf{ open\+Event\+Out\+File()}, \textbf{ open\+File\+Ext()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+Namelist\+Inputs()}, and \textbf{ read\+Param\+Data()}.
+Referenced by \textbf{ copy\+File()}, \textbf{ main()}, \textbf{ open\+Event\+Out\+File()}, \textbf{ open\+File\+Ext()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+Input\+File()}, and \textbf{ read\+Param\+Data()}.
 
 \label{util_8c_a4ec71fe2ea5006cccfae2cbf8ed19979} 
 \index{util.c@{util.c}!openFileExt@{openFileExt}}
@@ -154,7 +155,7 @@ Referenced by \textbf{ copy\+File()}, \textbf{ main()}, \textbf{ open\+Event\+Ou
 
 
 
-Definition at line \textbf{ 38} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 41} of file \textbf{ util.\+c}.
 
 
 
@@ -180,7 +181,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 72} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 75} of file \textbf{ util.\+c}.
 
 \label{util_8c_ad2222db949c03ef23f3e1a192af45aef} 
 \index{util.c@{util.c}!seedRand@{seedRand}}
@@ -190,7 +191,7 @@ Definition at line \textbf{ 72} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 53} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 56} of file \textbf{ util.\+c}.
 
 \label{util_8c_a46c453b73f4e8cd62264e4bfe8b6ae05} 
 \index{util.c@{util.c}!strcmpIgnoreCase@{strcmpIgnoreCase}}
@@ -200,11 +201,11 @@ Definition at line \textbf{ 53} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 158} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 161} of file \textbf{ util.\+c}.
 
 
 
-Referenced by \textbf{ check\+Runtype()}, \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ locate\+Param()}, and \textbf{ main()}.
+Referenced by \textbf{ check\+Runtype()}, \textbf{ locate\+Param()}, and \textbf{ main()}.
 
 \label{util_8c_ab343ccfdac6191045fced6c36c0143f4} 
 \index{util.c@{util.c}!stripComment@{stripComment}}
@@ -214,11 +215,11 @@ Referenced by \textbf{ check\+Runtype()}, \textbf{ locate\+Namelist\+Input\+Item
 
 
 
-Definition at line \textbf{ 189} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 192} of file \textbf{ util.\+c}.
 
 
 
-Referenced by \textbf{ read\+Model\+Params()}, and \textbf{ read\+Namelist\+Inputs()}.
+Referenced by \textbf{ read\+Input\+File()}, and \textbf{ read\+Model\+Params()}.
 
 \label{util_8c_a31f647ac0b82a2bb708fcdaaab1a498d} 
 \index{util.c@{util.c}!sumArray@{sumArray}}
@@ -228,5 +229,5 @@ Referenced by \textbf{ read\+Model\+Params()}, and \textbf{ read\+Namelist\+Inpu
 
 
 
-Definition at line \textbf{ 144} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 147} of file \textbf{ util.\+c}.
 

@@ -1,0 +1,102 @@
+\doxysection{context.\+h}
+\label{context_8h_source}\index{context.h@{context.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Definition\ of\ global\ context\ struct}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Used\ to\ encapsulate\ program\ options\ defined\ in\ context\ file\ and\ command}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ options}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#ifndef\ CONTEXT\_H}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ CONTEXT\_H}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ CONTEXT\_CHAR\_MAXLEN\ 256}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ For\ convenience}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ FILENAME\_MAXLEN\ CONTEXT\_CHAR\_MAXLEN}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}common/uthash.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ ContextSource\ \{}
+\DoxyCodeLine{00017\ \ \ \textcolor{comment}{//\ These\ are\ in\ order\ of\ precedence,\ higher\ value\ wins.\ CALCULATED\ should\ be}}
+\DoxyCodeLine{00018\ \ \ \textcolor{comment}{//\ orthogonal\ to\ CONTEXT\_FILE\ and\ COMMAND\_LINE.}}
+\DoxyCodeLine{00019\ \ \ CTX\_DEFAULT\ =\ 0,}
+\DoxyCodeLine{00020\ \ \ CTX\_CONTEXT\_FILE\ =\ 1,}
+\DoxyCodeLine{00021\ \ \ CTX\_COMMAND\_LINE\ =\ 2,}
+\DoxyCodeLine{00022\ \ \ CTX\_CALCULATED\ =\ 3}
+\DoxyCodeLine{00023\ \}\ context\_source\_t;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ ContextType\ \{\ CTX\_INT\ =\ 0,\ CTX\_CHAR\ =\ 1\ \}\ context\_type\_t;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{struct\ }context\_metadata\ \{}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordtype}{char}\ keyName[CONTEXT\_CHAR\_MAXLEN];\ \ \textcolor{comment}{//\ hash\ key}}
+\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{char}\ printName[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00030\ \ \ context\_source\_t\ source;}
+\DoxyCodeLine{00031\ \ \ context\_type\_t\ type;}
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{void}\ *value;\ \ \textcolor{comment}{//\ pointer\ to\ the\ member\ of\ Context\ that\ holds\ the\ value}}
+\DoxyCodeLine{00033\ \ \ UT\_hash\_handle\ hh;\ \ \textcolor{comment}{//\ makes\ this\ structure\ hashable}}
+\DoxyCodeLine{00034\ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{struct\ }Context\ \{}
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordtype}{char}\ inputFile[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00038\ \ \ \textcolor{keywordtype}{char}\ runType[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{char}\ fileName[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordtype}{int}\ location;}
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordtype}{int}\ doMainOutput;}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{int}\ doSingleOutputs;}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{int}\ printHeader;}
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{char}\ paramFile[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00045\ \ \ \textcolor{keywordtype}{char}\ climFile[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{char}\ outFile[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{int}\ dumpConfig;}
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordtype}{char}\ outConfigFile[CONTEXT\_CHAR\_MAXLEN];}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \textcolor{comment}{//\ Temp\ space\ for\ handling\ command\ line\ flag\ args;\ we\ do\ not\ write\ directly}}
+\DoxyCodeLine{00051\ \ \ \textcolor{comment}{//\ the\ params\ since\ we\ want\ to\ do\ a\ precedence\ check\ first.\ If\ the\ new\ source}}
+\DoxyCodeLine{00052\ \ \ \textcolor{comment}{//\ has\ higher\ precedence\ than\ the\ current,\ we\ will\ copy\ this\ value\ to\ the}}
+\DoxyCodeLine{00053\ \ \ \textcolor{comment}{//\ respective\ param.}}
+\DoxyCodeLine{00054\ \ \ \textcolor{keywordtype}{int}\ tmpFlag;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \textcolor{comment}{//\ Hash\ map\ storing\ metadata\ for\ context\ values}}
+\DoxyCodeLine{00057\ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *metaMap;}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{comment}{//\ The\ one\ and\ only\ Context\ struct}}
+\DoxyCodeLine{00061\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }Context\ ctx;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ initContext(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ context\_source\_t\ getContextSource(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{keyword}{struct\ }context\_metadata\ *getContextMetadata(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{void}\ createContextMetadata(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *printName,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ context\_source\_t\ source,\ context\_type\_t\ type,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *value);}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ updateIntContext(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keywordtype}{int}\ value,\ context\_source\_t\ source);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{void}\ updateCharContext(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *value,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ context\_source\_t\ source);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{int}\ hasSourcePrecedence(\textcolor{keyword}{struct}\ context\_metadata\ *s,\ context\_source\_t\ newSource);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{char}\ *getContextSourceString(context\_source\_t\ src);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{void}\ printConfig(FILE\ *outFile);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#define\ CREATE\_INT\_CONTEXT(name,\ printName,\ value,\ source)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\ \ \ \ ctx.name\ =\ value;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\ \ \ \ createContextMetadata(\#name,\ printName,\ source,\ CTX\_INT,\ \&ctx.name);\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\ \ \}\ while\ (0)}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#define\ CREATE\_CHAR\_CONTEXT(name,\ printName,\ value,\ source)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\ \ \ \ strncpy(ctx.name,\ value,\ CONTEXT\_CHAR\_MAXLEN);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\ \ \ \ createContextMetadata(\#name,\ printName,\ source,\ CTX\_CHAR,\ ctx.name);\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\ \ \}\ while\ (0)}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ CONTEXT\_H}}
+
+\end{DoxyCode}

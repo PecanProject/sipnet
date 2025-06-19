@@ -3,11 +3,11 @@
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
 {\ttfamily \#include $<$stdlib.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
-{\ttfamily \#include $<$unistd.\+h$>$}\newline
 {\ttfamily \#include "{}common/exit\+Codes.\+h"{}}\newline
-{\ttfamily \#include "{}common/namelist\+Input.\+h"{}}\newline
 {\ttfamily \#include "{}common/model\+Params.\+h"{}}\newline
 {\ttfamily \#include "{}common/util.\+h"{}}\newline
+{\ttfamily \#include "{}cli.\+h"{}}\newline
+{\ttfamily \#include "{}context.\+h"{}}\newline
 {\ttfamily \#include "{}events.\+h"{}}\newline
 {\ttfamily \#include "{}sipnet.\+h"{}}\newline
 {\ttfamily \#include "{}output\+Items.\+h"{}}\newline
@@ -20,109 +20,31 @@ Include dependency graph for frontend.\+c\+:
 \includegraphics[width=350pt]{d5/d74/frontend_8c__incl}
 \end{center}
 \end{figure}
-\doxysubsubsection*{Macros}
-\begin{DoxyCompactItemize}
-\item 
-\#define \textbf{ FILE\+\_\+\+MAXNAME}~256
-\item 
-\#define \textbf{ RUNTYPE\+\_\+\+MAXNAME}~16
-\item 
-\#define \textbf{ INPUT\+\_\+\+MAXNAME}~64
-\item 
-\#define \textbf{ INPUT\+\_\+\+FILE}~"{}sipnet.\+in"{}
-\item 
-\#define \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}~1
-\item 
-\#define \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}~0
-\end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \textbf{ check\+Runtype} (\textbf{ Namelist\+Inputs} $\ast$namelist, const char $\ast$input\+File)
+void \textbf{ check\+Runtype} (void)
 \item 
-void \textbf{ usage} (char $\ast$prog\+Name)
+void \textbf{ read\+Input\+File} (const char $\ast$file\+Name)
 \item 
 int \textbf{ main} (int argc, char $\ast$argv[$\,$])
 \end{DoxyCompactItemize}
 
 
-\doxysubsection{Macro Definition Documentation}
-\label{frontend_8c_ae4c12fc13f2b42ca16a2417a967d16c3} 
-\index{frontend.c@{frontend.c}!DO\_MAIN\_OUTPUT@{DO\_MAIN\_OUTPUT}}
-\index{DO\_MAIN\_OUTPUT@{DO\_MAIN\_OUTPUT}!frontend.c@{frontend.c}}
-\doxysubsubsection{DO\_MAIN\_OUTPUT}
-{\footnotesize\ttfamily \#define DO\+\_\+\+MAIN\+\_\+\+OUTPUT~1}
-
-
-
-Definition at line \textbf{ 28} of file \textbf{ frontend.\+c}.
-
-\label{frontend_8c_a81098b79a764bc9a91acebcf846dc70c} 
-\index{frontend.c@{frontend.c}!DO\_SINGLE\_OUTPUTS@{DO\_SINGLE\_OUTPUTS}}
-\index{DO\_SINGLE\_OUTPUTS@{DO\_SINGLE\_OUTPUTS}!frontend.c@{frontend.c}}
-\doxysubsubsection{DO\_SINGLE\_OUTPUTS}
-{\footnotesize\ttfamily \#define DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS~0}
-
-
-
-Definition at line \textbf{ 29} of file \textbf{ frontend.\+c}.
-
-\label{frontend_8c_a829499bd91e567d022bbdabc3ae7c62e} 
-\index{frontend.c@{frontend.c}!FILE\_MAXNAME@{FILE\_MAXNAME}}
-\index{FILE\_MAXNAME@{FILE\_MAXNAME}!frontend.c@{frontend.c}}
-\doxysubsubsection{FILE\_MAXNAME}
-{\footnotesize\ttfamily \#define FILE\+\_\+\+MAXNAME~256}
-
-
-
-Definition at line \textbf{ 24} of file \textbf{ frontend.\+c}.
-
-\label{frontend_8c_a2a3ad4ebb43e29f804a1e524aca840b2} 
-\index{frontend.c@{frontend.c}!INPUT\_FILE@{INPUT\_FILE}}
-\index{INPUT\_FILE@{INPUT\_FILE}!frontend.c@{frontend.c}}
-\doxysubsubsection{INPUT\_FILE}
-{\footnotesize\ttfamily \#define INPUT\+\_\+\+FILE~"{}sipnet.\+in"{}}
-
-
-
-Definition at line \textbf{ 27} of file \textbf{ frontend.\+c}.
-
-\label{frontend_8c_a8f37ae52567be5458f05af3c396b2811} 
-\index{frontend.c@{frontend.c}!INPUT\_MAXNAME@{INPUT\_MAXNAME}}
-\index{INPUT\_MAXNAME@{INPUT\_MAXNAME}!frontend.c@{frontend.c}}
-\doxysubsubsection{INPUT\_MAXNAME}
-{\footnotesize\ttfamily \#define INPUT\+\_\+\+MAXNAME~64}
-
-
-
-Definition at line \textbf{ 26} of file \textbf{ frontend.\+c}.
-
-\label{frontend_8c_a7316472e16c612c08c61ab2699b96d4c} 
-\index{frontend.c@{frontend.c}!RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}}
-\index{RUNTYPE\_MAXNAME@{RUNTYPE\_MAXNAME}!frontend.c@{frontend.c}}
-\doxysubsubsection{RUNTYPE\_MAXNAME}
-{\footnotesize\ttfamily \#define RUNTYPE\+\_\+\+MAXNAME~16}
-
-
-
-Definition at line \textbf{ 25} of file \textbf{ frontend.\+c}.
-
-
-
 \doxysubsection{Function Documentation}
-\label{frontend_8c_a3895fa41741e70c5ccada04c2bc105fe} 
+\label{frontend_8c_aa5fc925fd213af7da2a41d2f0752e504} 
 \index{frontend.c@{frontend.c}!checkRuntype@{checkRuntype}}
 \index{checkRuntype@{checkRuntype}!frontend.c@{frontend.c}}
 \doxysubsubsection{checkRuntype()}
-{\footnotesize\ttfamily void check\+Runtype (\begin{DoxyParamCaption}\item[{\textbf{ Namelist\+Inputs} $\ast$}]{namelist,  }\item[{const char $\ast$}]{input\+File }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void check\+Runtype (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 
 
-Definition at line \textbf{ 31} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 22} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ locate\+Namelist\+Input\+Item()}, \textbf{ Namelist\+Input\+Item\+Struct\+::ptr}, \textbf{ strcmp\+Ignore\+Case()}, and \textbf{ Namelist\+Input\+Item\+Struct\+::was\+Read}.
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::run\+Type}, and \textbf{ strcmp\+Ignore\+Case()}.
 
 
 
@@ -133,7 +55,7 @@ Here is the call graph for this function\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=350pt]{d9/ddf/frontend_8c_a3895fa41741e70c5ccada04c2bc105fe_cgraph}
+\includegraphics[width=271pt]{d9/ddf/frontend_8c_aa5fc925fd213af7da2a41d2f0752e504_cgraph}
 \end{center}
 \end{figure}
 \label{frontend_8c_a0ddf1224851353fc92bfbff6f499fa97} 
@@ -144,35 +66,43 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 58} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 117} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ add\+Namelist\+Input\+Item()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ delete\+Output\+Items()}, \textbf{ die\+If\+Not\+Set()}, \textbf{ DO\+\_\+\+MAIN\+\_\+\+OUTPUT}, \textbf{ DO\+\_\+\+SINGLE\+\_\+\+OUTPUTS}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ FILE\+\_\+\+MAXNAME}, \textbf{ HEADER}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ INPUT\+\_\+\+FILE}, \textbf{ INPUT\+\_\+\+MAXNAME}, \textbf{ INT\+\_\+\+TYPE}, \textbf{ new\+Namelist\+Inputs()}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ read\+Namelist\+Inputs()}, \textbf{ run\+Model\+Output()}, \textbf{ RUNTYPE\+\_\+\+MAXNAME}, \textbf{ setup\+Output\+Items()}, \textbf{ STRING\+\_\+\+TYPE}, and \textbf{ usage()}.
+References \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ Context\+::input\+File}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, and \textbf{ update\+Char\+Context()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=350pt]{d9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph}
+\includegraphics[height=550pt]{d9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph}
 \end{center}
 \end{figure}
-\label{frontend_8c_af3fc073cbe5282a8dcb2a1380512b3e8} 
-\index{frontend.c@{frontend.c}!usage@{usage}}
-\index{usage@{usage}!frontend.c@{frontend.c}}
-\doxysubsubsection{usage()}
-{\footnotesize\ttfamily void usage (\begin{DoxyParamCaption}\item[{char $\ast$}]{prog\+Name }\end{DoxyParamCaption})}
+\label{frontend_8c_a9a5aedf5fbe3456c5234cc1478cd6b6b} 
+\index{frontend.c@{frontend.c}!readInputFile@{readInputFile}}
+\index{readInputFile@{readInputFile}!frontend.c@{frontend.c}}
+\doxysubsubsection{readInputFile()}
+{\footnotesize\ttfamily void read\+Input\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{file\+Name }\end{DoxyParamCaption})}
 
 
 
-Definition at line \textbf{ 51} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ INPUT\+\_\+\+FILE}.
+References \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ open\+File()}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
 
 
 
 Referenced by \textbf{ main()}.
 
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d9/ddf/frontend_8c_a9a5aedf5fbe3456c5234cc1478cd6b6b_cgraph}
+\end{center}
+\end{figure}

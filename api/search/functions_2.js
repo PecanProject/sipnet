@@ -9,9 +9,9 @@ var searchData=
   ['checklocations_6',['checkLocations',['../d9/d49/subset_data_8c.html#a21e40fa66ea361bb21b3f016896a05c5',1,'subsetData.c']]],
   ['checkparam_7',['checkParam',['../d3/ddd/model_params_8h.html#a09bdc6313ae6948313e6b8ae49f61ef6',1,'modelParams.h']]],
   ['checkparamformat_8',['checkParamFormat',['../d2/de5/model_params_8c.html#afdf10aa3ce8b3b81f9e5b9a8a05de8e7',1,'modelParams.c']]],
-  ['checkruntype_9',['checkRuntype',['../d9/ddf/frontend_8c.html#a3895fa41741e70c5ccada04c2bc105fe',1,'frontend.c']]],
+  ['checkruntype_9',['checkRuntype',['../d9/ddf/frontend_8c.html#aa5fc925fd213af7da2a41d2f0752e504',1,'frontend.c']]],
   ['checkstatus_10',['checkStatus',['../d9/d49/subset_data_8c.html#ab14cee6bb907d7f1784c4ed34849c3b8',1,'subsetData.c']]],
-  ['cleanupmodel_11',['cleanupmodel',['../dd/d09/sipnet_8c.html#a203036d3ba6226dbc9fd9b0f1806911e',1,'cleanupModel():&#160;sipnet.c'],['../de/de4/sipnet_8h.html#a22030f07f029aedc523fc93afdeeccd1',1,'cleanupModel(void):&#160;sipnet.c']]],
+  ['cleanupmodel_11',['cleanupmodel',['../de/de4/sipnet_8h.html#a22030f07f029aedc523fc93afdeeccd1',1,'cleanupModel(void):&#160;sipnet.c'],['../dd/d09/sipnet_8c.html#a203036d3ba6226dbc9fd9b0f1806911e',1,'cleanupModel():&#160;sipnet.c']]],
   ['closeeventoutfile_12',['closeeventoutfile',['../de/deb/events_8c.html#a9751770959684fd1795afaa844e7f132',1,'closeEventOutFile(FILE *file):&#160;events.c'],['../db/dd2/events_8h.html#a9751770959684fd1795afaa844e7f132',1,'closeEventOutFile(FILE *file):&#160;events.c']]],
   ['closeoutputitemfile_13',['closeOutputItemFile',['../dd/d66/output_items_8c.html#a8ec899fb3e0b216b4f5a01aaf8232c9a',1,'outputItems.c']]],
   ['copyfile_14',['copyFile',['../d9/d49/subset_data_8c.html#ae5f25619fa72061b0a68e8ad2d840f0a',1,'subsetData.c']]],
@@ -19,5 +19,6 @@ var searchData=
   ['copysubset_16',['copySubset',['../d9/d49/subset_data_8c.html#a015c9bbe26ddf4a7ce02576d07ae369b',1,'subsetData.c']]],
   ['countfields_17',['countfields',['../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822',1,'countFields(const char *line, const char *sep):&#160;util.c'],['../d8/d3c/util_8h.html#a87a0923ef9b7dde5f205f1501f851822',1,'countFields(const char *line, const char *sep):&#160;util.c']]],
   ['countitems_18',['countItems',['../d6/d7a/transpose_8c.html#a2088381b83013d475f3620bba77cd853',1,'transpose.c']]],
-  ['createeventnode_19',['createEventNode',['../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209',1,'events.c']]]
+  ['createcontextmetadata_19',['createcontextmetadata',['../d8/dfa/context_8c.html#a3b036ab0ee548b6bafeb192d65fd71f8',1,'createContextMetadata(const char *name, const char *printName, context_source_t source, context_type_t type, void *value):&#160;context.c'],['../dc/d1e/context_8h.html#a3b036ab0ee548b6bafeb192d65fd71f8',1,'createContextMetadata(const char *name, const char *printName, context_source_t source, context_type_t type, void *value):&#160;context.c']]],
+  ['createeventnode_20',['createEventNode',['../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209',1,'events.c']]]
 ];

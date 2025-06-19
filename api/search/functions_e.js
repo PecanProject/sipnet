@@ -1,15 +1,14 @@
 var searchData=
 [
-  ['seedrand_0',['seedrand',['../d8/d3c/util_8h.html#ad2222db949c03ef23f3e1a192af45aef',1,'seedRand(unsigned int seed, FILE *outF):&#160;util.c'],['../de/df1/util_8c.html#ad2222db949c03ef23f3e1a192af45aef',1,'seedRand(unsigned int seed, FILE *outF):&#160;util.c']]],
-  ['setall_1',['setAll',['../d2/de5/model_params_8c.html#ab81f54de2aa764b487efc4c6164859e4',1,'modelParams.c']]],
-  ['setupevents_2',['setupEvents',['../dd/d09/sipnet_8c.html#a21f961b493802a978c8eb210422b3f31',1,'sipnet.c']]],
-  ['setupmodel_3',['setupModel',['../dd/d09/sipnet_8c.html#a9b1ccc083cb92b4e622e21d05a72c7c3',1,'sipnet.c']]],
-  ['setupoutputitems_4',['setupoutputitems',['../dd/d09/sipnet_8c.html#af9ce545d20f3285ad314db7ce52ee054',1,'setupOutputItems(OutputItems *outputItems):&#160;sipnet.c'],['../de/de4/sipnet_8h.html#af9ce545d20f3285ad314db7ce52ee054',1,'setupOutputItems(OutputItems *outputItems):&#160;sipnet.c']]],
-  ['simplewaterflow_5',['simpleWaterFlow',['../dd/d09/sipnet_8c.html#a8760c2d181a729bf56e8372445b33aab',1,'sipnet.c']]],
-  ['snowpack_6',['snowPack',['../dd/d09/sipnet_8c.html#a316ac45bcdc2d3372761d43e597874ab',1,'sipnet.c']]],
-  ['soildegradation_7',['soilDegradation',['../dd/d09/sipnet_8c.html#a18edb857cbb1b173feeb13ebd0d50afe',1,'sipnet.c']]],
-  ['soilwaterfluxes_8',['soilWaterFluxes',['../dd/d09/sipnet_8c.html#a397c7c05612189c254b1186783c77676',1,'sipnet.c']]],
-  ['strcmpignorecase_9',['strcmpignorecase',['../de/df1/util_8c.html#a46c453b73f4e8cd62264e4bfe8b6ae05',1,'strcmpIgnoreCase(const char *s1, const char *s2):&#160;util.c'],['../d8/d3c/util_8h.html#a46c453b73f4e8cd62264e4bfe8b6ae05',1,'strcmpIgnoreCase(const char *s1, const char *s2):&#160;util.c']]],
-  ['stripcomment_10',['stripcomment',['../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4',1,'stripComment(char *line, const char *commentChars):&#160;util.c'],['../d8/d3c/util_8h.html#ab343ccfdac6191045fced6c36c0143f4',1,'stripComment(char *line, const char *commentChars):&#160;util.c']]],
-  ['sumarray_11',['sumarray',['../de/df1/util_8c.html#a31f647ac0b82a2bb708fcdaaab1a498d',1,'sumArray(double *array, int length):&#160;util.c'],['../d8/d3c/util_8h.html#a31f647ac0b82a2bb708fcdaaab1a498d',1,'sumArray(double *array, int length):&#160;util.c']]]
+  ['randm_0',['randm',['../de/df1/util_8c.html#a7c691c3c5db12904e93cc52d68cc2304',1,'randm(void):&#160;util.c'],['../d8/d3c/util_8h.html#a7c691c3c5db12904e93cc52d68cc2304',1,'randm(void):&#160;util.c']]],
+  ['readclimdata_1',['readClimData',['../dd/d09/sipnet_8c.html#a354aaad1383b6e5adfcec6ca83a791d9',1,'sipnet.c']]],
+  ['readclimline_2',['readClimLine',['../d9/d49/subset_data_8c.html#a5b0abd5931b15a92fa27271b98d837d4',1,'subsetData.c']]],
+  ['readeventdata_3',['readeventdata',['../de/deb/events_8c.html#adb0aecb501956ec964a98b0310035c54',1,'readEventData(char *eventFile):&#160;events.c'],['../db/dd2/events_8h.html#adb0aecb501956ec964a98b0310035c54',1,'readEventData(char *eventFile):&#160;events.c']]],
+  ['readfile_4',['readFile',['../d6/d7a/transpose_8c.html#aa47bbeed4188b8f05cc93b3b8ecabbdc',1,'transpose.c']]],
+  ['readinputfile_5',['readInputFile',['../d9/ddf/frontend_8c.html#a9a5aedf5fbe3456c5234cc1478cd6b6b',1,'frontend.c']]],
+  ['readitems_6',['readItems',['../d6/d7a/transpose_8c.html#ac7baaad9a0b659c32d141f73510e6dd4',1,'transpose.c']]],
+  ['readmodelparams_7',['readmodelparams',['../d2/de5/model_params_8c.html#a9c4813f1a9054c1d171453553db336f1',1,'readModelParams(ModelParams *modelParams, FILE *paramFile):&#160;modelParams.c'],['../d3/ddd/model_params_8h.html#abb687d7bb08bd469cecfdf62201bd9e8',1,'readModelParams(ModelParams *params, FILE *paramFile):&#160;modelParams.c']]],
+  ['readparamdata_8',['readParamData',['../dd/d09/sipnet_8c.html#af9e9d170e57aeefe91bb24310470dd7c',1,'sipnet.c']]],
+  ['resetmeantracker_9',['resetmeantracker',['../d5/d1f/runmean_8c.html#aafa097eaf82986761f1920d2a1ed2457',1,'resetMeanTracker(MeanTracker *tracker, double initMean):&#160;runmean.c'],['../de/d1e/runmean_8h.html#aafa097eaf82986761f1920d2a1ed2457',1,'resetMeanTracker(MeanTracker *tracker, double initMean):&#160;runmean.c']]],
+  ['runmodeloutput_10',['runmodeloutput',['../dd/d09/sipnet_8c.html#af6d23e2711c7acdd2f52fd1946185796',1,'runModelOutput(FILE *out, OutputItems *outputItems, int printHeader):&#160;sipnet.c'],['../de/de4/sipnet_8h.html#af6d23e2711c7acdd2f52fd1946185796',1,'runModelOutput(FILE *out, OutputItems *outputItems, int printHeader):&#160;sipnet.c']]]
 ];
