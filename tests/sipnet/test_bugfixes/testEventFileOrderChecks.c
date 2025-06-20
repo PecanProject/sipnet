@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-#include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
 #include "utils/exitHandler.c"
 #include "sipnet/events.c"
@@ -10,6 +9,10 @@
 
 int run(void) {
   int status = 0;
+
+  // Set up the context
+  initContext();
+  updateIntContext("events", 1, CTX_TEST);
 
   // exit() handling params
   int jmp_rval;

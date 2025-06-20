@@ -22,13 +22,14 @@ include_directories(tests/utils)
 add_compile_options(-Wall -Wpedantic -Werror)
 
 add_library(commonlib
-        src/common/spatialParams.c
+        src/common/context.c
+        src/common/logging.c
+        src/common/modelParams.c
         src/common/util.c
 )
 
 add_library(sipnetlib
         src/sipnet/cli.c
-        src/sipnet/context.c
         src/sipnet/events.c
         src/sipnet/frontend.c
         src/sipnet/outputItems.c

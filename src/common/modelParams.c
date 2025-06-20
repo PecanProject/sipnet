@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
+
 #include "exitCodes.h"
+#include "logging.h"
 #include "modelParams.h"
 #include "util.h"
 
@@ -31,23 +32,54 @@ void setAll(double *array, int length, double value) {
 // If not, kills program
 // Writes out names of all parameters that weren't read (even if not required,
 // as a warning message)
+// Also prints out a list of obsolete params that were read
 void checkAllRead(ModelParams *ModelParams) {
-  int i;
-  int okay;
+  int i, okay, readObsParam = 0, missingOptParam = 0;
   OneModelParam *param;
 
   okay = 1;  // so far so good
   for (i = 0; i < ModelParams->numParams; i++) {
     param = &(ModelParams->params[i]);
-    if (param->value == NULL) {
+    if (!param->isRead) {
       if (param->isRequired) {  // should have been read but wasn't!
         okay = 0;
-        printf("ERROR: Didn't read required parameter %s\n", param->name);
+        logError("Did not find read required parameter %s\n", param->name);
       } else {
-        printf("WARNING: Didn't read parameter %s (not flagged as required, so "
-               "continuing)\n",
-               param->name);
+        missingOptParam = 1;
       }
+    } else {
+      if (param->isRequired == OBSOLETE_PARAM) {
+        readObsParam = 1;
+      }
+    }
+  }
+
+  // Inform if any optional params are not in the file; not an error, just a
+  // note, and just one line instead of one for each
+  if (missingOptParam) {
+    logInfo("optional params not specified in input file:");
+    if (!ctx.quiet) {
+      for (i = 0; i < ModelParams->numParams; i++) {
+        param = &(ModelParams->params[i]);
+        if ((!param->isRead) && (param->isRequired == 0)) {
+          printf(" %s", param->name);
+        }
+      }
+      printf("\n");
+    }
+  }
+
+  // Warn about read obsolete params, but again just one line
+  if (readObsParam) {
+    logWarning("ignoring obsolete parameter(s):");
+    if (!ctx.quiet) {
+      for (i = 0; i < ModelParams->numParams; i++) {
+        param = &(ModelParams->params[i]);
+        if ((param->isRead) && (param->isRequired == OBSOLETE_PARAM)) {
+          printf(" %s", param->name);
+        }
+      }
+      printf("\n");
     }
   }
 
@@ -77,7 +109,13 @@ ModelParams *newModelParams(int maxParams) {
 
   return modelParams;
 }
-
+/*!
+ *
+ * @param modelParams
+ * @param name
+ * @param externalLoc
+ * @param isRequired
+ */
 void initializeOneModelParam(ModelParams *modelParams, char *name,
                              double *externalLoc, int isRequired) {
   int paramIndex;  // index of next uninitialized parameter
@@ -85,9 +123,9 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
 
   if (allParamsInitialized(modelParams)) {  // all parameters have been
                                             // initialized!
-    printf("Error trying to initialize %s: have already initialized all %d "
-           "parameters\n",
-           name, modelParams->maxParams);
+    logError("trying to initialize %s: have already initialized all %d "
+             "parameters\n",
+             name, modelParams->maxParams);
     printf("Check value of maxParams passed into newModelParams function\n");
     exit(1);
   }
@@ -108,15 +146,15 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
 void checkParamFormat(char *line, const char *sep) {
   int numParams = countFields(line, sep);
   if (numParams > 2) {
-    printf("WARNING: extra columns in .param file are being ignored (found %d "
-           "columns)\n",
-           numParams);
+    logWarning("extra columns in .param file are being ignored (found %d "
+               "columns)\n",
+               numParams);
   }
 }
 
 void readModelParams(ModelParams *modelParams, FILE *paramFile) {
-  const char *SEPARATORS = " \t\n\r";  // characters that can separate values in
-                                       // parameter files
+  const char *SEPARATORS = " \t\n\r";  // characters that can separate values
+                                       // in parameter files
   const char *COMMENT_CHARS = "!";  // comment characters (ignore everything
                                     // after this on a line)
 
@@ -152,21 +190,20 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
       if (strcmp(strValue, "*") == 0) {
         // This used to mean "spatially varying" when sipnet supported multiple
         // sites, but now this is an error
-        printf("Error reading parameter %s; '*' is no longer supported\n",
-               pName);
+        logError("reading parameter %s; '*' is no longer supported\n", pName);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
       value = strtod(strValue, &errc);
       paramIndex = locateParam(modelParams, pName);
 
       if (paramIndex == -1) {  // not found
-        printf("WARNING: Ignoring parameter %s: this parameter wasn't "
-               "initialized in the code\n",
-               pName);
+        logWarning("ignoring parameter %s: this parameter wasn't initialized "
+                   "in the code\n",
+                   pName);
       } else if (valueSet(modelParams, paramIndex)) {
-        printf("Error reading parameter file: read %s, but this parameter has "
-               "already been set\n",
-               pName);
+        logError("reading parameter file: read %s, but this parameter has "
+                 "already been set\n",
+                 pName);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       } else {  // otherwise, we're good to go
         // set param to point to the appropriate parameter, for easier access
@@ -182,7 +219,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
 
   // check for error in reading:
   if (ferror(paramFile)) {
-    printf("Error reading file in readModelParams\n");
+    logError("reading file in readModelParams\n");
     printf("ferror = %d\n", ferror(paramFile));
     exit(1);
   }

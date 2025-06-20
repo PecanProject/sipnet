@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
-#include "sipnet/sipnet.c"
+
+#include "typesUtils.h"
 
 int checkOutput(double soilWater, double immedEvap) {
   int status = 0;
@@ -22,10 +22,7 @@ int checkOutput(double soilWater, double immedEvap) {
 int run(void) {
   int status = 0;
 
-  // set up dummy climate
-  climate = (ClimateNode *)malloc(sizeof(ClimateNode));
-  climate->year = 2024;
-  climate->day = 70;
+  prepTypesTest();
 
   // set up dummy envi/fluxes/params
   envi.soilWater = 0;

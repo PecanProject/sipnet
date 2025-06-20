@@ -13,14 +13,7 @@
 // See also sipnet.c for other options (that should be moved here if/when
 // testing is added)
 
-// Whether we model root dynamics
-#define ROOTS 1
-
-// Read in and process agronomic events. SIPNET expects a file named
-// events.in to exist, though unit tests may use other names.
-// Note: requires ROOTS to be activated.
-#define EVENT_HANDLER 1 && ROOTS
-
+// OPTION
 // have extra litter pool, in addition to soil c pool
 #define LITTER_POOL 0
 
