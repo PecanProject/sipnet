@@ -167,7 +167,10 @@ tests/update_model_structures.sh
 
 - Use [Semantic Versioning v2](https://semver.org/) for SIPNET releases.
   - Tag releases with the version number `vX.Y.Z`.
-  - Name version in `docs/CHANGELOG.md`
+  - Update version in the following files:
+    - `CITATION.cff`
+    - `src/sipnet/version.h`
+    - `docs/CHANGELOG.md`
+    - Update `PROJECT_NUMBER` in `docs/Doxyfile`
 - Include content from `docs/CHANGELOG.md` file in release description.
-- Attach Mac and Linux compiled SIPNET binaries to release.
-- Update `PROJECT_NUMBER` in `docs/Doxyfile`
+
