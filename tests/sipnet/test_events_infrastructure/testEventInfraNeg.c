@@ -1,7 +1,6 @@
 
 #include <stdio.h>
 
-#include "modelStructures.h"  //NOLINT
 #include "sipnet/events.c"
 #include "utils/exitHandler.c"
 
@@ -21,7 +20,7 @@ int run(void) {
   test_assert(jmp_rval == 0);
   status |= !exit_result;
   if (status) {
-    printf("FAIL with infra_events_simple.in");
+    logTest("FAIL with infra_events_simple.in");
   }
 
   // Remaining tests should exit()
@@ -37,7 +36,7 @@ int run(void) {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with infra_events_unknown.in\n");
+    logTest("FAIL with infra_events_unknown.in\n");
   }
 
   // Second test
@@ -50,7 +49,7 @@ int run(void) {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with infra_events_date_ooo.in\n");
+    logTest("FAIL with infra_events_date_ooo.in\n");
   }
 
   // Bad data tests - NAs in various places
@@ -64,7 +63,7 @@ int run(void) {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with infra_events_bad_first.in\n");
+    logTest("FAIL with infra_events_bad_first.in\n");
   }
 
   // NA in a till event
@@ -77,7 +76,7 @@ int run(void) {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with infra_events_bad_till.in\n");
+    logTest("FAIL with infra_events_bad_till.in\n");
   }
 
   // Allow a real exit, not that this is really needed
@@ -89,13 +88,13 @@ int run(void) {
 int main(void) {
   int status;
 
-  printf("Starting testEventInfraNeg:run()\n");
+  logTest("Starting testEventInfraNeg:run()\n");
   status = run();
   if (status) {
     really_exit = 1;
-    printf("FAILED testEventInfraNeg with status %d\n", status);
+    logTest("FAILED testEventInfraNeg with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testEventInfraNeg\n");
+  logTest("PASSED testEventInfraNeg\n");
 }

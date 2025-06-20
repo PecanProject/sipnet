@@ -37,14 +37,14 @@ EventNode *createEventNode(int year, int day, int eventType,
           sscanf(eventParamsStr,  // NOLINT
                  "%lf %lf %lf %lf", &fracRA, &fracRB, &fracTA, &fracTB);
       if (numRead != NUM_HARVEST_PARAMS) {
-        printf("Error parsing Harvest params for year %d day %d\n", year, day);
+        logError("parsing Harvest params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       // Validate the params
       if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
-        printf("Invalid harvest event for year %d day %d; above and below must "
-               "each add to 1 or less",
-               year, day);
+        logError("nvalid harvest event for year %d day %d; above and below "
+                 "must each add to 1 or less",
+                 year, day);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
       params->fractionRemovedAbove = fracRA;
@@ -61,8 +61,7 @@ EventNode *createEventNode(int year, int day, int eventType,
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf %d", &amountAdded, &method);
       if (numRead != NUM_IRRIGATION_PARAMS) {
-        printf("Error parsing Irrigation params for year %d day %d\n", year,
-               day);
+        logError("parsing Irrigation params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       params->amountAdded = amountAdded;
@@ -79,8 +78,8 @@ EventNode *createEventNode(int year, int day, int eventType,
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf %lf %lf", &orgN, &orgC, &minN);
       if (numRead != NUM_FERTILIZATION_PARAMS) {
-        printf("Error parsing Fertilization params for year %d day %d\n", year,
-               day);
+        logError("parsing Fertilization params for year %d day %d\n", year,
+                 day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       // scanf(eventParamsStr, "%lf %lf %lf %lf", &org_N, &org_C, &min_N,
@@ -98,7 +97,7 @@ EventNode *createEventNode(int year, int day, int eventType,
           sscanf(eventParamsStr,  // NOLINT
                  "%lf %lf %lf %lf", &leafC, &woodC, &fineRootC, &coarseRootC);
       if (numRead != NUM_PLANTING_PARAMS) {
-        printf("Error parsing Planting params for year %d day %d\n", year, day);
+        logError("parsing Planting params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       params->leafC = leafC;
@@ -113,7 +112,7 @@ EventNode *createEventNode(int year, int day, int eventType,
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf %lf %lf", &fracLT, &somDM, &litterDM);
       if (numRead != NUM_TILLAGE_PARAMS) {
-        printf("Error parsing Tillage params for year %d day %d\n", year, day);
+        logError("parsing Tillage params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       params->fractionLitterTransferred = fracLT;
@@ -123,7 +122,7 @@ EventNode *createEventNode(int year, int day, int eventType,
     } break;
     default:
       // Unknown type, error and exit
-      printf("Error reading event file: unknown event type %d\n", eventType);
+      logError("reading event file: unknown event type %d\n", eventType);
       exit(1);
   }
 
@@ -165,7 +164,7 @@ EventNode *readEventData(char *eventFile) {
     return events;
   }
 
-  printf("Begin reading event data from file %s\n", eventFile);
+  logInfo("Begin reading event data from file %s\n", eventFile);
 
   FILE *in = openFile(eventFile, "r");
 
@@ -177,14 +176,14 @@ EventNode *readEventData(char *eventFile) {
   int numRead = sscanf(line,  // NOLINT
                        "%d %d %s %n", &year, &day, eventTypeStr, &numBytes);
   if (numRead != NUM_EVENT_CORE_PARAMS) {
-    printf("Error reading event file: bad data on first line\n");
+    logError("reading event file: bad data on first line\n");
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
   eventParamsStr = line + numBytes;
 
   eventType = getEventType(eventTypeStr);
   if (eventType == UNKNOWN_EVENT) {
-    printf("Error reading event file: unknown event type %s\n", eventTypeStr);
+    logError("reading event file: unknown event type %s\n", eventTypeStr);
     exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 
@@ -199,24 +198,24 @@ EventNode *readEventData(char *eventFile) {
     numRead = sscanf(line, "%d %d %s %n",  // NOLINT
                      &year, &day, eventTypeStr, &numBytes);
     if (numRead != NUM_EVENT_CORE_PARAMS) {
-      printf(
-          "Error reading event file: bad data on line after year %d day %d\n",
-          currYear, currDay);
+      logError("reading event file: bad data on line after year %d day %d\n",
+               currYear, currDay);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     eventParamsStr = line + numBytes;
 
     eventType = getEventType(eventTypeStr);
     if (eventType == UNKNOWN_EVENT) {
-      printf("Error reading event file: unknown event type %s\n", eventTypeStr);
+      logError("reading event file: unknown event type %s\n", eventTypeStr);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
     if ((year < currYear) || ((year == currYear) && (day < currDay))) {
-      printf("Error reading event file: last event was at (%d, %d) ", currYear,
-             currDay);
-      printf("next event is at (%d, %d)\n", year, day);
-      printf("Event records must be in time-ascending order\n");
+      // clang-format off
+      logError("reading event file: last event was at (%d, %d), next event is "
+               "at (%d, %d)\n", currDay, year, day);
+      logError("event records must be in time-ascending order\n", currYear);
+      // clang-format on
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
 
@@ -275,7 +274,7 @@ void printEvent(EventNode *event) {
              hParams->fractionTransferredBelow);
       break;
     default:
-      printf("Error printing event: unknown type %d\n", event->type);
+      printf("ERROR printing event: unknown type %d\n", event->type);
   }
 }
 
@@ -292,7 +291,7 @@ const char *eventTypeToString(event_type_t type) {
     case TILLAGE:
       return "till";
     default:
-      printf("ERROR: unknown event type in eventTypeToString (%d)", type);
+      logError("unknown event type in eventTypeToString (%d)", type);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 }

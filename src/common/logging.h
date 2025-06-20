@@ -13,10 +13,12 @@
  * to the Context
  *
  */
-
+// clang-format off
 #define logWarning(...) logprint(1, "[WARNING] ", __VA_ARGS__)
-#define logInfo(...) logprint(1, "[INFO   ] ", __VA_ARGS__)
-#define logError(...) logprint(0, "[ERROR  ] ", __VA_ARGS__)
+#define logInfo(...)    logprint(1, "[INFO   ] ", __VA_ARGS__)
+#define logError(...)   logprint(0, "[ERROR  ] ", __VA_ARGS__)
+#define logTest(...)    logprint(0, "[TEST   ] ", __VA_ARGS__)
+// clang-format on
 
 void logprint(int checkContext, const char *prefix, const char *fmt, ...);
 

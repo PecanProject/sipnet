@@ -24,7 +24,6 @@ extern char *argNameMap[2 * NUM_FLAG_OPTIONS];
  */
 void checkCLINameMap(void);
 
-
 // Print the help message when requested
 void usage(char *progName);
 

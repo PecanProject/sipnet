@@ -2,6 +2,8 @@
 #include <setjmp.h>
 #include <unistd.h>
 
+#include "common/logging.h"
+
 static int expected_code = 1;  // the expected value a tested function passes to
                                // exit
 static int should_exit = 1;  // set in test code; 1 if exit should have been
@@ -37,7 +39,7 @@ static int exit_result = 1;
 // stub function
 void exit(int code) {
   if (!really_exit) {
-    printf("Mocking the exit call\n");
+    logTest("Mocking the call to exit()\n");
     test_assert(should_exit == 1);
     test_assert(expected_code == code);
     longjmp(jump_env, 1);

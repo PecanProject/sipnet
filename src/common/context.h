@@ -19,7 +19,8 @@ typedef enum ContextSource {
   CTX_DEFAULT = 0,
   CTX_CONTEXT_FILE = 1,
   CTX_COMMAND_LINE = 2,
-  CTX_CALCULATED = 3
+  CTX_CALCULATED = 3,
+  CTX_TEST = 4  // set by a test, always wins
 } context_source_t;
 
 typedef enum ContextType { CTX_INT = 0, CTX_CHAR = 1 } context_type_t;

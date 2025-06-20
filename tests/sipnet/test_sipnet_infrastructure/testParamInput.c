@@ -1,7 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-#include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
 #include "utils/exitHandler.c"
 #include "sipnet/sipnet.c"
