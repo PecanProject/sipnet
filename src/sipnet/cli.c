@@ -59,9 +59,8 @@ void usage(char *progName) {
   printf("  --print_header   Whether to print header row in output files (1)\n");
   printf("  --events         Enable event handling (1)\n");
   printf("  --quiet          Suppress info and warning message (0)\n");
-  printf("  --   \n");
-  printf("  --   \n");
-  printf("  --   \n");
+  printf("  --[TBD]   \n");
+  printf("  --[TBD]   \n");
   printf("\n");
   printf("Info options:\n");
   printf("  -h, --help           Print this message and exit\n");

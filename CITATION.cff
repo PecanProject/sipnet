@@ -1,0 +1,171 @@
+cff-version: 1.2.0
+title: "SIPNET: Simple Photosynthesis and Evapotranspiration Model"
+version: 1.3.0
+abstract: >
+  SIPNET (Simple Photosynthesis and Evapotranspiration Model) is a process-based
+  ecosystem model designed to simulate carbon and water fluxes and (optionally) agricultural management
+  events in terrestrial ecosystems.
+  SIPNET is used for research in ecosystem ecology, carbon and greenhouse gas accounting, 
+  data assimilation, and model benchmarking.
+  Model development and recent features are detailed in the CHANGELOG and relevant literature.
+license: BSD-3-Clause
+message: "Please cite SIPNET using the metadata from 'preferred-citation'."
+type: software
+authors:
+  - family-names: Sacks
+    given-names: William J.
+    orcid: "https://orcid.org/0000-0003-2902-5263"
+  - family-names: Moore
+    given-names: David J.P.
+    orcid: "https://orcid.org/0000-0002-6462-3288"
+  - family-names: Zobitz
+    given-names: John M.
+    orcid: "https://orcid.org/0000-0002-1830-143X"
+  - family-names: Braswell
+    given-names: Bobby H.
+    orcid: "https://orcid.org/0000-0002-4061-9516"
+  - family-names: Schimel
+    given-names: David S.
+    orcid: "https://orcid.org/0000-0003-3473-8065"
+  - family-names: LeBauer
+    given-names: David S.
+    orcid: "https://orcid.org/0000-0001-7228-053X"
+  - family-names: Kooper
+    given-names: Rob
+    orcid: "https://orcid.org/0000-0002-5781-7287"
+  - family-names: Dietze
+    given-names: Michael C.
+    orcid: "https://orcid.org/0000-0002-2324-2518"
+  - family-names: Fer
+    given-names: Istem
+    orcid: "https://orcid.org/0000-0001-8236-303X"
+  - family-names: (other contributors)
+    given-names: See https://github.com/PecanProject/sipnet/graphs/contributors
+  - family-names: Michael
+    given-names: Longfritz
+
+repository-code: https://github.com/PecanProject/sipnet
+keywords:
+  - ecosystem model
+  - carbon cycle
+  - water cycle
+  - terrestrial biosphere
+  - data assimilation
+
+preferred-citation:
+  type: software
+  title: "SIPNET: Simple Photosynthesis and Evapotranspiration Model"
+  version: 1.3.0
+  url: https://github.com/PecanProject/sipnet
+  authors:
+    - family-names: Sacks
+      given-names: William J.
+    - family-names: Moore
+      given-names: David J.P.
+    - family-names: Zobitz
+      given-names: John M.
+    - family-names: Braswell
+      given-names: Bobby H.
+    - family-names: Schimel
+      given-names: David S.
+    - family-names: LeBauer
+      given-names: David S.
+    - family-names: Kooper
+      given-names: Rob
+    - family-names: Dietze
+      given-names: Michael C.
+    - family-names: Fer
+      given-names: Istem
+    - family-names: Michael
+      given-names: Longfritz
+    - family-names: (other contributors)
+      given-names: See https://github.com/PecanProject/sipnet/graphs/contributors
+
+references:
+  - type: article
+    title: "Estimating Diurnal to Annual Ecosystem Parameters by Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem Exchange Observations"
+    authors:
+      - family-names: Braswell
+        given-names: Bobby H.
+      - family-names: Sacks
+        given-names: William J.
+      - family-names: Linder
+        given-names: Ernst
+      - family-names: Schimel
+        given-names: David S.
+    year: 2005
+    collection-title: Global Change Biology
+    volume: 11
+    pages: "335-355"
+    doi: 10.1111/j.1365-2486.2005.00897.x
+  - type: article
+    title: "Model–data Synthesis of Diurnal and Seasonal CO2 Fluxes at Niwot Ridge, Colorado"
+    authors:
+      - family-names: Sacks
+        given-names: William J.
+      - family-names: Schimel
+        given-names: David S.
+      - family-names: Monson
+        given-names: Russell K.
+      - family-names: Braswell
+        given-names: Bobby H.
+    year: 2005
+    collection-title: Global Change Biology
+    volume: 12
+    pages: "240-259"
+    doi: 10.1111/j.1365-2486.2005.01059.x
+  - type: article
+    title: "Coupling between Carbon Cycling and Climate in a High-Elevation, Subalpine Forest: A Model-Data Fusion Analysis."
+    authors:
+      - family-names: Sacks
+        given-names: William J.
+      - family-names: Schimel
+        given-names: David S.
+      - family-names: Monson
+        given-names: Russell K.
+    year: 2007
+    collection-title: Oecologia
+    volume: 151
+    pages: "54-68"
+    doi: 10.1007/s00442-006-0565-2
+  - type: article
+    title: "Integration of Process-Based Soil Respiration Models with Whole-Ecosystem CO2 Measurements"
+    authors:
+      - family-names: Zobitz
+        given-names: John M.
+      - family-names: Moore
+        given-names: David J.P.
+      - family-names: Sacks
+        given-names: William J.
+      - family-names: Monson
+        given-names: Russell K.
+      - family-names: Bowling
+        given-names: David R.
+      - family-names: Schimel
+        given-names: David S.
+    year: 2008
+    collection-title: Ecosystems
+    volume: 40
+    pages: "2723-2731"
+    doi: 10.1007/s10021-007-9120-1
+  - type: article
+    title: "Joint data assimilation of satellite reflectance and net ecosystem exchange data constrains ecosystem carbon fluxes at a high-elevation subalpine forest"
+    authors:
+      - family-names: Zobitz
+        given-names: John M.
+      - family-names: Moore
+        given-names: David J.P.
+      - family-names: Quaife
+        given-names: Tristan
+      - family-names: Braswell
+        given-names: Bobby H.
+      - family-names: Bergeson
+        given-names: Andrew
+      - family-names: Anthony
+        given-names: Jeremy A.
+      - family-names: Monson
+        given-names: Russell K.
+    year: 2014
+    collection-title: Global Change Biology
+    volume: 20
+    doi: 10.1016/j.agrformet.2014.04.011
