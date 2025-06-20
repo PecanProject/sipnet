@@ -15,7 +15,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>  // for access()
+
 #include "common/exitCodes.h"
+#include "common/logging.h"
 #include "common/util.h"
 
 void printEvent(EventNode *event);
@@ -159,7 +161,7 @@ EventNode *readEventData(char *eventFile) {
   if (access(eventFile, F_OK) != 0) {
     // no file found, which is fine; we're done, a vector of NULL is what we
     // want for events
-    printf("No event file found, assuming no events\n");
+    logInfo("No event file found, assuming no events\n");
     return events;
   }
 

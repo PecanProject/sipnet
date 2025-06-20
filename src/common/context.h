@@ -34,18 +34,26 @@ struct context_metadata {
 };
 
 struct Context {
-  char inputFile[CONTEXT_CHAR_MAXLEN];
-  char runType[CONTEXT_CHAR_MAXLEN];
-  char fileName[CONTEXT_CHAR_MAXLEN];
-  int location;
+  // Flags
   int doMainOutput;
   int doSingleOutputs;
+  int events;
   int printHeader;
+  int dumpConfig;
+  int quiet;
+
+  // Files
   char paramFile[CONTEXT_CHAR_MAXLEN];
   char climFile[CONTEXT_CHAR_MAXLEN];
   char outFile[CONTEXT_CHAR_MAXLEN];
-  int dumpConfig;
   char outConfigFile[CONTEXT_CHAR_MAXLEN];
+  char inputFile[CONTEXT_CHAR_MAXLEN];
+
+  // Other
+  // We should probably rename this to siteName?
+  char fileName[CONTEXT_CHAR_MAXLEN];
+  // For compatibility
+  char runType[CONTEXT_CHAR_MAXLEN];
 
   // Temp space for handling command line flag args; we do not write directly
   // the params since we want to do a precedence check first. If the new source

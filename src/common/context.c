@@ -6,7 +6,6 @@
 #include <time.h>
 
 #include "common/exitCodes.h"
-#include "cli.h"
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
 #define RUN_TYPE_STANDARD "standard"
@@ -22,30 +21,28 @@ void initContext(void) {
   ctx.metaMap = NULL;
 
   // Init the params
-  CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE, CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(runType, "RUN_TYPE", RUN_TYPE_STANDARD, CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(fileName, "FILENAME", "", CTX_DEFAULT);
-  CREATE_INT_CONTEXT(location, "LOCATION", 0, CTX_DEFAULT);
+  // Flags, default on
   CREATE_INT_CONTEXT(doMainOutput, "DO_MAIN_OUTPUT", 1, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT);
+  CREATE_INT_CONTEXT(events, "EVENTS", 1, CTX_DEFAULT);
   CREATE_INT_CONTEXT(printHeader, "PRINT_HEADER", 1, CTX_DEFAULT);
+
+  // Flags, default off
+  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT);
+  CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT);
+  CREATE_INT_CONTEXT(quiet, "QUIET", 0, CTX_DEFAULT);
+
+  // Files
   CREATE_CHAR_CONTEXT(paramFile, "PARAM_FILE", "", CTX_DEFAULT);
   CREATE_CHAR_CONTEXT(climFile, "CLIM_FILE", "", CTX_DEFAULT);
   CREATE_CHAR_CONTEXT(outFile, "OUT_FILE", "", CTX_DEFAULT);
-  CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT);
   CREATE_CHAR_CONTEXT(outConfigFile, "OUT_CONFIG_FILE", "", CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE, CTX_DEFAULT);
 
-  // Safety check: make sure the elements of the cli argNameMap are actually
-  // valid members - that is, that we can successfully find a metadata for each
-  // one. This protects against changing a field name here and forgetting to
-  // update that map.
-  for (int ind = 0; ind < NUM_FLAG_OPTIONS; ++ind) {
-    struct context_metadata *s = getContextMetadata(argNameMap[ind]);
-    if (s == NULL) {
-      printf("Internal error: cli param mismatch with Context\n");
-      exit(EXIT_CODE_INTERNAL_ERROR);
-    }
-  }
+  // Other
+  // Would like to rename as SITE_NAME, if that wasn't breaking
+  CREATE_CHAR_CONTEXT(fileName, "FILENAME", "", CTX_DEFAULT);
+  // For compatibility
+  CREATE_CHAR_CONTEXT(runType, "RUN_TYPE", RUN_TYPE_STANDARD, CTX_DEFAULT);
 }
 
 // With all the different permutations of spellings for config params, lets
@@ -163,17 +160,26 @@ void printConfig(FILE *outFile) {
   struct context_metadata *s;
 
   // Header
-  char timestamp[100];
-  time_t current_time;
-  time(&current_time);
-  struct tm *utc_time = gmtime(&current_time);
-  strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S UTC", utc_time);
-  fprintf(outFile, "Final config for SIPNET run at %s\n", timestamp);
-  fprintf(outFile, "%20s %20s %30s\n", "Name", "Source", "Value");
+  if (ctx.printHeader) {
+    char timestamp[100];
+    time_t current_time;
+    time(&current_time);
+    struct tm *utc_time = gmtime(&current_time);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S UTC", utc_time);
+    fprintf(outFile, "Final config for SIPNET run at %s\n", timestamp);
+    fprintf(outFile, "%20s %20s %30s\n", "Name", "Source", "Value");
+  }
 
   // Config
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
+
+    // don't print RUN_TYPE, it's only in the Context for compatibility
+    nameToKey("runType");
+    if (strcmp(s->keyName, keyName) == 0) {
+      continue;
+    }
+
     if (s->type == CTX_INT) {
       fprintf(outFile, "%20s %20s %30d\n", s->printName,
               getContextSourceString(s->source), *(int *)s->value);

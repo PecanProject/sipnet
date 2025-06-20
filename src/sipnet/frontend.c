@@ -8,16 +8,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "common/context.h"
 #include "common/exitCodes.h"
+#include "common/logging.h"
 #include "common/modelParams.h"
 #include "common/util.h"
 
 #include "cli.h"
-#include "context.h"
 #include "events.h"
 #include "sipnet.h"
 #include "outputItems.h"
-#include "modelStructures.h"
 
 void checkRuntype(void) {
   if (strcmpIgnoreCase(ctx.runType, "standard") != 0) {
@@ -63,7 +63,7 @@ void readInputFile(const char *fileName) {
                                                  // '=')
       struct context_metadata *ctx_meta = getContextMetadata(inputName);
       if (ctx_meta == NULL) {
-        printf("Warning: ignoring input file parameter %s\n", inputName);
+        logWarning("ignoring input file parameter %s\n", inputName);
         continue;
       }
 
@@ -130,6 +130,8 @@ int main(int argc, char *argv[]) {
 
   // 1. Initialize Context with default values
   initContext();
+  // Also need to verify the CLI name map, now that the context has been init'd
+  checkCLINameMap();
 
   // 2. Parse command line args
   parseCommandLineArgs(argc, argv);
@@ -187,9 +189,9 @@ int main(int argc, char *argv[]) {
   // 6. Initialize model, events, outputItems
   initModel(&modelParams, paramFile, climFile);
 
-#if EVENT_HANDLER
-  initEvents(EVENT_IN_FILE, ctx.printHeader);
-#endif
+  if (ctx.events) {
+    initEvents(EVENT_IN_FILE, ctx.printHeader);
+  }
 
   if (ctx.doSingleOutputs) {
     outputItems = newOutputItems(ctx.fileName, ' ');
