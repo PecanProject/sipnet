@@ -34,6 +34,8 @@ struct context_metadata {
   UT_hash_handle hh;  // makes this structure hashable
 };
 
+// See docs/developer-guide/cli-options.md for details on how to add a new
+// Context entry
 struct Context {
   // Flags
   int doMainOutput;
@@ -53,8 +55,6 @@ struct Context {
   // Other
   // We should probably rename this to siteName?
   char fileName[CONTEXT_CHAR_MAXLEN];
-  // For compatibility
-  char runType[CONTEXT_CHAR_MAXLEN];
 
   // Temp space for handling command line flag args; we do not write directly
   // the params since we want to do a precedence check first. If the new source
@@ -73,8 +73,6 @@ extern struct Context ctx;
  * Initialize the global context struct with default values
  */
 void initContext(void);
-
-context_source_t getContextSource(const char *name);
 
 struct context_metadata *getContextMetadata(const char *name);
 

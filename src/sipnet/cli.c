@@ -19,6 +19,8 @@
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
 
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
+// See docs/developer-guide/cli-options.md for details on how to add a new
+// option
 static struct option long_options[] = {  // NOLINT
     // These options set a flag (and they need to be at the top here for
     // indexing purposes). The DECLARE_FLAG macro declares both <flag> and
@@ -32,7 +34,7 @@ static struct option long_options[] = {  // NOLINT
 
     // clang-format off
     // These options don’t set a flag. We distinguish them by their indices
-    // name        has_arg           flag  val
+    // name        has_arg           flag  val (val is the index)
     {"input_file", required_argument, 0,   'i'},
     {"help",       no_argument,       0,   'h'},
     {"version",    no_argument,       0,   'v'},

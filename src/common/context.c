@@ -8,7 +8,6 @@
 #include "common/exitCodes.h"
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
-#define RUN_TYPE_STANDARD "standard"
 
 struct Context ctx;
 
@@ -39,10 +38,8 @@ void initContext(void) {
   CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE, CTX_DEFAULT);
 
   // Other
-  // Would like to rename as SITE_NAME, if that wasn't breaking
+  // Would like to rename as SITE_NAME, if that wasn't a breaking change
   CREATE_CHAR_CONTEXT(fileName, "FILENAME", "", CTX_DEFAULT);
-  // For compatibility
-  CREATE_CHAR_CONTEXT(runType, "RUN_TYPE", RUN_TYPE_STANDARD, CTX_DEFAULT);
 }
 
 // With all the different permutations of spellings for config params, lets
@@ -59,10 +56,6 @@ void nameToKey(const char *name) {
     }
   }
   keyName[keyInd] = '\0';
-}
-
-context_source_t getContextSource(const char *name) {
-  return getContextMetadata(name)->source;
 }
 
 struct context_metadata *getContextMetadata(const char *name) {
@@ -175,12 +168,6 @@ void printConfig(FILE *outFile) {
   // Config
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
-
-    // don't print RUN_TYPE, it's only in the Context for compatibility
-    nameToKey("runType");
-    if (strcmp(s->keyName, keyName) == 0) {
-      continue;
-    }
 
     if (s->type == CTX_INT) {
       fprintf(outFile, "%20s %20s %30d\n", s->printName,
