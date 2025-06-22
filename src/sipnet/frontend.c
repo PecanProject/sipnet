@@ -63,6 +63,7 @@ void readInputFile(const char *fileName) {
       // set to "standard"; and make sure it is that if set
       if (strcasecmp(inputName, "runtype") == 0) {
         checkRuntype(inputValue);
+        continue;
       }
 
       // Find the metadata so we know what to do with this param
