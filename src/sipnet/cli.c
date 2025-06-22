@@ -1,6 +1,7 @@
 #include "cli.h"
 
 #include "common/exitCodes.h"
+#include "common/logging.h"
 
 #include "version.h"
 
@@ -22,9 +23,11 @@ static struct option long_options[] = {  // NOLINT
     // These options set a flag (and they need to be at the top here for
     // indexing purposes). The DECLARE_FLAG macro declares both <flag> and
     // <no_flag> versions of the option.
+    DECLARE_FLAG(do_main_output),
+    DECLARE_FLAG(do_single_outputs),
+    DECLARE_FLAG(events),
     DECLARE_FLAG(print_header),
     DECLARE_FLAG(dump_config),
-    DECLARE_FLAG(events),
     DECLARE_FLAG(quiet),
 
     // clang-format off
@@ -39,9 +42,12 @@ static struct option long_options[] = {  // NOLINT
 // See cli.h
 char *argNameMap[] = {
     // Must follow same order as in long_options above; only need flag opts here
-    // Gives corresponding name in Context struct
-    DECLARE_ARG_FOR_MAP(printHeader), DECLARE_ARG_FOR_MAP(dumpConfig),
-    DECLARE_ARG_FOR_MAP(events), DECLARE_ARG_FOR_MAP(quiet)};
+    // Gives corresponding name in Context struct (that is, the argument to the
+    // DECLARE_ARG_FOR_MAP macro needs to be the name of the corresponding field
+    // in Context)
+    DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
+    DECLARE_ARG_FOR_MAP(events),       DECLARE_ARG_FOR_MAP(printHeader),
+    DECLARE_ARG_FOR_MAP(dumpConfig),   DECLARE_ARG_FOR_MAP(quiet)};
 
 // Print the help message when requested
 void usage(char *progName) {
@@ -119,11 +125,28 @@ void parseCommandLineArgs(int argc, char *argv[]) {
 // one. This protects against changing a field name here and forgetting to
 // update that map.
 void checkCLINameMap(void) {
+  int numFlags = 0;
+  struct context_metadata *s;
+
+  // Make sure everything in argNameMap maps to a valid metadata
   for (int ind = 0; ind < 2 * NUM_FLAG_OPTIONS; ++ind) {
-    struct context_metadata *s = getContextMetadata(argNameMap[ind]);
+    s = getContextMetadata(argNameMap[ind]);
     if (s == NULL) {
-      printf("Internal error: cli param mismatch with Context\n");
+      logError("Internal error: mismatched argNameMap and Context contents; "
+               "missing Context metadata\n");
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
+  }
+  // Make sure the number of flag metadata structs equals NUM_FLAG_OPTIONS
+  for (s = ctx.metaMap; s != NULL;
+       s = (struct context_metadata *)(s->hh.next)) {
+    if (s->type == CTX_INT) {
+      ++numFlags;
+    }
+  }
+  if (numFlags != NUM_FLAG_OPTIONS) {
+    logError("Internal error: mismatched argNameMap and Context contents; "
+             "missing argNameMap entry\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }

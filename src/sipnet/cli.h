@@ -14,12 +14,14 @@
 
 // The run-time option names do not match their corresponding fields in Context,
 // so we need a way to get from one to the other.
-#define NUM_FLAG_OPTIONS 4
+#define NUM_FLAG_OPTIONS 6
 extern char *argNameMap[2 * NUM_FLAG_OPTIONS];
 
 /*!
  * Verify that the cli's arg-name map is valid
  *
+ * Verifies that everything in argNameMap maps to a valid context metadata.
+ * Does not verify that we failed to add a flag to the map.
  * Call this after initContext()
  */
 void checkCLINameMap(void);

@@ -142,6 +142,8 @@ char *getContextSourceString(context_source_t src) {
       return "COMMAND_LINE";
     case CTX_CALCULATED:
       return "CALCULATED";
+    case CTX_TEST:
+      return "TEST";
     default:
       return "UNKNOWN";
   }
