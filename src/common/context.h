@@ -53,7 +53,7 @@ struct Context {
   char inputFile[CONTEXT_CHAR_MAXLEN];
 
   // Other
-  // We should probably rename this to siteName?
+  // File prefix for climate and param files
   char fileName[CONTEXT_CHAR_MAXLEN];
 
   // Temp space for handling command line flag args; we do not write directly

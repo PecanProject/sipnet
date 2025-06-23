@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "common/context.h"
+
 #include "exitCodes.h"
 #include "logging.h"
 #include "modelParams.h"

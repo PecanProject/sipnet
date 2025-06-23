@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
+#include "common/logging.h"
 #include "sipnet/sipnet.c"
 #include "sipnet/events.c"
 

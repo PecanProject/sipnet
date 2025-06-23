@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
+#include "common/logging.h"
 #include "sipnet/events.c"
 
 int checkEvent(EventNode *event, int year, int day, enum EventType type) {
