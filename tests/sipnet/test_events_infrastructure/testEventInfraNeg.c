@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "sipnet/events.c"
+#include "common/logging.h"
 #include "utils/exitHandler.c"
 
 int run(void) {

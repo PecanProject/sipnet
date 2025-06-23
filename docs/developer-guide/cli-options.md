@@ -6,7 +6,7 @@ options, and string-valued options.
 
 ## Important Notes
 
-A note on naming: each option will have a corresponding entry in the `Context` struct, and some care must be 
+A note on naming: each option will have a corresponding entry in the `Context` struct, and some care must be
 taken to allow SIPNET to map between the option 
 and the `Context` member that holds the options value. The key that is used for that map is generated from the 
 `nameToKey` function in `common/context.c`; that functions removes all non-alphanumeric characters
@@ -20,9 +20,7 @@ config file. However, the command line is parsed first (due to the chicken-and-e
 command line specifies where the config file is!). Care must be taken to make sure that the source 
 of an option's value is maintained. In terms of the actual programming, this means all options 
 should be set via the macros `CREATE_INT_CONTEXT`/`CREATE_CHAR_CONTEXT` on creation and the functions
-`updateIntContext`/`updateCharContext` when updating a value. In particular, the `long_options` 
-struct used by`getops_long` should not have the `value` entry set to the option's actual location 
-in the `Context` struct (this is handled automatically for flag-type options).
+`updateIntContext`/`updateCharContext` when updating a value.
 
 ## Adding a new flag
 
@@ -46,8 +44,8 @@ flag options. There is nothing to add there for new flags.
 ## Adding a new integer-valued option
 
 Integer-valued options expect an integer value after the option (e.g., `--num_carbon_pools 3`). 
-These are much easier to add if there is a short-form version of the new option (with or without a long-form version); easier to
-the point that this documentation only covers this case.
+If the option has a short-form version (with or without a long-form version), follow the steps below. 
+For long-form only options, see the notes at the end of this section.
 
 Here are the steps for int-value options:
 
@@ -61,8 +59,8 @@ Here are the steps for int-value options:
 ## Adding a new string-valued option
 
 String-valued options expect a string value after the option (e.g., `-i sipnet.in`).
-These are much easier to add if there is a short-form version of the new option (with or without a long-form version); easier to
-the point that this documentation only covers this case.
+If the option has a short-form version (with or without a long-form version), follow the steps below.
+For long-form only options, see the notes at the end of this section.
 
 Here are the steps for string-valued options:
 
@@ -74,7 +72,10 @@ Here are the steps for string-valued options:
    3. Update `usage()` to document the new option in the help text
 
 
-## Last Steps
+## Long-Form Only Options
 
-Anything to here to make sure this works in `sipnet.in`?
-Mention that testing is great?
+[TBD: fold this in above? This isn't that complicated; let's see if anything changes in the next round]
+
+When adding to the `long_options` struct in step 3(i), give an int value as the last element of the the new
+struct. This is the index that should be used in the `parseCLIArgs()` switch statement for handling the new 
+option. The int value must be unique among the other case labels.
