@@ -1,36 +1,61 @@
-# Adding New Command Line Options
+# Command Line Options
 
-Follow these instructions to add new command-line options to the sipnet executable, based on what type 
-of option is being added. There are three possible types that are enabled: flags, int-valued 
-options, and string-valued options.
+These instructions explain how to add new command-line options to the SIPNET executable. Three types of command-line 
+options are enabled: flags, integer-valued options, and string-valued options.
+
+## Background
+
+The **`Context` struct**, defined in `common/context.h`, holds the values of all command-line options.
+
+When adding a new command-line option, you will need to add a corresponding member to the `Context` struct that will hold the value of that option.
 
 ## Important Notes
 
-A note on naming: each option will have a corresponding entry in the `Context` struct, and some care must be 
-taken to allow SIPNET to map between the option 
-and the `Context` member that holds the options value. The key that is used for that map is generated from the 
-`nameToKey` function in `common/context.c`; that functions removes all non-alphanumeric characters
-and converts alpha characters to lowercase. The option name (e.g., `print_header`) and `Context` 
-member name (in this case, `printHeader`) must generate the same key. Also, that key must be unique
-across the `Context` member names.
+**A note on naming:** 
 
-A note on precedence: SIPNET options can be specified in either (or both) a config file or as a 
-command option. Options specified via the command line have precedence over the values in the 
-config file. However, the command line is parsed first (due to the chicken-and-egg problem that the
-command line specifies where the config file is!). Care must be taken to make sure that the source 
-of an option's value is maintained. In terms of the actual programming, this means all options 
-should be set via the macros `CREATE_INT_CONTEXT`/`CREATE_CHAR_CONTEXT` on creation and the functions
-`updateIntContext`/`updateCharContext` when updating a value. In particular, the `long_options` 
-struct used by`getops_long` should not have the `value` entry set to the option's actual location 
-in the `Context` struct (this is handled automatically for flag-type options).
+Each command-line option must have a corresponding entry in the `Context` struct. SIPNET uses a mapping system to 
+link the command-line option (e.g. `print_header`) to its `Context` member (in this case, `printHeader`).
 
-## Adding a new flag
+Some care must be taken to allow SIPNET to map between the option and the `Context` member that holds the options value. 
+The mapping is created using the `nameToKey` function in `common/context.c` that:
+- removes all non-alphanumeric characters.
+- converts alpha characters to lowercase. 
+
+For the mapping to work, the option name (e.g., `print_header`) and `Context` member name (in this case, `printHeader`) must generate the same key (e.g. `printheader` and `printHeader` both generate `printheader`).
+
+Each key must be unique across the `Context` member names.
+
+**A note on precedence:** 
+
+SIPNET options can be specified in either (or both) a config file or a command-line option. Command-line options are
+have precedence over config file options.
+
+However, because the command line is parsed first (due to the chicken-and-egg problem that the command line specifies where the config file is!), the code must keep track of - and maintain - the source of the option value. 
+This means that:
+- Options must be set via the macros `CREATE_INT_CONTEXT`/`CREATE_CHAR_CONTEXT` when they are created.
+- The functions `updateIntContext`/`updateCharContext` must be used when updating a value.
+- In particular, the `long_options` struct used by`getops_long` should not have the `value` entry set to the option's actual location in the `Context` struct (this is handled automatically for flag-type options).
+
+## Steps to Add Each Type of Option
+
+For each type of option, the steps are similar:
+
+1. Add Add a member to the `Context` struct in `common/context.h`.
+2. Initialize the member in `initContext()` in `common/context.c`.
+3. Update the `NUM_FLAG_OPTIONS` in `src/sipnet/cli.h`.
+4. Update the `long_options` struct in `src/sipnet/cli.c` to include the new option.
+5. Add tests.
+6. Update documentation.
+
+But the specific details of steps 1-4 vary depending on the type of option, as described below.
+
+### Flag options
 
 Flags are boolean on/off options, such as `print_header` or `events` (and their corresponding 
 negations, `no_print_header` and `no_events`). The code is setup to make it easy to add both
-halves of the pair. 
+halves of the pair.
 
-Here are the steps for flags:
+Here are the steps to add a flag:
 
 1. In `common/context.h`: Add a member to the `Context` struct to hold the param's value
 2. In `commont/context.c`: Initialize the default value in initContext() using the `CREATE_INT_CONTEXT` macro
@@ -43,13 +68,13 @@ Here are the steps for flags:
 Note: the function that parses the command line options (`parseCLIArgs()` in `src/sipnet/cli.c`) automatically handles
 flag options. There is nothing to add there for new flags.
 
-## Adding a new integer-valued option
+### Integer-valued option
 
 Integer-valued options expect an integer value after the option (e.g., `--num_carbon_pools 3`). 
-These are much easier to add if there is a short-form version of the new option (with or without a long-form version); easier to
-the point that this documentation only covers this case.
+These are much easier to add if there is a short-form version of the new option (with or without a long-form version); 
+easier to the point that this documentation only covers this case.
 
-Here are the steps for int-value options:
+Here are the steps to add an int-value option:
 
 1. In `common/context.h`: Add a member to the `Context` struct to hold the param's value
 2. In `commont/context.c`: Initialize the default value in initContext() using the `CREATE_INT_CONTEXT` macro
@@ -58,13 +83,13 @@ Here are the steps for int-value options:
     2. Update `parseCLIArgs()`... [details TBD]
     3. Update `usage()` to document the new option in the help text
 
-## Adding a new string-valued option
+### String-valued options
 
-String-valued options expect a string value after the option (e.g., `-i sipnet.in`).
-These are much easier to add if there is a short-form version of the new option (with or without a long-form version); easier to
-the point that this documentation only covers this case.
+String-valued options expect a string value after the option (e.g., `-input_file sipnet.in`).
+These are much easier to add if there is a short-form version of the new option (with or without a long-form version);
+easier to the point that this documentation only covers this case.
 
-Here are the steps for string-valued options:
+Here are the steps to add a string-valued option:
 
 1. In `common/context.h`: Add a member to the `Context` struct to hold the param's value
 2. In `commont/context.c`: Initialize the default value in initContext() using the `CREATE_CHAR_CONTEXT` macro 
@@ -74,7 +99,15 @@ Here are the steps for string-valued options:
    3. Update `usage()` to document the new option in the help text
 
 
-## Last Steps
+## Additional Steps [TBD]
 
-Anything to here to make sure this works in `sipnet.in`?
-Mention that testing is great?
+1. Documentation is great:
+  - `src/sipnet/cli.c`
+    - Add new option to help message
+    - Update `NUM_FLAG_OPTIONS`.
+    - Anythiing else?
+  - Update the documentation in `docs/user-guide/cli-options.md` [TBD] 
+    (could this be automated by adding `sipnet -h > docs/user-guide/cli-options.md`) to `make document`?.
+2. Testing is great.
+  - Add tests for both the new option and its negation (if applicable) in [TBD].
+  - Anything to here to make sure this works in `sipnet.in` [TBD]?
