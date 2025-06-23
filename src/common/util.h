@@ -13,11 +13,6 @@
 // our own openFile method, which exits gracefully if there's an error
 FILE *openFile(const char *name, const char *mode);
 
-// do an strcmp on s1 and s2, ignoring case
-// (convert both to lower case before comparing)
-// return value is the same as for strcmp
-int strcmpIgnoreCase(const char *s1, const char *s2);
-
 // If line contains any character in the string commentChars,
 //  strip the comment off the line (i.e. replace first occurrence of
 //  commentChars with '\0')

@@ -246,7 +246,7 @@ int locateParam(ModelParams *modelParams, char *name) {
   i = 0;
   found = 0;
   while (i < modelParams->numParams && !found) {
-    if (strcmpIgnoreCase(name, modelParams->params[i].name) == 0) {
+    if (strcasecmp(name, modelParams->params[i].name) == 0) {
       found = 1;
     }
     i++;

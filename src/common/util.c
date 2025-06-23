@@ -30,36 +30,6 @@ FILE *openFile(const char *name, const char *mode) {
   return f;
 }
 
-// do an strcmp on s1 and s2, ignoring case
-// (convert both to lower case before comparing)
-// return value is the same as for strcmp
-int strcmpIgnoreCase(const char *s1, const char *s2) {
-  char *s1Lower;
-  char *s2Lower;
-  int i;
-  int result;
-
-  // allocate space for copies
-  // note that we need one more than strlen to allow room for termination
-  // character
-  s1Lower = (char *)malloc((strlen(s1) + 1) * sizeof(char));
-  s2Lower = (char *)malloc((strlen(s2) + 1) * sizeof(char));
-
-  for (i = 0; i <= strlen(s1); i++) {
-    s1Lower[i] = tolower(s1[i]);
-  }
-  for (i = 0; i <= strlen(s2); i++) {
-    s2Lower[i] = tolower(s2[i]);
-  }
-
-  result = strcmp(s1Lower, s2Lower);
-
-  free(s1Lower);
-  free(s2Lower);
-
-  return result;
-}
-
 // If line contains any character in the string commentChars,
 //  strip the comment off the line (i.e. replace first occurrence of
 //  commentChars with '\0')
