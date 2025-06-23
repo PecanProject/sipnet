@@ -4,12 +4,15 @@
 #include <stdio.h>
 
 #define MODEL_PARAM_MAXNAME 64
+#define OBSOLETE_PARAM (-1)
 
 // struct to hold a single param
 typedef struct OneModelParamStruct {
   char name[MODEL_PARAM_MAXNAME];  // name of parameter
-  int isRequired;  // 0 or 1; 1 indicates that we should terminate run if this
-                   // parameter isn't specified in input file
+  int isRequired;  // 1|0|OBSOLETE_PARAM (-1)
+                   //  1: required param, terminate if not read
+                   //  0: optional param
+                   // -1: obsolete param, warn if read
   double *value;  // a pointer to this param's (external location) value
   int isRead;  // whether this param has been read
 } OneModelParam;

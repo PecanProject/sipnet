@@ -8,19 +8,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "common/context.h"
 #include "common/exitCodes.h"
+#include "common/logging.h"
 #include "common/modelParams.h"
 #include "common/util.h"
 
 #include "cli.h"
-#include "context.h"
 #include "events.h"
 #include "sipnet.h"
 #include "outputItems.h"
-#include "modelStructures.h"
 
-void checkRuntype(void) {
-  if (strcmpIgnoreCase(ctx.runType, "standard") != 0) {
+void checkRuntype(const char *runType) {
+  if (strcasecmp(runType, "standard") != 0) {
     // Make sure this is not an old config with a different RUNTYPE set
     printf("SIPNET only supports the standard runtype mode; other options are "
            "obsolete and were last supported in v1.3.0\n");
@@ -56,14 +56,20 @@ void readInputFile(const char *fileName) {
 
     if (!isComment) {  // if this isn't just a comment line or blank line
       // tokenize line:
-      inputName = strtok(line, SEPARATORS);  // make inputName point to first
-                                             // token
-      inputValue = strtok(NULL, allSeparators);  // make inputValue point to
-                                                 // next token (e.g. after the
-                                                 // '=')
+      inputName = strtok(line, SEPARATORS);
+      inputValue = strtok(NULL, allSeparators);
+
+      // Handle RUNTYPE as an obsolete param; if it isn't set, consider it to be
+      // set to "standard"; and make sure it is that if set
+      if (strcasecmp(inputName, "runtype") == 0) {
+        checkRuntype(inputValue);
+        continue;
+      }
+
+      // Find the metadata so we know what to do with this param
       struct context_metadata *ctx_meta = getContextMetadata(inputName);
       if (ctx_meta == NULL) {
-        printf("Warning: ignoring input file parameter %s\n", inputName);
+        logWarning("ignoring input file parameter %s\n", inputName);
         continue;
       }
 
@@ -130,6 +136,8 @@ int main(int argc, char *argv[]) {
 
   // 1. Initialize Context with default values
   initContext();
+  // Also need to verify the CLI name map, now that the context has been init'd
+  checkCLINameMap();
 
   // 2. Parse command line args
   parseCommandLineArgs(argc, argv);
@@ -152,10 +160,6 @@ int main(int argc, char *argv[]) {
            FILENAME_MAXLEN - 10);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
-
-  // Handle RUNTYPE as an obsolete param; if it isn't set, consider it to be
-  // set to "standard"; and make sure it is that if set
-  checkRuntype();
 
   // 5. Set calculated filenames
   strcpy(paramFile, ctx.fileName);
@@ -187,9 +191,9 @@ int main(int argc, char *argv[]) {
   // 6. Initialize model, events, outputItems
   initModel(&modelParams, paramFile, climFile);
 
-#if EVENT_HANDLER
-  initEvents(EVENT_IN_FILE, ctx.printHeader);
-#endif
+  if (ctx.events) {
+    initEvents(EVENT_IN_FILE, ctx.printHeader);
+  }
 
   if (ctx.doSingleOutputs) {
     outputItems = newOutputItems(ctx.fileName, ' ');

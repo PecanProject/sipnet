@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
+#include "common/logging.h"
 #include "sipnet/sipnet.c"
 #include "sipnet/events.c"
 
@@ -81,15 +81,18 @@ int run(void) {
 
   int testStatus = 0;
   int status;
+  initContext();
+  updateIntContext("events", 1, CTX_TEST);
+
   status = runTest("events_output_no_header", 0);
   if (status) {
-    printf("runTest(no_header) failed\n");
+    logTest("runTest(no_header) failed\n");
   }
   testStatus |= status;
 
   status = runTest("events_output_header", 1);
   if (status) {
-    printf("runTest(header) failed\n");
+    logTest("runTest(header) failed\n");
   }
   testStatus |= status;
 
@@ -102,12 +105,12 @@ int main(void) {
   // Set up params and env to make sure event processing runs
   init();
 
-  printf("Starting run()\n");
+  logTest("Starting run()\n");
   status = run();
   if (status) {
-    printf("FAILED testEventOutputFile with status %d\n", status);
+    logTest("FAILED testEventOutputFile with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testEventOutputFile\n");
+  logTest("PASSED testEventOutputFile\n");
 }

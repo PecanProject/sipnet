@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "modelStructures.h"  // NOLINT
 #include "utils/tUtils.h"
+#include "common/logging.h"
 #include "sipnet/events.c"
 
 int checkEvent(EventNode *event, int year, int day, enum EventType type) {
@@ -12,7 +12,7 @@ int checkEvent(EventNode *event, int year, int day, enum EventType type) {
   }
   int success = event->year == year && event->day == day && event->type == type;
   if (!success) {
-    printf("Error checking event\n");
+    logTest("Error checking event\n");
     printEvent(event);
     return 1;
   }
@@ -28,7 +28,7 @@ int checkHarvestParams(HarvestParams *params, double fracRemAbove,
         compareDoubles(params->fractionTransferredAbove, fracTransAbove) &&
         compareDoubles(params->fractionTransferredBelow, fracTransBelow));
   if (status) {
-    printf("checkHarvestParams failed\n");
+    logTest("checkHarvestParams failed\n");
   }
   return status;
 }
@@ -38,7 +38,7 @@ int checkIrrigationParams(IrrigationParams *params, double amountAdded,
   int status = !(compareDoubles(params->amountAdded, amountAdded) &&
                  params->method == method);
   if (status) {
-    printf("checkIrrigationParams failed\n");
+    logTest("checkIrrigationParams failed\n");
   }
   return status;
 }
@@ -49,7 +49,7 @@ int checkFertilizationParams(FertilizationParams *params, double orgN,
                  compareDoubles(params->orgC, orgC) &&
                  compareDoubles(params->minN, minN));
   if (status) {
-    printf("checkFertilizationParams failed\n");
+    logTest("checkFertilizationParams failed\n");
   }
   return status;
 }
@@ -61,7 +61,7 @@ int checkPlantingParams(PlantingParams *params, double leafC, double woodC,
                  compareDoubles(params->fineRootC, fineRootC) &&
                  compareDoubles(params->coarseRootC, coarseRootC));
   if (status) {
-    printf("checkPlantingParams failed\n");
+    logTest("checkPlantingParams failed\n");
   }
   return status;
 }
@@ -74,7 +74,7 @@ int checkTillageParams(TillageParams *params, double fracLitterTransferred,
         compareDoubles(params->somDecompModifier, somDecompModifier) &&
         compareDoubles(params->litterDecompModifier, litterDecompModifier));
   if (status) {
-    printf("checkTillageParams failed\n");
+    logTest("checkTillageParams failed\n");
   }
   return status;
 }
@@ -97,7 +97,7 @@ int runTestSimple(void) {
   EventNode *output = readEventData("infra_events_simple.in");
 
   if (!output) {
-    printf("runTestSimple: events not read properly\n");
+    logTest("runTestSimple: events not read properly\n");
     return 1;
   }
 
@@ -132,13 +132,13 @@ int run(void) {
   int status;
   status = runTestEmpty();
   if (status) {
-    printf("runTestEmpty failed\n");
+    logTest("runTestEmpty failed\n");
   }
   testStatus |= status;
 
   status = runTestSimple();
   if (status) {
-    printf("runTestSimple failed\n");
+    logTest("runTestSimple failed\n");
   }
   testStatus |= status;
 
@@ -157,17 +157,17 @@ int main(void) {
   //    printf("Test initialization failed with status %d\n", status);
   //    exit(status);
   //  } else {
-  printf("Test initialized\n");
+  logTest("Test initialized\n");
   //  }
 
-  printf("Starting run()\n");
+  logTest("Starting run()\n");
   status = run();
   if (status) {
-    printf("FAILED testEventInfra with status %d\n", status);
+    logTest("FAILED testEventInfra with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testEventInfra\n");
+  logTest("PASSED testEventInfra\n");
 
   cleanup();
 }

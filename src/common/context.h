@@ -19,7 +19,8 @@ typedef enum ContextSource {
   CTX_DEFAULT = 0,
   CTX_CONTEXT_FILE = 1,
   CTX_COMMAND_LINE = 2,
-  CTX_CALCULATED = 3
+  CTX_CALCULATED = 3,
+  CTX_TEST = 4  // set by a test, always wins
 } context_source_t;
 
 typedef enum ContextType { CTX_INT = 0, CTX_CHAR = 1 } context_type_t;
@@ -33,19 +34,27 @@ struct context_metadata {
   UT_hash_handle hh;  // makes this structure hashable
 };
 
+// See docs/developer-guide/cli-options.md for details on how to add a new
+// Context entry
 struct Context {
-  char inputFile[CONTEXT_CHAR_MAXLEN];
-  char runType[CONTEXT_CHAR_MAXLEN];
-  char fileName[CONTEXT_CHAR_MAXLEN];
-  int location;
+  // Flags
   int doMainOutput;
   int doSingleOutputs;
+  int events;
   int printHeader;
+  int dumpConfig;
+  int quiet;
+
+  // Files
   char paramFile[CONTEXT_CHAR_MAXLEN];
   char climFile[CONTEXT_CHAR_MAXLEN];
   char outFile[CONTEXT_CHAR_MAXLEN];
-  int dumpConfig;
   char outConfigFile[CONTEXT_CHAR_MAXLEN];
+  char inputFile[CONTEXT_CHAR_MAXLEN];
+
+  // Other
+  // File prefix for climate and param files
+  char fileName[CONTEXT_CHAR_MAXLEN];
 
   // Temp space for handling command line flag args; we do not write directly
   // the params since we want to do a precedence check first. If the new source
@@ -64,8 +73,6 @@ extern struct Context ctx;
  * Initialize the global context struct with default values
  */
 void initContext(void);
-
-context_source_t getContextSource(const char *name);
 
 struct context_metadata *getContextMetadata(const char *name);
 
