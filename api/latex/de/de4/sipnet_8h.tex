@@ -47,11 +47,11 @@ Free allocated memory
 
 Call this when done running model 
 
-Definition at line \textbf{ 2887} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2383} of file \textbf{ sipnet.\+c}.
 
 
 
-References \textbf{ close\+Event\+Out\+File()}, \textbf{ deallocate\+Mean\+Tracker()}, \textbf{ event\+Out\+File}, \textbf{ free\+Climate\+List()}, \textbf{ free\+Event\+List()}, \textbf{ mean\+FPAR}, \textbf{ mean\+GPP}, and \textbf{ mean\+NPP}.
+References \textbf{ close\+Event\+Out\+File()}, \textbf{ ctx}, \textbf{ deallocate\+Mean\+Tracker()}, \textbf{ event\+Out\+File}, \textbf{ Context\+::events}, \textbf{ free\+Climate\+List()}, \textbf{ free\+Event\+List()}, \textbf{ mean\+FPAR}, \textbf{ mean\+GPP}, and \textbf{ mean\+NPP}.
 
 
 
@@ -86,11 +86,11 @@ Read in event data from a file with the following specification\+:
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2880} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2372} of file \textbf{ sipnet.\+c}.
 
 
 
-References \textbf{ event\+Out\+File}, \textbf{ events}, \textbf{ open\+Event\+Out\+File()}, and \textbf{ read\+Event\+Data()}.
+References \textbf{ ctx}, \textbf{ event\+Out\+File}, \textbf{ Context\+::events}, \textbf{ events}, \textbf{ open\+Event\+Out\+File()}, and \textbf{ read\+Event\+Data()}.
 
 
 
@@ -125,7 +125,7 @@ Read in initial parameter values and climate data. Also set up pointers to diffe
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2868} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2361} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -149,14 +149,6 @@ Here is the call graph for this function\+:
 \doxysubsubsection{printModelComponents()}
 {\footnotesize\ttfamily void print\+Model\+Components (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{out }\end{DoxyParamCaption})}
 
-
-
-Definition at line \textbf{ 2820} of file \textbf{ sipnet.\+c}.
-
-
-
-References \textbf{ ALTERNATIVE\+\_\+\+TRANS}, \textbf{ BALL\+\_\+\+BERRY}, \textbf{ COMPLEX\+\_\+\+WATER}, \textbf{ DAYCENT\+\_\+\+WATER\+\_\+\+HRESP}, \textbf{ GDD}, \textbf{ GROWTH\+\_\+\+RESP}, \textbf{ LITTER\+\_\+\+POOL}, \textbf{ LITTER\+\_\+\+WATER}, \textbf{ LITTER\+\_\+\+WATER\+\_\+\+DRAINAGE}, \textbf{ LLOYD\+\_\+\+TAYLOR}, \textbf{ MEAN\+\_\+\+FPAR\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+GPP\+\_\+\+SOIL\+\_\+\+DAYS}, \textbf{ MEAN\+\_\+\+NPP\+\_\+\+DAYS}, \textbf{ MICROBES}, \textbf{ MODEL\+\_\+\+WATER}, \textbf{ NUMBER\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ PENMAN\+\_\+\+MONTEITH\+\_\+\+TRANS}, \textbf{ ROOTS}, \textbf{ SEASONAL\+\_\+\+R\+\_\+\+SOIL}, \textbf{ SNOW}, \textbf{ SOIL\+\_\+\+MULTIPOOL}, \textbf{ SOIL\+\_\+\+PHENOL}, \textbf{ SOIL\+\_\+\+QUALITY}, \textbf{ STOICHIOMETRY}, \textbf{ WATER\+\_\+\+HRESP}, and \textbf{ WATER\+\_\+\+PSN}.
-
 \label{sipnet_8h_af6d23e2711c7acdd2f52fd1946185796} 
 \index{sipnet.h@{sipnet.h}!runModelOutput@{runModelOutput}}
 \index{runModelOutput@{runModelOutput}!sipnet.h@{sipnet.h}}
@@ -176,7 +168,7 @@ Run the model using parameter values in model\+Params
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2792} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2329} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -211,7 +203,7 @@ Each variable added will be output in a separate file (\textquotesingle{}$\ast$.
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2860} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2353} of file \textbf{ sipnet.\+c}.
 
 
 

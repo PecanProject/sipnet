@@ -123,6 +123,8 @@ Data Structures</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:af353f764fae2fca2d3a8837b12a5acee" id="r_af353f764fae2fca2d3a8837b12a5acee"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/ddd/model_params_8h.html#af353f764fae2fca2d3a8837b12a5acee">MODEL_PARAM_MAXNAME</a>&#160;&#160;&#160;64</td></tr>
 <tr class="separator:af353f764fae2fca2d3a8837b12a5acee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd02ffd73296db5d11d0cb7332e3c6b5" id="r_acd02ffd73296db5d11d0cb7332e3c6b5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/ddd/model_params_8h.html#acd02ffd73296db5d11d0cb7332e3c6b5">OBSOLETE_PARAM</a>&#160;&#160;&#160;(-1)</td></tr>
+<tr class="separator:acd02ffd73296db5d11d0cb7332e3c6b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -168,6 +170,22 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00006">6</a> of file <a class="el" href="../../d3/ddd/model_params_8h_source.html">modelParams.h</a>.</p>
+
+</div>
+</div>
+<a id="acd02ffd73296db5d11d0cb7332e3c6b5" name="acd02ffd73296db5d11d0cb7332e3c6b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd02ffd73296db5d11d0cb7332e3c6b5">&#9670;&#160;</a></span>OBSOLETE_PARAM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OBSOLETE_PARAM&#160;&#160;&#160;(-1)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00007">7</a> of file <a class="el" href="../../d3/ddd/model_params_8h_source.html">modelParams.h</a>.</p>
 
 </div>
 </div>
@@ -251,9 +269,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00230">230</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00269">269</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00018">ModelParamsStruct::params</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00025">ModelParamsStruct::readIndices</a>.</p>
+<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::params</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00028">ModelParamsStruct::readIndices</a>.</p>
 
 </div>
 </div>
@@ -331,7 +349,7 @@ Functions</h2></td></tr>
           <td class="memname">void initializeOneModelParam </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="../../d3/ddd/model_params_8h.html#a158618150d9703f9e07beca8b80e4ecb">ModelParams</a> *&#160;</td>
-          <td class="paramname"><em>params</em>, </td>
+          <td class="paramname"><em>modelParams</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -358,12 +376,21 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">modelParams</td><td></td></tr>
+    <tr><td class="paramname">name</td><td></td></tr>
+    <tr><td class="paramname">externalLoc</td><td></td></tr>
+    <tr><td class="paramname">isRequired</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00081">81</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00121">121</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d2/de5/model_params_8c_source.html#l00012">allParamsInitialized()</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00014">OneModelParamStruct::isRead</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00011">OneModelParamStruct::isRequired</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00020">ModelParamsStruct::maxParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00010">OneModelParamStruct::name</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::numParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00018">ModelParamsStruct::params</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00013">OneModelParamStruct::value</a>.</p>
+<p class="reference">References <a class="el" href="../../d2/de5/model_params_8c_source.html#l00015">allParamsInitialized()</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00017">OneModelParamStruct::isRead</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00012">OneModelParamStruct::isRequired</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00019">logError</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00023">ModelParamsStruct::maxParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00011">OneModelParamStruct::name</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00024">ModelParamsStruct::numParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::params</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00016">OneModelParamStruct::value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00734">readParamData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00671">readParamData()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -403,21 +430,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00205">205</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00244">244</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00010">OneModelParamStruct::name</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00018">ModelParamsStruct::params</a>, and <a class="el" href="../../de/df1/util_8c_source.html#l00161">strcmpIgnoreCase()</a>.</p>
+<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00011">OneModelParamStruct::name</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d2/de5/model_params_8c_source.html#l00117">readModelParams()</a>.</p>
-<div class="dynheader">
-Here is the call graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="../../d3/ddd/model_params_8h_adfb3483c3e32d4584b53b0b89901b081_cgraph.png" border="0" usemap="#ad3/ddd/model_params_8h_adfb3483c3e32d4584b53b0b89901b081_cgraph" alt=""/></div>
-<map name="ad3/ddd/model_params_8h_adfb3483c3e32d4584b53b0b89901b081_cgraph" id="ad3/ddd/model_params_8h_adfb3483c3e32d4584b53b0b89901b081_cgraph">
-<area shape="rect" title=" " alt="" coords="5,5,108,31"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a46c453b73f4e8cd62264e4bfe8b6ae05" title=" " alt="" coords="156,5,296,31"/>
-<area shape="poly" title=" " alt="" coords="108,15,142,15,142,21,108,21"/>
-</map>
-</div>
+<p class="reference">Referenced by <a class="el" href="../../d2/de5/model_params_8c_source.html#l00157">readModelParams()</a>.</p>
 
 </div>
 </div>
@@ -437,11 +454,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00064">64</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00098">98</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00020">ModelParamsStruct::maxParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::numParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00023">ModelParamsStruct::numParamsRead</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00018">ModelParamsStruct::params</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00025">ModelParamsStruct::readIndices</a>.</p>
+<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00023">ModelParamsStruct::maxParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00024">ModelParamsStruct::numParams</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00026">ModelParamsStruct::numParamsRead</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::params</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00028">ModelParamsStruct::readIndices</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00734">readParamData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00671">readParamData()</a>.</p>
 
 </div>
 </div>
@@ -471,11 +488,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00117">117</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00157">157</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d2/de5/model_params_8c_source.html#l00034">checkAllRead()</a>, <a class="el" href="../../d2/de5/model_params_8c_source.html#l00108">checkParamFormat()</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00014">OneModelParamStruct::isRead</a>, <a class="el" href="../../d2/de5/model_params_8c_source.html#l00205">locateParam()</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00006">MODEL_PARAM_MAXNAME</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00023">ModelParamsStruct::numParamsRead</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00018">ModelParamsStruct::params</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00025">ModelParamsStruct::readIndices</a>, <a class="el" href="../../d6/d7a/transpose_8c_source.html#l00016">SEPARATORS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00192">stripComment()</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00013">OneModelParamStruct::value</a>, and <a class="el" href="../../d2/de5/model_params_8c_source.html#l00226">valueSet()</a>.</p>
+<p class="reference">References <a class="el" href="../../d2/de5/model_params_8c_source.html#l00038">checkAllRead()</a>, <a class="el" href="../../d2/de5/model_params_8c_source.html#l00148">checkParamFormat()</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00017">OneModelParamStruct::isRead</a>, <a class="el" href="../../d2/de5/model_params_8c_source.html#l00244">locateParam()</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00019">logError</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00017">logWarning</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00006">MODEL_PARAM_MAXNAME</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00026">ModelParamsStruct::numParamsRead</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::params</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00028">ModelParamsStruct::readIndices</a>, <a class="el" href="../../d6/d7a/transpose_8c_source.html#l00016">SEPARATORS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00037">stripComment()</a>, <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00016">OneModelParamStruct::value</a>, and <a class="el" href="../../d2/de5/model_params_8c_source.html#l00265">valueSet()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00734">readParamData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00671">readParamData()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -492,10 +509,8 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="125,127,203,147,201,152,124,132"/>
 <area shape="rect" href="../../d2/de5/model_params_8c.html#a96945b74fe6ffd02c6e48a0bc7db89c6" title=" " alt="" coords="226,203,305,228"/>
 <area shape="poly" title=" " alt="" coords="95,127,139,157,193,188,214,197,212,202,191,192,136,161,92,132"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822" title=" " alt="" coords="409,55,505,80"/>
-<area shape="poly" title=" " alt="" coords="339,65,395,65,395,70,339,70"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a46c453b73f4e8cd62264e4bfe8b6ae05" title=" " alt="" coords="387,104,527,129"/>
-<area shape="poly" title=" " alt="" coords="317,114,373,114,373,119,317,119"/>
+<area shape="rect" href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822" title=" " alt="" coords="387,55,483,80"/>
+<area shape="poly" title=" " alt="" coords="339,65,373,65,373,70,339,70"/>
 </map>
 </div>
 
@@ -527,11 +542,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00226">226</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/de5/model_params_8c_source.html#l00265">265</a> of file <a class="el" href="../../d2/de5/model_params_8c_source.html">modelParams.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00014">OneModelParamStruct::isRead</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00018">ModelParamsStruct::params</a>.</p>
+<p class="reference">References <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00017">OneModelParamStruct::isRead</a>, and <a class="el" href="../../d3/ddd/model_params_8h_source.html#l00021">ModelParamsStruct::params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d2/de5/model_params_8c_source.html#l00117">readModelParams()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d2/de5/model_params_8c_source.html#l00157">readModelParams()</a>.</p>
 
 </div>
 </div>

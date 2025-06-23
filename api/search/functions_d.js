@@ -7,6 +7,6 @@ var searchData=
   ['potpsn_4',['potPsn',['../dd/d09/sipnet_8c.html#a210ec283fb3a7691a2f81ea56d3e0589',1,'sipnet.c']]],
   ['printconfig_5',['printconfig',['../d8/dfa/context_8c.html#a29b8b8f3293bc9ce42a12cc9b86416f8',1,'printConfig(FILE *outFile):&#160;context.c'],['../dc/d1e/context_8h.html#a29b8b8f3293bc9ce42a12cc9b86416f8',1,'printConfig(FILE *outFile):&#160;context.c']]],
   ['printevent_6',['printEvent',['../de/deb/events_8c.html#aeda31871c170fe492587b17f70382344',1,'events.c']]],
-  ['printmodelcomponents_7',['printmodelcomponents',['../dd/d09/sipnet_8c.html#aed3527886ac1ed87fff8c530d8851819',1,'printModelComponents(FILE *out):&#160;sipnet.c'],['../de/de4/sipnet_8h.html#aed3527886ac1ed87fff8c530d8851819',1,'printModelComponents(FILE *out):&#160;sipnet.c']]],
+  ['printmodelcomponents_7',['printModelComponents',['../de/de4/sipnet_8h.html#aed3527886ac1ed87fff8c530d8851819',1,'sipnet.h']]],
   ['processevents_8',['processEvents',['../dd/d09/sipnet_8c.html#afb4ad97daa6ca46b43b7eae3554c17fe',1,'sipnet.c']]]
 ];

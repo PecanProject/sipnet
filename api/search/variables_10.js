@@ -15,7 +15,6 @@ var searchData=
   ['rsoilconst1_12',['rSoilConst1',['../d0/dbf/struct_parameters.html#a813652a364f6058f1f5e13bbc8a09052',1,'Parameters']]],
   ['rsoilconst2_13',['rSoilConst2',['../d0/dbf/struct_parameters.html#a062811c787dd972cbc38929a514a0a2d',1,'Parameters']]],
   ['rtot_14',['rtot',['../d3/d1f/struct_tracker_vars.html#adf0cf7040532c1c0044ff78faa824981',1,'TrackerVars']]],
-  ['runtype_15',['runType',['../de/d66/struct_context.html#a5adbf165d204d31cdc2a3e331351ef73',1,'Context']]],
-  ['rveg_16',['rVeg',['../da/d95/struct_flux_vars.html#a78a5d006f66342f58b68ee21d149cc9a',1,'FluxVars']]],
-  ['rwood_17',['rWood',['../da/d95/struct_flux_vars.html#a3c51d0552452feb1d466eeeb1b9cd69e',1,'FluxVars']]]
+  ['rveg_15',['rVeg',['../da/d95/struct_flux_vars.html#a78a5d006f66342f58b68ee21d149cc9a',1,'FluxVars']]],
+  ['rwood_16',['rWood',['../da/d95/struct_flux_vars.html#a3c51d0552452feb1d466eeeb1b9cd69e',1,'FluxVars']]]
 ];

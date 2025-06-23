@@ -3,15 +3,15 @@
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
 {\ttfamily \#include $<$stdlib.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include "{}common/context.\+h"{}}\newline
 {\ttfamily \#include "{}common/exit\+Codes.\+h"{}}\newline
+{\ttfamily \#include "{}common/logging.\+h"{}}\newline
 {\ttfamily \#include "{}common/model\+Params.\+h"{}}\newline
 {\ttfamily \#include "{}common/util.\+h"{}}\newline
 {\ttfamily \#include "{}cli.\+h"{}}\newline
-{\ttfamily \#include "{}context.\+h"{}}\newline
 {\ttfamily \#include "{}events.\+h"{}}\newline
 {\ttfamily \#include "{}sipnet.\+h"{}}\newline
 {\ttfamily \#include "{}output\+Items.\+h"{}}\newline
-{\ttfamily \#include "{}model\+Structures.\+h"{}}\newline
 Include dependency graph for frontend.\+c\+:
 \nopagebreak
 \begin{figure}[H]
@@ -23,7 +23,7 @@ Include dependency graph for frontend.\+c\+:
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \textbf{ check\+Runtype} (void)
+void \textbf{ check\+Runtype} (const char $\ast$run\+Type)
 \item 
 void \textbf{ read\+Input\+File} (const char $\ast$file\+Name)
 \item 
@@ -32,11 +32,11 @@ int \textbf{ main} (int argc, char $\ast$argv[$\,$])
 
 
 \doxysubsection{Function Documentation}
-\label{frontend_8c_aa5fc925fd213af7da2a41d2f0752e504} 
+\label{frontend_8c_aa1488883552f000ab25659f4cd9f0819} 
 \index{frontend.c@{frontend.c}!checkRuntype@{checkRuntype}}
 \index{checkRuntype@{checkRuntype}!frontend.c@{frontend.c}}
 \doxysubsubsection{checkRuntype()}
-{\footnotesize\ttfamily void check\+Runtype (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void check\+Runtype (\begin{DoxyParamCaption}\item[{const char $\ast$}]{run\+Type }\end{DoxyParamCaption})}
 
 
 
@@ -44,20 +44,12 @@ Definition at line \textbf{ 22} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::run\+Type}, and \textbf{ strcmp\+Ignore\+Case()}.
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, and \textbf{ Context\+::input\+File}.
 
 
 
-Referenced by \textbf{ main()}.
+Referenced by \textbf{ read\+Input\+File()}.
 
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=271pt]{d9/ddf/frontend_8c_aa5fc925fd213af7da2a41d2f0752e504_cgraph}
-\end{center}
-\end{figure}
 \label{frontend_8c_a0ddf1224851353fc92bfbff6f499fa97} 
 \index{frontend.c@{frontend.c}!main@{main}}
 \index{main@{main}!frontend.c@{frontend.c}}
@@ -66,11 +58,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 117} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 123} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ Context\+::input\+File}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, and \textbf{ update\+Char\+Context()}.
+References \textbf{ check\+CLIName\+Map()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ Context\+::events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ Context\+::input\+File}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, and \textbf{ update\+Char\+Context()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -92,7 +84,7 @@ Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ open\+File()}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+References \textbf{ check\+Runtype()}, \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ log\+Warning}, \textbf{ open\+File()}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
 
 
 

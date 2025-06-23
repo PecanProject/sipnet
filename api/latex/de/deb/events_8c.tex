@@ -11,6 +11,7 @@ Handles reading, parsing, and storing agronomic events for SIPNET simulations.
 {\ttfamily \#include $<$stdlib.\+h$>$}\newline
 {\ttfamily \#include $<$unistd.\+h$>$}\newline
 {\ttfamily \#include "{}common/exit\+Codes.\+h"{}}\newline
+{\ttfamily \#include "{}common/logging.\+h"{}}\newline
 {\ttfamily \#include "{}common/util.\+h"{}}\newline
 Include dependency graph for events.\+c\+:
 \nopagebreak
@@ -64,7 +65,7 @@ Close the event output file
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 328} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 329} of file \textbf{ events.\+c}.
 
 
 
@@ -78,11 +79,11 @@ Referenced by \textbf{ cleanup\+Model()}.
 
 
 
-Definition at line \textbf{ 23} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 25} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ event}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ NUM\+\_\+\+FERTILIZATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+HARVEST\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+IRRIGATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+PLANTING\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+TILLAGE\+\_\+\+PARAMS}, \textbf{ params}, \textbf{ PLANTING}, \textbf{ TILLAGE}, and \textbf{ Event\+Node\+::year}.
+References \textbf{ event}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ log\+Error}, \textbf{ NUM\+\_\+\+FERTILIZATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+HARVEST\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+IRRIGATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+PLANTING\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+TILLAGE\+\_\+\+PARAMS}, \textbf{ params}, \textbf{ PLANTING}, \textbf{ TILLAGE}, and \textbf{ Event\+Node\+::year}.
 
 
 
@@ -106,11 +107,11 @@ string version of event enum type
 \end{DoxyReturn}
 
 
-Definition at line \textbf{ 280} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 281} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ PLANTING}, and \textbf{ TILLAGE}.
+References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ log\+Error}, \textbf{ PLANTING}, and \textbf{ TILLAGE}.
 
 
 
@@ -124,7 +125,7 @@ Referenced by \textbf{ write\+Event\+Out()}.
 
 
 
-Definition at line \textbf{ 132} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 133} of file \textbf{ events.\+c}.
 
 
 
@@ -150,7 +151,7 @@ FILE pointer to output file
 \end{DoxyReturn}
 
 
-Definition at line \textbf{ 298} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 299} of file \textbf{ events.\+c}.
 
 
 
@@ -176,7 +177,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 231} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 232} of file \textbf{ events.\+c}.
 
 
 
@@ -192,11 +193,11 @@ Read event data from input filename (canonically events.\+in)
 
 Format\+: returned data is structured as an linked list of \doxyref{Event\+Node}{p.}{d6/d43/struct_event_node} pointers. It is assumed that the events are ordered by year and day. 
 
-Definition at line \textbf{ 147} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 148} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ create\+Event\+Node()}, \textbf{ events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ get\+Event\+Type()}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
+References \textbf{ create\+Event\+Node()}, \textbf{ events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ get\+Event\+Type()}, \textbf{ log\+Error}, \textbf{ log\+Info}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
 
 
 
@@ -239,7 +240,7 @@ year day event\+\_\+type $<$param\+\_\+name$>$=$<$delta$>$[,$<$param\+\_\+name$>
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 309} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 310} of file \textbf{ events.\+c}.
 
 
 

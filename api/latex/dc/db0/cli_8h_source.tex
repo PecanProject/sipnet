@@ -8,30 +8,30 @@
 \DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <getopt.h>}}
 \DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
 \DoxyCodeLine{00006\ }
-\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}context.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}common/context.h"{}}}
 \DoxyCodeLine{00008\ }
 \DoxyCodeLine{00009\ \textcolor{comment}{//\ This\ file\ encapsulates\ management\ of\ the\ cli\ -\/\ that\ is,\ parsing\ the\ command}}
 \DoxyCodeLine{00010\ \textcolor{comment}{//\ line\ options,\ and\ managing\ what\ those\ options\ are}}
 \DoxyCodeLine{00011\ }
 \DoxyCodeLine{00012\ \textcolor{comment}{//\ The\ struct\ 'option'\ is\ defined\ in\ getopt.h,\ and\ is\ expected\ by\ getopt\_long()}}
-\DoxyCodeLine{00013\ \textcolor{keyword}{extern}\ \textcolor{keyword}{struct\ }option\ long\_options[];}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ extern\ struct\ option\ long\_options[];}}
 \DoxyCodeLine{00014\ }
 \DoxyCodeLine{00015\ \textcolor{comment}{//\ The\ run-\/time\ option\ names\ do\ not\ match\ their\ corresponding\ fields\ in\ Context,}}
-\DoxyCodeLine{00016\ \textcolor{comment}{//\ so\ we\ need\ a\ way\ to\ get\ from\ one\ to\ the\ other.\ There\ is\ a\ check\ in}}
-\DoxyCodeLine{00017\ \textcolor{comment}{//\ initContext()\ that\ verifies\ that\ these\ all\ work.\ The\ \#define\ here\ is\ for}}
-\DoxyCodeLine{00018\ \textcolor{comment}{//\ that\ check.}}
-\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ NUM\_FLAG\_OPTIONS\ 4}}
-\DoxyCodeLine{00020\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{char}\ *argNameMap[NUM\_FLAG\_OPTIONS];}
-\DoxyCodeLine{00021\ }
-\DoxyCodeLine{00022\ \textcolor{comment}{//\ Print\ the\ help\ message\ when\ requested}}
-\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName);}
-\DoxyCodeLine{00024\ }
-\DoxyCodeLine{00025\ \textcolor{comment}{//\ Print\ the\ version\ when\ requested}}
-\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ version(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00027\ }
-\DoxyCodeLine{00028\ \textcolor{comment}{//\ Parses\ command-\/line\ options\ using\ getopt\_long}}
-\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ parseCommandLineArgs(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[]);}
-\DoxyCodeLine{00030\ }
-\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_CLI\_H}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ so\ we\ need\ a\ way\ to\ get\ from\ one\ to\ the\ other.}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ NUM\_FLAG\_OPTIONS\ 6}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{char}\ *argNameMap[2\ *\ NUM\_FLAG\_OPTIONS];}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ checkCLINameMap(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ Print\ the\ help\ message\ when\ requested}}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ Print\ the\ version\ when\ requested}}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ version(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ Parses\ command-\/line\ options\ using\ getopt\_long}}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ parseCommandLineArgs(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[]);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_CLI\_H}}
 
 \end{DoxyCode}

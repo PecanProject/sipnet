@@ -24,7 +24,6 @@ var searchData=
   ['litterwfracinit_21',['litterWFracInit',['../d0/dbf/struct_parameters.html#a102e14e94699cd3d5d8779152fd1b38e',1,'Parameters']]],
   ['litterwhc_22',['litterWHC',['../d0/dbf/struct_parameters.html#a9eca602db8d822f71fc253aed7a473a8',1,'Parameters']]],
   ['litwaterdrainrate_23',['litWaterDrainRate',['../d0/dbf/struct_parameters.html#a861b819f4d9f2f4f2e4e579f5d5fc972',1,'Parameters']]],
-  ['location_24',['location',['../de/d66/struct_context.html#abe056b99691cadd4e5d53af99910ffc5',1,'Context']]],
-  ['log2_5fnum_5fbuckets_25',['log2_num_buckets',['../db/d32/struct_u_t__hash__table.html#ae376a7f3fac525f3a9d03b6beec8d12f',1,'UT_hash_table']]],
-  ['long_5foptions_26',['long_options',['../dd/def/cli_8c.html#ab5b68aa8f898c499ca2c3092ecd9e552',1,'long_options:&#160;cli.c'],['../dc/db0/cli_8h.html#ab5b68aa8f898c499ca2c3092ecd9e552',1,'long_options:&#160;cli.c']]]
+  ['log2_5fnum_5fbuckets_24',['log2_num_buckets',['../db/d32/struct_u_t__hash__table.html#ae376a7f3fac525f3a9d03b6beec8d12f',1,'UT_hash_table']]],
+  ['long_5foptions_25',['long_options',['../dd/def/cli_8c.html#ab5b68aa8f898c499ca2c3092ecd9e552',1,'cli.c']]]
 ];

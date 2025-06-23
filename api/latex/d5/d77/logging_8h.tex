@@ -1,0 +1,99 @@
+\doxysection{logging.\+h File Reference}
+\label{logging_8h}\index{logging.h@{logging.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \#include "{}context.\+h"{}}\newline
+Include dependency graph for logging.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{dc/d60/logging_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/dcc/logging_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ log\+Warning}(...)~\textbf{ logprint}(1, "{}[WARNING] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\item 
+\#define \textbf{ log\+Info}(...)~\textbf{ logprint}(1, "{}[INFO   ] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\item 
+\#define \textbf{ log\+Error}(...)~\textbf{ logprint}(0, "{}[ERROR  ] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\item 
+\#define \textbf{ log\+Test}(...)~\textbf{ logprint}(0, "{}[TEST   ] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ logprint} (int check\+Context, const char $\ast$prefix, const char $\ast$fmt,...)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{logging_8h_a95d829d52ad9b078da34c2312388a48b} 
+\index{logging.h@{logging.h}!logError@{logError}}
+\index{logError@{logError}!logging.h@{logging.h}}
+\doxysubsubsection{logError}
+{\footnotesize\ttfamily \#define log\+Error(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(0, "{}[ERROR  ] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ logging.\+h}.
+
+\label{logging_8h_acf315d78a13752d852ac5aef893598ae} 
+\index{logging.h@{logging.h}!logInfo@{logInfo}}
+\index{logInfo@{logInfo}!logging.h@{logging.h}}
+\doxysubsubsection{logInfo}
+{\footnotesize\ttfamily \#define log\+Info(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(1, "{}[INFO   ] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ logging.\+h}.
+
+\label{logging_8h_a2fdba44c36e040a816760eace78b36f9} 
+\index{logging.h@{logging.h}!logTest@{logTest}}
+\index{logTest@{logTest}!logging.h@{logging.h}}
+\doxysubsubsection{logTest}
+{\footnotesize\ttfamily \#define log\+Test(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(0, "{}[TEST   ] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ logging.\+h}.
+
+\label{logging_8h_a683d6ae10d139ab0d19204f4f6bec87b} 
+\index{logging.h@{logging.h}!logWarning@{logWarning}}
+\index{logWarning@{logWarning}!logging.h@{logging.h}}
+\doxysubsubsection{logWarning}
+{\footnotesize\ttfamily \#define log\+Warning(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(1, "{}[WARNING] "{}, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+
+Someday, this might grow into a real logging system
+
+For now, it is just some convenience wrappers around printf that has access to the \doxyref{Context}{p.}{de/d66/struct_context} 
+
+Definition at line \textbf{ 17} of file \textbf{ logging.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\label{logging_8h_a73e7d763b174525b6bd0524a7aa0a628} 
+\index{logging.h@{logging.h}!logprint@{logprint}}
+\index{logprint@{logprint}!logging.h@{logging.h}}
+\doxysubsubsection{logprint()}
+{\footnotesize\ttfamily void logprint (\begin{DoxyParamCaption}\item[{int}]{check\+Context,  }\item[{const char $\ast$}]{prefix,  }\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ logging.\+c}.
+
+
+
+References \textbf{ ctx}, and \textbf{ Context\+::quiet}.
+

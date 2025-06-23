@@ -319,7 +319,7 @@ Close the event output file
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 328} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 329} of file \textbf{ events.\+c}.
 
 
 
@@ -343,11 +343,11 @@ string version of event enum type
 \end{DoxyReturn}
 
 
-Definition at line \textbf{ 280} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 281} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ PLANTING}, and \textbf{ TILLAGE}.
+References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ log\+Error}, \textbf{ PLANTING}, and \textbf{ TILLAGE}.
 
 
 
@@ -369,7 +369,7 @@ FILE pointer to output file
 \end{DoxyReturn}
 
 
-Definition at line \textbf{ 298} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 299} of file \textbf{ events.\+c}.
 
 
 
@@ -397,11 +397,11 @@ Read event data from input filename (canonically events.\+in)
 
 Format\+: returned data is structured as an linked list of \doxyref{Event\+Node}{p.}{d6/d43/struct_event_node} pointers. It is assumed that the events are ordered by year and day. 
 
-Definition at line \textbf{ 147} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 148} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ create\+Event\+Node()}, \textbf{ events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ get\+Event\+Type()}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
+References \textbf{ create\+Event\+Node()}, \textbf{ events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ get\+Event\+Type()}, \textbf{ log\+Error}, \textbf{ log\+Info}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
 
 
 
@@ -444,7 +444,7 @@ year day event\+\_\+type $<$param\+\_\+name$>$=$<$delta$>$[,$<$param\+\_\+name$>
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 309} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 310} of file \textbf{ events.\+c}.
 
 
 

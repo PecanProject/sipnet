@@ -1,0 +1,17 @@
+\doxysection{logging.\+c}
+\label{logging_8c_source}\index{logging.c@{logging.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}logging.h"{}}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{keywordtype}{void}\ logprint(\textcolor{keywordtype}{int}\ checkContext,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prefix,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...)\ \{}
+\DoxyCodeLine{00004\ \ \ \textcolor{keywordflow}{if}\ (!checkContext\ ||\ !ctx.quiet)\ \{}
+\DoxyCodeLine{00005\ \ \ \ \ va\_list\ args;}
+\DoxyCodeLine{00006\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%s"{}},\ prefix);}
+\DoxyCodeLine{00007\ \ \ \ \ va\_start(args,\ fmt);}
+\DoxyCodeLine{00008\ \ \ \ \ vprintf(fmt,\ args);}
+\DoxyCodeLine{00009\ \ \ \ \ va\_end(args);}
+\DoxyCodeLine{00010\ \ \ \}}
+\DoxyCodeLine{00011\ \}}
+
+\end{DoxyCode}

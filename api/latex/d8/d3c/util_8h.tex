@@ -20,29 +20,7 @@ This graph shows which files directly or indirectly include this file\+:
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \textbf{ build\+File\+Name} (char $\ast$filename, const char $\ast$base, const char $\ast$ext)
-\item 
 FILE $\ast$ \textbf{ open\+File} (const char $\ast$name, const char $\ast$mode)
-\item 
-FILE $\ast$ \textbf{ open\+File\+Ext} (const char $\ast$name, const char $\ast$ext, const char $\ast$mode)
-\item 
-void \textbf{ seed\+Rand} (unsigned int seed, FILE $\ast$outF)
-\item 
-double \textbf{ randm} (void)
-\item 
-double $\ast$ \textbf{ make\+Array} (int size)
-\item 
-double $\ast$$\ast$ \textbf{ make2\+DArray} (int nrows, int ncols)
-\item 
-int $\ast$$\ast$ \textbf{ make2\+DInt\+Array} (int nrows, int ncols)
-\item 
-void \textbf{ free2\+DArray} (void $\ast$$\ast$arr)
-\item 
-void \textbf{ assign\+Array} (double $\ast$out, double $\ast$in, int n)
-\item 
-double \textbf{ sum\+Array} (double $\ast$array, int length)
-\item 
-int \textbf{ strcmp\+Ignore\+Case} (const char $\ast$s1, const char $\ast$s2)
 \item 
 int \textbf{ strip\+Comment} (char $\ast$line, const char $\ast$comment\+Chars)
 \item 
@@ -51,30 +29,6 @@ int \textbf{ count\+Fields} (const char $\ast$line, const char $\ast$sep)
 
 
 \doxysubsection{Function Documentation}
-\label{util_8h_ac49fd8b4678d4f6f01e00d17b72ac028} 
-\index{util.h@{util.h}!assignArray@{assignArray}}
-\index{assignArray@{assignArray}!util.h@{util.h}}
-\doxysubsubsection{assignArray()}
-{\footnotesize\ttfamily void assign\+Array (\begin{DoxyParamCaption}\item[{double $\ast$}]{out,  }\item[{double $\ast$}]{in,  }\item[{int}]{n }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 138} of file \textbf{ util.\+c}.
-
-\label{util_8h_aaf26e57eedf3733a337d8d421ff599ef} 
-\index{util.h@{util.h}!buildFileName@{buildFileName}}
-\index{buildFileName@{buildFileName}!util.h@{util.h}}
-\doxysubsubsection{buildFileName()}
-{\footnotesize\ttfamily void build\+File\+Name (\begin{DoxyParamCaption}\item[{char $\ast$}]{filename,  }\item[{const char $\ast$}]{base,  }\item[{const char $\ast$}]{ext }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 20} of file \textbf{ util.\+c}.
-
-
-
-Referenced by \textbf{ open\+File\+Ext()}.
-
 \label{util_8h_a87a0923ef9b7dde5f205f1501f851822} 
 \index{util.h@{util.h}!countFields@{countFields}}
 \index{countFields@{countFields}!util.h@{util.h}}
@@ -83,51 +37,11 @@ Referenced by \textbf{ open\+File\+Ext()}.
 
 
 
-Definition at line \textbf{ 208} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 53} of file \textbf{ util.\+c}.
 
 
 
 Referenced by \textbf{ check\+Param\+Format()}, and \textbf{ read\+Clim\+Data()}.
-
-\label{util_8h_a7611ac8af983ccdaaadddb7de7b53c2b} 
-\index{util.h@{util.h}!free2DArray@{free2DArray}}
-\index{free2DArray@{free2DArray}!util.h@{util.h}}
-\doxysubsubsection{free2DArray()}
-{\footnotesize\ttfamily void free2\+DArray (\begin{DoxyParamCaption}\item[{void $\ast$$\ast$}]{arr }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 132} of file \textbf{ util.\+c}.
-
-\label{util_8h_acfd51a4f4e38b658d40ac54b748a9b49} 
-\index{util.h@{util.h}!make2DArray@{make2DArray}}
-\index{make2DArray@{make2DArray}!util.h@{util.h}}
-\doxysubsubsection{make2DArray()}
-{\footnotesize\ttfamily double $\ast$$\ast$ make2\+DArray (\begin{DoxyParamCaption}\item[{int}]{nrows,  }\item[{int}]{ncols }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 99} of file \textbf{ util.\+c}.
-
-\label{util_8h_a09ddebbbbb5ccb732d7f88931d9d1b2f} 
-\index{util.h@{util.h}!make2DIntArray@{make2DIntArray}}
-\index{make2DIntArray@{make2DIntArray}!util.h@{util.h}}
-\doxysubsubsection{make2DIntArray()}
-{\footnotesize\ttfamily int $\ast$$\ast$ make2\+DInt\+Array (\begin{DoxyParamCaption}\item[{int}]{nrows,  }\item[{int}]{ncols }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 115} of file \textbf{ util.\+c}.
-
-\label{util_8h_a21c26b5db93cc2c6817b9a953683280f} 
-\index{util.h@{util.h}!makeArray@{makeArray}}
-\index{makeArray@{makeArray}!util.h@{util.h}}
-\doxysubsubsection{makeArray()}
-{\footnotesize\ttfamily double $\ast$ make\+Array (\begin{DoxyParamCaption}\item[{int}]{size }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 86} of file \textbf{ util.\+c}.
 
 \label{util_8h_a2a788020b8916d13ec26d4ad01c225f9} 
 \index{util.h@{util.h}!openFile@{openFile}}
@@ -137,7 +51,7 @@ Definition at line \textbf{ 86} of file \textbf{ util.\+c}.
 
 
 
-Definition at line \textbf{ 27} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 20} of file \textbf{ util.\+c}.
 
 
 
@@ -145,67 +59,7 @@ References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+FILE\+\_\+\+OPEN\+\_\+\+OR\+\_\+\+RE
 
 
 
-Referenced by \textbf{ copy\+File()}, \textbf{ main()}, \textbf{ open\+Event\+Out\+File()}, \textbf{ open\+File\+Ext()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+Input\+File()}, and \textbf{ read\+Param\+Data()}.
-
-\label{util_8h_a4ec71fe2ea5006cccfae2cbf8ed19979} 
-\index{util.h@{util.h}!openFileExt@{openFileExt}}
-\index{openFileExt@{openFileExt}!util.h@{util.h}}
-\doxysubsubsection{openFileExt()}
-{\footnotesize\ttfamily FILE $\ast$ open\+File\+Ext (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{const char $\ast$}]{ext,  }\item[{const char $\ast$}]{mode }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 41} of file \textbf{ util.\+c}.
-
-
-
-References \textbf{ build\+File\+Name()}, and \textbf{ open\+File()}.
-
-
-
-Referenced by \textbf{ main()}.
-
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=241pt]{d8/d3c/util_8h_a4ec71fe2ea5006cccfae2cbf8ed19979_cgraph}
-\end{center}
-\end{figure}
-\label{util_8h_a7c691c3c5db12904e93cc52d68cc2304} 
-\index{util.h@{util.h}!randm@{randm}}
-\index{randm@{randm}!util.h@{util.h}}
-\doxysubsubsection{randm()}
-{\footnotesize\ttfamily double randm (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 75} of file \textbf{ util.\+c}.
-
-\label{util_8h_ad2222db949c03ef23f3e1a192af45aef} 
-\index{util.h@{util.h}!seedRand@{seedRand}}
-\index{seedRand@{seedRand}!util.h@{util.h}}
-\doxysubsubsection{seedRand()}
-{\footnotesize\ttfamily void seed\+Rand (\begin{DoxyParamCaption}\item[{unsigned int}]{seed,  }\item[{FILE $\ast$}]{outF }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 56} of file \textbf{ util.\+c}.
-
-\label{util_8h_a46c453b73f4e8cd62264e4bfe8b6ae05} 
-\index{util.h@{util.h}!strcmpIgnoreCase@{strcmpIgnoreCase}}
-\index{strcmpIgnoreCase@{strcmpIgnoreCase}!util.h@{util.h}}
-\doxysubsubsection{strcmpIgnoreCase()}
-{\footnotesize\ttfamily int strcmp\+Ignore\+Case (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s1,  }\item[{const char $\ast$}]{s2 }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 161} of file \textbf{ util.\+c}.
-
-
-
-Referenced by \textbf{ check\+Runtype()}, \textbf{ locate\+Param()}, and \textbf{ main()}.
+Referenced by \textbf{ copy\+File()}, \textbf{ main()}, \textbf{ open\+Event\+Out\+File()}, \textbf{ open\+Output\+Item\+File()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Event\+Data()}, \textbf{ read\+Input\+File()}, and \textbf{ read\+Param\+Data()}.
 
 \label{util_8h_ab343ccfdac6191045fced6c36c0143f4} 
 \index{util.h@{util.h}!stripComment@{stripComment}}
@@ -215,19 +69,9 @@ Referenced by \textbf{ check\+Runtype()}, \textbf{ locate\+Param()}, and \textbf
 
 
 
-Definition at line \textbf{ 192} of file \textbf{ util.\+c}.
+Definition at line \textbf{ 37} of file \textbf{ util.\+c}.
 
 
 
 Referenced by \textbf{ read\+Input\+File()}, and \textbf{ read\+Model\+Params()}.
-
-\label{util_8h_a31f647ac0b82a2bb708fcdaaab1a498d} 
-\index{util.h@{util.h}!sumArray@{sumArray}}
-\index{sumArray@{sumArray}!util.h@{util.h}}
-\doxysubsubsection{sumArray()}
-{\footnotesize\ttfamily double sum\+Array (\begin{DoxyParamCaption}\item[{double $\ast$}]{array,  }\item[{int}]{length }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 147} of file \textbf{ util.\+c}.
 

@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['c_5fweight_0',['C_WEIGHT',['../dd/d09/sipnet_8c.html#adab4e1be14327a9397852d62804c7b76',1,'sipnet.c']]],
-  ['complex_5fwater_1',['COMPLEX_WATER',['../dd/d09/sipnet_8c.html#adb267dcc85838516962e2f5ca42a0aaf',1,'sipnet.c']]],
-  ['context_5fchar_5fmaxlen_2',['CONTEXT_CHAR_MAXLEN',['../dc/d1e/context_8h.html#a7f0acfa4f185fa9fa97b242bfb4331e6',1,'context.h']]],
-  ['cp_3',['CP',['../dd/d09/sipnet_8c.html#a6594e57d1fff186da0a254a3742dcff7',1,'sipnet.c']]],
-  ['create_5fchar_5fcontext_4',['CREATE_CHAR_CONTEXT',['../dc/d1e/context_8h.html#a4eafd5e37e8b4257f597bbc8646fdb6d',1,'context.h']]],
-  ['create_5fint_5fcontext_5',['CREATE_INT_CONTEXT',['../dc/d1e/context_8h.html#adff317a6fb950ea88bebf3e662256c0d',1,'context.h']]]
+  ['e_5fstar_5fsnow_0',['E_STAR_SNOW',['../dd/d09/sipnet_8c.html#a3f70be9aae36e2c07886d14fcc89df0e',1,'sipnet.c']]],
+  ['elmt_5ffrom_5fhh_1',['ELMT_FROM_HH',['../d8/d8f/uthash_8h.html#a568e95048979b8b3e4ea1567fd91c186',1,'uthash.h']]],
+  ['event_5fin_5ffile_2',['EVENT_IN_FILE',['../db/dd2/events_8h.html#a58f95b03434757972c784f255112e9ac',1,'events.h']]],
+  ['event_5fout_5ffile_3',['EVENT_OUT_FILE',['../db/dd2/events_8h.html#a9368c664234669a806791cb8f6e4f17a',1,'events.h']]]
 ];

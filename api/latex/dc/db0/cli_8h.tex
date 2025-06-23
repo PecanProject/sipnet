@@ -2,7 +2,7 @@
 \label{cli_8h}\index{cli.h@{cli.h}}
 {\ttfamily \#include $<$getopt.\+h$>$}\newline
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
-{\ttfamily \#include "{}context.\+h"{}}\newline
+{\ttfamily \#include "{}common/context.\+h"{}}\newline
 Include dependency graph for cli.\+h\+:
 \nopagebreak
 \begin{figure}[H]
@@ -16,16 +16,18 @@ This graph shows which files directly or indirectly include this file\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=244pt]{dc/d4d/cli_8h__dep__incl}
+\includegraphics[width=164pt]{dc/d4d/cli_8h__dep__incl}
 \end{center}
 \end{figure}
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}~4
+\#define \textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}~6
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
+\item 
+void \textbf{ check\+CLIName\+Map} (void)
 \item 
 void \textbf{ usage} (char $\ast$prog\+Name)
 \item 
@@ -36,9 +38,7 @@ void \textbf{ parse\+Command\+Line\+Args} (int argc, char $\ast$argv[$\,$])
 \doxysubsubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-struct option \textbf{ long\+\_\+options} [$\,$]
-\item 
-char $\ast$ \textbf{ arg\+Name\+Map} [\textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}]
+char $\ast$ \textbf{ arg\+Name\+Map} [2 $\ast$\textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}]
 \end{DoxyCompactItemize}
 
 
@@ -47,15 +47,43 @@ char $\ast$ \textbf{ arg\+Name\+Map} [\textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}]
 \index{cli.h@{cli.h}!NUM\_FLAG\_OPTIONS@{NUM\_FLAG\_OPTIONS}}
 \index{NUM\_FLAG\_OPTIONS@{NUM\_FLAG\_OPTIONS}!cli.h@{cli.h}}
 \doxysubsubsection{NUM\_FLAG\_OPTIONS}
-{\footnotesize\ttfamily \#define NUM\+\_\+\+FLAG\+\_\+\+OPTIONS~4}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+FLAG\+\_\+\+OPTIONS~6}
 
 
 
-Definition at line \textbf{ 19} of file \textbf{ cli.\+h}.
+Definition at line \textbf{ 17} of file \textbf{ cli.\+h}.
 
 
 
 \doxysubsection{Function Documentation}
+\label{cli_8h_a658b859d7c6cdfc1af6642003ea13000} 
+\index{cli.h@{cli.h}!checkCLINameMap@{checkCLINameMap}}
+\index{checkCLINameMap@{checkCLINameMap}!cli.h@{cli.h}}
+\doxysubsubsection{checkCLINameMap()}
+{\footnotesize\ttfamily void check\+CLIName\+Map (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Verify that the cli\textquotesingle{}s arg-\/name map is valid
+
+Verifies that everything in arg\+Name\+Map maps to a valid context metadata. Does not verify that we failed to add a flag to the map. Call this after \doxyref{init\+Context()}{p.}{d8/dfa/context_8c_a8d99453d034c44d40efbf1d8687c074a} 
+
+Definition at line \textbf{ 129} of file \textbf{ cli.\+c}.
+
+
+
+References \textbf{ arg\+Name\+Map}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ context\+\_\+metadata\+::hh}, \textbf{ log\+Error}, \textbf{ Context\+::meta\+Map}, \textbf{ UT\+\_\+hash\+\_\+handle\+::next}, \textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}, and \textbf{ context\+\_\+metadata\+::type}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/db0/cli_8h_a658b859d7c6cdfc1af6642003ea13000_cgraph}
+\end{center}
+\end{figure}
 \label{cli_8h_ab2dacbbb35dc2c2e91c7ad158c9211f1} 
 \index{cli.h@{cli.h}!parseCommandLineArgs@{parseCommandLineArgs}}
 \index{parseCommandLineArgs@{parseCommandLineArgs}!cli.h@{cli.h}}
@@ -64,7 +92,7 @@ Definition at line \textbf{ 19} of file \textbf{ cli.\+h}.
 
 
 
-Definition at line \textbf{ 60} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 89} of file \textbf{ cli.\+c}.
 
 
 
@@ -90,7 +118,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 30} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 55} of file \textbf{ cli.\+c}.
 
 
 
@@ -104,7 +132,7 @@ Referenced by \textbf{ main()}, and \textbf{ parse\+Command\+Line\+Args()}.
 
 
 
-Definition at line \textbf{ 57} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 86} of file \textbf{ cli.\+c}.
 
 
 
@@ -117,31 +145,17 @@ Referenced by \textbf{ parse\+Command\+Line\+Args()}.
 
 
 \doxysubsection{Variable Documentation}
-\label{cli_8h_a4a55451fdf9c7ec3826cf0b1dbdafcb4} 
+\label{cli_8h_a7dbffa9afd6b8943ade6be0ec2e2abc8} 
 \index{cli.h@{cli.h}!argNameMap@{argNameMap}}
 \index{argNameMap@{argNameMap}!cli.h@{cli.h}}
 \doxysubsubsection{argNameMap}
-{\footnotesize\ttfamily char$\ast$ arg\+Name\+Map[\textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}]\hspace{0.3cm}{\ttfamily [extern]}}
+{\footnotesize\ttfamily char$\ast$ arg\+Name\+Map[2 $\ast$\textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}]\hspace{0.3cm}{\ttfamily [extern]}}
 
 
 
-Definition at line \textbf{ 24} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 45} of file \textbf{ cli.\+c}.
 
 
 
-Referenced by \textbf{ init\+Context()}, and \textbf{ parse\+Command\+Line\+Args()}.
-
-\label{cli_8h_ab5b68aa8f898c499ca2c3092ecd9e552} 
-\index{cli.h@{cli.h}!long\_options@{long\_options}}
-\index{long\_options@{long\_options}!cli.h@{cli.h}}
-\doxysubsubsection{long\_options}
-{\footnotesize\ttfamily struct option long\+\_\+options[$\,$]\hspace{0.3cm}{\ttfamily [extern]}}
-
-
-
-Definition at line \textbf{ 8} of file \textbf{ cli.\+c}.
-
-
-
-Referenced by \textbf{ parse\+Command\+Line\+Args()}.
+Referenced by \textbf{ check\+CLIName\+Map()}, and \textbf{ parse\+Command\+Line\+Args()}.
 

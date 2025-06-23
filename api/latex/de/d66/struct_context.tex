@@ -17,19 +17,17 @@ Collaboration diagram for Context\+:
 \doxysubsubsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
-char \textbf{ input\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
-\item 
-char \textbf{ run\+Type} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
-\item 
-char \textbf{ file\+Name} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
-\item 
-int \textbf{ location}
-\item 
 int \textbf{ do\+Main\+Output}
 \item 
 int \textbf{ do\+Single\+Outputs}
 \item 
+int \textbf{ events}
+\item 
 int \textbf{ print\+Header}
+\item 
+int \textbf{ dump\+Config}
+\item 
+int \textbf{ quiet}
 \item 
 char \textbf{ param\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
 \item 
@@ -37,9 +35,11 @@ char \textbf{ clim\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
 \item 
 char \textbf{ out\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
 \item 
-int \textbf{ dump\+Config}
-\item 
 char \textbf{ out\+Config\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ input\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ file\+Name} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
 \item 
 int \textbf{ tmp\+Flag}
 \item 
@@ -50,7 +50,7 @@ struct \textbf{ context\+\_\+metadata} $\ast$ \textbf{ meta\+Map}
 \doxysubsection{Detailed Description}
 
 
-Definition at line \textbf{ 36} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 39} of file \textbf{ context.\+h}.
 
 
 
@@ -63,7 +63,7 @@ Definition at line \textbf{ 36} of file \textbf{ context.\+h}.
 
 
 
-Definition at line \textbf{ 45} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 50} of file \textbf{ context.\+h}.
 
 
 
@@ -105,11 +105,25 @@ Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 47} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 45} of file \textbf{ context.\+h}.
 
 
 
 Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_a4cd6bfcdb8b7d5d632a428f7c86e0a38} 
+\index{Context@{Context}!events@{events}}
+\index{events@{events}!Context@{Context}}
+\doxysubsubsection{events}
+{\footnotesize\ttfamily int Context\+::events}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ cleanup\+Model()}, \textbf{ init\+Events()}, and \textbf{ main()}.
 
 \label{struct_context_a53bd09e12a982936d5c969319c09d9ef} 
 \index{Context@{Context}!fileName@{fileName}}
@@ -119,7 +133,7 @@ Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 39} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 57} of file \textbf{ context.\+h}.
 
 
 
@@ -133,25 +147,11 @@ Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 37} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 53} of file \textbf{ context.\+h}.
 
 
 
 Referenced by \textbf{ check\+Runtype()}, \textbf{ init\+Context()}, and \textbf{ main()}.
-
-\label{struct_context_abe056b99691cadd4e5d53af99910ffc5} 
-\index{Context@{Context}!location@{location}}
-\index{location@{location}!Context@{Context}}
-\doxysubsubsection{location}
-{\footnotesize\ttfamily int Context\+::location}
-
-
-
-Definition at line \textbf{ 40} of file \textbf{ context.\+h}.
-
-
-
-Referenced by \textbf{ init\+Context()}.
 
 \label{struct_context_ab1032381865186a8a31a945b8894dfc9} 
 \index{Context@{Context}!metaMap@{metaMap}}
@@ -161,11 +161,11 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 57} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 66} of file \textbf{ context.\+h}.
 
 
 
-Referenced by \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+Referenced by \textbf{ check\+CLIName\+Map()}, \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
 
 \label{struct_context_a08a0406bde2d60cc36c9133a80f9ff4c} 
 \index{Context@{Context}!outConfigFile@{outConfigFile}}
@@ -175,7 +175,7 @@ Referenced by \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Meta
 
 
 
-Definition at line \textbf{ 48} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 52} of file \textbf{ context.\+h}.
 
 
 
@@ -189,7 +189,7 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 46} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 51} of file \textbf{ context.\+h}.
 
 
 
@@ -203,7 +203,7 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 44} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 49} of file \textbf{ context.\+h}.
 
 
 
@@ -217,25 +217,25 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 43} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 44} of file \textbf{ context.\+h}.
 
 
 
-Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+Referenced by \textbf{ init\+Context()}, \textbf{ main()}, and \textbf{ print\+Config()}.
 
-\label{struct_context_a5adbf165d204d31cdc2a3e331351ef73} 
-\index{Context@{Context}!runType@{runType}}
-\index{runType@{runType}!Context@{Context}}
-\doxysubsubsection{runType}
-{\footnotesize\ttfamily char Context\+::run\+Type[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
-
-
-
-Definition at line \textbf{ 38} of file \textbf{ context.\+h}.
+\label{struct_context_ae528d2928b7fb3b747ff06024595049f} 
+\index{Context@{Context}!quiet@{quiet}}
+\index{quiet@{quiet}!Context@{Context}}
+\doxysubsubsection{quiet}
+{\footnotesize\ttfamily int Context\+::quiet}
 
 
 
-Referenced by \textbf{ check\+Runtype()}, and \textbf{ init\+Context()}.
+Definition at line \textbf{ 46} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ check\+All\+Read()}, \textbf{ init\+Context()}, and \textbf{ logprint()}.
 
 \label{struct_context_a7e8b5f01de62693a021dccda234c5660} 
 \index{Context@{Context}!tmpFlag@{tmpFlag}}
@@ -245,7 +245,7 @@ Referenced by \textbf{ check\+Runtype()}, and \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 54} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 63} of file \textbf{ context.\+h}.
 
 
 

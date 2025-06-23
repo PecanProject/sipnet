@@ -15,7 +15,7 @@ This graph shows which files directly or indirectly include this file\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=244pt]{d2/db5/context_8h__dep__incl}
+\includegraphics[width=350pt]{d2/db5/context_8h__dep__incl}
 \end{center}
 \end{figure}
 \doxysubsubsection*{Data Structures}
@@ -46,10 +46,13 @@ typedef enum \textbf{ Context\+Type} \textbf{ context\+\_\+type\+\_\+t}
 \doxysubsubsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum \textbf{ Context\+Source} \{ \textbf{ CTX\+\_\+\+DEFAULT} = 0
+enum \textbf{ Context\+Source} \{ \newline
+\textbf{ CTX\+\_\+\+DEFAULT} = 0
 , \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE} = 1
 , \textbf{ CTX\+\_\+\+COMMAND\+\_\+\+LINE} = 2
 , \textbf{ CTX\+\_\+\+CALCULATED} = 3
+, \newline
+\textbf{ CTX\+\_\+\+TEST} = 4
  \}
 \item 
 enum \textbf{ Context\+Type} \{ \textbf{ CTX\+\_\+\+INT} = 0
@@ -60,8 +63,6 @@ enum \textbf{ Context\+Type} \{ \textbf{ CTX\+\_\+\+INT} = 0
 \begin{DoxyCompactItemize}
 \item 
 void \textbf{ init\+Context} (void)
-\item 
-\textbf{ context\+\_\+source\+\_\+t} \textbf{ get\+Context\+Source} (const char $\ast$name)
 \item 
 struct \textbf{ context\+\_\+metadata} $\ast$ \textbf{ get\+Context\+Metadata} (const char $\ast$name)
 \item 
@@ -111,7 +112,7 @@ Definition at line \textbf{ 8} of file \textbf{ context.\+h}.
 \end{DoxyCode}
 
 
-Definition at line \textbf{ 93} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 100} of file \textbf{ context.\+h}.
 
 \label{context_8h_adff317a6fb950ea88bebf3e662256c0d} 
 \index{context.h@{context.h}!CREATE\_INT\_CONTEXT@{CREATE\_INT\_CONTEXT}}
@@ -129,7 +130,7 @@ Definition at line \textbf{ 93} of file \textbf{ context.\+h}.
 \end{DoxyCode}
 
 
-Definition at line \textbf{ 87} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 94} of file \textbf{ context.\+h}.
 
 \label{context_8h_af627ce6072a8c0c3d82dac1a6684f5f6} 
 \index{context.h@{context.h}!FILENAME\_MAXLEN@{FILENAME\_MAXLEN}}
@@ -182,6 +183,10 @@ CTX\+\_\+\+COMMAND\+\_\+\+LINE&\\
 CTX\+\_\+\+CALCULATED&\\
 \hline
 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CTX\_TEST@{CTX\_TEST}!context.h@{context.h}}\index{context.h@{context.h}!CTX\_TEST@{CTX\_TEST}}}\label{context_8h_abf1e49ca15a471e7ed8bf9a811c589fcad0a51e5d3cb2d8aa47229e33b84c63f9} 
+CTX\+\_\+\+TEST&\\
+\hline
+
 \end{DoxyEnumFields}
 
 
@@ -205,7 +210,7 @@ CTX\+\_\+\+CHAR&\\
 \end{DoxyEnumFields}
 
 
-Definition at line \textbf{ 25} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 26} of file \textbf{ context.\+h}.
 
 
 
@@ -218,7 +223,7 @@ Definition at line \textbf{ 25} of file \textbf{ context.\+h}.
 
 
 
-Definition at line \textbf{ 82} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 72} of file \textbf{ context.\+c}.
 
 
 
@@ -240,7 +245,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 71} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 61} of file \textbf{ context.\+c}.
 
 
 
@@ -248,7 +253,7 @@ References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR
 
 
 
-Referenced by \textbf{ get\+Context\+Source()}, \textbf{ init\+Context()}, and \textbf{ read\+Input\+File()}.
+Referenced by \textbf{ check\+CLIName\+Map()}, and \textbf{ read\+Input\+File()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -256,28 +261,6 @@ Here is the call graph for this function\+:
 \begin{center}
 \leavevmode
 \includegraphics[width=270pt]{dc/d1e/context_8h_a2c1d1cd4576607f037bf7ece58c8e9d7_cgraph}
-\end{center}
-\end{figure}
-\label{context_8h_a9b1ada3ae6814f8e499dddb22c7040f8} 
-\index{context.h@{context.h}!getContextSource@{getContextSource}}
-\index{getContextSource@{getContextSource}!context.h@{context.h}}
-\doxysubsubsection{getContextSource()}
-{\footnotesize\ttfamily \textbf{ context\+\_\+source\+\_\+t} get\+Context\+Source (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name }\end{DoxyParamCaption})}
-
-
-
-Definition at line \textbf{ 67} of file \textbf{ context.\+c}.
-
-
-
-References \textbf{ get\+Context\+Metadata()}, and \textbf{ context\+\_\+metadata\+::source}.
-
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{dc/d1e/context_8h_a9b1ada3ae6814f8e499dddb22c7040f8_cgraph}
 \end{center}
 \end{figure}
 \label{context_8h_a6ca54051e74c3814bf713a2138dad5a5} 
@@ -288,11 +271,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 138} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 128} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ CTX\+\_\+\+COMMAND\+\_\+\+LINE}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, and \textbf{ CTX\+\_\+\+DEFAULT}.
+References \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ CTX\+\_\+\+COMMAND\+\_\+\+LINE}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+DEFAULT}, and \textbf{ CTX\+\_\+\+TEST}.
 
 
 
@@ -306,7 +289,7 @@ Referenced by \textbf{ print\+Config()}.
 
 
 
-Definition at line \textbf{ 131} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 121} of file \textbf{ context.\+c}.
 
 
 
@@ -324,24 +307,16 @@ Referenced by \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Conte
 
 Initialize the global context struct with default values 
 
-Definition at line \textbf{ 20} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 18} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ arg\+Name\+Map}, \textbf{ Context\+::clim\+File}, \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}, \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+DEFAULT}, \textbf{ DEFAULT\+\_\+\+INPUT\+\_\+\+FILE}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ Context\+::file\+Name}, \textbf{ get\+Context\+Metadata()}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::location}, \textbf{ Context\+::meta\+Map}, \textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}, \textbf{ Context\+::out\+Config\+File}, \textbf{ Context\+::out\+File}, \textbf{ Context\+::param\+File}, \textbf{ Context\+::print\+Header}, \textbf{ RUN\+\_\+\+TYPE\+\_\+\+STANDARD}, and \textbf{ Context\+::run\+Type}.
+References \textbf{ Context\+::clim\+File}, \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}, \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+DEFAULT}, \textbf{ DEFAULT\+\_\+\+INPUT\+\_\+\+FILE}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ events}, \textbf{ Context\+::file\+Name}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::meta\+Map}, \textbf{ Context\+::out\+Config\+File}, \textbf{ Context\+::out\+File}, \textbf{ Context\+::param\+File}, \textbf{ Context\+::print\+Header}, and \textbf{ Context\+::quiet}.
 
 
 
 Referenced by \textbf{ main()}.
 
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{dc/d1e/context_8h_a8d99453d034c44d40efbf1d8687c074a_cgraph}
-\end{center}
-\end{figure}
 \label{context_8h_a29b8b8f3293bc9ce42a12cc9b86416f8} 
 \index{context.h@{context.h}!printConfig@{printConfig}}
 \index{printConfig@{printConfig}!context.h@{context.h}}
@@ -350,11 +325,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 159} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 151} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ by\+\_\+name()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Source\+String()}, \textbf{ HASH\+\_\+\+SORT}, \textbf{ context\+\_\+metadata\+::hh}, \textbf{ Context\+::meta\+Map}, \textbf{ UT\+\_\+hash\+\_\+handle\+::next}, \textbf{ context\+\_\+metadata\+::print\+Name}, \textbf{ context\+\_\+metadata\+::source}, \textbf{ context\+\_\+metadata\+::type}, and \textbf{ context\+\_\+metadata\+::value}.
+References \textbf{ by\+\_\+name()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Source\+String()}, \textbf{ HASH\+\_\+\+SORT}, \textbf{ context\+\_\+metadata\+::hh}, \textbf{ Context\+::meta\+Map}, \textbf{ UT\+\_\+hash\+\_\+handle\+::next}, \textbf{ Context\+::print\+Header}, \textbf{ context\+\_\+metadata\+::print\+Name}, \textbf{ context\+\_\+metadata\+::source}, \textbf{ context\+\_\+metadata\+::type}, and \textbf{ context\+\_\+metadata\+::value}.
 
 
 
@@ -376,7 +351,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 116} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 106} of file \textbf{ context.\+c}.
 
 
 
@@ -402,7 +377,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 102} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 92} of file \textbf{ context.\+c}.
 
 
 
@@ -431,9 +406,9 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 14} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 12} of file \textbf{ context.\+c}.
 
 
 
-Referenced by \textbf{ check\+Runtype()}, \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ main()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+Referenced by \textbf{ check\+All\+Read()}, \textbf{ check\+CLIName\+Map()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ logprint()}, \textbf{ main()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
 

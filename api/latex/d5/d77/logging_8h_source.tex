@@ -1,0 +1,24 @@
+\doxysection{logging.\+h}
+\label{logging_8h_source}\index{logging.h@{logging.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SIPNET\_LOGGING\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SIPNET\_LOGGING\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdarg.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}context.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ logWarning(...)\ logprint(1,\ "{}[WARNING]\ "{},\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ logInfo(...)\ \ \ \ logprint(1,\ "{}[INFO\ \ \ ]\ "{},\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ logError(...)\ \ \ logprint(0,\ "{}[ERROR\ \ ]\ "{},\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ logTest(...)\ \ \ \ logprint(0,\ "{}[TEST\ \ \ ]\ "{},\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ logprint(\textcolor{keywordtype}{int}\ checkContext,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prefix,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_LOGGING\_H}}
+
+\end{DoxyCode}

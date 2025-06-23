@@ -28,6 +28,8 @@ struct \textbf{ Model\+Params\+Struct}
 \begin{DoxyCompactItemize}
 \item 
 \#define \textbf{ MODEL\+\_\+\+PARAM\+\_\+\+MAXNAME}~64
+\item 
+\#define \textbf{ OBSOLETE\+\_\+\+PARAM}~(-\/1)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Typedefs}
 \begin{DoxyCompactItemize}
@@ -72,6 +74,16 @@ void \textbf{ delete\+Model\+Params} (\textbf{ Model\+Params} $\ast$\textbf{ par
 
 Definition at line \textbf{ 6} of file \textbf{ model\+Params.\+h}.
 
+\label{model_params_8h_acd02ffd73296db5d11d0cb7332e3c6b5} 
+\index{modelParams.h@{modelParams.h}!OBSOLETE\_PARAM@{OBSOLETE\_PARAM}}
+\index{OBSOLETE\_PARAM@{OBSOLETE\_PARAM}!modelParams.h@{modelParams.h}}
+\doxysubsubsection{OBSOLETE\_PARAM}
+{\footnotesize\ttfamily \#define OBSOLETE\+\_\+\+PARAM~(-\/1)}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ model\+Params.\+h}.
+
 
 
 \doxysubsection{Typedef Documentation}
@@ -104,7 +116,7 @@ Definition at line \textbf{ 6} of file \textbf{ model\+Params.\+h}.
 
 
 
-Definition at line \textbf{ 230} of file \textbf{ model\+Params.\+c}.
+Definition at line \textbf{ 269} of file \textbf{ model\+Params.\+c}.
 
 
 
@@ -132,15 +144,26 @@ References \textbf{ Model\+Params\+Struct\+::params}, and \textbf{ Model\+Params
 \index{modelParams.h@{modelParams.h}!initializeOneModelParam@{initializeOneModelParam}}
 \index{initializeOneModelParam@{initializeOneModelParam}!modelParams.h@{modelParams.h}}
 \doxysubsubsection{initializeOneModelParam()}
-{\footnotesize\ttfamily void initialize\+One\+Model\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Model\+Params} $\ast$}]{params,  }\item[{char $\ast$}]{name,  }\item[{double $\ast$}]{external\+Loc,  }\item[{int}]{is\+Required }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void initialize\+One\+Model\+Param (\begin{DoxyParamCaption}\item[{\textbf{ Model\+Params} $\ast$}]{model\+Params,  }\item[{char $\ast$}]{name,  }\item[{double $\ast$}]{external\+Loc,  }\item[{int}]{is\+Required }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em model\+Params} & \\
+\hline
+{\em name} & \\
+\hline
+{\em external\+Loc} & \\
+\hline
+{\em is\+Required} & \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \textbf{ 121} of file \textbf{ model\+Params.\+c}.
 
 
 
-Definition at line \textbf{ 81} of file \textbf{ model\+Params.\+c}.
-
-
-
-References \textbf{ all\+Params\+Initialized()}, \textbf{ One\+Model\+Param\+Struct\+::is\+Read}, \textbf{ One\+Model\+Param\+Struct\+::is\+Required}, \textbf{ Model\+Params\+Struct\+::max\+Params}, \textbf{ One\+Model\+Param\+Struct\+::name}, \textbf{ Model\+Params\+Struct\+::num\+Params}, \textbf{ Model\+Params\+Struct\+::params}, and \textbf{ One\+Model\+Param\+Struct\+::value}.
+References \textbf{ all\+Params\+Initialized()}, \textbf{ One\+Model\+Param\+Struct\+::is\+Read}, \textbf{ One\+Model\+Param\+Struct\+::is\+Required}, \textbf{ log\+Error}, \textbf{ Model\+Params\+Struct\+::max\+Params}, \textbf{ One\+Model\+Param\+Struct\+::name}, \textbf{ Model\+Params\+Struct\+::num\+Params}, \textbf{ Model\+Params\+Struct\+::params}, and \textbf{ One\+Model\+Param\+Struct\+::value}.
 
 
 
@@ -162,24 +185,16 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 205} of file \textbf{ model\+Params.\+c}.
+Definition at line \textbf{ 244} of file \textbf{ model\+Params.\+c}.
 
 
 
-References \textbf{ One\+Model\+Param\+Struct\+::name}, \textbf{ Model\+Params\+Struct\+::params}, and \textbf{ strcmp\+Ignore\+Case()}.
+References \textbf{ One\+Model\+Param\+Struct\+::name}, and \textbf{ Model\+Params\+Struct\+::params}.
 
 
 
 Referenced by \textbf{ read\+Model\+Params()}.
 
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=262pt]{d3/ddd/model_params_8h_adfb3483c3e32d4584b53b0b89901b081_cgraph}
-\end{center}
-\end{figure}
 \label{model_params_8h_aa087ef12104270d1077ce38d5d1d53b5} 
 \index{modelParams.h@{modelParams.h}!newModelParams@{newModelParams}}
 \index{newModelParams@{newModelParams}!modelParams.h@{modelParams.h}}
@@ -188,7 +203,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 64} of file \textbf{ model\+Params.\+c}.
+Definition at line \textbf{ 98} of file \textbf{ model\+Params.\+c}.
 
 
 
@@ -206,11 +221,11 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 117} of file \textbf{ model\+Params.\+c}.
+Definition at line \textbf{ 157} of file \textbf{ model\+Params.\+c}.
 
 
 
-References \textbf{ check\+All\+Read()}, \textbf{ check\+Param\+Format()}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ One\+Model\+Param\+Struct\+::is\+Read}, \textbf{ locate\+Param()}, \textbf{ MODEL\+\_\+\+PARAM\+\_\+\+MAXNAME}, \textbf{ Model\+Params\+Struct\+::num\+Params\+Read}, \textbf{ Model\+Params\+Struct\+::params}, \textbf{ Model\+Params\+Struct\+::read\+Indices}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ One\+Model\+Param\+Struct\+::value}, and \textbf{ value\+Set()}.
+References \textbf{ check\+All\+Read()}, \textbf{ check\+Param\+Format()}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ One\+Model\+Param\+Struct\+::is\+Read}, \textbf{ locate\+Param()}, \textbf{ log\+Error}, \textbf{ log\+Warning}, \textbf{ MODEL\+\_\+\+PARAM\+\_\+\+MAXNAME}, \textbf{ Model\+Params\+Struct\+::num\+Params\+Read}, \textbf{ Model\+Params\+Struct\+::params}, \textbf{ Model\+Params\+Struct\+::read\+Indices}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ One\+Model\+Param\+Struct\+::value}, and \textbf{ value\+Set()}.
 
 
 
@@ -232,7 +247,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 226} of file \textbf{ model\+Params.\+c}.
+Definition at line \textbf{ 265} of file \textbf{ model\+Params.\+c}.
 
 
 
