@@ -1655,6 +1655,8 @@ void soilDegradation(void) {
   microbeGrowth();
   double microbeEff;
 
+  microbeEff = params.efficiency;
+
   envi.soil +=
       (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
        fluxes.leafLitter - fluxes.microbeIngestion) *
