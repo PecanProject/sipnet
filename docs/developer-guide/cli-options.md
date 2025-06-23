@@ -21,7 +21,7 @@ The mapping is created using the `nameToKey` function in `common/context.c` that
 - removes all non-alphanumeric characters.
 - converts alpha characters to lowercase. 
 
-For the mapping to work, the option name (e.g., `print_header`) and `Context` member name (in this case, `printHeader`) must generate the same key (e.g. `printheader` and `printHeader` both generate `printheader`).
+For the mapping to work, the option name (e.g., `print_header`) and `Context` member name (in this case, `printHeader`) must generate the same key (e.g. `print_header` and `printHeader` both generate `printheader`).
 
 Each key must be unique across the `Context` member names.
 
