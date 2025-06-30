@@ -11,7 +11,7 @@ When adding a new command-line option, you will need to add a corresponding memb
 
 ## Important Notes
 
-**A note on naming:** 
+**Naming:** 
 
 Each command-line option must have a corresponding entry in the `Context` struct. SIPNET uses a mapping system to 
 link the command-line option (e.g. `print_header`) to its `Context` member (in this case, `printHeader`).
@@ -21,11 +21,12 @@ The mapping is created using the `nameToKey` function in `common/context.c` that
 - removes all non-alphanumeric characters.
 - converts alpha characters to lowercase. 
 
-For the mapping to work, the option name (e.g., `print_header`) and `Context` member name (in this case, `printHeader`) must generate the same key (e.g. `print_header` and `printHeader` both generate `printheader`).
+For the mapping to work, the option name (e.g., `print_header`) and `Context` member name (in this case, 
+`printHeader`) must generate the same key (e.g. `printheader` and `printHeader` both generate `printheader`).
 
 Each key must be unique across the `Context` member names.
 
-**A note on precedence:** 
+**Precedence:** 
 
 SIPNET options can be specified in either (or both) a config file or a command-line option. Command-line options are
 have precedence over config file options.

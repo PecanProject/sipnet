@@ -21,14 +21,16 @@ void initContext(void) {
 
   // Init the params
   // Flags, default on
-  CREATE_INT_CONTEXT(doMainOutput, "DO_MAIN_OUTPUT", 1, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(events, "EVENTS", 1, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(printHeader, "PRINT_HEADER", 1, CTX_DEFAULT);
+  CREATE_INT_CONTEXT(doMainOutput, "DO_MAIN_OUTPUT", 1, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(events, "EVENTS", 1, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(printHeader, "PRINT_HEADER", 1, CTX_DEFAULT, 1);
 
   // Flags, default off
-  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(quiet, "QUIET", 0, CTX_DEFAULT);
+  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(litterPool, "LITTER_POOL", 0, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(microbes, "MICROBES", 0, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(quiet, "QUIET", 0, CTX_DEFAULT, 1);
 
   // Files
   CREATE_CHAR_CONTEXT(paramFile, "PARAM_FILE", "", CTX_DEFAULT);
@@ -38,8 +40,20 @@ void initContext(void) {
   CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE, CTX_DEFAULT);
 
   // Other
-  // Would like to rename as SITE_NAME, if that wasn't a breaking change
+  // Prefix for climate and parameter input files. We may want to rename this
+  // to siteName or such, as 'fileName' implies an actual file, though that
+  // would be a breaking change.
   CREATE_CHAR_CONTEXT(fileName, "FILENAME", "", CTX_DEFAULT);
+  // Number of soil carbon pools being used in this run, should in [1,3] (I
+  // don't think greater than three has been tested). Note that one has some
+  // implications in the code, see soilMultiPool.
+  CREATE_INT_CONTEXT(numSoilCarbonPools, "NUM_SOIL_CARBON_POOLS", 1,
+                     CTX_DEFAULT, 0);
+  // Whether this is a soil carbon multipool run; literally defined as
+  // (num_soil_carbon_pools > 1), but it's a nice convenience. Some model
+  // options are only possible when this is true. Calculated quantity, not an
+  // CLI arg.
+  CREATE_INT_CONTEXT(soilMultiPool, "SOIL_MULTI_POOL", 0, CTX_DEFAULT, 0);
 }
 
 // With all the different permutations of spellings for config params, lets
@@ -71,7 +85,7 @@ struct context_metadata *getContextMetadata(const char *name) {
 
 void createContextMetadata(const char *name, const char *printName,
                            context_source_t source, context_type_t type,
-                           void *value) {
+                           void *value, int isFlag) {
   struct context_metadata *s;
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s);
@@ -87,6 +101,7 @@ void createContextMetadata(const char *name, const char *printName,
   s->source = source;
   s->type = type;
   s->value = value;
+  s->isFlag = isFlag;
 }
 
 void updateIntContext(const char *name, int value, context_source_t source) {

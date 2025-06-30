@@ -31,6 +31,7 @@ struct context_metadata {
   context_source_t source;
   context_type_t type;
   void *value;  // pointer to the member of Context that holds the value
+  int isFlag;  // flags are handled slightly different than non-flag ints
   UT_hash_handle hh;  // makes this structure hashable
 };
 
@@ -41,6 +42,8 @@ struct Context {
   int doMainOutput;
   int doSingleOutputs;
   int events;
+  int litterPool;
+  int microbes;
   int printHeader;
   int dumpConfig;
   int quiet;
@@ -55,6 +58,10 @@ struct Context {
   // Other
   // File prefix for climate and param files
   char fileName[CONTEXT_CHAR_MAXLEN];
+  // Number of soil carbon pools
+  int numSoilCarbonPools;
+  // Whether we are in a multi-pool setup (calculated)
+  int soilMultiPool;
 
   // Temp space for handling command line flag args; we do not write directly
   // the params since we want to do a precedence check first. If the new source
@@ -78,7 +85,7 @@ struct context_metadata *getContextMetadata(const char *name);
 
 void createContextMetadata(const char *name, const char *printName,
                            context_source_t source, context_type_t type,
-                           void *value);
+                           void *value, int isFlag);
 
 void updateIntContext(const char *name, int value, context_source_t source);
 
@@ -91,16 +98,16 @@ char *getContextSourceString(context_source_t src);
 
 void printConfig(FILE *outFile);
 
-#define CREATE_INT_CONTEXT(name, printName, value, source)                     \
+#define CREATE_INT_CONTEXT(name, printName, value, source, flag)               \
   do {                                                                         \
     ctx.name = value;                                                          \
-    createContextMetadata(#name, printName, source, CTX_INT, &ctx.name);       \
+    createContextMetadata(#name, printName, source, CTX_INT, &ctx.name, flag); \
   } while (0)
 
 #define CREATE_CHAR_CONTEXT(name, printName, value, source)                    \
   do {                                                                         \
     strncpy(ctx.name, value, CONTEXT_CHAR_MAXLEN);                             \
-    createContextMetadata(#name, printName, source, CTX_CHAR, ctx.name);       \
+    createContextMetadata(#name, printName, source, CTX_CHAR, ctx.name, 0);    \
   } while (0)
 
 #endif  // CONTEXT_H

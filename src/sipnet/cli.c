@@ -28,16 +28,19 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(do_main_output),
     DECLARE_FLAG(do_single_outputs),
     DECLARE_FLAG(events),
+    DECLARE_FLAG(litter_pool),
+    DECLARE_FLAG(microbes),
     DECLARE_FLAG(print_header),
     DECLARE_FLAG(dump_config),
     DECLARE_FLAG(quiet),
 
     // clang-format off
     // These options don’t set a flag. We distinguish them by their indices
-    // name        has_arg           flag  val (val is the index)
-    {"input_file", required_argument, 0,   'i'},
-    {"help",       no_argument,       0,   'h'},
-    {"version",    no_argument,       0,   'v'},
+    // name                         has_arg           flag  val (val is the index)
+    {"input_file",                  required_argument, 0,   'i'},
+    {"help",                        no_argument,       0,   'h'},
+    {"num_carbon_soil_pools",       required_argument, 0,   'n'},
+    {"version",                     no_argument,       0,   'v'},
     // clang-format on
     {0, 0, 0, 0}};
 
@@ -48,7 +51,8 @@ char *argNameMap[] = {
     // DECLARE_ARG_FOR_MAP macro needs to be the name of the corresponding field
     // in Context)
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
-    DECLARE_ARG_FOR_MAP(events),       DECLARE_ARG_FOR_MAP(printHeader),
+    DECLARE_ARG_FOR_MAP(events),       DECLARE_ARG_FOR_MAP(litterPool),
+    DECLARE_ARG_FOR_MAP(microbes),     DECLARE_ARG_FOR_MAP(printHeader),
     DECLARE_ARG_FOR_MAP(dumpConfig),   DECLARE_ARG_FOR_MAP(quiet)};
 
 // Print the help message when requested
@@ -59,15 +63,17 @@ void usage(char *progName) {
   printf("Run SIPNET model for one site with configured options.\n");
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
-  printf("  -i, --input_file     Name of input config file (sipnet.in)\n");
+  printf("  -i, --input_file             Name of input config file (sipnet.in)\n");
+  printf("  -n, --num_carbon_soil_pools  Number of carbon soil pools (1)\n");
   printf("\n");
   printf("Flag options: (prepend flag with 'no_' to force off, eg '--no_print_header')\n");
-  printf("\n");
+  printf("  --events         Enable event handling (1)\n");
+  printf("  --litter_pool    Enable litter pool in addition to single soil carbon pool (0)\n");
+  printf("  --microbes       Enable microbe modeling (0)\n");
+  printf("  --[TBD]   \n");
   printf("  --dump_config    Print final config to <input_file>.config (0)\n");
   printf("  --print_header   Whether to print header row in output files (1)\n");
-  printf("  --events         Enable event handling (1)\n");
   printf("  --quiet          Suppress info and warning message (0)\n");
-  printf("  --[TBD]   \n");
   printf("  --[TBD]   \n");
   printf("\n");
   printf("Info options:\n");
@@ -91,7 +97,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
   int longIndex = 0;
   int shortIndex;
   // get command-line arguments:
-  while ((shortIndex = getopt_long(argc, argv, "hi:v", long_options,
+  while ((shortIndex = getopt_long(argc, argv, "hi:n:v", long_options,
                                    &longIndex)) != -1) {
 
     switch (shortIndex) {
@@ -112,6 +118,19 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         }
         updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);
         break;
+      case 'n': {
+        char *errc;
+        int intVal = strtol(optarg, &errc, 0);  // NOLINT
+        if (strlen(errc) > 0) {  // invalid character(s) in input string
+          printf("Unknown value for num_soil_carbon_pools: %s\n", optarg);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        if (intVal < 1 || intVal > 3) {  // 3? Do we need an upper bound?
+          printf("num_soil_carbon_pools must be 1, 2, or 3\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateIntContext("numSoilCarbonPools", intVal, CTX_COMMAND_LINE);
+      } break;
       case 'v':
         version();
         exit(EXIT_CODE_SUCCESS);
@@ -134,21 +153,23 @@ void checkCLINameMap(void) {
   for (int ind = 0; ind < 2 * NUM_FLAG_OPTIONS; ++ind) {
     s = getContextMetadata(argNameMap[ind]);
     if (s == NULL) {
-      logError("Internal error: mismatched argNameMap and Context contents; "
-               "missing Context metadata\n");
+      logInternalError("mismatched argNameMap and Context contents; "
+                       "no metadata for %s\n",
+                       argNameMap[ind]);
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
   // Make sure the number of flag metadata structs equals NUM_FLAG_OPTIONS
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
-    if (s->type == CTX_INT) {
+    if (s->isFlag) {
       ++numFlags;
     }
   }
   if (numFlags != NUM_FLAG_OPTIONS) {
-    logError("Internal error: mismatched argNameMap and Context contents; "
-             "missing argNameMap entry\n");
+    logInternalError("mismatched argNameMap and Context contents; "
+                     "%d metaMap entries, NUM_FLAG_OPTIONS=%d\n",
+                     numFlags, NUM_FLAG_OPTIONS);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }

@@ -52,30 +52,10 @@
 #define SOIL_PHENOL 0 && !GDD
 // use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)
 
-// LITTER_POOL moved to modelStructures.h
-// have extra litter pool, in addition to soil c pool
-
-// CONVERT TO CALC'D PARAM
-#define SOIL_MULTIPOOL 0 && !LITTER_POOL
-// do we have a multipool approach to model soils?
-// if LITTER_POOL == 1, then SOIL_MULTIPOOL will be 0 because we take care of
-// litter with the soil quality submodel.
-
 // OPTION
-#define NUMBER_SOIL_CARBON_POOLS 3
-// first number: number of pools we want to have.
-// IF SOIL_MULTIPOOL=0, then NUMBER_SOIL_CARBON_POOLS = 1
-// if SOIL_MULTIPOOL=1, then NUMBER_SOIL_CARBON_POOLS = number given
-
-// OPTION
-#define SOIL_QUALITY 0 && SOIL_MULTIPOOL
+#define SOIL_QUALITY 0  //&& SOIL_MULTIPOOL
 // do we have a soil quality submodel?
 // we only do SOIL_QUALITY if SOIL_MULTIPOOL is turned on
-
-// OPTION
-#define MICROBES 0 && !SOIL_MULTIPOOL
-// do we utilize microbes.  This will only be an option
-// if SOIL_MULTIPOOL==0 and MICROBES ==1
 
 #define C_WEIGHT 12.0  // molecular weight of carbon
 #define TEN_6 1000000.0  // for conversions from micro
@@ -346,12 +326,7 @@ typedef struct Environment {
                       // ground area)
   double plantLeafC;  // carbon in leaves (g C * m^-2 ground area)
   double litter;  // carbon in litter (g C * m^-2 ground area)
-#if SOIL_MULTIPOOL
-  double soil[NUMBER_SOIL_CARBON_POOLS];  // if we have more than one quality
-                                          // pool we use this
-#else
-  double soil;
-#endif
+  double *soil;
 
   double litterWater;  // water in litter (evaporative) layer (cm)
   double soilWater;  // plant available soil water (cm)
@@ -393,15 +368,10 @@ typedef struct FluxVars {
   double rWood;  // g C m^-2 ground area day^-1 of wood respiration
   double rLeaf;  // g C m^-2 ground area day^-1 of leaf respiration
 
-#if SOIL_MULTIPOOL
   double maintRespiration[NUMBER_SOIL_CARBON_POOLS];  // Microbial maintenance
                                                       // respiration rate g C
                                                       // m-2 ground area day^-1
   double microbeIngestion[NUMBER_SOIL_CARBON_POOLS];
-#else
-  double maintRespiration;
-  double microbeIngestion;
-#endif
 
   double fineRootLoss;  // Loss rate of fine roots (turnover + exudation)
   double coarseRootLoss;  // Loss rate of coarse roots (turnover + exudation)
@@ -710,9 +680,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "leafAllocation", &(params.leafAllocation), 1);
   initializeOneModelParam(modelParams, "leafTurnoverRate", &(params.leafTurnoverRate), 1);
   initializeOneModelParam(modelParams, "baseVegResp", &(params.baseVegResp), 1);
-  initializeOneModelParam(modelParams, "litterBreakdownRate", &(params.litterBreakdownRate), LITTER_POOL);
+  initializeOneModelParam(modelParams, "litterBreakdownRate", &(params.litterBreakdownRate), ctx.litterPool);
 
-  initializeOneModelParam(modelParams, "fracLitterRespired", &(params.fracLitterRespired), LITTER_POOL);
+  initializeOneModelParam(modelParams, "fracLitterRespired", &(params.fracLitterRespired), ctx.litterPool);
   initializeOneModelParam(modelParams, "baseSoilResp", &(params.baseSoilResp), 1);
   initializeOneModelParam(modelParams, "baseSoilRespCold", &(params.baseSoilRespCold), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "soilRespQ10", &(params.soilRespQ10), 1);
@@ -742,12 +712,12 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "qualityLeaf", &(params.qualityLeaf), SOIL_QUALITY);
   initializeOneModelParam(modelParams, "qualityWood", &(params.qualityWood), SOIL_QUALITY);
 
-  initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), (SOIL_QUALITY) || (MICROBES));
-  initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), (SOIL_QUALITY) || (MICROBES));
-  initializeOneModelParam(modelParams, "halfSatIngestion", &(params.halfSatIngestion), MICROBES);
+  initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), (SOIL_QUALITY) || ctx.microbes);
+  initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), (SOIL_QUALITY) || ctx.microbes);
+  initializeOneModelParam(modelParams, "halfSatIngestion", &(params.halfSatIngestion), ctx.microbes);
   initializeOneModelParam(modelParams, "totNitrogen", &(params.totNitrogen), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "microbeNC", &(params.microbeNC), OBSOLETE_PARAM);
-  initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), (SOIL_QUALITY) || (MICROBES));
+  initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), (SOIL_QUALITY) || ctx.microbes);
   initializeOneModelParam(modelParams, "fineRootFrac", &(params.fineRootFrac), 1);
   initializeOneModelParam(modelParams, "coarseRootFrac", &(params.coarseRootFrac), 1);
 
@@ -763,9 +733,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "fineRootQ10", &(params.fineRootQ10), 1);
   initializeOneModelParam(modelParams, "coarseRootQ10", &(params.coarseRootQ10), 1);
 
-  initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), MICROBES);
-  initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), MICROBES);
-  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), (1) && (MICROBES) );
+  initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), ctx.microbes);
+  initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), ctx.microbes);
+  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes );
   initializeOneModelParam(modelParams, "m_ballBerry", &(params.m_ballBerry), OBSOLETE_PARAM);
   // NOLINTEND
   // clang-format on
@@ -785,17 +755,14 @@ void outputHeader(FILE *out) {
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
   fprintf(out, "year day time plantWoodC plantLeafC ");
 
-#if SOIL_MULTIPOOL
-  int counter;
-
-  for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
-    fprintf(out, "soil(%8.2f) ", envi.soil[counter]);
+  if (ctx.soilMultiPool) {
+    for (int counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
+      fprintf(out, "soil(%d) ", counter);
+    }
+    fprintf(out, "totSoilC ");
+  } else {
+    fprintf(out, "soil ");
   }
-  fprintf(out, "totSoilC ");
-
-#else
-  fprintf(out, "soil ");
-#endif
 
   fprintf(out, "microbeC ");
   fprintf(out, "coarseRootC fineRootC ");
@@ -816,17 +783,14 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%4d %3d %5.2f %8.2f %8.2f ", year, day, time, envi.plantWoodC,
           envi.plantLeafC);
 
-#if SOIL_MULTIPOOL
   int counter;
 
-  for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
+  for (counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
     fprintf(out, "%8.2f ", envi.soil[counter]);
   }
-  fprintf(out, "%8.2f ", trackers.totSoilC);
-
-#else
-  fprintf(out, "%8.2f ", envi.soil);
-#endif
+  if (ctx.soilMultiPool) {
+    fprintf(out, "%8.2f ", trackers.totSoilC);
+  }
 
   fprintf(out, "%8.2f ", envi.microbeC);
 
@@ -1489,77 +1453,69 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   moistEffect = 1;
 #endif  // WATER_HRESP
 
-#if SOIL_MULTIPOOL
-  int counter;
+  if (ctx.soilMultiPool) {
+    int counter;
 
-  double poolBaseRespiration, poolQ10;
+    double poolBaseRespiration, poolQ10;
 
-  double soilQuality;
+    // TBD double soilQuality;
 
-  // Loop through all the soil carbon pools
-  for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
+    // Loop through all the soil carbon pools
+    for (counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
 
 #if SOIL_QUALITY
-    // Ensure that the quality will never be zero
-    soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
+      // Ensure that the quality will never be zero
+      // TBD soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
 #else
-    soilQuality = 0;
+      // TBD soilQuality = 0;
 #endif
-    poolBaseRespiration = params.baseSoilResp;
-    poolQ10 = params.soilRespQ10;
-    tempEffect = poolBaseRespiration * pow(poolQ10, tsoil / 10);
-    fluxes.maintRespiration[counter] =
-        envi.soil[counter] * moistEffect * tempEffect;
+      poolBaseRespiration = params.baseSoilResp;
+      poolQ10 = params.soilRespQ10;
+      tempEffect = poolBaseRespiration * pow(poolQ10, tsoil / 10);
+      fluxes.maintRespiration[counter] =
+          envi.soil[counter] * moistEffect * tempEffect;
+    }
+  } else {  // We use a single pool model
+    if (ctx.microbes) {
+      // If we don't have a multipool approach, respiration is determined by
+      // microbe biomass
+      tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
+
+      fluxes.maintRespiration[0] = envi.microbeC * moistEffect * tempEffect;
+    } else {
+      tempEffect = params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
+      fluxes.maintRespiration[0] = envi.soil[0] * moistEffect * tempEffect;
+    }
   }
-
-#else  // We use a single pool model
-
-#if MICROBES  // If we don't have a multipool approach, respiration is
-              // determined by microbe biomass
-
-  tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
-
-  fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
-#else
-  tempEffect = params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
-  fluxes.maintRespiration = envi.soil * moistEffect * tempEffect;
-#endif
-
-#endif
 }
 
-// Unused - remove?
-// double microbeQualityEfficiency(double soilQuality) {
-//
-//   return params.efficiency;  // Efficiency an increasing function of quality
-// }
-
 void microbeGrowth(void) {
-#if SOIL_MULTIPOOL
-  int counter;  // Counter of quality pools
-  for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
+  if (ctx.soilMultiPool) {
+    for (int counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
 #if SOIL_QUALITY
 
-    double soilQuality;
-    double ingestionCoeff;
+      double soilQuality;
+      double ingestionCoeff;
 
-    // Ensure that the quality will never be zero
-    soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
+      // Ensure that the quality will never be zero
+      soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
 
-    ingestionCoeff = params.maxIngestionRate;
+      ingestionCoeff = params.maxIngestionRate;
 
-    // Scale this proportional to total soil
-    fluxes.microbeIngestion[counter] =
-        ingestionCoeff * envi.soil[counter] / trackers.totSoilC;
+      // Scale this proportional to total soil
+      fluxes.microbeIngestion[counter] =
+          ingestionCoeff * envi.soil[counter] / trackers.totSoilC;
 #endif  // We need code in here if we just have a rate coefficient pool
-  }
-#elif MICROBES
-  double baseRate = params.maxIngestionRate * envi.soil /
-                    (params.halfSatIngestion + envi.soil);
+    }
+  } else {  // single pool
+    if (ctx.microbes) {
+      double baseRate = params.maxIngestionRate * envi.soil[0] /
+                        (params.halfSatIngestion + envi.soil[0]);
 
-  // Flux that microbes remove from soil  (mg C g soil day)
-  fluxes.microbeIngestion = baseRate * envi.microbeC;
-#endif
+      // Flux that microbes remove from soil  (mg C g soil day)
+      fluxes.microbeIngestion[0] = baseRate * envi.microbeC;
+    }
+  }
 }
 
 // Now we need to calculate the production of the soil carbon pool, but we are
@@ -1575,7 +1531,7 @@ void microbeGrowth(void) {
 // find what soil carbon pool the litter (wood or leaf) enters into
 int litterInputPool(double qualityComponent) {
   // Ensure that the input pool will never be 0
-  return (int)floor(qualityComponent * NUMBER_SOIL_CARBON_POOLS);
+  return (int)floor(qualityComponent * ctx.numSoilCarbonPools);
 }
 
 void soilDegradation(void) {
@@ -1585,105 +1541,105 @@ void soilDegradation(void) {
 
   calcMaintenanceRespiration(climate->tsoil, soilWater, params.soilWHC);
 
-#if SOIL_MULTIPOOL
-  int counter;  // Counter of different soil pools
-  int woodLitterInput, leafLitterInput;  // The particular pool litter enters
-                                         // into
-  double litterInput;  // The litter rate into a pool
-
-  double totResp, poolResp;  // Respiration rate summed across all pools
-
-  microbeGrowth();
+  if (ctx.soilMultiPool) {
+    microbeGrowth();
 #if SOIL_QUALITY
+    int counter;  // Counter of different soil pools
+    int woodLitterInput, leafLitterInput;  // The particular pool litter enters
+                                           // into
+    double litterInput;  // The litter rate into a pool
 
-  double microbeEff;
+    double totResp, poolResp;  // Respiration rate summed across all pools
 
-  double soilQuality;
+    double microbeEff;
 
-  totResp = 0;
+    double soilQuality;
 
-  // fluxes.woodLitter gives us the amount in the pool; we adjust these by 1
-  // because the input pool will never be 0
-  woodLitterInput = litterInputPool(params.qualityWood);
+    totResp = 0;
 
-  // fluxes.leafLitter gives us the amount in the pool
-  leafLitterInput = litterInputPool(params.qualityLeaf);
+    // fluxes.woodLitter gives us the amount in the pool; we adjust these by 1
+    // because the input pool will never be 0
+    woodLitterInput = litterInputPool(params.qualityWood);
 
-  for (counter = NUMBER_SOIL_CARBON_POOLS - 1; -1 < counter; counter--) {
-    litterInput = 0;  // Initialize the total litter input with every loop
+    // fluxes.leafLitter gives us the amount in the pool
+    leafLitterInput = litterInputPool(params.qualityLeaf);
 
-    soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
+    for (counter = NUMBER_SOIL_CARBON_POOLS - 1; -1 < counter; counter--) {
+      litterInput = 0;  // Initialize the total litter input with every loop
 
-    // calculate the microbial efficiency
-    microbeEff = params.efficiency * soilQuality;
+      soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
 
-    poolResp = (1 - microbeEff) * fluxes.microbeIngestion[counter];
-    // Add in growth + maintenance respiration
-    totResp += poolResp + fluxes.maintRespiration[counter];
+      // calculate the microbial efficiency
+      microbeEff = params.efficiency * soilQuality;
 
-    if (woodLitterInput == counter) {
-      litterInput += fluxes.woodLitter * climate->length;
+      poolResp = (1 - microbeEff) * fluxes.microbeIngestion[counter];
+      // Add in growth + maintenance respiration
+      totResp += poolResp + fluxes.maintRespiration[counter];
+
+      if (woodLitterInput == counter) {
+        litterInput += fluxes.woodLitter * climate->length;
+      }
+
+      if (leafLitterInput == counter) {
+        litterInput += fluxes.leafLitter * climate->length;
+      }
+
+      if (counter == 0) {
+        envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
+                               fluxes.maintRespiration[counter]) *
+                              climate->length;  // Transfer from this pool
+      } else {
+        envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
+                               fluxes.maintRespiration[counter]) *
+                              climate->length;  // Transfer from this pool
+        envi.soil[counter - 1] +=
+            (microbeEff * fluxes.microbeIngestion[counter]) *
+            climate->length;  // Transfer into next pool
+      }
     }
+    // Do the roots.  If we don't model roots, the value of these fluxes will be
+    // zero.
 
-    if (leafLitterInput == counter) {
-      litterInput += fluxes.leafLitter * climate->length;
-    }
-
-#if (counter == 0)
-    envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
-                           fluxes.maintRespiration[counter]) *
-                          climate->length;  // Transfer from this pool
-#else
-    envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
-                           fluxes.maintRespiration[counter]) *
-                          climate->length;  // Transfer from this pool
-    envi.soil[counter - 1] += (microbeEff * fluxes.microbeIngestion[counter]) *
-                              climate->length;  // Transfer into next pool
+    envi.soil[NUMBER_SOIL_CARBON_POOLS - 1] +=
+        (fluxes.coarseRootLoss + fluxes.fineRootLoss) * climate->length;
+    fluxes.rSoil = totResp;
+    // #else    This is the loop for no quality model
 
 #endif
+  } else if (ctx.microbes) {
+    microbeGrowth();
+    double microbeEff;
+
+    microbeEff = params.efficiency;
+
+    envi.soil[0] +=
+        (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
+         fluxes.leafLitter - fluxes.microbeIngestion[0]) *
+        climate->length;
+    envi.microbeC += (microbeEff * fluxes.microbeIngestion[0] +
+                      fluxes.soilPulse - fluxes.maintRespiration[0]) *
+                     climate->length;
+
+    fluxes.rSoil = fluxes.maintRespiration[0] +
+                   (1 - microbeEff) * fluxes.microbeIngestion[0];
+  } else {
+    if (ctx.litterPool) {
+      // TBD Why arent we setting fluxes.fSoil here?
+      envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
+                      fluxes.litterToSoil - fluxes.rLitter) *
+                     climate->length;
+
+      envi.soil[0] += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                       fluxes.litterToSoil - fluxes.rSoil) *
+                      climate->length;
+    } else {
+      // Normal pool (single pool, no microbes)
+      fluxes.rSoil = fluxes.maintRespiration[0];
+      envi.soil[0] += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                       fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
+                      climate->length;
+    }
   }
-  // Do the roots.  If we don't model roots, the value of these fluxes will be
-  // zero.
-
-  envi.soil[NUMBER_SOIL_CARBON_POOLS - 1] +=
-      (fluxes.coarseRootLoss + fluxes.fineRootLoss) * climate->length;
-  fluxes.rSoil = totResp;
-  // #else    This is the loop for no quality model
-
-#endif
-#elif MICROBES
-  microbeGrowth();
-  double microbeEff;
-
-  microbeEff = params.efficiency;
-
-  envi.soil +=
-      (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
-       fluxes.leafLitter - fluxes.microbeIngestion) *
-      climate->length;
-  envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
-                    fluxes.maintRespiration) *
-                   climate->length;
-
-  fluxes.rSoil =
-      fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
-
-#elif LITTER_POOL  // If LITTER_POOL = 1, then all other bets are off
-  envi.litter += (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil -
-                  fluxes.rLitter) *
-                 climate->length;
-
-  envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                fluxes.litterToSoil - fluxes.rSoil) *
-               climate->length;
-
-#else  // Normal pool (single pool, no microbes)
-  fluxes.rSoil = fluxes.maintRespiration;
-  envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
-               climate->length;
-#endif
-
   // Update roots.  If we don't model roots, these fluxes will be zero.
   envi.coarseRootC +=
       (fluxes.coarseRootCreation - fluxes.coarseRootLoss - fluxes.rCoarseRoot) *
@@ -1713,8 +1669,8 @@ void calculateFluxes(void) {
   double potGrossPsn;  // potential photosynthesis, without water stress
   double dWater;
   double lai;  // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  // double litterBreakdown; /* total litter breakdown (i.e. litterToSoil +
-  // rLitter) (g C/m^2 ground/day) */
+  double litterBreakdown;  // total litter breakdown (i.e. litterToSoil +
+  // rLitter) (g C/m^2 ground/day)
   double folResp, woodResp;  // maintenance respiration terms, g C * m^-2 ground
                              // area * day^-1
   double litterWater, soilWater;  // amount of water in litter and soil (cm)
@@ -1761,19 +1717,19 @@ void calculateFluxes(void) {
 
   leafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
 
-#if LITTER_POOL
-  litterBreakdown =
-      soilBreakdown(envi.litter, params.litterBreakdownRate, litterWater,
-                    params.litterWHC, climate->tsoil, params.soilRespQ10);
-  fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
-  fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
-  // NOTE: right now, we don't have capability to use separate cold soil params
-  // for litter
-#else
-  //  litterBreakdown = 0;
-  fluxes.rLitter = 0;
-  fluxes.litterToSoil = 0;
-#endif
+  if (ctx.litterPool) {
+    litterBreakdown =
+        soilBreakdown(envi.litter, params.litterBreakdownRate, litterWater,
+                      params.litterWHC, climate->tsoil, params.soilRespQ10);
+    fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
+    fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
+    // NOTE: right now, we don't have capability to use separate cold soil
+    // params for litter
+  } else {
+    //  litterBreakdown = 0;
+    fluxes.rLitter = 0;
+    fluxes.litterToSoil = 0;
+  }
 
   // finally, calculate fluxes that we haven't already calculated:
 
@@ -1884,18 +1840,13 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.plantWoodC), 0);
   ensureNonNegative(&(envi.plantLeafC), 0);
 
-#if LITTER_POOL
-  ensureNonNegative(&(envi.litter), 0);
-#endif
+  if (ctx.litterPool) {
+    ensureNonNegative(&(envi.litter), 0);
+  }
 
-#if SOIL_MULTIPOOL
-  int counter;
-  for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
+  for (int counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
     ensureNonNegative(&(envi.soil[counter]), 0);
   }
-#else
-  ensureNonNegative(&(envi.soil), 0);
-#endif
 
   ensureNonNegative(&(envi.coarseRootC), 0);
   ensureNonNegative(&(envi.fineRootC), 0);
@@ -1967,26 +1918,16 @@ void updateTrackers(double oldSoilWater) {
   trackers.soilWetnessFrac =
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
   trackers.totSoilC = 0;  // Set this to 0, and then we add to it
-#if SOIL_MULTIPOOL
-  int counter;
 
-  for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
+  for (int counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
     trackers.totSoilC += envi.soil[counter];
   }
-#else
-  trackers.totSoilC += envi.soil;
-#endif
 
   trackers.fpar = getMeanTrackerMean(meanFPAR);
 
   trackers.LAI = envi.plantLeafC / params.leafCSpWt;
   trackers.yearlyLitter += fluxes.leafLitter;
   trackers.plantWoodC = envi.plantWoodC;
-  // note this variable is added for Howland forest multi-model comparison
-  // includes ONLY leaf litter
-
-  // mean of soil wetness at start of time step at soil wetness at end of time
-  // step - assume linear
 }
 
 /*!
@@ -2229,9 +2170,9 @@ void setupModel(void) {
 
 // If we aren't explicitly modeling microbe pool, then do not have a pulse to
 // microbes, exudates go directly to the soil
-#if !MICROBES
-  params.microbePulseEff = 0;
-#endif
+  if (!ctx.microbes) {
+    params.microbePulseEff = 0;
+  }
 
   // change units of parameters:
   params.baseVegResp /= 365.0;  // change from per-year to per-day rate
@@ -2252,19 +2193,10 @@ void setupModel(void) {
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
   envi.litter = params.litterInit;
 
-  // If SOIL_QUALITY, split initial soilCarbon equally among all the pools
-#if SOIL_MULTIPOOL
-  int counter;
-
-  for (counter = 0; counter < NUMBER_SOIL_CARBON_POOLS; counter++) {
-
-    envi.soil[counter] = params.soilInit / NUMBER_SOIL_CARBON_POOLS;
+  for (int counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
+    envi.soil[counter] = params.soilInit / ctx.numSoilCarbonPools;
   }
   trackers.totSoilC = params.soilInit;
-#else
-  envi.soil = params.soilInit;
-
-#endif
 
 #if SOIL_QUALITY
   params.maxIngestionRate =
