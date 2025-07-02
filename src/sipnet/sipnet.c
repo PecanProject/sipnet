@@ -43,9 +43,6 @@
 // #define G 0
 // assume that soil heat flux is zero;
 
-#define GROWTH_RESP 0
-// explicitly model growth resp., rather than including with maint. resp.
-
 #define LLOYD_TAYLOR 0
 // use Lloyd-Taylor model for soil respiration, in which temperature sensitivity
 // decreases at higher temperatures? Lloyd-Taylor model is R = R0 * e^(E0 *
@@ -60,10 +57,6 @@
 // won't use different parameters at different temperatures
 
 #define WATER_PSN 1
-// does soil moisture affect photosynthesis?
-
-#define WATER_HRESP 1
-// does soil moisture affect heterotrophic respiration?
 
 #define DAYCENT_WATER_HRESP 0 && WATER_HRESP
 // use DAYCENT soil moisture function?
@@ -94,41 +87,19 @@
 // not overflowing? if litter water is off, then litter water drainage is off:
 // litter water drainage wouldn't do anything
 
+#define GROWTH_RESP 0
+#define WATER_HRESP 1
 #define LEAF_WATER 0 && (COMPLEX_WATER)
-// calculate leaf pool and evaporate from that pool
-// makes immediate evaporation more realistic for smaller timesteps
 
-#define SNOW (1 || (COMPLEX_WATER)) && MODEL_WATER
-// keep track of snowpack, rather than assuming all precip. is liquid
-// note: when using a complex water submodel, we ALWAYS keep track of snowpack
-// if model water is off, then snow is off: snow wouldn't do anything
-
-#define GDD 1
-// use GDD to determine leaf growth? (note: mutually exclusive with SOIL_PHENOL)
-
-#define SOIL_PHENOL 0 && !GDD
-// use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)
-
-// LITTER_POOL moved to modelStructures.h
-// have extra litter pool, in addition to soil c pool
+#define SNOW (0 || (COMPLEX_WATER)) && MODEL_WATER
+#define GDD 0
+#define SOIL_PHENOL 1 && !GDD
+#define LITTER_POOL 0
 
 #define SOIL_MULTIPOOL 0 && !LITTER_POOL
-// do we have a multipool approach to model soils?
-// if LITTER_POOL == 1, then SOIL_MULTIPOOL will be 0 because we take care of
-// litter with the soil quality submodel.
-
 #define NUMBER_SOIL_CARBON_POOLS 3
-// first number: number of pools we want to have.
-// IF SOIL_MULTIPOOL=0, then NUMBER_SOIL_CARBON_POOLS = 1
-// if SOIL_MULTIPOOL=1, then NUMBER_SOIL_CARBON_POOLS = number given
-
 #define SOIL_QUALITY 0 && SOIL_MULTIPOOL
-// do we have a soil quality submodel?
-// we only do SOIL_QUALITY if SOIL_MULTIPOOL is turned on
-
-#define MICROBES 0 && !SOIL_MULTIPOOL
-// do we utilize microbes.  This will only be an option
-// if SOIL_MULTIPOOL==0 and MICROBES ==1
+#define MICROBES 1 && !SOIL_MULTIPOOL
 
 #define STOICHIOMETRY 0 && MICROBES
 // do we utilize stoichometric considerations for the microbial pool?
@@ -2164,13 +2135,26 @@ double woodLitterF(double plantWoodC) {
                                                 // lost per day
 }
 
+double soilBreakdown(double poolC, double baseRate, double water, double whc,
+                     double tsoil, double Q10) {
+  double tempEffect = pow(Q10, tsoil / 10.0);
+
+#if WATER_HRESP  // if soil moisture affects heterotrophic resp.
+  double moistEffect = pow((water / whc), params.soilRespMoistEffect);
+#else  // no WATER_HRESP
+  double moistEffect = 1;
+#endif  // WATER_HRESP
+
+  return poolC * baseRate * tempEffect * moistEffect;
+}
+
 void calculateFluxes(void) {
   // auxiliary variables:
   double baseFolResp;
   double potGrossPsn;  // potential photosynthesis, without water stress
   double dWater;
   double lai;  // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  // double litterBreakdown; /* total litter breakdown (i.e. litterToSoil +
+  double litterBreakdown; /* total litter breakdown (i.e. litterToSoil +
   // rLitter) (g C/m^2 ground/day) */
   double folResp, woodResp;  // maintenance respiration terms, g C * m^-2 ground
                              // area * day^-1

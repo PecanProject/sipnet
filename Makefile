@@ -1,7 +1,7 @@
 CC=gcc
 LD=gcc
 AR=ar -rs
-CFLAGS=-Wall -Werror -g -Isrc
+CFLAGS=-Wall -Werror -g -Isrc -Wno-unused-but-set-variable -Wno-unused-variable
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)

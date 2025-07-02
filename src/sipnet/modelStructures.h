@@ -21,9 +21,6 @@
 // Note: requires ROOTS to be activated.
 #define EVENT_HANDLER 1 && ROOTS
 
-// have extra litter pool, in addition to soil c pool
-#define LITTER_POOL 0
-
 // Print header row in output files (main output and events.out)
 #define HEADER 0
 
