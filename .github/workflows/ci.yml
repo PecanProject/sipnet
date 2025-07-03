@@ -35,7 +35,7 @@ jobs:
       - name: compile sipnet
         run: make
 
-      # run single sipnet run
+      # run smoke tests
       - name: Run SIPNET smoke tests
         shell: bash
         run: tests/smoke/run_smoke.sh
