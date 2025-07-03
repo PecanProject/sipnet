@@ -573,6 +573,8 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 26 | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27 | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 
+An example output file can be found in [tests/smoke/niwot.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot.out).
+
 ### Events output
 
 When event handling is enabled SIPNET will create a file named `events.out` when event handling is enabled. 
