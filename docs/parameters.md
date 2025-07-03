@@ -537,32 +537,11 @@ Notes:
 2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 ```
 
-#### Events output
-
-SIPNET will create a file named `events.out` when event handling is enabled. 
-
-
-This file will have one row for each agronomic event that is processed. Each row lists year, 
-day, event type, and parameter name/value pairs for all state variables that the event
-affects. 
-
-
-Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
-up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
-```
-year  day  type     param_name=delta[,param_name=delta,...]
-2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
-2023   70  irrig    envi.soilWater=5.00
-2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
-2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
-2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
-2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
-```
-
-_Note: `events.out` logs all parameters changed by an event for debugging and testing purposes; 
-For downstream analyses that only need the date and event type, `events.in` is equivalent and easier to parse._
-
 ## Outputs
+
+### Model Outputs
+
+The `sipnet.out` file contains a time series of state variables and fluxes from the simulation.  
 
 |    | Symbol               | Parameter Name      | Definition                     | Units                |
 |----|----------------------|---------------------|--------------------------------|----------------------|
@@ -594,6 +573,33 @@ For downstream analyses that only need the date and event type, `events.in` is e
 | 26 | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27 | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 
+### Events output
+
+When event handling is enabled SIPNET will create a file named `events.out` when event handling is enabled. 
+
+This file will have one row for each agronomic event that is processed. Each row lists year, 
+day, event type, and parameter name/value pairs for state variables that the event
+directly affects. 
+
+The file logs all parameters changed by an event for debugging and testing purposes; downstream analyses should use 
+the same information found in `events.in` and `sipnet.out` [^1].
+
+Below is an example `events.out`, with header enabled for clarity. Note the delimiters: spaces
+up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
+
+```
+year  day  type     param_name=delta[,param_name=delta,...]
+2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
+2023   70  irrig    envi.soilWater=5.00
+2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
+2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
+2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+```
+
+[^1]: `events.in` provides date and event type; dates from `events.in` can be matched to pools and fluxes recorded in `sipnet.out`.
+
+
 <!--
 
 |    | $F^C_\text{CH_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
@@ -616,3 +622,4 @@ TODO: update and move the following terms used in model description to appropria
 | $R_{\text{meth}}$ | Rate of methane production                                           |
 | $R_{\text{methox}}$ | Rate of methane oxidation                                          |
 -->
+
