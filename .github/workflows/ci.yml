@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        OS: 
+        OS:
           - macos-latest
           - ubuntu-latest
           - ubuntu-24.04
@@ -30,39 +30,15 @@ jobs:
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
             brew install --formula doxygen
           fi
-        
+
       # compile SIPNET
       - name: compile sipnet
         run: make
 
-      # remove existing test output file
-      - name: Remove Niwout Output File
-        run: rm tests/smoke/niwot.out
-
       # run single sipnet run
-      - name: Run SIPNET on tests/smoke/niwot
+      - name: Run SIPNET smoke tests
         shell: bash
-        run: ./sipnet -i tests/smoke/sipnet.in
-
-      # check for correct output of Niwot run
-      - name: Check if niwot.out is generated
-        shell: bash
-        run: |
-          if [ ! -f tests/smoke/niwot.out ]; then
-            echo "::error title={No Output}::Test run for Niwot site failed to produce output"
-            exit 1
-          fi
-        
-      # Check if niwot.out has changed 
-      - name: Check whether niwot.out has changed 
-        shell: bash
-        run: |
-          if git diff --exit-code tests/smoke/niwot.out; then
-            echo "Success: Niwot.out created and has not changed"
-          else
-            echo "::error title={Output Changed}::The test file niwot.out has changed. This is expected to fail with some changes to SIPNET. When this happens, assess correctness and then update the reference niwot.out."
-            exit 1
-          fi
+        run: tests/smoke/run_smoke.sh
 
   # Run Unit Tests
   test:
@@ -70,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        OS: 
+        OS:
           - macos-latest
           - ubuntu-latest
           - ubuntu-24.04
@@ -87,4 +63,3 @@ jobs:
       # run tests
       - name: Run Unit Tests
         run: make testrun
-
