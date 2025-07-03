@@ -3,11 +3,16 @@
 # Store the starting directory
 START_DIR="$(pwd)"
 
+# Change to the script directory
+cd "$(dirname "$0")" || { echo "Failed to change to script directory to $SCRIPT_DIR"; exit 1; }
+SCRIPT_DIR="$(pwd)"
+echo "Changed to script directory $SCRIPT_DIR"
+
 # Find all immediate subdirectories
 DIRECTORIES=()
 while IFS= read -r -d '' dir; do
     DIRECTORIES+=("$dir")
-done < <(find "$START_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
+done < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
 
 # Exit immediately if a command fails (optional)
 #set -e
@@ -63,7 +68,7 @@ for DIR in "${DIRECTORIES[@]}"; do
     echo ""  # Blank line for readability
 
     # Return to the starting directory
-    cd "$START_DIR"
+    cd "$SCRIPT_DIR"
 done
 
 # Final return to starting directory (in case of premature exit)
