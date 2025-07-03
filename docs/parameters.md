@@ -577,17 +577,19 @@ An example output file can be found in [tests/smoke/niwot.out](https://github.co
 
 ### Events output
 
-When event handling is enabled SIPNET will create a file named `events.out` when event handling is enabled. 
+When event handling is enabled, SIPNET will create a file named `events.out`. 
 
-This file will have one row for each agronomic event that is processed. Each row lists year, 
-day, event type, and parameter name/value pairs for state variables that the event
-directly affects. 
+This file is designed primarily for _testing and debugging_.  
+It contains one row for each agronomic event that is processed. 
+Each row lists the year, day, event type, and parameter name/value pairs. 
+The name/value pairs represent the state variables that are directly changed by an event, recording the change (delta) applied to each.
 
-The file logs all parameters changed by an event for debugging and testing purposes; downstream analyses should use 
-the same information found in `events.in` and `sipnet.out` [^1].
+Information in `events.out` can, in principle, be reconstructed or inferred from `events.in` and `sipnet.out` though this may be confounded if simultaneous events affect the same variable.
 
-Below is an example `events.out`, with header enabled for clarity. Note the delimiters: spaces
-up to the param-values pairs, commas separating PV pairs, and `=` between param and value.
+Still, _`sipnet.out` is the authoritative source_ for information about system state and evolution in time, including responses to events.
+
+Below is an example `events.out`, with header enabled for clarity. 
+Note the delimiters: spaces separate columns, commas separate name/value pairs, and `=` map names with their values (deltas).
 
 ```
 year  day  type     param_name=delta[,param_name=delta,...]
@@ -598,9 +600,6 @@ year  day  type     param_name=delta[,param_name=delta,...]
 2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
 2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 ```
-
-[^1]: `events.in` provides date and event type; dates from `events.in` can be matched to pools and fluxes recorded in `sipnet.out`.
-
 
 <!--
 
