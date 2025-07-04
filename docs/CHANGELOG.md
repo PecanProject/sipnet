@@ -31,7 +31,7 @@ sections to include in release notes:
 - Build docs and push to gh-pages (#41)
 - events.out file for agronomic event handling (#57)
 - Utility `tools/trim_first_chars.sh` to trim the first n characters from every row in a file, useful for updating old input files to remove location column
-- Expanded smoke test cases to better cover SIPNET modeling options (#103)
+- Expanded smoke test cases to better cover SIPNET modeling options (#109)
 
 ### Fixed
 
