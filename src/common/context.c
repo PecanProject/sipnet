@@ -26,9 +26,10 @@ void initContext(void) {
   CREATE_INT_CONTEXT(printHeader, "PRINT_HEADER", 1, CTX_DEFAULT, 1);
 
   // Flags, default off
-  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT, 1);
   CREATE_INT_CONTEXT(litterPool, "LITTER_POOL", 0, CTX_DEFAULT, 1);
   CREATE_INT_CONTEXT(microbes, "MICROBES", 0, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(growthResp, "GROWTH_RESP", 0, CTX_DEFAULT, 1);
+  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT, 1);
   CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT, 1);
   CREATE_INT_CONTEXT(quiet, "QUIET", 0, CTX_DEFAULT, 1);
 
@@ -163,6 +164,29 @@ int by_name(const struct context_metadata *a,
   return strcmp(a->keyName, b->keyName);
 }
 
+void validateContext(void) {
+  // Make sure FILENAME is set and well-sized; everything else is optional (not
+  // necessary or has a default)
+  if (strcmp(ctx.fileName, "") == 0) {
+    printf("Error: fileName must be set for SIPNET to run\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
+    // We need room to append .clim, .param, etc
+    printf("Error: fileName is too long; max length is %d characters\n",
+           FILENAME_MAXLEN - 10);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
+  // Check num carbon pools in [1,3]
+
+  // Check inter-param requirements are not violated
+
+  printf("*******************************\n");
+  printf("VALIDATE CONTEXT NOT FINISHED!!\n");
+  printf("*******************************\n");
+}
+
 void printConfig(FILE *outFile) {
   // Sort alphabetically for consistency
   HASH_SORT(ctx.metaMap, by_name);  // NOLINT
@@ -177,7 +201,7 @@ void printConfig(FILE *outFile) {
     struct tm *utc_time = gmtime(&current_time);
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S UTC", utc_time);
     fprintf(outFile, "Final config for SIPNET run at %s\n", timestamp);
-    fprintf(outFile, "%20s %20s %30s\n", "Name", "Source", "Value");
+    fprintf(outFile, "%21s %13s %30s\n", "Name", "Source", "Value");
   }
 
   // Config
@@ -185,10 +209,10 @@ void printConfig(FILE *outFile) {
        s = (struct context_metadata *)(s->hh.next)) {
 
     if (s->type == CTX_INT) {
-      fprintf(outFile, "%20s %20s %30d\n", s->printName,
+      fprintf(outFile, "%21s %13s %30d\n", s->printName,
               getContextSourceString(s->source), *(int *)s->value);
     } else if (s->type == CTX_CHAR) {
-      fprintf(outFile, "%20s %20s %30s\n", s->printName,
+      fprintf(outFile, "%21s %13s %30s\n", s->printName,
               getContextSourceString(s->source), (char *)s->value);
     } else {
       // The height of paranoia

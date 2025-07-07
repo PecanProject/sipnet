@@ -39,11 +39,14 @@ struct context_metadata {
 // Context entry
 struct Context {
   // Flags
-  int doMainOutput;
-  int doSingleOutputs;
+  // * Model options
   int events;
   int litterPool;
   int microbes;
+  int growthResp;
+  // * I/O
+  int doMainOutput;
+  int doSingleOutputs;
   int printHeader;
   int dumpConfig;
   int quiet;
@@ -95,6 +98,8 @@ void updateCharContext(const char *name, const char *value,
 int hasSourcePrecedence(struct context_metadata *s, context_source_t newSource);
 
 char *getContextSourceString(context_source_t src);
+
+void validateContext(void);
 
 void printConfig(FILE *outFile);
 

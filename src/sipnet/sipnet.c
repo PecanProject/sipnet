@@ -368,10 +368,9 @@ typedef struct FluxVars {
   double rWood;  // g C m^-2 ground area day^-1 of wood respiration
   double rLeaf;  // g C m^-2 ground area day^-1 of leaf respiration
 
-  double maintRespiration[NUMBER_SOIL_CARBON_POOLS];  // Microbial maintenance
-                                                      // respiration rate g C
-                                                      // m-2 ground area day^-1
-  double microbeIngestion[NUMBER_SOIL_CARBON_POOLS];
+  double *maintRespiration;  // Microbial maintenance respiration rate g C
+                             // m-2 ground area day^-1
+  double *microbeIngestion;
 
   double fineRootLoss;  // Loss rate of fine roots (turnover + exudation)
   double coarseRootLoss;  // Loss rate of coarse roots (turnover + exudation)
@@ -1663,6 +1662,19 @@ double woodLitterF(double plantWoodC) {
                                                 // lost per day
 }
 
+double soilBreakdown(double poolC, double baseRate, double water, double whc,
+                     double tsoil, double Q10) {
+  double tempEffect = pow(Q10, tsoil / 10.0);
+
+#if WATER_HRESP  // if soil moisture affects heterotrophic resp.
+  double moistEffect = pow((water / whc), params.soilRespMoistEffect);
+#else  // no WATER_HRESP
+  double moistEffect = 1;
+#endif  // WATER_HRESP
+
+  return poolC * baseRate * tempEffect * moistEffect;
+}
+
 void calculateFluxes(void) {
   // auxiliary variables:
   double baseFolResp;
@@ -1726,7 +1738,7 @@ void calculateFluxes(void) {
     // NOTE: right now, we don't have capability to use separate cold soil
     // params for litter
   } else {
-    //  litterBreakdown = 0;
+    litterBreakdown = 0;
     fluxes.rLitter = 0;
     fluxes.litterToSoil = 0;
   }
@@ -2289,11 +2301,29 @@ void setupOutputItems(OutputItems *outputItems) {
   addOutputItem(outputItems, "GPP_cum", &(trackers.totGpp));
 }
 
+void createSoilCarbonPoolArrays(void) {
+  // Create arrays based on number of soil carbon pools
+  envi.soil = (double *)malloc(ctx.numSoilCarbonPools * sizeof(double));
+  fluxes.maintRespiration =
+      (double *)malloc(ctx.numSoilCarbonPools * sizeof(double));
+  fluxes.microbeIngestion =
+      (double *)malloc(ctx.numSoilCarbonPools * sizeof(double));
+}
+
+void freeSoilCarbonPoolArrays(void) {
+  // Free arrays based on number of soil carbon pools
+  free(envi.soil);
+  free(fluxes.maintRespiration);
+  free(fluxes.microbeIngestion);
+}
+
 // See sipnet.h
 void initModel(ModelParams **modelParams, const char *paramFile,
                const char *climFile) {
   readParamData(modelParams, paramFile);
   readClimData(climFile);
+
+  createSoilCarbonPoolArrays();
 
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
   meanGPP = newMeanTracker(0, MEAN_GPP_SOIL_DAYS, MEAN_GPP_SOIL_MAX_ENTRIES);
@@ -2314,6 +2344,8 @@ void initEvents(char *eventFile, int printHeader) {
 // See sipnet.h
 void cleanupModel() {
   freeClimateList();
+  freeSoilCarbonPoolArrays();
+
   deallocateMeanTracker(meanNPP);
   deallocateMeanTracker(meanGPP);
   deallocateMeanTracker(meanFPAR);

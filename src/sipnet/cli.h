@@ -14,7 +14,7 @@
 
 // The run-time option names do not match their corresponding fields in Context,
 // so we need a way to get from one to the other.
-#define NUM_FLAG_OPTIONS 8
+#define NUM_FLAG_OPTIONS 9
 extern char *argNameMap[2 * NUM_FLAG_OPTIONS];
 
 /*!

@@ -7,14 +7,14 @@
 
 // C preprocessor shenanigans to get stringizing and concatenation to work
 // for NO_(x) macro, needed by DECLARE_FLAG macro
-#define CONCAT(x, y) x##y
-#define STRINGIZE_IMPL(x) #x
-#define STRINGIZE(x) STRINGIZE_IMPL(x)
-#define NO_(x) STRINGIZE(CONCAT(no_, x))
+// #define CONCAT(x, y) x##y
+// #define STRINGIZE_IMPL(x) #x
+// #define STRINGIZE(x) STRINGIZE_IMPL(x)
+// #define NO_(x) STRINGIZE(CONCAT(no-, x))
 
 #define DECLARE_FLAG(name)                                                     \
   {#name, no_argument, &ctx.tmpFlag, 1},                                       \
-      {NO_(name), no_argument, &ctx.tmpFlag, 0}
+      {"no-" #name, no_argument, &ctx.tmpFlag, 0}
 
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
 
@@ -25,21 +25,23 @@ static struct option long_options[] = {  // NOLINT
     // These options set a flag (and they need to be at the top here for
     // indexing purposes). The DECLARE_FLAG macro declares both <flag> and
     // <no_flag> versions of the option.
-    DECLARE_FLAG(do_main_output),
-    DECLARE_FLAG(do_single_outputs),
     DECLARE_FLAG(events),
-    DECLARE_FLAG(litter_pool),
+    DECLARE_FLAG(litter - pool),
     DECLARE_FLAG(microbes),
-    DECLARE_FLAG(print_header),
-    DECLARE_FLAG(dump_config),
+    DECLARE_FLAG(growth - resp),
+
+    DECLARE_FLAG(do - main - output),
+    DECLARE_FLAG(do - single - outputs),
+    DECLARE_FLAG(print - header),
+    DECLARE_FLAG(dump - config),
     DECLARE_FLAG(quiet),
 
     // clang-format off
     // These options don’t set a flag. We distinguish them by their indices
     // name                         has_arg           flag  val (val is the index)
-    {"input_file",                  required_argument, 0,   'i'},
+    {"input-file",                  required_argument, 0,   'i'},
     {"help",                        no_argument,       0,   'h'},
-    {"num_carbon_soil_pools",       required_argument, 0,   'n'},
+    {"num-carbon-soil-pools",       required_argument, 0,   'n'},
     {"version",                     no_argument,       0,   'v'},
     // clang-format on
     {0, 0, 0, 0}};
@@ -50,10 +52,14 @@ char *argNameMap[] = {
     // Gives corresponding name in Context struct (that is, the argument to the
     // DECLARE_ARG_FOR_MAP macro needs to be the name of the corresponding field
     // in Context)
+    // Model options
+    DECLARE_ARG_FOR_MAP(events), DECLARE_ARG_FOR_MAP(litterPool),
+    DECLARE_ARG_FOR_MAP(microbes), DECLARE_ARG_FOR_MAP(growthResp),
+
+    // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
-    DECLARE_ARG_FOR_MAP(events),       DECLARE_ARG_FOR_MAP(litterPool),
-    DECLARE_ARG_FOR_MAP(microbes),     DECLARE_ARG_FOR_MAP(printHeader),
-    DECLARE_ARG_FOR_MAP(dumpConfig),   DECLARE_ARG_FOR_MAP(quiet)};
+    DECLARE_ARG_FOR_MAP(printHeader), DECLARE_ARG_FOR_MAP(dumpConfig),
+    DECLARE_ARG_FOR_MAP(quiet)};
 
 // Print the help message when requested
 void usage(char *progName) {
@@ -63,17 +69,21 @@ void usage(char *progName) {
   printf("Run SIPNET model for one site with configured options.\n");
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
-  printf("  -i, --input_file             Name of input config file (sipnet.in)\n");
-  printf("  -n, --num_carbon_soil_pools  Number of carbon soil pools (1)\n");
+  printf("  -i, --input-file <input-file>      Name of input config file (sipnet.in)\n");
+  printf("  -n, --num-carbon-soil-pools <num>  Number of carbon soil pools (1)\n");
   printf("\n");
-  printf("Flag options: (prepend flag with 'no_' to force off, eg '--no_print_header')\n");
-  printf("  --events         Enable event handling (1)\n");
-  printf("  --litter_pool    Enable litter pool in addition to single soil carbon pool (0)\n");
-  printf("  --microbes       Enable microbe modeling (0)\n");
+  printf("Model flags: (prepend flag with 'no_' to force off, eg '--no-events')\n");
+  printf("  --events             Enable event handling (1)\n");
+  printf("  --litter-pool        Enable litter pool in addition to single soil carbon pool (0)\n");
+  printf("  --microbes           Enable microbe modeling (0)\n");
+  printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
   printf("  --[TBD]   \n");
-  printf("  --dump_config    Print final config to <input_file>.config (0)\n");
-  printf("  --print_header   Whether to print header row in output files (1)\n");
-  printf("  --quiet          Suppress info and warning message (0)\n");
+  printf("I/O flags: (prepend flag with 'no_' to force off, eg '--no-print-header')\n");
+  printf("  --do-main-output     Print time series of all output variables to <input-file>.out (1)\n");
+  printf("  --do-single-outputs  Print outputs one variable per file (e.g. <input-file>.NEE)\n");
+  printf("  --dump-config        Print final config to <input-file>.config (0)\n");
+  printf("  --print-header       Whether to print header row in output files (1)\n");
+  printf("  --quiet              Suppress info and warning message (0)\n");
   printf("  --[TBD]   \n");
   printf("\n");
   printf("Info options:\n");

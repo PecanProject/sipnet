@@ -148,18 +148,7 @@ int main(int argc, char *argv[]) {
   readInputFile(ctx.inputFile);
 
   // 4. Run some checks
-  // Make sure FILENAME is set and well-sized; everything else is optional (not
-  // necessary or has a default)
-  if (strcmp(ctx.fileName, "") == 0) {
-    printf("Error: fileName must be set for SIPNET to run\n");
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-  }
-  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
-    // We need room to append .clim, .param, etc
-    printf("Error: fileName is too long; max length is %d characters\n",
-           FILENAME_MAXLEN - 10);
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-  }
+  validateContext();
 
   // 5. Set calculated filenames
   strcpy(paramFile, ctx.fileName);
