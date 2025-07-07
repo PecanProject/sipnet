@@ -2180,8 +2180,8 @@ void setupModel(void) {
   // one:
   ensureAllocation();
 
-// If we aren't explicitly modeling microbe pool, then do not have a pulse to
-// microbes, exudates go directly to the soil
+  // If we aren't explicitly modeling microbe pool, then do not have a pulse to
+  // microbes, exudates go directly to the soil
   if (!ctx.microbes) {
     params.microbePulseEff = 0;
   }
