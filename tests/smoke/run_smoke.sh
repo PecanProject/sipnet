@@ -8,10 +8,19 @@ cd "$(dirname "$0")" || { echo "Failed to change to script directory to $SCRIPT_
 SCRIPT_DIR="$(pwd)"
 echo "Changed to script directory $SCRIPT_DIR"
 
+# Initialize counters
+num_tests=0
+sipnet_pass_count=0
+sipnet_fail_count=0
+event_pass_count=0
+event_fail_count=0
+skip_count=0
+
 # Find all immediate subdirectories
 DIRECTORIES=()
 while IFS= read -r -d '' dir; do
     DIRECTORIES+=("$dir")
+    ((num_tests++))
 done < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
 
 # Sort - or we would, if our bash had mapfile
@@ -19,13 +28,6 @@ done < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
 
 # Exit immediately if a command fails (optional)
 #set -e
-
-# Initialize counters
-sipnet_pass_count=0
-sipnet_fail_count=0
-event_pass_count=0
-event_fail_count=0
-skip_count=0
 
 # Loop through each directory
 for DIR in "${DIRECTORIES[@]}"; do
@@ -87,10 +89,10 @@ echo "======================="
 echo "SUMMARY:"
 echo "Skipped directories: $skip_count"
 echo "SIPNET OUTPUT:"
-echo "Passed:  $sipnet_pass_count"
+echo "Passed:  $sipnet_pass_count/$num_tests"
 echo "Failed:  $sipnet_fail_count"
 echo "EVENT OUTPUT:"
-echo "Passed:  $event_pass_count"
+echo "Passed:  $event_pass_count/$num_tests"
 echo "Failed:  $event_fail_count"
 echo "======================="
 

@@ -3,9 +3,23 @@
 Smoke tests run as part of the build process in github's CI workflow. Thus, they should be kept short (e.g., run time
 less than a minute as a rough guideline). This document describes the current smoke tests.
 
+## Tests Files
+
+Each smoke test contains the following files:
+
+**INPUT**
+* `events.in`: events input file (may be empty if no events, as with the Niwot case)
+* `sipnet.clim`: climate input file
+* `sipnet.in`: sipnet configuration file
+* `sipnet.param`: model parameter input file
+
+**OUTPUT**
+* `events.exp`: expected events output file, compared to generated `events.out`
+* `sipnet.exp`: expected sipnet output, compared to generated `sipnet.out`
+
 ## Niwot
 
-The "original" smoke test, this is a simple run at (a? the?) Niwot site, using out-of-the-box settings for SIPNET.
+The "original" smoke test, this is a simple run at Niwot Ridge(?), using out-of-the-box settings for SIPNET.
 
 ## Russell Ranch
 
