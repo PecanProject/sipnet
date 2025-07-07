@@ -1,14 +1,12 @@
 #include "logging.h"
 #include "exitCodes.h"
 
-// Note: errVal here isn't scalable, but we will replace it if/when we have
-// a proper logging system
-void logprint(int errLevel, const char *prefix, const char *file, int lineNum,
+void logprint(int logLevel, const char *prefix, const char *file, int lineNum,
               const char *fmt, ...) {
-  if (errLevel == 0 && ctx.quiet) {
+  if (logLevel == 0 && ctx.quiet) {
     return;
   }
-  switch (errLevel) {
+  switch (logLevel) {
     case 0:
     case 1:
       printf("%s", prefix);
@@ -23,7 +21,7 @@ void logprint(int errLevel, const char *prefix, const char *file, int lineNum,
       printf(
           "[ERROR (INTERNAL)] (%s:%d) Unknown error level %d while trying to "
           "print output; original output from (%s:%d)\n",
-          __FILE_NAME__, __LINE__, errLevel, file, lineNum);
+          __FILE_NAME__, __LINE__, logLevel, file, lineNum);
       exit(EXIT_CODE_INTERNAL_ERROR);
   }
   va_list args;
