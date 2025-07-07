@@ -23,7 +23,6 @@
 #include "events.h"
 #include "outputItems.h"
 #include "runmean.h"
-#include "modelStructures.h"
 
 // OPTION
 #define GROWTH_RESP 0
