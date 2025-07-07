@@ -8,6 +8,11 @@
 #include "common/exitCodes.h"
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
+#define NO_DEFAULT_FILE ""
+#define ARG_OFF 0
+#define ARG_ON 1
+#define FLAG_YES 1
+#define FLAG_NO 0
 
 struct Context ctx;
 
@@ -19,26 +24,34 @@ void initContext(void) {
   // Init hash map to NULL before adding anything to it
   ctx.metaMap = NULL;
 
+  // clang-format off
   // Init the params
-  // Flags, default on
-  CREATE_INT_CONTEXT(doMainOutput, "DO_MAIN_OUTPUT", 1, CTX_DEFAULT, 1);
-  CREATE_INT_CONTEXT(events, "EVENTS", 1, CTX_DEFAULT, 1);
-  CREATE_INT_CONTEXT(printHeader, "PRINT_HEADER", 1, CTX_DEFAULT, 1);
+  // Flags, model options
+  CREATE_INT_CONTEXT(events,          "EVENTS",           ARG_ON,  CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(gdd,             "GDD",              ARG_ON,  CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(growthResp,      "GROWTH_RESP",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(leafWater,       "LEAF_WATER",       ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(litterPool,      "LITTER_POOL",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(microbes,        "MICROBES",         ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(soilQuality,     "SOIL_QUALITY"    , ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  CTX_DEFAULT, FLAG_YES);
 
-  // Flags, default off
-  CREATE_INT_CONTEXT(litterPool, "LITTER_POOL", 0, CTX_DEFAULT, 1);
-  CREATE_INT_CONTEXT(microbes, "MICROBES", 0, CTX_DEFAULT, 1);
-  CREATE_INT_CONTEXT(growthResp, "GROWTH_RESP", 0, CTX_DEFAULT, 1);
-  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT, 1);
-  CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT, 1);
-  CREATE_INT_CONTEXT(quiet, "QUIET", 0, CTX_DEFAULT, 1);
+  // Flags, I/O
+  CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(dumpConfig,      "DUMP_CONFIG",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(printHeader,     "PRINT_HEADER",     ARG_ON,  CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(quiet,           "QUIET",            ARG_OFF, CTX_DEFAULT, FLAG_YES);
 
   // Files
-  CREATE_CHAR_CONTEXT(paramFile, "PARAM_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(climFile, "CLIM_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(outFile, "OUT_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(outConfigFile, "OUT_CONFIG_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE, CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(paramFile,      "PARAM_FILE",       NO_DEFAULT_FILE,    CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(climFile,       "CLIM_FILE",        NO_DEFAULT_FILE,    CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(outFile,        "OUT_FILE",         NO_DEFAULT_FILE,    CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(outConfigFile,  "OUT_CONFIG_FILE",  NO_DEFAULT_FILE,    CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE, CTX_DEFAULT);
+  // clang-format on
 
   // Other
   // Prefix for climate and parameter input files. We may want to rename this
@@ -46,13 +59,14 @@ void initContext(void) {
   // would be a breaking change.
   CREATE_CHAR_CONTEXT(fileName, "FILENAME", "", CTX_DEFAULT);
   // Number of soil carbon pools being used in this run, should in [1,3] (I
-  // don't think greater than three has been tested). Note that one has some
-  // implications in the code, see soilMultiPool.
+  // don't think greater than three has been tested). Note that 1 has some
+  // implications in the code, see soilMultiPool. Also not that this is NOT
+  // a flag.
   CREATE_INT_CONTEXT(numSoilCarbonPools, "NUM_SOIL_CARBON_POOLS", 1,
                      CTX_DEFAULT, 0);
   // Whether this is a soil carbon multipool run; literally defined as
   // (num_soil_carbon_pools > 1), but it's a nice convenience. Some model
-  // options are only possible when this is true. Calculated quantity, not an
+  // options are only possible when this is true. Calculated quantity, not a
   // CLI arg.
   CREATE_INT_CONTEXT(soilMultiPool, "SOIL_MULTI_POOL", 0, CTX_DEFAULT, 0);
 }

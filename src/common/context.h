@@ -41,14 +41,21 @@ struct Context {
   // Flags
   // * Model options
   int events;
+  int gdd;
+  int growthResp;
+  int leafWater;
   int litterPool;
   int microbes;
-  int growthResp;
+  int snow;
+  int soilPhenol;
+  int soilQuality;
+  int waterHResp;
+
   // * I/O
   int doMainOutput;
   int doSingleOutputs;
-  int printHeader;
   int dumpConfig;
+  int printHeader;
   int quiet;
 
   // Files

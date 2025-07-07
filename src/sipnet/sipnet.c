@@ -24,38 +24,6 @@
 #include "outputItems.h"
 #include "runmean.h"
 
-// OPTION
-#define GROWTH_RESP 0
-// explicitly model growth resp., rather than including with maint. resp.
-
-// OPTION
-#define WATER_HRESP 1
-// does soil moisture affect heterotrophic respiration?
-
-// OPTION
-#define LEAF_WATER 0
-// calculate leaf pool and evaporate from that pool
-// makes immediate evaporation more realistic for smaller timesteps
-
-// OPTION
-#define SNOW 1
-// keep track of snowpack, rather than assuming all precip. is liquid
-// note: when using a complex water submodel, we ALWAYS keep track of snowpack
-// if model water is off, then snow is off: snow wouldn't do anything
-
-// OPTION
-#define GDD 1
-// use GDD to determine leaf growth? (note: mutually exclusive with SOIL_PHENOL)
-
-// OPTION
-#define SOIL_PHENOL 0 && !GDD
-// use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)
-
-// OPTION
-#define SOIL_QUALITY 0  //&& SOIL_MULTIPOOL
-// do we have a soil quality submodel?
-// we only do SOIL_QUALITY if SOIL_MULTIPOOL is turned on
-
 #define C_WEIGHT 12.0  // molecular weight of carbon
 #define TEN_6 1000000.0  // for conversions from micro
 #define TEN_9 1000000000.0  // for conversions from nano
@@ -122,10 +90,8 @@ struct ClimateVars {
   double soilWetness;  // fractional soil wetness (fraction of saturation -
                        // between 0 and 1)
 
-#if GDD
-  double gdd; /* growing degree days from Jan. 1 to now
-     NOTE: Calculated, *not* read from file */
-#endif
+  double gdd;  // growing degree days from Jan. 1 to now. NOTE: Calculated,
+               // *not* read from file
 
   ClimateNode *nextClim;
 };
@@ -487,10 +453,9 @@ void readClimData(const char *climFile) {
   double time, length;  // time in hours, length in days (or fraction of day)
   double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
 
-#if GDD
+  // Only used if ctx.gdd = 1
   double thisGdd;  // growing degree days of this time step
   double gdd = 0.0;  // growing degree days since the last Jan. 1
-#endif
 
   int status;  // status of the read
 
@@ -571,17 +536,17 @@ void readClimData(const char *climFile) {
     }
     curr->soilWetness = soilWetness;
 
-#if GDD
-    if (year != lastYear) {  // HAPPY NEW YEAR!
-      gdd = 0;  // reset growing degree days
+    if (ctx.gdd) {
+      if (year != lastYear) {  // HAPPY NEW YEAR!
+        gdd = 0;  // reset growing degree days
+      }
+      thisGdd = tair * length;
+      if (thisGdd < 0) {  // can't have negative growing degree days
+        thisGdd = 0;
+      }
+      gdd += thisGdd;
+      curr->gdd = gdd;
     }
-    thisGdd = tair * length;
-    if (thisGdd < 0) {  // can't have negative growing degree days
-      thisGdd = 0;
-    }
-    gdd += thisGdd;
-    curr->gdd = gdd;
-#endif
 
     lastYear = year;
 
@@ -661,7 +626,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "psnTMin", &(params.psnTMin), 1);
   initializeOneModelParam(modelParams, "psnTOpt", &(params.psnTOpt), 1);
   initializeOneModelParam(modelParams, "vegRespQ10", &(params.vegRespQ10), 1);
-  initializeOneModelParam(modelParams, "growthRespFrac", &(params.growthRespFrac), GROWTH_RESP);
+  initializeOneModelParam(modelParams, "growthRespFrac", &(params.growthRespFrac), ctx.growthResp);
   initializeOneModelParam(modelParams, "frozenSoilFolREff", &(params.frozenSoilFolREff), 1);
   initializeOneModelParam(modelParams, "frozenSoilThreshold", &(params.frozenSoilThreshold), 1);
   initializeOneModelParam(modelParams, "dVpdSlope", &(params.dVpdSlope), 1);
@@ -669,9 +634,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "halfSatPar", &(params.halfSatPar), 1);
   initializeOneModelParam(modelParams, "attenuation", &(params.attenuation), 1);
 
-  initializeOneModelParam(modelParams, "leafOnDay", &(params.leafOnDay), !((GDD) || (SOIL_PHENOL)));
-  initializeOneModelParam(modelParams, "gddLeafOn", &(params.gddLeafOn), GDD);
-  initializeOneModelParam(modelParams, "soilTempLeafOn", &(params.soilTempLeafOn), SOIL_PHENOL);
+  initializeOneModelParam(modelParams, "leafOnDay", &(params.leafOnDay), !((ctx.gdd) || (ctx.soilPhenol)));
+  initializeOneModelParam(modelParams, "gddLeafOn", &(params.gddLeafOn), ctx.gdd);
+  initializeOneModelParam(modelParams, "soilTempLeafOn", &(params.soilTempLeafOn), ctx.soilPhenol);
   initializeOneModelParam(modelParams, "leafOffDay", &(params.leafOffDay), 1);
   initializeOneModelParam(modelParams, "leafGrowth", &(params.leafGrowth), 1);
   initializeOneModelParam(modelParams, "fracLeafFall", &(params.fracLeafFall), 1);
@@ -689,7 +654,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
   initializeOneModelParam(modelParams, "E0", &(params.E0), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "T0", &(params.T0), OBSOLETE_PARAM);
-  initializeOneModelParam(modelParams, "soilRespMoistEffect", &(params.soilRespMoistEffect), WATER_HRESP);
+  initializeOneModelParam(modelParams, "soilRespMoistEffect", &(params.soilRespMoistEffect), ctx.waterHResp);
   initializeOneModelParam(modelParams, "waterRemoveFrac", &(params.waterRemoveFrac), 1);
   initializeOneModelParam(modelParams, "frozenSoilEff", &(params.frozenSoilEff), 1);
   initializeOneModelParam(modelParams, "wueConst", &(params.wueConst), 1);
@@ -697,9 +662,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "soilWHC", &(params.soilWHC), 1);
   initializeOneModelParam(modelParams, "immedEvapFrac", &(params.immedEvapFrac), 1);
   initializeOneModelParam(modelParams, "fastFlowFrac", &(params.fastFlowFrac), 1);
-  initializeOneModelParam(modelParams, "leafPoolDepth", &(params.leafPoolDepth), LEAF_WATER);
+  initializeOneModelParam(modelParams, "leafPoolDepth", &(params.leafPoolDepth), ctx.leafWater);
 
-  initializeOneModelParam(modelParams, "snowMelt", &(params.snowMelt), SNOW);
+  initializeOneModelParam(modelParams, "snowMelt", &(params.snowMelt), ctx.snow);
   initializeOneModelParam(modelParams, "litWaterDrainRate", &(params.litWaterDrainRate), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "rdConst", &(params.rdConst), 1);
   initializeOneModelParam(modelParams, "rSoilConst1", &(params.rSoilConst1), 1);
@@ -707,15 +672,15 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "leafCSpWt", &(params.leafCSpWt), 1);
   initializeOneModelParam(modelParams, "cFracLeaf", &(params.cFracLeaf), 1);
   initializeOneModelParam(modelParams, "woodTurnoverRate", &(params.woodTurnoverRate), 1);
-  initializeOneModelParam(modelParams, "qualityLeaf", &(params.qualityLeaf), SOIL_QUALITY);
-  initializeOneModelParam(modelParams, "qualityWood", &(params.qualityWood), SOIL_QUALITY);
+  initializeOneModelParam(modelParams, "qualityLeaf", &(params.qualityLeaf), ctx.soilQuality);
+  initializeOneModelParam(modelParams, "qualityWood", &(params.qualityWood), ctx.soilQuality);
 
-  initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), (SOIL_QUALITY) || ctx.microbes);
-  initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), (SOIL_QUALITY) || ctx.microbes);
+  initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), (ctx.soilQuality) || ctx.microbes);
+  initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), (ctx.soilQuality) || ctx.microbes);
   initializeOneModelParam(modelParams, "halfSatIngestion", &(params.halfSatIngestion), ctx.microbes);
   initializeOneModelParam(modelParams, "totNitrogen", &(params.totNitrogen), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "microbeNC", &(params.microbeNC), OBSOLETE_PARAM);
-  initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), (SOIL_QUALITY) || ctx.microbes);
+  initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), (ctx.soilQuality) || ctx.microbes);
   initializeOneModelParam(modelParams, "fineRootFrac", &(params.fineRootFrac), 1);
   initializeOneModelParam(modelParams, "coarseRootFrac", &(params.coarseRootFrac), 1);
 
@@ -1024,26 +989,16 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 // note: there may be some fluctuations in this signal for some methods of
 // determining growing season start (e.g. for soil temp-based leaf growth)
 int pastLeafGrowth(void) {
-
-#if GDD
-  // null pointer dereference warning suppressed on the next line
-  return (climate->gdd >= params.gddLeafOn);  // NOLINT
-#elif SOIL_PHENOL
-  return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
-                                                     // threshold
-#else
-  double currTime;
-  int currYear;
-  int currDay;
-  currYear = climate->year;
-  currDay = climate->day;
-  currTime = (double)climate->day + climate->time / 24.0;
-
-  // printf("stuff: %8d  %8d  \n",currYear,currDay);
-
-  return (currTime >= params.leafOnDay);  // turn-on day
-  // return 1;
-#endif
+  if (ctx.gdd) {
+    // null pointer dereference warning suppressed on the next line
+    return (climate->gdd >= params.gddLeafOn);  // NOLINT
+  } else if (ctx.soilPhenol) {
+    return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
+                                                       // threshold
+  } else {
+    double currTime = (double)climate->day + climate->time / 24.0;
+    return (currTime >= params.leafOnDay);  // turn-on day
+  }
 }
 
 // have we passed the growing season-end leaf fall trigger this year?
@@ -1112,29 +1067,28 @@ void simpleWaterFlow(double *rain, double *snowFall, double *immedEvap,
                      double precip, double temp, double length, double trans) {
   double netIn;  // net water into soil, in cm
 
-#if SNOW  // we're modeling snow
-  if (temp <= 0) {  // below freezing
-    *snowFall = precip / length;
-    *rain = 0;
-    *snowMelt = 0;
-  } else {  // above freezing
-    *snowFall = 0;
-    *rain = precip / length;
-    if (snow > 0) {
-      *snowMelt = params.snowMelt * temp;  // snow melt proportional to temp.
-      if ((*snowMelt * length) > snow) {  // can only melt what's there!
-        *snowMelt = snow / length;
-      }
-    } else {
+  if (ctx.snow) {
+    if (temp <= 0) {  // below freezing
+      *snowFall = precip / length;
+      *rain = 0;
       *snowMelt = 0;
+    } else {  // above freezing
+      *snowFall = 0;
+      *rain = precip / length;
+      if (snow > 0) {
+        *snowMelt = params.snowMelt * temp;  // snow melt proportional to temp.
+        if ((*snowMelt * length) > snow) {  // can only melt what's there!
+          *snowMelt = snow / length;
+        }
+      } else {
+        *snowMelt = 0;
+      }
     }
+  } else {
+    *rain = precip / length;
+    *snowFall = 0;
+    *snowMelt = 0;
   }
-
-#else  // not modeling snow
-  *rain = precip / length;
-  *snowFall = 0;
-  *snowMelt = 0;
-#endif  // #if snow
 
   netIn = (*rain + *snowMelt - trans) * length;
   *bottomDrainage = ((water + netIn) - params.soilWHC) / length;
@@ -1171,20 +1125,19 @@ void calcPrecip(double *rain, double *snowFall, double *immedEvap, double lai) {
      let sublimation take care of that)
   */
 
-#if LEAF_WATER
-  double maxLeafPool;
+  if (ctx.leafWater) {
+    double maxLeafPool;
 
-  maxLeafPool = lai * params.leafPoolDepth;  // calculate current leaf pool size
-                                             // depending on lai
-  *immedEvap = (*rain) * params.immedEvapFrac;
+    maxLeafPool = lai * params.leafPoolDepth;  // calculate current leaf pool
+                                               // size depending on lai
+    *immedEvap = (*rain) * params.immedEvapFrac;
 
-  // don't evaporate more than pool size, excess water will go to the soil
-  if (*immedEvap > maxLeafPool)
-    *immedEvap = maxLeafPool;
-
-#else
-  *immedEvap = (*rain) * params.immedEvapFrac;
-#endif
+    // don't evaporate more than pool size, excess water will go to the soil
+    if (*immedEvap > maxLeafPool)
+      *immedEvap = maxLeafPool;
+  } else {
+    *immedEvap = (*rain) * params.immedEvapFrac;
+  }
 }
 
 // snowpack dynamics:
@@ -1350,13 +1303,13 @@ void transSoilDrainage(double *bottomDrainage, double topDrainage, double trans,
 // net rain (cm/day) is (rain - immedEvap) - i.e. the amount available to enter
 //   the soil
 // snowMelt in cm water equiv./day
-// litterWater and soilWater in cm
+// soilWater in cm
 // Also calculates drainage from bottom (soil/transpiration) layer (cm/day)
 // Note that there may only be one layer, in which case we have only the
 // bottomDrainage term, and evap. and trans. come from same layer.
 void soilWaterFluxes(double *fastFlow, double *evaporation, double *topDrainage,
                      double *bottomDrainage, double netRain, double snowMelt,
-                     double trans, double litterWater, double soilWater) {
+                     double trans, double soilWater) {
 
   // only one soil moisture pool: evap. and trans. both happen from this pool
   *topDrainage = 0;  // no top layer, only a bottom layer
@@ -1439,34 +1392,34 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   double moistEffect;
   double tempEffect;
 
-#if WATER_HRESP  // if soil moisture affects heterotrophic resp.
+  if (ctx.waterHResp) {  // if soil moisture affects heterotrophic resp
+    // using PnET formulation
+    moistEffect = pow((water / whc), params.soilRespMoistEffect);
 
-  // using PnET formulation
-  moistEffect = pow((water / whc), params.soilRespMoistEffect);
-
-  if (climate->tsoil < 0) {
-    moistEffect = 1;  // Ignore moisture effects in frozen soils
+    if (climate->tsoil < 0) {
+      moistEffect = 1;  // Ignore moisture effects in frozen soils
+    }
+  } else {
+    moistEffect = 1;
   }
-#else  // no WATER_HRESP
-  moistEffect = 1;
-#endif  // WATER_HRESP
 
   if (ctx.soilMultiPool) {
     int counter;
-
     double poolBaseRespiration, poolQ10;
-
-    // TBD double soilQuality;
+    // double soilQuality;
 
     // Loop through all the soil carbon pools
     for (counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
+      // Should we be using soilQuality somewhere here?
+      //
+      // if (ctx.soilQuality) {
+      //   // Ensure that the quality will never be zero
+      //   soilQuality = (counter + 1) / (1.0 * ctx.numSoilCarbonPools);
+      // }
+      // else {
+      //   soilQuality = 0;
+      // }
 
-#if SOIL_QUALITY
-      // Ensure that the quality will never be zero
-      // TBD soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
-#else
-      // TBD soilQuality = 0;
-#endif
       poolBaseRespiration = params.baseSoilResp;
       poolQ10 = params.soilRespQ10;
       tempEffect = poolBaseRespiration * pow(poolQ10, tsoil / 10);
@@ -1489,21 +1442,21 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
 
 void microbeGrowth(void) {
   if (ctx.soilMultiPool) {
-    for (int counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
-#if SOIL_QUALITY
+    if (ctx.soilQuality) {
+      for (int counter = 0; counter < ctx.numSoilCarbonPools; counter++) {
+        // double soilQuality;
+        double ingestionCoeff;
 
-      double soilQuality;
-      double ingestionCoeff;
+        // Ensure that the quality will never be zero
+        // SHOULD WE BE USING soilQuality somewhere?
+        // soilQuality = (counter + 1) / (1.0 * ctx.numSoilCarbonPools);
 
-      // Ensure that the quality will never be zero
-      soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
+        ingestionCoeff = params.maxIngestionRate;
 
-      ingestionCoeff = params.maxIngestionRate;
-
-      // Scale this proportional to total soil
-      fluxes.microbeIngestion[counter] =
-          ingestionCoeff * envi.soil[counter] / trackers.totSoilC;
-#endif  // We need code in here if we just have a rate coefficient pool
+        // Scale this proportional to total soil
+        fluxes.microbeIngestion[counter] =
+            ingestionCoeff * envi.soil[counter] / trackers.totSoilC;
+      }
     }
   } else {  // single pool
     if (ctx.microbes) {
@@ -1541,69 +1494,69 @@ void soilDegradation(void) {
 
   if (ctx.soilMultiPool) {
     microbeGrowth();
-#if SOIL_QUALITY
-    int counter;  // Counter of different soil pools
-    int woodLitterInput, leafLitterInput;  // The particular pool litter enters
-                                           // into
-    double litterInput;  // The litter rate into a pool
+    if (ctx.soilQuality) {
+      int counter;  // Counter of different soil pools
+      int woodLitterInput, leafLitterInput;  // The particular pool litter
+                                             // enters into
+      double litterInput;  // The litter rate into a pool
+      double totResp, poolResp;  // Respiration rate summed across all pools
+      double microbeEff;
+      double soilQuality;
 
-    double totResp, poolResp;  // Respiration rate summed across all pools
+      totResp = 0;
 
-    double microbeEff;
+      // fluxes.woodLitter gives us the amount in the pool; we adjust these by 1
+      // because the input pool will never be 0
+      woodLitterInput = litterInputPool(params.qualityWood);
 
-    double soilQuality;
+      // fluxes.leafLitter gives us the amount in the pool
+      leafLitterInput = litterInputPool(params.qualityLeaf);
 
-    totResp = 0;
+      for (counter = ctx.numSoilCarbonPools - 1; -1 < counter; counter--) {
+        litterInput = 0;  // Initialize the total litter input with every loop
 
-    // fluxes.woodLitter gives us the amount in the pool; we adjust these by 1
-    // because the input pool will never be 0
-    woodLitterInput = litterInputPool(params.qualityWood);
+        soilQuality = (counter + 1) / (1.0 * ctx.numSoilCarbonPools);
 
-    // fluxes.leafLitter gives us the amount in the pool
-    leafLitterInput = litterInputPool(params.qualityLeaf);
+        // calculate the microbial efficiency
+        microbeEff = params.efficiency * soilQuality;
 
-    for (counter = NUMBER_SOIL_CARBON_POOLS - 1; -1 < counter; counter--) {
-      litterInput = 0;  // Initialize the total litter input with every loop
+        poolResp = (1 - microbeEff) * fluxes.microbeIngestion[counter];
+        // Add in growth + maintenance respiration
+        totResp += poolResp + fluxes.maintRespiration[counter];
 
-      soilQuality = (counter + 1) / NUMBER_SOIL_CARBON_POOLS;
+        if (woodLitterInput == counter) {
+          litterInput += fluxes.woodLitter * climate->length;
+        }
 
-      // calculate the microbial efficiency
-      microbeEff = params.efficiency * soilQuality;
+        if (leafLitterInput == counter) {
+          litterInput += fluxes.leafLitter * climate->length;
+        }
 
-      poolResp = (1 - microbeEff) * fluxes.microbeIngestion[counter];
-      // Add in growth + maintenance respiration
-      totResp += poolResp + fluxes.maintRespiration[counter];
-
-      if (woodLitterInput == counter) {
-        litterInput += fluxes.woodLitter * climate->length;
+        if (counter == 0) {
+          envi.soil[counter] +=
+              (litterInput - fluxes.microbeIngestion[counter] -
+               fluxes.maintRespiration[counter]) *
+              climate->length;  // Transfer from this pool
+        } else {
+          envi.soil[counter] +=
+              (litterInput - fluxes.microbeIngestion[counter] -
+               fluxes.maintRespiration[counter]) *
+              climate->length;  // Transfer from this pool
+          envi.soil[counter - 1] +=
+              (microbeEff * fluxes.microbeIngestion[counter]) *
+              climate->length;  // Transfer into next pool
+        }
       }
 
-      if (leafLitterInput == counter) {
-        litterInput += fluxes.leafLitter * climate->length;
-      }
+      // Do the roots.  If we don't model roots, the value of these fluxes will
+      // be zero.
+      envi.soil[ctx.numSoilCarbonPools - 1] +=
+          (fluxes.coarseRootLoss + fluxes.fineRootLoss) * climate->length;
+      fluxes.rSoil = totResp;
 
-      if (counter == 0) {
-        envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
-                               fluxes.maintRespiration[counter]) *
-                              climate->length;  // Transfer from this pool
-      } else {
-        envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
-                               fluxes.maintRespiration[counter]) *
-                              climate->length;  // Transfer from this pool
-        envi.soil[counter - 1] +=
-            (microbeEff * fluxes.microbeIngestion[counter]) *
-            climate->length;  // Transfer into next pool
-      }
+      // #else    This is the loop for no quality model
+      // ARE WE MISSING THE ELSE CASE HERE?
     }
-    // Do the roots.  If we don't model roots, the value of these fluxes will be
-    // zero.
-
-    envi.soil[NUMBER_SOIL_CARBON_POOLS - 1] +=
-        (fluxes.coarseRootLoss + fluxes.fineRootLoss) * climate->length;
-    fluxes.rSoil = totResp;
-    // #else    This is the loop for no quality model
-
-#endif
   } else if (ctx.microbes) {
     microbeGrowth();
     double microbeEff;
@@ -1622,7 +1575,7 @@ void soilDegradation(void) {
                    (1 - microbeEff) * fluxes.microbeIngestion[0];
   } else {
     if (ctx.litterPool) {
-      // TBD Why arent we setting fluxes.fSoil here?
+      // TBD Why aren't we setting fluxes.rSoil here?
       envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
                       fluxes.litterToSoil - fluxes.rLitter) *
                      climate->length;
@@ -1664,12 +1617,13 @@ double woodLitterF(double plantWoodC) {
 double soilBreakdown(double poolC, double baseRate, double water, double whc,
                      double tsoil, double Q10) {
   double tempEffect = pow(Q10, tsoil / 10.0);
+  double moistEffect;
 
-#if WATER_HRESP  // if soil moisture affects heterotrophic resp.
-  double moistEffect = pow((water / whc), params.soilRespMoistEffect);
-#else  // no WATER_HRESP
-  double moistEffect = 1;
-#endif  // WATER_HRESP
+  if (ctx.waterHResp) {
+    moistEffect = pow((water / whc), params.soilRespMoistEffect);
+  } else {
+    moistEffect = 1;
+  }
 
   return poolC * baseRate * tempEffect * moistEffect;
 }
@@ -1686,10 +1640,7 @@ void calculateFluxes(void) {
                              // area * day^-1
   double litterWater, soilWater;  // amount of water in litter and soil (cm)
                                   // taken from environment
-
-#if GROWTH_RESP
   double growthResp;  // g C * m^-2 ground area * day^-1
-#endif
 
   double netRain;  // rain - immedEvap (cm/day)
 
@@ -1708,23 +1659,22 @@ void calculateFluxes(void) {
   snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
   soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation),
                   &(fluxes.topDrainage), &(fluxes.bottomDrainage), netRain,
-                  fluxes.snowMelt, fluxes.transpiration, litterWater,
-                  soilWater);
+                  fluxes.snowMelt, fluxes.transpiration, soilWater);
 
   getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
 
-#if GROWTH_RESP
-  vegResp2(&folResp, &woodResp, &growthResp, baseFolResp,
-           fluxes.photosynthesis);
-  fluxes.rVeg = folResp + woodResp + growthResp;
-  fluxes.rWood = woodResp;
-  fluxes.rLeaf = folResp + growthResp;
-#else
-  vegResp(&folResp, &woodResp, baseFolResp);
-  fluxes.rVeg = folResp + woodResp;
-  fluxes.rWood = woodResp;
-  fluxes.rLeaf = folResp;
-#endif
+  if (ctx.growthResp) {
+    vegResp2(&folResp, &woodResp, &growthResp, baseFolResp,
+             fluxes.photosynthesis);
+    fluxes.rVeg = folResp + woodResp + growthResp;
+    fluxes.rWood = woodResp;
+    fluxes.rLeaf = folResp + growthResp;
+  } else {
+    vegResp(&folResp, &woodResp, baseFolResp);
+    fluxes.rVeg = folResp + woodResp;
+    fluxes.rWood = woodResp;
+    fluxes.rLeaf = folResp;
+  }
 
   leafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
 
@@ -1737,7 +1687,7 @@ void calculateFluxes(void) {
     // NOTE: right now, we don't have capability to use separate cold soil
     // params for litter
   } else {
-    litterBreakdown = 0;
+    // litterBreakdown = 0;
     fluxes.rLitter = 0;
     fluxes.litterToSoil = 0;
   }
@@ -2095,7 +2045,7 @@ void updateState(void) {
        fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) *
       climate->length;
 
-  // if SNOW = 0, some or all of these fluxes will always be 0
+  // if ctx.snow = 0, some or all of these fluxes will always be 0
   envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) *
                climate->length;
 
@@ -2209,16 +2159,15 @@ void setupModel(void) {
   }
   trackers.totSoilC = params.soilInit;
 
-#if SOIL_QUALITY
-  params.maxIngestionRate =
-      params.maxIngestionRate * 24 * params.microbeInit / 1000;
-  // change from per hour to per day rate, and then multiply by microbial
-  // concentration (mg C / g soil).
-
-#else
-  // change from per hour to per day rate
-  params.maxIngestionRate = params.maxIngestionRate * 24;
-#endif
+  if (ctx.soilQuality) {
+    // change from per hour to per day rate, and then multiply by microbial
+    // concentration (mg C / g soil).
+    params.maxIngestionRate =
+        params.maxIngestionRate * 24 * params.microbeInit / 1000;
+  } else {
+    // change from per hour to per day rate
+    params.maxIngestionRate = params.maxIngestionRate * 24;
+  }
 
   envi.microbeC = params.microbeInit * params.soilInit / 1000;  // convert to gC
                                                                 // m-2

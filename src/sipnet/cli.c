@@ -5,13 +5,6 @@
 
 #include "version.h"
 
-// C preprocessor shenanigans to get stringizing and concatenation to work
-// for NO_(x) macro, needed by DECLARE_FLAG macro
-// #define CONCAT(x, y) x##y
-// #define STRINGIZE_IMPL(x) #x
-// #define STRINGIZE(x) STRINGIZE_IMPL(x)
-// #define NO_(x) STRINGIZE(CONCAT(no-, x))
-
 #define DECLARE_FLAG(name)                                                     \
   {#name, no_argument, &ctx.tmpFlag, 1},                                       \
       {"no-" #name, no_argument, &ctx.tmpFlag, 0}
@@ -25,25 +18,31 @@ static struct option long_options[] = {  // NOLINT
     // These options set a flag (and they need to be at the top here for
     // indexing purposes). The DECLARE_FLAG macro declares both <flag> and
     // <no_flag> versions of the option.
+    // clang-format off IS REALLY NEEDED HERE
     DECLARE_FLAG(events),
+    DECLARE_FLAG(gdd),
+    DECLARE_FLAG(growth - resp),
+    DECLARE_FLAG(leaf - water),
     DECLARE_FLAG(litter - pool),
     DECLARE_FLAG(microbes),
-    DECLARE_FLAG(growth - resp),
+    DECLARE_FLAG(snow),
+    DECLARE_FLAG(soil - phenol),
+    DECLARE_FLAG(soil - quality),
+    DECLARE_FLAG(water - hresp),
 
     DECLARE_FLAG(do - main - output),
     DECLARE_FLAG(do - single - outputs),
-    DECLARE_FLAG(print - header),
     DECLARE_FLAG(dump - config),
+    DECLARE_FLAG(print - header),
     DECLARE_FLAG(quiet),
 
-    // clang-format off
-    // These options don’t set a flag. We distinguish them by their indices
-    // name                         has_arg           flag  val (val is the index)
-    {"input-file",                  required_argument, 0,   'i'},
-    {"help",                        no_argument,       0,   'h'},
-    {"num-carbon-soil-pools",       required_argument, 0,   'n'},
-    {"version",                     no_argument,       0,   'v'},
-    // clang-format on
+    // These options don’t set a flag. We distinguish them by their indices.
+    // name                         has_arg           flag  val (val is the
+    // index)
+    {"input-file", required_argument, 0, 'i'},
+    {"help", no_argument, 0, 'h'},
+    {"num-carbon-soil-pools", required_argument, 0, 'n'},
+    {"version", no_argument, 0, 'v'},
     {0, 0, 0, 0}};
 
 // See cli.h
@@ -53,13 +52,17 @@ char *argNameMap[] = {
     // DECLARE_ARG_FOR_MAP macro needs to be the name of the corresponding field
     // in Context)
     // Model options
-    DECLARE_ARG_FOR_MAP(events), DECLARE_ARG_FOR_MAP(litterPool),
-    DECLARE_ARG_FOR_MAP(microbes), DECLARE_ARG_FOR_MAP(growthResp),
+    DECLARE_ARG_FOR_MAP(events), DECLARE_ARG_FOR_MAP(gdd),
+    DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
+    DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
+    DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
+    DECLARE_ARG_FOR_MAP(soilQuality), DECLARE_ARG_FOR_MAP(waterHResp),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
-    DECLARE_ARG_FOR_MAP(printHeader), DECLARE_ARG_FOR_MAP(dumpConfig),
+    DECLARE_ARG_FOR_MAP(dumpConfig), DECLARE_ARG_FOR_MAP(printHeader),
     DECLARE_ARG_FOR_MAP(quiet)};
+// clang-format on
 
 // Print the help message when requested
 void usage(char *progName) {
@@ -69,22 +72,27 @@ void usage(char *progName) {
   printf("Run SIPNET model for one site with configured options.\n");
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
-  printf("  -i, --input-file <input-file>      Name of input config file (sipnet.in)\n");
+  printf("  -i, --input-file <input-file>      Name of input config file ('sipnet.in')\n");
   printf("  -n, --num-carbon-soil-pools <num>  Number of carbon soil pools (1)\n");
   printf("\n");
-  printf("Model flags: (prepend flag with 'no_' to force off, eg '--no-events')\n");
+  printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
   printf("  --events             Enable event handling (1)\n");
+  printf("  --gdd                Use growing degree days to determine leaf growth (1)\n");
+  printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
+  printf("  --leaf-water         Calculate leaf pool and evaporate from that pool (0)\n");
   printf("  --litter-pool        Enable litter pool in addition to single soil carbon pool (0)\n");
   printf("  --microbes           Enable microbe modeling (0)\n");
-  printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
-  printf("  --[TBD]   \n");
-  printf("I/O flags: (prepend flag with 'no_' to force off, eg '--no-print-header')\n");
+  printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
+  printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
+  printf("  --soil-quality       Use soil quality submodel (0)\n");
+  printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
+  printf("\n");
+  printf("I/O flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
   printf("  --do-main-output     Print time series of all output variables to <input-file>.out (1)\n");
   printf("  --do-single-outputs  Print outputs one variable per file (e.g. <input-file>.NEE)\n");
   printf("  --dump-config        Print final config to <input-file>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
-  printf("  --[TBD]   \n");
   printf("\n");
   printf("Info options:\n");
   printf("  -h, --help           Print this message and exit\n");
@@ -93,8 +101,6 @@ void usage(char *progName) {
   printf("Configuration options are read from <input_file>. Other options specified on the command\n");
   printf("line override settings from that file.\n");
   printf("\n");
-  //printf("\n");
-  //printf("\n");
   // clang-format on
 }
 
