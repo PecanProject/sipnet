@@ -16,9 +16,9 @@
 // clang-format off
 #define logWarning(...) logprint(0, "[WARNING] ", __FILE_NAME__, __LINE__, __VA_ARGS__)
 #define logInfo(...)    logprint(0, "[INFO   ] ", __FILE_NAME__, __LINE__, __VA_ARGS__)
+#define logTest(...)    logprint(1, "[TEST   ] ", __FILE_NAME__, __LINE__, __VA_ARGS__)
 #define logError(...)   logprint(1, "[ERROR  ] ", __FILE_NAME__, __LINE__, __VA_ARGS__)
 #define logInternalError(...) logprint(2, "[ERROR (INTERNAL)] ", __FILE_NAME__, __LINE__, __VA_ARGS__)
-#define logTest(...)    logprint(0, "[TEST   ] ",(0, "[ERROR  ] ", __FILE_NAME__, __LINE__, __VA_ARGS__)
 // clang-format on
 
 void logprint(int errLevel, const char *prefix, const char *file, int lineNum,
