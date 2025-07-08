@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
   // 4. Run some checks
   validateContext();
 
-  // 5. Set calculated filenames
+  // 5. Set calculated parameters
   strcpy(paramFile, ctx.fileName);
   strcat(paramFile, ".param");
   updateCharContext("paramFile", paramFile, CTX_CALCULATED);
@@ -165,6 +165,10 @@ int main(int argc, char *argv[]) {
   } else {
     out = NULL;
   }
+  // Don't forget soilMultiPool
+  updateIntContext("soilMultiPool", (ctx.numSoilCarbonPools > 1),
+                   CTX_CALCULATED);
+
   // Lastly - do after all other config processing
   if (ctx.dumpConfig) {
     strcpy(outConfigFile, ctx.fileName);

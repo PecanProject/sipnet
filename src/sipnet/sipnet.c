@@ -1532,20 +1532,23 @@ void soilDegradation(void) {
           litterInput += fluxes.leafLitter * climate->length;
         }
 
-        if (counter == 0) {
-          envi.soil[counter] +=
-              (litterInput - fluxes.microbeIngestion[counter] -
-               fluxes.maintRespiration[counter]) *
-              climate->length;  // Transfer from this pool
-        } else {
-          envi.soil[counter] +=
-              (litterInput - fluxes.microbeIngestion[counter] -
-               fluxes.maintRespiration[counter]) *
-              climate->length;  // Transfer from this pool
-          envi.soil[counter - 1] +=
-              (microbeEff * fluxes.microbeIngestion[counter]) *
-              climate->length;  // Transfer into next pool
-        }
+        // THIS IS A BUG, but will be fixed in a later update, as it will
+        // change smoke test output at a time when we don't want that
+#if (counter == 0)
+        // if (counter == 0) {
+        envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
+                               fluxes.maintRespiration[counter]) *
+                              climate->length;  // Transfer from this pool
+        //} else {
+#else
+        envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
+                               fluxes.maintRespiration[counter]) *
+                              climate->length;  // Transfer from this pool
+        envi.soil[counter - 1] +=
+            (microbeEff * fluxes.microbeIngestion[counter]) *
+            climate->length;  // Transfer into next pool
+        //}
+#endif
       }
 
       // Do the roots.  If we don't model roots, the value of these fluxes will

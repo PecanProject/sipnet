@@ -18,28 +18,29 @@ static struct option long_options[] = {  // NOLINT
     // These options set a flag (and they need to be at the top here for
     // indexing purposes). The DECLARE_FLAG macro declares both <flag> and
     // <no_flag> versions of the option.
-    // clang-format off IS REALLY NEEDED HERE
+    // clang-format off
     DECLARE_FLAG(events),
     DECLARE_FLAG(gdd),
-    DECLARE_FLAG(growth - resp),
-    DECLARE_FLAG(leaf - water),
-    DECLARE_FLAG(litter - pool),
+    DECLARE_FLAG(growth-resp),
+    DECLARE_FLAG(leaf-water),
+    DECLARE_FLAG(litter-pool),
     DECLARE_FLAG(microbes),
     DECLARE_FLAG(snow),
-    DECLARE_FLAG(soil - phenol),
-    DECLARE_FLAG(soil - quality),
-    DECLARE_FLAG(water - hresp),
+    DECLARE_FLAG(soil-phenol),
+    DECLARE_FLAG(soil-quality),
+    DECLARE_FLAG(water-hresp),
 
-    DECLARE_FLAG(do - main - output),
-    DECLARE_FLAG(do - single - outputs),
-    DECLARE_FLAG(dump - config),
-    DECLARE_FLAG(print - header),
+    DECLARE_FLAG(do-main-output),
+    DECLARE_FLAG(do-single-outputs),
+    DECLARE_FLAG(dump-config),
+    DECLARE_FLAG(print-header),
     DECLARE_FLAG(quiet),
 
     // These options don’t set a flag. We distinguish them by their indices.
     // name                         has_arg           flag  val (val is the
     // index)
     {"input-file", required_argument, 0, 'i'},
+    {"file-name", no_argument, 0, 'f'},
     {"help", no_argument, 0, 'h'},
     {"num-carbon-soil-pools", required_argument, 0, 'n'},
     {"version", no_argument, 0, 'v'},
@@ -73,6 +74,7 @@ void usage(char *progName) {
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
   printf("  -i, --input-file <input-file>      Name of input config file ('sipnet.in')\n");
+  printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
   printf("  -n, --num-carbon-soil-pools <num>  Number of carbon soil pools (1)\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
@@ -88,9 +90,9 @@ void usage(char *progName) {
   printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
   printf("\n");
   printf("I/O flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
-  printf("  --do-main-output     Print time series of all output variables to <input-file>.out (1)\n");
-  printf("  --do-single-outputs  Print outputs one variable per file (e.g. <input-file>.NEE)\n");
-  printf("  --dump-config        Print final config to <input-file>.config (0)\n");
+  printf("  --do-main-output     Print time series of all output variables to <file-name>.out (1)\n");
+  printf("  --do-single-outputs  Print outputs one variable per file (e.g. <file-name>.NEE)\n");
+  printf("  --dump-config        Print final config to <file-name>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
   printf("\n");
@@ -120,6 +122,16 @@ void parseCommandLineArgs(int argc, char *argv[]) {
       case 0:
         // long form option, flag == 0
         updateIntContext(argNameMap[longIndex], ctx.tmpFlag, CTX_COMMAND_LINE);
+        break;
+      case 'f':
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          printf("ERROR: filename %s exceeds maximum length of %d\n", optarg,
+                 FILENAME_MAXLEN);
+          printf("Either change the name or increase INPUT_MAXNAME in "
+                 "frontend.c\n");
+          exit(1);
+        }
+        updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
         break;
       case 'h':
         usage(argv[0]);
