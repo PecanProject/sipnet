@@ -11,7 +11,7 @@ When adding a new command-line option, you will need to add a corresponding memb
 
 ## Important Notes
 
-**Naming:** 
+### Naming
 
 Each command-line option must have a corresponding entry in the `Context` struct. SIPNET uses a mapping system to 
 link the command-line option (e.g. `print_header`) to its `Context` member (in this case, `printHeader`).
@@ -26,7 +26,7 @@ For the mapping to work, the option name (e.g., `print_header`) and `Context` me
 
 Each key must be unique across the `Context` member names.
 
-**Precedence:** 
+### Precedence
 
 SIPNET options can be specified in either (or both) a config file or a command-line option. Command-line options are
 have precedence over config file options.
@@ -35,6 +35,8 @@ However, because the command line is parsed first (due to the chicken-and-egg pr
 This means that:
 - Options must be set via the macros `CREATE_INT_CONTEXT`/`CREATE_CHAR_CONTEXT` when they are created.
 - The functions `updateIntContext`/`updateCharContext` must be used when updating a value.
+
+See the Function Reference at the end for more information.
 
 ## Steps to Add Each Type of Option
 
@@ -98,6 +100,11 @@ Here are the steps to add a string-valued option:
    2. Update `parseCLIArgs()`... [details TBD]
    3. Update `usage()` to document the new option in the help text
 
+### Long-Form Only Options
+
+When adding to the `long_options` struct in step 3(i), give an int value as the last element of the the new
+struct. This is the index that should be used in the `parseCLIArgs()` switch statement for handling the new
+option. The int value must be unique among the other case labels.
 
 ## Additional Steps [TBD]
 
@@ -112,10 +119,61 @@ Here are the steps to add a string-valued option:
   - Add tests for both the new option and its negation (if applicable) in [TBD].
   - Anything to here to make sure this works in `sipnet.in` [TBD]?
 
-## Long-Form Only Options
+## Function/Macro Reference
 
-[TBD: fold this in above? This isn't that complicated; let's see if anything changes in the next round]
+### `CREATE_INT_CONTEXT`
+Syntax:
+```c
+CREATE_INT_CONTEXT(name, printName, value, flag)
+```
+Arguments:
+- `name`: the exact name (no quotes) of the `Context` struct member used in `Context.h`
+- `printName`: the name used for this option when printing via `--dump-config`
+- `value`: the default integer value for this option; the defined values `ARG_ON` and `ARG_OFF` can be used for flag options
+- `flag`: `FLAG_YES` or `FLAG_NO` to indicate whether this is a flag option
 
-When adding to the `long_options` struct in step 3(i), give an int value as the last element of the the new
-struct. This is the index that should be used in the `parseCLIArgs()` switch statement for handling the new 
-option. The int value must be unique among the other case labels.
+Examples:
+<br>`CREATE_INT_CONTEXT(snow, "SNOW", ARG_ON, FLAG_YES);`
+<br>`CREATE_INT_CONTEXT(numSoilCarbonPools, "NUM_SOIL_CARBON_POOLS", 3, FLAG_NO);`
+
+### `CREATE_CHAR_CONTEXT`
+Syntax:
+```c
+CREATE_CHAR_CONTEXT(name, printName, value)
+```
+Arguments:
+- `name`: the exact name (no quotes) of the `Context` struct member used in `Context.h`
+- `printName`: the name used for this option when printing via `--dump-config`
+- `value`: the default string value for this option
+
+Examples:
+<br>`CREATE_CHAR_CONTEXT(outConfigFile, "OUT_CONFIG_FILE", NO_DEFAULT_FILE);`
+<br>`CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE);`
+
+### `updateIntContext`
+Syntax:
+```c
+updateIntContext(const char *name, int value, context_source_t source)
+```
+Arguments:
+- `name`: a string that can uniquely identify the option (see [Naming](#naming) above)
+- `value`: the new integer value for the option 
+- `source`: where the value is coming from, e.g. `CTX_CONTEXT_FILE` or `CTX_COMMAND_LINE`
+
+Examples:
+<br>`updateIntContext(inputName, intVal, CTX_CONTEXT_FILE);` (from parsing the input file)
+<br>`updateIntContext("numSoilCarbonPools", intVal, CTX_COMMAND_LINE);` (from parsing the command line)
+
+### `updateCharContext`
+Syntax:
+```c
+updateCharContext(const char *name, const char *value, context_source_t source)
+```
+Arguments:
+- `name`: a string that can uniquely identify the option (see [Naming](#naming) above)
+- `value`: the new string value for the option
+- `source`: where the value is coming from, e.g. `CTX_CONTEXT_FILE` or `CTX_COMMAND_LINE`
+
+Examples:
+<br>`updateCharContext(inputName, inputValue, CTX_CONTEXT_FILE);` (from parsing the input file)
+<br>`updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);` (from parsing the command line)
