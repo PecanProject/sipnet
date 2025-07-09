@@ -98,10 +98,6 @@ struct context_metadata *getContextMetadata(const char *name) {
   struct context_metadata *s;
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s);
-  if (s == NULL) {
-    printf("Internal error: context metadata for param %s not found\n", name);
-    exit(EXIT_CODE_INTERNAL_ERROR);
-  }
   return s;
 }
 
