@@ -110,16 +110,18 @@ void validateContext(void);
 
 void printConfig(FILE *outFile);
 
-#define CREATE_INT_CONTEXT(name, printName, value, source, flag)               \
+#define CREATE_INT_CONTEXT(name, printName, value, flag)                       \
   do {                                                                         \
     ctx.name = value;                                                          \
-    createContextMetadata(#name, printName, source, CTX_INT, &ctx.name, flag); \
+    createContextMetadata(#name, printName, CTX_DEFAULT, CTX_INT, &ctx.name,   \
+                          flag);                                               \
   } while (0)
 
-#define CREATE_CHAR_CONTEXT(name, printName, value, source)                    \
+#define CREATE_CHAR_CONTEXT(name, printName, value)                            \
   do {                                                                         \
     strncpy(ctx.name, value, CONTEXT_CHAR_MAXLEN);                             \
-    createContextMetadata(#name, printName, source, CTX_CHAR, ctx.name, 0);    \
+    createContextMetadata(#name, printName, CTX_DEFAULT, CTX_CHAR, ctx.name,   \
+                          0);                                                  \
   } while (0)
 
 #endif  // CONTEXT_H

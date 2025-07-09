@@ -29,44 +29,44 @@ void initContext(void) {
   // clang-format off
   // Init the params
   // Flags, model options
-  CREATE_INT_CONTEXT(events,          "EVENTS",           ARG_ON,  CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(gdd,             "GDD",              ARG_ON,  CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(growthResp,      "GROWTH_RESP",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(leafWater,       "LEAF_WATER",       ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(litterPool,      "LITTER_POOL",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(microbes,        "MICROBES",         ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(soilQuality,     "SOIL_QUALITY"    , ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(events,          "EVENTS",           ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(gdd,             "GDD",              ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(growthResp,      "GROWTH_RESP",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(leafWater,       "LEAF_WATER",       ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(litterPool,      "LITTER_POOL",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(microbes,        "MICROBES",         ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(soilQuality,     "SOIL_QUALITY"    , ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
 
   // Flags, I/O
-  CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(dumpConfig,      "DUMP_CONFIG",      ARG_OFF, CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(printHeader,     "PRINT_HEADER",     ARG_ON,  CTX_DEFAULT, FLAG_YES);
-  CREATE_INT_CONTEXT(quiet,           "QUIET",            ARG_OFF, CTX_DEFAULT, FLAG_YES);
+  CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(dumpConfig,      "DUMP_CONFIG",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(printHeader,     "PRINT_HEADER",     ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(quiet,           "QUIET",            ARG_OFF, FLAG_YES);
 
   // Files
-  CREATE_CHAR_CONTEXT(paramFile,      "PARAM_FILE",       NO_DEFAULT_FILE,    CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(climFile,       "CLIM_FILE",        NO_DEFAULT_FILE,    CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(outFile,        "OUT_FILE",         NO_DEFAULT_FILE,    CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(outConfigFile,  "OUT_CONFIG_FILE",  NO_DEFAULT_FILE,    CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE, CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(paramFile,      "PARAM_FILE",       NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(climFile,       "CLIM_FILE",        NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(outFile,        "OUT_FILE",         NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(outConfigFile,  "OUT_CONFIG_FILE",  NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE);
   // clang-format on
 
   // Other
   // Prefix for climate and parameter input files. We may want to rename this
   // to siteName or such, as 'fileName' implies an actual file, though that
   // would be a breaking change.
-  CREATE_CHAR_CONTEXT(fileName, "FILE_NAME", DEFAULT_FILE_NAME, CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(fileName, "FILE_NAME", DEFAULT_FILE_NAME);
 
   // Number of soil carbon pools being used in this run, should in [1,3] (I
   // don't think greater than three has been tested). Note that 1 has some
   // implications in the code, see soilMultiPool. Also note that this is NOT
   // a flag.
   CREATE_INT_CONTEXT(numSoilCarbonPools, "NUM_SOIL_CARBON_POOLS",
-                     DEFAULT_NUM_POOLS, CTX_DEFAULT, FLAG_NO);
+                     DEFAULT_NUM_POOLS, FLAG_NO);
 
   // Whether this is a soil carbon multipool run; literally defined as
   // (num_soil_carbon_pools > 1), but it's a nice convenience. Some model
@@ -75,7 +75,7 @@ void initContext(void) {
   // such (it's not a command-line option, so we don't want the mechanics
   // associated with one).
   CREATE_INT_CONTEXT(soilMultiPool, "SOIL_MULTI_POOL", (DEFAULT_NUM_POOLS > 1),
-                     CTX_DEFAULT, FLAG_NO);
+                     FLAG_NO);
 }
 
 // With all the different permutations of spellings for config params, lets
