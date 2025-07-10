@@ -32,6 +32,7 @@ void checkRuntype(const char *runType) {
 void readInputFile(void) {
   // First, make sure the filename is valid
   validateFilename();
+  printf("Reading config from file %s\n", ctx.inputFile);
 
   const char *SEPARATORS = " \t=:";  // characters that can separate names from
                                      // values in input file
@@ -51,7 +52,7 @@ void readInputFile(void) {
 
   strcpy(allSeparators, SEPARATORS);
   strcat(allSeparators, "\n\r");
-  infile = openFile(ctx.fileName, "r");
+  infile = openFile(ctx.inputFile, "r");
 
   while (fgets(line, sizeof(line), infile) != NULL) {  // while not EOF or error
     // remove trailing comments:
@@ -79,7 +80,7 @@ void readInputFile(void) {
       if (inputValue == NULL) {
         printf("Error in input file: No value given for input item %s\n",
                inputName);
-        printf("Please fix %s and re-run\n", ctx.fileName);
+        printf("Please fix %s and re-run\n", ctx.inputFile);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
 
@@ -89,7 +90,7 @@ void readInputFile(void) {
           if (strlen(errc) > 0) {  // invalid character(s) in input string
             printf("ERROR in input file: Invalid value for %s: %s\n", inputName,
                    inputValue);
-            printf("Please fix %s and re-run\n", ctx.fileName);
+            printf("Please fix %s and re-run\n", ctx.inputFile);
             exit(EXIT_CODE_BAD_PARAMETER_VALUE);
           }
           updateIntContext(inputName, intVal, CTX_CONTEXT_FILE);
@@ -106,7 +107,7 @@ void readInputFile(void) {
                      inputValue, inputName, CONTEXT_CHAR_MAXLEN);
               printf(
                   "Please fix %s, or change the maximum length, and re-run\n",
-                  ctx.fileName);
+                  ctx.inputFile);
               exit(EXIT_CODE_BAD_PARAMETER_VALUE);
             }
             updateCharContext(inputName, inputValue, CTX_CONTEXT_FILE);

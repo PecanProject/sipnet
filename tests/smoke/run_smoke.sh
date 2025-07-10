@@ -53,6 +53,7 @@ for DIR in "${DIRECTORIES[@]}"; do
         cd "$SCRIPT_DIR" || { echo "Failed to change directories, exiting"; exit 1; }
         continue
     else
+        pwd
         # This is the command that all directories will run when options/config are in
         ../../../sipnet -i sipnet.in
     fi
@@ -105,7 +106,7 @@ if  [ "$skip_count" -gt 0 ]; then
 fi
 
 if [ "$sipnet_fail_count" -gt 0 ] || [ "$event_fail_count" -gt 0 ]; then
-    echo "::error title={Output Changed}::Some outputs have changed. This is expected with some changes to SIPNET. When this happens, assess correctness and then update the reference output files. See the report above for details."
+    echo "Some outputs have changed. This is expected with some changes to SIPNET. When this happens, assess correctness and then update the reference output files. See the report above for details."
     (( exit_code |= 1))
 fi
 
