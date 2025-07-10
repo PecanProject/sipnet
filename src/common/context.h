@@ -9,6 +9,9 @@
 // For convenience
 #define FILENAME_MAXLEN CONTEXT_CHAR_MAXLEN
 
+// 3? Do we need an upper bound?
+#define MAX_SOIL_CARBON_POOLS 3
+
 #include <stdio.h>
 
 #include "common/uthash.h"
@@ -105,6 +108,8 @@ void updateCharContext(const char *name, const char *value,
 int hasSourcePrecedence(struct context_metadata *s, context_source_t newSource);
 
 char *getContextSourceString(context_source_t src);
+
+void validateFilename(void);
 
 void validateContext(void);
 

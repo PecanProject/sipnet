@@ -103,6 +103,13 @@ void usage(char *progName) {
   printf("Configuration options are read from <input_file>. Other options specified on the command\n");
   printf("line override settings from that file.\n");
   printf("\n");
+  printf("Note the following restrictions on these options:\n");
+  printf(" --num-soil-carbon-pools must be between 1 and 3\n");
+  printf(" --soil-phenol and --gdd may not both be turned on\n");
+  printf(" --litter-pool requires --num-soil-carbon-pools to be 1\n");
+  printf(" --microbes requires --num-soil-carbon-pools to be 1\n");
+  printf(" --soil-quality requires --num-soil-carbon-pools to be greater than 1\n");
+  printf("\n");
   // clang-format on
 }
 
@@ -153,7 +160,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
           printf("Unknown value for num_soil_carbon_pools: %s\n", optarg);
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
-        if (intVal < 1 || intVal > 3) {  // 3? Do we need an upper bound?
+        if (intVal < 1 || intVal > MAX_SOIL_CARBON_POOLS) {
           printf("num_soil_carbon_pools must be 1, 2, or 3\n");
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }

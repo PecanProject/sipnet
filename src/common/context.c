@@ -5,7 +5,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "common/exitCodes.h"
+#include "exitCodes.h"
+#include "logging.h"
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
 #define DEFAULT_FILE_NAME "sipnet"
@@ -181,7 +182,8 @@ int by_name(const struct context_metadata *a,
   return strcmp(a->keyName, b->keyName);
 }
 
-void validateContext(void) {
+void validateFilename(void) {
+  // We need to do this earlier than the rest of the validation
   // Make sure FILENAME is set and well-sized; everything else is optional (not
   // necessary or has a default)
   if (strcmp(ctx.fileName, "") == 0) {
@@ -194,14 +196,40 @@ void validateContext(void) {
            FILENAME_MAXLEN - 10);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
+}
 
-  // Check num carbon pools in [1,3]
+void validateContext(void) {
+  int hasError = 0;
 
-  // Check inter-param requirements are not violated
+  if ((ctx.numSoilCarbonPools < 1) ||
+      (ctx.numSoilCarbonPools > MAX_SOIL_CARBON_POOLS)) {
+    logError("num-soil-carbon-pools must be between 1 and 3");
+    hasError = 1;
+  }
+  if (ctx.soilPhenol && ctx.gdd) {
+    logError("soil-phenol and gdd may not both be turned on");
+    hasError = 1;
+  }
+  if (ctx.soilMultiPool) {
+    if (ctx.litterPool) {
+      logError("litter-pool requires num-soil-carbon-pools to be 1");
+      hasError = 1;
+    }
+    if (ctx.microbes) {
+      logError("microbes requires num-soil-carbon-pools to be 1");
+      hasError = 1;
+    }
+  } else {
+    if (ctx.soilQuality) {
+      logError(
+          "soil-quality requires num-soil-carbon-pools to be greater than 1");
+      hasError = 1;
+    }
+  }
 
-  printf("*******************************\n");
-  printf("VALIDATE CONTEXT NOT FINISHED!!\n");
-  printf("*******************************\n");
+  if (hasError) {
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
 }
 
 void printConfig(FILE *outFile) {
@@ -243,7 +271,8 @@ void printConfig(FILE *outFile) {
               getContextSourceString(s->source), width, (char *)s->value);
     } else {
       // The height of paranoia
-      printf("Internal error, unknown found for context param\n");
+      printf("Internal error, unknown type (%d) found for context param\n",
+             s->type);
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }

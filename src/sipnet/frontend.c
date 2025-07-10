@@ -29,7 +29,10 @@ void checkRuntype(const char *runType) {
   }
 }
 
-void readInputFile(const char *fileName) {
+void readInputFile(void) {
+  // First, make sure the filename is valid
+  validateFilename();
+
   const char *SEPARATORS = " \t=:";  // characters that can separate names from
                                      // values in input file
   const char *COMMENT_CHARS = "!";  // comment characters (ignore everything
@@ -48,7 +51,7 @@ void readInputFile(const char *fileName) {
 
   strcpy(allSeparators, SEPARATORS);
   strcat(allSeparators, "\n\r");
-  infile = openFile(fileName, "r");
+  infile = openFile(ctx.fileName, "r");
 
   while (fgets(line, sizeof(line), infile) != NULL) {  // while not EOF or error
     // remove trailing comments:
@@ -76,7 +79,7 @@ void readInputFile(const char *fileName) {
       if (inputValue == NULL) {
         printf("Error in input file: No value given for input item %s\n",
                inputName);
-        printf("Please fix %s and re-run\n", fileName);
+        printf("Please fix %s and re-run\n", ctx.fileName);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
 
@@ -86,7 +89,7 @@ void readInputFile(const char *fileName) {
           if (strlen(errc) > 0) {  // invalid character(s) in input string
             printf("ERROR in input file: Invalid value for %s: %s\n", inputName,
                    inputValue);
-            printf("Please fix %s and re-run\n", fileName);
+            printf("Please fix %s and re-run\n", ctx.fileName);
             exit(EXIT_CODE_BAD_PARAMETER_VALUE);
           }
           updateIntContext(inputName, intVal, CTX_CONTEXT_FILE);
@@ -103,7 +106,7 @@ void readInputFile(const char *fileName) {
                      inputValue, inputName, CONTEXT_CHAR_MAXLEN);
               printf(
                   "Please fix %s, or change the maximum length, and re-run\n",
-                  fileName);
+                  ctx.fileName);
               exit(EXIT_CODE_BAD_PARAMETER_VALUE);
             }
             updateCharContext(inputName, inputValue, CTX_CONTEXT_FILE);
@@ -144,8 +147,8 @@ int main(int argc, char *argv[]) {
 
   // 3. Read input config file
   // Note: command-line args have precedence
-  // read from input file:
-  readInputFile(ctx.inputFile);
+  // read from input file
+  readInputFile();
 
   // 4. Run some checks
   validateContext();
