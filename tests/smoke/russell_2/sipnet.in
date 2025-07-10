@@ -62,8 +62,7 @@ SNOW = 1
 SOIL_PHENOL = 0
 ! Use soil temperature to determine leaf growth
 
-SOIL_QUALITY = 1
-! NON DEFAULT
+SOIL_QUALITY = 0
 ! Use soil quality submodel
 
 WATER_HRESP = 1
