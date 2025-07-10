@@ -87,8 +87,8 @@ struct ClimateVars {
   double vPress; /* average vapor pressure in canopy airspace (kPa)
         NOTE: input is in Pa */
   double wspd;  // avg. wind speed (m/s)
-  double soilWetness;  // fractional soil wetness (fraction of saturation -
-                       // between 0 and 1)
+  double soilWetness;  // [UNUSED PARAM] fractional soil wetness (fraction of
+                       // saturation - between 0 and 1)
 
   double gdd;  // growing degree days from Jan. 1 to now. NOTE: Calculated,
                // *not* read from file
@@ -146,10 +146,10 @@ typedef struct Parameters {
   double soilTempLeafOn;  // with soil temp-based phenology, soil temp threshold
                           // for leaf appearance
   double leafOffDay;  // day when leaves disappear
-  double leafGrowth;  // add'l leaf growth at start of growing season (g C *
-                      // m^-2 ground)
-  double fracLeafFall;  // add'l fraction of leaves that fall at end of growing
-                        // season
+  double leafGrowth;  // additional leaf growth at start of growing season
+                      // (g C * m^-2 ground)
+  double fracLeafFall;  // additional fraction of leaves that fall at end of
+                        // growing season
   double leafAllocation;  // fraction of NPP allocated to leaf growth
   double leafTurnoverRate; /* average turnover rate of leaves, in fraction per
             day NOTE: read in as per-year rate! */
@@ -330,8 +330,6 @@ typedef struct FluxVars {
   double bottomDrainage;  // drainage from lower level of soil out of system (cm
                           // water * day^-1)
   double transpiration;  // cm water * day^-1
-  double rWood;  // g C m^-2 ground area day^-1 of wood respiration
-  double rLeaf;  // g C m^-2 ground area day^-1 of leaf respiration
 
   double *maintRespiration;  // Microbial maintenance respiration rate g C
                              // m-2 ground area day^-1
@@ -375,10 +373,6 @@ typedef struct TrackerVars {  // variables to track various things
   double soilWetnessFrac; /* mean fractional soil wetness (soilWater/soilWHC)
            over this time step (linear mean: mean of wetness at start of time
            step and wetness at end of time step) */
-  double fa;  // g C * m^-2 of net photosynthesis (GPP - leaf respiration) in
-              // this time interval
-  double fr;  // g C * m^-2 of non foliar respiration (soil + wood respiration)
-              // in this time interval
   double totSoilC;  // total soil carbon across all the pools
 
   double rRoot;  // g C m-2 of root respiration
@@ -387,10 +381,6 @@ typedef struct TrackerVars {  // variables to track various things
   double rAboveground;  // Wood and foliar respiration
   double fpar;  // 8 day mean fractional photosynthetically active radiation
                 // (percentage)
-  double plantWoodC;  // carbon in plant wood (above-ground + roots) (g C * m^-2
-                      // ground area)
-  double LAI;  // Leaf Area Index - leaf area per ground area / divide
-               // PlantLeafC by leafCSpWt
   double yearlyLitter;  // g C * m^-2 litterfall, year to date: SUM litter
 } Trackers;
 
@@ -1053,53 +1043,6 @@ void leafFluxes(double *leafCreation, double *leafLitter, double plantLeafC) {
   }
 }
 
-// calculate rain and snowfall (cm water equiv./day)
-// calculate snow melt (cm water equiv./day) and drainage(cm/day)
-// drainage here is any water that exceeds water holding capacity
-
-// this is the simplified water flow function, which has only one soil moisture
-// layer and does not do evaporation of any kind, or fast flow (sets these all
-// to 0)
-void simpleWaterFlow(double *rain, double *snowFall, double *immedEvap,
-                     double *snowMelt, double *sublimation, double *fastFlow,
-                     double *evaporation, double *topDrainage,
-                     double *bottomDrainage, double water, double snow,
-                     double precip, double temp, double length, double trans) {
-  double netIn;  // net water into soil, in cm
-
-  if (ctx.snow) {
-    if (temp <= 0) {  // below freezing
-      *snowFall = precip / length;
-      *rain = 0;
-      *snowMelt = 0;
-    } else {  // above freezing
-      *snowFall = 0;
-      *rain = precip / length;
-      if (snow > 0) {
-        *snowMelt = params.snowMelt * temp;  // snow melt proportional to temp.
-        if ((*snowMelt * length) > snow) {  // can only melt what's there!
-          *snowMelt = snow / length;
-        }
-      } else {
-        *snowMelt = 0;
-      }
-    }
-  } else {
-    *rain = precip / length;
-    *snowFall = 0;
-    *snowMelt = 0;
-  }
-
-  netIn = (*rain + *snowMelt - trans) * length;
-  *bottomDrainage = ((water + netIn) - params.soilWHC) / length;
-  if (*bottomDrainage < 0) {
-    *bottomDrainage = 0;
-  }
-
-  // all the things we don't model in simpleWaterFlow mode:
-  *immedEvap = *sublimation = *fastFlow = *evaporation = *topDrainage = 0;
-}
-
 // following 4 functions are for complex water sub-model
 
 // calculate total rain and snowfall (cm water equiv./day)
@@ -1281,20 +1224,6 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
   // drain any water that remains beyond water holding capacity:
   if (waterRemaining > whc) {
     *drainage += (waterRemaining - whc) / (climate->length);
-  }
-}
-
-// calculate drainage from bottom (soil/transpiration) layer (cm/day)
-// based on current soil water store (cm), whc, drainage from top (cm/day) and
-// transpiration (cm/day)
-void transSoilDrainage(double *bottomDrainage, double topDrainage, double trans,
-                       double soilWater) {
-  double waterRemaining;  // cm
-
-  waterRemaining = soilWater + (topDrainage - trans) * climate->length;
-  *bottomDrainage = (waterRemaining - params.soilWHC) / (climate->length);
-  if (*bottomDrainage < 0) {
-    *bottomDrainage = 0;
   }
 }
 
@@ -1534,21 +1463,18 @@ void soilDegradation(void) {
 
         // THIS IS A BUG, but will be fixed in a later update, as it will
         // change smoke test output at a time when we don't want that
-#if (counter == 0)
-        // if (counter == 0) {
+#if (counter == 0)  // if (counter == 0) {
         envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
                                fluxes.maintRespiration[counter]) *
                               climate->length;  // Transfer from this pool
-        //} else {
-#else
+#else  // } else {
         envi.soil[counter] += (litterInput - fluxes.microbeIngestion[counter] -
                                fluxes.maintRespiration[counter]) *
                               climate->length;  // Transfer from this pool
         envi.soil[counter - 1] +=
             (microbeEff * fluxes.microbeIngestion[counter]) *
             climate->length;  // Transfer into next pool
-        //}
-#endif
+#endif  // }
       }
 
       // Do the roots.  If we don't model roots, the value of these fluxes will
@@ -1670,13 +1596,9 @@ void calculateFluxes(void) {
     vegResp2(&folResp, &woodResp, &growthResp, baseFolResp,
              fluxes.photosynthesis);
     fluxes.rVeg = folResp + woodResp + growthResp;
-    fluxes.rWood = woodResp;
-    fluxes.rLeaf = folResp + growthResp;
   } else {
     vegResp(&folResp, &woodResp, baseFolResp);
     fluxes.rVeg = folResp + woodResp;
-    fluxes.rWood = woodResp;
-    fluxes.rLeaf = folResp;
   }
 
   leafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
@@ -1763,8 +1685,6 @@ void initTrackers(void) {
   trackers.totNee = 0.0;
   trackers.evapotranspiration = 0.0;
   trackers.soilWetnessFrac = envi.soilWater / params.soilWHC;
-  trackers.fa = 0.0;
-  trackers.fr = 0.0;
   trackers.totSoilC = 0.0;
   trackers.rSoil = 0.0;
 
@@ -1774,8 +1694,6 @@ void initTrackers(void) {
   trackers.rAboveground = 0.0;
   trackers.fpar = 0.0;
 
-  trackers.plantWoodC = 0.0;
-  trackers.LAI = 0.0;
   trackers.yearlyLitter = 0.0;
 }
 
@@ -1858,9 +1776,6 @@ void updateTrackers(double oldSoilWater) {
   trackers.npp = trackers.gpp - trackers.ra;
   trackers.nee = -1.0 * (trackers.npp - trackers.rh);
 
-  trackers.fa = trackers.gpp - (fluxes.rLeaf) * climate->length;
-  trackers.fr = trackers.rh + (fluxes.rWood) * climate->length;
-
   trackers.yearlyGpp += trackers.gpp;
   trackers.yearlyRa += trackers.ra;
   trackers.yearlyRh += trackers.rh;
@@ -1889,9 +1804,7 @@ void updateTrackers(double oldSoilWater) {
 
   trackers.fpar = getMeanTrackerMean(meanFPAR);
 
-  trackers.LAI = envi.plantLeafC / params.leafCSpWt;
   trackers.yearlyLitter += fluxes.leafLitter;
-  trackers.plantWoodC = envi.plantWoodC;
 }
 
 /*!
