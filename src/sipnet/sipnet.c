@@ -105,8 +105,6 @@ struct ClimateVars {
 // file,
 //  be sure to add them to the readParamData function, below
 
-// TODO: UPDATE COMMENTS BELOW FOR OBSOLETE PARAMS
-
 typedef struct Parameters {
   // parameters read in from file:
   // initial state values:
@@ -180,21 +178,25 @@ typedef struct Parameters {
   double baseSoilResp; /* soil respiration at 0 degrees C and max soil moisture
        (g C respired * g^-1 soil C * day^-1)
        NOTE: read in as per-year rate! */
-  double baseSoilRespCold; /* soil respiration at 0 degrees C and max soil
-             moisture when tsoil < coldSoilThreshold (g C respired * g^-1 soil C
-             * day^-1) NOTE: read in as per-year rate! */
+  double baseSoilRespCold;  // OBSOLETE PARAM
+                            // soil respiration at 0 degrees C and max soil
+                            // moisture when tsoil < coldSoilThreshold
+                            // (g C respired * g^-1 soil C day^-1)
+                            // NOTE: read in as per-year rate!
 
   // 6 parameters
 
   double soilRespQ10;  // scalar determining effect of temp on soil resp.
-  double soilRespQ10Cold;  // scalar determining effect of temp on soil resp.
+  double soilRespQ10Cold;  // OBSOLETE PARAM
+                           // scalar determining effect of temp on soil resp.
                            // when tsoil < coldSoilThreshold
 
-  double coldSoilThreshold;  // temp. at which use baseSoilRespCold and
+  double coldSoilThreshold;  // OBSOLETE PARAM
+                             // temp. at which use baseSoilRespCold and
                              // soilRespQ10Cold (if SEASONAL_R_SOIL true)
                              // (degrees C)
-  double E0;  // E0 in Lloyd-Taylor soil respiration function
-  double T0;  // T0 in Lloyd-Taylor soil respiration function
+  double E0;  // OBSOLETE PARAM  E0 in Lloyd-Taylor soil respiration function
+  double T0;  // OBSOLETE PARAM  T0 in Lloyd-Taylor soil respiration function
   double soilRespMoistEffect;  // scalar determining effect of moisture on soil
                                // resp.
 
@@ -213,14 +215,15 @@ typedef struct Parameters {
   double fastFlowFrac;  // fraction of water entering soil that goes directly to
                         // drainage
   double snowMelt;  // rate at which snow melts (cm water equiv./degree C/day)
-  double litWaterDrainRate;  // rate at which litter water drains into lower
+  double litWaterDrainRate;  // OBSOLETE PARAM
+                             // rate at which litter water drains into lower
                              // layer when litter layer fully moisture-saturated
                              // (cm water/day)
   double rdConst;  // scalar determining amount of aerodynamic resistance
   double rSoilConst1, rSoilConst2;  // soil resistance =
                                     // e^(rSoilConst1 - rSoilConst2 * W1)
                                     // where W1 = (litterWater/litterWHC)
-  double m_ballBerry;  // slope for the Ball Berry relationship
+  double m_ballBerry;  // OBSOLETE PARAM slope for the Ball Berry relationship
   double leafCSpWt;  // g C * m^-2 leaf area
   double cFracLeaf;  // g leaf C * g^-1 leaf
   double leafPoolDepth;  // leaf (evaporative) pool rim thickness in mm
@@ -244,8 +247,8 @@ typedef struct Parameters {
   double maxIngestionRate;  // hr-1 - maximum ingestion rate of the microbe
   double halfSatIngestion;  // mg C g-1 soil - half saturation ingestion rate of
                             // microbe
-  double totNitrogen;  // Percentage nitrogen in soil
-  double microbeNC;  // mg N / mg C - microbe N:C ratio
+  double totNitrogen;  // OBSOLETE PARAM  Percentage nitrogen in soil
+  double microbeNC;  // OBSOLETE PARAM  mg N / mg C - microbe N:C ratio
   // 5 parameters
 
   double microbeInit;  // mg C / g soil microbe initial carbon amount
