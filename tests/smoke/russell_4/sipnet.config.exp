@@ -1,0 +1,25 @@
+Final config for SIPNET run at 2025-07-11 19:38:52 UTC
+                 Name        Source           Value
+            CLIM_FILE    CALCULATED     sipnet.clim
+       DO_MAIN_OUTPUT       DEFAULT               1
+     DO_SINGLE_OUTPUT       DEFAULT               0
+          DUMP_CONFIG    INPUT_FILE               1
+               EVENTS       DEFAULT               1
+            FILE_NAME       DEFAULT          sipnet
+                  GDD    INPUT_FILE               0
+          GROWTH_RESP       DEFAULT               0
+           INPUT_FILE  COMMAND_LINE       sipnet.in
+           LEAF_WATER       DEFAULT               0
+          LITTER_POOL       DEFAULT               0
+             MICROBES    INPUT_FILE               1
+NUM_SOIL_CARBON_POOLS       DEFAULT               1
+      OUT_CONFIG_FILE    CALCULATED   sipnet.config
+             OUT_FILE    CALCULATED      sipnet.out
+           PARAM_FILE    CALCULATED    sipnet.param
+         PRINT_HEADER       DEFAULT               1
+                QUIET       DEFAULT               0
+                 SNOW    INPUT_FILE               0
+      SOIL_MULTI_POOL    CALCULATED               0
+          SOIL_PHENOL    INPUT_FILE               1
+         SOIL_QUALITY       DEFAULT               0
+          WATER_HRESP       DEFAULT               1

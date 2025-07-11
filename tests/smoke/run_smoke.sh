@@ -14,6 +14,8 @@ sipnet_pass_count=0
 sipnet_fail_count=0
 event_pass_count=0
 event_fail_count=0
+config_pass_count=0
+config_fail_count=0
 skip_count=0
 
 # Find all immediate subdirectories
@@ -50,6 +52,7 @@ for DIR in "${DIRECTORIES[@]}"; do
         echo "FORCED PASS for this test"
         ((sipnet_pass_count++))
         ((event_pass_count++))
+        ((config_pass_count++))
         cd "$SCRIPT_DIR" || { echo "Failed to change directories, exiting"; exit 1; }
         continue
     else
@@ -75,6 +78,15 @@ for DIR in "${DIRECTORIES[@]}"; do
         echo "[$DIR] ❌ Differences found in event output"
         ((event_fail_count++))
     fi
+    # For the config check, exclude the first line with the timestamp
+    if diff -q -I "Final config for SIPNET run" sipnet.config sipnet.config.exp > /dev/null; then
+        echo "[$DIR] ✅ No differences found in config output"
+        ((config_pass_count++))
+        rm sipnet.config
+    else
+        echo "[$DIR] ❌ Differences found in config output"
+        ((config_fail_count++))
+    fi
 
     echo ""  # Blank line for readability
 
@@ -95,6 +107,9 @@ echo "Failed:  $sipnet_fail_count"
 echo "EVENT OUTPUT:"
 echo "Passed:  $event_pass_count/$num_tests"
 echo "Failed:  $event_fail_count"
+echo "CONFIG OUTPUT:"
+echo "Passed:  $config_pass_count/$num_tests"
+echo "Failed:  $config_fail_count"
 echo "======================="
 
 exit_code=0
@@ -105,7 +120,7 @@ if  [ "$skip_count" -gt 0 ]; then
     (( exit_code |= 1))
 fi
 
-if [ "$sipnet_fail_count" -gt 0 ] || [ "$event_fail_count" -gt 0 ]; then
+if [ "$sipnet_fail_count" -gt 0 ] || [ "$event_fail_count" -gt 0 ] || [ "$config_fail_count" -gt 0 ]; then
     echo "Some outputs have changed. This is expected with some changes to SIPNET. When this happens, assess correctness and then update the reference output files. See the report above for details."
     (( exit_code |= 1))
 fi
