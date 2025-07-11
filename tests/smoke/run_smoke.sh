@@ -44,11 +44,10 @@ for DIR in "${DIRECTORIES[@]}"; do
     cd "$DIR" || { echo "Failed to change directory to $DIR"; ((skip_count++)); continue; }
 
     # Run sipnet
-    # TEMP HACK to make this run until run-time options and config are in place.
-    # NOTE THAT THIS WILL NOT TEST ANY CHANGES
+    # Note that we have a mechanism here to force pass a test; please use
+    # hesitantly, and as a temporary measure while hopefully investigations
+    # are proceeding as to why this is needed.
     if [ -f "./skip" ]; then
-        # Changes are not in place yet for this one. There should be a sipnet binary
-        # in this directory to manually check on MacOS.
         echo "FORCED PASS for this test"
         ((sipnet_pass_count++))
         ((event_pass_count++))
