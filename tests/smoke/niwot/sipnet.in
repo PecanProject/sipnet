@@ -32,3 +32,7 @@ DO_SINGLE_OUTPUTS = 0
 
 ! Also, dump the config for the test
 DUMP_CONFIG = 1
+
+! Also also, putting this in to make sure we continue to accept and ignore it
+! gracefully
+LOCATION = 0
