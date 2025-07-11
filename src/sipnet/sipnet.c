@@ -446,7 +446,6 @@ void readClimData(const char *climFile) {
   double time, length;  // time in hours, length in days (or fraction of day)
   double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
 
-  // Only used if ctx.gdd = 1
   double thisGdd;  // growing degree days of this time step
   double gdd = 0.0;  // growing degree days since the last Jan. 1
 

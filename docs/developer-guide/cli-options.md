@@ -22,7 +22,7 @@ The mapping is created using the `nameToKey` function in `common/context.c` that
 - converts alpha characters to lowercase. 
 
 For the mapping to work, the option name (e.g., `print_header`) and `Context` member name (in this case, 
-`printHeader`) must generate the same key (e.g. `printheader` and `printHeader` both generate `printheader`).
+`printHeader`) must generate the same key (e.g. `print_header` and `printHeader` both generate `printheader`).
 
 Each key must be unique across the `Context` member names.
 
@@ -36,7 +36,7 @@ This means that:
 - Options must be set via the macros `CREATE_INT_CONTEXT`/`CREATE_CHAR_CONTEXT` when they are created.
 - The functions `updateIntContext`/`updateCharContext` must be used when updating a value.
 
-See the Function Reference at the end for more information.
+See the Function/Macro Reference at the end for more information.
 
 ## Steps to Add Each Type of Option
 
