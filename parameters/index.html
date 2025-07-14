@@ -2623,10 +2623,10 @@ Each line in the file corresponds to a single parameter and contains five or six
 </table>
 <h4 id="example-sipnetparam-file">Example <code>sipnet.param</code> file<a class="headerlink" href="#example-sipnetparam-file" title="Permanent link">&para;</a></h4>
 <p>Column names are not used, but are:</p>
-<pre><code>param_name value
-</code></pre>
+<div class="highlight"><pre><span></span><code>param_name value
+</code></pre></div>
 <p>The first lines in <code>sipnet.param</code> could be:</p>
-<pre><code>plantWoodInit 110
+<div class="highlight"><pre><span></span><code>plantWoodInit 110
 laiInit 0
 litterInit 200
 soilInit 7000
@@ -2639,7 +2639,7 @@ coarseRootFrac 0.2
 aMax 95
 aMaxFrac 0.85
 ...
-</code></pre>
+</code></pre></div>
 <h3 id="climate">Climate<a class="headerlink" href="#climate" title="Permanent link">&para;</a></h3>
 <p>For each step of the model, the following inputs are needed. These are provided in a file named <code>&lt;sitename&gt;.clim</code> with the following columns:</p>
 <table>
@@ -2751,20 +2751,20 @@ aMaxFrac 0.85
 * If there is more than one location specified in the file, SIPNET will error and halt</p>
 <h4 id="example-sipnetclim-file">Example <code>sipnet.clim</code> file:<a class="headerlink" href="#example-sipnetclim-file" title="Permanent link">&para;</a></h4>
 <p>Column names are not used, but are:</p>
-<pre><code>loc year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   soilWetness
-</code></pre>
+<div class="highlight"><pre><span></span><code>loc year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   soilWetness
+</code></pre></div>
 <p><strong>Half-hour time step</strong></p>
-<pre><code>0   1998 305  0.00    -1800   1.9000   1.2719   0.0000   0.0000 109.5364  77.5454 726.6196   1.6300   0.0000
+<div class="highlight"><pre><span></span><code>0   1998 305  0.00    -1800   1.9000   1.2719   0.0000   0.0000 109.5364  77.5454 726.6196   1.6300   0.0000
 0   1998 305  0.50    -1800   1.9000   1.1832   0.0000   0.0000 109.5364  73.1254 726.6196   1.6300   0.0000
 0   1998 305  1.00    -1800   2.0300   1.1171   0.0000   0.0000 110.4243  63.9567 732.5092   0.6800   0.0000
 0   1998 305  1.50    -1800   2.0300   1.0439   0.0000   0.0000 110.4243  60.3450 732.5092   0.6800   0.0000
-</code></pre>
+</code></pre></div>
 <p><strong>Variable time step</strong></p>
-<pre><code>0     1998 305  0.00  0.292 1.5  0.8   0.0000 0.0000 105.8 70.1    711.6  0.9200 0.0000
+<div class="highlight"><pre><span></span><code>0     1998 305  0.00  0.292 1.5  0.8   0.0000 0.0000 105.8 70.1    711.6  0.9200 0.0000
 0     1998 305  7.00  0.417 3.6  1.8   5.6016 0.0000 125.7 23.5    809.4  1.1270 0.0000
 0     1998 305 17.00  0.583 1.9  1.3   0.0000 0.0000 108.1 75.9    732.7  1.1350 0.0000
 0     1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690 0.0000
-</code></pre>
+</code></pre></div>
 <h3 id="agronomic-events">Agronomic Events<a class="headerlink" href="#agronomic-events" title="Permanent link">&para;</a></h3>
 <p>For managed ecosystems, the following inputs are provided in a file named <code>events.in</code> with the following columns:</p>
 <table>
@@ -3016,27 +3016,27 @@ aMaxFrac 0.85
 <li>root biomass is only removed for root crops</li>
 </ul>
 <h4 id="example-of-eventsin-file">Example of <code>events.in</code> file:<a class="headerlink" href="#example-of-eventsin-file" title="Permanent link">&para;</a></h4>
-<pre><code>2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
+<div class="highlight"><pre><span></span><code>2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
 2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
 2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
 2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
 2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
-</code></pre>
+</code></pre></div>
 <h4 id="events-output">Events output<a class="headerlink" href="#events-output" title="Permanent link">&para;</a></h4>
 <p>SIPNET will create a file named <code>events.out</code> when event handling is enabled. </p>
 <p>This file will have one row for each agronomic event that is processed. Each row lists year, 
 day, event type, and parameter name/value pairs for all state variables that the event
 affects. </p>
 <p>Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
-up to the param-values pairs, commas separating PV pairs, and <code>=</code> between param and value.</p>
-<pre><code>year  day  type     param_name=delta[,param_name=delta,...]
+up to the param-values pairs, commas separating PV pairs, and <code>=</code> between param and value.
+<div class="highlight"><pre><span></span><code>year  day  type     param_name=delta[,param_name=delta,...]
 2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
 2023   70  irrig    envi.soilWater=5.00
 2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
 2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
 2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
 2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
-</code></pre>
+</code></pre></div></p>
 <p><em>Note: <code>events.out</code> logs all parameters changed by an event for debugging and testing purposes; 
 For downstream analyses that only need the date and event type, <code>events.in</code> is equivalent and easier to parse.</em></p>
 <h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
@@ -3315,7 +3315,7 @@ TODO: update and move the following terms used in model description to appropria
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>

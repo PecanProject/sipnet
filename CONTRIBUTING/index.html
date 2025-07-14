@@ -919,13 +919,13 @@
 <ol>
 <li>Clone this repository:</li>
 </ol>
-<p><code>bash
-   git clone git@github.com:PecanProject/sipnet</code></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:PecanProject/sipnet
+</code></pre></div>
 <ol>
 <li>Run the setup script (once per clone):</li>
 </ol>
-<p><code>bash
-   tools/setup.sh</code></p>
+<div class="highlight"><pre><span></span><code>tools/setup.sh
+</code></pre></div>
 <p>The <code>tools/setup.sh</code> script verifies that Python ≥ 3.8 is available,
 ensures that <code>clang-format</code>, <code>clang-tidy</code>, and <code>git clang-format</code> are
 installed (it automatically installs them on macOS and prints installation
@@ -963,12 +963,12 @@ but it will save you time whenever you touch C/C++ code.</em></p>
 <p><strong>If the hook stops your commit</strong>, run:</p>
 </li>
 </ol>
-<p><code>bash
-   # format only what you just staged
-   git clang-format
-   # restage fixes and commit again
-   git add -u
-   git commit</code>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># format only what you just staged</span>
+git<span class="w"> </span>clang-format
+<span class="c1"># restage fixes and commit again</span>
+git<span class="w"> </span>add<span class="w"> </span>-u
+git<span class="w"> </span>commit
+</code></pre></div>
 If <code>git clang-format</code> fails because not all changes are staged (likely a <code>git commit -a</code> command), either <code>git add</code> all the changes, or try <code>git clang-format -f</code> to reformat all modified files
 3. <strong>clang‑tidy static analysis</strong> runs automatically in CI.<br />
     If the bot leaves comments, adjust your code as instructed and push.</p>
@@ -990,48 +990,48 @@ clang-tidy &lt;path/to/filename.c&gt;
 <p>Documentation is located at https://pecanproject.github.io/sipnet/, and can be rebuilt using <code>mkdocs</code>. A brief summary 
 of use is listed here, or see the Getting Started page for <code>mkdocs</code> <a href="https://www.mkdocs.org/getting-started/">here</a> for
 more information. </p>
-<p>Issue the following command to install <code>mkdocs</code> and the third-party extensions usedin SIPNET:</p>
-<pre><code>pip install mkdocs mkdocs-material pymdown-extensions
-</code></pre>
-<p>The <code>material</code> theme can be found <a href="https://github.com/squidfunk/mkdocs-material">here</a>.</p>
+<p>Issue the following command to install <code>mkdocs</code> and the third-party extensions usedin SIPNET:
+<div class="highlight"><pre><span></span><code>pip install mkdocs mkdocs-material pymdown-extensions
+</code></pre></div>
+The <code>material</code> theme can be found <a href="https://github.com/squidfunk/mkdocs-material">here</a>.</p>
 <p>MkDocs comes with a built-in dev-server that lets you preview your documentation as you work on it. Make sure you're 
 in the same directory as the mkdocs.yml configuration file, and then start the server by running the mkdocs serve 
 command:</p>
-<pre><code>$ mkdocs serve
+<p><div class="highlight"><pre><span></span><code>$ mkdocs serve
 INFO    -  Building documentation...
 INFO    -  Cleaning site directory
 INFO    -  Documentation built in 0.22 seconds
-INFO    -  [15:50:43] Watching paths for changes: 'docs', 'mkdocs.yml'
+INFO    -  [15:50:43] Watching paths for changes: &#39;docs&#39;, &#39;mkdocs.yml&#39;
 INFO    -  [15:50:43] Serving on http://127.0.0.1:8000/
-</code></pre>
-<p>Open up http://127.0.0.1:8000/ in your browser, and you'll see the documentation home page.</p>
+</code></pre></div>
+Open up http://127.0.0.1:8000/ in your browser, and you'll see the documentation home page.</p>
 <p>The dev-server also supports auto-reloading, and will rebuild your documentation whenever anything in the configuration
 file, documentation directory, or theme directory changes.</p>
 <p>If the structure of the documentation has changed (e.g., adding, moving, removing, or renaming pages), update <code>mkdocs.yml</code> in the root 
 directory to reflect these changes and issue this command to rebuild:</p>
-<pre><code>mkdocs build
-</code></pre>
+<div class="highlight"><pre><span></span><code>mkdocs build
+</code></pre></div>
 <h2 id="compiling-sipnet-binaries">Compiling SIPNET binaries<a class="headerlink" href="#compiling-sipnet-binaries" title="Permanent link">&para;</a></h2>
 <p>SIPNET uses <code>make</code> to build the model and documentation. There are also miscellaneous targets for running analysis workflows:</p>
-<pre><code class="language-sh"># build SIPNET executable
-make sipnet
-# build documentation
-make document
-# clean up build artifacts
-make clean
-# list all make commands
-make help
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="c1"># build SIPNET executable</span>
+make<span class="w"> </span>sipnet
+<span class="c1"># build documentation</span>
+make<span class="w"> </span>document
+<span class="c1"># clean up build artifacts</span>
+make<span class="w"> </span>clean
+<span class="c1"># list all make commands</span>
+make<span class="w"> </span><span class="nb">help</span>
+</code></pre></div>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <p>Any new features (that are worth keeping!) should be covered by tests.</p>
-<p>SIPNET also uses <code>make</code> to build and run its unit tests. This can be done with the following commands:</p>
-<pre><code class="language-shell"># Compile tests
-make test
-# Run tests
-make testrun
-# Clean after tests are run
-make testclean
-</code></pre>
+<p>SIPNET also uses <code>make</code> to build and run its unit tests. This can be done with the following commands:
+<div class="highlight"><pre><span></span><code><span class="c1"># Compile tests</span>
+make<span class="w"> </span><span class="nb">test</span>
+<span class="c1"># Run tests</span>
+make<span class="w"> </span>testrun
+<span class="c1"># Clean after tests are run</span>
+make<span class="w"> </span>testclean
+</code></pre></div></p>
 <h2 id="releases">Releases<a class="headerlink" href="#releases" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Use <a href="https://semver.org/">Semantic Versioning v2</a> for SIPNET releases.</li>
@@ -1093,7 +1093,7 @@ make testclean
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.code.copy"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
