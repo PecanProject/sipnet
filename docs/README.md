@@ -14,7 +14,7 @@ current development is focused on representing carbon balance and GHG fluxes and
 2. Build the SIPNET executable:
    ```bash
     make
-    ```
+   ```
 3. Run a test simulation:
    ```bash
    ./src/sipnet -i tests/smoke/sipnet.in
