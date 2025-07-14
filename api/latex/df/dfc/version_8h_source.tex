@@ -5,8 +5,17 @@
 \DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SIPNET\_VERSION\_H}}
 \DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SIPNET\_VERSION\_H}}
 \DoxyCodeLine{00003\ }
-\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ VERSION\_STRING\ "{}2.0.0"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ NUMERIC\_VERSION\ "{}2.0.0"{}}}
 \DoxyCodeLine{00005\ }
-\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_VERSION\_H}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ To\ enable,\ compile\ with\ \`{}-\/DGIT\_HASH="{}<your\ revision\ here>"{}`}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifdef\ GIT\_HASH}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ str(x)\ \#x}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ xstr(x)\ str(x)\ \ }\textcolor{comment}{//\ bah,\ macro\ string\ expansion\ rules}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ VERSION\_STRING\ NUMERIC\_VERSION\ "{}\ ("{}\ xstr(GIT\_HASH)\ "{})"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ VERSION\_STRING\ NUMERIC\_VERSION}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ GIT\_HASH}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_VERSION\_H}}
 
 \end{DoxyCode}
