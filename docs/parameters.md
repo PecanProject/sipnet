@@ -573,7 +573,15 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 26 | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27 | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 
-An example output file can be found in [tests/smoke/niwot.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot.out).
+An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
+
+```
+Notes: PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;
+year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration fPAR
+1998 305  0.00  5759.77  1133.88 16000.06     8.00  1919.90  1919.64   400.00    0.500     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000   0.0000
+1998 305  7.00  5759.63  1133.71 16000.08     8.00  1919.77  1919.10   400.00    0.500     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022   0.5821
+1998 305 17.00  5759.16  1133.48 16000.15     8.00  1919.57  1918.37   400.00    0.500     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000   0.5821
+```
 
 ### Events output
 
