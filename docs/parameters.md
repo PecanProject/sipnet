@@ -281,7 +281,27 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ## Run-time Options
 
-This section replaces the previous "Compile-time parameters" section, as most of these are now configurable at run-time.
+Configuration settings are applied in the following order of precedence:
+
+1. Default values built into SIPNET
+2. Values from the configuration file
+3. Command-line arguments
+
+Thus, command-line arguments override settings in the configuration file, and configuration file settings override default values.
+
+### Input / Output Flags
+
+| Option                  | Default   | Description                                                                 |
+|-------------------------|-----------|-----------------------------------------------------------------------------|
+| `input-file`            | sipnet.in | Name of input config file                                                   |
+| `file-name`             | sipnet    | Prefix of climate and parameter files                                       |
+| `do-main-output`        | 1         | Print time series of all output variables to `<file-name>.out`              |
+| `do-single-outputs`     | 0         | Print outputs one variable per file (e.g. `<file-name>.NEE`)                |
+| `dump-config`           | 0         | Print final config to `<file-name>.config`                                  |
+| `print-header`          | 1         | Whether to print header row in output files                                 |
+| `quiet`                 | 0         | Suppress info and warning message                                           |
+
+### Model Flags
 
 | Option                  | Default | Description                                                              |
 |-------------------------|---------|--------------------------------------------------------------------------|
@@ -301,6 +321,64 @@ This section replaces the previous "Compile-time parameters" section, as most of
 | `dump-config`           | 0       | Print final config to `<file-name>.config`.                              |
 | `print-header`          | 1       | Whether to print header row in output files.                             |
 | `quiet`                 | 0       | Suppress info and warning message.                                       |
+
+Note the following restrictions on these options:
+ - `num-soil-carbon-pools` must be between 1 and 3
+ - `soil-phenol` and `gdd` may not both be turned on
+ - `litter-pool` requires `num-soil-carbon-pools` to be 1
+ - `microbes` requires `num-soil-carbon-pools` to be 1
+ - `soil-quality` requires `num-soil-carbon-pools` to be greater than 1
+
+### Command Line Arguments
+
+Command-line arguments can be used to specify run-time options when starting SIPNET. The syntax is as follows:
+
+```
+sipnet [options]
+```
+
+Where `[options]` can include any of the run-time options listed above, in the form `--option=value`.
+
+See `sipnet --help` for a full list of available command-line options.
+
+### Configuration File Format
+
+SIPNET reads a configuration file that specifies run-time options without using command-line arguments. By default, SIPNET looks for a file named `sipnet.in` in the current directory. These will be overwritten by command-line arguments if specified.
+
+The configuration file uses a simple key-value format, `option = value`. 
+With one option per line; comments follow `#`.
+
+#### Example Configuration File
+
+```
+# Base filename (used for derived filenames if not explicitly specified)
+file-name = mysite
+
+# Input files
+param-file = mysite.param
+clim-file = mysite.clim
+
+# Output options
+do-main-output = 1
+do-single-outputs = 0
+dump-config = 1
+print-header = 1
+
+# Model options
+events = 1
+gdd = 1
+growth-resp = 0
+leaf-water = 0
+litter-pool = 0
+microbes = 0
+snow = 1
+soil-phenol = 0
+soil-quality = 0
+water-hresp = 1
+num-soil-carbon-pools = 1
+```
+
+When `dump-config = 1` is set, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
 
 ## Hard-coded Values
 
@@ -379,9 +457,9 @@ For each step of the model, the following inputs are needed. These are provided 
 | col | parameter | description | units | notes |
 |-----| ----------- | --------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | 1   | year        | year of start of this timestep  |               | integer, e.g. 2010|
-| 2   | day         | day of start of this timestep   |               | integer where 1 = Jan 1|
-| 3   | time        | time of start of this timestep  | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
-| 4   | length      | length of this timestep         | days          | variable-length timesteps allowed, typically not used |
+| 2   | day         | day of start of this timestep      | Day of year | 1 = Jan 1                             |
+| 3   | time        | time of start of this timestep     | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
+| 4   | length      | length of this timestep          | days          | variable-length timesteps allowed, typically not used |
 | 5   | tair        | avg. air temp for this time step| degrees Celsius |     |
 | 6   | tsoil       | average soil temperature for this time step  | degrees Celsius| can be estimated from Tair  |
 | 7   | par         | average photosynthetically active radiation (PAR) for this time step  | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$  | input is in Einsteins \* m^-2 ground area, summed over entire time step |
