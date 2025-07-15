@@ -186,12 +186,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 30 |   $K_\text{litter}$          | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | g C broken down \* g^-1 litter C \* day^-1        | read in as per-year rate                              |
 | 31 |             | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) |                                                   |                                                       |
 | 32 | $K_{dec}$     | baseSoilResp        | Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil          | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
-| 33 |             | baseSoilRespCold    | soil respiration at 0°C and max soil moisture when tsoil < coldSoilThreshold        | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
 | 34 | $Q_{10s}$ | soilRespQ10         | Soil respiration Q10                                                                |                                                   | scalar determining effect of temp on soil respiration |
-| 35 |             | soilRespQ10Cold     | scalar determining effect of temp on soil resp. when tsoil < coldSoilThreshold      |                                                   |                                                       |
-| 36 |             | coldSoilThreshold   | temp. at which use baseSoilRespCold and soilRespQ10Cold                             | °C                                                | Not used if SEASONAL\_R\_SOIL is 0                    |
-| 37 |             | E0                  | E0 in Lloyd-Taylor soil respiration function                                        |                                                   | Not used if LLOYD\_TAYLOR is 0                        |
-| 38 |             | T0                  | T0 in Lloyd-Taylor soil respiration function                                        |                                                   | Not used if LLOYD\_TAYLOR is 0                        |
 | 39 |             | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                                   |                                                       |
 |    |             | baseMicrobeResp     |                                                                                     |                                                   |                                                       |
 |    |             |                     |                                                                                     |                                                   |                                                       |
@@ -242,11 +237,10 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 46 |            | fastFlowFrac      | fraction of water entering soil that goes directly to drainage                                        |                        |                                                                                                                                                |
 |    | $k_\text{SOM,drain}$ |
 | 47 |            | snowMelt          | rate at which snow melts                                                                              | cm water equivavlent per degree Celsius per day |                                                                                                                                                |
-| 48 |            | litWaterDrainRate | rate at which litter rains into lower layer when litter layer fully moisture-saturated         | cm water/day          |                                                                                                                                                |
 | 49 |            | rdConst           | scalar determining amount of aerodynamic resistance                                                   |                        |                                                                                                                                                |
 | 50 |            | rSoilConst1       |                                                                                                       |                        | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
 | 51 |            | rSoilConst2       |                                                                                                       |                        | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
-| 52 |            | m\_ballBerry      | slope for the Ball Berry relationship                                                                 |                        |                                                                                                                                                |
+
 
 
 ### Tree physiological parameters
@@ -272,8 +266,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 58 |                   | efficiency             | conversion efficiency of ingested carbon           |                       | Microbe & Stoichiometry model |
 | 59 |                   | maxIngestionRate       | maximum ingestion rate of the microbe              | hr-1                  | Microbe & Stoichiometry model |
 | 60 |                   | halfSatIngestion       | half saturation ingestion rate of microbe          | mg C g-1 soil         | Microbe & Stoichiometry model |
-| 61 |                   | totNitrogen            | Percentage nitrogen in soil                        |                       | Microbe & Stoichiometry model |
-| 62 |                   | microbeNC              | microbe N:C ratio                                  | mg N / mg C           | Microbe & Stoichiometry model |
 | 63 |                   | microbeInit            |                                                    | mg C / g soil microbe | initial carbon amount         |-->
 
 
@@ -287,48 +279,45 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 -->
 
-## Compile-time parameters
+## Run-time Options
 
-| Parameter 0                                    | Default                   | Description                                                                                                     |
-| ---------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| CSV\_O                                         | 0                         | output .out file as a CSV file                                                                                  |
-| ALTERNATIVE\_TRANS 0                           | 0                         | do we want to implement alternative transpiration?                                                              |
-| BALL\_BERRY 0                                  | 0                         | implement a Ball Berry submodel to calculate gs from RH, CO2 and A                                              |
-| PENMAN\_MONTEITH\_TRANS 0                      | 0                         | implement a transpiration calculation based on the Penman-Monteith Equation                                     |
-| GROWTH\_RESP 0                                 | 0                         | explicitly model growth resp., rather than including with maint. resp.                                          |
-| LLOYD\_TAYLOR 0                                | 0                         | use Lloyd-Taylor model for soil respiration, in which temperature sensitivity decreases at higher temperatures? |
-| SEASONAL\_R\_SOIL 0 && !LLOYD\_TAYLOR          | 0                         | use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil < (some threshold)?           |
-| WATER\_PSN 1                                   | 1                         | does soil moisture affect photosynthesis?                                                                       |
-| WATER\_HRESP 1                                 | 1                         | does soil moisture affect heterotrophic respiration?                                                            |
-| DAYCENT\_WATER\_HRESP 0 && WATER\_HRESP        | 0                         | use DAYCENT soil moisture function?                                                                             |
-| MODEL\_WATER 1                                 | 1                         | do we model soil water (and ignore soilWetness)?                                                                |
-| COMPLEX\_WATER 1 && MODEL\_WATER               | 1                         | do we use a more complex water submodel? (model evaporation as well as transpiration)                           |
-| LITTER\_WATER 0 && (COMPLEX\_WATER)            | 0                         | do we have a separate litter water layer, used for evaporation?                                                 |
-| LITTER\_WATER\_DRAINAGE 1 && (LITTER\_WATER)   | 0                         | does water from the top layer drain down into bottom layer even if top layer not overflowing?                   |
-| SNOW (1 \|\| (COMPLEX\_WATER)) && MODEL\_WATER | 1                         | keep track of snowpack, rather than assuming all precip. is liquid                                              |
-| GDD 0                                          | 0                         | use GDD to determine leaf growth? (note: mutually exclusive with SOIL\_PHENOL)                                  |
-| SOIL\_PHENOL 0 && !GDD                         | 0                         | use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)                                    |
-| LITTER\_POOL 0                                 | 0                         | have extra litter pool, in addition to soil c pool                                                              |
-| SOIL\_MULTIPOOL 0 && !LITTER\_POOL             | 0                         | do we have a multipool approach to model soils?                                                                 |
-| NUMBER\_SOIL\_CARBON\_POOLS 3                  | 3                         | number of pools we want to have. Equal to 1 if SOIL\_MULTIPOOL is 0                                             |
-| SOIL\_QUALITY 0 && SOIL\_MULTIPOOL             | 0                         | do we have a soil quality submodel?                                                                             |
-| MICROBES 0 && !SOIL\_MULTIPOOL                 | 0                         | do we utilize microbes. This will only be an option if SOIL\_MULTIPOOL is 0 and MICROBES is 1                   |
-| STOICHIOMETRY 0 && MICROBES                    | 0                         | do we utilize stoichometric considerations for the microbial pool?                                              |
-| ROOTS 0                                        | 0                         | do we model root dynamics? If no, roots are part of wood pool. If yes, split into coarse and fine roots|
-| MODIS 0                                        | 0                         | do we use modis FPAR data to constrain GPP?                                                                     |
-| C\_WEIGHT 12.0                                 | 12                        | molecular weight of carbon                                                                                      |
-| MEAN\_NPP\_DAYS 5                              | 5                         | over how many days do we keep the running mean                                                                  |
-| MEAN\_NPP\_MAX\_ENTRIES                        | MEAN\_NPP\_DAYS\*50       | assume that the most pts we can have is two per hour                                                            |
-| MEAN\_GPP\_SOIL\_DAYS 5                        | 5                         | over how many days do we keep the running mean                                                                  |
-| MEAN\_GPP\_SOIL\_MAX\_ENTRIES                  | MEAN\_GPP\_SOIL\_DAYS\*50 | assume that the most pts we can have is one per hour                                                            |
-| LAMBDA                                         | 2501000                   | latent heat of vaporization (J/kg)                                                                              |
-| LAMBDA\_S                                      | 2835000                   | latent heat of sublimation (J/kg)                                                                               |
-| RHO                                            | 1.3                       | air density (kg/m^3)                                                                                            |
-| CP                                             | 1005.                     | specific heat of air (J/(kg K))                                                                                 |
-| GAMMA                                          | 66                        | psychometric constant (Pa/K)                                                                                    |
-| E\_STAR\_SNOW                                  | 0.6                       | approximate saturation vapor pressure at 0°C (kPa)                                                              |
-|                                                |                           |                                                                                                                 |
+This section replaces the previous "Compile-time parameters" section, as most of these are now configurable at run-time.
 
+| Option                  | Default | Description                                                              |
+|-------------------------|---------|--------------------------------------------------------------------------|
+| `events`                | 1       | Enable event handling.                                                   |
+| `gdd`                   | 1       | Use growing degree days to determine leaf growth.                        |
+| `growth-resp`           | 0       | Explicitly model growth respiration, rather than including with maintenance respiration. |
+| `leaf-water`            | 0       | Calculate leaf pool and evaporate from that pool.                        |
+| `litter-pool`           | 0       | Enable litter pool in addition to single soil carbon pool.               |
+| `microbes`              | 0       | Enable microbe modeling.                                                 |
+| `snow`                  | 1       | Keep track of snowpack, rather than assuming all precipitation is liquid.|
+| `soil-phenol`           | 0       | Use soil temperature to determine leaf growth.                           |
+| `soil-quality`          | 0       | Use soil quality submodel.                                               |
+| `water-hresp`           | 1       | Whether soil moisture affects heterotrophic respiration.                 |
+| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
+| `do-main-output`        | 1       | Print time series of all output variables to `<file-name>.out`.          |
+| `do-single-outputs`     | 0       | Print outputs one variable per file (e.g. `<file-name>.NEE`).            |
+| `dump-config`           | 0       | Print final config to `<file-name>.config`.                              |
+| `print-header`          | 1       | Whether to print header row in output files.                             |
+| `quiet`                 | 0       | Suppress info and warning message.                                       |
+
+## Hard-coded Values
+
+| Parameter                   | Value                     | Description                                                                                                     |
+|-----------------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `MAX_SOIL_CARBON_POOLS`     | 3                         | Maximum number of soil carbon pools.                                                                            |
+| `C_WEIGHT`                  | 12.0                      | molecular weight of carbon                                                                                      |
+| `MEAN_NPP_DAYS`             | 5                         | over how many days do we keep the running mean                                                                  |
+| `MEAN_NPP_MAX_ENTRIES`      | `MEAN_NPP_DAYS`*50      | assume that the most pts we can have is two per hour                                                            |
+| `MEAN_GPP_SOIL_DAYS`        | 5                         | over how many days do we keep the running mean                                                                  |
+| `MEAN_GPP_SOIL_MAX_ENTRIES` | `MEAN_GPP_SOIL_DAYS`*50 | assume that the most pts we can have is one per hour                                                            |
+| `LAMBDA`                    | 2501000                   | latent heat of vaporization (J/kg)                                                                              |
+| `LAMBDA_S`                  | 2835000                   | latent heat of sublimation (J/kg)                                                                               |
+| `RHO`                       | 1.3                       | air density (kg/m^3)                                                                                            |
+| `CP`                        | 1005.                     | specific heat of air (J/(kg K))                                                                                 |
+| `GAMMA`                     | 66                        | psychometric constant (Pa/K)                                                                                    |
+| `E_STAR_SNOW`               | 0.6                       | approximate saturation vapor pressure at 0°C (kPa)                                                              |
 
 ## Input Files
 
@@ -401,7 +390,7 @@ For each step of the model, the following inputs are needed. These are provided 
 | 10  | vpdSoil     | average vapor pressure deficit between soil and air | kPa | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
 | 11  | vPress      | average vapor pressure in canopy airspace | kPa | input is in Pa |
 | 12  | wspd        | avg. wind speed                   | m/s         |                |
-| 13  | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
+| 13  | soilWetness | fractional soil wetness          | unitless (0-1) | not used: use has been deprecated; calculated internally |
 
 Note: An older format for this file included location as the first column. Files with this older format can still be read by sipnet:
 * SIPNET will print a warning indicating that it is ignoring the location column
