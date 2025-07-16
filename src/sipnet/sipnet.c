@@ -464,7 +464,7 @@ void readClimData(const char *climFile) {
   // Check format of first line to see if location is still specified (we will
   // ignore it if so)
   if (getline(&firstLine, &lineCap, in) == -1) {  // EOF
-    printf("Error: no climate data in %s\n", climFile);
+    logError("no climate data in %s\n", climFile);
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
@@ -505,7 +505,7 @@ void readClimData(const char *climFile) {
   free(firstLine);
 
   if (status != expectedNumCols) {
-    printf("Error reading climate file: bad data on first line\n");
+    logError("while reading climate file: bad data on first line\n");
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
@@ -569,15 +569,15 @@ void readClimData(const char *climFile) {
     }
     if (status != EOF) {
       if (status != expectedNumCols) {
-        printf("Error reading climate file: bad data near year %d day %d\n",
-               year, day);
+        logError("while reading climate file: bad data near year %d day %d\n",
+                 year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       // Check for older file with multiple locations - that's an error now
       if (legacyFormat && (dummyLoc != firstLoc)) {
-        printf("Error reading legacy climate file %s: multiple locations not "
-               "supported (locations found: %d and %d)\n",
-               climFile, firstLoc, dummyLoc);
+        logError("while reading legacy climate file %s: multiple locations "
+                 "not supported (locations found: %d and %d)\n",
+                 climFile, firstLoc, dummyLoc);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
 
