@@ -2,6 +2,7 @@
 
 #include "utils/tUtils.h"
 #include "utils/exitHandler.c"
+#include "common/logging.h"
 #include "sipnet/sipnet.c"
 
 int runTest(const char *climFile) {
@@ -49,7 +50,7 @@ int run() {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with multi_loc.clim\n");
+    logTest("FAIL with multi_loc.clim\n");
   }
 
   // Fourth test - has location but no soilWetness
@@ -64,7 +65,7 @@ int run() {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with missing_one.clim\n");
+    logTest("FAIL with missing_one.clim\n");
   }
 
   return status;
@@ -75,9 +76,9 @@ int main() {
 
   status = run();
   if (status) {
-    printf("FAILED testClimInput with status %d\n", status);
+    logTest("FAILED testClimInput with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testClimInput\n");
+  logTest("PASSED testClimInput\n");
 }
