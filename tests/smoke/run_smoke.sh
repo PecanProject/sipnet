@@ -61,27 +61,27 @@ for DIR in "${DIRECTORIES[@]}"; do
     fi
 
     # Compare output with expected output; clean up files if no diffs found
-    if diff -q sipnet.out sipnet.exp > /dev/null; then
+    if git diff --exit-code sipnet.out > /dev/null; then
         echo "[$DIR] ✅ No differences found in sipnet output"
         ((sipnet_pass_count++))
-        rm sipnet.out
+        #rm sipnet.out
     else
         echo "[$DIR] ❌ Differences found in sipnet output"
         ((sipnet_fail_count++))
     fi
-    if diff -q events.out events.exp > /dev/null; then
+    if git diff --exit-code events.out > /dev/null; then
         echo "[$DIR] ✅ No differences found in event output"
         ((event_pass_count++))
-        rm events.out
+        #rm events.out
     else
         echo "[$DIR] ❌ Differences found in event output"
         ((event_fail_count++))
     fi
     # For the config check, exclude the first line with the timestamp
-    if diff -q -I "Final config for SIPNET run" sipnet.config sipnet.config.exp > /dev/null; then
+    if git diff --exit-code -I "Final config for SIPNET run" sipnet.config > /dev/null; then
         echo "[$DIR] ✅ No differences found in config output"
         ((config_pass_count++))
-        rm sipnet.config
+        #rm sipnet.config
     else
         echo "[$DIR] ❌ Differences found in config output"
         ((config_fail_count++))
