@@ -289,38 +289,44 @@ Configuration settings are applied in the following order of precedence:
 
 Thus, command-line arguments override settings in the configuration file, and configuration file settings override default values.
 
-### Input / Output Flags
+### Input / Output Options
 
-| Option                  | Default   | Description                                                                 |
-|-------------------------|-----------|-----------------------------------------------------------------------------|
-| `input-file`            | sipnet.in | Name of input config file                                                   |
-| `file-name`             | sipnet    | Prefix of climate and parameter files                                       |
-| `do-main-output`        | 1         | Print time series of all output variables to `<file-name>.out`              |
-| `do-single-outputs`     | 0         | Print outputs one variable per file (e.g. `<file-name>.NEE`)                |
-| `dump-config`           | 0         | Print final config to `<file-name>.config`                                  |
-| `print-header`          | 1         | Whether to print header row in output files                                 |
-| `quiet`                 | 0         | Suppress info and warning message                                           |
+| Option              | Default   | Description                                                                 |
+|---------------------|-----------|-----------------------------------------------------------------------------|
+| `input-file`        | sipnet.in | Name of input config file                                                   |
+| `file-name`         | sipnet    | Prefix of climate and parameter files                                       |
+
+### Output Flags
+
+| Option              | Default   | Description                                                                 |
+|---------------------|-----------|-----------------------------------------------------------------------------|
+| `do-main-output`    | on        | Print time series of all output variables to `<file-name>.out`              |
+| `do-single-outputs` | off       | Print outputs one variable per file (e.g. `<file-name>.NEE`)                |
+| `dump-config`       | on        | Print final config to `<file-name>.config`                                  |
+| `print-header`      | on        | Whether to print header row in output files                                 |
+| `quiet`             | off       | Suppress info and warning message                                           |
 
 ### Model Flags
 
 | Option                  | Default | Description                                                              |
 |-------------------------|---------|--------------------------------------------------------------------------|
-| `events`                | 1       | Enable event handling.                                                   |
-| `gdd`                   | 1       | Use growing degree days to determine leaf growth.                        |
-| `growth-resp`           | 0       | Explicitly model growth respiration, rather than including with maintenance respiration. |
-| `leaf-water`            | 0       | Calculate leaf pool and evaporate from that pool.                        |
-| `litter-pool`           | 0       | Enable litter pool in addition to single soil carbon pool.               |
-| `microbes`              | 0       | Enable microbe modeling.                                                 |
-| `snow`                  | 1       | Keep track of snowpack, rather than assuming all precipitation is liquid.|
-| `soil-phenol`           | 0       | Use soil temperature to determine leaf growth.                           |
-| `soil-quality`          | 0       | Use soil quality submodel.                                               |
-| `water-hresp`           | 1       | Whether soil moisture affects heterotrophic respiration.                 |
+| `events`                | on      | Enable event handling.                                                   |
+| `gdd`                   | on      | Use growing degree days to determine leaf growth.                        |
+| `growth-resp`           | off     | Explicitly model growth respiration, rather than including with maintenance respiration. |
+| `leaf-water`            | off     | Calculate leaf pool and evaporate from that pool.                        |
+| `litter-pool`           | off     | Enable litter pool in addition to single soil carbon pool.               |
+| `microbes`              | off     | Enable microbe modeling.                                                 |
+| `snow`                  | on      | Keep track of snowpack, rather than assuming all precipitation is liquid.|
+| `soil-phenol`           | off     | Use soil temperature to determine leaf growth.                           |
+| `soil-quality`          | off     | Use soil quality submodel.                                               |
+| `water-hresp`           | on      | Whether soil moisture affects heterotrophic respiration.                 |
 | `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
-| `do-main-output`        | 1       | Print time series of all output variables to `<file-name>.out`.          |
-| `do-single-outputs`     | 0       | Print outputs one variable per file (e.g. `<file-name>.NEE`).            |
-| `dump-config`           | 0       | Print final config to `<file-name>.config`.                              |
-| `print-header`          | 1       | Whether to print header row in output files.                             |
-| `quiet`                 | 0       | Suppress info and warning message.                                       |
+
+### Other Model Options
+
+| Option                  | Default | Description                                                              |
+|-------------------------|---------|--------------------------------------------------------------------------|
+| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
 
 Note the following restrictions on these options:
  - `num-soil-carbon-pools` must be between 1 and 3
@@ -337,7 +343,8 @@ Command-line arguments can be used to specify run-time options when starting SIP
 sipnet [options]
 ```
 
-Where `[options]` can include any of the run-time options listed above, in the form `--option=value`.
+Where `[options]` can include any of the run-time options listed above. 
+Flags use the syntax `--flag` to turn them on, or `--no-flag` to turn them off. Other options are specified by `--option value`.
 
 See `sipnet --help` for a full list of available command-line options.
 
@@ -345,24 +352,21 @@ See `sipnet --help` for a full list of available command-line options.
 
 SIPNET reads a configuration file that specifies run-time options without using command-line arguments. By default, SIPNET looks for a file named `sipnet.in` in the current directory. These will be overwritten by command-line arguments if specified.
 
-The configuration file uses a simple key-value format, `option = value`. 
-With one option per line; comments follow `#`.
+The configuration file uses a simple key-value format, `option = value`, 
+with one option per line; comments follow `#`. Flags are specified as 0 for off and 1 for on.
 
 #### Example Configuration File
 
 ```
-# Base filename (used for derived filenames if not explicitly specified)
+# Base filename (used for derived filenames)
 file-name = mysite
-
-# Input files
-param-file = mysite.param
-clim-file = mysite.clim
 
 # Output options
 do-main-output = 1
 do-single-outputs = 0
 dump-config = 1
 print-header = 1
+quiet = 0
 
 # Model options
 events = 1
@@ -401,17 +405,12 @@ When `dump-config = 1` is set, SIPNET will output the final configuration (after
 
 ### Run Settings
 
-The `sipnet.in` file specifies run settings for SIPNET, including the run type, input file names, and output options. The file is self-documenting, with comments describing each option. Key features of interest include 
-
-- `FILENAME` Set output filenames.
-- `PRINT_HEADER` Print header information to output files
-- `DO_SINGLE_OUTPUTS` Write each variable to a separate file
+See [Run-time Options](#run-time-options) above.
 
 Multi-site runs, sensitivity tests, and Monte Carlo runs are no longer supported. Typically these analyses are handled 
 using the [PEcAn Framework](https://pecanproject.org/).
 
 ### Parameters and Initial Conditions
-
 
 Both initial conditions and parameters are specified in a file named `sipnet.param`.
 

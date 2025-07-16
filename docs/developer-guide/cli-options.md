@@ -121,7 +121,15 @@ option. The int value must be unique among the other case labels.
 
 ## Function/Macro Reference
 
+When adding a new CLI option, these functions and macros should be used to create and update
+the corresponding fields in the `Context` struct.
+
 ### `CREATE_INT_CONTEXT`
+
+This macro is used to initialize the `Context` field as well as create the necessary 
+metadata information for integer-based arguments, both flag and not.
+This macro is used in the `initContext` function in `src/common/context.c`.
+
 Syntax:
 ```c
 CREATE_INT_CONTEXT(name, printName, value, flag)
@@ -137,6 +145,11 @@ Examples:
 <br>`CREATE_INT_CONTEXT(numSoilCarbonPools, "NUM_SOIL_CARBON_POOLS", 3, FLAG_NO);`
 
 ### `CREATE_CHAR_CONTEXT`
+
+This macro is used to initialize the `Context` field as well as create the necessary
+metadata information for string-based arguments.
+This macro is used in the `initContext` function in `src/common/context.c`.
+
 Syntax:
 ```c
 CREATE_CHAR_CONTEXT(name, printName, value)
@@ -151,6 +164,11 @@ Examples:
 <br>`CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE);`
 
 ### `updateIntContext`
+
+This function is used to update an integer-based argument, both the stored value as well as the source of that value. 
+This function is typically used in the `parseCommandLineArgs` function in `src/sipnet/cli.c`.
+Note that flag options should not need this, as they are handled automatically.
+
 Syntax:
 ```c
 updateIntContext(const char *name, int value, context_source_t source)
@@ -165,6 +183,10 @@ Examples:
 <br>`updateIntContext("numSoilCarbonPools", intVal, CTX_COMMAND_LINE);` (from parsing the command line)
 
 ### `updateCharContext`
+
+This function is used to update a string-based argument, both the stored value as well as the source of that value.
+This function is typically used in the `parseCommandLineArgs` function in `src/sipnet/cli.c`.
+
 Syntax:
 ```c
 updateCharContext(const char *name, const char *value, context_source_t source)
