@@ -9,6 +9,8 @@ var searchData=
   ['amaxfrac_6',['aMaxFrac',['../d0/dbf/struct_parameters.html#a5e8eee05f111973cae5154da145d9569',1,'Parameters']]],
   ['amountadded_7',['amountAdded',['../d1/df7/struct_irrigation_params.html#a73756530fc57d80723a96f4ffa122eea',1,'IrrigationParams']]],
   ['and_20packages_8',['Organization and Packages',['../index.html#autotoc_md1',1,'']]],
-  ['argnamemap_9',['argnamemap',['../dd/def/cli_8c.html#a83337ecc58bbd4270f4c7dc3d57f4c85',1,'argNameMap:&#160;cli.c'],['../dc/db0/cli_8h.html#a7dbffa9afd6b8943ade6be0ec2e2abc8',1,'argNameMap:&#160;cli.c']]],
-  ['attenuation_10',['attenuation',['../d0/dbf/struct_parameters.html#a2fc3b263482824cfe82143c0701a3730',1,'Parameters']]]
+  ['arg_5foff_9',['ARG_OFF',['../d8/dfa/context_8c.html#a37a67a964a687da40df775b2a83698ec',1,'context.c']]],
+  ['arg_5fon_10',['ARG_ON',['../d8/dfa/context_8c.html#af5a53476a03439b207a8ed755ca09a5d',1,'context.c']]],
+  ['argnamemap_11',['argnamemap',['../dd/def/cli_8c.html#a83337ecc58bbd4270f4c7dc3d57f4c85',1,'argNameMap:&#160;cli.c'],['../dc/db0/cli_8h.html#a7dbffa9afd6b8943ade6be0ec2e2abc8',1,'argNameMap:&#160;cli.c']]],
+  ['attenuation_12',['attenuation',['../d0/dbf/struct_parameters.html#a2fc3b263482824cfe82143c0701a3730',1,'Parameters']]]
 ];

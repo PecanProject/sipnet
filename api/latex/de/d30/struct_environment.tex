@@ -19,7 +19,7 @@ double \textbf{ plant\+LeafC}
 \item 
 double \textbf{ litter}
 \item 
-double \textbf{ soil}
+double $\ast$ \textbf{ soil}
 \item 
 double \textbf{ litter\+Water}
 \item 
@@ -38,7 +38,7 @@ double \textbf{ fine\+RootC}
 \doxysubsection{Detailed Description}
 
 
-Definition at line \textbf{ 344} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 292} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -51,7 +51,7 @@ Definition at line \textbf{ 344} of file \textbf{ sipnet.\+c}.
 
 
 
-Definition at line \textbf{ 362} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 305} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -65,7 +65,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Sto
 
 
 
-Definition at line \textbf{ 363} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 306} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -79,7 +79,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Sto
 
 
 
-Definition at line \textbf{ 348} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 296} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -93,7 +93,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Sto
 
 
 
-Definition at line \textbf{ 356} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 299} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -107,7 +107,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ output\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 360} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 303} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -121,11 +121,11 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ ensure\+Non\+
 
 
 
-Definition at line \textbf{ 347} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 295} of file \textbf{ sipnet.\+c}.
 
 
 
-Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ output\+State()}, \textbf{ process\+Events()}, \textbf{ setup\+Model()}, \textbf{ update\+State()}, and \textbf{ update\+Trackers()}.
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ output\+State()}, \textbf{ process\+Events()}, \textbf{ setup\+Model()}, and \textbf{ update\+State()}.
 
 \label{struct_environment_ab648e7470b571b841f42344a52bea970} 
 \index{Environment@{Environment}!plantWoodC@{plantWoodC}}
@@ -135,11 +135,11 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Sto
 
 
 
-Definition at line \textbf{ 345} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 293} of file \textbf{ sipnet.\+c}.
 
 
 
-Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ output\+State()}, \textbf{ process\+Events()}, \textbf{ setup\+Model()}, \textbf{ update\+State()}, \textbf{ update\+Trackers()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ output\+State()}, \textbf{ process\+Events()}, \textbf{ setup\+Model()}, \textbf{ update\+State()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
 
 \label{struct_environment_abc8c199a28e22aa073bf67637591c57d} 
 \index{Environment@{Environment}!snow@{snow}}
@@ -149,25 +149,25 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Sto
 
 
 
-Definition at line \textbf{ 358} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 301} of file \textbf{ sipnet.\+c}.
 
 
 
 Referenced by \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ evap\+Soil\+Fluxes()}, \textbf{ output\+State()}, \textbf{ setup\+Model()}, \textbf{ snow\+Pack()}, and \textbf{ update\+State()}.
 
-\label{struct_environment_a367adff5dc1e22750eefd698ea312726} 
+\label{struct_environment_a77b66f8a4f3eeff8caa8520a9b408283} 
 \index{Environment@{Environment}!soil@{soil}}
 \index{soil@{soil}!Environment@{Environment}}
 \doxysubsubsection{soil}
-{\footnotesize\ttfamily double Environment\+::soil}
+{\footnotesize\ttfamily double$\ast$ Environment\+::soil}
 
 
 
-Definition at line \textbf{ 353} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 297} of file \textbf{ sipnet.\+c}.
 
 
 
-Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ microbe\+Growth()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ setup\+Model()}, \textbf{ soil\+Degradation()}, and \textbf{ update\+Trackers()}.
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ create\+Soil\+Carbon\+Pool\+Arrays()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ free\+Soil\+Carbon\+Pool\+Arrays()}, \textbf{ microbe\+Growth()}, \textbf{ output\+State()}, \textbf{ setup\+Model()}, \textbf{ soil\+Degradation()}, and \textbf{ update\+Trackers()}.
 
 \label{struct_environment_a403be7bee187cc66a14e77247c3a3a35} 
 \index{Environment@{Environment}!soilWater@{soilWater}}
@@ -177,7 +177,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ ensure\+Non\+
 
 
 
-Definition at line \textbf{ 357} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 300} of file \textbf{ sipnet.\+c}.
 
 
 

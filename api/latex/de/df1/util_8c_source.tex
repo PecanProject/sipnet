@@ -18,53 +18,51 @@
 \DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}exitCodes.h"{}}}
 \DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}util.h"{}}}
 \DoxyCodeLine{00016\ }
-\DoxyCodeLine{00017\ \textcolor{comment}{//\ TODO:\ HOW\ TO\ INCLUDE\ CTX\ -\/\ move\ warn/info\ to\ context.h|c?}}
-\DoxyCodeLine{00018\ }
-\DoxyCodeLine{00019\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
-\DoxyCodeLine{00020\ FILE\ *openFile(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode)\ \{}
-\DoxyCodeLine{00021\ \ \ FILE\ *f;}
-\DoxyCodeLine{00022\ }
-\DoxyCodeLine{00023\ \ \ \textcolor{keywordflow}{if}\ ((f\ =\ fopen(name,\ mode))\ ==\ NULL)\ \{}
-\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode\_word\ =}
-\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ (!strcmp(mode,\ \textcolor{stringliteral}{"{}r"{}})\ ||\ !strcmp(mode,\ \textcolor{stringliteral}{"{}rb"{}}))\ ?\ \textcolor{stringliteral}{"{}reading"{}}\ :\ \textcolor{stringliteral}{"{}writing"{}};}
-\DoxyCodeLine{00026\ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Error\ \%s\ '\%s':\ \%s\(\backslash\)n"{}},\ mode\_word,\ name,\ strerror(errno));}
-\DoxyCodeLine{00027\ \ \ \ \ exit(EXIT\_CODE\_FILE\_OPEN\_OR\_READ\_ERROR);}
-\DoxyCodeLine{00028\ \ \ \}}
-\DoxyCodeLine{00029\ }
-\DoxyCodeLine{00030\ \ \ \textcolor{keywordflow}{return}\ f;}
-\DoxyCodeLine{00031\ \}}
-\DoxyCodeLine{00032\ }
-\DoxyCodeLine{00033\ \textcolor{comment}{//\ If\ line\ contains\ any\ character\ in\ the\ string\ commentChars,}}
-\DoxyCodeLine{00034\ \textcolor{comment}{//\ \ strip\ the\ comment\ off\ the\ line\ (i.e.\ replace\ first\ occurrence\ of}}
-\DoxyCodeLine{00035\ \textcolor{comment}{//\ \ commentChars\ with\ '\(\backslash\)0')}}
-\DoxyCodeLine{00036\ \textcolor{comment}{//\ Return\ 1\ if\ line\ contains\ only\ a\ comment\ (or\ only\ blanks),\ 0\ otherwise}}
-\DoxyCodeLine{00037\ \textcolor{keywordtype}{int}\ stripComment(\textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *commentChars)\ \{}
-\DoxyCodeLine{00038\ \ \ \textcolor{keywordtype}{char}\ *commentCharLoc;}
-\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{int}\ lenTrim;}
-\DoxyCodeLine{00040\ }
-\DoxyCodeLine{00041\ \ \ \textcolor{comment}{//\ strip\ trailing\ comment:}}
-\DoxyCodeLine{00042\ \ \ commentCharLoc\ =\ strpbrk(line,\ commentChars);}
-\DoxyCodeLine{00043\ \ \ \textcolor{keywordflow}{if}\ (commentCharLoc\ !=\ NULL)\ \{}
-\DoxyCodeLine{00044\ \ \ \ \ commentCharLoc[0]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
-\DoxyCodeLine{00045\ \ \ \}}
-\DoxyCodeLine{00046\ }
-\DoxyCodeLine{00047\ \ \ \textcolor{comment}{//\ determine\ length\ without\ any\ leading\ blanks}}
-\DoxyCodeLine{00048\ \ \ lenTrim\ =\ strlen(line)\ -\/\ strspn(line,\ \textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)n\(\backslash\)r"{}});}
-\DoxyCodeLine{00049\ \ \ \textcolor{keywordflow}{return}\ (lenTrim\ ==\ 0);}
-\DoxyCodeLine{00050\ \}}
-\DoxyCodeLine{00051\ }
-\DoxyCodeLine{00052\ \textcolor{comment}{//\ count\ number\ of\ fields\ in\ a\ string\ separated\ by\ delimiter\ 'sep'}}
-\DoxyCodeLine{00053\ \textcolor{keywordtype}{int}\ countFields(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sep)\ \{}
-\DoxyCodeLine{00054\ \ \ \textcolor{comment}{//\ strtok\ modifies\ string,\ so\ we\ need\ a\ copy}}
-\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{char}\ lineCopy[256];}
-\DoxyCodeLine{00056\ \ \ strcpy(lineCopy,\ line);}
-\DoxyCodeLine{00057\ \ \ \textcolor{keywordtype}{int}\ numParams\ =\ 0;}
-\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{char}\ *par\ =\ strtok(lineCopy,\ sep);}
-\DoxyCodeLine{00059\ \ \ \textcolor{keywordflow}{while}\ (par\ !=\ NULL)\ \{}
-\DoxyCodeLine{00060\ \ \ \ \ ++numParams;}
-\DoxyCodeLine{00061\ \ \ \ \ par\ =\ strtok(NULL,\ sep);}
-\DoxyCodeLine{00062\ \ \ \}}
-\DoxyCodeLine{00063\ \ \ \textcolor{keywordflow}{return}\ numParams;}
-\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00018\ FILE\ *openFile(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode)\ \{}
+\DoxyCodeLine{00019\ \ \ FILE\ *f;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \textcolor{keywordflow}{if}\ ((f\ =\ fopen(name,\ mode))\ ==\ NULL)\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode\_word\ =}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ (!strcmp(mode,\ \textcolor{stringliteral}{"{}r"{}})\ ||\ !strcmp(mode,\ \textcolor{stringliteral}{"{}rb"{}}))\ ?\ \textcolor{stringliteral}{"{}reading"{}}\ :\ \textcolor{stringliteral}{"{}writing"{}};}
+\DoxyCodeLine{00024\ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}Error\ \%s\ '\%s':\ \%s\(\backslash\)n"{}},\ mode\_word,\ name,\ strerror(errno));}
+\DoxyCodeLine{00025\ \ \ \ \ exit(EXIT\_CODE\_FILE\_OPEN\_OR\_READ\_ERROR);}
+\DoxyCodeLine{00026\ \ \ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordflow}{return}\ f;}
+\DoxyCodeLine{00029\ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ If\ line\ contains\ any\ character\ in\ the\ string\ commentChars,}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ \ strip\ the\ comment\ off\ the\ line\ (i.e.\ replace\ first\ occurrence\ of}}
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ \ commentChars\ with\ '\(\backslash\)0')}}
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ Return\ 1\ if\ line\ contains\ only\ a\ comment\ (or\ only\ blanks),\ 0\ otherwise}}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{int}\ stripComment(\textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *commentChars)\ \{}
+\DoxyCodeLine{00036\ \ \ \textcolor{keywordtype}{char}\ *commentCharLoc;}
+\DoxyCodeLine{00037\ \ \ \textcolor{keywordtype}{int}\ lenTrim;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \textcolor{comment}{//\ strip\ trailing\ comment:}}
+\DoxyCodeLine{00040\ \ \ commentCharLoc\ =\ strpbrk(line,\ commentChars);}
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordflow}{if}\ (commentCharLoc\ !=\ NULL)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ commentCharLoc[0]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00043\ \ \ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \textcolor{comment}{//\ determine\ length\ without\ any\ leading\ blanks}}
+\DoxyCodeLine{00046\ \ \ lenTrim\ =\ strlen(line)\ -\/\ strspn(line,\ \textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)n\(\backslash\)r"{}});}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordflow}{return}\ (lenTrim\ ==\ 0);}
+\DoxyCodeLine{00048\ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{//\ count\ number\ of\ fields\ in\ a\ string\ separated\ by\ delimiter\ 'sep'}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{int}\ countFields(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sep)\ \{}
+\DoxyCodeLine{00052\ \ \ \textcolor{comment}{//\ strtok\ modifies\ string,\ so\ we\ need\ a\ copy}}
+\DoxyCodeLine{00053\ \ \ \textcolor{keywordtype}{char}\ lineCopy[256];}
+\DoxyCodeLine{00054\ \ \ strcpy(lineCopy,\ line);}
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{int}\ numParams\ =\ 0;}
+\DoxyCodeLine{00056\ \ \ \textcolor{keywordtype}{char}\ *par\ =\ strtok(lineCopy,\ sep);}
+\DoxyCodeLine{00057\ \ \ \textcolor{keywordflow}{while}\ (par\ !=\ NULL)\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ ++numParams;}
+\DoxyCodeLine{00059\ \ \ \ \ par\ =\ strtok(NULL,\ sep);}
+\DoxyCodeLine{00060\ \ \ \}}
+\DoxyCodeLine{00061\ \ \ \textcolor{keywordflow}{return}\ numParams;}
+\DoxyCodeLine{00062\ \}}
 
 \end{DoxyCode}

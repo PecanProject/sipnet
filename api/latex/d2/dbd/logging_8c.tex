@@ -1,6 +1,7 @@
 \doxysection{logging.\+c File Reference}
 \label{logging_8c}\index{logging.c@{logging.c}}
 {\ttfamily \#include "{}logging.\+h"{}}\newline
+{\ttfamily \#include "{}exit\+Codes.\+h"{}}\newline
 Include dependency graph for logging.\+c\+:
 \nopagebreak
 \begin{figure}[H]
@@ -12,22 +13,22 @@ Include dependency graph for logging.\+c\+:
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \textbf{ logprint} (int check\+Context, const char $\ast$prefix, const char $\ast$fmt,...)
+void \textbf{ logprint} (int log\+Level, const char $\ast$prefix, const char $\ast$file, int line\+Num, const char $\ast$fmt,...)
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Function Documentation}
-\label{logging_8c_a73e7d763b174525b6bd0524a7aa0a628} 
+\label{logging_8c_aaefb2aad1cd72e8eca30f50b85ab2d20} 
 \index{logging.c@{logging.c}!logprint@{logprint}}
 \index{logprint@{logprint}!logging.c@{logging.c}}
 \doxysubsubsection{logprint()}
-{\footnotesize\ttfamily void logprint (\begin{DoxyParamCaption}\item[{int}]{check\+Context,  }\item[{const char $\ast$}]{prefix,  }\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void logprint (\begin{DoxyParamCaption}\item[{int}]{log\+Level,  }\item[{const char $\ast$}]{prefix,  }\item[{const char $\ast$}]{file,  }\item[{int}]{line\+Num,  }\item[{const char $\ast$}]{fmt,  }\item[{}]{... }\end{DoxyParamCaption})}
 
 
 
-Definition at line \textbf{ 3} of file \textbf{ logging.\+c}.
+Definition at line \textbf{ 4} of file \textbf{ logging.\+c}.
 
 
 
-References \textbf{ ctx}, and \textbf{ Context\+::quiet}.
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, and \textbf{ Context\+::quiet}.
 

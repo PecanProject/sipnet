@@ -6,7 +6,7 @@ var searchData=
   ['phenologytrackers_3',['phenologyTrackers',['../dd/d09/sipnet_8c.html#a07b4e2bcae6e08b95736df4e0fff2af7',1,'sipnet.c']]],
   ['photosynthesis_4',['photosynthesis',['../da/d95/struct_flux_vars.html#a1c0acd440f7092c6ce72f995cd80c7f9',1,'FluxVars']]],
   ['plantleafc_5',['plantLeafC',['../de/d30/struct_environment.html#a90dc0461aa33bac8b0a236a736169f4f',1,'Environment']]],
-  ['plantwoodc_6',['plantwoodc',['../de/d30/struct_environment.html#ab648e7470b571b841f42344a52bea970',1,'Environment::plantWoodC'],['../d3/d1f/struct_tracker_vars.html#ab037dd3b1af2bd2625e2591923d98a13',1,'TrackerVars::plantWoodC']]],
+  ['plantwoodc_6',['plantWoodC',['../de/d30/struct_environment.html#ab648e7470b571b841f42344a52bea970',1,'Environment']]],
   ['plantwoodinit_7',['plantWoodInit',['../d0/dbf/struct_parameters.html#aaf9ff11261c3bc55ec3e589586d27236',1,'Parameters']]],
   ['precip_8',['precip',['../d4/d5e/struct_climate_vars.html#a439d5d5fcd57d320737a65c934878dea',1,'ClimateVars']]],
   ['prev_9',['prev',['../de/dfa/struct_u_t__hash__handle.html#abaf54a69367933df2d45575f48ca6a58',1,'UT_hash_handle']]],

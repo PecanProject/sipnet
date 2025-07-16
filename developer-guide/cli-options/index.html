@@ -549,6 +549,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Important Notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      Naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      Precedence
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -588,6 +612,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#long-form-only-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Long-Form Only Options
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -603,11 +636,53 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#long-form-only-options" class="md-nav__link">
+  <a href="#functionmacro-reference" class="md-nav__link">
     <span class="md-ellipsis">
-      Long-Form Only Options
+      Function/Macro Reference
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Function/Macro Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_int_context" class="md-nav__link">
+    <span class="md-ellipsis">
+      CREATE_INT_CONTEXT
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_char_context" class="md-nav__link">
+    <span class="md-ellipsis">
+      CREATE_CHAR_CONTEXT
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updateintcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      updateIntContext
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updatecharcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      updateCharContext
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -780,6 +855,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Important Notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      Naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      Precedence
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -819,6 +918,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#long-form-only-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Long-Form Only Options
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -834,11 +942,53 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#long-form-only-options" class="md-nav__link">
+  <a href="#functionmacro-reference" class="md-nav__link">
     <span class="md-ellipsis">
-      Long-Form Only Options
+      Function/Macro Reference
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Function/Macro Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_int_context" class="md-nav__link">
+    <span class="md-ellipsis">
+      CREATE_INT_CONTEXT
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_char_context" class="md-nav__link">
+    <span class="md-ellipsis">
+      CREATE_CHAR_CONTEXT
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updateintcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      updateIntContext
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updatecharcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      updateCharContext
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -873,22 +1023,24 @@ options are enabled: flags, integer-valued options, and string-valued options.</
 <p>The <strong><code>Context</code> struct</strong>, defined in <code>common/context.h</code>, holds the values of all command-line options.</p>
 <p>When adding a new command-line option, you will need to add a corresponding member to the <code>Context</code> struct that will hold the value of that option.</p>
 <h2 id="important-notes">Important Notes<a class="headerlink" href="#important-notes" title="Permanent link">&para;</a></h2>
-<p><strong>A note on naming:</strong> </p>
+<h3 id="naming">Naming<a class="headerlink" href="#naming" title="Permanent link">&para;</a></h3>
 <p>Each command-line option must have a corresponding entry in the <code>Context</code> struct. SIPNET uses a mapping system to 
 link the command-line option (e.g. <code>print_header</code>) to its <code>Context</code> member (in this case, <code>printHeader</code>).</p>
 <p>Some care must be taken to allow SIPNET to map between the option and the <code>Context</code> member that holds the options value. 
 The mapping is created using the <code>nameToKey</code> function in <code>common/context.c</code> that:
 - removes all non-alphanumeric characters.
 - converts alpha characters to lowercase. </p>
-<p>For the mapping to work, the option name (e.g., <code>print_header</code>) and <code>Context</code> member name (in this case, <code>printHeader</code>) must generate the same key (e.g. <code>print_header</code> and <code>printHeader</code> both generate <code>printheader</code>).</p>
+<p>For the mapping to work, the option name (e.g., <code>print_header</code>) and <code>Context</code> member name (in this case, 
+<code>printHeader</code>) must generate the same key (e.g. <code>print_header</code> and <code>printHeader</code> both generate <code>printheader</code>).</p>
 <p>Each key must be unique across the <code>Context</code> member names.</p>
-<p><strong>A note on precedence:</strong> </p>
+<h3 id="precedence">Precedence<a class="headerlink" href="#precedence" title="Permanent link">&para;</a></h3>
 <p>SIPNET options can be specified in either (or both) a config file or a command-line option. Command-line options are
 have precedence over config file options.</p>
 <p>However, because the command line is parsed first (due to the chicken-and-egg problem that the command line specifies where the config file is!), the code must keep track of - and maintain - the source of the option value. 
 This means that:
 - Options must be set via the macros <code>CREATE_INT_CONTEXT</code>/<code>CREATE_CHAR_CONTEXT</code> when they are created.
 - The functions <code>updateIntContext</code>/<code>updateCharContext</code> must be used when updating a value.</p>
+<p>See the Function/Macro Reference at the end for more information.</p>
 <h2 id="steps-to-add-each-type-of-option">Steps to Add Each Type of Option<a class="headerlink" href="#steps-to-add-each-type-of-option" title="Permanent link">&para;</a></h2>
 <p>For each type of option, the steps are similar:</p>
 <ol>
@@ -944,6 +1096,10 @@ For long-form only options, see the notes at the end of this section.</p>
 <li>Update <code>parseCLIArgs()</code>... [details TBD]</li>
 <li>Update <code>usage()</code> to document the new option in the help text</li>
 </ol>
+<h3 id="long-form-only-options">Long-Form Only Options<a class="headerlink" href="#long-form-only-options" title="Permanent link">&para;</a></h3>
+<p>When adding to the <code>long_options</code> struct in step 3(i), give an int value as the last element of the the new
+struct. This is the index that should be used in the <code>parseCLIArgs()</code> switch statement for handling the new
+option. The int value must be unique among the other case labels.</p>
 <h2 id="additional-steps-tbd">Additional Steps [TBD]<a class="headerlink" href="#additional-steps-tbd" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Documentation is great:</li>
@@ -959,11 +1115,65 @@ For long-form only options, see the notes at the end of this section.</p>
 <li>Add tests for both the new option and its negation (if applicable) in [TBD].</li>
 <li>Anything to here to make sure this works in <code>sipnet.in</code> [TBD]?</li>
 </ol>
-<h2 id="long-form-only-options">Long-Form Only Options<a class="headerlink" href="#long-form-only-options" title="Permanent link">&para;</a></h2>
-<p>[TBD: fold this in above? This isn't that complicated; let's see if anything changes in the next round]</p>
-<p>When adding to the <code>long_options</code> struct in step 3(i), give an int value as the last element of the the new
-struct. This is the index that should be used in the <code>parseCLIArgs()</code> switch statement for handling the new 
-option. The int value must be unique among the other case labels.</p>
+<h2 id="functionmacro-reference">Function/Macro Reference<a class="headerlink" href="#functionmacro-reference" title="Permanent link">&para;</a></h2>
+<p>When adding a new CLI option, these functions and macros should be used to create and update
+the corresponding fields in the <code>Context</code> struct.</p>
+<h3 id="create_int_context"><code>CREATE_INT_CONTEXT</code><a class="headerlink" href="#create_int_context" title="Permanent link">&para;</a></h3>
+<p>This macro is used to initialize the <code>Context</code> field as well as create the necessary 
+metadata information for integer-based arguments, both flag and not.
+This macro is used in the <code>initContext</code> function in <code>src/common/context.c</code>.</p>
+<p>Syntax:
+<div class="highlight"><pre><span></span><code><span class="n">CREATE_INT_CONTEXT</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">printName</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">)</span>
+</code></pre></div>
+Arguments:
+- <code>name</code>: the exact name (no quotes) of the <code>Context</code> struct member used in <code>Context.h</code>
+- <code>printName</code>: the name used for this option when printing via <code>--dump-config</code>
+- <code>value</code>: the default integer value for this option; the defined values <code>ARG_ON</code> and <code>ARG_OFF</code> can be used for flag options
+- <code>flag</code>: <code>FLAG_YES</code> or <code>FLAG_NO</code> to indicate whether this is a flag option</p>
+<p>Examples:
+<br><code>CREATE_INT_CONTEXT(snow, "SNOW", ARG_ON, FLAG_YES);</code>
+<br><code>CREATE_INT_CONTEXT(numSoilCarbonPools, "NUM_SOIL_CARBON_POOLS", 3, FLAG_NO);</code></p>
+<h3 id="create_char_context"><code>CREATE_CHAR_CONTEXT</code><a class="headerlink" href="#create_char_context" title="Permanent link">&para;</a></h3>
+<p>This macro is used to initialize the <code>Context</code> field as well as create the necessary
+metadata information for string-based arguments.
+This macro is used in the <code>initContext</code> function in <code>src/common/context.c</code>.</p>
+<p>Syntax:
+<div class="highlight"><pre><span></span><code><span class="n">CREATE_CHAR_CONTEXT</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">printName</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+Arguments:
+- <code>name</code>: the exact name (no quotes) of the <code>Context</code> struct member used in <code>Context.h</code>
+- <code>printName</code>: the name used for this option when printing via <code>--dump-config</code>
+- <code>value</code>: the default string value for this option</p>
+<p>Examples:
+<br><code>CREATE_CHAR_CONTEXT(outConfigFile, "OUT_CONFIG_FILE", NO_DEFAULT_FILE);</code>
+<br><code>CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE);</code></p>
+<h3 id="updateintcontext"><code>updateIntContext</code><a class="headerlink" href="#updateintcontext" title="Permanent link">&para;</a></h3>
+<p>This function is used to update an integer-based argument, both the stored value as well as the source of that value. 
+This function is typically used in the <code>parseCommandLineArgs</code> function in <code>src/sipnet/cli.c</code>.
+Note that flag options should not need this, as they are handled automatically.</p>
+<p>Syntax:
+<div class="highlight"><pre><span></span><code><span class="n">updateIntContext</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">context_source_t</span><span class="w"> </span><span class="n">source</span><span class="p">)</span>
+</code></pre></div>
+Arguments:
+- <code>name</code>: a string that can uniquely identify the option (see <a href="#naming">Naming</a> above)
+- <code>value</code>: the new integer value for the option 
+- <code>source</code>: where the value is coming from, e.g. <code>CTX_CONTEXT_FILE</code> or <code>CTX_COMMAND_LINE</code></p>
+<p>Examples:
+<br><code>updateIntContext(inputName, intVal, CTX_CONTEXT_FILE);</code> (from parsing the input file)
+<br><code>updateIntContext("numSoilCarbonPools", intVal, CTX_COMMAND_LINE);</code> (from parsing the command line)</p>
+<h3 id="updatecharcontext"><code>updateCharContext</code><a class="headerlink" href="#updatecharcontext" title="Permanent link">&para;</a></h3>
+<p>This function is used to update a string-based argument, both the stored value as well as the source of that value.
+This function is typically used in the <code>parseCommandLineArgs</code> function in <code>src/sipnet/cli.c</code>.</p>
+<p>Syntax:
+<div class="highlight"><pre><span></span><code><span class="n">updateCharContext</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">context_source_t</span><span class="w"> </span><span class="n">source</span><span class="p">)</span>
+</code></pre></div>
+Arguments:
+- <code>name</code>: a string that can uniquely identify the option (see <a href="#naming">Naming</a> above)
+- <code>value</code>: the new string value for the option
+- <code>source</code>: where the value is coming from, e.g. <code>CTX_CONTEXT_FILE</code> or <code>CTX_COMMAND_LINE</code></p>
+<p>Examples:
+<br><code>updateCharContext(inputName, inputValue, CTX_CONTEXT_FILE);</code> (from parsing the input file)
+<br><code>updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);</code> (from parsing the command line)</p>
 
 
 

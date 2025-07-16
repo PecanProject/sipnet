@@ -4,7 +4,7 @@ var searchData=
   ['readclimline_1',['readClimLine',['../d9/d49/subset_data_8c.html#a5b0abd5931b15a92fa27271b98d837d4',1,'subsetData.c']]],
   ['readeventdata_2',['readeventdata',['../de/deb/events_8c.html#adb0aecb501956ec964a98b0310035c54',1,'readEventData(char *eventFile):&#160;events.c'],['../db/dd2/events_8h.html#adb0aecb501956ec964a98b0310035c54',1,'readEventData(char *eventFile):&#160;events.c']]],
   ['readfile_3',['readFile',['../d6/d7a/transpose_8c.html#aa47bbeed4188b8f05cc93b3b8ecabbdc',1,'transpose.c']]],
-  ['readinputfile_4',['readInputFile',['../d9/ddf/frontend_8c.html#a9a5aedf5fbe3456c5234cc1478cd6b6b',1,'frontend.c']]],
+  ['readinputfile_4',['readInputFile',['../d9/ddf/frontend_8c.html#aa266edaa72008942db003eb2ee683c11',1,'frontend.c']]],
   ['readitems_5',['readItems',['../d6/d7a/transpose_8c.html#ac7baaad9a0b659c32d141f73510e6dd4',1,'transpose.c']]],
   ['readmodelparams_6',['readmodelparams',['../d2/de5/model_params_8c.html#a9c4813f1a9054c1d171453553db336f1',1,'readModelParams(ModelParams *modelParams, FILE *paramFile):&#160;modelParams.c'],['../d3/ddd/model_params_8h.html#abb687d7bb08bd469cecfdf62201bd9e8',1,'readModelParams(ModelParams *params, FILE *paramFile):&#160;modelParams.c']]],
   ['readparamdata_7',['readParamData',['../dd/d09/sipnet_8c.html#af9e9d170e57aeefe91bb24310470dd7c',1,'sipnet.c']]],

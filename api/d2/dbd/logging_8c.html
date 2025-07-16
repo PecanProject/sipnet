@@ -79,14 +79,17 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d6/d8f/exit_codes_8h_source.html">exitCodes.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for logging.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../de/d5f/logging_8c__incl.png" border="0" usemap="#alogging_8c" alt=""/></div>
 <map name="alogging_8c" id="alogging_8c">
-<area shape="rect" title=" " alt="" coords="47,5,129,31"/>
+<area shape="rect" title=" " alt="" coords="105,5,186,31"/>
 <area shape="rect" href="../../d5/d77/logging_8h.html" title=" " alt="" coords="47,79,129,104"/>
-<area shape="poly" title=" " alt="" coords="91,31,91,65,85,65,85,31"/>
+<area shape="poly" title=" " alt="" coords="138,33,108,70,104,66,134,29"/>
+<area shape="rect" href="../../d6/d8f/exit_codes_8h.html" title=" " alt="" coords="153,79,252,104"/>
+<area shape="poly" title=" " alt="" coords="157,29,187,66,183,70,153,33"/>
 <area shape="rect" title=" " alt="" coords="5,225,72,251"/>
 <area shape="poly" title=" " alt="" coords="76,106,57,126,41,153,36,183,37,212,32,212,30,182,36,151,52,123,72,102"/>
 <area shape="rect" title=" " alt="" coords="51,152,125,177"/>
@@ -111,12 +114,12 @@ Include dependency graph for logging.c:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a73e7d763b174525b6bd0524a7aa0a628" id="r_a73e7d763b174525b6bd0524a7aa0a628"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dbd/logging_8c.html#a73e7d763b174525b6bd0524a7aa0a628">logprint</a> (int checkContext, const char *prefix, const char *fmt,...)</td></tr>
-<tr class="separator:a73e7d763b174525b6bd0524a7aa0a628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaefb2aad1cd72e8eca30f50b85ab2d20" id="r_aaefb2aad1cd72e8eca30f50b85ab2d20"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dbd/logging_8c.html#aaefb2aad1cd72e8eca30f50b85ab2d20">logprint</a> (int logLevel, const char *prefix, const char *file, int lineNum, const char *fmt,...)</td></tr>
+<tr class="separator:aaefb2aad1cd72e8eca30f50b85ab2d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a73e7d763b174525b6bd0524a7aa0a628" name="a73e7d763b174525b6bd0524a7aa0a628"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a73e7d763b174525b6bd0524a7aa0a628">&#9670;&#160;</a></span>logprint()</h2>
+<a id="aaefb2aad1cd72e8eca30f50b85ab2d20" name="aaefb2aad1cd72e8eca30f50b85ab2d20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaefb2aad1cd72e8eca30f50b85ab2d20">&#9670;&#160;</a></span>logprint()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -125,13 +128,25 @@ Functions</h2></td></tr>
           <td class="memname">void logprint </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>checkContext</em>, </td>
+          <td class="paramname"><em>logLevel</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>prefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>lineNum</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -153,9 +168,9 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/dbd/logging_8c_source.html#l00003">3</a> of file <a class="el" href="../../d2/dbd/logging_8c_source.html">logging.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/dbd/logging_8c_source.html#l00004">4</a> of file <a class="el" href="../../d2/dbd/logging_8c_source.html">logging.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">ctx</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00046">Context::quiet</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00062">Context::quiet</a>.</p>
 
 </div>
 </div>

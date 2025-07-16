@@ -1,10 +1,10 @@
 var searchData=
 [
   ['gamma_0',['GAMMA',['../dd/d09/sipnet_8c.html#a8659b9de3e544ff142b153b076f30fd5',1,'sipnet.c']]],
-  ['gdd_1',['gdd',['../d4/d5e/struct_climate_vars.html#a807944b57ddaa012b6d16ee23b05c97c',1,'ClimateVars::gdd'],['../dd/d09/sipnet_8c.html#a0edcc383fd1d020eca86572fac169cf3',1,'GDD:&#160;sipnet.c']]],
+  ['gdd_1',['gdd',['../d4/d5e/struct_climate_vars.html#a807944b57ddaa012b6d16ee23b05c97c',1,'ClimateVars::gdd'],['../de/d66/struct_context.html#ab68cc2cebc8a4a47855609bf3f7a2a74',1,'Context::gdd']]],
   ['gddleafon_2',['gddLeafOn',['../d0/dbf/struct_parameters.html#a58465780552ef313a947933f59812623',1,'Parameters']]],
   ['get16bits_3',['get16bits',['../d8/d8f/uthash_8h.html#abc7d71657be8975a51684e41029b7964',1,'uthash.h']]],
-  ['getcontextmetadata_4',['getcontextmetadata',['../d8/dfa/context_8c.html#a2c1d1cd4576607f037bf7ece58c8e9d7',1,'getContextMetadata(const char *name):&#160;context.c'],['../dc/d1e/context_8h.html#a2c1d1cd4576607f037bf7ece58c8e9d7',1,'getContextMetadata(const char *name):&#160;context.c']]],
+  ['getcontextmetadata_4',['getcontextmetadata',['../dc/d1e/context_8h.html#a2c1d1cd4576607f037bf7ece58c8e9d7',1,'getContextMetadata(const char *name):&#160;context.c'],['../d8/dfa/context_8c.html#a2c1d1cd4576607f037bf7ece58c8e9d7',1,'getContextMetadata(const char *name):&#160;context.c']]],
   ['getcontextsourcestring_5',['getcontextsourcestring',['../dc/d1e/context_8h.html#a6ca54051e74c3814bf713a2138dad5a5',1,'getContextSourceString(context_source_t src):&#160;context.c'],['../d8/dfa/context_8c.html#a6ca54051e74c3814bf713a2138dad5a5',1,'getContextSourceString(context_source_t src):&#160;context.c']]],
   ['geteventtype_6',['getEventType',['../de/deb/events_8c.html#a4314c765f6bbd615a94286919f475f41',1,'events.c']]],
   ['getgpp_7',['getGpp',['../dd/d09/sipnet_8c.html#a8c2f0ba72fdaae9e3836745acd5fc7eb',1,'sipnet.c']]],
@@ -16,6 +16,6 @@ var searchData=
   ['getparam_13',['getParam',['../d3/ddd/model_params_8h.html#a4cbd6854e09f61fb75d564bc518c5705',1,'modelParams.h']]],
   ['gotostart_14',['gotoStart',['../d9/d49/subset_data_8c.html#afa2c09010ed08ddb4110159b84f72c05',1,'subsetData.c']]],
   ['gpp_15',['gpp',['../d3/d1f/struct_tracker_vars.html#a153c2a930645fc22678b3e17827fcd64',1,'TrackerVars']]],
-  ['growth_5fresp_16',['GROWTH_RESP',['../dd/d09/sipnet_8c.html#ab0cd25831c6916da804fb2e50bbf461a',1,'sipnet.c']]],
+  ['growthresp_16',['growthResp',['../de/d66/struct_context.html#abbb892397e8afd781ec48b3d25adce98',1,'Context']]],
   ['growthrespfrac_17',['growthRespFrac',['../d0/dbf/struct_parameters.html#aa6f0ccd409357580062c2c968b0fe397',1,'Parameters']]]
 ];

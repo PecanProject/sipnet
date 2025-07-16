@@ -32,9 +32,11 @@ struct \textbf{ Context}
 \item 
 \#define \textbf{ FILENAME\+\_\+\+MAXLEN}~\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}
 \item 
-\#define \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}(name,  print\+Name,  value,  source)
+\#define \textbf{ MAX\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}~3
 \item 
-\#define \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}(name,  print\+Name,  value,  source)
+\#define \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}(name,  print\+Name,  value,  flag)
+\item 
+\#define \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}(name,  print\+Name,  value)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Typedefs}
 \begin{DoxyCompactItemize}
@@ -66,7 +68,7 @@ void \textbf{ init\+Context} (void)
 \item 
 struct \textbf{ context\+\_\+metadata} $\ast$ \textbf{ get\+Context\+Metadata} (const char $\ast$name)
 \item 
-void \textbf{ create\+Context\+Metadata} (const char $\ast$name, const char $\ast$print\+Name, \textbf{ context\+\_\+source\+\_\+t} source, \textbf{ context\+\_\+type\+\_\+t} type, void $\ast$value)
+void \textbf{ create\+Context\+Metadata} (const char $\ast$name, const char $\ast$print\+Name, \textbf{ context\+\_\+source\+\_\+t} source, \textbf{ context\+\_\+type\+\_\+t} type, void $\ast$value, int is\+Flag)
 \item 
 void \textbf{ update\+Int\+Context} (const char $\ast$name, int value, \textbf{ context\+\_\+source\+\_\+t} source)
 \item 
@@ -75,6 +77,10 @@ void \textbf{ update\+Char\+Context} (const char $\ast$name, const char $\ast$va
 int \textbf{ has\+Source\+Precedence} (struct \textbf{ context\+\_\+metadata} $\ast$s, \textbf{ context\+\_\+source\+\_\+t} new\+Source)
 \item 
 char $\ast$ \textbf{ get\+Context\+Source\+String} (\textbf{ context\+\_\+source\+\_\+t} src)
+\item 
+void \textbf{ validate\+Filename} (void)
+\item 
+void \textbf{ validate\+Context} (void)
 \item 
 void \textbf{ print\+Config} (FILE $\ast$out\+File)
 \end{DoxyCompactItemize}
@@ -96,41 +102,43 @@ struct \textbf{ Context} \textbf{ ctx}
 
 Definition at line \textbf{ 8} of file \textbf{ context.\+h}.
 
-\label{context_8h_a4eafd5e37e8b4257f597bbc8646fdb6d} 
+\label{context_8h_a62396977a5ceb65ecc58ed12df949e51} 
 \index{context.h@{context.h}!CREATE\_CHAR\_CONTEXT@{CREATE\_CHAR\_CONTEXT}}
 \index{CREATE\_CHAR\_CONTEXT@{CREATE\_CHAR\_CONTEXT}!context.h@{context.h}}
 \doxysubsubsection{CREATE\_CHAR\_CONTEXT}
-{\footnotesize\ttfamily \#define CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT(\begin{DoxyParamCaption}\item[{}]{name,  }\item[{}]{print\+Name,  }\item[{}]{value,  }\item[{}]{source }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \#define CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT(\begin{DoxyParamCaption}\item[{}]{name,  }\item[{}]{print\+Name,  }\item[{}]{value }\end{DoxyParamCaption})}
 
 {\bfseries Value\+:}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\ \ \textcolor{keywordflow}{do}\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
 \DoxyCodeLine{\ \ \ \ strncpy(ctx.name,\ value,\ CONTEXT\_CHAR\_MAXLEN);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
-\DoxyCodeLine{\ \ \ \ createContextMetadata(\#name,\ printName,\ source,\ CTX\_CHAR,\ ctx.name);\ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ createContextMetadata(\#name,\ printName,\ CTX\_DEFAULT,\ CTX\_CHAR,\ ctx.name,\ \ \ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
 \DoxyCodeLine{\ \ \}\ \textcolor{keywordflow}{while}\ (0)}
 
 \end{DoxyCode}
 
 
-Definition at line \textbf{ 100} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 125} of file \textbf{ context.\+h}.
 
-\label{context_8h_adff317a6fb950ea88bebf3e662256c0d} 
+\label{context_8h_a718fac820be7caca4070697c286a8d9c} 
 \index{context.h@{context.h}!CREATE\_INT\_CONTEXT@{CREATE\_INT\_CONTEXT}}
 \index{CREATE\_INT\_CONTEXT@{CREATE\_INT\_CONTEXT}!context.h@{context.h}}
 \doxysubsubsection{CREATE\_INT\_CONTEXT}
-{\footnotesize\ttfamily \#define CREATE\+\_\+\+INT\+\_\+\+CONTEXT(\begin{DoxyParamCaption}\item[{}]{name,  }\item[{}]{print\+Name,  }\item[{}]{value,  }\item[{}]{source }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \#define CREATE\+\_\+\+INT\+\_\+\+CONTEXT(\begin{DoxyParamCaption}\item[{}]{name,  }\item[{}]{print\+Name,  }\item[{}]{value,  }\item[{}]{flag }\end{DoxyParamCaption})}
 
 {\bfseries Value\+:}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\ \ \textcolor{keywordflow}{do}\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
 \DoxyCodeLine{\ \ \ \ ctx.name\ =\ value;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
-\DoxyCodeLine{\ \ \ \ createContextMetadata(\#name,\ printName,\ source,\ CTX\_INT,\ \&ctx.name);\ \ \ \ \ \ \ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ createContextMetadata(\#name,\ printName,\ CTX\_DEFAULT,\ CTX\_INT,\ \&ctx.name,\ \ \ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ flag);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
 \DoxyCodeLine{\ \ \}\ \textcolor{keywordflow}{while}\ (0)}
 
 \end{DoxyCode}
 
 
-Definition at line \textbf{ 94} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 118} of file \textbf{ context.\+h}.
 
 \label{context_8h_af627ce6072a8c0c3d82dac1a6684f5f6} 
 \index{context.h@{context.h}!FILENAME\_MAXLEN@{FILENAME\_MAXLEN}}
@@ -141,6 +149,16 @@ Definition at line \textbf{ 94} of file \textbf{ context.\+h}.
 
 
 Definition at line \textbf{ 10} of file \textbf{ context.\+h}.
+
+\label{context_8h_ae56888dccfec40078036883a322e2e1b} 
+\index{context.h@{context.h}!MAX\_SOIL\_CARBON\_POOLS@{MAX\_SOIL\_CARBON\_POOLS}}
+\index{MAX\_SOIL\_CARBON\_POOLS@{MAX\_SOIL\_CARBON\_POOLS}!context.h@{context.h}}
+\doxysubsubsection{MAX\_SOIL\_CARBON\_POOLS}
+{\footnotesize\ttfamily \#define MAX\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS~3}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ context.\+h}.
 
 
 
@@ -190,7 +208,7 @@ CTX\+\_\+\+TEST&\\
 \end{DoxyEnumFields}
 
 
-Definition at line \textbf{ 16} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 19} of file \textbf{ context.\+h}.
 
 \label{context_8h_a856bf0f48d7d9c89d1e4216a6f0394e5} 
 \index{context.h@{context.h}!ContextType@{ContextType}}
@@ -210,31 +228,31 @@ CTX\+\_\+\+CHAR&\\
 \end{DoxyEnumFields}
 
 
-Definition at line \textbf{ 26} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 29} of file \textbf{ context.\+h}.
 
 
 
 \doxysubsection{Function Documentation}
-\label{context_8h_a3b036ab0ee548b6bafeb192d65fd71f8} 
+\label{context_8h_addfa7774732e67477844bf3b1e506e3e} 
 \index{context.h@{context.h}!createContextMetadata@{createContextMetadata}}
 \index{createContextMetadata@{createContextMetadata}!context.h@{context.h}}
 \doxysubsubsection{createContextMetadata()}
-{\footnotesize\ttfamily void create\+Context\+Metadata (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{const char $\ast$}]{print\+Name,  }\item[{\textbf{ context\+\_\+source\+\_\+t}}]{source,  }\item[{\textbf{ context\+\_\+type\+\_\+t}}]{type,  }\item[{void $\ast$}]{value }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void create\+Context\+Metadata (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{const char $\ast$}]{print\+Name,  }\item[{\textbf{ context\+\_\+source\+\_\+t}}]{source,  }\item[{\textbf{ context\+\_\+type\+\_\+t}}]{type,  }\item[{void $\ast$}]{value,  }\item[{int}]{is\+Flag }\end{DoxyParamCaption})}
 
 
 
-Definition at line \textbf{ 72} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 105} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ HASH\+\_\+\+ADD\+\_\+\+STR}, \textbf{ HASH\+\_\+\+FIND\+\_\+\+STR}, \textbf{ key\+Name}, \textbf{ context\+\_\+metadata\+::key\+Name}, \textbf{ Context\+::meta\+Map}, \textbf{ name\+To\+Key()}, \textbf{ context\+\_\+metadata\+::print\+Name}, \textbf{ context\+\_\+metadata\+::source}, \textbf{ context\+\_\+metadata\+::type}, and \textbf{ context\+\_\+metadata\+::value}.
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ HASH\+\_\+\+ADD\+\_\+\+STR}, \textbf{ HASH\+\_\+\+FIND\+\_\+\+STR}, \textbf{ context\+\_\+metadata\+::is\+Flag}, \textbf{ key\+Name}, \textbf{ context\+\_\+metadata\+::key\+Name}, \textbf{ Context\+::meta\+Map}, \textbf{ name\+To\+Key()}, \textbf{ context\+\_\+metadata\+::print\+Name}, \textbf{ context\+\_\+metadata\+::source}, \textbf{ context\+\_\+metadata\+::type}, and \textbf{ context\+\_\+metadata\+::value}.
 
 Here is the call graph for this function\+:
 \nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=285pt]{dc/d1e/context_8h_a3b036ab0ee548b6bafeb192d65fd71f8_cgraph}
+\includegraphics[width=285pt]{dc/d1e/context_8h_addfa7774732e67477844bf3b1e506e3e_cgraph}
 \end{center}
 \end{figure}
 \label{context_8h_a2c1d1cd4576607f037bf7ece58c8e9d7} 
@@ -245,11 +263,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 61} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 98} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ HASH\+\_\+\+FIND\+\_\+\+STR}, \textbf{ key\+Name}, \textbf{ Context\+::meta\+Map}, and \textbf{ name\+To\+Key()}.
+References \textbf{ ctx}, \textbf{ HASH\+\_\+\+FIND\+\_\+\+STR}, \textbf{ key\+Name}, \textbf{ Context\+::meta\+Map}, and \textbf{ name\+To\+Key()}.
 
 
 
@@ -271,7 +289,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 128} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 162} of file \textbf{ context.\+c}.
 
 
 
@@ -289,7 +307,7 @@ Referenced by \textbf{ print\+Config()}.
 
 
 
-Definition at line \textbf{ 121} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 155} of file \textbf{ context.\+c}.
 
 
 
@@ -307,11 +325,11 @@ Referenced by \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Conte
 
 Initialize the global context struct with default values 
 
-Definition at line \textbf{ 18} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 26} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ Context\+::clim\+File}, \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}, \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+DEFAULT}, \textbf{ DEFAULT\+\_\+\+INPUT\+\_\+\+FILE}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ events}, \textbf{ Context\+::file\+Name}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::meta\+Map}, \textbf{ Context\+::out\+Config\+File}, \textbf{ Context\+::out\+File}, \textbf{ Context\+::param\+File}, \textbf{ Context\+::print\+Header}, and \textbf{ Context\+::quiet}.
+References \textbf{ ARG\+\_\+\+OFF}, \textbf{ ARG\+\_\+\+ON}, \textbf{ Context\+::clim\+File}, \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}, \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}, \textbf{ ctx}, \textbf{ DEFAULT\+\_\+\+FILE\+\_\+\+NAME}, \textbf{ DEFAULT\+\_\+\+INPUT\+\_\+\+FILE}, \textbf{ DEFAULT\+\_\+\+NUM\+\_\+\+POOLS}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ events}, \textbf{ Context\+::file\+Name}, \textbf{ FLAG\+\_\+\+NO}, \textbf{ FLAG\+\_\+\+YES}, \textbf{ Context\+::gdd}, \textbf{ Context\+::growth\+Resp}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::leaf\+Water}, \textbf{ Context\+::litter\+Pool}, \textbf{ Context\+::meta\+Map}, \textbf{ Context\+::microbes}, \textbf{ NO\+\_\+\+DEFAULT\+\_\+\+FILE}, \textbf{ Context\+::num\+Soil\+Carbon\+Pools}, \textbf{ Context\+::out\+Config\+File}, \textbf{ Context\+::out\+File}, \textbf{ Context\+::param\+File}, \textbf{ Context\+::print\+Header}, \textbf{ Context\+::quiet}, \textbf{ Context\+::snow}, \textbf{ Context\+::soil\+Multi\+Pool}, \textbf{ Context\+::soil\+Phenol}, \textbf{ Context\+::soil\+Quality}, and \textbf{ Context\+::water\+HResp}.
 
 
 
@@ -325,7 +343,7 @@ Referenced by \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 151} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 235} of file \textbf{ context.\+c}.
 
 
 
@@ -351,7 +369,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 106} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 140} of file \textbf{ context.\+c}.
 
 
 
@@ -377,7 +395,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 92} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 126} of file \textbf{ context.\+c}.
 
 
 
@@ -385,7 +403,7 @@ References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR
 
 
 
-Referenced by \textbf{ parse\+Command\+Line\+Args()}, and \textbf{ read\+Input\+File()}.
+Referenced by \textbf{ main()}, \textbf{ parse\+Command\+Line\+Args()}, and \textbf{ read\+Input\+File()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -395,6 +413,42 @@ Here is the call graph for this function\+:
 \includegraphics[width=304pt]{dc/d1e/context_8h_a0f4f1dc481cb817a031def2778f6a75b_cgraph}
 \end{center}
 \end{figure}
+\label{context_8h_a8ecd27c5da4fdfe9d3da597a98396439} 
+\index{context.h@{context.h}!validateContext@{validateContext}}
+\index{validateContext@{validateContext}!context.h@{context.h}}
+\doxysubsubsection{validateContext()}
+{\footnotesize\ttfamily void validate\+Context (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 201} of file \textbf{ context.\+c}.
+
+
+
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::gdd}, \textbf{ Context\+::litter\+Pool}, \textbf{ log\+Error}, \textbf{ MAX\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ Context\+::microbes}, \textbf{ Context\+::num\+Soil\+Carbon\+Pools}, \textbf{ Context\+::soil\+Multi\+Pool}, \textbf{ Context\+::soil\+Phenol}, and \textbf{ Context\+::soil\+Quality}.
+
+
+
+Referenced by \textbf{ main()}.
+
+\label{context_8h_acd2879842c9d03d4fcb1e6cf70d75567} 
+\index{context.h@{context.h}!validateFilename@{validateFilename}}
+\index{validateFilename@{validateFilename}!context.h@{context.h}}
+\doxysubsubsection{validateFilename()}
+{\footnotesize\ttfamily void validate\+Filename (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 185} of file \textbf{ context.\+c}.
+
+
+
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::file\+Name}, and \textbf{ FILENAME\+\_\+\+MAXLEN}.
+
+
+
+Referenced by \textbf{ read\+Input\+File()}.
+
 
 
 \doxysubsection{Variable Documentation}
@@ -406,9 +460,9 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 12} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 20} of file \textbf{ context.\+c}.
 
 
 
-Referenced by \textbf{ check\+All\+Read()}, \textbf{ check\+CLIName\+Map()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ logprint()}, \textbf{ main()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, \textbf{ check\+All\+Read()}, \textbf{ check\+CLIName\+Map()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ create\+Context\+Metadata()}, \textbf{ create\+Soil\+Carbon\+Pool\+Arrays()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ litter\+Input\+Pool()}, \textbf{ logprint()}, \textbf{ main()}, \textbf{ microbe\+Growth()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ print\+Config()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Input\+File()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ soil\+Breakdown()}, \textbf{ soil\+Degradation()}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, \textbf{ update\+Trackers()}, \textbf{ validate\+Context()}, and \textbf{ validate\+Filename()}.
 

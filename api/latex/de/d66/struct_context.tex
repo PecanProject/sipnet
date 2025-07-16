@@ -11,21 +11,39 @@ Collaboration diagram for Context\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=550pt]{db/d9f/struct_context__coll__graph}
+\includegraphics[width=350pt]{db/d9f/struct_context__coll__graph}
 \end{center}
 \end{figure}
 \doxysubsubsection*{Data Fields}
 \begin{DoxyCompactItemize}
 \item 
+int \textbf{ events}
+\item 
+int \textbf{ gdd}
+\item 
+int \textbf{ growth\+Resp}
+\item 
+int \textbf{ leaf\+Water}
+\item 
+int \textbf{ litter\+Pool}
+\item 
+int \textbf{ microbes}
+\item 
+int \textbf{ snow}
+\item 
+int \textbf{ soil\+Phenol}
+\item 
+int \textbf{ soil\+Quality}
+\item 
+int \textbf{ water\+HResp}
+\item 
 int \textbf{ do\+Main\+Output}
 \item 
 int \textbf{ do\+Single\+Outputs}
 \item 
-int \textbf{ events}
+int \textbf{ dump\+Config}
 \item 
 int \textbf{ print\+Header}
-\item 
-int \textbf{ dump\+Config}
 \item 
 int \textbf{ quiet}
 \item 
@@ -41,6 +59,10 @@ char \textbf{ input\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
 \item 
 char \textbf{ file\+Name} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
 \item 
+int \textbf{ num\+Soil\+Carbon\+Pools}
+\item 
+int \textbf{ soil\+Multi\+Pool}
+\item 
 int \textbf{ tmp\+Flag}
 \item 
 struct \textbf{ context\+\_\+metadata} $\ast$ \textbf{ meta\+Map}
@@ -50,7 +72,7 @@ struct \textbf{ context\+\_\+metadata} $\ast$ \textbf{ meta\+Map}
 \doxysubsection{Detailed Description}
 
 
-Definition at line \textbf{ 39} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 43} of file \textbf{ context.\+h}.
 
 
 
@@ -63,7 +85,7 @@ Definition at line \textbf{ 39} of file \textbf{ context.\+h}.
 
 
 
-Definition at line \textbf{ 50} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 66} of file \textbf{ context.\+h}.
 
 
 
@@ -77,7 +99,7 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 41} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 58} of file \textbf{ context.\+h}.
 
 
 
@@ -91,7 +113,7 @@ Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 42} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 59} of file \textbf{ context.\+h}.
 
 
 
@@ -105,7 +127,7 @@ Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 45} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 60} of file \textbf{ context.\+h}.
 
 
 
@@ -119,7 +141,7 @@ Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 43} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 46} of file \textbf{ context.\+h}.
 
 
 
@@ -133,11 +155,39 @@ Referenced by \textbf{ cleanup\+Model()}, \textbf{ init\+Events()}, and \textbf{
 
 
 
-Definition at line \textbf{ 57} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 73} of file \textbf{ context.\+h}.
 
 
 
-Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+Referenced by \textbf{ init\+Context()}, \textbf{ main()}, and \textbf{ validate\+Filename()}.
+
+\label{struct_context_ab68cc2cebc8a4a47855609bf3f7a2a74} 
+\index{Context@{Context}!gdd@{gdd}}
+\index{gdd@{gdd}!Context@{Context}}
+\doxysubsubsection{gdd}
+{\footnotesize\ttfamily int Context\+::gdd}
+
+
+
+Definition at line \textbf{ 47} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Param\+Data()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_abbb892397e8afd781ec48b3d25adce98} 
+\index{Context@{Context}!growthResp@{growthResp}}
+\index{growthResp@{growthResp}!Context@{Context}}
+\doxysubsubsection{growthResp}
+{\footnotesize\ttfamily int Context\+::growth\+Resp}
+
+
+
+Definition at line \textbf{ 48} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ init\+Context()}, and \textbf{ read\+Param\+Data()}.
 
 \label{struct_context_a37b56fdee3db0a788df677781d1c19cf} 
 \index{Context@{Context}!inputFile@{inputFile}}
@@ -147,11 +197,39 @@ Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 53} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 69} of file \textbf{ context.\+h}.
 
 
 
-Referenced by \textbf{ check\+Runtype()}, \textbf{ init\+Context()}, and \textbf{ main()}.
+Referenced by \textbf{ check\+Runtype()}, \textbf{ init\+Context()}, and \textbf{ read\+Input\+File()}.
+
+\label{struct_context_af1d3b536a30cd958d391429a8630a592} 
+\index{Context@{Context}!leafWater@{leafWater}}
+\index{leafWater@{leafWater}!Context@{Context}}
+\doxysubsubsection{leafWater}
+{\footnotesize\ttfamily int Context\+::leaf\+Water}
+
+
+
+Definition at line \textbf{ 49} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Precip()}, \textbf{ init\+Context()}, and \textbf{ read\+Param\+Data()}.
+
+\label{struct_context_aa3e2aa55571d6a4a65448210768cea02} 
+\index{Context@{Context}!litterPool@{litterPool}}
+\index{litterPool@{litterPool}!Context@{Context}}
+\doxysubsubsection{litterPool}
+{\footnotesize\ttfamily int Context\+::litter\+Pool}
+
+
+
+Definition at line \textbf{ 50} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ init\+Context()}, \textbf{ read\+Param\+Data()}, \textbf{ soil\+Degradation()}, and \textbf{ validate\+Context()}.
 
 \label{struct_context_ab1032381865186a8a31a945b8894dfc9} 
 \index{Context@{Context}!metaMap@{metaMap}}
@@ -161,11 +239,39 @@ Referenced by \textbf{ check\+Runtype()}, \textbf{ init\+Context()}, and \textbf
 
 
 
-Definition at line \textbf{ 66} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 86} of file \textbf{ context.\+h}.
 
 
 
 Referenced by \textbf{ check\+CLIName\+Map()}, \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+
+\label{struct_context_a17d7bf75243adf0f236a64dd8935b70d} 
+\index{Context@{Context}!microbes@{microbes}}
+\index{microbes@{microbes}!Context@{Context}}
+\doxysubsubsection{microbes}
+{\footnotesize\ttfamily int Context\+::microbes}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ init\+Context()}, \textbf{ microbe\+Growth()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ soil\+Degradation()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_addd4c0a4c30c12cc107a574f277f4bcc} 
+\index{Context@{Context}!numSoilCarbonPools@{numSoilCarbonPools}}
+\index{numSoilCarbonPools@{numSoilCarbonPools}!Context@{Context}}
+\doxysubsubsection{numSoilCarbonPools}
+{\footnotesize\ttfamily int Context\+::num\+Soil\+Carbon\+Pools}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ create\+Soil\+Carbon\+Pool\+Arrays()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ init\+Context()}, \textbf{ litter\+Input\+Pool()}, \textbf{ main()}, \textbf{ microbe\+Growth()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ setup\+Model()}, \textbf{ soil\+Degradation()}, \textbf{ update\+Trackers()}, and \textbf{ validate\+Context()}.
 
 \label{struct_context_a08a0406bde2d60cc36c9133a80f9ff4c} 
 \index{Context@{Context}!outConfigFile@{outConfigFile}}
@@ -175,7 +281,7 @@ Referenced by \textbf{ check\+CLIName\+Map()}, \textbf{ create\+Context\+Metadat
 
 
 
-Definition at line \textbf{ 52} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 68} of file \textbf{ context.\+h}.
 
 
 
@@ -189,7 +295,7 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 51} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 67} of file \textbf{ context.\+h}.
 
 
 
@@ -203,7 +309,7 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 49} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 65} of file \textbf{ context.\+h}.
 
 
 
@@ -217,7 +323,7 @@ Referenced by \textbf{ init\+Context()}.
 
 
 
-Definition at line \textbf{ 44} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 61} of file \textbf{ context.\+h}.
 
 
 
@@ -231,11 +337,67 @@ Referenced by \textbf{ init\+Context()}, \textbf{ main()}, and \textbf{ print\+C
 
 
 
-Definition at line \textbf{ 46} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 62} of file \textbf{ context.\+h}.
 
 
 
 Referenced by \textbf{ check\+All\+Read()}, \textbf{ init\+Context()}, and \textbf{ logprint()}.
+
+\label{struct_context_acd38debde360a07c8bd64a6da0d12e07} 
+\index{Context@{Context}!snow@{snow}}
+\index{snow@{snow}!Context@{Context}}
+\doxysubsubsection{snow}
+{\footnotesize\ttfamily int Context\+::snow}
+
+
+
+Definition at line \textbf{ 52} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ read\+Param\+Data()}.
+
+\label{struct_context_a3e87a64fc2c7c8f1cab9dc8d5b4523e9} 
+\index{Context@{Context}!soilMultiPool@{soilMultiPool}}
+\index{soilMultiPool@{soilMultiPool}!Context@{Context}}
+\doxysubsubsection{soilMultiPool}
+{\footnotesize\ttfamily int Context\+::soil\+Multi\+Pool}
+
+
+
+Definition at line \textbf{ 77} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ init\+Context()}, \textbf{ microbe\+Growth()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ soil\+Degradation()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_a80638bf12742d277c4056884b9d22c42} 
+\index{Context@{Context}!soilPhenol@{soilPhenol}}
+\index{soilPhenol@{soilPhenol}!Context@{Context}}
+\doxysubsubsection{soilPhenol}
+{\footnotesize\ttfamily int Context\+::soil\+Phenol}
+
+
+
+Definition at line \textbf{ 53} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Param\+Data()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_a14e0b9bdca9fbc5757c50165ec8bf81f} 
+\index{Context@{Context}!soilQuality@{soilQuality}}
+\index{soilQuality@{soilQuality}!Context@{Context}}
+\doxysubsubsection{soilQuality}
+{\footnotesize\ttfamily int Context\+::soil\+Quality}
+
+
+
+Definition at line \textbf{ 54} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, \textbf{ microbe\+Growth()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ soil\+Degradation()}, and \textbf{ validate\+Context()}.
 
 \label{struct_context_a7e8b5f01de62693a021dccda234c5660} 
 \index{Context@{Context}!tmpFlag@{tmpFlag}}
@@ -245,11 +407,25 @@ Referenced by \textbf{ check\+All\+Read()}, \textbf{ init\+Context()}, and \text
 
 
 
-Definition at line \textbf{ 63} of file \textbf{ context.\+h}.
+Definition at line \textbf{ 83} of file \textbf{ context.\+h}.
 
 
 
 Referenced by \textbf{ parse\+Command\+Line\+Args()}.
+
+\label{struct_context_adf3479d0e1418bcc4d256fbbf3c7ec2c} 
+\index{Context@{Context}!waterHResp@{waterHResp}}
+\index{waterHResp@{waterHResp}!Context@{Context}}
+\doxysubsubsection{waterHResp}
+{\footnotesize\ttfamily int Context\+::water\+HResp}
+
+
+
+Definition at line \textbf{ 55} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ init\+Context()}, \textbf{ read\+Param\+Data()}, and \textbf{ soil\+Breakdown()}.
 
 
 

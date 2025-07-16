@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['ten_5f6_0',['TEN_6',['../dd/d09/sipnet_8c.html#af22ccbc85009d9be17ede79656d506fd',1,'sipnet.c']]],
-  ['ten_5f9_1',['TEN_9',['../dd/d09/sipnet_8c.html#aebc6dd4f646b3b7b93755d749b8614f3',1,'sipnet.c']]],
-  ['tiny_2',['TINY',['../dd/d09/sipnet_8c.html#acf1c38f71f39386356edb151a131ad11',1,'sipnet.c']]]
+  ['sec_5fper_5fday_0',['SEC_PER_DAY',['../dd/d09/sipnet_8c.html#a3aaee30ddedb3f6675aac341a66e39e2',1,'sipnet.c']]],
+  ['separators_1',['SEPARATORS',['../d6/d7a/transpose_8c.html#a557b042aa353cdf74324fa04c52888b1',1,'transpose.c']]]
 ];

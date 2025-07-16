@@ -15,14 +15,6 @@ Include dependency graph for cli.\+c\+:
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \textbf{ CONCAT}(x,  y)~x\#\#y
-\item 
-\#define \textbf{ STRINGIZE\+\_\+\+IMPL}(x)~\#x
-\item 
-\#define \textbf{ STRINGIZE}(x)~\textbf{ STRINGIZE\+\_\+\+IMPL}(x)
-\item 
-\#define \textbf{ NO\+\_\+}(x)~\textbf{ STRINGIZE}(\textbf{ CONCAT}(no\+\_\+, x))
-\item 
 \#define \textbf{ DECLARE\+\_\+\+FLAG}(name)
 \item 
 \#define \textbf{ DECLARE\+\_\+\+ARG\+\_\+\+FOR\+\_\+\+MAP}(x)~\#x, \#x
@@ -48,16 +40,6 @@ char $\ast$ \textbf{ arg\+Name\+Map} [$\,$]
 
 
 \doxysubsection{Macro Definition Documentation}
-\label{cli_8c_a2f18db18bca26cafa95e9719de4a41ef} 
-\index{cli.c@{cli.c}!CONCAT@{CONCAT}}
-\index{CONCAT@{CONCAT}!cli.c@{cli.c}}
-\doxysubsubsection{CONCAT}
-{\footnotesize\ttfamily \#define CONCAT(\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{y }\end{DoxyParamCaption})~x\#\#y}
-
-
-
-Definition at line \textbf{ 10} of file \textbf{ cli.\+c}.
-
 \label{cli_8c_aead0b58bed32b620aa473ad448cb6b6f} 
 \index{cli.c@{cli.c}!DECLARE\_ARG\_FOR\_MAP@{DECLARE\_ARG\_FOR\_MAP}}
 \index{DECLARE\_ARG\_FOR\_MAP@{DECLARE\_ARG\_FOR\_MAP}!cli.c@{cli.c}}
@@ -66,7 +48,7 @@ Definition at line \textbf{ 10} of file \textbf{ cli.\+c}.
 
 
 
-Definition at line \textbf{ 19} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 12} of file \textbf{ cli.\+c}.
 
 \label{cli_8c_a37e06d3f351351d78696abc48ad770cb} 
 \index{cli.c@{cli.c}!DECLARE\_FLAG@{DECLARE\_FLAG}}
@@ -77,42 +59,12 @@ Definition at line \textbf{ 19} of file \textbf{ cli.\+c}.
 {\bfseries Value\+:}
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\ \ \{\#name,\ no\_argument,\ \&ctx.tmpFlag,\ 1\},\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}
-\DoxyCodeLine{\ \ \ \ \ \ \{NO\_(name),\ no\_argument,\ \&ctx.tmpFlag,\ 0\}}
+\DoxyCodeLine{\ \ \ \ \ \ \{\textcolor{stringliteral}{"{}no-\/"{}}\ \#name,\ no\_argument,\ \&ctx.tmpFlag,\ 0\}}
 
 \end{DoxyCode}
 
 
-Definition at line \textbf{ 15} of file \textbf{ cli.\+c}.
-
-\label{cli_8c_af1ed0771cba6db57522d2bcf5ed89af9} 
-\index{cli.c@{cli.c}!NO\_@{NO\_}}
-\index{NO\_@{NO\_}!cli.c@{cli.c}}
-\doxysubsubsection{NO\_}
-{\footnotesize\ttfamily \#define NO\+\_\+(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~\textbf{ STRINGIZE}(\textbf{ CONCAT}(no\+\_\+, x))}
-
-
-
-Definition at line \textbf{ 13} of file \textbf{ cli.\+c}.
-
-\label{cli_8c_a3428692efe6051ef30016ffde1a9f7bb} 
-\index{cli.c@{cli.c}!STRINGIZE@{STRINGIZE}}
-\index{STRINGIZE@{STRINGIZE}!cli.c@{cli.c}}
-\doxysubsubsection{STRINGIZE}
-{\footnotesize\ttfamily \#define STRINGIZE(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~\textbf{ STRINGIZE\+\_\+\+IMPL}(x)}
-
-
-
-Definition at line \textbf{ 12} of file \textbf{ cli.\+c}.
-
-\label{cli_8c_abe365693b784b0470549b63af6c923c1} 
-\index{cli.c@{cli.c}!STRINGIZE\_IMPL@{STRINGIZE\_IMPL}}
-\index{STRINGIZE\_IMPL@{STRINGIZE\_IMPL}!cli.c@{cli.c}}
-\doxysubsubsection{STRINGIZE\_IMPL}
-{\footnotesize\ttfamily \#define STRINGIZE\+\_\+\+IMPL(\begin{DoxyParamCaption}\item[{}]{x }\end{DoxyParamCaption})~\#x}
-
-
-
-Definition at line \textbf{ 11} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 8} of file \textbf{ cli.\+c}.
 
 
 
@@ -127,11 +79,11 @@ Verify that the cli\textquotesingle{}s arg-\/name map is valid
 
 Verifies that everything in arg\+Name\+Map maps to a valid context metadata. Does not verify that we failed to add a flag to the map. Call this after \doxyref{init\+Context()}{p.}{d8/dfa/context_8c_a8d99453d034c44d40efbf1d8687c074a} 
 
-Definition at line \textbf{ 129} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 183} of file \textbf{ cli.\+c}.
 
 
 
-References \textbf{ arg\+Name\+Map}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ context\+\_\+metadata\+::hh}, \textbf{ log\+Error}, \textbf{ Context\+::meta\+Map}, \textbf{ UT\+\_\+hash\+\_\+handle\+::next}, \textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}, and \textbf{ context\+\_\+metadata\+::type}.
+References \textbf{ arg\+Name\+Map}, \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ context\+\_\+metadata\+::hh}, \textbf{ context\+\_\+metadata\+::is\+Flag}, \textbf{ log\+Internal\+Error}, \textbf{ Context\+::meta\+Map}, \textbf{ UT\+\_\+hash\+\_\+handle\+::next}, and \textbf{ NUM\+\_\+\+FLAG\+\_\+\+OPTIONS}.
 
 
 
@@ -153,11 +105,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 89} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 120} of file \textbf{ cli.\+c}.
 
 
 
-References \textbf{ arg\+Name\+Map}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+COMMAND\+\_\+\+LINE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+CLI\+\_\+\+ARGUMENT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ long\+\_\+options}, \textbf{ Context\+::tmp\+Flag}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, \textbf{ usage()}, and \textbf{ version()}.
+References \textbf{ arg\+Name\+Map}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+COMMAND\+\_\+\+LINE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+CLI\+\_\+\+ARGUMENT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ long\+\_\+options}, \textbf{ MAX\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ Context\+::tmp\+Flag}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, \textbf{ usage()}, and \textbf{ version()}.
 
 
 
@@ -179,7 +131,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 55} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 69} of file \textbf{ cli.\+c}.
 
 
 
@@ -193,7 +145,7 @@ Referenced by \textbf{ parse\+Command\+Line\+Args()}.
 
 
 
-Definition at line \textbf{ 86} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 117} of file \textbf{ cli.\+c}.
 
 
 
@@ -219,14 +171,22 @@ Referenced by \textbf{ parse\+Command\+Line\+Args()}.
 \DoxyCodeLine{\ \ \ \ }
 \DoxyCodeLine{\ \ \ \ }
 \DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(events),\ DECLARE\_ARG\_FOR\_MAP(gdd),}
+\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(growthResp),\ DECLARE\_ARG\_FOR\_MAP(leafWater),}
+\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(litterPool),\ DECLARE\_ARG\_FOR\_MAP(microbes),}
+\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(snow),\ DECLARE\_ARG\_FOR\_MAP(soilPhenol),}
+\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(soilQuality),\ DECLARE\_ARG\_FOR\_MAP(waterHResp),}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ }
 \DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(doMainOutput),\ DECLARE\_ARG\_FOR\_MAP(doSingleOutputs),}
-\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(events),\ \ \ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(printHeader),}
-\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(dumpConfig),\ \ \ DECLARE\_ARG\_FOR\_MAP(quiet)\}}
+\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(dumpConfig),\ DECLARE\_ARG\_FOR\_MAP(printHeader),}
+\DoxyCodeLine{\ \ \ \ DECLARE\_ARG\_FOR\_MAP(quiet)\}}
 
 \end{DoxyCode}
 
 
-Definition at line \textbf{ 45} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 50} of file \textbf{ cli.\+c}.
 
 
 
@@ -238,32 +198,9 @@ Referenced by \textbf{ check\+CLIName\+Map()}, and \textbf{ parse\+Command\+Line
 \doxysubsubsection{long\_options}
 {\footnotesize\ttfamily struct option long\+\_\+options[$\,$]\hspace{0.3cm}{\ttfamily [static]}}
 
-{\bfseries Initial value\+:}
-\begin{DoxyCode}{0}
-\DoxyCodeLine{=\ \{\ \ }
-\DoxyCodeLine{\ \ \ \ }
-\DoxyCodeLine{\ \ \ \ }
-\DoxyCodeLine{\ \ \ \ }
-\DoxyCodeLine{\ \ \ \ DECLARE\_FLAG(do\_main\_output),}
-\DoxyCodeLine{\ \ \ \ DECLARE\_FLAG(do\_single\_outputs),}
-\DoxyCodeLine{\ \ \ \ DECLARE\_FLAG(events),}
-\DoxyCodeLine{\ \ \ \ DECLARE\_FLAG(print\_header),}
-\DoxyCodeLine{\ \ \ \ DECLARE\_FLAG(dump\_config),}
-\DoxyCodeLine{\ \ \ \ DECLARE\_FLAG(quiet),}
-\DoxyCodeLine{}
-\DoxyCodeLine{\ \ \ \ }
-\DoxyCodeLine{\ \ \ \ }
-\DoxyCodeLine{\ \ \ \ }
-\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}input\_file"{}},\ required\_argument,\ 0,\ \ \ \textcolor{charliteral}{'i'}\},}
-\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}help"{}},\ \ \ \ \ \ \ no\_argument,\ \ \ \ \ \ \ 0,\ \ \ \textcolor{charliteral}{'h'}\},}
-\DoxyCodeLine{\ \ \ \ \{\textcolor{stringliteral}{"{}version"{}},\ \ \ \ no\_argument,\ \ \ \ \ \ \ 0,\ \ \ \textcolor{charliteral}{'v'}\},}
-\DoxyCodeLine{\ \ \ \ }
-\DoxyCodeLine{\ \ \ \ \{0,\ 0,\ 0,\ 0\}\}}
-
-\end{DoxyCode}
 
 
-Definition at line \textbf{ 24} of file \textbf{ cli.\+c}.
+Definition at line \textbf{ 17} of file \textbf{ cli.\+c}.
 
 
 

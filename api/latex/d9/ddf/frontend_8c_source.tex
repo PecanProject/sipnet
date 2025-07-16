@@ -33,193 +33,190 @@
 \DoxyCodeLine{00029\ \ \ \}}
 \DoxyCodeLine{00030\ \}}
 \DoxyCodeLine{00031\ }
-\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ readInputFile(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fileName)\ \{}
-\DoxyCodeLine{00033\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *SEPARATORS\ =\ \textcolor{stringliteral}{"{}\ \(\backslash\)t=:"{}};\ \ \textcolor{comment}{//\ characters\ that\ can\ separate\ names\ from}}
-\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ values\ in\ input\ file}}
-\DoxyCodeLine{00035\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *COMMENT\_CHARS\ =\ \textcolor{stringliteral}{"{}!"{}};\ \ \textcolor{comment}{//\ comment\ characters\ (ignore\ everything}}
-\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ after\ this\ on\ a\ line)}}
-\DoxyCodeLine{00037\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *EMPTY\_STRING\ =\ \textcolor{stringliteral}{"{}none"{}};\ \ \textcolor{comment}{//\ if\ this\ is\ the\ value\ of\ a\ string\ type,}}
-\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ take\ it\ to\ mean\ the\ empty\ string}}
-\DoxyCodeLine{00039\ }
-\DoxyCodeLine{00040\ \ \ FILE\ *infile;}
-\DoxyCodeLine{00041\ }
-\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{char}\ line[1024];}
-\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{char}\ allSeparators[16];}
-\DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{char}\ *inputName;\ \ \textcolor{comment}{//\ name\ of\ input\ item\ just\ read\ in}}
-\DoxyCodeLine{00045\ \ \ \textcolor{keywordtype}{char}\ *inputValue;\ \ \textcolor{comment}{//\ value\ of\ input\ item\ just\ read\ in,\ as\ a\ string}}
-\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{char}\ *errc\ =\ \textcolor{stringliteral}{"{}"{}};}
-\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{int}\ isComment;}
-\DoxyCodeLine{00048\ }
-\DoxyCodeLine{00049\ \ \ strcpy(allSeparators,\ SEPARATORS);}
-\DoxyCodeLine{00050\ \ \ strcat(allSeparators,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)r"{}});}
-\DoxyCodeLine{00051\ \ \ infile\ =\ openFile(fileName,\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ readInputFile(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00033\ \ \ \textcolor{comment}{//\ First,\ make\ sure\ the\ filename\ is\ valid}}
+\DoxyCodeLine{00034\ \ \ validateFilename();}
+\DoxyCodeLine{00035\ \ \ printf(\textcolor{stringliteral}{"{}Reading\ config\ from\ file\ \%s\(\backslash\)n"{}},\ ctx.inputFile);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *SEPARATORS\ =\ \textcolor{stringliteral}{"{}\ \(\backslash\)t=:"{}};\ \ \textcolor{comment}{//\ characters\ that\ can\ separate\ names\ from}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ values\ in\ input\ file}}
+\DoxyCodeLine{00039\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *COMMENT\_CHARS\ =\ \textcolor{stringliteral}{"{}!"{}};\ \ \textcolor{comment}{//\ comment\ characters\ (ignore\ everything}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ after\ this\ on\ a\ line)}}
+\DoxyCodeLine{00041\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *EMPTY\_STRING\ =\ \textcolor{stringliteral}{"{}none"{}};\ \ \textcolor{comment}{//\ if\ this\ is\ the\ value\ of\ a\ string\ type,}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ we\ take\ it\ to\ mean\ the\ empty\ string}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ FILE\ *infile;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{char}\ line[1024];}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{char}\ allSeparators[16];}
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordtype}{char}\ *inputName;\ \ \textcolor{comment}{//\ name\ of\ input\ item\ just\ read\ in}}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordtype}{char}\ *inputValue;\ \ \textcolor{comment}{//\ value\ of\ input\ item\ just\ read\ in,\ as\ a\ string}}
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordtype}{char}\ *errc\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00051\ \ \ \textcolor{keywordtype}{int}\ isComment;}
 \DoxyCodeLine{00052\ }
-\DoxyCodeLine{00053\ \ \ \textcolor{keywordflow}{while}\ (fgets(line,\ \textcolor{keyword}{sizeof}(line),\ infile)\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
-\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ remove\ trailing\ comments:}}
-\DoxyCodeLine{00055\ \ \ \ \ isComment\ =\ stripComment(line,\ COMMENT\_CHARS);}
+\DoxyCodeLine{00053\ \ \ strcpy(allSeparators,\ SEPARATORS);}
+\DoxyCodeLine{00054\ \ \ strcat(allSeparators,\ \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)r"{}});}
+\DoxyCodeLine{00055\ \ \ infile\ =\ openFile(ctx.inputFile,\ \textcolor{stringliteral}{"{}r"{}});}
 \DoxyCodeLine{00056\ }
-\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isComment)\ \{\ \ \textcolor{comment}{//\ if\ this\ isn't\ just\ a\ comment\ line\ or\ blank\ line}}
-\DoxyCodeLine{00058\ \ \ \ \ \ \ \textcolor{comment}{//\ tokenize\ line:}}
-\DoxyCodeLine{00059\ \ \ \ \ \ \ inputName\ =\ strtok(line,\ SEPARATORS);}
-\DoxyCodeLine{00060\ \ \ \ \ \ \ inputValue\ =\ strtok(NULL,\ allSeparators);}
-\DoxyCodeLine{00061\ }
-\DoxyCodeLine{00062\ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ RUNTYPE\ as\ an\ obsolete\ param;\ if\ it\ isn't\ set,\ consider\ it\ to\ be}}
-\DoxyCodeLine{00063\ \ \ \ \ \ \ \textcolor{comment}{//\ set\ to\ "{}standard"{};\ and\ make\ sure\ it\ is\ that\ if\ set}}
-\DoxyCodeLine{00064\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcasecmp(inputName,\ \textcolor{stringliteral}{"{}runtype"{}})\ ==\ 0)\ \{}
-\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ checkRuntype(inputValue);}
-\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
-\DoxyCodeLine{00067\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00068\ }
-\DoxyCodeLine{00069\ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ metadata\ so\ we\ know\ what\ to\ do\ with\ this\ param}}
-\DoxyCodeLine{00070\ \ \ \ \ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *ctx\_meta\ =\ getContextMetadata(inputName);}
-\DoxyCodeLine{00071\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ctx\_meta\ ==\ NULL)\ \{}
-\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}ignoring\ input\ file\ parameter\ \%s\(\backslash\)n"{}},\ inputName);}
-\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
-\DoxyCodeLine{00074\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00075\ }
-\DoxyCodeLine{00076\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (inputValue\ ==\ NULL)\ \{}
-\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ in\ input\ file:\ No\ value\ given\ for\ input\ item\ \%s\(\backslash\)n"{}},}
-\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputName);}
-\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
-\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00081\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00082\ }
-\DoxyCodeLine{00083\ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (ctx\_meta-\/>type)\ \{}
-\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ CTX\_INT:\ \{}
-\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ intVal\ =\ strtol(inputValue,\ \&errc,\ 0);\ \ \textcolor{comment}{//\ NOLINT}}
-\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(errc)\ >\ 0)\ \{\ \ \textcolor{comment}{//\ invalid\ character(s)\ in\ input\ string}}
-\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ input\ file:\ Invalid\ value\ for\ \%s:\ \%s\(\backslash\)n"{}},\ inputName,}
-\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputValue);}
-\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ fileName);}
-\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ updateIntContext(inputName,\ intVal,\ CTX\_CONTEXT\_FILE);}
-\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ CTX\_CHAR:\ \{}
-\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmp(inputValue,\ EMPTY\_STRING)\ ==\ 0)\ \{}
-\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ the\ value\ is\ specified\ as\ the\ value\ which\ signifies\ the}}
-\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ empty\ string}}
-\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ updateCharContext(inputName,\ \textcolor{stringliteral}{"{}"{}},\ CTX\_CONTEXT\_FILE);}
-\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(inputValue)\ >=\ CONTEXT\_CHAR\_MAXLEN)\ \{}
-\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ input\ file:\ value\ '\%s'\ exceeds\ maximum\ "{}}}
-\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}length\ for\ \%s\ (\%d)\(\backslash\)n"{}},}
-\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputValue,\ inputName,\ CONTEXT\_CHAR\_MAXLEN);}
-\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(}
-\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Please\ fix\ \%s,\ or\ change\ the\ maximum\ length,\ and\ re-\/run\(\backslash\)n"{}},}
-\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fileName);}
-\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ updateCharContext(inputName,\ inputValue,\ CTX\_CONTEXT\_FILE);}
-\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
-\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readInputFile:\ Unrecognized\ type\ for\ \%s:\ \%d\(\backslash\)n"{}},}
-\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputName,\ ctx\_meta-\/>type);}
-\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
-\DoxyCodeLine{00116\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00117\ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ (!isComment)}}
-\DoxyCodeLine{00118\ \ \ \}\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
-\DoxyCodeLine{00119\ }
-\DoxyCodeLine{00120\ \ \ fclose(infile);}
-\DoxyCodeLine{00121\ \}}
-\DoxyCodeLine{00122\ }
-\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
-\DoxyCodeLine{00124\ }
-\DoxyCodeLine{00125\ \ \ FILE\ *out,\ *outConfig;}
+\DoxyCodeLine{00057\ \ \ \textcolor{keywordflow}{while}\ (fgets(line,\ \textcolor{keyword}{sizeof}(line),\ infile)\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{//\ remove\ trailing\ comments:}}
+\DoxyCodeLine{00059\ \ \ \ \ isComment\ =\ stripComment(line,\ COMMENT\_CHARS);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isComment)\ \{\ \ \textcolor{comment}{//\ if\ this\ isn't\ just\ a\ comment\ line\ or\ blank\ line}}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \textcolor{comment}{//\ tokenize\ line:}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ inputName\ =\ strtok(line,\ SEPARATORS);}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ inputValue\ =\ strtok(NULL,\ allSeparators);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ RUNTYPE\ as\ an\ obsolete\ param;\ if\ it\ isn't\ set,\ consider\ it\ to\ be}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \textcolor{comment}{//\ set\ to\ "{}standard"{};\ and\ make\ sure\ it\ is\ that\ if\ set}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcasecmp(inputName,\ \textcolor{stringliteral}{"{}runtype"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ checkRuntype(inputValue);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ metadata\ so\ we\ know\ what\ to\ do\ with\ this\ param}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *ctx\_meta\ =\ getContextMetadata(inputName);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ctx\_meta\ ==\ NULL)\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}ignoring\ input\ file\ parameter\ \%s\(\backslash\)n"{}},\ inputName);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (inputValue\ ==\ NULL)\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error\ in\ input\ file:\ No\ value\ given\ for\ input\ item\ \%s\(\backslash\)n"{}},}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputName);}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ ctx.inputFile);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (ctx\_meta-\/>type)\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ CTX\_INT:\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ intVal\ =\ strtol(inputValue,\ \&errc,\ 0);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(errc)\ >\ 0)\ \{\ \ \textcolor{comment}{//\ invalid\ character(s)\ in\ input\ string}}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ input\ file:\ Invalid\ value\ for\ \%s:\ \%s\(\backslash\)n"{}},\ inputName,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputValue);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Please\ fix\ \%s\ and\ re-\/run\(\backslash\)n"{}},\ ctx.inputFile);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ updateIntContext(inputName,\ intVal,\ CTX\_CONTEXT\_FILE);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ CTX\_CHAR:\ \{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmp(inputValue,\ EMPTY\_STRING)\ ==\ 0)\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ the\ value\ is\ specified\ as\ the\ value\ which\ signifies\ the}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ empty\ string}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ updateCharContext(inputName,\ \textcolor{stringliteral}{"{}"{}},\ CTX\_CONTEXT\_FILE);}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(inputValue)\ >=\ CONTEXT\_CHAR\_MAXLEN)\ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ input\ file:\ value\ '\%s'\ exceeds\ maximum\ "{}}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}length\ for\ \%s\ (\%d)\(\backslash\)n"{}},}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputValue,\ inputName,\ CONTEXT\_CHAR\_MAXLEN);}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Please\ fix\ \%s,\ or\ change\ the\ maximum\ length,\ and\ re-\/run\(\backslash\)n"{}},}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ctx.inputFile);}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ updateCharContext(inputName,\ inputValue,\ CTX\_CONTEXT\_FILE);}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ in\ readInputFile:\ Unrecognized\ type\ for\ \%s:\ \%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ inputName,\ ctx\_meta-\/>type);}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00121\ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ (!isComment)}}
+\DoxyCodeLine{00122\ \ \ \}\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ fclose(infile);}
+\DoxyCodeLine{00125\ \}}
 \DoxyCodeLine{00126\ }
-\DoxyCodeLine{00127\ \ \ ModelParams\ *modelParams;\ \ \textcolor{comment}{//\ the\ parameters\ used\ in\ the\ model\ (possibly}}
-\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spatially-\/varying)}}
-\DoxyCodeLine{00129\ \ \ OutputItems\ *outputItems;\ \ \textcolor{comment}{//\ structure\ to\ hold\ information\ for\ output\ to}}
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ single-\/variable\ files\ (if\ doSingleOutputs\ is}}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ true)}}
-\DoxyCodeLine{00132\ }
-\DoxyCodeLine{00133\ \ \ \textcolor{comment}{//\ char\ fileName[FILENAME\_MAXLEN\ -\/\ 8];}}
-\DoxyCodeLine{00134\ \ \ \textcolor{keywordtype}{char}\ outFile[FILENAME\_MAXLEN],\ outConfigFile[FILENAME\_MAXLEN];}
-\DoxyCodeLine{00135\ \ \ \textcolor{keywordtype}{char}\ paramFile[FILENAME\_MAXLEN],\ climFile[FILENAME\_MAXLEN];}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ FILE\ *out,\ *outConfig;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ ModelParams\ *modelParams;\ \ \textcolor{comment}{//\ the\ parameters\ used\ in\ the\ model\ (possibly}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ spatially-\/varying)}}
+\DoxyCodeLine{00133\ \ \ OutputItems\ *outputItems;\ \ \textcolor{comment}{//\ structure\ to\ hold\ information\ for\ output\ to}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ single-\/variable\ files\ (if\ doSingleOutputs\ is}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ true)}}
 \DoxyCodeLine{00136\ }
-\DoxyCodeLine{00137\ \ \ \textcolor{comment}{//\ 1.\ Initialize\ Context\ with\ default\ values}}
-\DoxyCodeLine{00138\ \ \ initContext();}
-\DoxyCodeLine{00139\ \ \ \textcolor{comment}{//\ Also\ need\ to\ verify\ the\ CLI\ name\ map,\ now\ that\ the\ context\ has\ been\ init'd}}
-\DoxyCodeLine{00140\ \ \ checkCLINameMap();}
-\DoxyCodeLine{00141\ }
-\DoxyCodeLine{00142\ \ \ \textcolor{comment}{//\ 2.\ Parse\ command\ line\ args}}
-\DoxyCodeLine{00143\ \ \ parseCommandLineArgs(argc,\ argv);}
-\DoxyCodeLine{00144\ }
-\DoxyCodeLine{00145\ \ \ \textcolor{comment}{//\ 3.\ Read\ input\ config\ file}}
-\DoxyCodeLine{00146\ \ \ \textcolor{comment}{//\ Note:\ command-\/line\ args\ have\ precedence}}
-\DoxyCodeLine{00147\ \ \ \textcolor{comment}{//\ read\ from\ input\ file:}}
-\DoxyCodeLine{00148\ \ \ readInputFile(ctx.inputFile);}
-\DoxyCodeLine{00149\ }
-\DoxyCodeLine{00150\ \ \ \textcolor{comment}{//\ 4.\ Run\ some\ checks}}
-\DoxyCodeLine{00151\ \ \ \textcolor{comment}{//\ Make\ sure\ FILENAME\ is\ set\ and\ well-\/sized;\ everything\ else\ is\ optional\ (not}}
-\DoxyCodeLine{00152\ \ \ \textcolor{comment}{//\ necessary\ or\ has\ a\ default)}}
-\DoxyCodeLine{00153\ \ \ \textcolor{keywordflow}{if}\ (strcmp(ctx.fileName,\ \textcolor{stringliteral}{"{}"{}})\ ==\ 0)\ \{}
-\DoxyCodeLine{00154\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ fileName\ must\ be\ set\ for\ SIPNET\ to\ run\(\backslash\)n"{}});}
-\DoxyCodeLine{00155\ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00156\ \ \ \}}
-\DoxyCodeLine{00157\ \ \ \textcolor{keywordflow}{if}\ (strlen(ctx.fileName)\ >\ FILENAME\_MAXLEN\ -\/\ 10)\ \{}
-\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//\ We\ need\ room\ to\ append\ .clim,\ .param,\ etc}}
-\DoxyCodeLine{00159\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Error:\ fileName\ is\ too\ long;\ max\ length\ is\ \%d\ characters\(\backslash\)n"{}},}
-\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ FILENAME\_MAXLEN\ -\/\ 10);}
-\DoxyCodeLine{00161\ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00162\ \ \ \}}
-\DoxyCodeLine{00163\ }
-\DoxyCodeLine{00164\ \ \ \textcolor{comment}{//\ 5.\ Set\ calculated\ filenames}}
-\DoxyCodeLine{00165\ \ \ strcpy(paramFile,\ ctx.fileName);}
-\DoxyCodeLine{00166\ \ \ strcat(paramFile,\ \textcolor{stringliteral}{"{}.param"{}});}
-\DoxyCodeLine{00167\ \ \ updateCharContext(\textcolor{stringliteral}{"{}paramFile"{}},\ paramFile,\ CTX\_CALCULATED);}
-\DoxyCodeLine{00168\ \ \ strcpy(climFile,\ ctx.fileName);}
-\DoxyCodeLine{00169\ \ \ strcat(climFile,\ \textcolor{stringliteral}{"{}.clim"{}});}
-\DoxyCodeLine{00170\ \ \ updateCharContext(\textcolor{stringliteral}{"{}climFile"{}},\ climFile,\ CTX\_CALCULATED);}
-\DoxyCodeLine{00171\ \ \ \textcolor{keywordflow}{if}\ (ctx.doMainOutput)\ \{}
-\DoxyCodeLine{00172\ \ \ \ \ strcpy(outFile,\ ctx.fileName);}
-\DoxyCodeLine{00173\ \ \ \ \ strcat(outFile,\ \textcolor{stringliteral}{"{}.out"{}});}
-\DoxyCodeLine{00174\ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}outFile"{}},\ outFile,\ CTX\_CALCULATED);}
-\DoxyCodeLine{00175\ \ \ \ \ out\ =\ openFile(outFile,\ \textcolor{stringliteral}{"{}w"{}});}
-\DoxyCodeLine{00176\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00177\ \ \ \ \ out\ =\ NULL;}
-\DoxyCodeLine{00178\ \ \ \}}
-\DoxyCodeLine{00179\ \ \ \textcolor{comment}{//\ Lastly\ -\/\ do\ after\ all\ other\ config\ processing}}
-\DoxyCodeLine{00180\ \ \ \textcolor{keywordflow}{if}\ (ctx.dumpConfig)\ \{}
-\DoxyCodeLine{00181\ \ \ \ \ strcpy(outConfigFile,\ ctx.fileName);}
-\DoxyCodeLine{00182\ \ \ \ \ strcat(outConfigFile,\ \textcolor{stringliteral}{"{}.config"{}});}
-\DoxyCodeLine{00183\ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}outConfigFile"{}},\ outConfigFile,\ CTX\_CALCULATED);}
-\DoxyCodeLine{00184\ \ \ \ \ outConfig\ =\ openFile(outConfigFile,\ \textcolor{stringliteral}{"{}w"{}});}
-\DoxyCodeLine{00185\ \ \ \ \ printConfig(outConfig);}
-\DoxyCodeLine{00186\ \ \ \ \ fclose(outConfig);}
-\DoxyCodeLine{00187\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00188\ \ \ \ \ outConfig\ =\ NULL;}
-\DoxyCodeLine{00189\ \ \ \}}
+\DoxyCodeLine{00137\ \ \ \textcolor{comment}{//\ char\ fileName[FILENAME\_MAXLEN\ -\/\ 8];}}
+\DoxyCodeLine{00138\ \ \ \textcolor{keywordtype}{char}\ outFile[FILENAME\_MAXLEN],\ outConfigFile[FILENAME\_MAXLEN];}
+\DoxyCodeLine{00139\ \ \ \textcolor{keywordtype}{char}\ paramFile[FILENAME\_MAXLEN],\ climFile[FILENAME\_MAXLEN];}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \textcolor{comment}{//\ 1.\ Initialize\ Context\ with\ default\ values}}
+\DoxyCodeLine{00142\ \ \ initContext();}
+\DoxyCodeLine{00143\ \ \ \textcolor{comment}{//\ Also\ need\ to\ verify\ the\ CLI\ name\ map,\ now\ that\ the\ context\ has\ been\ init'd}}
+\DoxyCodeLine{00144\ \ \ checkCLINameMap();}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \textcolor{comment}{//\ 2.\ Parse\ command\ line\ args}}
+\DoxyCodeLine{00147\ \ \ parseCommandLineArgs(argc,\ argv);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \textcolor{comment}{//\ 3.\ Read\ input\ config\ file}}
+\DoxyCodeLine{00150\ \ \ \textcolor{comment}{//\ Note:\ command-\/line\ args\ have\ precedence}}
+\DoxyCodeLine{00151\ \ \ \textcolor{comment}{//\ read\ from\ input\ file}}
+\DoxyCodeLine{00152\ \ \ readInputFile();}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \textcolor{comment}{//\ 4.\ Run\ some\ checks}}
+\DoxyCodeLine{00155\ \ \ validateContext();}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \textcolor{comment}{//\ 5.\ Set\ calculated\ parameters}}
+\DoxyCodeLine{00158\ \ \ strcpy(paramFile,\ ctx.fileName);}
+\DoxyCodeLine{00159\ \ \ strcat(paramFile,\ \textcolor{stringliteral}{"{}.param"{}});}
+\DoxyCodeLine{00160\ \ \ updateCharContext(\textcolor{stringliteral}{"{}paramFile"{}},\ paramFile,\ CTX\_CALCULATED);}
+\DoxyCodeLine{00161\ \ \ strcpy(climFile,\ ctx.fileName);}
+\DoxyCodeLine{00162\ \ \ strcat(climFile,\ \textcolor{stringliteral}{"{}.clim"{}});}
+\DoxyCodeLine{00163\ \ \ updateCharContext(\textcolor{stringliteral}{"{}climFile"{}},\ climFile,\ CTX\_CALCULATED);}
+\DoxyCodeLine{00164\ \ \ \textcolor{keywordflow}{if}\ (ctx.doMainOutput)\ \{}
+\DoxyCodeLine{00165\ \ \ \ \ strcpy(outFile,\ ctx.fileName);}
+\DoxyCodeLine{00166\ \ \ \ \ strcat(outFile,\ \textcolor{stringliteral}{"{}.out"{}});}
+\DoxyCodeLine{00167\ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}outFile"{}},\ outFile,\ CTX\_CALCULATED);}
+\DoxyCodeLine{00168\ \ \ \ \ out\ =\ openFile(outFile,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00169\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00170\ \ \ \ \ out\ =\ NULL;}
+\DoxyCodeLine{00171\ \ \ \}}
+\DoxyCodeLine{00172\ \ \ \textcolor{comment}{//\ Don't\ forget\ soilMultiPool}}
+\DoxyCodeLine{00173\ \ \ updateIntContext(\textcolor{stringliteral}{"{}soilMultiPool"{}},\ (ctx.numSoilCarbonPools\ >\ 1),}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CTX\_CALCULATED);}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \textcolor{comment}{//\ Lastly\ -\/\ do\ after\ all\ other\ config\ processing}}
+\DoxyCodeLine{00177\ \ \ \textcolor{keywordflow}{if}\ (ctx.dumpConfig)\ \{}
+\DoxyCodeLine{00178\ \ \ \ \ strcpy(outConfigFile,\ ctx.fileName);}
+\DoxyCodeLine{00179\ \ \ \ \ strcat(outConfigFile,\ \textcolor{stringliteral}{"{}.config"{}});}
+\DoxyCodeLine{00180\ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}outConfigFile"{}},\ outConfigFile,\ CTX\_CALCULATED);}
+\DoxyCodeLine{00181\ \ \ \ \ outConfig\ =\ openFile(outConfigFile,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00182\ \ \ \ \ printConfig(outConfig);}
+\DoxyCodeLine{00183\ \ \ \ \ fclose(outConfig);}
+\DoxyCodeLine{00184\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00185\ \ \ \ \ outConfig\ =\ NULL;}
+\DoxyCodeLine{00186\ \ \ \}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \textcolor{comment}{//\ 6.\ Initialize\ model,\ events,\ outputItems}}
+\DoxyCodeLine{00189\ \ \ initModel(\&modelParams,\ paramFile,\ climFile);}
 \DoxyCodeLine{00190\ }
-\DoxyCodeLine{00191\ \ \ \textcolor{comment}{//\ 6.\ Initialize\ model,\ events,\ outputItems}}
-\DoxyCodeLine{00192\ \ \ initModel(\&modelParams,\ paramFile,\ climFile);}
-\DoxyCodeLine{00193\ }
-\DoxyCodeLine{00194\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
-\DoxyCodeLine{00195\ \ \ \ \ initEvents(EVENT\_IN\_FILE,\ ctx.printHeader);}
-\DoxyCodeLine{00196\ \ \ \}}
-\DoxyCodeLine{00197\ }
-\DoxyCodeLine{00198\ \ \ \textcolor{keywordflow}{if}\ (ctx.doSingleOutputs)\ \{}
-\DoxyCodeLine{00199\ \ \ \ \ outputItems\ =\ newOutputItems(ctx.fileName,\ \textcolor{charliteral}{'\ '});}
-\DoxyCodeLine{00200\ \ \ \ \ setupOutputItems(outputItems);}
-\DoxyCodeLine{00201\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00202\ \ \ \ \ outputItems\ =\ NULL;}
-\DoxyCodeLine{00203\ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ initEvents(EVENT\_IN\_FILE,\ ctx.printHeader);}
+\DoxyCodeLine{00193\ \ \ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \textcolor{keywordflow}{if}\ (ctx.doSingleOutputs)\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ outputItems\ =\ newOutputItems(ctx.fileName,\ \textcolor{charliteral}{'\ '});}
+\DoxyCodeLine{00197\ \ \ \ \ setupOutputItems(outputItems);}
+\DoxyCodeLine{00198\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00199\ \ \ \ \ outputItems\ =\ NULL;}
+\DoxyCodeLine{00200\ \ \ \}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \textcolor{comment}{//\ 7.\ Do\ the\ run!}}
+\DoxyCodeLine{00203\ \ \ runModelOutput(out,\ outputItems,\ ctx.printHeader);}
 \DoxyCodeLine{00204\ }
-\DoxyCodeLine{00205\ \ \ \textcolor{comment}{//\ 7.\ Do\ the\ run!}}
-\DoxyCodeLine{00206\ \ \ runModelOutput(out,\ outputItems,\ ctx.printHeader);}
-\DoxyCodeLine{00207\ }
-\DoxyCodeLine{00208\ \ \ \textcolor{comment}{//\ 8.\ Cleanup}}
-\DoxyCodeLine{00209\ \ \ \textcolor{keywordflow}{if}\ (ctx.doMainOutput)\ \{}
-\DoxyCodeLine{00210\ \ \ \ \ fclose(out);}
-\DoxyCodeLine{00211\ \ \ \}}
-\DoxyCodeLine{00212\ }
-\DoxyCodeLine{00213\ \ \ cleanupModel();}
-\DoxyCodeLine{00214\ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
-\DoxyCodeLine{00215\ \ \ \ \ deleteOutputItems(outputItems);}
-\DoxyCodeLine{00216\ \ \ \}}
-\DoxyCodeLine{00217\ }
-\DoxyCodeLine{00218\ \ \ \textcolor{keywordflow}{return}\ EXIT\_CODE\_SUCCESS;}
-\DoxyCodeLine{00219\ \}}
+\DoxyCodeLine{00205\ \ \ \textcolor{comment}{//\ 8.\ Cleanup}}
+\DoxyCodeLine{00206\ \ \ \textcolor{keywordflow}{if}\ (ctx.doMainOutput)\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ fclose(out);}
+\DoxyCodeLine{00208\ \ \ \}}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ cleanupModel();}
+\DoxyCodeLine{00211\ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ deleteOutputItems(outputItems);}
+\DoxyCodeLine{00213\ \ \ \}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \textcolor{keywordflow}{return}\ EXIT\_CODE\_SUCCESS;}
+\DoxyCodeLine{00216\ \}}
 
 \end{DoxyCode}

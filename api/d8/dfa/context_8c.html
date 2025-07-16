@@ -85,35 +85,42 @@ $(function() {
 <code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;time.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="../../d6/d8f/exit_codes_8h_source.html">common/exitCodes.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d6/d8f/exit_codes_8h_source.html">exitCodes.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for context.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d1/d9d/context_8c__incl.png" border="0" usemap="#acontext_8c" alt=""/></div>
 <map name="acontext_8c" id="acontext_8c">
-<area shape="rect" title=" " alt="" coords="324,5,407,31"/>
-<area shape="rect" href="../../dc/d1e/context_8h.html" title=" " alt="" coords="181,79,264,104"/>
-<area shape="poly" title=" " alt="" coords="344,33,259,75,257,70,341,28"/>
-<area shape="rect" title=" " alt="" coords="63,152,129,177"/>
-<area shape="poly" title=" " alt="" coords="324,28,250,45,209,61,171,81,138,110,113,142,108,139,134,106,168,76,207,56,248,40,323,22"/>
-<area shape="rect" title=" " alt="" coords="294,225,365,251"/>
-<area shape="poly" title=" " alt="" coords="366,31,357,79,336,212,331,212,352,78,361,30"/>
-<area shape="rect" title=" " alt="" coords="367,79,438,104"/>
-<area shape="poly" title=" " alt="" coords="374,30,393,65,388,68,369,32"/>
-<area shape="rect" title=" " alt="" coords="463,79,527,104"/>
-<area shape="poly" title=" " alt="" coords="387,28,462,69,460,74,385,33"/>
-<area shape="rect" href="../../d6/d8f/exit_codes_8h.html" title=" " alt="" coords="551,79,711,104"/>
-<area shape="poly" title=" " alt="" coords="407,28,576,73,574,78,406,33"/>
-<area shape="poly" title=" " alt="" coords="204,106,130,147,127,143,201,102"/>
-<area shape="rect" href="../../d8/d8f/uthash_8h.html" title=" " alt="" coords="153,152,292,177"/>
-<area shape="poly" title=" " alt="" coords="225,104,225,138,220,138,220,104"/>
-<area shape="poly" title=" " alt="" coords="241,175,302,215,299,220,238,180"/>
-<area shape="rect" title=" " alt="" coords="5,225,80,251"/>
-<area shape="poly" title=" " alt="" coords="195,180,86,223,84,218,193,175"/>
-<area shape="rect" title=" " alt="" coords="105,225,175,251"/>
-<area shape="poly" title=" " alt="" coords="211,179,166,218,162,214,208,175"/>
-<area shape="rect" title=" " alt="" coords="199,225,270,251"/>
-<area shape="poly" title=" " alt="" coords="227,177,233,211,228,212,222,178"/>
+<area shape="rect" title=" " alt="" coords="258,5,341,31"/>
+<area shape="rect" href="../../dc/d1e/context_8h.html" title=" " alt="" coords="106,152,189,177"/>
+<area shape="poly" title=" " alt="" coords="258,25,229,31,198,41,169,57,147,80,141,94,139,108,142,138,137,139,133,108,136,92,142,77,166,53,196,36,228,26,257,20"/>
+<area shape="rect" title=" " alt="" coords="241,225,307,251"/>
+<area shape="poly" title=" " alt="" coords="341,16,418,18,501,29,535,40,559,55,566,66,569,78,567,91,560,105,537,134,510,159,479,179,445,196,379,220,321,233,320,228,377,215,443,191,476,175,506,155,533,131,556,103,562,89,564,78,561,68,555,59,533,44,500,34,418,23,341,21"/>
+<area shape="rect" title=" " alt="" coords="5,299,76,324"/>
+<area shape="poly" title=" " alt="" coords="259,28,195,45,162,60,133,81,112,103,94,129,68,185,53,241,46,285,40,284,48,240,63,184,90,126,108,100,130,77,160,56,193,40,257,22"/>
+<area shape="rect" title=" " alt="" coords="264,79,335,104"/>
+<area shape="poly" title=" " alt="" coords="302,31,302,65,297,65,297,31"/>
+<area shape="rect" title=" " alt="" coords="359,79,423,104"/>
+<area shape="poly" title=" " alt="" coords="316,29,367,68,364,72,312,33"/>
+<area shape="rect" href="../../d6/d8f/exit_codes_8h.html" title=" " alt="" coords="447,79,546,104"/>
+<area shape="poly" title=" " alt="" coords="332,28,452,71,451,76,330,33"/>
+<area shape="rect" href="../../d5/d77/logging_8h.html" title=" " alt="" coords="157,79,239,104"/>
+<area shape="poly" title=" " alt="" coords="285,33,227,73,224,68,282,28"/>
+<area shape="poly" title=" " alt="" coords="169,175,243,216,240,221,166,180"/>
+<area shape="rect" href="../../d8/d8f/uthash_8h.html" title=" " alt="" coords="78,225,217,251"/>
+<area shape="poly" title=" " alt="" coords="150,178,150,212,145,212,145,178"/>
+<area shape="poly" title=" " alt="" coords="132,253,71,293,68,289,129,248"/>
+<area shape="rect" title=" " alt="" coords="290,299,365,324"/>
+<area shape="poly" title=" " alt="" coords="177,248,286,291,284,296,175,253"/>
+<area shape="rect" title=" " alt="" coords="100,299,171,324"/>
+<area shape="poly" title=" " alt="" coords="148,251,142,286,137,285,143,251"/>
+<area shape="rect" title=" " alt="" coords="195,299,265,324"/>
+<area shape="poly" title=" " alt="" coords="162,249,208,287,204,292,159,253"/>
+<area shape="poly" title=" " alt="" coords="192,106,166,142,161,139,187,103"/>
+<area shape="poly" title=" " alt="" coords="207,103,264,212,259,215,202,106"/>
+<area shape="rect" title=" " alt="" coords="263,152,338,177"/>
+<area shape="poly" title=" " alt="" coords="216,102,274,142,271,146,213,106"/>
 </map>
 </div>
 </div>
@@ -123,6 +130,20 @@ Include dependency graph for context.c:</div>
 Macros</h2></td></tr>
 <tr class="memitem:a6085d883c066f63ee46aeddd862932a2" id="r_a6085d883c066f63ee46aeddd862932a2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a6085d883c066f63ee46aeddd862932a2">DEFAULT_INPUT_FILE</a>&#160;&#160;&#160;&quot;sipnet.in&quot;</td></tr>
 <tr class="separator:a6085d883c066f63ee46aeddd862932a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7a970fb49d2ff723bbd67b86ba3b443" id="r_ad7a970fb49d2ff723bbd67b86ba3b443"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#ad7a970fb49d2ff723bbd67b86ba3b443">DEFAULT_FILE_NAME</a>&#160;&#160;&#160;&quot;sipnet&quot;</td></tr>
+<tr class="separator:ad7a970fb49d2ff723bbd67b86ba3b443"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32bcc4084070242e2a0b7c9865998ac9" id="r_a32bcc4084070242e2a0b7c9865998ac9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a32bcc4084070242e2a0b7c9865998ac9">NO_DEFAULT_FILE</a>&#160;&#160;&#160;&quot;&quot;</td></tr>
+<tr class="separator:a32bcc4084070242e2a0b7c9865998ac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37a67a964a687da40df775b2a83698ec" id="r_a37a67a964a687da40df775b2a83698ec"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a37a67a964a687da40df775b2a83698ec">ARG_OFF</a>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:a37a67a964a687da40df775b2a83698ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5a53476a03439b207a8ed755ca09a5d" id="r_af5a53476a03439b207a8ed755ca09a5d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#af5a53476a03439b207a8ed755ca09a5d">ARG_ON</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:af5a53476a03439b207a8ed755ca09a5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5153dc318c06556a70a052690d5d7b40" id="r_a5153dc318c06556a70a052690d5d7b40"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a5153dc318c06556a70a052690d5d7b40">FLAG_YES</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:a5153dc318c06556a70a052690d5d7b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98fa4f4ea5978fa77b1222bc6041a057" id="r_a98fa4f4ea5978fa77b1222bc6041a057"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a98fa4f4ea5978fa77b1222bc6041a057">FLAG_NO</a>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:a98fa4f4ea5978fa77b1222bc6041a057"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21c8b970c6620eb29cd48d60bfeb1d3d" id="r_a21c8b970c6620eb29cd48d60bfeb1d3d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a21c8b970c6620eb29cd48d60bfeb1d3d">DEFAULT_NUM_POOLS</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:a21c8b970c6620eb29cd48d60bfeb1d3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -132,8 +153,8 @@ Functions</h2></td></tr>
 <tr class="separator:adea62cde04ed31fad01b81c933db6fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c1d1cd4576607f037bf7ece58c8e9d7" id="r_a2c1d1cd4576607f037bf7ece58c8e9d7"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="../../d8/dd6/structcontext__metadata.html">context_metadata</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a2c1d1cd4576607f037bf7ece58c8e9d7">getContextMetadata</a> (const char *name)</td></tr>
 <tr class="separator:a2c1d1cd4576607f037bf7ece58c8e9d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b036ab0ee548b6bafeb192d65fd71f8" id="r_a3b036ab0ee548b6bafeb192d65fd71f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a3b036ab0ee548b6bafeb192d65fd71f8">createContextMetadata</a> (const char *name, const char *printName, <a class="el" href="../../dc/d1e/context_8h.html#a45b732a6dd7841b52c09c5ccf92f751d">context_source_t</a> source, <a class="el" href="../../dc/d1e/context_8h.html#aa832a4ffef8b3853d7a89a1993af3f0e">context_type_t</a> type, void *value)</td></tr>
-<tr class="separator:a3b036ab0ee548b6bafeb192d65fd71f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addfa7774732e67477844bf3b1e506e3e" id="r_addfa7774732e67477844bf3b1e506e3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#addfa7774732e67477844bf3b1e506e3e">createContextMetadata</a> (const char *name, const char *printName, <a class="el" href="../../dc/d1e/context_8h.html#a45b732a6dd7841b52c09c5ccf92f751d">context_source_t</a> source, <a class="el" href="../../dc/d1e/context_8h.html#aa832a4ffef8b3853d7a89a1993af3f0e">context_type_t</a> type, void *value, int isFlag)</td></tr>
+<tr class="separator:addfa7774732e67477844bf3b1e506e3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f4f1dc481cb817a031def2778f6a75b" id="r_a0f4f1dc481cb817a031def2778f6a75b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a0f4f1dc481cb817a031def2778f6a75b">updateIntContext</a> (const char *name, int value, <a class="el" href="../../dc/d1e/context_8h.html#a45b732a6dd7841b52c09c5ccf92f751d">context_source_t</a> source)</td></tr>
 <tr class="separator:a0f4f1dc481cb817a031def2778f6a75b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98c6509e4642073a88bc9e2ffcb83a8f" id="r_a98c6509e4642073a88bc9e2ffcb83a8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a98c6509e4642073a88bc9e2ffcb83a8f">updateCharContext</a> (const char *name, const char *value, <a class="el" href="../../dc/d1e/context_8h.html#a45b732a6dd7841b52c09c5ccf92f751d">context_source_t</a> source)</td></tr>
@@ -144,6 +165,10 @@ Functions</h2></td></tr>
 <tr class="separator:a6ca54051e74c3814bf713a2138dad5a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39aed19c593d337a29ffdfbfd20a378a" id="r_a39aed19c593d337a29ffdfbfd20a378a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a39aed19c593d337a29ffdfbfd20a378a">by_name</a> (const struct <a class="el" href="../../d8/dd6/structcontext__metadata.html">context_metadata</a> *a, const struct <a class="el" href="../../d8/dd6/structcontext__metadata.html">context_metadata</a> *b)</td></tr>
 <tr class="separator:a39aed19c593d337a29ffdfbfd20a378a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd2879842c9d03d4fcb1e6cf70d75567" id="r_acd2879842c9d03d4fcb1e6cf70d75567"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#acd2879842c9d03d4fcb1e6cf70d75567">validateFilename</a> (void)</td></tr>
+<tr class="separator:acd2879842c9d03d4fcb1e6cf70d75567"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ecd27c5da4fdfe9d3da597a98396439" id="r_a8ecd27c5da4fdfe9d3da597a98396439"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a8ecd27c5da4fdfe9d3da597a98396439">validateContext</a> (void)</td></tr>
+<tr class="separator:a8ecd27c5da4fdfe9d3da597a98396439"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29b8b8f3293bc9ce42a12cc9b86416f8" id="r_a29b8b8f3293bc9ce42a12cc9b86416f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dfa/context_8c.html#a29b8b8f3293bc9ce42a12cc9b86416f8">printConfig</a> (FILE *outFile)</td></tr>
 <tr class="separator:a29b8b8f3293bc9ce42a12cc9b86416f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -155,6 +180,54 @@ Variables</h2></td></tr>
 <tr class="separator:afd1fa7f1bdbc41da9c3ac9d44ff3de63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a37a67a964a687da40df775b2a83698ec" name="a37a67a964a687da40df775b2a83698ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37a67a964a687da40df775b2a83698ec">&#9670;&#160;</a></span>ARG_OFF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ARG_OFF&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00014">14</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+</div>
+</div>
+<a id="af5a53476a03439b207a8ed755ca09a5d" name="af5a53476a03439b207a8ed755ca09a5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5a53476a03439b207a8ed755ca09a5d">&#9670;&#160;</a></span>ARG_ON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ARG_ON&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">15</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+</div>
+</div>
+<a id="ad7a970fb49d2ff723bbd67b86ba3b443" name="ad7a970fb49d2ff723bbd67b86ba3b443"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7a970fb49d2ff723bbd67b86ba3b443">&#9670;&#160;</a></span>DEFAULT_FILE_NAME</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DEFAULT_FILE_NAME&#160;&#160;&#160;&quot;sipnet&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">12</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+</div>
+</div>
 <a id="a6085d883c066f63ee46aeddd862932a2" name="a6085d883c066f63ee46aeddd862932a2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6085d883c066f63ee46aeddd862932a2">&#9670;&#160;</a></span>DEFAULT_INPUT_FILE</h2>
 
@@ -167,7 +240,71 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00010">10</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00011">11</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+</div>
+</div>
+<a id="a21c8b970c6620eb29cd48d60bfeb1d3d" name="a21c8b970c6620eb29cd48d60bfeb1d3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21c8b970c6620eb29cd48d60bfeb1d3d">&#9670;&#160;</a></span>DEFAULT_NUM_POOLS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DEFAULT_NUM_POOLS&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00018">18</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+</div>
+</div>
+<a id="a98fa4f4ea5978fa77b1222bc6041a057" name="a98fa4f4ea5978fa77b1222bc6041a057"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98fa4f4ea5978fa77b1222bc6041a057">&#9670;&#160;</a></span>FLAG_NO</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FLAG_NO&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00017">17</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+</div>
+</div>
+<a id="a5153dc318c06556a70a052690d5d7b40" name="a5153dc318c06556a70a052690d5d7b40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5153dc318c06556a70a052690d5d7b40">&#9670;&#160;</a></span>FLAG_YES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FLAG_YES&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00016">16</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+</div>
+</div>
+<a id="a32bcc4084070242e2a0b7c9865998ac9" name="a32bcc4084070242e2a0b7c9865998ac9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32bcc4084070242e2a0b7c9865998ac9">&#9670;&#160;</a></span>NO_DEFAULT_FILE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define NO_DEFAULT_FILE&#160;&#160;&#160;&quot;&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00013">13</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
 </div>
 </div>
@@ -198,16 +335,16 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00146">146</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00180">180</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00029">context_metadata::keyName</a>.</p>
+<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00032">context_metadata::keyName</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00151">printConfig()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00235">printConfig()</a>.</p>
 
 </div>
 </div>
-<a id="a3b036ab0ee548b6bafeb192d65fd71f8" name="a3b036ab0ee548b6bafeb192d65fd71f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b036ab0ee548b6bafeb192d65fd71f8">&#9670;&#160;</a></span>createContextMetadata()</h2>
+<a id="addfa7774732e67477844bf3b1e506e3e" name="addfa7774732e67477844bf3b1e506e3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#addfa7774732e67477844bf3b1e506e3e">&#9670;&#160;</a></span>createContextMetadata()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -240,7 +377,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>isFlag</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -250,14 +393,14 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00072">72</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00105">105</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00515">HASH_ADD_STR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00029">context_metadata::keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00066">Context::metaMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00049">nameToKey()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00030">context_metadata::printName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00031">context_metadata::source</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00032">context_metadata::type</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00033">context_metadata::value</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00515">HASH_ADD_STR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00037">context_metadata::isFlag</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00023">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00032">context_metadata::keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00086">Context::metaMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00086">nameToKey()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00033">context_metadata::printName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::source</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00035">context_metadata::type</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00036">context_metadata::value</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d8/dfa/context_8c_a3b036ab0ee548b6bafeb192d65fd71f8_cgraph.png" border="0" usemap="#ad8/dfa/context_8c_a3b036ab0ee548b6bafeb192d65fd71f8_cgraph" alt=""/></div>
-<map name="ad8/dfa/context_8c_a3b036ab0ee548b6bafeb192d65fd71f8_cgraph" id="ad8/dfa/context_8c_a3b036ab0ee548b6bafeb192d65fd71f8_cgraph">
+<div class="center"><img src="../../d8/dfa/context_8c_addfa7774732e67477844bf3b1e506e3e_cgraph.png" border="0" usemap="#ad8/dfa/context_8c_addfa7774732e67477844bf3b1e506e3e_cgraph" alt=""/></div>
+<map name="ad8/dfa/context_8c_addfa7774732e67477844bf3b1e506e3e_cgraph" id="ad8/dfa/context_8c_addfa7774732e67477844bf3b1e506e3e_cgraph">
 <area shape="rect" title=" " alt="" coords="5,5,181,31"/>
 <area shape="rect" href="../../d8/dfa/context_8c.html#adea62cde04ed31fad01b81c933db6fcd" title=" " alt="" coords="229,5,327,31"/>
 <area shape="poly" title=" " alt="" coords="181,15,216,15,216,21,181,21"/>
@@ -282,11 +425,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00061">61</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00098">98</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00066">Context::metaMap</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00049">nameToKey()</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00023">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00086">Context::metaMap</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00086">nameToKey()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00129">checkCLINameMap()</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00183">checkCLINameMap()</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -316,11 +459,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00128">128</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00162">162</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00022">CTX_CALCULATED</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00021">CTX_COMMAND_LINE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00020">CTX_CONTEXT_FILE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00019">CTX_DEFAULT</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00023">CTX_TEST</a>.</p>
+<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00025">CTX_CALCULATED</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00024">CTX_COMMAND_LINE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00023">CTX_CONTEXT_FILE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00022">CTX_DEFAULT</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00026">CTX_TEST</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00151">printConfig()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00235">printConfig()</a>.</p>
 
 </div>
 </div>
@@ -350,11 +493,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00121">121</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00155">155</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00031">context_metadata::source</a>.</p>
+<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::source</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00106">updateCharContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00092">updateIntContext()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00140">updateCharContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00126">updateIntContext()</a>.</p>
 
 </div>
 </div>
@@ -375,11 +518,11 @@ Here is the call graph for this function:</div>
 </div><div class="memdoc">
 <p>Initialize the global context struct with default values </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00018">18</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00026">26</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00050">Context::climFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00100">CREATE_CHAR_CONTEXT</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00094">CREATE_INT_CONTEXT</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00019">CTX_DEFAULT</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00010">DEFAULT_INPUT_FILE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00041">Context::doMainOutput</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00042">Context::doSingleOutputs</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00045">Context::dumpConfig</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00498">events</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00057">Context::fileName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00053">Context::inputFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00066">Context::metaMap</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00052">Context::outConfigFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00051">Context::outFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00049">Context::paramFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00044">Context::printHeader</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00046">Context::quiet</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00014">ARG_OFF</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">ARG_ON</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00066">Context::climFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00125">CREATE_CHAR_CONTEXT</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00118">CREATE_INT_CONTEXT</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">DEFAULT_FILE_NAME</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00011">DEFAULT_INPUT_FILE</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00018">DEFAULT_NUM_POOLS</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00058">Context::doMainOutput</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00059">Context::doSingleOutputs</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00060">Context::dumpConfig</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00425">events</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00073">Context::fileName</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00017">FLAG_NO</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00016">FLAG_YES</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00047">Context::gdd</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00048">Context::growthResp</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00069">Context::inputFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00049">Context::leafWater</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00050">Context::litterPool</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00086">Context::metaMap</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00051">Context::microbes</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00013">NO_DEFAULT_FILE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00075">Context::numSoilCarbonPools</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00068">Context::outConfigFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00067">Context::outFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00065">Context::paramFile</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00061">Context::printHeader</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00062">Context::quiet</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00052">Context::snow</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00077">Context::soilMultiPool</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00053">Context::soilPhenol</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00054">Context::soilQuality</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00055">Context::waterHResp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00123">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00127">main()</a>.</p>
 
 </div>
 </div>
@@ -399,11 +542,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00049">49</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00086">86</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">keyName</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00023">keyName</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00072">createContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00061">getContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00106">updateCharContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00092">updateIntContext()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00105">createContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00098">getContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00140">updateCharContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00126">updateIntContext()</a>.</p>
 
 </div>
 </div>
@@ -423,11 +566,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00151">151</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00235">235</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00146">by_name()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00026">CTX_CHAR</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00026">CTX_INT</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00128">getContextSourceString()</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00955">HASH_SORT</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::hh</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00066">Context::metaMap</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l01207">UT_hash_handle::next</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00044">Context::printHeader</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00030">context_metadata::printName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00031">context_metadata::source</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00032">context_metadata::type</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00033">context_metadata::value</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00180">by_name()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00029">CTX_CHAR</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00029">CTX_INT</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00162">getContextSourceString()</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00955">HASH_SORT</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00038">context_metadata::hh</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00086">Context::metaMap</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l01207">UT_hash_handle::next</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00061">Context::printHeader</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00033">context_metadata::printName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::source</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00035">context_metadata::type</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00036">context_metadata::value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00123">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00127">main()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -475,11 +618,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00106">106</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00140">140</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00008">CONTEXT_CHAR_MAXLEN</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00121">hasSourcePrecedence()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00066">Context::metaMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00049">nameToKey()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00031">context_metadata::source</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00033">context_metadata::value</a>.</p>
+<p class="reference">References <a class="el" href="../../dc/d1e/context_8h_source.html#l00008">CONTEXT_CHAR_MAXLEN</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00155">hasSourcePrecedence()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00023">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00086">Context::metaMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00086">nameToKey()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::source</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00036">context_metadata::value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00123">main()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00089">parseCommandLineArgs()</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00127">main()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00120">parseCommandLineArgs()</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -527,11 +670,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00092">92</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00126">126</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00121">hasSourcePrecedence()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00066">Context::metaMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00049">nameToKey()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00031">context_metadata::source</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00033">context_metadata::value</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l00510">HASH_FIND_STR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00155">hasSourcePrecedence()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00023">keyName</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00086">Context::metaMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00086">nameToKey()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::source</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00036">context_metadata::value</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00089">parseCommandLineArgs()</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00127">main()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00120">parseCommandLineArgs()</a>, and <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -544,6 +687,54 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="141,49,208,57,207,62,140,54"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="a8ecd27c5da4fdfe9d3da597a98396439" name="a8ecd27c5da4fdfe9d3da597a98396439"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ecd27c5da4fdfe9d3da597a98396439">&#9670;&#160;</a></span>validateContext()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void validateContext </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00201">201</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00047">Context::gdd</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00050">Context::litterPool</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00024">logError</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00013">MAX_SOIL_CARBON_POOLS</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00051">Context::microbes</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00075">Context::numSoilCarbonPools</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00077">Context::soilMultiPool</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00053">Context::soilPhenol</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00054">Context::soilQuality</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00127">main()</a>.</p>
+
+</div>
+</div>
+<a id="acd2879842c9d03d4fcb1e6cf70d75567" name="acd2879842c9d03d4fcb1e6cf70d75567"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd2879842c9d03d4fcb1e6cf70d75567">&#9670;&#160;</a></span>validateFilename()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void validateFilename </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00185">185</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00073">Context::fileName</a>, and <a class="el" href="../../dc/d1e/context_8h_source.html#l00010">FILENAME_MAXLEN</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>.</p>
 
 </div>
 </div>
@@ -560,9 +751,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00012">12</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00020">20</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d2/de5/model_params_8c_source.html#l00038">checkAllRead()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00129">checkCLINameMap()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00022">checkRuntype()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02383">cleanupModel()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00072">createContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00061">getContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00018">initContext()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02372">initEvents()</a>, <a class="el" href="../../d2/dbd/logging_8c_source.html#l00003">logprint()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00123">main()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00089">parseCommandLineArgs()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00151">printConfig()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00106">updateCharContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00092">updateIntContext()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01321">calcMaintenanceRespiration()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01052">calcPrecip()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01562">calculateFluxes()</a>, <a class="el" href="../../d2/de5/model_params_8c_source.html#l00038">checkAllRead()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00183">checkCLINameMap()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00022">checkRuntype()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02211">cleanupModel()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00105">createContextMetadata()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02170">createSoilCarbonPoolArrays()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01722">ensureNonNegativeStocks()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00098">getContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00026">initContext()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02200">initEvents()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01414">litterInputPool()</a>, <a class="el" href="../../d2/dbd/logging_8c_source.html#l00004">logprint()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00127">main()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01374">microbeGrowth()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00708">outputHeader()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00736">outputState()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00120">parseCommandLineArgs()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00983">pastLeafGrowth()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00235">printConfig()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00441">readClimData()</a>, <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00032">readInputFile()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00596">readParamData()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l02039">setupModel()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01548">soilBreakdown()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01419">soilDegradation()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00140">updateCharContext()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00126">updateIntContext()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01752">updateTrackers()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00201">validateContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00185">validateFilename()</a>.</p>
 
 </div>
 </div>
@@ -586,9 +777,9 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00015">15</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dfa/context_8c_source.html#l00023">23</a> of file <a class="el" href="../../d8/dfa/context_8c_source.html">context.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00072">createContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00061">getContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00049">nameToKey()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00106">updateCharContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00092">updateIntContext()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d8/dfa/context_8c_source.html#l00105">createContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00098">getContextMetadata()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00086">nameToKey()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00140">updateCharContext()</a>, and <a class="el" href="../../d8/dfa/context_8c_source.html#l00126">updateIntContext()</a>.</p>
 
 </div>
 </div>

@@ -7,7 +7,7 @@ var searchData=
   ['ensureallocation_4',['ensureAllocation',['../dd/d09/sipnet_8c.html#a70c224b11abdbdbb4632a547ef459fff',1,'sipnet.c']]],
   ['ensurenonnegative_5',['ensureNonNegative',['../dd/d09/sipnet_8c.html#ac9b31a3b89b0fd8bcca50ded6c094e14',1,'sipnet.c']]],
   ['ensurenonnegativestocks_6',['ensureNonNegativeStocks',['../dd/d09/sipnet_8c.html#ab671ed28e8a5d8606938d981f89a181d',1,'sipnet.c']]],
-  ['envi_7',['envi',['../dd/d09/sipnet_8c.html#a20b924acc4518082c0082b78140b99d6',1,'envi:&#160;sipnet.c'],['../dd/d09/sipnet_8c.html#aae0795899c6c1f77c7f7d9aca2a20357',1,'Envi:&#160;sipnet.c']]],
+  ['envi_7',['envi',['../dd/d09/sipnet_8c.html#aae0795899c6c1f77c7f7d9aca2a20357',1,'Envi:&#160;sipnet.c'],['../dd/d09/sipnet_8c.html#a20b924acc4518082c0082b78140b99d6',1,'envi:&#160;sipnet.c']]],
   ['environment_8',['Environment',['../de/d30/struct_environment.html',1,'']]],
   ['evaporation_9',['evaporation',['../da/d95/struct_flux_vars.html#aadc31dee7abcba006826405092efa633',1,'FluxVars']]],
   ['evapotranspiration_10',['evapotranspiration',['../d3/d1f/struct_tracker_vars.html#a31a6c82bcca82fdbeadaabd1fe518d88',1,'TrackerVars']]],

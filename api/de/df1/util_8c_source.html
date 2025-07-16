@@ -97,65 +97,63 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="../../d6/d8f/exit_codes_8h.html">exitCodes.h</a>&quot;</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/d3c/util_8h.html">util.h</a>&quot;</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// TODO: HOW TO INCLUDE CTX - move warn/info to context.h|c?</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">// our own openFile method, which exits gracefully if there&#39;s an error</span></div>
-<div class="foldopen" id="foldopen00020" data-start="{" data-end="}">
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9">   20</a></span>FILE *<a class="code hl_function" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9">openFile</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keyword">const</span> <span class="keywordtype">char</span> *mode) {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  FILE *f;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keywordflow">if</span> ((f = fopen(name, mode)) == NULL) {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *mode_word =</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        (!strcmp(mode, <span class="stringliteral">&quot;r&quot;</span>) || !strcmp(mode, <span class="stringliteral">&quot;rb&quot;</span>)) ? <span class="stringliteral">&quot;reading&quot;</span> : <span class="stringliteral">&quot;writing&quot;</span>;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    fprintf(stderr, <span class="stringliteral">&quot;Error %s &#39;%s&#39;: %s\n&quot;</span>, mode_word, name, strerror(errno));</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    exit(<a class="code hl_enumvalue" href="../../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa371fc63e842acdb9cbc7cb9d063610ca">EXIT_CODE_FILE_OPEN_OR_READ_ERROR</a>);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  }</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keywordflow">return</span> f;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// our own openFile method, which exits gracefully if there&#39;s an error</span></div>
+<div class="foldopen" id="foldopen00018" data-start="{" data-end="}">
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9">   18</a></span>FILE *<a class="code hl_function" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9">openFile</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keyword">const</span> <span class="keywordtype">char</span> *mode) {</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  FILE *f;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keywordflow">if</span> ((f = fopen(name, mode)) == NULL) {</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *mode_word =</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        (!strcmp(mode, <span class="stringliteral">&quot;r&quot;</span>) || !strcmp(mode, <span class="stringliteral">&quot;rb&quot;</span>)) ? <span class="stringliteral">&quot;reading&quot;</span> : <span class="stringliteral">&quot;writing&quot;</span>;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    fprintf(stderr, <span class="stringliteral">&quot;Error %s &#39;%s&#39;: %s\n&quot;</span>, mode_word, name, strerror(errno));</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    exit(<a class="code hl_enumvalue" href="../../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa371fc63e842acdb9cbc7cb9d063610ca">EXIT_CODE_FILE_OPEN_OR_READ_ERROR</a>);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  }</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keywordflow">return</span> f;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
 </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">// If line contains any character in the string commentChars,</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">//  strip the comment off the line (i.e. replace first occurrence of</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">//  commentChars with &#39;\0&#39;)</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">// Return 1 if line contains only a comment (or only blanks), 0 otherwise</span></div>
-<div class="foldopen" id="foldopen00037" data-start="{" data-end="}">
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4">   37</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4">stripComment</a>(<span class="keywordtype">char</span> *line, <span class="keyword">const</span> <span class="keywordtype">char</span> *commentChars) {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <span class="keywordtype">char</span> *commentCharLoc;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keywordtype">int</span> lenTrim;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="comment">// strip trailing comment:</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  commentCharLoc = strpbrk(line, commentChars);</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  <span class="keywordflow">if</span> (commentCharLoc != NULL) {</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    commentCharLoc[0] = <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  }</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="comment">// determine length without any leading blanks</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  lenTrim = strlen(line) - strspn(line, <span class="stringliteral">&quot; \t\n\r&quot;</span>);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keywordflow">return</span> (lenTrim == 0);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">// If line contains any character in the string commentChars,</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">//  strip the comment off the line (i.e. replace first occurrence of</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">//  commentChars with &#39;\0&#39;)</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">// Return 1 if line contains only a comment (or only blanks), 0 otherwise</span></div>
+<div class="foldopen" id="foldopen00035" data-start="{" data-end="}">
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4">   35</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4">stripComment</a>(<span class="keywordtype">char</span> *line, <span class="keyword">const</span> <span class="keywordtype">char</span> *commentChars) {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keywordtype">char</span> *commentCharLoc;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keywordtype">int</span> lenTrim;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="comment">// strip trailing comment:</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  commentCharLoc = strpbrk(line, commentChars);</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordflow">if</span> (commentCharLoc != NULL) {</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    commentCharLoc[0] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  }</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="comment">// determine length without any leading blanks</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  lenTrim = strlen(line) - strspn(line, <span class="stringliteral">&quot; \t\n\r&quot;</span>);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="keywordflow">return</span> (lenTrim == 0);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>}</div>
 </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment">// count number of fields in a string separated by delimiter &#39;sep&#39;</span></div>
-<div class="foldopen" id="foldopen00053" data-start="{" data-end="}">
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822">   53</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822">countFields</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *line, <span class="keyword">const</span> <span class="keywordtype">char</span> *sep) {</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="comment">// strtok modifies string, so we need a copy</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keywordtype">char</span> lineCopy[256];</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  strcpy(lineCopy, line);</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordtype">int</span> numParams = 0;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordtype">char</span> *par = strtok(lineCopy, sep);</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keywordflow">while</span> (par != NULL) {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    ++numParams;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    par = strtok(NULL, sep);</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  }</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <span class="keywordflow">return</span> numParams;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">// count number of fields in a string separated by delimiter &#39;sep&#39;</span></div>
+<div class="foldopen" id="foldopen00051" data-start="{" data-end="}">
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822">   51</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822">countFields</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *line, <span class="keyword">const</span> <span class="keywordtype">char</span> *sep) {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="comment">// strtok modifies string, so we need a copy</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="keywordtype">char</span> lineCopy[256];</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  strcpy(lineCopy, line);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keywordtype">int</span> numParams = 0;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keywordtype">char</span> *par = strtok(lineCopy, sep);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordflow">while</span> (par != NULL) {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    ++numParams;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    par = strtok(NULL, sep);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  }</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keywordflow">return</span> numParams;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
 </div>
 <div class="ttc" id="aexit_codes_8h_html"><div class="ttname"><a href="../../d6/d8f/exit_codes_8h.html">exitCodes.h</a></div></div>
 <div class="ttc" id="aexit_codes_8h_html_a2d967eed409413b06a8450ff977ab52aa371fc63e842acdb9cbc7cb9d063610ca"><div class="ttname"><a href="../../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa371fc63e842acdb9cbc7cb9d063610ca">EXIT_CODE_FILE_OPEN_OR_READ_ERROR</a></div><div class="ttdeci">@ EXIT_CODE_FILE_OPEN_OR_READ_ERROR</div><div class="ttdef"><b>Definition</b> <a href="../../d6/d8f/exit_codes_8h_source.html#l00023">exitCodes.h:23</a></div></div>
-<div class="ttc" id="autil_8c_html_a2a788020b8916d13ec26d4ad01c225f9"><div class="ttname"><a href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9">openFile</a></div><div class="ttdeci">FILE * openFile(const char *name, const char *mode)</div><div class="ttdef"><b>Definition</b> <a href="../../de/df1/util_8c_source.html#l00020">util.c:20</a></div></div>
-<div class="ttc" id="autil_8c_html_a87a0923ef9b7dde5f205f1501f851822"><div class="ttname"><a href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822">countFields</a></div><div class="ttdeci">int countFields(const char *line, const char *sep)</div><div class="ttdef"><b>Definition</b> <a href="../../de/df1/util_8c_source.html#l00053">util.c:53</a></div></div>
-<div class="ttc" id="autil_8c_html_ab343ccfdac6191045fced6c36c0143f4"><div class="ttname"><a href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4">stripComment</a></div><div class="ttdeci">int stripComment(char *line, const char *commentChars)</div><div class="ttdef"><b>Definition</b> <a href="../../de/df1/util_8c_source.html#l00037">util.c:37</a></div></div>
+<div class="ttc" id="autil_8c_html_a2a788020b8916d13ec26d4ad01c225f9"><div class="ttname"><a href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9">openFile</a></div><div class="ttdeci">FILE * openFile(const char *name, const char *mode)</div><div class="ttdef"><b>Definition</b> <a href="../../de/df1/util_8c_source.html#l00018">util.c:18</a></div></div>
+<div class="ttc" id="autil_8c_html_a87a0923ef9b7dde5f205f1501f851822"><div class="ttname"><a href="../../de/df1/util_8c.html#a87a0923ef9b7dde5f205f1501f851822">countFields</a></div><div class="ttdeci">int countFields(const char *line, const char *sep)</div><div class="ttdef"><b>Definition</b> <a href="../../de/df1/util_8c_source.html#l00051">util.c:51</a></div></div>
+<div class="ttc" id="autil_8c_html_ab343ccfdac6191045fced6c36c0143f4"><div class="ttname"><a href="../../de/df1/util_8c.html#ab343ccfdac6191045fced6c36c0143f4">stripComment</a></div><div class="ttdeci">int stripComment(char *line, const char *commentChars)</div><div class="ttdef"><b>Definition</b> <a href="../../de/df1/util_8c_source.html#l00035">util.c:35</a></div></div>
 <div class="ttc" id="autil_8h_html"><div class="ttname"><a href="../../d8/d3c/util_8h.html">util.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

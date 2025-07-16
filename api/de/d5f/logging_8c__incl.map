@@ -1,7 +1,9 @@
 <map id="logging.c" name="logging.c">
-<area shape="rect" id="Node000001" title=" " alt="" coords="47,5,129,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="105,5,186,31"/>
 <area shape="rect" id="Node000002" href="$d5/d77/logging_8h.html" title=" " alt="" coords="47,79,129,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="91,31,91,65,85,65,85,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,33,108,70,104,66,134,29"/>
+<area shape="rect" id="Node000011" href="$d6/d8f/exit_codes_8h.html" title=" " alt="" coords="153,79,252,104"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="157,29,187,66,183,70,153,33"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="5,225,72,251"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="76,106,57,126,41,153,36,183,37,212,32,212,30,182,36,151,52,123,72,102"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="51,152,125,177"/>

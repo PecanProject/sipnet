@@ -15,7 +15,7 @@ var searchData=
   ['planting_12',['PLANTING',['../db/dd2/events_8h.html#a2628ea8d12e8b2563c32f05dc7fff6faa36fd4717f5fdc11db3faf781607853e0',1,'events.h']]],
   ['plantingparams_13',['plantingparams',['../d4/dbd/struct_planting_params.html',1,'PlantingParams'],['../db/dd2/events_8h.html#a7783a5d4f4deff466d6f1759288a5cff',1,'PlantingParams:&#160;events.h']]],
   ['plantleafc_14',['plantLeafC',['../de/d30/struct_environment.html#a90dc0461aa33bac8b0a236a736169f4f',1,'Environment']]],
-  ['plantwoodc_15',['plantwoodc',['../d3/d1f/struct_tracker_vars.html#ab037dd3b1af2bd2625e2591923d98a13',1,'TrackerVars::plantWoodC'],['../de/d30/struct_environment.html#ab648e7470b571b841f42344a52bea970',1,'Environment::plantWoodC']]],
+  ['plantwoodc_15',['plantWoodC',['../de/d30/struct_environment.html#ab648e7470b571b841f42344a52bea970',1,'Environment']]],
   ['plantwoodinit_16',['plantWoodInit',['../d0/dbf/struct_parameters.html#aaf9ff11261c3bc55ec3e589586d27236',1,'Parameters']]],
   ['potpsn_17',['potPsn',['../dd/d09/sipnet_8c.html#a210ec283fb3a7691a2f81ea56d3e0589',1,'sipnet.c']]],
   ['precip_18',['precip',['../d4/d5e/struct_climate_vars.html#a439d5d5fcd57d320737a65c934878dea',1,'ClimateVars']]],

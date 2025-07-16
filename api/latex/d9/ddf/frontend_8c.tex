@@ -25,7 +25,7 @@ Include dependency graph for frontend.\+c\+:
 \item 
 void \textbf{ check\+Runtype} (const char $\ast$run\+Type)
 \item 
-void \textbf{ read\+Input\+File} (const char $\ast$file\+Name)
+void \textbf{ read\+Input\+File} (void)
 \item 
 int \textbf{ main} (int argc, char $\ast$argv[$\,$])
 \end{DoxyCompactItemize}
@@ -58,11 +58,11 @@ Referenced by \textbf{ read\+Input\+File()}.
 
 
 
-Definition at line \textbf{ 123} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 127} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ check\+CLIName\+Map()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ Context\+::events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ Context\+::input\+File}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, and \textbf{ update\+Char\+Context()}.
+References \textbf{ check\+CLIName\+Map()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ Context\+::events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ new\+Output\+Items()}, \textbf{ Context\+::num\+Soil\+Carbon\+Pools}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, and \textbf{ validate\+Context()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -72,11 +72,11 @@ Here is the call graph for this function\+:
 \includegraphics[height=550pt]{d9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph}
 \end{center}
 \end{figure}
-\label{frontend_8c_a9a5aedf5fbe3456c5234cc1478cd6b6b} 
+\label{frontend_8c_aa266edaa72008942db003eb2ee683c11} 
 \index{frontend.c@{frontend.c}!readInputFile@{readInputFile}}
 \index{readInputFile@{readInputFile}!frontend.c@{frontend.c}}
 \doxysubsubsection{readInputFile()}
-{\footnotesize\ttfamily void read\+Input\+File (\begin{DoxyParamCaption}\item[{const char $\ast$}]{file\+Name }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void read\+Input\+File (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
 
 
 
@@ -84,7 +84,7 @@ Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ check\+Runtype()}, \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ log\+Warning}, \textbf{ open\+File()}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+References \textbf{ check\+Runtype()}, \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ Context\+::input\+File}, \textbf{ log\+Warning}, \textbf{ open\+File()}, \textbf{ SEPARATORS}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, and \textbf{ validate\+Filename()}.
 
 
 
@@ -95,6 +95,6 @@ Here is the call graph for this function\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=350pt]{d9/ddf/frontend_8c_a9a5aedf5fbe3456c5234cc1478cd6b6b_cgraph}
+\includegraphics[width=350pt]{d9/ddf/frontend_8c_aa266edaa72008942db003eb2ee683c11_cgraph}
 \end{center}
 \end{figure}
