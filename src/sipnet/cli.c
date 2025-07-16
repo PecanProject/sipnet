@@ -89,7 +89,7 @@ void usage(char *progName) {
   printf("  --soil-quality       Use soil quality submodel (0)\n");
   printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
   printf("\n");
-  printf("I/O flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
+  printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
   printf("  --do-main-output     Print time series of all output variables to <file-name>.out (1)\n");
   printf("  --do-single-outputs  Print outputs one variable per file (e.g. <file-name>.NEE)\n");
   printf("  --dump-config        Print final config to <file-name>.config (0)\n");
