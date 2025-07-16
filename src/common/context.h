@@ -51,7 +51,6 @@ struct Context {
   int microbes;
   int snow;
   int soilPhenol;
-  int soilQuality;
   int waterHResp;
 
   // * I/O

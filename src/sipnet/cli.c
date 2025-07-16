@@ -27,7 +27,6 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(microbes),
     DECLARE_FLAG(snow),
     DECLARE_FLAG(soil-phenol),
-    DECLARE_FLAG(soil-quality),
     DECLARE_FLAG(water-hresp),
 
     DECLARE_FLAG(do-main-output),
@@ -57,7 +56,7 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
     DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
-    DECLARE_ARG_FOR_MAP(soilQuality), DECLARE_ARG_FOR_MAP(waterHResp),
+    DECLARE_ARG_FOR_MAP(waterHResp),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -86,7 +85,6 @@ void usage(char *progName) {
   printf("  --microbes           Enable microbe modeling (0)\n");
   printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
   printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
-  printf("  --soil-quality       Use soil quality submodel (0)\n");
   printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
@@ -108,8 +106,6 @@ void usage(char *progName) {
   printf(" --soil-phenol and --gdd may not both be turned on\n");
   printf(" --litter-pool requires --num-soil-carbon-pools to be 1\n");
   printf(" --microbes requires --num-soil-carbon-pools to be 1\n");
-  printf(" --soil-quality requires --num-soil-carbon-pools to be greater than 1\n");
-  printf("\n");
   // clang-format on
 }
 

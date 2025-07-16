@@ -38,7 +38,6 @@ void initContext(void) {
   CREATE_INT_CONTEXT(microbes,        "MICROBES",         ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, FLAG_YES);
-  CREATE_INT_CONTEXT(soilQuality,     "SOIL_QUALITY"    , ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
 
   // Flags, I/O
@@ -217,12 +216,6 @@ void validateContext(void) {
     }
     if (ctx.microbes) {
       logError("microbes requires num-soil-carbon-pools to be 1");
-      hasError = 1;
-    }
-  } else {
-    if (ctx.soilQuality) {
-      logError(
-          "soil-quality requires num-soil-carbon-pools to be greater than 1");
       hasError = 1;
     }
   }

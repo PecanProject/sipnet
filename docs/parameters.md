@@ -261,8 +261,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 |    |  Symbol           | Parameter Name         | Definition                                         | Units                 | notes                         |
 | -- | ----------------- |  --------------------- | -------------------------------------------------- | --------------------- | ----------------------------- |
-| 56 |                   | qualityLeaf            | value for leaf litter quality                      |                       |                               |
-| 57 |                   | qualityWood            | value for wood litter quality                      |                       |                               |
 | 58 |                   | efficiency             | conversion efficiency of ingested carbon           |                       | Microbe & Stoichiometry model |
 | 59 |                   | maxIngestionRate       | maximum ingestion rate of the microbe              | hr-1                  | Microbe & Stoichiometry model |
 | 60 |                   | halfSatIngestion       | half saturation ingestion rate of microbe          | mg C g-1 soil         | Microbe & Stoichiometry model |
@@ -318,7 +316,6 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `microbes`              | off     | Enable microbe modeling.                                                 |
 | `snow`                  | on      | Keep track of snowpack, rather than assuming all precipitation is liquid.|
 | `soil-phenol`           | off     | Use soil temperature to determine leaf growth.                           |
-| `soil-quality`          | off     | Use soil quality submodel.                                               |
 | `water-hresp`           | on      | Whether soil moisture affects heterotrophic respiration.                 |
 | `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
 
@@ -333,7 +330,6 @@ Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
  - `litter-pool` requires `num-soil-carbon-pools` to be 1
  - `microbes` requires `num-soil-carbon-pools` to be 1
- - `soil-quality` requires `num-soil-carbon-pools` to be greater than 1
 
 ### Command Line Arguments
 
@@ -377,7 +373,6 @@ litter-pool = 0
 microbes = 0
 snow = 1
 soil-phenol = 0
-soil-quality = 0
 water-hresp = 1
 num-soil-carbon-pools = 1
 ```
