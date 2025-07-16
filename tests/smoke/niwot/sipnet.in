@@ -2,6 +2,8 @@
 
 ! --- INPUTS FOR ALL RUN TYPES ---
 
+! Old school format, to make sure we are backwards compatible
+
 RUNTYPE = standard
 ! RUNTYPE is obsolete; any value other than 'standard' will cause an error. It is
 ! retained (for now) to enable error reporting. This config is optional.
@@ -27,3 +29,10 @@ DO_SINGLE_OUTPUTS = 0
 ! (These extra outputs are setup in sipnet.c : setupOutputItems)
 ! For a spatial run (LOCATION = -1), the first value on each line is
 ! the location, followed by the time series
+
+! Also, dump the config for the test
+DUMP_CONFIG = 1
+
+! Also also, putting this in to make sure we continue to accept and ignore it
+! gracefully
+LOCATION = 0

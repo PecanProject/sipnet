@@ -5,16 +5,9 @@
 
 #include "version.h"
 
-// C preprocessor shenanigans to get stringizing and concatenation to work
-// for NO_(x) macro, needed by DECLARE_FLAG macro
-#define CONCAT(x, y) x##y
-#define STRINGIZE_IMPL(x) #x
-#define STRINGIZE(x) STRINGIZE_IMPL(x)
-#define NO_(x) STRINGIZE(CONCAT(no_, x))
-
 #define DECLARE_FLAG(name)                                                     \
   {#name, no_argument, &ctx.tmpFlag, 1},                                       \
-      {NO_(name), no_argument, &ctx.tmpFlag, 0}
+      {"no-" #name, no_argument, &ctx.tmpFlag, 0}
 
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
 
@@ -25,20 +18,32 @@ static struct option long_options[] = {  // NOLINT
     // These options set a flag (and they need to be at the top here for
     // indexing purposes). The DECLARE_FLAG macro declares both <flag> and
     // <no_flag> versions of the option.
-    DECLARE_FLAG(do_main_output),
-    DECLARE_FLAG(do_single_outputs),
+    // clang-format off
     DECLARE_FLAG(events),
-    DECLARE_FLAG(print_header),
-    DECLARE_FLAG(dump_config),
+    DECLARE_FLAG(gdd),
+    DECLARE_FLAG(growth-resp),
+    DECLARE_FLAG(leaf-water),
+    DECLARE_FLAG(litter-pool),
+    DECLARE_FLAG(microbes),
+    DECLARE_FLAG(snow),
+    DECLARE_FLAG(soil-phenol),
+    DECLARE_FLAG(soil-quality),
+    DECLARE_FLAG(water-hresp),
+
+    DECLARE_FLAG(do-main-output),
+    DECLARE_FLAG(do-single-outputs),
+    DECLARE_FLAG(dump-config),
+    DECLARE_FLAG(print-header),
     DECLARE_FLAG(quiet),
 
-    // clang-format off
-    // These options don’t set a flag. We distinguish them by their indices
-    // name        has_arg           flag  val (val is the index)
-    {"input_file", required_argument, 0,   'i'},
-    {"help",       no_argument,       0,   'h'},
-    {"version",    no_argument,       0,   'v'},
-    // clang-format on
+    // These options don’t set a flag. We distinguish them by their indices.
+    // name                         has_arg           flag  val (val is the
+    // index)
+    {"input-file", required_argument, 0, 'i'},
+    {"file-name", no_argument, 0, 'f'},
+    {"help", no_argument, 0, 'h'},
+    {"num-carbon-soil-pools", required_argument, 0, 'n'},
+    {"version", no_argument, 0, 'v'},
     {0, 0, 0, 0}};
 
 // See cli.h
@@ -47,9 +52,18 @@ char *argNameMap[] = {
     // Gives corresponding name in Context struct (that is, the argument to the
     // DECLARE_ARG_FOR_MAP macro needs to be the name of the corresponding field
     // in Context)
+    // Model options
+    DECLARE_ARG_FOR_MAP(events), DECLARE_ARG_FOR_MAP(gdd),
+    DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
+    DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
+    DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
+    DECLARE_ARG_FOR_MAP(soilQuality), DECLARE_ARG_FOR_MAP(waterHResp),
+
+    // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
-    DECLARE_ARG_FOR_MAP(events),       DECLARE_ARG_FOR_MAP(printHeader),
-    DECLARE_ARG_FOR_MAP(dumpConfig),   DECLARE_ARG_FOR_MAP(quiet)};
+    DECLARE_ARG_FOR_MAP(dumpConfig), DECLARE_ARG_FOR_MAP(printHeader),
+    DECLARE_ARG_FOR_MAP(quiet)};
+// clang-format on
 
 // Print the help message when requested
 void usage(char *progName) {
@@ -59,16 +73,28 @@ void usage(char *progName) {
   printf("Run SIPNET model for one site with configured options.\n");
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
-  printf("  -i, --input_file     Name of input config file (sipnet.in)\n");
+  printf("  -i, --input-file <input-file>      Name of input config file ('sipnet.in')\n");
+  printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
+  printf("  -n, --num-carbon-soil-pools <num>  Number of carbon soil pools (1)\n");
   printf("\n");
-  printf("Flag options: (prepend flag with 'no_' to force off, eg '--no_print_header')\n");
+  printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
+  printf("  --events             Enable event handling (1)\n");
+  printf("  --gdd                Use growing degree days to determine leaf growth (1)\n");
+  printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
+  printf("  --leaf-water         Calculate leaf pool and evaporate from that pool (0)\n");
+  printf("  --litter-pool        Enable litter pool in addition to single soil carbon pool (0)\n");
+  printf("  --microbes           Enable microbe modeling (0)\n");
+  printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
+  printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
+  printf("  --soil-quality       Use soil quality submodel (0)\n");
+  printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
   printf("\n");
-  printf("  --dump_config    Print final config to <input_file>.config (0)\n");
-  printf("  --print_header   Whether to print header row in output files (1)\n");
-  printf("  --events         Enable event handling (1)\n");
-  printf("  --quiet          Suppress info and warning message (0)\n");
-  printf("  --[TBD]   \n");
-  printf("  --[TBD]   \n");
+  printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
+  printf("  --do-main-output     Print time series of all output variables to <file-name>.out (1)\n");
+  printf("  --do-single-outputs  Print outputs one variable per file (e.g. <file-name>.NEE)\n");
+  printf("  --dump-config        Print final config to <file-name>.config (0)\n");
+  printf("  --print-header       Whether to print header row in output files (1)\n");
+  printf("  --quiet              Suppress info and warning message (0)\n");
   printf("\n");
   printf("Info options:\n");
   printf("  -h, --help           Print this message and exit\n");
@@ -77,8 +103,13 @@ void usage(char *progName) {
   printf("Configuration options are read from <input_file>. Other options specified on the command\n");
   printf("line override settings from that file.\n");
   printf("\n");
-  //printf("\n");
-  //printf("\n");
+  printf("Note the following restrictions on these options:\n");
+  printf(" --num-soil-carbon-pools must be between 1 and 3\n");
+  printf(" --soil-phenol and --gdd may not both be turned on\n");
+  printf(" --litter-pool requires --num-soil-carbon-pools to be 1\n");
+  printf(" --microbes requires --num-soil-carbon-pools to be 1\n");
+  printf(" --soil-quality requires --num-soil-carbon-pools to be greater than 1\n");
+  printf("\n");
   // clang-format on
 }
 
@@ -91,13 +122,23 @@ void parseCommandLineArgs(int argc, char *argv[]) {
   int longIndex = 0;
   int shortIndex;
   // get command-line arguments:
-  while ((shortIndex = getopt_long(argc, argv, "hi:v", long_options,
+  while ((shortIndex = getopt_long(argc, argv, "hi:n:v", long_options,
                                    &longIndex)) != -1) {
 
     switch (shortIndex) {
       case 0:
         // long form option, flag == 0
         updateIntContext(argNameMap[longIndex], ctx.tmpFlag, CTX_COMMAND_LINE);
+        break;
+      case 'f':
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          printf("ERROR: filename %s exceeds maximum length of %d\n", optarg,
+                 FILENAME_MAXLEN);
+          printf("Either change the name or increase INPUT_MAXNAME in "
+                 "frontend.c\n");
+          exit(1);
+        }
+        updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
         break;
       case 'h':
         usage(argv[0]);
@@ -112,6 +153,19 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         }
         updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);
         break;
+      case 'n': {
+        char *errc;
+        int intVal = strtol(optarg, &errc, 0);  // NOLINT
+        if (strlen(errc) > 0) {  // invalid character(s) in input string
+          printf("Unknown value for num_soil_carbon_pools: %s\n", optarg);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        if (intVal < 1 || intVal > MAX_SOIL_CARBON_POOLS) {
+          printf("num_soil_carbon_pools must be 1, 2, or 3\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateIntContext("numSoilCarbonPools", intVal, CTX_COMMAND_LINE);
+      } break;
       case 'v':
         version();
         exit(EXIT_CODE_SUCCESS);
@@ -134,21 +188,23 @@ void checkCLINameMap(void) {
   for (int ind = 0; ind < 2 * NUM_FLAG_OPTIONS; ++ind) {
     s = getContextMetadata(argNameMap[ind]);
     if (s == NULL) {
-      logError("Internal error: mismatched argNameMap and Context contents; "
-               "missing Context metadata\n");
+      logInternalError("mismatched argNameMap and Context contents; "
+                       "no metadata for %s\n",
+                       argNameMap[ind]);
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
   // Make sure the number of flag metadata structs equals NUM_FLAG_OPTIONS
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
-    if (s->type == CTX_INT) {
+    if (s->isFlag) {
       ++numFlags;
     }
   }
   if (numFlags != NUM_FLAG_OPTIONS) {
-    logError("Internal error: mismatched argNameMap and Context contents; "
-             "missing argNameMap entry\n");
+    logInternalError("mismatched argNameMap and Context contents; "
+                     "%d metaMap entries, NUM_FLAG_OPTIONS=%d\n",
+                     numFlags, NUM_FLAG_OPTIONS);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }

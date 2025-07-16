@@ -186,12 +186,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 30 |   $K_\text{litter}$          | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | g C broken down \* g^-1 litter C \* day^-1        | read in as per-year rate                              |
 | 31 |             | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) |                                                   |                                                       |
 | 32 | $K_{dec}$     | baseSoilResp        | Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil          | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
-| 33 |             | baseSoilRespCold    | soil respiration at 0°C and max soil moisture when tsoil < coldSoilThreshold        | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
 | 34 | $Q_{10s}$ | soilRespQ10         | Soil respiration Q10                                                                |                                                   | scalar determining effect of temp on soil respiration |
-| 35 |             | soilRespQ10Cold     | scalar determining effect of temp on soil resp. when tsoil < coldSoilThreshold      |                                                   |                                                       |
-| 36 |             | coldSoilThreshold   | temp. at which use baseSoilRespCold and soilRespQ10Cold                             | °C                                                | Not used if SEASONAL\_R\_SOIL is 0                    |
-| 37 |             | E0                  | E0 in Lloyd-Taylor soil respiration function                                        |                                                   | Not used if LLOYD\_TAYLOR is 0                        |
-| 38 |             | T0                  | T0 in Lloyd-Taylor soil respiration function                                        |                                                   | Not used if LLOYD\_TAYLOR is 0                        |
 | 39 |             | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                                   |                                                       |
 |    |             | baseMicrobeResp     |                                                                                     |                                                   |                                                       |
 |    |             |                     |                                                                                     |                                                   |                                                       |
@@ -242,11 +237,10 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 46 |            | fastFlowFrac      | fraction of water entering soil that goes directly to drainage                                        |                        |                                                                                                                                                |
 |    | $k_\text{SOM,drain}$ |
 | 47 |            | snowMelt          | rate at which snow melts                                                                              | cm water equivavlent per degree Celsius per day |                                                                                                                                                |
-| 48 |            | litWaterDrainRate | rate at which litter rains into lower layer when litter layer fully moisture-saturated         | cm water/day          |                                                                                                                                                |
 | 49 |            | rdConst           | scalar determining amount of aerodynamic resistance                                                   |                        |                                                                                                                                                |
 | 50 |            | rSoilConst1       |                                                                                                       |                        | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
 | 51 |            | rSoilConst2       |                                                                                                       |                        | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
-| 52 |            | m\_ballBerry      | slope for the Ball Berry relationship                                                                 |                        |                                                                                                                                                |
+
 
 
 ### Tree physiological parameters
@@ -272,8 +266,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 58 |                   | efficiency             | conversion efficiency of ingested carbon           |                       | Microbe & Stoichiometry model |
 | 59 |                   | maxIngestionRate       | maximum ingestion rate of the microbe              | hr-1                  | Microbe & Stoichiometry model |
 | 60 |                   | halfSatIngestion       | half saturation ingestion rate of microbe          | mg C g-1 soil         | Microbe & Stoichiometry model |
-| 61 |                   | totNitrogen            | Percentage nitrogen in soil                        |                       | Microbe & Stoichiometry model |
-| 62 |                   | microbeNC              | microbe N:C ratio                                  | mg N / mg C           | Microbe & Stoichiometry model |
 | 63 |                   | microbeInit            |                                                    | mg C / g soil microbe | initial carbon amount         |-->
 
 
@@ -287,64 +279,138 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 -->
 
-## Compile-time parameters
+## Run-time Options
 
-| Parameter 0                                    | Default                   | Description                                                                                                     |
-| ---------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| CSV\_O                                         | 0                         | output .out file as a CSV file                                                                                  |
-| ALTERNATIVE\_TRANS 0                           | 0                         | do we want to implement alternative transpiration?                                                              |
-| BALL\_BERRY 0                                  | 0                         | implement a Ball Berry submodel to calculate gs from RH, CO2 and A                                              |
-| PENMAN\_MONTEITH\_TRANS 0                      | 0                         | implement a transpiration calculation based on the Penman-Monteith Equation                                     |
-| GROWTH\_RESP 0                                 | 0                         | explicitly model growth resp., rather than including with maint. resp.                                          |
-| LLOYD\_TAYLOR 0                                | 0                         | use Lloyd-Taylor model for soil respiration, in which temperature sensitivity decreases at higher temperatures? |
-| SEASONAL\_R\_SOIL 0 && !LLOYD\_TAYLOR          | 0                         | use different parameters for soil resp. (baseSoilResp and soilRespQ10) when tsoil < (some threshold)?           |
-| WATER\_PSN 1                                   | 1                         | does soil moisture affect photosynthesis?                                                                       |
-| WATER\_HRESP 1                                 | 1                         | does soil moisture affect heterotrophic respiration?                                                            |
-| DAYCENT\_WATER\_HRESP 0 && WATER\_HRESP        | 0                         | use DAYCENT soil moisture function?                                                                             |
-| MODEL\_WATER 1                                 | 1                         | do we model soil water (and ignore soilWetness)?                                                                |
-| COMPLEX\_WATER 1 && MODEL\_WATER               | 1                         | do we use a more complex water submodel? (model evaporation as well as transpiration)                           |
-| LITTER\_WATER 0 && (COMPLEX\_WATER)            | 0                         | do we have a separate litter water layer, used for evaporation?                                                 |
-| LITTER\_WATER\_DRAINAGE 1 && (LITTER\_WATER)   | 0                         | does water from the top layer drain down into bottom layer even if top layer not overflowing?                   |
-| SNOW (1 \|\| (COMPLEX\_WATER)) && MODEL\_WATER | 1                         | keep track of snowpack, rather than assuming all precip. is liquid                                              |
-| GDD 0                                          | 0                         | use GDD to determine leaf growth? (note: mutually exclusive with SOIL\_PHENOL)                                  |
-| SOIL\_PHENOL 0 && !GDD                         | 0                         | use soil temp. to determine leaf growth? (note: mutually exclusive with GDD)                                    |
-| LITTER\_POOL 0                                 | 0                         | have extra litter pool, in addition to soil c pool                                                              |
-| SOIL\_MULTIPOOL 0 && !LITTER\_POOL             | 0                         | do we have a multipool approach to model soils?                                                                 |
-| NUMBER\_SOIL\_CARBON\_POOLS 3                  | 3                         | number of pools we want to have. Equal to 1 if SOIL\_MULTIPOOL is 0                                             |
-| SOIL\_QUALITY 0 && SOIL\_MULTIPOOL             | 0                         | do we have a soil quality submodel?                                                                             |
-| MICROBES 0 && !SOIL\_MULTIPOOL                 | 0                         | do we utilize microbes. This will only be an option if SOIL\_MULTIPOOL is 0 and MICROBES is 1                   |
-| STOICHIOMETRY 0 && MICROBES                    | 0                         | do we utilize stoichometric considerations for the microbial pool?                                              |
-| ROOTS 0                                        | 0                         | do we model root dynamics? If no, roots are part of wood pool. If yes, split into coarse and fine roots|
-| MODIS 0                                        | 0                         | do we use modis FPAR data to constrain GPP?                                                                     |
-| C\_WEIGHT 12.0                                 | 12                        | molecular weight of carbon                                                                                      |
-| MEAN\_NPP\_DAYS 5                              | 5                         | over how many days do we keep the running mean                                                                  |
-| MEAN\_NPP\_MAX\_ENTRIES                        | MEAN\_NPP\_DAYS\*50       | assume that the most pts we can have is two per hour                                                            |
-| MEAN\_GPP\_SOIL\_DAYS 5                        | 5                         | over how many days do we keep the running mean                                                                  |
-| MEAN\_GPP\_SOIL\_MAX\_ENTRIES                  | MEAN\_GPP\_SOIL\_DAYS\*50 | assume that the most pts we can have is one per hour                                                            |
-| LAMBDA                                         | 2501000                   | latent heat of vaporization (J/kg)                                                                              |
-| LAMBDA\_S                                      | 2835000                   | latent heat of sublimation (J/kg)                                                                               |
-| RHO                                            | 1.3                       | air density (kg/m^3)                                                                                            |
-| CP                                             | 1005.                     | specific heat of air (J/(kg K))                                                                                 |
-| GAMMA                                          | 66                        | psychometric constant (Pa/K)                                                                                    |
-| E\_STAR\_SNOW                                  | 0.6                       | approximate saturation vapor pressure at 0°C (kPa)                                                              |
-|                                                |                           |                                                                                                                 |
+Configuration settings are applied in the following order of precedence:
 
+1. Default values built into SIPNET
+2. Values from the configuration file
+3. Command-line arguments
+
+Thus, command-line arguments override settings in the configuration file, and configuration file settings override default values.
+
+### Input / Output Options
+
+| Option              | Default   | Description                                                                 |
+|---------------------|-----------|-----------------------------------------------------------------------------|
+| `input-file`        | sipnet.in | Name of input config file                                                   |
+| `file-name`         | sipnet    | Prefix of climate and parameter files                                       |
+
+### Output Flags
+
+| Option              | Default   | Description                                                                 |
+|---------------------|-----------|-----------------------------------------------------------------------------|
+| `do-main-output`    | on        | Print time series of all output variables to `<file-name>.out`              |
+| `do-single-outputs` | off       | Print outputs one variable per file (e.g. `<file-name>.NEE`)                |
+| `dump-config`       | on        | Print final config to `<file-name>.config`                                  |
+| `print-header`      | on        | Whether to print header row in output files                                 |
+| `quiet`             | off       | Suppress info and warning message                                           |
+
+### Model Flags
+
+| Option                  | Default | Description                                                              |
+|-------------------------|---------|--------------------------------------------------------------------------|
+| `events`                | on      | Enable event handling.                                                   |
+| `gdd`                   | on      | Use growing degree days to determine leaf growth.                        |
+| `growth-resp`           | off     | Explicitly model growth respiration, rather than including with maintenance respiration. |
+| `leaf-water`            | off     | Calculate leaf pool and evaporate from that pool.                        |
+| `litter-pool`           | off     | Enable litter pool in addition to single soil carbon pool.               |
+| `microbes`              | off     | Enable microbe modeling.                                                 |
+| `snow`                  | on      | Keep track of snowpack, rather than assuming all precipitation is liquid.|
+| `soil-phenol`           | off     | Use soil temperature to determine leaf growth.                           |
+| `soil-quality`          | off     | Use soil quality submodel.                                               |
+| `water-hresp`           | on      | Whether soil moisture affects heterotrophic respiration.                 |
+| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
+
+### Other Model Options
+
+| Option                  | Default | Description                                                              |
+|-------------------------|---------|--------------------------------------------------------------------------|
+| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
+
+Note the following restrictions on these options:
+ - `num-soil-carbon-pools` must be between 1 and 3
+ - `soil-phenol` and `gdd` may not both be turned on
+ - `litter-pool` requires `num-soil-carbon-pools` to be 1
+ - `microbes` requires `num-soil-carbon-pools` to be 1
+ - `soil-quality` requires `num-soil-carbon-pools` to be greater than 1
+
+### Command Line Arguments
+
+Command-line arguments can be used to specify run-time options when starting SIPNET. The syntax is as follows:
+
+```
+sipnet [options]
+```
+
+Where `[options]` can include any of the run-time options listed above. 
+Flags use the syntax `--flag` to turn them on, or `--no-flag` to turn them off. Other options are specified by `--option value`.
+
+See `sipnet --help` for a full list of available command-line options.
+
+### Configuration File Format
+
+SIPNET reads a configuration file that specifies run-time options without using command-line arguments. By default, SIPNET looks for a file named `sipnet.in` in the current directory. These will be overwritten by command-line arguments if specified.
+
+The configuration file uses a simple key-value format, `option = value`, 
+with one option per line; comments follow `#`. Flags are specified as 0 for off and 1 for on.
+
+#### Example Configuration File
+
+```
+# Base filename (used for derived filenames)
+file-name = mysite
+
+# Output options
+do-main-output = 1
+do-single-outputs = 0
+dump-config = 1
+print-header = 1
+quiet = 0
+
+# Model options
+events = 1
+gdd = 1
+growth-resp = 0
+leaf-water = 0
+litter-pool = 0
+microbes = 0
+snow = 1
+soil-phenol = 0
+soil-quality = 0
+water-hresp = 1
+num-soil-carbon-pools = 1
+```
+
+When `dump-config = 1` is set, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
+
+## Hard-coded Values
+
+| Parameter                   | Value                     | Description                                                                                                     |
+|-----------------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `MAX_SOIL_CARBON_POOLS`     | 3                         | Maximum number of soil carbon pools.                                                                            |
+| `C_WEIGHT`                  | 12.0                      | molecular weight of carbon                                                                                      |
+| `MEAN_NPP_DAYS`             | 5                         | over how many days do we keep the running mean                                                                  |
+| `MEAN_NPP_MAX_ENTRIES`      | `MEAN_NPP_DAYS`*50      | assume that the most pts we can have is two per hour                                                            |
+| `MEAN_GPP_SOIL_DAYS`        | 5                         | over how many days do we keep the running mean                                                                  |
+| `MEAN_GPP_SOIL_MAX_ENTRIES` | `MEAN_GPP_SOIL_DAYS`*50 | assume that the most pts we can have is one per hour                                                            |
+| `LAMBDA`                    | 2501000                   | latent heat of vaporization (J/kg)                                                                              |
+| `LAMBDA_S`                  | 2835000                   | latent heat of sublimation (J/kg)                                                                               |
+| `RHO`                       | 1.3                       | air density (kg/m^3)                                                                                            |
+| `CP`                        | 1005.                     | specific heat of air (J/(kg K))                                                                                 |
+| `GAMMA`                     | 66                        | psychometric constant (Pa/K)                                                                                    |
+| `E_STAR_SNOW`               | 0.6                       | approximate saturation vapor pressure at 0°C (kPa)                                                              |
 
 ## Input Files
 
 ### Run Settings
 
-The `sipnet.in` file specifies run settings for SIPNET, including the run type, input file names, and output options. The file is self-documenting, with comments describing each option. Key features of interest include 
-
-- `FILENAME` Set output filenames.
-- `PRINT_HEADER` Print header information to output files
-- `DO_SINGLE_OUTPUTS` Write each variable to a separate file
+See [Run-time Options](#run-time-options) above.
 
 Multi-site runs, sensitivity tests, and Monte Carlo runs are no longer supported. Typically these analyses are handled 
 using the [PEcAn Framework](https://pecanproject.org/).
 
 ### Parameters and Initial Conditions
-
 
 Both initial conditions and parameters are specified in a file named `sipnet.param`.
 
@@ -390,9 +456,9 @@ For each step of the model, the following inputs are needed. These are provided 
 | col | parameter | description | units | notes |
 |-----| ----------- | --------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | 1   | year        | year of start of this timestep  |               | integer, e.g. 2010|
-| 2   | day         | day of start of this timestep   |               | integer where 1 = Jan 1|
-| 3   | time        | time of start of this timestep  | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
-| 4   | length      | length of this timestep         | days          | variable-length timesteps allowed, typically not used |
+| 2   | day         | day of start of this timestep      | Day of year | 1 = Jan 1                             |
+| 3   | time        | time of start of this timestep     | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
+| 4   | length      | length of this timestep          | days          | variable-length timesteps allowed, typically not used |
 | 5   | tair        | avg. air temp for this time step| degrees Celsius |     |
 | 6   | tsoil       | average soil temperature for this time step  | degrees Celsius| can be estimated from Tair  |
 | 7   | par         | average photosynthetically active radiation (PAR) for this time step  | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$  | input is in Einsteins \* m^-2 ground area, summed over entire time step |
@@ -401,7 +467,7 @@ For each step of the model, the following inputs are needed. These are provided 
 | 10  | vpdSoil     | average vapor pressure deficit between soil and air | kPa | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
 | 11  | vPress      | average vapor pressure in canopy airspace | kPa | input is in Pa |
 | 12  | wspd        | avg. wind speed                   | m/s         |                |
-| 13  | soilWetness | fractional soil wetness          | unitless (0-1) | $f_\text{WHC}$; Used if `MODEL_WATER=0`; if `MODEL_WATER=1`, soil wetness is simulated|
+| 13  | soilWetness | fractional soil wetness          | unitless (0-1) | not used: use has been deprecated; calculated internally |
 
 Note: An older format for this file included location as the first column. Files with this older format can still be read by sipnet:
 * SIPNET will print a warning indicating that it is ignoring the location column

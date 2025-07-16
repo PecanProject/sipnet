@@ -1,25 +1,69 @@
-! Input file to set up a forward run of SIPNET
+! Input configuration file to set up a forward run of SIPNET. All parameters
+! below may be overridden via command line arguments. All parameters in this
+! file are optional, as they all have default values. Run "sipnet --help"
+! for more information.
 
-! --- INPUTS FOR ALL RUN TYPES ---
-
-RUNTYPE = standard
-! RUNTYPE is obsolete; any value other than 'standard' will cause an error. It is
-! retained (for now) to enable error reporting. This config is optional.
-
-FILENAME = Sites/Niwot/niwot
+!!!!!!!!!!!!!!!!!!!
+!!  I/O OPTIONS  !!
+!!!!!!!!!!!!!!!!!!!
+FILENAME = sipnet
 ! FILENAME.param is the file of parameter values & initial conditions
 ! FILENAME.clim is the file of climate data for each time step
+! FILENAME must be a path relative to the directory in which SIPNET is run
 
 DO_MAIN_OUTPUT = 1
 ! If 1, do the primary output to FILENAME.out (time series of all output
-!  variables)
+! variables)
 ! If 0, suppress this output
-
-PRINT_HEADER = 0
-! If 1, print header on main output file; if 0, don't print header
-!  (default: 0)
 
 DO_SINGLE_OUTPUTS = 0
 ! If 1, do extra outputs: one variable per file (e.g. FILENAME.NEE)
 ! If 0, don't do these extra outputs
-! (These extra outputs are setup in sipnet.c : setupOutputItems)
+
+DUMP_CONFIG = 0
+! If 1, print final config to FILENAME.config
+! If 0, do not print the config
+
+PRINT_HEADER = 1
+! If 1, print header on main output and events.out files
+! If 0, don't print header
+
+QUIET = 0
+! If 1, suppress info and warning messages generated during the SIPNET run
+! If 0, do not suppress messages
+
+!!!!!!!!!!!!!!!!!!!
+!! MODEL OPTIONS !!
+!!!!!!!!!!!!!!!!!!!
+EVENTS = 1
+! Process events found in events.in
+
+GDD = 1
+! Use growing degree days to determine leaf growth
+
+GROWTH_RESP = 0
+! Explicitly model growth resp, rather than including with maint resp
+
+LEAF_WATER = 0
+! Calculate leaf pool and evaporate from that pool
+
+LITTER_POOL = 0
+! Enable litter pool in addition to single soil carbon pool
+
+MICROBES = 0
+! Enable microbe modeling
+
+SNOW = 1
+! Keep track of snowpack, rather than assuming all precipitation is liquid
+
+SOIL_PHENOL = 0
+! Use soil temperature to determine leaf growth
+
+SOIL_QUALITY = 0
+! Use soil quality submodel
+
+WATER_HRESP = 1
+! Whether soil moisture affects heterotrophic respiration
+
+NUM_SOIL_CARBON_POOLS = 1
+! Number of soil carbon pools to explicitly model
