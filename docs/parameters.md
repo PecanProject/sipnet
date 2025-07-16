@@ -353,31 +353,33 @@ with one option per line; comments follow `#`. Flags are specified as 0 for off 
 
 #### Example Configuration File
 
+Note that case is ignored for parameter names, as well as dashes and underscores.
+
 ```
 # Base filename (used for derived filenames)
-file-name = mysite
+FILE_NAME = mysite
 
 # Output options
-do-main-output = 1
-do-single-outputs = 0
-dump-config = 1
-print-header = 1
-quiet = 0
+DO_MAIN_OUTPUT = 1
+DO_SINGLE_OUTPUTS = 0
+DUMP_CONFIG = 1
+PRINT_HEADER = 1
+QUIET = 0
 
 # Model options
-events = 1
-gdd = 1
-growth-resp = 0
-leaf-water = 0
-litter-pool = 0
-microbes = 0
-snow = 1
-soil-phenol = 0
-water-hresp = 1
-num-soil-carbon-pools = 1
+EVENTS = 1
+GDD = 1
+GROWTH_RESP = 0
+LEAF_WATER = 0
+LITTER_POOL = 0
+MICROBES = 0
+SNOW = 1
+SOIL_PHENOL = 0
+WATER_HRESP = 1
+NUM_SOIL_CARBON_POOLS = 1
 ```
 
-When `dump-config = 1` is set, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
+When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
 
 ## Hard-coded Values
 
