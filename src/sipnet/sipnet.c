@@ -87,8 +87,6 @@ struct ClimateVars {
   double vPress; /* average vapor pressure in canopy airspace (kPa)
         NOTE: input is in Pa */
   double wspd;  // avg. wind speed (m/s)
-  double soilWetness;  // [UNUSED PARAM] fractional soil wetness (fraction of
-                       // saturation - between 0 and 1)
 
   double gdd;  // growing degree days from Jan. 1 to now. NOTE: Calculated,
                // *not* read from file
@@ -96,7 +94,8 @@ struct ClimateVars {
   ClimateNode *nextClim;
 };
 
-#define NUM_CLIM_FILE_COLS 13
+#define NUM_CLIM_FILE_COLS 12
+#define NUM_CLIM_FILE_COLS_LEGACY (NUM_CLIM_FILE_COLS + 2)
 
 // model parameters which can change from one run to the next
 // these include initializations of state
@@ -453,10 +452,10 @@ void readClimData(const char *climFile) {
 
   // for format check
   int firstLoc, dummyLoc, numFields;
-  int expectedNumCols = NUM_CLIM_FILE_COLS;
+  int expectedNumCols;
+  int legacyFormat;
   char *firstLine = NULL;
   size_t lineCap = 0;
-  int hasLoc = 0;
   const char *SEPARATORS = " \t\n\r";  // characters that can separate values in
                                        // parameter files
 
@@ -470,23 +469,38 @@ void readClimData(const char *climFile) {
   }
 
   numFields = countFields(firstLine, SEPARATORS);
-  if (numFields == expectedNumCols + 1) {
-    logWarning("ignoring location column in %s (found %d cols)\n", climFile,
-               numFields);
-    ++expectedNumCols;
-    hasLoc = 1;
+  switch (numFields) {
+    case NUM_CLIM_FILE_COLS:
+      // Standard format
+      expectedNumCols = NUM_CLIM_FILE_COLS;
+      legacyFormat = 0;
+      break;
+    case NUM_CLIM_FILE_COLS_LEGACY:
+      expectedNumCols = NUM_CLIM_FILE_COLS_LEGACY;
+      legacyFormat = 1;
+      logWarning("old climate file format detected (found %d cols); ignoring "
+                 "location and soilWetness columns in %s\n",
+                 numFields, climFile);
+      break;
+    default:
+      // Unrecognized format
+      logError("format unrecognized in climate file %s; %d columns found, "
+               "expected %d or %d (legacy format)\n",
+               climFile, numFields, NUM_CLIM_FILE_COLS,
+               NUM_CLIM_FILE_COLS_LEGACY);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
-  if (hasLoc) {
+  if (legacyFormat) {
     status = sscanf(firstLine,  // NOLINT
                     "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                     &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
                     &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
   } else {
     status = sscanf(firstLine,  // NOLINT
-                    "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
+                    "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
                     &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
-                    &vpdSoil, &vPress, &wspd, &soilWetness);
+                    &vpdSoil, &vPress, &wspd);
   }
   free(firstLine);
 
@@ -526,7 +540,6 @@ void readClimData(const char *climFile) {
     if (curr->wspd < TINY) {
       curr->wspd = TINY;  // avoid divide by zero
     }
-    curr->soilWetness = soilWetness;
 
     if (ctx.gdd) {
       if (year != lastYear) {  // HAPPY NEW YEAR!
@@ -542,7 +555,7 @@ void readClimData(const char *climFile) {
 
     lastYear = year;
 
-    if (hasLoc) {
+    if (legacyFormat) {
       status =
           fscanf(in,  // NOLINT
                  "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
@@ -550,9 +563,9 @@ void readClimData(const char *climFile) {
                  &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
     } else {
       status = fscanf(in,  // NOLINT
-                      "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                      &year, &day, &time, &length, &tair, &tsoil, &par, &precip,
-                      &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+                      "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
+                      &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
+                      &vpdSoil, &vPress, &wspd);
     }
     if (status != EOF) {
       if (status != expectedNumCols) {
@@ -561,15 +574,14 @@ void readClimData(const char *climFile) {
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       // Check for older file with multiple locations - that's an error now
-      if (dummyLoc != firstLoc) {
-        printf("Error reading climate file %s: multiple locations not "
-               "supported\n",
-               climFile);
+      if (legacyFormat && (dummyLoc != firstLoc)) {
+        printf("Error reading legacy climate file %s: multiple locations not "
+               "supported (locations found: %d and %d)\n",
+               climFile, firstLoc, dummyLoc);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
 
-      // still reading climate records from the same place: add a node at end
-      // of linked list
+      // add a new climate node at end of linked list
       next = (ClimateNode *)malloc(sizeof(ClimateNode));
       curr->nextClim = next;
       // set this down here rather than at top of loop so head treated the
