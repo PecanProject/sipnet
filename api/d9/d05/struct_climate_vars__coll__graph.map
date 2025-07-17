@@ -1,4 +1,4 @@
 <map id="ClimateVars" name="ClimateVars">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,112,331"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="114,105,124,112,132,125,137,143,139,168,136,199,127,219,122,217,130,198,133,168,132,144,127,127,120,116,111,110"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,99,311"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="100,99,110,104,118,116,123,134,125,158,122,187,115,206,110,204,117,186,120,158,118,135,113,118,107,108,98,104"/>
 </map>

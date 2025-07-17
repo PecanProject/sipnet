@@ -72,7 +72,9 @@ struct \textbf{ Phenology\+Trackers\+Struct}
 \item 
 \#define \textbf{ TINY}~0.\+000001
 \item 
-\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}~13
+\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}~12
+\item 
+\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS\+\_\+\+LEGACY}~(\textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS} + 2)
 \item 
 \#define \textbf{ NUM\+\_\+\+PARAMS}~(sizeof(\textbf{ Params}) / sizeof(double))
 \end{DoxyCompactItemize}
@@ -338,11 +340,21 @@ Definition at line \textbf{ 34} of file \textbf{ sipnet.\+c}.
 \index{sipnet.c@{sipnet.c}!NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}}
 \index{NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}!sipnet.c@{sipnet.c}}
 \doxysubsubsection{NUM\_CLIM\_FILE\_COLS}
-{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS~13}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS~12}
 
 
 
-Definition at line \textbf{ 99} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 97} of file \textbf{ sipnet.\+c}.
+
+\label{sipnet_8c_ac990f86ddae6558c9d39c3755c4d1261} 
+\index{sipnet.c@{sipnet.c}!NUM\_CLIM\_FILE\_COLS\_LEGACY@{NUM\_CLIM\_FILE\_COLS\_LEGACY}}
+\index{NUM\_CLIM\_FILE\_COLS\_LEGACY@{NUM\_CLIM\_FILE\_COLS\_LEGACY}!sipnet.c@{sipnet.c}}
+\doxysubsubsection{NUM\_CLIM\_FILE\_COLS\_LEGACY}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS\+\_\+\+LEGACY~(\textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS} + 2)}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ sipnet.\+c}.
 
 \label{sipnet_8c_a132d28b0774786b46faf261499aff357} 
 \index{sipnet.c@{sipnet.c}!NUM\_PARAMS@{NUM\_PARAMS}}
@@ -352,7 +364,7 @@ Definition at line \textbf{ 99} of file \textbf{ sipnet.\+c}.
 
 
 
-Definition at line \textbf{ 289} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 288} of file \textbf{ sipnet.\+c}.
 
 \label{sipnet_8c_a3bf4402b9e2ae88e4462c3689f5d22b8} 
 \index{sipnet.c@{sipnet.c}!RHO@{RHO}}
@@ -481,7 +493,7 @@ Note\+: SIPNET is not a multi-\/layer model; this function derives a canopy‐av
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 825} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 837} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -507,7 +519,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1321} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1333} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -525,7 +537,7 @@ Referenced by \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 1052} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1064} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -543,7 +555,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 1275} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1287} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -561,7 +573,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 1562} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1574} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -589,7 +601,7 @@ Free allocated memory
 
 Call this when done running model 
 
-Definition at line \textbf{ 2211} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2223} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -615,7 +627,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 2170} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2182} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -633,7 +645,7 @@ Referenced by \textbf{ init\+Model()}.
 
 
 
-Definition at line \textbf{ 1306} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1318} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -651,7 +663,7 @@ Referenced by \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 1706} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1718} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -665,7 +677,7 @@ Referenced by \textbf{ ensure\+Non\+Negative\+Stocks()}.
 
 
 
-Definition at line \textbf{ 1722} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1734} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -691,7 +703,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1167} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1179} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -709,7 +721,7 @@ Referenced by \textbf{ soil\+Water\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 771} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 783} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -727,7 +739,7 @@ Referenced by \textbf{ cleanup\+Model()}.
 
 
 
-Definition at line \textbf{ 783} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 795} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -745,7 +757,7 @@ Referenced by \textbf{ cleanup\+Model()}.
 
 
 
-Definition at line \textbf{ 2179} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2191} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -763,7 +775,7 @@ Referenced by \textbf{ cleanup\+Model()}.
 
 
 
-Definition at line \textbf{ 1254} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1266} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -790,7 +802,7 @@ Read in event data from a file with the following specification\+:
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2200} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2212} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -829,7 +841,7 @@ Read in initial parameter values and climate data. Also set up pointers to diffe
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2187} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2199} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -855,7 +867,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 2009} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2021} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -881,7 +893,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1669} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1681} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -899,7 +911,7 @@ Referenced by \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 1008} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1020} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -925,7 +937,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1414} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1426} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -943,7 +955,7 @@ Referenced by \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 1374} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1386} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -961,7 +973,7 @@ Referenced by \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 940} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 952} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -986,7 +998,7 @@ Print header row to output file
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 708} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 720} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1015,7 +1027,7 @@ Print current state values to output file
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 736} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 748} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1033,7 +1045,7 @@ Referenced by \textbf{ run\+Model\+Output()}.
 
 
 
-Definition at line \textbf{ 998} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1010} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1051,7 +1063,7 @@ Referenced by \textbf{ init\+Phenology\+Trackers()}, and \textbf{ leaf\+Fluxes()
 
 
 
-Definition at line \textbf{ 983} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 995} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1069,7 +1081,7 @@ Referenced by \textbf{ init\+Phenology\+Trackers()}, and \textbf{ leaf\+Fluxes()
 
 
 
-Definition at line \textbf{ 904} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 916} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1101,7 +1113,7 @@ For a given year and day (as determined by the global {\ttfamily climate} pointe
 
 For each event, modify state variables according to the model for that event, and write a row to events.\+out listing the modified variables and the delta applied. 
 
-Definition at line \textbf{ 1823} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1835} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1138,11 +1150,11 @@ NOTE\+: there should be NO blank lines in the file.
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 441} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 440} of file \textbf{ sipnet.\+c}.
 
 
 
-References \textbf{ count\+Fields()}, \textbf{ ctx}, \textbf{ Climate\+Vars\+::day}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ first\+Climate}, \textbf{ Context\+::gdd}, \textbf{ Climate\+Vars\+::gdd}, \textbf{ Climate\+Vars\+::length}, \textbf{ log\+Warning}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}, \textbf{ open\+File()}, \textbf{ Climate\+Vars\+::par}, \textbf{ Climate\+Vars\+::precip}, \textbf{ SEPARATORS}, \textbf{ Climate\+Vars\+::soil\+Wetness}, \textbf{ Climate\+Vars\+::tair}, \textbf{ Climate\+Vars\+::time}, \textbf{ TINY}, \textbf{ Climate\+Vars\+::tsoil}, \textbf{ Climate\+Vars\+::vpd}, \textbf{ Climate\+Vars\+::vpd\+Soil}, \textbf{ Climate\+Vars\+::v\+Press}, \textbf{ Climate\+Vars\+::wspd}, and \textbf{ Climate\+Vars\+::year}.
+References \textbf{ count\+Fields()}, \textbf{ ctx}, \textbf{ Climate\+Vars\+::day}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ first\+Climate}, \textbf{ Context\+::gdd}, \textbf{ Climate\+Vars\+::gdd}, \textbf{ Climate\+Vars\+::length}, \textbf{ log\+Error}, \textbf{ log\+Warning}, \textbf{ Climate\+Vars\+::next\+Clim}, \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}, \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS\+\_\+\+LEGACY}, \textbf{ open\+File()}, \textbf{ Climate\+Vars\+::par}, \textbf{ Climate\+Vars\+::precip}, \textbf{ SEPARATORS}, \textbf{ Climate\+Vars\+::tair}, \textbf{ Climate\+Vars\+::time}, \textbf{ TINY}, \textbf{ Climate\+Vars\+::tsoil}, \textbf{ Climate\+Vars\+::vpd}, \textbf{ Climate\+Vars\+::vpd\+Soil}, \textbf{ Climate\+Vars\+::v\+Press}, \textbf{ Climate\+Vars\+::wspd}, and \textbf{ Climate\+Vars\+::year}.
 
 
 
@@ -1175,7 +1187,7 @@ Note that the last argument in the "{}initialize\+One\+Model\+Param"{} function 
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 596} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 608} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1212,7 +1224,7 @@ Run the model using parameter values in model\+Params
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2139} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2151} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1238,7 +1250,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 2136} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2148} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1256,7 +1268,7 @@ Referenced by \textbf{ run\+Model\+Output()}.
 
 
 
-Definition at line \textbf{ 2039} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2051} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1291,7 +1303,7 @@ Each variable added will be output in a separate file (\textquotesingle{}$\ast$.
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 2163} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 2175} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1317,7 +1329,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1092} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1104} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1335,7 +1347,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 1548} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1560} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1353,7 +1365,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 1419} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1431} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1379,7 +1391,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1241} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1253} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1405,7 +1417,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1942} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1954} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1431,7 +1443,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1752} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1764} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1457,7 +1469,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1261} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1273} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1475,7 +1487,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 1283} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1295} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1501,7 +1513,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 1543} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1555} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1522,7 +1534,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 422} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 421} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1536,7 +1548,7 @@ Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Maintenance\+Respirat
 
 
 
-Definition at line \textbf{ 412} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 411} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1550,7 +1562,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calculate\+Fl
 
 
 
-Definition at line \textbf{ 426} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 425} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1564,7 +1576,7 @@ Referenced by \textbf{ create\+Event\+Node()}, \textbf{ print\+Event()}, \textbf
 
 
 
-Definition at line \textbf{ 427} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 426} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1578,7 +1590,7 @@ Referenced by \textbf{ cleanup\+Model()}, \textbf{ init\+Events()}, and \textbf{
 
 
 
-Definition at line \textbf{ 425} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 424} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1592,7 +1604,7 @@ Referenced by \textbf{ free\+Event\+List()}, \textbf{ init\+Context()}, \textbf{
 
 
 
-Definition at line \textbf{ 406} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 405} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1606,7 +1618,7 @@ Referenced by \textbf{ free\+Climate\+List()}, \textbf{ read\+Clim\+Data()}, and
 
 
 
-Definition at line \textbf{ 423} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 422} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1620,7 +1632,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calculate\+Fl
 
 
 
-Definition at line \textbf{ 419} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 418} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1634,7 +1646,7 @@ Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ cleanup\+Model()}, \textbf{
 
 
 
-Definition at line \textbf{ 417} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 416} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1648,7 +1660,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ cleanup\+Model()}, \textbf
 
 
 
-Definition at line \textbf{ 415} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 414} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1662,7 +1674,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ cleanup\+Model()}, \textbf
 
 
 
-Definition at line \textbf{ 411} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 410} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1676,7 +1688,7 @@ Referenced by \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Maintenance\+Respirat
 
 
 
-Definition at line \textbf{ 414} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 413} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -1690,7 +1702,7 @@ Referenced by \textbf{ init\+Phenology\+Trackers()}, and \textbf{ leaf\+Fluxes()
 
 
 
-Definition at line \textbf{ 413} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 412} of file \textbf{ sipnet.\+c}.
 
 
 
