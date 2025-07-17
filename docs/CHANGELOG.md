@@ -46,7 +46,7 @@ sections to include in release notes:
 - Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
 - Deprecated: "LOCATION" is obsolete. Will be ignored with warning. (#92)
 - Deprecated: All columns in *.param except for name and value. Will be ignored with warning. (#92)
-- Deprecated: location column in input climate files. Will be ignored with warning. (#92)
+- Deprecated: location and soilWetness columns in input climate files. If both are present, will be ignored with warning. (#92, #127)
 
 ### Removed
 
