@@ -88,13 +88,13 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 4  | $C_{\text{soil},0}$        | soilInit        | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
 | 5  | $W_{\text{litter},0}$      | litterWFracInit |                                                                          | unitless                                             | fraction of litterWHC                                                              |
 | 6  | $W_{\text{soil},0}$        | soilWFracInit   |                                                                          | unitless                                             | fraction of soilWHC                                                                |
-|    | $N_{\text{org, litter},0}$         |                 | Initial litter organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
-|    | $N_{\text{org, soil},0}$         |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
-|    | $N_{\text{min, soil},0}$         |                 | Initial soil mineral nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
+|    | $N_{\text{org, litter},0}$ |                 | Initial litter organic nitrogen content                                  | g N m$^{-2}$                                         |                                                                                    |
+|    | $N_{\text{org, soil},0}$   |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
+|    | $N_{\text{min, soil},0}$   |                 | Initial soil mineral nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
 |    | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
 |    | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
-|    | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                      |                                                                                    |
-|    | $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                  |                                                                                    |
+|    | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                                      |                                                                                    |
+|    | $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                                      |                                                                                    |
 
 <!--not used in CCMMF
 
@@ -453,24 +453,24 @@ aMaxFrac 0.85
 
 For each step of the model, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns:
 
-| col | parameter | description | units | notes |
-|-----| ----------- | --------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 1   | year        | year of start of this timestep  |               | integer, e.g. 2010|
-| 2   | day         | day of start of this timestep      | Day of year | 1 = Jan 1                             |
-| 3   | time        | time of start of this timestep     | hours after midnight | e.g. noon = 12.0, midnight = 0.0, can be a fraction |
-| 4   | length      | length of this timestep          | days          | variable-length timesteps allowed, typically not used |
-| 5   | tair        | avg. air temp for this time step| degrees Celsius |     |
-| 6   | tsoil       | average soil temperature for this time step  | degrees Celsius| can be estimated from Tair  |
-| 7   | par         | average photosynthetically active radiation (PAR) for this time step  | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$  | input is in Einsteins \* m^-2 ground area, summed over entire time step |
-| 8   | precip      | total precip. for this time step| cm            | input is in mm; water equivilant - either rain or snow   |
-| 9   | vpd         | average vapor pressure deficit   | kPa          | input is in Pa, can be calculated from air temperature and relative humidity.|
-| 10  | vpdSoil     | average vapor pressure deficit between soil and air | kPa | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
-| 11  | vPress      | average vapor pressure in canopy airspace | kPa | input is in Pa |
-| 12  | wspd        | avg. wind speed                   | m/s         |                |
-| 13  | soilWetness | fractional soil wetness          | unitless (0-1) | not used: use has been deprecated; calculated internally |
+| col | parameter  | description                                                          | units                                                                          | notes                                                                                                            |
+|-----|------------|----------------------------------------------------------------------|--------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| 1   | year       | year of start of this timestep                                       |                                                                                | integer, e.g. 2010                                                                                               |
+| 2   | day        | day of start of this timestep                                        | Day of year                                                                    | 1 = Jan 1                                                                                                        |
+| 3   | time       | time of start of this timestep                                       | hours after midnight                                                           | e.g. noon = 12.0, midnight = 0.0, can be a fraction                                                              |
+| 4   | length     | length of this timestep                                              | days                                                                           | variable-length timesteps allowed, typically not used                                                            |
+| 5   | tair       | avg. air temp for this time step                                     | degrees Celsius                                                                |                                                                                                                  |
+| 6   | tsoil      | average soil temperature for this time step                          | degrees Celsius                                                                | can be estimated from Tair                                                                                       |
+| 7   | par        | average photosynthetically active radiation (PAR) for this time step | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$ | input is in Einsteins \* m^-2 ground area, summed over entire time step                                          |
+| 8   | precip     | total precip. for this time step                                     | cm                                                                             | input is in mm; water equivilant - either rain or snow                                                           |
+| 9   | vpd        | average vapor pressure deficit                                       | kPa                                                                            | input is in Pa, can be calculated from air temperature and relative humidity.                                    |
+| 10  | vpdSoil    | average vapor pressure deficit between soil and air                  | kPa                                                                            | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair   |
+| 11  | vPress     | average vapor pressure in canopy airspace                            | kPa                                                                            | input is in Pa                                                                                                   |
+| 12  | wspd       | avg. wind speed                                                      | m/s                                                                            |                                                                                                                  |
 
-Note: An older format for this file included location as the first column. Files with this older format can still be read by sipnet:
-* SIPNET will print a warning indicating that it is ignoring the location column
+Note: An older format for this file included location as the first column and soilWetness as the last column. Files 
+with this older format can still be read by sipnet:
+* SIPNET will print a warning indicating that it is ignoring the obsolete columns
 * If there is more than one location specified in the file, SIPNET will error and halt
 
 #### Example `sipnet.clim` file:
@@ -478,25 +478,25 @@ Note: An older format for this file included location as the first column. Files
 Column names are not used, but are:
 
 ```
-loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd   soilWetness
+loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
 ```
 
 **Half-hour time step**
 
 ```
-0	1998 305  0.00    -1800   1.9000   1.2719   0.0000   0.0000 109.5364  77.5454 726.6196   1.6300   0.0000
-0	1998 305  0.50    -1800   1.9000   1.1832   0.0000   0.0000 109.5364  73.1254 726.6196   1.6300   0.0000
-0	1998 305  1.00    -1800   2.0300   1.1171   0.0000   0.0000 110.4243  63.9567 732.5092   0.6800   0.0000
-0	1998 305  1.50    -1800   2.0300   1.0439   0.0000   0.0000 110.4243  60.3450 732.5092   0.6800   0.0000
+0	1998 305  0.00    -1800   1.9000   1.2719   0.0000   0.0000 109.5364  77.5454 726.6196   1.6300
+0	1998 305  0.50    -1800   1.9000   1.1832   0.0000   0.0000 109.5364  73.1254 726.6196   1.6300
+0	1998 305  1.00    -1800   2.0300   1.1171   0.0000   0.0000 110.4243  63.9567 732.5092   0.6800
+0	1998 305  1.50    -1800   2.0300   1.0439   0.0000   0.0000 110.4243  60.3450 732.5092   0.6800
 ```
 
 **Variable time step**
 
 ```
-0	  1998 305  0.00  0.292 1.5  0.8   0.0000 0.0000 105.8 70.1    711.6  0.9200 0.0000
-0	  1998 305  7.00  0.417 3.6  1.8   5.6016 0.0000 125.7 23.5    809.4  1.1270 0.0000
-0	  1998 305 17.00  0.583 1.9  1.3   0.0000 0.0000 108.1 75.9    732.7  1.1350 0.0000
-0	  1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690 0.0000
+0	  1998 305  0.00  0.292 1.5  0.8   0.0000 0.0000 105.8 70.1    711.6  0.9200
+0	  1998 305  7.00  0.417 3.6  1.8   5.6016 0.0000 125.7 23.5    809.4  1.1270
+0	  1998 305 17.00  0.583 1.9  1.3   0.0000 0.0000 108.1 75.9    732.7  1.1350
+0	  1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690
 ```
 
 ### Agronomic Events
