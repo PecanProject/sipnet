@@ -1921,10 +1921,20 @@ void processEvents(void) {
         // TBD
         printf("Tillage events not yet implemented\n");
         break;
-      case FERTILIZATION:
-        // TBD
-        printf("Fertilization events not yet implemented\n");
-        break;
+      case FERTILIZATION: {
+        const FertilizationParams *fertParams = event->eventParams;
+        // const double orgN = fertParams->orgN;
+        const double orgC = fertParams->orgC;
+        // const double minN = fertParams->minN;
+
+        // Pool updates:
+        envi.litter += orgC;
+
+        // FUTURE: allocate to N pools
+
+        // This will (likely) be 3 params eventually
+        writeEventOut(eventOutFile, event, 1, "envi.litter", orgC);
+      } break;
       default:
         printf("Unknown event type (%d) in processEvents()\n", event->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
