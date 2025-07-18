@@ -366,7 +366,6 @@ MICROBES = 0
 SNOW = 1
 SOIL_PHENOL = 0
 WATER_HRESP = 1
-NUM_SOIL_CARBON_POOLS = 1
 ```
 
 When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
