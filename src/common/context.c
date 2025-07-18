@@ -15,7 +15,6 @@
 #define ARG_ON 1
 #define FLAG_YES 1
 #define FLAG_NO 0
-#define DEFAULT_NUM_POOLS 1
 
 struct Context ctx;
 
@@ -60,22 +59,6 @@ void initContext(void) {
   // to siteName or such, as 'fileName' implies an actual file, though that
   // would be a breaking change.
   CREATE_CHAR_CONTEXT(fileName, "FILE_NAME", DEFAULT_FILE_NAME);
-
-  // Number of soil carbon pools being used in this run, should in [1,3] (I
-  // don't think greater than three has been tested). Note that 1 has some
-  // implications in the code, see soilMultiPool. Also note that this is NOT
-  // a flag.
-  CREATE_INT_CONTEXT(numSoilCarbonPools, "NUM_SOIL_CARBON_POOLS",
-                     DEFAULT_NUM_POOLS, FLAG_NO);
-
-  // Whether this is a soil carbon multipool run; literally defined as
-  // (num_soil_carbon_pools > 1), but it's a nice convenience. Some model
-  // options are only possible when this is true. Calculated quantity, not a
-  // CLI arg. This is technically a flag, but we aren't looking to treat it as
-  // such (it's not a command-line option, so we don't want the mechanics
-  // associated with one).
-  CREATE_INT_CONTEXT(soilMultiPool, "SOIL_MULTI_POOL", (DEFAULT_NUM_POOLS > 1),
-                     FLAG_NO);
 }
 
 // With all the different permutations of spellings for config params, lets
@@ -200,24 +183,9 @@ void validateFilename(void) {
 void validateContext(void) {
   int hasError = 0;
 
-  if ((ctx.numSoilCarbonPools < 1) ||
-      (ctx.numSoilCarbonPools > MAX_SOIL_CARBON_POOLS)) {
-    logError("num-soil-carbon-pools must be between 1 and 3");
-    hasError = 1;
-  }
   if (ctx.soilPhenol && ctx.gdd) {
     logError("soil-phenol and gdd may not both be turned on");
     hasError = 1;
-  }
-  if (ctx.soilMultiPool) {
-    if (ctx.litterPool) {
-      logError("litter-pool requires num-soil-carbon-pools to be 1");
-      hasError = 1;
-    }
-    if (ctx.microbes) {
-      logError("microbes requires num-soil-carbon-pools to be 1");
-      hasError = 1;
-    }
   }
 
   if (hasError) {
