@@ -81,7 +81,9 @@ for DIR in "${DIRECTORIES[@]}"; do
     if git diff --exit-code -I "Final config for SIPNET run" sipnet.config > /dev/null; then
         echo "[$DIR] ✅ No differences found in config output"
         ((config_pass_count++))
-        #rm sipnet.config
+        # The file will appear different to git due to timestamp, so revert
+        # it if we've passed
+        git restore sipnet.config
     else
         echo "[$DIR] ❌ Differences found in config output"
         ((config_fail_count++))
