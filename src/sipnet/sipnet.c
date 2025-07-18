@@ -278,11 +278,6 @@ typedef struct Parameters {
   double microbeQ10;  // Q10 of coarse roots
   double microbePulseEff;  // fraction of exudates that microbes immediately
                            // use.
-  // Total parameters=7+9+8+5+14+15+4+5+1+5+6+3=81
-
-  // double soilBreakdownCoeff[NUMBER_SOIL_CARBON_POOLS];  // Rate coefficients
-  // if we do not have a multipool quality model
-
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -375,7 +370,6 @@ typedef struct TrackerVars {  // variables to track various things
   double soilWetnessFrac; /* mean fractional soil wetness (soilWater/soilWHC)
            over this time step (linear mean: mean of wetness at start of time
            step and wetness at end of time step) */
-  double totSoilC;  // total soil carbon across all the pools
 
   double rRoot;  // g C m-2 of root respiration
   double rSoil;  // Soil respiration (microbes+root)
@@ -1554,12 +1548,10 @@ void initTrackers(void) {
   trackers.totNee = 0.0;
   trackers.evapotranspiration = 0.0;
   trackers.soilWetnessFrac = envi.soilWater / params.soilWHC;
-  trackers.totSoilC = 0.0;
   trackers.rSoil = 0.0;
 
   trackers.rRoot = 0.0;
 
-  trackers.totSoilC = params.soilInit;
   trackers.rAboveground = 0.0;
   trackers.fpar = 0.0;
 
@@ -1662,11 +1654,6 @@ void updateTrackers(double oldSoilWater) {
 
   trackers.soilWetnessFrac =
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
-
-  // Is this really the correct thing to do?
-  trackers.totSoilC = 0;  // Set this to 0, and then we add to it
-
-  trackers.totSoilC += envi.soil;
 
   trackers.fpar = getMeanTrackerMean(meanFPAR);
 
@@ -1932,13 +1919,10 @@ void setupModel(void) {
 
   envi.plantWoodC =
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
-
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
+
   envi.litter = params.litterInit;
-
   envi.soil = params.soilInit;
-
-  trackers.totSoilC = params.soilInit;
 
   // change from per hour to per day rate
   params.maxIngestionRate = params.maxIngestionRate * 24;

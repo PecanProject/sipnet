@@ -317,19 +317,9 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `snow`                  | on      | Keep track of snowpack, rather than assuming all precipitation is liquid.|
 | `soil-phenol`           | off     | Use soil temperature to determine leaf growth.                           |
 | `water-hresp`           | on      | Whether soil moisture affects heterotrophic respiration.                 |
-| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
-
-### Other Model Options
-
-| Option                  | Default | Description                                                              |
-|-------------------------|---------|--------------------------------------------------------------------------|
-| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
 
 Note the following restrictions on these options:
- - `num-soil-carbon-pools` must be between 1 and 3
  - `soil-phenol` and `gdd` may not both be turned on
- - `litter-pool` requires `num-soil-carbon-pools` to be 1
- - `microbes` requires `num-soil-carbon-pools` to be 1
 
 ### Command Line Arguments
 
@@ -385,7 +375,6 @@ When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after appl
 
 | Parameter                   | Value                     | Description                                                                                                     |
 |-----------------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------|
-| `MAX_SOIL_CARBON_POOLS`     | 3                         | Maximum number of soil carbon pools.                                                                            |
 | `C_WEIGHT`                  | 12.0                      | molecular weight of carbon                                                                                      |
 | `MEAN_NPP_DAYS`             | 5                         | over how many days do we keep the running mean                                                                  |
 | `MEAN_NPP_MAX_ENTRIES`      | `MEAN_NPP_DAYS`*50      | assume that the most pts we can have is two per hour                                                            |

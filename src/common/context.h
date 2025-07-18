@@ -9,9 +9,6 @@
 // For convenience
 #define FILENAME_MAXLEN CONTEXT_CHAR_MAXLEN
 
-// 3? Do we need an upper bound?
-#define MAX_SOIL_CARBON_POOLS 3
-
 #include <stdio.h>
 
 #include "common/uthash.h"
