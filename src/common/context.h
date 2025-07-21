@@ -9,9 +9,6 @@
 // For convenience
 #define FILENAME_MAXLEN CONTEXT_CHAR_MAXLEN
 
-// 3? Do we need an upper bound?
-#define MAX_SOIL_CARBON_POOLS 3
-
 #include <stdio.h>
 
 #include "common/uthash.h"
@@ -51,7 +48,6 @@ struct Context {
   int microbes;
   int snow;
   int soilPhenol;
-  int soilQuality;
   int waterHResp;
 
   // * I/O
@@ -71,10 +67,6 @@ struct Context {
   // Other
   // File prefix for climate and param files
   char fileName[CONTEXT_CHAR_MAXLEN];
-  // Number of soil carbon pools
-  int numSoilCarbonPools;
-  // Whether we are in a multi-pool setup (calculated)
-  int soilMultiPool;
 
   // Temp space for handling command line flag args; we do not write directly
   // the params since we want to do a precedence check first. If the new source

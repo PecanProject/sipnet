@@ -169,9 +169,6 @@ int main(int argc, char *argv[]) {
   } else {
     out = NULL;
   }
-  // Don't forget soilMultiPool
-  updateIntContext("soilMultiPool", (ctx.numSoilCarbonPools > 1),
-                   CTX_CALCULATED);
 
   // Lastly - do after all other config processing
   if (ctx.dumpConfig) {

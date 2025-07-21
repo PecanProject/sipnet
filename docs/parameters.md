@@ -261,8 +261,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 |    |  Symbol           | Parameter Name         | Definition                                         | Units                 | notes                         |
 | -- | ----------------- |  --------------------- | -------------------------------------------------- | --------------------- | ----------------------------- |
-| 56 |                   | qualityLeaf            | value for leaf litter quality                      |                       |                               |
-| 57 |                   | qualityWood            | value for wood litter quality                      |                       |                               |
 | 58 |                   | efficiency             | conversion efficiency of ingested carbon           |                       | Microbe & Stoichiometry model |
 | 59 |                   | maxIngestionRate       | maximum ingestion rate of the microbe              | hr-1                  | Microbe & Stoichiometry model |
 | 60 |                   | halfSatIngestion       | half saturation ingestion rate of microbe          | mg C g-1 soil         | Microbe & Stoichiometry model |
@@ -318,22 +316,10 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `microbes`              | off     | Enable microbe modeling.                                                 |
 | `snow`                  | on      | Keep track of snowpack, rather than assuming all precipitation is liquid.|
 | `soil-phenol`           | off     | Use soil temperature to determine leaf growth.                           |
-| `soil-quality`          | off     | Use soil quality submodel.                                               |
 | `water-hresp`           | on      | Whether soil moisture affects heterotrophic respiration.                 |
-| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
-
-### Other Model Options
-
-| Option                  | Default | Description                                                              |
-|-------------------------|---------|--------------------------------------------------------------------------|
-| `num-carbon-soil-pools` | 1       | Number of carbon soil pools.                                             |
 
 Note the following restrictions on these options:
- - `num-soil-carbon-pools` must be between 1 and 3
  - `soil-phenol` and `gdd` may not both be turned on
- - `litter-pool` requires `num-soil-carbon-pools` to be 1
- - `microbes` requires `num-soil-carbon-pools` to be 1
- - `soil-quality` requires `num-soil-carbon-pools` to be greater than 1
 
 ### Command Line Arguments
 
@@ -357,38 +343,37 @@ with one option per line; comments follow `#`. Flags are specified as 0 for off 
 
 #### Example Configuration File
 
+Note that case is ignored for parameter names, as well as dashes and underscores.
+
 ```
 # Base filename (used for derived filenames)
-file-name = mysite
+FILE_NAME = mysite
 
 # Output options
-do-main-output = 1
-do-single-outputs = 0
-dump-config = 1
-print-header = 1
-quiet = 0
+DO_MAIN_OUTPUT = 1
+DO_SINGLE_OUTPUTS = 0
+DUMP_CONFIG = 1
+PRINT_HEADER = 1
+QUIET = 0
 
 # Model options
-events = 1
-gdd = 1
-growth-resp = 0
-leaf-water = 0
-litter-pool = 0
-microbes = 0
-snow = 1
-soil-phenol = 0
-soil-quality = 0
-water-hresp = 1
-num-soil-carbon-pools = 1
+EVENTS = 1
+GDD = 1
+GROWTH_RESP = 0
+LEAF_WATER = 0
+LITTER_POOL = 0
+MICROBES = 0
+SNOW = 1
+SOIL_PHENOL = 0
+WATER_HRESP = 1
 ```
 
-When `dump-config = 1` is set, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
+When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
 
 ## Hard-coded Values
 
 | Parameter                   | Value                     | Description                                                                                                     |
 |-----------------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------|
-| `MAX_SOIL_CARBON_POOLS`     | 3                         | Maximum number of soil carbon pools.                                                                            |
 | `C_WEIGHT`                  | 12.0                      | molecular weight of carbon                                                                                      |
 | `MEAN_NPP_DAYS`             | 5                         | over how many days do we keep the running mean                                                                  |
 | `MEAN_NPP_MAX_ENTRIES`      | `MEAN_NPP_DAYS`*50      | assume that the most pts we can have is two per hour                                                            |
