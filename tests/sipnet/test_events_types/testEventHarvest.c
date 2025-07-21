@@ -8,30 +8,40 @@
 int checkOutput(double litter, double leafC, double woodC, double fineC,
                 double coarseC) {
   int status = 0;
-  if (!compareDoubles(litter, envi.litter)) {
-    printf("Litter C is %f, expected %f\n", envi.litter, litter);
+  double curLitter = 0;
+  if (ctx.litterPool) {
+    logTest("Checking litter pool\n");
+    curLitter = envi.litter;
+  } else {
+    logTest("Checking soil pool\n");
+    curLitter = envi.soil;
+    litter += 0.5; // We bumped init soil C to distinguish
+  }
+  if (!compareDoubles(litter, curLitter)) {
+    logTest("Litter/soil C is %f, expected %f\n", curLitter, litter);
     status = 1;
   }
   if (!compareDoubles(leafC, envi.plantLeafC)) {
-    printf("Plant leaf C is %f, expected %f\n", envi.plantLeafC, leafC);
+    logTest("Plant leaf C is %f, expected %f\n", envi.plantLeafC, leafC);
     status = 1;
   }
   if (!compareDoubles(woodC, envi.plantWoodC)) {
-    printf("Plant wood C is %f, expected %f\n", envi.plantWoodC, woodC);
+    logTest("Plant wood C is %f, expected %f\n", envi.plantWoodC, woodC);
     status = 1;
   }
   if (!compareDoubles(fineC, envi.fineRootC)) {
-    printf("Fine root C is %f, expected %f\n", envi.fineRootC, fineC);
+    logTest("Fine root C is %f, expected %f\n", envi.fineRootC, fineC);
     status = 1;
   }
   if (!compareDoubles(coarseC, envi.coarseRootC)) {
-    printf("Coarse root C is %f, expected %f\n", envi.coarseRootC, coarseC);
+    logTest("Coarse root C is %f, expected %f\n", envi.coarseRootC, coarseC);
     status = 1;
   }
   return status;
 }
 
 void initEnv(void) {
+  envi.soil = 1.5;
   envi.litter = 1;
   envi.plantLeafC = 2;
   envi.plantWoodC = 3;
@@ -43,12 +53,15 @@ int run(void) {
   int status = 0;
   double expLitter, expLeafC, expWoodC, expFineC, expCoarseC;
 
+  // We will need to switch back and forth between litter pool and soil manually
   prepTypesTest();
 
   // init values
   initEnv();
 
   //// ONE PLANTING EVENT
+  updateIntContext("litterPool", 0, CTX_TEST);
+  logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   initEvents("events_one_harvest.in", 0);
   setupEvents();
   processEvents();
@@ -62,6 +75,8 @@ int run(void) {
   status |= checkOutput(expLitter, expLeafC, expWoodC, expFineC, expCoarseC);
 
   //// TWO HARVEST EVENTS
+  updateIntContext("litterPool", 1, CTX_TEST);
+  logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   initEnv();
   initEvents("events_two_harvest.in", 1);
   setupEvents();
@@ -84,12 +99,12 @@ int run(void) {
 }
 
 int main(void) {
-  printf("Starting run()\n");
+  logTest("Starting run()\n");
   int status = run();
   if (status) {
-    printf("FAILED testEventPlanting with status %d\n", status);
+    logTest("FAILED testEventHarvest with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testEventPlanting\n");
+  logTest("PASSED testEventHarvest\n");
 }
