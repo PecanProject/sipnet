@@ -2,6 +2,7 @@
 
 #include "utils/tUtils.h"
 #include "utils/exitHandler.c"
+#include "common/logging.h"
 #include "sipnet/sipnet.c"
 
 void writeParams(const char *fname);
@@ -68,7 +69,7 @@ int run() {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with spatial_val.param\n");
+    logTest("FAIL with spatial_val.param\n");
   }
 
   return status;
@@ -79,11 +80,11 @@ int main() {
 
   status = run();
   if (status) {
-    printf("FAILED testParamInput with status %d\n", status);
+    logTest("FAILED testParamInput with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testParamInput\n");
+  logTest("PASSED testParamInput\n");
 }
 
 void writeParams(const char *fname) {

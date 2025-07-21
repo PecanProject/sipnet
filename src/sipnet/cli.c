@@ -27,7 +27,6 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(microbes),
     DECLARE_FLAG(snow),
     DECLARE_FLAG(soil-phenol),
-    DECLARE_FLAG(soil-quality),
     DECLARE_FLAG(water-hresp),
 
     DECLARE_FLAG(do-main-output),
@@ -42,7 +41,6 @@ static struct option long_options[] = {  // NOLINT
     {"input-file", required_argument, 0, 'i'},
     {"file-name", no_argument, 0, 'f'},
     {"help", no_argument, 0, 'h'},
-    {"num-carbon-soil-pools", required_argument, 0, 'n'},
     {"version", no_argument, 0, 'v'},
     {0, 0, 0, 0}};
 
@@ -57,7 +55,7 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
     DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
-    DECLARE_ARG_FOR_MAP(soilQuality), DECLARE_ARG_FOR_MAP(waterHResp),
+    DECLARE_ARG_FOR_MAP(waterHResp),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -75,7 +73,6 @@ void usage(char *progName) {
   printf("Options: (defaults are shown in parens at end)\n");
   printf("  -i, --input-file <input-file>      Name of input config file ('sipnet.in')\n");
   printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
-  printf("  -n, --num-carbon-soil-pools <num>  Number of carbon soil pools (1)\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
   printf("  --events             Enable event handling (1)\n");
@@ -86,7 +83,6 @@ void usage(char *progName) {
   printf("  --microbes           Enable microbe modeling (0)\n");
   printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
   printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
-  printf("  --soil-quality       Use soil quality submodel (0)\n");
   printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
@@ -104,12 +100,7 @@ void usage(char *progName) {
   printf("line override settings from that file.\n");
   printf("\n");
   printf("Note the following restrictions on these options:\n");
-  printf(" --num-soil-carbon-pools must be between 1 and 3\n");
   printf(" --soil-phenol and --gdd may not both be turned on\n");
-  printf(" --litter-pool requires --num-soil-carbon-pools to be 1\n");
-  printf(" --microbes requires --num-soil-carbon-pools to be 1\n");
-  printf(" --soil-quality requires --num-soil-carbon-pools to be greater than 1\n");
-  printf("\n");
   // clang-format on
 }
 
@@ -122,7 +113,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
   int longIndex = 0;
   int shortIndex;
   // get command-line arguments:
-  while ((shortIndex = getopt_long(argc, argv, "hi:n:v", long_options,
+  while ((shortIndex = getopt_long(argc, argv, "hi:v", long_options,
                                    &longIndex)) != -1) {
 
     switch (shortIndex) {
@@ -153,19 +144,6 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         }
         updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);
         break;
-      case 'n': {
-        char *errc;
-        int intVal = strtol(optarg, &errc, 0);  // NOLINT
-        if (strlen(errc) > 0) {  // invalid character(s) in input string
-          printf("Unknown value for num_soil_carbon_pools: %s\n", optarg);
-          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
-        }
-        if (intVal < 1 || intVal > MAX_SOIL_CARBON_POOLS) {
-          printf("num_soil_carbon_pools must be 1, 2, or 3\n");
-          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
-        }
-        updateIntContext("numSoilCarbonPools", intVal, CTX_COMMAND_LINE);
-      } break;
       case 'v':
         version();
         exit(EXIT_CODE_SUCCESS);
