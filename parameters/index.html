@@ -536,15 +536,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#other-model-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Other Model Options
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#command-line-arguments" class="md-nav__link">
     <span class="md-ellipsis">
       Command Line Arguments
@@ -1255,15 +1246,6 @@
   <a href="#model-flags" class="md-nav__link">
     <span class="md-ellipsis">
       Model Flags
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#other-model-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Other Model Options
     </span>
   </a>
   
@@ -2486,8 +2468,6 @@
 
 |    |  Symbol           | Parameter Name         | Definition                                         | Units                 | notes                         |
 | -- | ----------------- |  --------------------- | -------------------------------------------------- | --------------------- | ----------------------------- |
-| 56 |                   | qualityLeaf            | value for leaf litter quality                      |                       |                               |
-| 57 |                   | qualityWood            | value for wood litter quality                      |                       |                               |
 | 58 |                   | efficiency             | conversion efficiency of ingested carbon           |                       | Microbe & Stoichiometry model |
 | 59 |                   | maxIngestionRate       | maximum ingestion rate of the microbe              | hr-1                  | Microbe & Stoichiometry model |
 | 60 |                   | halfSatIngestion       | half saturation ingestion rate of microbe          | mg C g-1 soil         | Microbe & Stoichiometry model |
@@ -2620,45 +2600,14 @@
 <td>Use soil temperature to determine leaf growth.</td>
 </tr>
 <tr>
-<td><code>soil-quality</code></td>
-<td>off</td>
-<td>Use soil quality submodel.</td>
-</tr>
-<tr>
 <td><code>water-hresp</code></td>
 <td>on</td>
 <td>Whether soil moisture affects heterotrophic respiration.</td>
 </tr>
-<tr>
-<td><code>num-carbon-soil-pools</code></td>
-<td>1</td>
-<td>Number of carbon soil pools.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="other-model-options">Other Model Options<a class="headerlink" href="#other-model-options" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>num-carbon-soil-pools</code></td>
-<td>1</td>
-<td>Number of carbon soil pools.</td>
-</tr>
 </tbody>
 </table>
 <p>Note the following restrictions on these options:
- - <code>num-soil-carbon-pools</code> must be between 1 and 3
- - <code>soil-phenol</code> and <code>gdd</code> may not both be turned on
- - <code>litter-pool</code> requires <code>num-soil-carbon-pools</code> to be 1
- - <code>microbes</code> requires <code>num-soil-carbon-pools</code> to be 1
- - <code>soil-quality</code> requires <code>num-soil-carbon-pools</code> to be greater than 1</p>
+ - <code>soil-phenol</code> and <code>gdd</code> may not both be turned on</p>
 <h3 id="command-line-arguments">Command Line Arguments<a class="headerlink" href="#command-line-arguments" title="Permanent link">&para;</a></h3>
 <p>Command-line arguments can be used to specify run-time options when starting SIPNET. The syntax is as follows:</p>
 <div class="highlight"><pre><span></span><code>sipnet [options]
@@ -2671,30 +2620,29 @@ Flags use the syntax <code>--flag</code> to turn them on, or <code>--no-flag</co
 <p>The configuration file uses a simple key-value format, <code>option = value</code>, 
 with one option per line; comments follow <code>#</code>. Flags are specified as 0 for off and 1 for on.</p>
 <h4 id="example-configuration-file">Example Configuration File<a class="headerlink" href="#example-configuration-file" title="Permanent link">&para;</a></h4>
+<p>Note that case is ignored for parameter names, as well as dashes and underscores.</p>
 <div class="highlight"><pre><span></span><code># Base filename (used for derived filenames)
-file-name = mysite
+FILE_NAME = mysite
 
 # Output options
-do-main-output = 1
-do-single-outputs = 0
-dump-config = 1
-print-header = 1
-quiet = 0
+DO_MAIN_OUTPUT = 1
+DO_SINGLE_OUTPUTS = 0
+DUMP_CONFIG = 1
+PRINT_HEADER = 1
+QUIET = 0
 
 # Model options
-events = 1
-gdd = 1
-growth-resp = 0
-leaf-water = 0
-litter-pool = 0
-microbes = 0
-snow = 1
-soil-phenol = 0
-soil-quality = 0
-water-hresp = 1
-num-soil-carbon-pools = 1
+EVENTS = 1
+GDD = 1
+GROWTH_RESP = 0
+LEAF_WATER = 0
+LITTER_POOL = 0
+MICROBES = 0
+SNOW = 1
+SOIL_PHENOL = 0
+WATER_HRESP = 1
 </code></pre></div>
-<p>When <code>dump-config = 1</code> is set, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named <code>&lt;file-name&gt;.config</code>.</p>
+<p>When <code>DUMP_CONFIG</code> is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named <code>&lt;file-name&gt;.config</code>.</p>
 <h2 id="hard-coded-values">Hard-coded Values<a class="headerlink" href="#hard-coded-values" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2705,11 +2653,6 @@ num-soil-carbon-pools = 1
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>MAX_SOIL_CARBON_POOLS</code></td>
-<td>3</td>
-<td>Maximum number of soil carbon pools.</td>
-</tr>
 <tr>
 <td><code>C_WEIGHT</code></td>
 <td>12.0</td>

@@ -31,8 +31,6 @@ Include dependency graph for context.\+c\+:
 \#define \textbf{ FLAG\+\_\+\+YES}~1
 \item 
 \#define \textbf{ FLAG\+\_\+\+NO}~0
-\item 
-\#define \textbf{ DEFAULT\+\_\+\+NUM\+\_\+\+POOLS}~1
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -111,16 +109,6 @@ Definition at line \textbf{ 12} of file \textbf{ context.\+c}.
 
 Definition at line \textbf{ 11} of file \textbf{ context.\+c}.
 
-\label{context_8c_a21c8b970c6620eb29cd48d60bfeb1d3d} 
-\index{context.c@{context.c}!DEFAULT\_NUM\_POOLS@{DEFAULT\_NUM\_POOLS}}
-\index{DEFAULT\_NUM\_POOLS@{DEFAULT\_NUM\_POOLS}!context.c@{context.c}}
-\doxysubsubsection{DEFAULT\_NUM\_POOLS}
-{\footnotesize\ttfamily \#define DEFAULT\+\_\+\+NUM\+\_\+\+POOLS~1}
-
-
-
-Definition at line \textbf{ 18} of file \textbf{ context.\+c}.
-
 \label{context_8c_a98fa4f4ea5978fa77b1222bc6041a057} 
 \index{context.c@{context.c}!FLAG\_NO@{FLAG\_NO}}
 \index{FLAG\_NO@{FLAG\_NO}!context.c@{context.c}}
@@ -162,7 +150,7 @@ Definition at line \textbf{ 13} of file \textbf{ context.\+c}.
 
 
 
-Definition at line \textbf{ 180} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 162} of file \textbf{ context.\+c}.
 
 
 
@@ -180,7 +168,7 @@ Referenced by \textbf{ print\+Config()}.
 
 
 
-Definition at line \textbf{ 105} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 87} of file \textbf{ context.\+c}.
 
 
 
@@ -202,7 +190,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 98} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 80} of file \textbf{ context.\+c}.
 
 
 
@@ -228,7 +216,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 162} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 144} of file \textbf{ context.\+c}.
 
 
 
@@ -246,7 +234,7 @@ Referenced by \textbf{ print\+Config()}.
 
 
 
-Definition at line \textbf{ 155} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 137} of file \textbf{ context.\+c}.
 
 
 
@@ -264,11 +252,11 @@ Referenced by \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Conte
 
 Initialize the global context struct with default values 
 
-Definition at line \textbf{ 26} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 25} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ ARG\+\_\+\+OFF}, \textbf{ ARG\+\_\+\+ON}, \textbf{ Context\+::clim\+File}, \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}, \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}, \textbf{ ctx}, \textbf{ DEFAULT\+\_\+\+FILE\+\_\+\+NAME}, \textbf{ DEFAULT\+\_\+\+INPUT\+\_\+\+FILE}, \textbf{ DEFAULT\+\_\+\+NUM\+\_\+\+POOLS}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ events}, \textbf{ Context\+::file\+Name}, \textbf{ FLAG\+\_\+\+NO}, \textbf{ FLAG\+\_\+\+YES}, \textbf{ Context\+::gdd}, \textbf{ Context\+::growth\+Resp}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::leaf\+Water}, \textbf{ Context\+::litter\+Pool}, \textbf{ Context\+::meta\+Map}, \textbf{ Context\+::microbes}, \textbf{ NO\+\_\+\+DEFAULT\+\_\+\+FILE}, \textbf{ Context\+::num\+Soil\+Carbon\+Pools}, \textbf{ Context\+::out\+Config\+File}, \textbf{ Context\+::out\+File}, \textbf{ Context\+::param\+File}, \textbf{ Context\+::print\+Header}, \textbf{ Context\+::quiet}, \textbf{ Context\+::snow}, \textbf{ Context\+::soil\+Multi\+Pool}, \textbf{ Context\+::soil\+Phenol}, \textbf{ Context\+::soil\+Quality}, and \textbf{ Context\+::water\+HResp}.
+References \textbf{ ARG\+\_\+\+OFF}, \textbf{ ARG\+\_\+\+ON}, \textbf{ Context\+::clim\+File}, \textbf{ CREATE\+\_\+\+CHAR\+\_\+\+CONTEXT}, \textbf{ CREATE\+\_\+\+INT\+\_\+\+CONTEXT}, \textbf{ ctx}, \textbf{ DEFAULT\+\_\+\+FILE\+\_\+\+NAME}, \textbf{ DEFAULT\+\_\+\+INPUT\+\_\+\+FILE}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ events}, \textbf{ Context\+::file\+Name}, \textbf{ FLAG\+\_\+\+YES}, \textbf{ Context\+::gdd}, \textbf{ Context\+::growth\+Resp}, \textbf{ Context\+::input\+File}, \textbf{ Context\+::leaf\+Water}, \textbf{ Context\+::litter\+Pool}, \textbf{ Context\+::meta\+Map}, \textbf{ Context\+::microbes}, \textbf{ NO\+\_\+\+DEFAULT\+\_\+\+FILE}, \textbf{ Context\+::out\+Config\+File}, \textbf{ Context\+::out\+File}, \textbf{ Context\+::param\+File}, \textbf{ Context\+::print\+Header}, \textbf{ Context\+::quiet}, \textbf{ Context\+::snow}, \textbf{ Context\+::soil\+Phenol}, and \textbf{ Context\+::water\+HResp}.
 
 
 
@@ -282,7 +270,7 @@ Referenced by \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 86} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 68} of file \textbf{ context.\+c}.
 
 
 
@@ -300,7 +288,7 @@ Referenced by \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Meta
 
 
 
-Definition at line \textbf{ 235} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 196} of file \textbf{ context.\+c}.
 
 
 
@@ -326,7 +314,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 140} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 122} of file \textbf{ context.\+c}.
 
 
 
@@ -352,7 +340,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 126} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 108} of file \textbf{ context.\+c}.
 
 
 
@@ -360,7 +348,7 @@ References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR
 
 
 
-Referenced by \textbf{ main()}, \textbf{ parse\+Command\+Line\+Args()}, and \textbf{ read\+Input\+File()}.
+Referenced by \textbf{ parse\+Command\+Line\+Args()}, and \textbf{ read\+Input\+File()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -378,11 +366,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 201} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 183} of file \textbf{ context.\+c}.
 
 
 
-References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::gdd}, \textbf{ Context\+::litter\+Pool}, \textbf{ log\+Error}, \textbf{ MAX\+\_\+\+SOIL\+\_\+\+CARBON\+\_\+\+POOLS}, \textbf{ Context\+::microbes}, \textbf{ Context\+::num\+Soil\+Carbon\+Pools}, \textbf{ Context\+::soil\+Multi\+Pool}, \textbf{ Context\+::soil\+Phenol}, and \textbf{ Context\+::soil\+Quality}.
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::gdd}, \textbf{ log\+Error}, and \textbf{ Context\+::soil\+Phenol}.
 
 
 
@@ -396,7 +384,7 @@ Referenced by \textbf{ main()}.
 
 
 
-Definition at line \textbf{ 185} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 167} of file \textbf{ context.\+c}.
 
 
 
@@ -417,11 +405,11 @@ Referenced by \textbf{ read\+Input\+File()}.
 
 
 
-Definition at line \textbf{ 20} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 19} of file \textbf{ context.\+c}.
 
 
 
-Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, \textbf{ check\+All\+Read()}, \textbf{ check\+CLIName\+Map()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ create\+Context\+Metadata()}, \textbf{ create\+Soil\+Carbon\+Pool\+Arrays()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ litter\+Input\+Pool()}, \textbf{ logprint()}, \textbf{ main()}, \textbf{ microbe\+Growth()}, \textbf{ output\+Header()}, \textbf{ output\+State()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ print\+Config()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Input\+File()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ soil\+Breakdown()}, \textbf{ soil\+Degradation()}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, \textbf{ update\+Trackers()}, \textbf{ validate\+Context()}, and \textbf{ validate\+Filename()}.
+Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, \textbf{ check\+All\+Read()}, \textbf{ check\+CLIName\+Map()}, \textbf{ check\+Runtype()}, \textbf{ cleanup\+Model()}, \textbf{ create\+Context\+Metadata()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ logprint()}, \textbf{ main()}, \textbf{ microbe\+Growth()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ print\+Config()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Input\+File()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ soil\+Breakdown()}, \textbf{ soil\+Degradation()}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, \textbf{ validate\+Context()}, and \textbf{ validate\+Filename()}.
 
 \label{context_8c_afd1fa7f1bdbc41da9c3ac9d44ff3de63} 
 \index{context.c@{context.c}!keyName@{keyName}}
@@ -431,7 +419,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calc\+Precip(
 
 
 
-Definition at line \textbf{ 23} of file \textbf{ context.\+c}.
+Definition at line \textbf{ 22} of file \textbf{ context.\+c}.
 
 
 

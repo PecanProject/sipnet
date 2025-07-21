@@ -173,50 +173,47 @@
 \DoxyCodeLine{00169\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
 \DoxyCodeLine{00170\ \ \ \ \ out\ =\ NULL;}
 \DoxyCodeLine{00171\ \ \ \}}
-\DoxyCodeLine{00172\ \ \ \textcolor{comment}{//\ Don't\ forget\ soilMultiPool}}
-\DoxyCodeLine{00173\ \ \ updateIntContext(\textcolor{stringliteral}{"{}soilMultiPool"{}},\ (ctx.numSoilCarbonPools\ >\ 1),}
-\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CTX\_CALCULATED);}
-\DoxyCodeLine{00175\ }
-\DoxyCodeLine{00176\ \ \ \textcolor{comment}{//\ Lastly\ -\/\ do\ after\ all\ other\ config\ processing}}
-\DoxyCodeLine{00177\ \ \ \textcolor{keywordflow}{if}\ (ctx.dumpConfig)\ \{}
-\DoxyCodeLine{00178\ \ \ \ \ strcpy(outConfigFile,\ ctx.fileName);}
-\DoxyCodeLine{00179\ \ \ \ \ strcat(outConfigFile,\ \textcolor{stringliteral}{"{}.config"{}});}
-\DoxyCodeLine{00180\ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}outConfigFile"{}},\ outConfigFile,\ CTX\_CALCULATED);}
-\DoxyCodeLine{00181\ \ \ \ \ outConfig\ =\ openFile(outConfigFile,\ \textcolor{stringliteral}{"{}w"{}});}
-\DoxyCodeLine{00182\ \ \ \ \ printConfig(outConfig);}
-\DoxyCodeLine{00183\ \ \ \ \ fclose(outConfig);}
-\DoxyCodeLine{00184\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00185\ \ \ \ \ outConfig\ =\ NULL;}
-\DoxyCodeLine{00186\ \ \ \}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \textcolor{comment}{//\ Lastly\ -\/\ do\ after\ all\ other\ config\ processing}}
+\DoxyCodeLine{00174\ \ \ \textcolor{keywordflow}{if}\ (ctx.dumpConfig)\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ strcpy(outConfigFile,\ ctx.fileName);}
+\DoxyCodeLine{00176\ \ \ \ \ strcat(outConfigFile,\ \textcolor{stringliteral}{"{}.config"{}});}
+\DoxyCodeLine{00177\ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}outConfigFile"{}},\ outConfigFile,\ CTX\_CALCULATED);}
+\DoxyCodeLine{00178\ \ \ \ \ outConfig\ =\ openFile(outConfigFile,\ \textcolor{stringliteral}{"{}w"{}});}
+\DoxyCodeLine{00179\ \ \ \ \ printConfig(outConfig);}
+\DoxyCodeLine{00180\ \ \ \ \ fclose(outConfig);}
+\DoxyCodeLine{00181\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ outConfig\ =\ NULL;}
+\DoxyCodeLine{00183\ \ \ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \textcolor{comment}{//\ 6.\ Initialize\ model,\ events,\ outputItems}}
+\DoxyCodeLine{00186\ \ \ initModel(\&modelParams,\ paramFile,\ climFile);}
 \DoxyCodeLine{00187\ }
-\DoxyCodeLine{00188\ \ \ \textcolor{comment}{//\ 6.\ Initialize\ model,\ events,\ outputItems}}
-\DoxyCodeLine{00189\ \ \ initModel(\&modelParams,\ paramFile,\ climFile);}
-\DoxyCodeLine{00190\ }
-\DoxyCodeLine{00191\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
-\DoxyCodeLine{00192\ \ \ \ \ initEvents(EVENT\_IN\_FILE,\ ctx.printHeader);}
-\DoxyCodeLine{00193\ \ \ \}}
-\DoxyCodeLine{00194\ }
-\DoxyCodeLine{00195\ \ \ \textcolor{keywordflow}{if}\ (ctx.doSingleOutputs)\ \{}
-\DoxyCodeLine{00196\ \ \ \ \ outputItems\ =\ newOutputItems(ctx.fileName,\ \textcolor{charliteral}{'\ '});}
-\DoxyCodeLine{00197\ \ \ \ \ setupOutputItems(outputItems);}
-\DoxyCodeLine{00198\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00199\ \ \ \ \ outputItems\ =\ NULL;}
-\DoxyCodeLine{00200\ \ \ \}}
+\DoxyCodeLine{00188\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ initEvents(EVENT\_IN\_FILE,\ ctx.printHeader);}
+\DoxyCodeLine{00190\ \ \ \}}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \textcolor{keywordflow}{if}\ (ctx.doSingleOutputs)\ \{}
+\DoxyCodeLine{00193\ \ \ \ \ outputItems\ =\ newOutputItems(ctx.fileName,\ \textcolor{charliteral}{'\ '});}
+\DoxyCodeLine{00194\ \ \ \ \ setupOutputItems(outputItems);}
+\DoxyCodeLine{00195\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00196\ \ \ \ \ outputItems\ =\ NULL;}
+\DoxyCodeLine{00197\ \ \ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \textcolor{comment}{//\ 7.\ Do\ the\ run!}}
+\DoxyCodeLine{00200\ \ \ runModelOutput(out,\ outputItems,\ ctx.printHeader);}
 \DoxyCodeLine{00201\ }
-\DoxyCodeLine{00202\ \ \ \textcolor{comment}{//\ 7.\ Do\ the\ run!}}
-\DoxyCodeLine{00203\ \ \ runModelOutput(out,\ outputItems,\ ctx.printHeader);}
-\DoxyCodeLine{00204\ }
-\DoxyCodeLine{00205\ \ \ \textcolor{comment}{//\ 8.\ Cleanup}}
-\DoxyCodeLine{00206\ \ \ \textcolor{keywordflow}{if}\ (ctx.doMainOutput)\ \{}
-\DoxyCodeLine{00207\ \ \ \ \ fclose(out);}
-\DoxyCodeLine{00208\ \ \ \}}
-\DoxyCodeLine{00209\ }
-\DoxyCodeLine{00210\ \ \ cleanupModel();}
-\DoxyCodeLine{00211\ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
-\DoxyCodeLine{00212\ \ \ \ \ deleteOutputItems(outputItems);}
-\DoxyCodeLine{00213\ \ \ \}}
-\DoxyCodeLine{00214\ }
-\DoxyCodeLine{00215\ \ \ \textcolor{keywordflow}{return}\ EXIT\_CODE\_SUCCESS;}
-\DoxyCodeLine{00216\ \}}
+\DoxyCodeLine{00202\ \ \ \textcolor{comment}{//\ 8.\ Cleanup}}
+\DoxyCodeLine{00203\ \ \ \textcolor{keywordflow}{if}\ (ctx.doMainOutput)\ \{}
+\DoxyCodeLine{00204\ \ \ \ \ fclose(out);}
+\DoxyCodeLine{00205\ \ \ \}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ cleanupModel();}
+\DoxyCodeLine{00208\ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
+\DoxyCodeLine{00209\ \ \ \ \ deleteOutputItems(outputItems);}
+\DoxyCodeLine{00210\ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \textcolor{keywordflow}{return}\ EXIT\_CODE\_SUCCESS;}
+\DoxyCodeLine{00213\ \}}
 
 \end{DoxyCode}

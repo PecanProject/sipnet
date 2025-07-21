@@ -6,7 +6,7 @@ var searchData=
   ['nee_3',['nee',['../d3/d1f/struct_tracker_vars.html#a8b32589de454079b7d9e578f737373e7',1,'TrackerVars']]],
   ['newmeantracker_4',['newmeantracker',['../de/d1e/runmean_8h.html#a05982cf71148e3b1c4d8a2a14e0c93ab',1,'newMeanTracker(double initMean, double totWeight, int maxEntries):&#160;runmean.c'],['../d5/d1f/runmean_8c.html#a05982cf71148e3b1c4d8a2a14e0c93ab',1,'newMeanTracker(double initMean, double totWeight, int maxEntries):&#160;runmean.c']]],
   ['newmodelparams_5',['newmodelparams',['../d2/de5/model_params_8c.html#a6db6f8bbce7b7ee8d666e744366091a2',1,'newModelParams(int maxParams):&#160;modelParams.c'],['../d3/ddd/model_params_8h.html#aa087ef12104270d1077ce38d5d1d53b5',1,'newModelParams(int maxParameters):&#160;modelParams.c']]],
-  ['newoutputitems_6',['newoutputitems',['../da/db0/output_items_8h.html#af48aa4e86a751aa76c9a108ffa5a1858',1,'newOutputItems(char *filenameBase, char separator):&#160;outputItems.c'],['../dd/d66/output_items_8c.html#af48aa4e86a751aa76c9a108ffa5a1858',1,'newOutputItems(char *filenameBase, char separator):&#160;outputItems.c']]],
+  ['newoutputitems_6',['newoutputitems',['../dd/d66/output_items_8c.html#af48aa4e86a751aa76c9a108ffa5a1858',1,'newOutputItems(char *filenameBase, char separator):&#160;outputItems.c'],['../da/db0/output_items_8h.html#af48aa4e86a751aa76c9a108ffa5a1858',1,'newOutputItems(char *filenameBase, char separator):&#160;outputItems.c']]],
   ['newsingleoutputitem_7',['newSingleOutputItem',['../dd/d66/output_items_8c.html#af6f19a742a9ffe4e26766e24b1cc8bbe',1,'outputItems.c']]],
   ['next_8',['next',['../de/dfa/struct_u_t__hash__handle.html#a93bc88ffe97f85ea0d9e0056b7118942',1,'UT_hash_handle']]],
   ['nextclim_9',['nextClim',['../d4/d5e/struct_climate_vars.html#ab542473c23dec94db4eb707e33a1e1df',1,'ClimateVars']]],
@@ -32,6 +32,5 @@ var searchData=
   ['numeric_5fversion_29',['NUMERIC_VERSION',['../df/dfc/version_8h.html#a029358f46b14f890a547758c3f5bea69',1,'version.h']]],
   ['numlines_30',['numlines',['../d6/d7a/transpose_8c.html#a1c9dccc59ccf3fb82ca0ecb091ea7c14',1,'transpose.c']]],
   ['numparams_31',['numParams',['../d8/dae/struct_model_params_struct.html#afaa276662aebf01c9ed5abca07956cda',1,'ModelParamsStruct']]],
-  ['numparamsread_32',['numParamsRead',['../d8/dae/struct_model_params_struct.html#a685a4cacf7bdf46a0e1d91b6f5cca613',1,'ModelParamsStruct']]],
-  ['numsoilcarbonpools_33',['numSoilCarbonPools',['../de/d66/struct_context.html#addd4c0a4c30c12cc107a574f277f4bcc',1,'Context']]]
+  ['numparamsread_32',['numParamsRead',['../d8/dae/struct_model_params_struct.html#a685a4cacf7bdf46a0e1d91b6f5cca613',1,'ModelParamsStruct']]]
 ];
