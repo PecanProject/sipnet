@@ -15,7 +15,7 @@ int checkOutput(double litter, double leafC, double woodC, double fineC,
   } else {
     logTest("Checking soil pool\n");
     curLitter = envi.soil;
-    litter += 0.5; // We bumped init soil C to distinguish
+    litter += 0.5;  // We bumped init soil C to distinguish
   }
   if (!compareDoubles(litter, curLitter)) {
     logTest("Litter/soil C is %f, expected %f\n", curLitter, litter);

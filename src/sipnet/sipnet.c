@@ -1759,8 +1759,7 @@ void processEvents(void) {
         if (ctx.litterPool) {
           envi.litter += litterAdd;
           strcpy(carbonPool, "env.litter");
-        }
-        else {
+        } else {
           // If the litter pool is not turned on, add it to the soil pool
           envi.soil += litterAdd;
           strcpy(carbonPool, "env.soil");
@@ -1794,8 +1793,7 @@ void processEvents(void) {
           strcpy(carbonPool, "env.litter");
           // orgN
           // minN
-        }
-        else {
+        } else {
           // If the litter pool is not turned on, add it to the soil pool
           envi.soil += orgC;
           strcpy(carbonPool, "env.soil");
