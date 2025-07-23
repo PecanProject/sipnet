@@ -5,9 +5,16 @@
 #include <string.h>
 #include <time.h>
 
-#include "common/exitCodes.h"
+#include "exitCodes.h"
+#include "logging.h"
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
+#define DEFAULT_FILE_NAME "sipnet"
+#define NO_DEFAULT_FILE ""
+#define ARG_OFF 0
+#define ARG_ON 1
+#define FLAG_YES 1
+#define FLAG_NO 0
 
 struct Context ctx;
 
@@ -19,27 +26,39 @@ void initContext(void) {
   // Init hash map to NULL before adding anything to it
   ctx.metaMap = NULL;
 
+  // clang-format off
   // Init the params
-  // Flags, default on
-  CREATE_INT_CONTEXT(doMainOutput, "DO_MAIN_OUTPUT", 1, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(events, "EVENTS", 1, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(printHeader, "PRINT_HEADER", 1, CTX_DEFAULT);
+  // Flags, model options
+  CREATE_INT_CONTEXT(events,          "EVENTS",           ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(gdd,             "GDD",              ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(growthResp,      "GROWTH_RESP",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(leafWater,       "LEAF_WATER",       ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(litterPool,      "LITTER_POOL",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(microbes,        "MICROBES",         ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
 
-  // Flags, default off
-  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", 0, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(dumpConfig, "DUMP_CONFIG", 0, CTX_DEFAULT);
-  CREATE_INT_CONTEXT(quiet, "QUIET", 0, CTX_DEFAULT);
+  // Flags, I/O
+  CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(dumpConfig,      "DUMP_CONFIG",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(printHeader,     "PRINT_HEADER",     ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(quiet,           "QUIET",            ARG_OFF, FLAG_YES);
 
   // Files
-  CREATE_CHAR_CONTEXT(paramFile, "PARAM_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(climFile, "CLIM_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(outFile, "OUT_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(outConfigFile, "OUT_CONFIG_FILE", "", CTX_DEFAULT);
-  CREATE_CHAR_CONTEXT(inputFile, "INPUT_FILE", DEFAULT_INPUT_FILE, CTX_DEFAULT);
+  CREATE_CHAR_CONTEXT(paramFile,      "PARAM_FILE",       NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(climFile,       "CLIM_FILE",        NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(outFile,        "OUT_FILE",         NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(outConfigFile,  "OUT_CONFIG_FILE",  NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE);
+  // clang-format on
 
   // Other
-  // Would like to rename as SITE_NAME, if that wasn't a breaking change
-  CREATE_CHAR_CONTEXT(fileName, "FILENAME", "", CTX_DEFAULT);
+  // Prefix for climate and parameter input files. We may want to rename this
+  // to siteName or such, as 'fileName' implies an actual file, though that
+  // would be a breaking change.
+  CREATE_CHAR_CONTEXT(fileName, "FILE_NAME", DEFAULT_FILE_NAME);
 }
 
 // With all the different permutations of spellings for config params, lets
@@ -62,16 +81,12 @@ struct context_metadata *getContextMetadata(const char *name) {
   struct context_metadata *s;
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s);
-  if (s == NULL) {
-    printf("Internal error: context metadata for param %s not found\n", name);
-    exit(EXIT_CODE_INTERNAL_ERROR);
-  }
   return s;
 }
 
 void createContextMetadata(const char *name, const char *printName,
                            context_source_t source, context_type_t type,
-                           void *value) {
+                           void *value, int isFlag) {
   struct context_metadata *s;
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s);
@@ -87,6 +102,7 @@ void createContextMetadata(const char *name, const char *printName,
   s->source = source;
   s->type = type;
   s->value = value;
+  s->isFlag = isFlag;
 }
 
 void updateIntContext(const char *name, int value, context_source_t source) {
@@ -148,11 +164,50 @@ int by_name(const struct context_metadata *a,
   return strcmp(a->keyName, b->keyName);
 }
 
+void validateFilename(void) {
+  // We need to do this earlier than the rest of the validation
+  // Make sure FILENAME is set and well-sized; everything else is optional (not
+  // necessary or has a default)
+  if (strcmp(ctx.fileName, "") == 0) {
+    printf("Error: fileName must be set for SIPNET to run\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
+    // We need room to append .clim, .param, etc
+    printf("Error: fileName is too long; max length is %d characters\n",
+           FILENAME_MAXLEN - 10);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
+void validateContext(void) {
+  int hasError = 0;
+
+  if (ctx.soilPhenol && ctx.gdd) {
+    logError("soil-phenol and gdd may not both be turned on");
+    hasError = 1;
+  }
+
+  if (hasError) {
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
 void printConfig(FILE *outFile) {
   // Sort alphabetically for consistency
   HASH_SORT(ctx.metaMap, by_name);  // NOLINT
 
   struct context_metadata *s;
+
+  // Calculate width of value column
+  unsigned int width = 0;
+  for (s = ctx.metaMap; s != NULL;
+       s = (struct context_metadata *)(s->hh.next)) {
+    if (s->type == CTX_CHAR) {
+      unsigned int len = strlen(s->printName);
+      width = len > width ? len : width;
+    }
+  }
 
   // Header
   if (ctx.printHeader) {
@@ -162,7 +217,7 @@ void printConfig(FILE *outFile) {
     struct tm *utc_time = gmtime(&current_time);
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S UTC", utc_time);
     fprintf(outFile, "Final config for SIPNET run at %s\n", timestamp);
-    fprintf(outFile, "%20s %20s %30s\n", "Name", "Source", "Value");
+    fprintf(outFile, "%21s %13s %*s\n", "Name", "Source", width, "Value");
   }
 
   // Config
@@ -170,14 +225,15 @@ void printConfig(FILE *outFile) {
        s = (struct context_metadata *)(s->hh.next)) {
 
     if (s->type == CTX_INT) {
-      fprintf(outFile, "%20s %20s %30d\n", s->printName,
-              getContextSourceString(s->source), *(int *)s->value);
+      fprintf(outFile, "%21s %13s %*d\n", s->printName,
+              getContextSourceString(s->source), width, *(int *)s->value);
     } else if (s->type == CTX_CHAR) {
-      fprintf(outFile, "%20s %20s %30s\n", s->printName,
-              getContextSourceString(s->source), (char *)s->value);
+      fprintf(outFile, "%21s %13s %*s\n", s->printName,
+              getContextSourceString(s->source), width, (char *)s->value);
     } else {
       // The height of paranoia
-      printf("Internal error, unknown found for context param\n");
+      printf("Internal error, unknown type (%d) found for context param\n",
+             s->type);
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }

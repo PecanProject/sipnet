@@ -30,12 +30,15 @@ sections to include in release notes:
 - Changelog (#33)
 - Build docs and push to gh-pages (#41)
 - events.out file for agronomic event handling (#57)
-- utility `tools/trim_first_chars.sh` to trim the first n characters from every row in a file, useful for updating old input files to remove location column
+- Utility `tools/trim_first_chars.sh` to trim the first n characters from every row in a file, useful for updating old input files to remove location column
+- Expanded smoke test cases to better cover SIPNET modeling options (#109, #114)
+- Converted all compile-time switches not removed or hard-coded to be on into switches to run-time options (#114)
 
 ### Fixed
 
 - Fixed OOM issue when reading bad data (#38, #45)
 - Event order checks no longer only compare to first record (#74, #77)
+- Fixed long-standing bug wherein microbePulseEff was not set to 0 when MICROBES was off (#114)
 
 ### Changed
 
@@ -43,7 +46,7 @@ sections to include in release notes:
 - Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
 - Deprecated: "LOCATION" is obsolete. Will be ignored with warning. (#92)
 - Deprecated: All columns in *.param except for name and value. Will be ignored with warning. (#92)
-- Deprecated: location column in input climate files. Will be ignored with warning. (#92)
+- Deprecated: location and soilWetness columns in input climate files. If both are present, will be ignored with warning. (#92, #127)
 
 ### Removed
 
@@ -51,6 +54,7 @@ sections to include in release notes:
 - Removed obsolete run types senstest and montecarlo and associated code (#69, #76)
 - Removed obsolete estimate program and associated code (#70, #82)
 - Removed multi-site support; in particular, output files no longer have a location column (#92)
+- Removed or hard-codes 'on' many compile time switches (#114)
 
 ### Git SHA
 [TBD]

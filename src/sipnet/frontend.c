@@ -29,7 +29,11 @@ void checkRuntype(const char *runType) {
   }
 }
 
-void readInputFile(const char *fileName) {
+void readInputFile(void) {
+  // First, make sure the filename is valid
+  validateFilename();
+  printf("Reading config from file %s\n", ctx.inputFile);
+
   const char *SEPARATORS = " \t=:";  // characters that can separate names from
                                      // values in input file
   const char *COMMENT_CHARS = "!";  // comment characters (ignore everything
@@ -48,7 +52,7 @@ void readInputFile(const char *fileName) {
 
   strcpy(allSeparators, SEPARATORS);
   strcat(allSeparators, "\n\r");
-  infile = openFile(fileName, "r");
+  infile = openFile(ctx.inputFile, "r");
 
   while (fgets(line, sizeof(line), infile) != NULL) {  // while not EOF or error
     // remove trailing comments:
@@ -76,7 +80,7 @@ void readInputFile(const char *fileName) {
       if (inputValue == NULL) {
         printf("Error in input file: No value given for input item %s\n",
                inputName);
-        printf("Please fix %s and re-run\n", fileName);
+        printf("Please fix %s and re-run\n", ctx.inputFile);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
 
@@ -86,7 +90,7 @@ void readInputFile(const char *fileName) {
           if (strlen(errc) > 0) {  // invalid character(s) in input string
             printf("ERROR in input file: Invalid value for %s: %s\n", inputName,
                    inputValue);
-            printf("Please fix %s and re-run\n", fileName);
+            printf("Please fix %s and re-run\n", ctx.inputFile);
             exit(EXIT_CODE_BAD_PARAMETER_VALUE);
           }
           updateIntContext(inputName, intVal, CTX_CONTEXT_FILE);
@@ -103,7 +107,7 @@ void readInputFile(const char *fileName) {
                      inputValue, inputName, CONTEXT_CHAR_MAXLEN);
               printf(
                   "Please fix %s, or change the maximum length, and re-run\n",
-                  fileName);
+                  ctx.inputFile);
               exit(EXIT_CODE_BAD_PARAMETER_VALUE);
             }
             updateCharContext(inputName, inputValue, CTX_CONTEXT_FILE);
@@ -144,24 +148,13 @@ int main(int argc, char *argv[]) {
 
   // 3. Read input config file
   // Note: command-line args have precedence
-  // read from input file:
-  readInputFile(ctx.inputFile);
+  // read from input file
+  readInputFile();
 
   // 4. Run some checks
-  // Make sure FILENAME is set and well-sized; everything else is optional (not
-  // necessary or has a default)
-  if (strcmp(ctx.fileName, "") == 0) {
-    printf("Error: fileName must be set for SIPNET to run\n");
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-  }
-  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
-    // We need room to append .clim, .param, etc
-    printf("Error: fileName is too long; max length is %d characters\n",
-           FILENAME_MAXLEN - 10);
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-  }
+  validateContext();
 
-  // 5. Set calculated filenames
+  // 5. Set calculated parameters
   strcpy(paramFile, ctx.fileName);
   strcat(paramFile, ".param");
   updateCharContext("paramFile", paramFile, CTX_CALCULATED);
@@ -176,6 +169,7 @@ int main(int argc, char *argv[]) {
   } else {
     out = NULL;
   }
+
   // Lastly - do after all other config processing
   if (ctx.dumpConfig) {
     strcpy(outConfigFile, ctx.fileName);

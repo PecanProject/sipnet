@@ -1,0 +1,26 @@
+! Input file to set up a forward run of SIPNET
+
+! Non-default options
+
+!!!!!!!!!!!!!!!!!!!
+!!  I/O OPTIONS  !!
+!!!!!!!!!!!!!!!!!!!
+DUMP_CONFIG = 1
+! NON DEFAULT
+! If 1, print final config to FILENAME.config
+! If 0, do not print the config
+
+!!!!!!!!!!!!!!!!!!!
+!! MODEL OPTIONS !!
+!!!!!!!!!!!!!!!!!!!
+GDD = 0
+! Use growing degree days to determine leaf growth
+
+MICROBES = 1
+! Enable microbe modeling
+
+SNOW = 0
+! Keep track of snowpack, rather than assuming all precipitation is liquid
+
+SOIL_PHENOL = 1
+! Use soil temperature to determine leaf growth

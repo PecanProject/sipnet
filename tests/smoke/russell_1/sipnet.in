@@ -1,0 +1,9 @@
+! Input configuration file to set up a forward run of SIPNET. All parameters
+! below may be overridden via command line arguments. All parameters in this
+! file are optional, as they all have default values. Run "sipnet --help"
+! for more information.
+
+! We use default values for this run (except for dumpConfig), let's remove
+! the other params to guarantee that
+
+DUMP_CONFIG=1

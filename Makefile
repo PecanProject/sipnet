@@ -1,7 +1,7 @@
 CC=gcc
 LD=gcc
 AR=ar -rs
-CFLAGS=-Wall -Werror -g -Isrc -Wno-c2x-extensions
+CFLAGS=-Wall -Werror -g -Isrc -Wno-c2x-extensions -DGIT_HASH='$(GIT_HASH)'
 LIBLINKS=-lm
 LIB_DIR=./libs
 LDFLAGS=-L$(LIB_DIR)
@@ -40,6 +40,10 @@ DOXYGEN_LATEX_DIR = docs/latex
 # the make command, with no arguments, should not build everything in this complex
 # environment
 .DEFAULT_GOAL := sipnet
+
+# Look up what Git revision we're building from
+# We use this below to compile the hash into the binary for ease of debugging
+GIT_HASH := $(shell git rev-parse --short=10 HEAD; git diff-index --quiet HEAD || echo " plus uncommitted changes")
 
 # the main executables - the original 'all' target
 exec: sipnet transpose subsetData

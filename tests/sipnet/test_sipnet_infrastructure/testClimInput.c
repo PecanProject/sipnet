@@ -2,6 +2,7 @@
 
 #include "utils/tUtils.h"
 #include "utils/exitHandler.c"
+#include "common/logging.h"
 #include "sipnet/sipnet.c"
 
 int runTest(const char *climFile) {
@@ -37,7 +38,7 @@ int run() {
   // Second test - legacy read (clim file with location column)
   status |= runTest("with_loc.clim");
 
-  // Third test - multi location (sbould error)
+  // Third test - multi location (should error)
   really_exit = 0;
   should_exit = 1;
   exit_result = 1;  // reset for next test
@@ -49,7 +50,22 @@ int run() {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with multi_loc.clim\n");
+    logTest("FAIL with multi_loc.clim\n");
+  }
+
+  // Fourth test - has location but no soilWetness
+  really_exit = 0;
+  should_exit = 1;
+  exit_result = 1;  // reset for next test
+  expected_code = EXIT_CODE_INPUT_FILE_ERROR;
+  jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    runTest("missing_one.clim");
+  }
+  test_assert(jmp_rval == 1);
+  status |= !exit_result;
+  if (!exit_result) {
+    logTest("FAIL with missing_one.clim\n");
   }
 
   return status;
@@ -60,9 +76,9 @@ int main() {
 
   status = run();
   if (status) {
-    printf("FAILED testClimInput with status %d\n", status);
+    logTest("FAILED testClimInput with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testClimInput\n");
+  logTest("PASSED testClimInput\n");
 }

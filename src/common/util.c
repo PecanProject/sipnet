@@ -14,8 +14,6 @@
 #include "exitCodes.h"
 #include "util.h"
 
-// TODO: HOW TO INCLUDE CTX - move warn/info to context.h|c?
-
 // our own openFile method, which exits gracefully if there's an error
 FILE *openFile(const char *name, const char *mode) {
   FILE *f;

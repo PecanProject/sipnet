@@ -1,0 +1,26 @@
+! Input file to set up a forward run of SIPNET
+
+!!!!!!!!!!!!!!!!!!!
+!!  I/O OPTIONS  !!
+!!!!!!!!!!!!!!!!!!!
+
+DUMP_CONFIG = 1
+! If 1, print final config to FILENAME.config
+! If 0, do not print the config
+
+!!!!!!!!!!!!!!!!!!!
+!! MODEL OPTIONS !!
+!!!!!!!!!!!!!!!!!!!
+
+! Non-default options
+GROWTH_RESP = 1
+! Explicitly model growth resp, rather than including with maint resp
+
+LEAF_WATER = 1
+! Calculate leaf pool and evaporate from that pool
+
+LITTER_POOL = 1
+! Enable litter pool in addition to single soil carbon pool
+
+WATER_HRESP = 0
+! Whether soil moisture affects heterotrophic respiration
