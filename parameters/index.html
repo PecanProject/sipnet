@@ -704,15 +704,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#events-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      Events output
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -729,6 +720,30 @@
       Outputs
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Outputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Outputs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      Events output
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1420,15 +1435,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#events-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      Events output
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1445,6 +1451,30 @@
       Outputs
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Outputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Outputs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      Events output
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3132,24 +3162,9 @@ with this older format can still be read by sipnet:
 2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
 2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
 </code></pre></div>
-<h4 id="events-output">Events output<a class="headerlink" href="#events-output" title="Permanent link">&para;</a></h4>
-<p>SIPNET will create a file named <code>events.out</code> when event handling is enabled. </p>
-<p>This file will have one row for each agronomic event that is processed. Each row lists year, 
-day, event type, and parameter name/value pairs for all state variables that the event
-affects. </p>
-<p>Example events.out file below, with header enabled for clarity. Note the delimiters: spaces
-up to the param-values pairs, commas separating PV pairs, and <code>=</code> between param and value.
-<div class="highlight"><pre><span></span><code>year  day  type     param_name=delta[,param_name=delta,...]
-2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
-2023   70  irrig    envi.soilWater=5.00
-2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
-2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
-2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
-2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
-</code></pre></div></p>
-<p><em>Note: <code>events.out</code> logs all parameters changed by an event for debugging and testing purposes; 
-For downstream analyses that only need the date and event type, <code>events.in</code> is equivalent and easier to parse.</em></p>
 <h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
+<h3 id="model-outputs">Model Outputs<a class="headerlink" href="#model-outputs" title="Permanent link">&para;</a></h3>
+<p>The <code>sipnet.out</code> file contains a time series of state variables and fluxes from the simulation.  </p>
 <table>
 <thead>
 <tr>
@@ -3352,6 +3367,31 @@ For downstream analyses that only need the date and event type, <code>events.in<
 </tr>
 </tbody>
 </table>
+<p>An example output file can be found in <a href="https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out">tests/smoke/sipnet.out</a>.</p>
+<div class="highlight"><pre><span></span><code>Notes: PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;
+year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration fPAR
+1998 305  0.00  5759.77  1133.88 16000.06     8.00  1919.90  1919.64   400.00    0.500     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000   0.0000
+1998 305  7.00  5759.63  1133.71 16000.08     8.00  1919.77  1919.10   400.00    0.500     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022   0.5821
+1998 305 17.00  5759.16  1133.48 16000.15     8.00  1919.57  1918.37   400.00    0.500     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000   0.5821
+</code></pre></div>
+<h3 id="events-output">Events output<a class="headerlink" href="#events-output" title="Permanent link">&para;</a></h3>
+<p>When event handling is enabled, SIPNET will create a file named <code>events.out</code>. </p>
+<p>This file is designed primarily for <em>testing and debugging</em>.<br />
+It contains one row for each agronomic event that is processed. 
+Each row lists the year, day, event type, and parameter name/value pairs. 
+The name/value pairs represent the state variables that are directly changed by an event, recording the change (delta) applied to each.</p>
+<p>Information in <code>events.out</code> can, in principle, be reconstructed or inferred from <code>events.in</code> and <code>sipnet.out</code> though this may be confounded if simultaneous events affect the same variable.</p>
+<p>Still, <em><code>sipnet.out</code> is the authoritative source</em> for information about system state and evolution in time, including responses to events.</p>
+<p>Below is an example <code>events.out</code>, with header enabled for clarity. 
+Note the delimiters: spaces separate columns, commas separate name/value pairs, and <code>=</code> map names with their values (deltas).</p>
+<div class="highlight"><pre><span></span><code>year  day  type     param_name=delta[,param_name=delta,...]
+2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
+2023   70  irrig    envi.soilWater=5.00
+2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
+2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
+2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
+2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+</code></pre></div>
 <!--
 
 |    | $F^C_\text{CH_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
