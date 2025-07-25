@@ -21,7 +21,7 @@ void logprint(int logLevel, const char *prefix, const char *file, int lineNum,
       printf(
           "[ERROR (INTERNAL)] (%s:%d) Unknown error level %d while trying to "
           "print output; original output from (%s:%d)\n",
-          __FILE_NAME__, __LINE__, logLevel, file, lineNum);
+          FILE_NAME, __LINE__, logLevel, file, lineNum);
       exit(EXIT_CODE_INTERNAL_ERROR);
   }
   va_list args;

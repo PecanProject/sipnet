@@ -76,7 +76,14 @@ $(COMMON_LIB): $(COMMON_OFILES)
 $(SIPNET_LIB): $(SIPNET_OFILES)
 	$(AR) $(SIPNET_LIB) $(SIPNET_OFILES)
 
-sipnet: $(SIPNET_OFILES) $(COMMON_LIB)
+GCC_VERSION = $(shell $(CC) --version)
+info:
+	@echo "System info"
+	@echo "ARCH: $(shell arch)"
+	@echo "CC: $(GCC_VERSION)"
+	@echo ""
+
+sipnet: info $(SIPNET_OFILES) $(COMMON_LIB)
 	$(LD) $(LDFLAGS) -o sipnet $(SIPNET_OFILES) $(LIBLINKS) $(SIPNET_LIBS)
 
 transpose: $(TRANSPOSE_OFILES) $(COMMON_LIB)

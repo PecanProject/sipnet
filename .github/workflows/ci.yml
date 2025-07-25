@@ -16,6 +16,7 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - ubuntu-24.04
+          - ubuntu-22.04
     runs-on: ${{ matrix.OS }}
 
     steps:
@@ -50,6 +51,7 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - ubuntu-24.04
+          - ubuntu-22.04
     runs-on: ${{ matrix.OS }}
 
     steps:
