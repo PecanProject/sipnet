@@ -8,19 +8,19 @@
 int checkOutput(double leafC, double woodC, double fineC, double coarseC) {
   int status = 0;
   if (!compareDoubles(leafC, envi.plantLeafC)) {
-    printf("Plant leaf C is %f, expected %f\n", envi.plantLeafC, leafC);
+    logTest("Plant leaf C is %f, expected %f\n", envi.plantLeafC, leafC);
     status = 1;
   }
   if (!compareDoubles(woodC, envi.plantWoodC)) {
-    printf("Plant wood C is %f, expected %f\n", envi.plantWoodC, woodC);
+    logTest("Plant wood C is %f, expected %f\n", envi.plantWoodC, woodC);
     status = 1;
   }
   if (!compareDoubles(fineC, envi.fineRootC)) {
-    printf("Fine root C is %f, expected %f\n", envi.fineRootC, fineC);
+    logTest("Fine root C is %f, expected %f\n", envi.fineRootC, fineC);
     status = 1;
   }
   if (!compareDoubles(coarseC, envi.coarseRootC)) {
-    printf("Coarse root C is %f, expected %f\n", envi.coarseRootC, coarseC);
+    logTest("Coarse root C is %f, expected %f\n", envi.coarseRootC, coarseC);
     status = 1;
   }
   return status;
@@ -60,12 +60,12 @@ int run(void) {
 }
 
 int main(void) {
-  printf("Starting run()\n");
+  logTest("Starting run()\n");
   int status = run();
   if (status) {
-    printf("FAILED testEventPlanting with status %d\n", status);
+    logTest("FAILED testEventPlanting with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testEventPlanting\n");
+  logTest("PASSED testEventPlanting\n");
 }

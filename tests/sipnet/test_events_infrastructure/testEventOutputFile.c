@@ -84,12 +84,14 @@ int run(void) {
   initContext();
   updateIntContext("events", 1, CTX_TEST);
 
+  updateIntContext("litterPool", 0, CTX_TEST);  // default, but to be sure
   status = runTest("events_output_no_header", 0);
   if (status) {
     logTest("runTest(no_header) failed\n");
   }
   testStatus |= status;
 
+  updateIntContext("litterPool", 1, CTX_TEST);
   status = runTest("events_output_header", 1);
   if (status) {
     logTest("runTest(header) failed\n");

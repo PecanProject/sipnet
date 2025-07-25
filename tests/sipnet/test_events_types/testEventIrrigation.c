@@ -9,11 +9,11 @@
 int checkOutput(double soilWater, double immedEvap) {
   int status = 0;
   if (!compareDoubles(soilWater, envi.soilWater)) {
-    printf("Soil water is %f, expected %f\n", envi.soilWater, soilWater);
+    logTest("Soil water is %f, expected %f\n", envi.soilWater, soilWater);
     status = 1;
   }
   if (!compareDoubles(immedEvap, fluxes.immedEvap)) {
-    printf("Immed evap is %f, expected %f\n", fluxes.immedEvap, immedEvap);
+    logTest("Immed evap is %f, expected %f\n", fluxes.immedEvap, immedEvap);
     status = 1;
   }
   return status;
@@ -54,12 +54,12 @@ int run(void) {
 }
 
 int main(void) {
-  printf("Starting run()\n");
+  logTest("Starting run()\n");
   int status = run();
   if (status) {
-    printf("FAILED testEventIrrigation with status %d\n", status);
+    logTest("FAILED testEventIrrigation with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testEventIrrigation\n");
+  logTest("PASSED testEventIrrigation\n");
 }

@@ -1742,6 +1742,7 @@ void processEvents(void) {
         const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
+        char carbonPool[20] = "";
 
         // Litter increase
         const double litterAdd = fracTA * (envi.plantLeafC + envi.plantWoodC) +
@@ -1755,7 +1756,14 @@ void processEvents(void) {
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
 
         // Pool updates:
-        envi.litter += litterAdd;
+        if (ctx.litterPool) {
+          envi.litter += litterAdd;
+          strcpy(carbonPool, "env.litter");
+        } else {
+          // If the litter pool is not turned on, add it to the soil pool
+          envi.soil += litterAdd;
+          strcpy(carbonPool, "env.soil");
+        }
         envi.plantLeafC += leafDelta;
         envi.plantWoodC += woodDelta;
         envi.fineRootC += fineDelta;
@@ -1763,7 +1771,7 @@ void processEvents(void) {
 
         // FUTURE: move/remove biomass in N pools
 
-        writeEventOut(eventOutFile, event, 5, "env.litter", litterAdd,
+        writeEventOut(eventOutFile, event, 5, carbonPool, litterAdd,
                       "envi.plantLeafC", leafDelta, "envi.plantWoodC",
                       woodDelta, "envi.fineRootC", fineDelta,
                       "envi.coarseRootC", coarseDelta);
@@ -1772,10 +1780,32 @@ void processEvents(void) {
         // TBD
         printf("Tillage events not yet implemented\n");
         break;
-      case FERTILIZATION:
-        // TBD
-        printf("Fertilization events not yet implemented\n");
-        break;
+      case FERTILIZATION: {
+        const FertilizationParams *fertParams = event->eventParams;
+        // const double orgN = fertParams->orgN;
+        const double orgC = fertParams->orgC;
+        // const double minN = fertParams->minN;
+        char carbonPool[20] = "";
+
+        // Pool updates:
+        if (ctx.litterPool) {
+          envi.litter += orgC;
+          strcpy(carbonPool, "env.litter");
+          // orgN
+          // minN
+        } else {
+          // If the litter pool is not turned on, add it to the soil pool
+          envi.soil += orgC;
+          strcpy(carbonPool, "env.soil");
+          // orgN
+          // minN
+        }
+
+        // FUTURE: allocate to N pools
+
+        // This will (likely) be 3 params eventually
+        writeEventOut(eventOutFile, event, 1, carbonPool, orgC);
+      } break;
       default:
         printf("Unknown event type (%d) in processEvents()\n", event->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
