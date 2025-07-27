@@ -22,15 +22,17 @@ This graph shows which files directly or indirectly include this file\+:
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \textbf{ log\+Warning}(...)~\textbf{ logprint}(0, "{}[WARNING] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\#define \textbf{ FILE\+\_\+\+NAME}~\+\_\+\+\_\+\+FILE\+\_\+\+\_\+
 \item 
-\#define \textbf{ log\+Info}(...)~\textbf{ logprint}(0, "{}[INFO   ] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\#define \textbf{ log\+Warning}(...)~\textbf{ logprint}(0, "{}[WARNING] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
 \item 
-\#define \textbf{ log\+Test}(...)~\textbf{ logprint}(1, "{}[TEST   ] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\#define \textbf{ log\+Info}(...)~\textbf{ logprint}(0, "{}[INFO   ] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
 \item 
-\#define \textbf{ log\+Error}(...)~\textbf{ logprint}(1, "{}[ERROR  ] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\#define \textbf{ log\+Test}(...)~\textbf{ logprint}(1, "{}[TEST   ] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
 \item 
-\#define \textbf{ log\+Internal\+Error}(...)~\textbf{ logprint}(2, "{}[ERROR (INTERNAL)] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\#define \textbf{ log\+Error}(...)~\textbf{ logprint}(1, "{}[ERROR  ] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
+\item 
+\#define \textbf{ log\+Internal\+Error}(...)~\textbf{ logprint}(2, "{}[ERROR (INTERNAL)] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -40,51 +42,61 @@ void \textbf{ logprint} (int log\+Level, const char $\ast$prefix, const char $\a
 
 
 \doxysubsection{Macro Definition Documentation}
+\label{logging_8h_ab117546549783a058d0321a287699579} 
+\index{logging.h@{logging.h}!FILE\_NAME@{FILE\_NAME}}
+\index{FILE\_NAME@{FILE\_NAME}!logging.h@{logging.h}}
+\doxysubsubsection{FILE\_NAME}
+{\footnotesize\ttfamily \#define FILE\+\_\+\+NAME~\+\_\+\+\_\+\+FILE\+\_\+\+\_\+}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ logging.\+h}.
+
 \label{logging_8h_a95d829d52ad9b078da34c2312388a48b} 
 \index{logging.h@{logging.h}!logError@{logError}}
 \index{logError@{logError}!logging.h@{logging.h}}
 \doxysubsubsection{logError}
-{\footnotesize\ttfamily \#define log\+Error(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(1, "{}[ERROR  ] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+{\footnotesize\ttfamily \#define log\+Error(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(1, "{}[ERROR  ] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
 
 
 
-Definition at line \textbf{ 24} of file \textbf{ logging.\+h}.
+Definition at line \textbf{ 29} of file \textbf{ logging.\+h}.
 
 \label{logging_8h_acf315d78a13752d852ac5aef893598ae} 
 \index{logging.h@{logging.h}!logInfo@{logInfo}}
 \index{logInfo@{logInfo}!logging.h@{logging.h}}
 \doxysubsubsection{logInfo}
-{\footnotesize\ttfamily \#define log\+Info(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(0, "{}[INFO   ] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+{\footnotesize\ttfamily \#define log\+Info(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(0, "{}[INFO   ] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
 
 
 
-Definition at line \textbf{ 22} of file \textbf{ logging.\+h}.
+Definition at line \textbf{ 27} of file \textbf{ logging.\+h}.
 
 \label{logging_8h_af6760ef13876c24ab86aa7fbb746ca4d} 
 \index{logging.h@{logging.h}!logInternalError@{logInternalError}}
 \index{logInternalError@{logInternalError}!logging.h@{logging.h}}
 \doxysubsubsection{logInternalError}
-{\footnotesize\ttfamily \#define log\+Internal\+Error(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(2, "{}[ERROR (INTERNAL)] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+{\footnotesize\ttfamily \#define log\+Internal\+Error(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(2, "{}[ERROR (INTERNAL)] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
 
 
 
-Definition at line \textbf{ 25} of file \textbf{ logging.\+h}.
+Definition at line \textbf{ 30} of file \textbf{ logging.\+h}.
 
 \label{logging_8h_a2fdba44c36e040a816760eace78b36f9} 
 \index{logging.h@{logging.h}!logTest@{logTest}}
 \index{logTest@{logTest}!logging.h@{logging.h}}
 \doxysubsubsection{logTest}
-{\footnotesize\ttfamily \#define log\+Test(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(1, "{}[TEST   ] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+{\footnotesize\ttfamily \#define log\+Test(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(1, "{}[TEST   ] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
 
 
 
-Definition at line \textbf{ 23} of file \textbf{ logging.\+h}.
+Definition at line \textbf{ 28} of file \textbf{ logging.\+h}.
 
 \label{logging_8h_a683d6ae10d139ab0d19204f4f6bec87b} 
 \index{logging.h@{logging.h}!logWarning@{logWarning}}
 \index{logWarning@{logWarning}!logging.h@{logging.h}}
 \doxysubsubsection{logWarning}
-{\footnotesize\ttfamily \#define log\+Warning(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(0, "{}[WARNING] "{}, \+\_\+\+\_\+\+FILE\+\_\+\+NAME\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
+{\footnotesize\ttfamily \#define log\+Warning(\begin{DoxyParamCaption}\item[{}]{... }\end{DoxyParamCaption})~\textbf{ logprint}(0, "{}[WARNING] "{}, FILE\+\_\+\+NAME, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+, \+\_\+\+\_\+\+VA\+\_\+\+ARGS\+\_\+\+\_\+)}
 
 Someday, this might grow into a real logging system
 
@@ -92,7 +104,7 @@ For now, it is just some convenience wrappers around printf that has access to t
 
 Also, logging levels\+: 0\+: silenced when --quiet 1\+: not silenced by --quiet 2\+: as 1, but also prints file and line number in output 
 
-Definition at line \textbf{ 21} of file \textbf{ logging.\+h}.
+Definition at line \textbf{ 26} of file \textbf{ logging.\+h}.
 
 
 
@@ -109,5 +121,5 @@ Definition at line \textbf{ 4} of file \textbf{ logging.\+c}.
 
 
 
-References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, and \textbf{ Context\+::quiet}.
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ FILE\+\_\+\+NAME}, and \textbf{ Context\+::quiet}.
 
