@@ -1,37 +1,49 @@
 #ifndef SIPNET_STATE_H
 #define SIPNET_STATE_H
 
-// See sipnet.c for the list of references cited below
+// See sipnet.c for the list of references cited below. In short:
+// [1] Braswell et al., 2005
+// [2] Sacks et al., 2006
+// [3] Chapter titled "PROCESS-BASED MODELING OF SOIL RESPIRATION FLUXES USING
+//     A MODEL-DATA FUSION ANALYSIS", author unknown
 
 typedef struct ClimateVars ClimateNode;
 
 struct ClimateVars {
-  // [1] Braswell et al. 2005
-  int year;  // year of start of this timestep
-  int day;  // day of start of this timestep (1 = Jan 1.)
-  double time;  // time of start of this timestep (hour.fraction - e.g. noon
-                // = 12.0, midnight = 0.0)
-  double length;  // length of this timestep (in days) - allow variable-length
-                  // timesteps
-  double tair;  // avg. air temp for this time step (degrees C)
-  double tsoil;  // avg. soil temp for this time step (degrees C)
-  double par; /* average par for this time step (Einsteins * m^-2 ground area *
-    day^-1) NOTE: input is in Einsteins * m^-2 ground area, summed over entire
-    time step */
-  double precip; /* total precip. for this time step (cm water equiv. - either
-        rain or snow) NOTE: input is in mm */
-  double vpd; /* average vapor pressure deficit (kPa)
-     NOTE: input is in Pa */
-  double vpdSoil; /* average vapor pressure deficit between soil and air (kPa)
-         NOTE: input is in Pa
-         differs from vpd in that saturation vapor pressure calculated using
-         Tsoil rather than Tair */
-  double vPress; /* average vapor pressure in canopy airspace (kPa)
-        NOTE: input is in Pa */
-  double wspd;  // avg. wind speed (m/s)
-
-  double gdd;  // growing degree days from Jan. 1 to now. NOTE: Calculated,
-               // *not* read from file
+  // year of start of this timestep
+  int year;
+  // day of start of this timestep (1 = Jan 1.)
+  int day;
+  // time of start of this timestep (hour.fraction - e.g. noon= 12.0,
+  // midnight = 0.0)
+  double time;
+  // length of this timestep (in days) - allow variable-length timesteps
+  double length;
+  // avg. air temp for this time step (degrees C)
+  double tair;
+  // avg. soil temp for this time step (degrees C)
+  double tsoil;
+  // average par for this time step (Einsteins * m^-2 ground area * day^-1)
+  // NOTE: input is in Einsteins * m^-2 ground area, summed over entire time
+  // step
+  double par;
+  // total precip. for this time step (cm water equiv. - either rain or snow)
+  // NOTE: input is in mm
+  double precip;
+  // average vapor pressure deficit (kPa).  NOTE: input is in Pa
+  double vpd;
+  //  average vapor pressure deficit between soil and air (kPa). NOTE: input is
+  //  in Pa.
+  //  Differs from vpd in that saturation vapor pressure calculated using Tsoil
+  //  rather than Tair
+  double vpdSoil;
+  //  average vapor pressure in canopy airspace (kPa). NOTE: input is in Pa
+  double vPress;
+  // avg. wind speed (m/s)
+  double wspd;
+  // growing degree days from Jan. 1 to now. NOTE: Calculated, *not* read from
+  // file
+  double gdd;
 
   ClimateNode *nextClim;
 };
@@ -39,72 +51,132 @@ struct ClimateVars {
 #define NUM_CLIM_FILE_COLS 12
 #define NUM_CLIM_FILE_COLS_LEGACY (NUM_CLIM_FILE_COLS + 2)
 
-// model parameters which can change from one run to the next
-// these include initializations of state
-// initial values are read in from a file, or calculated at start of model
-// if any parameters are added here, and these parameters are to be read from
-// file,
-//  be sure to add them to the readParamData function, below
+// Model parameters which can change from one run to the next. These include
+// initializations of state.
+// Initial values are read in from a file, or calculated at start of model.
+// If any parameters are added here, and these parameters are to be read from
+// file, be sure to add them to the readParamData function, below
 
 // Parameter values are read in from <inputFile>.param
 typedef struct Parameters {
-  //
-  // [1] Braswell et al. (2005)
-  //
-  // Initial state values:
+  // *****
+  // Params from [1] Braswell et al. (2005)
 
-  // g C * m^-2 ground area in wood (above-ground + roots); C_(W,0) in [1]
+  //
+  // Initial state values
+
+  // g C * m^-2 ground area in wood (above-ground + roots)
+  // :: C_(W,0) in [1]
   double plantWoodInit;
   // initial leaf area, m^2 leaves * m^-2 ground area (multiply by leafCSpWt to
   // get initial plant leaf C, which is C_(L,0) in [1])
+  // :: used to derive C_L_0 in [1]
   double laiInit;
-  // initial soil C content, g C * m^-2 ground area; C_(S,0) in [1]
+  // initial soil C content, g C * m^-2 ground area
+  // :: C_(S,0) in [1]
   double soilInit;
-  // unitless: fraction of soilWHC; used to derive W_0 in [1]
+  // unitless: fraction of soilWHC
+  // :: used to derive W_0 in [1]
   double soilWFracInit;
 
   //
   // Photosynthesis
 
   // max photosynthesis assuming max. possible par, all intercepted, no temp,
-  // water or vpd stress (nmol CO2 * g^-1 leaf * sec^-1); A_max in [1]
+  // water or vpd stress (nmol CO2 * g^-1 leaf * sec^-1)
+  // :: A_max in [1]
   double aMax;
-  // avg. daily aMax as fraction of instantaneous; A_d in [1]
+  // avg. daily aMax as fraction of instantaneous
+  // :: A_d in [1]
   double aMaxFrac;
-  // basal foliage resp. rate, as % of aMax; K_f in [1]
+  // basal foliage resp. rate, as % of aMax
+  // :: K_f in [1]
   double baseFolRespFrac;
   // min and optimal temps at which net photosynthesis occurs (degrees C)
-  // T_min and T_opt in [1]
+  // :: T_min and T_opt in [1]
   double psnTMin, psnTOpt;
-  // Slope of VPD-psn relationship; K_VPD in [1]
+  // slope of VPD-psn relationship
+  // :: K_VPD in [1]
   double dVpdSlope;
-  // Exponent for D_VPD calculation via dVpd = 1 - dVpdSlope * vpd^dVpdExp
+  // exponent for D_VPD calculation via dVpd = 1 - dVpdSlope * vpd^dVpdExp
   // Note: this is explicitly shown as 2 in [1] - see (A10)
+  // :: no direct analog in [1]
   double dVpdExp;
   // par at which photosynthesis occurs at 1/2 theoretical maximum
-  // (Einsteins * m^-2 ground area * day^-1); PAR_1/2 in [1]
+  // (Einsteins * m^-2 ground area * day^-1)
+  // :: PAR_1/2 in [1]
   double halfSatPar;
-  // light attenuation coefficient; k in [1]
+  // light attenuation coefficient
+  // :: k in [1]
   double attenuation;
 
   //
   // Phenology related
 
-  // day when leaves appear; D_on in [1]
+  // day when leaves appear
+  // :: D_on in [1]
   double leafOnDay;
-  // day when leaves disappear; D_off in [1]
+  // day when leaves disappear
+  // :: D_off in [1]
   double leafOffDay;
-  //// where's L_max
+  // No L_max from [1], superseded by...
 
   //
-  // Other sources
+  // Autotrophic respiration
+
+  // vegetation maintenance respiration at 0 degrees C
+  // (g C respired * g^-1 plant C * day^-1)
+  // Only counts plant wood C - leaves handled elsewhere (both above and
+  // below-ground: assumed for now to have same resp. rate)
+  // NOTE: read in as per-year rate!
+  // :: K_A in [1]
+  double baseVegResp;
+  // scalar determining effect of temp on veg. resp.; Q_10_v in [1]
+  double vegRespQ10;
+
   //
+  // Soil respiration
+
+  // soil respiration at 0 degrees C and max soil moisture
+  // (g C respired * g^-1 soil C * day^-1)
+  // NOTE: read in as per-year rate!
+  // :: K_H in [1]
+  double baseSoilResp;
+  // scalar determining effect of temp on soil resp.; Q_10_s in [1]
+  double soilRespQ10;
+
+  //
+  // Moisture related
+
+  // fraction of plant available soil water which can be removed in one day
+  // without water stress occurring
+  // :: f in [1]
+  double waterRemoveFrac;
+  // water use efficiency constant
+  // :: K_WUE in [1]
+  double wueConst;
+  // soil (transpiration layer) water holding capacity (cm)
+  // :: W_c in [1]
+  double soilWHC;
+  // g C * m^-2 leaf area
+  // :: SLW in [1]
+  double leafCSpWt;
+  // g leaf C * g^-1 leaf
+  // :: C_frac in [1]
+  double cFracLeaf;
+  // average turnover rate of woody plant C, in fraction per day (leaf loss
+  // handled separately). NOTE: read in as per-year rate!
+  // :: K_w in [1]
+  double woodTurnoverRate;
+
+  // *****
+  // Other params, provenance TBD
+  //
+
   // initial state values:
   double litterInit;  // g C * m^-2 ground area
   double litterWFracInit;  // unitless: fraction of litterWHC
   double snowInit;  // cm water equiv.
-
-  // 9 parameters
 
   // phenology-related:
   double gddLeafOn;  // with gdd-based phenology, gdd threshold for leaf
@@ -116,17 +188,10 @@ typedef struct Parameters {
   double fracLeafFall;  // additional fraction of leaves that fall at end of
                         // growing season
   double leafAllocation;  // fraction of NPP allocated to leaf growth
-  double leafTurnoverRate; /* average turnover rate of leaves, in fraction per
-            day NOTE: read in as per-year rate! */
+  double leafTurnoverRate; // average turnover rate of leaves, in fraction per
+                           // day. NOTE: read in as per-year rate!
 
-  // 8 parameters
   // autotrophic respiration:
-  double baseVegResp; /* vegetation maintenance respiration at 0 degrees C
-      (g C respired * g^-1 plant C * day^-1)
-      NOTE: only counts plant wood C - leaves handled elsewhere
-      (both above and below-ground: assumed for now to have same resp. rate)
-      NOTE: read in as per-year rate! */
-  double vegRespQ10;  // scalar determining effect of temp on veg. resp.
   double growthRespFrac;  // growth resp. as fraction of (GPP - woodResp -
                           // folResp)
   double frozenSoilFolREff;  // amount that foliar resp. is shutdown if soil is
@@ -134,7 +199,6 @@ typedef struct Parameters {
   double frozenSoilThreshold;  // soil temperature below which frozenSoilFolREff
                                // and frozenSoilEff kick in (degrees C)
 
-  // 5 parameters
   // soil respiration:
   double litterBreakdownRate; /* rate at which litter is converted to
                  soil/respired at 0 degrees C and max soil moisture (g C broken
@@ -142,84 +206,39 @@ typedef struct Parameters {
                */
   double fracLitterRespired; /* of the litter broken down, fraction respired
                 (the rest is transferred to soil pool) */
-  double baseSoilResp; /* soil respiration at 0 degrees C and max soil moisture
-       (g C respired * g^-1 soil C * day^-1)
-       NOTE: read in as per-year rate! */
-  double baseSoilRespCold;  // OBSOLETE PARAM
-                            // soil respiration at 0 degrees C and max soil
-                            // moisture when tsoil < coldSoilThreshold
-                            // (g C respired * g^-1 soil C day^-1)
-                            // NOTE: read in as per-year rate!
-
-  // 6 parameters
-
-  double soilRespQ10;  // scalar determining effect of temp on soil resp.
-  double soilRespQ10Cold;  // OBSOLETE PARAM
-                           // scalar determining effect of temp on soil resp.
-                           // when tsoil < coldSoilThreshold
-
-  double coldSoilThreshold;  // OBSOLETE PARAM
-                             // temp. at which use baseSoilRespCold and
-                             // soilRespQ10Cold (if SEASONAL_R_SOIL true)
-                             // (degrees C)
-  double E0;  // OBSOLETE PARAM  E0 in Lloyd-Taylor soil respiration function
-  double T0;  // OBSOLETE PARAM  T0 in Lloyd-Taylor soil respiration function
   double soilRespMoistEffect;  // scalar determining effect of moisture on soil
                                // resp.
 
-  // 8 parameters
   // moisture-related:
-  double waterRemoveFrac; /* fraction of plant available soil water which can be
-          removed in one day without water stress occurring */
   double frozenSoilEff;  // fraction of water that's available if soil is frozen
                          // (0 = none available, 1 = all still avail.)
                          // NOTE: if frozenSoilEff = 0, then shut down psn
-  double wueConst;  // water use efficiency constant
   double litterWHC;  // litter (evaporative layer) water holding capacity (cm)
-  double soilWHC;  // soil (transpiration layer) water holding capacity (cm)
   double immedEvapFrac;  // fraction of rain that is immediately intercepted &
                          // evaporated
   double fastFlowFrac;  // fraction of water entering soil that goes directly to
                         // drainage
   double snowMelt;  // rate at which snow melts (cm water equiv./degree C/day)
-  double litWaterDrainRate;  // OBSOLETE PARAM
-                             // rate at which litter water drains into lower
-                             // layer when litter layer fully moisture-saturated
-                             // (cm water/day)
   double rdConst;  // scalar determining amount of aerodynamic resistance
   double rSoilConst1, rSoilConst2;  // soil resistance =
                                     // e^(rSoilConst1 - rSoilConst2 * W1)
                                     // where W1 = (litterWater/litterWHC)
-  double m_ballBerry;  // OBSOLETE PARAM slope for the Ball Berry relationship
-  double leafCSpWt;  // g C * m^-2 leaf area
-  double cFracLeaf;  // g leaf C * g^-1 leaf
   double leafPoolDepth;  // leaf (evaporative) pool rim thickness in mm
 
-  double woodTurnoverRate;  // average turnover rate of woody plant C, in
-                            // fraction per day (leaf loss handled separately)
-                            // NOTE: read in as per-year rate!
 
   // calculated parameters:
   double psnTMax;  // degrees C - assumed symmetrical around psnTOpt
 
-  // 16-1 calculated= 15 parameters
 
   // quality model parameters
-  double qualityLeaf;  // value for leaf litter quality
-  double qualityWood;  // value for wood litter quality
   double efficiency;  // conversion efficiency of ingested carbon
 
-  // 4 parameters
 
   double maxIngestionRate;  // hr-1 - maximum ingestion rate of the microbe
   double halfSatIngestion;  // mg C g-1 soil - half saturation ingestion rate of
                             // microbe
-  double totNitrogen;  // OBSOLETE PARAM  Percentage nitrogen in soil
-  double microbeNC;  // OBSOLETE PARAM  mg N / mg C - microbe N:C ratio
-  // 5 parameters
 
   double microbeInit;  // mg C / g soil microbe initial carbon amount
-                       // 1 parameters
 
   double fineRootFrac;  // fraction of wood carbon allocated to fine roots
   double coarseRootFrac;  // fraction of wood carbon that is coarse roots
@@ -227,10 +246,11 @@ typedef struct Parameters {
   double woodAllocation;  // fraction of NPP allocated to the roots
   double fineRootExudation;  // fraction of GPP exuded to the soil
   double coarseRootExudation;  // fraction of NPP exuded to the soil
+
   // Calculated param
   double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
 
-  // 7-1=6 parameters
+
 
   double fineRootTurnoverRate;  // turnover of fine roots (per year rate)
   double coarseRootTurnoverRate;  // turnover of coarse roots (per year rate)
@@ -240,26 +260,55 @@ typedef struct Parameters {
                               // rate)
   double fineRootQ10;  // Q10 of fine roots
   double coarseRootQ10;  // Q10 of coarse roots
-                         // 6 parameters
 
   double baseMicrobeResp;  // base respiration rate of microbes
   double microbeQ10;  // Q10 of coarse roots
   double microbePulseEff;  // fraction of exudates that microbes immediately
                            // use.
+
+  // OBSOLETE PARAMS
+  // To be removed
+  double baseSoilRespCold;  // OBSOLETE PARAM
+                            // soil respiration at 0 degrees C and max soil
+                            // moisture when tsoil < coldSoilThreshold
+                            // (g C respired * g^-1 soil C day^-1)
+                            // NOTE: read in as per-year rate!
+  double soilRespQ10Cold;  // OBSOLETE PARAM
+                           // scalar determining effect of temp on soil resp.
+                           // when tsoil < coldSoilThreshold
+
+  double coldSoilThreshold;  // OBSOLETE PARAM
+                             // temp. at which use baseSoilRespCold and
+                             // soilRespQ10Cold (if SEASONAL_R_SOIL true)
+                             // (degrees C)
+  double litWaterDrainRate;  // OBSOLETE PARAM
+                             // rate at which litter water drains into lower
+                             // layer when litter layer fully moisture-saturated
+                             // (cm water/day)
+  double E0;  // OBSOLETE PARAM  E0 in Lloyd-Taylor soil respiration function
+  double T0;  // OBSOLETE PARAM  T0 in Lloyd-Taylor soil respiration function
+  double m_ballBerry;  // OBSOLETE PARAM slope for the Ball Berry relationship
+  double totNitrogen;  // OBSOLETE PARAM  Percentage nitrogen in soil
+  double microbeNC;  // OBSOLETE PARAM  mg N / mg C - microbe N:C ratio
+  double qualityLeaf;  // value for leaf litter quality
+  double qualityWood;  // value for wood litter quality
+
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
 
 // the state of the environment
 typedef struct Environment {
+  // From [1] Braswell et al. 2005
   double plantWoodC;  // carbon in plant wood (above-ground + roots) (g C * m^-2
                       // ground area)
   double plantLeafC;  // carbon in leaves (g C * m^-2 ground area)
-  double litter;  // carbon in litter (g C * m^-2 ground area)
   double soil;  // carbon in soil (g C * m^-2 ground area)
-
-  double litterWater;  // water in litter (evaporative) layer (cm)
   double soilWater;  // plant available soil water (cm)
+
+  // From other sources
+  double litter;  // carbon in litter (g C * m^-2 ground area)
+  double litterWater;  // water in litter (evaporative) layer (cm)
   double snow;  // snow pack (cm water equiv.)
 
   double microbeC;  // carbon in microbes g C m-2 ground area
