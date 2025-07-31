@@ -583,6 +583,10 @@ void calcLightEff(double *lightEff, double lai, double par) {
  * @brief Compute gross potential photosynthesis with restrictions and base
  * foliar resp
  *
+ * Computes GPP_pot from [1], eq (A7); GPP reduced by effects of temperature,
+ * vapor pressure deficit, and light. Also computes base foliar respiration here
+ * for convenience, used later as part of foliar respiration computation.
+ *
  * @param[out] potGrossPsn gross photosynthesis without water effect (g C * m^-2
  * ground area * day^-1)
  * @param[out] baseFolResp base foliar respiration without temp, water, etc. (g
@@ -598,9 +602,8 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
   // Calculation of potGrossPsn proceeds as described in [1], with minor
   // modifications as noted below.
 
-  // Calculation of baseFolResp is not described in [1], but is
-  // naturally calculated here as well. It is used in the calculation of
-  // foliar resp and wood maint. resp (TBD: this may be part of [1])
+  // Calculation of baseFolResp is used as part of [1], eq (A18), calculated
+  // here for convenience (see vegResp() fur use of baseFolResp).
 
   // maximum possible gross respiration (nmol CO2 * g^-1 leaf * sec^-1)
   double grossAMax;
@@ -643,7 +646,7 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
   *potGrossPsn = grossAMax * dTemp * dVpd * dLight * conversion;
 
   // do foliar resp. even if no photosynthesis in this time step
-  // :: not part of [1] (so far)
+  // :: from [1] in part, used in eq (A18) later
   *baseFolResp = respPerGram * conversion;
 }
 
@@ -1179,7 +1182,7 @@ void soilDegradation(void) {
       // :: from [1] (and others, TBD), eq (A3), where:
       //     L_w = fluxes.woodLitter
       //     L_l = fluxes.leafLitter
-      //     R_h = fluxes.rSoil (which is a copy of fluxes.maintRespiration)
+      //     R_h = fluxes.rSoil
       //    coarseRootLoss and fineRootLoss are from addition of root modeling
       envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                     fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
@@ -1235,6 +1238,8 @@ double soilBreakdown(double poolC, double baseRate, double water, double whc,
 
   if (ctx.waterHResp) {
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
+    // TBD Should we be checking if tsoil < 0, as in
+    // calcMaintenanceRespiration()?
   } else {
     moistEffect = 1;
   }
