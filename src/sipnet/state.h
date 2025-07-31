@@ -297,7 +297,9 @@ typedef struct FluxVars {
   double transpiration;  // cm water * day^-1
 
   double maintRespiration;  // Microbial maintenance respiration rate g C
-                            // m-2 ground area day^-1
+                            // m-2 ground area day^-1; except when microbes are
+                            // not in effect, and it is equivalent to rSoil, at
+                            // least as describe in [1], eq (A20)
   double microbeIngestion;
 
   double fineRootLoss;  // Loss rate of fine roots (turnover + exudation)

@@ -1086,6 +1086,8 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   double moistEffect;
   double tempEffect;
 
+  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
+  // case, need to dig in. With that said...
   // :: from [1], eq (A20), if waterHResp, tsoil >= 0, and not microbes;
   //    modified to add an exponent soilRespMoistEffect to (W/W_c), which is
   //    equal to 1 in [1]
@@ -1159,7 +1161,11 @@ void soilDegradation(void) {
   } else {
     if (ctx.litterPool) {
       // TBD Why aren't we setting fluxes.rSoil here?
-      // TBD: hoping to dig into this when I examine [2]
+      //   -- hoping to dig into this when I examine [2], but I suspect we are
+      // missing:
+      //       fluxes.rSoil = fluxes.maintRespiration;
+      // or to be calculating rSoil instead of maintResp in
+
       envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
                       fluxes.litterToSoil - fluxes.rLitter) *
                      climate->length;
@@ -1168,8 +1174,8 @@ void soilDegradation(void) {
                     fluxes.litterToSoil - fluxes.rSoil) *
                    climate->length;
     } else {
-      fluxes.rSoil = fluxes.maintRespiration;
       // Normal pool (single pool, no microbes)
+      fluxes.rSoil = fluxes.maintRespiration;
       // :: from [1] (and others, TBD), eq (A3), where:
       //     L_w = fluxes.woodLitter
       //     L_l = fluxes.leafLitter
