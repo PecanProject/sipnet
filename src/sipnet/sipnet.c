@@ -530,7 +530,8 @@ void calcLightEff(double *lightEff, double lai, double par) {
       lightIntensity = par * exp(-1.0 * params.attenuation * cumLai);
 
       // between 0 and 1; when lightIntensity = halfSatPar, currLightEff = 1/2
-      // :: from [1], eq (A12), modified as pow of 2 instead of e
+      // :: from [1], eq (A12), modified as power of 2 instead of e (but
+      // equivalent mathematically)
       currLightEff = (1 - pow(2, (-1.0 * lightIntensity / params.halfSatPar)));
 
       // CHANGE FROM [1]: instead of taking mean of the light effects at each
