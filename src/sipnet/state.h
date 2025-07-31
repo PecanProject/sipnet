@@ -188,8 +188,8 @@ typedef struct Parameters {
   double fracLeafFall;  // additional fraction of leaves that fall at end of
                         // growing season
   double leafAllocation;  // fraction of NPP allocated to leaf growth
-  double leafTurnoverRate; // average turnover rate of leaves, in fraction per
-                           // day. NOTE: read in as per-year rate!
+  double leafTurnoverRate;  // average turnover rate of leaves, in fraction per
+                            // day. NOTE: read in as per-year rate!
 
   // autotrophic respiration:
   double growthRespFrac;  // growth resp. as fraction of (GPP - woodResp -
@@ -225,14 +225,11 @@ typedef struct Parameters {
                                     // where W1 = (litterWater/litterWHC)
   double leafPoolDepth;  // leaf (evaporative) pool rim thickness in mm
 
-
   // calculated parameters:
   double psnTMax;  // degrees C - assumed symmetrical around psnTOpt
 
-
   // quality model parameters
   double efficiency;  // conversion efficiency of ingested carbon
-
 
   double maxIngestionRate;  // hr-1 - maximum ingestion rate of the microbe
   double halfSatIngestion;  // mg C g-1 soil - half saturation ingestion rate of
@@ -249,8 +246,6 @@ typedef struct Parameters {
 
   // Calculated param
   double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
-
-
 
   double fineRootTurnoverRate;  // turnover of fine roots (per year rate)
   double coarseRootTurnoverRate;  // turnover of coarse roots (per year rate)
