@@ -607,7 +607,7 @@ Event parameters specified in the `events.in` file:
 
 Mineral N includes fertilizer supplied as NO3, NH4, and Urea-N. Urea-N is assumed to hydrolyze to ammonium 
 and bicarbonate rapidly and is treated as a mineral N pool. This is a common model assumption because of 
-the fast conversion of Urea to ammonium, and is consistent with the DayCent formulation (Parton et al TK-ref, other models and refs?). 
+the fast conversion of Urea to ammonium, and is consistent with the DayCent formulation (Parton et al, 2001). 
 Only relatively recently did DayCent explicitly model Urea-N to NH4 in order to represent the impact of 
 urease inhibitors (Gurung et al 2021) that slow down the rate.
 
@@ -655,10 +655,7 @@ $$
 F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} + f_{\text{transfer,below}} \cdot C_{\text{root}} \tag{28}\label{eq:harvest}
 $$
 
-When the model is run with LITTER_POOL=1, $F^C_{\text{harvest,litter}}$ is added to the litter pool. When run with LITTER_POOL=0, 
-it is added to the soil carbon pool instead.
-
-This amount is then added to the litter/soil flux in equation \eqref{eq:litter_flux}.
+This amount is then added to the litter flux in equation \eqref{eq:litter_flux}.
 
 ### $\frak{Irrigation}$
 
