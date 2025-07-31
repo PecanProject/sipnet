@@ -54,6 +54,17 @@ component out of
 -->
 ## Carbon Dynamics
 
+
+### Litter Pool
+
+SIPNET can be run with or without a separate litter pool (LITTER_POOL=1 or 0). 
+Equations in this document assume LITTER_POOL=1 unless otherwise noted.
+
+When LITTER_POOL=0:
+- Carbon fluxes that would go to the litter pool ($F^C_\text{litter}$) are routed directly to the soil carbon pool
+- All decomposition occurs in the soil pool
+- This affects carbon routing from harvest events, organic matter additions, plant senescence, and other processes involving $F^C_\text{litter}$
+
 ### Maximum Photosynthetic Rate
 
 $$
@@ -168,7 +179,8 @@ $$
 R_\text{wood} = K_\text{wood} \cdot C_\text{wood} \cdot D_{\text{temp,Q10}_v} \tag{Braswell A19}\label{eq:A19}
 $$
 
-Wood maintenance respiration  $(R_m)$ depends on the wood carbon content  $(C_\text{wood})$, a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling function $D_{\text{temp,Q10}_v}$.
+Wood maintenance respiration $(R_m)$ depends on the wood carbon content  $(C_\text{wood})$, 
+a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling function $D_{\text{temp,Q10}_v}$.
 
 
 ### Litter Carbon
@@ -221,7 +233,7 @@ The rate of decomposition is a function of the litter carbon content and the dec
 ### Soil Carbon
 
 $$
-\frac{dC_\text{soil}}{dt} = F^C_\text{soil} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
 $$
 
 The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined by the addition of litter carbon and the loss of carbon to heterotrophic respiration. This model assumes no loss of SOC to leaching or erosion.
@@ -579,25 +591,30 @@ For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) su
 
 ## $\frak{Agronomic \ Management \ Events}$
 
-All management events are specified in the `events.in`. Each event is a separate record that includes the date of the event, the type of event, and associated parameters.
+All management events are specified in the `events.in`. Each event is a separate record that includes the 
+date of the event, the type of event, and associated parameters.
 
-### $\frak{Fertilizer \ and \ Organic \ Matter \ Additions}$ 
+### $\frak{Fertilizer}$ and Organic Matter Additions 
 
-Additions of Mineral N, Organic N, and Organic C are represented by the fluxes $F^N_{\text{fert,min}}$, $F^N_{\text{fert,org}},$ and $F^C_{\text{fert,org}}$ that are specified in the `events.in` configuration file.
+Additions of Mineral N, Organic N, and Organic C are added directly to their respective pools via the 
+fluxes $F^N_{\text{fert,min}}$, $F^N_{\text{fert,org}},$ and $F^C_{\text{fert,org}}$ that are specified 
+in the `events.in` configuration file.
 
 Event parameters specified in the `events.in` file:
-
 - Organic N added  $(F^N_{\text{fert,org}})$
 - Organic C added  $(F^C_{\text{fert,org}})$
 - Mineral N added  $(F^N_{\text{fert,min}})$
 
-These are added to the litter C and N and mineral N pools, respectively.
-
-Mineral N includes fertilizer supplied as NO3, NH4, and Urea-N. Urea-N is assumed to hydrolyze to ammonium and bicarbonate rapidly and is treated as a mineral N pool. This is a common assumption because of the high rate of this conversion, and is consistent the DayCent formulation (Parton et al TK-ref, other models and refs?). Only relatively recently did DayCent explicitly model Urea-N to NH4 in order to represent the impact of urease inhibitors (Gurung et al 2021) that slow down the rate.
+Mineral N includes fertilizer supplied as NO3, NH4, and Urea-N. Urea-N is assumed to hydrolyze to ammonium 
+and bicarbonate rapidly and is treated as a mineral N pool. This is a common model assumption because of 
+the fast conversion of Urea to ammonium, and is consistent with the DayCent formulation (Parton et al TK-ref, other models and refs?). 
+Only relatively recently did DayCent explicitly model Urea-N to NH4 in order to represent the impact of 
+urease inhibitors (Gurung et al 2021) that slow down the rate.
 
 ### $\frak{Tillage}$
 
-To represent tillage, we define two new adjustment factors that modify the decomposition rates of litter $K_{\text{litter}}$ and soil organic matter $K_{\text{som}}$:
+To represent tillage, we define two new adjustment factors that modify the decomposition rates
+ of litter $K_{\text{litter}}$ and soil organic matter $K_{\text{som}}$:
 
 Event parameters from the `events.in` file:
 
@@ -638,7 +655,10 @@ $$
 F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} + f_{\text{transfer,below}} \cdot C_{\text{root}} \tag{28}\label{eq:harvest}
 $$
 
-This amount is then added to the litter flux in equation \eqref{eq:litter_flux}.
+When the model is run with LITTER_POOL=1, $F^C_{\text{harvest,litter}}$ is added to the litter pool. When run with LITTER_POOL=0, 
+it is added to the soil carbon pool instead.
+
+This amount is then added to the litter/soil flux in equation \eqref{eq:litter_flux}.
 
 ### $\frak{Irrigation}$
 
