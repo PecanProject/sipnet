@@ -137,7 +137,7 @@ void updateCharContext(const char *name, const char *value,
 int hasSourcePrecedence(struct context_metadata *s,
                         context_source_t newSource) {
   // If newSource is greater (or equal) to old source, then it's good
-  return (s->source < newSource);
+  return (s->source <= newSource);
 }
 
 // Get a printable version of source enum for dumpConfig()
