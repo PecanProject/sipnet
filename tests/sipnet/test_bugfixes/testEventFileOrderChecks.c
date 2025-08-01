@@ -28,7 +28,7 @@ int run(void) {
   test_assert(jmp_rval == 0);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with infra_events_year_boundary.in\n");
+    logTest("FAIL with infra_events_year_boundary.in\n");
   }
 
   // Second test - this should exit
@@ -42,7 +42,7 @@ int run(void) {
   test_assert(jmp_rval == 1);
   status |= !exit_result;
   if (!exit_result) {
-    printf("FAIL with infra_events_bad_order.in\n");
+    logTest("FAIL with infra_events_bad_order.in\n");
   }
 
   // Allow a real exit, not that this is really needed
@@ -54,13 +54,13 @@ int run(void) {
 int main(void) {
   int status;
 
-  printf("Starting testEventFileOrderChecks:run()\n");
+  logTest("Starting testEventFileOrderChecks:run()\n");
   status = run();
   if (status) {
     really_exit = 1;
-    printf("FAILED testEventFileOrderChecks with status %d\n", status);
+    logTest("FAILED testEventFileOrderChecks with status %d\n", status);
     exit(status);
   }
 
-  printf("PASSED testEventFileOrderChecks\n");
+  logTest("PASSED testEventFileOrderChecks\n");
 }
