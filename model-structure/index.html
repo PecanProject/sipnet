@@ -421,6 +421,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#litter-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Litter Pool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#maximum-photosynthetic-rate" class="md-nav__link">
     <span class="md-ellipsis">
       Maximum Photosynthetic Rate
@@ -882,7 +891,7 @@
           <li class="md-nav__item">
   <a href="#frakfertilizer-and-organic-matter-additions" class="md-nav__link">
     <span class="md-ellipsis">
-      \(\frak{Fertilizer \ and \ Organic \ Matter \ Additions}\)
+      \(\frak{Fertilizer}\) and Organic Matter Additions
     </span>
   </a>
   
@@ -1297,6 +1306,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#litter-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Litter Pool
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#maximum-photosynthetic-rate" class="md-nav__link">
     <span class="md-ellipsis">
       Maximum Photosynthetic Rate
@@ -1758,7 +1776,7 @@
           <li class="md-nav__item">
   <a href="#frakfertilizer-and-organic-matter-additions" class="md-nav__link">
     <span class="md-ellipsis">
-      \(\frak{Fertilizer \ and \ Organic \ Matter \ Additions}\)
+      \(\frak{Fertilizer}\) and Organic Matter Additions
     </span>
   </a>
   
@@ -1869,6 +1887,13 @@ In equation \eqref{eq:line}, $m$ is the slope and $b$ is the intercept.
 component out of 
 -->
 <h2 id="carbon-dynamics">Carbon Dynamics<a class="headerlink" href="#carbon-dynamics" title="Permanent link">&para;</a></h2>
+<h3 id="litter-pool">Litter Pool<a class="headerlink" href="#litter-pool" title="Permanent link">&para;</a></h3>
+<p>SIPNET can be run with or without a separate litter pool (LITTER_POOL=1 or 0). 
+Equations in this document assume LITTER_POOL=1 unless otherwise noted.</p>
+<p>When LITTER_POOL=0:
+- Carbon fluxes that would go to the litter pool (<span class="arithmatex">\(F^C_\text{litter}\)</span>) are routed directly to the soil carbon pool
+- All decomposition occurs in the soil pool
+- This affects carbon routing from harvest events, organic matter additions, plant senescence, and other processes involving <span class="arithmatex">\(F^C_\text{litter}\)</span></p>
 <h3 id="maximum-photosynthetic-rate">Maximum Photosynthetic Rate<a class="headerlink" href="#maximum-photosynthetic-rate" title="Permanent link">&para;</a></h3>
 <div class="arithmatex">\[
 \text{GPP}_{\text{max}} = A_{\text{max}} \cdot A_d + R_{leaf,0} \tag{Braswell A6}\label{eq:A6}
@@ -1946,7 +1971,8 @@ R_\text{leaf} = R_\text{leaf,opt} \cdot D_{\text{temp,Q10}} \tag{Braswell A18a}\
 <div class="arithmatex">\[
 R_\text{wood} = K_\text{wood} \cdot C_\text{wood} \cdot D_{\text{temp,Q10}_v} \tag{Braswell A19}\label{eq:A19}
 \]</div>
-<p>Wood maintenance respiration  <span class="arithmatex">\((R_m)\)</span> depends on the wood carbon content  <span class="arithmatex">\((C_\text{wood})\)</span>, a scaling constant  <span class="arithmatex">\((k_\text{wood})\)</span>, and the temperature sensitivity scaling function <span class="arithmatex">\(D_{\text{temp,Q10}_v}\)</span>.</p>
+<p>Wood maintenance respiration <span class="arithmatex">\((R_m)\)</span> depends on the wood carbon content  <span class="arithmatex">\((C_\text{wood})\)</span>, 
+a scaling constant  <span class="arithmatex">\((k_\text{wood})\)</span>, and the temperature sensitivity scaling function <span class="arithmatex">\(D_{\text{temp,Q10}_v}\)</span>.</p>
 <h3 id="litter-carbon">Litter Carbon<a class="headerlink" href="#litter-carbon" title="Permanent link">&para;</a></h3>
 <p>The change in the litter carbon pool over time is defined by the input of new litter and the loss to decomposition:</p>
 <div class="arithmatex">\[
@@ -1983,7 +2009,7 @@ F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \c
 <p>The rate of decomposition is a function of the litter carbon content and the decomposition rate <span class="arithmatex">\(K_{\text{litter}}\)</span> modified by temperature and moisture factors. <span class="arithmatex">\(f_{R_H}\)</span> is the fraction of litter carbon that is respired.</p>
 <h3 id="soil-carbon">Soil Carbon<a class="headerlink" href="#soil-carbon" title="Permanent link">&para;</a></h3>
 <div class="arithmatex">\[
-\frac{dC_\text{soil}}{dt} = F^C_\text{soil} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
 \]</div>
 <p>The change in the SOC pool over time <span class="arithmatex">\(\frac{dC_\text{soil}}{dt}\)</span> is determined by the addition of litter carbon and the loss of carbon to heterotrophic respiration. This model assumes no loss of SOC to leaching or erosion.</p>
 <h3 id="heterotrophic-respiration-c_textsoillitter-rightarrow-co_2">Heterotrophic Respiration <span class="arithmatex">\((C_\text{soil,litter} \rightarrow CO_2)\)</span><a class="headerlink" href="#heterotrophic-respiration-c_textsoillitter-rightarrow-co_2" title="Permanent link">&para;</a></h3>
@@ -2202,19 +2228,24 @@ D_{\mathrm{moistur,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\t
 <p>Where <span class="arithmatex">\(\beta\)</span> and <span class="arithmatex">\(\gamma\)</span> are parameters that control the shape of the curve, and can be estimated for a particular maiximum and width.</p>
 <p>For the relationship between <span class="arithmatex">\(N_2O\)</span> flux and soil moisture, Wang et al (2023) suggest a Gaussian function.</p>
 <h2 id="frakagronomic-management-events"><span class="arithmatex">\(\frak{Agronomic \ Management \ Events}\)</span><a class="headerlink" href="#frakagronomic-management-events" title="Permanent link">&para;</a></h2>
-<p>All management events are specified in the <code>events.in</code>. Each event is a separate record that includes the date of the event, the type of event, and associated parameters.</p>
-<h3 id="frakfertilizer-and-organic-matter-additions"><span class="arithmatex">\(\frak{Fertilizer \ and \ Organic \ Matter \ Additions}\)</span><a class="headerlink" href="#frakfertilizer-and-organic-matter-additions" title="Permanent link">&para;</a></h3>
-<p>Additions of Mineral N, Organic N, and Organic C are represented by the fluxes <span class="arithmatex">\(F^N_{\text{fert,min}}\)</span>, <span class="arithmatex">\(F^N_{\text{fert,org}},\)</span> and <span class="arithmatex">\(F^C_{\text{fert,org}}\)</span> that are specified in the <code>events.in</code> configuration file.</p>
-<p>Event parameters specified in the <code>events.in</code> file:</p>
-<ul>
-<li>Organic N added  <span class="arithmatex">\((F^N_{\text{fert,org}})\)</span></li>
-<li>Organic C added  <span class="arithmatex">\((F^C_{\text{fert,org}})\)</span></li>
-<li>Mineral N added  <span class="arithmatex">\((F^N_{\text{fert,min}})\)</span></li>
-</ul>
-<p>These are added to the litter C and N and mineral N pools, respectively.</p>
-<p>Mineral N includes fertilizer supplied as NO3, NH4, and Urea-N. Urea-N is assumed to hydrolyze to ammonium and bicarbonate rapidly and is treated as a mineral N pool. This is a common assumption because of the high rate of this conversion, and is consistent the DayCent formulation (Parton et al TK-ref, other models and refs?). Only relatively recently did DayCent explicitly model Urea-N to NH4 in order to represent the impact of urease inhibitors (Gurung et al 2021) that slow down the rate.</p>
+<p>All management events are specified in the <code>events.in</code>. Each event is a separate record that includes the 
+date of the event, the type of event, and associated parameters.</p>
+<h3 id="frakfertilizer-and-organic-matter-additions"><span class="arithmatex">\(\frak{Fertilizer}\)</span> and Organic Matter Additions<a class="headerlink" href="#frakfertilizer-and-organic-matter-additions" title="Permanent link">&para;</a></h3>
+<p>Additions of Mineral N, Organic N, and Organic C are added directly to their respective pools via the 
+fluxes <span class="arithmatex">\(F^N_{\text{fert,min}}\)</span>, <span class="arithmatex">\(F^N_{\text{fert,org}},\)</span> and <span class="arithmatex">\(F^C_{\text{fert,org}}\)</span> that are specified 
+in the <code>events.in</code> configuration file.</p>
+<p>Event parameters specified in the <code>events.in</code> file:
+- Organic N added  <span class="arithmatex">\((F^N_{\text{fert,org}})\)</span>
+- Organic C added  <span class="arithmatex">\((F^C_{\text{fert,org}})\)</span>
+- Mineral N added  <span class="arithmatex">\((F^N_{\text{fert,min}})\)</span></p>
+<p>Mineral N includes fertilizer supplied as NO3, NH4, and Urea-N. Urea-N is assumed to hydrolyze to ammonium 
+and bicarbonate rapidly and is treated as a mineral N pool. This is a common model assumption because of 
+the fast conversion of Urea to ammonium, and is consistent with the DayCent formulation (Parton et al, 2001). 
+Only relatively recently did DayCent explicitly model Urea-N to NH4 in order to represent the impact of 
+urease inhibitors (Gurung et al 2021) that slow down the rate.</p>
 <h3 id="fraktillage"><span class="arithmatex">\(\frak{Tillage}\)</span><a class="headerlink" href="#fraktillage" title="Permanent link">&para;</a></h3>
-<p>To represent tillage, we define two new adjustment factors that modify the decomposition rates of litter <span class="arithmatex">\(K_{\text{litter}}\)</span> and soil organic matter <span class="arithmatex">\(K_{\text{som}}\)</span>:</p>
+<p>To represent tillage, we define two new adjustment factors that modify the decomposition rates
+ of litter <span class="arithmatex">\(K_{\text{litter}}\)</span> and soil organic matter <span class="arithmatex">\(K_{\text{som}}\)</span>:</p>
 <p>Event parameters from the <code>events.in</code> file:</p>
 <ul>
 <li>SOM decomposition modifier <span class="arithmatex">\(D_{K\text{,tillage,litter}}\)</span>  </li>

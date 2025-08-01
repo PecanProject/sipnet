@@ -141,7 +141,7 @@
 \DoxyCodeLine{00137\ \textcolor{keywordtype}{int}\ hasSourcePrecedence(\textcolor{keyword}{struct}\ context\_metadata\ *s,}
 \DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ context\_source\_t\ newSource)\ \{}
 \DoxyCodeLine{00139\ \ \ \textcolor{comment}{//\ If\ newSource\ is\ greater\ (or\ equal)\ to\ old\ source,\ then\ it's\ good}}
-\DoxyCodeLine{00140\ \ \ \textcolor{keywordflow}{return}\ (s-\/>source\ <\ newSource);}
+\DoxyCodeLine{00140\ \ \ \textcolor{keywordflow}{return}\ (s-\/>source\ <=\ newSource);}
 \DoxyCodeLine{00141\ \}}
 \DoxyCodeLine{00142\ }
 \DoxyCodeLine{00143\ \textcolor{comment}{//\ Get\ a\ printable\ version\ of\ source\ enum\ for\ dumpConfig()}}
