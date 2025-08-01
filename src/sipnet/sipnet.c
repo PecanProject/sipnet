@@ -1167,7 +1167,6 @@ void soilDegradation(void) {
       //   -- hoping to dig into this when I examine [2], but I suspect we are
       // missing:
       //       fluxes.rSoil = fluxes.maintRespiration;
-      // or to be calculating rSoil instead of maintResp in
 
       envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
                       fluxes.litterToSoil - fluxes.rLitter) *
@@ -1224,9 +1223,9 @@ double woodLitterF(double plantWoodC) {
  * is with the litter pool when litterPool is on.
  *
  * @param poolC carbon in input pool (litter pool)
- * @param baseRate base litter breakdown rate
- * @param water water in litter pool
- * @param whc litter pool water holding capacity
+ * @param baseRate base pool breakdown rate
+ * @param water water in pool
+ * @param whc pool water holding capacity
  * @param tsoil soil temperature
  * @param Q10 Q10 param (uses soil respiration Q10)
  * @return litter breakdown (g C/m^2 ground area)
