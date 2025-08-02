@@ -51,15 +51,16 @@ struct ClimateVars {
 #define NUM_CLIM_FILE_COLS 12
 #define NUM_CLIM_FILE_COLS_LEGACY (NUM_CLIM_FILE_COLS + 2)
 
-// Model parameters which can change from one run to the next. These include
-// initializations of state.
-// Initial values are read in from a file, or calculated at start of model.
+// Model parameters which can change from one run to the next, including
+// initializations of state. Initial values are read in from a file, or
+// calculated at start of model.
+//
 // If any parameters are added here, and these parameters are to be read from
 // file, be sure to add them to the readParamData function, below
 
 // Parameter values are read in from <inputFile>.param
 typedef struct Parameters {
-  // *****
+  // ****************************************
   // Params from [1] Braswell et al. (2005)
 
   //
@@ -169,8 +170,10 @@ typedef struct Parameters {
   // :: K_w in [1]
   double woodTurnoverRate;
 
-  // *****
+  // ****************************************
   // Other params, provenance TBD
+  //    (many of these are obviously from [2], I just haven't worked out the
+  //    details yet - that's next up)
   //
 
   // initial state values:
@@ -285,8 +288,8 @@ typedef struct Parameters {
   double m_ballBerry;  // OBSOLETE PARAM slope for the Ball Berry relationship
   double totNitrogen;  // OBSOLETE PARAM  Percentage nitrogen in soil
   double microbeNC;  // OBSOLETE PARAM  mg N / mg C - microbe N:C ratio
-  double qualityLeaf;  // value for leaf litter quality
-  double qualityWood;  // value for wood litter quality
+  double qualityLeaf;  // OBSOLETE PARAM  value for leaf litter quality
+  double qualityWood;  // OBSOLETE PARAM  value for wood litter quality
 
 } Params;
 
@@ -301,62 +304,101 @@ typedef struct Environment {
   double soil;  // carbon in soil (g C * m^-2 ground area)
   double soilWater;  // plant available soil water (cm)
 
-  // From other sources
+  // From [2] Sacks et al. 2006
   double litter;  // carbon in litter (g C * m^-2 ground area)
   double litterWater;  // water in litter (evaporative) layer (cm)
   double snow;  // snow pack (cm water equiv.)
 
+  // From other sources, TBD
   double microbeC;  // carbon in microbes g C m-2 ground area
-
   double coarseRootC;
   double fineRootC;
 } Envi;
 
 // fluxes as per-day rates
 typedef struct FluxVars {
-  double photosynthesis;  // GROSS photosynthesis (g C * m^-2 ground area *
-                          // day^-1)
-  double leafCreation;  // g C * m^-2 ground area * day^-1 transferred from wood
-                        // to leaves
-  double leafLitter;  // g C * m^-2 ground area * day^-1 leaves falling
-  double woodLitter;  // g C * m^-2 ground area * day^-1
-  double rVeg;  // vegetation respiration (g C * m^-2 ground area * day^-1)
+  // Re: rSoil vs maintRespiration
+  // When microbes are in effect, maintResp is the respiration term for the
+  // microbes, and rSoil is calculated taking maintResp into account (which
+  // seems fine).
+  // However, when microbes are off, maintResp and rSoil are treated as the
+  // same, which makes _some_ sense (and maintResp is calculated as
+  // heterotrophic soil resp is described in [1]), but the use in the code is
+  // confusing. Also, the description of maintResp (before this update) only
+  // mentions the microbe case, furthering the confusion. For microbes off, I
+  // would have expected maintResp to be 0, and rSoil to be calc'd as maintResp
+  // is now.
+
+  // ****************************************
+  // Fluxes from [1] Braswell et al. (2005)
+  //  - fluxes tracked as part of modeling from [1]
+
+  // GROSS photosynthesis (g C * m^-2 ground area * day^-1)
+  double photosynthesis;
+  // Leaf fall (g C * m^-2 ground area * day^-1)
+  double leafLitter;
+  // Wood flux to litter (g C * m^-2 ground area * day^-1)
+  double woodLitter;
+  // vegetation respiration (g C * m^-2 ground area * day^-1)
+  double rVeg;
+  // soil respiration (g C * m^-2 ground area * day^-1)
+  double rSoil;
+  // Liquid precipitation (cm water * day^-1)
+  double rain;
+  // Soil transpiration (cm water * day^-1)
+  double transpiration;
+  // drainage from lower level of soil out of system (cm water * day^-1)
+  double bottomDrainage;
+
+  // ****************************************
+  // Fluxes from other sources, provenance TBD
+  //
+
+  // leaf creation term as determined by growing season boundaries (as in [1])
+  // and NPP (as in [2])
+  // C transferred from wood to leaves (g C * m^-2 ground area * day^-1)
+  double leafCreation;
+  // wood creation term, dependent on NPP similar to leaf creation, but
+  // provenance TBD (g C * m^-2 ground area * day^-1)
+  double woodCreation;
+
+  // litter [2]
   double litterToSoil;  // g C * m^-2 ground area * day^-1 litter turned into
                         // soil
   double rLitter;  // g C * m^-2 ground area * day^-1 respired by litter
-  double rSoil;  // g C * m^-2 ground area * day^-1 respired by soil
-  double rain;  // cm water * day^-1 (only liquid precip.)
+
+  // snow [2]
   double snowFall;  // cm water equiv. * day^-1
-  double immedEvap;  // rain that's intercepted and immediately evaporated (cm
-                     // water * day^-1)
   double snowMelt;  // cm water equiv. * day^-1
   double sublimation;  // cm water equiv. * day^-1
+
+  // more complex soil moisture system [2]
+  double immedEvap;  // rain that's intercepted and immediately evaporated (cm
+                     // water * day^-1)
   double fastFlow;  // water entering soil that goes directly to drainage (out
                     // of system) (cm water * day^-1)
   double evaporation;  // evaporation from top of soil (cm water * day^-1)
   double topDrainage;  // drainage from top of soil to lower level (cm water *
                        // day^-1)
-  double bottomDrainage;  // drainage from lower level of soil out of system (cm
-                          // water * day^-1)
-  double transpiration;  // cm water * day^-1
 
-  double maintRespiration;  // Microbial maintenance respiration rate g C
-                            // m-2 ground area day^-1; except when microbes are
-                            // not in effect, and it is equivalent to rSoil, at
-                            // least as describe in [1], eq (A20)
+  // Microbes [3]
+  // microbes on: microbial maintenance respiration rate
+  // microbes off: equivalent to rSoil, calc'd as described in [1], eq (A20)
+  // (g C m-2 ground area day^-1)
+  double maintRespiration;
+  // Flux that microbes remove from soil (mg C g soil day)
   double microbeIngestion;
+  // Exudates into the soil
+  double soilPulse;
 
+  // Roots
   double fineRootLoss;  // Loss rate of fine roots (turnover + exudation)
   double coarseRootLoss;  // Loss rate of coarse roots (turnover + exudation)
-
   double fineRootCreation;  // Creation rate of fine roots
   double coarseRootCreation;  // Creation rate of coarse roots
-  double woodCreation;  // Creation rate of wood
-
   double rCoarseRoot;  // Coarse root respiration
   double rFineRoot;  // Fine root respiration
 
-  double soilPulse;  // Exudates into the soil
 } Fluxes;
 
 typedef struct TrackerVars {  // variables to track various things

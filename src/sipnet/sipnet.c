@@ -744,7 +744,8 @@ int pastLeafFall(void) {
  *
  * Mechanics of growing season boundary effects are from [1], modified to be a
  * fraction of total leaves growing/falling to allow for continual growth and
- * litter as described in [2], Appendix: Model Description.
+ * litter as described in [2], Appendix: Model Description. Calculation of
+ * leafCreation is not from [1] (source TBD).
  *
  * @param[out] leafCreation (g C/m^2 ground/day)
  * @param[out] leafLitter (g C/m^2 ground/day)
@@ -757,15 +758,16 @@ void leafFluxes(double *leafCreation, double *leafLitter, double plantLeafC) {
   // first determine the fluxes that happen at every time step, not just start &
   // end of growing season:
   if (npp > 0) {
-    *leafCreation = npp * params.leafAllocation;  // a fraction of NPP is
-    // allocated to leaf growth
-  } else {  // net loss of C in this time step - no C left for growth
+    // a fraction of NPP is allocated to leaf growth
+    *leafCreation = npp * params.leafAllocation;
+  } else {
+    // net loss of C in this time step - no C left for growth
     *leafCreation = 0;
   }
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
 
-  // now add add'l fluxes at start/end of growing season:
+  // now add additional fluxes at start/end of growing season:
 
   // first check for new year; if new year, reset trackers (since we haven't
   // done leaf growth or fall yet in this new year):
