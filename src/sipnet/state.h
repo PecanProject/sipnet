@@ -60,8 +60,10 @@ struct ClimateVars {
 
 // Parameter values are read in from <inputFile>.param
 typedef struct Parameters {
+
   // ****************************************
   // Params from [1] Braswell et al. (2005)
+  // ****************************************
 
   //
   // Initial state values
@@ -96,6 +98,8 @@ typedef struct Parameters {
   // min and optimal temps at which net photosynthesis occurs (degrees C)
   // :: T_min and T_opt in [1]
   double psnTMin, psnTOpt;
+  // calculated (not read) T max, assumed symmetrical around psnTOpt (degrees C)
+  double psnTMax;
   // slope of VPD-psn relationship
   // :: K_VPD in [1]
   double dVpdSlope;
@@ -171,85 +175,100 @@ typedef struct Parameters {
   double woodTurnoverRate;
 
   // ****************************************
-  // Other params, provenance TBD
-  //    (many of these are obviously from [2], I just haven't worked out the
-  //    details yet - that's next up)
+  // Params from [2] Sacks et al. (2006)
+  // ****************************************
+
   //
+  // Initial state values
 
-  // initial state values:
-  double litterInit;  // g C * m^-2 ground area
-  double litterWFracInit;  // unitless: fraction of litterWHC
-  double snowInit;  // cm water equiv.
+  // initial litter pool (g C * m^-2 ground area)
+  // :: not directly listed in [2]
+  double litterInit;
+  // initial litter water as fraction of litterWHC (unitless)
+  // :: equivalent to W_S,0 in [2]
+  double litterWFracInit;
+  // initial snowpack (cm water equivalent)
+  // :: W_P,0 in [2]
+  double snowInit;
 
-  // phenology-related:
-  double gddLeafOn;  // with gdd-based phenology, gdd threshold for leaf
-                     // appearance
-  double soilTempLeafOn;  // with soil temp-based phenology, soil temp threshold
-                          // for leaf appearance
-  double leafGrowth;  // additional leaf growth at start of growing season
-                      // (g C * m^-2 ground)
-  double fracLeafFall;  // additional fraction of leaves that fall at end of
-                        // growing season
-  double leafAllocation;  // fraction of NPP allocated to leaf growth
-  double leafTurnoverRate;  // average turnover rate of leaves, in fraction per
-                            // day. NOTE: read in as per-year rate!
+  //
+  // Moisture related
 
-  // autotrophic respiration:
-  double growthRespFrac;  // growth resp. as fraction of (GPP - woodResp -
-                          // folResp)
-  double frozenSoilFolREff;  // amount that foliar resp. is shutdown if soil is
-                             // frozen (0 = full shutdown, 1 = no shutdown)
-  double frozenSoilThreshold;  // soil temperature below which frozenSoilFolREff
-                               // and frozenSoilEff kick in (degrees C)
+  // fraction of water that's available if soil is frozen
+  // (0 = none available, 1 = all still avail.)
+  // NOTE: if frozenSoilEff = 0, then shut down psn
+  // :: not directly listed in [2]
+  double frozenSoilEff;
+  // litter (evaporative layer) water holding capacity (cm)
+  // :: W_S,c in [2]
+  double litterWHC;
+  // fraction of rain that is immediately intercepted & evaporated
+  // :: E in [2]
+  double immedEvapFrac;
+  // fraction of water entering soil that goes directly to drainage
+  // :: F in [2]
+  double fastFlowFrac;
+  // rate at which snow melts (cm water equiv./degree C/day)
+  // :: K_S in [2]
+  double snowMelt;
+  // scalar determining amount of aerodynamic resistance
+  // :: R_d in [2]
+  double rdConst;
+  // parameters used to calculate soil resistance as
+  // soil resistance = e^(rSoilConst1 - rSoilConst2 * W1)
+  // where W1 = (litterWater/litterWHC)
+  // :: R_soil,1 and R_soil,2 in [2]
+  double rSoilConst1, rSoilConst2;
 
-  // soil respiration:
-  double litterBreakdownRate; /* rate at which litter is converted to
-                 soil/respired at 0 degrees C and max soil moisture (g C broken
-                 down * g^-1 litter C * day^-1) NOTE: read in as per-year rate
-               */
-  double fracLitterRespired; /* of the litter broken down, fraction respired
-                (the rest is transferred to soil pool) */
-  double soilRespMoistEffect;  // scalar determining effect of moisture on soil
-                               // resp.
+  //
+  // Phenology related
 
-  // moisture-related:
-  double frozenSoilEff;  // fraction of water that's available if soil is frozen
-                         // (0 = none available, 1 = all still avail.)
-                         // NOTE: if frozenSoilEff = 0, then shut down psn
-  double litterWHC;  // litter (evaporative layer) water holding capacity (cm)
-  double immedEvapFrac;  // fraction of rain that is immediately intercepted &
-                         // evaporated
-  double fastFlowFrac;  // fraction of water entering soil that goes directly to
-                        // drainage
-  double snowMelt;  // rate at which snow melts (cm water equiv./degree C/day)
-  double rdConst;  // scalar determining amount of aerodynamic resistance
-  double rSoilConst1, rSoilConst2;  // soil resistance =
-                                    // e^(rSoilConst1 - rSoilConst2 * W1)
-                                    // where W1 = (litterWater/litterWHC)
-  double leafPoolDepth;  // leaf (evaporative) pool rim thickness in mm
+  // fraction of NPP allocated to leaf growth
+  // :: NPP_L in [2]
+  double leafAllocation;
+  // average turnover rate of leaves, in fraction per day. NOTE: read in as
+  // per-year rate!
+  // :: K_L in [2]
+  double leafTurnoverRate;
 
-  // calculated parameters:
-  double psnTMax;  // degrees C - assumed symmetrical around psnTOpt
+  //
+  // Autotrophic respiration
 
-  // quality model parameters
-  double efficiency;  // conversion efficiency of ingested carbon
+  // amount that foliar resp. is shutdown if soil is frozen (0 = full shutdown,
+  // 1 = no shutdown)
+  // :: not directly listed in [2]
+  double frozenSoilFolREff;
+  // soil temperature below which frozenSoilFolREff and frozenSoilEff kick in
+  // (degrees C)
+  // :: T_s in [2]
+  double frozenSoilThreshold;
 
-  double maxIngestionRate;  // hr-1 - maximum ingestion rate of the microbe
-  double halfSatIngestion;  // mg C g-1 soil - half saturation ingestion rate of
-                            // microbe
+  //
+  // Soil respiration
 
-  double microbeInit;  // mg C / g soil microbe initial carbon amount
+  // rate at which litter is converted to soil/respired at 0 degrees C and max
+  // soil moisture (g C broken down * g^-1 litter C * day^-1)
+  // NOTE: read in as per-year rate
+  // :: not directly listed in [2]
+  double litterBreakdownRate;
+  // of the litter broken down, fraction respired (the rest is transferred to
+  // soil pool)
+  // :: not directly listed in [2]
+  double fracLitterRespired;
 
+  // ****************************************
+  // Params from [3] Zobitz et al. (2008)
+  // ****************************************
+
+  // roots
   double fineRootFrac;  // fraction of wood carbon allocated to fine roots
   double coarseRootFrac;  // fraction of wood carbon that is coarse roots
+  double woodAllocation;  // fraction of NPP allocated to the non-root wood
   double fineRootAllocation;  // fraction of NPP allocated to fine roots
-  double woodAllocation;  // fraction of NPP allocated to the roots
+  double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
+                                // (calculated param)
   double fineRootExudation;  // fraction of GPP exuded to the soil
   double coarseRootExudation;  // fraction of NPP exuded to the soil
-
-  // Calculated param
-  double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
-
   double fineRootTurnoverRate;  // turnover of fine roots (per year rate)
   double coarseRootTurnoverRate;  // turnover of coarse roots (per year rate)
   double baseFineRootResp;  // base respiration rate of fine roots  (per year
@@ -259,10 +278,64 @@ typedef struct Parameters {
   double fineRootQ10;  // Q10 of fine roots
   double coarseRootQ10;  // Q10 of coarse roots
 
-  double baseMicrobeResp;  // base respiration rate of microbes
-  double microbeQ10;  // Q10 of coarse roots
-  double microbePulseEff;  // fraction of exudates that microbes immediately
-                           // use.
+  // ****************************************
+  // Params from [4] Zobitz et al. (draft)
+  // ****************************************
+
+  // mg C / g soil microbe initial carbon amount, as fraction of soil init C
+  // :: equivalent to C_B,0 in [4]
+  double microbeInit;
+  // base respiration rate of microbes at 0 degrees C
+  // :: K_B in [4]
+  double baseMicrobeResp;
+  // Q10 of microbes
+  // :: Q10_B in [4]
+  double microbeQ10;
+  // fraction of exudates that microbes immediately use (microbe assimilation
+  // efficiency of root exudates)
+  // :: epsilon_R in [4]
+  double microbePulseEff;
+  // microbe efficiency to convert carbon to biomass
+  // :: epsilon in [4]
+  double efficiency;
+  // microbial maximum ingestion rate (hr-1)
+  // :: mu_MAX in [4]
+  double maxIngestionRate;
+  // half saturation ingestion rate of microbes (mg C g-1 soil)
+  // Note: those units can't be correct, as we add this to envi.soil; must be
+  //       (g C / m-2 ground area), as there are no conversions in the code.
+  //       Or, this is a bug. (This param is listed as g C/m-2 in [4], so
+  //       probably not a bug.)
+  // :: theta_B in [4]
+  double halfSatIngestion;
+
+  // ****************************************
+  // Other params, provenance TBD
+  // ****************************************
+
+  // phenology-related:
+  // with gdd-based phenology, gdd threshold for leaf appearance
+  double gddLeafOn;
+  // with soil temp-based phenology, soil temp threshold for leaf appearance
+  double soilTempLeafOn;
+
+  // The two params below seem to be used in leaf calculations as part of a
+  // merging of approaches from [1] and [2]
+  // additional leaf growth at start of growing season (g C * m^-2 ground)
+  double leafGrowth;
+  // additional fraction of leaves that fall at end of growing season
+  double fracLeafFall;
+
+  // autotrophic respiration:
+  double growthRespFrac;  // growth resp. as fraction of (GPP - woodResp -
+                          // folResp)
+
+  // soil respiration:
+  double soilRespMoistEffect;  // scalar determining effect of moisture on soil
+                               // resp.
+
+  // moisture-related:
+  double leafPoolDepth;  // leaf (evaporative) pool rim thickness in mm
 
   // OBSOLETE PARAMS
   // To be removed
@@ -309,10 +382,12 @@ typedef struct Environment {
   double litterWater;  // water in litter (evaporative) layer (cm)
   double snow;  // snow pack (cm water equiv.)
 
-  // From other sources, TBD
-  double microbeC;  // carbon in microbes g C m-2 ground area
+  // From [3] Zobitz et al. (2008)
   double coarseRootC;
   double fineRootC;
+
+  // From [4] Zobitz (draft)
+  double microbeC;  // carbon in microbes (g C m-2 ground area)
 } Envi;
 
 // fluxes as per-day rates
@@ -328,6 +403,13 @@ typedef struct FluxVars {
   // mentions the microbe case, furthering the confusion. For microbes off, I
   // would have expected maintResp to be 0, and rSoil to be calc'd as maintResp
   // is now.
+  // The GROWTH_RESP flag may also play in here, as when that is on, we split
+  // heterotrophic respiration into growth and maintenance resp. This means
+  // maintResp and rSoil should not be the same (microbes off), so again -
+  // confusing in the code. Also: are we handling all the permutations of
+  // GROWTH_RESP and MICROBES correctly?
+  // It's possible that better descriptions of these terms here, and more
+  // comments in the code are all that is needed.
 
   // ****************************************
   // Fluxes from [1] Braswell et al. (2005)
@@ -351,6 +433,35 @@ typedef struct FluxVars {
   double bottomDrainage;
 
   // ****************************************
+  // Fluxes from [2] Sacks et al. (2006)
+  //  - fluxes tracked as part of modeling from [2]
+
+  // litter fluxes
+  // litter turned into soil (g C * m^-2 ground area * day^-1)
+  double litterToSoil;
+  // respired by litter (g C * m^-2 ground area * day^-1)
+  double rLitter;
+
+  // snow fluxes
+  // snow addded (cm water equiv. * day^-1)
+  double snowFall;
+  // snow removed by melting (cm water equiv. * day^-1)
+  double snowMelt;
+  // snow removed by sublimation (cm water equiv. * day^-1)
+  double sublimation;
+
+  // more complex soil moisture system fluxes
+  // rain that's intercepted and immediately evaporated (cm water * day^-1)
+  double immedEvap;
+  // water entering soil that goes directly to drainage (out of system)
+  // (cm water * day^-1)
+  double fastFlow;
+  // evaporation from top of soil (cm water * day^-1)
+  double evaporation;
+  // drainage from top of soil to lower level (cm water * day^-1)
+  double topDrainage;
+
+  // ****************************************
   // Fluxes from other sources, provenance TBD
   //
 
@@ -362,25 +473,6 @@ typedef struct FluxVars {
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;
 
-  // litter [2]
-  double litterToSoil;  // g C * m^-2 ground area * day^-1 litter turned into
-                        // soil
-  double rLitter;  // g C * m^-2 ground area * day^-1 respired by litter
-
-  // snow [2]
-  double snowFall;  // cm water equiv. * day^-1
-  double snowMelt;  // cm water equiv. * day^-1
-  double sublimation;  // cm water equiv. * day^-1
-
-  // more complex soil moisture system [2]
-  double immedEvap;  // rain that's intercepted and immediately evaporated (cm
-                     // water * day^-1)
-  double fastFlow;  // water entering soil that goes directly to drainage (out
-                    // of system) (cm water * day^-1)
-  double evaporation;  // evaporation from top of soil (cm water * day^-1)
-  double topDrainage;  // drainage from top of soil to lower level (cm water *
-                       // day^-1)
-
   // Microbes [3]
   // microbes on: microbial maintenance respiration rate
   // microbes off: equivalent to rSoil, calc'd as described in [1], eq (A20)
@@ -391,7 +483,7 @@ typedef struct FluxVars {
   // Exudates into the soil
   double soilPulse;
 
-  // Roots
+  // Roots [3]
   double fineRootLoss;  // Loss rate of fine roots (turnover + exudation)
   double coarseRootLoss;  // Loss rate of coarse roots (turnover + exudation)
   double fineRootCreation;  // Creation rate of fine roots
@@ -436,16 +528,19 @@ typedef struct TrackerVars {  // variables to track various things
   double yearlyLitter;  // g C * m^-2 litterfall, year to date: SUM litter
 } Trackers;
 
-typedef struct PhenologyTrackersStruct { /* variables to track each year's
-          phenological development. Only used in leafFluxes function, but made
-          global so can be initialized dynamically, based on day of year of
-          first climate record */
-  int didLeafGrowth;  // have we done leaf growth at start of growing season
-                      // this year? (0 = no, 1 = yes)
-  int didLeafFall;  // have we done leaf fall at end of growing season this
-                    // year? (0 = no, 1 = yes)
-  int lastYear;  // year of previous time step, for tracking when we hit a new
-                 // calendar year
+typedef struct PhenologyTrackersStruct {
+  // variables to track each year's phenological development. Only used in
+  // leafFluxes function, but made global so can be initialized dynamically,
+  // based on day of year of first climate record
+
+  // have we done leaf growth at start of growing season this year? (0 = no,
+  // 1 = yes)
+  int didLeafGrowth;
+  // have we done leaf fall at end of growing season this year? (0 = no,
+  // 1 = yes)
+  int didLeafFall;
+  // year of previous time step, for tracking when we hit a new calendar year
+  int lastYear;
 } PhenologyTrackers;
 
 #endif  // SIPNET_STATE_H
