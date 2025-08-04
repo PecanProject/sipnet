@@ -1185,7 +1185,7 @@ void soilDegradation(void) {
     // :: from [1] for litter terms
     // :: from [3] for root terms
     // :: from [4] for microbeIngestion term
-    // TBD Why are we not subtracting rSoil here?
+    // Note: no rSoil term here, as soil C loss is handled by microbeIngestion
     envi.soil +=
         (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
          fluxes.leafLitter - fluxes.microbeIngestion) *
