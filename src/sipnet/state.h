@@ -462,16 +462,25 @@ typedef struct FluxVars {
   double topDrainage;
 
   // ****************************************
-  // Fluxes from other sources, provenance TBD
-  //
+  // Fluxes from [3] Zobitz et al. (2008)
+  //  - fluxes tracked as part of modeling from [3]
 
-  // leaf creation term as determined by growing season boundaries (as in [1])
-  // and NPP (as in [2])
-  // C transferred from wood to leaves (g C * m^-2 ground area * day^-1)
-  double leafCreation;
-  // wood creation term, dependent on NPP similar to leaf creation, but
-  // provenance TBD (g C * m^-2 ground area * day^-1)
-  double woodCreation;
+  // Loss rate of fine roots (turnover + exudation)
+  double fineRootLoss;
+  // Loss rate of coarse roots (turnover + exudation)
+  double coarseRootLoss;
+  // Creation rate of fine roots
+  double fineRootCreation;
+  // Creation rate of coarse roots
+  double coarseRootCreation;
+  // Coarse root respiration
+  double rCoarseRoot;
+  // Fine root respiration
+  double rFineRoot;
+
+  // ****************************************
+  // Fluxes from [4] Zobitz (draft)
+  //  - fluxes tracked as part of modeling from [4]
 
   // Microbes [3]
   // microbes on: microbial maintenance respiration rate
@@ -483,13 +492,17 @@ typedef struct FluxVars {
   // Exudates into the soil
   double soilPulse;
 
-  // Roots [3]
-  double fineRootLoss;  // Loss rate of fine roots (turnover + exudation)
-  double coarseRootLoss;  // Loss rate of coarse roots (turnover + exudation)
-  double fineRootCreation;  // Creation rate of fine roots
-  double coarseRootCreation;  // Creation rate of coarse roots
-  double rCoarseRoot;  // Coarse root respiration
-  double rFineRoot;  // Fine root respiration
+  // ****************************************
+  // Fluxes from other sources, provenance TBD
+  //
+
+  // leaf creation term as determined by growing season boundaries (as in [1])
+  // and NPP (as in [2])
+  // C transferred from wood to leaves (g C * m^-2 ground area * day^-1)
+  double leafCreation;
+  // wood creation term, dependent on NPP similar to leaf creation, but
+  // provenance TBD (g C * m^-2 ground area * day^-1)
+  double woodCreation;
 
 } Fluxes;
 

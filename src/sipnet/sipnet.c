@@ -1707,13 +1707,13 @@ void updateState(void) {
   // And yes, I would love to break that out to maintain more rigor in this
   // flow process.
 
-  // :: from [1] (and others, TBD), eq (A1), where:
+  // :: from [1], eq (A1), where:
   //     GPP = fluxes.photosynthesis
   //     R_a = fluxes.rVeg
   //     L_w = fluxes.woodLitter
   //     L   = fluxes.leafCreation
-  // :: from [3], root terms (woodCreation, fineRootC, coarseRootC)  from NPP
-  //    allocation
+  // :: from [3], additional root terms (woodCreation, fineRootC, coarseRootC)
+  //    from NPP allocation
   envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation -
                       fluxes.leafCreation - fluxes.woodLitter - fluxes.rVeg -
                       fluxes.coarseRootCreation - fluxes.fineRootCreation) *
@@ -1725,18 +1725,19 @@ void updateState(void) {
   envi.plantLeafC +=
       (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
 
-  // :: from [1] (and others, TBD), eq (A4), where:
+  // :: from [1], eq (A4), where:
   //     P = (fluxes.rain - fluxes.immedEvap)
   //     T = (fluxes.transpiration + fluxes.evaporation)
   //     D = (fluxes.bottomDrainage + fluxes.fastFlow)
-  //    from [2], addition of fluxes.snowMelt
+  //    from [2], addition of fluxes.snowMelt, as well as the modifications in
+  //    the terms above: immedEvap in P, evaporation in T, and fastFlow in D
   envi.soilWater +=
       (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow -
        fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) *
       climate->length;
 
   // if ctx.snow = 0, some or all of these fluxes will always be 0
-  // :: from [2], addition of snowpack
+  // :: from [2], addition of snowpack description
   envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) *
                climate->length;
 
