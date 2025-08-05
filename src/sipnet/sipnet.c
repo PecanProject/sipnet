@@ -1145,11 +1145,15 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   }
 }
 
+/*!
+ * Calculates microbe ingestion
+ */
 void microbeGrowth(void) {
-  // :: from [4], part of eq (5.9); calc's mu_max*C_B*g(C_S), to be used
-  //    in calculation of both eqs (5.9) and (5.10) (see soilDegradation())
+  // :: from [4], part of eqs (5.9) and (5.10)
+  //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
+  //    eqs (5.9) and (5.10) in soilDegradation()
   if (ctx.microbes) {
-    // :: mu_max * g(C_S) from eq (5.9)
+    // :: mu_max * g(C_S)
     double baseRate = params.maxIngestionRate * envi.soil /
                       (params.halfSatIngestion + envi.soil);
 
@@ -1160,15 +1164,16 @@ void microbeGrowth(void) {
   }
 }
 
-// Now we need to calculate the production of the soil carbon pool, but we are
-// going to have some outputs here that become inputs.  We need to output total
-// respiration of this pool, as this gets fed back into the optimization
-// soil quality is always the current counter divided by the number of total
-// pools. Here we update the soil carbon pools and report the total respiration
-// rate across all pools (it is easier this way than updating the carbon pools
-// separately because then we don't have to store all the fluxes in a separate
-// vector)
-
+/*!
+ * Calculate soil respiration flux and update carbon pools
+ *
+ * Calculates soil respiration, method depending on the MICROBES and
+ * LITTER_POOL flags. Updates carbon pools for soil, fine roots,
+ * and coarse roots.
+ *
+ * TODO: split this apart - fluxes into calculateFluxes, with pool updates
+ *       after, as is the general method for SIPNET.
+ */
 void soilDegradation(void) {
 
   double soilWater;
@@ -1178,33 +1183,33 @@ void soilDegradation(void) {
 
   if (ctx.microbes) {
     microbeGrowth();
-    double microbeEff;
-
-    microbeEff = params.efficiency;
+    double microbeEff = params.efficiency;
 
     // :: from [1] for litter terms
     // :: from [3] for root terms
     // :: from [4] for microbeIngestion term
-    // Note: no rSoil term here, as soil C loss is handled by microbeIngestion
+    // Note: no rSoil term here, as soil resp is handled by microbeIngestion
     envi.soil +=
         (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
          fluxes.leafLitter - fluxes.microbeIngestion) *
         climate->length;
     // microbeC additions due to ingestion and incorporation of root exudates,
     // with reduction from microbe respiration
-    // :: from [4], eqs (5.9), (5.12, 5.11 indirectly in maintRespiration and
-    //    soilPulse)
+    // :: from [4], eq (5.9) for first (ingestion) term,
+    // ::      eq (5.11) used for soilPulse, and
+    // ::      eq (5.12) used for maintRespiration
     envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
                       fluxes.maintRespiration) *
                      climate->length;
 
-    // :: from [4], eq (5.10) plus maintResp
+    // rSoil is maintenance resp + growth (microbe) resp
+    // :: from [4], eq (5.10) for microbe term
     fluxes.rSoil =
         fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // TBD Why aren't we setting fluxes.rSoil here?
-      //     suspect we are msiing  fluxes.rSoil = fluxes.maintRespiration;
+      //     suspect we are missing fluxes.rSoil = fluxes.maintRespiration;
       // :: from [2], litter model description
       envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
                       fluxes.litterToSoil - fluxes.rLitter) *
@@ -1381,7 +1386,7 @@ void calculateFluxes(void) {
                         params.fineRootTurnoverRate * envi.fineRootC;
 
   // fluxes that get added to microbe pool
-  // :: from [4], eq (5.11) first part
+  // :: from [4], eq (5.11) first line
   fluxes.soilPulse = params.microbePulseEff * (coarseExudate + fineExudate);
 
   // :: from [3], root model description

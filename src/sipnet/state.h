@@ -488,6 +488,8 @@ typedef struct FluxVars {
   // (g C m-2 ground area day^-1)
   double maintRespiration;
   // Flux that microbes remove from soil (mg C g soil day)
+  // TBD I highly doubt those units; this is calc'd as
+  //     (g C * m-2) * (day-1) * (unitless terms)
   double microbeIngestion;
   // Exudates into the soil
   double soilPulse;
