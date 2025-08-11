@@ -95,6 +95,16 @@
 // Note that Sacks, et al. (2007) is not referenced directly here, but is of
 // interest in that it represents a use of the more complex soil moisture
 // model from [2] above _without_ the litter layer.
+// Other cites/notes:
+// * [3] and [4] above are sources for the now-removed multi-pool/soil quality
+//   modes, if we want to bring those back at some point
+// * Zobitz, J.M., Moore, D.J.P., Quaife, T., Braswell, B.H., Bergeson, A.,
+//   Anthony, J.A., Monson, R.K., 2014. Joint data assimilation of satellite
+//   reflectance and net ecosystem exchange data constrains ecosystem carbon
+//   fluxes at a high-elevation subalpine forest. Agric. For. Meteorol.
+//   195–196, 73–88. https://doi.org/10.1016/j.agrformet.2014.04.011
+//   - This paper details the now-removed MODIS and fAPAR tracking, if we want
+//   to bring those back at some point
 
 // linked list of climate variables
 // one node for each time step
