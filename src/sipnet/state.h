@@ -327,15 +327,20 @@ typedef struct Parameters {
   double fracLeafFall;
 
   // autotrophic respiration:
-  double growthRespFrac;  // growth resp. as fraction of (GPP - woodResp -
-                          // folResp)
+  // growth resp. as fraction of (GPP - woodResp - folResp)
+  // Note: that comment may not be correct, growthResp is calc'd as
+  //       (mean GPP) * (growtheRespFrac)
+  //       with no correction for woodResp or folResp
+  double growthRespFrac;
 
   // soil respiration:
-  double soilRespMoistEffect;  // scalar determining effect of moisture on soil
-                               // resp.
+  // scalar determining effect of moisture on soil respiration; used as exponent
+  // for (W/W_c) fraction in moisture effect calculation
+  double soilRespMoistEffect;
 
-  // moisture-related:
-  double leafPoolDepth;  // leaf (evaporative) pool rim thickness in mm
+  // moisture related:
+  // leaf (evaporative) pool rim thickness in mm
+  double leafPoolDepth;
 
   // OBSOLETE PARAMS
   // To be removed

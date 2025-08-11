@@ -647,7 +647,7 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
           pow((params.psnTMax - params.psnTMin) / 2.0, 2);
   dTemp = fmax(dTemp, 0.0);
   // :: from [1], eq (A10); modified to accept a variable exponent, [1] uses
-  // dVpdExp = 2 [TAG:UNKNOWN_PROVENANCE]
+  // dVpdExp = 2 [TAG:UNKNOWN_PROVENANCE] vpd exponent
   dVpd = 1.0 - params.dVpdSlope * pow(vpd, params.dVpdExp);
   dVpd = fmax(dVpd, 0.0);
   // dLight calculated as described in [1], see calcLightEff()
@@ -728,10 +728,11 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 // note: there may be some fluctuations in this signal for some methods of
 // determining growing season start (e.g. for soil temp-based leaf growth)
 int pastLeafGrowth(void) {
-  if (ctx.gdd) {  // [TAG:UNKNOWN_PROVENANCE]
+  if (ctx.gdd) {  // [TAG:UNKNOWN_PROVENANCE] gdd functionality
     // null pointer dereference warning suppressed on the next line
     return (climate->gdd >= params.gddLeafOn);  // NOLINT
-  } else if (ctx.soilPhenol) {  // [TAG:UNKNOWN_PROVENANCE]
+  } else if (ctx.soilPhenol) {
+    // [TAG:UNKNOWN_PROVENANCE] soil phenol functionality
     return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
                                                        // threshold
   } else {
@@ -767,7 +768,7 @@ int pastLeafFall(void) {
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
 void leafFluxes(double *leafCreation, double *leafLitter, double plantLeafC) {
-  // [TAG:UNKNOWN_PROVENANCE]
+  // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
   // [1]: growing season boundary effects, but modified to be partial growth
   // and fall, instead of binary
@@ -1121,7 +1122,9 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   //    equal to 1 in [1]
 
   if (ctx.waterHResp) {  // if soil moisture affects heterotrophic resp
-    // :: from [1], first part of eq (A20) with exponent addition
+    // :: from [1], first part of eq (A20)
+    // :: exponent term soilRespMoistEffect is in addition to [1]
+    // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
 
     // :: from [2], snowpack addition
@@ -1280,6 +1283,8 @@ double soilBreakdown(double poolC, double baseRate, double water, double whc,
   double moistEffect;
 
   if (ctx.waterHResp) {
+    // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
+    // is unknown
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
     // TBD Should we be checking if tsoil < 0, as in
     // calcMaintenanceRespiration()?
