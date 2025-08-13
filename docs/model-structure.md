@@ -612,20 +612,20 @@ urease inhibitors (Gurung et al 2021) that slow down the rate.
 
 ### $\frak{Tillage}$
 
-To represent the effect of tillage on decomposition rate, we define the tillage dependency, which is a function of a tillage effect that is specified in the `events.in` file:
+To represent the effect of tillage on decomposition rate, we define the tillage dependency function $D_{\textrm{till}}$, which is a function of a tillage effect $f_{\textrm{till}}$:
 
 $$
-D_{K\text{,tillage}}(t) = 1 + f_{\textrm{till}}\cdot e^{-t/30} \tag{25}\label{eq:tillage}
+D_{\textrm{till}}(t) = 1 + f_{\textrm{till}}\cdot e^{-t/30} \tag{25}\label{eq:till}
 $$
 
-Here, $f_{\textrm{till}}$ is the event-specific tillage adjustment factor, and $D_{K,\text{tillage}}(t)$ is the multiplier that adjusts the decomposition rate $R_H$ in equation \eqref{eq:rh}. 
+$f_{\textrm{till}}$ is specified in the `events.in` file, and $D_{\textrm{till}}(t)$ is multiplied by the $KC$ term in the calculation of $R_H$ (Eq. \eqref{eq:rh}).
 
-This factor has a baseline of 0 when there has been no recent tillage event. A value of $f_{\textrm{till}}=0.2$ represents an initial 20% increase that will exponentially decay. The rate of exponential decay is 1/30 days. This rate was chosen such that $D_\textrm{tillage}$ integrates to 30, which is equivalent to DayCent’s 30‑day step function.
+A value of $f_{\textrm{till}}=0.2$ represents an initial 20% increase that will exponentially decay. The rate of exponential decay is 1/30 days. This rate was chosen such that $D_{\textrm{till}}$ integrates to 30, which is equivalent to DayCent’s 30‑day step function.
 
 If multiple tillage events at times $t_z$ occur with effects $f_{\textrm{till,}z}$, they add linearly thus:
 
 $$
-D_{K\text{,tillage}}(t) = 1 + \sum_{z} f_{\textrm{till,}z}\, e^{-(t-t_{z})/30},\quad t\ge t_{z}.
+D_{\textrm{till}}(t) = 1 + \sum_{z} f_{\textrm{till,}z}\, e^{-(t-t_{z})/30},\quad t\ge t_{z}.
 $$
 
 ### $\frak{Planting \ and \ Emergence}$
