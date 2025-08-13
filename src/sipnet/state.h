@@ -387,7 +387,7 @@ typedef struct Environment {
   // carbon in litter (g C * m^-2 ground area)
   double litter;
   // water in litter (evaporative) layer (cm)
-  // Npte: this may be obsolete since we have dropped LITTER_WATER
+  // Note: this may be obsolete since we have dropped LITTER_WATER
   double litterWater;
   // snow pack (cm water equiv.)
   double snow;
