@@ -4,8 +4,8 @@
 // See sipnet.c for the list of references cited below. In short:
 // [1] Braswell et al., 2005
 // [2] Sacks et al., 2006
-// [3] Chapter titled "PROCESS-BASED MODELING OF SOIL RESPIRATION FLUXES USING
-//     A MODEL-DATA FUSION ANALYSIS", author unknown
+// [3] Zobitz et al, 2008
+// [3] Zobitz (et al.?), date unknown, chapter 5 from unknown book
 
 typedef struct ClimateVars ClimateNode;
 
@@ -263,23 +263,35 @@ typedef struct Parameters {
   // Params from [3] Zobitz et al. (2008)
   // ****************************************
 
-  // roots
-  double fineRootFrac;  // fraction of wood carbon allocated to fine roots
-  double coarseRootFrac;  // fraction of wood carbon that is coarse roots
-  double woodAllocation;  // fraction of NPP allocated to the non-root wood
-  double fineRootAllocation;  // fraction of NPP allocated to fine roots
-  double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
-                                // (calculated param)
-  double fineRootExudation;  // fraction of GPP exuded to the soil
-  double coarseRootExudation;  // fraction of NPP exuded to the soil
-  double fineRootTurnoverRate;  // turnover of fine roots (per year rate)
-  double coarseRootTurnoverRate;  // turnover of coarse roots (per year rate)
-  double baseFineRootResp;  // base respiration rate of fine roots  (per year
-                            // rate)
-  double baseCoarseRootResp;  // base respiration rate of coarse roots (per year
-                              // rate)
-  double fineRootQ10;  // Q10 of fine roots
-  double coarseRootQ10;  // Q10 of coarse roots
+  // Roots
+  //
+
+  // fraction of wood carbon allocated to fine roots
+  double fineRootFrac;
+  // fraction of wood carbon that is coarse roots
+  double coarseRootFrac;
+  // fraction of NPP allocated to the non-root wood
+  double woodAllocation;
+  // fraction of NPP allocated to fine roots
+  double fineRootAllocation;
+  // fraction of NPP allocated to the coarse roots (calculated param)
+  double coarseRootAllocation;
+  // fraction of GPP exuded to the soil
+  double fineRootExudation;
+  // fraction of NPP exuded to the soil
+  double coarseRootExudation;
+  // turnover of fine roots (per year rate)
+  double fineRootTurnoverRate;
+  // turnover of coarse roots (per year rate)
+  double coarseRootTurnoverRate;
+  // base respiration rate of fine roots  (per year rate)
+  double baseFineRootResp;
+  // base respiration rate of coarse roots (per year rate)
+  double baseCoarseRootResp;
+  // Q10 of fine roots
+  double fineRootQ10;
+  // Q10 of coarse roots
+  double coarseRootQ10;
 
   // ****************************************
   // Params from [4] Zobitz et al. (draft)
@@ -519,38 +531,61 @@ typedef struct FluxVars {
 } Fluxes;
 
 typedef struct TrackerVars {  // variables to track various things
-  double gpp;  // g C * m^-2 taken up in this time interval: GROSS
-               // photosynthesis
-  double rtot;  // g C * m^-2 respired in this time interval
-  double ra;  // g C * m^-2 autotrophic resp. in this time interval
-  double rh;  // g C * m^-2 heterotrophic resp. in this time interval
-  double npp;  // g C * m^-2 taken up in this time interval
-  double nee;  // g C * m^-2 given off in this time interval
-  double yearlyGpp;  // g C * m^-2 taken up, year to date: GROSS photosynthesis
-  double yearlyRtot;  // g C * m^-2 respired, year to date
-  double yearlyRa;  // g C * m^-2 autotrophic resp., year to date
-  double yearlyRh;  // g C * m^-2 heterotrophic resp., year to date
-  double yearlyNpp;  // g C * m^-2 taken up, year to date
-  double yearlyNee;  // g C * m^-2 given off, year to date
-  double totGpp;  // g C * m^-2 taken up, to date: GROSS photosynthesis
-  double totRtot;  // g C * m^-2 respired, to date
-  double totRa;  // g C * m^-2 autotrophic resp., to date
-  double totRh;  // g C * m^-2 heterotrophic resp., to date
-  double totNpp;  // g C * m^-2 taken up, to date
-  double totNee;  // g C * m^-2 given off, to date
-  double evapotranspiration;  // cm water evaporated/sublimated (sublimed???) or
-                              // transpired in this time step
-  double soilWetnessFrac; /* mean fractional soil wetness (soilWater/soilWHC)
-           over this time step (linear mean: mean of wetness at start of time
-           step and wetness at end of time step) */
+  // g C * m^-2 taken up in this time interval; GROSS photosynthesis
+  double gpp;
+  // g C * m^-2 respired in this time interval
+  double rtot;
+  // g C * m^-2 autotrophic resp. in this time interval
+  double ra;
+  // g C * m^-2 heterotrophic resp. in this time interval
+  double rh;
+  // g C * m^-2 taken up in this time interval
+  double npp;
+  // g C * m^-2 given off in this time interval
+  double nee;
+  // g C * m^-2 taken up, year to date: GROSS photosynthesis
+  double yearlyGpp;
+  // g C * m^-2 respired, year to date
+  double yearlyRtot;
+  // g C * m^-2 autotrophic resp., year to date
+  double yearlyRa;
+  // g C * m^-2 heterotrophic resp., year to date
+  double yearlyRh;
+  // g C * m^-2 taken up, year to date
+  double yearlyNpp;
+  // g C * m^-2 given off, year to date
+  double yearlyNee;
+  // g C * m^-2 taken up, to date: GROSS photosynthesis
+  double totGpp;
+  // g C * m^-2 respired, to date
+  double totRtot;
+  // g C * m^-2 autotrophic resp., to date
+  double totRa;
+  // g C * m^-2 heterotrophic resp., to date
+  double totRh;
+  // g C * m^-2 taken up, to date
+  double totNpp;
+  // g C * m^-2 given off, to date
+  double totNee;
+  // cm water evaporated/sublimated (sublimed???) or transpired in this time
+  // step
+  double evapotranspiration;
+  // mean fractional soil wetness (soilWater/soilWHC) over this time step
+  // (linear mean: mean of wetness at start of time step and wetness at end of
+  // time step)
+  double soilWetnessFrac;
 
-  double rRoot;  // g C m-2 of root respiration
-  double rSoil;  // Soil respiration (microbes+root)
+  // g C m-2 of root respiration
+  double rRoot;
+  // Soil respiration (microbes+root)
+  double rSoil;
 
-  double rAboveground;  // Wood and foliar respiration
-  double fpar;  // 8 day mean fractional photosynthetically active radiation
-                // (percentage)
-  double yearlyLitter;  // g C * m^-2 litterfall, year to date: SUM litter
+  // Wood and foliar respiration
+  double rAboveground;
+  // 8 day mean fractional photosynthetically active radiation (percentage)
+  double fpar;
+  // g C * m^-2 litterfall, year to date: SUM litter
+  double yearlyLitter;
 } Trackers;
 
 typedef struct PhenologyTrackersStruct {
