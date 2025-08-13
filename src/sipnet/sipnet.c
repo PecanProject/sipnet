@@ -253,6 +253,8 @@ void readClimData(const char *climFile) {
     }
 
     if (ctx.gdd) {
+      // :: from [1], growing degree day calculations to support described
+      //    modification to leaf phenology on pg 350
       if (year != lastYear) {  // HAPPY NEW YEAR!
         gdd = 0;  // reset growing degree days
       }
@@ -738,7 +740,8 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 // note: there may be some fluctuations in this signal for some methods of
 // determining growing season start (e.g. for soil temp-based leaf growth)
 int pastLeafGrowth(void) {
-  if (ctx.gdd) {  // [TAG:UNKNOWN_PROVENANCE] gdd functionality
+  if (ctx.gdd) {
+    // :: from [1], description on pg 350
     // null pointer dereference warning suppressed on the next line
     return (climate->gdd >= params.gddLeafOn);  // NOLINT
   } else if (ctx.soilPhenol) {
@@ -1128,13 +1131,17 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   // TBD We seem to be conflating maintResp and rSoil in the non-microbe
   // case, need to dig in. With that said...
   // :: from [1], eq (A20), if waterHResp, tsoil >= 0, and not microbes;
-  //    modified to add an exponent soilRespMoistEffect to (W/W_c), which is
-  //    equal to 1 in [1]
+  //    modified to add an exponent soilRespMoistEffect to (W/W_c);
+  //    soilRespMoistEffect is equal to 1 in [1].
 
-  if (ctx.waterHResp) {  // if soil moisture affects heterotrophic resp
-    // :: from [1], first part of eq (A20)
-    // :: exponent term soilRespMoistEffect is in addition to [1]
+  if (ctx.waterHResp) {
+    // if soil moisture affects heterotrophic respiration
+
+    // :: from [1], first part of eq (A20), with added exponent
+    //
     // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
+    // Note: older versions of sipnet note this as "using PnET formulation",
+    // but we have been unable to verify that this comes from PnET
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
 
     // :: from [2], snowpack addition
@@ -1142,6 +1149,8 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
       moistEffect = 1;  // Ignore moisture effects in frozen soils
     }
   } else {
+    // Soil moisture does not affect heterotrophic respiration
+    // :: from [2], fifth modification described on pg 247
     moistEffect = 1;
   }
 
@@ -1277,7 +1286,9 @@ double woodLitterF(double plantWoodC) {
  *
  * The function and param names seem to indicate that this function is
  * intended for use for both soil and litter pools, but the only current use
- * is with the litter pool when litterPool is on.
+ * is with the litter pool when litterPool is on. (Very old versions of sipnet
+ * did indeed call this for both soil and litter, but the soil call has been
+ * replaced with the soilDegradation() function.)
  *
  * @param poolC carbon in input pool (litter pool)
  * @param baseRate base pool breakdown rate
@@ -1296,30 +1307,50 @@ double soilBreakdown(double poolC, double baseRate, double water, double whc,
     // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
     // is unknown
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
+
     // TBD Should we be checking if tsoil < 0, as in
     // calcMaintenanceRespiration()?
+    //
+    // Here's the code that should be here, will turn on in a later change
+    // Note, the tsoil check could just be combined into the if expression
+    // above
+    // :: from [2], snowpack addition
+    // if (climate->tsoil < 0) {
+    //   moistEffect = 1;  // Ignore moisture effects in frozen soils
+    // }
   } else {
+    // :: from [2], fifth modification described on pg 247
     moistEffect = 1;
   }
 
   return poolC * baseRate * tempEffect * moistEffect;
 }
 
+/*!
+ * Calculate flux terms for sipnet as part of main model flow
+ *
+ * All fluxes should be calculated before state variables are updated.
+ */
 void calculateFluxes(void) {
-  // auxiliary variables:
+  // base foliar respiration, calc'd as part of potential photosynthesis
   double baseFolResp;
-  double potGrossPsn;  // potential photosynthesis, without water stress
+  // potential photosynthesis, without water stress
+  double potGrossPsn;
+  // reduction in photosynthesis due to soil dryness
   double dWater;
-  double lai;  // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  double litterBreakdown;  // total litter breakdown (i.e. litterToSoil +
-  // rLitter) (g C/m^2 ground/day)
-  double folResp, woodResp;  // maintenance respiration terms, g C * m^-2 ground
-                             // area * day^-1
-  double litterWater, soilWater;  // amount of water in litter and soil (cm)
-                                  // taken from environment
-  double growthResp;  // g C * m^-2 ground area * day^-1
-
-  double netRain;  // rain - immedEvap (cm/day)
+  // m^2 leaf/m^2 ground (calculated from plantLeafC)
+  double lai;
+  // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
+  double litterBreakdown;
+  // maintenance respiration terms (g C * m^-2 ground area * day^-1)
+  double folResp, woodResp;
+  // amount of water in litter and soil (cm) taken from environment
+  double litterWater, soilWater;
+  // Growth respiration, if splitting growth and maintenance
+  // (g C * m^-2 ground area * day^-1)
+  double growthResp;
+  // net rain, equal to (rain - immedEvap) (cm/day)
+  double netRain;
 
   litterWater = envi.litterWater;
   soilWater = envi.soilWater;
@@ -1357,8 +1388,6 @@ void calculateFluxes(void) {
                       params.litterWHC, climate->tsoil, params.soilRespQ10);
     fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
-    // NOTE: right now, we don't have capability to use separate cold soil
-    // params for litter
   } else {
     // litterBreakdown = 0;
     fluxes.rLitter = 0;

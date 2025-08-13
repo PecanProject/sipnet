@@ -51,7 +51,7 @@ struct ClimateVars {
 #define NUM_CLIM_FILE_COLS 12
 #define NUM_CLIM_FILE_COLS_LEGACY (NUM_CLIM_FILE_COLS + 2)
 
-// Model parameters which can change from one run to the next, including
+// Model parameters, which can change from one run to the next, include
 // initializations of state. Initial values are read in from a file, or
 // calculated at start of model.
 //
@@ -124,7 +124,9 @@ typedef struct Parameters {
   // day when leaves disappear
   // :: D_off in [1]
   double leafOffDay;
-  // No L_max from [1], superseded by...
+  // with gdd-based phenology, gdd threshold for leaf appearance
+  // :: unlabeled in [1]
+  double gddLeafOn;
 
   //
   // Autotrophic respiration
@@ -201,6 +203,7 @@ typedef struct Parameters {
   double frozenSoilEff;
   // litter (evaporative layer) water holding capacity (cm)
   // :: W_S,c in [2]
+  // NOTE: this may be obsolete now that we have dropped LITTER_WATER
   double litterWHC;
   // fraction of rain that is immediately intercepted & evaporated
   // :: E in [2]
@@ -314,8 +317,6 @@ typedef struct Parameters {
   // ****************************************
 
   // phenology-related:
-  // with gdd-based phenology, gdd threshold for leaf appearance
-  double gddLeafOn;
   // with soil temp-based phenology, soil temp threshold for leaf appearance
   double soilTempLeafOn;
 
@@ -383,9 +384,13 @@ typedef struct Environment {
   double soilWater;  // plant available soil water (cm)
 
   // From [2] Sacks et al. 2006
-  double litter;  // carbon in litter (g C * m^-2 ground area)
-  double litterWater;  // water in litter (evaporative) layer (cm)
-  double snow;  // snow pack (cm water equiv.)
+  // carbon in litter (g C * m^-2 ground area)
+  double litter;
+  // water in litter (evaporative) layer (cm)
+  // Npte: this may be obsolete since we have dropped LITTER_WATER
+  double litterWater;
+  // snow pack (cm water equiv.)
+  double snow;
 
   // From [3] Zobitz et al. (2008)
   double coarseRootC;
