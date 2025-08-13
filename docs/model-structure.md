@@ -245,9 +245,8 @@ Total heterotrophic respiration is the sum of respiration from soil and litter p
 $$
 R_{H} = f_{R_H} \cdot 
   \left(\sum_j  K_j \cdot C_j 
-    \mathfrak{\cdot D_{\text{tillage,}j}}
     \right) \cdot 
-    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} 
+    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \mathfrak{\cdot D_{\text{tillage}}} 
     \tag{7}\label{eq:rh}
 $$
 
@@ -613,23 +612,21 @@ urease inhibitors (Gurung et al 2021) that slow down the rate.
 
 ### $\frak{Tillage}$
 
-To represent tillage, we define two new adjustment factors that modify the decomposition rates
- of litter $K_{\text{litter}}$ and soil organic matter $K_{\text{som}}$:
-
-Event parameters from the `events.in` file:
-
-* SOM decomposition modifier $D_{K\text{,tillage,litter}}$  
-* Litter decomposition modifier $D_{K\text{,tillage,som}}$ 
-
-These values specified as fractions (e.g. 0.2 for 20% increase in decomposition rate). They are set to 0 by default and are expected to be >0. They are set in the `events.in`, and are effective for one month after the tillage event.
+To represent the effect of tillage on decomposition rate, we define the tillage dependency, which is a function of a tillage effect that is specified in the `events.in` file:
 
 $$
-K^{\prime}_{\text{i}} = K_{\text{i}} \cdot (1+D_{K\text{,tillage,}i})
+D_{K\text{,tillage}}(t) = 1 + f_{\textrm{till}}\cdot e^{-t/30} \tag{25}\label{eq:tillage}
 $$
 
-Where $i$ is either litter or soil organic matter pool, and $K^{\prime}$ is the transiently adjusted decomposition rate.
+Here, $f_{\textrm{till}}$ is the event-specific tillage adjustment factor, and $D_{K,\text{tillage}}(t)$ is the multiplier that adjusts the decomposition rate $R_H$ in equation \eqref{eq:rh}. 
 
-The choice of one month adjustment period is based on DayCent (Parton et al 2001).
+This factor has a baseline of 0 when there has been no recent tillage event. A value of $f_{\textrm{till}}=0.2$ represents an initial 20% increase that will exponentially decay. The rate of exponential decay is 1/30 days. This rate was chosen such that $D_\textrm{tillage}$ integrates to 30, which is equivalent to DayCent’s 30‑day step function.
+
+If multiple tillage events at times $t_z$ occur with effects $f_{\textrm{till,}z}$, they add linearly thus:
+
+$$
+D_{K\text{,tillage}}(t) = 1 + \sum_{z} f_{\textrm{till,}z}\, e^{-(t-t_{z})/30},\quad t\ge t_{z}.
+$$
 
 ### $\frak{Planting \ and \ Emergence}$
 
@@ -646,7 +643,12 @@ Because a harvest event only specifies the fraction of above and belowground car
 The removed fraction is calculated as follows:
 
 $$
-F^C_{\text{harvest,removed}} = f_{\text{remove,above}} \cdot C_{\text{above}} + f_{\text{remove,below}} \cdot C_{\text{below}}
+% these next two eqns can prob. be simplified
+% noting that f_removed + f_transfer = 1
+% and using i \in \{\text{above}, \text{below}\} 
+% and j in removed, litter
+F^C_{\text{harvest,removed}} = f_{\text{remove,above}} \cdot C_{\text{above}} + f_{\text{remove,below}} \cdot C_{\text{root}}
+\tag{27}\label{eq:harvest_removed}
 $$
 
 The fraction transferred to litter is calculated as follows:
