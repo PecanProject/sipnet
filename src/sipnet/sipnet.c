@@ -23,6 +23,7 @@
 #include "events.h"
 #include "outputItems.h"
 #include "runmean.h"
+#include "state.h"
 
 #define C_WEIGHT 12.0  // molecular weight of carbon
 #define TEN_6 1000000.0  // for conversions from micro
@@ -58,344 +59,56 @@
 
 // end constant definitions
 
+// Sections of code below are labeled as to the source paper and content
+// (usually equation) that they represent. The following sources are used:
+//
+// [1] Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S.
+//     Schimel. 2005. Estimating Diurnal to Annual Ecosystem Parameters by
+//     Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem
+//     Exchange Observations. Global Change Biology 11 (2): 335–55.
+//     https://doi.org/10.1111/j.1365-2486.2005.00897.x
+// Braswell at al.'s original description of SIPNET
+//
+// [2] Sacks WJ, Schimel DS, Monson RK, Braswell BH. 2006. Model-data synthesis
+//     of diurnal and seasonal CO2 fluxes at Niwot Ridge, Colorado. Global
+//     Change Biology 12:240–259
+//     https://doi.org/10.1111/j.1365-2486.2005.01059.x
+// Sacks, et al. additions of evergreen leaf phenology, and more
+// complex soil moisture model including a snowpack and litter layer
+// (referred to as 'surface layer' in this publication)
+//
+// [3] Zobitz, J. M., D. J. P. Moore, W. J. Sacks, R. K. Monson, D. R.
+//     Bowling, and D. S. Schimel. 2008. “Integration of Process-Based Soil
+//     Respiration Models with Whole-Ecosystem CO2 Measurements.” Ecosystems
+//     11 (2): 250–69. https://doi.org/10.1007/s10021-007-9120-1
+// Zobitz, et al. additions of and roots (also, soil multi-pool and soil
+// quality models, which are not currently included in this SIPNET - but we
+// now know the source if/when we want to reintroduce them)
+//
+// [4] Zobitz, J. M., et al(?)/publication unknown, currently
+//     '/docs/soilSIPNET_draft.pdf' in the repo and appears to be Chapter 5 of
+//     an unknown book
+// Zobitz et al.: this appears to be a prior draft of [3] above, which
+// includes the addition of microbes
+//
+//
+// Note that Sacks, et al. (2007) is not referenced directly here, but is of
+// interest in that it represents a use of the more complex soil moisture
+// model from [2] above _without_ the litter layer.
+// Other cites/notes:
+// * [3] and [4] above are sources for the now-removed multi-pool/soil quality
+//   modes, if we want to bring those back at some point
+// * Zobitz, J.M., Moore, D.J.P., Quaife, T., Braswell, B.H., Bergeson, A.,
+//   Anthony, J.A., Monson, R.K., 2014. Joint data assimilation of satellite
+//   reflectance and net ecosystem exchange data constrains ecosystem carbon
+//   fluxes at a high-elevation subalpine forest. Agric. For. Meteorol.
+//   195–196, 73–88. https://doi.org/10.1016/j.agrformet.2014.04.011
+//   - This paper details the now-removed MODIS and fAPAR tracking, if we want
+//   to bring those back at some point
+
 // linked list of climate variables
 // one node for each time step
 // these climate data are read in from a file
-
-typedef struct ClimateVars ClimateNode;
-
-struct ClimateVars {
-  int year;  // year of start of this timestep
-  int day;  // day of start of this timestep (1 = Jan 1.)
-  double time;  // time of start of this timestep (hour.fraction - e.g. noon
-                // = 12.0, midnight = 0.0)
-  double length;  // length of this timestep (in days) - allow variable-length
-                  // timesteps
-  double tair;  // avg. air temp for this time step (degrees C)
-  double tsoil;  // avg. soil temp for this time step (degrees C)
-  double par; /* average par for this time step (Einsteins * m^-2 ground area *
-    day^-1) NOTE: input is in Einsteins * m^-2 ground area, summed over entire
-    time step */
-  double precip; /* total precip. for this time step (cm water equiv. - either
-        rain or snow) NOTE: input is in mm */
-  double vpd; /* average vapor pressure deficit (kPa)
-     NOTE: input is in Pa */
-  double vpdSoil; /* average vapor pressure deficit between soil and air (kPa)
-         NOTE: input is in Pa
-         differs from vpd in that saturation vapor pressure calculated using
-         Tsoil rather than Tair */
-  double vPress; /* average vapor pressure in canopy airspace (kPa)
-        NOTE: input is in Pa */
-  double wspd;  // avg. wind speed (m/s)
-
-  double gdd;  // growing degree days from Jan. 1 to now. NOTE: Calculated,
-               // *not* read from file
-
-  ClimateNode *nextClim;
-};
-
-#define NUM_CLIM_FILE_COLS 12
-#define NUM_CLIM_FILE_COLS_LEGACY (NUM_CLIM_FILE_COLS + 2)
-
-// model parameters which can change from one run to the next
-// these include initializations of state
-// initial values are read in from a file, or calculated at start of model
-// if any parameters are added here, and these parameters are to be read from
-// file,
-//  be sure to add them to the readParamData function, below
-
-typedef struct Parameters {
-  // parameters read in from file:
-  // initial state values:
-  double plantWoodInit;  // g C * m^-2 ground area in wood (above-ground +
-                         // roots)
-  double laiInit;  // initial leaf area, m^2 leaves * m^-2 ground area (multiply
-                   // by leafCSpWt to get initial plant leaf C)
-  double litterInit;  // g C * m^-2 ground area
-  double soilInit;  // g C * m^-2 ground area
-  double litterWFracInit;  // unitless: fraction of litterWHC
-  double soilWFracInit;  // unitless: fraction of soilWHC
-  double snowInit;  // cm water equiv.
-
-  // 7 parameters
-  // parameters:
-
-  // photosynthesis:
-  double aMax; /* max photosynthesis (nmol CO2 * g^-1 leaf * sec^-1)
-     assuming max. possible par, all intercepted, no temp, water or vpd stress
-   */
-  double aMaxFrac;  // avg. daily aMax as fraction of instantaneous
-  double baseFolRespFrac;  // basal foliage resp. rate, as % of max. net
-                           // photosynth. rate
-  double psnTMin, psnTOpt;  // min and optimal temps at which net photosynthesis
-                            // occurs (degrees C)
-  double dVpdSlope, dVpdExp;  // dVpd = 1 - dVpdSlope * vpd^dVpdExp
-  double halfSatPar; /* par at which photosynthesis occurs at 1/2 theoretical
-            maximum (Einsteins * m^-2 ground area * day^-1) */
-  double attenuation;  // light attenuation coefficient
-
-  // 9 parameters
-
-  // phenology-related:
-  double leafOnDay;  // day when leaves appear
-  double gddLeafOn;  // with gdd-based phenology, gdd threshold for leaf
-                     // appearance
-  double soilTempLeafOn;  // with soil temp-based phenology, soil temp threshold
-                          // for leaf appearance
-  double leafOffDay;  // day when leaves disappear
-  double leafGrowth;  // additional leaf growth at start of growing season
-                      // (g C * m^-2 ground)
-  double fracLeafFall;  // additional fraction of leaves that fall at end of
-                        // growing season
-  double leafAllocation;  // fraction of NPP allocated to leaf growth
-  double leafTurnoverRate; /* average turnover rate of leaves, in fraction per
-            day NOTE: read in as per-year rate! */
-
-  // 8 parameters
-  // autotrophic respiration:
-  double baseVegResp; /* vegetation maintenance respiration at 0 degrees C
-      (g C respired * g^-1 plant C * day^-1)
-      NOTE: only counts plant wood C - leaves handled elsewhere
-      (both above and below-ground: assumed for now to have same resp. rate)
-      NOTE: read in as per-year rate! */
-  double vegRespQ10;  // scalar determining effect of temp on veg. resp.
-  double growthRespFrac;  // growth resp. as fraction of (GPP - woodResp -
-                          // folResp)
-  double frozenSoilFolREff;  // amount that foliar resp. is shutdown if soil is
-                             // frozen (0 = full shutdown, 1 = no shutdown)
-  double frozenSoilThreshold;  // soil temperature below which frozenSoilFolREff
-                               // and frozenSoilEff kick in (degrees C)
-
-  // 5 parameters
-  // soil respiration:
-  double litterBreakdownRate; /* rate at which litter is converted to
-                 soil/respired at 0 degrees C and max soil moisture (g C broken
-                 down * g^-1 litter C * day^-1) NOTE: read in as per-year rate
-               */
-  double fracLitterRespired; /* of the litter broken down, fraction respired
-                (the rest is transferred to soil pool) */
-  double baseSoilResp; /* soil respiration at 0 degrees C and max soil moisture
-       (g C respired * g^-1 soil C * day^-1)
-       NOTE: read in as per-year rate! */
-  double baseSoilRespCold;  // OBSOLETE PARAM
-                            // soil respiration at 0 degrees C and max soil
-                            // moisture when tsoil < coldSoilThreshold
-                            // (g C respired * g^-1 soil C day^-1)
-                            // NOTE: read in as per-year rate!
-
-  // 6 parameters
-
-  double soilRespQ10;  // scalar determining effect of temp on soil resp.
-  double soilRespQ10Cold;  // OBSOLETE PARAM
-                           // scalar determining effect of temp on soil resp.
-                           // when tsoil < coldSoilThreshold
-
-  double coldSoilThreshold;  // OBSOLETE PARAM
-                             // temp. at which use baseSoilRespCold and
-                             // soilRespQ10Cold (if SEASONAL_R_SOIL true)
-                             // (degrees C)
-  double E0;  // OBSOLETE PARAM  E0 in Lloyd-Taylor soil respiration function
-  double T0;  // OBSOLETE PARAM  T0 in Lloyd-Taylor soil respiration function
-  double soilRespMoistEffect;  // scalar determining effect of moisture on soil
-                               // resp.
-
-  // 8 parameters
-  // moisture-related:
-  double waterRemoveFrac; /* fraction of plant available soil water which can be
-          removed in one day without water stress occurring */
-  double frozenSoilEff;  // fraction of water that's available if soil is frozen
-                         // (0 = none available, 1 = all still avail.)
-                         // NOTE: if frozenSoilEff = 0, then shut down psn
-  double wueConst;  // water use efficiency constant
-  double litterWHC;  // litter (evaporative layer) water holding capacity (cm)
-  double soilWHC;  // soil (transpiration layer) water holding capacity (cm)
-  double immedEvapFrac;  // fraction of rain that is immediately intercepted &
-                         // evaporated
-  double fastFlowFrac;  // fraction of water entering soil that goes directly to
-                        // drainage
-  double snowMelt;  // rate at which snow melts (cm water equiv./degree C/day)
-  double litWaterDrainRate;  // OBSOLETE PARAM
-                             // rate at which litter water drains into lower
-                             // layer when litter layer fully moisture-saturated
-                             // (cm water/day)
-  double rdConst;  // scalar determining amount of aerodynamic resistance
-  double rSoilConst1, rSoilConst2;  // soil resistance =
-                                    // e^(rSoilConst1 - rSoilConst2 * W1)
-                                    // where W1 = (litterWater/litterWHC)
-  double m_ballBerry;  // OBSOLETE PARAM slope for the Ball Berry relationship
-  double leafCSpWt;  // g C * m^-2 leaf area
-  double cFracLeaf;  // g leaf C * g^-1 leaf
-  double leafPoolDepth;  // leaf (evaporative) pool rim thickness in mm
-
-  double woodTurnoverRate;  // average turnover rate of woody plant C, in
-                            // fraction per day (leaf loss handled separately)
-                            // NOTE: read in as per-year rate!
-
-  // calculated parameters:
-  double psnTMax;  // degrees C - assumed symmetrical around psnTOpt
-
-  // 16-1 calculated= 15 parameters
-
-  // quality model parameters
-  double qualityLeaf;  // value for leaf litter quality
-  double qualityWood;  // value for wood litter quality
-  double efficiency;  // conversion efficiency of ingested carbon
-
-  // 4 parameters
-
-  double maxIngestionRate;  // hr-1 - maximum ingestion rate of the microbe
-  double halfSatIngestion;  // mg C g-1 soil - half saturation ingestion rate of
-                            // microbe
-  double totNitrogen;  // OBSOLETE PARAM  Percentage nitrogen in soil
-  double microbeNC;  // OBSOLETE PARAM  mg N / mg C - microbe N:C ratio
-  // 5 parameters
-
-  double microbeInit;  // mg C / g soil microbe initial carbon amount
-                       // 1 parameters
-
-  double fineRootFrac;  // fraction of wood carbon allocated to fine roots
-  double coarseRootFrac;  // fraction of wood carbon that is coarse roots
-  double fineRootAllocation;  // fraction of NPP allocated to fine roots
-  double woodAllocation;  // fraction of NPP allocated to the roots
-  double fineRootExudation;  // fraction of GPP exuded to the soil
-  double coarseRootExudation;  // fraction of NPP exuded to the soil
-  // Calculated param
-  double coarseRootAllocation;  // fraction of NPP allocated to the coarse roots
-
-  // 7-1=6 parameters
-
-  double fineRootTurnoverRate;  // turnover of fine roots (per year rate)
-  double coarseRootTurnoverRate;  // turnover of coarse roots (per year rate)
-  double baseFineRootResp;  // base respiration rate of fine roots  (per year
-                            // rate)
-  double baseCoarseRootResp;  // base respiration rate of coarse roots (per year
-                              // rate)
-  double fineRootQ10;  // Q10 of fine roots
-  double coarseRootQ10;  // Q10 of coarse roots
-                         // 6 parameters
-
-  double baseMicrobeResp;  // base respiration rate of microbes
-  double microbeQ10;  // Q10 of coarse roots
-  double microbePulseEff;  // fraction of exudates that microbes immediately
-                           // use.
-} Params;
-
-#define NUM_PARAMS (sizeof(Params) / sizeof(double))
-
-// the state of the environment
-typedef struct Environment {
-  double plantWoodC;  // carbon in plant wood (above-ground + roots) (g C * m^-2
-                      // ground area)
-  double plantLeafC;  // carbon in leaves (g C * m^-2 ground area)
-  double litter;  // carbon in litter (g C * m^-2 ground area)
-  double soil;  // carbon in soil (g C * m^-2 ground area)
-
-  double litterWater;  // water in litter (evaporative) layer (cm)
-  double soilWater;  // plant available soil water (cm)
-  double snow;  // snow pack (cm water equiv.)
-
-  double microbeC;  // carbon in microbes g C m-2 ground area
-
-  double coarseRootC;
-  double fineRootC;
-} Envi;
-
-// fluxes as per-day rates
-typedef struct FluxVars {
-  double photosynthesis;  // GROSS photosynthesis (g C * m^-2 ground area *
-                          // day^-1)
-  double leafCreation;  // g C * m^-2 ground area * day^-1 transferred from wood
-                        // to leaves
-  double leafLitter;  // g C * m^-2 ground area * day^-1 leaves falling
-  double woodLitter;  // g C * m^-2 ground area * day^-1
-  double rVeg;  // vegetation respiration (g C * m^-2 ground area * day^-1)
-  double litterToSoil;  // g C * m^-2 ground area * day^-1 litter turned into
-                        // soil
-  double rLitter;  // g C * m^-2 ground area * day^-1 respired by litter
-  double rSoil;  // g C * m^-2 ground area * day^-1 respired by soil
-  double rain;  // cm water * day^-1 (only liquid precip.)
-  double snowFall;  // cm water equiv. * day^-1
-  double immedEvap;  // rain that's intercepted and immediately evaporated (cm
-                     // water * day^-1)
-  double snowMelt;  // cm water equiv. * day^-1
-  double sublimation;  // cm water equiv. * day^-1
-  double fastFlow;  // water entering soil that goes directly to drainage (out
-                    // of system) (cm water * day^-1)
-  double evaporation;  // evaporation from top of soil (cm water * day^-1)
-  double topDrainage;  // drainage from top of soil to lower level (cm water *
-                       // day^-1)
-  double bottomDrainage;  // drainage from lower level of soil out of system (cm
-                          // water * day^-1)
-  double transpiration;  // cm water * day^-1
-
-  double maintRespiration;  // Microbial maintenance respiration rate g C
-                            // m-2 ground area day^-1
-  double microbeIngestion;
-
-  double fineRootLoss;  // Loss rate of fine roots (turnover + exudation)
-  double coarseRootLoss;  // Loss rate of coarse roots (turnover + exudation)
-
-  double fineRootCreation;  // Creation rate of fine roots
-  double coarseRootCreation;  // Creation rate of coarse roots
-  double woodCreation;  // Creation rate of wood
-
-  double rCoarseRoot;  // Coarse root respiration
-  double rFineRoot;  // Fine root respiration
-
-  double soilPulse;  // Exudates into the soil
-} Fluxes;
-
-typedef struct TrackerVars {  // variables to track various things
-  double gpp;  // g C * m^-2 taken up in this time interval: GROSS
-               // photosynthesis
-  double rtot;  // g C * m^-2 respired in this time interval
-  double ra;  // g C * m^-2 autotrophic resp. in this time interval
-  double rh;  // g C * m^-2 heterotrophic resp. in this time interval
-  double npp;  // g C * m^-2 taken up in this time interval
-  double nee;  // g C * m^-2 given off in this time interval
-  double yearlyGpp;  // g C * m^-2 taken up, year to date: GROSS photosynthesis
-  double yearlyRtot;  // g C * m^-2 respired, year to date
-  double yearlyRa;  // g C * m^-2 autotrophic resp., year to date
-  double yearlyRh;  // g C * m^-2 heterotrophic resp., year to date
-  double yearlyNpp;  // g C * m^-2 taken up, year to date
-  double yearlyNee;  // g C * m^-2 given off, year to date
-  double totGpp;  // g C * m^-2 taken up, to date: GROSS photosynthesis
-  double totRtot;  // g C * m^-2 respired, to date
-  double totRa;  // g C * m^-2 autotrophic resp., to date
-  double totRh;  // g C * m^-2 heterotrophic resp., to date
-  double totNpp;  // g C * m^-2 taken up, to date
-  double totNee;  // g C * m^-2 given off, to date
-  double evapotranspiration;  // cm water evaporated/sublimated (sublimed???) or
-                              // transpired in this time step
-  double soilWetnessFrac; /* mean fractional soil wetness (soilWater/soilWHC)
-           over this time step (linear mean: mean of wetness at start of time
-           step and wetness at end of time step) */
-
-  double rRoot;  // g C m-2 of root respiration
-  double rSoil;  // Soil respiration (microbes+root)
-
-  double rAboveground;  // Wood and foliar respiration
-  double fpar;  // 8 day mean fractional photosynthetically active radiation
-                // (percentage)
-  double yearlyLitter;  // g C * m^-2 litterfall, year to date: SUM litter
-} Trackers;
-
-typedef struct PhenologyTrackersStruct { /* variables to track each year's
-          phenological development. Only used in leafFluxes function, but made
-          global so can be initialized dynamically, based on day of year of
-          first climate record */
-  int didLeafGrowth;  // have we done leaf growth at start of growing season
-                      // this year? (0 = no, 1 = yes)
-  int didLeafFall;  // have we done leaf fall at end of growing season this
-                    // year? (0 = no, 1 = yes)
-  int lastYear;  // year of previous time step, for tracking when we hit a new
-                 // calendar year
-} PhenologyTrackers;
-
-// global variables:
-// made global so they can be initialized in a separate function
-// so they only have to be initialized once
-
 static ClimateNode *firstClimate;  // pointers to first climate
 
 // more global variables:
@@ -418,6 +131,10 @@ static Fluxes fluxes;
 static EventNode *events;
 static EventNode *event;
 static FILE *eventOutFile;
+
+//
+// Infrastructure and I/O functions
+//
 
 /*!
  * Read climate file into linked list
@@ -536,6 +253,8 @@ void readClimData(const char *climFile) {
     }
 
     if (ctx.gdd) {
+      // :: from [1], growing degree day calculations to support described
+      //    modification to leaf phenology on pg 350
       if (year != lastYear) {  // HAPPY NEW YEAR!
         gdd = 0;  // reset growing degree days
       }
@@ -771,10 +490,9 @@ void freeEventList() {
   }
 }
 
-// !!! functions for calculating auxiliary variables !!!
-
-// rather than returning a value, they have as parameters the variable(s) which
-// they modify so a single function can modify multiple variables
+//
+// Modeling functions
+//
 
 /*!
  * @brief Compute canopy light effect using Simpson's rule.
@@ -807,6 +525,8 @@ void calcLightEff(double *lightEff, double lai, double par) {
   // Information on the distribution of LAI with height is available
   // as of March 2007 ... contact Dr. Maggie Prater Maggie.Prater@colorado.edu
 
+  // All of this modeling comes from [1]
+
   static const int NUM_LAYERS = 6;
   // believe it or not, 6 layers gives approximately the same result as 100
   // layers
@@ -824,24 +544,28 @@ void calcLightEff(double *lightEff, double lai, double par) {
     coeff = 1;
     int err;
     double fAPAR;  // Calculation of fAPAR according to 1 - exp(attenuation*LAI)
-    // double APAR;    // Absorbed PAR by the canopy
-    // double lightIntensityTop, lightIntensityBottom;  // PAR absorbed by the
-    // canopy
     cumfAPAR = 0.0;
 
-    while (layer <= NUM_LAYERS) {
-      cumLai = lai * ((double)layer / NUM_LAYERS);  // lai from this layer up
-                                                    // (starting at top)
+    while (layer <= NUM_LAYERS) {  // layer 0 means top layer
+      // lai from this layer up, starting at top
+      // :: from [1], description above eq (A11)
+      cumLai = lai * ((double)layer / NUM_LAYERS);
 
-      // between 0 and par
+      // par attenuated down to current layer
+      // :: from [1], eq (A11)
       lightIntensity = par * exp(-1.0 * params.attenuation * cumLai);
 
-      // between 0 and 1
+      // between 0 and 1; when lightIntensity = halfSatPar, currLightEff = 1/2
+      // :: from [1], eq (A12), modified as power of 2 instead of e (but
+      // equivalent mathematically)
       currLightEff = (1 - pow(2, (-1.0 * lightIntensity / params.halfSatPar)));
 
-      // when lightIntensity = halfSatPar, currLightEff = 1/2
+      // CHANGE FROM [1]: instead of taking mean of the light effects at each
+      // layer, we approximate the integral via simpson's rule, and then divide
+      // by the number of layers
       cumLightEff += coeff * currLightEff;
 
+      // FPAR calc for the tracker below (likely cruft, not part of [1])
       currfAPAR = 1 - (lightIntensity / par);
       cumfAPAR += coeff * currfAPAR;
 
@@ -855,23 +579,23 @@ void calcLightEff(double *lightEff, double lai, double par) {
     *lightEff = cumLightEff / (3.0 * NUM_LAYERS);  // multiplying by (h/3) in
                                                    // Simpson's rule
 
-    // now calculate fAPAR
+    // TBD: remove FPAR tracking, this is cruft
+    // Now calculate fAPAR.
     cumfAPAR -= currfAPAR;
-    // the average value, multiplying by h/3 in Simpson's rule, and dividing by
-    // the number of steps
+    // Mean value of simpson's rule integration
     fAPAR = cumfAPAR / (3.0 * NUM_LAYERS);
+    // update running mean of FPAR (we don't care about climate length)
+    err = addValueToMeanTracker(meanFPAR, fAPAR, 1);
 
-    err = addValueToMeanTracker(meanFPAR, fAPAR, 1);  // update running mean of
-                                                      // FPAR (we don't care
-                                                      // about climate length)
     if (err != 0) {
       printf("******* Error type %d while trying to add value to FPAR mean "
-             "tracker in sipnet:potPSN() *******\n",
+             "tracker in sipnet:calcLightEff() *******\n",
              err);
       printf("FPAR = %f, climate->length = %f\n", fAPAR, climate->length);
       printf("Suggestion: try changing MEAN_FPAR_MAX_ENTRIES in sipnet.c\n");
       exit(1);
     }
+    // end FPAR removal
 
   } else {  // no leaves or no light!
     *lightEff = 0;
@@ -881,48 +605,100 @@ void calcLightEff(double *lightEff, double lai, double par) {
 // calculate gross photosynthesis without water effect (g C * m^-2 ground area *
 // day^-1) and base foliar respiration without temp, water, etc. (g C * m^-2
 // ground area * day^-1)
-void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
-            double vpd, double par, int /*day*/) {
-  double grossAMax;  // maximum possible gross respiration (nmol CO2 * g^-1 leaf
-                     // * sec^-1)
-  double dTemp, dVpd, lightEff;  // decrease in photosynth. due to temp, vpd and
-                                 // amt. of light absorbed
-  double respPerGram;  // base foliar respiration in nmol CO2 * g^-1 leaf *
-                       // sec^-1
-  double conversion; /* convert from (nmol CO2 * g^-1 leaf * sec^-1)
-           to (g C * m^-2 ground area * day^-1) */
 
-  respPerGram = params.baseFolRespFrac * params.aMax;
+/*!
+ * @brief Compute gross potential photosynthesis with restrictions and base
+ * foliar resp
+ *
+ * Computes GPP_pot from [1], eq (A7); GPP reduced by effects of temperature,
+ * vapor pressure deficit, and light. Also computes base foliar respiration here
+ * for convenience, used later as part of foliar respiration computation.
+ *
+ * @param[out] potGrossPsn gross photosynthesis without water effect
+ *                         (g C * m^-2 ground area * day^-1)
+ * @param[out] baseFolResp base foliar respiration unmodified by temp, water,
+ *                         etc. (g C * m^-2 ground area * day^-1)
+ * @param[in] lai leaf area index (m^2 leaf * m^-2 ground area)
+ * @param[in] tair air temperature (degrees Celsius)
+ * @param[in] vpd vapor pressure deficit (kPa)
+ * @param[in] par photosynthetically active radiation (Einsteins * m^-2 ground
+ *                area * day^-1)
+ */
+void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
+            double vpd, double par) {
+  // Calculation of potGrossPsn proceeds as described in [1], with minor
+  // modifications as noted below.
+
+  // Calculation of baseFolResp is used as part of [1], eq (A18), calculated
+  // here for convenience (see vegResp() fur use of baseFolResp).
+
+  // maximum possible gross respiration (nmol CO2 * g^-1 leaf * sec^-1)
+  double grossAMax;
+  // effect of temperature on photosynthesis (range: [0:1])
+  double dTemp;
+  // decrease in leaf gas exchange due to vapor pressure deficit
+  double dVpd;
+  // decrease in photosynthesis due to amt. of light absorbed
+  double dLight;
+  // base foliar respiration in nmol CO2 * g^-1 leaf * sec^-1
+  double respPerGram;
+  // convert from (nmol CO2 * g^-1 leaf * sec^-1) to
+  // (g C * m^-2 ground area * day^-1)
+  double conversion;
+
   // foliar respiration, unmodified by temp, etc.
+  // :: from [1], eq (A5)
+  respPerGram = params.baseFolRespFrac * params.aMax;
+  // daily maximum gross photosynthetic rate
+  // :: from [1], eq (A6)
   grossAMax = params.aMax * params.aMaxFrac + respPerGram;
 
+  // Now to calculate reductions to the daily maximum - dTemp, dVpd, dLight
+  // :: from [1], eq (A9)
   dTemp = (params.psnTMax - tair) * (tair - params.psnTMin) /
           pow((params.psnTMax - params.psnTMin) / 2.0, 2);
-  if (dTemp < 0) {
-    dTemp = 0.0;
-  }
+  dTemp = fmax(dTemp, 0.0);
+  // :: from [1], eq (A10); modified to accept a variable exponent, [1] uses
+  // dVpdExp = 2 [TAG:UNKNOWN_PROVENANCE] vpd exponent
   dVpd = 1.0 - params.dVpdSlope * pow(vpd, params.dVpdExp);
-  if (dVpd < 0) {
-    dVpd = 0.0;
-  }
-  calcLightEff(&lightEff, lai, par);
+  dVpd = fmax(dVpd, 0.0);
+  // dLight calculated as described in [1], see calcLightEff()
+  calcLightEff(&dLight, lai, par);
 
+  // :: from [1], unit conversion taking into account eq (A8)
   conversion = C_WEIGHT * (1.0 / TEN_9) *
                (params.leafCSpWt / params.cFracLeaf) * lai *
                SEC_PER_DAY;  // to convert units
-  *potGrossPsn = grossAMax * dTemp * dVpd * lightEff * conversion;
-  *baseFolResp = respPerGram * conversion;  // do foliar resp. even if no
-                                            // photosynthesis in this time step
+  // :: from [1], eq (A7)
+  *potGrossPsn = grossAMax * dTemp * dVpd * dLight * conversion;
+
+  // do foliar resp. even if no photosynthesis in this time step
+  // :: from [1] in part, used in eq (A18) later
+  *baseFolResp = respPerGram * conversion;
 }
 
 // calculate transpiration (cm H20 * day^-1)
 // and dWater (factor between 0 and 1)
+/*!
+ * @brief Calculate Dwater and transpiration
+ *
+ * @param[out] trans transpiration (cm H20 * day^-1)
+ * @param[out] dWater reduction in photosynthesis due to soil dryness (unitless,
+ * [0:1])
+ * @param[in] potGrossPsn potential photosynthesis before including dWater (g C
+ * * m^-2 ground area * day^-1)
+ * @param[in] vpd vapor pressure deficit (kPa)
+ * @param[in] soilWater current water in soil (g C * m^-2 ground area)
+ */
 void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
               double soilWater) {
-  double potTrans;  // potential transpiration in the absense of plant water
-                    // stress (cm H20 * day^-1)
+  // potential transpiration in the absense of plant water stress
+  // (cm H20 * day^-1)
+  double potTrans;
+  // amount of water available for photosynthesis
   double removableWater;
-  double wue;  // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
+  // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
+  double wue;
 
   if (potGrossPsn < TINY) {  // avoid divide by 0
     *trans = 0.0;  // no photosynthesis -> no transpiration
@@ -931,27 +707,30 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
   }
 
   else {
+    // :: from [1], eq (A13)
     wue = params.wueConst / vpd;
-    potTrans = potGrossPsn / wue * 1000.0 * (44.0 / 12.0) * (1.0 / 10000.0);
+
     // 1000 converts g to mg; 44/12 converts g C to g CO2, 1/10000 converts m^2
     // to cm^2
+    // :: from [1], eq (A14) plus unit conversion as described there
+    potTrans = potGrossPsn / wue * 1000.0 * (44.0 / 12.0) * (1.0 / 10000.0);
 
+    // :: from [1], discussion below eq (A14)
     removableWater = soilWater * params.waterRemoveFrac;
+
+    // :: from [2], snowpack modification
     if (climate->tsoil < params.frozenSoilThreshold) {
       // frozen soil - less or no water available
-      /* frozen soil effect: fraction of water available if soil is frozen
-                                               (assume amt. of water avail. w/
-         frozen soil scales linearly with amt. of water avail. in thawed soil)
-       */
+      // frozen soil effect: fraction of water available if soil is frozen
+      // (assume amount of water available in frozen soil scales linearly
+      // with amount of water available in thawed soil)
       removableWater *= params.frozenSoilEff;
     }
-    if (removableWater >= potTrans) {
-      *trans = potTrans;
-    } else {
-      *trans = removableWater;
-    }
 
-    // from PnET: equivalent to setting DWATER_MAX = 1
+    // :: from [1], eq (A15)
+    *trans = fmin(removableWater, potTrans);
+
+    // :: from [1], eq (A16)
     *dWater = *trans / potTrans;
   }
 }
@@ -962,12 +741,15 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 // determining growing season start (e.g. for soil temp-based leaf growth)
 int pastLeafGrowth(void) {
   if (ctx.gdd) {
+    // :: from [1], description on pg 350
     // null pointer dereference warning suppressed on the next line
     return (climate->gdd >= params.gddLeafOn);  // NOLINT
   } else if (ctx.soilPhenol) {
+    // [TAG:UNKNOWN_PROVENANCE] soil phenol functionality
     return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
                                                        // threshold
   } else {
+    // :: from [1]
     double currTime = (double)climate->day + climate->time / 24.0;
     return (currTime >= params.leafOnDay);  // turn-on day
   }
@@ -976,31 +758,51 @@ int pastLeafGrowth(void) {
 // have we passed the growing season-end leaf fall trigger this year?
 // 0 = no, 1 = yes
 int pastLeafFall(void) {
+  // :: from [1]
   return ((climate->day + climate->time / 24.0) >=
           params.leafOffDay);  // turn-off
                                // day
 }
 
-// calculate leafCreation and leafLitter fluxes (g C/m^2 ground/day)
-// leafCreation is a fraction of recent mean npp, plus some constant amount at
-// start of growing season leafLitter is a constant rate, plus some additional
-// fraction of leaves at end of growing season
+/*!
+ * Calculate leaf creation and leaf litter fluxes
+ *
+ * Leaf creation is a fraction of recent mean npp, plus some constant amount
+ * at start of growing season. Leaf litter is a constant rate, plus some
+ * additional fraction of leaves at end of growing season.
+ *
+ * Mechanics of growing season boundary effects are from [1], modified to be a
+ * fraction of total leaves growing/falling to allow for continual growth and
+ * litter as described in [2], Appendix: Model Description. Calculation of
+ * leafCreation is not from [1] (source TBD).
+ *
+ * @param[out] leafCreation (g C/m^2 ground/day)
+ * @param[out] leafLitter (g C/m^2 ground/day)
+ * @param[in] plantLeafC (g C/m^2 ground area)
+ */
 void leafFluxes(double *leafCreation, double *leafLitter, double plantLeafC) {
+  // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
+  // This function's exact source is still unknown, but is likely a combo of:
+  // [1]: growing season boundary effects, but modified to be partial growth
+  // and fall, instead of binary
+  // [2]: leaf creation relationship with NPP
+
   double npp;  // temporal mean of recent npp (g C * m^-2 ground * day^-1)
 
   npp = getMeanTrackerMean(meanNPP);
   // first determine the fluxes that happen at every time step, not just start &
   // end of growing season:
   if (npp > 0) {
-    *leafCreation = npp * params.leafAllocation;  // a fraction of NPP is
-    // allocated to leaf growth
-  } else {  // net loss of C in this time step - no C left for growth
+    // a fraction of NPP is allocated to leaf growth
+    *leafCreation = npp * params.leafAllocation;
+  } else {
+    // net loss of C in this time step - no C left for growth
     *leafCreation = 0;
   }
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
 
-  // now add add'l fluxes at start/end of growing season:
+  // now add additional fluxes at start/end of growing season:
 
   // first check for new year; if new year, reset trackers (since we haven't
   // done leaf growth or fall yet in this new year):
@@ -1232,19 +1034,37 @@ void soilWaterFluxes(double *fastFlow, double *evaporation, double *topDrainage,
 
 // calculate GROSS photosynthesis (g C * m^-2 * day^-1)
 void getGpp(double *gpp, double potGrossPsn, double dWater) {
+  // :: from [1], eq (A17)
   *gpp = potGrossPsn * dWater;
 }
 
-// calculate foliar respiration and wood maint. resp, both in g C * m^-2 ground
-// area * day^-1 does *not* explicitly model growth resp. (includes it in maint.
-// resp)
+/*!
+ * @brief Calculate foliar respiration and wood maintenance resp
+ *
+ * Does NOT explicitly calculate growth respiration; growth resp included in
+ * wood maintenance resp.
+ *
+ * @param[out] folResp foliar respiration (g C * m^-2 ground area * day^-1)
+ * @param[out] woodResp wood maintenance respiration (g C * m^-2 ground area *
+ * day^-1)
+ * @param[in] baseFolResp base foliar respiration (g C * m^-2 ground area *
+ * day^-1)
+ */
 void vegResp(double *folResp, double *woodResp, double baseFolResp) {
+  // Respiration model according to [1]
+
+  // :: from [1], eq (A18)
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
+
+  // :: from [2], snowpack addition
   if (climate->tsoil < params.frozenSoilThreshold) {
-    *folResp *= params.frozenSoilFolREff;  // allows foliar resp. to be shutdown
-                                           // by a given fraction in winter
+    // allows foliar resp. to be shutdown by a given fraction in winter
+    *folResp *= params.frozenSoilFolREff;
   }
+  // end snowpack addition
+
+  // :: from [1], eq (A19)
   *woodResp = params.baseVegResp * envi.plantWoodC *
               pow(params.vegRespQ10, climate->tair / 10.0);
 }
@@ -1254,14 +1074,18 @@ void vegResp(double *folResp, double *woodResp, double baseFolResp) {
 // resp)
 void calcRootResp(double *rootResp, double respQ10, double baseRate,
                   double poolSize) {
+  // :: from [3], root model description (eq (1) with root params)
   *rootResp = baseRate * poolSize * pow(respQ10, climate->tsoil / 10.0);
 }
 
 // a second veg. resp. method:
 // calculate foliar resp., wood maint. resp. and growth resp., all in g C * m^-2
 // ground area * day^-1 growth resp. modeled in a very simple way
+// This is in addition to [1], source not yet determined (controlled by
+// ctx.growthResp)
 void vegResp2(double *folResp, double *woodResp, double *growthResp,
               double baseFolResp, double /*gpp*/) {
+  // [TAG:UNKNOWN_PROVENANCE] growthResp
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
   if (climate->tsoil < params.frozenSoilThreshold) {
@@ -1284,6 +1108,7 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
 // ensure that all the allocation to wood + leaves + fine roots < 1,
 // and calculate coarse root allocation
 void ensureAllocation(void) {
+  // :: from [3], root model description
   params.coarseRootAllocation = 1 - params.leafAllocation -
                                 params.woodAllocation -
                                 params.fineRootAllocation;
@@ -1303,46 +1128,74 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
   double moistEffect;
   double tempEffect;
 
-  if (ctx.waterHResp) {  // if soil moisture affects heterotrophic resp
-    // using PnET formulation
+  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
+  // case, need to dig in. With that said...
+  // :: from [1], eq (A20), if waterHResp, tsoil >= 0, and not microbes;
+  //    modified to add an exponent soilRespMoistEffect to (W/W_c);
+  //    soilRespMoistEffect is equal to 1 in [1].
+
+  if (ctx.waterHResp) {
+    // if soil moisture affects heterotrophic respiration
+
+    // :: from [1], first part of eq (A20), with added exponent
+    //
+    // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
+    // Note: older versions of sipnet note this as "using PnET formulation",
+    // but we have been unable to verify that this comes from PnET
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
 
+    // :: from [2], snowpack addition
     if (climate->tsoil < 0) {
       moistEffect = 1;  // Ignore moisture effects in frozen soils
     }
   } else {
+    // Soil moisture does not affect heterotrophic respiration
+    // :: from [2], fifth modification described on pg 247
     moistEffect = 1;
   }
 
   if (ctx.microbes) {
     // respiration is determined by microbe biomass
+    // :: from [4], eq (5.12) with addition of moisture effect
+    // [TAG:UNKNOWN_PROVENANCE]  moistEffect
     tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
     fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
   } else {
+    // :: from [1], remainder of eq (A20)
     tempEffect = params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
     fluxes.maintRespiration = envi.soil * moistEffect * tempEffect;
   }
 }
 
+/*!
+ * Calculates microbe ingestion
+ */
 void microbeGrowth(void) {
+  // :: from [4], part of eqs (5.9) and (5.10)
+  //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
+  //    eqs (5.9) and (5.10) in soilDegradation()
   if (ctx.microbes) {
+    // :: mu_max * g(C_S)
     double baseRate = params.maxIngestionRate * envi.soil /
                       (params.halfSatIngestion + envi.soil);
 
     // Flux that microbes remove from soil  (mg C g soil day)
+    // Some is ingested, rest used for growth in soilDegradation
+    // :: above * C_B
     fluxes.microbeIngestion = baseRate * envi.microbeC;
   }
 }
 
-// Now we need to calculate the production of the soil carbon pool, but we are
-// going to have some outputs here that become inputs.  We need to output total
-// respiration of this pool, as this gets fed back into the optimization
-// soil quality is always the current counter divided by the number of total
-// pools. Here we update the soil carbon pools and report the total respiration
-// rate across all pools (it is easier this way than updating the carbon pools
-// separately because then we don't have to store all the fluxes in a separate
-// vector)
-
+/*!
+ * Calculate soil respiration flux and update carbon pools
+ *
+ * Calculates soil respiration, method depending on the MICROBES and
+ * LITTER_POOL flags. Updates carbon pools for soil, fine roots,
+ * and coarse roots.
+ *
+ * TODO: split this apart - fluxes into calculateFluxes, with pool updates
+ *       after, as is the general method for SIPNET.
+ */
 void soilDegradation(void) {
 
   double soilWater;
@@ -1352,38 +1205,56 @@ void soilDegradation(void) {
 
   if (ctx.microbes) {
     microbeGrowth();
-    double microbeEff;
+    double microbeEff = params.efficiency;
 
-    microbeEff = params.efficiency;
-
+    // :: from [1] for litter terms
+    // :: from [3] for root terms
+    // :: from [4] for microbeIngestion term
+    // Note: no rSoil term here, as soil resp is handled by microbeIngestion
     envi.soil +=
         (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
          fluxes.leafLitter - fluxes.microbeIngestion) *
         climate->length;
+    // microbeC additions due to ingestion and incorporation of root exudates,
+    // with reduction from microbe respiration
+    // :: from [4], eq (5.9) for first (ingestion) term,
+    // ::      eq (5.11) used for soilPulse, and
+    // ::      eq (5.12) used for maintRespiration
     envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
                       fluxes.maintRespiration) *
                      climate->length;
 
+    // rSoil is maintenance resp + growth (microbe) resp
+    // :: from [4], eq (5.10) for microbe term
     fluxes.rSoil =
         fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // TBD Why aren't we setting fluxes.rSoil here?
+      //     suspect we are missing fluxes.rSoil = fluxes.maintRespiration;
+      // :: from [2], litter model description
       envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
                       fluxes.litterToSoil - fluxes.rLitter) *
                      climate->length;
 
+      // from [2] and [3], litter and root terms respectively
       envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                     fluxes.litterToSoil - fluxes.rSoil) *
                    climate->length;
     } else {
       // Normal pool (single pool, no microbes)
       fluxes.rSoil = fluxes.maintRespiration;
+      // :: from [1] (and others, TBD), eq (A3), where:
+      //     L_w = fluxes.woodLitter
+      //     L_l = fluxes.leafLitter
+      //     R_h = fluxes.rSoil
+      // :: from [3], root terms
       envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                     fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
                    climate->length;
     }
   }
+  // :: from [3], root model description
   envi.coarseRootC +=
       (fluxes.coarseRootCreation - fluxes.coarseRootLoss - fluxes.rCoarseRoot) *
       climate->length;
@@ -1406,35 +1277,80 @@ double woodLitterF(double plantWoodC) {
                                                 // lost per day
 }
 
+/*!
+ * Calculate soil/litter breakdown
+ *
+ * Calculate pool breakdown based on carbon in pool, pool breakdown rate, and
+ * soil temperature. If waterHResp is on, also calculate a moisture effect
+ * term base on fraction of water holding capacity.
+ *
+ * The function and param names seem to indicate that this function is
+ * intended for use for both soil and litter pools, but the only current use
+ * is with the litter pool when litterPool is on. (Very old versions of sipnet
+ * did indeed call this for both soil and litter, but the soil call has been
+ * replaced with the soilDegradation() function.)
+ *
+ * @param poolC carbon in input pool (litter pool)
+ * @param baseRate base pool breakdown rate
+ * @param water water in pool
+ * @param whc pool water holding capacity
+ * @param tsoil soil temperature
+ * @param Q10 Q10 param (uses soil respiration Q10)
+ * @return litter breakdown (g C/m^2 ground area)
+ */
 double soilBreakdown(double poolC, double baseRate, double water, double whc,
                      double tsoil, double Q10) {
   double tempEffect = pow(Q10, tsoil / 10.0);
   double moistEffect;
 
   if (ctx.waterHResp) {
+    // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
+    // is unknown
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
+
+    // TBD Should we be checking if tsoil < 0, as in
+    // calcMaintenanceRespiration()?
+    //
+    // Here's the code that should be here, will turn on in a later change
+    // Note, the tsoil check could just be combined into the if expression
+    // above
+    // :: from [2], snowpack addition
+    // if (climate->tsoil < 0) {
+    //   moistEffect = 1;  // Ignore moisture effects in frozen soils
+    // }
   } else {
+    // :: from [2], fifth modification described on pg 247
     moistEffect = 1;
   }
 
   return poolC * baseRate * tempEffect * moistEffect;
 }
 
+/*!
+ * Calculate flux terms for sipnet as part of main model flow
+ *
+ * All fluxes should be calculated before state variables are updated.
+ */
 void calculateFluxes(void) {
-  // auxiliary variables:
+  // base foliar respiration, calc'd as part of potential photosynthesis
   double baseFolResp;
-  double potGrossPsn;  // potential photosynthesis, without water stress
+  // potential photosynthesis, without water stress
+  double potGrossPsn;
+  // reduction in photosynthesis due to soil dryness
   double dWater;
-  double lai;  // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  double litterBreakdown;  // total litter breakdown (i.e. litterToSoil +
-  // rLitter) (g C/m^2 ground/day)
-  double folResp, woodResp;  // maintenance respiration terms, g C * m^-2 ground
-                             // area * day^-1
-  double litterWater, soilWater;  // amount of water in litter and soil (cm)
-                                  // taken from environment
-  double growthResp;  // g C * m^-2 ground area * day^-1
-
-  double netRain;  // rain - immedEvap (cm/day)
+  // m^2 leaf/m^2 ground (calculated from plantLeafC)
+  double lai;
+  // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
+  double litterBreakdown;
+  // maintenance respiration terms (g C * m^-2 ground area * day^-1)
+  double folResp, woodResp;
+  // amount of water in litter and soil (cm) taken from environment
+  double litterWater, soilWater;
+  // Growth respiration, if splitting growth and maintenance
+  // (g C * m^-2 ground area * day^-1)
+  double growthResp;
+  // net rain, equal to (rain - immedEvap) (cm/day)
+  double netRain;
 
   litterWater = envi.litterWater;
   soilWater = envi.soilWater;
@@ -1442,7 +1358,7 @@ void calculateFluxes(void) {
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai
 
   potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd,
-         climate->par, climate->day);
+         climate->par);
   moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd,
            soilWater);
 
@@ -1472,8 +1388,6 @@ void calculateFluxes(void) {
                       params.litterWHC, climate->tsoil, params.soilRespQ10);
     fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
-    // NOTE: right now, we don't have capability to use separate cold soil
-    // params for litter
   } else {
     // litterBreakdown = 0;
     fluxes.rLitter = 0;
@@ -1490,10 +1404,8 @@ void calculateFluxes(void) {
   npp = getMeanTrackerMean(meanNPP);
   gppSoil = getMeanTrackerMean(meanGPP);
   if (npp > 0) {
-    fluxes.coarseRootCreation =
-        (1 - params.leafAllocation - params.fineRootAllocation -
-         params.woodAllocation) *
-        npp;
+    // :: from [3], root model description and eq (3)
+    fluxes.coarseRootCreation = params.coarseRootAllocation * npp;
     fluxes.fineRootCreation = params.fineRootAllocation * npp;
     fluxes.woodCreation = params.woodAllocation * npp;
   } else {
@@ -1503,6 +1415,7 @@ void calculateFluxes(void) {
   }
 
   if ((gppSoil > 0) & (envi.fineRootC > 0)) {
+    // :: from [3], eq (5)
     coarseExudate = params.coarseRootExudation * gppSoil;
     fineExudate = params.fineRootExudation * gppSoil;
   } else {
@@ -1510,14 +1423,17 @@ void calculateFluxes(void) {
     coarseExudate = 0;
   }
 
+  // :: from [3], roots model descriptions and [4] eq (5.11)
   fluxes.coarseRootLoss = (1 - params.microbePulseEff) * coarseExudate +
                           params.coarseRootTurnoverRate * envi.coarseRootC;
   fluxes.fineRootLoss = (1 - params.microbePulseEff) * fineExudate +
                         params.fineRootTurnoverRate * envi.fineRootC;
 
   // fluxes that get added to microbe pool
+  // :: from [4], eq (5.11) first line
   fluxes.soilPulse = params.microbePulseEff * (coarseExudate + fineExudate);
 
+  // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
                params.baseCoarseRootResp, envi.coarseRootC);
   calcRootResp(&fluxes.rFineRoot, params.fineRootQ10, params.baseFineRootResp,
@@ -1827,34 +1743,61 @@ void updateState(void) {
   int err;
   oldSoilWater = envi.soilWater;
 
-  calculateFluxes();
+  // 1. Calculate Fluxes
 
-  // update the stocks, with fluxes adjusted for length of time step:
+  calculateFluxes();
+  soilDegradation();  // This updates all the soil functions
+
+  // 2. Update Pools
+
+  // Update the stocks, with fluxes adjusted for length of time step.
+  // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
+  // were updated in soilDegradation(); also, envi.litter when that is in use.
+  // And yes, I would love to break that out to maintain more rigor in this
+  // flow process.
+
+  // :: from [1], eq (A1), where:
+  //     GPP = fluxes.photosynthesis
+  //     R_a = fluxes.rVeg
+  //     L_w = fluxes.woodLitter
+  //     L   = fluxes.leafCreation
+  // :: from [3], additional root terms (woodCreation, fineRootC, coarseRootC)
+  //    from NPP allocation
   envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation -
                       fluxes.leafCreation - fluxes.woodLitter - fluxes.rVeg -
                       fluxes.coarseRootCreation - fluxes.fineRootCreation) *
                      climate->length;
+
+  // :: from [1], eq (A2), where:
+  //     L   = fluxes.leafCreation
+  //     L_L = fluxes.leafLitter
   envi.plantLeafC +=
       (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
 
-  soilDegradation();  // This updates all the soil functions
-
+  // :: from [1], eq (A4), where:
+  //     P = (fluxes.rain - fluxes.immedEvap)
+  //     T = (fluxes.transpiration + fluxes.evaporation)
+  //     D = (fluxes.bottomDrainage + fluxes.fastFlow)
+  //    from [2], addition of fluxes.snowMelt, as well as the modifications in
+  //    the terms above: immedEvap in P, evaporation in T, and fastFlow in D
   envi.soilWater +=
       (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow -
        fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) *
       climate->length;
 
   // if ctx.snow = 0, some or all of these fluxes will always be 0
+  // :: from [2], addition of snowpack description
   envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) *
                climate->length;
 
   ensureNonNegativeStocks();
 
-  // Process events for this location/year/day, AFTER updates are made to fluxes
-  // and state variables above. Events are (currently, Jan 25, 2025) handled as
-  // instantaneous deltas to relevant state (envi and fluxes fields),
+  // 3. Process events for this location/year/day, AFTER updates are made to
+  // fluxes and state variables above. Events are (currently, Jan 25, 2025)
+  // handled as instantaneous deltas to relevant state (envi and fluxes fields),
   processEvents();
 
+  // 4. Update trackers
   npp = fluxes.photosynthesis - fluxes.rVeg - fluxes.rCoarseRoot -
         fluxes.rFineRoot;
 
