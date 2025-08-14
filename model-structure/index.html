@@ -2017,9 +2017,8 @@ F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \c
 <div class="arithmatex">\[
 R_{H} = f_{R_H} \cdot 
   \left(\sum_j  K_j \cdot C_j 
-    \mathfrak{\cdot D_{\text{tillage,}j}}
     \right) \cdot 
-    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} 
+    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \mathfrak{\cdot D_{\text{tillage}}} 
     \tag{7}\label{eq:rh}
 \]</div>
 <div class="arithmatex">\[\small j \in \{\text{soil, litter}\}\]</div>
@@ -2244,19 +2243,16 @@ the fast conversion of Urea to ammonium, and is consistent with the DayCent form
 Only relatively recently did DayCent explicitly model Urea-N to NH4 in order to represent the impact of 
 urease inhibitors (Gurung et al 2021) that slow down the rate.</p>
 <h3 id="fraktillage"><span class="arithmatex">\(\frak{Tillage}\)</span><a class="headerlink" href="#fraktillage" title="Permanent link">&para;</a></h3>
-<p>To represent tillage, we define two new adjustment factors that modify the decomposition rates
- of litter <span class="arithmatex">\(K_{\text{litter}}\)</span> and soil organic matter <span class="arithmatex">\(K_{\text{som}}\)</span>:</p>
-<p>Event parameters from the <code>events.in</code> file:</p>
-<ul>
-<li>SOM decomposition modifier <span class="arithmatex">\(D_{K\text{,tillage,litter}}\)</span>  </li>
-<li>Litter decomposition modifier <span class="arithmatex">\(D_{K\text{,tillage,som}}\)</span> </li>
-</ul>
-<p>These values specified as fractions (e.g. 0.2 for 20% increase in decomposition rate). They are set to 0 by default and are expected to be &gt;0. They are set in the <code>events.in</code>, and are effective for one month after the tillage event.</p>
+<p>To represent the effect of tillage on decomposition rate, we define the tillage dependency function <span class="arithmatex">\(D_{\textrm{till}}\)</span>, which is a function of a tillage effect <span class="arithmatex">\(f_{\textrm{till}}\)</span>:</p>
 <div class="arithmatex">\[
-K^{\prime}_{\text{i}} = K_{\text{i}} \cdot (1+D_{K\text{,tillage,}i})
+D_{\textrm{till}}(t) = 1 + f_{\textrm{till}}\cdot e^{-t/30} \tag{25}\label{eq:till}
 \]</div>
-<p>Where <span class="arithmatex">\(i\)</span> is either litter or soil organic matter pool, and <span class="arithmatex">\(K^{\prime}\)</span> is the transiently adjusted decomposition rate.</p>
-<p>The choice of one month adjustment period is based on DayCent (Parton et al 2001).</p>
+<p><span class="arithmatex">\(f_{\textrm{till}}\)</span> is specified in the <code>events.in</code> file, and <span class="arithmatex">\(D_{\textrm{till}}(t)\)</span> is multiplied by the <span class="arithmatex">\(KC\)</span> term in the calculation of <span class="arithmatex">\(R_H\)</span> (Eq. \eqref{eq:rh}).</p>
+<p>A value of <span class="arithmatex">\(f_{\textrm{till}}=0.2\)</span> represents an initial 20% increase that will exponentially decay. The rate of exponential decay is 1/30 days. This rate was chosen such that <span class="arithmatex">\(D_{\textrm{till}}\)</span> integrates to 30, which is equivalent to DayCent’s 30‑day step function.</p>
+<p>If multiple tillage events at times <span class="arithmatex">\(t_z\)</span> occur with effects <span class="arithmatex">\(f_{\textrm{till,}z}\)</span>, they add linearly thus:</p>
+<div class="arithmatex">\[
+D_{\textrm{till}}(t) = 1 + \sum_{z} f_{\textrm{till,}z}\, e^{-(t-t_{z})/30},\quad t\ge t_{z}.
+\]</div>
 <h3 id="frakplanting-and-emergence"><span class="arithmatex">\(\frak{Planting \ and \ Emergence}\)</span><a class="headerlink" href="#frakplanting-and-emergence" title="Permanent link">&para;</a></h3>
 <p>A planting event is defined by its emergence date and directly specifies the amount of carbon added to each of four plant carbon pools: leaf, wood, fine root, and coarse root. On the emergence date, the model initializes the plant pools with the amounts of carbon specified in the events file.</p>
 <p>Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios following equation \eqref{eq:cn_stoich}.</p>
@@ -2265,7 +2261,12 @@ K^{\prime}_{\text{i}} = K_{\text{i}} \cdot (1+D_{K\text{,tillage,}i})
 <p>Because a harvest event only specifies the fraction of above and belowground carbon that is removed or transferred to litter, assume that the above terms apply to leaf + wood, and below applies to fine root + coarse root.</p>
 <p>The removed fraction is calculated as follows:</p>
 <div class="arithmatex">\[
-F^C_{\text{harvest,removed}} = f_{\text{remove,above}} \cdot C_{\text{above}} + f_{\text{remove,below}} \cdot C_{\text{below}}
+% these next two eqns can prob. be simplified
+% noting that f_removed + f_transfer = 1
+% and using i \in \{\text{above}, \text{below}\} 
+% and j in removed, litter
+F^C_{\text{harvest,removed}} = f_{\text{remove,above}} \cdot C_{\text{above}} + f_{\text{remove,below}} \cdot C_{\text{root}}
+\tag{27}\label{eq:harvest_removed}
 \]</div>
 <p>The fraction transferred to litter is calculated as follows:</p>
 <div class="arithmatex">\[

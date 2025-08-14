@@ -1841,10 +1841,10 @@
 
 ### Initial state values 
 
-|   | Symbol                                   | Parameter Name  | Definition                                | Units                          | notes                                             |
-| - | ---------------------------------------- | --------------- | ----------------------------------------- | ------------------------------ | ------------------------------------------------- |
-|   | ${NH_4}_{\text{soil},0}$                         |                 | Initial soil ammonium content             | g N m$^{-2}$                 |                                                   |
-|   | ${NO_3}_{\text{soil},0}$                         |                 | Initial soil nitrate content              | g N m$^{-2}$                 |                                                   |
+|     | Symbol                   | Parameter Name | Definition                    | Units        | notes |
+| --- | ------------------------ | -------------- | ----------------------------- | ------------ | ----- |
+|     | ${NH_4}_{\text{soil},0}$ |                | Initial soil ammonium content | g N m$^{-2}$ |       |
+|     | ${NO_3}_{\text{soil},0}$ |                | Initial soil nitrate content  | g N m$^{-2}$ |       |
 
 -->
 
@@ -2131,10 +2131,23 @@
 <td></td>
 </tr>
 <tr>
-<td><!-- | 68                         |                           | fineRootExudation   | fraction of GPP exuded to the soil             |       | Pulsing parameters |
-| 68   |                            | coarseRootExudation | fraction of NPP exuded to the soil             |       | Pulsing parameters |
--->
-</td>
+<td>&lt;!--</td>
+<td>68</td>
+<td></td>
+<td>fineRootExudation</td>
+<td>fraction of GPP exuded to the soil</td>
+<td></td>
+</tr>
+<tr>
+<td>68</td>
+<td></td>
+<td>coarseRootExudation</td>
+<td>fraction of NPP exuded to the soil</td>
+<td></td>
+<td>Pulsing parameters</td>
+</tr>
+<tr>
+<td>--&gt;</td>
 <td></td>
 <td></td>
 <td></td>
@@ -2285,6 +2298,7 @@
 </tr>
 </tbody>
 </table>
+<p>| new | <span class="arithmatex">\(f_{\textrm{till}}\)</span> | tillageEff   | Effect of tillage on decomposition that exponentially decays over time | fraction | Per‑event in <code>events.in</code>; 0 = no effect |</p>
 <ul>
 <li><span class="arithmatex">\(R_{dec}\)</span>: Rate of decomposition <span class="arithmatex">\((\text{day}^{-1})\)</span> </li>
 <li><span class="arithmatex">\(Q_{10dec}\)</span>: Temperature coefficient for <span class="arithmatex">\(R_{dec}\)</span> (unitless)</li>
@@ -2496,13 +2510,13 @@
 ### Quality model parameters
 
 
-|    |  Symbol           | Parameter Name         | Definition                                         | Units                 | notes                         |
-| -- | ----------------- |  --------------------- | -------------------------------------------------- | --------------------- | ----------------------------- |
-| 58 |                   | efficiency             | conversion efficiency of ingested carbon           |                       | Microbe & Stoichiometry model |
-| 59 |                   | maxIngestionRate       | maximum ingestion rate of the microbe              | hr-1                  | Microbe & Stoichiometry model |
-| 60 |                   | halfSatIngestion       | half saturation ingestion rate of microbe          | mg C g-1 soil         | Microbe & Stoichiometry model |
-| 63 |                   | microbeInit            |                                                    | mg C / g soil microbe | initial carbon amount         |-->
-
+|     | Symbol | Parameter Name   | Definition                                | Units                 | notes                         |
+| --- | ------ | ---------------- | ----------------------------------------- | --------------------- | ----------------------------- |
+| 58  |        | efficiency       | conversion efficiency of ingested carbon  |                       | Microbe & Stoichiometry model |
+| 59  |        | maxIngestionRate | maximum ingestion rate of the microbe     | hr-1                  | Microbe & Stoichiometry model |
+| 60  |        | halfSatIngestion | half saturation ingestion rate of microbe | mg C g-1 soil         | Microbe & Stoichiometry model |
+| 63  |        | microbeInit      |                                           | mg C / g soil microbe | initial carbon amount         | -->
+<p>|</p>
 <!-- Not used in CCMMF (two Q10s , soil and veg); no microbes
 | 74 |                   | fineRootQ10            | Q10 of fine roots                                  |                       |                               |
 | 75 |                   | coarseRootQ10          | Q10 of coarse roots                                |                       |                               |
@@ -3023,12 +3037,16 @@ with this older format can still be read by sipnet:
 <td style="text-align: center;">Y</td>
 <td>g N / m2</td>
 </tr>
+<tr>
+<td>&lt;!--</td>
+<td style="text-align: center;">min-N2</td>
+<td style="text-align: center;">8</td>
+<td>Y*</td>
+</tr>
 </tbody>
 </table>
-<!--| min-N2    |  8  |  Y*  | g N / m2 (*not unused in one pool model, NO3 in two pool model) |-->
-
 <ul>
-<li>model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.</li>
+<li>Model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.</li>
 </ul>
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
 <ul>
@@ -3046,26 +3064,17 @@ with this older format can still be read by sipnet:
 </thead>
 <tbody>
 <tr>
-<td>SOM decomposition modifier</td>
+<td>tillageEff (<span class="arithmatex">\(f_{\textrm{till}}\)</span>)</td>
 <td style="text-align: center;">5</td>
 <td style="text-align: center;">Y</td>
-<td>% increase in <span class="arithmatex">\(K_{dec}\)</span></td>
-</tr>
-<tr>
-<td>litter decomposition modifier</td>
-<td style="text-align: center;">6</td>
-<td style="text-align: center;">Y</td>
-<td>% increase in <span class="arithmatex">\(K_{lit}\)</span></td>
+<td>Adjustment to <span class="arithmatex">\(R_H\)</span></td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>model representation:<ul>
-<li>increase k for one month, amount proportional to depth</li>
-<li>transfer litter C and N to soil pool</li>
-</ul>
-</li>
-<li>notes: could also alter bulk density and other soil properties</li>
+<li>Model representation:</li>
+<li>Transient increase in decomposition rate by <span class="arithmatex">\(f_{\text{,tillage}}\)</span> that exponentially decays over time.</li>
+<li>Multiple tillage events are additive.</li>
 </ul>
 <h4 id="planting-events">Planting Events<a class="headerlink" href="#planting-events" title="Permanent link">&para;</a></h4>
 <table>
@@ -3105,7 +3114,7 @@ with this older format can still be read by sipnet:
 </tbody>
 </table>
 <ul>
-<li>model representation: </li>
+<li>Model representation:</li>
 <li>Date of event is the date of emergence, not the date of actual planting </li>
 <li>Increases size of carbon pools by the amount of each respective parameter</li>
 <li><span class="arithmatex">\(N\)</span> pools are calculated from <span class="arithmatex">\(CN\)</span> stoichiometric ratios.</li>
@@ -3156,11 +3165,12 @@ with this older format can still be read by sipnet:
 <li>root biomass is only removed for root crops</li>
 </ul>
 <h4 id="example-of-eventsin-file">Example of <code>events.in</code> file:<a class="headerlink" href="#example-of-eventsin-file" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code>2022  35  till   0.2 0.3      # tilled on day 35, soil organic matter pool decomposition rate increases by 20% and soil litter pool decomposition rate increases by 30% 
-2022  40  irrig  5 1          # 5cm canopy irrigation on day 40 applied to soil
-2022  40  fert   0 0 10       # fertilized with 10 g / m2 N_min on day 40 of 2022
-2022  50  plant  10 3 2 5     # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
-2022  250 harv   0.1          # harvest 10% of aboveground plant biomass on day 250
+<div class="highlight"><pre><span></span><code>2022  35  till  0.2       # tilled on day 35, f_till = 0.2 (20% boost to rate term)
+2022  40  till  0.1       # tilled on day 40, adds 0.1 to f_till
+2022  40  irrig  5 1      # 5cm canopy irrigation on day 40 applied to soil
+2022  40  fert   0 0 10   # fertilized with 10 g / m2 N_min on day 40 of 2022
+2022  50  plant  10 3 2 5 # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
+2022  250 harv   0.1      # harvest 10% of aboveground plant biomass on day 250
 </code></pre></div>
 <h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
 <h3 id="model-outputs">Model Outputs<a class="headerlink" href="#model-outputs" title="Permanent link">&para;</a></h3>
@@ -3399,20 +3409,20 @@ Note the delimiters: spaces separate columns, commas separate name/value pairs, 
 
 TODO: update and move the following terms used in model description to appropriate tables
 
-| Symbol          | Description  |
-|-----------------|-------------|
-| $F_{T,Q10}$ | Temperature dependence using Q10 relationship  |  
-| $F_{T,opt}$ | Temperature dependence based on optimal temperature |
-| $W_{\text{soil}}$ | Soil water content                                                   |
-| $W_{\text{WHC}}$ | Soil Water Holding Capacity                                           |
-| $f_{\text{anaer}}$ | Fraction of anaerobic soil                                           |
-| $R_{\text{mineralization,N}}$ | Rate of nitrogen mineralization                                 |
-| $R_{\text{leach,}N_{\text{mineral}}}$ | Rate of mineral nitrogen leaching                |
-| $R_{\text{vol,}N_{\text{mineral}}}$ | Rate of mineral nitrogen volatilization                  |
-| $R_{\text{fert,}N_{\text{mineral}}}$ | Rate of mineral nitrogen fertilization                   |
-| $R_{\text{fert,}N_{\text{org}}}$ | Rate of organic nitrogen fertilization input                    |
-| $R_{\text{meth}}$ | Rate of methane production                                           |
-| $R_{\text{methox}}$ | Rate of methane oxidation                                          |
+| Symbol                                | Description                                         |
+| ------------------------------------- | --------------------------------------------------- |
+| $F_{T,Q10}$                           | Temperature dependence using Q10 relationship       |
+| $F_{T,opt}$                           | Temperature dependence based on optimal temperature |
+| $W_{\text{soil}}$                     | Soil water content                                  |
+| $W_{\text{WHC}}$                      | Soil Water Holding Capacity                         |
+| $f_{\text{anaer}}$                    | Fraction of anaerobic soil                          |
+| $R_{\text{mineralization,N}}$         | Rate of nitrogen mineralization                     |
+| $R_{\text{leach,}N_{\text{mineral}}}$ | Rate of mineral nitrogen leaching                   |
+| $R_{\text{vol,}N_{\text{mineral}}}$   | Rate of mineral nitrogen volatilization             |
+| $R_{\text{fert,}N_{\text{mineral}}}$  | Rate of mineral nitrogen fertilization              |
+| $R_{\text{fert,}N_{\text{org}}}$      | Rate of organic nitrogen fertilization input        |
+| $R_{\text{meth}}$                     | Rate of methane production                          |
+| $R_{\text{methox}}$                   | Rate of methane oxidation                           |
 -->
 
 
