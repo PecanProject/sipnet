@@ -2,6 +2,10 @@
 \label{struct_parameters}\index{Parameters@{Parameters}}
 
 
+{\ttfamily \#include $<$state.\+h$>$}
+
+
+
 Collaboration diagram for Parameters\+:
 \nopagebreak
 \begin{figure}[H]
@@ -17,15 +21,9 @@ double \textbf{ plant\+Wood\+Init}
 \item 
 double \textbf{ lai\+Init}
 \item 
-double \textbf{ litter\+Init}
-\item 
 double \textbf{ soil\+Init}
 \item 
-double \textbf{ litter\+WFrac\+Init}
-\item 
 double \textbf{ soil\+WFrac\+Init}
-\item 
-double \textbf{ snow\+Init}
 \item 
 double \textbf{ a\+Max}
 \item 
@@ -37,6 +35,8 @@ double \textbf{ psn\+TMin}
 \item 
 double \textbf{ psn\+TOpt}
 \item 
+double \textbf{ psn\+TMax}
+\item 
 double \textbf{ d\+Vpd\+Slope}
 \item 
 double \textbf{ d\+Vpd\+Exp}
@@ -47,25 +47,55 @@ double \textbf{ attenuation}
 \item 
 double \textbf{ leaf\+On\+Day}
 \item 
-double \textbf{ gdd\+Leaf\+On}
-\item 
-double \textbf{ soil\+Temp\+Leaf\+On}
-\item 
 double \textbf{ leaf\+Off\+Day}
 \item 
-double \textbf{ leaf\+Growth}
-\item 
-double \textbf{ frac\+Leaf\+Fall}
-\item 
-double \textbf{ leaf\+Allocation}
-\item 
-double \textbf{ leaf\+Turnover\+Rate}
+double \textbf{ gdd\+Leaf\+On}
 \item 
 double \textbf{ base\+Veg\+Resp}
 \item 
 double \textbf{ veg\+Resp\+Q10}
 \item 
-double \textbf{ growth\+Resp\+Frac}
+double \textbf{ base\+Soil\+Resp}
+\item 
+double \textbf{ soil\+Resp\+Q10}
+\item 
+double \textbf{ water\+Remove\+Frac}
+\item 
+double \textbf{ wue\+Const}
+\item 
+double \textbf{ soil\+WHC}
+\item 
+double \textbf{ leaf\+CSp\+Wt}
+\item 
+double \textbf{ c\+Frac\+Leaf}
+\item 
+double \textbf{ wood\+Turnover\+Rate}
+\item 
+double \textbf{ litter\+Init}
+\item 
+double \textbf{ litter\+WFrac\+Init}
+\item 
+double \textbf{ snow\+Init}
+\item 
+double \textbf{ frozen\+Soil\+Eff}
+\item 
+double \textbf{ litter\+WHC}
+\item 
+double \textbf{ immed\+Evap\+Frac}
+\item 
+double \textbf{ fast\+Flow\+Frac}
+\item 
+double \textbf{ snow\+Melt}
+\item 
+double \textbf{ rd\+Const}
+\item 
+double \textbf{ r\+Soil\+Const1}
+\item 
+double \textbf{ r\+Soil\+Const2}
+\item 
+double \textbf{ leaf\+Allocation}
+\item 
+double \textbf{ leaf\+Turnover\+Rate}
 \item 
 double \textbf{ frozen\+Soil\+Fol\+REff}
 \item 
@@ -75,87 +105,19 @@ double \textbf{ litter\+Breakdown\+Rate}
 \item 
 double \textbf{ frac\+Litter\+Respired}
 \item 
-double \textbf{ base\+Soil\+Resp}
-\item 
-double \textbf{ base\+Soil\+Resp\+Cold}
-\item 
-double \textbf{ soil\+Resp\+Q10}
-\item 
-double \textbf{ soil\+Resp\+Q10\+Cold}
-\item 
-double \textbf{ cold\+Soil\+Threshold}
-\item 
-double \textbf{ E0}
-\item 
-double \textbf{ T0}
-\item 
-double \textbf{ soil\+Resp\+Moist\+Effect}
-\item 
-double \textbf{ water\+Remove\+Frac}
-\item 
-double \textbf{ frozen\+Soil\+Eff}
-\item 
-double \textbf{ wue\+Const}
-\item 
-double \textbf{ litter\+WHC}
-\item 
-double \textbf{ soil\+WHC}
-\item 
-double \textbf{ immed\+Evap\+Frac}
-\item 
-double \textbf{ fast\+Flow\+Frac}
-\item 
-double \textbf{ snow\+Melt}
-\item 
-double \textbf{ lit\+Water\+Drain\+Rate}
-\item 
-double \textbf{ rd\+Const}
-\item 
-double \textbf{ r\+Soil\+Const1}
-\item 
-double \textbf{ r\+Soil\+Const2}
-\item 
-double \textbf{ m\+\_\+ball\+Berry}
-\item 
-double \textbf{ leaf\+CSp\+Wt}
-\item 
-double \textbf{ c\+Frac\+Leaf}
-\item 
-double \textbf{ leaf\+Pool\+Depth}
-\item 
-double \textbf{ wood\+Turnover\+Rate}
-\item 
-double \textbf{ psn\+TMax}
-\item 
-double \textbf{ quality\+Leaf}
-\item 
-double \textbf{ quality\+Wood}
-\item 
-double \textbf{ efficiency}
-\item 
-double \textbf{ max\+Ingestion\+Rate}
-\item 
-double \textbf{ half\+Sat\+Ingestion}
-\item 
-double \textbf{ tot\+Nitrogen}
-\item 
-double \textbf{ microbe\+NC}
-\item 
-double \textbf{ microbe\+Init}
-\item 
 double \textbf{ fine\+Root\+Frac}
 \item 
 double \textbf{ coarse\+Root\+Frac}
 \item 
+double \textbf{ wood\+Allocation}
+\item 
 double \textbf{ fine\+Root\+Allocation}
 \item 
-double \textbf{ wood\+Allocation}
+double \textbf{ coarse\+Root\+Allocation}
 \item 
 double \textbf{ fine\+Root\+Exudation}
 \item 
 double \textbf{ coarse\+Root\+Exudation}
-\item 
-double \textbf{ coarse\+Root\+Allocation}
 \item 
 double \textbf{ fine\+Root\+Turnover\+Rate}
 \item 
@@ -169,18 +131,60 @@ double \textbf{ fine\+Root\+Q10}
 \item 
 double \textbf{ coarse\+Root\+Q10}
 \item 
+double \textbf{ microbe\+Init}
+\item 
 double \textbf{ base\+Microbe\+Resp}
 \item 
 double \textbf{ microbe\+Q10}
 \item 
 double \textbf{ microbe\+Pulse\+Eff}
+\item 
+double \textbf{ efficiency}
+\item 
+double \textbf{ max\+Ingestion\+Rate}
+\item 
+double \textbf{ half\+Sat\+Ingestion}
+\item 
+double \textbf{ soil\+Temp\+Leaf\+On}
+\item 
+double \textbf{ leaf\+Growth}
+\item 
+double \textbf{ frac\+Leaf\+Fall}
+\item 
+double \textbf{ growth\+Resp\+Frac}
+\item 
+double \textbf{ soil\+Resp\+Moist\+Effect}
+\item 
+double \textbf{ leaf\+Pool\+Depth}
+\item 
+double \textbf{ base\+Soil\+Resp\+Cold}
+\item 
+double \textbf{ soil\+Resp\+Q10\+Cold}
+\item 
+double \textbf{ cold\+Soil\+Threshold}
+\item 
+double \textbf{ lit\+Water\+Drain\+Rate}
+\item 
+double \textbf{ E0}
+\item 
+double \textbf{ T0}
+\item 
+double \textbf{ m\+\_\+ball\+Berry}
+\item 
+double \textbf{ tot\+Nitrogen}
+\item 
+double \textbf{ microbe\+NC}
+\item 
+double \textbf{ quality\+Leaf}
+\item 
+double \textbf{ quality\+Wood}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 
 
-Definition at line \textbf{ 107} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 62} of file \textbf{ state.\+h}.
 
 
 
@@ -193,7 +197,7 @@ Definition at line \textbf{ 107} of file \textbf{ sipnet.\+c}.
 
 
 
-Definition at line \textbf{ 124} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 91} of file \textbf{ state.\+h}.
 
 
 
@@ -207,7 +211,7 @@ Referenced by \textbf{ pot\+Psn()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 127} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 94} of file \textbf{ state.\+h}.
 
 
 
@@ -221,7 +225,7 @@ Referenced by \textbf{ pot\+Psn()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 135} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 116} of file \textbf{ state.\+h}.
 
 
 
@@ -235,7 +239,7 @@ Referenced by \textbf{ calc\+Light\+Eff()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 271} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 290} of file \textbf{ state.\+h}.
 
 
 
@@ -249,7 +253,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and 
 
 
 
-Definition at line \textbf{ 269} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 288} of file \textbf{ state.\+h}.
 
 
 
@@ -263,7 +267,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and 
 
 
 
-Definition at line \textbf{ 128} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 97} of file \textbf{ state.\+h}.
 
 
 
@@ -277,7 +281,7 @@ Referenced by \textbf{ pot\+Psn()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 277} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 305} of file \textbf{ state.\+h}.
 
 
 
@@ -291,7 +295,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ read\+Param\+
 
 
 
-Definition at line \textbf{ 177} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 151} of file \textbf{ state.\+h}.
 
 
 
@@ -305,7 +309,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ read\+Param\+
 
 
 
-Definition at line \textbf{ 180} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 360} of file \textbf{ state.\+h}.
 
 
 
@@ -319,7 +323,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 156} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 140} of file \textbf{ state.\+h}.
 
 
 
@@ -333,7 +337,7 @@ Referenced by \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ 
 
 
 
-Definition at line \textbf{ 227} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 173} of file \textbf{ state.\+h}.
 
 
 
@@ -347,11 +351,11 @@ Referenced by \textbf{ pot\+Psn()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 263} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 278} of file \textbf{ state.\+h}.
 
 
 
-Referenced by \textbf{ ensure\+Allocation()}.
+Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ ensure\+Allocation()}.
 
 \label{struct_parameters_a80dd45c8ca7ffd37b6c1e7749f635380} 
 \index{Parameters@{Parameters}!coarseRootExudation@{coarseRootExudation}}
@@ -361,7 +365,7 @@ Referenced by \textbf{ ensure\+Allocation()}.
 
 
 
-Definition at line \textbf{ 261} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 282} of file \textbf{ state.\+h}.
 
 
 
@@ -375,7 +379,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 257} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 272} of file \textbf{ state.\+h}.
 
 
 
@@ -389,7 +393,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 274} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 294} of file \textbf{ state.\+h}.
 
 
 
@@ -403,7 +407,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 268} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 286} of file \textbf{ state.\+h}.
 
 
 
@@ -417,7 +421,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and 
 
 
 
-Definition at line \textbf{ 193} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 369} of file \textbf{ state.\+h}.
 
 
 
@@ -431,7 +435,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 132} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 109} of file \textbf{ state.\+h}.
 
 
 
@@ -445,7 +449,7 @@ Referenced by \textbf{ pot\+Psn()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 132} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 105} of file \textbf{ state.\+h}.
 
 
 
@@ -459,7 +463,7 @@ Referenced by \textbf{ pot\+Psn()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 197} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 377} of file \textbf{ state.\+h}.
 
 
 
@@ -473,7 +477,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 242} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 315} of file \textbf{ state.\+h}.
 
 
 
@@ -487,7 +491,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 214} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 213} of file \textbf{ state.\+h}.
 
 
 
@@ -501,7 +505,7 @@ Referenced by \textbf{ evap\+Soil\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 258} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 276} of file \textbf{ state.\+h}.
 
 
 
@@ -515,7 +519,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Allocation()}, and
 
 
 
-Definition at line \textbf{ 260} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 280} of file \textbf{ state.\+h}.
 
 
 
@@ -529,7 +533,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 256} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 270} of file \textbf{ state.\+h}.
 
 
 
@@ -543,7 +547,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 273} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 292} of file \textbf{ state.\+h}.
 
 
 
@@ -557,7 +561,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 267} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 284} of file \textbf{ state.\+h}.
 
 
 
@@ -571,7 +575,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and 
 
 
 
-Definition at line \textbf{ 148} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 340} of file \textbf{ state.\+h}.
 
 
 
@@ -585,7 +589,7 @@ Referenced by \textbf{ leaf\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 175} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 260} of file \textbf{ state.\+h}.
 
 
 
@@ -599,7 +603,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 206} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 203} of file \textbf{ state.\+h}.
 
 
 
@@ -613,7 +617,7 @@ Referenced by \textbf{ moisture()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 164} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 243} of file \textbf{ state.\+h}.
 
 
 
@@ -627,7 +631,7 @@ Referenced by \textbf{ read\+Param\+Data()}, \textbf{ veg\+Resp()}, and \textbf{
 
 
 
-Definition at line \textbf{ 166} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 247} of file \textbf{ state.\+h}.
 
 
 
@@ -641,7 +645,7 @@ Referenced by \textbf{ moisture()}, \textbf{ read\+Param\+Data()}, \textbf{ veg\
 
 
 
-Definition at line \textbf{ 141} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 129} of file \textbf{ state.\+h}.
 
 
 
@@ -655,7 +659,7 @@ Referenced by \textbf{ past\+Leaf\+Growth()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 162} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 347} of file \textbf{ state.\+h}.
 
 
 
@@ -669,7 +673,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ veg\+Resp2()}.
 
 
 
-Definition at line \textbf{ 247} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 325} of file \textbf{ state.\+h}.
 
 
 
@@ -683,7 +687,7 @@ Referenced by \textbf{ microbe\+Growth()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 133} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 113} of file \textbf{ state.\+h}.
 
 
 
@@ -697,7 +701,7 @@ Referenced by \textbf{ calc\+Light\+Eff()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 212} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 210} of file \textbf{ state.\+h}.
 
 
 
@@ -711,7 +715,7 @@ Referenced by \textbf{ calc\+Precip()}, \textbf{ process\+Events()}, and \textbf
 
 
 
-Definition at line \textbf{ 112} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 77} of file \textbf{ state.\+h}.
 
 
 
@@ -725,11 +729,11 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 150} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 231} of file \textbf{ state.\+h}.
 
 
 
-Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Allocation()}, \textbf{ leaf\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
+Referenced by \textbf{ ensure\+Allocation()}, \textbf{ leaf\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 \label{struct_parameters_a21301da718af10742e7d006e23d8d1fd} 
 \index{Parameters@{Parameters}!leafCSpWt@{leafCSpWt}}
@@ -739,7 +743,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Allocation()}, \te
 
 
 
-Definition at line \textbf{ 226} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 170} of file \textbf{ state.\+h}.
 
 
 
@@ -753,7 +757,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ pot\+Psn()}, \textbf{ read
 
 
 
-Definition at line \textbf{ 146} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 338} of file \textbf{ state.\+h}.
 
 
 
@@ -767,7 +771,7 @@ Referenced by \textbf{ leaf\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 145} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 126} of file \textbf{ state.\+h}.
 
 
 
@@ -781,7 +785,7 @@ Referenced by \textbf{ past\+Leaf\+Fall()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 140} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 123} of file \textbf{ state.\+h}.
 
 
 
@@ -795,7 +799,7 @@ Referenced by \textbf{ past\+Leaf\+Growth()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 228} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 356} of file \textbf{ state.\+h}.
 
 
 
@@ -809,7 +813,7 @@ Referenced by \textbf{ calc\+Precip()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 151} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 235} of file \textbf{ state.\+h}.
 
 
 
@@ -823,7 +827,7 @@ Referenced by \textbf{ leaf\+Fluxes()}, \textbf{ read\+Param\+Data()}, and \text
 
 
 
-Definition at line \textbf{ 171} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 256} of file \textbf{ state.\+h}.
 
 
 
@@ -837,7 +841,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and 
 
 
 
-Definition at line \textbf{ 114} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 188} of file \textbf{ state.\+h}.
 
 
 
@@ -851,7 +855,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 116} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 191} of file \textbf{ state.\+h}.
 
 
 
@@ -865,7 +869,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 210} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 207} of file \textbf{ state.\+h}.
 
 
 
@@ -879,7 +883,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and 
 
 
 
-Definition at line \textbf{ 217} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 373} of file \textbf{ state.\+h}.
 
 
 
@@ -893,7 +897,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 225} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 379} of file \textbf{ state.\+h}.
 
 
 
@@ -907,7 +911,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 246} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 318} of file \textbf{ state.\+h}.
 
 
 
@@ -921,7 +925,7 @@ Referenced by \textbf{ microbe\+Growth()}, \textbf{ read\+Param\+Data()}, and \t
 
 
 
-Definition at line \textbf{ 253} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 302} of file \textbf{ state.\+h}.
 
 
 
@@ -935,7 +939,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 250} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 381} of file \textbf{ state.\+h}.
 
 
 
@@ -949,7 +953,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 279} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 312} of file \textbf{ state.\+h}.
 
 
 
@@ -963,7 +967,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and 
 
 
 
-Definition at line \textbf{ 278} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 308} of file \textbf{ state.\+h}.
 
 
 
@@ -977,7 +981,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, and \textbf{ read\+Par
 
 
 
-Definition at line \textbf{ 110} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 73} of file \textbf{ state.\+h}.
 
 
 
@@ -991,7 +995,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 235} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 102} of file \textbf{ state.\+h}.
 
 
 
@@ -1005,7 +1009,7 @@ Referenced by \textbf{ pot\+Psn()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 130} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 100} of file \textbf{ state.\+h}.
 
 
 
@@ -1019,7 +1023,7 @@ Referenced by \textbf{ pot\+Psn()}, \textbf{ read\+Param\+Data()}, and \textbf{ 
 
 
 
-Definition at line \textbf{ 130} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 100} of file \textbf{ state.\+h}.
 
 
 
@@ -1033,7 +1037,7 @@ Referenced by \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ 
 
 
 
-Definition at line \textbf{ 240} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 382} of file \textbf{ state.\+h}.
 
 
 
@@ -1047,7 +1051,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 241} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 383} of file \textbf{ state.\+h}.
 
 
 
@@ -1061,7 +1065,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 221} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 219} of file \textbf{ state.\+h}.
 
 
 
@@ -1075,7 +1079,7 @@ Referenced by \textbf{ evap\+Soil\+Fluxes()}, \textbf{ read\+Param\+Data()}, and
 
 
 
-Definition at line \textbf{ 222} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 224} of file \textbf{ state.\+h}.
 
 
 
@@ -1089,7 +1093,7 @@ Referenced by \textbf{ evap\+Soil\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 222} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 224} of file \textbf{ state.\+h}.
 
 
 
@@ -1103,7 +1107,7 @@ Referenced by \textbf{ evap\+Soil\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 118} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 194} of file \textbf{ state.\+h}.
 
 
 
@@ -1117,7 +1121,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 216} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 216} of file \textbf{ state.\+h}.
 
 
 
@@ -1131,7 +1135,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ snow\+Pack()}.
 
 
 
-Definition at line \textbf{ 115} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 80} of file \textbf{ state.\+h}.
 
 
 
@@ -1145,7 +1149,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 199} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 352} of file \textbf{ state.\+h}.
 
 
 
@@ -1159,7 +1163,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ read\+Param\+
 
 
 
-Definition at line \textbf{ 188} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 153} of file \textbf{ state.\+h}.
 
 
 
@@ -1173,7 +1177,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calculate\+Fl
 
 
 
-Definition at line \textbf{ 189} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 365} of file \textbf{ state.\+h}.
 
 
 
@@ -1187,7 +1191,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 143} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 333} of file \textbf{ state.\+h}.
 
 
 
@@ -1201,7 +1205,7 @@ Referenced by \textbf{ past\+Leaf\+Growth()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 117} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 83} of file \textbf{ state.\+h}.
 
 
 
@@ -1215,7 +1219,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 211} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 167} of file \textbf{ state.\+h}.
 
 
 
@@ -1229,7 +1233,7 @@ Referenced by \textbf{ init\+Trackers()}, \textbf{ read\+Param\+Data()}, \textbf
 
 
 
-Definition at line \textbf{ 198} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 378} of file \textbf{ state.\+h}.
 
 
 
@@ -1243,7 +1247,7 @@ Referenced by \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 249} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 380} of file \textbf{ state.\+h}.
 
 
 
@@ -1257,7 +1261,7 @@ Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 
 
-Definition at line \textbf{ 161} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 142} of file \textbf{ state.\+h}.
 
 
 
@@ -1271,7 +1275,7 @@ Referenced by \textbf{ read\+Param\+Data()}, \textbf{ veg\+Resp()}, and \textbf{
 
 
 
-Definition at line \textbf{ 204} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 161} of file \textbf{ state.\+h}.
 
 
 
@@ -1285,7 +1289,7 @@ Referenced by \textbf{ moisture()}, and \textbf{ read\+Param\+Data()}.
 
 
 
-Definition at line \textbf{ 259} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 274} of file \textbf{ state.\+h}.
 
 
 
@@ -1299,7 +1303,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Allocation()}, and
 
 
 
-Definition at line \textbf{ 230} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 177} of file \textbf{ state.\+h}.
 
 
 
@@ -1313,7 +1317,7 @@ Referenced by \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, and \text
 
 
 
-Definition at line \textbf{ 209} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 164} of file \textbf{ state.\+h}.
 
 
 
@@ -1323,4 +1327,4 @@ Referenced by \textbf{ moisture()}, and \textbf{ read\+Param\+Data()}.
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-\textbf{ sipnet.\+c}\end{DoxyCompactItemize}
+\textbf{ state.\+h}\end{DoxyCompactItemize}

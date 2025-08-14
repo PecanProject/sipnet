@@ -2,12 +2,16 @@
 \label{struct_flux_vars}\index{FluxVars@{FluxVars}}
 
 
+{\ttfamily \#include $<$state.\+h$>$}
+
+
+
 Collaboration diagram for Flux\+Vars\+:
 \nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=140pt]{db/da5/struct_flux_vars__coll__graph}
+\includegraphics[width=145pt]{db/da5/struct_flux_vars__coll__graph}
 \end{center}
 \end{figure}
 \doxysubsubsection*{Data Fields}
@@ -15,43 +19,37 @@ Collaboration diagram for Flux\+Vars\+:
 \item 
 double \textbf{ photosynthesis}
 \item 
-double \textbf{ leaf\+Creation}
-\item 
 double \textbf{ leaf\+Litter}
 \item 
 double \textbf{ wood\+Litter}
 \item 
 double \textbf{ r\+Veg}
 \item 
-double \textbf{ litter\+To\+Soil}
-\item 
-double \textbf{ r\+Litter}
-\item 
 double \textbf{ r\+Soil}
 \item 
 double \textbf{ rain}
 \item 
-double \textbf{ snow\+Fall}
+double \textbf{ transpiration}
 \item 
-double \textbf{ immed\+Evap}
+double \textbf{ bottom\+Drainage}
+\item 
+double \textbf{ litter\+To\+Soil}
+\item 
+double \textbf{ r\+Litter}
+\item 
+double \textbf{ snow\+Fall}
 \item 
 double \textbf{ snow\+Melt}
 \item 
 double \textbf{ sublimation}
+\item 
+double \textbf{ immed\+Evap}
 \item 
 double \textbf{ fast\+Flow}
 \item 
 double \textbf{ evaporation}
 \item 
 double \textbf{ top\+Drainage}
-\item 
-double \textbf{ bottom\+Drainage}
-\item 
-double \textbf{ transpiration}
-\item 
-double \textbf{ maint\+Respiration}
-\item 
-double \textbf{ microbe\+Ingestion}
 \item 
 double \textbf{ fine\+Root\+Loss}
 \item 
@@ -61,20 +59,26 @@ double \textbf{ fine\+Root\+Creation}
 \item 
 double \textbf{ coarse\+Root\+Creation}
 \item 
-double \textbf{ wood\+Creation}
-\item 
 double \textbf{ r\+Coarse\+Root}
 \item 
 double \textbf{ r\+Fine\+Root}
 \item 
+double \textbf{ maint\+Respiration}
+\item 
+double \textbf{ microbe\+Ingestion}
+\item 
 double \textbf{ soil\+Pulse}
+\item 
+double \textbf{ leaf\+Creation}
+\item 
+double \textbf{ wood\+Creation}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 
 
-Definition at line \textbf{ 304} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 416} of file \textbf{ state.\+h}.
 
 
 
@@ -87,7 +91,7 @@ Definition at line \textbf{ 304} of file \textbf{ sipnet.\+c}.
 
 
 
-Definition at line \textbf{ 327} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 455} of file \textbf{ state.\+h}.
 
 
 
@@ -101,7 +105,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 339} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 497} of file \textbf{ state.\+h}.
 
 
 
@@ -115,7 +119,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, and 
 
 
 
-Definition at line \textbf{ 336} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 493} of file \textbf{ state.\+h}.
 
 
 
@@ -129,7 +133,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 324} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 482} of file \textbf{ state.\+h}.
 
 
 
@@ -143,7 +147,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 322} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 480} of file \textbf{ state.\+h}.
 
 
 
@@ -157,7 +161,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 338} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 495} of file \textbf{ state.\+h}.
 
 
 
@@ -171,7 +175,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, and 
 
 
 
-Definition at line \textbf{ 335} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 491} of file \textbf{ state.\+h}.
 
 
 
@@ -185,7 +189,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 318} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 477} of file \textbf{ state.\+h}.
 
 
 
@@ -199,7 +203,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ process\+Events()}, \textb
 
 
 
-Definition at line \textbf{ 307} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 526} of file \textbf{ state.\+h}.
 
 
 
@@ -213,7 +217,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 309} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 443} of file \textbf{ state.\+h}.
 
 
 
@@ -227,7 +231,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, \tex
 
 
 
-Definition at line \textbf{ 312} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 463} of file \textbf{ state.\+h}.
 
 
 
@@ -241,7 +245,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 331} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 511} of file \textbf{ state.\+h}.
 
 
 
@@ -255,7 +259,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, and \textbf{ soil\+Deg
 
 
 
-Definition at line \textbf{ 333} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 515} of file \textbf{ state.\+h}.
 
 
 
@@ -269,7 +273,7 @@ Referenced by \textbf{ microbe\+Growth()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 305} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 441} of file \textbf{ state.\+h}.
 
 
 
@@ -283,7 +287,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 316} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 451} of file \textbf{ state.\+h}.
 
 
 
@@ -297,7 +301,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 342} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 499} of file \textbf{ state.\+h}.
 
 
 
@@ -311,7 +315,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, \tex
 
 
 
-Definition at line \textbf{ 343} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 501} of file \textbf{ state.\+h}.
 
 
 
@@ -325,7 +329,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, \tex
 
 
 
-Definition at line \textbf{ 314} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 465} of file \textbf{ state.\+h}.
 
 
 
@@ -339,7 +343,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, and 
 
 
 
-Definition at line \textbf{ 315} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 449} of file \textbf{ state.\+h}.
 
 
 
@@ -353,7 +357,7 @@ Referenced by \textbf{ soil\+Degradation()}, and \textbf{ update\+Trackers()}.
 
 
 
-Definition at line \textbf{ 311} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 447} of file \textbf{ state.\+h}.
 
 
 
@@ -367,7 +371,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 317} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 469} of file \textbf{ state.\+h}.
 
 
 
@@ -381,7 +385,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 320} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 471} of file \textbf{ state.\+h}.
 
 
 
@@ -395,7 +399,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 345} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 517} of file \textbf{ state.\+h}.
 
 
 
@@ -409,7 +413,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 321} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 473} of file \textbf{ state.\+h}.
 
 
 
@@ -423,7 +427,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 325} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 484} of file \textbf{ state.\+h}.
 
 
 
@@ -437,7 +441,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 329} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 453} of file \textbf{ state.\+h}.
 
 
 
@@ -451,7 +455,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ output\+State()}, \textbf{
 
 
 
-Definition at line \textbf{ 340} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 529} of file \textbf{ state.\+h}.
 
 
 
@@ -465,7 +469,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 310} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 445} of file \textbf{ state.\+h}.
 
 
 
@@ -475,4 +479,4 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, and 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-\textbf{ sipnet.\+c}\end{DoxyCompactItemize}
+\textbf{ state.\+h}\end{DoxyCompactItemize}

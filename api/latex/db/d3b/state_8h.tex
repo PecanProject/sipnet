@@ -1,0 +1,125 @@
+\doxysection{state.\+h File Reference}
+\label{state_8h}\index{state.h@{state.h}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=99pt]{d3/d2f/state_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Climate\+Vars}
+\item 
+struct \textbf{ Parameters}
+\item 
+struct \textbf{ Environment}
+\item 
+struct \textbf{ Flux\+Vars}
+\item 
+struct \textbf{ Tracker\+Vars}
+\item 
+struct \textbf{ Phenology\+Trackers\+Struct}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}~12
+\item 
+\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS\+\_\+\+LEGACY}~(\textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS} + 2)
+\item 
+\#define \textbf{ NUM\+\_\+\+PARAMS}~(sizeof(\textbf{ Params}) / sizeof(double))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \textbf{ Climate\+Vars} \textbf{ Climate\+Node}
+\item 
+typedef struct \textbf{ Parameters} \textbf{ Params}
+\item 
+typedef struct \textbf{ Environment} \textbf{ Envi}
+\item 
+typedef struct \textbf{ Flux\+Vars} \textbf{ Fluxes}
+\item 
+typedef struct \textbf{ Tracker\+Vars} \textbf{ Trackers}
+\item 
+typedef struct \textbf{ Phenology\+Trackers\+Struct} \textbf{ Phenology\+Trackers}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{state_8h_a3b03038a92137f9b02f379c65b9d0847} 
+\index{state.h@{state.h}!NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}}
+\index{NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}!state.h@{state.h}}
+\doxysubsubsection{NUM\_CLIM\_FILE\_COLS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS~12}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ state.\+h}.
+
+\label{state_8h_ac990f86ddae6558c9d39c3755c4d1261} 
+\index{state.h@{state.h}!NUM\_CLIM\_FILE\_COLS\_LEGACY@{NUM\_CLIM\_FILE\_COLS\_LEGACY}}
+\index{NUM\_CLIM\_FILE\_COLS\_LEGACY@{NUM\_CLIM\_FILE\_COLS\_LEGACY}!state.h@{state.h}}
+\doxysubsubsection{NUM\_CLIM\_FILE\_COLS\_LEGACY}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS\+\_\+\+LEGACY~(\textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS} + 2)}
+
+
+
+Definition at line \textbf{ 52} of file \textbf{ state.\+h}.
+
+\label{state_8h_a132d28b0774786b46faf261499aff357} 
+\index{state.h@{state.h}!NUM\_PARAMS@{NUM\_PARAMS}}
+\index{NUM\_PARAMS@{NUM\_PARAMS}!state.h@{state.h}}
+\doxysubsubsection{NUM\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+PARAMS~(sizeof(\textbf{ Params}) / sizeof(double))}
+
+
+
+Definition at line \textbf{ 387} of file \textbf{ state.\+h}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\label{state_8h_aed561e4afbcb4dd662b119e22716d716} 
+\index{state.h@{state.h}!ClimateNode@{ClimateNode}}
+\index{ClimateNode@{ClimateNode}!state.h@{state.h}}
+\doxysubsubsection{ClimateNode}
+{\footnotesize\ttfamily typedef struct \textbf{ Climate\+Vars} \textbf{ Climate\+Node}}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ state.\+h}.
+
+\label{state_8h_aae0795899c6c1f77c7f7d9aca2a20357} 
+\index{state.h@{state.h}!Envi@{Envi}}
+\index{Envi@{Envi}!state.h@{state.h}}
+\doxysubsubsection{Envi}
+{\footnotesize\ttfamily typedef struct \textbf{ Environment} \textbf{ Envi}}
+
+\label{state_8h_aa098d508f38c6014635e5efdffda2442} 
+\index{state.h@{state.h}!Fluxes@{Fluxes}}
+\index{Fluxes@{Fluxes}!state.h@{state.h}}
+\doxysubsubsection{Fluxes}
+{\footnotesize\ttfamily typedef struct \textbf{ Flux\+Vars} \textbf{ Fluxes}}
+
+\label{state_8h_a4ecd2fe2fb87baa30a67a3e7d86d5fa3} 
+\index{state.h@{state.h}!Params@{Params}}
+\index{Params@{Params}!state.h@{state.h}}
+\doxysubsubsection{Params}
+{\footnotesize\ttfamily typedef struct \textbf{ Parameters} \textbf{ Params}}
+
+\label{state_8h_a4ed61abd51873baf31f9c01cfde6b7f5} 
+\index{state.h@{state.h}!PhenologyTrackers@{PhenologyTrackers}}
+\index{PhenologyTrackers@{PhenologyTrackers}!state.h@{state.h}}
+\doxysubsubsection{PhenologyTrackers}
+{\footnotesize\ttfamily typedef struct \textbf{ Phenology\+Trackers\+Struct} \textbf{ Phenology\+Trackers}}
+
+\label{state_8h_aea73df8f56cefd3ff079ed52622f5dac} 
+\index{state.h@{state.h}!Trackers@{Trackers}}
+\index{Trackers@{Trackers}!state.h@{state.h}}
+\doxysubsubsection{Trackers}
+{\footnotesize\ttfamily typedef struct \textbf{ Tracker\+Vars} \textbf{ Trackers}}
+
