@@ -191,7 +191,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 |     |                   | baseMicrobeResp     |                                                                                     |                                               |                                                       |
 |     |                   |                     |                                                                                     |                                               |                                                       |
 
-| new | $f_{\textrm{till}}$ | tillageEff   | Effect of tillage on decomposition that exponentially decayse over time | fraction | Per‑event in `events.in`; 0 = no effect |
+| new | $f_{\textrm{till}}$ | tillageEff   | Effect of tillage on decomposition that exponentially decays over time | fraction | Per‑event in `events.in`; 0 = no effect |
 
 - $R_{dec}$: Rate of decomposition $(\text{day}^{-1})$ 
 - $Q_{10dec}$: Temperature coefficient for $R_{dec}$ (unitless)
