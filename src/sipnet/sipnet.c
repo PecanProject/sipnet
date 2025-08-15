@@ -1229,9 +1229,11 @@ void soilDegradation(void) {
     fluxes.rSoil =
         fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
+    // With no microbes, rSoil flux is just the maintenance respiration
+    // (at least, that's how maintResp was calculated; we still have some
+    // naming weirdness here)
+    fluxes.rSoil = fluxes.maintRespiration;
     if (ctx.litterPool) {
-      // TBD Why aren't we setting fluxes.rSoil here?
-      //     suspect we are missing fluxes.rSoil = fluxes.maintRespiration;
       // :: from [2], litter model description
       envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
                       fluxes.litterToSoil - fluxes.rLitter) *
@@ -1243,7 +1245,6 @@ void soilDegradation(void) {
                    climate->length;
     } else {
       // Normal pool (single pool, no microbes)
-      fluxes.rSoil = fluxes.maintRespiration;
       // :: from [1] (and others, TBD), eq (A3), where:
       //     L_w = fluxes.woodLitter
       //     L_l = fluxes.leafLitter
