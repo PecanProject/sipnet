@@ -1305,22 +1305,17 @@ double soilBreakdown(double poolC, double baseRate, double water, double whc,
   double moistEffect;
 
   if (ctx.waterHResp) {
-    // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
-    // is unknown
-    moistEffect = pow((water / whc), params.soilRespMoistEffect);
-
-    // TBD Should we be checking if tsoil < 0, as in
-    // calcMaintenanceRespiration()?
-    //
-    // Here's the code that should be here, will turn on in a later change
-    // Note, the tsoil check could just be combined into the if expression
-    // above
     // :: from [2], snowpack addition
-    // if (climate->tsoil < 0) {
-    //   moistEffect = 1;  // Ignore moisture effects in frozen soils
-    // }
+    if (climate->tsoil < 0) {
+      moistEffect = 1;  // Ignore moisture effects in frozen soils
+    } else {
+      // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
+      // is unknown
+      moistEffect = pow((water / whc), params.soilRespMoistEffect);
+    }
   } else {
     // :: from [2], fifth modification described on pg 247
+    // :: that is, moisture-independent R_h
     moistEffect = 1;
   }
 
