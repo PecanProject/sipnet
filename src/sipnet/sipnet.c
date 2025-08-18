@@ -946,22 +946,35 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
 //   calculated
 // (e.g. transpiration if we're just using one layer) (for calculating remaining
 // water/drainage) (cm/day)
-void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
-                    double water, double whc, double netRain, double snowMelt,
-                    double fluxesOut) {
+
+/*!
+ *  Calculate fastFlow, evaporation, and drainage from soil
+ *
+ * @param[out] fastFlow water that immediately goes to drainage (cm/day)
+ * @param[out] evaporation water that evaporates fro msoil layer (cm/day)
+ * @param[out] drainage water that drains from the soil (cm/day)
+ * @param[in] water current water in soil layer
+ * @param[in] netRain rain available to enter soil (cm/day)
+ * @param[in] snowMelt water available from snow (cm equiv/day)
+ * @param[in] trans water leaving via transpiration
+ */
+void soilWaterFluxes(double *fastFlow, double *evaporation, double *drainage,
+                     double water, double netRain, double snowMelt,
+                     double trans) {
   // conversion factor for evaporation
-  static const double CONVERSION = (RHO * CP) / GAMMA * (1. / LAMBDA) * 1000. *
-                                   1000. * (1. / 10000) * SEC_PER_DAY;
   // 1000 converts kg to g, 1000 converts kPa to Pa, 1/10000 converts m^2 to
   // cm^2
-
-  double waterRemaining; /* keep running total of water remaining, in cm
-          (to make sure we don't evap. or drain too much, and so we can drain
-          any overflow) */
-  double netIn;  // keep track of net water into soil, in cm/day
-  double rd;  // aerodynamic resistance between ground and canopy air space
-              // (sec/m)
-  double rsoil;  // bare soil surface resistance (sec/m)
+  static const double CONVERSION = (RHO * CP) / GAMMA * (1. / LAMBDA) * 1000. *
+                                   1000. * (1. / 10000) * SEC_PER_DAY;
+  // keep running total of water remaining, in cm to make sure we don't
+  // evaporate or drain too much, and so we can drain any overflow
+  double waterRemaining;
+  // keep track of net water into soil, in cm/day
+  double netIn;
+  // aerodynamic resistance between ground and canopy air space (sec/m)
+  double rd;
+  // bare soil surface resistance (sec/m)
+  double rsoil;
 
   netIn = netRain + snowMelt;
 
@@ -971,8 +984,7 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
 
   // calculate evaporation:
   // first calculate how much water is left to evaporate (used later)
-  waterRemaining =
-      water + netIn * climate->length - fluxesOut * climate->length;
+  waterRemaining = water + netIn * climate->length - trans * climate->length;
 
   // if there's a snow pack, don't evaporate from soil:
   if (envi.snow > 0) {
@@ -981,8 +993,9 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
 
   // else no snow pack:
   else {
+    double waterFrac = water / params.soilWHC;
+    rsoil = exp(params.rSoilConst1 - params.rSoilConst2 * (waterFrac));
     rd = (params.rdConst) / (climate->wspd);  // aerodynamic resistance (sec/m)
-    rsoil = exp(params.rSoilConst1 - params.rSoilConst2 * (water / whc));
     *evaporation = CONVERSION * climate->vpdSoil / (rd + rsoil);
     // by using vpd we assume that relative humidity of soil pore space is 1
     // (when this isn't true, there won't be much water evaporated anyway)
@@ -1003,33 +1016,12 @@ void evapSoilFluxes(double *fastFlow, double *evaporation, double *drainage,
     }
   }
 
-  *drainage = 0;
-
   // drain any water that remains beyond water holding capacity:
-  if (waterRemaining > whc) {
-    *drainage += (waterRemaining - whc) / (climate->length);
+  if (waterRemaining > params.soilWHC) {
+    *drainage = (waterRemaining - params.soilWHC) / (climate->length);
+  } else {
+    *drainage = 0;
   }
-}
-
-// calculates fastFlow (cm/day), evaporation (cm/day) and drainage to lower
-// layer (cm/day)
-// net rain (cm/day) is (rain - immedEvap) - i.e. the amount available to enter
-//   the soil
-// snowMelt in cm water equiv./day
-// soilWater in cm
-// Also calculates drainage from bottom (soil/transpiration) layer (cm/day)
-// Note that there may only be one layer, in which case we have only the
-// bottomDrainage term, and evap. and trans. come from same layer.
-void soilWaterFluxes(double *fastFlow, double *evaporation, double *topDrainage,
-                     double *bottomDrainage, double netRain, double snowMelt,
-                     double trans, double soilWater) {
-
-  // only one soil moisture pool: evap. and trans. both happen from this pool
-  *topDrainage = 0;  // no top layer, only a bottom layer
-
-  // last param = fluxes out that have already been calculated: transpiration
-  evapSoilFluxes(fastFlow, evaporation, bottomDrainage, soilWater,
-                 params.soilWHC, netRain, snowMelt, trans);
 }
 
 // calculate GROSS photosynthesis (g C * m^-2 * day^-1)
@@ -1349,7 +1341,7 @@ void calculateFluxes(void) {
   // maintenance respiration terms (g C * m^-2 ground area * day^-1)
   double folResp, woodResp;
   // amount of water in litter and soil (cm) taken from environment
-  double litterWater, soilWater;
+  double litterWater;
   // Growth respiration, if splitting growth and maintenance
   // (g C * m^-2 ground area * day^-1)
   double growthResp;
@@ -1357,21 +1349,20 @@ void calculateFluxes(void) {
   double netRain;
 
   litterWater = envi.litterWater;
-  soilWater = envi.soilWater;
 
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai
 
   potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd,
          climate->par);
   moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd,
-           soilWater);
+           envi.soilWater);
 
   calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), lai);
   netRain = fluxes.rain - fluxes.immedEvap;
   snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
   soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation),
-                  &(fluxes.topDrainage), &(fluxes.bottomDrainage), netRain,
-                  fluxes.snowMelt, fluxes.transpiration, soilWater);
+                  &(fluxes.bottomDrainage), envi.soilWater, netRain,
+                  fluxes.snowMelt, fluxes.transpiration);
 
   getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
 
