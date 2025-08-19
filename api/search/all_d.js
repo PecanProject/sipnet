@@ -17,6 +17,5 @@ var searchData=
   ['outputitems_2ec_14',['outputItems.c',['../dd/d66/output_items_8c.html',1,'']]],
   ['outputitems_2eh_15',['outputItems.h',['../da/db0/output_items_8h.html',1,'']]],
   ['outputitemsstruct_16',['OutputItemsStruct',['../dc/dd5/struct_output_items_struct.html',1,'']]],
-  ['outputstate_17',['outputState',['../dd/d09/sipnet_8c.html#a1e3fd4978043c0ae5cce072375c387bf',1,'sipnet.c']]],
-  ['outputtranspose_18',['outputTranspose',['../d6/d7a/transpose_8c.html#af6de32adecde5a94a2f1a9bb48848ccb',1,'transpose.c']]]
+  ['outputstate_17',['outputState',['../dd/d09/sipnet_8c.html#a1e3fd4978043c0ae5cce072375c387bf',1,'sipnet.c']]]
 ];

@@ -5,7 +5,7 @@ var searchData=
   ['updateintcontext_2',['updateintcontext',['../d8/dfa/context_8c.html#a0f4f1dc481cb817a031def2778f6a75b',1,'updateIntContext(const char *name, int value, context_source_t source):&#160;context.c'],['../dc/d1e/context_8h.html#a0f4f1dc481cb817a031def2778f6a75b',1,'updateIntContext(const char *name, int value, context_source_t source):&#160;context.c']]],
   ['updatestate_3',['updateState',['../dd/d09/sipnet_8c.html#a972eedbc68ae911757b8efa8952aa1fc',1,'sipnet.c']]],
   ['updatetrackers_4',['updateTrackers',['../dd/d09/sipnet_8c.html#a8b7178c18acaf22dffc942561473d6bb',1,'sipnet.c']]],
-  ['usage_5',['usage',['../d6/d7a/transpose_8c.html#af3fc073cbe5282a8dcb2a1380512b3e8',1,'usage(char *progName):&#160;transpose.c'],['../dc/db0/cli_8h.html#af3fc073cbe5282a8dcb2a1380512b3e8',1,'usage(char *progName):&#160;cli.c'],['../dd/def/cli_8c.html#af3fc073cbe5282a8dcb2a1380512b3e8',1,'usage(char *progName):&#160;cli.c']]],
+  ['usage_5',['usage',['../dc/db0/cli_8h.html#af3fc073cbe5282a8dcb2a1380512b3e8',1,'usage(char *progName):&#160;cli.c'],['../dd/def/cli_8c.html#af3fc073cbe5282a8dcb2a1380512b3e8',1,'usage(char *progName):&#160;cli.c']]],
   ['ut_5fhash_5fbucket_6',['ut_hash_bucket',['../d6/d7e/struct_u_t__hash__bucket.html',1,'UT_hash_bucket'],['../d8/d8f/uthash_8h.html#a3775136bedd7fc8db3ad7c1ad6a7218e',1,'UT_hash_bucket:&#160;uthash.h']]],
   ['ut_5fhash_5fhandle_7',['ut_hash_handle',['../de/dfa/struct_u_t__hash__handle.html',1,'UT_hash_handle'],['../d8/d8f/uthash_8h.html#a817624f072ea116d638b237d518d6f6a',1,'UT_hash_handle:&#160;uthash.h']]],
   ['ut_5fhash_5ftable_8',['ut_hash_table',['../db/d32/struct_u_t__hash__table.html',1,'UT_hash_table'],['../d8/d8f/uthash_8h.html#ade349c45717e328f0337b6fe5a0658bf',1,'UT_hash_table:&#160;uthash.h']]],
@@ -19,6 +19,5 @@ var searchData=
   ['uthash_5fstrlen_16',['uthash_strlen',['../d8/d8f/uthash_8h.html#aa14634cb1f894d48256362bae7239be6',1,'uthash.h']]],
   ['uthash_5fversion_17',['UTHASH_VERSION',['../d8/d8f/uthash_8h.html#aa56cef9cb86dc1f4b5d27ee3a691077e',1,'uthash.h']]],
   ['util_2ec_18',['util.c',['../de/df1/util_8c.html',1,'']]],
-  ['util_2eh_19',['util.h',['../d8/d3c/util_8h.html',1,'']]],
-  ['utilities_20',['Stand-alone Utilities',['../index.html#autotoc_md3',1,'']]]
+  ['util_2eh_19',['util.h',['../d8/d3c/util_8h.html',1,'']]]
 ];

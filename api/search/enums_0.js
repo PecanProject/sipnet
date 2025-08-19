@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['aggregation_5ftypes_0',['AGGREGATION_TYPES',['../d9/d49/subset_data_8c.html#aef61c4baa510f040b8460cccc00c17f1',1,'subsetData.c']]]
+  ['contextsource_0',['ContextSource',['../dc/d1e/context_8h.html#abf1e49ca15a471e7ed8bf9a811c589fc',1,'context.h']]],
+  ['contexttype_1',['ContextType',['../dc/d1e/context_8h.html#a856bf0f48d7d9c89d1e4216a6f0394e5',1,'context.h']]]
 ];
