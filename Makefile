@@ -16,18 +16,7 @@ SIPNET_CFILES:=$(addprefix src/sipnet/, $(SIPNET_CFILES))
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNET_LIBS=-lsipnet_common
 
-# Utilities
-TRANSPOSE_CFILES:=transpose.c
-TRANSPOSE_CFILES:=$(addprefix src/utilities/, $(TRANSPOSE_CFILES))
-TRANSPOSE_OFILES=$(TRANSPOSE_CFILES:.c=.o)
-TRANSPOSE_LIBS=-lsipnet_common
-
-SUBSET_DATA_CFILES:=subsetData.c
-SUBSET_DATA_CFILES:=$(addprefix src/utilities/, $(SUBSET_DATA_CFILES))
-SUBSET_DATA_OFILES=$(SUBSET_DATA_CFILES:.c=.o)
-SUBSET_DATA_LIBS=-lsipnet_common
-
-CFILES=$(sort $(SIPNET_CFILES) $(TRANSPOSE_CFILES) $(SUBSET_DATA_CFILES))
+CFILES=$(sort $(SIPNET_CFILES))
 
 SIPNET_LIB=$(LIB_DIR)/libsipnet.a
 COMMON_LIB=$(LIB_DIR)/libsipnet_common.a
@@ -45,11 +34,8 @@ DOXYGEN_LATEX_DIR = docs/latex
 # We use this below to compile the hash into the binary for ease of debugging
 GIT_HASH := $(shell git rev-parse --short=10 HEAD; git diff-index --quiet HEAD || echo " plus uncommitted changes")
 
-# the main executables - the original 'all' target
-exec: sipnet transpose subsetData
-
-# with the default set to 'sipnet', we can have all do (close to) everything
-all: exec document
+# all does everything build related (but not test)
+all: sipnet document
 
 # Build documentation with both Doxygen and Mkdocs
 document: .doxygen.stamp .mkdocs.stamp
@@ -86,16 +72,10 @@ info:
 sipnet: info $(SIPNET_OFILES) $(COMMON_LIB)
 	$(LD) $(LDFLAGS) -o sipnet $(SIPNET_OFILES) $(LIBLINKS) $(SIPNET_LIBS)
 
-transpose: $(TRANSPOSE_OFILES) $(COMMON_LIB)
-	$(LD) $(LDFLAGS) -o transpose $(TRANSPOSE_OFILES) $(LIBLINKS) $(TRANSPOSE_LIBS)
-
-subsetData: $(SUBSET_DATA_OFILES) $(COMMON_LIB)
-	$(LD) $(LDFLAGS) -o subsetData $(SUBSET_DATA_OFILES) $(LIBLINKS) $(SUBSET_DATA_LIBS)
-
 clean:
-	rm -f $(SIPNET_OFILES) $(TRANSPOSE_OFILES) $(SUBSET_DATA_OFILES) $(COMMON_OFILES)
+	rm -f $(SIPNET_OFILES) $(COMMON_OFILES)
 	rm -f $(COMMON_LIB) $(SIPNET_LIB)
-	rm -f sipnet transpose subsetData
+	rm -f sipnet
 	rm -rf $(DOXYGEN_HTML_DIR) $(DOXYGEN_LATEX_DIR)
 	rm -rf site/
 	rm -f .doxygen.stamp .mkdocs.stamp
@@ -124,7 +104,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 
 cleanall: clean testclean
 
-.PHONY: all clean histutil help document exec cleanall \
+.PHONY: all clean help document exec cleanall \
 		test $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun
 
 help:
@@ -133,20 +113,15 @@ help:
 	@echo "  === Core Targets ==="
 	@echo "  sipnet       - (also default target) Build the sipnet executable; see sipnet.in in the src/sipnet"
 	@echo "                 directory for a sample input file"
-	@echo "  exec         - Build the above executables and all utilities (see below)"
 	@echo "  document     - Generate documentation (via doxygen and mkdocs)"
-	@echo "  all          - Build all above executables and the documentation"
+	@echo "  all          - Build sipnet executable and the documentation"
 	@echo "  clean        - Remove compiled files, executables, and documentation"
 	@echo "  depend       - Generate build dependency information for source files and append to Makefile"
-	@echo "  === Utilities ==="
-	@echo "  transpose    - read in and transpose a matrix"
-	@echo "  subsetData   - subset input files (e.g., .clim, .dat, .valid, .sigma, .spd) from a specified start date"
-	@echo "                 and length of time in days (see src/utilities/subset.in for sample input file)"
 	@echo "  === Tests ==="
 	@echo "  test         - Build the unit tests"
 	@echo "  testrun      - Run the unit tests"
 	@echo "  testclean    - Clean build artifacts and executables from the unit tests"
-	@echo "  cleanall     - Run both clean and testclean
+	@echo "  cleanall     - Run both clean and testclean"
 
 
 # Make sure this target and subsequent comment remain at the bottom of this file
