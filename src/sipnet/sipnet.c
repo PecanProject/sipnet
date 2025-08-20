@@ -1310,6 +1310,9 @@ double soilBreakdown(double poolC, double baseRate, double water, double whc,
       moistEffect = 1;  // Ignore moisture effects in frozen soils
     } else {
       // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
+      // Original formulation from [1], based on PnET is: 
+      //   moistEffect = water / whc
+      // Which is the case with the default value,  params.soilRespMoistEffect = 1 
       // is unknown
       moistEffect = pow((water / whc), params.soilRespMoistEffect);
     }
