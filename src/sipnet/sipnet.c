@@ -40,11 +40,6 @@
 #define MEAN_GPP_SOIL_MAX_ENTRIES (MEAN_GPP_SOIL_DAYS * 50)  //
 // assume that the most pts we can have is one per hour
 
-// constants for tracking running mean of fPAR:
-#define MEAN_FPAR_DAYS 1  // over how many days do we keep the running mean?
-#define MEAN_FPAR_MAX_ENTRIES (MEAN_FPAR_DAYS * 24)  //
-// assume that the most pts we can have is one per hour
-
 // some constants for water submodel:
 #define LAMBDA 2501000.  // latent heat of vaporization (J/kg)
 #define LAMBDA_S 2835000.  // latent heat of sublimation (J/kg)
@@ -122,8 +117,6 @@ static MeanTracker *meanNPP;  // running mean of NPP over some fixed time
                               // (stored in g C * m^-2 * day^-1)
 static MeanTracker *meanGPP;  // running mean of GPP over some fixed time for
                               // linkages (stored in g C * m^-2 * day^-1)
-static MeanTracker *meanFPAR;  // running mean of FPAR of some fixed time for
-                               // MODIS
 
 static ClimateNode *climate;  // current climate
 static Fluxes fluxes;
@@ -333,7 +326,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "laiInit", &(params.laiInit), 1);
   initializeOneModelParam(modelParams, "litterInit", &(params.litterInit), 1);
   initializeOneModelParam(modelParams, "soilInit", &(params.soilInit), 1);
-  initializeOneModelParam(modelParams, "litterWFracInit", &(params.litterWFracInit), 1);
+  initializeOneModelParam(modelParams, "litterWFracInit", &(params.litterWFracInit), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "soilWFracInit", &(params.soilWFracInit), 1);
   initializeOneModelParam(modelParams, "snowInit", &(params.snowInit), 1);
   initializeOneModelParam(modelParams, "aMax", &(params.aMax), 1);
@@ -375,7 +368,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "waterRemoveFrac", &(params.waterRemoveFrac), 1);
   initializeOneModelParam(modelParams, "frozenSoilEff", &(params.frozenSoilEff), 1);
   initializeOneModelParam(modelParams, "wueConst", &(params.wueConst), 1);
-  initializeOneModelParam(modelParams, "litterWHC", &(params.litterWHC), 1);
+  initializeOneModelParam(modelParams, "litterWHC", &(params.litterWHC), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "soilWHC", &(params.soilWHC), 1);
   initializeOneModelParam(modelParams, "immedEvapFrac", &(params.immedEvapFrac), 1);
   initializeOneModelParam(modelParams, "fastFlowFrac", &(params.fastFlowFrac), 1);
@@ -455,7 +448,10 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
 
-  fprintf(out, " %8.2f %8.3f %8.2f %8.3f %8.2f ", envi.litter, envi.litterWater,
+  // The 0.0 entries below are placeholders for now-obsolete params:
+  // * litterWater
+  // * fpar
+  fprintf(out, " %8.2f %8.3f %8.2f %8.3f %8.2f ", envi.litter, 0.0,
           envi.soilWater, trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
@@ -463,7 +459,7 @@ void outputState(FILE *out, int year, int day, double time) {
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration, trackers.fpar);
+          fluxes.transpiration, 0.0);
 }
 
 // de-allocate space used for climate linked list
@@ -535,16 +531,12 @@ void calcLightEff(double *lightEff, double lai, double par) {
   double cumLai;  // lai from this layer up
   double lightIntensity;
   double currLightEff = 0.0, cumLightEff;
-  double currfAPAR = 0.0, cumfAPAR;
   int coeff;  // current coefficient in Simpson's rule
 
   if (lai > 0 && par > 0) {  // must have at least some leaves and some light
     cumLightEff = 0.0;  // the running sum
     layer = 0;
     coeff = 1;
-    int err;
-    double fAPAR;  // Calculation of fAPAR according to 1 - exp(attenuation*LAI)
-    cumfAPAR = 0.0;
 
     while (layer <= NUM_LAYERS) {  // layer 0 means top layer
       // lai from this layer up, starting at top
@@ -565,10 +557,6 @@ void calcLightEff(double *lightEff, double lai, double par) {
       // by the number of layers
       cumLightEff += coeff * currLightEff;
 
-      // FPAR calc for the tracker below (likely cruft, not part of [1])
-      currfAPAR = 1 - (lightIntensity / par);
-      cumfAPAR += coeff * currfAPAR;
-
       // now move to the next layer:
       layer++;
       coeff = 2 * (1 + layer % 2);  // coeff. goes 1, 4, 2, 4, ..., 2, 4, 2
@@ -578,33 +566,10 @@ void calcLightEff(double *lightEff, double lai, double par) {
     cumLightEff -= currLightEff;
     *lightEff = cumLightEff / (3.0 * NUM_LAYERS);  // multiplying by (h/3) in
                                                    // Simpson's rule
-
-    // TBD: remove FPAR tracking, this is cruft
-    // Now calculate fAPAR.
-    cumfAPAR -= currfAPAR;
-    // Mean value of simpson's rule integration
-    fAPAR = cumfAPAR / (3.0 * NUM_LAYERS);
-    // update running mean of FPAR (we don't care about climate length)
-    err = addValueToMeanTracker(meanFPAR, fAPAR, 1);
-
-    if (err != 0) {
-      printf("******* Error type %d while trying to add value to FPAR mean "
-             "tracker in sipnet:calcLightEff() *******\n",
-             err);
-      printf("FPAR = %f, climate->length = %f\n", fAPAR, climate->length);
-      printf("Suggestion: try changing MEAN_FPAR_MAX_ENTRIES in sipnet.c\n");
-      exit(1);
-    }
-    // end FPAR removal
-
   } else {  // no leaves or no light!
     *lightEff = 0;
   }
 }
-
-// calculate gross photosynthesis without water effect (g C * m^-2 ground area *
-// day^-1) and base foliar respiration without temp, water, etc. (g C * m^-2
-// ground area * day^-1)
 
 /*!
  * @brief Compute gross potential photosynthesis with restrictions and base
@@ -930,22 +895,6 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
     }  // end else above freezing
   }  // end else there is snow
 }  // end snowPack
-
-// water calculations relating to the top (litter/evaporative) layer of soil
-// (if only modeling one soil water layer, these relate to that layer)
-// calculates fastFlow (cm/day), evaporation (cm/day) and drainage to lower
-//   layer (cm/day)
-// water is amount of water in evaporative layer (cm)
-// whc is water holding capacity of evaporative layer (cm)
-// (water and whc are used rather than envi variables to allow use of either
-//   litterWater or soilWater)
-// net rain (cm/day) is (rain - immedEvap) - i.e. the amount available to enter
-//   the soil
-// snowMelt in cm water equiv./day
-// fluxesOut is the sum of any fluxes out of this layer that have already been
-//   calculated
-// (e.g. transpiration if we're just using one layer) (for calculating remaining
-// water/drainage) (cm/day)
 
 /*!
  *  Calculate fastFlow, evaporation, and drainage from soil
@@ -1340,15 +1289,11 @@ void calculateFluxes(void) {
   double litterBreakdown;
   // maintenance respiration terms (g C * m^-2 ground area * day^-1)
   double folResp, woodResp;
-  // amount of water in litter and soil (cm) taken from environment
-  double litterWater;
   // Growth respiration, if splitting growth and maintenance
   // (g C * m^-2 ground area * day^-1)
   double growthResp;
   // net rain, equal to (rain - immedEvap) (cm/day)
   double netRain;
-
-  litterWater = envi.litterWater;
 
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai
 
@@ -1360,9 +1305,9 @@ void calculateFluxes(void) {
   calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), lai);
   netRain = fluxes.rain - fluxes.immedEvap;
   snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
-  soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation),
-                  &(fluxes.bottomDrainage), envi.soilWater, netRain,
-                  fluxes.snowMelt, fluxes.transpiration);
+  soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.drainage),
+                  envi.soilWater, netRain, fluxes.snowMelt,
+                  fluxes.transpiration);
 
   getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
 
@@ -1379,8 +1324,8 @@ void calculateFluxes(void) {
 
   if (ctx.litterPool) {
     litterBreakdown =
-        soilBreakdown(envi.litter, params.litterBreakdownRate, litterWater,
-                      params.litterWHC, climate->tsoil, params.soilRespQ10);
+        soilBreakdown(envi.litter, params.litterBreakdownRate, envi.soilWater,
+                      params.soilWHC, climate->tsoil, params.soilRespQ10);
     fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
   } else {
@@ -1464,7 +1409,6 @@ void initTrackers(void) {
   trackers.rRoot = 0.0;
 
   trackers.rAboveground = 0.0;
-  trackers.fpar = 0.0;
 
   trackers.yearlyLitter = 0.0;
 }
@@ -1565,8 +1509,6 @@ void updateTrackers(double oldSoilWater) {
 
   trackers.soilWetnessFrac =
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
-
-  trackers.fpar = getMeanTrackerMean(meanFPAR);
 
   trackers.yearlyLitter += fluxes.leafLitter;
 }
@@ -1777,7 +1719,7 @@ void updateState(void) {
   //    the terms above: immedEvap in P, evaporation in T, and fastFlow in D
   envi.soilWater +=
       (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow -
-       fluxes.evaporation - fluxes.transpiration - fluxes.bottomDrainage) *
+       fluxes.evaporation - fluxes.transpiration - fluxes.drainage) *
       climate->length;
 
   // if ctx.snow = 0, some or all of these fluxes will always be 0
@@ -1922,13 +1864,6 @@ void setupModel(void) {
   envi.coarseRootC = params.coarseRootFrac * params.plantWoodInit;
   envi.fineRootC = params.fineRootFrac * params.plantWoodInit;
 
-  envi.litterWater = params.litterWFracInit * params.litterWHC;
-  if (envi.litterWater < 0) {
-    envi.litterWater = 0;
-  } else if (envi.litterWater > params.litterWHC) {
-    envi.litterWater = params.litterWHC;
-  }
-
   envi.soilWater = params.soilWFracInit * params.soilWHC;
   if (envi.soilWater < 0) {
     envi.soilWater = 0;
@@ -1946,8 +1881,6 @@ void setupModel(void) {
                                  // MEAN_NPP_DAYS) of 0
   resetMeanTracker(meanGPP, 0);  // initialize with mean NPP (over last
                                  // MEAN_GPP_DAYS) of 0
-  resetMeanTracker(meanFPAR, 0);  // initialize with mean FPAR (over last
-                                  // MEAN_FPAR_DAYS) of 0
 }
 
 // Setup events at given location
@@ -1993,7 +1926,6 @@ void initModel(ModelParams **modelParams, const char *paramFile,
 
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
   meanGPP = newMeanTracker(0, MEAN_GPP_SOIL_DAYS, MEAN_GPP_SOIL_MAX_ENTRIES);
-  meanFPAR = newMeanTracker(0, MEAN_FPAR_DAYS, MEAN_FPAR_MAX_ENTRIES);
 }
 
 // See sipnet.h
@@ -2013,7 +1945,6 @@ void cleanupModel() {
 
   deallocateMeanTracker(meanNPP);
   deallocateMeanTracker(meanGPP);
-  deallocateMeanTracker(meanFPAR);
   if (ctx.events) {
     freeEventList();
     closeEventOutFile(eventOutFile);
