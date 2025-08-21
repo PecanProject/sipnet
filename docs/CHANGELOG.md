@@ -33,12 +33,15 @@ sections to include in release notes:
 - Utility `tools/trim_first_chars.sh` to trim the first n characters from every row in a file, useful for updating old input files to remove location column
 - Expanded smoke test cases to better cover SIPNET modeling options (#109, #114)
 - Converted all compile-time switches not removed or hard-coded to be on into switches to run-time options (#114)
+- Added extensive documentation in code listing the source(s) that the code implements (#135)
 
 ### Fixed
 
 - Fixed OOM issue when reading bad data (#38, #45)
 - Event order checks no longer only compare to first record (#74, #77)
 - Fixed long-standing bug wherein microbePulseEff was not set to 0 when MICROBES was off (#114)
+- Fixed long-standing bug with missing rSoil flux calc when LITTER_POOL is on (#139)
+- Fixed long-standing bug with missing frozen soil check in soilBreakdown when LITTER_POOL is on (#140)
 
 ### Changed
 

@@ -1138,10 +1138,14 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
     // if soil moisture affects heterotrophic respiration
 
     // :: from [1], first part of eq (A20), with added exponent
+    // Original formulation from [1], based on PnET is:
+    //   moistEffect = water / whc
+    // which matches here with params.soilRespMoistEffect=1 (the default
+    // value)
     //
     // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
     // Note: older versions of sipnet note this as "using PnET formulation",
-    // but we have been unable to verify that this comes from PnET
+    // but we have been unable to verify that the exponent comes from PnET
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
 
     // :: from [2], snowpack addition
@@ -1305,22 +1309,21 @@ double soilBreakdown(double poolC, double baseRate, double water, double whc,
   double moistEffect;
 
   if (ctx.waterHResp) {
-    // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
-    // is unknown
-    moistEffect = pow((water / whc), params.soilRespMoistEffect);
-
-    // TBD Should we be checking if tsoil < 0, as in
-    // calcMaintenanceRespiration()?
-    //
-    // Here's the code that should be here, will turn on in a later change
-    // Note, the tsoil check could just be combined into the if expression
-    // above
     // :: from [2], snowpack addition
-    // if (climate->tsoil < 0) {
-    //   moistEffect = 1;  // Ignore moisture effects in frozen soils
-    // }
+    if (climate->tsoil < 0) {
+      moistEffect = 1;  // Ignore moisture effects in frozen soils
+    } else {
+      // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
+      // is unknown
+      // Original formulation from [1], based on PnET is:
+      //   moistEffect = water / whc
+      // which matches here with params.soilRespMoistEffect=1 (the default
+      // value)
+      moistEffect = pow((water / whc), params.soilRespMoistEffect);
+    }
   } else {
     // :: from [2], fifth modification described on pg 247
+    // :: that is, moisture-independent R_h
     moistEffect = 1;
   }
 
