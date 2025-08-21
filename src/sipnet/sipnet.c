@@ -1898,17 +1898,27 @@ void setupModel(void) {
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
 
-  envi.litter = params.litterInit;
+  if (ctx.litterPool) {
+    envi.litter = params.litterInit;
+  } else {
+    // Don't set a value if the litter pool is off
+    envi.litter = 0.0;
+  }
   envi.soil = params.soilInit;
 
   // change from per hour to per day rate
   params.maxIngestionRate = params.maxIngestionRate * 24;
 
-  envi.microbeC = params.microbeInit * params.soilInit / 1000;  // convert to gC
-                                                                // m-2
+  if (ctx.microbes) {
+    // convert to gC m-2
+    envi.microbeC = params.microbeInit * params.soilInit / 1000;
+  } else {
+    // Don't set a value if microbes is off
+    envi.microbeC = 0.0;
+  }
 
-  params.totNitrogen = params.totNitrogen * params.soilInit;  // convert to gC
-                                                              // m-2
+  // convert to gC m-2
+  params.totNitrogen = params.totNitrogen * params.soilInit;
 
   params.fineRootTurnoverRate /= 365.0;
   params.coarseRootTurnoverRate /= 365.0;
