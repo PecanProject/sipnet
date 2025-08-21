@@ -1732,125 +1732,135 @@
 \DoxyCodeLine{01898\ \ \ \ \ \ \ (1\ -\/\ params.coarseRootFrac\ -\/\ params.fineRootFrac)\ *\ params.plantWoodInit;}
 \DoxyCodeLine{01899\ \ \ envi.plantLeafC\ =\ params.laiInit\ *\ params.leafCSpWt;}
 \DoxyCodeLine{01900\ }
-\DoxyCodeLine{01901\ \ \ envi.litter\ =\ params.litterInit;}
-\DoxyCodeLine{01902\ \ \ envi.soil\ =\ params.soilInit;}
-\DoxyCodeLine{01903\ }
-\DoxyCodeLine{01904\ \ \ \textcolor{comment}{//\ change\ from\ per\ hour\ to\ per\ day\ rate}}
-\DoxyCodeLine{01905\ \ \ params.maxIngestionRate\ =\ params.maxIngestionRate\ *\ 24;}
-\DoxyCodeLine{01906\ }
-\DoxyCodeLine{01907\ \ \ envi.microbeC\ =\ params.microbeInit\ *\ params.soilInit\ /\ 1000;\ \ \textcolor{comment}{//\ convert\ to\ gC}}
-\DoxyCodeLine{01908\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m-\/2}}
-\DoxyCodeLine{01909\ }
-\DoxyCodeLine{01910\ \ \ params.totNitrogen\ =\ params.totNitrogen\ *\ params.soilInit;\ \ \textcolor{comment}{//\ convert\ to\ gC}}
-\DoxyCodeLine{01911\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ m-\/2}}
-\DoxyCodeLine{01912\ }
-\DoxyCodeLine{01913\ \ \ params.fineRootTurnoverRate\ /=\ 365.0;}
-\DoxyCodeLine{01914\ \ \ params.coarseRootTurnoverRate\ /=\ 365.0;}
-\DoxyCodeLine{01915\ }
-\DoxyCodeLine{01916\ \ \ params.baseCoarseRootResp\ /=\ 365.0;}
-\DoxyCodeLine{01917\ \ \ params.baseFineRootResp\ /=\ 365.0;}
-\DoxyCodeLine{01918\ \ \ params.baseMicrobeResp\ =\ params.baseMicrobeResp\ *\ 24;\ \ \textcolor{comment}{//\ change\ from\ per\ hour}}
-\DoxyCodeLine{01919\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ per\ day\ rate}}
-\DoxyCodeLine{01920\ }
-\DoxyCodeLine{01921\ \ \ envi.coarseRootC\ =\ params.coarseRootFrac\ *\ params.plantWoodInit;}
-\DoxyCodeLine{01922\ \ \ envi.fineRootC\ =\ params.fineRootFrac\ *\ params.plantWoodInit;}
-\DoxyCodeLine{01923\ }
-\DoxyCodeLine{01924\ \ \ envi.litterWater\ =\ params.litterWFracInit\ *\ params.litterWHC;}
-\DoxyCodeLine{01925\ \ \ \textcolor{keywordflow}{if}\ (envi.litterWater\ <\ 0)\ \{}
-\DoxyCodeLine{01926\ \ \ \ \ envi.litterWater\ =\ 0;}
-\DoxyCodeLine{01927\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.litterWater\ >\ params.litterWHC)\ \{}
-\DoxyCodeLine{01928\ \ \ \ \ envi.litterWater\ =\ params.litterWHC;}
-\DoxyCodeLine{01929\ \ \ \}}
+\DoxyCodeLine{01901\ \ \ \textcolor{keywordflow}{if}\ (ctx.litterPool)\ \{}
+\DoxyCodeLine{01902\ \ \ \ \ envi.litter\ =\ params.litterInit;}
+\DoxyCodeLine{01903\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{01904\ \ \ \ \ \textcolor{comment}{//\ Don't\ set\ a\ value\ if\ the\ litter\ pool\ is\ off}}
+\DoxyCodeLine{01905\ \ \ \ \ envi.litter\ =\ 0.0;}
+\DoxyCodeLine{01906\ \ \ \}}
+\DoxyCodeLine{01907\ \ \ envi.soil\ =\ params.soilInit;}
+\DoxyCodeLine{01908\ }
+\DoxyCodeLine{01909\ \ \ \textcolor{comment}{//\ change\ from\ per\ hour\ to\ per\ day\ rate}}
+\DoxyCodeLine{01910\ \ \ params.maxIngestionRate\ =\ params.maxIngestionRate\ *\ 24;}
+\DoxyCodeLine{01911\ }
+\DoxyCodeLine{01912\ \ \ \textcolor{keywordflow}{if}\ (ctx.microbes)\ \{}
+\DoxyCodeLine{01913\ \ \ \ \ \textcolor{comment}{//\ convert\ to\ gC\ m-\/2}}
+\DoxyCodeLine{01914\ \ \ \ \ envi.microbeC\ =\ params.microbeInit\ *\ params.soilInit\ /\ 1000;}
+\DoxyCodeLine{01915\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{01916\ \ \ \ \ \textcolor{comment}{//\ Don't\ set\ a\ value\ if\ microbes\ is\ off}}
+\DoxyCodeLine{01917\ \ \ \ \ envi.microbeC\ =\ 0.0;}
+\DoxyCodeLine{01918\ \ \ \}}
+\DoxyCodeLine{01919\ }
+\DoxyCodeLine{01920\ \ \ \textcolor{comment}{//\ convert\ to\ gC\ m-\/2}}
+\DoxyCodeLine{01921\ \ \ params.totNitrogen\ =\ params.totNitrogen\ *\ params.soilInit;}
+\DoxyCodeLine{01922\ }
+\DoxyCodeLine{01923\ \ \ params.fineRootTurnoverRate\ /=\ 365.0;}
+\DoxyCodeLine{01924\ \ \ params.coarseRootTurnoverRate\ /=\ 365.0;}
+\DoxyCodeLine{01925\ }
+\DoxyCodeLine{01926\ \ \ params.baseCoarseRootResp\ /=\ 365.0;}
+\DoxyCodeLine{01927\ \ \ params.baseFineRootResp\ /=\ 365.0;}
+\DoxyCodeLine{01928\ \ \ params.baseMicrobeResp\ =\ params.baseMicrobeResp\ *\ 24;\ \ \textcolor{comment}{//\ change\ from\ per\ hour}}
+\DoxyCodeLine{01929\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ to\ per\ day\ rate}}
 \DoxyCodeLine{01930\ }
-\DoxyCodeLine{01931\ \ \ envi.soilWater\ =\ params.soilWFracInit\ *\ params.soilWHC;}
-\DoxyCodeLine{01932\ \ \ \textcolor{keywordflow}{if}\ (envi.soilWater\ <\ 0)\ \{}
-\DoxyCodeLine{01933\ \ \ \ \ envi.soilWater\ =\ 0;}
-\DoxyCodeLine{01934\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.soilWater\ >\ params.soilWHC)\ \{}
-\DoxyCodeLine{01935\ \ \ \ \ envi.soilWater\ =\ params.soilWHC;}
-\DoxyCodeLine{01936\ \ \ \}}
-\DoxyCodeLine{01937\ }
-\DoxyCodeLine{01938\ \ \ envi.snow\ =\ params.snowInit;}
-\DoxyCodeLine{01939\ }
-\DoxyCodeLine{01940\ \ \ climate\ =\ firstClimate;}
-\DoxyCodeLine{01941\ }
-\DoxyCodeLine{01942\ \ \ initTrackers();}
-\DoxyCodeLine{01943\ \ \ initPhenologyTrackers();}
-\DoxyCodeLine{01944\ \ \ resetMeanTracker(meanNPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
-\DoxyCodeLine{01945\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_NPP\_DAYS)\ of\ 0}}
-\DoxyCodeLine{01946\ \ \ resetMeanTracker(meanGPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
-\DoxyCodeLine{01947\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_GPP\_DAYS)\ of\ 0}}
-\DoxyCodeLine{01948\ \ \ resetMeanTracker(meanFPAR,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ FPAR\ (over\ last}}
-\DoxyCodeLine{01949\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_FPAR\_DAYS)\ of\ 0}}
-\DoxyCodeLine{01950\ \}}
+\DoxyCodeLine{01931\ \ \ envi.coarseRootC\ =\ params.coarseRootFrac\ *\ params.plantWoodInit;}
+\DoxyCodeLine{01932\ \ \ envi.fineRootC\ =\ params.fineRootFrac\ *\ params.plantWoodInit;}
+\DoxyCodeLine{01933\ }
+\DoxyCodeLine{01934\ \ \ envi.litterWater\ =\ params.litterWFracInit\ *\ params.litterWHC;}
+\DoxyCodeLine{01935\ \ \ \textcolor{keywordflow}{if}\ (envi.litterWater\ <\ 0)\ \{}
+\DoxyCodeLine{01936\ \ \ \ \ envi.litterWater\ =\ 0;}
+\DoxyCodeLine{01937\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.litterWater\ >\ params.litterWHC)\ \{}
+\DoxyCodeLine{01938\ \ \ \ \ envi.litterWater\ =\ params.litterWHC;}
+\DoxyCodeLine{01939\ \ \ \}}
+\DoxyCodeLine{01940\ }
+\DoxyCodeLine{01941\ \ \ envi.soilWater\ =\ params.soilWFracInit\ *\ params.soilWHC;}
+\DoxyCodeLine{01942\ \ \ \textcolor{keywordflow}{if}\ (envi.soilWater\ <\ 0)\ \{}
+\DoxyCodeLine{01943\ \ \ \ \ envi.soilWater\ =\ 0;}
+\DoxyCodeLine{01944\ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (envi.soilWater\ >\ params.soilWHC)\ \{}
+\DoxyCodeLine{01945\ \ \ \ \ envi.soilWater\ =\ params.soilWHC;}
+\DoxyCodeLine{01946\ \ \ \}}
+\DoxyCodeLine{01947\ }
+\DoxyCodeLine{01948\ \ \ envi.snow\ =\ params.snowInit;}
+\DoxyCodeLine{01949\ }
+\DoxyCodeLine{01950\ \ \ climate\ =\ firstClimate;}
 \DoxyCodeLine{01951\ }
-\DoxyCodeLine{01952\ \textcolor{comment}{//\ Setup\ events\ at\ given\ location}}
-\DoxyCodeLine{01953\ \textcolor{keywordtype}{void}\ setupEvents()\ \{\ \textcolor{keyword}{event}\ =\ events;\ \}}
-\DoxyCodeLine{01954\ }
-\DoxyCodeLine{01955\ \textcolor{comment}{//\ See\ sipnet.h}}
-\DoxyCodeLine{01956\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader)\ \{}
-\DoxyCodeLine{01957\ \ \ \textcolor{keywordflow}{if}\ ((out\ !=\ NULL)\ \&\&\ printHeader)\ \{}
-\DoxyCodeLine{01958\ \ \ \ \ outputHeader(out);}
-\DoxyCodeLine{01959\ \ \ \}}
-\DoxyCodeLine{01960\ }
-\DoxyCodeLine{01961\ \ \ setupModel();}
-\DoxyCodeLine{01962\ \ \ setupEvents();}
-\DoxyCodeLine{01963\ }
-\DoxyCodeLine{01964\ \ \ \textcolor{keywordflow}{while}\ (climate\ !=\ NULL)\ \{}
-\DoxyCodeLine{01965\ \ \ \ \ updateState();}
-\DoxyCodeLine{01966\ \ \ \ \ \textcolor{keywordflow}{if}\ (out\ !=\ NULL)\ \{}
-\DoxyCodeLine{01967\ \ \ \ \ \ \ outputState(out,\ climate-\/>year,\ climate-\/>day,\ climate-\/>time);}
-\DoxyCodeLine{01968\ \ \ \ \ \}}
-\DoxyCodeLine{01969\ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
-\DoxyCodeLine{01970\ \ \ \ \ \ \ writeOutputItemValues(outputItems);}
-\DoxyCodeLine{01971\ \ \ \ \ \}}
-\DoxyCodeLine{01972\ \ \ \ \ climate\ =\ climate-\/>nextClim;}
-\DoxyCodeLine{01973\ \ \ \}}
-\DoxyCodeLine{01974\ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
-\DoxyCodeLine{01975\ \ \ \ \ terminateOutputItemLines(outputItems);}
-\DoxyCodeLine{01976\ \ \ \}}
-\DoxyCodeLine{01977\ \}}
-\DoxyCodeLine{01978\ }
-\DoxyCodeLine{01979\ \textcolor{comment}{//\ See\ sipnet.h}}
-\DoxyCodeLine{01980\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems)\ \{}
-\DoxyCodeLine{01981\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE"{}},\ \&(trackers.nee));}
-\DoxyCodeLine{01982\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE\_cum"{}},\ \&(trackers.totNee));}
-\DoxyCodeLine{01983\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP"{}},\ \&(trackers.gpp));}
-\DoxyCodeLine{01984\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP\_cum"{}},\ \&(trackers.totGpp));}
-\DoxyCodeLine{01985\ \}}
-\DoxyCodeLine{01986\ }
-\DoxyCodeLine{01987\ \textcolor{comment}{//\ See\ sipnet.h}}
-\DoxyCodeLine{01988\ \textcolor{keywordtype}{void}\ initModel(ModelParams\ **modelParams,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *paramFile,}
-\DoxyCodeLine{01989\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *climFile)\ \{}
-\DoxyCodeLine{01990\ \ \ readParamData(modelParams,\ paramFile);}
-\DoxyCodeLine{01991\ \ \ readClimData(climFile);}
-\DoxyCodeLine{01992\ }
-\DoxyCodeLine{01993\ \ \ meanNPP\ =\ newMeanTracker(0,\ MEAN\_NPP\_DAYS,\ MEAN\_NPP\_MAX\_ENTRIES);}
-\DoxyCodeLine{01994\ \ \ meanGPP\ =\ newMeanTracker(0,\ MEAN\_GPP\_SOIL\_DAYS,\ MEAN\_GPP\_SOIL\_MAX\_ENTRIES);}
-\DoxyCodeLine{01995\ \ \ meanFPAR\ =\ newMeanTracker(0,\ MEAN\_FPAR\_DAYS,\ MEAN\_FPAR\_MAX\_ENTRIES);}
-\DoxyCodeLine{01996\ \}}
-\DoxyCodeLine{01997\ }
-\DoxyCodeLine{01998\ \textcolor{comment}{//\ See\ sipnet.h}}
-\DoxyCodeLine{01999\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ printHeader)\ \{}
-\DoxyCodeLine{02000\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
-\DoxyCodeLine{02001\ \ \ \ \ events\ =\ readEventData(eventFile);}
-\DoxyCodeLine{02002\ \ \ \ \ eventOutFile\ =\ openEventOutFile(printHeader);}
-\DoxyCodeLine{02003\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{02004\ \ \ \ \ events\ =\ NULL;}
-\DoxyCodeLine{02005\ \ \ \ \ eventOutFile\ =\ NULL;}
-\DoxyCodeLine{02006\ \ \ \}}
-\DoxyCodeLine{02007\ \}}
-\DoxyCodeLine{02008\ }
-\DoxyCodeLine{02009\ \textcolor{comment}{//\ See\ sipnet.h}}
-\DoxyCodeLine{02010\ \textcolor{keywordtype}{void}\ cleanupModel()\ \{}
-\DoxyCodeLine{02011\ \ \ freeClimateList();}
-\DoxyCodeLine{02012\ }
-\DoxyCodeLine{02013\ \ \ deallocateMeanTracker(meanNPP);}
-\DoxyCodeLine{02014\ \ \ deallocateMeanTracker(meanGPP);}
-\DoxyCodeLine{02015\ \ \ deallocateMeanTracker(meanFPAR);}
-\DoxyCodeLine{02016\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
-\DoxyCodeLine{02017\ \ \ \ \ freeEventList();}
-\DoxyCodeLine{02018\ \ \ \ \ closeEventOutFile(eventOutFile);}
-\DoxyCodeLine{02019\ \ \ \}}
-\DoxyCodeLine{02020\ \}}
+\DoxyCodeLine{01952\ \ \ initTrackers();}
+\DoxyCodeLine{01953\ \ \ initPhenologyTrackers();}
+\DoxyCodeLine{01954\ \ \ resetMeanTracker(meanNPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
+\DoxyCodeLine{01955\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_NPP\_DAYS)\ of\ 0}}
+\DoxyCodeLine{01956\ \ \ resetMeanTracker(meanGPP,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ NPP\ (over\ last}}
+\DoxyCodeLine{01957\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_GPP\_DAYS)\ of\ 0}}
+\DoxyCodeLine{01958\ \ \ resetMeanTracker(meanFPAR,\ 0);\ \ \textcolor{comment}{//\ initialize\ with\ mean\ FPAR\ (over\ last}}
+\DoxyCodeLine{01959\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ MEAN\_FPAR\_DAYS)\ of\ 0}}
+\DoxyCodeLine{01960\ \}}
+\DoxyCodeLine{01961\ }
+\DoxyCodeLine{01962\ \textcolor{comment}{//\ Setup\ events\ at\ given\ location}}
+\DoxyCodeLine{01963\ \textcolor{keywordtype}{void}\ setupEvents()\ \{\ \textcolor{keyword}{event}\ =\ events;\ \}}
+\DoxyCodeLine{01964\ }
+\DoxyCodeLine{01965\ \textcolor{comment}{//\ See\ sipnet.h}}
+\DoxyCodeLine{01966\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader)\ \{}
+\DoxyCodeLine{01967\ \ \ \textcolor{keywordflow}{if}\ ((out\ !=\ NULL)\ \&\&\ printHeader)\ \{}
+\DoxyCodeLine{01968\ \ \ \ \ outputHeader(out);}
+\DoxyCodeLine{01969\ \ \ \}}
+\DoxyCodeLine{01970\ }
+\DoxyCodeLine{01971\ \ \ setupModel();}
+\DoxyCodeLine{01972\ \ \ setupEvents();}
+\DoxyCodeLine{01973\ }
+\DoxyCodeLine{01974\ \ \ \textcolor{keywordflow}{while}\ (climate\ !=\ NULL)\ \{}
+\DoxyCodeLine{01975\ \ \ \ \ updateState();}
+\DoxyCodeLine{01976\ \ \ \ \ \textcolor{keywordflow}{if}\ (out\ !=\ NULL)\ \{}
+\DoxyCodeLine{01977\ \ \ \ \ \ \ outputState(out,\ climate-\/>year,\ climate-\/>day,\ climate-\/>time);}
+\DoxyCodeLine{01978\ \ \ \ \ \}}
+\DoxyCodeLine{01979\ \ \ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
+\DoxyCodeLine{01980\ \ \ \ \ \ \ writeOutputItemValues(outputItems);}
+\DoxyCodeLine{01981\ \ \ \ \ \}}
+\DoxyCodeLine{01982\ \ \ \ \ climate\ =\ climate-\/>nextClim;}
+\DoxyCodeLine{01983\ \ \ \}}
+\DoxyCodeLine{01984\ \ \ \textcolor{keywordflow}{if}\ (outputItems\ !=\ NULL)\ \{}
+\DoxyCodeLine{01985\ \ \ \ \ terminateOutputItemLines(outputItems);}
+\DoxyCodeLine{01986\ \ \ \}}
+\DoxyCodeLine{01987\ \}}
+\DoxyCodeLine{01988\ }
+\DoxyCodeLine{01989\ \textcolor{comment}{//\ See\ sipnet.h}}
+\DoxyCodeLine{01990\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems)\ \{}
+\DoxyCodeLine{01991\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE"{}},\ \&(trackers.nee));}
+\DoxyCodeLine{01992\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}NEE\_cum"{}},\ \&(trackers.totNee));}
+\DoxyCodeLine{01993\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP"{}},\ \&(trackers.gpp));}
+\DoxyCodeLine{01994\ \ \ addOutputItem(outputItems,\ \textcolor{stringliteral}{"{}GPP\_cum"{}},\ \&(trackers.totGpp));}
+\DoxyCodeLine{01995\ \}}
+\DoxyCodeLine{01996\ }
+\DoxyCodeLine{01997\ \textcolor{comment}{//\ See\ sipnet.h}}
+\DoxyCodeLine{01998\ \textcolor{keywordtype}{void}\ initModel(ModelParams\ **modelParams,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *paramFile,}
+\DoxyCodeLine{01999\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *climFile)\ \{}
+\DoxyCodeLine{02000\ \ \ readParamData(modelParams,\ paramFile);}
+\DoxyCodeLine{02001\ \ \ readClimData(climFile);}
+\DoxyCodeLine{02002\ }
+\DoxyCodeLine{02003\ \ \ meanNPP\ =\ newMeanTracker(0,\ MEAN\_NPP\_DAYS,\ MEAN\_NPP\_MAX\_ENTRIES);}
+\DoxyCodeLine{02004\ \ \ meanGPP\ =\ newMeanTracker(0,\ MEAN\_GPP\_SOIL\_DAYS,\ MEAN\_GPP\_SOIL\_MAX\_ENTRIES);}
+\DoxyCodeLine{02005\ \ \ meanFPAR\ =\ newMeanTracker(0,\ MEAN\_FPAR\_DAYS,\ MEAN\_FPAR\_MAX\_ENTRIES);}
+\DoxyCodeLine{02006\ \}}
+\DoxyCodeLine{02007\ }
+\DoxyCodeLine{02008\ \textcolor{comment}{//\ See\ sipnet.h}}
+\DoxyCodeLine{02009\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ printHeader)\ \{}
+\DoxyCodeLine{02010\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
+\DoxyCodeLine{02011\ \ \ \ \ events\ =\ readEventData(eventFile);}
+\DoxyCodeLine{02012\ \ \ \ \ eventOutFile\ =\ openEventOutFile(printHeader);}
+\DoxyCodeLine{02013\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{02014\ \ \ \ \ events\ =\ NULL;}
+\DoxyCodeLine{02015\ \ \ \ \ eventOutFile\ =\ NULL;}
+\DoxyCodeLine{02016\ \ \ \}}
+\DoxyCodeLine{02017\ \}}
+\DoxyCodeLine{02018\ }
+\DoxyCodeLine{02019\ \textcolor{comment}{//\ See\ sipnet.h}}
+\DoxyCodeLine{02020\ \textcolor{keywordtype}{void}\ cleanupModel()\ \{}
+\DoxyCodeLine{02021\ \ \ freeClimateList();}
+\DoxyCodeLine{02022\ }
+\DoxyCodeLine{02023\ \ \ deallocateMeanTracker(meanNPP);}
+\DoxyCodeLine{02024\ \ \ deallocateMeanTracker(meanGPP);}
+\DoxyCodeLine{02025\ \ \ deallocateMeanTracker(meanFPAR);}
+\DoxyCodeLine{02026\ \ \ \textcolor{keywordflow}{if}\ (ctx.events)\ \{}
+\DoxyCodeLine{02027\ \ \ \ \ freeEventList();}
+\DoxyCodeLine{02028\ \ \ \ \ closeEventOutFile(eventOutFile);}
+\DoxyCodeLine{02029\ \ \ \}}
+\DoxyCodeLine{02030\ \}}
 
 \end{DoxyCode}
