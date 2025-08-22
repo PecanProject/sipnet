@@ -34,6 +34,7 @@ sections to include in release notes:
 - Expanded smoke test cases to better cover SIPNET modeling options (#109, #114)
 - Converted all compile-time switches not removed or hard-coded to be on into switches to run-time options (#114)
 - Added extensive documentation in code listing the source(s) that the code implements (#135)
+- Added python tool for comparing smoke test results with expected values (#142)
 
 ### Fixed
 
@@ -50,6 +51,8 @@ sections to include in release notes:
 - Deprecated: "LOCATION" is obsolete. Will be ignored with warning. (#92)
 - Deprecated: All columns in *.param except for name and value. Will be ignored with warning. (#92)
 - Deprecated: location and soilWetness columns in input climate files. If both are present, will be ignored with warning. (#92, #127)
+- Changed: sipnet.out columns will be zero when relevant modes are off (e.g., litter, microbes) (#143)
+- Changed: sipnet.out format; it no longer has loc, litterWater or fPAR columns (#TBD)
 
 ### Removed
 
@@ -58,6 +61,7 @@ sections to include in release notes:
 - Removed obsolete estimate program and associated code (#70, #82)
 - Removed multi-site support; in particular, output files no longer have a location column (#92)
 - Removed or hard-codes 'on' many compile time switches (#114)
+- Removed obsolete model params; sipnet now warns on unknown params in the params file (#124)
 
 ### Git SHA
 [TBD]
