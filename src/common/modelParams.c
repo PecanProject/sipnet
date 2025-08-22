@@ -36,7 +36,7 @@ void setAll(double *array, int length, double value) {
 // as a warning message)
 // Also prints out a list of obsolete params that were read
 void checkAllRead(ModelParams *ModelParams) {
-  int i, okay, readObsParam = 0, missingOptParam = 0;
+  int i, okay, missingOptParam = 0;
   OneModelParam *param;
 
   okay = 1;  // so far so good
@@ -49,10 +49,6 @@ void checkAllRead(ModelParams *ModelParams) {
       } else {
         missingOptParam = 1;
       }
-    } else {
-      if (param->isRequired == OBSOLETE_PARAM) {
-        readObsParam = 1;
-      }
     }
   }
 
@@ -64,24 +60,10 @@ void checkAllRead(ModelParams *ModelParams) {
       for (i = 0; i < ModelParams->numParams; i++) {
         param = &(ModelParams->params[i]);
         if ((!param->isRead) && (param->isRequired == 0)) {
-          printf(" %s", param->name);
+          logWarning(" %s", param->name);
         }
       }
-      printf("\n");
-    }
-  }
-
-  // Warn about read obsolete params, but again just one line
-  if (readObsParam) {
-    logWarning("ignoring obsolete parameter(s):");
-    if (!ctx.quiet) {
-      for (i = 0; i < ModelParams->numParams; i++) {
-        param = &(ModelParams->params[i]);
-        if ((param->isRead) && (param->isRequired == OBSOLETE_PARAM)) {
-          printf(" %s", param->name);
-        }
-      }
-      printf("\n");
+      logWarning("\n");
     }
   }
 
@@ -128,7 +110,7 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
     logError("trying to initialize %s: have already initialized all %d "
              "parameters\n",
              name, modelParams->maxParams);
-    printf("Check value of maxParams passed into newModelParams function\n");
+    logError("Check value of maxParams passed into newModelParams function\n");
     exit(1);
   }
 
@@ -168,6 +150,8 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
   double value;
   char *errc;
   int isComment;
+  char unknownParams[2048] = "";
+  char hasUnknownParams = 0;
 
   // Check for old-style (spatial param) format on first line containing params
   int formatChecked = 0;
@@ -199,9 +183,20 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
       paramIndex = locateParam(modelParams, pName);
 
       if (paramIndex == -1) {  // not found
-        logWarning("ignoring parameter %s: this parameter wasn't initialized "
-                   "in the code\n",
-                   pName);
+        if (hasUnknownParams) {
+          if (strlen(unknownParams) + strlen(pName) > 2048) {
+            logError("Too many unknown params; please remove some from %s and "
+                     "rerun\n",
+                     paramFile);
+            logError("Unknown params include: %s\n", unknownParams);
+            exit(EXIT_CODE_INPUT_FILE_ERROR);
+          }
+          strcat(unknownParams, ", ");
+          strcat(unknownParams, pName);
+        } else {
+          strcat(unknownParams, pName);
+          hasUnknownParams = 1;
+        }
       } else if (valueSet(modelParams, paramIndex)) {
         logError("reading parameter file: read %s, but this parameter has "
                  "already been set\n",
@@ -219,10 +214,15 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
     }  // if !isComment
   }  // while not EOF or error
 
+  // Warn if unknown params were found
+  if (hasUnknownParams) {
+    logWarning("Unknown param(s) found (and ignored): %s\n", unknownParams);
+  }
+
   // check for error in reading:
   if (ferror(paramFile)) {
     logError("reading file in readModelParams\n");
-    printf("ferror = %d\n", ferror(paramFile));
+    logError("ferror = %d\n", ferror(paramFile));
     exit(1);
   }
 
