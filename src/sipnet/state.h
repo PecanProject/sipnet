@@ -186,9 +186,6 @@ typedef struct Parameters {
   // initial litter pool (g C * m^-2 ground area)
   // :: not directly listed in [2]
   double litterInit;
-  // initial litter water as fraction of litterWHC (unitless)
-  // :: equivalent to W_S,0 in [2]
-  double litterWFracInit;
   // initial snowpack (cm water equivalent)
   // :: W_P,0 in [2]
   double snowInit;
@@ -201,10 +198,6 @@ typedef struct Parameters {
   // NOTE: if frozenSoilEff = 0, then shut down psn
   // :: not directly listed in [2]
   double frozenSoilEff;
-  // litter (evaporative layer) water holding capacity (cm)
-  // :: W_S,c in [2]
-  // NOTE: this may be obsolete now that we have dropped LITTER_WATER
-  double litterWHC;
   // fraction of rain that is immediately intercepted & evaporated
   // :: E in [2]
   double immedEvapFrac;
@@ -219,7 +212,7 @@ typedef struct Parameters {
   double rdConst;
   // parameters used to calculate soil resistance as
   // soil resistance = e^(rSoilConst1 - rSoilConst2 * W1)
-  // where W1 = (litterWater/litterWHC)
+  // where W1 = (water/WHC)
   // :: R_soil,1 and R_soil,2 in [2]
   double rSoilConst1, rSoilConst2;
 
@@ -382,6 +375,15 @@ typedef struct Parameters {
   double qualityLeaf;  // OBSOLETE PARAM  value for leaf litter quality
   double qualityWood;  // OBSOLETE PARAM  value for wood litter quality
 
+  // initial litter water as fraction of litterWHC (unitless)
+  // :: equivalent to W_S,0 in [2]
+  // OBSOLETE PARAM
+  double litterWFracInit;
+  // litter (evaporative layer) water holding capacity (cm)
+  // :: W_S,c in [2]
+  // OBSOLETE PARAM
+  double litterWHC;
+
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -398,9 +400,6 @@ typedef struct Environment {
   // From [2] Sacks et al. 2006
   // carbon in litter (g C * m^-2 ground area)
   double litter;
-  // water in litter (evaporative) layer (cm)
-  // Note: this may be obsolete since we have dropped LITTER_WATER
-  double litterWater;
   // snow pack (cm water equiv.)
   double snow;
 
@@ -451,8 +450,8 @@ typedef struct FluxVars {
   double rain;
   // Soil transpiration (cm water * day^-1)
   double transpiration;
-  // drainage from lower level of soil out of system (cm water * day^-1)
-  double bottomDrainage;
+  // drainage from soil out of system (cm water * day^-1)
+  double drainage;
 
   // ****************************************
   // Fluxes from [2] Sacks et al. (2006)
@@ -480,8 +479,6 @@ typedef struct FluxVars {
   double fastFlow;
   // evaporation from top of soil (cm water * day^-1)
   double evaporation;
-  // drainage from top of soil to lower level (cm water * day^-1)
-  double topDrainage;
 
   // ****************************************
   // Fluxes from [3] Zobitz et al. (2008)
@@ -582,8 +579,6 @@ typedef struct TrackerVars {  // variables to track various things
 
   // Wood and foliar respiration
   double rAboveground;
-  // 8 day mean fractional photosynthetically active radiation (percentage)
-  double fpar;
   // g C * m^-2 litterfall, year to date: SUM litter
   double yearlyLitter;
 } Trackers;
