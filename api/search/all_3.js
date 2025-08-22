@@ -15,7 +15,8 @@ var searchData=
   ['documentation_12',['SIPNET Source Code Documentation',['../index.html',1,'']]],
   ['domainoutput_13',['doMainOutput',['../de/d66/struct_context.html#ab496f3b56135a259d94de2e90935b5e7',1,'Context']]],
   ['dosingleoutputs_14',['doSingleOutputs',['../de/d66/struct_context.html#a82d97d2b1415236afb8f0faafa3449bf',1,'Context']]],
-  ['dumpconfig_15',['dumpConfig',['../de/d66/struct_context.html#aec9dbbdc704a6ef46b62d57e1892742b',1,'Context']]],
-  ['dvpdexp_16',['dVpdExp',['../d0/dbf/struct_parameters.html#a6fbe46f18a7bb7f423bb787b37fb8e0e',1,'Parameters']]],
-  ['dvpdslope_17',['dVpdSlope',['../d0/dbf/struct_parameters.html#a6bcf11ab6449a460e7636fed890f8a4f',1,'Parameters']]]
+  ['drainage_15',['drainage',['../da/d95/struct_flux_vars.html#acb2f2d248c761d29abcca7c3242fd70e',1,'FluxVars']]],
+  ['dumpconfig_16',['dumpConfig',['../de/d66/struct_context.html#aec9dbbdc704a6ef46b62d57e1892742b',1,'Context']]],
+  ['dvpdexp_17',['dVpdExp',['../d0/dbf/struct_parameters.html#a6fbe46f18a7bb7f423bb787b37fb8e0e',1,'Parameters']]],
+  ['dvpdslope_18',['dVpdSlope',['../d0/dbf/struct_parameters.html#a6bcf11ab6449a460e7636fed890f8a4f',1,'Parameters']]]
 ];

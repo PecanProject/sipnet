@@ -11,7 +11,7 @@ Collaboration diagram for Flux\+Vars\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=145pt]{db/da5/struct_flux_vars__coll__graph}
+\includegraphics[width=140pt]{db/da5/struct_flux_vars__coll__graph}
 \end{center}
 \end{figure}
 \doxysubsubsection*{Data Fields}
@@ -31,7 +31,7 @@ double \textbf{ rain}
 \item 
 double \textbf{ transpiration}
 \item 
-double \textbf{ bottom\+Drainage}
+double \textbf{ drainage}
 \item 
 double \textbf{ litter\+To\+Soil}
 \item 
@@ -48,8 +48,6 @@ double \textbf{ immed\+Evap}
 double \textbf{ fast\+Flow}
 \item 
 double \textbf{ evaporation}
-\item 
-double \textbf{ top\+Drainage}
 \item 
 double \textbf{ fine\+Root\+Loss}
 \item 
@@ -78,25 +76,11 @@ double \textbf{ wood\+Creation}
 \doxysubsection{Detailed Description}
 
 
-Definition at line \textbf{ 416} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 415} of file \textbf{ state.\+h}.
 
 
 
 \doxysubsection{Field Documentation}
-\label{struct_flux_vars_a042e9c3261b34bc70be1a6f41256edcc} 
-\index{FluxVars@{FluxVars}!bottomDrainage@{bottomDrainage}}
-\index{bottomDrainage@{bottomDrainage}!FluxVars@{FluxVars}}
-\doxysubsubsection{bottomDrainage}
-{\footnotesize\ttfamily double Flux\+Vars\+::bottom\+Drainage}
-
-
-
-Definition at line \textbf{ 455} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
-
 \label{struct_flux_vars_a76d3a7ca4bff86b4d697ea059b2dc231} 
 \index{FluxVars@{FluxVars}!coarseRootCreation@{coarseRootCreation}}
 \index{coarseRootCreation@{coarseRootCreation}!FluxVars@{FluxVars}}
@@ -105,7 +89,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 497} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 494} of file \textbf{ state.\+h}.
 
 
 
@@ -119,11 +103,25 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, and 
 
 
 
-Definition at line \textbf{ 493} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 490} of file \textbf{ state.\+h}.
 
 
 
 Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
+
+\label{struct_flux_vars_acb2f2d248c761d29abcca7c3242fd70e} 
+\index{FluxVars@{FluxVars}!drainage@{drainage}}
+\index{drainage@{drainage}!FluxVars@{FluxVars}}
+\doxysubsubsection{drainage}
+{\footnotesize\ttfamily double Flux\+Vars\+::drainage}
+
+
+
+Definition at line \textbf{ 454} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 \label{struct_flux_vars_aadc31dee7abcba006826405092efa633} 
 \index{FluxVars@{FluxVars}!evaporation@{evaporation}}
@@ -133,7 +131,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 482} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 481} of file \textbf{ state.\+h}.
 
 
 
@@ -147,7 +145,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 480} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 479} of file \textbf{ state.\+h}.
 
 
 
@@ -161,7 +159,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 495} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 492} of file \textbf{ state.\+h}.
 
 
 
@@ -175,7 +173,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, and 
 
 
 
-Definition at line \textbf{ 491} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 488} of file \textbf{ state.\+h}.
 
 
 
@@ -189,7 +187,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 477} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 476} of file \textbf{ state.\+h}.
 
 
 
@@ -203,7 +201,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ process\+Events()}, \textb
 
 
 
-Definition at line \textbf{ 526} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 523} of file \textbf{ state.\+h}.
 
 
 
@@ -217,7 +215,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 443} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 442} of file \textbf{ state.\+h}.
 
 
 
@@ -231,7 +229,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, \tex
 
 
 
-Definition at line \textbf{ 463} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 462} of file \textbf{ state.\+h}.
 
 
 
@@ -245,7 +243,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 511} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 508} of file \textbf{ state.\+h}.
 
 
 
@@ -259,7 +257,7 @@ Referenced by \textbf{ calc\+Maintenance\+Respiration()}, and \textbf{ soil\+Deg
 
 
 
-Definition at line \textbf{ 515} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 512} of file \textbf{ state.\+h}.
 
 
 
@@ -273,7 +271,7 @@ Referenced by \textbf{ microbe\+Growth()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 441} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 440} of file \textbf{ state.\+h}.
 
 
 
@@ -287,7 +285,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 451} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 450} of file \textbf{ state.\+h}.
 
 
 
@@ -301,7 +299,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 499} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 496} of file \textbf{ state.\+h}.
 
 
 
@@ -315,7 +313,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, \tex
 
 
 
-Definition at line \textbf{ 501} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 498} of file \textbf{ state.\+h}.
 
 
 
@@ -329,7 +327,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, \tex
 
 
 
-Definition at line \textbf{ 465} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 464} of file \textbf{ state.\+h}.
 
 
 
@@ -343,7 +341,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ soil\+Degradation()}, and 
 
 
 
-Definition at line \textbf{ 449} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 448} of file \textbf{ state.\+h}.
 
 
 
@@ -357,7 +355,7 @@ Referenced by \textbf{ soil\+Degradation()}, and \textbf{ update\+Trackers()}.
 
 
 
-Definition at line \textbf{ 447} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 446} of file \textbf{ state.\+h}.
 
 
 
@@ -371,7 +369,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \tex
 
 
 
-Definition at line \textbf{ 469} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 468} of file \textbf{ state.\+h}.
 
 
 
@@ -385,7 +383,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 471} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 470} of file \textbf{ state.\+h}.
 
 
 
@@ -399,7 +397,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 517} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 514} of file \textbf{ state.\+h}.
 
 
 
@@ -413,25 +411,11 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ soil\+Degradation()}.
 
 
 
-Definition at line \textbf{ 473} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 472} of file \textbf{ state.\+h}.
 
 
 
 Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \textbf{ update\+Trackers()}.
-
-\label{struct_flux_vars_a95972a67b0959ceff088aa7cc6b1d932} 
-\index{FluxVars@{FluxVars}!topDrainage@{topDrainage}}
-\index{topDrainage@{topDrainage}!FluxVars@{FluxVars}}
-\doxysubsubsection{topDrainage}
-{\footnotesize\ttfamily double Flux\+Vars\+::top\+Drainage}
-
-
-
-Definition at line \textbf{ 484} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ calculate\+Fluxes()}.
 
 \label{struct_flux_vars_adee1b0917d1707b6468fb012261d2f66} 
 \index{FluxVars@{FluxVars}!transpiration@{transpiration}}
@@ -441,7 +425,7 @@ Referenced by \textbf{ calculate\+Fluxes()}.
 
 
 
-Definition at line \textbf{ 453} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 452} of file \textbf{ state.\+h}.
 
 
 
@@ -455,7 +439,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ output\+State()}, \textbf{
 
 
 
-Definition at line \textbf{ 529} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 526} of file \textbf{ state.\+h}.
 
 
 
@@ -469,7 +453,7 @@ Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ update\+State()}.
 
 
 
-Definition at line \textbf{ 445} of file \textbf{ state.\+h}.
+Definition at line \textbf{ 444} of file \textbf{ state.\+h}.
 
 
 
