@@ -347,43 +347,6 @@ typedef struct Parameters {
   // moisture related:
   // leaf (evaporative) pool rim thickness in mm
   double leafPoolDepth;
-
-  // OBSOLETE PARAMS
-  // To be removed
-  double baseSoilRespCold;  // OBSOLETE PARAM
-                            // soil respiration at 0 degrees C and max soil
-                            // moisture when tsoil < coldSoilThreshold
-                            // (g C respired * g^-1 soil C day^-1)
-                            // NOTE: read in as per-year rate!
-  double soilRespQ10Cold;  // OBSOLETE PARAM
-                           // scalar determining effect of temp on soil resp.
-                           // when tsoil < coldSoilThreshold
-
-  double coldSoilThreshold;  // OBSOLETE PARAM
-                             // temp. at which use baseSoilRespCold and
-                             // soilRespQ10Cold (if SEASONAL_R_SOIL true)
-                             // (degrees C)
-  double litWaterDrainRate;  // OBSOLETE PARAM
-                             // rate at which litter water drains into lower
-                             // layer when litter layer fully moisture-saturated
-                             // (cm water/day)
-  double E0;  // OBSOLETE PARAM  E0 in Lloyd-Taylor soil respiration function
-  double T0;  // OBSOLETE PARAM  T0 in Lloyd-Taylor soil respiration function
-  double m_ballBerry;  // OBSOLETE PARAM slope for the Ball Berry relationship
-  double totNitrogen;  // OBSOLETE PARAM  Percentage nitrogen in soil
-  double microbeNC;  // OBSOLETE PARAM  mg N / mg C - microbe N:C ratio
-  double qualityLeaf;  // OBSOLETE PARAM  value for leaf litter quality
-  double qualityWood;  // OBSOLETE PARAM  value for wood litter quality
-
-  // initial litter water as fraction of litterWHC (unitless)
-  // :: equivalent to W_S,0 in [2]
-  // OBSOLETE PARAM
-  double litterWFracInit;
-  // litter (evaporative layer) water holding capacity (cm)
-  // :: W_S,c in [2]
-  // OBSOLETE PARAM
-  double litterWHC;
-
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))

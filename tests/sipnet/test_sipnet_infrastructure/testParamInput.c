@@ -7,14 +7,16 @@
 
 void writeParams(const char *fname);
 
+void resetParams(void) { memset(&params, 0, sizeof(struct Parameters)); }
+
 void runNegTest(const char *fName) {
   // Pretty much guaranteed to leak memory, but that should be ok for a test
-  ModelParams *modelParams = newModelParams(NUM_PARAMS);
+  ModelParams *modelParams = NULL;
   readParamData(&modelParams, fName);
 }
 
 int runTest(const char *root) {
-  ModelParams *modelParams = newModelParams(NUM_PARAMS);
+  ModelParams *modelParams = NULL;
 
   char inName[50];
   char outName[50];
@@ -30,14 +32,14 @@ int runTest(const char *root) {
 
   readParamData(&modelParams, inName);
   writeParams(outName);
+  resetParams();
+  deleteModelParams(modelParams);
 
   status = diffFiles(outName, expName);
   if (!status) {
     // Leave file for debugging if it failed
     remove(outName);
   }
-
-  deleteModelParams(modelParams);
 
   return status;
 }
@@ -72,6 +74,9 @@ int run() {
     logTest("FAIL with spatial_val.param\n");
   }
 
+  // Reset flags to allow main exit to work
+  really_exit = 1;
+
   return status;
 }
 
@@ -95,7 +100,6 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "laiInit", params.laiInit);
   fprintf(out, "%s: %.2f\n", "litterInit", params.litterInit);
   fprintf(out, "%s: %.2f\n", "soilInit", params.soilInit);
-  fprintf(out, "%s: %.2f\n", "litterWFracInit", params.litterWFracInit);
   fprintf(out, "%s: %.2f\n", "soilWFracInit", params.soilWFracInit);
   fprintf(out, "%s: %.2f\n", "snowInit", params.snowInit);
   fprintf(out, "%s: %.2f\n", "aMax", params.aMax);
@@ -123,38 +127,26 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "litterBreakdownRate", params.litterBreakdownRate);
   fprintf(out, "%s: %.2f\n", "fracLitterRespired", params.fracLitterRespired);
   fprintf(out, "%s: %.2f\n", "baseSoilResp", params.baseSoilResp);
-  fprintf(out, "%s: %.2f\n", "baseSoilRespCold", params.baseSoilRespCold);
   fprintf(out, "%s: %.2f\n", "soilRespQ10", params.soilRespQ10);
-  fprintf(out, "%s: %.2f\n", "soilRespQ10Cold", params.soilRespQ10Cold);
-  fprintf(out, "%s: %.2f\n", "coldSoilThreshold", params.coldSoilThreshold);
-  fprintf(out, "%s: %.2f\n", "E0", params.E0);
-  fprintf(out, "%s: %.2f\n", "T0", params.T0);
   fprintf(out, "%s: %.2f\n", "soilRespMoistEffect", params.soilRespMoistEffect);
   fprintf(out, "%s: %.2f\n", "waterRemoveFrac", params.waterRemoveFrac);
   fprintf(out, "%s: %.2f\n", "frozenSoilEff", params.frozenSoilEff);
   fprintf(out, "%s: %.2f\n", "wueConst", params.wueConst);
-  fprintf(out, "%s: %.2f\n", "litterWHC", params.litterWHC);
   fprintf(out, "%s: %.2f\n", "soilWHC", params.soilWHC);
   fprintf(out, "%s: %.2f\n", "immedEvapFrac", params.immedEvapFrac);
   fprintf(out, "%s: %.2f\n", "fastFlowFrac", params.fastFlowFrac);
   fprintf(out, "%s: %.2f\n", "snowMelt", params.snowMelt);
-  fprintf(out, "%s: %.2f\n", "litWaterDrainRate", params.litWaterDrainRate);
   fprintf(out, "%s: %.2f\n", "rdConst", params.rdConst);
   fprintf(out, "%s: %.2f\n", "rSoilConst1", params.rSoilConst1);
   fprintf(out, "%s: %.2f\n", "rSoilConst2", params.rSoilConst2);
-  fprintf(out, "%s: %.2f\n", "m_ballBerry", params.m_ballBerry);
   fprintf(out, "%s: %.2f\n", "leafCSpWt", params.leafCSpWt);
   fprintf(out, "%s: %.2f\n", "cFracLeaf", params.cFracLeaf);
   fprintf(out, "%s: %.2f\n", "leafPoolDepth", params.leafPoolDepth);
   fprintf(out, "%s: %.2f\n", "woodTurnoverRate", params.woodTurnoverRate);
   fprintf(out, "%s: %.2f\n", "psnTMax", params.psnTMax);
-  fprintf(out, "%s: %.2f\n", "qualityLeaf", params.qualityLeaf);
-  fprintf(out, "%s: %.2f\n", "qualityWood", params.qualityWood);
   fprintf(out, "%s: %.2f\n", "efficiency", params.efficiency);
   fprintf(out, "%s: %.2f\n", "maxIngestionRate", params.maxIngestionRate);
   fprintf(out, "%s: %.2f\n", "halfSatIngestion", params.halfSatIngestion);
-  fprintf(out, "%s: %.2f\n", "totNitrogen", params.totNitrogen);
-  fprintf(out, "%s: %.2f\n", "microbeNC", params.microbeNC);
   fprintf(out, "%s: %.2f\n", "microbeInit", params.microbeInit);
   fprintf(out, "%s: %.2f\n", "fineRootFrac", params.fineRootFrac);
   fprintf(out, "%s: %.2f\n", "coarseRootFrac", params.coarseRootFrac);
