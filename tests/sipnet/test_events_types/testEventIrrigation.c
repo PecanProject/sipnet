@@ -12,7 +12,8 @@ int checkOutput(double soilWater, double immedEvap) {
     logTest("Soil water is %f, expected %f\n", envi.soilWater, soilWater);
     status = 1;
   }
-  if (!compareDoubles(immedEvap, fluxes.immedEvap)) {
+  // This is a proper flux - need to multiply flux by climate length to compare
+  if (!compareDoubles(immedEvap, fluxes.immedEvap * climate->length)) {
     logTest("Immed evap is %f, expected %f\n", fluxes.immedEvap, immedEvap);
     status = 1;
   }

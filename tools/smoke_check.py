@@ -151,7 +151,7 @@ def check_results(smoke_dir: str, verbose: bool):
     data.loc['new mean', col] = means.loc['new']
 
   print('Difference Summary:')
-  print(data)
+  print(data.transpose())
 
 if __name__ == "__main__":
   main()

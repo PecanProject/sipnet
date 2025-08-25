@@ -1641,7 +1641,6 @@ void processEvents(void) {
         fluxes.eventCoarseRootC += coarseDelta;
 
         // FUTURE: move/remove biomass in N pools
-
         writeEventOut(eventOutFile, event, 5, "fluxes.eventLitterC", litterAdd,
                       "fluxes.eventLeafC", leafDelta, "fluxes.eventWoodC",
                       woodDelta, "fluxes.eventFineRootC", fineDelta,
@@ -1676,6 +1675,23 @@ void processEvents(void) {
   // It's true that this conversion will immediately be undone when updating
   // pools, but let's keep fluxes as fluxes.
   convertEventsToFluxes();
+
+  // BEGIN COMPATIBILITY CODE
+  // This should keep output unchanged, even though this needs to be moved.
+  // One step at a time.
+  envi.plantWoodC += fluxes.eventWoodC * climate->length;
+  envi.plantLeafC += fluxes.eventLeafC * climate->length;
+  envi.soilWater += fluxes.eventSoilWater * climate->length;
+  if (ctx.litterPool) {
+    envi.litter += fluxes.eventLitterC * climate->length;
+  } else {
+    envi.soil += fluxes.eventLitterC * climate->length;
+  }
+  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
+  envi.fineRootC += fluxes.eventFineRootC * climate->length;
+  // Last, don't forget we put the evap flux into immedEvap
+  fluxes.immedEvap += fluxes.eventEvap;
+  // END COMPATIBILITY CODE
 }
 
 // !!! main runner function !!!
@@ -1743,19 +1759,6 @@ void updateState(void) {
   // fluxes and state variables above. Events are (currently, Jan 25, 2025)
   // handled as instantaneous deltas to relevant state (envi and fluxes fields),
   processEvents();
-
-  // This should keep output unchanged, even though this needs to be moved.
-  // One step at a time.
-  envi.plantWoodC += fluxes.eventWoodC * climate->length;
-  envi.plantLeafC += fluxes.eventLeafC * climate->length;
-  envi.soilWater += fluxes.eventSoilWater * climate->length;
-  if (ctx.litterPool) {
-    envi.litter += fluxes.eventLitterC * climate->length;
-  } else {
-    envi.soil += fluxes.eventLitterC * climate->length;
-  }
-  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
-  envi.fineRootC += fluxes.eventFineRootC * climate->length;
 
   // 4. Update trackers
   npp = fluxes.photosynthesis - fluxes.rVeg - fluxes.rCoarseRoot -
