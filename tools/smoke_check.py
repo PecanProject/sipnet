@@ -41,6 +41,8 @@ def print_usage():
   print(f"'smoke_check' with no arguments is equivalent to 'smoke_check run'")
   print(f"")
   print(f"Note: smoke_check assumes tests/smoke/run_smoke.sh has already been run")
+  print(f"Also, if a smoke test errored and failed to produce output, this tool")
+  print(f"will report a false positive for that test.")
 
 def main():
   commands: list[str] = ['run', 'list', 'help', '-h', '--help']
