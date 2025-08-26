@@ -188,10 +188,10 @@ void validateContext(void) {
     hasError = 1;
   }
 
-  //  if (ctx.events && ctx.microbes) {
-  //    logError("events and microbes may not both be turned on\n");
-  //    hasError = 1;
-  //  }
+  if (ctx.events && ctx.microbes) {
+    logError("events and microbes may not both be turned on\n");
+    hasError = 1;
+  }
 
   if (hasError) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
