@@ -1519,9 +1519,10 @@ void updateTrackers(double oldSoilWater) {
 
   // evapotranspiration includes water lost to evaporation from canopy
   // irrigation (fluxes.eventEvap)
-  trackers.evapotranspiration = (fluxes.transpiration + fluxes.immedEvap +
-                                 fluxes.evaporation + fluxes.sublimation +
-                                 fluxes.eventEvap) * climate->length;
+  trackers.evapotranspiration =
+      (fluxes.transpiration + fluxes.immedEvap + fluxes.evaporation +
+       fluxes.sublimation + fluxes.eventEvap) *
+      climate->length;
 
   trackers.soilWetnessFrac =
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
@@ -1597,8 +1598,8 @@ void processEvents(void) {
         fluxes.eventEvap += evapAmount / climLen;
         fluxes.eventSoilWater += soilAmount / climLen;
         writeEventOut(eventOutFile, event, 2, "fluxes.eventSoilWater",
-                      soilAmount/climLen, "fluxes.eventEvap",
-                      evapAmount/climLen);
+                      soilAmount / climLen, "fluxes.eventEvap",
+                      evapAmount / climLen);
       } break;
       case PLANTING: {
         const PlantingParams *plantParams = event->eventParams;
@@ -1615,10 +1616,10 @@ void processEvents(void) {
 
         // FUTURE: allocate to N pools
 
-        writeEventOut(eventOutFile, event, 4, "fluxes.eventLeafC", leafC/climLen,
-                      "fluxes.eventWoodC", woodC/climLen, "fluxes.eventFineRootC",
-                      fineRootC/climLen, "fluxes.eventCoarseRootC",
-                      coarseRootC/climLen);
+        writeEventOut(eventOutFile, event, 4, "fluxes.eventLeafC",
+                      leafC / climLen, "fluxes.eventWoodC", woodC / climLen,
+                      "fluxes.eventFineRootC", fineRootC / climLen,
+                      "fluxes.eventCoarseRootC", coarseRootC / climLen);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
@@ -1646,13 +1647,12 @@ void processEvents(void) {
         fluxes.eventFineRootC += fineDelta / climLen;
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
-          // FUTURE: move/remove biomass in N pools
-          writeEventOut(eventOutFile, event, 5, "fluxes.eventLitterC",
-                        litterAdd/climLen, "fluxes.eventLeafC",
-                        leafDelta/climLen, "fluxes.eventWoodC",
-                        woodDelta/climLen, "fluxes.eventFineRootC",
-                        fineDelta/climLen, "fluxes.eventCoarseRootC",
-                        coarseDelta/climLen);
+        // FUTURE: move/remove biomass in N pools
+        writeEventOut(
+            eventOutFile, event, 5, "fluxes.eventLitterC", litterAdd / climLen,
+            "fluxes.eventLeafC", leafDelta / climLen, "fluxes.eventWoodC",
+            woodDelta / climLen, "fluxes.eventFineRootC", fineDelta / climLen,
+            "fluxes.eventCoarseRootC", coarseDelta / climLen);
       } break;
       case TILLAGE:
         // TBD
@@ -1669,7 +1669,8 @@ void processEvents(void) {
         // FUTURE: allocate to N pools
 
         // This will (likely) be 3 params eventually
-        writeEventOut(eventOutFile, event, 1, "fluxes.eventLitterC", orgC/climLen);
+        writeEventOut(eventOutFile, event, 1, "fluxes.eventLitterC",
+                      orgC / climLen);
       } break;
       default:
         printf("Unknown event type (%d) in processEvents()\n", event->type);
@@ -1711,8 +1712,8 @@ void updateState(void) {
   ///////////////////////
   // 1. Calculate Fluxes
 
-  // The main source of flux calculations handling, most of the biogeochem modeled
-  // fluxes are here. ("most" due to soilDegradation below)
+  // The main source of flux calculations handling, most of the biogeochem
+  // modeled fluxes are here. ("most" due to soilDegradation below)
   calculateFluxes();
 
   // All event handling, which is modeled as fluxes
