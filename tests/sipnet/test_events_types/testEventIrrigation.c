@@ -6,18 +6,24 @@
 
 #include "typesUtils.h"
 
-int checkOutput(double soilWater, double immedEvap) {
+int checkOutput(double soilWater, double eventEvap) {
   int status = 0;
   if (!compareDoubles(soilWater, envi.soilWater)) {
     logTest("Soil water is %f, expected %f\n", envi.soilWater, soilWater);
     status = 1;
   }
   // This is a proper flux - need to multiply flux by climate length to compare
-  if (!compareDoubles(immedEvap, fluxes.immedEvap * climate->length)) {
-    logTest("Immed evap is %f, expected %f\n", fluxes.immedEvap, immedEvap);
+  if (!compareDoubles(eventEvap, fluxes.eventEvap * climate->length)) {
+    logTest("Event evap is %f, expected %f\n", fluxes.immedEvap, eventEvap);
     status = 1;
   }
   return status;
+}
+
+void procEvents() {
+  processEvents();
+  soilDegradation();
+  updatePoolsForEvents();
 }
 
 int run(void) {
@@ -27,14 +33,14 @@ int run(void) {
 
   // set up dummy envi/fluxes/params
   envi.soilWater = 0;
-  fluxes.immedEvap = 0;
+  fluxes.eventEvap = 0;
   params.immedEvapFrac = 0.5;
 
   //// ONE IRRIGATION EVENT
   // amount 5, method 1 (soil)
   initEvents("events_one_irrig.in", 0);
   setupEvents();
-  processEvents();
+  procEvents();
   // should have 5 going to the soil
   status |= checkOutput(5, 0);
 
@@ -43,7 +49,7 @@ int run(void) {
   // amount 4, method 0 (canopy)
   initEvents("events_two_irrig.in", 1);
   setupEvents();
-  processEvents();
+  procEvents();
   // event 1: 3 to soil
   // event 2: 2=4*0.5 to evap, the rest (2) to soil
   // (plus the five from the test above)

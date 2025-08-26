@@ -49,6 +49,12 @@ void initEnv(void) {
   envi.coarseRootC = 5;
 }
 
+void procEvents() {
+  processEvents();
+  soilDegradation();
+  updatePoolsForEvents();
+}
+
 int run(void) {
   int status = 0;
   double expLitter, expLeafC, expWoodC, expFineC, expCoarseC;
@@ -64,7 +70,7 @@ int run(void) {
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   initEvents("events_one_harvest.in", 0);
   setupEvents();
-  processEvents();
+  procEvents();
 
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
   expLitter = 1 + 0.3 * (2 + 3) + 0.4 * (4 + 5);  // 1 + 1.5 + 3.6 = 6.1
@@ -82,7 +88,7 @@ int run(void) {
   initEnv();
   initEvents("events_two_harvest.in", 1);
   setupEvents();
-  processEvents();
+  procEvents();
   // Two events are additive
   expLitter = 1 + (0.3 + 0.25) * (2 + 3) + (0.4 + 0.25) * (4 + 5);  // 9.6
   expLeafC = 2 * (1 - 0.1 - 0.3 - 0.25 - 0.25);  // 0.2

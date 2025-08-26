@@ -53,11 +53,17 @@ void init(void) {
   climate = climate1;
 }
 
+void procEvents() {
+  processEvents();
+  soilDegradation();
+  updatePoolsForEvents();
+}
+
 void runLoc(void) {
   ClimateNode *climStart = climate;
   setupEvents();
   while (climate != NULL) {
-    processEvents();
+    procEvents();
     climate = climate->nextClim;
   }
   climate = climStart;
