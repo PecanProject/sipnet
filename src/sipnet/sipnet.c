@@ -1188,6 +1188,11 @@ void soilDegradation(void) {
       envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                     fluxes.litterToSoil - fluxes.rSoil) *
                    climate->length;
+
+      // Event additions. To be moved into updatePoolsForEvents after this
+      // function is split
+      envi.litter += fluxes.eventLitterC * climate->length;
+
     } else {
       // Normal pool (single pool, no microbes)
       // :: from [1] (and others, TBD), eq (A3), where:
@@ -1198,6 +1203,10 @@ void soilDegradation(void) {
       envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                     fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
                    climate->length;
+
+      // Event additions. To be moved into updatePoolsForEvents after this
+      // function is split
+      envi.soil += fluxes.eventLitterC * climate->length;
     }
   }
   // :: from [3], root model description
@@ -1207,6 +1216,11 @@ void soilDegradation(void) {
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss - fluxes.rFineRoot) *
       climate->length;
+
+  // Event additions. To be moved into updatePoolsForEvents after this
+  // function is split
+  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
+  envi.fineRootC += fluxes.eventFineRootC * climate->length;
 }
 
 ////
@@ -1503,9 +1517,11 @@ void updateTrackers(double oldSoilWater) {
   trackers.totNpp += trackers.npp;
   trackers.totNee += trackers.nee;
 
+  // evapotranspiration includes water lost to evaporation from canopy
+  // irrigation (fluxes.eventEvap)
   trackers.evapotranspiration = (fluxes.transpiration + fluxes.immedEvap +
-                                 fluxes.evaporation + fluxes.sublimation) *
-                                climate->length;
+                                 fluxes.evaporation + fluxes.sublimation +
+                                 fluxes.eventEvap) * climate->length;
 
   trackers.soilWetnessFrac =
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
@@ -1521,18 +1537,6 @@ void resetEventFluxes(void) {
   fluxes.eventEvap = 0.0;
   fluxes.eventSoilWater = 0.0;
   fluxes.eventLitterC = 0.0;
-}
-
-void convertEventsToFluxes(void) {
-  // Events are specified as amounts; after all events are processed, convert to
-  // fluxes
-  fluxes.eventLeafC /= climate->length;
-  fluxes.eventWoodC /= climate->length;
-  fluxes.eventFineRootC /= climate->length;
-  fluxes.eventCoarseRootC /= climate->length;
-  fluxes.eventEvap /= climate->length;
-  fluxes.eventSoilWater /= climate->length;
-  fluxes.eventLitterC /= climate->length;
 }
 
 /*!
@@ -1558,6 +1562,7 @@ void processEvents(void) {
   // should.
   const int climYear = climate->year;
   const int climDay = climate->day;
+  const double climLen = climate->length;
 
   // The events file has been tested on read, so we know this event list should
   // be in chrono order. However, we need to check to make sure the current
@@ -1571,7 +1576,6 @@ void processEvents(void) {
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     switch (event->type) {
-      // Implementation TBD, as we enable the various event types
       case IRRIGATION: {
         const IrrigationParams *irrParams = event->eventParams;
         const double amount = irrParams->amountAdded;
@@ -1590,10 +1594,11 @@ void processEvents(void) {
           printf("Unknown irrigation method type: %d\n", irrParams->method);
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
         }
-        fluxes.eventEvap += evapAmount;
-        fluxes.eventSoilWater += soilAmount;
+        fluxes.eventEvap += evapAmount / climLen;
+        fluxes.eventSoilWater += soilAmount / climLen;
         writeEventOut(eventOutFile, event, 2, "fluxes.eventSoilWater",
-                      soilAmount, "fluxes.eventEvap", evapAmount);
+                      soilAmount/climLen, "fluxes.eventEvap",
+                      evapAmount/climLen);
       } break;
       case PLANTING: {
         const PlantingParams *plantParams = event->eventParams;
@@ -1603,16 +1608,17 @@ void processEvents(void) {
         const double coarseRootC = plantParams->coarseRootC;
 
         // Update the pools
-        fluxes.eventLeafC += leafC;
-        fluxes.eventWoodC += woodC;
-        fluxes.eventFineRootC += fineRootC;
-        fluxes.eventCoarseRootC += coarseRootC;
+        fluxes.eventLeafC += leafC / climLen;
+        fluxes.eventWoodC += woodC / climLen;
+        fluxes.eventFineRootC += fineRootC / climLen;
+        fluxes.eventCoarseRootC += coarseRootC / climLen;
 
         // FUTURE: allocate to N pools
 
-        writeEventOut(eventOutFile, event, 4, "fluxes.eventLeafC", leafC,
-                      "fluxes.eventWoodC", woodC, "fluxes.eventFineRootC",
-                      fineRootC, "fluxes.eventCoarseRootC", coarseRootC);
+        writeEventOut(eventOutFile, event, 4, "fluxes.eventLeafC", leafC/climLen,
+                      "fluxes.eventWoodC", woodC/climLen, "fluxes.eventFineRootC",
+                      fineRootC/climLen, "fluxes.eventCoarseRootC",
+                      coarseRootC/climLen);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
@@ -1634,17 +1640,19 @@ void processEvents(void) {
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
 
         // Pool updates:
-        fluxes.eventLitterC += litterAdd;
-        fluxes.eventLeafC += leafDelta;
-        fluxes.eventWoodC += woodDelta;
-        fluxes.eventFineRootC += fineDelta;
-        fluxes.eventCoarseRootC += coarseDelta;
+        fluxes.eventLitterC += litterAdd / climLen;
+        fluxes.eventLeafC += leafDelta / climLen;
+        fluxes.eventWoodC += woodDelta / climLen;
+        fluxes.eventFineRootC += fineDelta / climLen;
+        fluxes.eventCoarseRootC += coarseDelta / climLen;
 
-        // FUTURE: move/remove biomass in N pools
-        writeEventOut(eventOutFile, event, 5, "fluxes.eventLitterC", litterAdd,
-                      "fluxes.eventLeafC", leafDelta, "fluxes.eventWoodC",
-                      woodDelta, "fluxes.eventFineRootC", fineDelta,
-                      "fluxes.eventCoarseRootC", coarseDelta);
+          // FUTURE: move/remove biomass in N pools
+          writeEventOut(eventOutFile, event, 5, "fluxes.eventLitterC",
+                        litterAdd/climLen, "fluxes.eventLeafC",
+                        leafDelta/climLen, "fluxes.eventWoodC",
+                        woodDelta/climLen, "fluxes.eventFineRootC",
+                        fineDelta/climLen, "fluxes.eventCoarseRootC",
+                        coarseDelta/climLen);
       } break;
       case TILLAGE:
         // TBD
@@ -1656,12 +1664,12 @@ void processEvents(void) {
         const double orgC = fertParams->orgC;
         // const double minN = fertParams->minN;
 
-        fluxes.eventLitterC += orgC;
+        fluxes.eventLitterC += orgC / climLen;
 
         // FUTURE: allocate to N pools
 
         // This will (likely) be 3 params eventually
-        writeEventOut(eventOutFile, event, 1, "fluxes.eventLitterC", orgC);
+        writeEventOut(eventOutFile, event, 1, "fluxes.eventLitterC", orgC/climLen);
       } break;
       default:
         printf("Unknown event type (%d) in processEvents()\n", event->type);
@@ -1670,28 +1678,22 @@ void processEvents(void) {
 
     event = event->nextEvent;
   }
+}
 
-  // Last, convert the event calculations - specified as amounts - to fluxes.
-  // It's true that this conversion will immediately be undone when updating
-  // pools, but let's keep fluxes as fluxes.
-  convertEventsToFluxes();
-
-  // BEGIN COMPATIBILITY CODE
-  // This should keep output unchanged, even though this needs to be moved.
-  // One step at a time.
+void updatePoolsForEvents(void) {
   envi.plantWoodC += fluxes.eventWoodC * climate->length;
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
   envi.soilWater += fluxes.eventSoilWater * climate->length;
-  if (ctx.litterPool) {
-    envi.litter += fluxes.eventLitterC * climate->length;
-  } else {
-    envi.soil += fluxes.eventLitterC * climate->length;
-  }
-  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
-  envi.fineRootC += fluxes.eventFineRootC * climate->length;
-  // Last, don't forget we put the evap flux into immedEvap
-  fluxes.immedEvap += fluxes.eventEvap;
-  // END COMPATIBILITY CODE
+  // envi.litter, envi.soil, envi.fineRootC and envi.CoarseRootC are all in
+  // soilDegradation, but should be moved here when that function is split
+  // into fluxes and pool updates
+  // if (ctx.litterPool) {
+  //   envi.litter += fluxes.eventLitterC * climate->length;
+  // } else {
+  //   envi.soil += fluxes.eventLitterC * climate->length;
+  // }
+  // envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
+  // envi.fineRootC += fluxes.eventFineRootC * climate->length;
 }
 
 // !!! main runner function !!!
@@ -1706,12 +1708,24 @@ void updateState(void) {
   int err;
   oldSoilWater = envi.soilWater;
 
+  ///////////////////////
   // 1. Calculate Fluxes
 
+  // The main source of flux calculations handling, most of the biogeochem modeled
+  // fluxes are here. ("most" due to soilDegradation below)
   calculateFluxes();
-  soilDegradation();  // This updates all the soil functions
 
+  // All event handling, which is modeled as fluxes
+  processEvents();
+
+  // This updates all the soil functions; it also updates some pools, which
+  // muddies the sipnet flow.
+  soilDegradation();
+
+  ///////////////////////
   // 2. Update Pools
+
+  // TODO: move this into an `updatePools()` function
 
   // Update the stocks, with fluxes adjusted for length of time step.
   // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
@@ -1753,14 +1767,17 @@ void updateState(void) {
   envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) *
                climate->length;
 
+  // Update pools for fluxes from events
+  updatePoolsForEvents();
+
+  // Verify none of our stocks have gone negative (and set to zero if so)
   ensureNonNegativeStocks();
 
-  // 3. Process events for this location/year/day, AFTER updates are made to
-  // fluxes and state variables above. Events are (currently, Jan 25, 2025)
-  // handled as instantaneous deltas to relevant state (envi and fluxes fields),
-  processEvents();
+  ///////////////////////
+  // 3. Update trackers
 
-  // 4. Update trackers
+  // TODO: move this into its own function, perhaps updateMeanTrackers()
+
   npp = fluxes.photosynthesis - fluxes.rVeg - fluxes.rCoarseRoot -
         fluxes.rFineRoot;
 
