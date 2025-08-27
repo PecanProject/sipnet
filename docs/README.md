@@ -35,6 +35,8 @@ See the quickstart above.
 
 [Link to cli docs, when they get written]
 
+[Link to description of all the input files]
+
 ### Running Tests
 #### Smoke Tests
 From the root sipnet directory, run:
