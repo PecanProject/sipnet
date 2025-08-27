@@ -899,6 +899,10 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
 /*!
  *  Calculate fastFlow, evaporation, and drainage from soil
  *
+ *  Note: irrigation moisture additions are calculated after this function is
+ *  called, so any such additions will affect the NEXT climate step
+ *  calculations.
+ *
  * @param[out] fastFlow water that immediately goes to drainage (cm/day)
  * @param[out] evaporation water that evaporates fro msoil layer (cm/day)
  * @param[out] drainage water that drains from the soil (cm/day)
@@ -1682,17 +1686,24 @@ void processEvents(void) {
 }
 
 void updatePoolsForEvents(void) {
+  // Harvest and planting events effect these carbon pools
   envi.plantWoodC += fluxes.eventWoodC * climate->length;
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
+
+  // Irrigation events
   envi.soilWater += fluxes.eventSoilWater * climate->length;
+
   // envi.litter, envi.soil, envi.fineRootC and envi.CoarseRootC are all in
   // soilDegradation, but should be moved here when that function is split
   // into fluxes and pool updates
+  //
+  // Harvest and fertilization
   // if (ctx.litterPool) {
   //   envi.litter += fluxes.eventLitterC * climate->length;
   // } else {
   //   envi.soil += fluxes.eventLitterC * climate->length;
   // }
+  // Harvest and planting
   // envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
   // envi.fineRootC += fluxes.eventFineRootC * climate->length;
 }
