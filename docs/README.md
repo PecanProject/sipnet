@@ -60,16 +60,11 @@ Failed:  0
 =======================
 ```
 #### Unit Tests
-Build the unit tests:
+Build and run the unit tests with the script:
 ```bash
-make test
+./tools/run_unit_tests.sh
 ```
-Run the unit tests:
-```bash
-make testrun
-```
-[TODO: create a wrapper around `make testrun` that will parse the output
-and report results in an easier format]
+The summary block at the end should show PASSED for each test.
 
 ## Documentation
 
