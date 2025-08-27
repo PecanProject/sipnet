@@ -40,7 +40,7 @@
 \DoxyCodeLine{00036\ \textcolor{comment}{//\ as\ a\ warning\ message)}}
 \DoxyCodeLine{00037\ \textcolor{comment}{//\ Also\ prints\ out\ a\ list\ of\ obsolete\ params\ that\ were\ read}}
 \DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ checkAllRead(ModelParams\ *ModelParams)\ \{}
-\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{int}\ i,\ okay,\ readObsParam\ =\ 0,\ missingOptParam\ =\ 0;}
+\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{int}\ i,\ okay,\ missingOptParam\ =\ 0;}
 \DoxyCodeLine{00040\ \ \ OneModelParam\ *param;}
 \DoxyCodeLine{00041\ }
 \DoxyCodeLine{00042\ \ \ okay\ =\ 1;\ \ \textcolor{comment}{//\ so\ far\ so\ good}}
@@ -53,173 +53,173 @@
 \DoxyCodeLine{00049\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
 \DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ missingOptParam\ =\ 1;}
 \DoxyCodeLine{00051\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00052\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00053\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (param-\/>isRequired\ ==\ OBSOLETE\_PARAM)\ \{}
-\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ readObsParam\ =\ 1;}
-\DoxyCodeLine{00055\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00056\ \ \ \ \ \}}
-\DoxyCodeLine{00057\ \ \ \}}
-\DoxyCodeLine{00058\ }
-\DoxyCodeLine{00059\ \ \ \textcolor{comment}{//\ Inform\ if\ any\ optional\ params\ are\ not\ in\ the\ file;\ not\ an\ error,\ just\ a}}
-\DoxyCodeLine{00060\ \ \ \textcolor{comment}{//\ note,\ and\ just\ one\ line\ instead\ of\ one\ for\ each}}
-\DoxyCodeLine{00061\ \ \ \textcolor{keywordflow}{if}\ (missingOptParam)\ \{}
-\DoxyCodeLine{00062\ \ \ \ \ logInfo(\textcolor{stringliteral}{"{}optional\ params\ not\ specified\ in\ input\ file:"{}});}
-\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ctx.quiet)\ \{}
-\DoxyCodeLine{00064\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ ModelParams-\/>numParams;\ i++)\ \{}
-\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ param\ =\ \&(ModelParams-\/>params[i]);}
-\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((!param-\/>isRead)\ \&\&\ (param-\/>isRequired\ ==\ 0))\ \{}
-\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \%s"{}},\ param-\/>name);}
-\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00069\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00070\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00071\ \ \ \ \ \}}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \ \ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \textcolor{comment}{//\ Inform\ if\ any\ optional\ params\ are\ not\ in\ the\ file;\ not\ an\ error,\ just\ a}}
+\DoxyCodeLine{00056\ \ \ \textcolor{comment}{//\ note,\ and\ just\ one\ line\ instead\ of\ one\ for\ each}}
+\DoxyCodeLine{00057\ \ \ \textcolor{keywordflow}{if}\ (missingOptParam)\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ logInfo(\textcolor{stringliteral}{"{}optional\ params\ not\ specified\ in\ input\ file:"{}});}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ctx.quiet)\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ ModelParams-\/>numParams;\ i++)\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ param\ =\ \&(ModelParams-\/>params[i]);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((!param-\/>isRead)\ \&\&\ (param-\/>isRequired\ ==\ 0))\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}\ \%s"{}},\ param-\/>name);}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \textcolor{keywordflow}{if}\ (!okay)\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ exit(1);}
 \DoxyCodeLine{00072\ \ \ \}}
-\DoxyCodeLine{00073\ }
-\DoxyCodeLine{00074\ \ \ \textcolor{comment}{//\ Warn\ about\ read\ obsolete\ params,\ but\ again\ just\ one\ line}}
-\DoxyCodeLine{00075\ \ \ \textcolor{keywordflow}{if}\ (readObsParam)\ \{}
-\DoxyCodeLine{00076\ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}ignoring\ obsolete\ parameter(s):"{}});}
-\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ctx.quiet)\ \{}
-\DoxyCodeLine{00078\ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ ModelParams-\/>numParams;\ i++)\ \{}
-\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ param\ =\ \&(ModelParams-\/>params[i]);}
-\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((param-\/>isRead)\ \&\&\ (param-\/>isRequired\ ==\ OBSOLETE\_PARAM))\ \{}
-\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \%s"{}},\ param-\/>name);}
-\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00083\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00084\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00085\ \ \ \ \ \}}
-\DoxyCodeLine{00086\ \ \ \}}
+\DoxyCodeLine{00073\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{comment}{/*************************************************/}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{//\ Public\ functions:\ defined\ in\ ModelParams.h}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{comment}{//\ allocate\ space\ for\ a\ new\ ModelParams\ structure,\ return\ a\ pointer\ to\ it}}
+\DoxyCodeLine{00080\ ModelParams\ *newModelParams(\textcolor{keywordtype}{int}\ maxParams)\ \{}
+\DoxyCodeLine{00081\ \ \ ModelParams\ *modelParams;}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ modelParams\ =\ (ModelParams\ *)malloc(\textcolor{keyword}{sizeof}(ModelParams));}
+\DoxyCodeLine{00084\ \ \ modelParams-\/>maxParams\ =\ maxParams;}
+\DoxyCodeLine{00085\ \ \ modelParams-\/>numParams\ =\ 0;\ \ \textcolor{comment}{//\ for\ now,\ anyway}}
+\DoxyCodeLine{00086\ \ \ modelParams-\/>numParamsRead\ =\ 0;\ \ \textcolor{comment}{//\ for\ now,\ anyway}}
 \DoxyCodeLine{00087\ }
-\DoxyCodeLine{00088\ \ \ \textcolor{keywordflow}{if}\ (!okay)\ \{}
-\DoxyCodeLine{00089\ \ \ \ \ exit(1);}
-\DoxyCodeLine{00090\ \ \ \}}
-\DoxyCodeLine{00091\ \}}
-\DoxyCodeLine{00092\ }
-\DoxyCodeLine{00093\ \textcolor{comment}{/*************************************************/}}
-\DoxyCodeLine{00094\ }
-\DoxyCodeLine{00095\ \textcolor{comment}{//\ Public\ functions:\ defined\ in\ ModelParams.h}}
-\DoxyCodeLine{00096\ }
-\DoxyCodeLine{00097\ \textcolor{comment}{//\ allocate\ space\ for\ a\ new\ ModelParams\ structure,\ return\ a\ pointer\ to\ it}}
-\DoxyCodeLine{00098\ ModelParams\ *newModelParams(\textcolor{keywordtype}{int}\ maxParams)\ \{}
-\DoxyCodeLine{00099\ \ \ ModelParams\ *modelParams;}
-\DoxyCodeLine{00100\ }
-\DoxyCodeLine{00101\ \ \ modelParams\ =\ (ModelParams\ *)malloc(\textcolor{keyword}{sizeof}(ModelParams));}
-\DoxyCodeLine{00102\ \ \ modelParams-\/>maxParams\ =\ maxParams;}
-\DoxyCodeLine{00103\ \ \ modelParams-\/>numParams\ =\ 0;\ \ \textcolor{comment}{//\ for\ now,\ anyway}}
-\DoxyCodeLine{00104\ \ \ modelParams-\/>numParamsRead\ =\ 0;\ \ \textcolor{comment}{//\ for\ now,\ anyway}}
-\DoxyCodeLine{00105\ }
-\DoxyCodeLine{00106\ \ \ \textcolor{comment}{//\ allocate\ space\ for\ vectors\ within\ this\ structure:}}
-\DoxyCodeLine{00107\ \ \ modelParams-\/>params\ =}
-\DoxyCodeLine{00108\ \ \ \ \ \ \ (OneModelParam\ *)malloc(maxParams\ *\ \textcolor{keyword}{sizeof}(OneModelParam));}
-\DoxyCodeLine{00109\ \ \ \textcolor{comment}{//\ Allocate\ enough\ space\ for\ reading\ all\ params}}
-\DoxyCodeLine{00110\ \ \ modelParams-\/>readIndices\ =\ (\textcolor{keywordtype}{int}\ *)malloc(maxParams\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
-\DoxyCodeLine{00111\ }
-\DoxyCodeLine{00112\ \ \ \textcolor{keywordflow}{return}\ modelParams;}
-\DoxyCodeLine{00113\ \}}
-\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ initializeOneModelParam(ModelParams\ *modelParams,\ \textcolor{keywordtype}{char}\ *name,}
-\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ *externalLoc,\ \textcolor{keywordtype}{int}\ isRequired)\ \{}
-\DoxyCodeLine{00123\ \ \ \textcolor{keywordtype}{int}\ paramIndex;\ \ \textcolor{comment}{//\ index\ of\ next\ uninitialized\ parameter}}
-\DoxyCodeLine{00124\ \ \ OneModelParam\ *param;\ \ \textcolor{comment}{//\ a\ pointer\ to\ the\ next\ uninitialized\ parameter}}
-\DoxyCodeLine{00125\ }
-\DoxyCodeLine{00126\ \ \ \textcolor{keywordflow}{if}\ (allParamsInitialized(modelParams))\ \{\ \ \textcolor{comment}{//\ all\ parameters\ have\ been}}
-\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ initialized!}}
-\DoxyCodeLine{00128\ \ \ \ \ logError(\textcolor{stringliteral}{"{}trying\ to\ initialize\ \%s:\ have\ already\ initialized\ all\ \%d\ "{}}}
-\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}parameters\(\backslash\)n"{}},}
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ name,\ modelParams-\/>maxParams);}
-\DoxyCodeLine{00131\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Check\ value\ of\ maxParams\ passed\ into\ newModelParams\ function\(\backslash\)n"{}});}
-\DoxyCodeLine{00132\ \ \ \ \ exit(1);}
-\DoxyCodeLine{00133\ \ \ \}}
-\DoxyCodeLine{00134\ }
-\DoxyCodeLine{00135\ \ \ \textcolor{comment}{//\ otherwise,\ get\ the\ index\ of\ the\ next\ uninitialized\ parameter}}
-\DoxyCodeLine{00136\ \ \ paramIndex\ =\ modelParams-\/>numParams;}
-\DoxyCodeLine{00137\ \ \ \textcolor{comment}{//\ and\ set\ param\ to\ point\ to\ it\ for\ easier\ access}}
-\DoxyCodeLine{00138\ \ \ param\ =\ \&(modelParams-\/>params[paramIndex]);}
-\DoxyCodeLine{00139\ }
-\DoxyCodeLine{00140\ \ \ strcpy(param-\/>name,\ name);}
-\DoxyCodeLine{00141\ \ \ param-\/>value\ =\ externalLoc;}
-\DoxyCodeLine{00142\ \ \ param-\/>isRequired\ =\ isRequired;}
-\DoxyCodeLine{00143\ \ \ param-\/>isRead\ =\ 0;}
+\DoxyCodeLine{00088\ \ \ \textcolor{comment}{//\ allocate\ space\ for\ vectors\ within\ this\ structure:}}
+\DoxyCodeLine{00089\ \ \ modelParams-\/>params\ =}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ (OneModelParam\ *)malloc(maxParams\ *\ \textcolor{keyword}{sizeof}(OneModelParam));}
+\DoxyCodeLine{00091\ \ \ \textcolor{comment}{//\ Allocate\ enough\ space\ for\ reading\ all\ params}}
+\DoxyCodeLine{00092\ \ \ modelParams-\/>readIndices\ =\ (\textcolor{keywordtype}{int}\ *)malloc(maxParams\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \textcolor{keywordflow}{return}\ modelParams;}
+\DoxyCodeLine{00095\ \}}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{void}\ initializeOneModelParam(ModelParams\ *modelParams,\ \textcolor{keywordtype}{char}\ *name,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ *externalLoc,\ \textcolor{keywordtype}{int}\ isRequired)\ \{}
+\DoxyCodeLine{00105\ \ \ \textcolor{keywordtype}{int}\ paramIndex;\ \ \textcolor{comment}{//\ index\ of\ next\ uninitialized\ parameter}}
+\DoxyCodeLine{00106\ \ \ OneModelParam\ *param;\ \ \textcolor{comment}{//\ a\ pointer\ to\ the\ next\ uninitialized\ parameter}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \textcolor{keywordflow}{if}\ (allParamsInitialized(modelParams))\ \{\ \ \textcolor{comment}{//\ all\ parameters\ have\ been}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ initialized!}}
+\DoxyCodeLine{00110\ \ \ \ \ logError(\textcolor{stringliteral}{"{}trying\ to\ initialize\ \%s:\ have\ already\ initialized\ all\ \%d\ "{}}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}parameters\(\backslash\)n"{}},}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ name,\ modelParams-\/>maxParams);}
+\DoxyCodeLine{00113\ \ \ \ \ logError(\textcolor{stringliteral}{"{}Check\ value\ of\ maxParams\ passed\ into\ newModelParams\ function\(\backslash\)n"{}});}
+\DoxyCodeLine{00114\ \ \ \ \ exit(1);}
+\DoxyCodeLine{00115\ \ \ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \textcolor{comment}{//\ otherwise,\ get\ the\ index\ of\ the\ next\ uninitialized\ parameter}}
+\DoxyCodeLine{00118\ \ \ paramIndex\ =\ modelParams-\/>numParams;}
+\DoxyCodeLine{00119\ \ \ \textcolor{comment}{//\ and\ set\ param\ to\ point\ to\ it\ for\ easier\ access}}
+\DoxyCodeLine{00120\ \ \ param\ =\ \&(modelParams-\/>params[paramIndex]);}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ strcpy(param-\/>name,\ name);}
+\DoxyCodeLine{00123\ \ \ param-\/>value\ =\ externalLoc;}
+\DoxyCodeLine{00124\ \ \ param-\/>isRequired\ =\ isRequired;}
+\DoxyCodeLine{00125\ \ \ param-\/>isRead\ =\ 0;}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ modelParams-\/>numParams++;}
+\DoxyCodeLine{00128\ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ checkParamFormat(\textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sep)\ \{}
+\DoxyCodeLine{00131\ \ \ \textcolor{keywordtype}{int}\ numParams\ =\ countFields(line,\ sep);}
+\DoxyCodeLine{00132\ \ \ \textcolor{keywordflow}{if}\ (numParams\ >\ 2)\ \{}
+\DoxyCodeLine{00133\ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}extra\ columns\ in\ .param\ file\ are\ being\ ignored\ (found\ \%d\ "{}}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}columns)\(\backslash\)n"{}},}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numParams);}
+\DoxyCodeLine{00136\ \ \ \}}
+\DoxyCodeLine{00137\ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{void}\ readModelParams(ModelParams\ *modelParams,\ FILE\ *paramFile)\ \{}
+\DoxyCodeLine{00140\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *SEPARATORS\ =\ \textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)n\(\backslash\)r"{}};\ \ \textcolor{comment}{//\ characters\ that\ can\ separate\ values}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ in\ parameter\ files}}
+\DoxyCodeLine{00142\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *COMMENT\_CHARS\ =\ \textcolor{stringliteral}{"{}!"{}};\ \ \textcolor{comment}{//\ comment\ characters\ (ignore\ everything}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ after\ this\ on\ a\ line)}}
 \DoxyCodeLine{00144\ }
-\DoxyCodeLine{00145\ \ \ modelParams-\/>numParams++;}
-\DoxyCodeLine{00146\ \}}
-\DoxyCodeLine{00147\ }
-\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}\ checkParamFormat(\textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sep)\ \{}
-\DoxyCodeLine{00149\ \ \ \textcolor{keywordtype}{int}\ numParams\ =\ countFields(line,\ sep);}
-\DoxyCodeLine{00150\ \ \ \textcolor{keywordflow}{if}\ (numParams\ >\ 2)\ \{}
-\DoxyCodeLine{00151\ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}extra\ columns\ in\ .param\ file\ are\ being\ ignored\ (found\ \%d\ "{}}}
-\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}columns)\(\backslash\)n"{}},}
-\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numParams);}
-\DoxyCodeLine{00154\ \ \ \}}
-\DoxyCodeLine{00155\ \}}
-\DoxyCodeLine{00156\ }
-\DoxyCodeLine{00157\ \textcolor{keywordtype}{void}\ readModelParams(ModelParams\ *modelParams,\ FILE\ *paramFile)\ \{}
-\DoxyCodeLine{00158\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *SEPARATORS\ =\ \textcolor{stringliteral}{"{}\ \(\backslash\)t\(\backslash\)n\(\backslash\)r"{}};\ \ \textcolor{comment}{//\ characters\ that\ can\ separate\ values}}
-\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ in\ parameter\ files}}
-\DoxyCodeLine{00160\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *COMMENT\_CHARS\ =\ \textcolor{stringliteral}{"{}!"{}};\ \ \textcolor{comment}{//\ comment\ characters\ (ignore\ everything}}
-\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ after\ this\ on\ a\ line)}}
-\DoxyCodeLine{00162\ }
-\DoxyCodeLine{00163\ \ \ \textcolor{keywordtype}{char}\ line[256];}
-\DoxyCodeLine{00164\ \ \ \textcolor{keywordtype}{char}\ pName[MODEL\_PARAM\_MAXNAME];\ \ \textcolor{comment}{//\ parameter\ name}}
-\DoxyCodeLine{00165\ \ \ \textcolor{keywordtype}{int}\ paramIndex;}
-\DoxyCodeLine{00166\ \ \ OneModelParam\ *param;\ \ \textcolor{comment}{//\ a\ pointer\ to\ a\ single\ parameter,\ for\ easier\ access}}
-\DoxyCodeLine{00167\ \ \ \textcolor{keywordtype}{char}\ strValue[32];\ \ \textcolor{comment}{//\ before\ we\ know\ whether\ value\ is\ a\ number\ or\ "{}*"{}}}
-\DoxyCodeLine{00168\ \ \ \textcolor{keywordtype}{double}\ value;}
-\DoxyCodeLine{00169\ \ \ \textcolor{keywordtype}{char}\ *errc;}
-\DoxyCodeLine{00170\ \ \ \textcolor{keywordtype}{int}\ isComment;}
-\DoxyCodeLine{00171\ }
-\DoxyCodeLine{00172\ \ \ \textcolor{comment}{//\ Check\ for\ old-\/style\ (spatial\ param)\ format\ on\ first\ line\ containing\ params}}
-\DoxyCodeLine{00173\ \ \ \textcolor{keywordtype}{int}\ formatChecked\ =\ 0;}
-\DoxyCodeLine{00174\ }
-\DoxyCodeLine{00175\ \ \ \textcolor{keywordflow}{while}\ (fgets(line,\ \textcolor{keyword}{sizeof}(line),\ paramFile)\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or}}
-\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ error}}
-\DoxyCodeLine{00177\ \ \ \ \ \textcolor{comment}{//\ remove\ trailing\ comments:}}
-\DoxyCodeLine{00178\ \ \ \ \ isComment\ =\ stripComment(line,\ COMMENT\_CHARS);}
-\DoxyCodeLine{00179\ }
-\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isComment)\ \{\ \ \textcolor{comment}{//\ if\ this\ isn't\ just\ a\ comment\ line\ or\ blank\ line}}
-\DoxyCodeLine{00181\ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ for\ old\ spatial-\/param\ format\ and\ warn\ if\ appropriate}}
-\DoxyCodeLine{00182\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!formatChecked)\ \{}
-\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ checkParamFormat(line,\ SEPARATORS);}
-\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ formatChecked\ =\ 1;}
-\DoxyCodeLine{00185\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00186\ }
-\DoxyCodeLine{00187\ \ \ \ \ \ \ \textcolor{comment}{//\ tokenize\ line:}}
-\DoxyCodeLine{00188\ \ \ \ \ \ \ strcpy(pName,\ strtok(line,\ SEPARATORS));\ \ \textcolor{comment}{//\ copy\ first\ token\ into\ pName}}
-\DoxyCodeLine{00189\ }
-\DoxyCodeLine{00190\ \ \ \ \ \ \ strcpy(strValue,\ strtok(NULL,\ SEPARATORS));}
-\DoxyCodeLine{00191\ }
-\DoxyCodeLine{00192\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmp(strValue,\ \textcolor{stringliteral}{"{}*"{}})\ ==\ 0)\ \{}
-\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ used\ to\ mean\ "{}spatially\ varying"{}\ when\ sipnet\ supported\ multiple}}
-\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sites,\ but\ now\ this\ is\ an\ error}}
-\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}reading\ parameter\ \%s;\ '*'\ is\ no\ longer\ supported\(\backslash\)n"{}},\ pName);}
-\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00197\ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00198\ \ \ \ \ \ \ value\ =\ strtod(strValue,\ \&errc);}
-\DoxyCodeLine{00199\ \ \ \ \ \ \ paramIndex\ =\ locateParam(modelParams,\ pName);}
-\DoxyCodeLine{00200\ }
-\DoxyCodeLine{00201\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (paramIndex\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ not\ found}}
-\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}ignoring\ parameter\ \%s:\ this\ parameter\ wasn't\ initialized\ "{}}}
-\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}in\ the\ code\(\backslash\)n"{}},}
-\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pName);}
-\DoxyCodeLine{00205\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (valueSet(modelParams,\ paramIndex))\ \{}
-\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}reading\ parameter\ file:\ read\ \%s,\ but\ this\ parameter\ has\ "{}}}
-\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}already\ been\ set\(\backslash\)n"{}},}
-\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pName);}
-\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
-\DoxyCodeLine{00210\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ otherwise,\ we're\ good\ to\ go}}
-\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\ param\ to\ point\ to\ the\ appropriate\ parameter,\ for\ easier\ access}}
-\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ param\ =\ \&(modelParams-\/>params[paramIndex]);}
-\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ *(param-\/>value)\ =\ value;}
-\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ param-\/>isRead\ =\ 1;}
-\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mark\ this\ as\ the\ next\ parameter\ read\ from\ file:}}
-\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ modelParams-\/>readIndices[modelParams-\/>numParamsRead]\ =\ paramIndex;}
-\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ modelParams-\/>numParamsRead++;}
-\DoxyCodeLine{00218\ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ (no\ errors\ in\ reading\ this\ line\ from\ parameter\ file)}}
-\DoxyCodeLine{00219\ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ !isComment}}
-\DoxyCodeLine{00220\ \ \ \}\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00145\ \ \ \textcolor{keywordtype}{char}\ line[256];}
+\DoxyCodeLine{00146\ \ \ \textcolor{keywordtype}{char}\ pName[MODEL\_PARAM\_MAXNAME];\ \ \textcolor{comment}{//\ parameter\ name}}
+\DoxyCodeLine{00147\ \ \ \textcolor{keywordtype}{int}\ paramIndex;}
+\DoxyCodeLine{00148\ \ \ OneModelParam\ *param;\ \ \textcolor{comment}{//\ a\ pointer\ to\ a\ single\ parameter,\ for\ easier\ access}}
+\DoxyCodeLine{00149\ \ \ \textcolor{keywordtype}{char}\ strValue[32];\ \ \textcolor{comment}{//\ before\ we\ know\ whether\ value\ is\ a\ number\ or\ "{}*"{}}}
+\DoxyCodeLine{00150\ \ \ \textcolor{keywordtype}{double}\ value;}
+\DoxyCodeLine{00151\ \ \ \textcolor{keywordtype}{char}\ *errc;}
+\DoxyCodeLine{00152\ \ \ \textcolor{keywordtype}{int}\ isComment;}
+\DoxyCodeLine{00153\ \ \ \textcolor{keywordtype}{char}\ unknownParams[2048]\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00154\ \ \ \textcolor{keywordtype}{char}\ hasUnknownParams\ =\ 0;}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \textcolor{comment}{//\ Check\ for\ old-\/style\ (spatial\ param)\ format\ on\ first\ line\ containing\ params}}
+\DoxyCodeLine{00157\ \ \ \textcolor{keywordtype}{int}\ formatChecked\ =\ 0;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \textcolor{keywordflow}{while}\ (fgets(line,\ \textcolor{keyword}{sizeof}(line),\ paramFile)\ !=\ NULL)\ \{\ \ \textcolor{comment}{//\ while\ not\ EOF\ or}}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ error}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//\ remove\ trailing\ comments:}}
+\DoxyCodeLine{00162\ \ \ \ \ isComment\ =\ stripComment(line,\ COMMENT\_CHARS);}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isComment)\ \{\ \ \textcolor{comment}{//\ if\ this\ isn't\ just\ a\ comment\ line\ or\ blank\ line}}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ for\ old\ spatial-\/param\ format\ and\ warn\ if\ appropriate}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!formatChecked)\ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ checkParamFormat(line,\ SEPARATORS);}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ formatChecked\ =\ 1;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \textcolor{comment}{//\ tokenize\ line:}}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ strcpy(pName,\ strtok(line,\ SEPARATORS));\ \ \textcolor{comment}{//\ copy\ first\ token\ into\ pName}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \ \ strcpy(strValue,\ strtok(NULL,\ SEPARATORS));}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmp(strValue,\ \textcolor{stringliteral}{"{}*"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ used\ to\ mean\ "{}spatially\ varying"{}\ when\ sipnet\ supported\ multiple}}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ sites,\ but\ now\ this\ is\ an\ error}}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}reading\ parameter\ \%s;\ '*'\ is\ no\ longer\ supported\(\backslash\)n"{}},\ pName);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ value\ =\ strtod(strValue,\ \&errc);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ paramIndex\ =\ locateParam(modelParams,\ pName);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (paramIndex\ ==\ -\/1)\ \{\ \ \textcolor{comment}{//\ not\ found}}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hasUnknownParams)\ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(unknownParams)\ +\ strlen(pName)\ >\ 2048)\ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Too\ many\ unknown\ params;\ please\ remove\ some\ from\ \%s\ and\ "{}}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}rerun\(\backslash\)n"{}},}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ paramFile);}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Unknown\ params\ include:\ \%s\(\backslash\)n"{}},\ unknownParams);}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ strcat(unknownParams,\ \textcolor{stringliteral}{"{},\ "{}});}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ strcat(unknownParams,\ pName);}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ strcat(unknownParams,\ pName);}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ hasUnknownParams\ =\ 1;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (valueSet(modelParams,\ paramIndex))\ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}reading\ parameter\ file:\ read\ \%s,\ but\ this\ parameter\ has\ "{}}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}already\ been\ set\(\backslash\)n"{}},}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pName);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \textcolor{comment}{//\ otherwise,\ we're\ good\ to\ go}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ set\ param\ to\ point\ to\ the\ appropriate\ parameter,\ for\ easier\ access}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ param\ =\ \&(modelParams-\/>params[paramIndex]);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ *(param-\/>value)\ =\ value;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ param-\/>isRead\ =\ 1;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ mark\ this\ as\ the\ next\ parameter\ read\ from\ file:}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ modelParams-\/>readIndices[modelParams-\/>numParamsRead]\ =\ paramIndex;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ modelParams-\/>numParamsRead++;}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \}\ \ \textcolor{comment}{//\ else\ (no\ errors\ in\ reading\ this\ line\ from\ parameter\ file)}}
+\DoxyCodeLine{00214\ \ \ \ \ \}\ \ \textcolor{comment}{//\ if\ !isComment}}
+\DoxyCodeLine{00215\ \ \ \}\ \ \textcolor{comment}{//\ while\ not\ EOF\ or\ error}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \textcolor{comment}{//\ Warn\ if\ unknown\ params\ were\ found}}
+\DoxyCodeLine{00218\ \ \ \textcolor{keywordflow}{if}\ (hasUnknownParams)\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ logWarning(\textcolor{stringliteral}{"{}Unknown\ param(s)\ found\ (and\ ignored):\ \%s\(\backslash\)n"{}},\ unknownParams);}
+\DoxyCodeLine{00220\ \ \ \}}
 \DoxyCodeLine{00221\ }
 \DoxyCodeLine{00222\ \ \ \textcolor{comment}{//\ check\ for\ error\ in\ reading:}}
 \DoxyCodeLine{00223\ \ \ \textcolor{keywordflow}{if}\ (ferror(paramFile))\ \{}
 \DoxyCodeLine{00224\ \ \ \ \ logError(\textcolor{stringliteral}{"{}reading\ file\ in\ readModelParams\(\backslash\)n"{}});}
-\DoxyCodeLine{00225\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ferror\ =\ \%d\(\backslash\)n"{}},\ ferror(paramFile));}
+\DoxyCodeLine{00225\ \ \ \ \ logError(\textcolor{stringliteral}{"{}ferror\ =\ \%d\(\backslash\)n"{}},\ ferror(paramFile));}
 \DoxyCodeLine{00226\ \ \ \ \ exit(1);}
 \DoxyCodeLine{00227\ \ \ \}}
 \DoxyCodeLine{00228\ }

@@ -152,32 +152,6 @@ double \textbf{ growth\+Resp\+Frac}
 double \textbf{ soil\+Resp\+Moist\+Effect}
 \item 
 double \textbf{ leaf\+Pool\+Depth}
-\item 
-double \textbf{ base\+Soil\+Resp\+Cold}
-\item 
-double \textbf{ soil\+Resp\+Q10\+Cold}
-\item 
-double \textbf{ cold\+Soil\+Threshold}
-\item 
-double \textbf{ lit\+Water\+Drain\+Rate}
-\item 
-double \textbf{ E0}
-\item 
-double \textbf{ T0}
-\item 
-double \textbf{ m\+\_\+ball\+Berry}
-\item 
-double \textbf{ tot\+Nitrogen}
-\item 
-double \textbf{ microbe\+NC}
-\item 
-double \textbf{ quality\+Leaf}
-\item 
-double \textbf{ quality\+Wood}
-\item 
-double \textbf{ litter\+WFrac\+Init}
-\item 
-double \textbf{ litter\+WHC}
 \end{DoxyCompactItemize}
 
 
@@ -301,20 +275,6 @@ Definition at line \textbf{ 151} of file \textbf{ state.\+h}.
 
 Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
-\label{struct_parameters_a6dd6b046d448457446a50d04a8569980} 
-\index{Parameters@{Parameters}!baseSoilRespCold@{baseSoilRespCold}}
-\index{baseSoilRespCold@{baseSoilRespCold}!Parameters@{Parameters}}
-\doxysubsubsection{baseSoilRespCold}
-{\footnotesize\ttfamily double Parameters\+::base\+Soil\+Resp\+Cold}
-
-
-
-Definition at line \textbf{ 353} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
-
 \label{struct_parameters_a4ab46d20f114d44106b0d7aafd5e45ac} 
 \index{Parameters@{Parameters}!baseVegResp@{baseVegResp}}
 \index{baseVegResp@{baseVegResp}!Parameters@{Parameters}}
@@ -413,20 +373,6 @@ Definition at line \textbf{ 279} of file \textbf{ state.\+h}.
 
 Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
-\label{struct_parameters_a1baff8a38b5aa5c46b7a98d5514a28c0} 
-\index{Parameters@{Parameters}!coldSoilThreshold@{coldSoilThreshold}}
-\index{coldSoilThreshold@{coldSoilThreshold}!Parameters@{Parameters}}
-\doxysubsubsection{coldSoilThreshold}
-{\footnotesize\ttfamily double Parameters\+::cold\+Soil\+Threshold}
-
-
-
-Definition at line \textbf{ 362} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
 \label{struct_parameters_a6fbe46f18a7bb7f423bb787b37fb8e0e} 
 \index{Parameters@{Parameters}!dVpdExp@{dVpdExp}}
 \index{dVpdExp@{dVpdExp}!Parameters@{Parameters}}
@@ -454,20 +400,6 @@ Definition at line \textbf{ 105} of file \textbf{ state.\+h}.
 
 
 Referenced by \textbf{ pot\+Psn()}, and \textbf{ read\+Param\+Data()}.
-
-\label{struct_parameters_acab8ba36a094deca79341a031eaeb510} 
-\index{Parameters@{Parameters}!E0@{E0}}
-\index{E0@{E0}!Parameters@{Parameters}}
-\doxysubsubsection{E0}
-{\footnotesize\ttfamily double Parameters\+::\+E0}
-
-
-
-Definition at line \textbf{ 370} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
 
 \label{struct_parameters_a83445565970015ce26774a7bc06ca70d} 
 \index{Parameters@{Parameters}!efficiency@{efficiency}}
@@ -847,62 +779,6 @@ Definition at line \textbf{ 188} of file \textbf{ state.\+h}.
 
 Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
-\label{struct_parameters_a102e14e94699cd3d5d8779152fd1b38e} 
-\index{Parameters@{Parameters}!litterWFracInit@{litterWFracInit}}
-\index{litterWFracInit@{litterWFracInit}!Parameters@{Parameters}}
-\doxysubsubsection{litterWFracInit}
-{\footnotesize\ttfamily double Parameters\+::litter\+WFrac\+Init}
-
-
-
-Definition at line \textbf{ 381} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
-\label{struct_parameters_a9eca602db8d822f71fc253aed7a473a8} 
-\index{Parameters@{Parameters}!litterWHC@{litterWHC}}
-\index{litterWHC@{litterWHC}!Parameters@{Parameters}}
-\doxysubsubsection{litterWHC}
-{\footnotesize\ttfamily double Parameters\+::litter\+WHC}
-
-
-
-Definition at line \textbf{ 385} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
-\label{struct_parameters_a861b819f4d9f2f4f2e4e579f5d5fc972} 
-\index{Parameters@{Parameters}!litWaterDrainRate@{litWaterDrainRate}}
-\index{litWaterDrainRate@{litWaterDrainRate}!Parameters@{Parameters}}
-\doxysubsubsection{litWaterDrainRate}
-{\footnotesize\ttfamily double Parameters\+::lit\+Water\+Drain\+Rate}
-
-
-
-Definition at line \textbf{ 366} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
-\label{struct_parameters_a40cf5a0ac22f59f85f98434b88960bc9} 
-\index{Parameters@{Parameters}!m\_ballBerry@{m\_ballBerry}}
-\index{m\_ballBerry@{m\_ballBerry}!Parameters@{Parameters}}
-\doxysubsubsection{m\_ballBerry}
-{\footnotesize\ttfamily double Parameters\+::m\+\_\+ball\+Berry}
-
-
-
-Definition at line \textbf{ 372} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
 \label{struct_parameters_a53f4b8c46baf160702bc37cd0200e549} 
 \index{Parameters@{Parameters}!maxIngestionRate@{maxIngestionRate}}
 \index{maxIngestionRate@{maxIngestionRate}!Parameters@{Parameters}}
@@ -930,20 +806,6 @@ Definition at line \textbf{ 295} of file \textbf{ state.\+h}.
 
 
 Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
-
-\label{struct_parameters_a95af90e9da2777e888e8ef69f223081a} 
-\index{Parameters@{Parameters}!microbeNC@{microbeNC}}
-\index{microbeNC@{microbeNC}!Parameters@{Parameters}}
-\doxysubsubsection{microbeNC}
-{\footnotesize\ttfamily double Parameters\+::microbe\+NC}
-
-
-
-Definition at line \textbf{ 374} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
 
 \label{struct_parameters_add6c3b296497d10d0dfba127cd29b8e0} 
 \index{Parameters@{Parameters}!microbePulseEff@{microbePulseEff}}
@@ -1028,34 +890,6 @@ Definition at line \textbf{ 100} of file \textbf{ state.\+h}.
 
 
 Referenced by \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
-
-\label{struct_parameters_a0e810d3fb42383d5771ecd88edb37aef} 
-\index{Parameters@{Parameters}!qualityLeaf@{qualityLeaf}}
-\index{qualityLeaf@{qualityLeaf}!Parameters@{Parameters}}
-\doxysubsubsection{qualityLeaf}
-{\footnotesize\ttfamily double Parameters\+::quality\+Leaf}
-
-
-
-Definition at line \textbf{ 375} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
-\label{struct_parameters_ae06862739bdd0cdbb2cabc47744eecdd} 
-\index{Parameters@{Parameters}!qualityWood@{qualityWood}}
-\index{qualityWood@{qualityWood}!Parameters@{Parameters}}
-\doxysubsubsection{qualityWood}
-{\footnotesize\ttfamily double Parameters\+::quality\+Wood}
-
-
-
-Definition at line \textbf{ 376} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
 
 \label{struct_parameters_afcecee4adf46ef1ec9584e5244f392e3} 
 \index{Parameters@{Parameters}!rdConst@{rdConst}}
@@ -1169,20 +1003,6 @@ Definition at line \textbf{ 153} of file \textbf{ state.\+h}.
 
 Referenced by \textbf{ calc\+Maintenance\+Respiration()}, \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Param\+Data()}.
 
-\label{struct_parameters_aab53995e97da9c753bf23a30d1f91b7d} 
-\index{Parameters@{Parameters}!soilRespQ10Cold@{soilRespQ10Cold}}
-\index{soilRespQ10Cold@{soilRespQ10Cold}!Parameters@{Parameters}}
-\doxysubsubsection{soilRespQ10Cold}
-{\footnotesize\ttfamily double Parameters\+::soil\+Resp\+Q10\+Cold}
-
-
-
-Definition at line \textbf{ 358} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
 \label{struct_parameters_a8afe6aa97d8fb167fff5617fa4c4bf29} 
 \index{Parameters@{Parameters}!soilTempLeafOn@{soilTempLeafOn}}
 \index{soilTempLeafOn@{soilTempLeafOn}!Parameters@{Parameters}}
@@ -1224,34 +1044,6 @@ Definition at line \textbf{ 167} of file \textbf{ state.\+h}.
 
 
 Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ init\+Trackers()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ soil\+Degradation()}, \textbf{ soil\+Water\+Fluxes()}, and \textbf{ update\+Trackers()}.
-
-\label{struct_parameters_a593cc422206887845a80ca943c2672ab} 
-\index{Parameters@{Parameters}!T0@{T0}}
-\index{T0@{T0}!Parameters@{Parameters}}
-\doxysubsubsection{T0}
-{\footnotesize\ttfamily double Parameters\+::\+T0}
-
-
-
-Definition at line \textbf{ 371} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}.
-
-\label{struct_parameters_a8ee4227ebfd9601e639850a4ddc1a37c} 
-\index{Parameters@{Parameters}!totNitrogen@{totNitrogen}}
-\index{totNitrogen@{totNitrogen}!Parameters@{Parameters}}
-\doxysubsubsection{totNitrogen}
-{\footnotesize\ttfamily double Parameters\+::tot\+Nitrogen}
-
-
-
-Definition at line \textbf{ 373} of file \textbf{ state.\+h}.
-
-
-
-Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
 \label{struct_parameters_af822a3b2ee113cccfd6198802a4db11c} 
 \index{Parameters@{Parameters}!vegRespQ10@{vegRespQ10}}

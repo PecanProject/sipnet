@@ -44,7 +44,7 @@ Definition at line \textbf{ 22} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, and \textbf{ Context\+::input\+File}.
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::input\+File}, and \textbf{ log\+Error}.
 
 
 
@@ -58,11 +58,11 @@ Referenced by \textbf{ read\+Input\+File()}.
 
 
 
-Definition at line \textbf{ 127} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 128} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ check\+CLIName\+Map()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ Context\+::events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, \textbf{ update\+Char\+Context()}, and \textbf{ validate\+Context()}.
+References \textbf{ check\+CLIName\+Map()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Model\+Params()}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ Context\+::events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, \textbf{ update\+Char\+Context()}, and \textbf{ validate\+Context()}.
 
 Here is the call graph for this function\+:
 \nopagebreak
@@ -80,11 +80,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 32} of file \textbf{ frontend.\+c}.
+Definition at line \textbf{ 33} of file \textbf{ frontend.\+c}.
 
 
 
-References \textbf{ check\+Runtype()}, \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ Context\+::input\+File}, \textbf{ log\+Warning}, \textbf{ open\+File()}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, and \textbf{ validate\+Filename()}.
+References \textbf{ check\+Runtype()}, \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ Context\+::input\+File}, \textbf{ log\+Error}, \textbf{ log\+Info}, \textbf{ log\+Warning}, \textbf{ open\+File()}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, and \textbf{ validate\+Filename()}.
 
 
 

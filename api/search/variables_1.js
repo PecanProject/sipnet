@@ -5,7 +5,6 @@ var searchData=
   ['basefolrespfrac_2',['baseFolRespFrac',['../d0/dbf/struct_parameters.html#adc886e92fb52e4f23f76390d8dc61ebf',1,'Parameters']]],
   ['basemicroberesp_3',['baseMicrobeResp',['../d0/dbf/struct_parameters.html#ac25217d21dcc9dee244a409909a8b4f7',1,'Parameters']]],
   ['basesoilresp_4',['baseSoilResp',['../d0/dbf/struct_parameters.html#a5b2cb71233c000f7a8cf6d0a90770e2f',1,'Parameters']]],
-  ['basesoilrespcold_5',['baseSoilRespCold',['../d0/dbf/struct_parameters.html#a6dd6b046d448457446a50d04a8569980',1,'Parameters']]],
-  ['basevegresp_6',['baseVegResp',['../d0/dbf/struct_parameters.html#a4ab46d20f114d44106b0d7aafd5e45ac',1,'Parameters']]],
-  ['buckets_7',['buckets',['../db/d32/struct_u_t__hash__table.html#a04556bbef9c9a1c40b1bc0d17a2a6e0b',1,'UT_hash_table']]]
+  ['basevegresp_5',['baseVegResp',['../d0/dbf/struct_parameters.html#a4ab46d20f114d44106b0d7aafd5e45ac',1,'Parameters']]],
+  ['buckets_6',['buckets',['../db/d32/struct_u_t__hash__table.html#a04556bbef9c9a1c40b1bc0d17a2a6e0b',1,'UT_hash_table']]]
 ];
