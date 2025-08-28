@@ -313,8 +313,7 @@ void readClimData(const char *climFile) {
  */
 void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   FILE *paramF;
-  ModelParams *modelParams;  // to prevent lots of
-                             // unnecessary dereferences
+  ModelParams *modelParams;
   paramF = openFile(paramFile, "r");
 
   *modelParamsPtr = newModelParams(NUM_PARAMS);
@@ -326,7 +325,6 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "laiInit", &(params.laiInit), 1);
   initializeOneModelParam(modelParams, "litterInit", &(params.litterInit), 1);
   initializeOneModelParam(modelParams, "soilInit", &(params.soilInit), 1);
-  initializeOneModelParam(modelParams, "litterWFracInit", &(params.litterWFracInit), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "soilWFracInit", &(params.soilWFracInit), 1);
   initializeOneModelParam(modelParams, "snowInit", &(params.snowInit), 1);
   initializeOneModelParam(modelParams, "aMax", &(params.aMax), 1);
@@ -357,39 +355,28 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
   initializeOneModelParam(modelParams, "fracLitterRespired", &(params.fracLitterRespired), ctx.litterPool);
   initializeOneModelParam(modelParams, "baseSoilResp", &(params.baseSoilResp), 1);
-  initializeOneModelParam(modelParams, "baseSoilRespCold", &(params.baseSoilRespCold), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "soilRespQ10", &(params.soilRespQ10), 1);
-  initializeOneModelParam(modelParams, "soilRespQ10Cold", &(params.soilRespQ10Cold), OBSOLETE_PARAM);
-  initializeOneModelParam(modelParams, "coldSoilThreshold", &(params.coldSoilThreshold), OBSOLETE_PARAM);
 
-  initializeOneModelParam(modelParams, "E0", &(params.E0), OBSOLETE_PARAM);
-  initializeOneModelParam(modelParams, "T0", &(params.T0), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "soilRespMoistEffect", &(params.soilRespMoistEffect), ctx.waterHResp);
   initializeOneModelParam(modelParams, "waterRemoveFrac", &(params.waterRemoveFrac), 1);
   initializeOneModelParam(modelParams, "frozenSoilEff", &(params.frozenSoilEff), 1);
   initializeOneModelParam(modelParams, "wueConst", &(params.wueConst), 1);
-  initializeOneModelParam(modelParams, "litterWHC", &(params.litterWHC), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "soilWHC", &(params.soilWHC), 1);
   initializeOneModelParam(modelParams, "immedEvapFrac", &(params.immedEvapFrac), 1);
   initializeOneModelParam(modelParams, "fastFlowFrac", &(params.fastFlowFrac), 1);
   initializeOneModelParam(modelParams, "leafPoolDepth", &(params.leafPoolDepth), ctx.leafWater);
 
   initializeOneModelParam(modelParams, "snowMelt", &(params.snowMelt), ctx.snow);
-  initializeOneModelParam(modelParams, "litWaterDrainRate", &(params.litWaterDrainRate), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "rdConst", &(params.rdConst), 1);
   initializeOneModelParam(modelParams, "rSoilConst1", &(params.rSoilConst1), 1);
   initializeOneModelParam(modelParams, "rSoilConst2", &(params.rSoilConst2), 1);
   initializeOneModelParam(modelParams, "leafCSpWt", &(params.leafCSpWt), 1);
   initializeOneModelParam(modelParams, "cFracLeaf", &(params.cFracLeaf), 1);
   initializeOneModelParam(modelParams, "woodTurnoverRate", &(params.woodTurnoverRate), 1);
-  initializeOneModelParam(modelParams, "qualityLeaf", &(params.qualityLeaf), OBSOLETE_PARAM);
-  initializeOneModelParam(modelParams, "qualityWood", &(params.qualityWood), OBSOLETE_PARAM);
 
   initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), ctx.microbes);
   initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), ctx.microbes);
   initializeOneModelParam(modelParams, "halfSatIngestion", &(params.halfSatIngestion), ctx.microbes);
-  initializeOneModelParam(modelParams, "totNitrogen", &(params.totNitrogen), OBSOLETE_PARAM);
-  initializeOneModelParam(modelParams, "microbeNC", &(params.microbeNC), OBSOLETE_PARAM);
   initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), ctx.microbes);
   initializeOneModelParam(modelParams, "fineRootFrac", &(params.fineRootFrac), 1);
   initializeOneModelParam(modelParams, "coarseRootFrac", &(params.coarseRootFrac), 1);
@@ -409,7 +396,6 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), ctx.microbes);
   initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), ctx.microbes);
   initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes );
-  initializeOneModelParam(modelParams, "m_ballBerry", &(params.m_ballBerry), OBSOLETE_PARAM);
   // NOLINTEND
   // clang-format on
 
@@ -451,6 +437,7 @@ void outputState(FILE *out, int year, int day, double time) {
   // The 0.0 entries below are placeholders for now-obsolete params:
   // * litterWater
   // * fpar
+  // to be removed in issue #145
   fprintf(out, " %8.2f %8.3f %8.2f %8.3f %8.2f ", envi.litter, 0.0,
           envi.soilWater, trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
@@ -1818,7 +1805,6 @@ void setupModel(void) {
   params.baseVegResp /= 365.0;  // change from per-year to per-day rate
   params.litterBreakdownRate /= 365.0;
   params.baseSoilResp /= 365.0;
-  params.baseSoilRespCold /= 365.0;
   params.woodTurnoverRate /= 365.0;
   params.leafTurnoverRate /= 365.0;
 
@@ -1849,9 +1835,6 @@ void setupModel(void) {
     // Don't set a value if microbes is off
     envi.microbeC = 0.0;
   }
-
-  // convert to gC m-2
-  params.totNitrogen = params.totNitrogen * params.soilInit;
 
   params.fineRootTurnoverRate /= 365.0;
   params.coarseRootTurnoverRate /= 365.0;

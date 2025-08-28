@@ -65,6 +65,7 @@ soilTempLeafOn		6.03
 leafOffDay			6.04
 leafGrowth			6.05
 fracLeafFall		6.06
+leafPoolDepth       1.00
 
 !!! Litter parameters
 woodTurnoverRate	    7.01
