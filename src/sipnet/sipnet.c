@@ -1599,7 +1599,7 @@ void processEvents(void) {
         const double fineRootC = plantParams->fineRootC;
         const double coarseRootC = plantParams->coarseRootC;
 
-        // Update the pools
+        // Update the fluxes
         fluxes.eventLeafC += leafC / climLen;
         fluxes.eventWoodC += woodC / climLen;
         fluxes.eventFineRootC += fineRootC / climLen;
