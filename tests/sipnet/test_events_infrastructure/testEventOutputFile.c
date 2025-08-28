@@ -25,19 +25,25 @@ void init(void) {
   ClimateNode *climate3 = (ClimateNode *)malloc(sizeof(ClimateNode));
   climate1->year = 2023;
   climate1->day = 65;
+  climate1->length = 0.5;
   climate2->year = 2023;
   climate2->day = 70;
+  climate2->length = 0.5;
   climate3->year = 2023;
   climate3->day = 200;
+  climate3->length = 0.5;
   ClimateNode *climate4 = (ClimateNode *)malloc(sizeof(ClimateNode));
   ClimateNode *climate5 = (ClimateNode *)malloc(sizeof(ClimateNode));
   ClimateNode *climate6 = (ClimateNode *)malloc(sizeof(ClimateNode));
   climate4->year = 2024;
   climate4->day = 65;
+  climate4->length = 0.5;
   climate5->year = 2024;
   climate5->day = 70;
+  climate5->length = 0.5;
   climate6->year = 2024;
   climate6->day = 200;
+  climate6->length = 0.5;
 
   climate5->nextClim = climate6;
   climate4->nextClim = climate5;
@@ -47,11 +53,17 @@ void init(void) {
   climate = climate1;
 }
 
+void procEvents() {
+  processEvents();
+  soilDegradation();
+  updatePoolsForEvents();
+}
+
 void runLoc(void) {
   ClimateNode *climStart = climate;
   setupEvents();
   while (climate != NULL) {
-    processEvents();
+    procEvents();
     climate = climate->nextClim;
   }
   climate = climStart;

@@ -29,6 +29,12 @@ void initEnv(void) {
   // Others to be added for N
 }
 
+void procEvents() {
+  processEvents();
+  soilDegradation();
+  updatePoolsForEvents();
+}
+
 int run(void) {
   int status = 0;
   double expLitterC;
@@ -44,7 +50,7 @@ int run(void) {
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   initEvents("events_one_fert.in", 0);
   setupEvents();
-  processEvents();
+  procEvents();
 
   // First fert: (15-5-10)
   expLitterC = 1 + 5;
@@ -58,7 +64,7 @@ int run(void) {
   initEnv();
   initEvents("events_two_fert.in", 1);
   setupEvents();
-  processEvents();
+  procEvents();
   // First event same as above (15-5-10)
   expLitterC = 1 + 5;
   // litterN

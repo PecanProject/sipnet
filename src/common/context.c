@@ -184,7 +184,12 @@ void validateContext(void) {
   int hasError = 0;
 
   if (ctx.soilPhenol && ctx.gdd) {
-    logError("soil-phenol and gdd may not both be turned on");
+    logError("soil-phenol and gdd may not both be turned on\n");
+    hasError = 1;
+  }
+
+  if (ctx.events && ctx.microbes) {
+    logError("events and microbes may not both be turned on\n");
     hasError = 1;
   }
 

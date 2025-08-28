@@ -13,6 +13,7 @@ void prepTypesTest() {
   climate = (ClimateNode *)malloc(sizeof(ClimateNode));
   climate->year = 2024;
   climate->day = 70;
+  climate->length = 0.125;
 }
 
 #endif  // SIPNET_TYPESUTILS_H

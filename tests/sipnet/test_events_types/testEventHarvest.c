@@ -49,6 +49,12 @@ void initEnv(void) {
   envi.coarseRootC = 5;
 }
 
+void procEvents() {
+  processEvents();
+  soilDegradation();
+  updatePoolsForEvents();
+}
+
 int run(void) {
   int status = 0;
   double expLitter, expLeafC, expWoodC, expFineC, expCoarseC;
@@ -64,35 +70,32 @@ int run(void) {
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   initEvents("events_one_harvest.in", 0);
   setupEvents();
-  processEvents();
+  procEvents();
 
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
-  expLitter = 1 + 0.3 * (2 + 3) + 0.4 * (4 + 5);
-  expLeafC = 2 * (1 - 0.1 - 0.3);
-  expWoodC = 3 * (1 - 0.1 - 0.3);
-  expFineC = 4 * (1 - 0.2 - 0.4);
-  expCoarseC = 5 * (1 - 0.2 - 0.4);
+  expLitter = 1 + 0.3 * (2 + 3) + 0.4 * (4 + 5);  // 1 + 1.5 + 3.6 = 6.1
+  expLeafC = 2 * (1 - 0.1 - 0.3);  // 1.2
+  expWoodC = 3 * (1 - 0.1 - 0.3);  // 1.8
+  expFineC = 4 * (1 - 0.2 - 0.4);  // 1.6
+  expCoarseC = 5 * (1 - 0.2 - 0.4);  // 2.0
   status |= checkOutput(expLitter, expLeafC, expWoodC, expFineC, expCoarseC);
 
-  //// TWO HARVEST EVENTS
+  //// TWO HARVEST
+  // Ok, so, two harvest events on the same day shouldn't happen (seriously,
+  // model it as one harvest) - but we can test the arithmetic here
   updateIntContext("litterPool", 1, CTX_TEST);
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   initEnv();
   initEvents("events_two_harvest.in", 1);
   setupEvents();
-  processEvents();
-  // First event same as above
-  expLitter = 1 + 0.3 * (2 + 3) + 0.4 * (4 + 5);
-  expLeafC = 2 * (1 - 0.1 - 0.3);
-  expWoodC = 3 * (1 - 0.1 - 0.3);
-  expFineC = 4 * (1 - 0.2 - 0.4);
-  expCoarseC = 5 * (1 - 0.2 - 0.4);
-  // Second is all params = 0.25
-  expLitter += 0.25 * (expLeafC + expWoodC + expFineC + expCoarseC);
-  expLeafC *= 0.5;
-  expWoodC *= 0.5;
-  expFineC *= 0.5;
-  expCoarseC *= 0.5;
+  procEvents();
+  // Two events are additive
+  expLitter = 1 + (0.3 + 0.25) * (2 + 3) + (0.4 + 0.25) * (4 + 5);  // 9.6
+  expLeafC = 2 * (1 - 0.1 - 0.3 - 0.25 - 0.25);  // 0.2
+  expWoodC = 3 * (1 - 0.1 - 0.3 - 0.25 - 0.25);  // 0.3
+  expFineC = 4 * (1 - 0.2 - 0.4 - 0.25 - 0.25);  // -0.4
+  expCoarseC = 5 * (1 - 0.2 - 0.4 - 0.25 - 0.25);  // -0.5
+
   status |= checkOutput(expLitter, expLeafC, expWoodC, expFineC, expCoarseC);
 
   return status;
