@@ -188,59 +188,64 @@
 \DoxyCodeLine{00184\ \ \ \textcolor{keywordtype}{int}\ hasError\ =\ 0;}
 \DoxyCodeLine{00185\ }
 \DoxyCodeLine{00186\ \ \ \textcolor{keywordflow}{if}\ (ctx.soilPhenol\ \&\&\ ctx.gdd)\ \{}
-\DoxyCodeLine{00187\ \ \ \ \ logError(\textcolor{stringliteral}{"{}soil-\/phenol\ and\ gdd\ may\ not\ both\ be\ turned\ on"{}});}
+\DoxyCodeLine{00187\ \ \ \ \ logError(\textcolor{stringliteral}{"{}soil-\/phenol\ and\ gdd\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
 \DoxyCodeLine{00188\ \ \ \ \ hasError\ =\ 1;}
 \DoxyCodeLine{00189\ \ \ \}}
 \DoxyCodeLine{00190\ }
-\DoxyCodeLine{00191\ \ \ \textcolor{keywordflow}{if}\ (hasError)\ \{}
-\DoxyCodeLine{00192\ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00193\ \ \ \}}
-\DoxyCodeLine{00194\ \}}
+\DoxyCodeLine{00191\ \ \ \textcolor{keywordflow}{if}\ (ctx.events\ \&\&\ ctx.microbes)\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ logError(\textcolor{stringliteral}{"{}events\ and\ microbes\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
+\DoxyCodeLine{00193\ \ \ \ \ hasError\ =\ 1;}
+\DoxyCodeLine{00194\ \ \ \}}
 \DoxyCodeLine{00195\ }
-\DoxyCodeLine{00196\ \textcolor{keywordtype}{void}\ printConfig(FILE\ *outFile)\ \{}
-\DoxyCodeLine{00197\ \ \ \textcolor{comment}{//\ Sort\ alphabetically\ for\ consistency}}
-\DoxyCodeLine{00198\ \ \ HASH\_SORT(ctx.metaMap,\ by\_name);\ \ \textcolor{comment}{//\ NOLINT}}
-\DoxyCodeLine{00199\ }
-\DoxyCodeLine{00200\ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *s;}
-\DoxyCodeLine{00201\ }
-\DoxyCodeLine{00202\ \ \ \textcolor{comment}{//\ Calculate\ width\ of\ value\ column}}
-\DoxyCodeLine{00203\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ width\ =\ 0;}
-\DoxyCodeLine{00204\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
-\DoxyCodeLine{00205\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
-\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>type\ ==\ CTX\_CHAR)\ \{}
-\DoxyCodeLine{00207\ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ len\ =\ strlen(s-\/>printName);}
-\DoxyCodeLine{00208\ \ \ \ \ \ \ width\ =\ len\ >\ width\ ?\ len\ :\ width;}
-\DoxyCodeLine{00209\ \ \ \ \ \}}
-\DoxyCodeLine{00210\ \ \ \}}
-\DoxyCodeLine{00211\ }
-\DoxyCodeLine{00212\ \ \ \textcolor{comment}{//\ Header}}
-\DoxyCodeLine{00213\ \ \ \textcolor{keywordflow}{if}\ (ctx.printHeader)\ \{}
-\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordtype}{char}\ timestamp[100];}
-\DoxyCodeLine{00215\ \ \ \ \ time\_t\ current\_time;}
-\DoxyCodeLine{00216\ \ \ \ \ time(\&current\_time);}
-\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keyword}{struct\ }tm\ *utc\_time\ =\ gmtime(\&current\_time);}
-\DoxyCodeLine{00218\ \ \ \ \ strftime(timestamp,\ \textcolor{keyword}{sizeof}(timestamp),\ \textcolor{stringliteral}{"{}\%Y-\/\%m-\/\%d\ \%H:\%M:\%S\ UTC"{}},\ utc\_time);}
-\DoxyCodeLine{00219\ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}Final\ config\ for\ SIPNET\ run\ at\ \%s\(\backslash\)n"{}},\ timestamp);}
-\DoxyCodeLine{00220\ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}\%21s\ \%13s\ \%*s\(\backslash\)n"{}},\ \textcolor{stringliteral}{"{}Name"{}},\ \textcolor{stringliteral}{"{}Source"{}},\ width,\ \textcolor{stringliteral}{"{}Value"{}});}
-\DoxyCodeLine{00221\ \ \ \}}
-\DoxyCodeLine{00222\ }
-\DoxyCodeLine{00223\ \ \ \textcolor{comment}{//\ Config}}
-\DoxyCodeLine{00224\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
-\DoxyCodeLine{00225\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
-\DoxyCodeLine{00226\ }
-\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>type\ ==\ CTX\_INT)\ \{}
-\DoxyCodeLine{00228\ \ \ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}\%21s\ \%13s\ \%*d\(\backslash\)n"{}},\ s-\/>printName,}
-\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getContextSourceString(s-\/>source),\ width,\ *(\textcolor{keywordtype}{int}\ *)s-\/>value);}
-\DoxyCodeLine{00230\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (s-\/>type\ ==\ CTX\_CHAR)\ \{}
-\DoxyCodeLine{00231\ \ \ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}\%21s\ \%13s\ \%*s\(\backslash\)n"{}},\ s-\/>printName,}
-\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getContextSourceString(s-\/>source),\ width,\ (\textcolor{keywordtype}{char}\ *)s-\/>value);}
-\DoxyCodeLine{00233\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00234\ \ \ \ \ \ \ \textcolor{comment}{//\ The\ height\ of\ paranoia}}
-\DoxyCodeLine{00235\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Internal\ error,\ unknown\ type\ (\%d)\ found\ for\ context\ param\(\backslash\)n"{}},}
-\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ s-\/>type);}
-\DoxyCodeLine{00237\ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
-\DoxyCodeLine{00238\ \ \ \ \ \}}
-\DoxyCodeLine{00239\ \ \ \}}
-\DoxyCodeLine{00240\ \}}
+\DoxyCodeLine{00196\ \ \ \textcolor{keywordflow}{if}\ (hasError)\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
+\DoxyCodeLine{00198\ \ \ \}}
+\DoxyCodeLine{00199\ \}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{void}\ printConfig(FILE\ *outFile)\ \{}
+\DoxyCodeLine{00202\ \ \ \textcolor{comment}{//\ Sort\ alphabetically\ for\ consistency}}
+\DoxyCodeLine{00203\ \ \ HASH\_SORT(ctx.metaMap,\ by\_name);\ \ \textcolor{comment}{//\ NOLINT}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *s;}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \textcolor{comment}{//\ Calculate\ width\ of\ value\ column}}
+\DoxyCodeLine{00208\ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ width\ =\ 0;}
+\DoxyCodeLine{00209\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>type\ ==\ CTX\_CHAR)\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ len\ =\ strlen(s-\/>printName);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ width\ =\ len\ >\ width\ ?\ len\ :\ width;}
+\DoxyCodeLine{00214\ \ \ \ \ \}}
+\DoxyCodeLine{00215\ \ \ \}}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00217\ \ \ \textcolor{comment}{//\ Header}}
+\DoxyCodeLine{00218\ \ \ \textcolor{keywordflow}{if}\ (ctx.printHeader)\ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{char}\ timestamp[100];}
+\DoxyCodeLine{00220\ \ \ \ \ time\_t\ current\_time;}
+\DoxyCodeLine{00221\ \ \ \ \ time(\&current\_time);}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keyword}{struct\ }tm\ *utc\_time\ =\ gmtime(\&current\_time);}
+\DoxyCodeLine{00223\ \ \ \ \ strftime(timestamp,\ \textcolor{keyword}{sizeof}(timestamp),\ \textcolor{stringliteral}{"{}\%Y-\/\%m-\/\%d\ \%H:\%M:\%S\ UTC"{}},\ utc\_time);}
+\DoxyCodeLine{00224\ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}Final\ config\ for\ SIPNET\ run\ at\ \%s\(\backslash\)n"{}},\ timestamp);}
+\DoxyCodeLine{00225\ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}\%21s\ \%13s\ \%*s\(\backslash\)n"{}},\ \textcolor{stringliteral}{"{}Name"{}},\ \textcolor{stringliteral}{"{}Source"{}},\ width,\ \textcolor{stringliteral}{"{}Value"{}});}
+\DoxyCodeLine{00226\ \ \ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \textcolor{comment}{//\ Config}}
+\DoxyCodeLine{00229\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>type\ ==\ CTX\_INT)\ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}\%21s\ \%13s\ \%*d\(\backslash\)n"{}},\ s-\/>printName,}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getContextSourceString(s-\/>source),\ width,\ *(\textcolor{keywordtype}{int}\ *)s-\/>value);}
+\DoxyCodeLine{00235\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (s-\/>type\ ==\ CTX\_CHAR)\ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ fprintf(outFile,\ \textcolor{stringliteral}{"{}\%21s\ \%13s\ \%*s\(\backslash\)n"{}},\ s-\/>printName,}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getContextSourceString(s-\/>source),\ width,\ (\textcolor{keywordtype}{char}\ *)s-\/>value);}
+\DoxyCodeLine{00238\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \textcolor{comment}{//\ The\ height\ of\ paranoia}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Internal\ error,\ unknown\ type\ (\%d)\ found\ for\ context\ param\(\backslash\)n"{}},}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ s-\/>type);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
+\DoxyCodeLine{00243\ \ \ \ \ \}}
+\DoxyCodeLine{00244\ \ \ \}}
+\DoxyCodeLine{00245\ \}}
 
 \end{DoxyCode}

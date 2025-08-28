@@ -105,90 +105,91 @@
 \DoxyCodeLine{00101\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
 \DoxyCodeLine{00102\ \ \ printf(\textcolor{stringliteral}{"{}Note\ the\ following\ restrictions\ on\ these\ options:\(\backslash\)n"{}});}
 \DoxyCodeLine{00103\ \ \ printf(\textcolor{stringliteral}{"{}\ -\/-\/soil-\/phenol\ and\ -\/-\/gdd\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
-\DoxyCodeLine{00104\ \ \ \textcolor{comment}{//\ clang-\/format\ on}}
-\DoxyCodeLine{00105\ \}}
-\DoxyCodeLine{00106\ }
-\DoxyCodeLine{00107\ \textcolor{comment}{//\ Print\ the\ version\ when\ requested}}
-\DoxyCodeLine{00108\ \textcolor{keywordtype}{void}\ version(\textcolor{keywordtype}{void})\ \{\ printf(\textcolor{stringliteral}{"{}SIPNET\ version\ \%s\(\backslash\)n"{}},\ VERSION\_STRING);\ \}}
-\DoxyCodeLine{00109\ }
-\DoxyCodeLine{00110\ \textcolor{comment}{//\ Parses\ command-\/line\ options\ using\ getopt\_long}}
-\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ parseCommandLineArgs(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
-\DoxyCodeLine{00112\ \ \ \textcolor{comment}{/*\ getopt\_long\ stores\ the\ option\ index\ here.\ */}}
-\DoxyCodeLine{00113\ \ \ \textcolor{keywordtype}{int}\ longIndex\ =\ 0;}
-\DoxyCodeLine{00114\ \ \ \textcolor{keywordtype}{int}\ shortIndex;}
-\DoxyCodeLine{00115\ \ \ \textcolor{comment}{//\ get\ command-\/line\ arguments:}}
-\DoxyCodeLine{00116\ \ \ \textcolor{keywordflow}{while}\ ((shortIndex\ =\ getopt\_long(argc,\ argv,\ \textcolor{stringliteral}{"{}hi:v"{}},\ long\_options,}
-\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&longIndex))\ !=\ -\/1)\ \{}
-\DoxyCodeLine{00118\ }
-\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordflow}{switch}\ (shortIndex)\ \{}
-\DoxyCodeLine{00120\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
-\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ long\ form\ option,\ flag\ ==\ 0}}
-\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ updateIntContext(argNameMap[longIndex],\ ctx.tmpFlag,\ CTX\_COMMAND\_LINE);}
-\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00124\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'f'}:}
-\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
-\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},\ optarg,}
-\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILENAME\_MAXLEN);}
-\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
-\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ exit(1);}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}fileName"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
-\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00134\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'h'}:}
-\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ usage(argv[0]);}
-\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
-\DoxyCodeLine{00137\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'i'}:}
-\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
-\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ input\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},}
-\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ optarg,\ FILENAME\_MAXLEN);}
-\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
-\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
-\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ exit(1);}
-\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}inputFile"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
-\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00147\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'v'}:}
-\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ version();}
-\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
-\DoxyCodeLine{00150\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
-\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ usage(argv[0]);}
-\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_CLI\_ARGUMENT);}
-\DoxyCodeLine{00153\ \ \ \ \ \}}
-\DoxyCodeLine{00154\ \ \ \}}
-\DoxyCodeLine{00155\ \}}
-\DoxyCodeLine{00156\ }
-\DoxyCodeLine{00157\ \textcolor{comment}{//\ Safety\ check:\ make\ sure\ the\ elements\ of\ the\ cli\ argNameMap\ are\ actually}}
-\DoxyCodeLine{00158\ \textcolor{comment}{//\ valid\ members\ -\/\ that\ is,\ that\ we\ can\ successfully\ find\ a\ metadata\ for\ each}}
-\DoxyCodeLine{00159\ \textcolor{comment}{//\ one.\ This\ protects\ against\ changing\ a\ field\ name\ here\ and\ forgetting\ to}}
-\DoxyCodeLine{00160\ \textcolor{comment}{//\ update\ that\ map.}}
-\DoxyCodeLine{00161\ \textcolor{keywordtype}{void}\ checkCLINameMap(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{00162\ \ \ \textcolor{keywordtype}{int}\ numFlags\ =\ 0;}
-\DoxyCodeLine{00163\ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *s;}
-\DoxyCodeLine{00164\ }
-\DoxyCodeLine{00165\ \ \ \textcolor{comment}{//\ Make\ sure\ everything\ in\ argNameMap\ maps\ to\ a\ valid\ metadata}}
-\DoxyCodeLine{00166\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ind\ =\ 0;\ ind\ <\ 2\ *\ NUM\_FLAG\_OPTIONS;\ ++ind)\ \{}
-\DoxyCodeLine{00167\ \ \ \ \ s\ =\ getContextMetadata(argNameMap[ind]);}
-\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\ ==\ NULL)\ \{}
-\DoxyCodeLine{00169\ \ \ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
-\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}no\ metadata\ for\ \%s\(\backslash\)n"{}},}
-\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ argNameMap[ind]);}
-\DoxyCodeLine{00172\ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
-\DoxyCodeLine{00173\ \ \ \ \ \}}
-\DoxyCodeLine{00174\ \ \ \}}
-\DoxyCodeLine{00175\ \ \ \textcolor{comment}{//\ Make\ sure\ the\ number\ of\ flag\ metadata\ structs\ equals\ NUM\_FLAG\_OPTIONS}}
-\DoxyCodeLine{00176\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
-\DoxyCodeLine{00177\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
-\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>isFlag)\ \{}
-\DoxyCodeLine{00179\ \ \ \ \ \ \ ++numFlags;}
-\DoxyCodeLine{00180\ \ \ \ \ \}}
-\DoxyCodeLine{00181\ \ \ \}}
-\DoxyCodeLine{00182\ \ \ \textcolor{keywordflow}{if}\ (numFlags\ !=\ NUM\_FLAG\_OPTIONS)\ \{}
-\DoxyCodeLine{00183\ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
-\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\%d\ metaMap\ entries,\ NUM\_FLAG\_OPTIONS=\%d\(\backslash\)n"{}},}
-\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numFlags,\ NUM\_FLAG\_OPTIONS);}
-\DoxyCodeLine{00186\ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
-\DoxyCodeLine{00187\ \ \ \}}
-\DoxyCodeLine{00188\ \}}
+\DoxyCodeLine{00104\ \ \ printf(\textcolor{stringliteral}{"{}\ -\/-\/events\ and\ -\/-\/microbes\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
+\DoxyCodeLine{00105\ \ \ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00106\ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{comment}{//\ Print\ the\ version\ when\ requested}}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ version(\textcolor{keywordtype}{void})\ \{\ printf(\textcolor{stringliteral}{"{}SIPNET\ version\ \%s\(\backslash\)n"{}},\ VERSION\_STRING);\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{//\ Parses\ command-\/line\ options\ using\ getopt\_long}}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ parseCommandLineArgs(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00113\ \ \ \textcolor{comment}{/*\ getopt\_long\ stores\ the\ option\ index\ here.\ */}}
+\DoxyCodeLine{00114\ \ \ \textcolor{keywordtype}{int}\ longIndex\ =\ 0;}
+\DoxyCodeLine{00115\ \ \ \textcolor{keywordtype}{int}\ shortIndex;}
+\DoxyCodeLine{00116\ \ \ \textcolor{comment}{//\ get\ command-\/line\ arguments:}}
+\DoxyCodeLine{00117\ \ \ \textcolor{keywordflow}{while}\ ((shortIndex\ =\ getopt\_long(argc,\ argv,\ \textcolor{stringliteral}{"{}hi:v"{}},\ long\_options,}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&longIndex))\ !=\ -\/1)\ \{}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{switch}\ (shortIndex)\ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ long\ form\ option,\ flag\ ==\ 0}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ updateIntContext(argNameMap[longIndex],\ ctx.tmpFlag,\ CTX\_COMMAND\_LINE);}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'f'}:}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},\ optarg,}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILENAME\_MAXLEN);}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}fileName"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'h'}:}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'i'}:}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ input\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ optarg,\ FILENAME\_MAXLEN);}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}inputFile"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'v'}:}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ version();}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_CLI\_ARGUMENT);}
+\DoxyCodeLine{00154\ \ \ \ \ \}}
+\DoxyCodeLine{00155\ \ \ \}}
+\DoxyCodeLine{00156\ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{comment}{//\ Safety\ check:\ make\ sure\ the\ elements\ of\ the\ cli\ argNameMap\ are\ actually}}
+\DoxyCodeLine{00159\ \textcolor{comment}{//\ valid\ members\ -\/\ that\ is,\ that\ we\ can\ successfully\ find\ a\ metadata\ for\ each}}
+\DoxyCodeLine{00160\ \textcolor{comment}{//\ one.\ This\ protects\ against\ changing\ a\ field\ name\ here\ and\ forgetting\ to}}
+\DoxyCodeLine{00161\ \textcolor{comment}{//\ update\ that\ map.}}
+\DoxyCodeLine{00162\ \textcolor{keywordtype}{void}\ checkCLINameMap(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00163\ \ \ \textcolor{keywordtype}{int}\ numFlags\ =\ 0;}
+\DoxyCodeLine{00164\ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *s;}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \textcolor{comment}{//\ Make\ sure\ everything\ in\ argNameMap\ maps\ to\ a\ valid\ metadata}}
+\DoxyCodeLine{00167\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ind\ =\ 0;\ ind\ <\ 2\ *\ NUM\_FLAG\_OPTIONS;\ ++ind)\ \{}
+\DoxyCodeLine{00168\ \ \ \ \ s\ =\ getContextMetadata(argNameMap[ind]);}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\ ==\ NULL)\ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}no\ metadata\ for\ \%s\(\backslash\)n"{}},}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ argNameMap[ind]);}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
+\DoxyCodeLine{00174\ \ \ \ \ \}}
+\DoxyCodeLine{00175\ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \textcolor{comment}{//\ Make\ sure\ the\ number\ of\ flag\ metadata\ structs\ equals\ NUM\_FLAG\_OPTIONS}}
+\DoxyCodeLine{00177\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>isFlag)\ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ ++numFlags;}
+\DoxyCodeLine{00181\ \ \ \ \ \}}
+\DoxyCodeLine{00182\ \ \ \}}
+\DoxyCodeLine{00183\ \ \ \textcolor{keywordflow}{if}\ (numFlags\ !=\ NUM\_FLAG\_OPTIONS)\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\%d\ metaMap\ entries,\ NUM\_FLAG\_OPTIONS=\%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numFlags,\ NUM\_FLAG\_OPTIONS);}
+\DoxyCodeLine{00187\ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
+\DoxyCodeLine{00188\ \ \ \}}
+\DoxyCodeLine{00189\ \}}
 
 \end{DoxyCode}

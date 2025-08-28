@@ -1,61 +1,65 @@
 <map id="updateState" name="updateState">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,724,107,749"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,748,107,773"/>
 <area shape="rect" id="Node000002" href="$d5/d1f/runmean_8c.html#a3b3e682c43d0a347c6eaf7de4cb68a16" title=" " alt="" coords="163,155,341,180"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="57,723,89,576,117,470,152,362,194,266,234,191,239,193,199,269,157,364,122,471,94,577,62,724"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="57,747,88,591,116,477,152,362,194,266,234,191,239,193,199,268,157,364,121,479,93,592,62,748"/>
 <area shape="rect" id="Node000004" href="$dd/d09/sipnet_8c.html#ad9da4c10d7ef093e8c67c89b91fff59f" title=" " alt="" coords="191,376,313,401"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="62,723,234,412,239,415,67,725"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="62,747,235,412,240,415,66,749"/>
 <area shape="rect" id="Node000021" href="$dd/d09/sipnet_8c.html#ab671ed28e8a5d8606938d981f89a181d" title=" " alt="" coords="155,699,349,724"/>
-<area shape="poly" id="edge22_Node000001_Node000021" title=" " alt="" coords="107,727,141,723,141,728,107,733"/>
+<area shape="poly" id="edge22_Node000001_Node000021" title=" " alt="" coords="105,745,154,733,186,725,187,730,155,738,106,751"/>
 <area shape="rect" id="Node000023" href="$dd/d09/sipnet_8c.html#afb4ad97daa6ca46b43b7eae3554c17fe" title="Process events for current location/year/day." alt="" coords="194,748,310,773"/>
-<area shape="poly" id="edge24_Node000001_Node000023" title=" " alt="" coords="107,740,181,749,180,755,107,745"/>
-<area shape="rect" id="Node000026" href="$dd/d09/sipnet_8c.html#a18edb857cbb1b173feeb13ebd0d50afe" title=" " alt="" coords="189,797,315,823"/>
-<area shape="poly" id="edge27_Node000001_Node000026" title=" " alt="" coords="81,747,156,782,182,791,181,796,154,787,79,752"/>
-<area shape="rect" id="Node000029" href="$dd/d09/sipnet_8c.html#a8b7178c18acaf22dffc942561473d6bb" title=" " alt="" coords="192,847,312,872"/>
-<area shape="poly" id="edge30_Node000001_Node000029" title=" " alt="" coords="69,748,104,789,129,812,156,832,180,842,178,847,153,836,125,816,100,793,65,751"/>
+<area shape="poly" id="edge24_Node000001_Node000023" title=" " alt="" coords="107,758,180,758,180,763,107,763"/>
+<area shape="rect" id="Node000027" href="$dd/d09/sipnet_8c.html#a18edb857cbb1b173feeb13ebd0d50afe" title=" " alt="" coords="189,797,315,823"/>
+<area shape="poly" id="edge28_Node000001_Node000027" title=" " alt="" coords="108,771,188,791,187,796,106,776"/>
+<area shape="rect" id="Node000030" href="$dd/d09/sipnet_8c.html#ac9de3738992b3780a28e1bdc3eba6604" title=" " alt="" coords="169,847,335,872"/>
+<area shape="poly" id="edge31_Node000001_Node000030" title=" " alt="" coords="72,771,109,802,156,832,176,840,174,845,153,836,105,806,69,776"/>
+<area shape="rect" id="Node000031" href="$dd/d09/sipnet_8c.html#a8b7178c18acaf22dffc942561473d6bb" title=" " alt="" coords="192,896,312,921"/>
+<area shape="poly" id="edge32_Node000001_Node000031" title=" " alt="" coords="66,772,100,826,126,856,156,881,180,893,178,898,153,886,122,859,96,829,62,775"/>
 <area shape="rect" id="Node000003" href="$d5/d1f/runmean_8c.html#aafa097eaf82986761f1920d2a1ed2457" title=" " alt="" coords="432,5,569,31"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="262,153,316,98,354,66,396,40,418,30,420,35,399,44,357,71,319,102,266,156"/>
-<area shape="rect" id="Node000005" href="$dd/d09/sipnet_8c.html#a5ff21882af3d7feea2b57d714c66e93c" title=" " alt="" coords="457,301,545,327"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="285,373,397,335,442,324,444,329,398,341,287,379"/>
-<area shape="rect" id="Node000006" href="$dd/d09/sipnet_8c.html#a5ac2aa2e3e8e9bf86283c643df0d214f" title=" " alt="" coords="445,351,556,376"/>
-<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="313,380,431,368,432,373,314,385"/>
-<area shape="rect" id="Node000007" href="$dd/d09/sipnet_8c.html#a8c2f0ba72fdaae9e3836745acd5fc7eb" title=" " alt="" coords="466,400,535,425"/>
-<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="314,392,452,405,452,411,313,397"/>
-<area shape="rect" id="Node000008" href="$d5/d1f/runmean_8c.html#aee80c094e5cc8830c70fd93fa14bb102" title=" " alt="" coords="652,451,813,476"/>
-<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="285,399,337,418,398,434,523,452,639,459,638,465,522,457,397,439,336,423,283,404"/>
-<area shape="rect" id="Node000009" href="$dd/d09/sipnet_8c.html#a3141adc9db6e20c6bdb1a11f7d779d1b" title=" " alt="" coords="456,501,545,527"/>
-<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="271,399,326,438,398,480,444,497,442,502,396,484,323,443,268,404"/>
-<area shape="rect" id="Node000012" href="$dd/d09/sipnet_8c.html#ae1cde3b069d0958828a9739fd94755db" title="Calculate Dwater and transpiration." alt="" coords="461,551,541,576"/>
-<area shape="poly" id="edge12_Node000004_Node000012" title=" " alt="" coords="264,400,315,465,354,503,399,536,423,546,448,554,446,559,421,551,396,540,351,507,311,469,260,403"/>
-<area shape="rect" id="Node000013" href="$dd/d09/sipnet_8c.html#a180db247bc25e07f57d5f23b6d59817d" title="Compute gross potential photosynthesis with restrictions and base foliar resp." alt="" coords="467,600,534,625"/>
-<area shape="poly" id="edge13_Node000004_Node000013" title=" " alt="" coords="261,401,279,438,309,488,349,541,373,565,399,585,426,598,454,606,453,611,424,603,396,590,369,569,345,544,304,491,275,440,256,403"/>
-<area shape="rect" id="Node000015" href="$dd/d09/sipnet_8c.html#a316ac45bcdc2d3372761d43e597874ab" title=" " alt="" coords="457,649,544,675"/>
-<area shape="poly" id="edge15_Node000004_Node000015" title=" " alt="" coords="259,400,274,445,302,509,343,577,369,608,399,634,420,646,444,654,443,659,418,651,396,639,365,612,339,580,297,512,269,447,254,402"/>
-<area shape="rect" id="Node000016" href="$dd/d09/sipnet_8c.html#a6b82287932679ebd632dd4c7baaf6f7e" title=" " alt="" coords="441,55,560,80"/>
-<area shape="poly" id="edge16_Node000004_Node000016" title=" " alt="" coords="257,375,347,190,358,161,364,135,374,112,396,89,427,73,429,78,399,93,379,115,369,137,363,162,352,192,262,377"/>
-<area shape="rect" id="Node000017" href="$dd/d09/sipnet_8c.html#a003ba69003021dbc13c256e601d7707a" title=" " alt="" coords="438,104,563,129"/>
-<area shape="poly" id="edge17_Node000004_Node000017" title=" " alt="" coords="257,374,318,251,358,183,378,156,396,139,423,124,426,129,399,143,382,160,363,186,322,254,262,377"/>
-<area shape="rect" id="Node000018" href="$dd/d09/sipnet_8c.html#a2d6b40f90dd338910f832524445b6c52" title="Calculate foliar respiration and wood maintenance resp." alt="" coords="461,153,540,179"/>
-<area shape="poly" id="edge18_Node000004_Node000018" title=" " alt="" coords="256,374,274,337,304,286,345,233,369,209,396,188,421,176,447,168,448,173,423,181,399,192,373,213,349,236,309,289,279,340,261,377"/>
-<area shape="rect" id="Node000019" href="$dd/d09/sipnet_8c.html#a9abb61b2df20f8e86ab92f3c0f56f828" title=" " alt="" coords="457,203,544,228"/>
-<area shape="poly" id="edge19_Node000004_Node000019" title=" " alt="" coords="260,374,311,308,351,270,396,237,419,227,443,220,444,225,421,232,399,242,354,274,315,312,264,378"/>
-<area shape="rect" id="Node000020" href="$dd/d09/sipnet_8c.html#a4fa75755604d209a86f737ba875af952" title=" " alt="" coords="451,252,550,277"/>
-<area shape="poly" id="edge21_Node000004_Node000020" title=" " alt="" coords="266,374,321,331,357,307,396,286,437,273,438,278,398,291,360,311,324,335,269,378"/>
-<area shape="poly" id="edge9_Node000009_Node000008" title=" " alt="" coords="545,502,660,476,661,482,546,507"/>
-<area shape="rect" id="Node000010" href="$dd/d09/sipnet_8c.html#add14dcfd1c6af5d9c7305ab5a23d2215" title=" " alt="" coords="683,551,783,576"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="546,521,670,547,669,553,545,526"/>
-<area shape="rect" id="Node000011" href="$dd/d09/sipnet_8c.html#a6762b20491a2b3113f378901df537c68" title=" " alt="" coords="670,501,795,527"/>
-<area shape="poly" id="edge11_Node000009_Node000011" title=" " alt="" coords="546,511,656,511,656,517,546,517"/>
-<area shape="rect" id="Node000014" href="$dd/d09/sipnet_8c.html#ae696156039998aae1a1343b0478f6d76" title="Compute canopy light effect using Simpson&#39;s rule." alt="" coords="684,600,781,625"/>
-<area shape="poly" id="edge14_Node000013_Node000014" title=" " alt="" coords="534,610,670,610,670,615,534,615"/>
-<area shape="poly" id="edge20_Node000019_Node000008" title=" " alt="" coords="545,215,576,222,605,237,630,259,652,284,687,339,711,393,727,437,722,438,706,395,682,341,647,287,626,263,603,242,574,227,544,220"/>
+<area shape="rect" id="Node000005" href="$dd/d09/sipnet_8c.html#a5ff21882af3d7feea2b57d714c66e93c" title=" " alt="" coords="457,351,545,376"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="313,380,442,367,443,372,314,385"/>
+<area shape="rect" id="Node000006" href="$dd/d09/sipnet_8c.html#a5ac2aa2e3e8e9bf86283c643df0d214f" title=" " alt="" coords="445,400,556,425"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="314,392,432,403,431,409,313,397"/>
+<area shape="rect" id="Node000007" href="$dd/d09/sipnet_8c.html#a8c2f0ba72fdaae9e3836745acd5fc7eb" title=" " alt="" coords="466,449,535,475"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="290,399,398,434,453,449,452,454,397,439,288,404"/>
+<area shape="rect" id="Node000008" href="$d5/d1f/runmean_8c.html#aee80c094e5cc8830c70fd93fa14bb102" title=" " alt="" coords="652,500,813,525"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="269,400,323,443,359,466,398,483,459,500,522,510,583,514,638,515,638,520,583,520,521,515,458,505,396,489,357,470,320,447,265,404"/>
+<area shape="rect" id="Node000009" href="$dd/d09/sipnet_8c.html#a3141adc9db6e20c6bdb1a11f7d779d1b" title=" " alt="" coords="456,551,545,576"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="265,400,317,461,356,498,399,529,444,548,441,553,396,534,352,502,313,465,261,403"/>
+<area shape="rect" id="Node000012" href="$dd/d09/sipnet_8c.html#ae1cde3b069d0958828a9739fd94755db" title="Calculate Dwater and transpiration." alt="" coords="461,600,541,625"/>
+<area shape="poly" id="edge12_Node000004_Node000012" title=" " alt="" coords="261,401,279,438,309,488,349,541,373,565,399,585,422,597,448,604,446,610,420,602,396,590,369,569,345,544,304,491,275,440,256,403"/>
+<area shape="rect" id="Node000013" href="$dd/d09/sipnet_8c.html#a180db247bc25e07f57d5f23b6d59817d" title="Compute gross potential photosynthesis with restrictions and base foliar resp." alt="" coords="467,649,534,675"/>
+<area shape="poly" id="edge13_Node000004_Node000013" title=" " alt="" coords="259,400,274,445,302,509,343,577,369,608,399,634,426,648,455,656,453,661,424,653,396,639,365,612,339,580,297,512,269,447,254,402"/>
+<area shape="rect" id="Node000015" href="$dd/d09/sipnet_8c.html#a316ac45bcdc2d3372761d43e597874ab" title=" " alt="" coords="457,55,544,80"/>
+<area shape="poly" id="edge15_Node000004_Node000015" title=" " alt="" coords="257,375,347,190,358,161,364,135,374,112,396,89,418,76,443,69,444,74,420,81,399,93,379,115,369,137,363,162,352,192,262,377"/>
+<area shape="rect" id="Node000016" href="$dd/d09/sipnet_8c.html#a6b82287932679ebd632dd4c7baaf6f7e" title=" " alt="" coords="441,104,560,129"/>
+<area shape="poly" id="edge16_Node000004_Node000016" title=" " alt="" coords="257,374,318,251,358,183,378,156,396,138,427,123,429,128,399,143,382,160,363,186,322,254,262,377"/>
+<area shape="rect" id="Node000017" href="$dd/d09/sipnet_8c.html#a003ba69003021dbc13c256e601d7707a" title=" " alt="" coords="438,153,563,179"/>
+<area shape="poly" id="edge17_Node000004_Node000017" title=" " alt="" coords="256,374,274,337,304,286,345,233,369,209,396,188,423,175,426,179,399,192,373,213,349,236,309,289,279,340,261,377"/>
+<area shape="rect" id="Node000018" href="$dd/d09/sipnet_8c.html#a2d6b40f90dd338910f832524445b6c52" title="Calculate foliar respiration and wood maintenance resp." alt="" coords="461,203,540,228"/>
+<area shape="poly" id="edge18_Node000004_Node000018" title=" " alt="" coords="260,374,311,308,351,270,396,237,421,226,447,219,449,224,423,231,399,242,354,274,315,312,264,378"/>
+<area shape="rect" id="Node000019" href="$dd/d09/sipnet_8c.html#a9abb61b2df20f8e86ab92f3c0f56f828" title=" " alt="" coords="457,252,544,277"/>
+<area shape="poly" id="edge19_Node000004_Node000019" title=" " alt="" coords="266,374,321,331,357,307,396,286,443,271,445,276,398,291,360,311,324,335,269,378"/>
+<area shape="rect" id="Node000020" href="$dd/d09/sipnet_8c.html#a4fa75755604d209a86f737ba875af952" title=" " alt="" coords="451,301,550,327"/>
+<area shape="poly" id="edge21_Node000004_Node000020" title=" " alt="" coords="285,373,397,335,437,325,439,330,398,341,287,379"/>
+<area shape="poly" id="edge9_Node000009_Node000008" title=" " alt="" coords="545,551,660,526,661,531,546,556"/>
+<area shape="rect" id="Node000010" href="$dd/d09/sipnet_8c.html#add14dcfd1c6af5d9c7305ab5a23d2215" title=" " alt="" coords="683,599,783,624"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="546,570,670,596,669,601,545,575"/>
+<area shape="rect" id="Node000011" href="$dd/d09/sipnet_8c.html#a6762b20491a2b3113f378901df537c68" title=" " alt="" coords="670,549,795,575"/>
+<area shape="poly" id="edge11_Node000009_Node000011" title=" " alt="" coords="546,560,656,560,656,565,546,566"/>
+<area shape="rect" id="Node000014" href="$dd/d09/sipnet_8c.html#ae696156039998aae1a1343b0478f6d76" title="Compute canopy light effect using Simpson&#39;s rule." alt="" coords="684,649,781,675"/>
+<area shape="poly" id="edge14_Node000013_Node000014" title=" " alt="" coords="534,659,670,659,670,665,534,665"/>
+<area shape="poly" id="edge20_Node000019_Node000008" title=" " alt="" coords="545,264,576,272,605,286,630,308,652,333,687,388,711,442,727,486,722,488,706,444,682,391,647,336,626,312,603,291,574,277,544,270"/>
 <area shape="rect" id="Node000022" href="$dd/d09/sipnet_8c.html#ac9b31a3b89b0fd8bcca50ded6c094e14" title=" " alt="" coords="425,699,576,724"/>
 <area shape="poly" id="edge23_Node000021_Node000022" title=" " alt="" coords="350,709,412,709,412,714,350,714"/>
-<area shape="rect" id="Node000024" href="$de/deb/events_8c.html#ae9bd841e389dc48f66a90ba59466ee08" title="Write a line to events.out for a single event." alt="" coords="443,748,558,773"/>
-<area shape="poly" id="edge25_Node000023_Node000024" title=" " alt="" coords="310,758,430,758,430,763,310,763"/>
-<area shape="rect" id="Node000025" href="$de/deb/events_8c.html#adaf5398f33e074025777106e1211e3c6" title=" " alt="" coords="662,748,803,773"/>
-<area shape="poly" id="edge26_Node000024_Node000025" title=" " alt="" coords="558,758,648,758,648,763,558,763"/>
-<area shape="rect" id="Node000027" href="$dd/d09/sipnet_8c.html#a5b84c84a6a5b9a7adeda513fad237ce0" title=" " alt="" coords="397,797,604,823"/>
-<area shape="poly" id="edge28_Node000026_Node000027" title=" " alt="" coords="315,807,383,807,383,813,315,813"/>
-<area shape="rect" id="Node000028" href="$dd/d09/sipnet_8c.html#ae34066cedd29cf1680484a9a3036d119" title=" " alt="" coords="439,847,562,872"/>
-<area shape="poly" id="edge29_Node000026_Node000028" title=" " alt="" coords="315,820,426,842,425,847,314,825"/>
+<area shape="rect" id="Node000024" href="$dd/d09/sipnet_8c.html#a12a8b3b4bb0688542d26bdb00f9c1961" title=" " alt="" coords="433,797,568,823"/>
+<area shape="poly" id="edge25_Node000023_Node000024" title=" " alt="" coords="311,769,424,792,422,797,310,775"/>
+<area shape="rect" id="Node000025" href="$de/deb/events_8c.html#ae9bd841e389dc48f66a90ba59466ee08" title="Write a line to events.out for a single event." alt="" coords="443,748,558,773"/>
+<area shape="poly" id="edge26_Node000023_Node000025" title=" " alt="" coords="310,758,430,758,430,763,310,763"/>
+<area shape="rect" id="Node000026" href="$de/deb/events_8c.html#adaf5398f33e074025777106e1211e3c6" title=" " alt="" coords="662,748,803,773"/>
+<area shape="poly" id="edge27_Node000025_Node000026" title=" " alt="" coords="558,758,648,758,648,763,558,763"/>
+<area shape="rect" id="Node000028" href="$dd/d09/sipnet_8c.html#a5b84c84a6a5b9a7adeda513fad237ce0" title=" " alt="" coords="397,896,604,921"/>
+<area shape="poly" id="edge29_Node000027_Node000028" title=" " alt="" coords="316,817,351,832,366,844,375,857,384,870,399,881,415,889,413,894,396,886,380,873,371,860,362,848,348,836,314,822"/>
+<area shape="rect" id="Node000029" href="$dd/d09/sipnet_8c.html#ae34066cedd29cf1680484a9a3036d119" title=" " alt="" coords="439,847,562,872"/>
+<area shape="poly" id="edge30_Node000027_Node000029" title=" " alt="" coords="315,820,426,842,425,847,314,825"/>
 </map>

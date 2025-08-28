@@ -70,6 +70,20 @@ double \textbf{ soil\+Pulse}
 double \textbf{ leaf\+Creation}
 \item 
 double \textbf{ wood\+Creation}
+\item 
+double \textbf{ event\+LeafC}
+\item 
+double \textbf{ event\+WoodC}
+\item 
+double \textbf{ event\+Fine\+RootC}
+\item 
+double \textbf{ event\+Coarse\+RootC}
+\item 
+double \textbf{ event\+Evap}
+\item 
+double \textbf{ event\+Soil\+Water}
+\item 
+double \textbf{ event\+LitterC}
 \end{DoxyCompactItemize}
 
 
@@ -137,6 +151,104 @@ Definition at line \textbf{ 444} of file \textbf{ state.\+h}.
 
 Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \textbf{ update\+Trackers()}.
 
+\label{struct_flux_vars_a121119760a58575da10ef0ded58f0abf} 
+\index{FluxVars@{FluxVars}!eventCoarseRootC@{eventCoarseRootC}}
+\index{eventCoarseRootC@{eventCoarseRootC}!FluxVars@{FluxVars}}
+\doxysubsubsection{eventCoarseRootC}
+{\footnotesize\ttfamily double Flux\+Vars\+::event\+Coarse\+RootC}
+
+
+
+Definition at line \textbf{ 503} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, and \textbf{ soil\+Degradation()}.
+
+\label{struct_flux_vars_ace93c59692d15a99205397f0671ab6dd} 
+\index{FluxVars@{FluxVars}!eventEvap@{eventEvap}}
+\index{eventEvap@{eventEvap}!FluxVars@{FluxVars}}
+\doxysubsubsection{eventEvap}
+{\footnotesize\ttfamily double Flux\+Vars\+::event\+Evap}
+
+
+
+Definition at line \textbf{ 505} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, and \textbf{ update\+Trackers()}.
+
+\label{struct_flux_vars_a894c0fecf778ddb0244c43c51c8cb613} 
+\index{FluxVars@{FluxVars}!eventFineRootC@{eventFineRootC}}
+\index{eventFineRootC@{eventFineRootC}!FluxVars@{FluxVars}}
+\doxysubsubsection{eventFineRootC}
+{\footnotesize\ttfamily double Flux\+Vars\+::event\+Fine\+RootC}
+
+
+
+Definition at line \textbf{ 501} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, and \textbf{ soil\+Degradation()}.
+
+\label{struct_flux_vars_a6643fb2f9f24257a29b988d07cd08a06} 
+\index{FluxVars@{FluxVars}!eventLeafC@{eventLeafC}}
+\index{eventLeafC@{eventLeafC}!FluxVars@{FluxVars}}
+\doxysubsubsection{eventLeafC}
+{\footnotesize\ttfamily double Flux\+Vars\+::event\+LeafC}
+
+
+
+Definition at line \textbf{ 497} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, and \textbf{ update\+Pools\+For\+Events()}.
+
+\label{struct_flux_vars_a6fd64673badab7f25854095c161de57f} 
+\index{FluxVars@{FluxVars}!eventLitterC@{eventLitterC}}
+\index{eventLitterC@{eventLitterC}!FluxVars@{FluxVars}}
+\doxysubsubsection{eventLitterC}
+{\footnotesize\ttfamily double Flux\+Vars\+::event\+LitterC}
+
+
+
+Definition at line \textbf{ 509} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, and \textbf{ soil\+Degradation()}.
+
+\label{struct_flux_vars_a4ce19489ea55aedbe2d0dfe57aa0caf5} 
+\index{FluxVars@{FluxVars}!eventSoilWater@{eventSoilWater}}
+\index{eventSoilWater@{eventSoilWater}!FluxVars@{FluxVars}}
+\doxysubsubsection{eventSoilWater}
+{\footnotesize\ttfamily double Flux\+Vars\+::event\+Soil\+Water}
+
+
+
+Definition at line \textbf{ 507} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, and \textbf{ update\+Pools\+For\+Events()}.
+
+\label{struct_flux_vars_a66de82d2a1d7b6781d64a58cafa7723d} 
+\index{FluxVars@{FluxVars}!eventWoodC@{eventWoodC}}
+\index{eventWoodC@{eventWoodC}!FluxVars@{FluxVars}}
+\doxysubsubsection{eventWoodC}
+{\footnotesize\ttfamily double Flux\+Vars\+::event\+WoodC}
+
+
+
+Definition at line \textbf{ 499} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, and \textbf{ update\+Pools\+For\+Events()}.
+
 \label{struct_flux_vars_a5454c2df7c0d34018230ecc44438582d} 
 \index{FluxVars@{FluxVars}!fastFlow@{fastFlow}}
 \index{fastFlow@{fastFlow}!FluxVars@{FluxVars}}
@@ -191,7 +303,7 @@ Definition at line \textbf{ 439} of file \textbf{ state.\+h}.
 
 
 
-Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ process\+Events()}, \textbf{ update\+State()}, and \textbf{ update\+Trackers()}.
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ update\+State()}, and \textbf{ update\+Trackers()}.
 
 \label{struct_flux_vars_a8a0530fd720806ff0648b9522bc99e5c} 
 \index{FluxVars@{FluxVars}!leafCreation@{leafCreation}}
