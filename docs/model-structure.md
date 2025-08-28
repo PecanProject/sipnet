@@ -390,7 +390,7 @@ Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we 
 A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$.
 
 $$
-F^N_\mathrm{N_2O vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n2o_vol}
+F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n_vol}
 $$
 
 ### $\frak{Nitrogen \ Leaching \ F^N_\text{leach}}$
