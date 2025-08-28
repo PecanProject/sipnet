@@ -324,6 +324,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Tests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smoke-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Smoke Tests
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unit Tests
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -333,15 +366,6 @@
   <a href="#documentation" class="md-nav__link">
     <span class="md-ellipsis">
       Documentation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#roadmap-or-changelog-section" class="md-nav__link">
-    <span class="md-ellipsis">
-      Roadmap or Changelog section?
     </span>
   </a>
   
@@ -797,6 +821,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Tests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smoke-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Smoke Tests
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unit-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unit Tests
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -806,15 +863,6 @@
   <a href="#documentation" class="md-nav__link">
     <span class="md-ellipsis">
       Documentation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#roadmap-or-changelog-section" class="md-nav__link">
-    <span class="md-ellipsis">
-      Roadmap or Changelog section?
     </span>
   </a>
   
@@ -875,31 +923,49 @@ current development is focused on representing carbon balance and GHG fluxes and
 <li>Build the SIPNET executable:
    <div class="highlight"><pre><span></span><code><span class="w"> </span>make
 </code></pre></div></li>
-<li>Run a test simulation:
-   <div class="highlight"><pre><span></span><code>./src/sipnet<span class="w"> </span>-i<span class="w"> </span>tests/smoke/sipnet.in
+<li>Change directory and run a test simulation:
+   <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>tests/smoke/niwot
+../../../sipnet<span class="w"> </span>-i<span class="w"> </span>sipnet.in
 </code></pre></div></li>
 <li>Check the output:
-   <div class="highlight"><pre><span></span><code>cat<span class="w"> </span>tests/smoke/niwot.out
+   <div class="highlight"><pre><span></span><code>cat<span class="w"> </span>niwot.out
 </code></pre></div></li>
 </ol>
 <h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
 <h3 id="installing">Installing<a class="headerlink" href="#installing" title="Permanent link">&para;</a></h3>
-<p>[What's required?]</p>
-<p>[Python may be required in the future, depending on what happens with formatting pre-commit hooks; we'll see]</p>
-<p>[Steps for building the program with make; mention 'make help' here too]</p>
-<p>[Add reference here to src/README.md for other utilities in this package]</p>
+<p>See the quickstart above.</p>
 <h3 id="executing-the-program">Executing the Program<a class="headerlink" href="#executing-the-program" title="Permanent link">&para;</a></h3>
-<p>[Running the program - example]</p>
-<p>[Description of sipnet.in and different modes, some variation of the below paragraph]</p>
-<p>The program used for forward runs of the model. Its operation is
-controlled by the file 'sipnet.in'; see that file for further configuration options.
-[Updated description TBD]</p>
+<p>[Link to cli docs, when they get written]</p>
+<p>[Link to description of all the input files]</p>
+<h3 id="running-tests">Running Tests<a class="headerlink" href="#running-tests" title="Permanent link">&para;</a></h3>
+<h4 id="smoke-tests">Smoke Tests<a class="headerlink" href="#smoke-tests" title="Permanent link">&para;</a></h4>
+<p>From the root sipnet directory, run:</p>
+<div class="highlight"><pre><span></span><code>./tests/smoke/run_smoke.sh
+</code></pre></div>
+<p>The end of the output from that script should be:</p>
+<div class="highlight"><pre><span></span><code><span class="o">=======================</span>
+SUMMARY:
+Skipped<span class="w"> </span>directories:<span class="w"> </span><span class="m">0</span>
+SIPNET<span class="w"> </span>OUTPUT:
+Passed:<span class="w">  </span><span class="m">5</span>/5
+Failed:<span class="w">  </span><span class="m">0</span>
+EVENT<span class="w"> </span>OUTPUT:
+Passed:<span class="w">  </span><span class="m">5</span>/5
+Failed:<span class="w">  </span><span class="m">0</span>
+CONFIG<span class="w"> </span>OUTPUT:
+Passed:<span class="w">  </span><span class="m">5</span>/5
+Failed:<span class="w">  </span><span class="nv">0</span>
+<span class="o">=======================</span>
+</code></pre></div>
+<h4 id="unit-tests">Unit Tests<a class="headerlink" href="#unit-tests" title="Permanent link">&para;</a></h4>
+<p>Build and run the unit tests with the script:</p>
+<div class="highlight"><pre><span></span><code>./tools/run_unit_tests.sh
+</code></pre></div>
+<p>The summary block at the end should show PASSED for each test.</p>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <p>Documentation for SIPNET is published at <a href="https://pecanproject.github.io/sipnet/">pecanproject.github.io/sipnet</a>, which is built using <code>mkdocs</code>. See 
 the <a href="CONTRIBUTING/#documentation">Documentation section</a> in the CONTRIBUTING page for more information
 about how to write and compile the documentation.</p>
-<h2 id="roadmap-or-changelog-section">Roadmap or Changelog section?<a class="headerlink" href="#roadmap-or-changelog-section" title="Permanent link">&para;</a></h2>
-<p>Do we want to list upcoming work? We could link to the issues page, and/or to the changelog</p>
 <h2 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h2>
 <p>See the main <a href="CONTRIBUTING/">Contributing</a> page</p>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
