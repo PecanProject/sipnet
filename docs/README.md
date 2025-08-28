@@ -38,8 +38,11 @@ See the quickstart above.
 [Link to description of all the input files]
 
 ### Running Tests
+
 #### Smoke Tests
+
 From the root sipnet directory, run:
+
 ```bash
 ./tests/smoke/run_smoke.sh
 ```
