@@ -469,7 +469,7 @@ $$
 
 The term $(1-f_{\text{intercept}})F^W_{\text{precip}}$ is the portion of gross precipitation that reaches the soil (i.e. infiltration from precipitation). Intercepted water (fraction $f_{\text{intercept}}$ of precipitation or canopy‑applied irrigation) is assumed to evaporate the same day and therefore never enters $W_{\text{soil}}$ and does not appear in \eqref{eq:A4}. $F^W_{\text{trans}}$ here is identical to $F^W_{\text{transpiration}}$ used elsewhere.
 
-### $\frak{Drainage}$
+### $Drainage$
 
 Under well-drained conditions, drainage occurs when soil water content  $(W_{\text{soil}})$ exceeds the soil water holding capacity  $(W_{\text{WHC}})`. Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduced the rate of drainage, and flooding will will require a combination of a low $f_{\text{drain}}$ and sufficient size and / or frequency of $F^W_\text{irrigation}$ to maintain flooded conditions.
 
