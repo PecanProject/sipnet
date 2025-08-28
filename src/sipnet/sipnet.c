@@ -1556,6 +1556,14 @@ void processEvents(void) {
   const int climDay = climate->day;
   const double climLen = climate->length;
 
+  // As this is used as a divisor in many places, let's make sure it's >0
+  if (climLen <= 0) {
+    logError("climate length (%f) on year %d day %d is non-positive; please "
+             "fix and re-run",
+             climLen, climYear, climDay);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
   // The events file has been tested on read, so we know this event list should
   // be in chrono order. However, we need to check to make sure the current
   // event is not in the past, as that would indicate an event that did not have
@@ -1599,7 +1607,7 @@ void processEvents(void) {
         const double fineRootC = plantParams->fineRootC;
         const double coarseRootC = plantParams->coarseRootC;
 
-        // Update the pools
+        // Update the fluxes
         fluxes.eventLeafC += leafC / climLen;
         fluxes.eventWoodC += woodC / climLen;
         fluxes.eventFineRootC += fineRootC / climLen;
