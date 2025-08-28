@@ -498,6 +498,7 @@ Agronomic (management) events are read from an `events.in` file. This file speci
 | 4…n | event_param | Type‑specific parameters (see below) | varies | Order depends on event type                      |
 
 Rules:
+
 - File must be in chronological order. Ties (same day multiple events) are allowed and processed in file order.
 - Events are specified at day resolution (no sub‑daily timestamp).
 - Every (year, day) appearing in `events.in` must have at least one corresponding climate record; otherwise SIPNET errors.
@@ -579,8 +580,8 @@ Specifically:
 #### Example of `events.in` file:
 
 ```
-2022  35  till  0.2       # tilled on day 35, f_till = 0.2 (20% boost to rate term)
-2022  40  till  0.1       # tilled on day 40, adds 0.1 to f_till
+2022  35  till   0.2      # tilled on day 35, f_till = 0.2 (20% boost to rate term)
+2022  40  till   0.1      # tilled on day 40, adds 0.1 to f_till
 2022  40  irrig  5 1      # 5cm canopy irrigation on day 40 applied to soil
 2022  40  fert   0 0 10   # fertilized with 10 g / m2 N_min on day 40 of 2022
 2022  50  plant  10 3 2 5 # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
