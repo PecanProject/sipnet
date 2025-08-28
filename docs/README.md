@@ -15,46 +15,71 @@ current development is focused on representing carbon balance and GHG fluxes and
    ```bash
     make
    ```
-3. Run a test simulation:
+3. Change directory and run a test simulation:
    ```bash
-   ./src/sipnet -i tests/smoke/sipnet.in
+   cd tests/smoke/niwot
+   ../../../sipnet -i sipnet.in
    ```
 4. Check the output:
    ```bash
-   cat tests/smoke/niwot.out
+   cat niwot.out
    ```
 
 ## Getting Started
 
 ### Installing
 
-[What's required?]
-
-[Python may be required in the future, depending on what happens with formatting pre-commit hooks; we'll see]
-
-[Steps for building the program with make; mention 'make help' here too]
-
-[Add reference here to src/README.md for other utilities in this package]
+See the quickstart above.
 
 ### Executing the Program
 
-[Running the program - example]
+[Link to cli docs, when they get written]
 
-[Description of sipnet.in and different modes, some variation of the below paragraph]
+[Link to description of all the input files]
 
-The program used for forward runs of the model. Its operation is
-controlled by the file 'sipnet.in'; see that file for further configuration options.
-[Updated description TBD]
+### Running Tests
+
+#### Smoke Tests
+
+From the root sipnet directory, run:
+
+```bash
+./tests/smoke/run_smoke.sh
+```
+
+The end of the output from that script should be:
+
+```shell
+=======================
+SUMMARY:
+Skipped directories: 0
+SIPNET OUTPUT:
+Passed:  5/5
+Failed:  0
+EVENT OUTPUT:
+Passed:  5/5
+Failed:  0
+CONFIG OUTPUT:
+Passed:  5/5
+Failed:  0
+=======================
+```
+
+#### Unit Tests
+
+Build and run the unit tests with the script:
+
+```bash
+./tools/run_unit_tests.sh
+```
+
+The summary block at the end should show PASSED for each test.
 
 ## Documentation
 
 Documentation for SIPNET is published at [pecanproject.github.io/sipnet](https://pecanproject.github.io/sipnet/), which is built using `mkdocs`. See 
 the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTING page for more information
 about how to write and compile the documentation.
-
-## Roadmap or Changelog section?
-
-Do we want to list upcoming work? We could link to the issues page, and/or to the changelog
 
 ## Contributing
 
