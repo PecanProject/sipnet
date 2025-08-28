@@ -22,9 +22,10 @@
 void checkRuntype(const char *runType) {
   if (strcasecmp(runType, "standard") != 0) {
     // Make sure this is not an old config with a different RUNTYPE set
-    printf("SIPNET only supports the standard runtype mode; other options are "
-           "obsolete and were last supported in v1.3.0\n");
-    printf("Please fix %s and re-run\n", ctx.inputFile);
+    logError(
+        "SIPNET only supports the standard runtype mode; other options are "
+        "obsolete and were last supported in v1.3.0\n");
+    logError("Please fix %s and re-run\n", ctx.inputFile);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
@@ -32,7 +33,7 @@ void checkRuntype(const char *runType) {
 void readInputFile(void) {
   // First, make sure the filename is valid
   validateFilename();
-  printf("Reading config from file %s\n", ctx.inputFile);
+  logInfo("Reading config from file %s\n", ctx.inputFile);
 
   const char *SEPARATORS = " \t=:";  // characters that can separate names from
                                      // values in input file
@@ -78,9 +79,9 @@ void readInputFile(void) {
       }
 
       if (inputValue == NULL) {
-        printf("Error in input file: No value given for input item %s\n",
-               inputName);
-        printf("Please fix %s and re-run\n", ctx.inputFile);
+        logError("Error in input file: No value given for input item %s\n",
+                 inputName);
+        logError("Please fix %s and re-run\n", ctx.inputFile);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
 
@@ -88,9 +89,9 @@ void readInputFile(void) {
         case CTX_INT: {
           int intVal = strtol(inputValue, &errc, 0);  // NOLINT
           if (strlen(errc) > 0) {  // invalid character(s) in input string
-            printf("ERROR in input file: Invalid value for %s: %s\n", inputName,
-                   inputValue);
-            printf("Please fix %s and re-run\n", ctx.inputFile);
+            logError("ERROR in input file: Invalid value for %s: %s\n",
+                     inputName, inputValue);
+            logError("Please fix %s and re-run\n", ctx.inputFile);
             exit(EXIT_CODE_BAD_PARAMETER_VALUE);
           }
           updateIntContext(inputName, intVal, CTX_CONTEXT_FILE);
@@ -102,10 +103,10 @@ void readInputFile(void) {
             updateCharContext(inputName, "", CTX_CONTEXT_FILE);
           } else {
             if (strlen(inputValue) >= CONTEXT_CHAR_MAXLEN) {
-              printf("ERROR in input file: value '%s' exceeds maximum "
-                     "length for %s (%d)\n",
-                     inputValue, inputName, CONTEXT_CHAR_MAXLEN);
-              printf(
+              logError("ERROR in input file: value '%s' exceeds maximum "
+                       "length for %s (%d)\n",
+                       inputValue, inputName, CONTEXT_CHAR_MAXLEN);
+              logError(
                   "Please fix %s, or change the maximum length, and re-run\n",
                   ctx.inputFile);
               exit(EXIT_CODE_BAD_PARAMETER_VALUE);
@@ -114,8 +115,8 @@ void readInputFile(void) {
           }
         } break;
         default:
-          printf("ERROR in readInputFile: Unrecognized type for %s: %d\n",
-                 inputName, ctx_meta->type);
+          logError("ERROR in readInputFile: Unrecognized type for %s: %d\n",
+                   inputName, ctx_meta->type);
           exit(EXIT_CODE_INTERNAL_ERROR);
       }
     }  // if (!isComment)
@@ -128,8 +129,7 @@ int main(int argc, char *argv[]) {
 
   FILE *out, *outConfig;
 
-  ModelParams *modelParams;  // the parameters used in the model (possibly
-                             // spatially-varying)
+  ModelParams *modelParams;  // the parameters used in the model
   OutputItems *outputItems;  // structure to hold information for output to
                              // single-variable files (if doSingleOutputs is
                              // true)
@@ -208,6 +208,8 @@ int main(int argc, char *argv[]) {
   if (outputItems != NULL) {
     deleteOutputItems(outputItems);
   }
+
+  deleteModelParams(modelParams);
 
   return EXIT_CODE_SUCCESS;
 }
