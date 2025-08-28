@@ -46,7 +46,9 @@ From the root sipnet directory, run:
 ```bash
 ./tests/smoke/run_smoke.sh
 ```
+
 The end of the output from that script should be:
+
 ```shell
 =======================
 SUMMARY:
@@ -62,11 +64,15 @@ Passed:  5/5
 Failed:  0
 =======================
 ```
+
 #### Unit Tests
+
 Build and run the unit tests with the script:
+
 ```bash
 ./tools/run_unit_tests.sh
 ```
+
 The summary block at the end should show PASSED for each test.
 
 ## Documentation
