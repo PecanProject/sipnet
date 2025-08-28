@@ -27,6 +27,12 @@ Goal: simplified biogeochemical model that is capable of simulating GHG balance,
 
 Start as simple as possible, add complexity as needed. When new features are considered, they should be evaluated alongside other possible model improvements that have been considered, and the overall list of project needs.
 
+Model state is updated in the following order:
+
+1. Calculate fluxes — compute the model's native fluxes
+2. Process events — convert events to per‑day fluxes and accumulate into fluxes.
+3. Update pools — pools are updated from the accumulated fluxes and pool‑specific updates.
+
 ### Notes on notation:
 
 Fluxes are denoted by $F$, except that respiration is denoted by $R$ following convention and previous descriptions of SIPNET.
@@ -448,32 +454,83 @@ If this scheme is too simple, we can adjust either the conditions under which N 
 
 ## Water Dynamics
 
-
 ### Soil Water Storage
 
 $$
 \begin{aligned}
-\frac{dW_{\text{soil}}}{dt} &= f_{\text{intercept}} \cdot \Bigl( F^W_{\text{precip}} + F^W_{\text{canopy irrigation}} \Bigr)\\[1mm]
-&\quad + \mathfrak{F^W_{\text{soil irrigation}}} - F^W_{\text{drainage}} - F^W_{\text{transpiration}}
+\frac{dW_{\text{soil}}}{dt} &= 
+  (1 - f_{\text{intercept}})\,F^W_{\text{precip}}
+  + F^W_{\text{irrig,soil}}
+  - F^W_{\text{drainage}}
+  - F^W_{\text{trans}}
 \end{aligned}
 \tag{Braswell A4}\label{eq:A4}
 $$
 
-The change in soil water content  $(W_{\text{soil}})$ is determined by precipitation $F^W_{\text{precip}}$ and losses due to drainage $F^W_{\text{drainage}}$ and transpiration $F^W_{\text{transpiration}}$.
-
-$F^W_{\text{precip}}$ is the precipitation rate prescribed at each time step in the `<sitename>.clim` file and fraction of precipitation intercepted by the canopy $f_{\text{intercept}}$.
-
-
+The term $(1-f_{\text{intercept}})F^W_{\text{precip}}$ is the portion of gross precipitation that reaches the soil (i.e. infiltration from precipitation). Intercepted water (fraction $f_{\text{intercept}}$ of precipitation or canopy‑applied irrigation) is assumed to evaporate the same day and therefore never enters $W_{\text{soil}}$ and does not appear in \eqref{eq:A4}. $F^W_{\text{trans}}$ here is identical to $F^W_{\text{transpiration}}$ used elsewhere.
 
 ### $\frak{Drainage}$
 
-Under well-drained conditions, drainage occurs when soil water content  $(W_{\text{soil}})$ exceeds the soil water holding capacity  $(W_{\text{WHC}})$. Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduced the rate of drainage, and flooding will will require a combination of a low $f_{\text{drain}}$ and sufficient size and / or frequency of $F^W_\text{irrigation}$ to maintain flooded conditions.
+Under well-drained conditions, drainage occurs when soil water content  $(W_{\text{soil}})$ exceeds the soil water holding capacity  $(W_{\text{WHC}})`. Beyond this point, additional water drains off at a rate controlled by the drainage parameter $f_{\text{drain}}$. For well drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduced the rate of drainage, and flooding will will require a combination of a low $f_{\text{drain}}$ and sufficient size and / or frequency of $F^W_\text{irrigation}$ to maintain flooded conditions.
 
 $$
 F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0) \tag{23}\label{eq:drainage}
 $$
 
 This is adapted from the original SIPNET formulation (Braswell et al 2005), adding a new parameter that controls the drainage rate.
+
+### Precipitation
+
+We define $F^W_{\text{precip}} = P$ as gross (measured) precipitation depth. The fraction reaching the soil is:
+$$
+F^W_{\text{precip,soil}} = (1 - f_{\text{intercept}})\,F^W_{\text{precip}}
+$$
+
+$F^W_{\text{precip,soil}}$ is added to soil water in equation \eqref{eq:A4}.
+
+### Evapotranspiration
+
+$$
+ET = E + T
+$$
+
+Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($T$), which are defined below:
+
+### Evaporation
+
+There are two components of evaporation: (1) immediate evaporation from intercepted precipitation or canopy irrigation and (2) soil surface evaporation.
+
+**Interception (Immediate Evaporation)**
+
+$$
+F^W_{\text{intercept,evap}} = f_{\text{intercept}}\,(F^W_{\text{precip}} + F^W_{\text{irrig,canopy}})
+$$
+
+**Soil Evaporation**
+
+Soil evaporation is computed as:
+
+$$
+F^W_{\text{soil,evap}} =
+\frac{\rho C_p}{\gamma}\frac{1}{\lambda}
+\frac{\text{VPD}_\text{soil}}{r_d + r_{\text{soil}}}
+$$
+
+where:
+$$
+r_d = \frac{\text{rdConst}}{u}, \qquad
+r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2}\frac{W_{\text{soil}}}{W_{\text{WHC}}}\right)
+$$
+
+Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
+
+#### Evaporation
+
+Total evaporation is calculated as the sum of intercepted water, soil evaporation, and sublimation:
+
+$$
+E = F^W_{\text{trans}} + F^W_{\text{intercept,evap}} + F^W_{\text{soil,evap}} + F^W_{\text{sublim}}
+$$
 
 ### Transpiration
 
@@ -588,12 +645,12 @@ Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, a
 
 For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.
 
-## $\frak{Agronomic \ Management \ Events}$
+## Agronomic Management Events
 
 All management events are specified in the `events.in`. Each event is a separate record that includes the 
 date of the event, the type of event, and associated parameters.
 
-### $\frak{Fertilizer}$ and Organic Matter Additions 
+### Fertilizer and Organic Matter Additions 
 
 Additions of Mineral N, Organic N, and Organic C are added directly to their respective pools via the 
 fluxes $F^N_{\text{fert,min}}$, $F^N_{\text{fert,org}},$ and $F^C_{\text{fert,org}}$ that are specified 
@@ -659,28 +716,45 @@ $$
 
 This amount is then added to the litter flux in equation \eqref{eq:litter_flux}.
 
-### $\frak{Irrigation}$
+### Irrigation
 
 Event parameters:
 
 * Irrigation rate  $(F^W_{\text{irrigation}})$, cm/day
-* Irrigation type indicator  $(I_{\text{irrigation}})$:
-	* Canopy irrigation (0): Water applied to the canopy, simulating rainfall.
+* Irrigation type indicator  $(I_{\text{irrigation}}\in {0,1})$:
+	* Canopy irrigation (0): Water applied to the canopy.
 	*	Soil irrigation (1): Water directly added to the soil.
 
-<!--	
-Note: Flooding not yet implemented
-*	Flooding (2): Special case of soil irrigation, where water fully saturates the soil and maintains flooding. -->
+The irrigation that that reaches the soil water pool is:
+
+$$
+F^W_{\text{irrig,soil}} =
+\begin{cases}
+(1 - f_{\text{intercept}}) \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
+F^W_{\text{irrig}}, & I_{\text{irrigation}} = 1
+\end{cases}
+\tag{30}\label{eq:irrig_soil}
+$$
+
+Irrigation that is immediately evaporated:
+$$
+F^W_{\text{irrig,evap}} =
+\begin{cases}
+f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
+0, & I_{\text{irrigation}} = 1
+\end{cases}
+\tag{29}\label{eq:irrig_evap}
+$$
 
 
-**Canopy irrigation** is simulated in the same way as precipitation, where a fraction of irrigation is intercepted and evaporated, and the remainder is added to the soil water pool.
-
-**Soil irrigation** adds water directly to the soil pool without interception. Flooded furrow irrigation' is a special case of soil irrigation, with a high rate of irrigation.
 
 <!-- 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
 
- Floodiing may also reduce the drainage parameter  $(f_{\text{drain}})$ close to zero \eq{eq:drainage}.
+ Flooding may also reduce the drainage parameter  $(f_{\text{drain}})$ close to zero \eq{eq:drainage}.
+
+Flooded or high‑volume irrigation (not yet implemented) would be represented by large $F^W_{\text{irrig}}$ and (optionally) a modified drainage parameter $f_{\text{drain}}$.
+
 
 $$
 F^W_{\text{irrigation}} = 

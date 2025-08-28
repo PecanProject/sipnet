@@ -456,8 +456,7 @@ For each step of the model, the following inputs are needed. These are provided 
 | 11  | vPress    | average vapor pressure in canopy airspace                            | kPa                                                                            | input is in Pa                                                                                                 |
 | 12  | wspd      | avg. wind speed                                                      | m/s                                                                            |                                                                                                                |
 
-Note: An older format for this file included location as the first column and soilWetness as the last column. Files 
-with this older format can still be read by sipnet:
+Note: An older format for this file included location as the first column and soilWetness as the last column. Files with this older format can still be read by sipnet:
 * SIPNET will print a warning indicating that it is ignoring the obsolete columns
 * If there is more than one location specified in the file, SIPNET will error and halt
 
@@ -489,67 +488,65 @@ loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
 
 ### Agronomic Events
 
-For managed ecosystems, the following inputs are provided in a file named `events.in` with the following columns:
+Agronomic (management) events are read from an `events.in` file. This file specifies one event per line:
 
-| col   | parameter   | description                     | units       | notes                                 |
-| ----- | ----------- | ------------------------------- | ----------- | ------------------------------------- |
-| 1     | year        | year of start of this timestep  |             | e.g. 2010                             |
-| 2     | day         | day of start of this timestep   | Day of year | 1 = Jan 1                             |
-| 3     | event_type  | type of event                   |             | one of plant, harv, till, fert, irrig |
-| 4...n | event_param | parameter associated with event |             | see table below                       |
+| col | parameter   | description                          | units  | notes                                            |
+| --- | ----------- | ------------------------------------ | ------ | ------------------------------------------------ |
+| 1   | year        | Year of the event                    |        | e.g. 2025                                        |
+| 2   | day         | Day of year of the event             | DOY    | 1 = Jan 1                                        |
+| 3   | event_type  | Event type code                      |        | one of: `plant`, `harv`, `till`, `fert`, `irrig` |
+| 4…n | event_param | Type‑specific parameters (see below) | varies | Order depends on event type                      |
 
-- Agronomic events are stored in `events.in`, one event per row
-- Events in the file must be sorted chronologically
-- Events are specified by year and day (no hourly timestamp)
-- It is assumed that there is one (or more) records in the climate file for each year/day that appears in the events file
-  - SIPNET will throw an error if it finds an event with no corresponding climate record
-- Events are processed with the first climate record that occurs for the relevant year/day as an instantaneous one-time change
-  - We may need events with duration later, spec TBD. Tillage is likely in this bucket.
-- The effects of an event are applied after fluxes are calculated for the current climate record; they are applied as a delta to one or more state variables, as required
+Rules:
+- File must be in chronological order. Ties (same day multiple events) are allowed and processed in file order.
+- Events are specified at day resolution (no sub‑daily timestamp).
+- Every (year, day) appearing in `events.in` must have at least one corresponding climate record; otherwise SIPNET errors.
+- Values in `events.in` are instantaneous amounts (cm or mass/area) applied on the date and time of the first climate record matching that event's year and day.
 
+See subsections below for details and parameter definitions for each event type.
+
+#### Irrigation
 
 | parameter |  col  | req?  | description                                 |
 | --------- | :---: | :---: | ------------------------------------------- |
-| amount    |   5   |   Y   | Amount added (cm/d)                         |
+| amount    |   5   |   Y   | Amount added (cm)                           |
 | method    |   6   |   Y   | 0=canopy<br>1=soil<br>2=flood (placeholder) |
 
-Model representation: an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.
+Model representation: An irrigation event increases soil moisture. A fraction of canopy irrigation is immediately evaporated.
 
 Specifically: 
 
-- amount is listed as cm/d, but as events are specified per-day, this is treated as `cm` of water added on that day
-- For method=soil, this amount of water is added directly to the `soilWater` state variable 
-- For method=canopy, a fraction of the irrigation water (determined by input param `immedEvapFrac`) is added to the flux state variable `immedEvap`, with the remainder going to `soilWater`.
+- For `method=soil`, this amount of water is added directly to the `soilWater` state variable 
+- For `method=canopy`, a fraction of the irrigation water (determined by input param `immedEvapFrac`) is added to the flux state variable `immedEvap`, with the remainder going to `soilWater`.
 - Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.
 
-Notes:
 
-- irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.
+#### Fertilization
 
-#### Fertilization Events
-
-| parameter |  col   | req?  | description |
-| --------- | :----: | :---: | ----------- |
-| org-N     |   5    |   Y   | g N / m2    |
-| org-C     |   6    |   Y   | g C / m2    |
-| min-N     |   7    |   Y   | g N / m2    | <!--(NH4+NO3 in one pool model; NH4 in two pool model)-->       |
-| <!--      | min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | --> |
+| parameter |  col  | req?  | description |
+| --------- | :---: | :---: | ----------- |
+| org-N     |   5   |   Y   | g N / m2    |
+| org-C     |   6   |   Y   | g C / m2    |
+| min-N     |   7   |   Y   | g N / m2    |
+<!--(NH4+NO3 in one pool model; NH4 in two pool model)
+| min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | 
+-->
 
   - Model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
-  - notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools 
+  - The code that generates `events.in` will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools. In PEcAn this is done by the `PEcAn.SIPNET::write.configs.SIPNET()` function.
 
-#### Tillage Events
+#### Tillage
 
-| parameter                          |  col  | req?  | description         |
-| ---------------------------------- | :---: | :---: | ------------------- |
-| tillageEff (\(f_{\textrm{till}}\)) |   5   |   Y   | Adjustment to $R_H$ |
+| parameter                        |  col  | req?  | description         |
+| -------------------------------- | :---: | :---: | ------------------- |
+| tillageEff $(f_{\textrm{till}})$ |   5   |   Y   | Adjustment to $R_H$ |
 
 - Model representation:
   - Transient increase in decomposition rate by $f_{\text{,tillage}}$ that exponentially decays over time.
   - Multiple tillage events are additive.
 
-#### Planting Events
+#### Planting
 
 | parameter     |  col  | req?  | description                                  |
 | ------------- | :---: | :---: | -------------------------------------------- |
@@ -564,7 +561,7 @@ Notes:
   - $N$ pools are calculated from $CN$ stoichiometric ratios.
 - notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.
 
-#### Harvest Events
+#### Harvest
 
 | parameter                                                  |  col  | req?  | description           |
 | ---------------------------------------------------------- | :---: | :---: | --------------------- |
@@ -596,44 +593,47 @@ Notes:
 
 The `sipnet.out` file contains a time series of state variables and fluxes from the simulation.  
 
-|     | Symbol               | Parameter Name      | Definition                     | Units                |
-| --- | -------------------- | ------------------- | ------------------------------ | -------------------- |
-| 1   |                      | year                | year of start of this timestep |                      |
-| 2   |                      | day                 | day of start of this timestep  |                      |
-| 3   |                      | time                | time of start of this timestep |                      |
-| 4   |                      | plantWoodC          | carbon in wood                 | g C/m$^2$            |
-| 5   |                      | plantLeafC          | carbon in leaves               | g C/m$^2$            |
-| 6   |                      | soil                | carbon in mineral soil         | g C/m$^2$            |
-| 7   |                      | microbeC            | carbon in soil microbes        | g C/m$^2$            |
-| 8   |                      | coarseRootC         | carbon in coarse roots         | g C/m$^2$            |
-| 9   |                      | fineRootC           | carbon in fine roots           | g C/m$^2$            |
-| 10  |                      | litter              | carbon in litter               | g C/m$^2$            |
-| 11  |                      | litterWater         | moisture in litter layer       | cm                   |
-| 12  |                      | soilWater           | moisture in soil               | cm                   |
-| 13  | $f_\text{WHC}$       | soilWetnessFrac     | moisture in soil as fraction   |                      |
-| 14  |                      | snow                | snow water                     | cm                   |
-| 15  |                      | npp                 | net primary production         | g C/m$^2$            |
-| 16  |                      | nee                 | net ecosystem production       | g C/m$^2$            |
-| 17  |                      | cumNEE              | cumulative nee                 | g C/m$^2$            |
-| 18  | $GPP$                | gpp                 | gross ecosystem production     | g C/m$^2$            |
-| 19  | $R_{A,\text{above}}$ | rAboveground        | plant respiration above ground | g C/m$^2$            |
-| 20  | $R_H$                | rSoil               | soil respiration               | g C/m$^2$            |
-| 21  | $R_{A\text{, root}}$ | rRoot               | root respiration               | g C/m$^2$            |
-| 22  | $R$                  | rtot                | total respiration              | g C/m$^2$            |
-| 23  |                      | fluxestranspiration | transpiration                  | cm                   |
+| #   | Symbol           | Output Name         | Definition / Notes                                                        | Units        |
+| --- | ---------------- | ------------------- | ------------------------------------------------------------------------- | ------------ |
+| 1   |                  | year                | Year of start of timestep                                                 | (integer)    |
+| 2   |                  | day                 | Day-of-year of start of timestep                                          | (integer)    |
+| 3   |                  | time                | Hour-of-day (fractional) at start of timestep                             | hours        |
+| 4   |                  | plantWoodC          | Woody plant carbon                                                        | g C m$^{-2}$ |
+| 5   |                  | plantLeafC          | Leaf carbon                                                               | g C m$^{-2}$ |
+| 6   |                  | soil                | (Single) soil organic carbon (or mineral soil C pool)                     | g C m$^{-2}$ |
+| 7   |                  | microbeC            | Microbial carbon (0 if microbes flag off)                                 | g C m$^{-2}$ |
+| 8   |                  | coarseRootC         | Coarse root carbon                                                        | g C m$^{-2}$ |
+| 9   |                  | fineRootC           | Fine root carbon                                                          | g C m$^{-2}$ |
+| 10  |                  | litter              | Litter carbon (0 if litter pool disabled)                                 | g C m$^{-2}$ |
+| 11  |                  | soilWater           | Soil water content                                                        | cm           |
+| 12  | $f_{\text{WHC}}$ | soilWetnessFrac     | Soil water as fraction of holding capacity                                | unitless     |
+| 13  |                  | snow                | Snow water equivalent                                                     | cm           |
+| 14  |                  | npp                 | Net primary production for timestep                                       | g C m$^{-2}$ |
+| 15  |                  | nee                 | Net ecosystem exchange (sign convention per code: - (NPP - RH))           | g C m$^{-2}$ |
+| 16  |                  | cumNEE              | Cumulative NEE since simulation start                                     | g C m$^{-2}$ |
+| 17  | $GPP$            | gpp                 | Gross primary production                                                  | g C m$^{-2}$ |
+| 18  |                  | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                       | g C m$^{-2}$ |
+| 19  | $R_H$            | rSoil               | Heterotrophic respiration (maintenance + microbe terms per configuration) | g C m$^{-2}$ |
+| 20  |                  | rRoot               | Root (autotrophic) respiration                                            | g C m$^{-2}$ |
+| 21  |                  | ra                  | Total autotrophic respiration (rAboveground + rRoot)                      | g C m$^{-2}$ |
+| 22  |                  | rh                  | Total heterotrophic respiration (litter + soil components)                | g C m$^{-2}$ |
+| 23  | $R$              | rtot                | Total ecosystem respiration (ra + rh)                                     | g C m$^{-2}$ |
+| 24  |                  | evapotranspiration  | ET (transpiration + immedEvap + evaporation + sublimation) for timestep   | cm           |
+| 25  |                  | fluxestranspiration | Transpiration component only                                              | cm           |
+<!-- Not yet implemented
 | 24  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 25  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 | 26  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
-
+-->
 An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
 
 ```
 Notes: PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;
-year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration fPAR
-1998 305  0.00  5759.77  1133.88 16000.06     8.00  1919.90  1919.64   400.00    0.500     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000   0.0000
-1998 305  7.00  5759.63  1133.71 16000.08     8.00  1919.77  1919.10   400.00    0.500     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022   0.5821
-1998 305 17.00  5759.16  1133.48 16000.15     8.00  1919.57  1918.37   400.00    0.500     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000   0.5821
+year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration
+1998 305  0.00  5759.77  1133.88 16000.06     8.00  1919.90  1919.64   0.500     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000
+1998 305  7.00  5759.63  1133.71 16000.08     8.00  1919.77  1919.10   0.500     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022
+1998 305 17.00  5759.16  1133.48 16000.15     8.00  1919.57  1918.37   0.500     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000
 ```
 
 ### Events output
