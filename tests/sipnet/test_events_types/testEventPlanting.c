@@ -33,6 +33,12 @@ void initEnv(void) {
   envi.coarseRootC = 4;
 }
 
+void procEvents() {
+  processEvents();
+  soilDegradation();
+  updatePoolsForEvents();
+}
+
 int run(void) {
   int status = 0;
 
@@ -44,7 +50,7 @@ int run(void) {
   //// ONE PLANTING EVENT
   initEvents("events_one_planting.in", 0);
   setupEvents();
-  processEvents();
+  procEvents();
   // added: leaf 10, wood 5, fine root 4, coarse root 3
   status |= checkOutput(1 + 10, 2 + 5, 3 + 4, 4 + 3);
 
@@ -52,7 +58,7 @@ int run(void) {
   initEnv();
   initEvents("events_two_planting.in", 1);
   setupEvents();
-  processEvents();
+  procEvents();
   // leaf 10+9, wood 5+6, fine root 4+8, coarse root 3+4
   status |= checkOutput(1 + 19, 2 + 11, 3 + 12, 4 + 7);
 

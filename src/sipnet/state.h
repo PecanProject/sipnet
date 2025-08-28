@@ -488,6 +488,25 @@ typedef struct FluxVars {
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;
 
+  // ****************************************
+  // Fluxes for event handling
+  // Note: this has no published reference source
+  //
+
+  // plantLeafC addition
+  double eventLeafC;
+  // plantWoodC addition
+  double eventWoodC;
+  // plantFineRootC addition
+  double eventFineRootC;
+  // plantCoarseRootC addition
+  double eventCoarseRootC;
+  // irrigation water that is immediately evaporated
+  double eventEvap;
+  // irrigation water that goes to the soil
+  double eventSoilWater;
+  // carbon added to litter pool (if used) or soil pool (if not)
+  double eventLitterC;
 } Fluxes;
 
 typedef struct TrackerVars {  // variables to track various things
