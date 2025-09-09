@@ -16,4 +16,9 @@ void prepTypesTest() {
   climate->length = 0.125;
 }
 
+void procEvents() {
+  processEvents();
+  updatePoolsForEvents();
+}
+
 #endif  // SIPNET_TYPESUTILS_H

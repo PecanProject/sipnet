@@ -55,7 +55,6 @@ void init(void) {
 
 void procEvents() {
   processEvents();
-  soilDegradation();
   updatePoolsForEvents();
 }
 

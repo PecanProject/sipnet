@@ -732,7 +732,8 @@ int pastLeafFall(void) {
  * @param[out] leafLitter (g C/m^2 ground/day)
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
-void leafFluxes(double *leafCreation, double *leafLitter, double plantLeafC) {
+void calcLeafFluxes(double *leafCreation, double *leafLitter,
+                    double plantLeafC) {
   // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
   // [1]: growing season boundary effects, but modified to be partial growth
@@ -807,8 +808,8 @@ void calcPrecip(double *rain, double *snowFall, double *immedEvap, double lai) {
   if (ctx.leafWater) {
     double maxLeafPool;
 
-    maxLeafPool = lai * params.leafPoolDepth;  // calculate current leaf pool
-                                               // size depending on lai
+    // calculate current leaf pool size depending on lai
+    maxLeafPool = lai * params.leafPoolDepth;
     *immedEvap = (*rain) * params.immedEvapFrac;
 
     // don't evaporate more than pool size, excess water will go to the soil
@@ -898,9 +899,9 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
  * @param[in] snowMelt water available from snow (cm equiv/day)
  * @param[in] trans water leaving via transpiration
  */
-void soilWaterFluxes(double *fastFlow, double *evaporation, double *drainage,
-                     double water, double netRain, double snowMelt,
-                     double trans) {
+void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
+                         double *drainage, double water, double netRain,
+                         double snowMelt, double trans) {
   // conversion factor for evaporation
   // 1000 converts kg to g, 1000 converts kPa to Pa, 1/10000 converts m^2 to
   // cm^2
@@ -1053,22 +1054,24 @@ void ensureAllocation(void) {
   }
 }
 
-// Currently we have a water effect and an effect for different cold soil
-// parameters  (this is maintenance respiration)
-void calcMaintenanceRespiration(double tsoil, double water, double whc) {
-
+/*!
+ *  Calculate moisture effect on soil respiration
+ *
+ *  Depends on soil temperature and whether waterHResp is on.
+ *
+ * @param water current soil water
+ * @param whc water holding capacity
+ * @return moisture effect as a fraction between 0 and 1
+ */
+double calcMoistEffect(double water, double whc) {
   double moistEffect;
-  double tempEffect;
 
-  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
-  // case, need to dig in. With that said...
-  // :: from [1], eq (A20), if waterHResp, tsoil >= 0, and not microbes;
-  //    modified to add an exponent soilRespMoistEffect to (W/W_c);
-  //    soilRespMoistEffect is equal to 1 in [1].
-
-  if (ctx.waterHResp) {
-    // if soil moisture affects heterotrophic respiration
-
+  if ((!ctx.waterHResp) || (climate->tsoil < 0)) {
+    // if not waterHResp, soil moisture does not affect heterotrophic
+    // respiration; else:
+    // :: from [2], snowpack addition
+    moistEffect = 1.0;  // Ignore moisture effects in frozen soils
+  } else {
     // :: from [1], first part of eq (A20), with added exponent
     // Original formulation from [1], based on PnET is:
     //   moistEffect = water / whc
@@ -1079,258 +1082,86 @@ void calcMaintenanceRespiration(double tsoil, double water, double whc) {
     // Note: older versions of sipnet note this as "using PnET formulation",
     // but we have been unable to verify that the exponent comes from PnET
     moistEffect = pow((water / whc), params.soilRespMoistEffect);
-
-    // :: from [2], snowpack addition
-    if (climate->tsoil < 0) {
-      moistEffect = 1;  // Ignore moisture effects in frozen soils
-    }
-  } else {
-    // Soil moisture does not affect heterotrophic respiration
-    // :: from [2], fifth modification described on pg 247
-    moistEffect = 1;
   }
 
-  if (ctx.microbes) {
-    // respiration is determined by microbe biomass
-    // :: from [4], eq (5.12) with addition of moisture effect
-    // [TAG:UNKNOWN_PROVENANCE]  moistEffect
-    tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
-    fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
-  } else {
-    // :: from [1], remainder of eq (A20)
-    tempEffect = params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
-    fluxes.maintRespiration = envi.soil * moistEffect * tempEffect;
-  }
+  return moistEffect;
 }
 
 /*!
- * Calculates microbe ingestion
+ * Calculate the rSoil flux when microbes is off
+ *
+ * @param tsoil
+ * @param water
+ * @param whc
  */
-void microbeGrowth(void) {
-  // :: from [4], part of eqs (5.9) and (5.10)
-  //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
-  //    eqs (5.9) and (5.10) in soilDegradation()
+void calcSoilMaintRespiration(double tsoil, double water, double whc) {
+
+  double tempEffect;
+  double moistEffect = calcMoistEffect(water, whc);
+
+  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
+  // case, need to dig in. With that said...
+
+  if (!ctx.microbes) {
+    // :: from [1], remainder of eq (A20)
+    // See calcMoistEffect for first part of eq (A20) calculation
+    tempEffect = params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
+    fluxes.maintRespiration = envi.soil * moistEffect * tempEffect;
+
+    // With no microbes, rSoil flux is just the maintenance respiration
+    fluxes.rSoil = fluxes.maintRespiration;
+  }
+  // else fluxes.rSoil = 0.0?
+}
+
+/*!
+ * Calculates fluxes used when modeling microbes
+ */
+void calcMicrobeFluxes(double tsoil, double water, double whc,
+                       double rootExudate) {
   if (ctx.microbes) {
+    double baseRate;
+    double tempEffect;
+    double moistEffect = calcMoistEffect(water, whc);
+
+    // :: from [4], part of eqs (5.9) and (5.10)
+    //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
+    //    eqs (5.9) and (5.10) in soilDegradation()
+
     // :: mu_max * g(C_S)
-    double baseRate = params.maxIngestionRate * envi.soil /
-                      (params.halfSatIngestion + envi.soil);
+    baseRate = params.maxIngestionRate * envi.soil /
+               (params.halfSatIngestion + envi.soil);
 
     // Flux that microbes remove from soil  (mg C g soil day)
     // Some is ingested, rest used for growth in soilDegradation
     // :: above * C_B
     fluxes.microbeIngestion = baseRate * envi.microbeC;
-  }
-}
 
-/*!
- * Calculate soil respiration flux and update carbon pools
- *
- * Calculates soil respiration, method depending on the MICROBES and
- * LITTER_POOL flags. Updates carbon pools for soil, fine roots,
- * and coarse roots.
- *
- * TODO: split this apart - fluxes into calculateFluxes, with pool updates
- *       after, as is the general method for SIPNET.
- */
-void soilDegradation(void) {
+    // fluxes that get added to microbe pool
+    // :: from [4], eq (5.11) first line
+    fluxes.soilPulse = params.microbePulseEff * (rootExudate);
 
-  double soilWater;
-  soilWater = envi.soilWater;
+    // respiration is determined by microbe biomass
+    // :: from [4], eq (5.12) with addition of moisture effect
+    // [TAG:UNKNOWN_PROVENANCE]  moistEffect
+    tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
+    fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
 
-  calcMaintenanceRespiration(climate->tsoil, soilWater, params.soilWHC);
-
-  if (ctx.microbes) {
-    microbeGrowth();
-    double microbeEff = params.efficiency;
-
-    // :: from [1] for litter terms
-    // :: from [3] for root terms
-    // :: from [4] for microbeIngestion term
-    // Note: no rSoil term here, as soil resp is handled by microbeIngestion
-    envi.soil +=
-        (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
-         fluxes.leafLitter - fluxes.microbeIngestion) *
-        climate->length;
-    // microbeC additions due to ingestion and incorporation of root exudates,
-    // with reduction from microbe respiration
-    // :: from [4], eq (5.9) for first (ingestion) term,
-    // ::      eq (5.11) used for soilPulse, and
-    // ::      eq (5.12) used for maintRespiration
-    envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
-                      fluxes.maintRespiration) *
-                     climate->length;
-
-    // rSoil is maintenance resp + growth (microbe) resp
-    // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil =
-        fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
-    // With no microbes, rSoil flux is just the maintenance respiration
-    // (at least, that's how maintResp was calculated; we still have some
-    // naming weirdness here)
-    fluxes.rSoil = fluxes.maintRespiration;
-    if (ctx.litterPool) {
-      // :: from [2], litter model description
-      envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
-                      fluxes.litterToSoil - fluxes.rLitter) *
-                     climate->length;
-
-      // from [2] and [3], litter and root terms respectively
-      envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                    fluxes.litterToSoil - fluxes.rSoil) *
-                   climate->length;
-
-      // Event additions. To be moved into updatePoolsForEvents after this
-      // function is split
-      envi.litter += fluxes.eventLitterC * climate->length;
-
-    } else {
-      // Normal pool (single pool, no microbes)
-      // :: from [1] (and others, TBD), eq (A3), where:
-      //     L_w = fluxes.woodLitter
-      //     L_l = fluxes.leafLitter
-      //     R_h = fluxes.rSoil
-      // :: from [3], root terms
-      envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                    fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
-                   climate->length;
-
-      // Event additions. To be moved into updatePoolsForEvents after this
-      // function is split
-      envi.soil += fluxes.eventLitterC * climate->length;
-    }
+    fluxes.microbeIngestion = 0.0;
+    fluxes.soilPulse = 0.0;
+    // fluxes.maintRespiration is otherwise set, do not set to zero here
   }
-  // :: from [3], root model description
-  envi.coarseRootC +=
-      (fluxes.coarseRootCreation - fluxes.coarseRootLoss - fluxes.rCoarseRoot) *
-      climate->length;
-  envi.fineRootC +=
-      (fluxes.fineRootCreation - fluxes.fineRootLoss - fluxes.rFineRoot) *
-      climate->length;
-
-  // Event additions. To be moved into updatePoolsForEvents after this
-  // function is split
-  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
-  envi.fineRootC += fluxes.eventFineRootC * climate->length;
 }
 
-////
-
-// !!! general, multi-purpose functions !!!
-
-// !!! functions to calculate fluxes !!!
-// all fluxes are on a per-day basis
-
-// transfer of carbon from plant woody material to litter, in g C * m^-2 ground
-// area * day^-1 (includes above-ground and roots)
-double woodLitterF(double plantWoodC) {
-  return plantWoodC * params.woodTurnoverRate;  // turnover rate is fraction
-                                                // lost per day
-}
-
-/*!
- * Calculate soil/litter breakdown
- *
- * Calculate pool breakdown based on carbon in pool, pool breakdown rate, and
- * soil temperature. If waterHResp is on, also calculate a moisture effect
- * term base on fraction of water holding capacity.
- *
- * The function and param names seem to indicate that this function is
- * intended for use for both soil and litter pools, but the only current use
- * is with the litter pool when litterPool is on. (Very old versions of sipnet
- * did indeed call this for both soil and litter, but the soil call has been
- * replaced with the soilDegradation() function.)
- *
- * @param poolC carbon in input pool (litter pool)
- * @param baseRate base pool breakdown rate
- * @param water water in pool
- * @param whc pool water holding capacity
- * @param tsoil soil temperature
- * @param Q10 Q10 param (uses soil respiration Q10)
- * @return litter breakdown (g C/m^2 ground area)
- */
-double soilBreakdown(double poolC, double baseRate, double water, double whc,
-                     double tsoil, double Q10) {
-  double tempEffect = pow(Q10, tsoil / 10.0);
-  double moistEffect;
-
-  if (ctx.waterHResp) {
-    // :: from [2], snowpack addition
-    if (climate->tsoil < 0) {
-      moistEffect = 1;  // Ignore moisture effects in frozen soils
-    } else {
-      // As in calcMaintenanceRespiration, provenance of soilRespMoistEffect
-      // is unknown
-      // Original formulation from [1], based on PnET is:
-      //   moistEffect = water / whc
-      // which matches here with params.soilRespMoistEffect=1 (the default
-      // value)
-      moistEffect = pow((water / whc), params.soilRespMoistEffect);
-    }
-  } else {
-    // :: from [2], fifth modification described on pg 247
-    // :: that is, moisture-independent R_h
-    moistEffect = 1;
-  }
-
-  return poolC * baseRate * tempEffect * moistEffect;
-}
-
-/*!
- * Calculate flux terms for sipnet as part of main model flow
- *
- * All fluxes should be calculated before state variables are updated.
- */
-void calculateFluxes(void) {
-  // base foliar respiration, calc'd as part of potential photosynthesis
-  double baseFolResp;
-  // potential photosynthesis, without water stress
-  double potGrossPsn;
-  // reduction in photosynthesis due to soil dryness
-  double dWater;
-  // m^2 leaf/m^2 ground (calculated from plantLeafC)
-  double lai;
-  // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
-  double litterBreakdown;
-  // maintenance respiration terms (g C * m^-2 ground area * day^-1)
-  double folResp, woodResp;
-  // Growth respiration, if splitting growth and maintenance
-  // (g C * m^-2 ground area * day^-1)
-  double growthResp;
-  // net rain, equal to (rain - immedEvap) (cm/day)
-  double netRain;
-
-  lai = envi.plantLeafC / params.leafCSpWt;  // current lai
-
-  potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd,
-         climate->par);
-  moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd,
-           envi.soilWater);
-
-  calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), lai);
-  netRain = fluxes.rain - fluxes.immedEvap;
-  snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
-  soilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation), &(fluxes.drainage),
-                  envi.soilWater, netRain, fluxes.snowMelt,
-                  fluxes.transpiration);
-
-  getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
-
-  if (ctx.growthResp) {
-    vegResp2(&folResp, &woodResp, &growthResp, baseFolResp,
-             fluxes.photosynthesis);
-    fluxes.rVeg = folResp + woodResp + growthResp;
-  } else {
-    vegResp(&folResp, &woodResp, baseFolResp);
-    fluxes.rVeg = folResp + woodResp;
-  }
-
-  leafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
-
+void calcLitterFluxes() {
   if (ctx.litterPool) {
-    litterBreakdown =
-        soilBreakdown(envi.litter, params.litterBreakdownRate, envi.soilWater,
-                      params.soilWHC, climate->tsoil, params.soilRespQ10);
+    double tempEffect = pow(params.soilRespQ10, climate->tsoil / 10.0);
+    double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
+    // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
+    double litterBreakdown =
+        envi.litter * params.litterBreakdownRate * tempEffect * moistEffect;
+
     fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
   } else {
@@ -1338,11 +1169,14 @@ void calculateFluxes(void) {
     fluxes.rLitter = 0;
     fluxes.litterToSoil = 0;
   }
+}
 
-  // finally, calculate fluxes that we haven't already calculated:
-
-  fluxes.woodLitter = woodLitterF(envi.plantWoodC);
-
+/*!
+ * Calculate root and wood creation and loss
+ *
+ * @return total root exudate for use with microbe model
+ */
+double calcRootAndWoodFluxes(void) {
   double coarseExudate, fineExudate;  // exudates in and out of soil
   double npp, gppSoil;  // running means of our tracker variables
 
@@ -1374,15 +1208,82 @@ void calculateFluxes(void) {
   fluxes.fineRootLoss = (1 - params.microbePulseEff) * fineExudate +
                         params.fineRootTurnoverRate * envi.fineRootC;
 
-  // fluxes that get added to microbe pool
-  // :: from [4], eq (5.11) first line
-  fluxes.soilPulse = params.microbePulseEff * (coarseExudate + fineExudate);
+  // Wood litter, in g C * m^-2 ground area * day^-1
+  // turnover rate is fraction lost per day
+  fluxes.woodLitter = envi.plantWoodC * params.woodTurnoverRate;
 
   // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
                params.baseCoarseRootResp, envi.coarseRootC);
   calcRootResp(&fluxes.rFineRoot, params.fineRootQ10, params.baseFineRootResp,
                envi.fineRootC);
+
+  return fineExudate + coarseExudate;
+}
+
+/*!
+ * Calculate flux terms for sipnet as part of main model flow
+ *
+ * All fluxes should be calculated before state variables are updated.
+ */
+void calculateFluxes(void) {
+  // base foliar respiration, calc'd as part of potential photosynthesis
+  double baseFolResp;
+  // potential photosynthesis, without water stress
+  double potGrossPsn;
+  // reduction in photosynthesis due to soil dryness
+  double dWater;
+  // m^2 leaf/m^2 ground (calculated from plantLeafC)
+  double lai;
+  // maintenance respiration terms (g C * m^-2 ground area * day^-1)
+  double folResp, woodResp;
+  // Growth respiration, if splitting growth and maintenance
+  // (g C * m^-2 ground area * day^-1)
+  double growthResp;
+  // net rain, equal to (rain - immedEvap) (cm/day)
+  double netRain;
+
+  // Psn, moisture and water fluxes
+  lai = envi.plantLeafC / params.leafCSpWt;  // current lai
+
+  potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd,
+         climate->par);
+  moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd,
+           envi.soilWater);
+  calcPrecip(&(fluxes.rain), &(fluxes.snowFall), &(fluxes.immedEvap), lai);
+  netRain = fluxes.rain - fluxes.immedEvap;
+  snowPack(&(fluxes.snowMelt), &(fluxes.sublimation), fluxes.snowFall);
+  calcSoilWaterFluxes(&(fluxes.fastFlow), &(fluxes.evaporation),
+                      &(fluxes.drainage), envi.soilWater, netRain,
+                      fluxes.snowMelt, fluxes.transpiration);
+  getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
+
+  // Vegetation respiration
+  if (ctx.growthResp) {
+    vegResp2(&folResp, &woodResp, &growthResp, baseFolResp,
+             fluxes.photosynthesis);
+    fluxes.rVeg = folResp + woodResp + growthResp;
+  } else {
+    vegResp(&folResp, &woodResp, baseFolResp);
+    fluxes.rVeg = folResp + woodResp;
+  }
+
+  // Leaf creation and litter
+  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
+
+  // Litter pool, if LITTER is on
+  calcLitterFluxes();
+
+  // Roots and microbes
+  double rootExudate = calcRootAndWoodFluxes();
+
+  // Microbes
+  if (ctx.microbes) {
+    calcMicrobeFluxes(climate->tsoil, envi.soilWater, params.soilWHC,
+                      rootExudate);
+  } else {
+    calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
+  }
 }
 
 // !!! functions for updating tracker variables !!!
@@ -1521,6 +1422,120 @@ void updateTrackers(double oldSoilWater) {
   trackers.yearlyLitter += fluxes.leafLitter;
 }
 
+/*!
+ * Update the main pools, leafC, woodC, soil and snow
+ */
+void updateMainPools() {
+  // Update the stocks, with fluxes adjusted for length of time step.
+  // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
+  // were updated in soilDegradation(); also, envi.litter when that is in use.
+  // And yes, I would love to break that out to maintain more rigor in this
+  // flow process.
+
+  // :: from [1], eq (A1), where:
+  //     GPP = fluxes.photosynthesis
+  //     R_a = fluxes.rVeg
+  //     L_w = fluxes.woodLitter
+  //     L   = fluxes.leafCreation
+  // :: from [3], additional root terms (woodCreation, fineRootC, coarseRootC)
+  //    from NPP allocation
+  envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation -
+                      fluxes.leafCreation - fluxes.woodLitter - fluxes.rVeg -
+                      fluxes.coarseRootCreation - fluxes.fineRootCreation) *
+                     climate->length;
+
+  // :: from [1], eq (A2), where:
+  //     L   = fluxes.leafCreation
+  //     L_L = fluxes.leafLitter
+  envi.plantLeafC +=
+      (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
+
+  // :: from [1], eq (A4), where:
+  //     P = (fluxes.rain - fluxes.immedEvap)
+  //     T = (fluxes.transpiration + fluxes.evaporation)
+  //     D = (fluxes.bottomDrainage + fluxes.fastFlow)
+  //    from [2], addition of fluxes.snowMelt, as well as the modifications in
+  //    the terms above: immedEvap in P, evaporation in T, and fastFlow in D
+  envi.soilWater +=
+      (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow -
+       fluxes.evaporation - fluxes.transpiration - fluxes.drainage) *
+      climate->length;
+
+  // if ctx.snow = 0, some or all of these fluxes will always be 0
+  // :: from [2], addition of snowpack description
+  envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) *
+               climate->length;
+}
+
+/*!
+ * Calculate soil respiration flux and update carbon pools
+ *
+ * Calculates soil respiration, method depending on the MICROBES and
+ * LITTER_POOL flags. Updates carbon pools for soil, fine roots,
+ * and coarse roots.
+ *
+ * TODO: split this apart - fluxes into calculateFluxes, with pool updates
+ *       after, as is the general method for SIPNET.
+ */
+void updatePoolsForSoil(void) {
+
+  // UPDATE POOLS
+  if (ctx.microbes) {
+    double microbeEff = params.efficiency;
+
+    // :: from [1] for litter terms
+    // :: from [3] for root terms
+    // :: from [4] for microbeIngestion term
+    // Note: no rSoil term here, as soil resp is handled by microbeIngestion
+    envi.soil +=
+        (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
+         fluxes.leafLitter - fluxes.microbeIngestion) *
+        climate->length;
+    // microbeC additions due to ingestion and incorporation of root exudates,
+    // with reduction from microbe respiration
+    // :: from [4], eq (5.9) for first (ingestion) term,
+    // ::      eq (5.11) used for soilPulse, and
+    // ::      eq (5.12) used for maintRespiration
+    envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
+                      fluxes.maintRespiration) *
+                     climate->length;
+
+    // rSoil is maintenance resp + growth (microbe) resp
+    // :: from [4], eq (5.10) for microbe term
+    fluxes.rSoil =
+        fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
+  } else {
+    if (ctx.litterPool) {
+      // :: from [2], litter model description
+      envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
+                      fluxes.litterToSoil - fluxes.rLitter) *
+                     climate->length;
+
+      // from [2] and [3], litter and root terms respectively
+      envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                    fluxes.litterToSoil - fluxes.rSoil) *
+                   climate->length;
+    } else {
+      // Normal pool (single pool, no microbes)
+      // :: from [1] (and others, TBD), eq (A3), where:
+      //     L_w = fluxes.woodLitter
+      //     L_l = fluxes.leafLitter
+      //     R_h = fluxes.rSoil
+      // :: from [3], root terms
+      envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                    fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
+                   climate->length;
+    }
+  }
+  // :: from [3], root model description
+  envi.coarseRootC +=
+      (fluxes.coarseRootCreation - fluxes.coarseRootLoss - fluxes.rCoarseRoot) *
+      climate->length;
+  envi.fineRootC +=
+      (fluxes.fineRootCreation - fluxes.fineRootLoss - fluxes.rFineRoot) *
+      climate->length;
+}
+
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;
   fluxes.eventWoodC = 0.0;
@@ -1570,9 +1585,9 @@ void processEvents(void) {
   // a corresponding climate file record.
   while (event != NULL && event->year <= climYear && event->day <= climDay) {
     if (event->year < climYear || event->day < climDay) {
-      printf("Agronomic event found for year: %d day: %d that does not "
-             "have a corresponding record in the climate file\n",
-             event->year, event->day);
+      logError("Agronomic event found for year: %d day: %d that does not "
+               "have a corresponding record in the climate file\n",
+               event->year, event->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     switch (event->type) {
@@ -1591,7 +1606,7 @@ void processEvents(void) {
           evapAmount = 0.0;
           soilAmount = amount;
         } else {
-          printf("Unknown irrigation method type: %d\n", irrParams->method);
+          logError("Unknown irrigation method type: %d\n", irrParams->method);
           exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
         }
         fluxes.eventEvap += evapAmount / climLen;
@@ -1655,7 +1670,7 @@ void processEvents(void) {
       } break;
       case TILLAGE:
         // TBD
-        printf("Tillage events not yet implemented\n");
+        logError("Tillage events not yet implemented\n");
         break;
       case FERTILIZATION: {
         const FertilizationParams *fertParams = event->eventParams;
@@ -1672,7 +1687,7 @@ void processEvents(void) {
                       orgC / climLen);
       } break;
       default:
-        printf("Unknown event type (%d) in processEvents()\n", event->type);
+        logError("Unknown event type (%d) in processEvents()\n", event->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
@@ -1681,26 +1696,23 @@ void processEvents(void) {
 }
 
 void updatePoolsForEvents(void) {
-  // Harvest and planting events effect these carbon pools
+  // Harvest and planting events
   envi.plantWoodC += fluxes.eventWoodC * climate->length;
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
 
   // Irrigation events
   envi.soilWater += fluxes.eventSoilWater * climate->length;
 
-  // envi.litter, envi.soil, envi.fineRootC and envi.CoarseRootC are all in
-  // soilDegradation, but should be moved here when that function is split
-  // into fluxes and pool updates
-  //
-  // Harvest and fertilization
-  // if (ctx.litterPool) {
-  //   envi.litter += fluxes.eventLitterC * climate->length;
-  // } else {
-  //   envi.soil += fluxes.eventLitterC * climate->length;
-  // }
-  // Harvest and planting
-  // envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
-  // envi.fineRootC += fluxes.eventFineRootC * climate->length;
+  // Harvest and fertilization events
+  if (ctx.litterPool) {
+    envi.litter += fluxes.eventLitterC * climate->length;
+  } else {
+    envi.soil += fluxes.eventLitterC * climate->length;
+  }
+
+  // Harvest and planting events
+  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
+  envi.fineRootC += fluxes.eventFineRootC * climate->length;
 }
 
 // !!! main runner function !!!
@@ -1725,54 +1737,14 @@ void updateState(void) {
   // All event handling, which is modeled as fluxes
   processEvents();
 
-  // This updates all the soil functions; it also updates some pools, which
-  // muddies the sipnet flow.
-  soilDegradation();
-
   ///////////////////////
   // 2. Update Pools
 
-  // TODO: move this into an `updatePools()` function
+  // Update leafC, woodC, soil water and snow pools
+  updateMainPools();
 
-  // Update the stocks, with fluxes adjusted for length of time step.
-  // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
-  // were updated in soilDegradation(); also, envi.litter when that is in use.
-  // And yes, I would love to break that out to maintain more rigor in this
-  // flow process.
-
-  // :: from [1], eq (A1), where:
-  //     GPP = fluxes.photosynthesis
-  //     R_a = fluxes.rVeg
-  //     L_w = fluxes.woodLitter
-  //     L   = fluxes.leafCreation
-  // :: from [3], additional root terms (woodCreation, fineRootC, coarseRootC)
-  //    from NPP allocation
-  envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation -
-                      fluxes.leafCreation - fluxes.woodLitter - fluxes.rVeg -
-                      fluxes.coarseRootCreation - fluxes.fineRootCreation) *
-                     climate->length;
-
-  // :: from [1], eq (A2), where:
-  //     L   = fluxes.leafCreation
-  //     L_L = fluxes.leafLitter
-  envi.plantLeafC +=
-      (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
-
-  // :: from [1], eq (A4), where:
-  //     P = (fluxes.rain - fluxes.immedEvap)
-  //     T = (fluxes.transpiration + fluxes.evaporation)
-  //     D = (fluxes.bottomDrainage + fluxes.fastFlow)
-  //    from [2], addition of fluxes.snowMelt, as well as the modifications in
-  //    the terms above: immedEvap in P, evaporation in T, and fastFlow in D
-  envi.soilWater +=
-      (fluxes.rain + fluxes.snowMelt - fluxes.immedEvap - fluxes.fastFlow -
-       fluxes.evaporation - fluxes.transpiration - fluxes.drainage) *
-      climate->length;
-
-  // if ctx.snow = 0, some or all of these fluxes will always be 0
-  // :: from [2], addition of snowpack description
-  envi.snow += (fluxes.snowFall - fluxes.snowMelt - fluxes.sublimation) *
-               climate->length;
+  // Update soil carbon pools
+  updatePoolsForSoil();
 
   // Update pools for fluxes from events
   updatePoolsForEvents();
