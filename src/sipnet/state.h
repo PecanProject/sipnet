@@ -271,7 +271,7 @@ typedef struct Parameters {
   double coarseRootAllocation;
   // fraction of GPP exuded to the soil
   double fineRootExudation;
-  // fraction of NPP exuded to the soil
+  // fraction of GPP exuded to the soil
   double coarseRootExudation;
   // turnover of fine roots (per year rate)
   double fineRootTurnoverRate;
