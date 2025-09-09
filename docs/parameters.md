@@ -162,9 +162,10 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 65   |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |                                    |                    |
 | 66   | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |                                    |                    |
 | 67   | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |                                    |                    |
-| <!-- | 68                        |                     | fineRootExudation                              | fraction of GPP exuded to the soil |                    | Pulsing parameters |
-| 68   |                           | coarseRootExudation | fraction of NPP exuded to the soil             |                                    | Pulsing parameters |
--->
+|      | 68                        | fineRootExudation   | fraction of GPP exuded to the soil[^exudates]  | fraction                           | Pulsing parameters |
+| 68   |                           | coarseRootExudation | fraction of GPP exuded to the soil[^exudates]  | fraction                          | Pulsing parameters |
+
+[^exudates]: Fine and coarse root exudation are calculated as a fraction of GPP, but the exudates are subtracted from the fine and coarse root pools, respectively. <!--Note that previous versions incorrectly defined fine root exudates as a fraction of NPP-->
 
 ### Autotrophic respiration parameters
 
@@ -533,8 +534,10 @@ Notes:
 | org-N     |   5    |   Y   | g N / m2    |
 | org-C     |   6    |   Y   | g C / m2    |
 | min-N     |   7    |   Y   | g N / m2    | <!--(NH4+NO3 in one pool model; NH4 in two pool model)-->       |
-| <!--      | min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | --> |
 
+<!--
+|           | min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) |  |
+-->
   - Model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
   - notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools 
