@@ -356,7 +356,7 @@ typedef struct Parameters {
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
 
 // Global var
-Params params;
+extern Params params;
 
 // the state of the environment
 typedef struct Environment {
@@ -382,7 +382,7 @@ typedef struct Environment {
 } Envi;
 
 // Global var
-Envi envi;  // state variables
+extern Envi envi;  // state variables
 
 // fluxes as per-day rates
 typedef struct FluxVars {
@@ -520,7 +520,7 @@ typedef struct FluxVars {
 } Fluxes;
 
 // Global var
-Fluxes fluxes;
+extern Fluxes fluxes;
 
 typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 taken up in this time interval; GROSS photosynthesis
@@ -579,7 +579,7 @@ typedef struct TrackerVars {  // variables to track various things
 } Trackers;
 
 // Global var
-Trackers trackers;
+extern Trackers trackers;
 
 typedef struct PhenologyTrackersStruct {
   // variables to track each year's phenological development. Only used in
@@ -597,6 +597,6 @@ typedef struct PhenologyTrackersStruct {
 } PhenologyTrackers;
 
 // Global var
-PhenologyTrackers phenologyTrackers;
+extern PhenologyTrackers phenologyTrackers;
 
 #endif  // SIPNET_STATE_H
