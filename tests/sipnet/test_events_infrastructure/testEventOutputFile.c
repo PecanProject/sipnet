@@ -82,7 +82,7 @@ int runTest(const char *prefix, int header) {
   initEvents(input, header);
   runLoc();
 
-  closeEventOutFile(eventOutFile);
+  closeEventOutFile();
   status = diffFiles(output, "events.out");
 
   return status;

@@ -101,29 +101,15 @@
 //   - This paper details the now-removed MODIS and fAPAR tracking, if we want
 //   to bring those back at some point
 
-// linked list of climate variables
-// one node for each time step
-// these climate data are read in from a file
-static ClimateNode *firstClimate;  // pointers to first climate
-
 // more global variables:
 // these are global to increase efficiency (avoid lots of parameter passing)
 
-static Params params;
-static Envi envi;  // state variables
-static Trackers trackers;
-static PhenologyTrackers phenologyTrackers;
-static MeanTracker *meanNPP;  // running mean of NPP over some fixed time
-                              // (stored in g C * m^-2 * day^-1)
-static MeanTracker *meanGPP;  // running mean of GPP over some fixed time for
-                              // linkages (stored in g C * m^-2 * day^-1)
-
-static ClimateNode *climate;  // current climate
-static Fluxes fluxes;
-
-static EventNode *events;
-static EventNode *event;
-static FILE *eventOutFile;
+// running mean of NPP over some fixed time
+// (stored in g C * m^-2 * day^-1)
+static MeanTracker *meanNPP;
+// running mean of GPP over some fixed time for linkages
+// (stored in g C * m^-2 * day^-1)
+static MeanTracker *meanGPP;
 
 //
 // Infrastructure and I/O functions
@@ -1422,6 +1408,37 @@ void updateTrackers(double oldSoilWater) {
   trackers.yearlyLitter += fluxes.leafLitter;
 }
 
+void updateMeanTrackers(void) {
+  double npp;  // net primary productivity, g C * m^-2 ground area * day^-1
+  int err;
+
+  npp = fluxes.photosynthesis - fluxes.rVeg - fluxes.rCoarseRoot -
+        fluxes.rFineRoot;
+
+  err = addValueToMeanTracker(meanNPP, npp, climate->length);  // update running
+                                                               // mean of NPP
+  if (err != 0) {
+    printf("******* Error type %d while trying to add value to NPP mean "
+           "tracker in sipnet:updateState() *******\n",
+           err);
+    printf("npp = %f, climate->length = %f\n", npp, climate->length);
+    printf("Suggestion: try changing MEAN_NPP_MAX_ENTRIES in sipnet.c\n");
+    exit(1);
+  }
+
+  err = addValueToMeanTracker(meanGPP, fluxes.photosynthesis,
+                              climate->length);  // update running mean of GPP
+  if (err != 0) {
+    printf("******* Error type %d while trying to add value to GPP mean "
+           "tracker in sipnet:updateState() *******\n",
+           err);
+    printf("GPP = %f, climate->length = %f\n", fluxes.photosynthesis,
+           climate->length);
+    printf("Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
+    exit(1);
+  }
+}
+
 /*!
  * Update the main pools, leafC, woodC, soil and snow
  */
@@ -1536,196 +1553,15 @@ void updatePoolsForSoil(void) {
       climate->length;
 }
 
-void resetEventFluxes(void) {
-  fluxes.eventLeafC = 0.0;
-  fluxes.eventWoodC = 0.0;
-  fluxes.eventFineRootC = 0.0;
-  fluxes.eventCoarseRootC = 0.0;
-  fluxes.eventEvap = 0.0;
-  fluxes.eventSoilWater = 0.0;
-  fluxes.eventLitterC = 0.0;
-}
-
-/*!
- * \brief Process events for current location/year/day
- *
- * For a given year and day (as determined by the global `climate`
- * pointer), process all events listed in the global `events` pointer for the
- * referenced location.
- *
- * For each event, modify state variables according to the model for that event,
- * and write a row to events.out listing the modified variables and the delta
- * applied.
- */
-void processEvents(void) {
-  // This should be in events.h/c, but with all the global state defined in this
-  // file, let's leave it here for now. Maybe someday we will factor that out.
-
-  // Set all event fluxes to zero, as these have no memory from one step to
-  // the next
-  resetEventFluxes();
-
-  // If event starts off NULL, this function will just fall through, as it
-  // should.
-  const int climYear = climate->year;
-  const int climDay = climate->day;
-  const double climLen = climate->length;
-
-  // As this is used as a divisor in many places, let's make sure it's >0
-  if (climLen <= 0) {
-    logError("climate length (%f) on year %d day %d is non-positive; please "
-             "fix and re-run",
-             climLen, climYear, climDay);
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-  }
-
-  // The events file has been tested on read, so we know this event list should
-  // be in chrono order. However, we need to check to make sure the current
-  // event is not in the past, as that would indicate an event that did not have
-  // a corresponding climate file record.
-  while (event != NULL && event->year <= climYear && event->day <= climDay) {
-    if (event->year < climYear || event->day < climDay) {
-      logError("Agronomic event found for year: %d day: %d that does not "
-               "have a corresponding record in the climate file\n",
-               event->year, event->day);
-      exit(EXIT_CODE_INPUT_FILE_ERROR);
-    }
-    switch (event->type) {
-      case IRRIGATION: {
-        const IrrigationParams *irrParams = event->eventParams;
-        const double amount = irrParams->amountAdded;
-        double soilAmount, evapAmount;
-        if (irrParams->method == CANOPY) {
-          // Part of the irrigation evaporates, and the rest makes it to the
-          // soil. Evaporated fraction:
-          evapAmount = params.immedEvapFrac * amount;
-          // Soil fraction:
-          soilAmount = amount - evapAmount;
-        } else if (irrParams->method == SOIL) {
-          // All goes to the soil
-          evapAmount = 0.0;
-          soilAmount = amount;
-        } else {
-          logError("Unknown irrigation method type: %d\n", irrParams->method);
-          exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
-        }
-        fluxes.eventEvap += evapAmount / climLen;
-        fluxes.eventSoilWater += soilAmount / climLen;
-        writeEventOut(eventOutFile, event, 2, "fluxes.eventSoilWater",
-                      soilAmount / climLen, "fluxes.eventEvap",
-                      evapAmount / climLen);
-      } break;
-      case PLANTING: {
-        const PlantingParams *plantParams = event->eventParams;
-        const double leafC = plantParams->leafC;
-        const double woodC = plantParams->woodC;
-        const double fineRootC = plantParams->fineRootC;
-        const double coarseRootC = plantParams->coarseRootC;
-
-        // Update the fluxes
-        fluxes.eventLeafC += leafC / climLen;
-        fluxes.eventWoodC += woodC / climLen;
-        fluxes.eventFineRootC += fineRootC / climLen;
-        fluxes.eventCoarseRootC += coarseRootC / climLen;
-
-        // FUTURE: allocate to N pools
-
-        writeEventOut(eventOutFile, event, 4, "fluxes.eventLeafC",
-                      leafC / climLen, "fluxes.eventWoodC", woodC / climLen,
-                      "fluxes.eventFineRootC", fineRootC / climLen,
-                      "fluxes.eventCoarseRootC", coarseRootC / climLen);
-      } break;
-      case HARVEST: {
-        // Harvest can both remove biomass and move biomass to the litter pool
-        const HarvestParams *harvParams = event->eventParams;
-        const double fracRA = harvParams->fractionRemovedAbove;
-        const double fracTA = harvParams->fractionTransferredAbove;
-        const double fracRB = harvParams->fractionRemovedBelow;
-        const double fracTB = harvParams->fractionTransferredBelow;
-
-        // Litter increase
-        const double litterAdd = fracTA * (envi.plantLeafC + envi.plantWoodC) +
-                                 fracTB * (envi.fineRootC + envi.coarseRootC);
-        // Pool reductions, counting both mass moved to litter and removed by
-        // the harvest itself. Above-ground changes:
-        const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
-        const double woodDelta = -envi.plantWoodC * (fracRA + fracTA);
-        // Below-ground changes:
-        const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
-        const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
-
-        // Pool updates:
-        fluxes.eventLitterC += litterAdd / climLen;
-        fluxes.eventLeafC += leafDelta / climLen;
-        fluxes.eventWoodC += woodDelta / climLen;
-        fluxes.eventFineRootC += fineDelta / climLen;
-        fluxes.eventCoarseRootC += coarseDelta / climLen;
-
-        // FUTURE: move/remove biomass in N pools
-        writeEventOut(
-            eventOutFile, event, 5, "fluxes.eventLitterC", litterAdd / climLen,
-            "fluxes.eventLeafC", leafDelta / climLen, "fluxes.eventWoodC",
-            woodDelta / climLen, "fluxes.eventFineRootC", fineDelta / climLen,
-            "fluxes.eventCoarseRootC", coarseDelta / climLen);
-      } break;
-      case TILLAGE:
-        // TBD
-        logError("Tillage events not yet implemented\n");
-        break;
-      case FERTILIZATION: {
-        const FertilizationParams *fertParams = event->eventParams;
-        // const double orgN = fertParams->orgN;
-        const double orgC = fertParams->orgC;
-        // const double minN = fertParams->minN;
-
-        fluxes.eventLitterC += orgC / climLen;
-
-        // FUTURE: allocate to N pools
-
-        // This will (likely) be 3 params eventually
-        writeEventOut(eventOutFile, event, 1, "fluxes.eventLitterC",
-                      orgC / climLen);
-      } break;
-      default:
-        logError("Unknown event type (%d) in processEvents()\n", event->type);
-        exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
-    }
-
-    event = event->nextEvent;
-  }
-}
-
-void updatePoolsForEvents(void) {
-  // Harvest and planting events
-  envi.plantWoodC += fluxes.eventWoodC * climate->length;
-  envi.plantLeafC += fluxes.eventLeafC * climate->length;
-
-  // Irrigation events
-  envi.soilWater += fluxes.eventSoilWater * climate->length;
-
-  // Harvest and fertilization events
-  if (ctx.litterPool) {
-    envi.litter += fluxes.eventLitterC * climate->length;
-  } else {
-    envi.soil += fluxes.eventLitterC * climate->length;
-  }
-
-  // Harvest and planting events
-  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
-  envi.fineRootC += fluxes.eventFineRootC * climate->length;
-}
-
 // !!! main runner function !!!
 
 // calculate all fluxes and update state for this time step
 // we calculate all fluxes before updating state in case flux calculations
 // depend on the old state
 void updateState(void) {
-  double npp;  // net primary productivity, g C * m^-2 ground area * day^-1
-  double oldSoilWater;  // how much soil water was there before we updated it?
-                        // Used in trackers
-  int err;
-  oldSoilWater = envi.soilWater;
+  // how much soil water was there before we updated it?
+  // Used in trackers
+  double oldSoilWater = envi.soilWater;
 
   ///////////////////////
   // 1. Calculate Fluxes
@@ -1749,41 +1585,14 @@ void updateState(void) {
   // Update pools for fluxes from events
   updatePoolsForEvents();
 
-  // Verify none of our stocks have gone negative (and set to zero if so)
+  // Verify none of our stocks have gone negative (set any that are to zero)
   ensureNonNegativeStocks();
 
   ///////////////////////
   // 3. Update trackers
 
-  // TODO: move this into its own function, perhaps updateMeanTrackers()
-
-  npp = fluxes.photosynthesis - fluxes.rVeg - fluxes.rCoarseRoot -
-        fluxes.rFineRoot;
-
-  err = addValueToMeanTracker(meanNPP, npp, climate->length);  // update running
-                                                               // mean of NPP
-  if (err != 0) {
-    printf("******* Error type %d while trying to add value to NPP mean "
-           "tracker in sipnet:updateState() *******\n",
-           err);
-    printf("npp = %f, climate->length = %f\n", npp, climate->length);
-    printf("Suggestion: try changing MEAN_NPP_MAX_ENTRIES in sipnet.c\n");
-    exit(1);
-  }
-
-  err = addValueToMeanTracker(meanGPP, fluxes.photosynthesis,
-                              climate->length);  // update running mean of GPP
-  if (err != 0) {
-    printf("******* Error type %d while trying to add value to GPP mean "
-           "tracker in sipnet:updateState() *******\n",
-           err);
-    printf("GPP = %f, climate->length = %f\n", fluxes.photosynthesis,
-           climate->length);
-    printf("Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
-    exit(1);
-  }
-
   updateTrackers(oldSoilWater);
+  updateMeanTrackers();
 }
 
 // initialize phenology tracker structure, based on day of year of first climate
@@ -1901,9 +1710,6 @@ void setupModel(void) {
                                  // MEAN_GPP_DAYS) of 0
 }
 
-// Setup events at given location
-void setupEvents() { event = events; }
-
 // See sipnet.h
 void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
   if ((out != NULL) && printHeader) {
@@ -1947,17 +1753,6 @@ void initModel(ModelParams **modelParams, const char *paramFile,
 }
 
 // See sipnet.h
-void initEvents(char *eventFile, int printHeader) {
-  if (ctx.events) {
-    events = readEventData(eventFile);
-    eventOutFile = openEventOutFile(printHeader);
-  } else {
-    events = NULL;
-    eventOutFile = NULL;
-  }
-}
-
-// See sipnet.h
 void cleanupModel() {
   freeClimateList();
 
@@ -1965,6 +1760,6 @@ void cleanupModel() {
   deallocateMeanTracker(meanGPP);
   if (ctx.events) {
     freeEventList();
-    closeEventOutFile(eventOutFile);
+    closeEventOutFile();
   }
 }

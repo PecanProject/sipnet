@@ -48,6 +48,10 @@ struct ClimateVars {
   ClimateNode *nextClim;
 };
 
+// Global vars
+extern ClimateNode *firstClimate;  // pointer to first climate
+extern ClimateNode *climate;  // current climate
+
 #define NUM_CLIM_FILE_COLS 12
 #define NUM_CLIM_FILE_COLS_LEGACY (NUM_CLIM_FILE_COLS + 2)
 
@@ -351,6 +355,9 @@ typedef struct Parameters {
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
 
+// Global var
+Params params;
+
 // the state of the environment
 typedef struct Environment {
   // From [1] Braswell et al. 2005
@@ -373,6 +380,9 @@ typedef struct Environment {
   // From [4] Zobitz (draft)
   double microbeC;  // carbon in microbes (g C m-2 ground area)
 } Envi;
+
+// Global var
+Envi envi;  // state variables
 
 // fluxes as per-day rates
 typedef struct FluxVars {
@@ -509,6 +519,9 @@ typedef struct FluxVars {
   double eventLitterC;
 } Fluxes;
 
+// Global var
+Fluxes fluxes;
+
 typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 taken up in this time interval; GROSS photosynthesis
   double gpp;
@@ -565,6 +578,9 @@ typedef struct TrackerVars {  // variables to track various things
   double yearlyLitter;
 } Trackers;
 
+// Global var
+Trackers trackers;
+
 typedef struct PhenologyTrackersStruct {
   // variables to track each year's phenological development. Only used in
   // leafFluxes function, but made global so can be initialized dynamically,
@@ -579,5 +595,8 @@ typedef struct PhenologyTrackersStruct {
   // year of previous time step, for tracking when we hit a new calendar year
   int lastYear;
 } PhenologyTrackers;
+
+// Global var
+PhenologyTrackers phenologyTrackers;
 
 #endif  // SIPNET_STATE_H
