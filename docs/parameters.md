@@ -76,7 +76,7 @@ Subscripts may be used in combination, e.g. $X_{\text{soil,mineral},0}$.
 
 ## Run-time Parameters
 
-Run-time parameters can change from one run to the next, or when the model is stopped and restarted. These include initial state values and parameters related to plant physiology, soil physiology, and biogeochemical cycling.
+Run-time parameters can change from one run to the next, or when the model is stopped and restarted. These include initial state values and parameters related to plant physiology, soil physics, and biogeochemical cycling.
 
 ### Initial state values
 
@@ -189,8 +189,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 34  | $Q_{10s}$         | soilRespQ10         | Soil respiration Q10                                                                |                                               | scalar determining effect of temp on soil respiration |
 | 39  |                   | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                               |                                                       |
 |     |                   | baseMicrobeResp     |                                                                                     |                                               |                                                       |
-|     |                   |                     |                                                                                     |                                               |                                                       |
-
 | new | $f_{\textrm{till}}$ | tillageEff   | Effect of tillage on decomposition that exponentially decays over time | fraction | Per‑event in `events.in`; 0 = no effect |
 
 - $R_{dec}$: Rate of decomposition $(\text{day}^{-1})$ 
