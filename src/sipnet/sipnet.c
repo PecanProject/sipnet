@@ -433,8 +433,8 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%8.2f ", envi.soil);
   fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
-  fprintf(out, " %8.2f %8.2f %8.3f %8.2f ", envi.litter,
-          envi.soilWater, trackers.soilWetnessFrac, envi.snow);
+  fprintf(out, " %8.2f %8.2f %8.3f %8.2f ", envi.litter, envi.soilWater,
+          trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
           "%8.4f\n",
