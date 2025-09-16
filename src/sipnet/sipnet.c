@@ -414,9 +414,9 @@ void outputHeader(FILE *out) {
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
   fprintf(out, "year day time plantWoodC plantLeafC ");
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
-  fprintf(out, "litter litterWater soilWater soilWetnessFrac snow ");
+  fprintf(out, "litter soilWater soilWetnessFrac snow ");
   fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-               "evapotranspiration fluxestranspiration fPAR\n");
+               "evapotranspiration fluxestranspiration\n");
 }
 
 /*!
@@ -433,20 +433,15 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%8.2f ", envi.soil);
   fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
-
-  // The 0.0 entries below are placeholders for now-obsolete params:
-  // * litterWater
-  // * fpar
-  // to be removed in issue #145
-  fprintf(out, " %8.2f %8.3f %8.2f %8.3f %8.2f ", envi.litter, 0.0,
-          envi.soilWater, trackers.soilWetnessFrac, envi.snow);
+  fprintf(out, " %8.2f %8.2f %8.3f %8.2f ", envi.litter, envi.soilWater,
+          trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f %8.4f\n",
+          "%8.4f\n",
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration, 0.0);
+          fluxes.transpiration);
 }
 
 // de-allocate space used for climate linked list

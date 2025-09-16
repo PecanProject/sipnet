@@ -52,7 +52,8 @@ sections to include in release notes:
 - Deprecated: All columns in *.param except for name and value. Will be ignored with warning. (#92)
 - Deprecated: location and soilWetness columns in input climate files. If both are present, will be ignored with warning. (#92, #127)
 - Changed: sipnet.out columns will be zero when relevant modes are off (e.g., litter, microbes) (#143)
-- Changed: sipnet.out format; it no longer has loc, litterWater or fPAR columns (#TBD)
+- Changed: reorganized code in sipnet to better model fluxes-then-pool-updates flow (#154)
+- Changed: sipnet.out format; it no longer has loc, litterWater or fPAR columns (#155)
 
 ### Removed
 
