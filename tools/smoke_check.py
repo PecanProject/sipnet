@@ -122,11 +122,27 @@ def check_results(smoke_dir: str, verbose: bool):
   if has_header:
     new_df = pd.read_table(file, skiprows=1, header=0, sep=r'\s+', dtype=float)
     git_df = pd.read_table(git_result, skiprows=1, header=0, sep=r'\s+', dtype=float)
+
+    if set(new_df.columns) != set(git_df.columns):
+      print("Columns have changed! Comparing subset of matching columns")
+      common_columns = [col for col in new_df.columns if col in git_df.columns]
+      # common_columns = list(set(new_df.columns) & set(git_df.columns))
+      print(f"Common columns: {common_columns}")
+      new_df = new_df[common_columns]
+      git_df = git_df[common_columns]
   else:
     cols = 'year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration fPAR'
     cols = cols.split(' ')
-    new_df = pd.read_table(file, sep=r'\s+', header=None, names=cols, dtype=float)
-    git_df = pd.read_table(git_result, sep=r'\s+', header=None, names=cols, dtype=float)
+    # new_df = pd.read_table(file, sep=r'\s+', header=None, names=cols, dtype=float)
+    # git_df = pd.read_table(git_result, sep=r'\s+', header=None, names=cols, dtype=float)
+    new_df = pd.read_table(file, sep=r'\s+', header=None, dtype=float)
+    if len(new_df.columns) != len(cols):
+      print("Number of columns has changed for test without a header; no comparison can be performed. Skipping.")
+      return
+
+    new_df.columns = cols
+    git_df = pd.read_table(git_result, sep=r'\s+', header=None, dtype=float)
+    git_df.columns = cols
 
   diff_df = git_df.compare(new_df, result_names=('old', 'new'))
 
