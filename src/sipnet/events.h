@@ -135,7 +135,7 @@ void initEvents(char *eventFile, int printHeader);
 /*!
  * Initialize global event pointer
  */
-void setupEvents();
+void setupEvents(void);
 
 /*!
  * Set all event fluxes to zero
