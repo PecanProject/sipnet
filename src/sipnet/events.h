@@ -84,6 +84,14 @@ extern EventNode *event;
 const char *eventTypeToString(event_type_t type);
 
 /*!
+ * Convert event string to corresponding enum value
+ *
+ * @param string string version of event enum type
+ * @return enum value representing the event
+ */
+event_type_t eventStringToType(const char *eventTypeStr);
+
+/*!
  * Read event data from input filename (canonically events.in)
  *
  * Format: returned data is structured as an linked list of EventNode pointers.

@@ -125,7 +125,7 @@ EventNode *createEventNode(int year, int day, int eventType,
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       tParams->tillageEffect = tillEffect;
-      event->eventParams = tParams;
+      newEvent->eventParams = tParams;
     } break;
     default:
       // Unknown type, error and exit
@@ -137,7 +137,25 @@ EventNode *createEventNode(int year, int day, int eventType,
   return newEvent;
 }
 
-event_type_t getEventType(const char *eventTypeStr) {
+const char *eventTypeToString(event_type_t type) {
+  switch (type) {
+    case IRRIGATION:
+      return "irrig";
+    case PLANTING:
+      return "plant";
+    case HARVEST:
+      return "harv";
+    case FERTILIZATION:
+      return "fert";
+    case TILLAGE:
+      return "till";
+    default:
+      logError("unknown event type in eventTypeToString (%d)", type);
+      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+  }
+}
+
+event_type_t eventStringToType(const char *eventTypeStr) {
   if (strcmp(eventTypeStr, "irrig") == 0) {
     return IRRIGATION;
   } else if (strcmp(eventTypeStr, "fert") == 0) {
@@ -188,7 +206,7 @@ EventNode *readEventData(char *eventFile) {
   }
   eventParamsStr = line + numBytes;
 
-  eventType = getEventType(eventTypeStr);
+  eventType = eventStringToType(eventTypeStr);
   if (eventType == UNKNOWN_EVENT) {
     logError("reading event file: unknown event type %s\n", eventTypeStr);
     exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -211,7 +229,7 @@ EventNode *readEventData(char *eventFile) {
     }
     eventParamsStr = line + numBytes;
 
-    eventType = getEventType(eventTypeStr);
+    eventType = eventStringToType(eventTypeStr);
     if (eventType == UNKNOWN_EVENT) {
       logError("reading event file: unknown event type %s\n", eventTypeStr);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -234,24 +252,6 @@ EventNode *readEventData(char *eventFile) {
 
   fclose(in);
   return newEvents;
-}
-
-const char *eventTypeToString(event_type_t type) {
-  switch (type) {
-    case IRRIGATION:
-      return "irrig";
-    case PLANTING:
-      return "plant";
-    case HARVEST:
-      return "harv";
-    case FERTILIZATION:
-      return "fert";
-    case TILLAGE:
-      return "till";
-    default:
-      logError("unknown event type in eventTypeToString (%d)", type);
-      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
-  }
 }
 
 void openEventOutFile(int printHeader) {
