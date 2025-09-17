@@ -68,6 +68,11 @@ struct EventNode {
   EventNode *nextEvent;
 };
 
+// Global event variables
+
+extern EventNode *events;
+extern EventNode *event;
+
 /*!
  * Convert event enum value to corresponding string
  *
@@ -89,12 +94,12 @@ EventNode *readEventData(char *eventFile);
  * @param printHeader Flag, non-zero value means write a header row
  * @return FILE pointer to output file
  */
-FILE *openEventOutFile(int printHeader);
+void openEventOutFile(int printHeader);
 
 /*!
- * \brief Write a line to events.out for a single event
+ * \brief Write a line to events.out for a single oneEvent
  *
- * Writes a single event to events.out. This is a variadic function which
+ * Writes a single oneEvent to events.out. This is a variadic function which
  * expects to receive 2*numParams values in (char*, double) pairs after the
  * numParams argument.
  *
@@ -103,17 +108,58 @@ FILE *openEventOutFile(int printHeader);
  * year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
  *
  * \param out       FILE pointer to events.out
- * \param event     Pointer to event node
+ * \param oneEvent     Pointer to oneEvent node
  * \param numParams Number of param/value pairs to write
  * \param ...       Pairs of (char*, double) arguments to write, 2*numParams
  *                  values
  */
-void writeEventOut(FILE *out, EventNode *event, int numParams, ...);
+void writeEventOut(EventNode *oneEvent, int numParams, ...);
 
 /*!
  * Close the event output file
  * @param file FILE pointer for output file
  */
-void closeEventOutFile(FILE *file);
+void closeEventOutFile(void);
+
+/*!
+ * Read in event data for all the model runs
+ *
+ * Read in event data from a file with the following specification:
+ * - one line per event
+ * - all events are ordered by year/day ascending
+ *
+ * @param eventFile Name of file containing event data
+ */
+void initEvents(char *eventFile, int printHeader);
+
+/*!
+ * Initialize global event pointer
+ */
+void setupEvents(void);
+
+/*!
+ * Set all event fluxes to zero
+ *
+ * Reset all event fluxes to zero in preparation for the next climate step.
+ */
+void resetEventFluxes(void);
+
+/*!
+ * \brief Process events for current location/year/day
+ *
+ * For a given year and day (as determined by the global `climate`
+ * pointer), process all events listed in the global `events` pointer for the
+ * referenced location.
+ *
+ * For each event, modify flux variables according to the model for that event,
+ * and write a row to events.out listing the modified variables and the delta
+ * applied.
+ */
+void processEvents(void);
+
+/*!
+ * Update relevant environment pools after event fluxes have been calculated
+ */
+void updatePoolsForEvents(void);
 
 #endif  // EVENTS_H

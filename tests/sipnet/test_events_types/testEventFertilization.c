@@ -29,12 +29,6 @@ void initEnv(void) {
   // Others to be added for N
 }
 
-void procEvents() {
-  processEvents();
-  soilDegradation();
-  updatePoolsForEvents();
-}
-
 int run(void) {
   int status = 0;
   double expLitterC;

@@ -35,4 +35,5 @@ add_library(sipnetlib
         src/sipnet/outputItems.c
         src/sipnet/runmean.c
         src/sipnet/sipnet.c
+        src/sipnet/state.c
 )

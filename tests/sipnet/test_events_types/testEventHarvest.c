@@ -49,12 +49,6 @@ void initEnv(void) {
   envi.coarseRootC = 5;
 }
 
-void procEvents() {
-  processEvents();
-  soilDegradation();
-  updatePoolsForEvents();
-}
-
 int run(void) {
   int status = 0;
   double expLitter, expLeafC, expWoodC, expFineC, expCoarseC;
