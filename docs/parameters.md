@@ -162,9 +162,10 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 65   |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |                                    |                    |
 | 66   | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |                                    |                    |
 | 67   | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |                                    |                    |
-| <!-- | 68                        |                     | fineRootExudation                              | fraction of GPP exuded to the soil |                    | Pulsing parameters |
-| 68   |                           | coarseRootExudation | fraction of NPP exuded to the soil             |                                    | Pulsing parameters |
--->
+|      | 68                        | fineRootExudation   | fraction of GPP exuded to the soil[^exudates]  | fraction                           | Pulsing parameters |
+| 68   |                           | coarseRootExudation | fraction of GPP exuded to the soil[^exudates]  | fraction                          | Pulsing parameters |
+
+[^exudates]: Fine and coarse root exudation are calculated as a fraction of GPP, but the exudates are subtracted from the fine and coarse root pools, respectively. <!--Note that previous versions incorrectly defined fine root exudates as a fraction of NPP-->
 
 ### Autotrophic respiration parameters
 
@@ -513,18 +514,18 @@ For managed ecosystems, the following inputs are provided in a file named `event
 | amount    |   5   |   Y   | Amount added (cm/d)                         |
 | method    |   6   |   Y   | 0=canopy<br>1=soil<br>2=flood (placeholder) |
 
-Model representation: an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.
+- Model representation:
+    - an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.
 
 Specifically: 
 
-- amount is listed as cm/d, but as events are specified per-day, this is treated as `cm` of water added on that day
-- For method=soil, this amount of water is added directly to the `soilWater` state variable 
+- amount is listed as cm/d, as events are specified per-day, this is treated as `cm` of water added on that day even though it is added at a specific time step.
+- For method=soil, this amount of water is added directly to the `soilWater` state variable.
 - For method=canopy, a fraction of the irrigation water (determined by input param `immedEvapFrac`) is added to the flux state variable `immedEvap`, with the remainder going to `soilWater`.
-- Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.
 
 Notes:
 
-- irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.
+- Irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.
 
 #### Fertilization Events
 
@@ -533,11 +534,16 @@ Notes:
 | org-N     |   5    |   Y   | g N / m2    |
 | org-C     |   6    |   Y   | g C / m2    |
 | min-N     |   7    |   Y   | g N / m2    | <!--(NH4+NO3 in one pool model; NH4 in two pool model)-->       |
-| <!--      | min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | --> |
 
-  - Model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.
+<!--
+|           | min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) |  |
+-->
+
+Model representation:
+
+    - increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
-  - notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools 
+    - notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools 
 
 #### Tillage Events
 
@@ -545,9 +551,10 @@ Notes:
 | ---------------------------------- | :---: | :---: | ------------------- |
 | tillageEff (\(f_{\textrm{till}}\)) |   5   |   Y   | Adjustment to $R_H$ |
 
-- Model representation:
-  - Transient increase in decomposition rate by $f_{\text{,tillage}}$ that exponentially decays over time.
-  - Multiple tillage events are additive.
+Model representation:
+
+    - Transient increase in decomposition rate by $f_{\text{,tillage}}$ that exponentially decays over time.
+    - Multiple tillage events are additive.
 
 #### Planting Events
 
@@ -558,11 +565,13 @@ Notes:
 | fine-root-C   |   7   |   Y   | C added to fine root pool (g C / m2)         |
 | coarse-root-C |   8   |   Y   | C added to coarse root pool (g C / m2)       |
 
-- Model representation:
-  - Date of event is the date of emergence, not the date of actual planting 
-  - Increases size of carbon pools by the amount of each respective parameter
-  - $N$ pools are calculated from $CN$ stoichiometric ratios.
-- notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.
+Model representation:
+
+    - Date of event is the date of emergence, not the date of actual planting 
+    - Increases size of carbon pools by the amount of each respective parameter
+    - $N$ pools are calculated from $CN$ stoichiometric ratios.
+
+Notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.
 
 #### Harvest Events
 
@@ -573,11 +582,12 @@ Notes:
 | fraction of aboveground biomass transferred to litter pool |   7   |   N   | default = 1 - removed |
 | fraction of belowground biomass transferred to litter pool |   8   |   N   | default = 1 - removed |
 
-- model representation:
-  - biomass C and N pools are either removed or added to litter
-   - for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). 
-  - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
-   - root biomass is only removed for root crops
+Model representation:
+
+    - biomass C and N pools are either removed or added to litter
+    - for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). 
+    - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
+    - root biomass is only removed for root crops
  
 #### Example of `events.in` file:
 
