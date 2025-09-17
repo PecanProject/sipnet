@@ -2131,31 +2131,24 @@
 <td></td>
 </tr>
 <tr>
-<td>&lt;!--</td>
+<td></td>
 <td>68</td>
-<td></td>
 <td>fineRootExudation</td>
-<td>fraction of GPP exuded to the soil</td>
-<td></td>
+<td>fraction of GPP exuded to the soil[^exudates]</td>
+<td>fraction</td>
+<td>Pulsing parameters</td>
 </tr>
 <tr>
 <td>68</td>
 <td></td>
 <td>coarseRootExudation</td>
-<td>fraction of NPP exuded to the soil</td>
-<td></td>
+<td>fraction of GPP exuded to the soil[^exudates]</td>
+<td>fraction</td>
 <td>Pulsing parameters</td>
-</tr>
-<tr>
-<td>--&gt;</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
+<p>[^exudates]: Fine and coarse root exudation are calculated as a fraction of GPP, but the exudates are subtracted from the fine and coarse root pools, respectively. <!--Note that previous versions incorrectly defined fine root exudates as a fraction of NPP--></p>
 <h3 id="autotrophic-respiration-parameters">Autotrophic respiration parameters<a class="headerlink" href="#autotrophic-respiration-parameters" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2996,17 +2989,21 @@ with this older format can still be read by sipnet:
 </tr>
 </tbody>
 </table>
-<p>Model representation: an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.</p>
+<ul>
+<li>Model representation:<ul>
+<li>an irrigation event increases soil moisture. Canopy irrigation also loses some moisture to evaporation.</li>
+</ul>
+</li>
+</ul>
 <p>Specifically: </p>
 <ul>
-<li>amount is listed as cm/d, but as events are specified per-day, this is treated as <code>cm</code> of water added on that day</li>
-<li>For method=soil, this amount of water is added directly to the <code>soilWater</code> state variable </li>
+<li>amount is listed as cm/d, as events are specified per-day, this is treated as <code>cm</code> of water added on that day even though it is added at a specific time step.</li>
+<li>For method=soil, this amount of water is added directly to the <code>soilWater</code> state variable.</li>
 <li>For method=canopy, a fraction of the irrigation water (determined by input param <code>immedEvapFrac</code>) is added to the flux state variable <code>immedEvap</code>, with the remainder going to <code>soilWater</code>.</li>
-<li>Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.</li>
 </ul>
 <p>Notes:</p>
 <ul>
-<li>irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.</li>
+<li>Irrigation could also directly change the soil moisture content rather than adding water as a flux. This could be used to represent an irrigation program that sets a moisture range and turns irrigation on at the low end and off at the high end of the range.</li>
 </ul>
 <h4 id="fertilization-events">Fertilization Events<a class="headerlink" href="#fertilization-events" title="Permanent link">&para;</a></h4>
 <table>
@@ -3037,21 +3034,18 @@ with this older format can still be read by sipnet:
 <td style="text-align: center;">Y</td>
 <td>g N / m2</td>
 </tr>
-<tr>
-<td>&lt;!--</td>
-<td style="text-align: center;">min-N2</td>
-<td style="text-align: center;">8</td>
-<td>Y*</td>
-</tr>
 </tbody>
 </table>
-<ul>
-<li>Model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.</li>
-</ul>
+<!--
+|           | min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) |  |
+-->
+
+<p>Model representation:</p>
+<pre><code>- increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.
+</code></pre>
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
-<ul>
-<li>notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools </li>
-</ul>
+<pre><code>- notes: PEcAn will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools
+</code></pre>
 <h4 id="tillage-events">Tillage Events<a class="headerlink" href="#tillage-events" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -3071,11 +3065,10 @@ with this older format can still be read by sipnet:
 </tr>
 </tbody>
 </table>
-<ul>
-<li>Model representation:</li>
-<li>Transient increase in decomposition rate by <span class="arithmatex">\(f_{\text{,tillage}}\)</span> that exponentially decays over time.</li>
-<li>Multiple tillage events are additive.</li>
-</ul>
+<p>Model representation:</p>
+<pre><code>- Transient increase in decomposition rate by $f_{\text{,tillage}}$ that exponentially decays over time.
+- Multiple tillage events are additive.
+</code></pre>
 <h4 id="planting-events">Planting Events<a class="headerlink" href="#planting-events" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -3113,13 +3106,12 @@ with this older format can still be read by sipnet:
 </tr>
 </tbody>
 </table>
-<ul>
-<li>Model representation:</li>
-<li>Date of event is the date of emergence, not the date of actual planting </li>
-<li>Increases size of carbon pools by the amount of each respective parameter</li>
-<li><span class="arithmatex">\(N\)</span> pools are calculated from <span class="arithmatex">\(CN\)</span> stoichiometric ratios.</li>
-<li>notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.</li>
-</ul>
+<p>Model representation:</p>
+<pre><code>- Date of event is the date of emergence, not the date of actual planting 
+- Increases size of carbon pools by the amount of each respective parameter
+- $N$ pools are calculated from $CN$ stoichiometric ratios.
+</code></pre>
+<p>Notes: PFT (crop type) is not an input parameter for a planting event because SIPNET only represents a single PFT.</p>
 <h4 id="harvest-events">Harvest Events<a class="headerlink" href="#harvest-events" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -3157,13 +3149,12 @@ with this older format can still be read by sipnet:
 </tr>
 </tbody>
 </table>
-<ul>
-<li>model representation:</li>
-<li>biomass C and N pools are either removed or added to litter</li>
-<li>for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). </li>
-<li>for perennials, some biomass may remain (col 5 + col 7 &lt;= 1 and col 6 + col 8 &lt;= 1; remainder is living).</li>
-<li>root biomass is only removed for root crops</li>
-</ul>
+<p>Model representation:</p>
+<pre><code>- biomass C and N pools are either removed or added to litter
+- for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). 
+- for perennials, some biomass may remain (col 5 + col 7 &lt;= 1 and col 6 + col 8 &lt;= 1; remainder is living).
+- root biomass is only removed for root crops
+</code></pre>
 <h4 id="example-of-eventsin-file">Example of <code>events.in</code> file:<a class="headerlink" href="#example-of-eventsin-file" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code>2022  35  till  0.2       # tilled on day 35, f_till = 0.2 (20% boost to rate term)
 2022  40  till  0.1       # tilled on day 40, adds 0.1 to f_till
