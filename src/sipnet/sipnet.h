@@ -26,17 +26,6 @@ void initModel(ModelParams **modelParams, const char *paramFile,
                const char *climFile);
 
 /*!
- * Read in event data for all the model runs
- *
- * Read in event data from a file with the following specification:
- * - one line per event
- * - all events are ordered by year/day ascending
- *
- * @param eventFile Name of file containing event data
- */
-void initEvents(char *eventFile, int printHeader);
-
-/*!
  * Free allocated memory
  *
  * Call this when done running model

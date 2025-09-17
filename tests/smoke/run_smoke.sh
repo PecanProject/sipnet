@@ -17,6 +17,7 @@ event_fail_count=0
 config_pass_count=0
 config_fail_count=0
 skip_count=0
+forced_pass_count=0
 
 # Find all immediate subdirectories
 DIRECTORIES=()
@@ -25,14 +26,14 @@ while IFS= read -r -d '' dir; do
     ((num_tests++))
 done < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
 
-# Sort - or we would, if our bash had mapfile
-#mapfile -t DIRECTORIES < <(printf "%s\n" "${DIRECTORIES[@]}" | sort)
+# Sort the directories
+IFS=$'\n' SORTED_DIRS=($(sort <<<"${DIRECTORIES[*]}")); unset IFS
 
 # Exit immediately if a command fails (optional)
 #set -e
 
 # Loop through each directory
-for DIR in "${DIRECTORIES[@]}"; do
+for DIR in "${SORTED_DIRS[@]}"; do
     echo "Running sipnet in: $DIR"
 
     if [ ! -d "$DIR" ]; then
@@ -49,15 +50,29 @@ for DIR in "${DIRECTORIES[@]}"; do
     # are proceeding as to why this is needed.
     if [ -f "./skip" ]; then
         echo "FORCED PASS for this test"
+        echo ""
         ((sipnet_pass_count++))
         ((event_pass_count++))
         ((config_pass_count++))
+        ((forced_pass_count++))
         cd "$SCRIPT_DIR" || { echo "Failed to change directories, exiting"; exit 1; }
         continue
     else
         pwd
         # This is the command that all directories will run when options/config are in
         ../../../sipnet -i sipnet.in
+
+        # Make sure the program actually ran successfully
+        if [ $? -ne 0 ]; then
+          echo "Error: The sipnet run failed. Marking everything as ❌ for this test."
+          # Mark everything as failed for this test, the continue
+          ((sipnet_fail_count++))
+          ((event_fail_count++))
+          ((config_fail_count++))
+          cd "$SCRIPT_DIR" || { echo "Failed to change directories, exiting"; exit 1; }
+          echo ""
+          continue
+        fi
     fi
 
     # Compare output with expected output; clean up files if no diffs found
@@ -98,18 +113,24 @@ done
 # Final return to starting directory (in case of premature exit)
 cd "$START_DIR" || { echo "Failed to change directories (ignorable)"; }
 
+if [ "$forced_pass_count" -gt 0 ]; then
+  forced_str=" ($forced_pass_count forced)"
+else
+  forced_str=""
+fi
+
 # Summary
 echo "======================="
 echo "SUMMARY:"
 echo "Skipped directories: $skip_count"
 echo "SIPNET OUTPUT:"
-echo "Passed:  $sipnet_pass_count/$num_tests"
+echo "Passed:  $sipnet_pass_count/$num_tests$forced_str"
 echo "Failed:  $sipnet_fail_count"
 echo "EVENT OUTPUT:"
-echo "Passed:  $event_pass_count/$num_tests"
+echo "Passed:  $event_pass_count/$num_tests$forced_str"
 echo "Failed:  $event_fail_count"
 echo "CONFIG OUTPUT:"
-echo "Passed:  $config_pass_count/$num_tests"
+echo "Passed:  $config_pass_count/$num_tests$forced_str"
 echo "Failed:  $config_fail_count"
 echo "======================="
 

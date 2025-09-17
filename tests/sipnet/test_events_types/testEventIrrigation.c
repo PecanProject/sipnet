@@ -20,12 +20,6 @@ int checkOutput(double soilWater, double eventEvap) {
   return status;
 }
 
-void procEvents() {
-  processEvents();
-  soilDegradation();
-  updatePoolsForEvents();
-}
-
 int run(void) {
   int status = 0;
 
