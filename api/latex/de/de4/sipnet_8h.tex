@@ -26,8 +26,6 @@ void \textbf{ print\+Model\+Components} (FILE $\ast$out)
 \item 
 void \textbf{ init\+Model} (\textbf{ Model\+Params} $\ast$$\ast$model\+Params, const char $\ast$param\+File, const char $\ast$clim\+File)
 \item 
-void \textbf{ init\+Events} (char $\ast$event\+File, int print\+Header)
-\item 
 void \textbf{ cleanup\+Model} (void)
 \item 
 void \textbf{ run\+Model\+Output} (FILE $\ast$out, \textbf{ Output\+Items} $\ast$output\+Items, int print\+Header)
@@ -47,11 +45,11 @@ Free allocated memory
 
 Call this when done running model 
 
-Definition at line \textbf{ 1984} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1751} of file \textbf{ sipnet.\+c}.
 
 
 
-References \textbf{ close\+Event\+Out\+File()}, \textbf{ ctx}, \textbf{ deallocate\+Mean\+Tracker()}, \textbf{ event\+Out\+File}, \textbf{ Context\+::events}, \textbf{ free\+Climate\+List()}, \textbf{ free\+Event\+List()}, \textbf{ mean\+GPP}, and \textbf{ mean\+NPP}.
+References \textbf{ close\+Event\+Out\+File()}, \textbf{ ctx}, \textbf{ deallocate\+Mean\+Tracker()}, \textbf{ Context\+::events}, \textbf{ free\+Climate\+List()}, \textbf{ free\+Event\+List()}, \textbf{ mean\+GPP}, and \textbf{ mean\+NPP}.
 
 
 
@@ -63,45 +61,6 @@ Here is the call graph for this function\+:
 \begin{center}
 \leavevmode
 \includegraphics[width=294pt]{de/de4/sipnet_8h_a22030f07f029aedc523fc93afdeeccd1_cgraph}
-\end{center}
-\end{figure}
-\label{sipnet_8h_a652d7b4ee171e11adcf885fc8907d130} 
-\index{sipnet.h@{sipnet.h}!initEvents@{initEvents}}
-\index{initEvents@{initEvents}!sipnet.h@{sipnet.h}}
-\doxysubsubsection{initEvents()}
-{\footnotesize\ttfamily void init\+Events (\begin{DoxyParamCaption}\item[{char $\ast$}]{event\+File,  }\item[{int}]{print\+Header }\end{DoxyParamCaption})}
-
-Read in event data for all the model runs
-
-Read in event data from a file with the following specification\+:
-\begin{DoxyItemize}
-\item one line per event
-\item all events are ordered by year/day ascending
-\end{DoxyItemize}
-
-
-\begin{DoxyParams}{Parameters}
-{\em event\+File} & Name of file containing event data \\
-\hline
-\end{DoxyParams}
-
-
-Definition at line \textbf{ 1973} of file \textbf{ sipnet.\+c}.
-
-
-
-References \textbf{ ctx}, \textbf{ event\+Out\+File}, \textbf{ Context\+::events}, \textbf{ events}, \textbf{ open\+Event\+Out\+File()}, and \textbf{ read\+Event\+Data()}.
-
-
-
-Referenced by \textbf{ main()}.
-
-Here is the call graph for this function\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{de/de4/sipnet_8h_a652d7b4ee171e11adcf885fc8907d130_cgraph}
 \end{center}
 \end{figure}
 \label{sipnet_8h_a0ea6a0f05e95efa49a0bcc8a4baae103} 
@@ -125,7 +84,7 @@ Read in initial parameter values and climate data. Also set up pointers to diffe
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1963} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1741} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -168,7 +127,7 @@ Run the model using parameter values in model\+Params
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1931} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1709} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -203,7 +162,7 @@ Each variable added will be output in a separate file (\textquotesingle{}$\ast$.
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1955} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1733} of file \textbf{ sipnet.\+c}.
 
 
 

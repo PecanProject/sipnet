@@ -78,7 +78,8 @@ $(function() {
 <a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">events.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -193,13 +194,31 @@ Functions</h2></td></tr>
 <tr class="separator:adaf5398f33e074025777106e1211e3c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb0aecb501956ec964a98b0310035c54" id="r_adb0aecb501956ec964a98b0310035c54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#adb0aecb501956ec964a98b0310035c54">readEventData</a> (char *eventFile)</td></tr>
 <tr class="separator:adb0aecb501956ec964a98b0310035c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89e0951d47d80ebfe47bf24c892ae03b" id="r_a89e0951d47d80ebfe47bf24c892ae03b"><td class="memItemLeft" align="right" valign="top">FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a89e0951d47d80ebfe47bf24c892ae03b">openEventOutFile</a> (int printHeader)</td></tr>
-<tr class="separator:a89e0951d47d80ebfe47bf24c892ae03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9bd841e389dc48f66a90ba59466ee08" id="r_ae9bd841e389dc48f66a90ba59466ee08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#ae9bd841e389dc48f66a90ba59466ee08">writeEventOut</a> (FILE *out, <a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *<a class="el" href="../../dd/d09/sipnet_8c.html#a7ae35c8e87cf86f85a3ee4485027cde0">event</a>, int numParams,...)</td></tr>
-<tr class="memdesc:ae9bd841e389dc48f66a90ba59466ee08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a line to events.out for a single event.  <br /></td></tr>
-<tr class="separator:ae9bd841e389dc48f66a90ba59466ee08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9751770959684fd1795afaa844e7f132" id="r_a9751770959684fd1795afaa844e7f132"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a9751770959684fd1795afaa844e7f132">closeEventOutFile</a> (FILE *file)</td></tr>
-<tr class="separator:a9751770959684fd1795afaa844e7f132"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00254fcd00e2cf4a0cb1a9f3d4843729" id="r_a00254fcd00e2cf4a0cb1a9f3d4843729"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a00254fcd00e2cf4a0cb1a9f3d4843729">openEventOutFile</a> (int printHeader)</td></tr>
+<tr class="separator:a00254fcd00e2cf4a0cb1a9f3d4843729"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac10b012ee2d3fc00122b3bfd0069da32" id="r_ac10b012ee2d3fc00122b3bfd0069da32"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#ac10b012ee2d3fc00122b3bfd0069da32">writeEventOut</a> (<a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *oneEvent, int numParams,...)</td></tr>
+<tr class="memdesc:ac10b012ee2d3fc00122b3bfd0069da32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a line to events.out for a single oneEvent.  <br /></td></tr>
+<tr class="separator:ac10b012ee2d3fc00122b3bfd0069da32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af58dd99ffc5dda744ab62797a83bb345" id="r_af58dd99ffc5dda744ab62797a83bb345"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#af58dd99ffc5dda744ab62797a83bb345">closeEventOutFile</a> (void)</td></tr>
+<tr class="separator:af58dd99ffc5dda744ab62797a83bb345"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a652d7b4ee171e11adcf885fc8907d130" id="r_a652d7b4ee171e11adcf885fc8907d130"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a652d7b4ee171e11adcf885fc8907d130">initEvents</a> (char *eventFile, int printHeader)</td></tr>
+<tr class="separator:a652d7b4ee171e11adcf885fc8907d130"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3653355925ac2ee71e40b293b7748dd" id="r_af3653355925ac2ee71e40b293b7748dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#af3653355925ac2ee71e40b293b7748dd">setupEvents</a> (void)</td></tr>
+<tr class="separator:af3653355925ac2ee71e40b293b7748dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12a8b3b4bb0688542d26bdb00f9c1961" id="r_a12a8b3b4bb0688542d26bdb00f9c1961"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a12a8b3b4bb0688542d26bdb00f9c1961">resetEventFluxes</a> (void)</td></tr>
+<tr class="separator:a12a8b3b4bb0688542d26bdb00f9c1961"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb4ad97daa6ca46b43b7eae3554c17fe" id="r_afb4ad97daa6ca46b43b7eae3554c17fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#afb4ad97daa6ca46b43b7eae3554c17fe">processEvents</a> (void)</td></tr>
+<tr class="memdesc:afb4ad97daa6ca46b43b7eae3554c17fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process events for current location/year/day.  <br /></td></tr>
+<tr class="separator:afb4ad97daa6ca46b43b7eae3554c17fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9de3738992b3780a28e1bdc3eba6604" id="r_ac9de3738992b3780a28e1bdc3eba6604"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#ac9de3738992b3780a28e1bdc3eba6604">updatePoolsForEvents</a> (void)</td></tr>
+<tr class="separator:ac9de3738992b3780a28e1bdc3eba6604"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a37141f818f11eaeeaae9437189de2bff" id="r_a37141f818f11eaeeaae9437189de2bff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a37141f818f11eaeeaae9437189de2bff">events</a></td></tr>
+<tr class="separator:a37141f818f11eaeeaae9437189de2bff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ae35c8e87cf86f85a3ee4485027cde0" id="r_a7ae35c8e87cf86f85a3ee4485027cde0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/dd2/events_8h.html#a7ae35c8e87cf86f85a3ee4485027cde0">event</a></td></tr>
+<tr class="separator:a7ae35c8e87cf86f85a3ee4485027cde0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a58f95b03434757972c784f255112e9ac" name="a58f95b03434757972c784f255112e9ac"></a>
@@ -492,8 +511,8 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a9751770959684fd1795afaa844e7f132" name="a9751770959684fd1795afaa844e7f132"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9751770959684fd1795afaa844e7f132">&#9670;&#160;</a></span>closeEventOutFile()</h2>
+<a id="af58dd99ffc5dda744ab62797a83bb345" name="af58dd99ffc5dda744ab62797a83bb345"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af58dd99ffc5dda744ab62797a83bb345">&#9670;&#160;</a></span>closeEventOutFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -501,8 +520,8 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void closeEventOutFile </td>
           <td>(</td>
-          <td class="paramtype">FILE *&#160;</td>
-          <td class="paramname"><em>file</em></td><td>)</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -514,9 +533,11 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00329">329</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00289">289</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01984">cleanupModel()</a>.</p>
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00030">eventOutFile</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01751">cleanupModel()</a>.</p>
 
 </div>
 </div>
@@ -544,22 +565,86 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string version of event enum type </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00281">281</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00240">240</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00310">writeEventOut()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00268">writeEventOut()</a>.</p>
 
 </div>
 </div>
-<a id="a89e0951d47d80ebfe47bf24c892ae03b" name="a89e0951d47d80ebfe47bf24c892ae03b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89e0951d47d80ebfe47bf24c892ae03b">&#9670;&#160;</a></span>openEventOutFile()</h2>
+<a id="a652d7b4ee171e11adcf885fc8907d130" name="a652d7b4ee171e11adcf885fc8907d130"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a652d7b4ee171e11adcf885fc8907d130">&#9670;&#160;</a></span>initEvents()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">FILE * openEventOutFile </td>
+          <td class="memname">void initEvents </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>eventFile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>printHeader</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Read in event data for all the model runs</p>
+<p>Read in event data from a file with the following specification:</p><ul>
+<li>one line per event</li>
+<li>all events are ordered by year/day ascending</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">eventFile</td><td>Name of file containing event data </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00295">295</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00043">Context::events</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00026">events</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00258">openEventOutFile()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00156">readEventData()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00128">main()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../db/dd2/events_8h_a652d7b4ee171e11adcf885fc8907d130_cgraph.png" border="0" usemap="#adb/dd2/events_8h_a652d7b4ee171e11adcf885fc8907d130_cgraph" alt=""/></div>
+<map name="adb/dd2/events_8h_a652d7b4ee171e11adcf885fc8907d130_cgraph" id="adb/dd2/events_8h_a652d7b4ee171e11adcf885fc8907d130_cgraph">
+<area shape="rect" title=" " alt="" coords="5,31,92,56"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a00254fcd00e2cf4a0cb1a9f3d4843729" title=" " alt="" coords="140,5,277,31"/>
+<area shape="poly" title=" " alt="" coords="92,34,126,28,127,34,93,39"/>
+<area shape="rect" href="../../de/deb/events_8c.html#adb0aecb501956ec964a98b0310035c54" title=" " alt="" coords="149,55,268,80"/>
+<area shape="poly" title=" " alt="" coords="93,47,136,54,135,59,92,52"/>
+<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="354,5,431,31"/>
+<area shape="poly" title=" " alt="" coords="278,15,340,15,340,21,278,21"/>
+<area shape="poly" title=" " alt="" coords="256,52,340,29,341,34,257,57"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209" title=" " alt="" coords="325,55,460,80"/>
+<area shape="poly" title=" " alt="" coords="268,65,311,65,311,70,268,70"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a4314c765f6bbd615a94286919f475f41" title=" " alt="" coords="337,104,448,129"/>
+<area shape="poly" title=" " alt="" coords="257,77,332,98,330,103,256,83"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a00254fcd00e2cf4a0cb1a9f3d4843729" name="a00254fcd00e2cf4a0cb1a9f3d4843729"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00254fcd00e2cf4a0cb1a9f3d4843729">&#9670;&#160;</a></span>openEventOutFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void openEventOutFile </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>printHeader</em></td><td>)</td>
@@ -575,19 +660,61 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>FILE pointer to output file </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00299">299</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00258">258</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00009">EVENT_OUT_FILE</a>, and <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00009">EVENT_OUT_FILE</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00030">eventOutFile</a>, and <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01973">initEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00295">initEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../db/dd2/events_8h_a89e0951d47d80ebfe47bf24c892ae03b_cgraph.png" border="0" usemap="#adb/dd2/events_8h_a89e0951d47d80ebfe47bf24c892ae03b_cgraph" alt=""/></div>
-<map name="adb/dd2/events_8h_a89e0951d47d80ebfe47bf24c892ae03b_cgraph" id="adb/dd2/events_8h_a89e0951d47d80ebfe47bf24c892ae03b_cgraph">
+<div class="center"><img src="../../db/dd2/events_8h_a00254fcd00e2cf4a0cb1a9f3d4843729_cgraph.png" border="0" usemap="#adb/dd2/events_8h_a00254fcd00e2cf4a0cb1a9f3d4843729_cgraph" alt=""/></div>
+<map name="adb/dd2/events_8h_a00254fcd00e2cf4a0cb1a9f3d4843729_cgraph" id="adb/dd2/events_8h_a00254fcd00e2cf4a0cb1a9f3d4843729_cgraph">
 <area shape="rect" title=" " alt="" coords="5,5,143,31"/>
 <area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="191,5,268,31"/>
 <area shape="poly" title=" " alt="" coords="143,15,177,15,177,21,143,21"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="afb4ad97daa6ca46b43b7eae3554c17fe" name="afb4ad97daa6ca46b43b7eae3554c17fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb4ad97daa6ca46b43b7eae3554c17fe">&#9670;&#160;</a></span>processEvents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void processEvents </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Process events for current location/year/day. </p>
+<p>For a given year and day (as determined by the global <code>climate</code> pointer), process all events listed in the global <code>events</code> pointer for the referenced location.</p>
+<p>For each event, modify flux variables according to the model for that event, and write a row to events.out listing the modified variables and the delta applied. </p>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00314">314</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00036">IrrigationParams::amountAdded</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00021">CANOPY</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00009">climate</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00052">PlantingParams::coarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00377">Environment::coarseRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00016">ClimateVars::day</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00011">envi</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00027">event</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00513">FluxVars::eventCoarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00515">FluxVars::eventEvap</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00511">FluxVars::eventFineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00507">FluxVars::eventLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00519">FluxVars::eventLitterC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00517">FluxVars::eventSoilWater</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00509">FluxVars::eventWoodC</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00051">PlantingParams::fineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00378">Environment::fineRootC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00014">fluxes</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00028">HarvestParams::fractionRemovedAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00029">HarvestParams::fractionRemovedBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00030">HarvestParams::fractionTransferredAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00031">HarvestParams::fractionTransferredBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00207">Parameters::immedEvapFrac</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00049">PlantingParams::leafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00021">ClimateVars::length</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00037">IrrigationParams::method</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00043">FertilizationParams::orgC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00010">params</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00366">Environment::plantLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00364">Environment::plantWoodC</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00304">resetEventFluxes()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00022">SOIL</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00050">PlantingParams::woodC</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00268">writeEventOut()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>, and <a class="el" href="../../db/d3b/state_8h_source.html#l00014">ClimateVars::year</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01556">updateState()</a>.</p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../db/dd2/events_8h_afb4ad97daa6ca46b43b7eae3554c17fe_cgraph.png" border="0" usemap="#adb/dd2/events_8h_afb4ad97daa6ca46b43b7eae3554c17fe_cgraph" alt=""/></div>
+<map name="adb/dd2/events_8h_afb4ad97daa6ca46b43b7eae3554c17fe_cgraph" id="adb/dd2/events_8h_afb4ad97daa6ca46b43b7eae3554c17fe_cgraph">
+<area shape="rect" title="Process events for current location/year/day." alt="" coords="5,31,121,56"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a12a8b3b4bb0688542d26bdb00f9c1961" title=" " alt="" coords="169,5,304,31"/>
+<area shape="poly" title=" " alt="" coords="121,32,155,27,156,32,122,38"/>
+<area shape="rect" href="../../de/deb/events_8c.html#ac10b012ee2d3fc00122b3bfd0069da32" title="Write a line to events.out for a single oneEvent." alt="" coords="179,55,294,80"/>
+<area shape="poly" title=" " alt="" coords="122,49,166,55,166,60,121,54"/>
+<area shape="rect" href="../../de/deb/events_8c.html#adaf5398f33e074025777106e1211e3c6" title=" " alt="" coords="352,55,493,80"/>
+<area shape="poly" title=" " alt="" coords="294,65,338,65,338,70,294,70"/>
 </map>
 </div>
 
@@ -611,11 +738,11 @@ Here is the call graph for this function:</div>
 <p>Read event data from input filename (canonically events.in)</p>
 <p>Format: returned data is structured as an linked list of <a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> pointers. It is assumed that the events are ordered by year and day. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00148">148</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00156">156</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00025">createEventNode()</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00124">events</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00133">getEventType()</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00027">logInfo</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00062">NUM_EVENT_CORE_PARAMS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00032">createEventNode()</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00141">getEventType()</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00027">logInfo</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00062">NUM_EVENT_CORE_PARAMS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01973">initEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00295">initEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -633,8 +760,84 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
-<a id="ae9bd841e389dc48f66a90ba59466ee08" name="ae9bd841e389dc48f66a90ba59466ee08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9bd841e389dc48f66a90ba59466ee08">&#9670;&#160;</a></span>writeEventOut()</h2>
+<a id="a12a8b3b4bb0688542d26bdb00f9c1961" name="a12a8b3b4bb0688542d26bdb00f9c1961"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12a8b3b4bb0688542d26bdb00f9c1961">&#9670;&#160;</a></span>resetEventFluxes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void resetEventFluxes </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Set all event fluxes to zero</p>
+<p>Reset all event fluxes to zero in preparation for the next climate step. </p>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00304">304</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../db/d3b/state_8h_source.html#l00513">FluxVars::eventCoarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00515">FluxVars::eventEvap</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00511">FluxVars::eventFineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00507">FluxVars::eventLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00519">FluxVars::eventLitterC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00517">FluxVars::eventSoilWater</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00509">FluxVars::eventWoodC</a>, and <a class="el" href="../../d0/dc9/state_8c_source.html#l00014">fluxes</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00314">processEvents()</a>.</p>
+
+</div>
+</div>
+<a id="af3653355925ac2ee71e40b293b7748dd" name="af3653355925ac2ee71e40b293b7748dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3653355925ac2ee71e40b293b7748dd">&#9670;&#160;</a></span>setupEvents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setupEvents </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Initialize global event pointer </p>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00302">302</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00026">events</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01709">runModelOutput()</a>.</p>
+
+</div>
+</div>
+<a id="ac9de3738992b3780a28e1bdc3eba6604" name="ac9de3738992b3780a28e1bdc3eba6604"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9de3738992b3780a28e1bdc3eba6604">&#9670;&#160;</a></span>updatePoolsForEvents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void updatePoolsForEvents </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Update relevant environment pools after event fluxes have been calculated </p>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00450">450</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../d0/dc9/state_8c_source.html#l00009">climate</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00377">Environment::coarseRootC</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00011">envi</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00513">FluxVars::eventCoarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00511">FluxVars::eventFineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00507">FluxVars::eventLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00519">FluxVars::eventLitterC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00517">FluxVars::eventSoilWater</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00509">FluxVars::eventWoodC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00378">Environment::fineRootC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00014">fluxes</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00021">ClimateVars::length</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00372">Environment::litter</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00047">Context::litterPool</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00366">Environment::plantLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00364">Environment::plantWoodC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00367">Environment::soil</a>, and <a class="el" href="../../db/d3b/state_8h_source.html#l00368">Environment::soilWater</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01556">updateState()</a>.</p>
+
+</div>
+</div>
+<a id="ac10b012ee2d3fc00122b3bfd0069da32" name="ac10b012ee2d3fc00122b3bfd0069da32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac10b012ee2d3fc00122b3bfd0069da32">&#9670;&#160;</a></span>writeEventOut()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -642,14 +845,8 @@ Here is the call graph for this function:</div>
         <tr>
           <td class="memname">void writeEventOut </td>
           <td>(</td>
-          <td class="paramtype">FILE *&#160;</td>
-          <td class="paramname"><em>out</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td>
-          <td class="paramname"><em>event</em>, </td>
+          <td class="paramname"><em>oneEvent</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -671,35 +868,88 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p>Write a line to events.out for a single event. </p>
-<p>Writes a single event to events.out. This is a variadic function which expects to receive 2*numParams values in (char*, double) pairs after the numParams argument.</p>
+<p>Write a line to events.out for a single oneEvent. </p>
+<p>Writes a single oneEvent to events.out. This is a variadic function which expects to receive 2*numParams values in (char*, double) pairs after the numParams argument.</p>
 <p>Output format:</p>
 <p>year day event_type &lt;param_name&gt;=&lt;delta&gt;[,&lt;param_name&gt;=&lt;delta&gt;,...]</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">out</td><td>FILE pointer to events.out </td></tr>
-    <tr><td class="paramname">event</td><td>Pointer to event node </td></tr>
+    <tr><td class="paramname">oneEvent</td><td>Pointer to oneEvent node </td></tr>
     <tr><td class="paramname">numParams</td><td>Number of param/value pairs to write </td></tr>
     <tr><td class="paramname">...</td><td>Pairs of (char*, double) arguments to write, 2*numParams values </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00310">310</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00268">268</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00125">event</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00281">eventTypeToString()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00030">eventOutFile</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00240">eventTypeToString()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01540">processEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00314">processEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../db/dd2/events_8h_ae9bd841e389dc48f66a90ba59466ee08_cgraph.png" border="0" usemap="#adb/dd2/events_8h_ae9bd841e389dc48f66a90ba59466ee08_cgraph" alt=""/></div>
-<map name="adb/dd2/events_8h_ae9bd841e389dc48f66a90ba59466ee08_cgraph" id="adb/dd2/events_8h_ae9bd841e389dc48f66a90ba59466ee08_cgraph">
-<area shape="rect" title="Write a line to events.out for a single event." alt="" coords="5,5,120,31"/>
+<div class="center"><img src="../../db/dd2/events_8h_ac10b012ee2d3fc00122b3bfd0069da32_cgraph.png" border="0" usemap="#adb/dd2/events_8h_ac10b012ee2d3fc00122b3bfd0069da32_cgraph" alt=""/></div>
+<map name="adb/dd2/events_8h_ac10b012ee2d3fc00122b3bfd0069da32_cgraph" id="adb/dd2/events_8h_ac10b012ee2d3fc00122b3bfd0069da32_cgraph">
+<area shape="rect" title="Write a line to events.out for a single oneEvent." alt="" coords="5,5,120,31"/>
 <area shape="rect" href="../../de/deb/events_8c.html#adaf5398f33e074025777106e1211e3c6" title=" " alt="" coords="168,5,309,31"/>
 <area shape="poly" title=" " alt="" coords="120,15,154,15,154,21,120,21"/>
 </map>
 </div>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a7ae35c8e87cf86f85a3ee4485027cde0" name="a7ae35c8e87cf86f85a3ee4485027cde0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ae35c8e87cf86f85a3ee4485027cde0">&#9670;&#160;</a></span>event</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a>* event</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00027">27</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00314">processEvents()</a>.</p>
+
+</div>
+</div>
+<a id="a37141f818f11eaeeaae9437189de2bff" name="a37141f818f11eaeeaae9437189de2bff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37141f818f11eaeeaae9437189de2bff">&#9670;&#160;</a></span>events</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a>* events</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00026">26</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00446">freeEventList()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00025">initContext()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00295">initEvents()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00302">setupEvents()</a>.</p>
 
 </div>
 </div>

@@ -72,16 +72,31 @@
 \DoxyCodeLine{00068\ \ \ EventNode\ *nextEvent;}
 \DoxyCodeLine{00069\ \};}
 \DoxyCodeLine{00070\ }
-\DoxyCodeLine{00077\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeToString(event\_type\_t\ type);}
-\DoxyCodeLine{00078\ }
-\DoxyCodeLine{00085\ EventNode\ *readEventData(\textcolor{keywordtype}{char}\ *eventFile);}
-\DoxyCodeLine{00086\ }
-\DoxyCodeLine{00092\ FILE\ *openEventOutFile(\textcolor{keywordtype}{int}\ printHeader);}
-\DoxyCodeLine{00093\ }
-\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ writeEventOut(FILE\ *out,\ EventNode\ *event,\ \textcolor{keywordtype}{int}\ numParams,\ ...);}
-\DoxyCodeLine{00112\ }
-\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ closeEventOutFile(FILE\ *file);}
-\DoxyCodeLine{00118\ }
-\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ EVENTS\_H}}
+\DoxyCodeLine{00071\ \textcolor{comment}{//\ Global\ event\ variables}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{extern}\ EventNode\ *events;}
+\DoxyCodeLine{00074\ \textcolor{keyword}{extern}\ EventNode\ *event;}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeToString(event\_type\_t\ type);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00090\ EventNode\ *readEventData(\textcolor{keywordtype}{char}\ *eventFile);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{void}\ openEventOutFile(\textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ writeEventOut(EventNode\ *oneEvent,\ \textcolor{keywordtype}{int}\ numParams,\ ...);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ closeEventOutFile(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00138\ \textcolor{keywordtype}{void}\ setupEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ resetEventFluxes(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ processEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00163\ \textcolor{keywordtype}{void}\ updatePoolsForEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ EVENTS\_H}}
 
 \end{DoxyCode}

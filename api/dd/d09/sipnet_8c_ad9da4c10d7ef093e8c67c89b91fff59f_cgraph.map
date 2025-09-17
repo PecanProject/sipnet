@@ -1,37 +1,45 @@
 <map id="calculateFluxes" name="calculateFluxes">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,304,128,329"/>
-<area shape="rect" id="Node000002" href="$dd/d09/sipnet_8c.html#a5ff21882af3d7feea2b57d714c66e93c" title=" " alt="" coords="195,5,283,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="67,303,75,255,93,185,107,147,125,108,147,72,174,40,181,35,184,39,178,44,151,75,130,111,112,149,98,187,80,256,72,304"/>
-<area shape="rect" id="Node000003" href="$dd/d09/sipnet_8c.html#a5ac2aa2e3e8e9bf86283c643df0d214f" title=" " alt="" coords="183,55,294,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="68,303,79,262,99,205,130,144,151,115,174,89,179,85,183,89,178,93,155,118,135,147,104,207,84,264,73,304"/>
-<area shape="rect" id="Node000004" href="$dd/d09/sipnet_8c.html#a8c2f0ba72fdaae9e3836745acd5fc7eb" title=" " alt="" coords="204,104,273,129"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="70,303,84,270,105,226,136,180,174,139,189,129,192,133,178,143,140,183,110,229,88,272,75,305"/>
-<area shape="rect" id="Node000005" href="$d5/d1f/runmean_8c.html#aee80c094e5cc8830c70fd93fa14bb102" title=" " alt="" coords="349,204,511,229"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="80,302,120,270,147,253,175,240,215,228,256,220,335,212,336,218,257,225,216,233,177,244,149,257,123,274,83,306"/>
-<area shape="rect" id="Node000006" href="$dd/d09/sipnet_8c.html#a3141adc9db6e20c6bdb1a11f7d779d1b" title=" " alt="" coords="194,304,283,329"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="128,314,180,314,180,319,128,319"/>
-<area shape="rect" id="Node000009" href="$dd/d09/sipnet_8c.html#ae1cde3b069d0958828a9739fd94755db" title="Calculate Dwater and transpiration." alt="" coords="199,255,279,280"/>
-<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="111,301,184,280,186,285,112,307"/>
-<area shape="rect" id="Node000010" href="$dd/d09/sipnet_8c.html#a180db247bc25e07f57d5f23b6d59817d" title="Compute gross potential photosynthesis with restrictions and base foliar resp." alt="" coords="205,551,272,576"/>
-<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="73,329,84,369,104,425,135,485,155,513,178,537,194,548,191,553,174,541,151,516,131,487,99,427,79,371,68,330"/>
-<area shape="rect" id="Node000012" href="$dd/d09/sipnet_8c.html#a316ac45bcdc2d3372761d43e597874ab" title=" " alt="" coords="195,353,282,379"/>
-<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="112,327,183,347,181,352,111,332"/>
-<area shape="rect" id="Node000013" href="$dd/d09/sipnet_8c.html#a6b82287932679ebd632dd4c7baaf6f7e" title=" " alt="" coords="179,403,298,428"/>
-<area shape="poly" id="edge13_Node000001_Node000013" title=" " alt="" coords="86,327,127,356,177,388,192,395,189,400,175,392,124,361,83,332"/>
-<area shape="rect" id="Node000014" href="$dd/d09/sipnet_8c.html#a003ba69003021dbc13c256e601d7707a" title=" " alt="" coords="176,452,301,477"/>
-<area shape="poly" id="edge14_Node000001_Node000014" title=" " alt="" coords="78,328,117,381,145,411,178,439,185,443,182,448,174,443,142,415,113,384,74,331"/>
-<area shape="rect" id="Node000015" href="$dd/d09/sipnet_8c.html#a2d6b40f90dd338910f832524445b6c52" title="Calculate foliar respiration and wood maintenance resp." alt="" coords="199,501,278,527"/>
-<area shape="poly" id="edge15_Node000001_Node000015" title=" " alt="" coords="75,328,89,360,110,403,140,448,178,488,188,495,185,500,174,492,136,452,106,406,84,363,70,331"/>
-<area shape="rect" id="Node000016" href="$dd/d09/sipnet_8c.html#a9abb61b2df20f8e86ab92f3c0f56f828" title=" " alt="" coords="195,153,282,179"/>
-<area shape="poly" id="edge16_Node000001_Node000016" title=" " alt="" coords="75,302,115,253,143,223,174,196,194,183,197,187,178,200,147,227,119,256,79,306"/>
-<area shape="rect" id="Node000017" href="$dd/d09/sipnet_8c.html#a4fa75755604d209a86f737ba875af952" title=" " alt="" coords="189,600,288,625"/>
-<area shape="poly" id="edge18_Node000001_Node000017" title=" " alt="" coords="72,329,80,377,98,445,130,520,152,556,178,587,182,591,179,595,174,591,147,559,125,523,93,447,75,378,67,330"/>
-<area shape="poly" id="edge6_Node000006_Node000005" title=" " alt="" coords="272,301,300,289,396,234,399,239,303,294,275,306"/>
-<area shape="rect" id="Node000007" href="$dd/d09/sipnet_8c.html#add14dcfd1c6af5d9c7305ab5a23d2215" title=" " alt="" coords="380,329,480,355"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="284,320,367,331,366,336,283,325"/>
-<area shape="rect" id="Node000008" href="$dd/d09/sipnet_8c.html#a6762b20491a2b3113f378901df537c68" title=" " alt="" coords="367,280,493,305"/>
-<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="283,308,353,300,354,305,284,314"/>
-<area shape="rect" id="Node000011" href="$dd/d09/sipnet_8c.html#ae696156039998aae1a1343b0478f6d76" title="Compute canopy light effect using Simpson&#39;s rule." alt="" coords="381,551,479,576"/>
-<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="272,561,368,561,368,566,272,566"/>
-<area shape="poly" id="edge17_Node000016_Node000005" title=" " alt="" coords="283,175,369,198,368,203,282,180"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,301,128,327"/>
+<area shape="rect" id="Node000002" href="$dd/d09/sipnet_8c.html#a56248ee02dd0dd606d585a4c8ab75fb1" title=" " alt="" coords="208,104,327,129"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="70,300,83,268,104,224,135,178,174,139,194,128,197,132,178,143,139,181,109,226,87,270,75,302"/>
+<area shape="rect" id="Node000006" href="$dd/d09/sipnet_8c.html#ae6f128356d87930f182afd9bd18b833a" title=" " alt="" coords="205,203,329,228"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="81,299,122,268,175,237,192,230,194,235,177,242,125,273,84,303"/>
+<area shape="rect" id="Node000008" href="$dd/d09/sipnet_8c.html#af3127138b3427148b8dbfc1adcf7bd5e" title=" " alt="" coords="196,252,339,277"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="118,299,201,278,202,283,120,304"/>
+<area shape="rect" id="Node000009" href="$dd/d09/sipnet_8c.html#a5ff21882af3d7feea2b57d714c66e93c" title=" " alt="" coords="223,301,311,327"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="128,311,209,311,209,317,128,317"/>
+<area shape="rect" id="Node000010" href="$dd/d09/sipnet_8c.html#a04e7f7d2bd36bf67a048bd4a3123419e" title=" " alt="" coords="177,5,358,31"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="67,301,74,252,91,181,105,143,123,106,146,71,174,40,180,36,183,40,178,44,150,74,128,108,110,145,96,183,79,253,72,301"/>
+<area shape="rect" id="Node000012" href="$dd/d09/sipnet_8c.html#a577c0cd025f26eaf59eb4bba5fb18516" title=" " alt="" coords="176,153,359,179"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="73,300,112,246,141,214,175,188,186,182,188,186,177,192,144,218,116,249,78,303"/>
+<area shape="rect" id="Node000013" href="$dd/d09/sipnet_8c.html#a9381dee4830173608d35ada94e8e998f" title=" " alt="" coords="191,351,343,376"/>
+<area shape="poly" id="edge15_Node000001_Node000013" title=" " alt="" coords="120,324,202,345,201,350,118,329"/>
+<area shape="rect" id="Node000014" href="$dd/d09/sipnet_8c.html#a8c2f0ba72fdaae9e3836745acd5fc7eb" title=" " alt="" coords="233,400,302,425"/>
+<area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="85,325,125,355,177,385,220,400,219,405,175,390,122,359,82,329"/>
+<area shape="rect" id="Node000015" href="$dd/d09/sipnet_8c.html#ae1cde3b069d0958828a9739fd94755db" title="Calculate Dwater and transpiration." alt="" coords="227,449,307,475"/>
+<area shape="poly" id="edge17_Node000001_Node000015" title=" " alt="" coords="78,325,116,379,145,409,177,434,215,450,213,455,175,439,141,413,112,382,74,329"/>
+<area shape="rect" id="Node000016" href="$dd/d09/sipnet_8c.html#a180db247bc25e07f57d5f23b6d59817d" title="Compute gross potential photosynthesis with restrictions and base foliar resp." alt="" coords="234,499,301,524"/>
+<area shape="poly" id="edge18_Node000001_Node000016" title=" " alt="" coords="75,326,88,358,109,401,139,446,178,484,199,495,222,503,220,508,196,500,174,488,135,449,105,404,83,361,70,328"/>
+<area shape="rect" id="Node000018" href="$dd/d09/sipnet_8c.html#a316ac45bcdc2d3372761d43e597874ab" title=" " alt="" coords="224,548,311,573"/>
+<area shape="poly" id="edge20_Node000001_Node000018" title=" " alt="" coords="73,326,83,366,103,423,134,482,154,510,178,533,193,543,211,550,209,555,191,548,174,537,150,513,129,485,98,425,78,368,68,327"/>
+<area shape="rect" id="Node000019" href="$dd/d09/sipnet_8c.html#a2d6b40f90dd338910f832524445b6c52" title="Calculate foliar respiration and wood maintenance resp." alt="" coords="228,597,307,623"/>
+<area shape="poly" id="edge21_Node000001_Node000019" title=" " alt="" coords="72,327,79,375,97,444,110,482,128,519,150,553,178,583,195,594,216,602,214,607,193,599,174,587,146,556,124,521,105,484,92,446,74,376,67,327"/>
+<area shape="rect" id="Node000020" href="$dd/d09/sipnet_8c.html#a9abb61b2df20f8e86ab92f3c0f56f828" title=" " alt="" coords="224,55,311,80"/>
+<area shape="poly" id="edge22_Node000001_Node000020" title=" " alt="" coords="68,300,78,260,97,202,129,142,150,114,174,89,191,79,209,72,211,77,193,84,178,93,154,117,133,144,102,205,83,261,73,302"/>
+<area shape="rect" id="Node000003" href="$d5/d1f/runmean_8c.html#aee80c094e5cc8830c70fd93fa14bb102" title=" " alt="" coords="407,55,568,80"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="324,101,416,80,417,86,325,107"/>
+<area shape="rect" id="Node000004" href="$dd/d09/sipnet_8c.html#add14dcfd1c6af5d9c7305ab5a23d2215" title=" " alt="" coords="437,104,537,129"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="327,114,424,114,424,119,327,119"/>
+<area shape="rect" id="Node000005" href="$dd/d09/sipnet_8c.html#a6762b20491a2b3113f378901df537c68" title=" " alt="" coords="425,153,550,179"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="325,127,417,148,416,153,324,132"/>
+<area shape="rect" id="Node000007" href="$dd/d09/sipnet_8c.html#aed354ab7fee50e148ad65d20e7d65719" title=" " alt="" coords="427,203,548,228"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="330,213,413,213,413,218,330,218"/>
+<area shape="poly" id="edge8_Node000008_Node000007" title=" " alt="" coords="324,249,416,228,417,234,325,255"/>
+<area shape="poly" id="edge12_Node000010_Node000003" title=" " alt="" coords="325,28,417,49,416,54,324,33"/>
+<area shape="rect" id="Node000011" href="$dd/d09/sipnet_8c.html#a5ac2aa2e3e8e9bf86283c643df0d214f" title=" " alt="" coords="432,5,543,31"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="358,15,418,15,418,21,358,21"/>
+<area shape="poly" id="edge14_Node000012_Node000007" title=" " alt="" coords="325,176,417,197,416,202,324,181"/>
+<area shape="rect" id="Node000017" href="$dd/d09/sipnet_8c.html#ae696156039998aae1a1343b0478f6d76" title="Compute canopy light effect using Simpson&#39;s rule." alt="" coords="439,499,536,524"/>
+<area shape="poly" id="edge19_Node000016_Node000017" title=" " alt="" coords="301,509,425,509,425,514,301,514"/>
+<area shape="poly" id="edge23_Node000020_Node000003" title=" " alt="" coords="311,65,393,65,393,70,311,70"/>
 </map>

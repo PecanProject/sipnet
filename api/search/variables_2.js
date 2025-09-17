@@ -1,7 +1,7 @@
 var searchData=
 [
   ['cfracleaf_0',['cFracLeaf',['../d0/dbf/struct_parameters.html#a18d93be2aa7d86d0f55b70ec7142ee7f',1,'Parameters']]],
-  ['climate_1',['climate',['../dd/d09/sipnet_8c.html#ac0c087b09a96464a0656d9cbfa24b5c8',1,'sipnet.c']]],
+  ['climate_1',['climate',['../db/d3b/state_8h.html#ac0c087b09a96464a0656d9cbfa24b5c8',1,'climate:&#160;state.c'],['../d0/dc9/state_8c.html#ac0c087b09a96464a0656d9cbfa24b5c8',1,'climate:&#160;state.c']]],
   ['climfile_2',['climFile',['../de/d66/struct_context.html#a6f08d84f4904ae85592b0a9e17c43377',1,'Context']]],
   ['coarserootallocation_3',['coarseRootAllocation',['../d0/dbf/struct_parameters.html#af99de4c85b83bb1c82a26824c3321cec',1,'Parameters']]],
   ['coarserootc_4',['coarserootc',['../d4/dbd/struct_planting_params.html#ae82ddf9535625d1e92b6eafd60d3598b',1,'PlantingParams::coarseRootC'],['../de/d30/struct_environment.html#a7f346fef121e607ed2025da12e338b8e',1,'Environment::coarseRootC']]],
