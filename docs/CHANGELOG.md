@@ -26,6 +26,18 @@ sections to include in release notes:
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+### Git SHA
+
+## **SIPNET 2.0.0 - "SIPNET Overhaul"**
+
+### Added
+
 - Model structure and parameter documentation (#42)
 - Changelog (#33)
 - Build docs and push to gh-pages (#41)
