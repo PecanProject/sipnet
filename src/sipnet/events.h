@@ -52,12 +52,14 @@ typedef struct PlantingParams {
   double coarseRootC;
 } PlantingParams;
 
-#define NUM_TILLAGE_PARAMS 3
+#define NUM_TILLAGE_PARAMS 1
 typedef struct TillageParams {
-  double fractionLitterTransferred;
-  double somDecompModifier;
-  double litterDecompModifier;
+  double tillageEffect;
 } TillageParams;
+// Tillage effect threshold, below which we call it done
+#define TILLAGE_THRESHOLD 0.01
+// Tillage effect decay factor
+#define TILLAGE_DECAY_FACTOR (1 / 30.0)
 
 #define NUM_EVENT_CORE_PARAMS 3
 typedef struct EventNode EventNode;
@@ -161,5 +163,24 @@ void processEvents(void);
  * Update relevant environment pools after event fluxes have been calculated
  */
 void updatePoolsForEvents(void);
+
+// Variables to track events with lingering effects
+typedef struct EventTrackerStruct {
+  // Tillage effect on Rh; exponentially decays at each time step by a factor
+  // equal to exp(-delta_t / 30)
+  double d_till_mod;
+} EventTrackers;
+
+extern EventTrackers eventTrackers;
+
+/*!
+ * Initialize EventTrackers struct for tracking lingering event effects
+ */
+void initEventTrackers(void);
+
+/*!
+ * Perform any needed udpates post fluxes-and-pools updates
+ */
+void updateEventTrackers(void);
 
 #endif  // EVENTS_H

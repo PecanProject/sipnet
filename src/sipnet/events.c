@@ -11,6 +11,7 @@
 // clang-format on
 
 #include "events.h"
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -115,18 +116,16 @@ EventNode *createEventNode(int year, int day, int eventType,
       newEvent->eventParams = pParams;
     } break;
     case TILLAGE: {
-      double fracLT, somDM, litterDM;
+      double tillEffect;
       TillageParams *tParams = (TillageParams *)malloc(sizeof(TillageParams));
       int numRead = sscanf(eventParamsStr,  // NOLINT
-                           "%lf %lf %lf", &fracLT, &somDM, &litterDM);
+                           "%lf", &tillEffect);
       if (numRead != NUM_TILLAGE_PARAMS) {
         logError("parsing Tillage params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
-      tParams->fractionLitterTransferred = fracLT;
-      tParams->somDecompModifier = somDM;
-      tParams->litterDecompModifier = litterDM;
-      newEvent->eventParams = tParams;
+      tParams->tillageEffect = tillEffect;
+      event->eventParams = tParams;
     } break;
     default:
       // Unknown type, error and exit
@@ -467,6 +466,25 @@ void updatePoolsForEvents(void) {
   envi.fineRootC += fluxes.eventFineRootC * climate->length;
 }
 
+// Definition of global event trackers struct
+EventTrackers eventTrackers;
+
+void initEventTrackers(void) { eventTrackers.d_till_mod = 0.0; }
+
+void updateEventTrackers(void) {
+  const double climLen = climate->length;
+
+  // Tillage: decay any existing tillage effects at end of step
+  if (eventTrackers.d_till_mod > 0) {
+    eventTrackers.d_till_mod *= exp(-climLen * TILLAGE_DECAY_FACTOR);
+
+    // Should this be an input param? Should this not even be done?
+    if (eventTrackers.d_till_mod < TILLAGE_THRESHOLD) {
+      eventTrackers.d_till_mod = 0.0;
+    }
+  }
+}
+
 void printEvent(EventNode *oneEvent) {
   if (oneEvent == NULL) {
     return;
@@ -496,12 +514,9 @@ void printEvent(EventNode *oneEvent) {
              pParams->coarseRootC);
       break;
     case TILLAGE:
-      printf("TILLAGE at on %d %d, ", year, day);
+      printf("TILLAGE on %d %d, ", year, day);
       TillageParams *const tParams = (TillageParams *)oneEvent->eventParams;
-      printf("with params: frac litter transferred %4.2f, som decomp modifier "
-             "%4.2f, litter decomp modifier %4.2f\n",
-             tParams->fractionLitterTransferred, tParams->somDecompModifier,
-             tParams->litterDecompModifier);
+      printf("with params: tillageEffect %4.2f\n", tParams->tillageEffect);
       break;
     case HARVEST:
       printf("HARVEST on %d %d, ", year, day);

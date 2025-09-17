@@ -26,7 +26,7 @@
 #include "state.h"
 
 #define C_WEIGHT 12.0  // molecular weight of carbon
-#define TEN_6 1000000.0  // for conversions from micro
+// #define TEN_6 1000000.0  // for conversions from micro
 #define TEN_9 1000000000.0  // for conversions from nano
 #define SEC_PER_DAY 86400.0
 
@@ -1587,7 +1587,10 @@ void updateState(void) {
   // 3. Update trackers
 
   updateTrackers(oldSoilWater);
+
   updateMeanTrackers();
+
+  updateEventTrackers();
 }
 
 // initialize phenology tracker structure, based on day of year of first climate
@@ -1699,6 +1702,7 @@ void setupModel(void) {
 
   initTrackers();
   initPhenologyTrackers();
+  initEventTrackers();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
                                  // MEAN_NPP_DAYS) of 0
   resetMeanTracker(meanGPP, 0);  // initialize with mean NPP (over last
