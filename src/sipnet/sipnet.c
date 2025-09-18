@@ -442,18 +442,6 @@ void freeClimateList() {
   }
 }
 
-// de-allocate space used for events linked list
-void freeEventList() {
-  EventNode *curr, *prev;
-
-  curr = events;
-  while (curr != NULL) {
-    prev = curr;
-    curr = curr->nextEvent;
-    free(prev);
-  }
-}
-
 //
 // Modeling functions
 //
