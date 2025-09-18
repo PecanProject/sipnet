@@ -24,8 +24,8 @@
 #include "state.h"
 
 // Global event variables - definition
-EventNode *events = NULL;
-EventNode *event = NULL;
+EventNode *gEvents = NULL;
+EventNode *gEvent = NULL;
 
 // events.out handle, only needed here
 static FILE *eventOutFile = NULL;
@@ -293,12 +293,12 @@ void closeEventOutFile() {
 
 void initEvents(char *eventFile, int printHeader) {
   if (ctx.events) {
-    events = readEventData(eventFile);
+    gEvents = readEventData(eventFile);
     openEventOutFile(printHeader);
   }
 }
 
-void setupEvents() { event = events; }
+void setupEvents() { gEvent = gEvents; }
 
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;
@@ -311,8 +311,9 @@ void resetEventFluxes(void) {
 }
 
 void processEvents(void) {
-  // This should be in events.h/c, but with all the global state defined in this
-  // file, let's leave it here for now. Maybe someday we will factor that out.
+  // This should be in events.h/c, but with all the global state defined in
+  // this file, let's leave it here for now. Maybe someday we will factor that
+  // out.
 
   // Set all event fluxes to zero, as these have no memory from one step to
   // the next
@@ -332,20 +333,20 @@ void processEvents(void) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 
-  // The events file has been tested on read, so we know this event list should
-  // be in chrono order. However, we need to check to make sure the current
-  // event is not in the past, as that would indicate an event that did not have
-  // a corresponding climate file record.
-  while (event != NULL && event->year <= climYear && event->day <= climDay) {
-    if (event->year < climYear || event->day < climDay) {
+  // The events file has been tested on read, so we know this event list
+  // should be in chrono order. However, we need to check to make sure the
+  // current event is not in the past, as that would indicate an event that
+  // did not have a corresponding climate file record.
+  while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+    if (gEvent->year < climYear || gEvent->day < climDay) {
       logError("Agronomic event found for year: %d day: %d that does not "
                "have a corresponding record in the climate file\n",
-               event->year, event->day);
+               gEvent->year, gEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
-    switch (event->type) {
+    switch (gEvent->type) {
       case IRRIGATION: {
-        const IrrigationParams *irrParams = event->eventParams;
+        const IrrigationParams *irrParams = gEvent->eventParams;
         const double amount = irrParams->amountAdded;
         double soilAmount, evapAmount;
         if (irrParams->method == CANOPY) {
@@ -364,11 +365,11 @@ void processEvents(void) {
         }
         fluxes.eventEvap += evapAmount / climLen;
         fluxes.eventSoilWater += soilAmount / climLen;
-        writeEventOut(event, 2, "fluxes.eventSoilWater", soilAmount / climLen,
+        writeEventOut(gEvent, 2, "fluxes.eventSoilWater", soilAmount / climLen,
                       "fluxes.eventEvap", evapAmount / climLen);
       } break;
       case PLANTING: {
-        const PlantingParams *plantParams = event->eventParams;
+        const PlantingParams *plantParams = gEvent->eventParams;
         const double leafC = plantParams->leafC;
         const double woodC = plantParams->woodC;
         const double fineRootC = plantParams->fineRootC;
@@ -382,14 +383,14 @@ void processEvents(void) {
 
         // FUTURE: allocate to N pools
 
-        writeEventOut(event, 4, "fluxes.eventLeafC", leafC / climLen,
+        writeEventOut(gEvent, 4, "fluxes.eventLeafC", leafC / climLen,
                       "fluxes.eventWoodC", woodC / climLen,
                       "fluxes.eventFineRootC", fineRootC / climLen,
                       "fluxes.eventCoarseRootC", coarseRootC / climLen);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
-        const HarvestParams *harvParams = event->eventParams;
+        const HarvestParams *harvParams = gEvent->eventParams;
         const double fracRA = harvParams->fractionRemovedAbove;
         const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
@@ -414,7 +415,7 @@ void processEvents(void) {
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
         // FUTURE: move/remove biomass in N pools
-        writeEventOut(event, 5, "fluxes.eventLitterC", litterAdd / climLen,
+        writeEventOut(gEvent, 5, "fluxes.eventLitterC", litterAdd / climLen,
                       "fluxes.eventLeafC", leafDelta / climLen,
                       "fluxes.eventWoodC", woodDelta / climLen,
                       "fluxes.eventFineRootC", fineDelta / climLen,
@@ -425,7 +426,7 @@ void processEvents(void) {
         logError("Tillage events not yet implemented\n");
         break;
       case FERTILIZATION: {
-        const FertilizationParams *fertParams = event->eventParams;
+        const FertilizationParams *fertParams = gEvent->eventParams;
         // const double orgN = fertParams->orgN;
         const double orgC = fertParams->orgC;
         // const double minN = fertParams->minN;
@@ -435,14 +436,14 @@ void processEvents(void) {
         // FUTURE: allocate to N pools
 
         // This will (likely) be 3 params eventually
-        writeEventOut(event, 1, "fluxes.eventLitterC", orgC / climLen);
+        writeEventOut(gEvent, 1, "fluxes.eventLitterC", orgC / climLen);
       } break;
       default:
-        logError("Unknown event type (%d) in processEvents()\n", event->type);
+        logError("Unknown event type (%d) in processEvents()\n", gEvent->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
-    event = event->nextEvent;
+    gEvent = gEvent->nextEvent;
   }
 }
 
@@ -464,6 +465,17 @@ void updatePoolsForEvents(void) {
   // Harvest and planting events
   envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
   envi.fineRootC += fluxes.eventFineRootC * climate->length;
+}
+
+void freeEventList(void) {
+  EventNode *curr, *prev;
+
+  curr = gEvents;
+  while (curr != NULL) {
+    prev = curr;
+    curr = curr->nextEvent;
+    free(prev);
+  }
 }
 
 // Definition of global event trackers struct

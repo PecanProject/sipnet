@@ -72,8 +72,8 @@ struct EventNode {
 
 // Global event variables
 
-extern EventNode *events;
-extern EventNode *event;
+extern EventNode *gEvents;
+extern EventNode *gEvent;
 
 /*!
  * Convert event enum value to corresponding string
@@ -171,6 +171,11 @@ void processEvents(void);
  * Update relevant environment pools after event fluxes have been calculated
  */
 void updatePoolsForEvents(void);
+
+/*!
+ * Deallocate space used for events linked list
+ */
+void freeEventList(void);
 
 // Variables to track events with lingering effects
 typedef struct EventTrackerStruct {
