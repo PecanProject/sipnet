@@ -26,7 +26,7 @@
 #include "state.h"
 
 #define C_WEIGHT 12.0  // molecular weight of carbon
-#define TEN_6 1000000.0  // for conversions from micro
+// #define TEN_6 1000000.0  // for conversions from micro
 #define TEN_9 1000000000.0  // for conversions from nano
 #define SEC_PER_DAY 86400.0
 
@@ -438,18 +438,6 @@ void freeClimateList() {
   while (curr != NULL) {
     prev = curr;
     curr = curr->nextClim;
-    free(prev);
-  }
-}
-
-// de-allocate space used for events linked list
-void freeEventList() {
-  EventNode *curr, *prev;
-
-  curr = events;
-  while (curr != NULL) {
-    prev = curr;
-    curr = curr->nextEvent;
     free(prev);
   }
 }
@@ -1084,10 +1072,14 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
   // case, need to dig in. With that said...
 
   if (!ctx.microbes) {
+    double resp;
     // :: from [1], remainder of eq (A20)
-    // See calcMoistEffect for first part of eq (A20) calculation
+    // See calcMoistEffect() for first part of eq (A20) calculation
     tempEffect = params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
-    fluxes.maintRespiration = envi.soil * moistEffect * tempEffect;
+    resp = envi.soil * moistEffect * tempEffect;
+
+    // Apply any effects from tillage; this should do nothing if there is none
+    fluxes.maintRespiration = resp * (1 + eventTrackers.d_till_mod);
 
     // With no microbes, rSoil flux is just the maintenance respiration
     fluxes.rSoil = fluxes.maintRespiration;
@@ -1587,7 +1579,10 @@ void updateState(void) {
   // 3. Update trackers
 
   updateTrackers(oldSoilWater);
+
   updateMeanTrackers();
+
+  updateEventTrackers();
 }
 
 // initialize phenology tracker structure, based on day of year of first climate
@@ -1621,8 +1616,7 @@ void initPhenologyTrackers(void) {
                                                // this year
 }
 
-// Setup model to run at given location (0-indexing: if only one location, loc
-// should be 0)
+// See sipnet.h
 void setupModel(void) {
 
   // a test: use constant (measured) soil respiration:
@@ -1699,6 +1693,7 @@ void setupModel(void) {
 
   initTrackers();
   initPhenologyTrackers();
+  initEventTrackers();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
                                  // MEAN_NPP_DAYS) of 0
   resetMeanTracker(meanGPP, 0);  // initialize with mean NPP (over last

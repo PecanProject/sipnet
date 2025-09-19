@@ -16,7 +16,7 @@ void printModelComponents(FILE *out);
  * Do model initializations
  *
  * Read in initial parameter values and climate data. Also set up pointers to
- * different output data types and setup meanNPP tracker.
+ * different output data types and allocate tracker structs.
  *
  * @param modelParams pointer to ModelParams struct, will be alloc'd here
  * @param paramFile name of parameter file
@@ -24,6 +24,14 @@ void printModelComponents(FILE *out);
  */
 void initModel(ModelParams **modelParams, const char *paramFile,
                const char *climFile);
+
+/*!
+ * Setup model for run
+ *
+ * Set calculated parameters, do parameter conversions, and initialize
+ * tracker structs.
+ */
+void setupModel(void);
 
 /*!
  * Free allocated memory

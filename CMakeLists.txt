@@ -37,3 +37,17 @@ add_library(sipnetlib
         src/sipnet/sipnet.c
         src/sipnet/state.c
 )
+
+add_library(tests
+        tests/sipnet/test_sipnet_infrastructure/testParamInput.c
+        tests/sipnet/test_sipnet_infrastructure/testClimInput.c
+        tests/sipnet/test_events_infrastructure/testEventInfra.c
+        tests/sipnet/test_events_infrastructure/testEventOutputFile.c
+        tests/sipnet/test_events_infrastructure/testEventInfraNeg.c
+        tests/sipnet/test_events_types/testEventPlanting.c
+        tests/sipnet/test_events_types/testEventIrrigation.c
+        tests/sipnet/test_events_types/testEventFertilization.c
+        tests/sipnet/test_events_types/testEventHarvest.c
+#        tests/sipnet/test_events_types/testEventTillage.c
+        tests/sipnet/test_bugfixes/testEventFileOrderChecks.c
+)
