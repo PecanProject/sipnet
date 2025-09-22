@@ -33,18 +33,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y doxygen graphviz
           python3 -m pip install --upgrade pip
-          python3 -m pip install mkdocs mkdocs-material
+          # Ensure mkdocs plugins in mkdocs.yml are available
+          python3 -m pip install mkdocs mkdocs-material pymdown-extensions
+
+      # Build API docs first so mkdocs can find docs/api/index.html referenced in nav
+      - name: Build Doxygen
+        run: |
+          # Use repo Doxyfile; fallback to root if needed
+          doxygen docs/Doxyfile || doxygen Doxyfile
+          # Ensure doxygen HTML ends up in docs/api (expected by mkdocs.yml nav)
+          if [ -d html ]; then mkdir -p docs/api && cp -a html/. docs/api/; fi
+          if [ -d docs/html ]; then mkdir -p docs/api && cp -a docs/html/. docs/api/; fi
 
       - name: Build MkDocs
         run: |
           mkdocs build --strict --site-dir site
-
-      - name: Build Doxygen
-        run: |
-          doxygen Doxyfile
-          # Move/merge Doxygen HTML output into site/api (adjust paths if needed)
-          if [ -d html ]; then mkdir -p site/api && rsync -a html/ site/api/; fi
-          if [ -d docs/html ]; then mkdir -p site/api && rsync -a docs/html/ site/api/; fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
