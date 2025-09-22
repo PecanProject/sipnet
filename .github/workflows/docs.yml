@@ -1,0 +1,68 @@
+name: Build and Deploy Docs
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+          python3 -m pip install --upgrade pip
+          python3 -m pip install mkdocs mkdocs-material
+
+      - name: Build MkDocs
+        run: |
+          mkdocs build --strict --site-dir site
+
+      - name: Build Doxygen
+        run: |
+          doxygen Doxyfile
+          # Move/merge Doxygen HTML output into site/api (adjust paths if needed)
+          if [ -d html ]; then mkdir -p site/api && rsync -a html/ site/api/; fi
+          if [ -d docs/html ]; then mkdir -p site/api && rsync -a docs/html/ site/api/; fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: >
+      ${{
+        (github.event_name == 'push') ||
+        (github.event_name == 'pull_request' &&
+         github.event.pull_request.head.repo.full_name == github.repository)
+      }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
