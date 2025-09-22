@@ -11,7 +11,7 @@ COMMON_CFILES:=context.c logging.c modelParams.c util.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
 
-SIPNET_CFILES:=sipnet.c frontend.c runmean.c outputItems.c events.c cli.c
+SIPNET_CFILES:=sipnet.c cli.c events.c frontend.c outputItems.c runmean.c state.c
 SIPNET_CFILES:=$(addprefix src/sipnet/, $(SIPNET_CFILES))
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNET_LIBS=-lsipnet_common

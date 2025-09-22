@@ -13,6 +13,9 @@ DUMP_CONFIG = 1
 !!!!!!!!!!!!!!!!!!!
 !! MODEL OPTIONS !!
 !!!!!!!!!!!!!!!!!!!
+EVENTS = 0
+! Events must be off when microbes is on
+
 GDD = 0
 ! Use growing degree days to determine leaf growth
 
