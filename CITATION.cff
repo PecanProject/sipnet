@@ -1,11 +1,11 @@
 cff-version: 1.2.0
 title: "SIPNET: Simple Photosynthesis and Evapotranspiration Model"
-version: 1.3.0
+version: 2.0..0
 abstract: >
   SIPNET (Simple Photosynthesis and Evapotranspiration Model) is a process-based
   ecosystem model designed to simulate carbon and water fluxes and (optionally) agricultural management
   events in terrestrial ecosystems.
-  SIPNET is used for research in ecosystem ecology, carbon and greenhouse gas accounting, 
+  SIPNET is used for research in ecosystem ecology, carbon and greenhouse gas accounting,
   data assimilation, and model benchmarking.
   Model development and recent features are detailed in the CHANGELOG and relevant literature.
 license: BSD-3-Clause

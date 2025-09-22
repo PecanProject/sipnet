@@ -26,9 +26,24 @@ sections to include in release notes:
 
 ### Added
 
-- Model structure and parameter documentation (#42)
+### Fixed
+
+### Changed
+
+### Removed
+
+### Git SHA
+
+## **SIPNET 2.0.0 - "SIPNET Overhaul"**
+
+### Added
+
+-Irrigation events (#26)
 - Changelog (#33)
+- Model structure and parameter documentation (#42)
 - Build docs and push to gh-pages (#41)
+- Add documentation website (pecanproject.github.io/sipnet) with automated builds (#53)
+- Handle planting & harvest events(#55)
 - events.out file for agronomic event handling (#57)
 - Utility `tools/trim_first_chars.sh` to trim the first n characters from every row in a file, useful for updating old input files to remove location column
 - Expanded smoke test cases to better cover SIPNET modeling options (#109, #114)
@@ -47,12 +62,14 @@ sections to include in release notes:
 ### Changed
 
 - Reorganized codebase (#34, #37)
+- Document & combine `calclighteff` functions (#35)
 - Deprecated: "RUNTYPE" is obsolete. Will be silently ignored if set to 'standard' or error if set to anything else. Runs in 'standard' mode by default.
 - Deprecated: "LOCATION" is obsolete. Will be ignored with warning. (#92)
 - Deprecated: All columns in *.param except for name and value. Will be ignored with warning. (#92)
 - Deprecated: location and soilWetness columns in input climate files. If both are present, will be ignored with warning. (#92, #127)
 - Changed: sipnet.out columns will be zero when relevant modes are off (e.g., litter, microbes) (#143)
-- Changed: sipnet.out format; it no longer has loc, litterWater or fPAR columns (#TBD)
+- Changed: reorganized code in sipnet to better model fluxes-then-pool-updates flow (#154)
+- Changed: sipnet.out format; it no longer has loc, litterWater or fPAR columns (#155)
 
 ### Removed
 
@@ -61,6 +78,8 @@ sections to include in release notes:
 - Removed obsolete estimate program and associated code (#70, #82)
 - Removed multi-site support; in particular, output files no longer have a location column (#92)
 - Removed or hard-codes 'on' many compile time switches (#114)
+- Removed `SOIL_QUALITY` mode (#125)
+- Removed `soilWetness` mode (#127)
 - Removed obsolete model params; sipnet now warns on unknown params in the params file (#124)
 
 ### Git SHA

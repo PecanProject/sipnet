@@ -20,19 +20,26 @@
 #include "common/logging.h"
 #include "common/util.h"
 
-void printEvent(EventNode *event);
+#include "state.h"
+
+// Global event variables - definition
+EventNode *events = NULL;
+EventNode *event = NULL;
+
+// events.out handle, only needed here
+static FILE *eventOutFile = NULL;
 
 EventNode *createEventNode(int year, int day, int eventType,
                            const char *eventParamsStr) {
-  EventNode *event = (EventNode *)malloc(sizeof(EventNode));
-  event->year = year;
-  event->day = day;
-  event->type = eventType;
+  EventNode *newEvent = (EventNode *)malloc(sizeof(EventNode));
+  newEvent->year = year;
+  newEvent->day = day;
+  newEvent->type = eventType;
 
   switch (eventType) {
     case HARVEST: {
       double fracRA, fracRB, fracTA, fracTB;
-      HarvestParams *params = (HarvestParams *)malloc(sizeof(HarvestParams));
+      HarvestParams *hParams = (HarvestParams *)malloc(sizeof(HarvestParams));
       int numRead =
           sscanf(eventParamsStr,  // NOLINT
                  "%lf %lf %lf %lf", &fracRA, &fracRB, &fracTA, &fracTB);
@@ -42,21 +49,21 @@ EventNode *createEventNode(int year, int day, int eventType,
       }
       // Validate the params
       if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
-        logError("nvalid harvest event for year %d day %d; above and below "
+        logError("nvalid harvest newEvent for year %d day %d; above and below "
                  "must each add to 1 or less",
                  year, day);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
-      params->fractionRemovedAbove = fracRA;
-      params->fractionRemovedBelow = fracRB;
-      params->fractionTransferredAbove = fracTA;
-      params->fractionTransferredBelow = fracTB;
-      event->eventParams = params;
+      hParams->fractionRemovedAbove = fracRA;
+      hParams->fractionRemovedBelow = fracRB;
+      hParams->fractionTransferredAbove = fracTA;
+      hParams->fractionTransferredBelow = fracTB;
+      newEvent->eventParams = hParams;
     } break;
     case IRRIGATION: {
       double amountAdded;
       int method;
-      IrrigationParams *params =
+      IrrigationParams *iParams =
           (IrrigationParams *)malloc(sizeof(IrrigationParams));
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf %d", &amountAdded, &method);
@@ -64,16 +71,16 @@ EventNode *createEventNode(int year, int day, int eventType,
         logError("parsing Irrigation params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
-      params->amountAdded = amountAdded;
-      params->method = method;
-      event->eventParams = params;
+      iParams->amountAdded = amountAdded;
+      iParams->method = method;
+      newEvent->eventParams = iParams;
     } break;
     case FERTILIZATION: {
       // If/when we try two N pools, enable the additional nh4_no3_frac param
       // (likely via compiler switch)
       double orgN, orgC, minN;
       // double nh4_no3_frac;
-      FertilizationParams *params =
+      FertilizationParams *fParams =
           (FertilizationParams *)malloc(sizeof(FertilizationParams));
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf %lf %lf", &orgN, &orgC, &minN);
@@ -84,15 +91,16 @@ EventNode *createEventNode(int year, int day, int eventType,
       }
       // scanf(eventParamsStr, "%lf %lf %lf %lf", &org_N, &org_C, &min_N,
       // &nh4_no3_frac);
-      params->orgN = orgN;
-      params->orgC = orgC;
-      params->minN = minN;
+      fParams->orgN = orgN;
+      fParams->orgC = orgC;
+      fParams->minN = minN;
       // params->nh4_no3_frac = nh4_nos_frac;
-      event->eventParams = params;
+      newEvent->eventParams = fParams;
     } break;
     case PLANTING: {
       double leafC, woodC, fineRootC, coarseRootC;
-      PlantingParams *params = (PlantingParams *)malloc(sizeof(PlantingParams));
+      PlantingParams *pParams =
+          (PlantingParams *)malloc(sizeof(PlantingParams));
       int numRead =
           sscanf(eventParamsStr,  // NOLINT
                  "%lf %lf %lf %lf", &leafC, &woodC, &fineRootC, &coarseRootC);
@@ -100,34 +108,34 @@ EventNode *createEventNode(int year, int day, int eventType,
         logError("parsing Planting params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
-      params->leafC = leafC;
-      params->woodC = woodC;
-      params->fineRootC = fineRootC;
-      params->coarseRootC = coarseRootC;
-      event->eventParams = params;
+      pParams->leafC = leafC;
+      pParams->woodC = woodC;
+      pParams->fineRootC = fineRootC;
+      pParams->coarseRootC = coarseRootC;
+      newEvent->eventParams = pParams;
     } break;
     case TILLAGE: {
       double fracLT, somDM, litterDM;
-      TillageParams *params = (TillageParams *)malloc(sizeof(TillageParams));
+      TillageParams *tParams = (TillageParams *)malloc(sizeof(TillageParams));
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf %lf %lf", &fracLT, &somDM, &litterDM);
       if (numRead != NUM_TILLAGE_PARAMS) {
         logError("parsing Tillage params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
-      params->fractionLitterTransferred = fracLT;
-      params->somDecompModifier = somDM;
-      params->litterDecompModifier = litterDM;
-      event->eventParams = params;
+      tParams->fractionLitterTransferred = fracLT;
+      tParams->somDecompModifier = somDM;
+      tParams->litterDecompModifier = litterDM;
+      newEvent->eventParams = tParams;
     } break;
     default:
       // Unknown type, error and exit
-      logError("reading event file: unknown event type %d\n", eventType);
+      logError("reading newEvent file: unknown newEvent type %d\n", eventType);
       exit(1);
   }
 
-  event->nextEvent = NULL;
-  return event;
+  newEvent->nextEvent = NULL;
+  return newEvent;
 }
 
 event_type_t getEventType(const char *eventTypeStr) {
@@ -154,14 +162,14 @@ EventNode *readEventData(char *eventFile) {
   char eventTypeStr[20];
   char line[EVENT_LINE_SIZE];
   EventNode *curr, *next;
-  EventNode *events = NULL;
+  EventNode *newEvents = NULL;
 
   // Check for a non-empty file
   if (access(eventFile, F_OK) != 0) {
     // no file found, which is fine; we're done, a vector of NULL is what we
-    // want for events
-    logInfo("No event file found, assuming no events\n");
-    return events;
+    // want for newEvents
+    logInfo("No event file found, assuming no newEvents\n");
+    return newEvents;
   }
 
   logInfo("Begin reading event data from file %s\n", eventFile);
@@ -169,8 +177,8 @@ EventNode *readEventData(char *eventFile) {
   FILE *in = openFile(eventFile, "r");
 
   if (fgets(line, EVENT_LINE_SIZE, in) == NULL) {
-    // Again, this is fine - just return the empty events array
-    return events;
+    // Again, this is fine - just return the empty newEvents array
+    return newEvents;
   }
 
   int numRead = sscanf(line,  // NOLINT
@@ -187,8 +195,8 @@ EventNode *readEventData(char *eventFile) {
     exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 
-  events = createEventNode(year, day, eventType, eventParamsStr);
-  next = events;
+  newEvents = createEventNode(year, day, eventType, eventParamsStr);
+  next = newEvents;
   currYear = year;
   currDay = day;
 
@@ -226,56 +234,7 @@ EventNode *readEventData(char *eventFile) {
   }
 
   fclose(in);
-  return events;
-}
-
-void printEvent(EventNode *event) {
-  if (event == NULL) {
-    return;
-  }
-  int year = event->year;
-  int day = event->day;
-  switch (event->type) {
-    case IRRIGATION:
-      printf("IRRIGATION on %d %d, ", year, day);
-      IrrigationParams *const iParams = (IrrigationParams *)event->eventParams;
-      printf("with params: amount added %4.2f\n", iParams->amountAdded);
-      break;
-    case FERTILIZATION:
-      printf("FERTILIZATION on %d %d, ", year, day);
-      FertilizationParams *const fParams =
-          (FertilizationParams *)event->eventParams;
-      printf("with params: org N %4.2f, org C %4.2f, min N %4.2f\n",
-             fParams->orgN, fParams->orgC, fParams->minN);
-      break;
-    case PLANTING:
-      printf("PLANTING on %d %d, ", year, day);
-      PlantingParams *const pParams = (PlantingParams *)event->eventParams;
-      printf("with params: leaf C %4.2f, wood C %4.2f, fine root C %4.2f, "
-             "coarse root C %4.2f\n",
-             pParams->leafC, pParams->woodC, pParams->fineRootC,
-             pParams->coarseRootC);
-      break;
-    case TILLAGE:
-      printf("TILLAGE at on %d %d, ", year, day);
-      TillageParams *const tParams = (TillageParams *)event->eventParams;
-      printf("with params: frac litter transferred %4.2f, som decomp modifier "
-             "%4.2f, litter decomp modifier %4.2f\n",
-             tParams->fractionLitterTransferred, tParams->somDecompModifier,
-             tParams->litterDecompModifier);
-      break;
-    case HARVEST:
-      printf("HARVEST on %d %d, ", year, day);
-      HarvestParams *const hParams = (HarvestParams *)event->eventParams;
-      printf("with params: frac removed above %4.2f, frac removed below %4.2f, "
-             "frac transferred above %4.2f, frac transferred below %4.2f\n",
-             hParams->fractionRemovedAbove, hParams->fractionRemovedBelow,
-             hParams->fractionTransferredAbove,
-             hParams->fractionTransferredBelow);
-      break;
-    default:
-      printf("ERROR printing event: unknown type %d\n", event->type);
-  }
+  return newEvents;
 }
 
 const char *eventTypeToString(event_type_t type) {
@@ -296,18 +255,17 @@ const char *eventTypeToString(event_type_t type) {
   }
 }
 
-FILE *openEventOutFile(int printHeader) {
-  FILE *eventFile = openFile(EVENT_OUT_FILE, "w");
+void openEventOutFile(int printHeader) {
+  eventOutFile = openFile(EVENT_OUT_FILE, "w");
   if (printHeader) {
     // Use format string analogous to the one in writeEventOut for
     // better alignment (won't be perfect, but definitely better)
-    fprintf(eventFile, "%4s  %3s  %-7s  %s", "year", "day", "type",
+    fprintf(eventOutFile, "%4s  %3s  %-7s  %s", "year", "day", "type",
             "param_name=delta[,param_name=delta,...]\n");
   }
-  return eventFile;
 }
 
-void writeEventOut(FILE *out, EventNode *event, int numParams, ...) {
+void writeEventOut(EventNode *oneEvent, int numParams, ...) {
   va_list args;
   int ind = 0;
 
@@ -315,15 +273,246 @@ void writeEventOut(FILE *out, EventNode *event, int numParams, ...) {
   // year day event_type <param name=delta>[,<param name>=<delta>,...]
 
   // Standard prefix for all
-  fprintf(out, "%4d  %3d  %-7s  ", event->year, event->day,
-          eventTypeToString(event->type));
-  // Variable output per event type
+  fprintf(eventOutFile, "%4d  %3d  %-7s  ", oneEvent->year, oneEvent->day,
+          eventTypeToString(oneEvent->type));
+  // Variable output per oneEvent type
   va_start(args, numParams);
   for (ind = 0; ind < numParams - 1; ind++) {
-    fprintf(out, "%s=%-.2f,", va_arg(args, char *), va_arg(args, double));
+    fprintf(eventOutFile, "%s=%-.2f,", va_arg(args, char *),
+            va_arg(args, double));
   }
-  fprintf(out, "%s=%-.2f\n", va_arg(args, char *), va_arg(args, double));
+  fprintf(eventOutFile, "%s=%-.2f\n", va_arg(args, char *),
+          va_arg(args, double));
   va_end(args);
 }
 
-void closeEventOutFile(FILE *file) { fclose(file); }
+void closeEventOutFile() {
+  if (eventOutFile) {
+    fclose(eventOutFile);
+  }
+}
+
+void initEvents(char *eventFile, int printHeader) {
+  if (ctx.events) {
+    events = readEventData(eventFile);
+    openEventOutFile(printHeader);
+  }
+}
+
+void setupEvents() { event = events; }
+
+void resetEventFluxes(void) {
+  fluxes.eventLeafC = 0.0;
+  fluxes.eventWoodC = 0.0;
+  fluxes.eventFineRootC = 0.0;
+  fluxes.eventCoarseRootC = 0.0;
+  fluxes.eventEvap = 0.0;
+  fluxes.eventSoilWater = 0.0;
+  fluxes.eventLitterC = 0.0;
+}
+
+void processEvents(void) {
+  // This should be in events.h/c, but with all the global state defined in this
+  // file, let's leave it here for now. Maybe someday we will factor that out.
+
+  // Set all event fluxes to zero, as these have no memory from one step to
+  // the next
+  resetEventFluxes();
+
+  // If event starts off NULL, this function will just fall through, as it
+  // should.
+  const int climYear = climate->year;
+  const int climDay = climate->day;
+  const double climLen = climate->length;
+
+  // As this is used as a divisor in many places, let's make sure it's >0
+  if (climLen <= 0) {
+    logError("climate length (%f) on year %d day %d is non-positive; please "
+             "fix and re-run",
+             climLen, climYear, climDay);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
+  // The events file has been tested on read, so we know this event list should
+  // be in chrono order. However, we need to check to make sure the current
+  // event is not in the past, as that would indicate an event that did not have
+  // a corresponding climate file record.
+  while (event != NULL && event->year <= climYear && event->day <= climDay) {
+    if (event->year < climYear || event->day < climDay) {
+      logError("Agronomic event found for year: %d day: %d that does not "
+               "have a corresponding record in the climate file\n",
+               event->year, event->day);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
+    }
+    switch (event->type) {
+      case IRRIGATION: {
+        const IrrigationParams *irrParams = event->eventParams;
+        const double amount = irrParams->amountAdded;
+        double soilAmount, evapAmount;
+        if (irrParams->method == CANOPY) {
+          // Part of the irrigation evaporates, and the rest makes it to the
+          // soil. Evaporated fraction:
+          evapAmount = params.immedEvapFrac * amount;
+          // Soil fraction:
+          soilAmount = amount - evapAmount;
+        } else if (irrParams->method == SOIL) {
+          // All goes to the soil
+          evapAmount = 0.0;
+          soilAmount = amount;
+        } else {
+          logError("Unknown irrigation method type: %d\n", irrParams->method);
+          exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+        }
+        fluxes.eventEvap += evapAmount / climLen;
+        fluxes.eventSoilWater += soilAmount / climLen;
+        writeEventOut(event, 2, "fluxes.eventSoilWater", soilAmount / climLen,
+                      "fluxes.eventEvap", evapAmount / climLen);
+      } break;
+      case PLANTING: {
+        const PlantingParams *plantParams = event->eventParams;
+        const double leafC = plantParams->leafC;
+        const double woodC = plantParams->woodC;
+        const double fineRootC = plantParams->fineRootC;
+        const double coarseRootC = plantParams->coarseRootC;
+
+        // Update the fluxes
+        fluxes.eventLeafC += leafC / climLen;
+        fluxes.eventWoodC += woodC / climLen;
+        fluxes.eventFineRootC += fineRootC / climLen;
+        fluxes.eventCoarseRootC += coarseRootC / climLen;
+
+        // FUTURE: allocate to N pools
+
+        writeEventOut(event, 4, "fluxes.eventLeafC", leafC / climLen,
+                      "fluxes.eventWoodC", woodC / climLen,
+                      "fluxes.eventFineRootC", fineRootC / climLen,
+                      "fluxes.eventCoarseRootC", coarseRootC / climLen);
+      } break;
+      case HARVEST: {
+        // Harvest can both remove biomass and move biomass to the litter pool
+        const HarvestParams *harvParams = event->eventParams;
+        const double fracRA = harvParams->fractionRemovedAbove;
+        const double fracTA = harvParams->fractionTransferredAbove;
+        const double fracRB = harvParams->fractionRemovedBelow;
+        const double fracTB = harvParams->fractionTransferredBelow;
+
+        // Litter increase
+        const double litterAdd = fracTA * (envi.plantLeafC + envi.plantWoodC) +
+                                 fracTB * (envi.fineRootC + envi.coarseRootC);
+        // Pool reductions, counting both mass moved to litter and removed by
+        // the harvest itself. Above-ground changes:
+        const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
+        const double woodDelta = -envi.plantWoodC * (fracRA + fracTA);
+        // Below-ground changes:
+        const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
+        const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
+
+        // Pool updates:
+        fluxes.eventLitterC += litterAdd / climLen;
+        fluxes.eventLeafC += leafDelta / climLen;
+        fluxes.eventWoodC += woodDelta / climLen;
+        fluxes.eventFineRootC += fineDelta / climLen;
+        fluxes.eventCoarseRootC += coarseDelta / climLen;
+
+        // FUTURE: move/remove biomass in N pools
+        writeEventOut(event, 5, "fluxes.eventLitterC", litterAdd / climLen,
+                      "fluxes.eventLeafC", leafDelta / climLen,
+                      "fluxes.eventWoodC", woodDelta / climLen,
+                      "fluxes.eventFineRootC", fineDelta / climLen,
+                      "fluxes.eventCoarseRootC", coarseDelta / climLen);
+      } break;
+      case TILLAGE:
+        // TBD
+        logError("Tillage events not yet implemented\n");
+        break;
+      case FERTILIZATION: {
+        const FertilizationParams *fertParams = event->eventParams;
+        // const double orgN = fertParams->orgN;
+        const double orgC = fertParams->orgC;
+        // const double minN = fertParams->minN;
+
+        fluxes.eventLitterC += orgC / climLen;
+
+        // FUTURE: allocate to N pools
+
+        // This will (likely) be 3 params eventually
+        writeEventOut(event, 1, "fluxes.eventLitterC", orgC / climLen);
+      } break;
+      default:
+        logError("Unknown event type (%d) in processEvents()\n", event->type);
+        exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+    }
+
+    event = event->nextEvent;
+  }
+}
+
+void updatePoolsForEvents(void) {
+  // Harvest and planting events
+  envi.plantWoodC += fluxes.eventWoodC * climate->length;
+  envi.plantLeafC += fluxes.eventLeafC * climate->length;
+
+  // Irrigation events
+  envi.soilWater += fluxes.eventSoilWater * climate->length;
+
+  // Harvest and fertilization events
+  if (ctx.litterPool) {
+    envi.litter += fluxes.eventLitterC * climate->length;
+  } else {
+    envi.soil += fluxes.eventLitterC * climate->length;
+  }
+
+  // Harvest and planting events
+  envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
+  envi.fineRootC += fluxes.eventFineRootC * climate->length;
+}
+
+void printEvent(EventNode *oneEvent) {
+  if (oneEvent == NULL) {
+    return;
+  }
+  int year = oneEvent->year;
+  int day = oneEvent->day;
+  switch (oneEvent->type) {
+    case IRRIGATION:
+      printf("IRRIGATION on %d %d, ", year, day);
+      IrrigationParams *const iParams =
+          (IrrigationParams *)oneEvent->eventParams;
+      printf("with params: amount added %4.2f\n", iParams->amountAdded);
+      break;
+    case FERTILIZATION:
+      printf("FERTILIZATION on %d %d, ", year, day);
+      FertilizationParams *const fParams =
+          (FertilizationParams *)oneEvent->eventParams;
+      printf("with params: org N %4.2f, org C %4.2f, min N %4.2f\n",
+             fParams->orgN, fParams->orgC, fParams->minN);
+      break;
+    case PLANTING:
+      printf("PLANTING on %d %d, ", year, day);
+      PlantingParams *const pParams = (PlantingParams *)oneEvent->eventParams;
+      printf("with params: leaf C %4.2f, wood C %4.2f, fine root C %4.2f, "
+             "coarse root C %4.2f\n",
+             pParams->leafC, pParams->woodC, pParams->fineRootC,
+             pParams->coarseRootC);
+      break;
+    case TILLAGE:
+      printf("TILLAGE at on %d %d, ", year, day);
+      TillageParams *const tParams = (TillageParams *)oneEvent->eventParams;
+      printf("with params: frac litter transferred %4.2f, som decomp modifier "
+             "%4.2f, litter decomp modifier %4.2f\n",
+             tParams->fractionLitterTransferred, tParams->somDecompModifier,
+             tParams->litterDecompModifier);
+      break;
+    case HARVEST:
+      printf("HARVEST on %d %d, ", year, day);
+      HarvestParams *const hParams = (HarvestParams *)oneEvent->eventParams;
+      printf("with params: frac removed above %4.2f, frac removed below %4.2f, "
+             "frac transferred above %4.2f, frac transferred below %4.2f\n",
+             hParams->fractionRemovedAbove, hParams->fractionRemovedBelow,
+             hParams->fractionTransferredAbove,
+             hParams->fractionTransferredBelow);
+      break;
+    default:
+      printf("ERROR printing oneEvent: unknown type %d\n", oneEvent->type);
+  }
+}

@@ -33,12 +33,6 @@ void initEnv(void) {
   envi.coarseRootC = 4;
 }
 
-void procEvents() {
-  processEvents();
-  soilDegradation();
-  updatePoolsForEvents();
-}
-
 int run(void) {
   int status = 0;
 
