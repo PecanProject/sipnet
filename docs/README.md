@@ -4,6 +4,9 @@ SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is an ecosystem 
 carbon and water dynamics. Originally developed for assimilation of eddy covariance flux data in forest ecosystems, 
 current development is focused on representing carbon balance and GHG fluxes and agricultural management practices.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17148669.svg)](https://doi.org/10.5281/zenodo.17148669)
+
+
 ## Quick Start
 
 1. Clone the repository:

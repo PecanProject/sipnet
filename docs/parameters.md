@@ -9,7 +9,7 @@ format:
       - \usepackage{amsmath}
 ---
 
-# Input and Output Parameters (DRAFT)
+# SIPNET Model States and Parameters
 
 Note: this is a work in progress draft. Not all parameters listed will be used in the CCMMF formulation of the model. The "Notation" section should be consistent with model equations, some of the mathematical symbols in the tables may not be.
 
@@ -76,7 +76,7 @@ Subscripts may be used in combination, e.g. $X_{\text{soil,mineral},0}$.
 
 ## Run-time Parameters
 
-Run-time parameters can change from one run to the next, or when the model is stopped and restarted. These include initial state values and parameters related to plant physiology, soil physiology, and biogeochemical cycling.
+Run-time parameters can change from one run to the next, or when the model is stopped and restarted. These include initial state values and parameters related to plant physiology, soil physics, and biogeochemical cycling.
 
 ### Initial state values
 
@@ -156,14 +156,14 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Allocation parameters
 
-|      | Symbol                    | Parameter Name      | Definition                                     | Units                              | notes              |
-| ---- | ------------------------- | ------------------- | ---------------------------------------------- | ---------------------------------- | ------------------ |
-| 64   |                           | fineRootFrac        | fraction of wood carbon allocated to fine root |                                    |                    |
-| 65   |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |                                    |                    |
-| 66   | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |                                    |                    |
-| 67   | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |                                    |                    |
-|      | 68                        | fineRootExudation   | fraction of GPP exuded to the soil[^exudates]  | fraction                           | Pulsing parameters |
-| 68   |                           | coarseRootExudation | fraction of GPP exuded to the soil[^exudates]  | fraction                          | Pulsing parameters |
+|     | Symbol                    | Parameter Name      | Definition                                     | Units                              | notes              |
+| --- | ------------------------- | ------------------- | ---------------------------------------------- | ---------------------------------- | ------------------ |
+| 64  |                           | fineRootFrac        | fraction of wood carbon allocated to fine root |          |                    |
+| 65  |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |          |                    |
+| 66  | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |          |                    |
+| 67  | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |          |                    |
+| 68  |                           | fineRootExudation   | fraction of GPP exuded to the soil[^exudates]  | fraction                           | Pulsing parameters |
+| 69  |                           | coarseRootExudation | fraction of GPP exuded to the soil[^exudates]  | fraction                          | Pulsing parameters |
 
 [^exudates]: Fine and coarse root exudation are calculated as a fraction of GPP, but the exudates are subtracted from the fine and coarse root pools, respectively. <!--Note that previous versions incorrectly defined fine root exudates as a fraction of NPP-->
 
@@ -190,8 +190,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 34  | $Q_{10s}$         | soilRespQ10         | Soil respiration Q10                                                                |                                               | scalar determining effect of temp on soil respiration |
 | 39  |                   | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                               |                                                       |
 |     |                   | baseMicrobeResp     |                                                                                     |                                               |                                                       |
-|     |                   |                     |                                                                                     |                                               |                                                       |
-
 | new | $f_{\textrm{till}}$ | tillageEff   | Effect of tillage on decomposition that exponentially decays over time | fraction | Per‑event in `events.in`; 0 = no effect |
 
 - $R_{dec}$: Rate of decomposition $(\text{day}^{-1})$ 
@@ -280,99 +278,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 78 |                   | microbePulseEff        | fraction of exudates that microbes immediately use |                       | Pulsing parameters            |
 
 -->
-
-## Run-time Options
-
-Configuration settings are applied in the following order of precedence:
-
-1. Default values built into SIPNET
-2. Values from the configuration file
-3. Command-line arguments
-
-Thus, command-line arguments override settings in the configuration file, and configuration file settings override default values.
-
-### Input / Output Options
-
-| Option       | Default   | Description                           |
-| ------------ | --------- | ------------------------------------- |
-| `input-file` | sipnet.in | Name of input config file             |
-| `file-name`  | sipnet    | Prefix of climate and parameter files |
-
-### Output Flags
-
-| Option              | Default | Description                                                    |
-| ------------------- | ------- | -------------------------------------------------------------- |
-| `do-main-output`    | on      | Print time series of all output variables to `<file-name>.out` |
-| `do-single-outputs` | off     | Print outputs one variable per file (e.g. `<file-name>.NEE`)   |
-| `dump-config`       | on      | Print final config to `<file-name>.config`                     |
-| `print-header`      | on      | Whether to print header row in output files                    |
-| `quiet`             | off     | Suppress info and warning message                              |
-
-### Model Flags
-
-| Option        | Default | Description                                                                              |
-| ------------- | ------- | ---------------------------------------------------------------------------------------- |
-| `events`      | on      | Enable event handling.                                                                   |
-| `gdd`         | on      | Use growing degree days to determine leaf growth.                                        |
-| `growth-resp` | off     | Explicitly model growth respiration, rather than including with maintenance respiration. |
-| `leaf-water`  | off     | Calculate leaf pool and evaporate from that pool.                                        |
-| `litter-pool` | off     | Enable litter pool in addition to single soil carbon pool.                               |
-| `microbes`    | off     | Enable microbe modeling.                                                                 |
-| `snow`        | on      | Keep track of snowpack, rather than assuming all precipitation is liquid.                |
-| `soil-phenol` | off     | Use soil temperature to determine leaf growth.                                           |
-| `water-hresp` | on      | Whether soil moisture affects heterotrophic respiration.                                 |
-
-Note the following restrictions on these options:
- - `soil-phenol` and `gdd` may not both be turned on
-
-### Command Line Arguments
-
-Command-line arguments can be used to specify run-time options when starting SIPNET. The syntax is as follows:
-
-```
-sipnet [options]
-```
-
-Where `[options]` can include any of the run-time options listed above. 
-Flags use the syntax `--flag` to turn them on, or `--no-flag` to turn them off. Other options are specified by `--option value`.
-
-See `sipnet --help` for a full list of available command-line options.
-
-### Configuration File Format
-
-SIPNET reads a configuration file that specifies run-time options without using command-line arguments. By default, SIPNET looks for a file named `sipnet.in` in the current directory. These will be overwritten by command-line arguments if specified.
-
-The configuration file uses a simple key-value format, `option = value`, 
-with one option per line; comments follow `#`. Flags are specified as 0 for off and 1 for on.
-
-#### Example Configuration File
-
-Note that case is ignored for parameter names, as well as dashes and underscores.
-
-```
-# Base filename (used for derived filenames)
-FILE_NAME = mysite
-
-# Output options
-DO_MAIN_OUTPUT = 1
-DO_SINGLE_OUTPUTS = 0
-DUMP_CONFIG = 1
-PRINT_HEADER = 1
-QUIET = 0
-
-# Model options
-EVENTS = 1
-GDD = 1
-GROWTH_RESP = 0
-LEAF_WATER = 0
-LITTER_POOL = 0
-MICROBES = 0
-SNOW = 1
-SOIL_PHENOL = 0
-WATER_HRESP = 1
-```
-
-When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
 
 ## Hard-coded Values
 
@@ -671,27 +576,3 @@ year  day  type     param_name=delta[,param_name=delta,...]
 2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
 2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
 ```
-
-<!--
-
-|    | $F^C_\text{CH_4}$  |fluxesch4    | Methane Flux                   | g C/m$^2$ / timestep |
-# unused content
-
-TODO: update and move the following terms used in model description to appropriate tables
-
-| Symbol                                | Description                                         |
-| ------------------------------------- | --------------------------------------------------- |
-| $F_{T,Q10}$                           | Temperature dependence using Q10 relationship       |
-| $F_{T,opt}$                           | Temperature dependence based on optimal temperature |
-| $W_{\text{soil}}$                     | Soil water content                                  |
-| $W_{\text{WHC}}$                      | Soil Water Holding Capacity                         |
-| $f_{\text{anaer}}$                    | Fraction of anaerobic soil                          |
-| $R_{\text{mineralization,N}}$         | Rate of nitrogen mineralization                     |
-| $R_{\text{leach,}N_{\text{mineral}}}$ | Rate of mineral nitrogen leaching                   |
-| $R_{\text{vol,}N_{\text{mineral}}}$   | Rate of mineral nitrogen volatilization             |
-| $R_{\text{fert,}N_{\text{mineral}}}$  | Rate of mineral nitrogen fertilization              |
-| $R_{\text{fert,}N_{\text{org}}}$      | Rate of organic nitrogen fertilization input        |
-| $R_{\text{meth}}$                     | Rate of methane production                          |
-| $R_{\text{methox}}$                   | Rate of methane oxidation                           |
--->
-

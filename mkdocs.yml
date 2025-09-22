@@ -7,6 +7,8 @@ nav:
     - Model Specification: model-structure.md
   - User Guide:
       - Running SIPNET: user-guide/running-sipnet.md
+      - Model Inputs: user-guide/model-inputs.md
+      - Model Outputs: user-guide/model-outputs.md
   - Developer Guide:
       - Code Structure: developer-guide/code-structure.md
       - Adding New Command Line Options: developer-guide/cli-options.md
@@ -21,6 +23,7 @@ theme:
   features:
     - content.action.edit
     - content.code.copy
+    - navigation.expand
   icon:
     edit: material/pencil
   palette:
