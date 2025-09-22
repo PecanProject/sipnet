@@ -1,43 +1,41 @@
 # Contributing to SIPNET
 
-We welcome contributions to SIPNET. This document outlines the process for contributing to the SIPNET project.
+We welcome contributions. This page is the one‑stop guide for developers.
 
-All contributors are expected to adhere to the PEcAn Project [Code of Conduct](https://github.com/PecanProject/pecan/blob/develop/CODE_OF_CONDUCT.md).
+All contributors must follow the project [Code of Conduct](CODE_OF_CONDUCT.md).
 
-## Setup
+## Developer Quickstart
 
-1. Clone this repository:
-
+- Clone the repository:
    ```bash
    git clone git@github.com:PecanProject/sipnet
+   cd sipnet
    ```
+- Setup (once per clone, described below):
+  ```bash
+  tools/setup.sh
+  ```
+- Build:
+  ```bash
+  make
+  ```
+- Run a sample:
+  ```bash
+  cd tests/smoke/niwot
+  ../../../sipnet -i sipnet.in
+  ```
 
-2. Run the setup script (once per clone):
+**Setup Script** The `tools/setup.sh` script verifies that Python ≥ 3.8 is available and that `clang-format`, `clang-tidy`, and `git clang-format` are installed. Automatically installs `clang` tools on macOS and prints installation instructions for Ubuntu/Debian. Then copies the clang pre‑commit hook into `.git/hooks` so that code formatting is checked on every commit.
 
-   ```bash
-   tools/setup.sh
-   ```
-
-The `tools/setup.sh` script verifies that Python ≥ 3.8 is available,
-ensures that `clang-format`, `clang-tidy`, and `git clang-format` are
-installed (it automatically installs them on macOS and prints installation
-instructions for Ubuntu/Debian), and then copies the clang pre‑commit hook into
-`.git/hooks`. 
-
-The pre-commit hook will check formatting on every commit; if issues are found it
-aborts the commit so you can run `git clang-format` and re‑stage the
-changes.
-
-*Note – running the script is unnecessary for documentation‑only edits,
-but it will save you time whenever you touch C/C++ code.*
-
+_Note – running `tools/setup.sh`  is not necessary for documentation‑only edits,
+but it will save you time whenever you touch C/C++ code._
 ## GitHub Workflow
 
-#### Branches
+### Branches
 
 The `master` branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches should be named to clearly indicate the purpose, and may be combined with an associated issue, e.g. `ISSUE#-feature-name`.
 
-#### Pull Requests
+### Pull Requests
 
 Pull requests should be made from feature branches to the `master` branch. 
 
@@ -56,14 +54,15 @@ Pull requests must pass all required checks to be merged into master, including 
   
 ## Code Format & Style
 
-We follow the standard LLVM/Clang formatting rules. Formatting is automatic, and you rarely have to think about them:
+We follow the standard LLVM/Clang formatting rules. Formatting is automated with a pre-commit hook, so you wil rarely have to think about them.
+
+To set up formatting and static analysis checks:
 
 1. **Run the setup script once** (see *Setup* above).  
    It installs a **pre‑commit hook** that blocks any commit whose C/C++
    files are not already formatted.
 
 2. **If the hook stops your commit**, run:
-
    ```bash
    # format only what you just staged
    git clang-format
@@ -84,86 +83,90 @@ If `git clang-format` fails because not all changes are staged (likely a `git co
     
 The hook and CI will tell you what to fix.
 
+If a commit is blocked, format staged changes:
+  ```bash
+  git clang-format
+  git add -u && git commit
+  ```
+  To reformat all modified files: `git clang-format -f`.
+- Optional local static analysis:
+  ```bash
+  clang-tidy path/to/file.c
+  ```
+
+
 ## Documentation
 
-What goes in **Doxygen**:
-- Documentation for functions, classes, and parameters.
+- Build API docs (Doxygen) and site (MkDocs):
+  ```bash
+  make document
+  ```
+- Live preview while editing docs:
+  ```bash
+  pip install mkdocs mkdocs-material pymdown-extensions
+  mkdocs serve
+  # open http://127.0.0.1:8000/
+  ```
+  Update `mkdocs.yml` if you add/move pages.
 
-What goes in **docs/*md**:
-- User guides and tutorials.
-- Documentation of equations, theoretical basis, and parameters.
+- Build API docs (Doxygen) and site (MkDocs):
+  ```bash
+  make document
+  ```
+  Outputs: `docs/api/` and `site/`.
+- Live preview while editing docs:
+  ```bash
+  pip install mkdocs mkdocs-material pymdown-extensions
+  mkdocs serve
+  # open http://127.0.0.1:8000/
+  ```
+  Update `mkdocs.yml` if you add/move pages.
 
-### Building the Documentation with `mkdocs`
+## Build
 
-Documentation is located at https://pecanproject.github.io/sipnet/, and can be rebuilt using `mkdocs`. A brief summary 
-of use is listed here, or see the Getting Started page for `mkdocs` [here](https://www.mkdocs.org/getting-started/) for
-more information. 
-
-Issue the following command to install `mkdocs` and the third-party extensions usedin SIPNET:
-```
-pip install mkdocs mkdocs-material pymdown-extensions
-```
-The `material` theme can be found [here](https://github.com/squidfunk/mkdocs-material).
-
-MkDocs comes with a built-in dev-server that lets you preview your documentation as you work on it. Make sure you're 
-in the same directory as the mkdocs.yml configuration file, and then start the server by running the mkdocs serve 
-command:
-
-```
-$ mkdocs serve
-INFO    -  Building documentation...
-INFO    -  Cleaning site directory
-INFO    -  Documentation built in 0.22 seconds
-INFO    -  [15:50:43] Watching paths for changes: 'docs', 'mkdocs.yml'
-INFO    -  [15:50:43] Serving on http://127.0.0.1:8000/
-```
-Open up http://127.0.0.1:8000/ in your browser, and you'll see the documentation home page.
-
-The dev-server also supports auto-reloading, and will rebuild your documentation whenever anything in the configuration
-file, documentation directory, or theme directory changes.
-
-If the structure of the documentation has changed (e.g., adding, moving, removing, or renaming pages), update `mkdocs.yml` in the root 
-directory to reflect these changes and issue this command to rebuild:
-
-```
-mkdocs build
+```bash
+make
 ```
 
-## Compiling SIPNET binaries
+- See the project [README.md](README.md) for quick start. Use `make help` for all targets.
 
-SIPNET uses `make` to build the model and documentation. There are also miscellaneous targets for running analysis workflows:
 
-```sh
-# build SIPNET executable
-make sipnet
-# build documentation
-make document
-# clean up build artifacts
-make clean
-# list all make commands
-make help
-```
 ## Testing
 
-Any new features (that are worth keeping!) should be covered by tests.
+New features require tests.
 
-SIPNET also uses `make` to build and run its unit tests. This can be done with the following commands:
-```shell
-# Compile tests
-make test
-# Run tests
-make testrun
-# Clean after tests are run
-make testclean
+- Unit tests:
+  ```bash
+  make unit
+  # or: make testbuild && ./tools/run_unit_tests.sh
+  ```
+- Smoke tests:
+  ```bash
+  make smoke
+  ```
+- Full check (unit + smoke):
+  ```bash
+  make test
+  ```
+
+- Clean up unit test artifacts:
+  ```bash
+  make testclean
+  ```
+
+Per‑suite runners live under `tests/sipnet/*`:
+```bash
+make -C tests/sipnet/test_events_infrastructure run
 ```
 
 ## Releases
 
-- Use [Semantic Versioning v2](https://semver.org/) for SIPNET releases.
-  - Tag releases with the version number `vX.Y.Z`.
-  - Update version in the following files:
-    - `CITATION.cff`
-    - `src/sipnet/version.h`
-    - `docs/CHANGELOG.md`
-    - Update `PROJECT_NUMBER` in `docs/Doxyfile`
-- Include content from `docs/CHANGELOG.md` file in release description.
+- Use [Semantic Versioning v2](https://semver.org/) for SIPNET releases. 
+- Tag the git commit associated with the release `vX.Y.Z`.
+- Update versions in:
+  - `CITATION.cff`
+  - `src/sipnet/version.h`
+  - `docs/CHANGELOG.md`
+  - `docs/Doxyfile` (`PROJECT_NUMBER`)
+- Run tests (`make test`).
+- Publish the GitHub release; include `docs/CHANGELOG.md` content in release notes.

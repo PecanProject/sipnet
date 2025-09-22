@@ -1,13 +1,18 @@
 # SIPNET
 
-SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is an ecosystem model designed to efficiently simulate
-carbon and water dynamics. Originally developed for assimilation of eddy covariance flux data in forest ecosystems, 
-current development is focused on representing carbon balance and GHG fluxes and agricultural management practices.
+SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is an ecosystem model designed to efficiently simulate carbon and water dynamics. Originally developed for assimilation of eddy covariance flux data in forest ecosystems, current development is focused on representing carbon balance and GHG fluxes and agricultural management practices.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17148669.svg)](https://doi.org/10.5281/zenodo.17148669)
 
 
-## Quick Start
+## Getting Started
+
+### Requirements
+
+- `gcc` or `clang` 
+- `make`
+
+### Quick Start
 
 1. Clone the repository:
    ```bash
@@ -28,66 +33,42 @@ current development is focused on representing carbon balance and GHG fluxes and
    cat niwot.out
    ```
 
-## Getting Started
+### Run Tests
 
-### Installing
-
-See the quickstart above.
-
-### Executing the Program
-
-[Link to cli docs, when they get written]
-
-[Link to description of all the input files]
-
-### Running Tests
-
-#### Smoke Tests
-
-From the root sipnet directory, run:
-
-```bash
-./tests/smoke/run_smoke.sh
+- Unit tests:
+  ```bash
+  make unit
+  # or: make testbuild && ./tools/run_unit_tests.sh
+  ```
+- Smoke tests:
+  ```bash
+  make smoke
+  # or: ./tests/smoke/run_smoke.sh
+  ```
+- Full tests (build + unit + smoke):
+  ```bash
+  make test
+  ```
+- Clean up test artifacts:
+  ```bash
+  make testclean
 ```
-
-The end of the output from that script should be:
-
-```shell
-=======================
-SUMMARY:
-Skipped directories: 0
-SIPNET OUTPUT:
-Passed:  5/5
-Failed:  0
-EVENT OUTPUT:
-Passed:  5/5
-Failed:  0
-CONFIG OUTPUT:
-Passed:  5/5
-Failed:  0
-=======================
-```
-
-#### Unit Tests
-
-Build and run the unit tests with the script:
-
-```bash
-./tools/run_unit_tests.sh
-```
-
-The summary block at the end should show PASSED for each test.
 
 ## Documentation
 
-Documentation for SIPNET is published at [pecanproject.github.io/sipnet](https://pecanproject.github.io/sipnet/), which is built using `mkdocs`. See 
-the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTING page for more information
+Documentation for SIPNET is published at [pecanproject.github.io/sipnet](https://pecanproject.github.io/sipnet/), which is built using `mkdocs`. 
+See the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTING page for more information
 about how to write and compile the documentation.
+
+Key pages:
+- [Model inputs](user-guide/model-inputs.md): Input files and configuration.
+- [Model outputs](user-guide/model-outputs.md): Output files and structure.
+- [Parameters](parameters.md): Model parameters and settings.
 
 ## Contributing
 
-See the main [Contributing](CONTRIBUTING.md) page
+See the main [Contributing](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) pages for details on how to contribute to SIPNET.
 
 ## License
 
-Distributed under the BSD 3-Clause license. See [LICENSE](https://github.com/PecanProject/sipnet/blob/master/LICENSE) for more information.
+Distributed under the BSD 3-Clause license. See [LICENSE](../LICENSE) for more information.
