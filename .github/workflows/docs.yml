@@ -33,17 +33,35 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y doxygen graphviz
           python3 -m pip install --upgrade pip
-          # Ensure mkdocs plugins in mkdocs.yml are available
           python3 -m pip install mkdocs mkdocs-material pymdown-extensions
 
-      # Build API docs first so mkdocs can find docs/api/index.html referenced in nav
-      - name: Build Doxygen
+      - name: Build docs (Makefile: doxygen + mkdocs)
         run: |
-          # Use repo Doxyfile; fallback to root if needed
-          doxygen docs/Doxyfile || doxygen Doxyfile
-          # Ensure doxygen HTML ends up in docs/api (expected by mkdocs.yml nav)
-          if [ -d html ]; then mkdir -p docs/api && cp -a html/. docs/api/; fi
-          if [ -d docs/html ]; then mkdir -p docs/api && cp -a docs/html/. docs/api/; fi
+          make clean document
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: >
+      ${{
+        (github.event_name == 'push') ||
+        (github.event_name == 'pull_request' &&
+         github.event.pull_request.head.repo.full_name == github.repository)
+      }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          preview: ${{ github.event_name == 'pull_request' }}
+          fi
 
       - name: Build MkDocs
         run: |
@@ -69,3 +87,5 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          preview: ${{ github.event_name == 'pull_request' }}
