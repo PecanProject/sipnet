@@ -156,23 +156,14 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Allocation parameters
 
-|      | Symbol                    | Parameter Name      | Definition                                     | Units                              | notes              |
-| ---- | ------------------------- | ------------------- | ---------------------------------------------- | ---------------------------------- | ------------------ |
-| 64   |                           | fineRootFrac        | fraction of wood carbon allocated to fine root |                                    |                    |
-| 65   |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |                                    |                    |
-| 66   | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |                                    |                    |
-| 67   | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |                                    |                    |
-| <!-- | 68                        |                     | fineRootExudation                              | fraction of GPP exuded to the soil |                    | Pulsing parameters |
-| 68   |                           | coarseRootExudation | fraction of NPP exuded to the soil             |                                    | Pulsing parameters |
--->
-|     | Symbol                    | Parameter Name      | Definition                                     | Units    | notes              |
-| --- | ------------------------- | ------------------- | ---------------------------------------------- | -------- | ------------------ |
-| 64  |                           | fineRootFrac        | fraction of wood carbon allocated to fine root |          |                    |
-| 65  |                           | coarseRootFrac      | fraction of wood carbon that is coarse root    |          |                    |
-| 66  | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots        |          |                    |
-| 67  | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood              |          |                    |
-|     | 68                        | fineRootExudation   | fraction of GPP exuded to the soil[^exudates]  | fraction | Pulsing parameters |
-| 68  |                           | coarseRootExudation | fraction of GPP exuded to the soil[^exudates]  | fraction | Pulsing parameters |
+|     | Symbol                    | Parameter Name      | Definition                                                      | Units    | notes              |
+| --- | ------------------------- | ------------------- | --------------------------------------------------------------- | -------- | ------------------ |
+| 64  |                           | fineRootFrac        | fraction of wood carbon allocated to fine root                  |          |                    |
+| 65  |                           | coarseRootFrac      | fraction of wood carbon that is coarse root                     |          |                    |
+| 66  | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots                         |          |                    |
+| 67  | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood                               |          |                    |
+| 68  |                           | fineRootExudation   | fraction of GPP from fine roots exuded to the soil[^exudates]   | fraction | Pulsing parameters |
+| 69  |                           | coarseRootExudation | fraction of GPP from coarse roots exuded to the soil[^exudates] | fraction | Pulsing parameters |
 
 [^exudates]: Fine and coarse root exudation are calculated as a fraction of GPP, but the exudates are subtracted from the fine and coarse root pools, respectively. <!--Note that previous versions incorrectly defined fine root exudates as a fraction of NPP-->
 
@@ -191,15 +182,15 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Soil respiration parameters
 
-|     | Symbol            | Parameter Name      | Definition                                                                          | Units                                         | notes                                                 |
-| --- | ----------------- | ------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
-| 30  | $K_\text{litter}$ | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | g C broken down \* g^-1 litter C \* day^-1    | read in as per-year rate                              |
-| 31  |                   | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) |                                               |                                                       |
-| 32  | $K_{dec}$         | baseSoilResp        | Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil           | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
-| 34  | $Q_{10s}$         | soilRespQ10         | Soil respiration Q10                                                                |                                               | scalar determining effect of temp on soil respiration |
-| 39  |                   | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                               |                                                       |
-|     |                   | baseMicrobeResp     |                                                                                     |                                               |                                                       |
-| new | $f_{\textrm{till}}$ | tillageEff   | Effect of tillage on decomposition that exponentially decays over time | fraction | Per‑event in `events.in`; 0 = no effect |
+|     | Symbol              | Parameter Name      | Definition                                                                          | Units                                         | notes                                                 |
+| --- | ------------------- | ------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
+| 30  | $K_\text{litter}$   | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | g C broken down \* g^-1 litter C \* day^-1    | read in as per-year rate                              |
+| 31  |                     | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) |                                               |                                                       |
+| 32  | $K_{dec}$           | baseSoilResp        | Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil           | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
+| 34  | $Q_{10s}$           | soilRespQ10         | Soil respiration Q10                                                                |                                               | scalar determining effect of temp on soil respiration |
+| 39  |                     | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                               |                                                       |
+|     |                     | baseMicrobeResp     |                                                                                     |                                               |                                                       |
+| new | $f_{\textrm{till}}$ | tillageEff          | Effect of tillage on decomposition that exponentially decays over time              | fraction                                      | Per‑event in `events.in`; 0 = no effect               |
 
 - $R_{dec}$: Rate of decomposition $(\text{day}^{-1})$ 
 - $Q_{10dec}$: Temperature coefficient for $R_{dec}$ (unitless)
