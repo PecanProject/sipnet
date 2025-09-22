@@ -1,17 +1,19 @@
 cff-version: 1.2.0
 title: "SIPNET: Simple Photosynthesis and Evapotranspiration Model"
-version: 2.0..0
+version: 2.0.0
 abstract: >
   SIPNET (Simple Photosynthesis and Evapotranspiration Model) is a process-based
   ecosystem model designed to simulate carbon and water fluxes and (optionally) agricultural management
   events in terrestrial ecosystems.
-  SIPNET is used for research in ecosystem ecology, carbon and greenhouse gas accounting,
+  SIPNET is used for research in ecosystem ecology, agriculture, carbon and greenhouse gas accounting,
   data assimilation, and model benchmarking.
   Model development and recent features are detailed in the CHANGELOG and relevant literature.
 license: BSD-3-Clause
 message: "Please cite SIPNET using the metadata from 'preferred-citation'."
 type: software
 authors:
+  - family-names: Michael
+    given-names: Longfritz
   - family-names: Sacks
     given-names: William J.
     orcid: "https://orcid.org/0000-0003-2902-5263"
@@ -27,9 +29,6 @@ authors:
   - family-names: Schimel
     given-names: David S.
     orcid: "https://orcid.org/0000-0003-3473-8065"
-  - family-names: LeBauer
-    given-names: David S.
-    orcid: "https://orcid.org/0000-0001-7228-053X"
   - family-names: Kooper
     given-names: Rob
     orcid: "https://orcid.org/0000-0002-5781-7287"
@@ -39,10 +38,9 @@ authors:
   - family-names: Fer
     given-names: Istem
     orcid: "https://orcid.org/0000-0001-8236-303X"
-  - family-names: (other contributors)
-    given-names: See https://github.com/PecanProject/sipnet/graphs/contributors
-  - family-names: Michael
-    given-names: Longfritz
+  - family-names: LeBauer
+    given-names: David S.
+    orcid: "https://orcid.org/0000-0001-7228-053X"
 
 repository-code: https://github.com/PecanProject/sipnet
 keywords:
@@ -55,9 +53,11 @@ keywords:
 preferred-citation:
   type: software
   title: "SIPNET: Simple Photosynthesis and Evapotranspiration Model"
-  version: 1.3.0
+  version: 2.0.0
   url: https://github.com/PecanProject/sipnet
   authors:
+    - family-names: Michael
+      given-names: Longfritz
     - family-names: Sacks
       given-names: William J.
     - family-names: Moore
@@ -68,18 +68,14 @@ preferred-citation:
       given-names: Bobby H.
     - family-names: Schimel
       given-names: David S.
-    - family-names: LeBauer
-      given-names: David S.
     - family-names: Kooper
       given-names: Rob
     - family-names: Dietze
       given-names: Michael C.
     - family-names: Fer
       given-names: Istem
-    - family-names: Michael
-      given-names: Longfritz
-    - family-names: (other contributors)
-      given-names: See https://github.com/PecanProject/sipnet/graphs/contributors
+    - family-names: LeBauer
+      given-names: David S.
 
 references:
   - type: article
