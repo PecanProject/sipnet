@@ -299,7 +299,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Run Settings
 
-See [Run-time Options](#run-time-options) above.
+See [Run-time Parameters](#run-time-parameters) above.
 
 Multi-site runs, sensitivity tests, and Monte Carlo runs are no longer supported. Typically these analyses are handled 
 using the [PEcAn Framework](https://pecanproject.org/).
