@@ -56,7 +56,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
@@ -66,20 +65,23 @@ jobs:
       - name: Add deployment URL to summary
         env:
           DEPLOY_URL: ${{ steps.deployment.outputs.page_url }}
+          PREVIEW_URL: ${{ steps.deployment.outputs.preview_url }}
         run: |
-          echo "Deployed to: $DEPLOY_URL" >> "$GITHUB_STEP_SUMMARY"
+          URL="${PREVIEW_URL:-$DEPLOY_URL}"
+          echo "Deployed to: $URL" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Comment preview URL on PR
         if: ${{ github.event_name == 'pull_request' }}
         uses: actions/github-script@v7
         env:
           DEPLOY_URL: ${{ steps.deployment.outputs.page_url }}
+          PREVIEW_URL: ${{ steps.deployment.outputs.preview_url }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const pr_number = context.payload.pull_request.number;
-            const url = process.env.DEPLOY_URL;
+            const url = process.env.PREVIEW_URL || process.env.DEPLOY_URL;
             const body = `Preview: ${url}`;
             await github.rest.issues.createComment({ owner, repo, issue_number: pr_number, body });
