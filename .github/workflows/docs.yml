@@ -35,7 +35,7 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install mkdocs mkdocs-material pymdown-extensions
 
-      - name: Build docs (Makefile: doxygen + mkdocs)
+      - name: "Build docs"
         run: |
           make clean document
 
