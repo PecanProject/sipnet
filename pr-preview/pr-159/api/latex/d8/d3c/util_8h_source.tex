@@ -1,0 +1,30 @@
+\doxysection{util.\+h}
+\label{util_8h_source}\index{util.h@{util.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*\ Basic\ utility\ functions}}
+\DoxyCodeLine{00002\ \textcolor{comment}{}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ Author:\ Bill\ Sacks}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ Creation\ date:\ 8/17/04}}
+\DoxyCodeLine{00006\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ UTIL\_H}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ UTIL\_H}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ our\ own\ openFile\ method,\ which\ exits\ gracefully\ if\ there's\ an\ error}}
+\DoxyCodeLine{00014\ FILE\ *openFile(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mode);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ If\ line\ contains\ any\ character\ in\ the\ string\ commentChars,}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ \ strip\ the\ comment\ off\ the\ line\ (i.e.\ replace\ first\ occurrence\ of}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ \ commentChars\ with\ '\(\backslash\)0')}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ Return\ 1\ if\ line\ contains\ only\ a\ comment\ (or\ only\ blanks),\ 0\ otherwise}}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{int}\ stripComment(\textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *commentChars);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ countFields(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *sep);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,31 @@
+\doxysection{logging.\+h}
+\label{logging_8h_source}\index{logging.h@{logging.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ SIPNET\_LOGGING\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ SIPNET\_LOGGING\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdarg.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}context.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#ifdef\ \_\_FILE\_NAME\_\_}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ FILE\_NAME\ \_\_FILE\_NAME\_\_}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ FILE\_NAME\ \_\_FILE\_\_\ \ }\textcolor{comment}{//\ Pretty\ verbose,\ but\ it\ will\ have\ to\ do}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ logWarning(...)\ logprint(0,\ "{}[WARNING]\ "{},\ FILE\_NAME,\ \_\_LINE\_\_,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ logInfo(...)\ \ \ \ logprint(0,\ "{}[INFO\ \ \ ]\ "{},\ FILE\_NAME,\ \_\_LINE\_\_,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ logTest(...)\ \ \ \ logprint(1,\ "{}[TEST\ \ \ ]\ "{},\ FILE\_NAME,\ \_\_LINE\_\_,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ logError(...)\ \ \ logprint(1,\ "{}[ERROR\ \ ]\ "{},\ FILE\_NAME,\ \_\_LINE\_\_,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ logInternalError(...)\ logprint(2,\ "{}[ERROR\ (INTERNAL)]\ "{},\ FILE\_NAME,\ \_\_LINE\_\_,\ \_\_VA\_ARGS\_\_)}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ logprint(\textcolor{keywordtype}{int}\ logLevel,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prefix,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file,\ \textcolor{keywordtype}{int}\ lineNum,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *fmt,\ ...);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_LOGGING\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,30 @@
+\doxysection{sipnet.\+h}
+\label{sipnet_8h_source}\index{sipnet.h@{sipnet.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ header\ file\ for\ sipnet}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#ifndef\ SIPNET\_H}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ SIPNET\_H}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}common/modelParams.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}outputItems.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ write\ to\ file\ which\ model\ components\ are\ turned\ on}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ (i.e.\ the\ value\ of\ the\ \#DEFINE's\ at\ the\ top\ of\ file)}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ pre:\ out\ is\ open\ for\ writing}}
+\DoxyCodeLine{00013\ \textcolor{keywordtype}{void}\ printModelComponents(FILE\ *out);}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ initModel(ModelParams\ **modelParams,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *paramFile,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *climFile);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ cleanupModel(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ runModelOutput(FILE\ *out,\ OutputItems\ *outputItems,\ \textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{void}\ setupOutputItems(OutputItems\ *outputItems);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

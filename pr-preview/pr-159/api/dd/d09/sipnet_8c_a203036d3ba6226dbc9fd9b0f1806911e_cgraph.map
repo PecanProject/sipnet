@@ -1,0 +1,11 @@
+<map id="cleanupModel" name="cleanupModel">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,80,119,105"/>
+<area shape="rect" id="Node000002" href="$de/deb/events_8c.html#a0f8aee6b04cbd9e1d72353f7afa2e12e" title=" " alt="" coords="183,5,322,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,78,166,40,187,32,189,37,168,44,87,82"/>
+<area shape="rect" id="Node000003" href="$d5/d1f/runmean_8c.html#ac19d52df9855de7455e094c7d9b11e79" title=" " alt="" coords="167,55,339,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="118,83,153,78,153,83,119,88"/>
+<area shape="rect" id="Node000004" href="$dd/d09/sipnet_8c.html#a01231c2f3397cee0183f18142836d200" title=" " alt="" coords="191,104,314,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="119,97,178,105,177,110,118,102"/>
+<area shape="rect" id="Node000005" href="$dd/d09/sipnet_8c.html#aab256833780bad131c33fe78bf9178f2" title=" " alt="" coords="199,153,307,179"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="89,103,168,138,192,147,190,152,166,143,87,108"/>
+</map>

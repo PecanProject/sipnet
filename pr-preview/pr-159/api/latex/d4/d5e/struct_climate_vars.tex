@@ -1,0 +1,258 @@
+\doxysection{Climate\+Vars Struct Reference}
+\label{struct_climate_vars}\index{ClimateVars@{ClimateVars}}
+
+
+{\ttfamily \#include $<$state.\+h$>$}
+
+
+
+Collaboration diagram for Climate\+Vars\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{d9/d05/struct_climate_vars__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+int \textbf{ year}
+\item 
+int \textbf{ day}
+\item 
+double \textbf{ time}
+\item 
+double \textbf{ length}
+\item 
+double \textbf{ tair}
+\item 
+double \textbf{ tsoil}
+\item 
+double \textbf{ par}
+\item 
+double \textbf{ precip}
+\item 
+double \textbf{ vpd}
+\item 
+double \textbf{ vpd\+Soil}
+\item 
+double \textbf{ v\+Press}
+\item 
+double \textbf{ wspd}
+\item 
+double \textbf{ gdd}
+\item 
+\textbf{ Climate\+Node} $\ast$ \textbf{ next\+Clim}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \textbf{ 12} of file \textbf{ state.\+h}.
+
+
+
+\doxysubsection{Field Documentation}
+\label{struct_climate_vars_a667af43572d0da41e85e0cdfa0ebad19} 
+\index{ClimateVars@{ClimateVars}!day@{day}}
+\index{day@{day}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{day}
+{\footnotesize\ttfamily int Climate\+Vars\+::day}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ process\+Events()}, \textbf{ read\+Clim\+Data()}, and \textbf{ run\+Model\+Output()}.
+
+\label{struct_climate_vars_a807944b57ddaa012b6d16ee23b05c97c} 
+\index{ClimateVars@{ClimateVars}!gdd@{gdd}}
+\index{gdd@{gdd}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{gdd}
+{\footnotesize\ttfamily double Climate\+Vars\+::gdd}
+
+
+
+Definition at line \textbf{ 46} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ past\+Leaf\+Growth()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_ae8ee1625df0ae0c90b790664129509d9} 
+\index{ClimateVars@{ClimateVars}!length@{length}}
+\index{length@{length}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{length}
+{\footnotesize\ttfamily double Climate\+Vars\+::length}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Leaf\+Fluxes()}, \textbf{ calc\+Precip()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ process\+Events()}, \textbf{ read\+Clim\+Data()}, \textbf{ snow\+Pack()}, \textbf{ update\+Main\+Pools()}, \textbf{ update\+Mean\+Trackers()}, \textbf{ update\+Pools\+For\+Events()}, \textbf{ update\+Pools\+For\+Soil()}, and \textbf{ update\+Trackers()}.
+
+\label{struct_climate_vars_ab542473c23dec94db4eb707e33a1e1df} 
+\index{ClimateVars@{ClimateVars}!nextClim@{nextClim}}
+\index{nextClim@{nextClim}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{nextClim}
+{\footnotesize\ttfamily \textbf{ Climate\+Node}$\ast$ Climate\+Vars\+::next\+Clim}
+
+
+
+Definition at line \textbf{ 48} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ free\+Climate\+List()}, \textbf{ read\+Clim\+Data()}, and \textbf{ run\+Model\+Output()}.
+
+\label{struct_climate_vars_a0a474e826ac7ccae1f48b9f98c0efad3} 
+\index{ClimateVars@{ClimateVars}!par@{par}}
+\index{par@{par}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{par}
+{\footnotesize\ttfamily double Climate\+Vars\+::par}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_a439d5d5fcd57d320737a65c934878dea} 
+\index{ClimateVars@{ClimateVars}!precip@{precip}}
+\index{precip@{precip}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{precip}
+{\footnotesize\ttfamily double Climate\+Vars\+::precip}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Precip()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_ad6427636af0774e1b630997668cbdef0} 
+\index{ClimateVars@{ClimateVars}!tair@{tair}}
+\index{tair@{tair}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{tair}
+{\footnotesize\ttfamily double Climate\+Vars\+::tair}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Precip()}, \textbf{ calculate\+Fluxes()}, \textbf{ read\+Clim\+Data()}, \textbf{ snow\+Pack()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{struct_climate_vars_a54b1223b331b4f7dee5ce1045f9a5f74} 
+\index{ClimateVars@{ClimateVars}!time@{time}}
+\index{time@{time}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{time}
+{\footnotesize\ttfamily double Climate\+Vars\+::time}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, and \textbf{ run\+Model\+Output()}.
+
+\label{struct_climate_vars_a663c6f37b55076b2b0e69e81d4968c53} 
+\index{ClimateVars@{ClimateVars}!tsoil@{tsoil}}
+\index{tsoil@{tsoil}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{tsoil}
+{\footnotesize\ttfamily double Climate\+Vars\+::tsoil}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+Moist\+Effect()}, \textbf{ calc\+Root\+Resp()}, \textbf{ calculate\+Fluxes()}, \textbf{ moisture()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{struct_climate_vars_aabfeafa537599946c43604138692366e} 
+\index{ClimateVars@{ClimateVars}!vpd@{vpd}}
+\index{vpd@{vpd}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{vpd}
+{\footnotesize\ttfamily double Climate\+Vars\+::vpd}
+
+
+
+Definition at line \textbf{ 34} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_af4393d4ed72dde37a421fc17ca72bf9e} 
+\index{ClimateVars@{ClimateVars}!vpdSoil@{vpdSoil}}
+\index{vpdSoil@{vpdSoil}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{vpdSoil}
+{\footnotesize\ttfamily double Climate\+Vars\+::vpd\+Soil}
+
+
+
+Definition at line \textbf{ 39} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Soil\+Water\+Fluxes()}, and \textbf{ read\+Clim\+Data()}.
+
+\label{struct_climate_vars_a9a5aa1edb8aa02969428b5b526dc4621} 
+\index{ClimateVars@{ClimateVars}!vPress@{vPress}}
+\index{vPress@{vPress}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{vPress}
+{\footnotesize\ttfamily double Climate\+Vars\+::v\+Press}
+
+
+
+Definition at line \textbf{ 41} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ read\+Clim\+Data()}, and \textbf{ snow\+Pack()}.
+
+\label{struct_climate_vars_ab0e536df8f8c0b0496b4d04844771600} 
+\index{ClimateVars@{ClimateVars}!wspd@{wspd}}
+\index{wspd@{wspd}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{wspd}
+{\footnotesize\ttfamily double Climate\+Vars\+::wspd}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ read\+Clim\+Data()}, and \textbf{ snow\+Pack()}.
+
+\label{struct_climate_vars_af8774be1939b2c568f0e70ee49c0a3c9} 
+\index{ClimateVars@{ClimateVars}!year@{year}}
+\index{year@{year}!ClimateVars@{ClimateVars}}
+\doxysubsubsection{year}
+{\footnotesize\ttfamily int Climate\+Vars\+::year}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Leaf\+Fluxes()}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ process\+Events()}, \textbf{ read\+Clim\+Data()}, \textbf{ run\+Model\+Output()}, and \textbf{ update\+Trackers()}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\textbf{ state.\+h}\end{DoxyCompactItemize}

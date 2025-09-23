@@ -1,0 +1,386 @@
+\doxysection{Context Struct Reference}
+\label{struct_context}\index{Context@{Context}}
+
+
+{\ttfamily \#include $<$context.\+h$>$}
+
+
+
+Collaboration diagram for Context\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{db/d9f/struct_context__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+int \textbf{ events}
+\item 
+int \textbf{ gdd}
+\item 
+int \textbf{ growth\+Resp}
+\item 
+int \textbf{ leaf\+Water}
+\item 
+int \textbf{ litter\+Pool}
+\item 
+int \textbf{ microbes}
+\item 
+int \textbf{ snow}
+\item 
+int \textbf{ soil\+Phenol}
+\item 
+int \textbf{ water\+HResp}
+\item 
+int \textbf{ do\+Main\+Output}
+\item 
+int \textbf{ do\+Single\+Outputs}
+\item 
+int \textbf{ dump\+Config}
+\item 
+int \textbf{ print\+Header}
+\item 
+int \textbf{ quiet}
+\item 
+char \textbf{ param\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ clim\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ out\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ out\+Config\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ input\+File} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+char \textbf{ file\+Name} [\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]
+\item 
+int \textbf{ tmp\+Flag}
+\item 
+struct \textbf{ context\+\_\+metadata} $\ast$ \textbf{ meta\+Map}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \textbf{ 40} of file \textbf{ context.\+h}.
+
+
+
+\doxysubsection{Field Documentation}
+\label{struct_context_a6f08d84f4904ae85592b0a9e17c43377} 
+\index{Context@{Context}!climFile@{climFile}}
+\index{climFile@{climFile}!Context@{Context}}
+\doxysubsubsection{climFile}
+{\footnotesize\ttfamily char Context\+::clim\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 62} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_ab496f3b56135a259d94de2e90935b5e7} 
+\index{Context@{Context}!doMainOutput@{doMainOutput}}
+\index{doMainOutput@{doMainOutput}!Context@{Context}}
+\doxysubsubsection{doMainOutput}
+{\footnotesize\ttfamily int Context\+::do\+Main\+Output}
+
+
+
+Definition at line \textbf{ 54} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_a82d97d2b1415236afb8f0faafa3449bf} 
+\index{Context@{Context}!doSingleOutputs@{doSingleOutputs}}
+\index{doSingleOutputs@{doSingleOutputs}!Context@{Context}}
+\doxysubsubsection{doSingleOutputs}
+{\footnotesize\ttfamily int Context\+::do\+Single\+Outputs}
+
+
+
+Definition at line \textbf{ 55} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_aec9dbbdc704a6ef46b62d57e1892742b} 
+\index{Context@{Context}!dumpConfig@{dumpConfig}}
+\index{dumpConfig@{dumpConfig}!Context@{Context}}
+\doxysubsubsection{dumpConfig}
+{\footnotesize\ttfamily int Context\+::dump\+Config}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ main()}.
+
+\label{struct_context_a4cd6bfcdb8b7d5d632a428f7c86e0a38} 
+\index{Context@{Context}!events@{events}}
+\index{events@{events}!Context@{Context}}
+\doxysubsubsection{events}
+{\footnotesize\ttfamily int Context\+::events}
+
+
+
+Definition at line \textbf{ 43} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ cleanup\+Model()}, \textbf{ init\+Events()}, \textbf{ main()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_a53bd09e12a982936d5c969319c09d9ef} 
+\index{Context@{Context}!fileName@{fileName}}
+\index{fileName@{fileName}!Context@{Context}}
+\doxysubsubsection{fileName}
+{\footnotesize\ttfamily char Context\+::file\+Name[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, \textbf{ main()}, and \textbf{ validate\+Filename()}.
+
+\label{struct_context_ab68cc2cebc8a4a47855609bf3f7a2a74} 
+\index{Context@{Context}!gdd@{gdd}}
+\index{gdd@{gdd}!Context@{Context}}
+\doxysubsubsection{gdd}
+{\footnotesize\ttfamily int Context\+::gdd}
+
+
+
+Definition at line \textbf{ 44} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Clim\+Data()}, \textbf{ read\+Param\+Data()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_abbb892397e8afd781ec48b3d25adce98} 
+\index{Context@{Context}!growthResp@{growthResp}}
+\index{growthResp@{growthResp}!Context@{Context}}
+\doxysubsubsection{growthResp}
+{\footnotesize\ttfamily int Context\+::growth\+Resp}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calculate\+Fluxes()}, \textbf{ init\+Context()}, and \textbf{ read\+Param\+Data()}.
+
+\label{struct_context_a37b56fdee3db0a788df677781d1c19cf} 
+\index{Context@{Context}!inputFile@{inputFile}}
+\index{inputFile@{inputFile}!Context@{Context}}
+\doxysubsubsection{inputFile}
+{\footnotesize\ttfamily char Context\+::input\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 65} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ check\+Runtype()}, \textbf{ init\+Context()}, and \textbf{ read\+Input\+File()}.
+
+\label{struct_context_af1d3b536a30cd958d391429a8630a592} 
+\index{Context@{Context}!leafWater@{leafWater}}
+\index{leafWater@{leafWater}!Context@{Context}}
+\doxysubsubsection{leafWater}
+{\footnotesize\ttfamily int Context\+::leaf\+Water}
+
+
+
+Definition at line \textbf{ 46} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Precip()}, \textbf{ init\+Context()}, and \textbf{ read\+Param\+Data()}.
+
+\label{struct_context_aa3e2aa55571d6a4a65448210768cea02} 
+\index{Context@{Context}!litterPool@{litterPool}}
+\index{litterPool@{litterPool}!Context@{Context}}
+\doxysubsubsection{litterPool}
+{\footnotesize\ttfamily int Context\+::litter\+Pool}
+
+
+
+Definition at line \textbf{ 47} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ init\+Context()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ update\+Pools\+For\+Events()}, and \textbf{ update\+Pools\+For\+Soil()}.
+
+\label{struct_context_ab1032381865186a8a31a945b8894dfc9} 
+\index{Context@{Context}!metaMap@{metaMap}}
+\index{metaMap@{metaMap}!Context@{Context}}
+\doxysubsubsection{metaMap}
+{\footnotesize\ttfamily struct \textbf{ context\+\_\+metadata}$\ast$ Context\+::meta\+Map}
+
+
+
+Definition at line \textbf{ 78} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ check\+CLIName\+Map()}, \textbf{ create\+Context\+Metadata()}, \textbf{ get\+Context\+Metadata()}, \textbf{ init\+Context()}, \textbf{ print\+Config()}, \textbf{ update\+Char\+Context()}, and \textbf{ update\+Int\+Context()}.
+
+\label{struct_context_a17d7bf75243adf0f236a64dd8935b70d} 
+\index{Context@{Context}!microbes@{microbes}}
+\index{microbes@{microbes}!Context@{Context}}
+\doxysubsubsection{microbes}
+{\footnotesize\ttfamily int Context\+::microbes}
+
+
+
+Definition at line \textbf{ 48} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Microbe\+Fluxes()}, \textbf{ calc\+Soil\+Maint\+Respiration()}, \textbf{ calculate\+Fluxes()}, \textbf{ init\+Context()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ update\+Pools\+For\+Soil()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_a08a0406bde2d60cc36c9133a80f9ff4c} 
+\index{Context@{Context}!outConfigFile@{outConfigFile}}
+\index{outConfigFile@{outConfigFile}!Context@{Context}}
+\doxysubsubsection{outConfigFile}
+{\footnotesize\ttfamily char Context\+::out\+Config\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 64} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_aef11cb4f744cba49840e28b81e723b78} 
+\index{Context@{Context}!outFile@{outFile}}
+\index{outFile@{outFile}!Context@{Context}}
+\doxysubsubsection{outFile}
+{\footnotesize\ttfamily char Context\+::out\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 63} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_adae7f5b970583472b7f89b05e4e8bde7} 
+\index{Context@{Context}!paramFile@{paramFile}}
+\index{paramFile@{paramFile}!Context@{Context}}
+\doxysubsubsection{paramFile}
+{\footnotesize\ttfamily char Context\+::param\+File[\textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}]}
+
+
+
+Definition at line \textbf{ 61} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}.
+
+\label{struct_context_ac0c4d6c6a47e31724551e2d2af149bf5} 
+\index{Context@{Context}!printHeader@{printHeader}}
+\index{printHeader@{printHeader}!Context@{Context}}
+\doxysubsubsection{printHeader}
+{\footnotesize\ttfamily int Context\+::print\+Header}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, \textbf{ main()}, and \textbf{ print\+Config()}.
+
+\label{struct_context_ae528d2928b7fb3b747ff06024595049f} 
+\index{Context@{Context}!quiet@{quiet}}
+\index{quiet@{quiet}!Context@{Context}}
+\doxysubsubsection{quiet}
+{\footnotesize\ttfamily int Context\+::quiet}
+
+
+
+Definition at line \textbf{ 58} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ check\+All\+Read()}, \textbf{ init\+Context()}, and \textbf{ logprint()}.
+
+\label{struct_context_acd38debde360a07c8bd64a6da0d12e07} 
+\index{Context@{Context}!snow@{snow}}
+\index{snow@{snow}!Context@{Context}}
+\doxysubsubsection{snow}
+{\footnotesize\ttfamily int Context\+::snow}
+
+
+
+Definition at line \textbf{ 49} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, and \textbf{ read\+Param\+Data()}.
+
+\label{struct_context_a80638bf12742d277c4056884b9d22c42} 
+\index{Context@{Context}!soilPhenol@{soilPhenol}}
+\index{soilPhenol@{soilPhenol}!Context@{Context}}
+\doxysubsubsection{soilPhenol}
+{\footnotesize\ttfamily int Context\+::soil\+Phenol}
+
+
+
+Definition at line \textbf{ 50} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ init\+Context()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ read\+Param\+Data()}, and \textbf{ validate\+Context()}.
+
+\label{struct_context_a7e8b5f01de62693a021dccda234c5660} 
+\index{Context@{Context}!tmpFlag@{tmpFlag}}
+\index{tmpFlag@{tmpFlag}!Context@{Context}}
+\doxysubsubsection{tmpFlag}
+{\footnotesize\ttfamily int Context\+::tmp\+Flag}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ parse\+Command\+Line\+Args()}.
+
+\label{struct_context_adf3479d0e1418bcc4d256fbbf3c7ec2c} 
+\index{Context@{Context}!waterHResp@{waterHResp}}
+\index{waterHResp@{waterHResp}!Context@{Context}}
+\doxysubsubsection{waterHResp}
+{\footnotesize\ttfamily int Context\+::water\+HResp}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ context.\+h}.
+
+
+
+Referenced by \textbf{ calc\+Moist\+Effect()}, \textbf{ init\+Context()}, and \textbf{ read\+Param\+Data()}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\textbf{ context.\+h}\end{DoxyCompactItemize}

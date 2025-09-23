@@ -1,0 +1,100 @@
+\doxysection{frontend.\+c File Reference}
+\label{frontend_8c}\index{frontend.c@{frontend.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include "{}common/context.\+h"{}}\newline
+{\ttfamily \#include "{}common/exit\+Codes.\+h"{}}\newline
+{\ttfamily \#include "{}common/logging.\+h"{}}\newline
+{\ttfamily \#include "{}common/model\+Params.\+h"{}}\newline
+{\ttfamily \#include "{}common/util.\+h"{}}\newline
+{\ttfamily \#include "{}cli.\+h"{}}\newline
+{\ttfamily \#include "{}events.\+h"{}}\newline
+{\ttfamily \#include "{}sipnet.\+h"{}}\newline
+{\ttfamily \#include "{}output\+Items.\+h"{}}\newline
+Include dependency graph for frontend.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d74/frontend_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ check\+Runtype} (const char $\ast$run\+Type)
+\item 
+void \textbf{ read\+Input\+File} (void)
+\item 
+int \textbf{ main} (int argc, char $\ast$argv[$\,$])
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\label{frontend_8c_aa1488883552f000ab25659f4cd9f0819} 
+\index{frontend.c@{frontend.c}!checkRuntype@{checkRuntype}}
+\index{checkRuntype@{checkRuntype}!frontend.c@{frontend.c}}
+\doxysubsubsection{checkRuntype()}
+{\footnotesize\ttfamily void check\+Runtype (\begin{DoxyParamCaption}\item[{const char $\ast$}]{run\+Type }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ frontend.\+c}.
+
+
+
+References \textbf{ ctx}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ Context\+::input\+File}, and \textbf{ log\+Error}.
+
+
+
+Referenced by \textbf{ read\+Input\+File()}.
+
+\label{frontend_8c_a0ddf1224851353fc92bfbff6f499fa97} 
+\index{frontend.c@{frontend.c}!main@{main}}
+\index{main@{main}!frontend.c@{frontend.c}}
+\doxysubsubsection{main()}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv[$\,$] }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 128} of file \textbf{ frontend.\+c}.
+
+
+
+References \textbf{ check\+CLIName\+Map()}, \textbf{ cleanup\+Model()}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CALCULATED}, \textbf{ delete\+Model\+Params()}, \textbf{ delete\+Output\+Items()}, \textbf{ Context\+::do\+Main\+Output}, \textbf{ Context\+::do\+Single\+Outputs}, \textbf{ Context\+::dump\+Config}, \textbf{ EVENT\+\_\+\+IN\+\_\+\+FILE}, \textbf{ Context\+::events}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+SUCCESS}, \textbf{ Context\+::file\+Name}, \textbf{ FILENAME\+\_\+\+MAXLEN}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, \textbf{ init\+Model()}, \textbf{ new\+Output\+Items()}, \textbf{ open\+File()}, \textbf{ parse\+Command\+Line\+Args()}, \textbf{ print\+Config()}, \textbf{ Context\+::print\+Header}, \textbf{ read\+Input\+File()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Output\+Items()}, \textbf{ update\+Char\+Context()}, and \textbf{ validate\+Context()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{d9/ddf/frontend_8c_a0ddf1224851353fc92bfbff6f499fa97_cgraph}
+\end{center}
+\end{figure}
+\label{frontend_8c_aa266edaa72008942db003eb2ee683c11} 
+\index{frontend.c@{frontend.c}!readInputFile@{readInputFile}}
+\index{readInputFile@{readInputFile}!frontend.c@{frontend.c}}
+\doxysubsubsection{readInputFile()}
+{\footnotesize\ttfamily void read\+Input\+File (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 33} of file \textbf{ frontend.\+c}.
+
+
+
+References \textbf{ check\+Runtype()}, \textbf{ CONTEXT\+\_\+\+CHAR\+\_\+\+MAXLEN}, \textbf{ ctx}, \textbf{ CTX\+\_\+\+CHAR}, \textbf{ CTX\+\_\+\+CONTEXT\+\_\+\+FILE}, \textbf{ CTX\+\_\+\+INT}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INTERNAL\+\_\+\+ERROR}, \textbf{ get\+Context\+Metadata()}, \textbf{ Context\+::input\+File}, \textbf{ log\+Error}, \textbf{ log\+Info}, \textbf{ log\+Warning}, \textbf{ open\+File()}, \textbf{ strip\+Comment()}, \textbf{ context\+\_\+metadata\+::type}, \textbf{ update\+Char\+Context()}, \textbf{ update\+Int\+Context()}, and \textbf{ validate\+Filename()}.
+
+
+
+Referenced by \textbf{ main()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d9/ddf/frontend_8c_aa266edaa72008942db003eb2ee683c11_cgraph}
+\end{center}
+\end{figure}

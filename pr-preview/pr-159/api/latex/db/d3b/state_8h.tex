@@ -1,0 +1,243 @@
+\doxysection{state.\+h File Reference}
+\label{state_8h}\index{state.h@{state.h}}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{d3/d2f/state_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Climate\+Vars}
+\item 
+struct \textbf{ Parameters}
+\item 
+struct \textbf{ Environment}
+\item 
+struct \textbf{ Flux\+Vars}
+\item 
+struct \textbf{ Tracker\+Vars}
+\item 
+struct \textbf{ Phenology\+Trackers\+Struct}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS}~12
+\item 
+\#define \textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS\+\_\+\+LEGACY}~(\textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS} + 2)
+\item 
+\#define \textbf{ NUM\+\_\+\+PARAMS}~(sizeof(\textbf{ Params}) / sizeof(double))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \textbf{ Climate\+Vars} \textbf{ Climate\+Node}
+\item 
+typedef struct \textbf{ Parameters} \textbf{ Params}
+\item 
+typedef struct \textbf{ Environment} \textbf{ Envi}
+\item 
+typedef struct \textbf{ Flux\+Vars} \textbf{ Fluxes}
+\item 
+typedef struct \textbf{ Tracker\+Vars} \textbf{ Trackers}
+\item 
+typedef struct \textbf{ Phenology\+Trackers\+Struct} \textbf{ Phenology\+Trackers}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Climate\+Node} $\ast$ \textbf{ first\+Climate}
+\item 
+\textbf{ Climate\+Node} $\ast$ \textbf{ climate}
+\item 
+\textbf{ Params} \textbf{ params}
+\item 
+\textbf{ Envi} \textbf{ envi}
+\item 
+\textbf{ Fluxes} \textbf{ fluxes}
+\item 
+\textbf{ Trackers} \textbf{ trackers}
+\item 
+\textbf{ Phenology\+Trackers} \textbf{ phenology\+Trackers}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\label{state_8h_a3b03038a92137f9b02f379c65b9d0847} 
+\index{state.h@{state.h}!NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}}
+\index{NUM\_CLIM\_FILE\_COLS@{NUM\_CLIM\_FILE\_COLS}!state.h@{state.h}}
+\doxysubsubsection{NUM\_CLIM\_FILE\_COLS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS~12}
+
+
+
+Definition at line \textbf{ 55} of file \textbf{ state.\+h}.
+
+\label{state_8h_ac990f86ddae6558c9d39c3755c4d1261} 
+\index{state.h@{state.h}!NUM\_CLIM\_FILE\_COLS\_LEGACY@{NUM\_CLIM\_FILE\_COLS\_LEGACY}}
+\index{NUM\_CLIM\_FILE\_COLS\_LEGACY@{NUM\_CLIM\_FILE\_COLS\_LEGACY}!state.h@{state.h}}
+\doxysubsubsection{NUM\_CLIM\_FILE\_COLS\_LEGACY}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS\+\_\+\+LEGACY~(\textbf{ NUM\+\_\+\+CLIM\+\_\+\+FILE\+\_\+\+COLS} + 2)}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ state.\+h}.
+
+\label{state_8h_a132d28b0774786b46faf261499aff357} 
+\index{state.h@{state.h}!NUM\_PARAMS@{NUM\_PARAMS}}
+\index{NUM\_PARAMS@{NUM\_PARAMS}!state.h@{state.h}}
+\doxysubsubsection{NUM\_PARAMS}
+{\footnotesize\ttfamily \#define NUM\+\_\+\+PARAMS~(sizeof(\textbf{ Params}) / sizeof(double))}
+
+
+
+Definition at line \textbf{ 356} of file \textbf{ state.\+h}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\label{state_8h_aed561e4afbcb4dd662b119e22716d716} 
+\index{state.h@{state.h}!ClimateNode@{ClimateNode}}
+\index{ClimateNode@{ClimateNode}!state.h@{state.h}}
+\doxysubsubsection{ClimateNode}
+{\footnotesize\ttfamily typedef struct \textbf{ Climate\+Vars} \textbf{ Climate\+Node}}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ state.\+h}.
+
+\label{state_8h_aae0795899c6c1f77c7f7d9aca2a20357} 
+\index{state.h@{state.h}!Envi@{Envi}}
+\index{Envi@{Envi}!state.h@{state.h}}
+\doxysubsubsection{Envi}
+{\footnotesize\ttfamily typedef struct \textbf{ Environment} \textbf{ Envi}}
+
+\label{state_8h_aa098d508f38c6014635e5efdffda2442} 
+\index{state.h@{state.h}!Fluxes@{Fluxes}}
+\index{Fluxes@{Fluxes}!state.h@{state.h}}
+\doxysubsubsection{Fluxes}
+{\footnotesize\ttfamily typedef struct \textbf{ Flux\+Vars} \textbf{ Fluxes}}
+
+\label{state_8h_a4ecd2fe2fb87baa30a67a3e7d86d5fa3} 
+\index{state.h@{state.h}!Params@{Params}}
+\index{Params@{Params}!state.h@{state.h}}
+\doxysubsubsection{Params}
+{\footnotesize\ttfamily typedef struct \textbf{ Parameters} \textbf{ Params}}
+
+\label{state_8h_a4ed61abd51873baf31f9c01cfde6b7f5} 
+\index{state.h@{state.h}!PhenologyTrackers@{PhenologyTrackers}}
+\index{PhenologyTrackers@{PhenologyTrackers}!state.h@{state.h}}
+\doxysubsubsection{PhenologyTrackers}
+{\footnotesize\ttfamily typedef struct \textbf{ Phenology\+Trackers\+Struct} \textbf{ Phenology\+Trackers}}
+
+\label{state_8h_aea73df8f56cefd3ff079ed52622f5dac} 
+\index{state.h@{state.h}!Trackers@{Trackers}}
+\index{Trackers@{Trackers}!state.h@{state.h}}
+\doxysubsubsection{Trackers}
+{\footnotesize\ttfamily typedef struct \textbf{ Tracker\+Vars} \textbf{ Trackers}}
+
+
+
+\doxysubsection{Variable Documentation}
+\label{state_8h_ac0c087b09a96464a0656d9cbfa24b5c8} 
+\index{state.h@{state.h}!climate@{climate}}
+\index{climate@{climate}!state.h@{state.h}}
+\doxysubsubsection{climate}
+{\footnotesize\ttfamily \textbf{ Climate\+Node}$\ast$ climate\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ state.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Leaf\+Fluxes()}, \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+Moist\+Effect()}, \textbf{ calc\+Precip()}, \textbf{ calc\+Root\+Resp()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ calculate\+Fluxes()}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ moisture()}, \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ process\+Events()}, \textbf{ run\+Model\+Output()}, \textbf{ setup\+Model()}, \textbf{ snow\+Pack()}, \textbf{ update\+Main\+Pools()}, \textbf{ update\+Mean\+Trackers()}, \textbf{ update\+Pools\+For\+Events()}, \textbf{ update\+Pools\+For\+Soil()}, \textbf{ update\+Trackers()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{state_8h_a20b924acc4518082c0082b78140b99d6} 
+\index{state.h@{state.h}!envi@{envi}}
+\index{envi@{envi}!state.h@{state.h}}
+\doxysubsubsection{envi}
+{\footnotesize\ttfamily \textbf{ Envi} envi\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ state.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+Microbe\+Fluxes()}, \textbf{ calc\+Root\+And\+Wood\+Fluxes()}, \textbf{ calc\+Soil\+Maint\+Respiration()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Non\+Negative\+Stocks()}, \textbf{ init\+Trackers()}, \textbf{ output\+State()}, \textbf{ process\+Events()}, \textbf{ setup\+Model()}, \textbf{ snow\+Pack()}, \textbf{ update\+Main\+Pools()}, \textbf{ update\+Pools\+For\+Events()}, \textbf{ update\+Pools\+For\+Soil()}, \textbf{ update\+State()}, \textbf{ update\+Trackers()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{state_8h_af06513506134d7fe27ffad821814f761} 
+\index{state.h@{state.h}!firstClimate@{firstClimate}}
+\index{firstClimate@{firstClimate}!state.h@{state.h}}
+\doxysubsubsection{firstClimate}
+{\footnotesize\ttfamily \textbf{ Climate\+Node}$\ast$ first\+Climate\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ state.\+c}.
+
+
+
+Referenced by \textbf{ free\+Climate\+List()}, \textbf{ read\+Clim\+Data()}, and \textbf{ setup\+Model()}.
+
+\label{state_8h_a4916801e6466ad444c3a69863f1e615d} 
+\index{state.h@{state.h}!fluxes@{fluxes}}
+\index{fluxes@{fluxes}!state.h@{state.h}}
+\doxysubsubsection{fluxes}
+{\footnotesize\ttfamily \textbf{ Fluxes} fluxes\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ state.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+Microbe\+Fluxes()}, \textbf{ calc\+Root\+And\+Wood\+Fluxes()}, \textbf{ calc\+Soil\+Maint\+Respiration()}, \textbf{ calculate\+Fluxes()}, \textbf{ output\+State()}, \textbf{ process\+Events()}, \textbf{ reset\+Event\+Fluxes()}, \textbf{ update\+Main\+Pools()}, \textbf{ update\+Mean\+Trackers()}, \textbf{ update\+Pools\+For\+Events()}, \textbf{ update\+Pools\+For\+Soil()}, and \textbf{ update\+Trackers()}.
+
+\label{state_8h_a02eb7524df3cdfd7ab32de5b40516106} 
+\index{state.h@{state.h}!params@{params}}
+\index{params@{params}!state.h@{state.h}}
+\doxysubsubsection{params}
+{\footnotesize\ttfamily \textbf{ Params} params\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ state.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Leaf\+Fluxes()}, \textbf{ calc\+Light\+Eff()}, \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+Microbe\+Fluxes()}, \textbf{ calc\+Moist\+Effect()}, \textbf{ calc\+Precip()}, \textbf{ calc\+Root\+And\+Wood\+Fluxes()}, \textbf{ calc\+Soil\+Maint\+Respiration()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ calculate\+Fluxes()}, \textbf{ ensure\+Allocation()}, \textbf{ init\+Trackers()}, \textbf{ moisture()}, \textbf{ past\+Leaf\+Fall()}, \textbf{ past\+Leaf\+Growth()}, \textbf{ pot\+Psn()}, \textbf{ process\+Events()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, \textbf{ snow\+Pack()}, \textbf{ update\+Pools\+For\+Soil()}, \textbf{ update\+Trackers()}, \textbf{ veg\+Resp()}, and \textbf{ veg\+Resp2()}.
+
+\label{state_8h_a07b4e2bcae6e08b95736df4e0fff2af7} 
+\index{state.h@{state.h}!phenologyTrackers@{phenologyTrackers}}
+\index{phenologyTrackers@{phenologyTrackers}!state.h@{state.h}}
+\doxysubsubsection{phenologyTrackers}
+{\footnotesize\ttfamily \textbf{ Phenology\+Trackers} phenology\+Trackers\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ state.\+c}.
+
+
+
+Referenced by \textbf{ calc\+Leaf\+Fluxes()}, and \textbf{ init\+Phenology\+Trackers()}.
+
+\label{state_8h_a5a2cc7351ddb784563951904a8ea55cb} 
+\index{state.h@{state.h}!trackers@{trackers}}
+\index{trackers@{trackers}!state.h@{state.h}}
+\doxysubsubsection{trackers}
+{\footnotesize\ttfamily \textbf{ Trackers} trackers\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ state.\+c}.
+
+
+
+Referenced by \textbf{ init\+Trackers()}, \textbf{ output\+State()}, \textbf{ setup\+Output\+Items()}, and \textbf{ update\+Trackers()}.
+
