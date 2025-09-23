@@ -1,0 +1,35 @@
+name: PR docs preview
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+permissions:
+  contents: write  # needed to push to gh-pages
+  pull-requests: write
+
+concurrency: preview-${{ github.ref }}
+
+jobs:
+  build-and-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system deps
+        if: github.event.action != 'closed'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+          python3 -m pip install --upgrade pip
+          python3 -m pip install mkdocs mkdocs-material pymdown-extensions
+
+      - name: Build docs
+        if: github.event.action != 'closed'
+        run: make clean document
+
+      - name: Deploy PR preview to gh-pages/pr-preview/pr-<n>/
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: site
+          preview-branch: gh-pages         # must match production branch
+          umbrella-dir: pr-preview         # default; explicit for clarity
+          comment: true                    # sticky PR comment with URL
