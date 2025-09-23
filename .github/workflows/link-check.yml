@@ -28,7 +28,6 @@ jobs:
             --retry 3
             --retry-wait-time 2
             --format markdown
-            --output ./lychee/out.md
             .
           fail: true
         env:
