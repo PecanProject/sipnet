@@ -25,7 +25,6 @@ jobs:
             --verbose
             --timeout 20
             --max-redirects 10
-            --retry 3
             --retry-wait-time 2
             --format markdown
             .
