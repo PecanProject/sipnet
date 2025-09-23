@@ -1065,21 +1065,23 @@ double calcMoistEffect(double water, double whc) {
  */
 void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
-  double tempEffect;
-  double moistEffect = calcMoistEffect(water, whc);
-
   // TBD We seem to be conflating maintResp and rSoil in the non-microbe
   // case, need to dig in. With that said...
 
   if (!ctx.microbes) {
-    double resp;
+    double moistEffect = calcMoistEffect(water, whc);
+
     // :: from [1], remainder of eq (A20)
     // See calcMoistEffect() for first part of eq (A20) calculation
-    tempEffect = params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
-    resp = envi.soil * moistEffect * tempEffect;
+    double tempEffect =
+        params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
 
-    // Apply any effects from tillage; this should do nothing if there is none
-    fluxes.maintRespiration = resp * (1 + eventTrackers.d_till_mod);
+    // Effects of tillage, if any
+    double tillageEffect = 1 + eventTrackers.d_till_mod;
+
+    // Put it all together!
+    fluxes.maintRespiration =
+        envi.soil * moistEffect * tempEffect * tillageEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
     fluxes.rSoil = fluxes.maintRespiration;

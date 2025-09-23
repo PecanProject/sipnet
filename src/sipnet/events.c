@@ -490,7 +490,6 @@ void updateEventTrackers(void) {
   if (eventTrackers.d_till_mod > 0) {
     eventTrackers.d_till_mod *= exp(-climLen * TILLAGE_DECAY_FACTOR);
 
-    // Should this be an input param? Should this not even be done?
     if (eventTrackers.d_till_mod < TILLAGE_THRESHOLD) {
       eventTrackers.d_till_mod = 0.0;
     }
