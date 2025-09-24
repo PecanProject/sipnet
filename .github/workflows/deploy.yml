@@ -27,6 +27,7 @@ jobs:
         with:
           branch: gh-pages
           folder: site
-          # Clean branch (no more branch-based previews)
+          # Keep PR previews published under pr-preview/
           clean: true
+          clean-exclude: pr-preview/
           force: false
