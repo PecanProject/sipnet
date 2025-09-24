@@ -27,7 +27,6 @@ jobs:
         with:
           branch: gh-pages
           folder: site
-          # Do NOT wipe out PR previews:
-          clean-exclude: pr-preview/
-          # Avoid force-push so previews survive:
+          # Clean branch (no more branch-based previews)
+          clean: true
           force: false
