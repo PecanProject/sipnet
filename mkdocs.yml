@@ -13,7 +13,7 @@ nav:
       - Code Structure: developer-guide/code-structure.md
       - Adding New Command Line Options: developer-guide/cli-options.md
       - Logging: developer-guide/logging.md
-      - Testing: developer-docs/testing.md
+      - Testing: developer-guide/testing.md
   - Contributing: CONTRIBUTING.md
   - API Reference: api/index.html
   - Changelog: CHANGELOG.md

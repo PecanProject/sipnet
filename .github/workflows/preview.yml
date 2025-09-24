@@ -24,14 +24,15 @@ jobs:
       - name: Build docs
         run: make clean document
 
-      - name: Deploy PR preview (subdir)
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy PR preview (replace subdir)
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: site
-          destination_dir: pr-preview/pr-${{ github.event.number }}
-          keep_files: true
-          enable_jekyll: false
+          branch: gh-pages
+          folder: site
+          target-folder: pr-preview/pr-${{ github.event.number }}
+          clean: true
+          clean-exclude: |
+            .nojekyll
 
       - name: Comment preview URL on PR
         uses: actions/github-script@v7
