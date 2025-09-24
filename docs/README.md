@@ -61,9 +61,11 @@ See the [Documentation section](CONTRIBUTING.md#documentation) in the CONTRIBUTI
 about how to write and compile the documentation.
 
 Key pages:
+
 - [Model inputs](user-guide/model-inputs.md): Input files and configuration.
 - [Model outputs](user-guide/model-outputs.md): Output files and structure.
 - [Parameters](parameters.md): Model parameters and settings.
+- [Model structure](developer-guide/model-structure.md): Overview of code organization.
 
 ## Contributing
 
