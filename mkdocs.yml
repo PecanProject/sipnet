@@ -51,3 +51,8 @@ extra:
 
 repo_url: https://github.com/PecanProject/sipnet
 edit_uri: edit/master/docs/
+
+# Use relative URLs so previews under subpaths work
+use_directory_urls: true
+# Avoid absolute site_url; let MkDocs generate relative asset paths
+site_url: ""

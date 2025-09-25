@@ -23,7 +23,8 @@ jobs:
           python3 -m pip install mkdocs mkdocs-material pymdown-extensions
 
       - name: Build docs (Makefile)
-        run: make clean document
+        run: |
+          make clean document
 
       - name: Ensure .nojekyll for static assets
         run: touch site/.nojekyll
