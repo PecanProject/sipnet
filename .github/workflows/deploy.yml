@@ -1,31 +1,37 @@
-name: Publish Documentation
-
+name: Deploy production docs
 on:
   push:
-    branches:
-      - "master"
+    branches: [master]
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz python3-pip
-
-      - name: Install MkDocs
+      - name: Install system deps
         run: |
-          pip install mkdocs mkdocs-material pymdown-extensions
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+          python3 -m pip install --upgrade pip
+          python3 -m pip install mkdocs mkdocs-material pymdown-extensions
 
-      - name: Generate Documentation
-        run: make document
+      - name: Build docs
+        run: |
+          make clean document
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Ensure .nojekyll in site root
+        run: touch site/.nojekyll
+
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: site  
+          branch: gh-pages
+          folder: site
+          # Keep PR previews published under pr-preview/
+          clean: true
+          clean-exclude: pr-preview/
+          force: false

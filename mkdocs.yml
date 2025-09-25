@@ -13,6 +13,7 @@ nav:
       - Code Structure: developer-guide/code-structure.md
       - Adding New Command Line Options: developer-guide/cli-options.md
       - Logging: developer-guide/logging.md
+      - Testing: developer-guide/testing.md
   - Contributing: CONTRIBUTING.md
   - API Reference: api/index.html
   - Changelog: CHANGELOG.md
@@ -50,3 +51,8 @@ extra:
 
 repo_url: https://github.com/PecanProject/sipnet
 edit_uri: edit/master/docs/
+
+# Use relative URLs so previews under subpaths work
+use_directory_urls: true
+# Avoid absolute site_url; let MkDocs generate relative asset paths
+site_url: ""
