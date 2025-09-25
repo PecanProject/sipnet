@@ -398,7 +398,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 void outputHeader(FILE *out) {
   fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; "
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
-  fprintf(out, "year day time plantWoodC plantLeafC ");
+  fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
   fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
@@ -414,8 +414,8 @@ void outputHeader(FILE *out) {
  */
 void outputState(FILE *out, int year, int day, double time) {
 
-  fprintf(out, "%4d %3d %5.2f %8.2f %8.2f ", year, day, time, envi.plantWoodC,
-          envi.plantLeafC);
+  fprintf(out, "%4d %3d %5.2f %8.2f %8.2f %8.2f ", year, day, time, envi.plantWoodC,
+          envi.plantLeafC, trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soil);
   fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
@@ -998,7 +998,7 @@ void calcRootResp(double *rootResp, double respQ10, double baseRate,
 // This is in addition to [1], source not yet determined (controlled by
 // ctx.growthResp)
 void vegResp2(double *folResp, double *woodResp, double *growthResp,
-              double baseFolResp, double /*gpp*/) {
+              double baseFolResp, double gpp) {
   // [TAG:UNKNOWN_PROVENANCE] growthResp
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
@@ -1292,6 +1292,7 @@ void initTrackers(void) {
   trackers.evapotranspiration = 0.0;
   trackers.soilWetnessFrac = envi.soilWater / params.soilWHC;
   trackers.rSoil = 0.0;
+  trackers.woodCreation = 0.0;
 
   trackers.rRoot = 0.0;
 
@@ -1389,6 +1390,7 @@ void updateTrackers(double oldSoilWater) {
   trackers.totRtot += trackers.rtot;
   trackers.totNpp += trackers.npp;
   trackers.totNee += trackers.nee;
+  trackers.woodCreation = fluxes.woodCreation * climate->length;
 
   // evapotranspiration includes water lost to evaporation from canopy
   // irrigation (fluxes.eventEvap)
