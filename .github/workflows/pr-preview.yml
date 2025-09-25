@@ -28,6 +28,18 @@ jobs:
       - name: Ensure .nojekyll for static assets
         run: touch site/.nojekyll
 
+      - name: Ensure branch root has .nojekyll
+        run: |
+          mkdir -p pubroot
+          touch pubroot/.nojekyll
+      - name: Publish .nojekyll at branch root
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: pubroot
+          target-folder: .
+          clean: false
+
       - name: Deploy PR preview (gh-pages subdir)
         uses: JamesIves/github-pages-deploy-action@v4
         with:

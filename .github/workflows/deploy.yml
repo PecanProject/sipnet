@@ -22,6 +22,9 @@ jobs:
       - name: Build docs
         run: make clean document
 
+      - name: Ensure .nojekyll in site root
+        run: touch site/.nojekyll
+
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
