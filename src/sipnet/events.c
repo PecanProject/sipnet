@@ -421,10 +421,17 @@ void processEvents(void) {
                       "fluxes.eventFineRootC", fineDelta / climLen,
                       "fluxes.eventCoarseRootC", coarseDelta / climLen);
       } break;
-      case TILLAGE:
-        // TBD
-        logError("Tillage events not yet implemented\n");
-        break;
+      case TILLAGE: {
+        // BIG NOTE: this is the one event type that is NOT modeled as a flux;
+        // see updateEventTrackers() for more
+        const TillageParams *tillParams = gEvent->eventParams;
+        // Update the tillage mod for R_H calculations; this will be slowly
+        // reduced by an exponential decay function. Note we add here, not set,
+        // as there may be lingering effects from a prior tillage.
+        eventTrackers.d_till_mod += tillParams->tillageEffect;
+        writeEventOut(gEvent, 1, "eventTrackers.d_till_mod",
+                      tillParams->tillageEffect);
+      } break;
       case FERTILIZATION: {
         const FertilizationParams *fertParams = gEvent->eventParams;
         // const double orgN = fertParams->orgN;
