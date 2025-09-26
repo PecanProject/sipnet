@@ -8,7 +8,7 @@ LDFLAGS=-L$(ROOT_DIR)/libs
 LDLIBS=-lsipnet -lsipnet_common -lm
 
 # List test files in this directory here
-TEST_CFILES=testEventIrrigation.c testEventPlanting.c testEventHarvest.c testEventFertilization.c
+TEST_CFILES=testEventIrrigation.c testEventPlanting.c testEventHarvest.c testEventFertilization.c  testEventTillage.c
 
 # The rest is boilerplate, likely copyable as is to a new test directory
 TEST_OBJ_FILES=$(TEST_CFILES:%.c=%.o)
