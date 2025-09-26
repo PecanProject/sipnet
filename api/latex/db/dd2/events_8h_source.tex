@@ -56,47 +56,66 @@
 \DoxyCodeLine{00052\ \ \ \textcolor{keywordtype}{double}\ coarseRootC;}
 \DoxyCodeLine{00053\ \}\ PlantingParams;}
 \DoxyCodeLine{00054\ }
-\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ NUM\_TILLAGE\_PARAMS\ 3}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ NUM\_TILLAGE\_PARAMS\ 1}}
 \DoxyCodeLine{00056\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }TillageParams\ \{}
-\DoxyCodeLine{00057\ \ \ \textcolor{keywordtype}{double}\ fractionLitterTransferred;}
-\DoxyCodeLine{00058\ \ \ \textcolor{keywordtype}{double}\ somDecompModifier;}
-\DoxyCodeLine{00059\ \ \ \textcolor{keywordtype}{double}\ litterDecompModifier;}
-\DoxyCodeLine{00060\ \}\ TillageParams;}
-\DoxyCodeLine{00061\ }
-\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ NUM\_EVENT\_CORE\_PARAMS\ 3}}
-\DoxyCodeLine{00063\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }EventNode\ EventNode;}
-\DoxyCodeLine{00064\ \textcolor{keyword}{struct\ }EventNode\ \{}
-\DoxyCodeLine{00065\ \ \ event\_type\_t\ type;}
-\DoxyCodeLine{00066\ \ \ \textcolor{keywordtype}{int}\ year,\ day;}
-\DoxyCodeLine{00067\ \ \ \textcolor{keywordtype}{void}\ *eventParams;}
-\DoxyCodeLine{00068\ \ \ EventNode\ *nextEvent;}
-\DoxyCodeLine{00069\ \};}
-\DoxyCodeLine{00070\ }
-\DoxyCodeLine{00071\ \textcolor{comment}{//\ Global\ event\ variables}}
+\DoxyCodeLine{00057\ \ \ \textcolor{keywordtype}{double}\ tillageEffect;}
+\DoxyCodeLine{00058\ \}\ TillageParams;}
+\DoxyCodeLine{00059\ \textcolor{comment}{//\ Tillage\ effect\ threshold,\ below\ which\ we\ call\ it\ done}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ TILLAGE\_THRESHOLD\ 0.01}}
+\DoxyCodeLine{00061\ \textcolor{comment}{//\ Tillage\ effect\ decay\ factor}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ TILLAGE\_DECAY\_FACTOR\ (1\ /\ 30.0)}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ NUM\_EVENT\_CORE\_PARAMS\ 3}}
+\DoxyCodeLine{00065\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }EventNode\ EventNode;}
+\DoxyCodeLine{00066\ \textcolor{keyword}{struct\ }EventNode\ \{}
+\DoxyCodeLine{00067\ \ \ event\_type\_t\ type;}
+\DoxyCodeLine{00068\ \ \ \textcolor{keywordtype}{int}\ year,\ day;}
+\DoxyCodeLine{00069\ \ \ \textcolor{keywordtype}{void}\ *eventParams;}
+\DoxyCodeLine{00070\ \ \ EventNode\ *nextEvent;}
+\DoxyCodeLine{00071\ \};}
 \DoxyCodeLine{00072\ }
-\DoxyCodeLine{00073\ \textcolor{keyword}{extern}\ EventNode\ *events;}
-\DoxyCodeLine{00074\ \textcolor{keyword}{extern}\ EventNode\ *event;}
-\DoxyCodeLine{00075\ }
-\DoxyCodeLine{00082\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeToString(event\_type\_t\ type);}
-\DoxyCodeLine{00083\ }
-\DoxyCodeLine{00090\ EventNode\ *readEventData(\textcolor{keywordtype}{char}\ *eventFile);}
-\DoxyCodeLine{00091\ }
-\DoxyCodeLine{00097\ \textcolor{keywordtype}{void}\ openEventOutFile(\textcolor{keywordtype}{int}\ printHeader);}
-\DoxyCodeLine{00098\ }
-\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ writeEventOut(EventNode\ *oneEvent,\ \textcolor{keywordtype}{int}\ numParams,\ ...);}
-\DoxyCodeLine{00117\ }
-\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ closeEventOutFile(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00123\ }
-\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ printHeader);}
-\DoxyCodeLine{00134\ }
-\DoxyCodeLine{00138\ \textcolor{keywordtype}{void}\ setupEvents(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00139\ }
-\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ resetEventFluxes(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00146\ }
-\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ processEvents(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00159\ }
-\DoxyCodeLine{00163\ \textcolor{keywordtype}{void}\ updatePoolsForEvents(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00164\ }
-\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ EVENTS\_H}}
+\DoxyCodeLine{00073\ \textcolor{comment}{//\ Global\ event\ variables}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{extern}\ EventNode\ *gEvents;}
+\DoxyCodeLine{00076\ \textcolor{keyword}{extern}\ EventNode\ *gEvent;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeToString(event\_type\_t\ type);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00092\ event\_type\_t\ eventStringToType(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *eventTypeStr);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00100\ EventNode\ *readEventData(\textcolor{keywordtype}{char}\ *eventFile);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00107\ \textcolor{keywordtype}{void}\ openEventOutFile(\textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{void}\ writeEventOut(EventNode\ *oneEvent,\ \textcolor{keywordtype}{int}\ numParams,\ ...);}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{void}\ closeEventOutFile(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{void}\ initEvents(\textcolor{keywordtype}{char}\ *eventFile,\ \textcolor{keywordtype}{int}\ printHeader);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}\ setupEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{void}\ resetEventFluxes(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{void}\ processEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00173\ \textcolor{keywordtype}{void}\ updatePoolsForEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ freeEventList(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \textcolor{comment}{//\ Variables\ to\ track\ events\ with\ lingering\ effects}}
+\DoxyCodeLine{00181\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }EventTrackerStruct\ \{}
+\DoxyCodeLine{00182\ \ \ \textcolor{comment}{//\ Tillage\ effect\ on\ Rh;\ exponentially\ decays\ at\ each\ time\ step\ by\ a\ factor}}
+\DoxyCodeLine{00183\ \ \ \textcolor{comment}{//\ equal\ to\ exp(-\/delta\_t\ /\ 30)}}
+\DoxyCodeLine{00184\ \ \ \textcolor{keywordtype}{double}\ d\_till\_mod;}
+\DoxyCodeLine{00185\ \}\ EventTrackers;}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \textcolor{keyword}{extern}\ EventTrackers\ eventTrackers;}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00192\ \textcolor{keywordtype}{void}\ initEventTrackers(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00197\ \textcolor{keywordtype}{void}\ updateEventTrackers(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ EVENTS\_H}}
 
 \end{DoxyCode}

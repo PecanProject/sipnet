@@ -1,7 +1,0 @@
-<map id="updateCharContext" name="updateCharContext">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,153,56"/>
-<area shape="rect" id="Node000002" href="$d8/dfa/context_8c.html#a9c1df8099ccef501362c2e62cddc38c8" title=" " alt="" coords="201,5,365,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,32,187,27,188,33,154,37"/>
-<area shape="rect" id="Node000003" href="$d8/dfa/context_8c.html#adea62cde04ed31fad01b81c933db6fcd" title=" " alt="" coords="235,55,332,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="154,49,221,57,221,63,153,55"/>
-</map>

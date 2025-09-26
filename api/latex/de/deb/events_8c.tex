@@ -6,6 +6,7 @@ Handles reading, parsing, and storing agronomic events for SIPNET simulations.
 
 
 {\ttfamily \#include "{}events.\+h"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
 {\ttfamily \#include $<$stdlib.\+h$>$}\newline
@@ -27,11 +28,11 @@ Include dependency graph for events.\+c\+:
 \item 
 \textbf{ Event\+Node} $\ast$ \textbf{ create\+Event\+Node} (int year, int day, int event\+Type, const char $\ast$event\+Params\+Str)
 \item 
-\textbf{ event\+\_\+type\+\_\+t} \textbf{ get\+Event\+Type} (const char $\ast$event\+Type\+Str)
+const char $\ast$ \textbf{ event\+Type\+To\+String} (\textbf{ event\+\_\+type\+\_\+t} type)
+\item 
+\textbf{ event\+\_\+type\+\_\+t} \textbf{ event\+String\+To\+Type} (const char $\ast$event\+Type\+Str)
 \item 
 \textbf{ Event\+Node} $\ast$ \textbf{ read\+Event\+Data} (char $\ast$event\+File)
-\item 
-const char $\ast$ \textbf{ event\+Type\+To\+String} (\textbf{ event\+\_\+type\+\_\+t} type)
 \item 
 void \textbf{ open\+Event\+Out\+File} (int print\+Header)
 \item 
@@ -49,16 +50,24 @@ void \textbf{ process\+Events} (void)
 \begin{DoxyCompactList}\small\item\em Process events for current location/year/day. \end{DoxyCompactList}\item 
 void \textbf{ update\+Pools\+For\+Events} (void)
 \item 
+void \textbf{ free\+Event\+List} (void)
+\item 
+void \textbf{ init\+Event\+Trackers} (void)
+\item 
+void \textbf{ update\+Event\+Trackers} (void)
+\item 
 void \textbf{ print\+Event} (\textbf{ Event\+Node} $\ast$one\+Event)
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-\textbf{ Event\+Node} $\ast$ \textbf{ events} = NULL
+\textbf{ Event\+Node} $\ast$ \textbf{ g\+Events} = NULL
 \item 
-\textbf{ Event\+Node} $\ast$ \textbf{ event} = NULL
+\textbf{ Event\+Node} $\ast$ \textbf{ g\+Event} = NULL
 \item 
 static FILE $\ast$ \textbf{ event\+Out\+File} = NULL
+\item 
+\textbf{ Event\+Trackers} \textbf{ event\+Trackers}
 \end{DoxyCompactItemize}
 
 
@@ -85,7 +94,7 @@ Close the event output file
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 289} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 288} of file \textbf{ events.\+c}.
 
 
 
@@ -103,11 +112,39 @@ Referenced by \textbf{ cleanup\+Model()}.
 
 
 
-Definition at line \textbf{ 32} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 33} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Event\+Node\+::day}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Tillage\+Params\+::fraction\+Litter\+Transferred}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Tillage\+Params\+::litter\+Decomp\+Modifier}, \textbf{ log\+Error}, \textbf{ Irrigation\+Params\+::method}, \textbf{ Fertilization\+Params\+::minN}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+FERTILIZATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+HARVEST\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+IRRIGATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+PLANTING\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+TILLAGE\+\_\+\+PARAMS}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ Fertilization\+Params\+::orgN}, \textbf{ PLANTING}, \textbf{ Tillage\+Params\+::som\+Decomp\+Modifier}, \textbf{ TILLAGE}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, and \textbf{ Event\+Node\+::year}.
+References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Event\+Node\+::day}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ log\+Error}, \textbf{ Irrigation\+Params\+::method}, \textbf{ Fertilization\+Params\+::minN}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+FERTILIZATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+HARVEST\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+IRRIGATION\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+PLANTING\+\_\+\+PARAMS}, \textbf{ NUM\+\_\+\+TILLAGE\+\_\+\+PARAMS}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ Fertilization\+Params\+::orgN}, \textbf{ PLANTING}, \textbf{ TILLAGE}, \textbf{ Tillage\+Params\+::tillage\+Effect}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, and \textbf{ Event\+Node\+::year}.
+
+
+
+Referenced by \textbf{ read\+Event\+Data()}.
+
+\label{events_8c_af004e8c62b6460f3db5b7507e459abf7} 
+\index{events.c@{events.c}!eventStringToType@{eventStringToType}}
+\index{eventStringToType@{eventStringToType}!events.c@{events.c}}
+\doxysubsubsection{eventStringToType()}
+{\footnotesize\ttfamily \textbf{ event\+\_\+type\+\_\+t} event\+String\+To\+Type (\begin{DoxyParamCaption}\item[{const char $\ast$}]{event\+Type\+Str }\end{DoxyParamCaption})}
+
+Convert event string to corresponding enum value
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & string version of event enum type \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+enum value representing the event 
+\end{DoxyReturn}
+
+
+Definition at line \textbf{ 158} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ PLANTING}, \textbf{ TILLAGE}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
 
 
 
@@ -131,7 +168,7 @@ string version of event enum type
 \end{DoxyReturn}
 
 
-Definition at line \textbf{ 240} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 140} of file \textbf{ events.\+c}.
 
 
 
@@ -141,23 +178,23 @@ References \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_
 
 Referenced by \textbf{ write\+Event\+Out()}.
 
-\label{events_8c_a4314c765f6bbd615a94286919f475f41} 
-\index{events.c@{events.c}!getEventType@{getEventType}}
-\index{getEventType@{getEventType}!events.c@{events.c}}
-\doxysubsubsection{getEventType()}
-{\footnotesize\ttfamily \textbf{ event\+\_\+type\+\_\+t} get\+Event\+Type (\begin{DoxyParamCaption}\item[{const char $\ast$}]{event\+Type\+Str }\end{DoxyParamCaption})}
+\label{events_8c_ae82fb7f2677202f858acbb5971811688} 
+\index{events.c@{events.c}!freeEventList@{freeEventList}}
+\index{freeEventList@{freeEventList}!events.c@{events.c}}
+\doxysubsubsection{freeEventList()}
+{\footnotesize\ttfamily void free\+Event\+List (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Deallocate space used for events linked list 
+
+Definition at line \textbf{ 477} of file \textbf{ events.\+c}.
 
 
 
-Definition at line \textbf{ 141} of file \textbf{ events.\+c}.
+References \textbf{ g\+Events}, and \textbf{ Event\+Node\+::next\+Event}.
 
 
 
-References \textbf{ FERTILIZATION}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ PLANTING}, \textbf{ TILLAGE}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
-
-
-
-Referenced by \textbf{ read\+Event\+Data()}.
+Referenced by \textbf{ cleanup\+Model()}.
 
 \label{events_8c_a652d7b4ee171e11adcf885fc8907d130} 
 \index{events.c@{events.c}!initEvents@{initEvents}}
@@ -180,11 +217,11 @@ Read in event data from a file with the following specification\+:
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 295} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 294} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ ctx}, \textbf{ Context\+::events}, \textbf{ events}, \textbf{ open\+Event\+Out\+File()}, and \textbf{ read\+Event\+Data()}.
+References \textbf{ ctx}, \textbf{ Context\+::events}, \textbf{ g\+Events}, \textbf{ open\+Event\+Out\+File()}, and \textbf{ read\+Event\+Data()}.
 
 
 
@@ -198,6 +235,24 @@ Here is the call graph for this function\+:
 \includegraphics[width=350pt]{de/deb/events_8c_a652d7b4ee171e11adcf885fc8907d130_cgraph}
 \end{center}
 \end{figure}
+\label{events_8c_ad2bd920387bf6b1a109235dbe00da30b} 
+\index{events.c@{events.c}!initEventTrackers@{initEventTrackers}}
+\index{initEventTrackers@{initEventTrackers}!events.c@{events.c}}
+\doxysubsubsection{initEventTrackers()}
+{\footnotesize\ttfamily void init\+Event\+Trackers (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Initialize Event\+Trackers struct for tracking lingering event effects 
+
+Definition at line \textbf{ 491} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ Event\+Tracker\+Struct\+::d\+\_\+till\+\_\+mod}, and \textbf{ event\+Trackers}.
+
+
+
+Referenced by \textbf{ setup\+Model()}.
+
 \label{events_8c_a00254fcd00e2cf4a0cb1a9f3d4843729} 
 \index{events.c@{events.c}!openEventOutFile@{openEventOutFile}}
 \index{openEventOutFile@{openEventOutFile}!events.c@{events.c}}
@@ -214,7 +269,7 @@ FILE pointer to output file
 \end{DoxyReturn}
 
 
-Definition at line \textbf{ 258} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 257} of file \textbf{ events.\+c}.
 
 
 
@@ -240,11 +295,11 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 470} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 506} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Event\+Node\+::day}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Tillage\+Params\+::fraction\+Litter\+Transferred}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Tillage\+Params\+::litter\+Decomp\+Modifier}, \textbf{ Fertilization\+Params\+::minN}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ Fertilization\+Params\+::orgN}, \textbf{ PLANTING}, \textbf{ Tillage\+Params\+::som\+Decomp\+Modifier}, \textbf{ TILLAGE}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, and \textbf{ Event\+Node\+::year}.
+References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Event\+Node\+::day}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ HARVEST}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Fertilization\+Params\+::minN}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ Fertilization\+Params\+::orgN}, \textbf{ PLANTING}, \textbf{ TILLAGE}, \textbf{ Tillage\+Params\+::tillage\+Effect}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, and \textbf{ Event\+Node\+::year}.
 
 \label{events_8c_afb4ad97daa6ca46b43b7eae3554c17fe} 
 \index{events.c@{events.c}!processEvents@{processEvents}}
@@ -260,11 +315,11 @@ For a given year and day (as determined by the global {\ttfamily climate} pointe
 
 For each event, modify flux variables according to the model for that event, and write a row to events.\+out listing the modified variables and the delta applied. 
 
-Definition at line \textbf{ 314} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 313} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ CANOPY}, \textbf{ climate}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Event\+Node\+::day}, \textbf{ Climate\+Vars\+::day}, \textbf{ envi}, \textbf{ event}, \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Evap}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ Flux\+Vars\+::event\+WoodC}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ HARVEST}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Climate\+Vars\+::length}, \textbf{ log\+Error}, \textbf{ Irrigation\+Params\+::method}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ params}, \textbf{ PLANTING}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ reset\+Event\+Fluxes()}, \textbf{ SOIL}, \textbf{ TILLAGE}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, \textbf{ write\+Event\+Out()}, \textbf{ Event\+Node\+::year}, and \textbf{ Climate\+Vars\+::year}.
+References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ CANOPY}, \textbf{ climate}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Event\+Tracker\+Struct\+::d\+\_\+till\+\_\+mod}, \textbf{ Event\+Node\+::day}, \textbf{ Climate\+Vars\+::day}, \textbf{ envi}, \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Evap}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ event\+Trackers}, \textbf{ Flux\+Vars\+::event\+WoodC}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ g\+Event}, \textbf{ HARVEST}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Climate\+Vars\+::length}, \textbf{ log\+Error}, \textbf{ Irrigation\+Params\+::method}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ params}, \textbf{ PLANTING}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ reset\+Event\+Fluxes()}, \textbf{ SOIL}, \textbf{ TILLAGE}, \textbf{ Tillage\+Params\+::tillage\+Effect}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, \textbf{ write\+Event\+Out()}, \textbf{ Event\+Node\+::year}, and \textbf{ Climate\+Vars\+::year}.
 
 
 
@@ -288,11 +343,11 @@ Read event data from input filename (canonically events.\+in)
 
 Format\+: returned data is structured as an linked list of \doxyref{Event\+Node}{p.}{d6/d43/struct_event_node} pointers. It is assumed that the events are ordered by year and day. 
 
-Definition at line \textbf{ 156} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 173} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ create\+Event\+Node()}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ get\+Event\+Type()}, \textbf{ log\+Error}, \textbf{ log\+Info}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
+References \textbf{ create\+Event\+Node()}, \textbf{ event\+String\+To\+Type()}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ log\+Error}, \textbf{ log\+Info}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ NUM\+\_\+\+EVENT\+\_\+\+CORE\+\_\+\+PARAMS}, \textbf{ open\+File()}, and \textbf{ UNKNOWN\+\_\+\+EVENT}.
 
 
 
@@ -303,7 +358,7 @@ Here is the call graph for this function\+:
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=270pt]{de/deb/events_8c_adb0aecb501956ec964a98b0310035c54_cgraph}
+\includegraphics[width=275pt]{de/deb/events_8c_adb0aecb501956ec964a98b0310035c54_cgraph}
 \end{center}
 \end{figure}
 \label{events_8c_a12a8b3b4bb0688542d26bdb00f9c1961} 
@@ -316,7 +371,7 @@ Set all event fluxes to zero
 
 Reset all event fluxes to zero in preparation for the next climate step. 
 
-Definition at line \textbf{ 304} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 303} of file \textbf{ events.\+c}.
 
 
 
@@ -334,15 +389,33 @@ Referenced by \textbf{ process\+Events()}.
 
 Initialize global event pointer 
 
-Definition at line \textbf{ 302} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 301} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ events}.
+References \textbf{ g\+Event}, and \textbf{ g\+Events}.
 
 
 
 Referenced by \textbf{ run\+Model\+Output()}.
+
+\label{events_8c_a2c2f094a0b3c9bd9fa1274bef1d7345c} 
+\index{events.c@{events.c}!updateEventTrackers@{updateEventTrackers}}
+\index{updateEventTrackers@{updateEventTrackers}!events.c@{events.c}}
+\doxysubsubsection{updateEventTrackers()}
+{\footnotesize\ttfamily void update\+Event\+Trackers (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Perform any needed udpates post fluxes-\/and-\/pools updates 
+
+Definition at line \textbf{ 493} of file \textbf{ events.\+c}.
+
+
+
+References \textbf{ climate}, \textbf{ Event\+Tracker\+Struct\+::d\+\_\+till\+\_\+mod}, \textbf{ event\+Trackers}, \textbf{ Climate\+Vars\+::length}, \textbf{ TILLAGE\+\_\+\+DECAY\+\_\+\+FACTOR}, and \textbf{ TILLAGE\+\_\+\+THRESHOLD}.
+
+
+
+Referenced by \textbf{ update\+State()}.
 
 \label{events_8c_ac9de3738992b3780a28e1bdc3eba6604} 
 \index{events.c@{events.c}!updatePoolsForEvents@{updatePoolsForEvents}}
@@ -352,7 +425,7 @@ Referenced by \textbf{ run\+Model\+Output()}.
 
 Update relevant environment pools after event fluxes have been calculated 
 
-Definition at line \textbf{ 450} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 457} of file \textbf{ events.\+c}.
 
 
 
@@ -391,7 +464,7 @@ year day event\+\_\+type $<$param\+\_\+name$>$=$<$delta$>$[,$<$param\+\_\+name$>
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 268} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 267} of file \textbf{ events.\+c}.
 
 
 
@@ -412,20 +485,6 @@ Here is the call graph for this function\+:
 
 
 \doxysubsection{Variable Documentation}
-\label{events_8c_a7ae35c8e87cf86f85a3ee4485027cde0} 
-\index{events.c@{events.c}!event@{event}}
-\index{event@{event}!events.c@{events.c}}
-\doxysubsubsection{event}
-{\footnotesize\ttfamily \textbf{ Event\+Node}$\ast$ event = NULL}
-
-
-
-Definition at line \textbf{ 27} of file \textbf{ events.\+c}.
-
-
-
-Referenced by \textbf{ process\+Events()}.
-
 \label{events_8c_acb0bc186ee10fd1a7ce8d16fb65c7225} 
 \index{events.c@{events.c}!eventOutFile@{eventOutFile}}
 \index{eventOutFile@{eventOutFile}!events.c@{events.c}}
@@ -434,23 +493,51 @@ Referenced by \textbf{ process\+Events()}.
 
 
 
-Definition at line \textbf{ 30} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 31} of file \textbf{ events.\+c}.
 
 
 
 Referenced by \textbf{ close\+Event\+Out\+File()}, \textbf{ open\+Event\+Out\+File()}, and \textbf{ write\+Event\+Out()}.
 
-\label{events_8c_a37141f818f11eaeeaae9437189de2bff} 
-\index{events.c@{events.c}!events@{events}}
-\index{events@{events}!events.c@{events.c}}
-\doxysubsubsection{events}
-{\footnotesize\ttfamily \textbf{ Event\+Node}$\ast$ events = NULL}
+\label{events_8c_ae3df6da54a2bb8e281ae1af683185cdb} 
+\index{events.c@{events.c}!eventTrackers@{eventTrackers}}
+\index{eventTrackers@{eventTrackers}!events.c@{events.c}}
+\doxysubsubsection{eventTrackers}
+{\footnotesize\ttfamily \textbf{ Event\+Trackers} event\+Trackers}
 
 
 
-Definition at line \textbf{ 26} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 489} of file \textbf{ events.\+c}.
 
 
 
-Referenced by \textbf{ free\+Event\+List()}, \textbf{ init\+Context()}, \textbf{ init\+Events()}, and \textbf{ setup\+Events()}.
+Referenced by \textbf{ calc\+Soil\+Maint\+Respiration()}, \textbf{ init\+Event\+Trackers()}, \textbf{ process\+Events()}, and \textbf{ update\+Event\+Trackers()}.
+
+\label{events_8c_a38b6ca986e84c3617003a946ba612b1b} 
+\index{events.c@{events.c}!gEvent@{gEvent}}
+\index{gEvent@{gEvent}!events.c@{events.c}}
+\doxysubsubsection{gEvent}
+{\footnotesize\ttfamily \textbf{ Event\+Node}$\ast$ g\+Event = NULL}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ events.\+c}.
+
+
+
+Referenced by \textbf{ process\+Events()}, and \textbf{ setup\+Events()}.
+
+\label{events_8c_a68075a1225c7f9cb57469c8b3069eee4} 
+\index{events.c@{events.c}!gEvents@{gEvents}}
+\index{gEvents@{gEvents}!events.c@{events.c}}
+\doxysubsubsection{gEvents}
+{\footnotesize\ttfamily \textbf{ Event\+Node}$\ast$ g\+Events = NULL}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ events.\+c}.
+
+
+
+Referenced by \textbf{ free\+Event\+List()}, \textbf{ init\+Events()}, and \textbf{ setup\+Events()}.
 

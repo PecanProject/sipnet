@@ -17,10 +17,9 @@ var searchData=
   ['length_14',['length',['../df/ddd/struct_mean_tracker_struct.html#a0350723c7e714583817061de94d03b14',1,'MeanTrackerStruct::length'],['../d4/d5e/struct_climate_vars.html#ae8ee1625df0ae0c90b790664129509d9',1,'ClimateVars::length']]],
   ['litter_15',['litter',['../de/d30/struct_environment.html#af1d077f08005ac4e3dbbd2eb303a8eb5',1,'Environment']]],
   ['litterbreakdownrate_16',['litterBreakdownRate',['../d0/dbf/struct_parameters.html#af3e755e0d008ae96f015c1a4e0b95c7a',1,'Parameters']]],
-  ['litterdecompmodifier_17',['litterDecompModifier',['../d0/dbb/struct_tillage_params.html#abaf412185f3746fa29d73f6ddf9ee460',1,'TillageParams']]],
-  ['litterinit_18',['litterInit',['../d0/dbf/struct_parameters.html#adf0a3098749d32699b783d443e245d8b',1,'Parameters']]],
-  ['litterpool_19',['litterPool',['../de/d66/struct_context.html#aa3e2aa55571d6a4a65448210768cea02',1,'Context']]],
-  ['littertosoil_20',['litterToSoil',['../da/d95/struct_flux_vars.html#a2d89ad02659fca5f5a25954bbc014816',1,'FluxVars']]],
-  ['log2_5fnum_5fbuckets_21',['log2_num_buckets',['../db/d32/struct_u_t__hash__table.html#ae376a7f3fac525f3a9d03b6beec8d12f',1,'UT_hash_table']]],
-  ['long_5foptions_22',['long_options',['../dd/def/cli_8c.html#ab5b68aa8f898c499ca2c3092ecd9e552',1,'cli.c']]]
+  ['litterinit_17',['litterInit',['../d0/dbf/struct_parameters.html#adf0a3098749d32699b783d443e245d8b',1,'Parameters']]],
+  ['litterpool_18',['litterPool',['../de/d66/struct_context.html#aa3e2aa55571d6a4a65448210768cea02',1,'Context']]],
+  ['littertosoil_19',['litterToSoil',['../da/d95/struct_flux_vars.html#a2d89ad02659fca5f5a25954bbc014816',1,'FluxVars']]],
+  ['log2_5fnum_5fbuckets_20',['log2_num_buckets',['../db/d32/struct_u_t__hash__table.html#ae376a7f3fac525f3a9d03b6beec8d12f',1,'UT_hash_table']]],
+  ['long_5foptions_21',['long_options',['../dd/def/cli_8c.html#ab5b68aa8f898c499ca2c3092ecd9e552',1,'cli.c']]]
 ];

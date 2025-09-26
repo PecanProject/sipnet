@@ -1,7 +1,0 @@
-<map id="calcRootAndWoodFluxes" name="calcRootAndWoodFluxes">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,187,56"/>
-<area shape="rect" id="Node000002" href="$dd/d09/sipnet_8c.html#a5ac2aa2e3e8e9bf86283c643df0d214f" title=" " alt="" coords="260,5,371,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="186,30,246,23,247,29,187,36"/>
-<area shape="rect" id="Node000003" href="$d5/d1f/runmean_8c.html#aee80c094e5cc8830c70fd93fa14bb102" title=" " alt="" coords="235,55,396,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,51,222,54,221,60,186,56"/>
-</map>

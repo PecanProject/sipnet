@@ -1,9 +1,0 @@
-<map id="processEvents" name="processEvents">
-<area shape="rect" id="Node000001" title="Process events for current location/year/day." alt="" coords="5,31,121,56"/>
-<area shape="rect" id="Node000002" href="$de/deb/events_8c.html#a12a8b3b4bb0688542d26bdb00f9c1961" title=" " alt="" coords="169,5,304,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,32,155,27,156,32,122,38"/>
-<area shape="rect" id="Node000003" href="$de/deb/events_8c.html#ac10b012ee2d3fc00122b3bfd0069da32" title="Write a line to events.out for a single oneEvent." alt="" coords="179,55,294,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="122,49,166,55,166,60,121,54"/>
-<area shape="rect" id="Node000004" href="$de/deb/events_8c.html#adaf5398f33e074025777106e1211e3c6" title=" " alt="" coords="352,55,493,80"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="294,65,338,65,338,70,294,70"/>
-</map>

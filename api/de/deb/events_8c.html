@@ -83,6 +83,7 @@ $(function() {
 <p>Handles reading, parsing, and storing agronomic events for SIPNET simulations.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="../../db/dd2/events_8h_source.html">events.h</a>&quot;</code><br />
+<code>#include &lt;math.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
@@ -96,42 +97,44 @@ Include dependency graph for events.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d4/d63/events_8c__incl.png" border="0" usemap="#aevents_8c" alt=""/></div>
 <map name="aevents_8c" id="aevents_8c">
-<area shape="rect" title="Handles reading, parsing, and storing agronomic events for SIPNET simulations." alt="" coords="221,5,298,31"/>
-<area shape="rect" href="../../db/dd2/events_8h.html" title=" " alt="" coords="85,79,164,104"/>
-<area shape="poly" title=" " alt="" coords="239,33,160,74,158,70,237,28"/>
+<area shape="rect" title="Handles reading, parsing, and storing agronomic events for SIPNET simulations." alt="" coords="241,5,318,31"/>
+<area shape="rect" href="../../db/dd2/events_8h.html" title=" " alt="" coords="174,79,252,104"/>
+<area shape="poly" title=" " alt="" coords="271,33,235,70,231,67,267,29"/>
 <area shape="rect" href="../../d8/d3c/util_8h.html" title=" " alt="" coords="35,152,151,177"/>
-<area shape="poly" title=" " alt="" coords="221,22,184,26,144,35,105,53,89,65,75,80,69,94,69,109,80,139,75,141,64,110,64,93,70,77,85,61,102,48,142,30,183,20,220,17"/>
-<area shape="rect" title=" " alt="" coords="133,225,199,251"/>
-<area shape="poly" title=" " alt="" coords="221,25,184,30,143,40,100,57,62,81,46,97,36,112,25,153,21,165,24,176,43,196,68,211,94,222,120,228,119,234,92,227,65,216,40,200,20,179,16,165,19,151,32,110,42,93,59,77,98,52,141,35,183,25,220,19"/>
-<area shape="rect" title=" " alt="" coords="72,299,143,324"/>
-<area shape="poly" title=" " alt="" coords="220,21,177,24,127,32,77,51,55,64,35,81,17,103,9,124,10,148,17,176,30,209,49,239,88,287,84,290,45,242,26,211,12,178,4,149,4,123,12,100,31,77,52,59,75,46,126,27,176,18,220,16"/>
-<area shape="rect" title=" " alt="" coords="568,299,639,324"/>
-<area shape="poly" title=" " alt="" coords="298,17,380,20,479,29,570,46,605,60,628,77,643,102,652,129,654,158,651,188,636,243,618,287,614,285,631,241,646,187,648,158,646,130,639,104,624,80,602,64,569,51,478,34,380,25,298,22"/>
-<area shape="rect" title=" " alt="" coords="355,79,430,104"/>
-<area shape="poly" title=" " alt="" coords="282,28,360,70,358,74,280,33"/>
-<area shape="rect" href="../../d6/d8f/exit_codes_8h.html" title=" " alt="" coords="454,79,614,104"/>
-<area shape="poly" title=" " alt="" coords="299,27,477,73,476,78,297,32"/>
-<area shape="rect" href="../../d5/d77/logging_8h.html" title=" " alt="" coords="188,79,331,104"/>
-<area shape="poly" title=" " alt="" coords="262,31,262,65,257,65,257,31"/>
-<area shape="rect" href="../../db/d3b/state_8h.html" title=" " alt="" coords="689,79,755,104"/>
-<area shape="poly" title=" " alt="" coords="299,21,461,43,671,76,676,77,675,82,670,81,461,48,298,27"/>
-<area shape="rect" title=" " alt="" coords="175,152,250,177"/>
-<area shape="poly" title=" " alt="" coords="141,102,189,141,186,145,137,106"/>
-<area shape="poly" title=" " alt="" coords="122,105,106,141,101,139,117,103"/>
-<area shape="poly" title=" " alt="" coords="107,176,146,214,142,218,103,180"/>
-<area shape="poly" title=" " alt="" coords="254,106,230,142,226,139,249,103"/>
-<area shape="poly" title=" " alt="" coords="266,104,272,139,271,159,264,179,242,205,213,222,210,218,238,201,260,176,266,158,267,139,261,105"/>
-<area shape="rect" href="../../dc/d1e/context_8h.html" title=" " alt="" coords="325,152,407,177"/>
-<area shape="poly" title=" " alt="" coords="278,102,339,142,336,147,275,106"/>
+<area shape="poly" title=" " alt="" coords="242,27,143,47,98,62,82,71,71,80,66,94,66,109,79,139,74,141,61,110,60,93,67,77,79,67,96,57,141,42,240,22"/>
+<area shape="rect" title=" " alt="" coords="133,225,200,251"/>
+<area shape="poly" title=" " alt="" coords="241,23,200,27,152,37,104,54,60,81,44,97,35,112,25,153,22,165,25,176,44,196,68,211,94,222,120,228,119,234,93,227,65,216,40,200,20,179,16,165,20,151,31,110,40,93,57,77,101,49,151,32,199,22,241,18"/>
+<area shape="rect" title=" " alt="" coords="82,79,150,104"/>
+<area shape="poly" title=" " alt="" coords="254,33,156,76,154,71,252,28"/>
+<area shape="rect" title=" " alt="" coords="70,299,140,324"/>
+<area shape="poly" title=" " alt="" coords="241,26,124,46,69,61,48,71,34,81,16,103,9,124,10,148,17,176,30,209,48,239,86,287,82,290,44,242,26,211,12,178,5,149,4,123,12,100,30,77,45,66,67,56,123,41,240,21"/>
+<area shape="rect" title=" " alt="" coords="612,299,683,324"/>
+<area shape="poly" title=" " alt="" coords="319,16,414,16,534,23,593,31,645,42,688,57,716,77,732,103,737,131,735,160,726,190,698,246,668,289,664,286,694,243,721,188,729,160,732,131,727,104,712,80,685,62,644,47,592,36,533,29,414,22,318,21"/>
+<area shape="rect" title=" " alt="" coords="444,79,518,104"/>
+<area shape="poly" title=" " alt="" coords="313,28,436,71,435,77,311,33"/>
+<area shape="rect" href="../../d6/d8f/exit_codes_8h.html" title=" " alt="" coords="542,79,702,104"/>
+<area shape="poly" title=" " alt="" coords="320,25,555,73,554,79,319,30"/>
+<area shape="rect" href="../../d5/d77/logging_8h.html" title=" " alt="" coords="276,79,419,104"/>
+<area shape="poly" title=" " alt="" coords="293,29,329,67,325,70,289,33"/>
+<area shape="rect" href="../../db/d3b/state_8h.html" title=" " alt="" coords="777,79,844,104"/>
+<area shape="poly" title=" " alt="" coords="319,20,509,41,759,76,764,77,763,82,758,81,508,46,319,26"/>
+<area shape="rect" title=" " alt="" coords="176,152,250,177"/>
+<area shape="poly" title=" " alt="" coords="216,104,216,138,210,138,210,104"/>
+<area shape="poly" title=" " alt="" coords="195,106,126,147,123,142,192,102"/>
+<area shape="poly" title=" " alt="" coords="107,176,146,214,143,218,103,180"/>
+<area shape="poly" title=" " alt="" coords="327,106,248,148,246,143,325,102"/>
+<area shape="poly" title=" " alt="" coords="339,106,307,141,264,179,201,221,198,216,261,175,303,137,336,103"/>
+<area shape="rect" href="../../dc/d1e/context_8h.html" title=" " alt="" coords="325,152,408,177"/>
+<area shape="poly" title=" " alt="" coords="353,104,363,138,357,140,348,105"/>
 <area shape="poly" title=" " alt="" coords="335,180,213,223,211,218,333,175"/>
-<area shape="rect" href="../../d8/d8f/uthash_8h.html" title=" " alt="" coords="297,225,435,251"/>
-<area shape="poly" title=" " alt="" coords="369,178,369,212,363,212,363,178"/>
-<area shape="poly" title=" " alt="" coords="325,253,157,299,155,294,324,248"/>
-<area shape="poly" title=" " alt="" coords="405,248,555,293,554,298,403,253"/>
-<area shape="rect" title=" " alt="" coords="279,299,354,324"/>
-<area shape="poly" title=" " alt="" coords="360,253,335,289,330,286,356,249"/>
-<area shape="rect" title=" " alt="" coords="379,299,449,324"/>
-<area shape="poly" title=" " alt="" coords="376,250,401,286,397,289,372,253"/>
+<area shape="rect" href="../../d8/d8f/uthash_8h.html" title=" " alt="" coords="297,225,436,251"/>
+<area shape="poly" title=" " alt="" coords="369,178,369,212,364,212,364,178"/>
+<area shape="poly" title=" " alt="" coords="325,253,154,299,153,294,324,248"/>
+<area shape="poly" title=" " alt="" coords="412,248,600,295,598,300,411,253"/>
+<area shape="rect" title=" " alt="" coords="280,299,354,324"/>
+<area shape="poly" title=" " alt="" coords="360,253,335,289,331,286,356,249"/>
+<area shape="rect" title=" " alt="" coords="379,299,450,324"/>
+<area shape="poly" title=" " alt="" coords="377,250,401,286,397,289,372,253"/>
 </map>
 </div>
 </div>
@@ -141,12 +144,12 @@ Include dependency graph for events.c:</div>
 Functions</h2></td></tr>
 <tr class="memitem:a888530715da1c012e928f07daa4b7209" id="r_a888530715da1c012e928f07daa4b7209"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209">createEventNode</a> (int year, int day, int eventType, const char *eventParamsStr)</td></tr>
 <tr class="separator:a888530715da1c012e928f07daa4b7209"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4314c765f6bbd615a94286919f475f41" id="r_a4314c765f6bbd615a94286919f475f41"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/dd2/events_8h.html#a5fa6c5d64f2d553ef94c943fb42d2375">event_type_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a4314c765f6bbd615a94286919f475f41">getEventType</a> (const char *eventTypeStr)</td></tr>
-<tr class="separator:a4314c765f6bbd615a94286919f475f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb0aecb501956ec964a98b0310035c54" id="r_adb0aecb501956ec964a98b0310035c54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#adb0aecb501956ec964a98b0310035c54">readEventData</a> (char *eventFile)</td></tr>
-<tr class="separator:adb0aecb501956ec964a98b0310035c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adaf5398f33e074025777106e1211e3c6" id="r_adaf5398f33e074025777106e1211e3c6"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#adaf5398f33e074025777106e1211e3c6">eventTypeToString</a> (<a class="el" href="../../db/dd2/events_8h.html#a5fa6c5d64f2d553ef94c943fb42d2375">event_type_t</a> type)</td></tr>
 <tr class="separator:adaf5398f33e074025777106e1211e3c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af004e8c62b6460f3db5b7507e459abf7" id="r_af004e8c62b6460f3db5b7507e459abf7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/dd2/events_8h.html#a5fa6c5d64f2d553ef94c943fb42d2375">event_type_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#af004e8c62b6460f3db5b7507e459abf7">eventStringToType</a> (const char *eventTypeStr)</td></tr>
+<tr class="separator:af004e8c62b6460f3db5b7507e459abf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb0aecb501956ec964a98b0310035c54" id="r_adb0aecb501956ec964a98b0310035c54"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#adb0aecb501956ec964a98b0310035c54">readEventData</a> (char *eventFile)</td></tr>
+<tr class="separator:adb0aecb501956ec964a98b0310035c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00254fcd00e2cf4a0cb1a9f3d4843729" id="r_a00254fcd00e2cf4a0cb1a9f3d4843729"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a00254fcd00e2cf4a0cb1a9f3d4843729">openEventOutFile</a> (int printHeader)</td></tr>
 <tr class="separator:a00254fcd00e2cf4a0cb1a9f3d4843729"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac10b012ee2d3fc00122b3bfd0069da32" id="r_ac10b012ee2d3fc00122b3bfd0069da32"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#ac10b012ee2d3fc00122b3bfd0069da32">writeEventOut</a> (<a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *oneEvent, int numParams,...)</td></tr>
@@ -165,17 +168,25 @@ Functions</h2></td></tr>
 <tr class="separator:afb4ad97daa6ca46b43b7eae3554c17fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9de3738992b3780a28e1bdc3eba6604" id="r_ac9de3738992b3780a28e1bdc3eba6604"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#ac9de3738992b3780a28e1bdc3eba6604">updatePoolsForEvents</a> (void)</td></tr>
 <tr class="separator:ac9de3738992b3780a28e1bdc3eba6604"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae82fb7f2677202f858acbb5971811688" id="r_ae82fb7f2677202f858acbb5971811688"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#ae82fb7f2677202f858acbb5971811688">freeEventList</a> (void)</td></tr>
+<tr class="separator:ae82fb7f2677202f858acbb5971811688"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2bd920387bf6b1a109235dbe00da30b" id="r_ad2bd920387bf6b1a109235dbe00da30b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#ad2bd920387bf6b1a109235dbe00da30b">initEventTrackers</a> (void)</td></tr>
+<tr class="separator:ad2bd920387bf6b1a109235dbe00da30b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c2f094a0b3c9bd9fa1274bef1d7345c" id="r_a2c2f094a0b3c9bd9fa1274bef1d7345c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a2c2f094a0b3c9bd9fa1274bef1d7345c">updateEventTrackers</a> (void)</td></tr>
+<tr class="separator:a2c2f094a0b3c9bd9fa1274bef1d7345c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7d775e58699585050eef5f7dc8b000e" id="r_ab7d775e58699585050eef5f7dc8b000e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#ab7d775e58699585050eef5f7dc8b000e">printEvent</a> (<a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *oneEvent)</td></tr>
 <tr class="separator:ab7d775e58699585050eef5f7dc8b000e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a37141f818f11eaeeaae9437189de2bff" id="r_a37141f818f11eaeeaae9437189de2bff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a37141f818f11eaeeaae9437189de2bff">events</a> = NULL</td></tr>
-<tr class="separator:a37141f818f11eaeeaae9437189de2bff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ae35c8e87cf86f85a3ee4485027cde0" id="r_a7ae35c8e87cf86f85a3ee4485027cde0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a7ae35c8e87cf86f85a3ee4485027cde0">event</a> = NULL</td></tr>
-<tr class="separator:a7ae35c8e87cf86f85a3ee4485027cde0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68075a1225c7f9cb57469c8b3069eee4" id="r_a68075a1225c7f9cb57469c8b3069eee4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a68075a1225c7f9cb57469c8b3069eee4">gEvents</a> = NULL</td></tr>
+<tr class="separator:a68075a1225c7f9cb57469c8b3069eee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38b6ca986e84c3617003a946ba612b1b" id="r_a38b6ca986e84c3617003a946ba612b1b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#a38b6ca986e84c3617003a946ba612b1b">gEvent</a> = NULL</td></tr>
+<tr class="separator:a38b6ca986e84c3617003a946ba612b1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb0bc186ee10fd1a7ce8d16fb65c7225" id="r_acb0bc186ee10fd1a7ce8d16fb65c7225"><td class="memItemLeft" align="right" valign="top">static FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#acb0bc186ee10fd1a7ce8d16fb65c7225">eventOutFile</a> = NULL</td></tr>
 <tr class="separator:acb0bc186ee10fd1a7ce8d16fb65c7225"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3df6da54a2bb8e281ae1af683185cdb" id="r_ae3df6da54a2bb8e281ae1af683185cdb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/dd2/events_8h.html#a85c6332e4846d6b69a8c1a8d737888b7">EventTrackers</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/deb/events_8c.html#ae3df6da54a2bb8e281ae1af683185cdb">eventTrackers</a></td></tr>
+<tr class="separator:ae3df6da54a2bb8e281ae1af683185cdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handles reading, parsing, and storing agronomic events for SIPNET simulations. </p>
@@ -205,11 +216,11 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00289">289</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00288">288</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00030">eventOutFile</a>.</p>
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00031">eventOutFile</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01751">cleanupModel()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01748">cleanupModel()</a>.</p>
 
 </div>
 </div>
@@ -251,11 +262,43 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00032">32</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00033">33</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00036">IrrigationParams::amountAdded</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00052">PlantingParams::coarseRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::eventParams</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00051">PlantingParams::fineRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00057">TillageParams::fractionLitterTransferred</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00028">HarvestParams::fractionRemovedAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00029">HarvestParams::fractionRemovedBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00030">HarvestParams::fractionTransferredAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00031">HarvestParams::fractionTransferredBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00049">PlantingParams::leafC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00059">TillageParams::litterDecompModifier</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00037">IrrigationParams::method</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00044">FertilizationParams::minN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00040">NUM_FERTILIZATION_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00026">NUM_HARVEST_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00034">NUM_IRRIGATION_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00047">NUM_PLANTING_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00055">NUM_TILLAGE_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00043">FertilizationParams::orgC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00042">FertilizationParams::orgN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00058">TillageParams::somDecompModifier</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00050">PlantingParams::woodC</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00036">IrrigationParams::amountAdded</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00052">PlantingParams::coarseRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::day</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00069">EventNode::eventParams</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00051">PlantingParams::fineRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00028">HarvestParams::fractionRemovedAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00029">HarvestParams::fractionRemovedBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00030">HarvestParams::fractionTransferredAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00031">HarvestParams::fractionTransferredBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00049">PlantingParams::leafC</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00037">IrrigationParams::method</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00044">FertilizationParams::minN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00070">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00040">NUM_FERTILIZATION_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00026">NUM_HARVEST_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00034">NUM_IRRIGATION_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00047">NUM_PLANTING_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00055">NUM_TILLAGE_PARAMS</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00043">FertilizationParams::orgC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00042">FertilizationParams::orgN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00057">TillageParams::tillageEffect</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::type</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00050">PlantingParams::woodC</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::year</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00156">readEventData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00173">readEventData()</a>.</p>
+
+</div>
+</div>
+<a id="af004e8c62b6460f3db5b7507e459abf7" name="af004e8c62b6460f3db5b7507e459abf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af004e8c62b6460f3db5b7507e459abf7">&#9670;&#160;</a></span>eventStringToType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../db/dd2/events_8h.html#a5fa6c5d64f2d553ef94c943fb42d2375">event_type_t</a> eventStringToType </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>eventTypeStr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Convert event string to corresponding enum value</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">string</td><td>string version of event enum type </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>enum value representing the event </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00158">158</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00173">readEventData()</a>.</p>
 
 </div>
 </div>
@@ -283,35 +326,36 @@ Variables</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string version of event enum type </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00240">240</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00140">140</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00268">writeEventOut()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00267">writeEventOut()</a>.</p>
 
 </div>
 </div>
-<a id="a4314c765f6bbd615a94286919f475f41" name="a4314c765f6bbd615a94286919f475f41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4314c765f6bbd615a94286919f475f41">&#9670;&#160;</a></span>getEventType()</h2>
+<a id="ae82fb7f2677202f858acbb5971811688" name="ae82fb7f2677202f858acbb5971811688"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae82fb7f2677202f858acbb5971811688">&#9670;&#160;</a></span>freeEventList()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../db/dd2/events_8h.html#a5fa6c5d64f2d553ef94c943fb42d2375">event_type_t</a> getEventType </td>
+          <td class="memname">void freeEventList </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>eventTypeStr</em></td><td>)</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Deallocate space used for events linked list </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00141">141</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00477">477</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00027">gEvents</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00070">EventNode::nextEvent</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00156">readEventData()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01748">cleanupModel()</a>.</p>
 
 </div>
 </div>
@@ -352,9 +396,9 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00295">295</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00294">294</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00043">Context::events</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00026">events</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00258">openEventOutFile()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00156">readEventData()</a>.</p>
+<p class="reference">References <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00043">Context::events</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00027">gEvents</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00257">openEventOutFile()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00173">readEventData()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00128">main()</a>.</p>
 <div class="dynheader">
@@ -367,15 +411,40 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="92,34,126,28,127,34,93,39"/>
 <area shape="rect" href="../../de/deb/events_8c.html#adb0aecb501956ec964a98b0310035c54" title=" " alt="" coords="149,55,268,80"/>
 <area shape="poly" title=" " alt="" coords="93,47,136,54,135,59,92,52"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="354,5,431,31"/>
-<area shape="poly" title=" " alt="" coords="278,15,340,15,340,21,278,21"/>
-<area shape="poly" title=" " alt="" coords="256,52,340,29,341,34,257,57"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209" title=" " alt="" coords="325,55,460,80"/>
-<area shape="poly" title=" " alt="" coords="268,65,311,65,311,70,268,70"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a4314c765f6bbd615a94286919f475f41" title=" " alt="" coords="337,104,448,129"/>
-<area shape="poly" title=" " alt="" coords="257,77,332,98,330,103,256,83"/>
+<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="357,5,435,31"/>
+<area shape="poly" title=" " alt="" coords="278,15,344,15,344,21,278,21"/>
+<area shape="poly" title=" " alt="" coords="257,52,343,29,345,34,258,57"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209" title=" " alt="" coords="329,55,463,80"/>
+<area shape="poly" title=" " alt="" coords="268,65,315,65,315,70,268,70"/>
+<area shape="rect" href="../../de/deb/events_8c.html#af004e8c62b6460f3db5b7507e459abf7" title=" " alt="" coords="325,104,467,129"/>
+<area shape="poly" title=" " alt="" coords="258,77,334,98,333,103,257,83"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="ad2bd920387bf6b1a109235dbe00da30b" name="ad2bd920387bf6b1a109235dbe00da30b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2bd920387bf6b1a109235dbe00da30b">&#9670;&#160;</a></span>initEventTrackers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void initEventTrackers </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Initialize EventTrackers struct for tracking lingering event effects </p>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00491">491</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00184">EventTrackerStruct::d_till_mod</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00489">eventTrackers</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01622">setupModel()</a>.</p>
 
 </div>
 </div>
@@ -402,11 +471,11 @@ Here is the call graph for this function:</div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>FILE pointer to output file </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00258">258</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00257">257</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00009">EVENT_OUT_FILE</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00030">eventOutFile</a>, and <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00009">EVENT_OUT_FILE</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00031">eventOutFile</a>, and <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00295">initEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00294">initEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -436,9 +505,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00470">470</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00506">506</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00036">IrrigationParams::amountAdded</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00052">PlantingParams::coarseRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::eventParams</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00051">PlantingParams::fineRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00057">TillageParams::fractionLitterTransferred</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00028">HarvestParams::fractionRemovedAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00029">HarvestParams::fractionRemovedBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00030">HarvestParams::fractionTransferredAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00031">HarvestParams::fractionTransferredBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00049">PlantingParams::leafC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00059">TillageParams::litterDecompModifier</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00044">FertilizationParams::minN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00043">FertilizationParams::orgC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00042">FertilizationParams::orgN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00058">TillageParams::somDecompModifier</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00050">PlantingParams::woodC</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00036">IrrigationParams::amountAdded</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00052">PlantingParams::coarseRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::day</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00069">EventNode::eventParams</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00051">PlantingParams::fineRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00028">HarvestParams::fractionRemovedAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00029">HarvestParams::fractionRemovedBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00030">HarvestParams::fractionTransferredAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00031">HarvestParams::fractionTransferredBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00049">PlantingParams::leafC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00044">FertilizationParams::minN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00043">FertilizationParams::orgC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00042">FertilizationParams::orgN</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00057">TillageParams::tillageEffect</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::type</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00050">PlantingParams::woodC</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::year</a>.</p>
 
 </div>
 </div>
@@ -462,11 +531,11 @@ Here is the call graph for this function:</div>
 <p>For a given year and day (as determined by the global <code>climate</code> pointer), process all events listed in the global <code>events</code> pointer for the referenced location.</p>
 <p>For each event, modify flux variables according to the model for that event, and write a row to events.out listing the modified variables and the delta applied. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00314">314</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00313">313</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00036">IrrigationParams::amountAdded</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00021">CANOPY</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00009">climate</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00052">PlantingParams::coarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00377">Environment::coarseRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00016">ClimateVars::day</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00011">envi</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00027">event</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00513">FluxVars::eventCoarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00515">FluxVars::eventEvap</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00511">FluxVars::eventFineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00507">FluxVars::eventLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00519">FluxVars::eventLitterC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00517">FluxVars::eventSoilWater</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00509">FluxVars::eventWoodC</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00051">PlantingParams::fineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00378">Environment::fineRootC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00014">fluxes</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00028">HarvestParams::fractionRemovedAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00029">HarvestParams::fractionRemovedBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00030">HarvestParams::fractionTransferredAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00031">HarvestParams::fractionTransferredBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00207">Parameters::immedEvapFrac</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00049">PlantingParams::leafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00021">ClimateVars::length</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00037">IrrigationParams::method</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00043">FertilizationParams::orgC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00010">params</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00366">Environment::plantLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00364">Environment::plantWoodC</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00304">resetEventFluxes()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00022">SOIL</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00050">PlantingParams::woodC</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00268">writeEventOut()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>, and <a class="el" href="../../db/d3b/state_8h_source.html#l00014">ClimateVars::year</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00036">IrrigationParams::amountAdded</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00021">CANOPY</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00009">climate</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00052">PlantingParams::coarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00377">Environment::coarseRootC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00184">EventTrackerStruct::d_till_mod</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::day</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00016">ClimateVars::day</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00011">envi</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00513">FluxVars::eventCoarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00515">FluxVars::eventEvap</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00511">FluxVars::eventFineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00507">FluxVars::eventLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00519">FluxVars::eventLitterC</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00069">EventNode::eventParams</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00517">FluxVars::eventSoilWater</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00489">eventTrackers</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00509">FluxVars::eventWoodC</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00020">EXIT_CODE_BAD_PARAMETER_VALUE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00012">FERTILIZATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00051">PlantingParams::fineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00378">Environment::fineRootC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00014">fluxes</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00028">HarvestParams::fractionRemovedAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00029">HarvestParams::fractionRemovedBelow</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00030">HarvestParams::fractionTransferredAbove</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00031">HarvestParams::fractionTransferredBelow</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00028">gEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00013">HARVEST</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00207">Parameters::immedEvapFrac</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00014">IRRIGATION</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00049">PlantingParams::leafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00021">ClimateVars::length</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00037">IrrigationParams::method</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00070">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00043">FertilizationParams::orgC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00010">params</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00015">PLANTING</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00366">Environment::plantLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00364">Environment::plantWoodC</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00303">resetEventFluxes()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00022">SOIL</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00016">TILLAGE</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00057">TillageParams::tillageEffect</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::type</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00050">PlantingParams::woodC</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00267">writeEventOut()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::year</a>, and <a class="el" href="../../db/d3b/state_8h_source.html#l00014">ClimateVars::year</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01556">updateState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01550">updateState()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -502,23 +571,23 @@ Here is the call graph for this function:</div>
 <p>Read event data from input filename (canonically events.in)</p>
 <p>Format: returned data is structured as an linked list of <a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a> pointers. It is assumed that the events are ordered by year and day. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00156">156</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00173">173</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00032">createEventNode()</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00141">getEventType()</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00027">logInfo</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00062">NUM_EVENT_CORE_PARAMS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00033">createEventNode()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00158">eventStringToType()</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00022">EXIT_CODE_INPUT_FILE_ERROR</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00021">EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">logError</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00027">logInfo</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00070">EventNode::nextEvent</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00064">NUM_EVENT_CORE_PARAMS</a>, <a class="el" href="../../de/df1/util_8c_source.html#l00018">openFile()</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00017">UNKNOWN_EVENT</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00295">initEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00294">initEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../de/deb/events_8c_adb0aecb501956ec964a98b0310035c54_cgraph.png" border="0" usemap="#ade/deb/events_8c_adb0aecb501956ec964a98b0310035c54_cgraph" alt=""/></div>
 <map name="ade/deb/events_8c_adb0aecb501956ec964a98b0310035c54_cgraph" id="ade/deb/events_8c_adb0aecb501956ec964a98b0310035c54_cgraph">
 <area shape="rect" title=" " alt="" coords="5,55,124,80"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209" title=" " alt="" coords="172,5,307,31"/>
-<area shape="poly" title=" " alt="" coords="110,52,179,32,181,37,111,57"/>
-<area shape="rect" href="../../de/deb/events_8c.html#a4314c765f6bbd615a94286919f475f41" title=" " alt="" coords="184,55,295,80"/>
-<area shape="poly" title=" " alt="" coords="124,65,170,65,170,70,124,70"/>
-<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="201,104,278,129"/>
-<area shape="poly" title=" " alt="" coords="111,77,188,100,187,105,110,83"/>
+<area shape="rect" href="../../de/deb/events_8c.html#a888530715da1c012e928f07daa4b7209" title=" " alt="" coords="175,5,310,31"/>
+<area shape="poly" title=" " alt="" coords="110,52,182,32,183,37,112,57"/>
+<area shape="rect" href="../../de/deb/events_8c.html#af004e8c62b6460f3db5b7507e459abf7" title=" " alt="" coords="172,55,313,80"/>
+<area shape="poly" title=" " alt="" coords="124,65,158,65,158,70,124,70"/>
+<area shape="rect" href="../../de/df1/util_8c.html#a2a788020b8916d13ec26d4ad01c225f9" title=" " alt="" coords="204,104,281,129"/>
+<area shape="poly" title=" " alt="" coords="112,77,191,100,190,105,110,83"/>
 </map>
 </div>
 
@@ -542,11 +611,11 @@ Here is the call graph for this function:</div>
 <p>Set all event fluxes to zero</p>
 <p>Reset all event fluxes to zero in preparation for the next climate step. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00304">304</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00303">303</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../db/d3b/state_8h_source.html#l00513">FluxVars::eventCoarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00515">FluxVars::eventEvap</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00511">FluxVars::eventFineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00507">FluxVars::eventLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00519">FluxVars::eventLitterC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00517">FluxVars::eventSoilWater</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00509">FluxVars::eventWoodC</a>, and <a class="el" href="../../d0/dc9/state_8c_source.html#l00014">fluxes</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00314">processEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00313">processEvents()</a>.</p>
 
 </div>
 </div>
@@ -567,11 +636,36 @@ Here is the call graph for this function:</div>
 </div><div class="memdoc">
 <p>Initialize global event pointer </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00302">302</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00301">301</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00026">events</a>.</p>
+<p class="reference">References <a class="el" href="../../de/deb/events_8c_source.html#l00028">gEvent</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00027">gEvents</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01709">runModelOutput()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01706">runModelOutput()</a>.</p>
+
+</div>
+</div>
+<a id="a2c2f094a0b3c9bd9fa1274bef1d7345c" name="a2c2f094a0b3c9bd9fa1274bef1d7345c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c2f094a0b3c9bd9fa1274bef1d7345c">&#9670;&#160;</a></span>updateEventTrackers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void updateEventTrackers </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Perform any needed udpates post fluxes-and-pools updates </p>
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00493">493</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">References <a class="el" href="../../d0/dc9/state_8c_source.html#l00009">climate</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00184">EventTrackerStruct::d_till_mod</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00489">eventTrackers</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00021">ClimateVars::length</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00062">TILLAGE_DECAY_FACTOR</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00060">TILLAGE_THRESHOLD</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01550">updateState()</a>.</p>
 
 </div>
 </div>
@@ -592,11 +686,11 @@ Here is the call graph for this function:</div>
 </div><div class="memdoc">
 <p>Update relevant environment pools after event fluxes have been calculated </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00450">450</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00457">457</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d0/dc9/state_8c_source.html#l00009">climate</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00377">Environment::coarseRootC</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00011">envi</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00513">FluxVars::eventCoarseRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00511">FluxVars::eventFineRootC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00507">FluxVars::eventLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00519">FluxVars::eventLitterC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00517">FluxVars::eventSoilWater</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00509">FluxVars::eventWoodC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00378">Environment::fineRootC</a>, <a class="el" href="../../d0/dc9/state_8c_source.html#l00014">fluxes</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00021">ClimateVars::length</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00372">Environment::litter</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00047">Context::litterPool</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00366">Environment::plantLeafC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00364">Environment::plantWoodC</a>, <a class="el" href="../../db/d3b/state_8h_source.html#l00367">Environment::soil</a>, and <a class="el" href="../../db/d3b/state_8h_source.html#l00368">Environment::soilWater</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01556">updateState()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01550">updateState()</a>.</p>
 
 </div>
 </div>
@@ -646,11 +740,11 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00268">268</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00267">267</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::day</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00030">eventOutFile</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00240">eventTypeToString()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00065">EventNode::type</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00066">EventNode::year</a>.</p>
+<p class="reference">References <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::day</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00031">eventOutFile</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00140">eventTypeToString()</a>, <a class="el" href="../../db/dd2/events_8h_source.html#l00067">EventNode::type</a>, and <a class="el" href="../../db/dd2/events_8h_source.html#l00068">EventNode::year</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00314">processEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00313">processEvents()</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -665,24 +759,6 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="a7ae35c8e87cf86f85a3ee4485027cde0" name="a7ae35c8e87cf86f85a3ee4485027cde0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ae35c8e87cf86f85a3ee4485027cde0">&#9670;&#160;</a></span>event</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a>* event = NULL</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00027">27</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00314">processEvents()</a>.</p>
-
-</div>
-</div>
 <a id="acb0bc186ee10fd1a7ce8d16fb65c7225" name="acb0bc186ee10fd1a7ce8d16fb65c7225"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acb0bc186ee10fd1a7ce8d16fb65c7225">&#9670;&#160;</a></span>eventOutFile</h2>
 
@@ -703,27 +779,63 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00030">30</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00031">31</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00289">closeEventOutFile()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00258">openEventOutFile()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00268">writeEventOut()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00288">closeEventOutFile()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00257">openEventOutFile()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00267">writeEventOut()</a>.</p>
 
 </div>
 </div>
-<a id="a37141f818f11eaeeaae9437189de2bff" name="a37141f818f11eaeeaae9437189de2bff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37141f818f11eaeeaae9437189de2bff">&#9670;&#160;</a></span>events</h2>
+<a id="ae3df6da54a2bb8e281ae1af683185cdb" name="ae3df6da54a2bb8e281ae1af683185cdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3df6da54a2bb8e281ae1af683185cdb">&#9670;&#160;</a></span>eventTrackers</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a>* events = NULL</td>
+          <td class="memname"><a class="el" href="../../db/dd2/events_8h.html#a85c6332e4846d6b69a8c1a8d737888b7">EventTrackers</a> eventTrackers</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00026">26</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00489">489</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l00446">freeEventList()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00025">initContext()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00295">initEvents()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00302">setupEvents()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/d09/sipnet_8c_source.html#l01066">calcSoilMaintRespiration()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00491">initEventTrackers()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00313">processEvents()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00493">updateEventTrackers()</a>.</p>
+
+</div>
+</div>
+<a id="a38b6ca986e84c3617003a946ba612b1b" name="a38b6ca986e84c3617003a946ba612b1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38b6ca986e84c3617003a946ba612b1b">&#9670;&#160;</a></span>gEvent</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a>* gEvent = NULL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00028">28</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00313">processEvents()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00301">setupEvents()</a>.</p>
+
+</div>
+</div>
+<a id="a68075a1225c7f9cb57469c8b3069eee4" name="a68075a1225c7f9cb57469c8b3069eee4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68075a1225c7f9cb57469c8b3069eee4">&#9670;&#160;</a></span>gEvents</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d6/d43/struct_event_node.html">EventNode</a>* gEvents = NULL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../de/deb/events_8c_source.html#l00027">27</a> of file <a class="el" href="../../de/deb/events_8c_source.html">events.c</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="../../de/deb/events_8c_source.html#l00477">freeEventList()</a>, <a class="el" href="../../de/deb/events_8c_source.html#l00294">initEvents()</a>, and <a class="el" href="../../de/deb/events_8c_source.html#l00301">setupEvents()</a>.</p>
 
 </div>
 </div>

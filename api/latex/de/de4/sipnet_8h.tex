@@ -26,6 +26,8 @@ void \textbf{ print\+Model\+Components} (FILE $\ast$out)
 \item 
 void \textbf{ init\+Model} (\textbf{ Model\+Params} $\ast$$\ast$model\+Params, const char $\ast$param\+File, const char $\ast$clim\+File)
 \item 
+void \textbf{ setup\+Model} (void)
+\item 
 void \textbf{ cleanup\+Model} (void)
 \item 
 void \textbf{ run\+Model\+Output} (FILE $\ast$out, \textbf{ Output\+Items} $\ast$output\+Items, int print\+Header)
@@ -45,7 +47,7 @@ Free allocated memory
 
 Call this when done running model 
 
-Definition at line \textbf{ 1751} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1748} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -71,7 +73,7 @@ Here is the call graph for this function\+:
 
 Do model initializations
 
-Read in initial parameter values and climate data. Also set up pointers to different output data types and setup mean\+NPP tracker.
+Read in initial parameter values and climate data. Also set up pointers to different output data types and allocate tracker structs.
 
 
 \begin{DoxyParams}{Parameters}
@@ -84,7 +86,7 @@ Read in initial parameter values and climate data. Also set up pointers to diffe
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1741} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1738} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -127,7 +129,7 @@ Run the model using parameter values in model\+Params
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1709} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1706} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -143,6 +145,34 @@ Here is the call graph for this function\+:
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{de/de4/sipnet_8h_af6d23e2711c7acdd2f52fd1946185796_cgraph}
+\end{center}
+\end{figure}
+\label{sipnet_8h_a9b1ccc083cb92b4e622e21d05a72c7c3} 
+\index{sipnet.h@{sipnet.h}!setupModel@{setupModel}}
+\index{setupModel@{setupModel}!sipnet.h@{sipnet.h}}
+\doxysubsubsection{setupModel()}
+{\footnotesize\ttfamily void setup\+Model (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Setup model for run
+
+Set calculated parameters, do parameter conversions, and initialize tracker structs. 
+
+Definition at line \textbf{ 1622} of file \textbf{ sipnet.\+c}.
+
+
+
+References \textbf{ Parameters\+::base\+Coarse\+Root\+Resp}, \textbf{ Parameters\+::base\+Fine\+Root\+Resp}, \textbf{ Parameters\+::base\+Microbe\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp}, \textbf{ Parameters\+::base\+Veg\+Resp}, \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Parameters\+::coarse\+Root\+Frac}, \textbf{ Parameters\+::coarse\+Root\+Turnover\+Rate}, \textbf{ ctx}, \textbf{ ensure\+Allocation()}, \textbf{ envi}, \textbf{ Environment\+::fine\+RootC}, \textbf{ Parameters\+::fine\+Root\+Frac}, \textbf{ Parameters\+::fine\+Root\+Turnover\+Rate}, \textbf{ first\+Climate}, \textbf{ init\+Event\+Trackers()}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ init\+Trackers()}, \textbf{ Parameters\+::lai\+Init}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ Parameters\+::leaf\+Turnover\+Rate}, \textbf{ Environment\+::litter}, \textbf{ Parameters\+::litter\+Breakdown\+Rate}, \textbf{ Parameters\+::litter\+Init}, \textbf{ Context\+::litter\+Pool}, \textbf{ Parameters\+::max\+Ingestion\+Rate}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ Environment\+::microbeC}, \textbf{ Parameters\+::microbe\+Init}, \textbf{ Parameters\+::microbe\+Pulse\+Eff}, \textbf{ Context\+::microbes}, \textbf{ params}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Parameters\+::plant\+Wood\+Init}, \textbf{ Parameters\+::psn\+TMax}, \textbf{ Parameters\+::psn\+TMin}, \textbf{ Parameters\+::psn\+TOpt}, \textbf{ reset\+Mean\+Tracker()}, \textbf{ Environment\+::snow}, \textbf{ Parameters\+::snow\+Init}, \textbf{ Environment\+::soil}, \textbf{ Parameters\+::soil\+Init}, \textbf{ Environment\+::soil\+Water}, \textbf{ Parameters\+::soil\+WFrac\+Init}, \textbf{ Parameters\+::soil\+WHC}, and \textbf{ Parameters\+::wood\+Turnover\+Rate}.
+
+
+
+Referenced by \textbf{ run\+Model\+Output()}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{de/de4/sipnet_8h_a9b1ccc083cb92b4e622e21d05a72c7c3_cgraph}
 \end{center}
 \end{figure}
 \label{sipnet_8h_af9ce545d20f3285ad314db7ce52ee054} 
@@ -162,7 +192,7 @@ Each variable added will be output in a separate file (\textquotesingle{}$\ast$.
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1733} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1730} of file \textbf{ sipnet.\+c}.
 
 
 
