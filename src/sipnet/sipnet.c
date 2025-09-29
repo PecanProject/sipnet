@@ -1433,7 +1433,10 @@ void updateMeanTrackers(void) {
  */
 void updateMainPools() {
   // Update the stocks, with fluxes adjusted for length of time step.
-  // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
+  // Notes:
+  // - GPP shows up twice (direct + via NPP --> woodCreation), but
+  // the math works out to: envi.plantWoodC ≈ NPP_allocation_to_wood − woodLitter.
+  // - The soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
   // were updated in soilDegradation(); also, envi.litter when that is in use.
   // And yes, I would love to break that out to maintain more rigor in this
   // flow process.
