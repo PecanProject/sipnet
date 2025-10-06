@@ -125,7 +125,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>      }</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      <span class="comment">// Validate the params</span></div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      <span class="keywordflow">if</span> ((fracRA + fracTA &gt; 1) || (fracRB + fracTB &gt; 1)) {</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <a class="code hl_define" href="../../d5/d77/logging_8h.html#a95d829d52ad9b078da34c2312388a48b">logError</a>(<span class="stringliteral">&quot;nvalid harvest newEvent for year %d day %d; above and below &quot;</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <a class="code hl_define" href="../../d5/d77/logging_8h.html#a95d829d52ad9b078da34c2312388a48b">logError</a>(<span class="stringliteral">&quot;invalid harvest newEvent for year %d day %d; above and below &quot;</span></div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                 <span class="stringliteral">&quot;must each add to 1 or less&quot;</span>,</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                 year, day);</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        exit(<a class="code hl_enumvalue" href="../../d6/d8f/exit_codes_8h.html#a2d967eed409413b06a8450ff977ab52aa70c5f94b894e60d2efe7e7b12ef99ebb">EXIT_CODE_BAD_PARAMETER_VALUE</a>);</div>
