@@ -50,7 +50,7 @@ EventNode *createEventNode(int year, int day, int eventType,
       }
       // Validate the params
       if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
-        logError("nvalid harvest newEvent for year %d day %d; above and below "
+        logError("invalid harvest newEvent for year %d day %d; above and below "
                  "must each add to 1 or less",
                  year, day);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
