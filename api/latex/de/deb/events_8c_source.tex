@@ -233,8 +233,8 @@
 \DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordflow}{if}\ ((year\ <\ currYear)\ ||\ ((year\ ==\ currYear)\ \&\&\ (day\ <\ currDay)))\ \{}
 \DoxyCodeLine{00239\ \ \ \ \ \ \ \textcolor{comment}{//\ clang-\/format\ off}}
 \DoxyCodeLine{00240\ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}reading\ event\ file:\ last\ event\ was\ at\ (\%d,\ \%d),\ next\ event\ is\ "{}}}
-\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}at\ (\%d,\ \%d)\(\backslash\)n"{}},\ currDay,\ year,\ day);}
-\DoxyCodeLine{00242\ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}event\ records\ must\ be\ in\ time-\/ascending\ order\(\backslash\)n"{}},\ currYear);}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}at\ (\%d,\ \%d)\(\backslash\)n"{}},\ currYear,\ currDay,\ year,\ day);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}event\ records\ must\ be\ in\ time-\/ascending\ order\(\backslash\)n"{}});}
 \DoxyCodeLine{00243\ \ \ \ \ \ \ \textcolor{comment}{//\ clang-\/format\ on}}
 \DoxyCodeLine{00244\ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
 \DoxyCodeLine{00245\ \ \ \ \ \}}
