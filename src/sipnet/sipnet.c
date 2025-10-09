@@ -986,7 +986,7 @@ void calcRootResp(double *rootResp, double respQ10, double baseRate,
 // This is in addition to [1], source not yet determined (controlled by
 // ctx.growthResp)
 void vegResp2(double *folResp, double *woodResp, double *growthResp,
-              double baseFolResp, double /*gpp*/) {
+              double baseFolResp) {
   // [TAG:UNKNOWN_PROVENANCE] growthResp
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
@@ -1235,8 +1235,7 @@ void calculateFluxes(void) {
 
   // Vegetation respiration
   if (ctx.growthResp) {
-    vegResp2(&folResp, &woodResp, &growthResp, baseFolResp,
-             fluxes.photosynthesis);
+    vegResp2(&folResp, &woodResp, &growthResp, baseFolResp);
     fluxes.rVeg = folResp + woodResp + growthResp;
   } else {
     vegResp(&folResp, &woodResp, baseFolResp);
