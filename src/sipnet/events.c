@@ -238,8 +238,8 @@ EventNode *readEventData(char *eventFile) {
     if ((year < currYear) || ((year == currYear) && (day < currDay))) {
       // clang-format off
       logError("reading event file: last event was at (%d, %d), next event is "
-               "at (%d, %d)\n", currDay, year, day);
-      logError("event records must be in time-ascending order\n", currYear);
+               "at (%d, %d)\n", currYear, currDay, year, day);
+      logError("event records must be in time-ascending order\n");
       // clang-format on
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
