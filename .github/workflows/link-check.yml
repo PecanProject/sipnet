@@ -1,0 +1,42 @@
+name: Broken Link Check
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 5 * * 1' # Weekly, Mondays at 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --include-fragments
+            --no-progress
+            --verbose
+            --timeout 20
+            --max-redirects 10
+            --max-retries 3
+            --retry-wait-time 2
+            --format markdown
+            --exclude https://doi.org/*
+            .
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload lychee report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lychee-report
+          path: lychee

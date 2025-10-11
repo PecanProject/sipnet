@@ -7,6 +7,7 @@ transpose
 .doxygen.stamp
 .mkdocs.stamp
 site/*
+site_preview/*
 
 # documentation
 docs/api
