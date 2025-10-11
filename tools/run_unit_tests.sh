@@ -15,8 +15,8 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 # Step 1: Build everything first
-echo "Running make test..."
-if ! make test; then
+echo "Running make testbuild..."
+if ! make testbuild; then
     echo -e "${RED}Build failed, exiting.${RESET}"
     exit 1
 fi

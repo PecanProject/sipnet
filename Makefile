@@ -85,7 +85,8 @@ SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
 SIPNET_TEST_DIRS_RUN:= $(addsuffix .run, $(SIPNET_TEST_DIRS))
 SIPNET_TEST_DIRS_CLEAN:= $(addsuffix .clean, $(SIPNET_TEST_DIRS))
 
-test: $(SIPNET_TEST_DIRS) $(COMMON_LIB) $(SIPNET_LIB)
+# Build unit test executables (does not run them)
+testbuild: $(SIPNET_TEST_DIRS) $(COMMON_LIB) $(SIPNET_LIB)
 
 # The dash in the build command tells make to continue if there are errors, allowing cleanup
 $(SIPNET_TEST_DIRS): $(SIPNET_LIB) $(COMMON_LIB)
@@ -105,7 +106,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 cleanall: clean testclean
 
 .PHONY: all clean help document exec cleanall \
-		test $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun
+		test testbuild $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun smoke unit
 
 help:
 	@echo "Available make targets:"
@@ -118,11 +119,24 @@ help:
 	@echo "  clean        - Remove compiled files, executables, and documentation"
 	@echo "  depend       - Generate build dependency information for source files and append to Makefile"
 	@echo "  === Tests ==="
-	@echo "  test         - Build the unit tests"
-	@echo "  testrun      - Run the unit tests"
+	@echo "  test         - Build + run unit tests, then smoke tests"
+	@echo "  testbuild    - Build the unit tests (does not run)"
+	@echo "  testrun      - Run the unit tests (per-directory runners)"
+	@echo "  unit         - Build and run unit tests (wrapper with summary)"
+	@echo "  smoke        - Run smoke tests (end-to-end diffs)"
 	@echo "  testclean    - Clean build artifacts and executables from the unit tests"
 	@echo "  cleanall     - Run both clean and testclean"
 
+# Convenience test targets
+unit: sipnet testbuild
+	./tools/run_unit_tests.sh
+
+smoke: sipnet
+	./tests/smoke/run_smoke.sh
+
+# Combined verification target
+test: sipnet testbuild
+	./tools/run_unit_tests.sh && ./tests/smoke/run_smoke.sh
 
 # Make sure this target and subsequent comment remain at the bottom of this file
 depend::
