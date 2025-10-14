@@ -986,7 +986,7 @@ void calcRootResp(double *rootResp, double respQ10, double baseRate,
 // This is in addition to [1], source not yet determined (controlled by
 // ctx.growthResp)
 void vegResp2(double *folResp, double *woodResp, double *growthResp,
-              double baseFolResp, double gpp) {
+              double baseFolResp) {
   // [TAG:UNKNOWN_PROVENANCE] growthResp
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
