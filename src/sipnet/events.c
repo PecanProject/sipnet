@@ -11,6 +11,7 @@
 // clang-format on
 
 #include "events.h"
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -23,8 +24,8 @@
 #include "state.h"
 
 // Global event variables - definition
-EventNode *events = NULL;
-EventNode *event = NULL;
+EventNode *gEvents = NULL;
+EventNode *gEvent = NULL;
 
 // events.out handle, only needed here
 static FILE *eventOutFile = NULL;
@@ -49,7 +50,7 @@ EventNode *createEventNode(int year, int day, int eventType,
       }
       // Validate the params
       if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
-        logError("nvalid harvest newEvent for year %d day %d; above and below "
+        logError("invalid harvest newEvent for year %d day %d; above and below "
                  "must each add to 1 or less",
                  year, day);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
@@ -115,17 +116,15 @@ EventNode *createEventNode(int year, int day, int eventType,
       newEvent->eventParams = pParams;
     } break;
     case TILLAGE: {
-      double fracLT, somDM, litterDM;
+      double tillEffect;
       TillageParams *tParams = (TillageParams *)malloc(sizeof(TillageParams));
       int numRead = sscanf(eventParamsStr,  // NOLINT
-                           "%lf %lf %lf", &fracLT, &somDM, &litterDM);
+                           "%lf", &tillEffect);
       if (numRead != NUM_TILLAGE_PARAMS) {
         logError("parsing Tillage params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
-      tParams->fractionLitterTransferred = fracLT;
-      tParams->somDecompModifier = somDM;
-      tParams->litterDecompModifier = litterDM;
+      tParams->tillageEffect = tillEffect;
       newEvent->eventParams = tParams;
     } break;
     default:
@@ -138,7 +137,25 @@ EventNode *createEventNode(int year, int day, int eventType,
   return newEvent;
 }
 
-event_type_t getEventType(const char *eventTypeStr) {
+const char *eventTypeToString(event_type_t type) {
+  switch (type) {
+    case IRRIGATION:
+      return "irrig";
+    case PLANTING:
+      return "plant";
+    case HARVEST:
+      return "harv";
+    case FERTILIZATION:
+      return "fert";
+    case TILLAGE:
+      return "till";
+    default:
+      logError("unknown event type in eventTypeToString (%d)", type);
+      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+  }
+}
+
+event_type_t eventStringToType(const char *eventTypeStr) {
   if (strcmp(eventTypeStr, "irrig") == 0) {
     return IRRIGATION;
   } else if (strcmp(eventTypeStr, "fert") == 0) {
@@ -189,7 +206,7 @@ EventNode *readEventData(char *eventFile) {
   }
   eventParamsStr = line + numBytes;
 
-  eventType = getEventType(eventTypeStr);
+  eventType = eventStringToType(eventTypeStr);
   if (eventType == UNKNOWN_EVENT) {
     logError("reading event file: unknown event type %s\n", eventTypeStr);
     exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -212,7 +229,7 @@ EventNode *readEventData(char *eventFile) {
     }
     eventParamsStr = line + numBytes;
 
-    eventType = getEventType(eventTypeStr);
+    eventType = eventStringToType(eventTypeStr);
     if (eventType == UNKNOWN_EVENT) {
       logError("reading event file: unknown event type %s\n", eventTypeStr);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -221,8 +238,8 @@ EventNode *readEventData(char *eventFile) {
     if ((year < currYear) || ((year == currYear) && (day < currDay))) {
       // clang-format off
       logError("reading event file: last event was at (%d, %d), next event is "
-               "at (%d, %d)\n", currDay, year, day);
-      logError("event records must be in time-ascending order\n", currYear);
+               "at (%d, %d)\n", currYear, currDay, year, day);
+      logError("event records must be in time-ascending order\n");
       // clang-format on
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
@@ -235,24 +252,6 @@ EventNode *readEventData(char *eventFile) {
 
   fclose(in);
   return newEvents;
-}
-
-const char *eventTypeToString(event_type_t type) {
-  switch (type) {
-    case IRRIGATION:
-      return "irrig";
-    case PLANTING:
-      return "plant";
-    case HARVEST:
-      return "harv";
-    case FERTILIZATION:
-      return "fert";
-    case TILLAGE:
-      return "till";
-    default:
-      logError("unknown event type in eventTypeToString (%d)", type);
-      exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
-  }
 }
 
 void openEventOutFile(int printHeader) {
@@ -294,12 +293,12 @@ void closeEventOutFile() {
 
 void initEvents(char *eventFile, int printHeader) {
   if (ctx.events) {
-    events = readEventData(eventFile);
+    gEvents = readEventData(eventFile);
     openEventOutFile(printHeader);
   }
 }
 
-void setupEvents() { event = events; }
+void setupEvents() { gEvent = gEvents; }
 
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;
@@ -312,8 +311,9 @@ void resetEventFluxes(void) {
 }
 
 void processEvents(void) {
-  // This should be in events.h/c, but with all the global state defined in this
-  // file, let's leave it here for now. Maybe someday we will factor that out.
+  // This should be in events.h/c, but with all the global state defined in
+  // this file, let's leave it here for now. Maybe someday we will factor that
+  // out.
 
   // Set all event fluxes to zero, as these have no memory from one step to
   // the next
@@ -333,20 +333,20 @@ void processEvents(void) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 
-  // The events file has been tested on read, so we know this event list should
-  // be in chrono order. However, we need to check to make sure the current
-  // event is not in the past, as that would indicate an event that did not have
-  // a corresponding climate file record.
-  while (event != NULL && event->year <= climYear && event->day <= climDay) {
-    if (event->year < climYear || event->day < climDay) {
+  // The events file has been tested on read, so we know this event list
+  // should be in chrono order. However, we need to check to make sure the
+  // current event is not in the past, as that would indicate an event that
+  // did not have a corresponding climate file record.
+  while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+    if (gEvent->year < climYear || gEvent->day < climDay) {
       logError("Agronomic event found for year: %d day: %d that does not "
                "have a corresponding record in the climate file\n",
-               event->year, event->day);
+               gEvent->year, gEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
-    switch (event->type) {
+    switch (gEvent->type) {
       case IRRIGATION: {
-        const IrrigationParams *irrParams = event->eventParams;
+        const IrrigationParams *irrParams = gEvent->eventParams;
         const double amount = irrParams->amountAdded;
         double soilAmount, evapAmount;
         if (irrParams->method == CANOPY) {
@@ -365,11 +365,11 @@ void processEvents(void) {
         }
         fluxes.eventEvap += evapAmount / climLen;
         fluxes.eventSoilWater += soilAmount / climLen;
-        writeEventOut(event, 2, "fluxes.eventSoilWater", soilAmount / climLen,
+        writeEventOut(gEvent, 2, "fluxes.eventSoilWater", soilAmount / climLen,
                       "fluxes.eventEvap", evapAmount / climLen);
       } break;
       case PLANTING: {
-        const PlantingParams *plantParams = event->eventParams;
+        const PlantingParams *plantParams = gEvent->eventParams;
         const double leafC = plantParams->leafC;
         const double woodC = plantParams->woodC;
         const double fineRootC = plantParams->fineRootC;
@@ -383,14 +383,14 @@ void processEvents(void) {
 
         // FUTURE: allocate to N pools
 
-        writeEventOut(event, 4, "fluxes.eventLeafC", leafC / climLen,
+        writeEventOut(gEvent, 4, "fluxes.eventLeafC", leafC / climLen,
                       "fluxes.eventWoodC", woodC / climLen,
                       "fluxes.eventFineRootC", fineRootC / climLen,
                       "fluxes.eventCoarseRootC", coarseRootC / climLen);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
-        const HarvestParams *harvParams = event->eventParams;
+        const HarvestParams *harvParams = gEvent->eventParams;
         const double fracRA = harvParams->fractionRemovedAbove;
         const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
@@ -415,18 +415,25 @@ void processEvents(void) {
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
         // FUTURE: move/remove biomass in N pools
-        writeEventOut(event, 5, "fluxes.eventLitterC", litterAdd / climLen,
+        writeEventOut(gEvent, 5, "fluxes.eventLitterC", litterAdd / climLen,
                       "fluxes.eventLeafC", leafDelta / climLen,
                       "fluxes.eventWoodC", woodDelta / climLen,
                       "fluxes.eventFineRootC", fineDelta / climLen,
                       "fluxes.eventCoarseRootC", coarseDelta / climLen);
       } break;
-      case TILLAGE:
-        // TBD
-        logError("Tillage events not yet implemented\n");
-        break;
+      case TILLAGE: {
+        // BIG NOTE: this is the one event type that is NOT modeled as a flux;
+        // see updateEventTrackers() for more
+        const TillageParams *tillParams = gEvent->eventParams;
+        // Update the tillage mod for R_H calculations; this will be slowly
+        // reduced by an exponential decay function. Note we add here, not set,
+        // as there may be lingering effects from a prior tillage.
+        eventTrackers.d_till_mod += tillParams->tillageEffect;
+        writeEventOut(gEvent, 1, "eventTrackers.d_till_mod",
+                      tillParams->tillageEffect);
+      } break;
       case FERTILIZATION: {
-        const FertilizationParams *fertParams = event->eventParams;
+        const FertilizationParams *fertParams = gEvent->eventParams;
         // const double orgN = fertParams->orgN;
         const double orgC = fertParams->orgC;
         // const double minN = fertParams->minN;
@@ -436,14 +443,14 @@ void processEvents(void) {
         // FUTURE: allocate to N pools
 
         // This will (likely) be 3 params eventually
-        writeEventOut(event, 1, "fluxes.eventLitterC", orgC / climLen);
+        writeEventOut(gEvent, 1, "fluxes.eventLitterC", orgC / climLen);
       } break;
       default:
-        logError("Unknown event type (%d) in processEvents()\n", event->type);
+        logError("Unknown event type (%d) in processEvents()\n", gEvent->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
-    event = event->nextEvent;
+    gEvent = gEvent->nextEvent;
   }
 }
 
@@ -465,6 +472,35 @@ void updatePoolsForEvents(void) {
   // Harvest and planting events
   envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
   envi.fineRootC += fluxes.eventFineRootC * climate->length;
+}
+
+void freeEventList(void) {
+  EventNode *curr, *prev;
+
+  curr = gEvents;
+  while (curr != NULL) {
+    prev = curr;
+    curr = curr->nextEvent;
+    free(prev);
+  }
+}
+
+// Definition of global event trackers struct
+EventTrackers eventTrackers;
+
+void initEventTrackers(void) { eventTrackers.d_till_mod = 0.0; }
+
+void updateEventTrackers(void) {
+  const double climLen = climate->length;
+
+  // Tillage: decay any existing tillage effects at end of step
+  if (eventTrackers.d_till_mod > 0) {
+    eventTrackers.d_till_mod *= exp(-climLen * TILLAGE_DECAY_FACTOR);
+
+    if (eventTrackers.d_till_mod < TILLAGE_THRESHOLD) {
+      eventTrackers.d_till_mod = 0.0;
+    }
+  }
 }
 
 void printEvent(EventNode *oneEvent) {
@@ -496,12 +532,9 @@ void printEvent(EventNode *oneEvent) {
              pParams->coarseRootC);
       break;
     case TILLAGE:
-      printf("TILLAGE at on %d %d, ", year, day);
+      printf("TILLAGE on %d %d, ", year, day);
       TillageParams *const tParams = (TillageParams *)oneEvent->eventParams;
-      printf("with params: frac litter transferred %4.2f, som decomp modifier "
-             "%4.2f, litter decomp modifier %4.2f\n",
-             tParams->fractionLitterTransferred, tParams->somDecompModifier,
-             tParams->litterDecompModifier);
+      printf("with params: tillageEffect %4.2f\n", tParams->tillageEffect);
       break;
     case HARVEST:
       printf("HARVEST on %d %d, ", year, day);
