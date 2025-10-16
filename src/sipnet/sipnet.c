@@ -414,8 +414,8 @@ void outputHeader(FILE *out) {
  */
 void outputState(FILE *out, int year, int day, double time) {
 
-  fprintf(out, "%4d %3d %5.2f %8.2f %8.2f %8.2f ", year, day, time, envi.plantWoodC,
-          envi.plantLeafC, trackers.woodCreation);
+  fprintf(out, "%4d %3d %5.2f %8.2f %8.2f %8.2f ", year, day, time,
+          envi.plantWoodC, envi.plantLeafC, trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soil);
   fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
