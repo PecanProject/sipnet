@@ -1,6 +1,8 @@
 # Logging
 
-SIPNET's logger is a small wrapper around `printf` that adds standard prefixes and, for internal errors, the source file and line number. It is defined in `common/logging.h` and implemented in `common/logging.c`.
+SIPNET's logger is a small wrapper around `printf` that adds standard prefixes and,
+for internal errors, the source file and line number. It is defined in `common/logging.h` 
+and implemented in `common/logging.c`.
 
 ## Levels
 
@@ -11,11 +13,11 @@ SIPNET's logger is a small wrapper around `printf` that adds standard prefixes a
 
 ## Usage
 
-- logInfo: Level 0; routine progress, configuration summaries, expected state changes.
-- logWarning: Level 0; Recoverable issues or surprises; fallbacks, deprecated/ignored inputs.
-- logTest: Level 1; Deterøinistic messages for tests/CI; not user-facing.
-- logError: Level 1; Non-recoverable problems preventing correct operation; abort/exit or skip major task.
-- logInternalError: Level 2; Errors that should never happen; include details and ask to report.
+- `logInfo`: Level 0; routine progress, configuration summaries, expected state changes.
+- `logWarning`: Level 0; Recoverable issues or surprises; fallbacks, deprecated/ignored inputs.
+- `logTest`: Level 1; Deterministic messages for tests/CI; not user-facing.
+- `logError`: Level 1; Non-recoverable problems preventing correct operation; abort/exit or skip major task.
+- `logInternalError`: Level 2; Errors that should never happen; include details and ask to report.
 
 1. Include the header:
    ```c
