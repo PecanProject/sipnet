@@ -577,7 +577,7 @@ typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 litterfall, year to date: SUM litter
   double yearlyLitter;
 
-  // g C * m^-2 wood creation 
+  // g C * m^-2 wood creation
   double woodCreation;
 
 } Trackers;
