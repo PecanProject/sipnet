@@ -580,29 +580,33 @@
 \DoxyCodeLine{00576\ \ \ \textcolor{keywordtype}{double}\ rAboveground;}
 \DoxyCodeLine{00577\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ litterfall,\ year\ to\ date:\ SUM\ litter}}
 \DoxyCodeLine{00578\ \ \ \textcolor{keywordtype}{double}\ yearlyLitter;}
-\DoxyCodeLine{00579\ \}\ Trackers;}
-\DoxyCodeLine{00580\ }
-\DoxyCodeLine{00581\ \textcolor{comment}{//\ Global\ var}}
-\DoxyCodeLine{00582\ \textcolor{keyword}{extern}\ Trackers\ trackers;}
-\DoxyCodeLine{00583\ }
-\DoxyCodeLine{00584\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }PhenologyTrackersStruct\ \{}
-\DoxyCodeLine{00585\ \ \ \textcolor{comment}{//\ variables\ to\ track\ each\ year's\ phenological\ development.\ Only\ used\ in}}
-\DoxyCodeLine{00586\ \ \ \textcolor{comment}{//\ leafFluxes\ function,\ but\ made\ global\ so\ can\ be\ initialized\ dynamically,}}
-\DoxyCodeLine{00587\ \ \ \textcolor{comment}{//\ based\ on\ day\ of\ year\ of\ first\ climate\ record}}
-\DoxyCodeLine{00588\ }
-\DoxyCodeLine{00589\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ growth\ at\ start\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
-\DoxyCodeLine{00590\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
-\DoxyCodeLine{00591\ \ \ \textcolor{keywordtype}{int}\ didLeafGrowth;}
-\DoxyCodeLine{00592\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ fall\ at\ end\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
-\DoxyCodeLine{00593\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
-\DoxyCodeLine{00594\ \ \ \textcolor{keywordtype}{int}\ didLeafFall;}
-\DoxyCodeLine{00595\ \ \ \textcolor{comment}{//\ year\ of\ previous\ time\ step,\ for\ tracking\ when\ we\ hit\ a\ new\ calendar\ year}}
-\DoxyCodeLine{00596\ \ \ \textcolor{keywordtype}{int}\ lastYear;}
-\DoxyCodeLine{00597\ \}\ PhenologyTrackers;}
-\DoxyCodeLine{00598\ }
-\DoxyCodeLine{00599\ \textcolor{comment}{//\ Global\ var}}
-\DoxyCodeLine{00600\ \textcolor{keyword}{extern}\ PhenologyTrackers\ phenologyTrackers;}
-\DoxyCodeLine{00601\ }
-\DoxyCodeLine{00602\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_STATE\_H}}
+\DoxyCodeLine{00579\ }
+\DoxyCodeLine{00580\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ wood\ creation}}
+\DoxyCodeLine{00581\ \ \ \textcolor{keywordtype}{double}\ woodCreation;}
+\DoxyCodeLine{00582\ }
+\DoxyCodeLine{00583\ \}\ Trackers;}
+\DoxyCodeLine{00584\ }
+\DoxyCodeLine{00585\ \textcolor{comment}{//\ Global\ var}}
+\DoxyCodeLine{00586\ \textcolor{keyword}{extern}\ Trackers\ trackers;}
+\DoxyCodeLine{00587\ }
+\DoxyCodeLine{00588\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }PhenologyTrackersStruct\ \{}
+\DoxyCodeLine{00589\ \ \ \textcolor{comment}{//\ variables\ to\ track\ each\ year's\ phenological\ development.\ Only\ used\ in}}
+\DoxyCodeLine{00590\ \ \ \textcolor{comment}{//\ leafFluxes\ function,\ but\ made\ global\ so\ can\ be\ initialized\ dynamically,}}
+\DoxyCodeLine{00591\ \ \ \textcolor{comment}{//\ based\ on\ day\ of\ year\ of\ first\ climate\ record}}
+\DoxyCodeLine{00592\ }
+\DoxyCodeLine{00593\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ growth\ at\ start\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
+\DoxyCodeLine{00594\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
+\DoxyCodeLine{00595\ \ \ \textcolor{keywordtype}{int}\ didLeafGrowth;}
+\DoxyCodeLine{00596\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ fall\ at\ end\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
+\DoxyCodeLine{00597\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
+\DoxyCodeLine{00598\ \ \ \textcolor{keywordtype}{int}\ didLeafFall;}
+\DoxyCodeLine{00599\ \ \ \textcolor{comment}{//\ year\ of\ previous\ time\ step,\ for\ tracking\ when\ we\ hit\ a\ new\ calendar\ year}}
+\DoxyCodeLine{00600\ \ \ \textcolor{keywordtype}{int}\ lastYear;}
+\DoxyCodeLine{00601\ \}\ PhenologyTrackers;}
+\DoxyCodeLine{00602\ }
+\DoxyCodeLine{00603\ \textcolor{comment}{//\ Global\ var}}
+\DoxyCodeLine{00604\ \textcolor{keyword}{extern}\ PhenologyTrackers\ phenologyTrackers;}
+\DoxyCodeLine{00605\ }
+\DoxyCodeLine{00606\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_STATE\_H}}
 
 \end{DoxyCode}
