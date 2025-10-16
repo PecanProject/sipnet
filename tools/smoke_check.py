@@ -124,12 +124,23 @@ def check_results(smoke_dir: str, verbose: bool):
     git_df = pd.read_table(git_result, skiprows=1, header=0, sep=r'\s+', dtype=float)
 
     if set(new_df.columns) != set(git_df.columns):
-      print("Columns have changed! Comparing subset of matching columns")
+      print("Columns have changed!")
       common_columns = [col for col in new_df.columns if col in git_df.columns]
+      git_inter_columns = [col for col in git_df.columns if col not in new_df.columns]
+      new_inter_columns = [col for col in new_df.columns if col not in git_df.columns]
       # common_columns = list(set(new_df.columns) & set(git_df.columns))
+      if git_inter_columns:
+        print(f"Removed columns from git: {git_inter_columns}")
+      else:
+        print("No columns removed")
+      if new_inter_columns:
+        print(f"New columns: {new_inter_columns}")
+      else:
+        print("No new columns added")
       print(f"Common columns: {common_columns}")
       new_df = new_df[common_columns]
       git_df = git_df[common_columns]
+      print("Comparing common columns")
   else:
     cols = 'year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration fPAR'
     cols = cols.split(' ')

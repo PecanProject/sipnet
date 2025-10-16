@@ -19,60 +19,55 @@ int checkEvent(EventNode *event, int year, int day, enum EventType type) {
   return 0;
 }
 
-int checkHarvestParams(HarvestParams *params, double fracRemAbove,
+int checkHarvestParams(HarvestParams *hParams, double fracRemAbove,
                        double fracRemBelow, double fracTransAbove,
                        double fracTransBelow) {
   int status =
-      !(compareDoubles(params->fractionRemovedAbove, fracRemAbove) &&
-        compareDoubles(params->fractionRemovedBelow, fracRemBelow) &&
-        compareDoubles(params->fractionTransferredAbove, fracTransAbove) &&
-        compareDoubles(params->fractionTransferredBelow, fracTransBelow));
+      !(compareDoubles(hParams->fractionRemovedAbove, fracRemAbove) &&
+        compareDoubles(hParams->fractionRemovedBelow, fracRemBelow) &&
+        compareDoubles(hParams->fractionTransferredAbove, fracTransAbove) &&
+        compareDoubles(hParams->fractionTransferredBelow, fracTransBelow));
   if (status) {
     logTest("checkHarvestParams failed\n");
   }
   return status;
 }
 
-int checkIrrigationParams(IrrigationParams *params, double amountAdded,
+int checkIrrigationParams(IrrigationParams *iParams, double amountAdded,
                           int method) {
-  int status = !(compareDoubles(params->amountAdded, amountAdded) &&
-                 params->method == method);
+  int status = !(compareDoubles(iParams->amountAdded, amountAdded) &&
+                 iParams->method == method);
   if (status) {
     logTest("checkIrrigationParams failed\n");
   }
   return status;
 }
 
-int checkFertilizationParams(FertilizationParams *params, double orgN,
+int checkFertilizationParams(FertilizationParams *fParams, double orgN,
                              double orgC, double minN) {
-  int status = !(compareDoubles(params->orgN, orgN) &&
-                 compareDoubles(params->orgC, orgC) &&
-                 compareDoubles(params->minN, minN));
+  int status = !(compareDoubles(fParams->orgN, orgN) &&
+                 compareDoubles(fParams->orgC, orgC) &&
+                 compareDoubles(fParams->minN, minN));
   if (status) {
     logTest("checkFertilizationParams failed\n");
   }
   return status;
 }
 
-int checkPlantingParams(PlantingParams *params, double leafC, double woodC,
+int checkPlantingParams(PlantingParams *pParams, double leafC, double woodC,
                         double fineRootC, double coarseRootC) {
-  int status = !(compareDoubles(params->leafC, leafC) &&
-                 compareDoubles(params->woodC, woodC) &&
-                 compareDoubles(params->fineRootC, fineRootC) &&
-                 compareDoubles(params->coarseRootC, coarseRootC));
+  int status = !(compareDoubles(pParams->leafC, leafC) &&
+                 compareDoubles(pParams->woodC, woodC) &&
+                 compareDoubles(pParams->fineRootC, fineRootC) &&
+                 compareDoubles(pParams->coarseRootC, coarseRootC));
   if (status) {
     logTest("checkPlantingParams failed\n");
   }
   return status;
 }
 
-int checkTillageParams(TillageParams *params, double fracLitterTransferred,
-                       double somDecompModifier, double litterDecompModifier) {
-  int status =
-      !(compareDoubles(params->fractionLitterTransferred,
-                       fracLitterTransferred) &&
-        compareDoubles(params->somDecompModifier, somDecompModifier) &&
-        compareDoubles(params->litterDecompModifier, litterDecompModifier));
+int checkTillageParams(TillageParams *tParams, double tillageEffect) {
+  int status = !(compareDoubles(tParams->tillageEffect, tillageEffect));
   if (status) {
     logTest("checkTillageParams failed\n");
   }
@@ -93,7 +88,7 @@ int runTestEmpty(void) {
 }
 
 int runTestSimple(void) {
-  // Simple test with one loc, one event per type
+  // Simple test with one loc, one outEvent per type
   EventNode *output = readEventData("infra_events_simple.in");
 
   if (!output) {
@@ -103,24 +98,24 @@ int runTestSimple(void) {
 
   // check output is correct
   int status = 0;
-  EventNode *event = output;
-  status |= checkEvent(event, 2022, 40, IRRIGATION);
-  status |= checkIrrigationParams((IrrigationParams *)event->eventParams, 5, 0);
-  event = event->nextEvent;
-  status |= checkEvent(event, 2022, 40, FERTILIZATION);
-  status |= checkFertilizationParams((FertilizationParams *)event->eventParams,
-                                     15, 5, 10);
-  event = event->nextEvent;
-  status |= checkEvent(event, 2022, 45, TILLAGE);
+  EventNode *outEvent = output;
+  status |= checkEvent(outEvent, 2022, 40, IRRIGATION);
   status |=
-      checkTillageParams((TillageParams *)event->eventParams, 0.1, 0.2, 0.3);
-  event = event->nextEvent;
-  status |= checkEvent(event, 2022, 46, PLANTING);
+      checkIrrigationParams((IrrigationParams *)outEvent->eventParams, 5, 0);
+  outEvent = outEvent->nextEvent;
+  status |= checkEvent(outEvent, 2022, 40, FERTILIZATION);
+  status |= checkFertilizationParams(
+      (FertilizationParams *)outEvent->eventParams, 15, 5, 10);
+  outEvent = outEvent->nextEvent;
+  status |= checkEvent(outEvent, 2022, 45, TILLAGE);
+  status |= checkTillageParams((TillageParams *)outEvent->eventParams, 0.1);
+  outEvent = outEvent->nextEvent;
+  status |= checkEvent(outEvent, 2022, 46, PLANTING);
   status |=
-      checkPlantingParams((PlantingParams *)event->eventParams, 10, 5, 4, 3);
-  event = event->nextEvent;
-  status |= checkEvent(event, 2022, 250, HARVEST);
-  status |= checkHarvestParams((HarvestParams *)event->eventParams, 0.4, 0.1,
+      checkPlantingParams((PlantingParams *)outEvent->eventParams, 10, 5, 4, 3);
+  outEvent = outEvent->nextEvent;
+  status |= checkEvent(outEvent, 2022, 250, HARVEST);
+  status |= checkHarvestParams((HarvestParams *)outEvent->eventParams, 0.4, 0.1,
                                0.2, 0.3);
 
   return status;
