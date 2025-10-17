@@ -141,17 +141,17 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Phenology-related parameters
 
-|     | Symbol               | Parameter Name   | Definition                                                              | Units                                                   | notes                                          |
-| --- | -------------------- | ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
-| 17  | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                                             |                                                |
-| 18  |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                                         |                                                |
-| 19  |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                                         |                                                |
-| 20  | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                                         |                                                |
-| 21  |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$         |                                                |
-| 22  |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                                         |                                                |
-| 23  | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                                         |                                                |
-| 24  | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | fraction per day                                        | read in as per-year rate                       |
-|     | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
+|     | Symbol               | Parameter Name   | Definition                                                              | Units                                                   | notes                                           |
+| --- | -------------------- | ---------------- | ----------------------------------------------------------------------- |---------------------------------------------------------|-------------------------------------------------|
+| 17  | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                                             |                                                 |
+| 18  |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                                         |                                                 |
+| 19  |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                                         |                                                 |
+| 20  | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                                         |                                                 |
+| 21  |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$         |                                                 |
+| 22  |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                                         |                                                 |
+| 23  | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                                         |                                                 |
+| 24  | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | $\text{y}^{-1}$                                         | converted to per-day rate internally            |
+|     | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code  |
 
 
 ### Allocation parameters
@@ -247,13 +247,13 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Tree physiological parameters
 
-|     | Symbol                 | Parameter Name         | Definition                             | Units                | notes                                                  |
-| --- | ---------------------- | ---------------------- | -------------------------------------- | -------------------- | ------------------------------------------------------ |
-| 53  | $SLW$                  | leafCSpWt              |                                        | g C * m^-2 leaf area |                                                        |
-| 54  | $C_{frac}$             | cFracLeaf              |                                        | g leaf C * g^-1 leaf |                                                        |
-| 55  | $K_\text{wood}$        | woodTurnoverRate       | average turnover rate of woody plant C | $\text{y}^{-1}$      | read in as per-year rate; leaf loss handled separately |
-| 70  | $K_\text{fine root}$   | fineRootTurnoverRate   | turnover of fine roots                 | $\text{y}^{-1}$      | per year rate                                          |
-| 71  | $K_\text{coarse root}$ | coarseRootTurnoverRate | turnover of coarse roots               | yr^-1                | per year rate                                          |
+|     | Symbol                 | Parameter Name         | Definition                             | Units                | notes                                                              |
+| --- | ---------------------- | ---------------------- | -------------------------------------- |----------------------|--------------------------------------------------------------------|
+| 53  | $SLW$                  | leafCSpWt              |                                        | g C * m^-2 leaf area |                                                                    |
+| 54  | $C_{frac}$             | cFracLeaf              |                                        | g leaf C * g^-1 leaf |                                                                    |
+| 55  | $K_\text{wood}$        | woodTurnoverRate       | average turnover rate of woody plant C | $\text{y}^{-1}$      | converted to per-day rate internally; leaf loss handled separately |
+| 70  | $K_\text{fine root}$   | fineRootTurnoverRate   | turnover of fine roots                 | $\text{y}^{-1}$      | converted to per-day rate internally                               |
+| 71  | $K_\text{coarse root}$ | coarseRootTurnoverRate | turnover of coarse roots               | $\text{y}^{-1}$      | converted to per-day rate internally                               |
 
 
 
