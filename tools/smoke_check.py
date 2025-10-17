@@ -165,8 +165,6 @@ def check_results(smoke_dir: str, verbose: bool):
     git_df = pd.read_table(git_result, sep=r'\s+', header=None, dtype=float)
     git_df.columns = cols
 
-  breakpoint()
-  
   diff_df = git_df.compare(new_df, result_names=('old', 'new'))
 
   if diff_df.empty:
