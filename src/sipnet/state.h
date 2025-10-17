@@ -361,7 +361,7 @@ typedef struct Parameters {
   // ****************************************
   // No published source for these, added as part of MAGIC project
 
-  // Initial mineral nitrogen pool amount, g C * m^-2 ground area
+  // Initial soil mineral nitrogen pool amount, g C * m^-2 ground area
   double minNInit;
 
 } Params;
@@ -401,7 +401,7 @@ typedef struct Environment {
   double microbeC;
 
   ///// MAGIC project
-  // mineral nitrogen pool (g C m^-2 ground area)
+  // soil mineral nitrogen pool (g C m^-2 ground area)
   double minN;
 } Envi;
 
