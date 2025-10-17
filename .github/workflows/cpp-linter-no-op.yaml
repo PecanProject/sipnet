@@ -1,0 +1,12 @@
+name: cpp-linter
+
+on:
+  pull_request:
+    # This needs to be identical (but as paths-ignore) to the 'paths' line in cpp-linter.yaml
+    paths-ignore: ['**.c', '**.cpp', '**.h', '**.hpp', '**.cxx', '**.hxx', '**.cc', '**.hh', '**CMakeLists.txt', 'meson.build', '**.cmake']
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No linter run required"'
