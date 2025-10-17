@@ -1,32 +1,48 @@
 # Logging
 
-SIPNET's logger is defined in `common/logger.h` and implemented in `common/logger.c`. 
+SIPNET's logger is a small wrapper around `printf` that adds standard prefixes and,
+for internal errors, the source file and line number. It is defined in `common/logging.h` 
+and implemented in `common/logging.c`.
 
-It provides a simple interface for logging messages at different levels (e.g., debug, info, warning, error).
+## Levels
 
-The use of logger functions is preferred over `printf` because ... 
-It is appropriate to use printf when ...
-
-## Logging Levels 
-
-- **logDebug**: Information useful during development or debugging.
-- **logInfo**: General information about the program's execution, such as successful initialization or key milestones.
-- **logWarning**: Non-critical issues that might require attention but do not stop execution. Example: deprecated parameters or ignored input.
-- **logError**: Critical issues that prevent the program from continuing correctly. Example: missing required parameters or internal errors.
+- 0: Quiet-able (suppressed by `--quiet`).
+- 1: Always on (not suppressed).
+- 2: Always on and includes `file:line`.
 
 
 ## Usage
 
-1. Include the logger header in your source file:
-   ```c
-   #include "common/logger.h"
-   ```
+- `logInfo`: Level 0; routine progress, configuration summaries, expected state changes.
+- `logWarning`: Level 0; Recoverable issues or surprises; fallbacks, deprecated/ignored inputs.
+- `logTest`: Level 1; Deterministic messages for tests/CI; not user-facing.
+- `logError`: Level 1; Non-recoverable problems preventing correct operation; abort/exit or skip major task.
+- `logInternalError`: Level 2; Errors that should never happen; include details and ask to report.
 
-2. Use the logging functions to log messages at different levels:
+1. Include the header:
    ```c
-   // Log messages at different levels
-   logDebug("This is a debug message");
-   logInfo("This is an info message");
-   logWarning("This is a warning message");
-   logError("This is an error message");
+   #include "common/logging.h"
    ```
+2. Log messages:
+   ```c
+   logInfo("Initialized OK\n");
+   logWarning("Deprecated parameter: %s\n", name);
+   logTest("Iteration %d\n", i);
+   logError("Missing required parameter: %s\n", key);
+   logInternalError("Unexpected state: %d\n", code);
+   ```
+3. Example outputs:
+    ```
+    [INFO   ] Initialized OK
+    [WARNING] Deprecated parameter: foo
+    [TEST   ] Iteration 12
+    [ERROR  ] Missing required parameter: bar
+    [ERROR (INTERNAL)] (myfile.c:123) Unexpected state: 5
+    ```
+
+
+## Notes:
+
+- Each log prints a fixed prefix (e.g., `[INFO   ]`, `[WARNING]`, `[ERROR  ]`).
+- Messages use `printf`-style formatting. Include `\n` yourself if you want a newline.
+- Level 2 (`logInternalError`) prints file:line; levels 0–1 print just the prefix.
