@@ -1101,14 +1101,14 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
 
     // :: from [4], part of eqs (5.9) and (5.10)
     //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
-    //    eqs (5.9) and (5.10) in soilDegradation()
+    //    eqs (5.9) and (5.10) in updatePoolsForSoil()
 
     // :: mu_max * g(C_S)
     baseRate = params.maxIngestionRate * envi.soil /
                (params.halfSatIngestion + envi.soil);
 
     // Flux that microbes remove from soil  (mg C g soil day)
-    // Some is ingested, rest used for growth in soilDegradation
+    // Some is ingested, rest used for growth in updatePoolsForSoil()
     // :: above * C_B
     fluxes.microbeIngestion = baseRate * envi.microbeC;
 
@@ -1434,10 +1434,12 @@ void updateMeanTrackers(void) {
  */
 void updateMainPools() {
   // Update the stocks, with fluxes adjusted for length of time step.
-  // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
-  // were updated in soilDegradation(); also, envi.litter when that is in use.
-  // And yes, I would love to break that out to maintain more rigor in this
-  // flow process.
+  // Notes:
+  // - GPP shows up twice (direct + via NPP --> woodCreation), but
+  //   the math works out to:
+  //     envi.plantWoodC += NPP_allocation_to_wood − woodLitter.
+  // - The soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
+  //   are updated in updatePoolsForSoil().
 
   // :: from [1], eq (A1), where:
   //     GPP = fluxes.photosynthesis
@@ -1556,8 +1558,7 @@ void updateState(void) {
   ///////////////////////
   // 1. Calculate Fluxes
 
-  // The main source of flux calculations handling, most of the biogeochem
-  // modeled fluxes are here. ("most" due to soilDegradation below)
+  // All non-event fluxes
   calculateFluxes();
 
   // All event handling, which is modeled as fluxes
