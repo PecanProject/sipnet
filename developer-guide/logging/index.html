@@ -12,7 +12,7 @@
         <link rel="prev" href="../cli-options/">
       
       
-        <link rel="next" href="../../CONTRIBUTING/">
+        <link rel="next" href="../testing/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -270,7 +270,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -361,7 +363,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -397,6 +401,52 @@
   
   <span class="md-ellipsis">
     Running SIPNET
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/model-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Inputs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/model-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Outputs
     
   </span>
   
@@ -557,9 +607,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#logging-levels" class="md-nav__link">
+  <a href="#levels" class="md-nav__link">
     <span class="md-ellipsis">
-      Logging Levels
+      Levels
     </span>
   </a>
   
@@ -574,10 +624,42 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes:
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -705,9 +787,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#logging-levels" class="md-nav__link">
+  <a href="#levels" class="md-nav__link">
     <span class="md-ellipsis">
-      Logging Levels
+      Levels
     </span>
   </a>
   
@@ -717,6 +799,15 @@
   <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes:
     </span>
   </a>
   
@@ -747,34 +838,50 @@
 
 
 <h1 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h1>
-<p>SIPNET's logger is defined in <code>common/logger.h</code> and implemented in <code>common/logger.c</code>. </p>
-<p>It provides a simple interface for logging messages at different levels (e.g., debug, info, warning, error).</p>
-<p>The use of logger functions is preferred over <code>printf</code> because ... 
-It is appropriate to use printf when ...</p>
-<h2 id="logging-levels">Logging Levels<a class="headerlink" href="#logging-levels" title="Permanent link">&para;</a></h2>
+<p>SIPNET's logger is a small wrapper around <code>printf</code> that adds standard prefixes and,
+for internal errors, the source file and line number. It is defined in <code>common/logging.h</code> 
+and implemented in <code>common/logging.c</code>.</p>
+<h2 id="levels">Levels<a class="headerlink" href="#levels" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>logDebug</strong>: Information useful during development or debugging.</li>
-<li><strong>logInfo</strong>: General information about the program's execution, such as successful initialization or key milestones.</li>
-<li><strong>logWarning</strong>: Non-critical issues that might require attention but do not stop execution. Example: deprecated parameters or ignored input.</li>
-<li><strong>logError</strong>: Critical issues that prevent the program from continuing correctly. Example: missing required parameters or internal errors.</li>
+<li>0: Quiet-able (suppressed by <code>--quiet</code>).</li>
+<li>1: Always on (not suppressed).</li>
+<li>2: Always on and includes <code>file:line</code>.</li>
 </ul>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<ol>
+<ul>
+<li><code>logInfo</code>: Level 0; routine progress, configuration summaries, expected state changes.</li>
+<li><code>logWarning</code>: Level 0; Recoverable issues or surprises; fallbacks, deprecated/ignored inputs.</li>
+<li><code>logTest</code>: Level 1; Deterministic messages for tests/CI; not user-facing.</li>
+<li><code>logError</code>: Level 1; Non-recoverable problems preventing correct operation; abort/exit or skip major task.</li>
 <li>
-<p>Include the logger header in your source file:
-   <div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;common/logger.h&quot;</span>
-</code></pre></div></p>
+<p><code>logInternalError</code>: Level 2; Errors that should never happen; include details and ask to report.</p>
 </li>
 <li>
-<p>Use the logging functions to log messages at different levels:
-   <div class="highlight"><pre><span></span><code><span class="c1">// Log messages at different levels</span>
-<span class="n">logDebug</span><span class="p">(</span><span class="s">&quot;This is a debug message&quot;</span><span class="p">);</span>
-<span class="n">logInfo</span><span class="p">(</span><span class="s">&quot;This is an info message&quot;</span><span class="p">);</span>
-<span class="n">logWarning</span><span class="p">(</span><span class="s">&quot;This is a warning message&quot;</span><span class="p">);</span>
-<span class="n">logError</span><span class="p">(</span><span class="s">&quot;This is an error message&quot;</span><span class="p">);</span>
+<p>Include the header:
+   <div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;common/logging.h&quot;</span>
 </code></pre></div></p>
 </li>
-</ol>
+<li>Log messages:
+   <div class="highlight"><pre><span></span><code><span class="n">logInfo</span><span class="p">(</span><span class="s">&quot;Initialized OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="n">logWarning</span><span class="p">(</span><span class="s">&quot;Deprecated parameter: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="n">logTest</span><span class="p">(</span><span class="s">&quot;Iteration %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="n">logError</span><span class="p">(</span><span class="s">&quot;Missing required parameter: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span>
+<span class="n">logInternalError</span><span class="p">(</span><span class="s">&quot;Unexpected state: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">code</span><span class="p">);</span>
+</code></pre></div></li>
+<li>Example outputs:
+    <div class="highlight"><pre><span></span><code>[INFO   ] Initialized OK
+[WARNING] Deprecated parameter: foo
+[TEST   ] Iteration 12
+[ERROR  ] Missing required parameter: bar
+[ERROR (INTERNAL)] (myfile.c:123) Unexpected state: 5
+</code></pre></div></li>
+</ul>
+<h2 id="notes">Notes:<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Each log prints a fixed prefix (e.g., <code>[INFO   ]</code>, <code>[WARNING]</code>, <code>[ERROR  ]</code>).</li>
+<li>Messages use <code>printf</code>-style formatting. Include <code>\n</code> yourself if you want a newline.</li>
+<li>Level 2 (<code>logInternalError</code>) prints file:line; levels 0–1 print just the prefix.</li>
+</ul>
 
 
 
@@ -823,7 +930,7 @@ It is appropriate to use printf when ...</p>
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.copy", "navigation.expand"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>

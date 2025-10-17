@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../developer-guide/logging/">
+        <link rel="prev" href="../developer-guide/testing/">
       
       
         <link rel="next" href="../api/">
@@ -270,7 +270,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -361,7 +363,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -407,6 +411,52 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/model-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Inputs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/model-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Outputs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -429,7 +479,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -521,6 +573,29 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -585,9 +660,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
+  <a href="#developer-quickstart" class="md-nav__link">
     <span class="md-ellipsis">
-      Setup
+      Developer Quickstart
     </span>
   </a>
   
@@ -642,27 +717,12 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#building-the-documentation-with-mkdocs" class="md-nav__link">
-    <span class="md-ellipsis">
-      Building the Documentation with mkdocs
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#compiling-sipnet-binaries" class="md-nav__link">
+  <a href="#build" class="md-nav__link">
     <span class="md-ellipsis">
-      Compiling SIPNET binaries
+      Build
     </span>
   </a>
   
@@ -787,9 +847,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
+  <a href="#developer-quickstart" class="md-nav__link">
     <span class="md-ellipsis">
-      Setup
+      Developer Quickstart
     </span>
   </a>
   
@@ -844,27 +904,12 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#building-the-documentation-with-mkdocs" class="md-nav__link">
-    <span class="md-ellipsis">
-      Building the Documentation with mkdocs
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#compiling-sipnet-binaries" class="md-nav__link">
+  <a href="#build" class="md-nav__link">
     <span class="md-ellipsis">
-      Compiling SIPNET binaries
+      Build
     </span>
   </a>
   
@@ -913,33 +958,32 @@
 
 
 <h1 id="contributing-to-sipnet">Contributing to SIPNET<a class="headerlink" href="#contributing-to-sipnet" title="Permanent link">&para;</a></h1>
-<p>We welcome contributions to SIPNET. This document outlines the process for contributing to the SIPNET project.</p>
-<p>All contributors are expected to adhere to the PEcAn Project <a href="https://github.com/PecanProject/pecan/blob/develop/CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
-<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
-<ol>
-<li>Clone this repository:</li>
-</ol>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:PecanProject/sipnet
-</code></pre></div>
-<ol>
-<li>Run the setup script (once per clone):</li>
-</ol>
-<div class="highlight"><pre><span></span><code>tools/setup.sh
-</code></pre></div>
-<p>The <code>tools/setup.sh</code> script verifies that Python ≥ 3.8 is available,
-ensures that <code>clang-format</code>, <code>clang-tidy</code>, and <code>git clang-format</code> are
-installed (it automatically installs them on macOS and prints installation
-instructions for Ubuntu/Debian), and then copies the clang pre‑commit hook into
-<code>.git/hooks</code>. </p>
-<p>The pre-commit hook will check formatting on every commit; if issues are found it
-aborts the commit so you can run <code>git clang-format</code> and re‑stage the
-changes.</p>
-<p><em>Note – running the script is unnecessary for documentation‑only edits,
+<p>We welcome contributions. This page is the one‑stop guide for developers.</p>
+<p>All contributors must follow the project <a href="../CODE_OF_CONDUCT/">Code of Conduct</a>.</p>
+<h2 id="developer-quickstart">Developer Quickstart<a class="headerlink" href="#developer-quickstart" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Clone the repository:
+   <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:PecanProject/sipnet
+<span class="nb">cd</span><span class="w"> </span>sipnet
+</code></pre></div></li>
+<li>Setup (once per clone, described below):
+  <div class="highlight"><pre><span></span><code>tools/setup.sh
+</code></pre></div></li>
+<li>Build:
+  <div class="highlight"><pre><span></span><code>make
+</code></pre></div></li>
+<li>Run a sample:
+  <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>tests/smoke/niwot
+../../../sipnet<span class="w"> </span>-i<span class="w"> </span>sipnet.in
+</code></pre></div></li>
+</ul>
+<p><strong>Setup Script</strong> The <code>tools/setup.sh</code> script verifies that Python ≥ 3.8 is available and that <code>clang-format</code>, <code>clang-tidy</code>, and <code>git clang-format</code> are installed. Automatically installs <code>clang</code> tools on macOS and prints installation instructions for Ubuntu/Debian. Then copies the clang pre‑commit hook into <code>.git/hooks</code> so that code formatting is checked on every commit.</p>
+<p><em>Note – running <code>tools/setup.sh</code>  is not necessary for documentation‑only edits,
 but it will save you time whenever you touch C/C++ code.</em></p>
 <h2 id="github-workflow">GitHub Workflow<a class="headerlink" href="#github-workflow" title="Permanent link">&para;</a></h2>
-<h4 id="branches">Branches<a class="headerlink" href="#branches" title="Permanent link">&para;</a></h4>
+<h3 id="branches">Branches<a class="headerlink" href="#branches" title="Permanent link">&para;</a></h3>
 <p>The <code>master</code> branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches should be named to clearly indicate the purpose, and may be combined with an associated issue, e.g. <code>ISSUE#-feature-name</code>.</p>
-<h4 id="pull-requests">Pull Requests<a class="headerlink" href="#pull-requests" title="Permanent link">&para;</a></h4>
+<h3 id="pull-requests">Pull Requests<a class="headerlink" href="#pull-requests" title="Permanent link">&para;</a></h3>
 <p>Pull requests should be made from feature branches to the <code>master</code> branch. </p>
 <p>Pull request descriptions should include a brief summary of the changes and links to related issues. </p>
 <p>Expectations for merging:
@@ -952,7 +996,8 @@ but it will save you time whenever you touch C/C++ code.</em></p>
   - For new model features related to the structure, remove relevant <code>\fraktur</code> font formatting from <code>docs/model-structure.md</code> to indicate that the feature has been implemented.</p>
 <p>Pull requests must pass all required checks to be merged into master, including the code format and style checks described below.</p>
 <h2 id="code-format-style">Code Format &amp; Style<a class="headerlink" href="#code-format-style" title="Permanent link">&para;</a></h2>
-<p>We follow the standard LLVM/Clang formatting rules. Formatting is automatic, and you rarely have to think about them:</p>
+<p>We follow the standard LLVM/Clang formatting rules. Formatting is automated with a pre-commit hook, so you wil rarely have to think about them.</p>
+<p>To set up formatting and static analysis checks:</p>
 <ol>
 <li>
 <p><strong>Run the setup script once</strong> (see <em>Setup</em> above).<br />
@@ -960,90 +1005,100 @@ but it will save you time whenever you touch C/C++ code.</em></p>
    files are not already formatted.</p>
 </li>
 <li>
-<p><strong>If the hook stops your commit</strong>, run:</p>
-</li>
-</ol>
-<p><div class="highlight"><pre><span></span><code><span class="c1"># format only what you just staged</span>
+<p><strong>If the hook stops your commit</strong>, run:
+   <div class="highlight"><pre><span></span><code><span class="c1"># format only what you just staged</span>
 git<span class="w"> </span>clang-format
 <span class="c1"># restage fixes and commit again</span>
 git<span class="w"> </span>add<span class="w"> </span>-u
 git<span class="w"> </span>commit
 </code></pre></div>
-If <code>git clang-format</code> fails because not all changes are staged (likely a <code>git commit -a</code> command), either <code>git add</code> all the changes, or try <code>git clang-format -f</code> to reformat all modified files
-3. <strong>clang‑tidy static analysis</strong> runs automatically in CI.<br />
+If <code>git clang-format</code> fails because not all changes are staged (likely a <code>git commit -a</code> command), either <code>git add</code> all the changes, or try <code>git clang-format -f</code> to reformat all modified files</p>
+</li>
+<li>
+<p><strong>clang‑tidy static analysis</strong> runs automatically in CI.<br />
     If the bot leaves comments, adjust your code as instructed and push.</p>
-<pre><code>To run `clang-tidy` manually before committing or pushing changes, use the following command from the project root:
-
-```bash
-# Replace &lt;path/to/filename.c&gt; with the file you want to check
-clang-tidy &lt;path/to/filename.c&gt;
-```
-</code></pre>
+<p>To run <code>clang-tidy</code> manually before committing or pushing changes, use the following command from the project root:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Replace &lt;path/to/filename.c&gt; with the file you want to check</span>
+clang-tidy<span class="w"> </span>&lt;path/to/filename.c&gt;
+</code></pre></div>
+</li>
+</ol>
 <p>The hook and CI will tell you what to fix.</p>
+<p>If a commit is blocked, format staged changes:
+  <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clang-format
+git<span class="w"> </span>add<span class="w"> </span>-u<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit
+</code></pre></div>
+  To reformat all modified files: <code>git clang-format -f</code>.
+- Optional local static analysis:
+  <div class="highlight"><pre><span></span><code>clang-tidy<span class="w"> </span>path/to/file.c
+</code></pre></div></p>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
-<p>What goes in <strong>Doxygen</strong>:
-- Documentation for functions, classes, and parameters.</p>
-<p>What goes in <strong>docs/*md</strong>:
-- User guides and tutorials.
-- Documentation of equations, theoretical basis, and parameters.</p>
-<h3 id="building-the-documentation-with-mkdocs">Building the Documentation with <code>mkdocs</code><a class="headerlink" href="#building-the-documentation-with-mkdocs" title="Permanent link">&para;</a></h3>
-<p>Documentation is located at https://pecanproject.github.io/sipnet/, and can be rebuilt using <code>mkdocs</code>. A brief summary 
-of use is listed here, or see the Getting Started page for <code>mkdocs</code> <a href="https://www.mkdocs.org/getting-started/">here</a> for
-more information. </p>
-<p>Issue the following command to install <code>mkdocs</code> and the third-party extensions usedin SIPNET:
-<div class="highlight"><pre><span></span><code>pip install mkdocs mkdocs-material pymdown-extensions
+<ul>
+<li>Build API docs (Doxygen) and site (MkDocs):
+  <div class="highlight"><pre><span></span><code>make<span class="w"> </span>document
+</code></pre></div></li>
+<li>
+<p>Live preview while editing docs:
+  <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>mkdocs<span class="w"> </span>mkdocs-material<span class="w"> </span>pymdown-extensions
+mkdocs<span class="w"> </span>serve
+<span class="c1"># open http://127.0.0.1:8000/</span>
 </code></pre></div>
-The <code>material</code> theme can be found <a href="https://github.com/squidfunk/mkdocs-material">here</a>.</p>
-<p>MkDocs comes with a built-in dev-server that lets you preview your documentation as you work on it. Make sure you're 
-in the same directory as the mkdocs.yml configuration file, and then start the server by running the mkdocs serve 
-command:</p>
-<p><div class="highlight"><pre><span></span><code>$ mkdocs serve
-INFO    -  Building documentation...
-INFO    -  Cleaning site directory
-INFO    -  Documentation built in 0.22 seconds
-INFO    -  [15:50:43] Watching paths for changes: &#39;docs&#39;, &#39;mkdocs.yml&#39;
-INFO    -  [15:50:43] Serving on http://127.0.0.1:8000/
+  Update <code>mkdocs.yml</code> if you add/move pages.</p>
+</li>
+<li>
+<p>Build API docs (Doxygen) and site (MkDocs):
+  <div class="highlight"><pre><span></span><code>make<span class="w"> </span>document
 </code></pre></div>
-Open up http://127.0.0.1:8000/ in your browser, and you'll see the documentation home page.</p>
-<p>The dev-server also supports auto-reloading, and will rebuild your documentation whenever anything in the configuration
-file, documentation directory, or theme directory changes.</p>
-<p>If the structure of the documentation has changed (e.g., adding, moving, removing, or renaming pages), update <code>mkdocs.yml</code> in the root 
-directory to reflect these changes and issue this command to rebuild:</p>
-<div class="highlight"><pre><span></span><code>mkdocs build
+  Outputs: <code>docs/api/</code> and <code>site/</code>.</p>
+</li>
+<li>Live preview while editing docs:
+  <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>mkdocs<span class="w"> </span>mkdocs-material<span class="w"> </span>pymdown-extensions
+mkdocs<span class="w"> </span>serve
+<span class="c1"># open http://127.0.0.1:8000/</span>
 </code></pre></div>
-<h2 id="compiling-sipnet-binaries">Compiling SIPNET binaries<a class="headerlink" href="#compiling-sipnet-binaries" title="Permanent link">&para;</a></h2>
-<p>SIPNET uses <code>make</code> to build the model and documentation. There are also miscellaneous targets for running analysis workflows:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># build SIPNET executable</span>
-make<span class="w"> </span>sipnet
-<span class="c1"># build documentation</span>
-make<span class="w"> </span>document
-<span class="c1"># clean up build artifacts</span>
-make<span class="w"> </span>clean
-<span class="c1"># list all make commands</span>
-make<span class="w"> </span><span class="nb">help</span>
+  Update <code>mkdocs.yml</code> if you add/move pages.</li>
+</ul>
+<h2 id="build">Build<a class="headerlink" href="#build" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make
 </code></pre></div>
+<ul>
+<li>See the project <a href="../">README.md</a> for quick start. Use <code>make help</code> for all targets.</li>
+</ul>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
-<p>Any new features (that are worth keeping!) should be covered by tests.</p>
-<p>SIPNET also uses <code>make</code> to build and run its unit tests. This can be done with the following commands:
-<div class="highlight"><pre><span></span><code><span class="c1"># Compile tests</span>
-make<span class="w"> </span><span class="nb">test</span>
-<span class="c1"># Run tests</span>
-make<span class="w"> </span>testrun
-<span class="c1"># Clean after tests are run</span>
-make<span class="w"> </span>testclean
+<p>New features require tests.</p>
+<ul>
+<li>Unit tests:
+  <div class="highlight"><pre><span></span><code>make<span class="w"> </span>unit
+<span class="c1"># or: make testbuild &amp;&amp; ./tools/run_unit_tests.sh</span>
+</code></pre></div></li>
+<li>Smoke tests:
+  <div class="highlight"><pre><span></span><code>make<span class="w"> </span>smoke
+</code></pre></div></li>
+<li>
+<p>Full check (unit + smoke):
+  <div class="highlight"><pre><span></span><code>make<span class="w"> </span><span class="nb">test</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Clean up unit test artifacts:
+  <div class="highlight"><pre><span></span><code>make<span class="w"> </span>testclean
+</code></pre></div></p>
+</li>
+</ul>
+<p>Per‑suite runners live under <code>tests/sipnet/*</code>:
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>-C<span class="w"> </span>tests/sipnet/test_events_infrastructure<span class="w"> </span>run
 </code></pre></div></p>
 <h2 id="releases">Releases<a class="headerlink" href="#releases" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Use <a href="https://semver.org/">Semantic Versioning v2</a> for SIPNET releases.</li>
-<li>Tag releases with the version number <code>vX.Y.Z</code>.</li>
-<li>Update version in the following files:<ul>
+<li>Use <a href="https://semver.org/">Semantic Versioning v2</a> for SIPNET releases. </li>
+<li>Tag the git commit associated with the release <code>vX.Y.Z</code>.</li>
+<li>Update versions in:</li>
 <li><code>CITATION.cff</code></li>
 <li><code>src/sipnet/version.h</code></li>
 <li><code>docs/CHANGELOG.md</code></li>
-<li>Update <code>PROJECT_NUMBER</code> in <code>docs/Doxyfile</code></li>
-</ul>
-</li>
-<li>Include content from <code>docs/CHANGELOG.md</code> file in release description.</li>
+<li><code>docs/Doxyfile</code> (<code>PROJECT_NUMBER</code>)</li>
+<li>Run tests (<code>make test</code>).</li>
+<li>Publish the GitHub release; include <code>docs/CHANGELOG.md</code> content in release notes.</li>
 </ul>
 
 
@@ -1093,7 +1148,7 @@ make<span class="w"> </span>testclean
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.code.copy"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.code.copy", "navigation.expand"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>

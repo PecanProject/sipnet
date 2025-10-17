@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../../user-guide/running-sipnet/">
+        <link rel="prev" href="../../user-guide/model-outputs/">
       
       
         <link rel="next" href="../cli-options/">
@@ -70,6 +70,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#code-structure" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -265,7 +270,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -356,7 +363,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -392,6 +401,52 @@
   
   <span class="md-ellipsis">
     Running SIPNET
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/model-inputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Inputs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/model-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Outputs
     
   </span>
   
@@ -462,6 +517,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Code Structure
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -474,6 +544,88 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#timestep-phases-in-updatestate" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timestep Phases (in updateState())
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mutability-rules-must-follow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mutability Rules (must-follow)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#units-and-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Units and Integration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#naming-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Naming Conventions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pool-update-responsibilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pool Update Responsibilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-flux-or-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding a New Flux or Event
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging &amp; Errors
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -516,6 +668,29 @@
   
   <span class="md-ellipsis">
     Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing
     
   </span>
   
@@ -638,6 +813,79 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#timestep-phases-in-updatestate" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timestep Phases (in updateState())
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mutability-rules-must-follow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mutability Rules (must-follow)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#units-and-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Units and Integration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#naming-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Naming Conventions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pool-update-responsibilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pool Update Responsibilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-flux-or-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding a New Flux or Event
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging &amp; Errors
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -661,9 +909,78 @@
   
 
 
-  <h1>Code Structure</h1>
-
-
+<h1 id="code-structure">Code Structure<a class="headerlink" href="#code-structure" title="Permanent link">&para;</a></h1>
+<p>This guide documents how state is advanced each timestep and the conventions that keep flux calculations pure and pool updates centralized.</p>
+<h2 id="timestep-phases-in-updatestate">Timestep Phases (in <code>updateState()</code>)<a class="headerlink" href="#timestep-phases-in-updatestate" title="Permanent link">&para;</a></h2>
+<p>1) Initialize fluxes
+- Zero all <code>fluxes.*</code> and <code>fluxes.event*</code>.</p>
+<p>2) Compute fluxes (pure calculations)
+- <code>calculateFluxes()</code> computes photosynthesis, respiration, water/snow, etc.
+- <code>processEvents()</code> converts scheduled/instant events to <code>fluxes.event*</code> deltas (no pool mutation).
+-  No function in this phase mutates <code>envi.*</code> or <code>trackers.*</code>.</p>
+<p>3) Apply pool updates (single place)
+- <code>updateMainPools()</code> updates leafC, woodC, soil water and snow pools
+- <code>updatePoolsForSoil()</code> updates soil carbon pools
+- <code>updatePoolsForEvents()</code> updates pools for fluxes from events
+- The above functions are the only code that changes <code>envi.*</code>.
+- For each pool P: ΔP = ((sum of rate fluxes to P) + (sum of event fluxes to P)) * climate.length
+- Apply bounds, conservation, and cross-pool constraints here.</p>
+<p>4) Trackers and running means
+- <code>updateTrackers()</code> uses timestep-integrated values (rate * climate.length) plus event deltas.
+- <code>updateMeanTrackers()</code> same, for running means</p>
+<p>5) Output
+- <code>outputState()</code> and any optional diagnostics/logging.</p>
+<h2 id="mutability-rules-must-follow">Mutability Rules (must-follow)<a class="headerlink" href="#mutability-rules-must-follow" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Only the <code>update*Pool*()</code> functions may change <code>envi.*</code>.</li>
+<li>Flux calculators:</li>
+<li>May read <code>envi.*</code>, <code>params.*</code>, <code>ctx.*</code>, <code>climate.*</code>.</li>
+<li>May write <code>fluxes.*</code> (rates) and <code>fluxes.event*</code> (event fluxes).</li>
+<li>Must not mutate <code>envi.*</code>, <code>trackers.*</code>, or perform I/O as logic side-effects.</li>
+<li>Events never change pools directly; they only add to <code>fluxes.event*</code>.</li>
+<li>Tillage events are handled differently, but they still do not change pools directly</li>
+</ul>
+<h2 id="units-and-integration">Units and Integration<a class="headerlink" href="#units-and-integration" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Rate fluxes in <code>fluxes.*</code> are per-day rates (pool units per day).</li>
+<li>Event fluxes in <code>fluxes.event*</code> are per-day rates.</li>
+<li>Integration per pool each timestep:</li>
+<li>Δpool_from_rates = (sum of relevant <code>fluxes.*</code>) * climate.length</li>
+<li>Δpool_from_events = (sum of relevant <code>fluxes.event*</code>) * climate.length</li>
+<li>pool += Δpool_from_rates + Δpool_from_events</li>
+</ul>
+<h2 id="naming-conventions">Naming Conventions<a class="headerlink" href="#naming-conventions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>envi.*        State variables (pools, water, snow, canopy, soil layers).</li>
+<li>fluxes.*      Per-day flux rates computed in the flux phase.</li>
+<li>fluxes.event* Event changes modeled as per-day fluxes to be applied during pool update.</li>
+<li>trackers.*    Integrated timestep values, cumulative sums, yearly aggregates.</li>
+<li>params.*      Fixed run parameters (immutable during a run).</li>
+<li>ctx.*         Feature flags / configuration switches.</li>
+<li>climate.*     Forcing for the current timestep (e.g., length, met drivers).</li>
+<li>diag.*        Optional transient diagnostics (no side effects on state).</li>
+</ul>
+<p>Name fluxes by direction and target, e.g., <code>fluxes.NPP</code>, <code>fluxes.soilRespiration</code>, <code>fluxes.leafLitterToSoil</code>, <code>fluxes.eventHarvestC</code>. Prefer “to/from” clarity for transfers.</p>
+<h2 id="pool-update-responsibilities">Pool Update Responsibilities<a class="headerlink" href="#pool-update-responsibilities" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Apply all additions/removals in a consistent order if constraints require it (e.g., water first if it bounds biochemical rates next step).</li>
+<li>Enforce invariants:</li>
+<li>No negative pools; clamp with tracked deficits and warnings if needed.</li>
+<li>Mass conservation across linked pools (e.g., C/N stoichiometry) with balanced cross-pool transfers.</li>
+<li>Centralize any event-specific application here (e.g., harvest removing biomass, adding residues).</li>
+</ul>
+<h2 id="adding-a-new-flux-or-event">Adding a New Flux or Event<a class="headerlink" href="#adding-a-new-flux-or-event" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Rates: add a <code>fluxes.*</code> variable, compute it in a flux function, and integrate it in <code>updateMainPools()</code>.</li>
+<li>Events: add a <code>fluxes.event*</code> variable, accumulate in <code>processEvents()</code>, apply it in <code>updatePoolsForEvents()</code>.</li>
+<li>Do not mutate <code>envi.*</code> in calculators or event processors.</li>
+</ul>
+<h2 id="logging-errors">Logging &amp; Errors<a class="headerlink" href="#logging-errors" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Use <code>logError()</code> and <code>logWarning()</code> (not printf) so tests can capture output.</li>
+<li>Messages should include timestep context: year, day, event type (if relevant), and the offending value(s).</li>
+<li>Emit warnings on clamping, conservation corrections, or unexpected negative fluxes.</li>
+</ul>
 
 
 
@@ -712,7 +1029,7 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.copy", "navigation.expand"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
