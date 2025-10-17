@@ -5,7 +5,11 @@
 // [1] Braswell et al., 2005
 // [2] Sacks et al., 2006
 // [3] Zobitz et al, 2008
-// [3] Zobitz (et al.?), date unknown, chapter 5 from unknown book
+// [4] Zobitz (et al.?), date unknown, chapter 5 from unknown book
+//
+// Also of note, additions have been made to support the MAGIC
+// (Modeling and Analysis of Greenhouse gases In Cropland) project
+// for the California Air Resources Board
 
 typedef struct ClimateVars ClimateNode;
 
@@ -351,6 +355,15 @@ typedef struct Parameters {
   // moisture related:
   // leaf (evaporative) pool rim thickness in mm
   double leafPoolDepth;
+
+  // ****************************************
+  // Nitrogen Cycle
+  // ****************************************
+  // No published source for these, added as part of MAGIC project
+
+  // Initial mineral nitrogen pool amount, g C * m^-2 ground area
+  double minNInit;
+
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -360,25 +373,36 @@ extern Params params;
 
 // the state of the environment
 typedef struct Environment {
-  // From [1] Braswell et al. 2005
-  double plantWoodC;  // carbon in plant wood (above-ground + roots) (g C * m^-2
-                      // ground area)
-  double plantLeafC;  // carbon in leaves (g C * m^-2 ground area)
-  double soil;  // carbon in soil (g C * m^-2 ground area)
-  double soilWater;  // plant available soil water (cm)
+  ///// From [1] Braswell et al. 2005
+  // carbon in plant wood (above-ground + roots)
+  // (g C * m^-2 ground area)
+  double plantWoodC;
+  // carbon in leaves (g C * m^-2 ground area)
+  double plantLeafC;
+  // carbon in soil (g C * m^-2 ground area)
+  double soil;
+  // plant available soil water (cm)
+  double soilWater;
 
-  // From [2] Sacks et al. 2006
+  ///// From [2] Sacks et al. 2006
   // carbon in litter (g C * m^-2 ground area)
   double litter;
   // snow pack (cm water equiv.)
   double snow;
 
-  // From [3] Zobitz et al. (2008)
+  ///// From [3] Zobitz et al. (2008)
+  // carbon in coarse roots (g C m^-2 ground area)
   double coarseRootC;
+  // carbon in fine roots (g C m^-2 ground area)
   double fineRootC;
 
-  // From [4] Zobitz (draft)
-  double microbeC;  // carbon in microbes (g C m-2 ground area)
+  ///// From [4] Zobitz (draft)
+  // carbon in microbes (g C m^-2 ground area)
+  double microbeC;
+
+  ///// MAGIC project
+  // mineral nitrogen pool (g C m^-2 ground area)
+  double minN;
 } Envi;
 
 // Global var
