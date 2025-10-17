@@ -49,6 +49,7 @@ struct Context {
   int snow;
   int soilPhenol;
   int waterHResp;
+  int nitrogenCycle;
 
   // * I/O
   int doMainOutput;
