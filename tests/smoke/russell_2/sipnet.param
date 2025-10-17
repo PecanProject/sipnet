@@ -77,3 +77,4 @@ microbeNC 0.2 0 0.1 0.5 0.001
 fineRootExudation 0.01 0 0 1 0.001
 coarseRootExudation 0.01 0 0 1 0.001
 microbePulseEff 0.45 0 0 1 0.05
+mineralNInit 1.0 0 0 0 0
