@@ -22,21 +22,22 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 9  |                  | coarseRootC         | Coarse root carbon                                                        | g C m$^{-2}$ |
 | 10 |                  | fineRootC           | Fine root carbon                                                          | g C m$^{-2}$ |
 | 11 |                  | litter              | Litter carbon (0 if litter pool disabled)                                 | g C m$^{-2}$ |
-| 12 | $f_{\text{WHC}}$ | soilWetnessFrac     | Soil water as fraction of holding capacity                                | unitless     |
-| 13 |                  | snow                | Snow water equivalent                                                     | cm           |
-| 14 |                  | npp                 | Net primary production for timestep                                       | g C m$^{-2}$ |
-| 15 |                  | nee                 | Net ecosystem exchange (sign convention per code: - (NPP - RH))           | g C m$^{-2}$ |
-| 16 |                  | cumNEE              | Cumulative NEE since simulation start                                     | g C m$^{-2}$ |
-| 17 | $GPP$            | gpp                 | Gross primary production                                                  | g C m$^{-2}$ |
-| 18 |                  | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                       | g C m$^{-2}$ |
-| 19 | $R_H$            | rSoil               | Heterotrophic respiration (maintenance + microbe terms per configuration) | g C m$^{-2}$ |
-| 20 |                  | rRoot               | Root (autotrophic) respiration                                            | g C m$^{-2}$ |
-| 21 |                  | ra                  | Total autotrophic respiration (rAboveground + rRoot)                      | g C m$^{-2}$ |
-| 22 |                  | rh                  | Total heterotrophic respiration (litter + soil components)                | g C m$^{-2}$ |
-| 23 | $R$              | rtot                | Total ecosystem respiration (ra + rh)                                     | g C m$^{-2}$ |
-| 24 |                  | evapotranspiration  | ET (transpiration + immedEvap + evaporation + sublimation) for timestep   | cm           |
-| 25 |                  | fluxestranspiration | Transpiration component only                                              | cm           |
-| 26 |                  | minN                | Soil mineral nitrogen                                                     | g N m$^{-2}$ |
+| 12 |                  | soilWater           | Soil water content                                                        | cm           |
+| 13 | $f_{\text{WHC}}$ | soilWetnessFrac     | Soil water as fraction of holding capacity                                | unitless     |
+| 14 |                  | snow                | Snow water equivalent                                                     | cm           |
+| 15 |                  | npp                 | Net primary production for timestep                                       | g C m$^{-2}$ |
+| 16 |                  | nee                 | Net ecosystem exchange (sign convention per code: - (NPP - RH))           | g C m$^{-2}$ |
+| 17 |                  | cumNEE              | Cumulative NEE since simulation start                                     | g C m$^{-2}$ |
+| 18 | $GPP$            | gpp                 | Gross primary production                                                  | g C m$^{-2}$ |
+| 19 |                  | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                       | g C m$^{-2}$ |
+| 20 | $R_H$            | rSoil               | Heterotrophic respiration (maintenance + microbe terms per configuration) | g C m$^{-2}$ |
+| 21 |                  | rRoot               | Root (autotrophic) respiration                                            | g C m$^{-2}$ |
+| 22 |                  | ra                  | Total autotrophic respiration (rAboveground + rRoot)                      | g C m$^{-2}$ |
+| 23 |                  | rh                  | Total heterotrophic respiration (litter + soil components)                | g C m$^{-2}$ |
+| 24 | $R$              | rtot                | Total ecosystem respiration (ra + rh)                                     | g C m$^{-2}$ |
+| 25 |                  | evapotranspiration  | ET (transpiration + immedEvap + evaporation + sublimation) for timestep   | cm           |
+| 26 |                  | fluxestranspiration | Transpiration component only                                              | cm           |
+| 27 |                  | minN                | Soil mineral nitrogen                                                     | g N m$^{-2}$ |
 <!-- Not yet implemented
 | 24  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 25  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
