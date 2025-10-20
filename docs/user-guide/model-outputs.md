@@ -16,40 +16,42 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 3   |                  | time                | Hour-of-day (fractional) at start of timestep                             | hours        |
 | 4   |                  | plantWoodC          | Woody plant carbon                                                        | g C m$^{-2}$ |
 | 5   |                  | plantLeafC          | Leaf carbon                                                               | g C m$^{-2}$ |
-| 6   |                  | soil                | (Single) soil organic carbon (or mineral soil C pool)                     | g C m$^{-2}$ |
-| 7   |                  | microbeC            | Microbial carbon (0 if microbes flag off)                                 | g C m$^{-2}$ |
-| 8   |                  | coarseRootC         | Coarse root carbon                                                        | g C m$^{-2}$ |
-| 9   |                  | fineRootC           | Fine root carbon                                                          | g C m$^{-2}$ |
-| 10  |                  | litter              | Litter carbon (0 if litter pool disabled)                                 | g C m$^{-2}$ |
-| 11  |                  | soilWater           | Soil water content                                                        | cm           |
-| 12  | $f_{\text{WHC}}$ | soilWetnessFrac     | Soil water as fraction of holding capacity                                | unitless     |
-| 13  |                  | snow                | Snow water equivalent                                                     | cm           |
-| 14  |                  | npp                 | Net primary production for timestep                                       | g C m$^{-2}$ |
-| 15  |                  | nee                 | Net ecosystem exchange (sign convention per code: - (NPP - RH))           | g C m$^{-2}$ |
-| 16  |                  | cumNEE              | Cumulative NEE since simulation start                                     | g C m$^{-2}$ |
-| 17  | $GPP$            | gpp                 | Gross primary production                                                  | g C m$^{-2}$ |
-| 18  |                  | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                       | g C m$^{-2}$ |
-| 19  | $R_H$            | rSoil               | Heterotrophic respiration (maintenance + microbe terms per configuration) | g C m$^{-2}$ |
-| 20  |                  | rRoot               | Root (autotrophic) respiration                                            | g C m$^{-2}$ |
-| 21  |                  | ra                  | Total autotrophic respiration (rAboveground + rRoot)                      | g C m$^{-2}$ |
-| 22  |                  | rh                  | Total heterotrophic respiration (litter + soil components)                | g C m$^{-2}$ |
-| 23  | $R$              | rtot                | Total ecosystem respiration (ra + rh)                                     | g C m$^{-2}$ |
-| 24  |                  | evapotranspiration  | ET (transpiration + immedEvap + evaporation + sublimation) for timestep   | cm           |
-| 25  |                  | fluxestranspiration | Transpiration component only                                              | cm           |
+| 6   |                  | woodCreation        | Carbon allocated to wood during timestep                                  | g C m$^{-2}$ |
+| 7   |                  | soil                | (Single) soil organic carbon (or mineral soil C pool)                     | g C m$^{-2}$ |
+| 8   |                  | microbeC            | Microbial carbon (0 if microbes flag off)                                 | g C m$^{-2}$ |
+| 9   |                  | coarseRootC         | Coarse root carbon                                                        | g C m$^{-2}$ |
+| 10  |                  | fineRootC           | Fine root carbon                                                          | g C m$^{-2}$ |
+| 11  |                  | litter              | Litter carbon (0 if litter pool disabled)                                 | g C m$^{-2}$ |
+| 12  |                  | soilWater           | Soil water content                                                        | cm           |
+| 13  | $f_{\text{WHC}}$ | soilWetnessFrac     | Soil water as fraction of holding capacity                                | unitless     |
+| 14  |                  | snow                | Snow water equivalent                                                     | cm           |
+| 15  |                  | npp                 | Net primary production for timestep                                       | g C m$^{-2}$ |
+| 16  |                  | nee                 | Net ecosystem exchange (sign convention per code: - (NPP - RH))           | g C m$^{-2}$ |
+| 17  |                  | cumNEE              | Cumulative NEE since simulation start                                     | g C m$^{-2}$ |
+| 18  | $GPP$            | gpp                 | Gross primary production                                                  | g C m$^{-2}$ |
+| 19  |                  | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                       | g C m$^{-2}$ |
+| 20  | $R_H$            | rSoil               | Heterotrophic respiration (maintenance + microbe terms per configuration) | g C m$^{-2}$ |
+| 21  |                  | rRoot               | Root (autotrophic) respiration                                            | g C m$^{-2}$ |
+| 22  |                  | ra                  | Total autotrophic respiration (rAboveground + rRoot)                      | g C m$^{-2}$ |
+| 23  |                  | rh                  | Total heterotrophic respiration (litter + soil components)                | g C m$^{-2}$ |
+| 24  | $R$              | rtot                | Total ecosystem respiration (ra + rh)                                     | g C m$^{-2}$ |
+| 25  |                  | evapotranspiration  | ET (transpiration + immedEvap + evaporation + sublimation) for timestep   | cm           |
+| 26  |                  | fluxestranspiration | Transpiration component only                                              | cm           |
 <!-- Not yet implemented
 | 24  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 25  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 | 26  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 -->
+
 An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
 
 ```
 Notes: PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;
-year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration
-1998 305  0.00  5759.77  1133.88 16000.06     8.00  1919.90  1919.64   0.500     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000
-1998 305  7.00  5759.63  1133.71 16000.08     8.00  1919.77  1919.10   0.500     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022
-1998 305 17.00  5759.16  1133.48 16000.15     8.00  1919.57  1918.37   0.500     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000
+year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration
+1998 305  0.00  5759.77  1133.88     0.00 16000.06     0.00  1919.90  1919.64     0.00     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000
+1998 305  7.00  5759.63  1133.71     0.00 16000.08     0.00  1919.77  1919.10     0.00     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022
+1998 305 17.00  5759.16  1133.48     0.00 16000.15     0.00  1919.57  1918.37     0.00     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000
 ```
 
 ## Events output
