@@ -11,11 +11,12 @@ format:
 
 # SIPNET Model States and Parameters  {@sec-parameters}
 
-Note: this is a work in progress draft. Actual parameters used depend on the how the model structure is configured. 
+<!--TODO insert overview here-->
+Note: this is a work in progress. 
 
-Numbered items are cross-referenced with original documentation.
-
-Still a work in progress: the "Notation" section is consistent with model equations, some of the mathematical symbols in the tables may either be missing or need to be updated.
+- Actual parameters used depend on the how the model structure is configured. 
+- Numbered items are cross-referenced with original documentation.
+- "Notation" section is consistent with model equations, some of the mathematical symbols in the tables may either be missing or need to be updated.
 
 ## Notation
 
