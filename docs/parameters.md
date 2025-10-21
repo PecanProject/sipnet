@@ -9,68 +9,77 @@ format:
       - \usepackage{amsmath}
 ---
 
-# SIPNET Model States and Parameters
+# SIPNET Model States and Parameters  {@sec-parameters}
 
-Note: this is a work in progress draft. Not all parameters listed will be used in the CCMMF formulation of the model. The "Notation" section should be consistent with model equations, some of the mathematical symbols in the tables may not be.
+Note: this is a work in progress draft. Actual parameters used depend on the how the model structure is configured. 
 
 Numbered items are cross-referenced with original documentation.
+
+Still a work in progress: the "Notation" section is consistent with model equations, some of the mathematical symbols in the tables may either be missing or need to be updated.
 
 ## Notation
 
 ### Variables (Pools, Fluxes, and Parameters)
 
-| Symbol   | Description                                            |
-| -------- | ------------------------------------------------------ |
-| $C$      | Carbon pool                                            |
-| $N$      | Nitrogen pool                                          |
-| $CN$     | Carbon-to-Nitrogen ratio                               |
-| $W$      | Water pool or content                                  |
-| $R$      | Respiration flux                                       |
-| $A$      | Photosynthesis rate (net assimilation)                 |
-| $T$      | Temperature                                            |
-| $K$      | Rate constant (e.g., for decomposition or respiration) |
-| $LAI$    | Leaf Area Index                                        |
-| $PAR$    | Photosynthetically Active Radiation                    |
-| $GPP$    | Gross Primary Production                               |
-| $NPP$    | Net Primary Production                                 |
-| $NEE$    | Net Ecosystem Exchange                                 |
-| $VPD$    | Vapor Pressure Deficit                                 |
-| $ET$     | Evapotranspiration                                     |
-| $Q_{10}$ | Temperature sensitivity coefficient                    |
-| $f$      | The fraction of a pool or flux other than NPP          |
-| $F$      | Flux of carbon, nitrogen, or water                     |
-| $D$      | Dependency or Damping Function                         |
-| $N$      | Nitrogen                                               |
-| $C$      | Carbon                                                 |
-| $\alpha$ | The fraction of NPP allocated to a plant pool          |
-| $k$      | Scaling factor                                         |
+
+| **Category**               | **Symbol** | **Description**                                         |
+|:---------------------------|:-----------|:--------------------------------------------------------|
+| **State variables**        |            |                                                         |
+|                            | $C$        | Carbon pool                                             |
+|                            | $N$        | Nitrogen pool                                           |
+|                            | $W$        | Water pool or content                                   |
+|                            | $CN$       | Carbon-to-Nitrogen ratio                                |
+| **Fluxes and rates**       |            |                                                         |
+|                            | $F$        | Generic flux of carbon, nitrogen, or water              |
+|                            | $A$        | Photosynthetic assimilation (net photosynthesis)        |
+|                            | $R$        | Respiration flux                                        |
+|                            | $ET$       | Evapotranspiration                                      |
+|                            | $GPP$      | Gross Primary Production                                |
+|                            | $NPP$      | Net Primary Production                                  |
+|                            | $NEE$      | Net Ecosystem Exchange                                  |
+| **Environmental drivers**  |            |                                                         |
+|                            | $T$        | Temperature                                             |
+|                            | $VPD$      | Vapor Pressure Deficit                                  |
+|                            | $PAR$      | Photosynthetically Active Radiation                     |
+|                            | $LAI$      | Leaf Area Index                                         |
+| **Parameters**             |            |                                                         |
+|                            | $K$        | Rate constant (e.g., for decomposition or respiration)  |
+|                            | $Q_{10}$   | Temperature sensitivity coefficient                     |
+|                            | $\alpha$   | Fraction of NPP allocated to a plant pool               |
+|                            | $f$        | Fraction of a pool or flux other than NPP               |
+|                            | $k$        | Scaling factor                                          |
+|                            | $D$        | Dependency or damping function                          |
 
 ### Subscripts (Temporal, Spatial, or Contextual Identifiers)
 
-| Subscript              | Description                                           |
-| ---------------------- | ----------------------------------------------------- |
-| $X_0$                  | Initial value, default value, state at time zero      |
-| $X_t$                  | Value at time $t$                                     |
-| $X_d$                  | Daily value                                           |
-| $X_\text{max}$         | Maximum value (e.g., temperature or rate)             |
-| $X_\text{min}$         | Minimum value (e.g., temperature or rate)             |
-| $X_\text{opt}$         | Optimal value (e.g., temperature or rate)             |
-| $X_\text{avg}$         | Average value (e.g., over a timestep or spatial area) |
-| $X_\text{leaf}$        | leaf pools or fluxes                                  |
-| $X_\text{wood}$        | wood pools or fluxes                                  |
-| $X_\text{root}$        | root pool                                             |
-| $X_\text{fine root}$   | fine root pool                                        |
-| $X_\text{coarse root}$ | coarse root pool                                      |
-| $X_\text{soil}$        | soil pools or processes                               |
-| $X_\text{litter}$      | litter pools or processes                             |
-| $X_\text{veg}$         | vegetation processes (general)                        |
-| $X_\text{resp}$        | respiration processes                                 |
-| $X_\text{dec}$         | decomposition processes                               |
-| $X_\text{vol}$         | volatilization processes                              |
-| $X_\text{VPD}$         | vapor pressure deficit                                |
-| $X_\text{org}$         | organic forms                                         |
-| $X_\text{mineral}$     | mineral forms                                         |
-| $X_{\text{anaer}}$     | anaerobic soil conditions                             |
+
+|**Category**                 | **Subscript**          | **Description**                                  |
+|:---------------------------|:-----------------------|:-------------------------------------------------|
+| **Temporal identifiers**   |                       |                                                   |
+|                            | $X_0$                 | Initial value                                     |
+|                            | $X_t$                 | Value at time $t$                                 |
+|                            | $X_d$                 | Daily value or average                            |
+|                            | $X_\text{avg}$        | Average value (e.g., over a timestep or spatial area) |
+|                            | $X_\text{max}$        | Maximum value (e.g., temperature or rate)         |
+|                            | $X_\text{min}$        | Minimum value (e.g., temperature or rate)         |
+|                            | $X_\text{opt}$        | Optimal value (e.g., temperature or rate)         |
+| **Structural components**  |              |                                                  |
+|                            | $X_\text{leaf}$       | Leaf pools or fluxes                             |
+|                            | $X_\text{wood}$       | Wood pools or fluxes                             |
+|                            | $X_\text{root}$       | Root pool                                        |
+|                            | $X_\text{fine root}$  | Fine root pool                                   |
+|                            | $X_\text{coarse root}$| Coarse root pool                                 |
+|                            | $X_\text{soil}$       | Soil pools or processes                          |
+|                            | $X_\text{litter}$     | Litter pools or processes                        |
+|                            | $X_\text{veg}$        | Vegetation processes (general)                   |
+| **Processes context**      |                       |                                                  |
+|                            | $X_\text{resp}$       | Respiration processes                            |
+|                            | $X_\text{dec}$        | Decomposition processes                          |
+|                            | $X_\text{vol}$        | Volatilization processes                         |
+| **Chemical / environmental identifiers** |          |                                                 |
+|                            | $X_\text{org}$        | Organic forms                                    |
+|                            | $X_\text{mineral}$    | Mineral forms                                    |
+|                            | $X_{\text{anaer}}$    | Anaerobic soil conditions                        |
 
 Subscripts may be used in combination, e.g. $X_{\text{soil,mineral},0}$.
 
