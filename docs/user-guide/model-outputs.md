@@ -16,7 +16,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 3  |                  | time                | Hour-of-day (fractional) at start of timestep                             | hours        |
 | 4  |                  | plantWoodC          | Woody plant carbon                                                        | g C m$^{-2}$ |
 | 5  |                  | plantLeafC          | Leaf carbon                                                               | g C m$^{-2}$ |
-| 6  |                  | woodCreation        | Created wood carbon (this time step)                                      | g C m$^{-2}$ |
+| 6  |                  | woodCreation        | Carbon allocated to wood during timestep                                  | g C m$^{-2}$ |
 | 7  |                  | soil                | (Single) soil organic carbon (or mineral soil C pool)                     | g C m$^{-2}$ |
 | 8  |                  | microbeC            | Microbial carbon (0 if microbes flag off)                                 | g C m$^{-2}$ |
 | 9  |                  | coarseRootC         | Coarse root carbon                                                        | g C m$^{-2}$ |
@@ -44,6 +44,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 26  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 -->
+
 An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
 
 ```

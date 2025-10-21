@@ -13,6 +13,8 @@ sections to include in release notes:
 
 ### Added
 
+- Add woodCreation to sipnet.out (#161)
+
 ### Fixed
 
 ### Changed
