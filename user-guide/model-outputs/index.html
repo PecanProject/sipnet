@@ -874,138 +874,145 @@
 <tr>
 <td>6</td>
 <td></td>
+<td>woodCreation</td>
+<td>Carbon allocated to wood during timestep</td>
+<td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
+</tr>
+<tr>
+<td>7</td>
+<td></td>
 <td>soil</td>
 <td>(Single) soil organic carbon (or mineral soil C pool)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>7</td>
+<td>8</td>
 <td></td>
 <td>microbeC</td>
 <td>Microbial carbon (0 if microbes flag off)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>8</td>
+<td>9</td>
 <td></td>
 <td>coarseRootC</td>
 <td>Coarse root carbon</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>9</td>
+<td>10</td>
 <td></td>
 <td>fineRootC</td>
 <td>Fine root carbon</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>10</td>
+<td>11</td>
 <td></td>
 <td>litter</td>
 <td>Litter carbon (0 if litter pool disabled)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>11</td>
+<td>12</td>
 <td></td>
 <td>soilWater</td>
 <td>Soil water content</td>
 <td>cm</td>
 </tr>
 <tr>
-<td>12</td>
+<td>13</td>
 <td><span class="arithmatex">\(f_{\text{WHC}}\)</span></td>
 <td>soilWetnessFrac</td>
 <td>Soil water as fraction of holding capacity</td>
 <td>unitless</td>
 </tr>
 <tr>
-<td>13</td>
+<td>14</td>
 <td></td>
 <td>snow</td>
 <td>Snow water equivalent</td>
 <td>cm</td>
 </tr>
 <tr>
-<td>14</td>
+<td>15</td>
 <td></td>
 <td>npp</td>
 <td>Net primary production for timestep</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>15</td>
+<td>16</td>
 <td></td>
 <td>nee</td>
 <td>Net ecosystem exchange (sign convention per code: - (NPP - RH))</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>16</td>
+<td>17</td>
 <td></td>
 <td>cumNEE</td>
 <td>Cumulative NEE since simulation start</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>17</td>
+<td>18</td>
 <td><span class="arithmatex">\(GPP\)</span></td>
 <td>gpp</td>
 <td>Gross primary production</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>18</td>
+<td>19</td>
 <td></td>
 <td>rAboveground</td>
 <td>Aboveground autotrophic respiration (leaves + wood)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>19</td>
+<td>20</td>
 <td><span class="arithmatex">\(R_H\)</span></td>
 <td>rSoil</td>
 <td>Heterotrophic respiration (maintenance + microbe terms per configuration)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>20</td>
+<td>21</td>
 <td></td>
 <td>rRoot</td>
 <td>Root (autotrophic) respiration</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>21</td>
+<td>22</td>
 <td></td>
 <td>ra</td>
 <td>Total autotrophic respiration (rAboveground + rRoot)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>22</td>
+<td>23</td>
 <td></td>
 <td>rh</td>
 <td>Total heterotrophic respiration (litter + soil components)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>23</td>
+<td>24</td>
 <td><span class="arithmatex">\(R\)</span></td>
 <td>rtot</td>
 <td>Total ecosystem respiration (ra + rh)</td>
 <td>g C m<span class="arithmatex">\(^{-2}\)</span></td>
 </tr>
 <tr>
-<td>24</td>
+<td>25</td>
 <td></td>
 <td>evapotranspiration</td>
 <td>ET (transpiration + immedEvap + evaporation + sublimation) for timestep</td>
 <td>cm</td>
 </tr>
 <tr>
-<td>25</td>
+<td>26</td>
 <td></td>
 <td>fluxestranspiration</td>
 <td>Transpiration component only</td>
@@ -1019,12 +1026,13 @@
 | 26  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 -->
+
 <p>An example output file can be found in <a href="https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out">tests/smoke/sipnet.out</a>.</p>
 <div class="highlight"><pre><span></span><code>Notes: PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;
-year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration
-1998 305  0.00  5759.77  1133.88 16000.06     8.00  1919.90  1919.64   0.500     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000
-1998 305  7.00  5759.63  1133.71 16000.08     8.00  1919.77  1919.10   0.500     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022
-1998 305 17.00  5759.16  1133.48 16000.15     8.00  1919.57  1918.37   0.500     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000
+year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration
+1998 305  0.00  5759.77  1133.88     0.00 16000.06     0.00  1919.90  1919.64     0.00     6.00    0.500     0.00    -0.32     0.74     0.74     0.00    0.164    0.578    0.159    0.324    0.419    0.742 0.00302126   0.0000
+1998 305  7.00  5759.63  1133.71     0.00 16000.08     0.00  1919.77  1919.10     0.00     5.99    0.500     0.00    -0.30     0.97     1.71     0.22    0.271    0.917    0.251    0.522    0.666    1.188 0.00240544   0.0022
+1998 305 17.00  5759.16  1133.48     0.00 16000.15     0.00  1919.57  1918.37     0.00     5.99    0.499     0.00    -0.67     1.56     3.27     0.00    0.338    1.219    0.335    0.673    0.884    1.557 0.00662149   0.0000
 </code></pre></div>
 <h2 id="events-output">Events output<a class="headerlink" href="#events-output" title="Permanent link">&para;</a></h2>
 <p>When event handling is enabled, SIPNET will create a file named <code>events.out</code>. </p>
