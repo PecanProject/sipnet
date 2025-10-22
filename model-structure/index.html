@@ -384,6 +384,16 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scope
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#notes-on-notation" class="md-nav__link">
     <span class="md-ellipsis">
       Notes on notation:
@@ -391,22 +401,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#scope" class="md-nav__link">
-    <span class="md-ellipsis">
-      Scope
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mathfrakproposed-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      \(\mathfrak{Proposed \ Features}\)
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1384,6 +1381,16 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scope
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#notes-on-notation" class="md-nav__link">
     <span class="md-ellipsis">
       Notes on notation:
@@ -1391,22 +1398,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#scope" class="md-nav__link">
-    <span class="md-ellipsis">
-      Scope
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mathfrakproposed-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      \(\mathfrak{Proposed \ Features}\)
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2033,22 +2027,21 @@ In equation \eqref{eq:line}, $m$ is the slope and $b$ is the intercept.
 <li>Process events — convert events to per‑day fluxes and accumulate into fluxes.</li>
 <li>Update pools — pools are updated from the accumulated fluxes and pool‑specific updates.</li>
 </ol>
-<h3 id="notes-on-notation">Notes on notation:<a class="headerlink" href="#notes-on-notation" title="Permanent link">&para;</a></h3>
-<p>Fluxes are denoted by <span class="arithmatex">\(F\)</span>, except that respiration is denoted by <span class="arithmatex">\(R\)</span> following convention and previous descriptions of SIPNET.</p>
-<p>Parameters and other information can be found in the Parameters documentation. <!-- or maybe combined here?--></p>
 <h3 id="scope">Scope<a class="headerlink" href="#scope" title="Permanent link">&para;</a></h3>
-<p>This document provides an overview of the SIPNET model’s structure. It was written to 
-- Consolidate the descriptions from multiple papers (notably Braswell et al 2005 and Zobitz et al 2008). 
-- Provide enough detail to support the addition of agronomic events, CH4, and N2O fluxes.
-- Focus on features currently in regular use.</p>
-<p>There are multiple ways to configure the model structure, and not all model structures are listed, notably the litter quality model. </p>
-<p>We aim to extend the scope of this document to be more comprehensive of the regularly used features.</p>
-<h3 id="mathfrakproposed-features"><span class="arithmatex">\(\mathfrak{Proposed \ Features}\)</span><a class="headerlink" href="#mathfrakproposed-features" title="Permanent link">&para;</a></h3>
-<p>Proposed features are indicated using the using <span class="arithmatex">\(\mathfrak{Fraktur Font}\)</span>. Where an entire section is new, it is only used in the section heading. Otherwise, it is used for terms within equations. As these features are implemented, the <code>\mathfrak{}</code> commands should be removed.</p>
-<!-- to remove
-- remove \mathfrak{}
-component out of 
--->
+<p>This document provides an overview of the SIPNET model’s structure. It was written to </p>
+<ul>
+<li>Consolidate the descriptions from multiple papers (notably Braswell et al 2005 and Zobitz et al 2008). </li>
+<li>Provide enough detail to support the addition of agronomic events, CH4, and N2O fluxes.</li>
+<li>Focus on features currently in regular use.</li>
+</ul>
+<p>There are multiple ways to configure the model structure, and not all model structures or components are listed. 
+Implementation in source code (sipnet.c) is annotated with references to specific publications.  </p>
+<h4 id="notes-on-notation">Notes on notation:<a class="headerlink" href="#notes-on-notation" title="Permanent link">&para;</a></h4>
+<ul>
+<li>The general approach used to define variables and subscripts is defined in @sec-notation.</li>
+<li>Specific parameter, flux, and state definitions are documentated in @sec-parameters.</li>
+<li><span class="arithmatex">\(\mathfrak{Fraktur Font}\)</span> is used to identify features that have not been implemented. This font will be removed as features are implemented.</li>
+</ul>
 <h2 id="carbon-dynamics">Carbon Dynamics<a class="headerlink" href="#carbon-dynamics" title="Permanent link">&para;</a></h2>
 <h3 id="litter-pool">Litter Pool<a class="headerlink" href="#litter-pool" title="Permanent link">&para;</a></h3>
 <p>SIPNET can be run with or without a separate litter pool (LITTER_POOL=1 or 0). 

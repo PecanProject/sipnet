@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sipnet-model-states-and-parameters" class="md-skip">
+        <a href="#sipnet-model-states-and-parameters-sec-parameters" class="md-skip">
           Skip to content
         </a>
       
@@ -1131,110 +1131,149 @@
   
 
 
-<h1 id="sipnet-model-states-and-parameters">SIPNET Model States and Parameters<a class="headerlink" href="#sipnet-model-states-and-parameters" title="Permanent link">&para;</a></h1>
-<p>Note: this is a work in progress draft. Not all parameters listed will be used in the CCMMF formulation of the model. The "Notation" section should be consistent with model equations, some of the mathematical symbols in the tables may not be.</p>
-<p>Numbered items are cross-referenced with original documentation.</p>
+<h1 id="sipnet-model-states-and-parameters-sec-parameters">SIPNET Model States and Parameters  {@sec-parameters}<a class="headerlink" href="#sipnet-model-states-and-parameters-sec-parameters" title="Permanent link">&para;</a></h1>
+<!--TODO insert overview here-->
+<p>Note: this is a work in progress. </p>
+<ul>
+<li>Actual parameters used depend on the how the model structure is configured. </li>
+<li>Numbered items are cross-referenced with original documentation.</li>
+<li>"Notation" section is consistent with model equations, some of the mathematical symbols in the tables may either be missing or need to be updated.</li>
+</ul>
 <h2 id="notation">Notation<a class="headerlink" href="#notation" title="Permanent link">&para;</a></h2>
 <h3 id="variables-pools-fluxes-and-parameters">Variables (Pools, Fluxes, and Parameters)<a class="headerlink" href="#variables-pools-fluxes-and-parameters" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Symbol</th>
-<th>Description</th>
+<th style="text-align: left;"><strong>Category</strong></th>
+<th style="text-align: left;"><strong>Symbol</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><span class="arithmatex">\(C\)</span></td>
-<td>Carbon pool</td>
+<td style="text-align: left;"><strong>State variables</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(N\)</span></td>
-<td>Nitrogen pool</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(C\)</span></td>
+<td style="text-align: left;">Carbon pool</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(CN\)</span></td>
-<td>Carbon-to-Nitrogen ratio</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(N\)</span></td>
+<td style="text-align: left;">Nitrogen pool</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(W\)</span></td>
-<td>Water pool or content</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(W\)</span></td>
+<td style="text-align: left;">Water pool or content</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(R\)</span></td>
-<td>Respiration flux</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(CN\)</span></td>
+<td style="text-align: left;">Carbon-to-Nitrogen ratio</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(A\)</span></td>
-<td>Photosynthesis rate (net assimilation)</td>
+<td style="text-align: left;"><strong>Fluxes and rates</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(T\)</span></td>
-<td>Temperature</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(F\)</span></td>
+<td style="text-align: left;">Generic flux of carbon, nitrogen, or water</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(K\)</span></td>
-<td>Rate constant (e.g., for decomposition or respiration)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(A\)</span></td>
+<td style="text-align: left;">Photosynthetic assimilation (net photosynthesis)</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(LAI\)</span></td>
-<td>Leaf Area Index</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(R\)</span></td>
+<td style="text-align: left;">Respiration flux</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(PAR\)</span></td>
-<td>Photosynthetically Active Radiation</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(ET\)</span></td>
+<td style="text-align: left;">Evapotranspiration</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(GPP\)</span></td>
-<td>Gross Primary Production</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(GPP\)</span></td>
+<td style="text-align: left;">Gross Primary Production</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(NPP\)</span></td>
-<td>Net Primary Production</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(NPP\)</span></td>
+<td style="text-align: left;">Net Primary Production</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(NEE\)</span></td>
-<td>Net Ecosystem Exchange</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(NEE\)</span></td>
+<td style="text-align: left;">Net Ecosystem Exchange</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(VPD\)</span></td>
-<td>Vapor Pressure Deficit</td>
+<td style="text-align: left;"><strong>Environmental drivers</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(ET\)</span></td>
-<td>Evapotranspiration</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(T\)</span></td>
+<td style="text-align: left;">Temperature</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(Q_{10}\)</span></td>
-<td>Temperature sensitivity coefficient</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(VPD\)</span></td>
+<td style="text-align: left;">Vapor Pressure Deficit</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(f\)</span></td>
-<td>The fraction of a pool or flux other than NPP</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(PAR\)</span></td>
+<td style="text-align: left;">Photosynthetically Active Radiation</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(F\)</span></td>
-<td>Flux of carbon, nitrogen, or water</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(LAI\)</span></td>
+<td style="text-align: left;">Leaf Area Index</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(D\)</span></td>
-<td>Dependency or Damping Function</td>
+<td style="text-align: left;"><strong>Parameters</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(N\)</span></td>
-<td>Nitrogen</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(K\)</span></td>
+<td style="text-align: left;">Rate constant (e.g., for decomposition or respiration)</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(C\)</span></td>
-<td>Carbon</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(Q_{10}\)</span></td>
+<td style="text-align: left;">Temperature sensitivity coefficient</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(\alpha\)</span></td>
-<td>The fraction of NPP allocated to a plant pool</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(\alpha\)</span></td>
+<td style="text-align: left;">Fraction of NPP allocated to a plant pool</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(k\)</span></td>
-<td>Scaling factor</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(f\)</span></td>
+<td style="text-align: left;">Fraction of a pool or flux other than NPP</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(k\)</span></td>
+<td style="text-align: left;">Scaling factor</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(D\)</span></td>
+<td style="text-align: left;">Dependency or damping function</td>
 </tr>
 </tbody>
 </table>
@@ -1242,98 +1281,136 @@
 <table>
 <thead>
 <tr>
-<th>Subscript</th>
-<th>Description</th>
+<th style="text-align: left;"><strong>Category</strong></th>
+<th style="text-align: left;"><strong>Subscript</strong></th>
+<th style="text-align: left;"><strong>Description</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><span class="arithmatex">\(X_0\)</span></td>
-<td>Initial value, default value, state at time zero</td>
+<td style="text-align: left;"><strong>Temporal identifiers</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_t\)</span></td>
-<td>Value at time <span class="arithmatex">\(t\)</span></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_0\)</span></td>
+<td style="text-align: left;">Initial value</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_d\)</span></td>
-<td>Daily value</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_t\)</span></td>
+<td style="text-align: left;">Value at time <span class="arithmatex">\(t\)</span></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{max}\)</span></td>
-<td>Maximum value (e.g., temperature or rate)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_d\)</span></td>
+<td style="text-align: left;">Daily value or average</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{min}\)</span></td>
-<td>Minimum value (e.g., temperature or rate)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{avg}\)</span></td>
+<td style="text-align: left;">Average value (e.g., over a timestep or spatial area)</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{opt}\)</span></td>
-<td>Optimal value (e.g., temperature or rate)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{max}\)</span></td>
+<td style="text-align: left;">Maximum value (e.g., temperature or rate)</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{avg}\)</span></td>
-<td>Average value (e.g., over a timestep or spatial area)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{min}\)</span></td>
+<td style="text-align: left;">Minimum value (e.g., temperature or rate)</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{leaf}\)</span></td>
-<td>leaf pools or fluxes</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{opt}\)</span></td>
+<td style="text-align: left;">Optimal value (e.g., temperature or rate)</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{wood}\)</span></td>
-<td>wood pools or fluxes</td>
+<td style="text-align: left;"><strong>Structural components</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{root}\)</span></td>
-<td>root pool</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{leaf}\)</span></td>
+<td style="text-align: left;">Leaf pools or fluxes</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{fine root}\)</span></td>
-<td>fine root pool</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{wood}\)</span></td>
+<td style="text-align: left;">Wood pools or fluxes</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{coarse root}\)</span></td>
-<td>coarse root pool</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{root}\)</span></td>
+<td style="text-align: left;">Root pool</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{soil}\)</span></td>
-<td>soil pools or processes</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{fine root}\)</span></td>
+<td style="text-align: left;">Fine root pool</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{litter}\)</span></td>
-<td>litter pools or processes</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{coarse root}\)</span></td>
+<td style="text-align: left;">Coarse root pool</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{veg}\)</span></td>
-<td>vegetation processes (general)</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{soil}\)</span></td>
+<td style="text-align: left;">Soil pools or processes</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{resp}\)</span></td>
-<td>respiration processes</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{litter}\)</span></td>
+<td style="text-align: left;">Litter pools or processes</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{dec}\)</span></td>
-<td>decomposition processes</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{veg}\)</span></td>
+<td style="text-align: left;">Vegetation processes (general)</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{vol}\)</span></td>
-<td>volatilization processes</td>
+<td style="text-align: left;"><strong>Processes context</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{VPD}\)</span></td>
-<td>vapor pressure deficit</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{resp}\)</span></td>
+<td style="text-align: left;">Respiration processes</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{org}\)</span></td>
-<td>organic forms</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{dec}\)</span></td>
+<td style="text-align: left;">Decomposition processes</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_\text{mineral}\)</span></td>
-<td>mineral forms</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{vol}\)</span></td>
+<td style="text-align: left;">Volatilization processes</td>
 </tr>
 <tr>
-<td><span class="arithmatex">\(X_{\text{anaer}}\)</span></td>
-<td>anaerobic soil conditions</td>
+<td style="text-align: left;"><strong>Chemical / environmental identifiers</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{org}\)</span></td>
+<td style="text-align: left;">Organic forms</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_\text{mineral}\)</span></td>
+<td style="text-align: left;">Mineral forms</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><span class="arithmatex">\(X_{\text{anaer}}\)</span></td>
+<td style="text-align: left;">Anaerobic soil conditions</td>
 </tr>
 </tbody>
 </table>
