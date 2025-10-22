@@ -381,7 +381,12 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
   initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), ctx.microbes);
   initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes );
+  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
+
+  // Nitrogen cycle params for the MAGIC project
+initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
+initializeOneModelParam(modelParams, "nVolatilization", &(params.nVolatilization), ctx.nitrogenCycle);
+
   // NOLINTEND
   // clang-format on
 
@@ -402,7 +407,7 @@ void outputHeader(FILE *out) {
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
   fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-               "evapotranspiration fluxestranspiration\n");
+               "evapotranspiration fluxestranspiration minN n2oFlux\n");
 }
 
 /*!
@@ -423,11 +428,11 @@ void outputState(FILE *out, int year, int day, double time) {
           trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f\n",
+          "%8.4f %8.3f %8.6f\n",
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration);
+          fluxes.transpiration, envi.minN, fluxes.nVolatilization);
 }
 
 // de-allocate space used for climate linked list
@@ -625,9 +630,7 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
     *trans = 0.0;  // no photosynthesis -> no transpiration
     *dWater = 1;  // dWater doesn't matter, since we don't have any
                   // photosynthesis
-  }
-
-  else {
+  } else {
     // :: from [1], eq (A13)
     wue = params.wueConst / vpd;
 
@@ -1056,6 +1059,14 @@ double calcMoistEffect(double water, double whc) {
   return moistEffect;
 }
 
+/**
+ *
+ */
+double calcTempEffect(double tsoil) {
+  // :: from [1], D_temp calc as part of eq (A20)
+  return params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
+}
+
 /*!
  * Calculate the rSoil flux when microbes is off
  *
@@ -1073,8 +1084,7 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
     // :: from [1], remainder of eq (A20)
     // See calcMoistEffect() for first part of eq (A20) calculation
-    double tempEffect =
-        params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
+    double tempEffect = calcTempEffect(tsoil);
 
     // Effects of tillage, if any
     double tillageEffect = 1 + eventTrackers.d_till_mod;
@@ -1197,6 +1207,18 @@ double calcRootAndWoodFluxes(void) {
 }
 
 /*!
+ * Calculate mineral N volatilization flux
+ */
+void calcNVolatilizationFlux() {
+  // flux = k_vol * nMin * Dtemp * Dwater
+  double d_temp = calcTempEffect(climate->tsoil);
+  double d_water = calcMoistEffect(envi.soilWater, params.soilWHC);
+
+  fluxes.nVolatilization =
+      (params.nVolatilization * envi.minN * d_temp * d_water) / climate->length;
+}
+
+/*!
  * Calculate flux terms for sipnet as part of main model flow
  *
  * All fluxes should be calculated before state variables are updated.
@@ -1257,6 +1279,11 @@ void calculateFluxes(void) {
                       rootExudate);
   } else {
     calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
+  }
+
+  // Nitrogen cycle
+  if (ctx.nitrogenCycle) {
+    calcNVolatilizationFlux();
   }
 }
 
@@ -1543,6 +1570,10 @@ void updatePoolsForSoil(void) {
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss - fluxes.rFineRoot) *
       climate->length;
+
+  // Nitrogen Cycle
+  // Added for MAGIC project
+  envi.minN -= fluxes.nVolatilization * climate->length;
 }
 
 // !!! main runner function !!!
@@ -1632,6 +1663,9 @@ void setupModel(void) {
   // one:
   ensureAllocation();
 
+  ///
+  /// PARAMS SETUP
+
   // If we aren't explicitly modeling microbe pool, then do not have a pulse to
   // microbes, exudates go directly to the soil
   if (!ctx.microbes) {
@@ -1681,6 +1715,9 @@ void setupModel(void) {
   params.baseMicrobeResp = params.baseMicrobeResp * 24;  // change from per hour
                                                          // to per day rate
 
+  ///
+  /// ENVIRONMENT SETUP
+
   envi.coarseRootC = params.coarseRootFrac * params.plantWoodInit;
   envi.fineRootC = params.fineRootFrac * params.plantWoodInit;
 
@@ -1692,6 +1729,12 @@ void setupModel(void) {
   }
 
   envi.snow = params.snowInit;
+
+  if (ctx.nitrogenCycle) {
+    envi.minN = params.minNInit;
+  } else {
+    envi.minN = 0.0;
+  }
 
   climate = firstClimate;
 
