@@ -364,6 +364,9 @@ typedef struct Parameters {
   // Initial soil mineral nitrogen pool amount, g C * m^-2 ground area
   double minNInit;
 
+  // Fraction of mineral N volatilized per day, d^-1
+  double nVolatilization;
+
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -521,6 +524,14 @@ typedef struct FluxVars {
   // wood creation term, dependent on NPP similar to leaf creation, but
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;
+
+  // ****************************************
+  // Fluxes for nitrogen cycle
+  // Note: added as part of MAGIC project
+  //
+
+  // Mineral N lost to volatilization
+  double nVolatilization;
 
   // ****************************************
   // Fluxes for event handling
