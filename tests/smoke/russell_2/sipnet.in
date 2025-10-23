@@ -41,33 +41,8 @@ QUIET = 0
 EVENTS = 1
 ! Process events found in events.in
 
-GDD = 1
-! Use growing degree days to determine leaf growth
-
-GROWTH_RESP = 0
-! Explicitly model growth resp, rather than including with maint resp
-
-LEAF_WATER = 0
-! Calculate leaf pool and evaporate from that pool
-
-LITTER_POOL = 0
+LITTER_POOL = 1
 ! Enable litter pool in addition to single soil carbon pool
 
-MICROBES = 0
-! Enable microbe modeling
-
-SNOW = 1
-! Keep track of snowpack, rather than assuming all precipitation is liquid
-
-SOIL_PHENOL = 0
-! Use soil temperature to determine leaf growth
-
-SOIL_QUALITY = 0
-! Use soil quality submodel
-
-WATER_HRESP = 1
-! Whether soil moisture affects heterotrophic respiration
-
-NUM_SOIL_CARBON_POOLS = 3
-! NON DEFAULT
-! Number of soil carbon pools to explicitly model
+NITROGEN_CYCLE = 1
+! Enable modeling of nitrogen cycle
