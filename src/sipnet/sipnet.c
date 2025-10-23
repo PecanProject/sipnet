@@ -381,7 +381,11 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
   initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), ctx.microbes);
   initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes );
+  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
+
+  // Nitrogen cycle params for the MAGIC project
+  initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
+
   // NOLINTEND
   // clang-format on
 
@@ -402,7 +406,7 @@ void outputHeader(FILE *out) {
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
   fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-               "evapotranspiration fluxestranspiration\n");
+               "evapotranspiration fluxestranspiration minN\n");
 }
 
 /*!
@@ -423,11 +427,11 @@ void outputState(FILE *out, int year, int day, double time) {
           trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f\n",
+          "%8.4f %8.3f\n",
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration);
+          fluxes.transpiration, envi.minN);
 }
 
 // de-allocate space used for climate linked list
@@ -1632,6 +1636,9 @@ void setupModel(void) {
   // one:
   ensureAllocation();
 
+  ///
+  /// PARAMS SETUP
+
   // If we aren't explicitly modeling microbe pool, then do not have a pulse to
   // microbes, exudates go directly to the soil
   if (!ctx.microbes) {
@@ -1681,6 +1688,9 @@ void setupModel(void) {
   params.baseMicrobeResp = params.baseMicrobeResp * 24;  // change from per hour
                                                          // to per day rate
 
+  ///
+  /// ENVIRONMENT SETUP
+
   envi.coarseRootC = params.coarseRootFrac * params.plantWoodInit;
   envi.fineRootC = params.fineRootFrac * params.plantWoodInit;
 
@@ -1692,6 +1702,12 @@ void setupModel(void) {
   }
 
   envi.snow = params.snowInit;
+
+  if (ctx.nitrogenCycle) {
+    envi.minN = params.minNInit;
+  } else {
+    envi.minN = 0.0;
+  }
 
   climate = firstClimate;
 
