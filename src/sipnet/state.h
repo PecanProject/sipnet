@@ -521,7 +521,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for event handling
-  //  - fluxes tracked as part of modeling from [4]
+  //  - fluxes tracked as part of modeling from [5]
   //
 
   // plantLeafC addition
