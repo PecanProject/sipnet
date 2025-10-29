@@ -37,7 +37,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 24 | $R$              | rtot                | Total ecosystem respiration (ra + rh)                                     | g C m$^{-2}$ |
 | 25 |                  | evapotranspiration  | ET (transpiration + immedEvap + evaporation + sublimation) for timestep   | cm           |
 | 26 |                  | fluxestranspiration | Transpiration component only                                              | cm           |
-| 27 |                  | minN                | Soil mineral nitrogen                                                     | g N m$^{-2}$ |
+| 27 | $N_\textrm{min}$ | minN                | Soil mineral nitrogen                                                     | g N m$^{-2}$ |
 <!-- Not yet implemented
 | 24  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 25  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |

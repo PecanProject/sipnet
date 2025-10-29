@@ -6,10 +6,7 @@
 // [2] Sacks et al., 2006
 // [3] Zobitz et al, 2008
 // [4] Zobitz (et al.?), date unknown, chapter 5 from unknown book
-//
-// Also of note, additions have been made to support the MAGIC
-// (Modeling and Analysis of Greenhouse gases In Cropland) project
-// for the California Air Resources Board
+// [5] LeBauer et al., unpublished
 
 typedef struct ClimateVars ClimateNode;
 
@@ -357,9 +354,9 @@ typedef struct Parameters {
   double leafPoolDepth;
 
   // ****************************************
-  // Nitrogen Cycle
+  // Params from [5] LeBauer et al. (unpublished)
   // ****************************************
-  // No published source for these, added as part of MAGIC project
+  // Nitrogen Cycle
 
   // Initial soil mineral nitrogen pool amount, g C * m^-2 ground area
   double minNInit;
@@ -403,7 +400,7 @@ typedef struct Environment {
   // carbon in microbes (g C m^-2 ground area)
   double microbeC;
 
-  ///// MAGIC project
+  ///// From [5] LeBauer et al. (unpublished)
   // soil mineral nitrogen pool (g C m^-2 ground area)
   double minN;
 } Envi;
@@ -535,7 +532,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for event handling
-  // Note: added as part of MAGIC project
+  //  - fluxes tracked as part of modeling from [5]
   //
 
   // plantLeafC addition
