@@ -104,6 +104,7 @@ void usage(char *progName) {
   printf("Note the following restrictions on these options:\n");
   printf(" --soil-phenol and --gdd may not both be turned on\n");
   printf(" --events and --microbes may not both be turned on\n");
+  printf(" --nitrogen-cycle and --microbes may not both be turned on\n");
   // clang-format on
 }
 
