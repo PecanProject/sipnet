@@ -47,7 +47,7 @@ Free allocated memory
 
 Call this when done running model 
 
-Definition at line \textbf{ 1750} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1769} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -86,7 +86,7 @@ Read in initial parameter values and climate data. Also set up pointers to diffe
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1740} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1759} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -129,7 +129,7 @@ Run the model using parameter values in model\+Params
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1708} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1727} of file \textbf{ sipnet.\+c}.
 
 
 
@@ -155,13 +155,15 @@ Here is the call graph for this function\+:
 
 Setup model for run
 
-Set calculated parameters, do parameter conversions, and initialize tracker structs. 
+Set calculated parameters, do parameter conversions, and initialize tracker structs. PARAMS SETUP
 
-Definition at line \textbf{ 1624} of file \textbf{ sipnet.\+c}.
+ENVIRONMENT SETUP
+
+Definition at line \textbf{ 1631} of file \textbf{ sipnet.\+c}.
 
 
 
-References \textbf{ Parameters\+::base\+Coarse\+Root\+Resp}, \textbf{ Parameters\+::base\+Fine\+Root\+Resp}, \textbf{ Parameters\+::base\+Microbe\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp}, \textbf{ Parameters\+::base\+Veg\+Resp}, \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Parameters\+::coarse\+Root\+Frac}, \textbf{ Parameters\+::coarse\+Root\+Turnover\+Rate}, \textbf{ ctx}, \textbf{ ensure\+Allocation()}, \textbf{ envi}, \textbf{ Environment\+::fine\+RootC}, \textbf{ Parameters\+::fine\+Root\+Frac}, \textbf{ Parameters\+::fine\+Root\+Turnover\+Rate}, \textbf{ first\+Climate}, \textbf{ init\+Event\+Trackers()}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ init\+Trackers()}, \textbf{ Parameters\+::lai\+Init}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ Parameters\+::leaf\+Turnover\+Rate}, \textbf{ Environment\+::litter}, \textbf{ Parameters\+::litter\+Breakdown\+Rate}, \textbf{ Parameters\+::litter\+Init}, \textbf{ Context\+::litter\+Pool}, \textbf{ Parameters\+::max\+Ingestion\+Rate}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ Environment\+::microbeC}, \textbf{ Parameters\+::microbe\+Init}, \textbf{ Parameters\+::microbe\+Pulse\+Eff}, \textbf{ Context\+::microbes}, \textbf{ params}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Parameters\+::plant\+Wood\+Init}, \textbf{ Parameters\+::psn\+TMax}, \textbf{ Parameters\+::psn\+TMin}, \textbf{ Parameters\+::psn\+TOpt}, \textbf{ reset\+Mean\+Tracker()}, \textbf{ Environment\+::snow}, \textbf{ Parameters\+::snow\+Init}, \textbf{ Environment\+::soil}, \textbf{ Parameters\+::soil\+Init}, \textbf{ Environment\+::soil\+Water}, \textbf{ Parameters\+::soil\+WFrac\+Init}, \textbf{ Parameters\+::soil\+WHC}, and \textbf{ Parameters\+::wood\+Turnover\+Rate}.
+References \textbf{ Parameters\+::base\+Coarse\+Root\+Resp}, \textbf{ Parameters\+::base\+Fine\+Root\+Resp}, \textbf{ Parameters\+::base\+Microbe\+Resp}, \textbf{ Parameters\+::base\+Soil\+Resp}, \textbf{ Parameters\+::base\+Veg\+Resp}, \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Parameters\+::coarse\+Root\+Frac}, \textbf{ Parameters\+::coarse\+Root\+Turnover\+Rate}, \textbf{ ctx}, \textbf{ ensure\+Allocation()}, \textbf{ envi}, \textbf{ Environment\+::fine\+RootC}, \textbf{ Parameters\+::fine\+Root\+Frac}, \textbf{ Parameters\+::fine\+Root\+Turnover\+Rate}, \textbf{ first\+Climate}, \textbf{ init\+Event\+Trackers()}, \textbf{ init\+Phenology\+Trackers()}, \textbf{ init\+Trackers()}, \textbf{ Parameters\+::lai\+Init}, \textbf{ Parameters\+::leaf\+CSp\+Wt}, \textbf{ Parameters\+::leaf\+Turnover\+Rate}, \textbf{ Environment\+::litter}, \textbf{ Parameters\+::litter\+Breakdown\+Rate}, \textbf{ Parameters\+::litter\+Init}, \textbf{ Context\+::litter\+Pool}, \textbf{ Parameters\+::max\+Ingestion\+Rate}, \textbf{ mean\+GPP}, \textbf{ mean\+NPP}, \textbf{ Environment\+::microbeC}, \textbf{ Parameters\+::microbe\+Init}, \textbf{ Parameters\+::microbe\+Pulse\+Eff}, \textbf{ Context\+::microbes}, \textbf{ Environment\+::minN}, \textbf{ Parameters\+::min\+NInit}, \textbf{ Context\+::nitrogen\+Cycle}, \textbf{ params}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Parameters\+::plant\+Wood\+Init}, \textbf{ Parameters\+::psn\+TMax}, \textbf{ Parameters\+::psn\+TMin}, \textbf{ Parameters\+::psn\+TOpt}, \textbf{ reset\+Mean\+Tracker()}, \textbf{ Environment\+::snow}, \textbf{ Parameters\+::snow\+Init}, \textbf{ Environment\+::soil}, \textbf{ Parameters\+::soil\+Init}, \textbf{ Environment\+::soil\+Water}, \textbf{ Parameters\+::soil\+WFrac\+Init}, \textbf{ Parameters\+::soil\+WHC}, and \textbf{ Parameters\+::wood\+Turnover\+Rate}.
 
 
 
@@ -192,7 +194,7 @@ Each variable added will be output in a separate file (\textquotesingle{}$\ast$.
 \end{DoxyParams}
 
 
-Definition at line \textbf{ 1732} of file \textbf{ sipnet.\+c}.
+Definition at line \textbf{ 1751} of file \textbf{ sipnet.\+c}.
 
 
 

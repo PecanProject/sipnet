@@ -32,164 +32,167 @@
 \DoxyCodeLine{00028\ \ \ \ \ DECLARE\_FLAG(snow),}
 \DoxyCodeLine{00029\ \ \ \ \ DECLARE\_FLAG(soil-\/phenol),}
 \DoxyCodeLine{00030\ \ \ \ \ DECLARE\_FLAG(water-\/hresp),}
-\DoxyCodeLine{00031\ }
-\DoxyCodeLine{00032\ \ \ \ \ DECLARE\_FLAG(\textcolor{keywordflow}{do}-\/main-\/output),}
-\DoxyCodeLine{00033\ \ \ \ \ DECLARE\_FLAG(\textcolor{keywordflow}{do}-\/single-\/outputs),}
-\DoxyCodeLine{00034\ \ \ \ \ DECLARE\_FLAG(dump-\/config),}
-\DoxyCodeLine{00035\ \ \ \ \ DECLARE\_FLAG(print-\/header),}
-\DoxyCodeLine{00036\ \ \ \ \ DECLARE\_FLAG(quiet),}
-\DoxyCodeLine{00037\ }
-\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//\ These\ options\ don’t\ set\ a\ flag.\ We\ distinguish\ them\ by\ their\ indices.}}
-\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//\ name\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ has\_arg\ \ \ \ \ \ \ \ \ \ \ flag\ \ val\ (val\ is\ the}}
-\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ index)}}
-\DoxyCodeLine{00041\ \ \ \ \ \{\textcolor{stringliteral}{"{}input-\/file"{}},\ required\_argument,\ 0,\ \textcolor{charliteral}{'i'}\},}
-\DoxyCodeLine{00042\ \ \ \ \ \{\textcolor{stringliteral}{"{}file-\/name"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'f'}\},}
-\DoxyCodeLine{00043\ \ \ \ \ \{\textcolor{stringliteral}{"{}help"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'h'}\},}
-\DoxyCodeLine{00044\ \ \ \ \ \{\textcolor{stringliteral}{"{}version"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'v'}\},}
-\DoxyCodeLine{00045\ \ \ \ \ \{0,\ 0,\ 0,\ 0\}\};}
-\DoxyCodeLine{00046\ }
-\DoxyCodeLine{00047\ \textcolor{comment}{//\ See\ cli.h}}
-\DoxyCodeLine{00048\ \textcolor{keywordtype}{char}\ *argNameMap[]\ =\ \{}
-\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{//\ Must\ follow\ same\ order\ as\ in\ long\_options\ above;\ only\ need\ flag\ opts\ here}}
-\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ Gives\ corresponding\ name\ in\ Context\ struct\ (that\ is,\ the\ argument\ to\ the}}
-\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ DECLARE\_ARG\_FOR\_MAP\ macro\ needs\ to\ be\ the\ name\ of\ the\ corresponding\ field}}
-\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ in\ Context)}}
-\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ Model\ options}}
-\DoxyCodeLine{00054\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(events),\ DECLARE\_ARG\_FOR\_MAP(gdd),}
-\DoxyCodeLine{00055\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(growthResp),\ DECLARE\_ARG\_FOR\_MAP(leafWater),}
-\DoxyCodeLine{00056\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(litterPool),\ DECLARE\_ARG\_FOR\_MAP(microbes),}
-\DoxyCodeLine{00057\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(snow),\ DECLARE\_ARG\_FOR\_MAP(soilPhenol),}
-\DoxyCodeLine{00058\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(waterHResp),}
-\DoxyCodeLine{00059\ }
-\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//\ I/O}}
-\DoxyCodeLine{00061\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(doMainOutput),\ DECLARE\_ARG\_FOR\_MAP(doSingleOutputs),}
-\DoxyCodeLine{00062\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(dumpConfig),\ DECLARE\_ARG\_FOR\_MAP(printHeader),}
-\DoxyCodeLine{00063\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(quiet)\};}
-\DoxyCodeLine{00064\ \textcolor{comment}{//\ clang-\/format\ on}}
-\DoxyCodeLine{00065\ }
-\DoxyCodeLine{00066\ \textcolor{comment}{//\ Print\ the\ help\ message\ when\ requested}}
-\DoxyCodeLine{00067\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName)\ \{}
-\DoxyCodeLine{00068\ \ \ \textcolor{comment}{//\ clang-\/format\ off}}
-\DoxyCodeLine{00069\ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ [OPTIONS]"{}},\ progName);}
-\DoxyCodeLine{00070\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00071\ \ \ printf(\textcolor{stringliteral}{"{}Run\ SIPNET\ model\ for\ one\ site\ with\ configured\ options.\(\backslash\)n"{}});}
-\DoxyCodeLine{00072\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00073\ \ \ printf(\textcolor{stringliteral}{"{}Options:\ (defaults\ are\ shown\ in\ parens\ at\ end)\(\backslash\)n"{}});}
-\DoxyCodeLine{00074\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/i,\ -\/-\/input-\/file\ <input-\/file>\ \ \ \ \ \ Name\ of\ input\ config\ file\ ('sipnet.in')\(\backslash\)n"{}});}
-\DoxyCodeLine{00075\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/f,\ -\/-\/file-\/name\ \ <name>\ \ \ \ \ \ \ \ \ \ \ \ Prefix\ of\ climate\ and\ parameter\ files\ ('sipnet')\(\backslash\)n"{}});}
-\DoxyCodeLine{00076\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00077\ \ \ printf(\textcolor{stringliteral}{"{}Model\ flags:\ (prepend\ flag\ with\ 'no-\/'\ to\ force\ off,\ eg\ '-\/-\/no-\/events')\(\backslash\)n"{}});}
-\DoxyCodeLine{00078\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/events\ \ \ \ \ \ \ \ \ \ \ \ \ Enable\ event\ handling\ (1)\(\backslash\)n"{}});}
-\DoxyCodeLine{00079\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/gdd\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Use\ growing\ degree\ days\ to\ determine\ leaf\ growth\ (1)\(\backslash\)n"{}});}
-\DoxyCodeLine{00080\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/growth-\/resp\ \ \ \ \ \ \ \ Explicitly\ model\ growth\ resp,\ rather\ than\ including\ with\ maint\ resp\ (0)\(\backslash\)n"{}});}
-\DoxyCodeLine{00081\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/leaf-\/water\ \ \ \ \ \ \ \ \ Calculate\ leaf\ pool\ and\ evaporate\ from\ that\ pool\ (0)\(\backslash\)n"{}});}
-\DoxyCodeLine{00082\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/litter-\/pool\ \ \ \ \ \ \ \ Enable\ litter\ pool\ in\ addition\ to\ single\ soil\ carbon\ pool\ (0)\(\backslash\)n"{}});}
-\DoxyCodeLine{00083\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/microbes\ \ \ \ \ \ \ \ \ \ \ Enable\ microbe\ modeling\ (0)\(\backslash\)n"{}});}
-\DoxyCodeLine{00084\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/snow\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Keep\ track\ of\ snowpack,\ rather\ than\ assuming\ all\ precipitation\ is\ liquid\ (1)\(\backslash\)n"{}});}
-\DoxyCodeLine{00085\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/soil-\/phenol\ \ \ \ \ \ \ \ Use\ soil\ temperature\ to\ determine\ leaf\ growth\ (0)\(\backslash\)n"{}});}
-\DoxyCodeLine{00086\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/water-\/hresp\ \ \ \ \ \ \ \ Whether\ soil\ moisture\ affects\ heterotrophic\ respiration\ (1)\(\backslash\)n"{}});}
-\DoxyCodeLine{00087\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00088\ \ \ printf(\textcolor{stringliteral}{"{}Output\ flags:\ (prepend\ flag\ with\ 'no-\/'\ to\ force\ off,\ eg\ '-\/-\/no-\/print-\/header')\(\backslash\)n"{}});}
-\DoxyCodeLine{00089\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/do-\/main-\/output\ \ \ \ \ Print\ time\ series\ of\ all\ output\ variables\ to\ <file-\/name>.out\ (1)\(\backslash\)n"{}});}
-\DoxyCodeLine{00090\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/do-\/single-\/outputs\ \ Print\ outputs\ one\ variable\ per\ file\ (e.g.\ <file-\/name>.NEE)\(\backslash\)n"{}});}
-\DoxyCodeLine{00091\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/dump-\/config\ \ \ \ \ \ \ \ Print\ final\ config\ to\ <file-\/name>.config\ (0)\(\backslash\)n"{}});}
-\DoxyCodeLine{00092\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/print-\/header\ \ \ \ \ \ \ Whether\ to\ print\ header\ row\ in\ output\ files\ (1)\(\backslash\)n"{}});}
-\DoxyCodeLine{00093\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/quiet\ \ \ \ \ \ \ \ \ \ \ \ \ \ Suppress\ info\ and\ warning\ message\ (0)\(\backslash\)n"{}});}
-\DoxyCodeLine{00094\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00095\ \ \ printf(\textcolor{stringliteral}{"{}Info\ options:\(\backslash\)n"{}});}
-\DoxyCodeLine{00096\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/h,\ -\/-\/help\ \ \ \ \ \ \ \ \ \ \ Print\ this\ message\ and\ exit\(\backslash\)n"{}});}
-\DoxyCodeLine{00097\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/v,\ -\/-\/version\ \ \ \ \ \ \ \ Print\ version\ information\ and\ exit\(\backslash\)n"{}});}
-\DoxyCodeLine{00098\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00099\ \ \ printf(\textcolor{stringliteral}{"{}Configuration\ options\ are\ read\ from\ <input\_file>.\ Other\ options\ specified\ on\ the\ command\(\backslash\)n"{}});}
-\DoxyCodeLine{00100\ \ \ printf(\textcolor{stringliteral}{"{}line\ override\ settings\ from\ that\ file.\(\backslash\)n"{}});}
-\DoxyCodeLine{00101\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
-\DoxyCodeLine{00102\ \ \ printf(\textcolor{stringliteral}{"{}Note\ the\ following\ restrictions\ on\ these\ options:\(\backslash\)n"{}});}
-\DoxyCodeLine{00103\ \ \ printf(\textcolor{stringliteral}{"{}\ -\/-\/soil-\/phenol\ and\ -\/-\/gdd\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
-\DoxyCodeLine{00104\ \ \ printf(\textcolor{stringliteral}{"{}\ -\/-\/events\ and\ -\/-\/microbes\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
-\DoxyCodeLine{00105\ \ \ \textcolor{comment}{//\ clang-\/format\ on}}
-\DoxyCodeLine{00106\ \}}
-\DoxyCodeLine{00107\ }
-\DoxyCodeLine{00108\ \textcolor{comment}{//\ Print\ the\ version\ when\ requested}}
-\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ version(\textcolor{keywordtype}{void})\ \{\ printf(\textcolor{stringliteral}{"{}SIPNET\ version\ \%s\(\backslash\)n"{}},\ VERSION\_STRING);\ \}}
+\DoxyCodeLine{00031\ \ \ \ \ DECLARE\_FLAG(nitrogen-\/cycle),}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ DECLARE\_FLAG(\textcolor{keywordflow}{do}-\/main-\/output),}
+\DoxyCodeLine{00034\ \ \ \ \ DECLARE\_FLAG(\textcolor{keywordflow}{do}-\/single-\/outputs),}
+\DoxyCodeLine{00035\ \ \ \ \ DECLARE\_FLAG(dump-\/config),}
+\DoxyCodeLine{00036\ \ \ \ \ DECLARE\_FLAG(print-\/header),}
+\DoxyCodeLine{00037\ \ \ \ \ DECLARE\_FLAG(quiet),}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//\ These\ options\ don’t\ set\ a\ flag.\ We\ distinguish\ them\ by\ their\ indices.}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ name\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ has\_arg\ \ \ \ \ \ \ \ \ \ \ flag\ \ val\ (val\ is\ the}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{//\ index)}}
+\DoxyCodeLine{00042\ \ \ \ \ \{\textcolor{stringliteral}{"{}input-\/file"{}},\ required\_argument,\ 0,\ \textcolor{charliteral}{'i'}\},}
+\DoxyCodeLine{00043\ \ \ \ \ \{\textcolor{stringliteral}{"{}file-\/name"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'f'}\},}
+\DoxyCodeLine{00044\ \ \ \ \ \{\textcolor{stringliteral}{"{}help"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'h'}\},}
+\DoxyCodeLine{00045\ \ \ \ \ \{\textcolor{stringliteral}{"{}version"{}},\ no\_argument,\ 0,\ \textcolor{charliteral}{'v'}\},}
+\DoxyCodeLine{00046\ \ \ \ \ \{0,\ 0,\ 0,\ 0\}\};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{comment}{//\ See\ cli.h}}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{char}\ *argNameMap[]\ =\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ Must\ follow\ same\ order\ as\ in\ long\_options\ above;\ only\ need\ flag\ opts\ here}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ Gives\ corresponding\ name\ in\ Context\ struct\ (that\ is,\ the\ argument\ to\ the}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//\ DECLARE\_ARG\_FOR\_MAP\ macro\ needs\ to\ be\ the\ name\ of\ the\ corresponding\ field}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ in\ Context)}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ Model\ options}}
+\DoxyCodeLine{00055\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(events),\ DECLARE\_ARG\_FOR\_MAP(gdd),}
+\DoxyCodeLine{00056\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(growthResp),\ DECLARE\_ARG\_FOR\_MAP(leafWater),}
+\DoxyCodeLine{00057\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(litterPool),\ DECLARE\_ARG\_FOR\_MAP(microbes),}
+\DoxyCodeLine{00058\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(snow),\ DECLARE\_ARG\_FOR\_MAP(soilPhenol),}
+\DoxyCodeLine{00059\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(waterHResp),\ DECLARE\_ARG\_FOR\_MAP(nitrogenCycle),}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ I/O}}
+\DoxyCodeLine{00062\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(doMainOutput),\ DECLARE\_ARG\_FOR\_MAP(doSingleOutputs),}
+\DoxyCodeLine{00063\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(dumpConfig),\ DECLARE\_ARG\_FOR\_MAP(printHeader),}
+\DoxyCodeLine{00064\ \ \ \ \ DECLARE\_ARG\_FOR\_MAP(quiet)\};}
+\DoxyCodeLine{00065\ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{//\ Print\ the\ help\ message\ when\ requested}}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ usage(\textcolor{keywordtype}{char}\ *progName)\ \{}
+\DoxyCodeLine{00069\ \ \ \textcolor{comment}{//\ clang-\/format\ off}}
+\DoxyCodeLine{00070\ \ \ printf(\textcolor{stringliteral}{"{}Usage:\ \%s\ [OPTIONS]"{}},\ progName);}
+\DoxyCodeLine{00071\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00072\ \ \ printf(\textcolor{stringliteral}{"{}Run\ SIPNET\ model\ for\ one\ site\ with\ configured\ options.\(\backslash\)n"{}});}
+\DoxyCodeLine{00073\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00074\ \ \ printf(\textcolor{stringliteral}{"{}Options:\ (defaults\ are\ shown\ in\ parens\ at\ end)\(\backslash\)n"{}});}
+\DoxyCodeLine{00075\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/i,\ -\/-\/input-\/file\ <input-\/file>\ \ \ \ \ \ Name\ of\ input\ config\ file\ ('sipnet.in')\(\backslash\)n"{}});}
+\DoxyCodeLine{00076\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/f,\ -\/-\/file-\/name\ \ <name>\ \ \ \ \ \ \ \ \ \ \ \ Prefix\ of\ climate\ and\ parameter\ files\ ('sipnet')\(\backslash\)n"{}});}
+\DoxyCodeLine{00077\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00078\ \ \ printf(\textcolor{stringliteral}{"{}Model\ flags:\ (prepend\ flag\ with\ 'no-\/'\ to\ force\ off,\ eg\ '-\/-\/no-\/events')\(\backslash\)n"{}});}
+\DoxyCodeLine{00079\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/events\ \ \ \ \ \ \ \ \ \ \ \ \ Enable\ event\ handling\ (1)\(\backslash\)n"{}});}
+\DoxyCodeLine{00080\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/gdd\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Use\ growing\ degree\ days\ to\ determine\ leaf\ growth\ (1)\(\backslash\)n"{}});}
+\DoxyCodeLine{00081\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/growth-\/resp\ \ \ \ \ \ \ \ Explicitly\ model\ growth\ resp,\ rather\ than\ including\ with\ maint\ resp\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00082\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/leaf-\/water\ \ \ \ \ \ \ \ \ Calculate\ leaf\ pool\ and\ evaporate\ from\ that\ pool\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00083\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/litter-\/pool\ \ \ \ \ \ \ \ Enable\ litter\ pool\ in\ addition\ to\ single\ soil\ carbon\ pool\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00084\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/microbes\ \ \ \ \ \ \ \ \ \ \ Enable\ microbe\ modeling\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00085\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/nitrogen-\/cycle\ \ \ \ \ Enable\ modeling\ of\ the\ nitrogen\ cycle\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00086\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/snow\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Keep\ track\ of\ snowpack,\ rather\ than\ assuming\ all\ precipitation\ is\ liquid\ (1)\(\backslash\)n"{}});}
+\DoxyCodeLine{00087\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/soil-\/phenol\ \ \ \ \ \ \ \ Use\ soil\ temperature\ to\ determine\ leaf\ growth\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00088\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/water-\/hresp\ \ \ \ \ \ \ \ Whether\ soil\ moisture\ affects\ heterotrophic\ respiration\ (1)\(\backslash\)n"{}});}
+\DoxyCodeLine{00089\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00090\ \ \ printf(\textcolor{stringliteral}{"{}Output\ flags:\ (prepend\ flag\ with\ 'no-\/'\ to\ force\ off,\ eg\ '-\/-\/no-\/print-\/header')\(\backslash\)n"{}});}
+\DoxyCodeLine{00091\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/do-\/main-\/output\ \ \ \ \ Print\ time\ series\ of\ all\ output\ variables\ to\ <file-\/name>.out\ (1)\(\backslash\)n"{}});}
+\DoxyCodeLine{00092\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/do-\/single-\/outputs\ \ Print\ outputs\ one\ variable\ per\ file\ (e.g.\ <file-\/name>.NEE)\(\backslash\)n"{}});}
+\DoxyCodeLine{00093\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/dump-\/config\ \ \ \ \ \ \ \ Print\ final\ config\ to\ <file-\/name>.config\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00094\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/print-\/header\ \ \ \ \ \ \ Whether\ to\ print\ header\ row\ in\ output\ files\ (1)\(\backslash\)n"{}});}
+\DoxyCodeLine{00095\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/-\/quiet\ \ \ \ \ \ \ \ \ \ \ \ \ \ Suppress\ info\ and\ warning\ message\ (0)\(\backslash\)n"{}});}
+\DoxyCodeLine{00096\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00097\ \ \ printf(\textcolor{stringliteral}{"{}Info\ options:\(\backslash\)n"{}});}
+\DoxyCodeLine{00098\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/h,\ -\/-\/help\ \ \ \ \ \ \ \ \ \ \ Print\ this\ message\ and\ exit\(\backslash\)n"{}});}
+\DoxyCodeLine{00099\ \ \ printf(\textcolor{stringliteral}{"{}\ \ -\/v,\ -\/-\/version\ \ \ \ \ \ \ \ Print\ version\ information\ and\ exit\(\backslash\)n"{}});}
+\DoxyCodeLine{00100\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00101\ \ \ printf(\textcolor{stringliteral}{"{}Configuration\ options\ are\ read\ from\ <input\_file>.\ Other\ options\ specified\ on\ the\ command\(\backslash\)n"{}});}
+\DoxyCodeLine{00102\ \ \ printf(\textcolor{stringliteral}{"{}line\ override\ settings\ from\ that\ file.\(\backslash\)n"{}});}
+\DoxyCodeLine{00103\ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)n"{}});}
+\DoxyCodeLine{00104\ \ \ printf(\textcolor{stringliteral}{"{}Note\ the\ following\ restrictions\ on\ these\ options:\(\backslash\)n"{}});}
+\DoxyCodeLine{00105\ \ \ printf(\textcolor{stringliteral}{"{}\ -\/-\/soil-\/phenol\ and\ -\/-\/gdd\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
+\DoxyCodeLine{00106\ \ \ printf(\textcolor{stringliteral}{"{}\ -\/-\/events\ and\ -\/-\/microbes\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
+\DoxyCodeLine{00107\ \ \ printf(\textcolor{stringliteral}{"{}\ -\/-\/nitrogen-\/cycle\ and\ -\/-\/microbes\ may\ not\ both\ be\ turned\ on\(\backslash\)n"{}});}
+\DoxyCodeLine{00108\ \ \ \textcolor{comment}{//\ clang-\/format\ on}}
+\DoxyCodeLine{00109\ \}}
 \DoxyCodeLine{00110\ }
-\DoxyCodeLine{00111\ \textcolor{comment}{//\ Parses\ command-\/line\ options\ using\ getopt\_long}}
-\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ parseCommandLineArgs(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
-\DoxyCodeLine{00113\ \ \ \textcolor{comment}{/*\ getopt\_long\ stores\ the\ option\ index\ here.\ */}}
-\DoxyCodeLine{00114\ \ \ \textcolor{keywordtype}{int}\ longIndex\ =\ 0;}
-\DoxyCodeLine{00115\ \ \ \textcolor{keywordtype}{int}\ shortIndex;}
-\DoxyCodeLine{00116\ \ \ \textcolor{comment}{//\ get\ command-\/line\ arguments:}}
-\DoxyCodeLine{00117\ \ \ \textcolor{keywordflow}{while}\ ((shortIndex\ =\ getopt\_long(argc,\ argv,\ \textcolor{stringliteral}{"{}hi:v"{}},\ long\_options,}
-\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&longIndex))\ !=\ -\/1)\ \{}
-\DoxyCodeLine{00119\ }
-\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{switch}\ (shortIndex)\ \{}
-\DoxyCodeLine{00121\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
-\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ long\ form\ option,\ flag\ ==\ 0}}
-\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ updateIntContext(argNameMap[longIndex],\ ctx.tmpFlag,\ CTX\_COMMAND\_LINE);}
-\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00125\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'f'}:}
-\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
-\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},\ optarg,}
-\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILENAME\_MAXLEN);}
-\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ exit(1);}
-\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}fileName"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
-\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00135\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'h'}:}
-\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ usage(argv[0]);}
-\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
-\DoxyCodeLine{00138\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'i'}:}
-\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
-\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ input\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},}
-\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ optarg,\ FILENAME\_MAXLEN);}
-\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
-\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
-\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ exit(1);}
-\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}inputFile"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
-\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00148\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'v'}:}
-\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ version();}
-\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
-\DoxyCodeLine{00151\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
-\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ usage(argv[0]);}
-\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_CLI\_ARGUMENT);}
-\DoxyCodeLine{00154\ \ \ \ \ \}}
-\DoxyCodeLine{00155\ \ \ \}}
-\DoxyCodeLine{00156\ \}}
-\DoxyCodeLine{00157\ }
-\DoxyCodeLine{00158\ \textcolor{comment}{//\ Safety\ check:\ make\ sure\ the\ elements\ of\ the\ cli\ argNameMap\ are\ actually}}
-\DoxyCodeLine{00159\ \textcolor{comment}{//\ valid\ members\ -\/\ that\ is,\ that\ we\ can\ successfully\ find\ a\ metadata\ for\ each}}
-\DoxyCodeLine{00160\ \textcolor{comment}{//\ one.\ This\ protects\ against\ changing\ a\ field\ name\ here\ and\ forgetting\ to}}
-\DoxyCodeLine{00161\ \textcolor{comment}{//\ update\ that\ map.}}
-\DoxyCodeLine{00162\ \textcolor{keywordtype}{void}\ checkCLINameMap(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{00163\ \ \ \textcolor{keywordtype}{int}\ numFlags\ =\ 0;}
-\DoxyCodeLine{00164\ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *s;}
-\DoxyCodeLine{00165\ }
-\DoxyCodeLine{00166\ \ \ \textcolor{comment}{//\ Make\ sure\ everything\ in\ argNameMap\ maps\ to\ a\ valid\ metadata}}
-\DoxyCodeLine{00167\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ind\ =\ 0;\ ind\ <\ 2\ *\ NUM\_FLAG\_OPTIONS;\ ++ind)\ \{}
-\DoxyCodeLine{00168\ \ \ \ \ s\ =\ getContextMetadata(argNameMap[ind]);}
-\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\ ==\ NULL)\ \{}
-\DoxyCodeLine{00170\ \ \ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
-\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}no\ metadata\ for\ \%s\(\backslash\)n"{}},}
-\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ argNameMap[ind]);}
-\DoxyCodeLine{00173\ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
-\DoxyCodeLine{00174\ \ \ \ \ \}}
-\DoxyCodeLine{00175\ \ \ \}}
-\DoxyCodeLine{00176\ \ \ \textcolor{comment}{//\ Make\ sure\ the\ number\ of\ flag\ metadata\ structs\ equals\ NUM\_FLAG\_OPTIONS}}
-\DoxyCodeLine{00177\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
-\DoxyCodeLine{00178\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
-\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>isFlag)\ \{}
-\DoxyCodeLine{00180\ \ \ \ \ \ \ ++numFlags;}
-\DoxyCodeLine{00181\ \ \ \ \ \}}
-\DoxyCodeLine{00182\ \ \ \}}
-\DoxyCodeLine{00183\ \ \ \textcolor{keywordflow}{if}\ (numFlags\ !=\ NUM\_FLAG\_OPTIONS)\ \{}
-\DoxyCodeLine{00184\ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
-\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\%d\ metaMap\ entries,\ NUM\_FLAG\_OPTIONS=\%d\(\backslash\)n"{}},}
-\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numFlags,\ NUM\_FLAG\_OPTIONS);}
-\DoxyCodeLine{00187\ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
-\DoxyCodeLine{00188\ \ \ \}}
-\DoxyCodeLine{00189\ \}}
+\DoxyCodeLine{00111\ \textcolor{comment}{//\ Print\ the\ version\ when\ requested}}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ version(\textcolor{keywordtype}{void})\ \{\ printf(\textcolor{stringliteral}{"{}SIPNET\ version\ \%s\(\backslash\)n"{}},\ VERSION\_STRING);\ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ Parses\ command-\/line\ options\ using\ getopt\_long}}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{void}\ parseCommandLineArgs(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])\ \{}
+\DoxyCodeLine{00116\ \ \ \textcolor{comment}{/*\ getopt\_long\ stores\ the\ option\ index\ here.\ */}}
+\DoxyCodeLine{00117\ \ \ \textcolor{keywordtype}{int}\ longIndex\ =\ 0;}
+\DoxyCodeLine{00118\ \ \ \textcolor{keywordtype}{int}\ shortIndex;}
+\DoxyCodeLine{00119\ \ \ \textcolor{comment}{//\ get\ command-\/line\ arguments:}}
+\DoxyCodeLine{00120\ \ \ \textcolor{keywordflow}{while}\ ((shortIndex\ =\ getopt\_long(argc,\ argv,\ \textcolor{stringliteral}{"{}hi:v"{}},\ long\_options,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&longIndex))\ !=\ -\/1)\ \{}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordflow}{switch}\ (shortIndex)\ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ long\ form\ option,\ flag\ ==\ 0}}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ updateIntContext(argNameMap[longIndex],\ ctx.tmpFlag,\ CTX\_COMMAND\_LINE);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'f'}:}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},\ optarg,}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILENAME\_MAXLEN);}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}fileName"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'h'}:}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'i'}:}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(optarg)\ >=\ FILENAME\_MAXLEN)\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR:\ input\ filename\ \%s\ exceeds\ maximum\ length\ of\ \%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ optarg,\ FILENAME\_MAXLEN);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}Either\ change\ the\ name\ or\ increase\ INPUT\_MAXNAME\ in\ "{}}}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frontend.c\(\backslash\)n"{}});}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ exit(1);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ updateCharContext(\textcolor{stringliteral}{"{}inputFile"{}},\ optarg,\ CTX\_COMMAND\_LINE);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \textcolor{charliteral}{'v'}:}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ version();}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_SUCCESS);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ usage(argv[0]);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_BAD\_CLI\_ARGUMENT);}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \}}
+\DoxyCodeLine{00159\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{comment}{//\ Safety\ check:\ make\ sure\ the\ elements\ of\ the\ cli\ argNameMap\ are\ actually}}
+\DoxyCodeLine{00162\ \textcolor{comment}{//\ valid\ members\ -\/\ that\ is,\ that\ we\ can\ successfully\ find\ a\ metadata\ for\ each}}
+\DoxyCodeLine{00163\ \textcolor{comment}{//\ one.\ This\ protects\ against\ changing\ a\ field\ name\ here\ and\ forgetting\ to}}
+\DoxyCodeLine{00164\ \textcolor{comment}{//\ update\ that\ map.}}
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{void}\ checkCLINameMap(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00166\ \ \ \textcolor{keywordtype}{int}\ numFlags\ =\ 0;}
+\DoxyCodeLine{00167\ \ \ \textcolor{keyword}{struct\ }context\_metadata\ *s;}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \textcolor{comment}{//\ Make\ sure\ everything\ in\ argNameMap\ maps\ to\ a\ valid\ metadata}}
+\DoxyCodeLine{00170\ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ ind\ =\ 0;\ ind\ <\ 2\ *\ NUM\_FLAG\_OPTIONS;\ ++ind)\ \{}
+\DoxyCodeLine{00171\ \ \ \ \ s\ =\ getContextMetadata(argNameMap[ind]);}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\ ==\ NULL)\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}no\ metadata\ for\ \%s\(\backslash\)n"{}},}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ argNameMap[ind]);}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
+\DoxyCodeLine{00177\ \ \ \ \ \}}
+\DoxyCodeLine{00178\ \ \ \}}
+\DoxyCodeLine{00179\ \ \ \textcolor{comment}{//\ Make\ sure\ the\ number\ of\ flag\ metadata\ structs\ equals\ NUM\_FLAG\_OPTIONS}}
+\DoxyCodeLine{00180\ \ \ \textcolor{keywordflow}{for}\ (s\ =\ ctx.metaMap;\ s\ !=\ NULL;}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ s\ =\ (\textcolor{keyword}{struct\ }context\_metadata\ *)(s-\/>hh.next))\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordflow}{if}\ (s-\/>isFlag)\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ ++numFlags;}
+\DoxyCodeLine{00184\ \ \ \ \ \}}
+\DoxyCodeLine{00185\ \ \ \}}
+\DoxyCodeLine{00186\ \ \ \textcolor{keywordflow}{if}\ (numFlags\ !=\ NUM\_FLAG\_OPTIONS)\ \{}
+\DoxyCodeLine{00187\ \ \ \ \ logInternalError(\textcolor{stringliteral}{"{}mismatched\ argNameMap\ and\ Context\ contents;\ "{}}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\%d\ metaMap\ entries,\ NUM\_FLAG\_OPTIONS=\%d\(\backslash\)n"{}},}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ numFlags,\ NUM\_FLAG\_OPTIONS);}
+\DoxyCodeLine{00190\ \ \ \ \ exit(EXIT\_CODE\_INTERNAL\_ERROR);}
+\DoxyCodeLine{00191\ \ \ \}}
+\DoxyCodeLine{00192\ \}}
 
 \end{DoxyCode}

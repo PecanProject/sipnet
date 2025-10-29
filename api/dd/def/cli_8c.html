@@ -188,7 +188,7 @@ Variables</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line">  {#name, no_argument, &amp;<a class="code hl_variable" href="../../d8/dfa/context_8c.html#ae4a21100fe87ad5a286b127a4d606939">ctx</a>.<a class="code hl_variable" href="../../de/d66/struct_context.html#a7e8b5f01de62693a021dccda234c5660">tmpFlag</a>, 1},                                       \</div>
 <div class="line">      {<span class="stringliteral">&quot;no-&quot;</span> #name, no_argument, &amp;<a class="code hl_variable" href="../../d8/dfa/context_8c.html#ae4a21100fe87ad5a286b127a4d606939">ctx</a>.<a class="code hl_variable" href="../../de/d66/struct_context.html#a7e8b5f01de62693a021dccda234c5660">tmpFlag</a>, 0}</div>
 <div class="ttc" id="acontext_8c_html_ae4a21100fe87ad5a286b127a4d606939"><div class="ttname"><a href="../../d8/dfa/context_8c.html#ae4a21100fe87ad5a286b127a4d606939">ctx</a></div><div class="ttdeci">struct Context ctx</div><div class="ttdef"><b>Definition</b> <a href="../../d8/dfa/context_8c_source.html#l00019">context.c:19</a></div></div>
-<div class="ttc" id="astruct_context_html_a7e8b5f01de62693a021dccda234c5660"><div class="ttname"><a href="../../de/d66/struct_context.html#a7e8b5f01de62693a021dccda234c5660">Context::tmpFlag</a></div><div class="ttdeci">int tmpFlag</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d1e/context_8h_source.html#l00075">context.h:75</a></div></div>
+<div class="ttc" id="astruct_context_html_a7e8b5f01de62693a021dccda234c5660"><div class="ttname"><a href="../../de/d66/struct_context.html#a7e8b5f01de62693a021dccda234c5660">Context::tmpFlag</a></div><div class="ttdeci">int tmpFlag</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d1e/context_8h_source.html#l00076">context.h:76</a></div></div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00008">8</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
 
@@ -213,9 +213,9 @@ Variables</h2></td></tr>
 <p>Verify that the cli's arg-name map is valid</p>
 <p>Verifies that everything in argNameMap maps to a valid context metadata. Does not verify that we failed to add a flag to the map. Call this after <a class="el" href="../../d8/dfa/context_8c.html#a8d99453d034c44d40efbf1d8687c074a">initContext()</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00162">162</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00165">165</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../dd/def/cli_8c_source.html#l00048">argNameMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00080">getContextMetadata()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00035">context_metadata::hh</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::isFlag</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00030">logInternalError</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00078">Context::metaMap</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l01207">UT_hash_handle::next</a>, and <a class="el" href="../../dc/db0/cli_8h_source.html#l00017">NUM_FLAG_OPTIONS</a>.</p>
+<p class="reference">References <a class="el" href="../../dd/def/cli_8c_source.html#l00049">argNameMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00024">EXIT_CODE_INTERNAL_ERROR</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00081">getContextMetadata()</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00035">context_metadata::hh</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00034">context_metadata::isFlag</a>, <a class="el" href="../../d5/d77/logging_8h_source.html#l00030">logInternalError</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00079">Context::metaMap</a>, <a class="el" href="../../d8/d8f/uthash_8h_source.html#l01207">UT_hash_handle::next</a>, and <a class="el" href="../../dc/db0/cli_8h_source.html#l00017">NUM_FLAG_OPTIONS</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00128">main()</a>.</p>
 <div class="dynheader">
@@ -259,9 +259,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00112">112</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00115">115</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
 
-<p class="reference">References <a class="el" href="../../dd/def/cli_8c_source.html#l00048">argNameMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00021">CTX_COMMAND_LINE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00025">EXIT_CODE_BAD_CLI_ARGUMENT</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00017">EXIT_CODE_SUCCESS</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00010">FILENAME_MAXLEN</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00017">long_options</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00075">Context::tmpFlag</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00122">updateCharContext()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00108">updateIntContext()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00067">usage()</a>, and <a class="el" href="../../dd/def/cli_8c_source.html#l00109">version()</a>.</p>
+<p class="reference">References <a class="el" href="../../dd/def/cli_8c_source.html#l00049">argNameMap</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00019">ctx</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00021">CTX_COMMAND_LINE</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00025">EXIT_CODE_BAD_CLI_ARGUMENT</a>, <a class="el" href="../../d6/d8f/exit_codes_8h_source.html#l00017">EXIT_CODE_SUCCESS</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00010">FILENAME_MAXLEN</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00017">long_options</a>, <a class="el" href="../../dc/d1e/context_8h_source.html#l00076">Context::tmpFlag</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00123">updateCharContext()</a>, <a class="el" href="../../d8/dfa/context_8c_source.html#l00109">updateIntContext()</a>, <a class="el" href="../../dd/def/cli_8c_source.html#l00068">usage()</a>, and <a class="el" href="../../dd/def/cli_8c_source.html#l00112">version()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="../../d9/ddf/frontend_8c_source.html#l00128">main()</a>.</p>
 <div class="dynheader">
@@ -305,9 +305,9 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00067">67</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00068">68</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00112">parseCommandLineArgs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00115">parseCommandLineArgs()</a>.</p>
 
 </div>
 </div>
@@ -327,11 +327,11 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00109">109</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00112">112</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
 
 <p class="reference">References <a class="el" href="../../df/dfc/version_8h_source.html#l00012">VERSION_STRING</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00112">parseCommandLineArgs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00115">parseCommandLineArgs()</a>.</p>
 
 </div>
 </div>
@@ -357,7 +357,7 @@ Here is the call graph for this function:</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(growthResp), <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(leafWater),</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(litterPool), <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(microbes),</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(snow), <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(soilPhenol),</div>
-<div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(waterHResp),</div>
+<div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(waterHResp), <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(nitrogenCycle),</div>
 <div class="line"> </div>
 <div class="line">    </div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(doMainOutput), <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(doSingleOutputs),</div>
@@ -365,9 +365,9 @@ Here is the call graph for this function:</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a>(quiet)}</div>
 <div class="ttc" id="acli_8c_html_aead0b58bed32b620aa473ad448cb6b6f"><div class="ttname"><a href="../../dd/def/cli_8c.html#aead0b58bed32b620aa473ad448cb6b6f">DECLARE_ARG_FOR_MAP</a></div><div class="ttdeci">#define DECLARE_ARG_FOR_MAP(x)</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/cli_8c_source.html#l00012">cli.c:12</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00048">48</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00049">49</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00162">checkCLINameMap()</a>, and <a class="el" href="../../dd/def/cli_8c_source.html#l00112">parseCommandLineArgs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00165">checkCLINameMap()</a>, and <a class="el" href="../../dd/def/cli_8c_source.html#l00115">parseCommandLineArgs()</a>.</p>
 
 </div>
 </div>
@@ -404,6 +404,7 @@ Here is the call graph for this function:</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#a37e06d3f351351d78696abc48ad770cb">DECLARE_FLAG</a>(snow),</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#a37e06d3f351351d78696abc48ad770cb">DECLARE_FLAG</a>(soil-phenol),</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#a37e06d3f351351d78696abc48ad770cb">DECLARE_FLAG</a>(water-hresp),</div>
+<div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#a37e06d3f351351d78696abc48ad770cb">DECLARE_FLAG</a>(nitrogen-cycle),</div>
 <div class="line"> </div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#a37e06d3f351351d78696abc48ad770cb">DECLARE_FLAG</a>(<span class="keywordflow">do</span>-<a class="code hl_function" href="../../d9/ddf/frontend_8c.html#a0ddf1224851353fc92bfbff6f499fa97">main</a>-output),</div>
 <div class="line">    <a class="code hl_define" href="../../dd/def/cli_8c.html#a37e06d3f351351d78696abc48ad770cb">DECLARE_FLAG</a>(<span class="keywordflow">do</span>-single-outputs),</div>
@@ -424,7 +425,7 @@ Here is the call graph for this function:</div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="../../dd/def/cli_8c_source.html#l00017">17</a> of file <a class="el" href="../../dd/def/cli_8c_source.html">cli.c</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00112">parseCommandLineArgs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../dd/def/cli_8c_source.html#l00115">parseCommandLineArgs()</a>.</p>
 
 </div>
 </div>

@@ -1657,52 +1657,58 @@ aMaxFrac 0.85
 <tr>
 <td><code>events</code></td>
 <td>on</td>
-<td>Enable event handling.</td>
+<td>Enable event handling</td>
 </tr>
 <tr>
 <td><code>gdd</code></td>
 <td>on</td>
-<td>Use growing degree days to determine leaf growth.</td>
+<td>Use growing degree days to determine leaf growth</td>
 </tr>
 <tr>
 <td><code>growth-resp</code></td>
 <td>off</td>
-<td>Explicitly model growth respiration, rather than including with maintenance respiration.</td>
+<td>Explicitly model growth respiration, rather than including with maintenance respiration</td>
 </tr>
 <tr>
 <td><code>leaf-water</code></td>
 <td>off</td>
-<td>Calculate leaf pool and evaporate from that pool.</td>
+<td>Calculate leaf pool and evaporate from that pool</td>
 </tr>
 <tr>
 <td><code>litter-pool</code></td>
 <td>off</td>
-<td>Enable litter pool in addition to single soil carbon pool.</td>
+<td>Enable litter pool in addition to single soil carbon pool</td>
 </tr>
 <tr>
 <td><code>microbes</code></td>
 <td>off</td>
-<td>Enable microbe modeling.</td>
+<td>Enable microbe modeling</td>
+</tr>
+<tr>
+<td><code>nitrogen-cycle</code></td>
+<td>off</td>
+<td>Enable nitrogen cycle modeling</td>
 </tr>
 <tr>
 <td><code>snow</code></td>
 <td>on</td>
-<td>Keep track of snowpack, rather than assuming all precipitation is liquid.</td>
+<td>Keep track of snowpack, rather than assuming all precipitation is liquid</td>
 </tr>
 <tr>
 <td><code>soil-phenol</code></td>
 <td>off</td>
-<td>Use soil temperature to determine leaf growth.</td>
+<td>Use soil temperature to determine leaf growth</td>
 </tr>
 <tr>
 <td><code>water-hresp</code></td>
 <td>on</td>
-<td>Whether soil moisture affects heterotrophic respiration.</td>
+<td>Whether soil moisture affects heterotrophic respiration</td>
 </tr>
 </tbody>
 </table>
 <p>Note the following restrictions on these options:
- - <code>soil-phenol</code> and <code>gdd</code> may not both be turned on</p>
+ - <code>soil-phenol</code> and <code>gdd</code> may not both be turned on
+ - <code>events</code> and <code>microbes</code> may not both be turned on</p>
 <h3 id="command-line-arguments">Command Line Arguments<a class="headerlink" href="#command-line-arguments" title="Permanent link">&para;</a></h3>
 <p>Command-line arguments can be used to specify run-time options when starting SIPNET. The syntax is as follows:</p>
 <div class="highlight"><pre><span></span><code>sipnet [options]

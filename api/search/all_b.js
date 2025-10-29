@@ -21,11 +21,12 @@ var searchData=
   ['microbepulseeff_18',['microbePulseEff',['../d0/dbf/struct_parameters.html#add6c3b296497d10d0dfba127cd29b8e0',1,'Parameters']]],
   ['microbeq10_19',['microbeQ10',['../d0/dbf/struct_parameters.html#a323aec3509858d5d3cc9b0c1d0c26237',1,'Parameters']]],
   ['microbes_20',['microbes',['../de/d66/struct_context.html#a17d7bf75243adf0f236a64dd8935b70d',1,'Context']]],
-  ['minn_21',['minN',['../da/dde/struct_fertilization_params.html#aaecae5a6504bc2a5726cc022d6644612',1,'FertilizationParams']]],
-  ['model_5fparam_5fmaxname_22',['MODEL_PARAM_MAXNAME',['../d3/ddd/model_params_8h.html#af353f764fae2fca2d3a8837b12a5acee',1,'modelParams.h']]],
-  ['modelparams_23',['ModelParams',['../d3/ddd/model_params_8h.html#a158618150d9703f9e07beca8b80e4ecb',1,'modelParams.h']]],
-  ['modelparams_2ec_24',['modelParams.c',['../d2/de5/model_params_8c.html',1,'']]],
-  ['modelparams_2eh_25',['modelParams.h',['../d3/ddd/model_params_8h.html',1,'']]],
-  ['modelparamsstruct_26',['ModelParamsStruct',['../d8/dae/struct_model_params_struct.html',1,'']]],
-  ['moisture_27',['moisture',['../dd/d09/sipnet_8c.html#ae1cde3b069d0958828a9739fd94755db',1,'sipnet.c']]]
+  ['minn_21',['minn',['../da/dde/struct_fertilization_params.html#aaecae5a6504bc2a5726cc022d6644612',1,'FertilizationParams::minN'],['../de/d30/struct_environment.html#afa81d878cb055a902d9d69139e8ba12d',1,'Environment::minN']]],
+  ['minninit_22',['minNInit',['../d0/dbf/struct_parameters.html#acd5bcd56031d99dc23dab2cfbe800e3a',1,'Parameters']]],
+  ['model_5fparam_5fmaxname_23',['MODEL_PARAM_MAXNAME',['../d3/ddd/model_params_8h.html#af353f764fae2fca2d3a8837b12a5acee',1,'modelParams.h']]],
+  ['modelparams_24',['ModelParams',['../d3/ddd/model_params_8h.html#a158618150d9703f9e07beca8b80e4ecb',1,'modelParams.h']]],
+  ['modelparams_2ec_25',['modelParams.c',['../d2/de5/model_params_8c.html',1,'']]],
+  ['modelparams_2eh_26',['modelParams.h',['../d3/ddd/model_params_8h.html',1,'']]],
+  ['modelparamsstruct_27',['ModelParamsStruct',['../d8/dae/struct_model_params_struct.html',1,'']]],
+  ['moisture_28',['moisture',['../dd/d09/sipnet_8c.html#ae1cde3b069d0958828a9739fd94755db',1,'sipnet.c']]]
 ];

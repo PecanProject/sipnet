@@ -13,5 +13,6 @@ var searchData=
   ['microbepulseeff_10',['microbePulseEff',['../d0/dbf/struct_parameters.html#add6c3b296497d10d0dfba127cd29b8e0',1,'Parameters']]],
   ['microbeq10_11',['microbeQ10',['../d0/dbf/struct_parameters.html#a323aec3509858d5d3cc9b0c1d0c26237',1,'Parameters']]],
   ['microbes_12',['microbes',['../de/d66/struct_context.html#a17d7bf75243adf0f236a64dd8935b70d',1,'Context']]],
-  ['minn_13',['minN',['../da/dde/struct_fertilization_params.html#aaecae5a6504bc2a5726cc022d6644612',1,'FertilizationParams']]]
+  ['minn_13',['minn',['../da/dde/struct_fertilization_params.html#aaecae5a6504bc2a5726cc022d6644612',1,'FertilizationParams::minN'],['../de/d30/struct_environment.html#afa81d878cb055a902d9d69139e8ba12d',1,'Environment::minN']]],
+  ['minninit_14',['minNInit',['../d0/dbf/struct_parameters.html#acd5bcd56031d99dc23dab2cfbe800e3a',1,'Parameters']]]
 ];

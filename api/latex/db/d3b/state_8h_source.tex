@@ -9,604 +9,620 @@
 \DoxyCodeLine{00005\ \textcolor{comment}{//\ [1]\ Braswell\ et\ al.,\ 2005}}
 \DoxyCodeLine{00006\ \textcolor{comment}{//\ [2]\ Sacks\ et\ al.,\ 2006}}
 \DoxyCodeLine{00007\ \textcolor{comment}{//\ [3]\ Zobitz\ et\ al,\ 2008}}
-\DoxyCodeLine{00008\ \textcolor{comment}{//\ [3]\ Zobitz\ (et\ al.?),\ date\ unknown,\ chapter\ 5\ from\ unknown\ book}}
-\DoxyCodeLine{00009\ }
-\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ClimateVars\ ClimateNode;}
-\DoxyCodeLine{00011\ }
-\DoxyCodeLine{00012\ \textcolor{keyword}{struct\ }ClimateVars\ \{}
-\DoxyCodeLine{00013\ \ \ \textcolor{comment}{//\ year\ of\ start\ of\ this\ timestep}}
-\DoxyCodeLine{00014\ \ \ \textcolor{keywordtype}{int}\ year;}
-\DoxyCodeLine{00015\ \ \ \textcolor{comment}{//\ day\ of\ start\ of\ this\ timestep\ (1\ =\ Jan\ 1.)}}
-\DoxyCodeLine{00016\ \ \ \textcolor{keywordtype}{int}\ day;}
-\DoxyCodeLine{00017\ \ \ \textcolor{comment}{//\ time\ of\ start\ of\ this\ timestep\ (hour.fraction\ -\/\ e.g.\ noon=\ 12.0,}}
-\DoxyCodeLine{00018\ \ \ \textcolor{comment}{//\ midnight\ =\ 0.0)}}
-\DoxyCodeLine{00019\ \ \ \textcolor{keywordtype}{double}\ time;}
-\DoxyCodeLine{00020\ \ \ \textcolor{comment}{//\ length\ of\ this\ timestep\ (in\ days)\ -\/\ allow\ variable-\/length\ timesteps}}
-\DoxyCodeLine{00021\ \ \ \textcolor{keywordtype}{double}\ length;}
-\DoxyCodeLine{00022\ \ \ \textcolor{comment}{//\ avg.\ air\ temp\ for\ this\ time\ step\ (degrees\ C)}}
-\DoxyCodeLine{00023\ \ \ \textcolor{keywordtype}{double}\ tair;}
-\DoxyCodeLine{00024\ \ \ \textcolor{comment}{//\ avg.\ soil\ temp\ for\ this\ time\ step\ (degrees\ C)}}
-\DoxyCodeLine{00025\ \ \ \textcolor{keywordtype}{double}\ tsoil;}
-\DoxyCodeLine{00026\ \ \ \textcolor{comment}{//\ average\ par\ for\ this\ time\ step\ (Einsteins\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00027\ \ \ \textcolor{comment}{//\ NOTE:\ input\ is\ in\ Einsteins\ *\ m\string^-\/2\ ground\ area,\ summed\ over\ entire\ time}}
-\DoxyCodeLine{00028\ \ \ \textcolor{comment}{//\ step}}
-\DoxyCodeLine{00029\ \ \ \textcolor{keywordtype}{double}\ par;}
-\DoxyCodeLine{00030\ \ \ \textcolor{comment}{//\ total\ precip.\ for\ this\ time\ step\ (cm\ water\ equiv.\ -\/\ either\ rain\ or\ snow)}}
-\DoxyCodeLine{00031\ \ \ \textcolor{comment}{//\ NOTE:\ input\ is\ in\ mm}}
-\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{double}\ precip;}
-\DoxyCodeLine{00033\ \ \ \textcolor{comment}{//\ average\ vapor\ pressure\ deficit\ (kPa).\ \ NOTE:\ input\ is\ in\ Pa}}
-\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{double}\ vpd;}
-\DoxyCodeLine{00035\ \ \ \textcolor{comment}{//\ \ average\ vapor\ pressure\ deficit\ between\ soil\ and\ air\ (kPa).\ NOTE:\ input\ is}}
-\DoxyCodeLine{00036\ \ \ \textcolor{comment}{//\ \ in\ Pa.}}
-\DoxyCodeLine{00037\ \ \ \textcolor{comment}{//\ \ Differs\ from\ vpd\ in\ that\ saturation\ vapor\ pressure\ calculated\ using\ Tsoil}}
-\DoxyCodeLine{00038\ \ \ \textcolor{comment}{//\ \ rather\ than\ Tair}}
-\DoxyCodeLine{00039\ \ \ \textcolor{keywordtype}{double}\ vpdSoil;}
-\DoxyCodeLine{00040\ \ \ \textcolor{comment}{//\ \ average\ vapor\ pressure\ in\ canopy\ airspace\ (kPa).\ NOTE:\ input\ is\ in\ Pa}}
-\DoxyCodeLine{00041\ \ \ \textcolor{keywordtype}{double}\ vPress;}
-\DoxyCodeLine{00042\ \ \ \textcolor{comment}{//\ avg.\ wind\ speed\ (m/s)}}
-\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{double}\ wspd;}
-\DoxyCodeLine{00044\ \ \ \textcolor{comment}{//\ growing\ degree\ days\ from\ Jan.\ 1\ to\ now.\ NOTE:\ Calculated,\ *not*\ read\ from}}
-\DoxyCodeLine{00045\ \ \ \textcolor{comment}{//\ file}}
-\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{double}\ gdd;}
-\DoxyCodeLine{00047\ }
-\DoxyCodeLine{00048\ \ \ ClimateNode\ *nextClim;}
-\DoxyCodeLine{00049\ \};}
-\DoxyCodeLine{00050\ }
-\DoxyCodeLine{00051\ \textcolor{comment}{//\ Global\ vars}}
-\DoxyCodeLine{00052\ \textcolor{keyword}{extern}\ ClimateNode\ *firstClimate;\ \ \textcolor{comment}{//\ pointer\ to\ first\ climate}}
-\DoxyCodeLine{00053\ \textcolor{keyword}{extern}\ ClimateNode\ *climate;\ \ \textcolor{comment}{//\ current\ climate}}
-\DoxyCodeLine{00054\ }
-\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ NUM\_CLIM\_FILE\_COLS\ 12}}
-\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ NUM\_CLIM\_FILE\_COLS\_LEGACY\ (NUM\_CLIM\_FILE\_COLS\ +\ 2)}}
-\DoxyCodeLine{00057\ }
-\DoxyCodeLine{00058\ \textcolor{comment}{//\ Model\ parameters,\ which\ can\ change\ from\ one\ run\ to\ the\ next,\ include}}
-\DoxyCodeLine{00059\ \textcolor{comment}{//\ initializations\ of\ state.\ Initial\ values\ are\ read\ in\ from\ a\ file,\ or}}
-\DoxyCodeLine{00060\ \textcolor{comment}{//\ calculated\ at\ start\ of\ model.}}
-\DoxyCodeLine{00061\ \textcolor{comment}{//}}
-\DoxyCodeLine{00062\ \textcolor{comment}{//\ If\ any\ parameters\ are\ added\ here,\ and\ these\ parameters\ are\ to\ be\ read\ from}}
-\DoxyCodeLine{00063\ \textcolor{comment}{//\ file,\ be\ sure\ to\ add\ them\ to\ the\ readParamData\ function,\ below}}
-\DoxyCodeLine{00064\ }
-\DoxyCodeLine{00065\ \textcolor{comment}{//\ Parameter\ values\ are\ read\ in\ from\ <inputFile>.param}}
-\DoxyCodeLine{00066\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }Parameters\ \{}
-\DoxyCodeLine{00067\ }
-\DoxyCodeLine{00068\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00069\ \ \ \textcolor{comment}{//\ Params\ from\ [1]\ Braswell\ et\ al.\ (2005)}}
-\DoxyCodeLine{00070\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00071\ }
-\DoxyCodeLine{00072\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00073\ \ \ \textcolor{comment}{//\ Initial\ state\ values}}
-\DoxyCodeLine{00074\ }
-\DoxyCodeLine{00075\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ ground\ area\ in\ wood\ (above-\/ground\ +\ roots)}}
-\DoxyCodeLine{00076\ \ \ \textcolor{comment}{//\ ::\ C\_(W,0)\ in\ [1]}}
-\DoxyCodeLine{00077\ \ \ \textcolor{keywordtype}{double}\ plantWoodInit;}
-\DoxyCodeLine{00078\ \ \ \textcolor{comment}{//\ initial\ leaf\ area,\ m\string^2\ leaves\ *\ m\string^-\/2\ ground\ area\ (multiply\ by\ leafCSpWt\ to}}
-\DoxyCodeLine{00079\ \ \ \textcolor{comment}{//\ get\ initial\ plant\ leaf\ C,\ which\ is\ C\_(L,0)\ in\ [1])}}
-\DoxyCodeLine{00080\ \ \ \textcolor{comment}{//\ ::\ used\ to\ derive\ C\_L\_0\ in\ [1]}}
-\DoxyCodeLine{00081\ \ \ \textcolor{keywordtype}{double}\ laiInit;}
-\DoxyCodeLine{00082\ \ \ \textcolor{comment}{//\ initial\ soil\ C\ content,\ g\ C\ *\ m\string^-\/2\ ground\ area}}
-\DoxyCodeLine{00083\ \ \ \textcolor{comment}{//\ ::\ C\_(S,0)\ in\ [1]}}
-\DoxyCodeLine{00084\ \ \ \textcolor{keywordtype}{double}\ soilInit;}
-\DoxyCodeLine{00085\ \ \ \textcolor{comment}{//\ unitless:\ fraction\ of\ soilWHC}}
-\DoxyCodeLine{00086\ \ \ \textcolor{comment}{//\ ::\ used\ to\ derive\ W\_0\ in\ [1]}}
-\DoxyCodeLine{00087\ \ \ \textcolor{keywordtype}{double}\ soilWFracInit;}
-\DoxyCodeLine{00088\ }
-\DoxyCodeLine{00089\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00090\ \ \ \textcolor{comment}{//\ Photosynthesis}}
-\DoxyCodeLine{00091\ }
-\DoxyCodeLine{00092\ \ \ \textcolor{comment}{//\ max\ photosynthesis\ assuming\ max.\ possible\ par,\ all\ intercepted,\ no\ temp,}}
-\DoxyCodeLine{00093\ \ \ \textcolor{comment}{//\ water\ or\ vpd\ stress\ (nmol\ CO2\ *\ g\string^-\/1\ leaf\ *\ sec\string^-\/1)}}
-\DoxyCodeLine{00094\ \ \ \textcolor{comment}{//\ ::\ A\_max\ in\ [1]}}
-\DoxyCodeLine{00095\ \ \ \textcolor{keywordtype}{double}\ aMax;}
-\DoxyCodeLine{00096\ \ \ \textcolor{comment}{//\ avg.\ daily\ aMax\ as\ fraction\ of\ instantaneous}}
-\DoxyCodeLine{00097\ \ \ \textcolor{comment}{//\ ::\ A\_d\ in\ [1]}}
-\DoxyCodeLine{00098\ \ \ \textcolor{keywordtype}{double}\ aMaxFrac;}
-\DoxyCodeLine{00099\ \ \ \textcolor{comment}{//\ basal\ foliage\ resp.\ rate,\ as\ \%\ of\ aMax}}
-\DoxyCodeLine{00100\ \ \ \textcolor{comment}{//\ ::\ K\_f\ in\ [1]}}
-\DoxyCodeLine{00101\ \ \ \textcolor{keywordtype}{double}\ baseFolRespFrac;}
-\DoxyCodeLine{00102\ \ \ \textcolor{comment}{//\ min\ and\ optimal\ temps\ at\ which\ net\ photosynthesis\ occurs\ (degrees\ C)}}
-\DoxyCodeLine{00103\ \ \ \textcolor{comment}{//\ ::\ T\_min\ and\ T\_opt\ in\ [1]}}
-\DoxyCodeLine{00104\ \ \ \textcolor{keywordtype}{double}\ psnTMin,\ psnTOpt;}
-\DoxyCodeLine{00105\ \ \ \textcolor{comment}{//\ calculated\ (not\ read)\ T\ max,\ assumed\ symmetrical\ around\ psnTOpt\ (degrees\ C)}}
-\DoxyCodeLine{00106\ \ \ \textcolor{keywordtype}{double}\ psnTMax;}
-\DoxyCodeLine{00107\ \ \ \textcolor{comment}{//\ slope\ of\ VPD-\/psn\ relationship}}
-\DoxyCodeLine{00108\ \ \ \textcolor{comment}{//\ ::\ K\_VPD\ in\ [1]}}
-\DoxyCodeLine{00109\ \ \ \textcolor{keywordtype}{double}\ dVpdSlope;}
-\DoxyCodeLine{00110\ \ \ \textcolor{comment}{//\ exponent\ for\ D\_VPD\ calculation\ via\ dVpd\ =\ 1\ -\/\ dVpdSlope\ *\ vpd\string^dVpdExp}}
-\DoxyCodeLine{00111\ \ \ \textcolor{comment}{//\ Note:\ this\ is\ explicitly\ shown\ as\ 2\ in\ [1]\ -\/\ see\ (A10)}}
-\DoxyCodeLine{00112\ \ \ \textcolor{comment}{//\ ::\ no\ direct\ analog\ in\ [1]}}
-\DoxyCodeLine{00113\ \ \ \textcolor{keywordtype}{double}\ dVpdExp;}
-\DoxyCodeLine{00114\ \ \ \textcolor{comment}{//\ par\ at\ which\ photosynthesis\ occurs\ at\ 1/2\ theoretical\ maximum}}
-\DoxyCodeLine{00115\ \ \ \textcolor{comment}{//\ (Einsteins\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00116\ \ \ \textcolor{comment}{//\ ::\ PAR\_1/2\ in\ [1]}}
-\DoxyCodeLine{00117\ \ \ \textcolor{keywordtype}{double}\ halfSatPar;}
-\DoxyCodeLine{00118\ \ \ \textcolor{comment}{//\ light\ attenuation\ coefficient}}
-\DoxyCodeLine{00119\ \ \ \textcolor{comment}{//\ ::\ k\ in\ [1]}}
-\DoxyCodeLine{00120\ \ \ \textcolor{keywordtype}{double}\ attenuation;}
-\DoxyCodeLine{00121\ }
-\DoxyCodeLine{00122\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00123\ \ \ \textcolor{comment}{//\ Phenology\ related}}
-\DoxyCodeLine{00124\ }
-\DoxyCodeLine{00125\ \ \ \textcolor{comment}{//\ day\ when\ leaves\ appear}}
-\DoxyCodeLine{00126\ \ \ \textcolor{comment}{//\ ::\ D\_on\ in\ [1]}}
-\DoxyCodeLine{00127\ \ \ \textcolor{keywordtype}{double}\ leafOnDay;}
-\DoxyCodeLine{00128\ \ \ \textcolor{comment}{//\ day\ when\ leaves\ disappear}}
-\DoxyCodeLine{00129\ \ \ \textcolor{comment}{//\ ::\ D\_off\ in\ [1]}}
-\DoxyCodeLine{00130\ \ \ \textcolor{keywordtype}{double}\ leafOffDay;}
-\DoxyCodeLine{00131\ \ \ \textcolor{comment}{//\ with\ gdd-\/based\ phenology,\ gdd\ threshold\ for\ leaf\ appearance}}
-\DoxyCodeLine{00132\ \ \ \textcolor{comment}{//\ ::\ unlabeled\ in\ [1]}}
-\DoxyCodeLine{00133\ \ \ \textcolor{keywordtype}{double}\ gddLeafOn;}
-\DoxyCodeLine{00134\ }
-\DoxyCodeLine{00135\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00136\ \ \ \textcolor{comment}{//\ Autotrophic\ respiration}}
-\DoxyCodeLine{00137\ }
-\DoxyCodeLine{00138\ \ \ \textcolor{comment}{//\ vegetation\ maintenance\ respiration\ at\ 0\ degrees\ C}}
-\DoxyCodeLine{00139\ \ \ \textcolor{comment}{//\ (g\ C\ respired\ *\ g\string^-\/1\ plant\ C\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00140\ \ \ \textcolor{comment}{//\ Only\ counts\ plant\ wood\ C\ -\/\ leaves\ handled\ elsewhere\ (both\ above\ and}}
-\DoxyCodeLine{00141\ \ \ \textcolor{comment}{//\ below-\/ground:\ assumed\ for\ now\ to\ have\ same\ resp.\ rate)}}
-\DoxyCodeLine{00142\ \ \ \textcolor{comment}{//\ NOTE:\ read\ in\ as\ per-\/year\ rate!}}
-\DoxyCodeLine{00143\ \ \ \textcolor{comment}{//\ ::\ K\_A\ in\ [1]}}
-\DoxyCodeLine{00144\ \ \ \textcolor{keywordtype}{double}\ baseVegResp;}
-\DoxyCodeLine{00145\ \ \ \textcolor{comment}{//\ scalar\ determining\ effect\ of\ temp\ on\ veg.\ resp.;\ Q\_10\_v\ in\ [1]}}
-\DoxyCodeLine{00146\ \ \ \textcolor{keywordtype}{double}\ vegRespQ10;}
-\DoxyCodeLine{00147\ }
-\DoxyCodeLine{00148\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00149\ \ \ \textcolor{comment}{//\ Soil\ respiration}}
-\DoxyCodeLine{00150\ }
-\DoxyCodeLine{00151\ \ \ \textcolor{comment}{//\ soil\ respiration\ at\ 0\ degrees\ C\ and\ max\ soil\ moisture}}
-\DoxyCodeLine{00152\ \ \ \textcolor{comment}{//\ (g\ C\ respired\ *\ g\string^-\/1\ soil\ C\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00153\ \ \ \textcolor{comment}{//\ NOTE:\ read\ in\ as\ per-\/year\ rate!}}
-\DoxyCodeLine{00154\ \ \ \textcolor{comment}{//\ ::\ K\_H\ in\ [1]}}
-\DoxyCodeLine{00155\ \ \ \textcolor{keywordtype}{double}\ baseSoilResp;}
-\DoxyCodeLine{00156\ \ \ \textcolor{comment}{//\ scalar\ determining\ effect\ of\ temp\ on\ soil\ resp.;\ Q\_10\_s\ in\ [1]}}
-\DoxyCodeLine{00157\ \ \ \textcolor{keywordtype}{double}\ soilRespQ10;}
-\DoxyCodeLine{00158\ }
-\DoxyCodeLine{00159\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00160\ \ \ \textcolor{comment}{//\ Moisture\ related}}
-\DoxyCodeLine{00161\ }
-\DoxyCodeLine{00162\ \ \ \textcolor{comment}{//\ fraction\ of\ plant\ available\ soil\ water\ which\ can\ be\ removed\ in\ one\ day}}
-\DoxyCodeLine{00163\ \ \ \textcolor{comment}{//\ without\ water\ stress\ occurring}}
-\DoxyCodeLine{00164\ \ \ \textcolor{comment}{//\ ::\ f\ in\ [1]}}
-\DoxyCodeLine{00165\ \ \ \textcolor{keywordtype}{double}\ waterRemoveFrac;}
-\DoxyCodeLine{00166\ \ \ \textcolor{comment}{//\ water\ use\ efficiency\ constant}}
-\DoxyCodeLine{00167\ \ \ \textcolor{comment}{//\ ::\ K\_WUE\ in\ [1]}}
-\DoxyCodeLine{00168\ \ \ \textcolor{keywordtype}{double}\ wueConst;}
-\DoxyCodeLine{00169\ \ \ \textcolor{comment}{//\ soil\ (transpiration\ layer)\ water\ holding\ capacity\ (cm)}}
-\DoxyCodeLine{00170\ \ \ \textcolor{comment}{//\ ::\ W\_c\ in\ [1]}}
-\DoxyCodeLine{00171\ \ \ \textcolor{keywordtype}{double}\ soilWHC;}
-\DoxyCodeLine{00172\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ leaf\ area}}
-\DoxyCodeLine{00173\ \ \ \textcolor{comment}{//\ ::\ SLW\ in\ [1]}}
-\DoxyCodeLine{00174\ \ \ \textcolor{keywordtype}{double}\ leafCSpWt;}
-\DoxyCodeLine{00175\ \ \ \textcolor{comment}{//\ g\ leaf\ C\ *\ g\string^-\/1\ leaf}}
-\DoxyCodeLine{00176\ \ \ \textcolor{comment}{//\ ::\ C\_frac\ in\ [1]}}
-\DoxyCodeLine{00177\ \ \ \textcolor{keywordtype}{double}\ cFracLeaf;}
-\DoxyCodeLine{00178\ \ \ \textcolor{comment}{//\ average\ turnover\ rate\ of\ woody\ plant\ C,\ in\ fraction\ per\ day\ (leaf\ loss}}
-\DoxyCodeLine{00179\ \ \ \textcolor{comment}{//\ handled\ separately).\ NOTE:\ read\ in\ as\ per-\/year\ rate!}}
-\DoxyCodeLine{00180\ \ \ \textcolor{comment}{//\ ::\ K\_w\ in\ [1]}}
-\DoxyCodeLine{00181\ \ \ \textcolor{keywordtype}{double}\ woodTurnoverRate;}
-\DoxyCodeLine{00182\ }
-\DoxyCodeLine{00183\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00184\ \ \ \textcolor{comment}{//\ Params\ from\ [2]\ Sacks\ et\ al.\ (2006)}}
-\DoxyCodeLine{00185\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00186\ }
-\DoxyCodeLine{00187\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00188\ \ \ \textcolor{comment}{//\ Initial\ state\ values}}
-\DoxyCodeLine{00189\ }
-\DoxyCodeLine{00190\ \ \ \textcolor{comment}{//\ initial\ litter\ pool\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
-\DoxyCodeLine{00191\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
-\DoxyCodeLine{00192\ \ \ \textcolor{keywordtype}{double}\ litterInit;}
-\DoxyCodeLine{00193\ \ \ \textcolor{comment}{//\ initial\ snowpack\ (cm\ water\ equivalent)}}
-\DoxyCodeLine{00194\ \ \ \textcolor{comment}{//\ ::\ W\_P,0\ in\ [2]}}
-\DoxyCodeLine{00195\ \ \ \textcolor{keywordtype}{double}\ snowInit;}
-\DoxyCodeLine{00196\ }
-\DoxyCodeLine{00197\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00198\ \ \ \textcolor{comment}{//\ Moisture\ related}}
-\DoxyCodeLine{00199\ }
-\DoxyCodeLine{00200\ \ \ \textcolor{comment}{//\ fraction\ of\ water\ that's\ available\ if\ soil\ is\ frozen}}
-\DoxyCodeLine{00201\ \ \ \textcolor{comment}{//\ (0\ =\ none\ available,\ 1\ =\ all\ still\ avail.)}}
-\DoxyCodeLine{00202\ \ \ \textcolor{comment}{//\ NOTE:\ if\ frozenSoilEff\ =\ 0,\ then\ shut\ down\ psn}}
-\DoxyCodeLine{00203\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
-\DoxyCodeLine{00204\ \ \ \textcolor{keywordtype}{double}\ frozenSoilEff;}
-\DoxyCodeLine{00205\ \ \ \textcolor{comment}{//\ fraction\ of\ rain\ that\ is\ immediately\ intercepted\ \&\ evaporated}}
-\DoxyCodeLine{00206\ \ \ \textcolor{comment}{//\ ::\ E\ in\ [2]}}
-\DoxyCodeLine{00207\ \ \ \textcolor{keywordtype}{double}\ immedEvapFrac;}
-\DoxyCodeLine{00208\ \ \ \textcolor{comment}{//\ fraction\ of\ water\ entering\ soil\ that\ goes\ directly\ to\ drainage}}
-\DoxyCodeLine{00209\ \ \ \textcolor{comment}{//\ ::\ F\ in\ [2]}}
-\DoxyCodeLine{00210\ \ \ \textcolor{keywordtype}{double}\ fastFlowFrac;}
-\DoxyCodeLine{00211\ \ \ \textcolor{comment}{//\ rate\ at\ which\ snow\ melts\ (cm\ water\ equiv./degree\ C/day)}}
-\DoxyCodeLine{00212\ \ \ \textcolor{comment}{//\ ::\ K\_S\ in\ [2]}}
-\DoxyCodeLine{00213\ \ \ \textcolor{keywordtype}{double}\ snowMelt;}
-\DoxyCodeLine{00214\ \ \ \textcolor{comment}{//\ scalar\ determining\ amount\ of\ aerodynamic\ resistance}}
-\DoxyCodeLine{00215\ \ \ \textcolor{comment}{//\ ::\ R\_d\ in\ [2]}}
-\DoxyCodeLine{00216\ \ \ \textcolor{keywordtype}{double}\ rdConst;}
-\DoxyCodeLine{00217\ \ \ \textcolor{comment}{//\ parameters\ used\ to\ calculate\ soil\ resistance\ as}}
-\DoxyCodeLine{00218\ \ \ \textcolor{comment}{//\ soil\ resistance\ =\ e\string^(rSoilConst1\ -\/\ rSoilConst2\ *\ W1)}}
-\DoxyCodeLine{00219\ \ \ \textcolor{comment}{//\ where\ W1\ =\ (water/WHC)}}
-\DoxyCodeLine{00220\ \ \ \textcolor{comment}{//\ ::\ R\_soil,1\ and\ R\_soil,2\ in\ [2]}}
-\DoxyCodeLine{00221\ \ \ \textcolor{keywordtype}{double}\ rSoilConst1,\ rSoilConst2;}
-\DoxyCodeLine{00222\ }
-\DoxyCodeLine{00223\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00224\ \ \ \textcolor{comment}{//\ Phenology\ related}}
-\DoxyCodeLine{00225\ }
-\DoxyCodeLine{00226\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ leaf\ growth}}
-\DoxyCodeLine{00227\ \ \ \textcolor{comment}{//\ ::\ NPP\_L\ in\ [2]}}
-\DoxyCodeLine{00228\ \ \ \textcolor{keywordtype}{double}\ leafAllocation;}
-\DoxyCodeLine{00229\ \ \ \textcolor{comment}{//\ average\ turnover\ rate\ of\ leaves,\ in\ fraction\ per\ day.\ NOTE:\ read\ in\ as}}
-\DoxyCodeLine{00230\ \ \ \textcolor{comment}{//\ per-\/year\ rate!}}
-\DoxyCodeLine{00231\ \ \ \textcolor{comment}{//\ ::\ K\_L\ in\ [2]}}
-\DoxyCodeLine{00232\ \ \ \textcolor{keywordtype}{double}\ leafTurnoverRate;}
-\DoxyCodeLine{00233\ }
-\DoxyCodeLine{00234\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00235\ \ \ \textcolor{comment}{//\ Autotrophic\ respiration}}
-\DoxyCodeLine{00236\ }
-\DoxyCodeLine{00237\ \ \ \textcolor{comment}{//\ amount\ that\ foliar\ resp.\ is\ shutdown\ if\ soil\ is\ frozen\ (0\ =\ full\ shutdown,}}
-\DoxyCodeLine{00238\ \ \ \textcolor{comment}{//\ 1\ =\ no\ shutdown)}}
-\DoxyCodeLine{00239\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
-\DoxyCodeLine{00240\ \ \ \textcolor{keywordtype}{double}\ frozenSoilFolREff;}
-\DoxyCodeLine{00241\ \ \ \textcolor{comment}{//\ soil\ temperature\ below\ which\ frozenSoilFolREff\ and\ frozenSoilEff\ kick\ in}}
-\DoxyCodeLine{00242\ \ \ \textcolor{comment}{//\ (degrees\ C)}}
-\DoxyCodeLine{00243\ \ \ \textcolor{comment}{//\ ::\ T\_s\ in\ [2]}}
-\DoxyCodeLine{00244\ \ \ \textcolor{keywordtype}{double}\ frozenSoilThreshold;}
-\DoxyCodeLine{00245\ }
-\DoxyCodeLine{00246\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00247\ \ \ \textcolor{comment}{//\ Soil\ respiration}}
-\DoxyCodeLine{00248\ }
-\DoxyCodeLine{00249\ \ \ \textcolor{comment}{//\ rate\ at\ which\ litter\ is\ converted\ to\ soil/respired\ at\ 0\ degrees\ C\ and\ max}}
-\DoxyCodeLine{00250\ \ \ \textcolor{comment}{//\ soil\ moisture\ (g\ C\ broken\ down\ *\ g\string^-\/1\ litter\ C\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00251\ \ \ \textcolor{comment}{//\ NOTE:\ read\ in\ as\ per-\/year\ rate}}
-\DoxyCodeLine{00252\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
-\DoxyCodeLine{00253\ \ \ \textcolor{keywordtype}{double}\ litterBreakdownRate;}
-\DoxyCodeLine{00254\ \ \ \textcolor{comment}{//\ of\ the\ litter\ broken\ down,\ fraction\ respired\ (the\ rest\ is\ transferred\ to}}
-\DoxyCodeLine{00255\ \ \ \textcolor{comment}{//\ soil\ pool)}}
-\DoxyCodeLine{00256\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
-\DoxyCodeLine{00257\ \ \ \textcolor{keywordtype}{double}\ fracLitterRespired;}
-\DoxyCodeLine{00258\ }
-\DoxyCodeLine{00259\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00260\ \ \ \textcolor{comment}{//\ Params\ from\ [3]\ Zobitz\ et\ al.\ (2008)}}
-\DoxyCodeLine{00261\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00262\ }
-\DoxyCodeLine{00263\ \ \ \textcolor{comment}{//\ Roots}}
-\DoxyCodeLine{00264\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00265\ }
-\DoxyCodeLine{00266\ \ \ \textcolor{comment}{//\ fraction\ of\ wood\ carbon\ allocated\ to\ fine\ roots}}
-\DoxyCodeLine{00267\ \ \ \textcolor{keywordtype}{double}\ fineRootFrac;}
-\DoxyCodeLine{00268\ \ \ \textcolor{comment}{//\ fraction\ of\ wood\ carbon\ that\ is\ coarse\ roots}}
-\DoxyCodeLine{00269\ \ \ \textcolor{keywordtype}{double}\ coarseRootFrac;}
-\DoxyCodeLine{00270\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ the\ non-\/root\ wood}}
-\DoxyCodeLine{00271\ \ \ \textcolor{keywordtype}{double}\ woodAllocation;}
-\DoxyCodeLine{00272\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ fine\ roots}}
-\DoxyCodeLine{00273\ \ \ \textcolor{keywordtype}{double}\ fineRootAllocation;}
-\DoxyCodeLine{00274\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ the\ coarse\ roots\ (calculated\ param)}}
-\DoxyCodeLine{00275\ \ \ \textcolor{keywordtype}{double}\ coarseRootAllocation;}
-\DoxyCodeLine{00276\ \ \ \textcolor{comment}{//\ fraction\ of\ GPP\ exuded\ to\ the\ soil}}
-\DoxyCodeLine{00277\ \ \ \textcolor{keywordtype}{double}\ fineRootExudation;}
-\DoxyCodeLine{00278\ \ \ \textcolor{comment}{//\ fraction\ of\ GPP\ exuded\ to\ the\ soil}}
-\DoxyCodeLine{00279\ \ \ \textcolor{keywordtype}{double}\ coarseRootExudation;}
-\DoxyCodeLine{00280\ \ \ \textcolor{comment}{//\ turnover\ of\ fine\ roots\ (per\ year\ rate)}}
-\DoxyCodeLine{00281\ \ \ \textcolor{keywordtype}{double}\ fineRootTurnoverRate;}
-\DoxyCodeLine{00282\ \ \ \textcolor{comment}{//\ turnover\ of\ coarse\ roots\ (per\ year\ rate)}}
-\DoxyCodeLine{00283\ \ \ \textcolor{keywordtype}{double}\ coarseRootTurnoverRate;}
-\DoxyCodeLine{00284\ \ \ \textcolor{comment}{//\ base\ respiration\ rate\ of\ fine\ roots\ \ (per\ year\ rate)}}
-\DoxyCodeLine{00285\ \ \ \textcolor{keywordtype}{double}\ baseFineRootResp;}
-\DoxyCodeLine{00286\ \ \ \textcolor{comment}{//\ base\ respiration\ rate\ of\ coarse\ roots\ (per\ year\ rate)}}
-\DoxyCodeLine{00287\ \ \ \textcolor{keywordtype}{double}\ baseCoarseRootResp;}
-\DoxyCodeLine{00288\ \ \ \textcolor{comment}{//\ Q10\ of\ fine\ roots}}
-\DoxyCodeLine{00289\ \ \ \textcolor{keywordtype}{double}\ fineRootQ10;}
-\DoxyCodeLine{00290\ \ \ \textcolor{comment}{//\ Q10\ of\ coarse\ roots}}
-\DoxyCodeLine{00291\ \ \ \textcolor{keywordtype}{double}\ coarseRootQ10;}
-\DoxyCodeLine{00292\ }
-\DoxyCodeLine{00293\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00294\ \ \ \textcolor{comment}{//\ Params\ from\ [4]\ Zobitz\ et\ al.\ (draft)}}
-\DoxyCodeLine{00295\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00296\ }
-\DoxyCodeLine{00297\ \ \ \textcolor{comment}{//\ mg\ C\ /\ g\ soil\ microbe\ initial\ carbon\ amount,\ as\ fraction\ of\ soil\ init\ C}}
-\DoxyCodeLine{00298\ \ \ \textcolor{comment}{//\ ::\ equivalent\ to\ C\_B,0\ in\ [4]}}
-\DoxyCodeLine{00299\ \ \ \textcolor{keywordtype}{double}\ microbeInit;}
-\DoxyCodeLine{00300\ \ \ \textcolor{comment}{//\ base\ respiration\ rate\ of\ microbes\ at\ 0\ degrees\ C}}
-\DoxyCodeLine{00301\ \ \ \textcolor{comment}{//\ ::\ K\_B\ in\ [4]}}
-\DoxyCodeLine{00302\ \ \ \textcolor{keywordtype}{double}\ baseMicrobeResp;}
-\DoxyCodeLine{00303\ \ \ \textcolor{comment}{//\ Q10\ of\ microbes}}
-\DoxyCodeLine{00304\ \ \ \textcolor{comment}{//\ ::\ Q10\_B\ in\ [4]}}
-\DoxyCodeLine{00305\ \ \ \textcolor{keywordtype}{double}\ microbeQ10;}
-\DoxyCodeLine{00306\ \ \ \textcolor{comment}{//\ fraction\ of\ exudates\ that\ microbes\ immediately\ use\ (microbe\ assimilation}}
-\DoxyCodeLine{00307\ \ \ \textcolor{comment}{//\ efficiency\ of\ root\ exudates)}}
-\DoxyCodeLine{00308\ \ \ \textcolor{comment}{//\ ::\ epsilon\_R\ in\ [4]}}
-\DoxyCodeLine{00309\ \ \ \textcolor{keywordtype}{double}\ microbePulseEff;}
-\DoxyCodeLine{00310\ \ \ \textcolor{comment}{//\ microbe\ efficiency\ to\ convert\ carbon\ to\ biomass}}
-\DoxyCodeLine{00311\ \ \ \textcolor{comment}{//\ ::\ epsilon\ in\ [4]}}
-\DoxyCodeLine{00312\ \ \ \textcolor{keywordtype}{double}\ efficiency;}
-\DoxyCodeLine{00313\ \ \ \textcolor{comment}{//\ microbial\ maximum\ ingestion\ rate\ (hr-\/1)}}
-\DoxyCodeLine{00314\ \ \ \textcolor{comment}{//\ ::\ mu\_MAX\ in\ [4]}}
-\DoxyCodeLine{00315\ \ \ \textcolor{keywordtype}{double}\ maxIngestionRate;}
-\DoxyCodeLine{00316\ \ \ \textcolor{comment}{//\ half\ saturation\ ingestion\ rate\ of\ microbes\ (mg\ C\ g-\/1\ soil)}}
-\DoxyCodeLine{00317\ \ \ \textcolor{comment}{//\ Note:\ those\ units\ can't\ be\ correct,\ as\ we\ add\ this\ to\ envi.soil;\ must\ be}}
-\DoxyCodeLine{00318\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ (g\ C\ /\ m-\/2\ ground\ area),\ as\ there\ are\ no\ conversions\ in\ the\ code.}}
-\DoxyCodeLine{00319\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ Or,\ this\ is\ a\ bug.\ (This\ param\ is\ listed\ as\ g\ C/m-\/2\ in\ [4],\ so}}
-\DoxyCodeLine{00320\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ probably\ not\ a\ bug.)}}
-\DoxyCodeLine{00321\ \ \ \textcolor{comment}{//\ ::\ theta\_B\ in\ [4]}}
-\DoxyCodeLine{00322\ \ \ \textcolor{keywordtype}{double}\ halfSatIngestion;}
-\DoxyCodeLine{00323\ }
-\DoxyCodeLine{00324\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00325\ \ \ \textcolor{comment}{//\ Other\ params,\ provenance\ TBD}}
-\DoxyCodeLine{00326\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00327\ }
-\DoxyCodeLine{00328\ \ \ \textcolor{comment}{//\ phenology-\/related:}}
-\DoxyCodeLine{00329\ \ \ \textcolor{comment}{//\ with\ soil\ temp-\/based\ phenology,\ soil\ temp\ threshold\ for\ leaf\ appearance}}
-\DoxyCodeLine{00330\ \ \ \textcolor{keywordtype}{double}\ soilTempLeafOn;}
-\DoxyCodeLine{00331\ }
-\DoxyCodeLine{00332\ \ \ \textcolor{comment}{//\ The\ two\ params\ below\ seem\ to\ be\ used\ in\ leaf\ calculations\ as\ part\ of\ a}}
-\DoxyCodeLine{00333\ \ \ \textcolor{comment}{//\ merging\ of\ approaches\ from\ [1]\ and\ [2]}}
-\DoxyCodeLine{00334\ \ \ \textcolor{comment}{//\ additional\ leaf\ growth\ at\ start\ of\ growing\ season\ (g\ C\ *\ m\string^-\/2\ ground)}}
-\DoxyCodeLine{00335\ \ \ \textcolor{keywordtype}{double}\ leafGrowth;}
-\DoxyCodeLine{00336\ \ \ \textcolor{comment}{//\ additional\ fraction\ of\ leaves\ that\ fall\ at\ end\ of\ growing\ season}}
-\DoxyCodeLine{00337\ \ \ \textcolor{keywordtype}{double}\ fracLeafFall;}
-\DoxyCodeLine{00338\ }
-\DoxyCodeLine{00339\ \ \ \textcolor{comment}{//\ autotrophic\ respiration:}}
-\DoxyCodeLine{00340\ \ \ \textcolor{comment}{//\ growth\ resp.\ as\ fraction\ of\ (GPP\ -\/\ woodResp\ -\/\ folResp)}}
-\DoxyCodeLine{00341\ \ \ \textcolor{comment}{//\ Note:\ that\ comment\ may\ not\ be\ correct,\ growthResp\ is\ calc'd\ as}}
-\DoxyCodeLine{00342\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ (mean\ GPP)\ *\ (growtheRespFrac)}}
-\DoxyCodeLine{00343\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ with\ no\ correction\ for\ woodResp\ or\ folResp}}
-\DoxyCodeLine{00344\ \ \ \textcolor{keywordtype}{double}\ growthRespFrac;}
-\DoxyCodeLine{00345\ }
-\DoxyCodeLine{00346\ \ \ \textcolor{comment}{//\ soil\ respiration:}}
-\DoxyCodeLine{00347\ \ \ \textcolor{comment}{//\ scalar\ determining\ effect\ of\ moisture\ on\ soil\ respiration;\ used\ as\ exponent}}
-\DoxyCodeLine{00348\ \ \ \textcolor{comment}{//\ for\ (W/W\_c)\ fraction\ in\ moisture\ effect\ calculation}}
-\DoxyCodeLine{00349\ \ \ \textcolor{keywordtype}{double}\ soilRespMoistEffect;}
-\DoxyCodeLine{00350\ }
-\DoxyCodeLine{00351\ \ \ \textcolor{comment}{//\ moisture\ related:}}
-\DoxyCodeLine{00352\ \ \ \textcolor{comment}{//\ leaf\ (evaporative)\ pool\ rim\ thickness\ in\ mm}}
-\DoxyCodeLine{00353\ \ \ \textcolor{keywordtype}{double}\ leafPoolDepth;}
-\DoxyCodeLine{00354\ \}\ Params;}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ [4]\ Zobitz\ (et\ al.?),\ date\ unknown,\ chapter\ 5\ from\ unknown\ book}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ [5]\ LeBauer\ et\ al.,\ unpublished}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }ClimateVars\ ClimateNode;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{struct\ }ClimateVars\ \{}
+\DoxyCodeLine{00014\ \ \ \textcolor{comment}{//\ year\ of\ start\ of\ this\ timestep}}
+\DoxyCodeLine{00015\ \ \ \textcolor{keywordtype}{int}\ year;}
+\DoxyCodeLine{00016\ \ \ \textcolor{comment}{//\ day\ of\ start\ of\ this\ timestep\ (1\ =\ Jan\ 1.)}}
+\DoxyCodeLine{00017\ \ \ \textcolor{keywordtype}{int}\ day;}
+\DoxyCodeLine{00018\ \ \ \textcolor{comment}{//\ time\ of\ start\ of\ this\ timestep\ (hour.fraction\ -\/\ e.g.\ noon=\ 12.0,}}
+\DoxyCodeLine{00019\ \ \ \textcolor{comment}{//\ midnight\ =\ 0.0)}}
+\DoxyCodeLine{00020\ \ \ \textcolor{keywordtype}{double}\ time;}
+\DoxyCodeLine{00021\ \ \ \textcolor{comment}{//\ length\ of\ this\ timestep\ (in\ days)\ -\/\ allow\ variable-\/length\ timesteps}}
+\DoxyCodeLine{00022\ \ \ \textcolor{keywordtype}{double}\ length;}
+\DoxyCodeLine{00023\ \ \ \textcolor{comment}{//\ avg.\ air\ temp\ for\ this\ time\ step\ (degrees\ C)}}
+\DoxyCodeLine{00024\ \ \ \textcolor{keywordtype}{double}\ tair;}
+\DoxyCodeLine{00025\ \ \ \textcolor{comment}{//\ avg.\ soil\ temp\ for\ this\ time\ step\ (degrees\ C)}}
+\DoxyCodeLine{00026\ \ \ \textcolor{keywordtype}{double}\ tsoil;}
+\DoxyCodeLine{00027\ \ \ \textcolor{comment}{//\ average\ par\ for\ this\ time\ step\ (Einsteins\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00028\ \ \ \textcolor{comment}{//\ NOTE:\ input\ is\ in\ Einsteins\ *\ m\string^-\/2\ ground\ area,\ summed\ over\ entire\ time}}
+\DoxyCodeLine{00029\ \ \ \textcolor{comment}{//\ step}}
+\DoxyCodeLine{00030\ \ \ \textcolor{keywordtype}{double}\ par;}
+\DoxyCodeLine{00031\ \ \ \textcolor{comment}{//\ total\ precip.\ for\ this\ time\ step\ (cm\ water\ equiv.\ -\/\ either\ rain\ or\ snow)}}
+\DoxyCodeLine{00032\ \ \ \textcolor{comment}{//\ NOTE:\ input\ is\ in\ mm}}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{double}\ precip;}
+\DoxyCodeLine{00034\ \ \ \textcolor{comment}{//\ average\ vapor\ pressure\ deficit\ (kPa).\ \ NOTE:\ input\ is\ in\ Pa}}
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordtype}{double}\ vpd;}
+\DoxyCodeLine{00036\ \ \ \textcolor{comment}{//\ \ average\ vapor\ pressure\ deficit\ between\ soil\ and\ air\ (kPa).\ NOTE:\ input\ is}}
+\DoxyCodeLine{00037\ \ \ \textcolor{comment}{//\ \ in\ Pa.}}
+\DoxyCodeLine{00038\ \ \ \textcolor{comment}{//\ \ Differs\ from\ vpd\ in\ that\ saturation\ vapor\ pressure\ calculated\ using\ Tsoil}}
+\DoxyCodeLine{00039\ \ \ \textcolor{comment}{//\ \ rather\ than\ Tair}}
+\DoxyCodeLine{00040\ \ \ \textcolor{keywordtype}{double}\ vpdSoil;}
+\DoxyCodeLine{00041\ \ \ \textcolor{comment}{//\ \ average\ vapor\ pressure\ in\ canopy\ airspace\ (kPa).\ NOTE:\ input\ is\ in\ Pa}}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{double}\ vPress;}
+\DoxyCodeLine{00043\ \ \ \textcolor{comment}{//\ avg.\ wind\ speed\ (m/s)}}
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{double}\ wspd;}
+\DoxyCodeLine{00045\ \ \ \textcolor{comment}{//\ growing\ degree\ days\ from\ Jan.\ 1\ to\ now.\ NOTE:\ Calculated,\ *not*\ read\ from}}
+\DoxyCodeLine{00046\ \ \ \textcolor{comment}{//\ file}}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{double}\ gdd;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ ClimateNode\ *nextClim;}
+\DoxyCodeLine{00050\ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{//\ Global\ vars}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{extern}\ ClimateNode\ *firstClimate;\ \ \textcolor{comment}{//\ pointer\ to\ first\ climate}}
+\DoxyCodeLine{00054\ \textcolor{keyword}{extern}\ ClimateNode\ *climate;\ \ \textcolor{comment}{//\ current\ climate}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ NUM\_CLIM\_FILE\_COLS\ 12}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ NUM\_CLIM\_FILE\_COLS\_LEGACY\ (NUM\_CLIM\_FILE\_COLS\ +\ 2)}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{//\ Model\ parameters,\ which\ can\ change\ from\ one\ run\ to\ the\ next,\ include}}
+\DoxyCodeLine{00060\ \textcolor{comment}{//\ initializations\ of\ state.\ Initial\ values\ are\ read\ in\ from\ a\ file,\ or}}
+\DoxyCodeLine{00061\ \textcolor{comment}{//\ calculated\ at\ start\ of\ model.}}
+\DoxyCodeLine{00062\ \textcolor{comment}{//}}
+\DoxyCodeLine{00063\ \textcolor{comment}{//\ If\ any\ parameters\ are\ added\ here,\ and\ these\ parameters\ are\ to\ be\ read\ from}}
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ file,\ be\ sure\ to\ add\ them\ to\ the\ readParamData\ function,\ below}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{//\ Parameter\ values\ are\ read\ in\ from\ <inputFile>.param}}
+\DoxyCodeLine{00067\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }Parameters\ \{}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00070\ \ \ \textcolor{comment}{//\ Params\ from\ [1]\ Braswell\ et\ al.\ (2005)}}
+\DoxyCodeLine{00071\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00074\ \ \ \textcolor{comment}{//\ Initial\ state\ values}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ ground\ area\ in\ wood\ (above-\/ground\ +\ roots)}}
+\DoxyCodeLine{00077\ \ \ \textcolor{comment}{//\ ::\ C\_(W,0)\ in\ [1]}}
+\DoxyCodeLine{00078\ \ \ \textcolor{keywordtype}{double}\ plantWoodInit;}
+\DoxyCodeLine{00079\ \ \ \textcolor{comment}{//\ initial\ leaf\ area,\ m\string^2\ leaves\ *\ m\string^-\/2\ ground\ area\ (multiply\ by\ leafCSpWt\ to}}
+\DoxyCodeLine{00080\ \ \ \textcolor{comment}{//\ get\ initial\ plant\ leaf\ C,\ which\ is\ C\_(L,0)\ in\ [1])}}
+\DoxyCodeLine{00081\ \ \ \textcolor{comment}{//\ ::\ used\ to\ derive\ C\_L\_0\ in\ [1]}}
+\DoxyCodeLine{00082\ \ \ \textcolor{keywordtype}{double}\ laiInit;}
+\DoxyCodeLine{00083\ \ \ \textcolor{comment}{//\ initial\ soil\ C\ content,\ g\ C\ *\ m\string^-\/2\ ground\ area}}
+\DoxyCodeLine{00084\ \ \ \textcolor{comment}{//\ ::\ C\_(S,0)\ in\ [1]}}
+\DoxyCodeLine{00085\ \ \ \textcolor{keywordtype}{double}\ soilInit;}
+\DoxyCodeLine{00086\ \ \ \textcolor{comment}{//\ unitless:\ fraction\ of\ soilWHC}}
+\DoxyCodeLine{00087\ \ \ \textcolor{comment}{//\ ::\ used\ to\ derive\ W\_0\ in\ [1]}}
+\DoxyCodeLine{00088\ \ \ \textcolor{keywordtype}{double}\ soilWFracInit;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00091\ \ \ \textcolor{comment}{//\ Photosynthesis}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \textcolor{comment}{//\ max\ photosynthesis\ assuming\ max.\ possible\ par,\ all\ intercepted,\ no\ temp,}}
+\DoxyCodeLine{00094\ \ \ \textcolor{comment}{//\ water\ or\ vpd\ stress\ (nmol\ CO2\ *\ g\string^-\/1\ leaf\ *\ sec\string^-\/1)}}
+\DoxyCodeLine{00095\ \ \ \textcolor{comment}{//\ ::\ A\_max\ in\ [1]}}
+\DoxyCodeLine{00096\ \ \ \textcolor{keywordtype}{double}\ aMax;}
+\DoxyCodeLine{00097\ \ \ \textcolor{comment}{//\ avg.\ daily\ aMax\ as\ fraction\ of\ instantaneous}}
+\DoxyCodeLine{00098\ \ \ \textcolor{comment}{//\ ::\ A\_d\ in\ [1]}}
+\DoxyCodeLine{00099\ \ \ \textcolor{keywordtype}{double}\ aMaxFrac;}
+\DoxyCodeLine{00100\ \ \ \textcolor{comment}{//\ basal\ foliage\ resp.\ rate,\ as\ \%\ of\ aMax}}
+\DoxyCodeLine{00101\ \ \ \textcolor{comment}{//\ ::\ K\_f\ in\ [1]}}
+\DoxyCodeLine{00102\ \ \ \textcolor{keywordtype}{double}\ baseFolRespFrac;}
+\DoxyCodeLine{00103\ \ \ \textcolor{comment}{//\ min\ and\ optimal\ temps\ at\ which\ net\ photosynthesis\ occurs\ (degrees\ C)}}
+\DoxyCodeLine{00104\ \ \ \textcolor{comment}{//\ ::\ T\_min\ and\ T\_opt\ in\ [1]}}
+\DoxyCodeLine{00105\ \ \ \textcolor{keywordtype}{double}\ psnTMin,\ psnTOpt;}
+\DoxyCodeLine{00106\ \ \ \textcolor{comment}{//\ calculated\ (not\ read)\ T\ max,\ assumed\ symmetrical\ around\ psnTOpt\ (degrees\ C)}}
+\DoxyCodeLine{00107\ \ \ \textcolor{keywordtype}{double}\ psnTMax;}
+\DoxyCodeLine{00108\ \ \ \textcolor{comment}{//\ slope\ of\ VPD-\/psn\ relationship}}
+\DoxyCodeLine{00109\ \ \ \textcolor{comment}{//\ ::\ K\_VPD\ in\ [1]}}
+\DoxyCodeLine{00110\ \ \ \textcolor{keywordtype}{double}\ dVpdSlope;}
+\DoxyCodeLine{00111\ \ \ \textcolor{comment}{//\ exponent\ for\ D\_VPD\ calculation\ via\ dVpd\ =\ 1\ -\/\ dVpdSlope\ *\ vpd\string^dVpdExp}}
+\DoxyCodeLine{00112\ \ \ \textcolor{comment}{//\ Note:\ this\ is\ explicitly\ shown\ as\ 2\ in\ [1]\ -\/\ see\ (A10)}}
+\DoxyCodeLine{00113\ \ \ \textcolor{comment}{//\ ::\ no\ direct\ analog\ in\ [1]}}
+\DoxyCodeLine{00114\ \ \ \textcolor{keywordtype}{double}\ dVpdExp;}
+\DoxyCodeLine{00115\ \ \ \textcolor{comment}{//\ par\ at\ which\ photosynthesis\ occurs\ at\ 1/2\ theoretical\ maximum}}
+\DoxyCodeLine{00116\ \ \ \textcolor{comment}{//\ (Einsteins\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00117\ \ \ \textcolor{comment}{//\ ::\ PAR\_1/2\ in\ [1]}}
+\DoxyCodeLine{00118\ \ \ \textcolor{keywordtype}{double}\ halfSatPar;}
+\DoxyCodeLine{00119\ \ \ \textcolor{comment}{//\ light\ attenuation\ coefficient}}
+\DoxyCodeLine{00120\ \ \ \textcolor{comment}{//\ ::\ k\ in\ [1]}}
+\DoxyCodeLine{00121\ \ \ \textcolor{keywordtype}{double}\ attenuation;}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00124\ \ \ \textcolor{comment}{//\ Phenology\ related}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \textcolor{comment}{//\ day\ when\ leaves\ appear}}
+\DoxyCodeLine{00127\ \ \ \textcolor{comment}{//\ ::\ D\_on\ in\ [1]}}
+\DoxyCodeLine{00128\ \ \ \textcolor{keywordtype}{double}\ leafOnDay;}
+\DoxyCodeLine{00129\ \ \ \textcolor{comment}{//\ day\ when\ leaves\ disappear}}
+\DoxyCodeLine{00130\ \ \ \textcolor{comment}{//\ ::\ D\_off\ in\ [1]}}
+\DoxyCodeLine{00131\ \ \ \textcolor{keywordtype}{double}\ leafOffDay;}
+\DoxyCodeLine{00132\ \ \ \textcolor{comment}{//\ with\ gdd-\/based\ phenology,\ gdd\ threshold\ for\ leaf\ appearance}}
+\DoxyCodeLine{00133\ \ \ \textcolor{comment}{//\ ::\ unlabeled\ in\ [1]}}
+\DoxyCodeLine{00134\ \ \ \textcolor{keywordtype}{double}\ gddLeafOn;}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00137\ \ \ \textcolor{comment}{//\ Autotrophic\ respiration}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \textcolor{comment}{//\ vegetation\ maintenance\ respiration\ at\ 0\ degrees\ C}}
+\DoxyCodeLine{00140\ \ \ \textcolor{comment}{//\ (g\ C\ respired\ *\ g\string^-\/1\ plant\ C\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00141\ \ \ \textcolor{comment}{//\ Only\ counts\ plant\ wood\ C\ -\/\ leaves\ handled\ elsewhere\ (both\ above\ and}}
+\DoxyCodeLine{00142\ \ \ \textcolor{comment}{//\ below-\/ground:\ assumed\ for\ now\ to\ have\ same\ resp.\ rate)}}
+\DoxyCodeLine{00143\ \ \ \textcolor{comment}{//\ NOTE:\ read\ in\ as\ per-\/year\ rate!}}
+\DoxyCodeLine{00144\ \ \ \textcolor{comment}{//\ ::\ K\_A\ in\ [1]}}
+\DoxyCodeLine{00145\ \ \ \textcolor{keywordtype}{double}\ baseVegResp;}
+\DoxyCodeLine{00146\ \ \ \textcolor{comment}{//\ scalar\ determining\ effect\ of\ temp\ on\ veg.\ resp.;\ Q\_10\_v\ in\ [1]}}
+\DoxyCodeLine{00147\ \ \ \textcolor{keywordtype}{double}\ vegRespQ10;}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00150\ \ \ \textcolor{comment}{//\ Soil\ respiration}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \textcolor{comment}{//\ soil\ respiration\ at\ 0\ degrees\ C\ and\ max\ soil\ moisture}}
+\DoxyCodeLine{00153\ \ \ \textcolor{comment}{//\ (g\ C\ respired\ *\ g\string^-\/1\ soil\ C\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00154\ \ \ \textcolor{comment}{//\ NOTE:\ read\ in\ as\ per-\/year\ rate!}}
+\DoxyCodeLine{00155\ \ \ \textcolor{comment}{//\ ::\ K\_H\ in\ [1]}}
+\DoxyCodeLine{00156\ \ \ \textcolor{keywordtype}{double}\ baseSoilResp;}
+\DoxyCodeLine{00157\ \ \ \textcolor{comment}{//\ scalar\ determining\ effect\ of\ temp\ on\ soil\ resp.;\ Q\_10\_s\ in\ [1]}}
+\DoxyCodeLine{00158\ \ \ \textcolor{keywordtype}{double}\ soilRespQ10;}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00161\ \ \ \textcolor{comment}{//\ Moisture\ related}}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \textcolor{comment}{//\ fraction\ of\ plant\ available\ soil\ water\ which\ can\ be\ removed\ in\ one\ day}}
+\DoxyCodeLine{00164\ \ \ \textcolor{comment}{//\ without\ water\ stress\ occurring}}
+\DoxyCodeLine{00165\ \ \ \textcolor{comment}{//\ ::\ f\ in\ [1]}}
+\DoxyCodeLine{00166\ \ \ \textcolor{keywordtype}{double}\ waterRemoveFrac;}
+\DoxyCodeLine{00167\ \ \ \textcolor{comment}{//\ water\ use\ efficiency\ constant}}
+\DoxyCodeLine{00168\ \ \ \textcolor{comment}{//\ ::\ K\_WUE\ in\ [1]}}
+\DoxyCodeLine{00169\ \ \ \textcolor{keywordtype}{double}\ wueConst;}
+\DoxyCodeLine{00170\ \ \ \textcolor{comment}{//\ soil\ (transpiration\ layer)\ water\ holding\ capacity\ (cm)}}
+\DoxyCodeLine{00171\ \ \ \textcolor{comment}{//\ ::\ W\_c\ in\ [1]}}
+\DoxyCodeLine{00172\ \ \ \textcolor{keywordtype}{double}\ soilWHC;}
+\DoxyCodeLine{00173\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ leaf\ area}}
+\DoxyCodeLine{00174\ \ \ \textcolor{comment}{//\ ::\ SLW\ in\ [1]}}
+\DoxyCodeLine{00175\ \ \ \textcolor{keywordtype}{double}\ leafCSpWt;}
+\DoxyCodeLine{00176\ \ \ \textcolor{comment}{//\ g\ leaf\ C\ *\ g\string^-\/1\ leaf}}
+\DoxyCodeLine{00177\ \ \ \textcolor{comment}{//\ ::\ C\_frac\ in\ [1]}}
+\DoxyCodeLine{00178\ \ \ \textcolor{keywordtype}{double}\ cFracLeaf;}
+\DoxyCodeLine{00179\ \ \ \textcolor{comment}{//\ average\ turnover\ rate\ of\ woody\ plant\ C,\ in\ fraction\ per\ day\ (leaf\ loss}}
+\DoxyCodeLine{00180\ \ \ \textcolor{comment}{//\ handled\ separately).\ NOTE:\ read\ in\ as\ per-\/year\ rate!}}
+\DoxyCodeLine{00181\ \ \ \textcolor{comment}{//\ ::\ K\_w\ in\ [1]}}
+\DoxyCodeLine{00182\ \ \ \textcolor{keywordtype}{double}\ woodTurnoverRate;}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00185\ \ \ \textcolor{comment}{//\ Params\ from\ [2]\ Sacks\ et\ al.\ (2006)}}
+\DoxyCodeLine{00186\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00189\ \ \ \textcolor{comment}{//\ Initial\ state\ values}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \textcolor{comment}{//\ initial\ litter\ pool\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00192\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
+\DoxyCodeLine{00193\ \ \ \textcolor{keywordtype}{double}\ litterInit;}
+\DoxyCodeLine{00194\ \ \ \textcolor{comment}{//\ initial\ snowpack\ (cm\ water\ equivalent)}}
+\DoxyCodeLine{00195\ \ \ \textcolor{comment}{//\ ::\ W\_P,0\ in\ [2]}}
+\DoxyCodeLine{00196\ \ \ \textcolor{keywordtype}{double}\ snowInit;}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00199\ \ \ \textcolor{comment}{//\ Moisture\ related}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \textcolor{comment}{//\ fraction\ of\ water\ that's\ available\ if\ soil\ is\ frozen}}
+\DoxyCodeLine{00202\ \ \ \textcolor{comment}{//\ (0\ =\ none\ available,\ 1\ =\ all\ still\ avail.)}}
+\DoxyCodeLine{00203\ \ \ \textcolor{comment}{//\ NOTE:\ if\ frozenSoilEff\ =\ 0,\ then\ shut\ down\ psn}}
+\DoxyCodeLine{00204\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
+\DoxyCodeLine{00205\ \ \ \textcolor{keywordtype}{double}\ frozenSoilEff;}
+\DoxyCodeLine{00206\ \ \ \textcolor{comment}{//\ fraction\ of\ rain\ that\ is\ immediately\ intercepted\ \&\ evaporated}}
+\DoxyCodeLine{00207\ \ \ \textcolor{comment}{//\ ::\ E\ in\ [2]}}
+\DoxyCodeLine{00208\ \ \ \textcolor{keywordtype}{double}\ immedEvapFrac;}
+\DoxyCodeLine{00209\ \ \ \textcolor{comment}{//\ fraction\ of\ water\ entering\ soil\ that\ goes\ directly\ to\ drainage}}
+\DoxyCodeLine{00210\ \ \ \textcolor{comment}{//\ ::\ F\ in\ [2]}}
+\DoxyCodeLine{00211\ \ \ \textcolor{keywordtype}{double}\ fastFlowFrac;}
+\DoxyCodeLine{00212\ \ \ \textcolor{comment}{//\ rate\ at\ which\ snow\ melts\ (cm\ water\ equiv./degree\ C/day)}}
+\DoxyCodeLine{00213\ \ \ \textcolor{comment}{//\ ::\ K\_S\ in\ [2]}}
+\DoxyCodeLine{00214\ \ \ \textcolor{keywordtype}{double}\ snowMelt;}
+\DoxyCodeLine{00215\ \ \ \textcolor{comment}{//\ scalar\ determining\ amount\ of\ aerodynamic\ resistance}}
+\DoxyCodeLine{00216\ \ \ \textcolor{comment}{//\ ::\ R\_d\ in\ [2]}}
+\DoxyCodeLine{00217\ \ \ \textcolor{keywordtype}{double}\ rdConst;}
+\DoxyCodeLine{00218\ \ \ \textcolor{comment}{//\ parameters\ used\ to\ calculate\ soil\ resistance\ as}}
+\DoxyCodeLine{00219\ \ \ \textcolor{comment}{//\ soil\ resistance\ =\ e\string^(rSoilConst1\ -\/\ rSoilConst2\ *\ W1)}}
+\DoxyCodeLine{00220\ \ \ \textcolor{comment}{//\ where\ W1\ =\ (water/WHC)}}
+\DoxyCodeLine{00221\ \ \ \textcolor{comment}{//\ ::\ R\_soil,1\ and\ R\_soil,2\ in\ [2]}}
+\DoxyCodeLine{00222\ \ \ \textcolor{keywordtype}{double}\ rSoilConst1,\ rSoilConst2;}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00225\ \ \ \textcolor{comment}{//\ Phenology\ related}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ leaf\ growth}}
+\DoxyCodeLine{00228\ \ \ \textcolor{comment}{//\ ::\ NPP\_L\ in\ [2]}}
+\DoxyCodeLine{00229\ \ \ \textcolor{keywordtype}{double}\ leafAllocation;}
+\DoxyCodeLine{00230\ \ \ \textcolor{comment}{//\ average\ turnover\ rate\ of\ leaves,\ in\ fraction\ per\ day.\ NOTE:\ read\ in\ as}}
+\DoxyCodeLine{00231\ \ \ \textcolor{comment}{//\ per-\/year\ rate!}}
+\DoxyCodeLine{00232\ \ \ \textcolor{comment}{//\ ::\ K\_L\ in\ [2]}}
+\DoxyCodeLine{00233\ \ \ \textcolor{keywordtype}{double}\ leafTurnoverRate;}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00236\ \ \ \textcolor{comment}{//\ Autotrophic\ respiration}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \textcolor{comment}{//\ amount\ that\ foliar\ resp.\ is\ shutdown\ if\ soil\ is\ frozen\ (0\ =\ full\ shutdown,}}
+\DoxyCodeLine{00239\ \ \ \textcolor{comment}{//\ 1\ =\ no\ shutdown)}}
+\DoxyCodeLine{00240\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
+\DoxyCodeLine{00241\ \ \ \textcolor{keywordtype}{double}\ frozenSoilFolREff;}
+\DoxyCodeLine{00242\ \ \ \textcolor{comment}{//\ soil\ temperature\ below\ which\ frozenSoilFolREff\ and\ frozenSoilEff\ kick\ in}}
+\DoxyCodeLine{00243\ \ \ \textcolor{comment}{//\ (degrees\ C)}}
+\DoxyCodeLine{00244\ \ \ \textcolor{comment}{//\ ::\ T\_s\ in\ [2]}}
+\DoxyCodeLine{00245\ \ \ \textcolor{keywordtype}{double}\ frozenSoilThreshold;}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00248\ \ \ \textcolor{comment}{//\ Soil\ respiration}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \textcolor{comment}{//\ rate\ at\ which\ litter\ is\ converted\ to\ soil/respired\ at\ 0\ degrees\ C\ and\ max}}
+\DoxyCodeLine{00251\ \ \ \textcolor{comment}{//\ soil\ moisture\ (g\ C\ broken\ down\ *\ g\string^-\/1\ litter\ C\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00252\ \ \ \textcolor{comment}{//\ NOTE:\ read\ in\ as\ per-\/year\ rate}}
+\DoxyCodeLine{00253\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
+\DoxyCodeLine{00254\ \ \ \textcolor{keywordtype}{double}\ litterBreakdownRate;}
+\DoxyCodeLine{00255\ \ \ \textcolor{comment}{//\ of\ the\ litter\ broken\ down,\ fraction\ respired\ (the\ rest\ is\ transferred\ to}}
+\DoxyCodeLine{00256\ \ \ \textcolor{comment}{//\ soil\ pool)}}
+\DoxyCodeLine{00257\ \ \ \textcolor{comment}{//\ ::\ not\ directly\ listed\ in\ [2]}}
+\DoxyCodeLine{00258\ \ \ \textcolor{keywordtype}{double}\ fracLitterRespired;}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00261\ \ \ \textcolor{comment}{//\ Params\ from\ [3]\ Zobitz\ et\ al.\ (2008)}}
+\DoxyCodeLine{00262\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \textcolor{comment}{//\ Roots}}
+\DoxyCodeLine{00265\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \textcolor{comment}{//\ fraction\ of\ wood\ carbon\ allocated\ to\ fine\ roots}}
+\DoxyCodeLine{00268\ \ \ \textcolor{keywordtype}{double}\ fineRootFrac;}
+\DoxyCodeLine{00269\ \ \ \textcolor{comment}{//\ fraction\ of\ wood\ carbon\ that\ is\ coarse\ roots}}
+\DoxyCodeLine{00270\ \ \ \textcolor{keywordtype}{double}\ coarseRootFrac;}
+\DoxyCodeLine{00271\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ the\ non-\/root\ wood}}
+\DoxyCodeLine{00272\ \ \ \textcolor{keywordtype}{double}\ woodAllocation;}
+\DoxyCodeLine{00273\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ fine\ roots}}
+\DoxyCodeLine{00274\ \ \ \textcolor{keywordtype}{double}\ fineRootAllocation;}
+\DoxyCodeLine{00275\ \ \ \textcolor{comment}{//\ fraction\ of\ NPP\ allocated\ to\ the\ coarse\ roots\ (calculated\ param)}}
+\DoxyCodeLine{00276\ \ \ \textcolor{keywordtype}{double}\ coarseRootAllocation;}
+\DoxyCodeLine{00277\ \ \ \textcolor{comment}{//\ fraction\ of\ GPP\ exuded\ to\ the\ soil}}
+\DoxyCodeLine{00278\ \ \ \textcolor{keywordtype}{double}\ fineRootExudation;}
+\DoxyCodeLine{00279\ \ \ \textcolor{comment}{//\ fraction\ of\ GPP\ exuded\ to\ the\ soil}}
+\DoxyCodeLine{00280\ \ \ \textcolor{keywordtype}{double}\ coarseRootExudation;}
+\DoxyCodeLine{00281\ \ \ \textcolor{comment}{//\ turnover\ of\ fine\ roots\ (per\ year\ rate)}}
+\DoxyCodeLine{00282\ \ \ \textcolor{keywordtype}{double}\ fineRootTurnoverRate;}
+\DoxyCodeLine{00283\ \ \ \textcolor{comment}{//\ turnover\ of\ coarse\ roots\ (per\ year\ rate)}}
+\DoxyCodeLine{00284\ \ \ \textcolor{keywordtype}{double}\ coarseRootTurnoverRate;}
+\DoxyCodeLine{00285\ \ \ \textcolor{comment}{//\ base\ respiration\ rate\ of\ fine\ roots\ \ (per\ year\ rate)}}
+\DoxyCodeLine{00286\ \ \ \textcolor{keywordtype}{double}\ baseFineRootResp;}
+\DoxyCodeLine{00287\ \ \ \textcolor{comment}{//\ base\ respiration\ rate\ of\ coarse\ roots\ (per\ year\ rate)}}
+\DoxyCodeLine{00288\ \ \ \textcolor{keywordtype}{double}\ baseCoarseRootResp;}
+\DoxyCodeLine{00289\ \ \ \textcolor{comment}{//\ Q10\ of\ fine\ roots}}
+\DoxyCodeLine{00290\ \ \ \textcolor{keywordtype}{double}\ fineRootQ10;}
+\DoxyCodeLine{00291\ \ \ \textcolor{comment}{//\ Q10\ of\ coarse\ roots}}
+\DoxyCodeLine{00292\ \ \ \textcolor{keywordtype}{double}\ coarseRootQ10;}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00295\ \ \ \textcolor{comment}{//\ Params\ from\ [4]\ Zobitz\ et\ al.\ (draft)}}
+\DoxyCodeLine{00296\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \textcolor{comment}{//\ mg\ C\ /\ g\ soil\ microbe\ initial\ carbon\ amount,\ as\ fraction\ of\ soil\ init\ C}}
+\DoxyCodeLine{00299\ \ \ \textcolor{comment}{//\ ::\ equivalent\ to\ C\_B,0\ in\ [4]}}
+\DoxyCodeLine{00300\ \ \ \textcolor{keywordtype}{double}\ microbeInit;}
+\DoxyCodeLine{00301\ \ \ \textcolor{comment}{//\ base\ respiration\ rate\ of\ microbes\ at\ 0\ degrees\ C}}
+\DoxyCodeLine{00302\ \ \ \textcolor{comment}{//\ ::\ K\_B\ in\ [4]}}
+\DoxyCodeLine{00303\ \ \ \textcolor{keywordtype}{double}\ baseMicrobeResp;}
+\DoxyCodeLine{00304\ \ \ \textcolor{comment}{//\ Q10\ of\ microbes}}
+\DoxyCodeLine{00305\ \ \ \textcolor{comment}{//\ ::\ Q10\_B\ in\ [4]}}
+\DoxyCodeLine{00306\ \ \ \textcolor{keywordtype}{double}\ microbeQ10;}
+\DoxyCodeLine{00307\ \ \ \textcolor{comment}{//\ fraction\ of\ exudates\ that\ microbes\ immediately\ use\ (microbe\ assimilation}}
+\DoxyCodeLine{00308\ \ \ \textcolor{comment}{//\ efficiency\ of\ root\ exudates)}}
+\DoxyCodeLine{00309\ \ \ \textcolor{comment}{//\ ::\ epsilon\_R\ in\ [4]}}
+\DoxyCodeLine{00310\ \ \ \textcolor{keywordtype}{double}\ microbePulseEff;}
+\DoxyCodeLine{00311\ \ \ \textcolor{comment}{//\ microbe\ efficiency\ to\ convert\ carbon\ to\ biomass}}
+\DoxyCodeLine{00312\ \ \ \textcolor{comment}{//\ ::\ epsilon\ in\ [4]}}
+\DoxyCodeLine{00313\ \ \ \textcolor{keywordtype}{double}\ efficiency;}
+\DoxyCodeLine{00314\ \ \ \textcolor{comment}{//\ microbial\ maximum\ ingestion\ rate\ (hr-\/1)}}
+\DoxyCodeLine{00315\ \ \ \textcolor{comment}{//\ ::\ mu\_MAX\ in\ [4]}}
+\DoxyCodeLine{00316\ \ \ \textcolor{keywordtype}{double}\ maxIngestionRate;}
+\DoxyCodeLine{00317\ \ \ \textcolor{comment}{//\ half\ saturation\ ingestion\ rate\ of\ microbes\ (mg\ C\ g-\/1\ soil)}}
+\DoxyCodeLine{00318\ \ \ \textcolor{comment}{//\ Note:\ those\ units\ can't\ be\ correct,\ as\ we\ add\ this\ to\ envi.soil;\ must\ be}}
+\DoxyCodeLine{00319\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ (g\ C\ /\ m-\/2\ ground\ area),\ as\ there\ are\ no\ conversions\ in\ the\ code.}}
+\DoxyCodeLine{00320\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ Or,\ this\ is\ a\ bug.\ (This\ param\ is\ listed\ as\ g\ C/m-\/2\ in\ [4],\ so}}
+\DoxyCodeLine{00321\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ probably\ not\ a\ bug.)}}
+\DoxyCodeLine{00322\ \ \ \textcolor{comment}{//\ ::\ theta\_B\ in\ [4]}}
+\DoxyCodeLine{00323\ \ \ \textcolor{keywordtype}{double}\ halfSatIngestion;}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00326\ \ \ \textcolor{comment}{//\ Other\ params,\ provenance\ TBD}}
+\DoxyCodeLine{00327\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \textcolor{comment}{//\ phenology-\/related:}}
+\DoxyCodeLine{00330\ \ \ \textcolor{comment}{//\ with\ soil\ temp-\/based\ phenology,\ soil\ temp\ threshold\ for\ leaf\ appearance}}
+\DoxyCodeLine{00331\ \ \ \textcolor{keywordtype}{double}\ soilTempLeafOn;}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \textcolor{comment}{//\ The\ two\ params\ below\ seem\ to\ be\ used\ in\ leaf\ calculations\ as\ part\ of\ a}}
+\DoxyCodeLine{00334\ \ \ \textcolor{comment}{//\ merging\ of\ approaches\ from\ [1]\ and\ [2]}}
+\DoxyCodeLine{00335\ \ \ \textcolor{comment}{//\ additional\ leaf\ growth\ at\ start\ of\ growing\ season\ (g\ C\ *\ m\string^-\/2\ ground)}}
+\DoxyCodeLine{00336\ \ \ \textcolor{keywordtype}{double}\ leafGrowth;}
+\DoxyCodeLine{00337\ \ \ \textcolor{comment}{//\ additional\ fraction\ of\ leaves\ that\ fall\ at\ end\ of\ growing\ season}}
+\DoxyCodeLine{00338\ \ \ \textcolor{keywordtype}{double}\ fracLeafFall;}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \ \ \textcolor{comment}{//\ autotrophic\ respiration:}}
+\DoxyCodeLine{00341\ \ \ \textcolor{comment}{//\ growth\ resp.\ as\ fraction\ of\ (GPP\ -\/\ woodResp\ -\/\ folResp)}}
+\DoxyCodeLine{00342\ \ \ \textcolor{comment}{//\ Note:\ that\ comment\ may\ not\ be\ correct,\ growthResp\ is\ calc'd\ as}}
+\DoxyCodeLine{00343\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ (mean\ GPP)\ *\ (growtheRespFrac)}}
+\DoxyCodeLine{00344\ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ with\ no\ correction\ for\ woodResp\ or\ folResp}}
+\DoxyCodeLine{00345\ \ \ \textcolor{keywordtype}{double}\ growthRespFrac;}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \ \ \textcolor{comment}{//\ soil\ respiration:}}
+\DoxyCodeLine{00348\ \ \ \textcolor{comment}{//\ scalar\ determining\ effect\ of\ moisture\ on\ soil\ respiration;\ used\ as\ exponent}}
+\DoxyCodeLine{00349\ \ \ \textcolor{comment}{//\ for\ (W/W\_c)\ fraction\ in\ moisture\ effect\ calculation}}
+\DoxyCodeLine{00350\ \ \ \textcolor{keywordtype}{double}\ soilRespMoistEffect;}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00352\ \ \ \textcolor{comment}{//\ moisture\ related:}}
+\DoxyCodeLine{00353\ \ \ \textcolor{comment}{//\ leaf\ (evaporative)\ pool\ rim\ thickness\ in\ mm}}
+\DoxyCodeLine{00354\ \ \ \textcolor{keywordtype}{double}\ leafPoolDepth;}
 \DoxyCodeLine{00355\ }
-\DoxyCodeLine{00356\ \textcolor{preprocessor}{\#define\ NUM\_PARAMS\ (sizeof(Params)\ /\ sizeof(double))}}
-\DoxyCodeLine{00357\ }
-\DoxyCodeLine{00358\ \textcolor{comment}{//\ Global\ var}}
-\DoxyCodeLine{00359\ \textcolor{keyword}{extern}\ Params\ params;}
+\DoxyCodeLine{00356\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00357\ \ \ \textcolor{comment}{//\ Params\ from\ [5]\ LeBauer\ et\ al.\ (unpublished)}}
+\DoxyCodeLine{00358\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00359\ \ \ \textcolor{comment}{//\ Nitrogen\ Cycle}}
 \DoxyCodeLine{00360\ }
-\DoxyCodeLine{00361\ \textcolor{comment}{//\ the\ state\ of\ the\ environment}}
-\DoxyCodeLine{00362\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }Environment\ \{}
-\DoxyCodeLine{00363\ \ \ \textcolor{comment}{//\ From\ [1]\ Braswell\ et\ al.\ 2005}}
-\DoxyCodeLine{00364\ \ \ \textcolor{keywordtype}{double}\ plantWoodC;\ \ \textcolor{comment}{//\ carbon\ in\ plant\ wood\ (above-\/ground\ +\ roots)\ (g\ C\ *\ m\string^-\/2}}
-\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ground\ area)}}
-\DoxyCodeLine{00366\ \ \ \textcolor{keywordtype}{double}\ plantLeafC;\ \ \textcolor{comment}{//\ carbon\ in\ leaves\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
-\DoxyCodeLine{00367\ \ \ \textcolor{keywordtype}{double}\ soil;\ \ \textcolor{comment}{//\ carbon\ in\ soil\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
-\DoxyCodeLine{00368\ \ \ \textcolor{keywordtype}{double}\ soilWater;\ \ \textcolor{comment}{//\ plant\ available\ soil\ water\ (cm)}}
-\DoxyCodeLine{00369\ }
-\DoxyCodeLine{00370\ \ \ \textcolor{comment}{//\ From\ [2]\ Sacks\ et\ al.\ 2006}}
-\DoxyCodeLine{00371\ \ \ \textcolor{comment}{//\ carbon\ in\ litter\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
-\DoxyCodeLine{00372\ \ \ \textcolor{keywordtype}{double}\ litter;}
-\DoxyCodeLine{00373\ \ \ \textcolor{comment}{//\ snow\ pack\ (cm\ water\ equiv.)}}
-\DoxyCodeLine{00374\ \ \ \textcolor{keywordtype}{double}\ snow;}
-\DoxyCodeLine{00375\ }
-\DoxyCodeLine{00376\ \ \ \textcolor{comment}{//\ From\ [3]\ Zobitz\ et\ al.\ (2008)}}
-\DoxyCodeLine{00377\ \ \ \textcolor{keywordtype}{double}\ coarseRootC;}
-\DoxyCodeLine{00378\ \ \ \textcolor{keywordtype}{double}\ fineRootC;}
-\DoxyCodeLine{00379\ }
-\DoxyCodeLine{00380\ \ \ \textcolor{comment}{//\ From\ [4]\ Zobitz\ (draft)}}
-\DoxyCodeLine{00381\ \ \ \textcolor{keywordtype}{double}\ microbeC;\ \ \textcolor{comment}{//\ carbon\ in\ microbes\ (g\ C\ m-\/2\ ground\ area)}}
-\DoxyCodeLine{00382\ \}\ Envi;}
+\DoxyCodeLine{00361\ \ \ \textcolor{comment}{//\ Initial\ soil\ mineral\ nitrogen\ pool\ amount,\ g\ C\ *\ m\string^-\/2\ ground\ area}}
+\DoxyCodeLine{00362\ \ \ \textcolor{keywordtype}{double}\ minNInit;}
+\DoxyCodeLine{00363\ }
+\DoxyCodeLine{00364\ \}\ Params;}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#define\ NUM\_PARAMS\ (sizeof(Params)\ /\ sizeof(double))}}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00368\ \textcolor{comment}{//\ Global\ var}}
+\DoxyCodeLine{00369\ \textcolor{keyword}{extern}\ Params\ params;}
+\DoxyCodeLine{00370\ }
+\DoxyCodeLine{00371\ \textcolor{comment}{//\ the\ state\ of\ the\ environment}}
+\DoxyCodeLine{00372\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }Environment\ \{}
+\DoxyCodeLine{00374\ \ \ \textcolor{comment}{//\ carbon\ in\ plant\ wood\ (above-\/ground\ +\ roots)}}
+\DoxyCodeLine{00375\ \ \ \textcolor{comment}{//\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00376\ \ \ \textcolor{keywordtype}{double}\ plantWoodC;}
+\DoxyCodeLine{00377\ \ \ \textcolor{comment}{//\ carbon\ in\ leaves\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00378\ \ \ \textcolor{keywordtype}{double}\ plantLeafC;}
+\DoxyCodeLine{00379\ \ \ \textcolor{comment}{//\ carbon\ in\ soil\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00380\ \ \ \textcolor{keywordtype}{double}\ soil;}
+\DoxyCodeLine{00381\ \ \ \textcolor{comment}{//\ plant\ available\ soil\ water\ (cm)}}
+\DoxyCodeLine{00382\ \ \ \textcolor{keywordtype}{double}\ soilWater;}
 \DoxyCodeLine{00383\ }
-\DoxyCodeLine{00384\ \textcolor{comment}{//\ Global\ var}}
-\DoxyCodeLine{00385\ \textcolor{keyword}{extern}\ Envi\ envi;\ \ \textcolor{comment}{//\ state\ variables}}
-\DoxyCodeLine{00386\ }
-\DoxyCodeLine{00387\ \textcolor{comment}{//\ fluxes\ as\ per-\/day\ rates}}
-\DoxyCodeLine{00388\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }FluxVars\ \{}
-\DoxyCodeLine{00389\ \ \ \textcolor{comment}{//\ Re:\ rSoil\ vs\ maintRespiration}}
-\DoxyCodeLine{00390\ \ \ \textcolor{comment}{//\ When\ microbes\ are\ in\ effect,\ maintResp\ is\ the\ respiration\ term\ for\ the}}
-\DoxyCodeLine{00391\ \ \ \textcolor{comment}{//\ microbes,\ and\ rSoil\ is\ calculated\ taking\ maintResp\ into\ account\ (which}}
-\DoxyCodeLine{00392\ \ \ \textcolor{comment}{//\ seems\ fine).}}
-\DoxyCodeLine{00393\ \ \ \textcolor{comment}{//\ However,\ when\ microbes\ are\ off,\ maintResp\ and\ rSoil\ are\ treated\ as\ the}}
-\DoxyCodeLine{00394\ \ \ \textcolor{comment}{//\ same,\ which\ makes\ \_some\_\ sense\ (and\ maintResp\ is\ calculated\ as}}
-\DoxyCodeLine{00395\ \ \ \textcolor{comment}{//\ heterotrophic\ soil\ resp\ is\ described\ in\ [1]),\ but\ the\ use\ in\ the\ code\ is}}
-\DoxyCodeLine{00396\ \ \ \textcolor{comment}{//\ confusing.\ Also,\ the\ description\ of\ maintResp\ (before\ this\ update)\ only}}
-\DoxyCodeLine{00397\ \ \ \textcolor{comment}{//\ mentions\ the\ microbe\ case,\ furthering\ the\ confusion.\ For\ microbes\ off,\ I}}
-\DoxyCodeLine{00398\ \ \ \textcolor{comment}{//\ would\ have\ expected\ maintResp\ to\ be\ 0,\ and\ rSoil\ to\ be\ calc'd\ as\ maintResp}}
-\DoxyCodeLine{00399\ \ \ \textcolor{comment}{//\ is\ now.}}
-\DoxyCodeLine{00400\ \ \ \textcolor{comment}{//\ The\ GROWTH\_RESP\ flag\ may\ also\ play\ in\ here,\ as\ when\ that\ is\ on,\ we\ split}}
-\DoxyCodeLine{00401\ \ \ \textcolor{comment}{//\ heterotrophic\ respiration\ into\ growth\ and\ maintenance\ resp.\ This\ means}}
-\DoxyCodeLine{00402\ \ \ \textcolor{comment}{//\ maintResp\ and\ rSoil\ should\ not\ be\ the\ same\ (microbes\ off),\ so\ again\ -\/}}
-\DoxyCodeLine{00403\ \ \ \textcolor{comment}{//\ confusing\ in\ the\ code.\ Also:\ are\ we\ handling\ all\ the\ permutations\ of}}
-\DoxyCodeLine{00404\ \ \ \textcolor{comment}{//\ GROWTH\_RESP\ and\ MICROBES\ correctly?}}
-\DoxyCodeLine{00405\ \ \ \textcolor{comment}{//\ It's\ possible\ that\ better\ descriptions\ of\ these\ terms\ here,\ and\ more}}
-\DoxyCodeLine{00406\ \ \ \textcolor{comment}{//\ comments\ in\ the\ code\ are\ all\ that\ is\ needed.}}
+\DoxyCodeLine{00385\ \ \ \textcolor{comment}{//\ carbon\ in\ litter\ (g\ C\ *\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00386\ \ \ \textcolor{keywordtype}{double}\ litter;}
+\DoxyCodeLine{00387\ \ \ \textcolor{comment}{//\ snow\ pack\ (cm\ water\ equiv.)}}
+\DoxyCodeLine{00388\ \ \ \textcolor{keywordtype}{double}\ snow;}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00391\ \ \ \textcolor{comment}{//\ carbon\ in\ coarse\ roots\ (g\ C\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00392\ \ \ \textcolor{keywordtype}{double}\ coarseRootC;}
+\DoxyCodeLine{00393\ \ \ \textcolor{comment}{//\ carbon\ in\ fine\ roots\ (g\ C\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00394\ \ \ \textcolor{keywordtype}{double}\ fineRootC;}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00397\ \ \ \textcolor{comment}{//\ carbon\ in\ microbes\ (g\ C\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00398\ \ \ \textcolor{keywordtype}{double}\ microbeC;}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00401\ \ \ \textcolor{comment}{//\ soil\ mineral\ nitrogen\ pool\ (g\ C\ m\string^-\/2\ ground\ area)}}
+\DoxyCodeLine{00402\ \ \ \textcolor{keywordtype}{double}\ minN;}
+\DoxyCodeLine{00403\ \}\ Envi;}
+\DoxyCodeLine{00404\ }
+\DoxyCodeLine{00405\ \textcolor{comment}{//\ Global\ var}}
+\DoxyCodeLine{00406\ \textcolor{keyword}{extern}\ Envi\ envi;\ \ \textcolor{comment}{//\ state\ variables}}
 \DoxyCodeLine{00407\ }
-\DoxyCodeLine{00408\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00409\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [1]\ Braswell\ et\ al.\ (2005)}}
-\DoxyCodeLine{00410\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [1]}}
-\DoxyCodeLine{00411\ }
-\DoxyCodeLine{00412\ \ \ \textcolor{comment}{//\ GROSS\ photosynthesis\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00413\ \ \ \textcolor{keywordtype}{double}\ photosynthesis;}
-\DoxyCodeLine{00414\ \ \ \textcolor{comment}{//\ Leaf\ fall\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00415\ \ \ \textcolor{keywordtype}{double}\ leafLitter;}
-\DoxyCodeLine{00416\ \ \ \textcolor{comment}{//\ Wood\ flux\ to\ litter\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00417\ \ \ \textcolor{keywordtype}{double}\ woodLitter;}
-\DoxyCodeLine{00418\ \ \ \textcolor{comment}{//\ vegetation\ respiration\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00419\ \ \ \textcolor{keywordtype}{double}\ rVeg;}
-\DoxyCodeLine{00420\ \ \ \textcolor{comment}{//\ soil\ respiration\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00421\ \ \ \textcolor{keywordtype}{double}\ rSoil;}
-\DoxyCodeLine{00422\ \ \ \textcolor{comment}{//\ Liquid\ precipitation\ (cm\ water\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00423\ \ \ \textcolor{keywordtype}{double}\ rain;}
-\DoxyCodeLine{00424\ \ \ \textcolor{comment}{//\ Soil\ transpiration\ (cm\ water\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00425\ \ \ \textcolor{keywordtype}{double}\ transpiration;}
-\DoxyCodeLine{00426\ \ \ \textcolor{comment}{//\ drainage\ from\ soil\ out\ of\ system\ (cm\ water\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00427\ \ \ \textcolor{keywordtype}{double}\ drainage;}
+\DoxyCodeLine{00408\ \textcolor{comment}{//\ fluxes\ as\ per-\/day\ rates}}
+\DoxyCodeLine{00409\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }FluxVars\ \{}
+\DoxyCodeLine{00410\ \ \ \textcolor{comment}{//\ Re:\ rSoil\ vs\ maintRespiration}}
+\DoxyCodeLine{00411\ \ \ \textcolor{comment}{//\ When\ microbes\ are\ in\ effect,\ maintResp\ is\ the\ respiration\ term\ for\ the}}
+\DoxyCodeLine{00412\ \ \ \textcolor{comment}{//\ microbes,\ and\ rSoil\ is\ calculated\ taking\ maintResp\ into\ account\ (which}}
+\DoxyCodeLine{00413\ \ \ \textcolor{comment}{//\ seems\ fine).}}
+\DoxyCodeLine{00414\ \ \ \textcolor{comment}{//\ However,\ when\ microbes\ are\ off,\ maintResp\ and\ rSoil\ are\ treated\ as\ the}}
+\DoxyCodeLine{00415\ \ \ \textcolor{comment}{//\ same,\ which\ makes\ \_some\_\ sense\ (and\ maintResp\ is\ calculated\ as}}
+\DoxyCodeLine{00416\ \ \ \textcolor{comment}{//\ heterotrophic\ soil\ resp\ is\ described\ in\ [1]),\ but\ the\ use\ in\ the\ code\ is}}
+\DoxyCodeLine{00417\ \ \ \textcolor{comment}{//\ confusing.\ Also,\ the\ description\ of\ maintResp\ (before\ this\ update)\ only}}
+\DoxyCodeLine{00418\ \ \ \textcolor{comment}{//\ mentions\ the\ microbe\ case,\ furthering\ the\ confusion.\ For\ microbes\ off,\ I}}
+\DoxyCodeLine{00419\ \ \ \textcolor{comment}{//\ would\ have\ expected\ maintResp\ to\ be\ 0,\ and\ rSoil\ to\ be\ calc'd\ as\ maintResp}}
+\DoxyCodeLine{00420\ \ \ \textcolor{comment}{//\ is\ now.}}
+\DoxyCodeLine{00421\ \ \ \textcolor{comment}{//\ The\ GROWTH\_RESP\ flag\ may\ also\ play\ in\ here,\ as\ when\ that\ is\ on,\ we\ split}}
+\DoxyCodeLine{00422\ \ \ \textcolor{comment}{//\ heterotrophic\ respiration\ into\ growth\ and\ maintenance\ resp.\ This\ means}}
+\DoxyCodeLine{00423\ \ \ \textcolor{comment}{//\ maintResp\ and\ rSoil\ should\ not\ be\ the\ same\ (microbes\ off),\ so\ again\ -\/}}
+\DoxyCodeLine{00424\ \ \ \textcolor{comment}{//\ confusing\ in\ the\ code.\ Also:\ are\ we\ handling\ all\ the\ permutations\ of}}
+\DoxyCodeLine{00425\ \ \ \textcolor{comment}{//\ GROWTH\_RESP\ and\ MICROBES\ correctly?}}
+\DoxyCodeLine{00426\ \ \ \textcolor{comment}{//\ It's\ possible\ that\ better\ descriptions\ of\ these\ terms\ here,\ and\ more}}
+\DoxyCodeLine{00427\ \ \ \textcolor{comment}{//\ comments\ in\ the\ code\ are\ all\ that\ is\ needed.}}
 \DoxyCodeLine{00428\ }
 \DoxyCodeLine{00429\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00430\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [2]\ Sacks\ et\ al.\ (2006)}}
-\DoxyCodeLine{00431\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [2]}}
+\DoxyCodeLine{00430\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [1]\ Braswell\ et\ al.\ (2005)}}
+\DoxyCodeLine{00431\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [1]}}
 \DoxyCodeLine{00432\ }
-\DoxyCodeLine{00433\ \ \ \textcolor{comment}{//\ litter\ fluxes}}
-\DoxyCodeLine{00434\ \ \ \textcolor{comment}{//\ litter\ turned\ into\ soil\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00435\ \ \ \textcolor{keywordtype}{double}\ litterToSoil;}
-\DoxyCodeLine{00436\ \ \ \textcolor{comment}{//\ respired\ by\ litter\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00437\ \ \ \textcolor{keywordtype}{double}\ rLitter;}
-\DoxyCodeLine{00438\ }
-\DoxyCodeLine{00439\ \ \ \textcolor{comment}{//\ snow\ fluxes}}
-\DoxyCodeLine{00440\ \ \ \textcolor{comment}{//\ snow\ addded\ (cm\ water\ equiv.\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00441\ \ \ \textcolor{keywordtype}{double}\ snowFall;}
-\DoxyCodeLine{00442\ \ \ \textcolor{comment}{//\ snow\ removed\ by\ melting\ (cm\ water\ equiv.\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00443\ \ \ \textcolor{keywordtype}{double}\ snowMelt;}
-\DoxyCodeLine{00444\ \ \ \textcolor{comment}{//\ snow\ removed\ by\ sublimation\ (cm\ water\ equiv.\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00445\ \ \ \textcolor{keywordtype}{double}\ sublimation;}
-\DoxyCodeLine{00446\ }
-\DoxyCodeLine{00447\ \ \ \textcolor{comment}{//\ more\ complex\ soil\ moisture\ system\ fluxes}}
-\DoxyCodeLine{00448\ \ \ \textcolor{comment}{//\ rain\ that's\ intercepted\ and\ immediately\ evaporated\ (cm\ water\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00449\ \ \ \textcolor{keywordtype}{double}\ immedEvap;}
-\DoxyCodeLine{00450\ \ \ \textcolor{comment}{//\ water\ entering\ soil\ that\ goes\ directly\ to\ drainage\ (out\ of\ system)}}
-\DoxyCodeLine{00451\ \ \ \textcolor{comment}{//\ (cm\ water\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00452\ \ \ \textcolor{keywordtype}{double}\ fastFlow;}
-\DoxyCodeLine{00453\ \ \ \textcolor{comment}{//\ evaporation\ from\ top\ of\ soil\ (cm\ water\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00454\ \ \ \textcolor{keywordtype}{double}\ evaporation;}
-\DoxyCodeLine{00455\ }
-\DoxyCodeLine{00456\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00457\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [3]\ Zobitz\ et\ al.\ (2008)}}
-\DoxyCodeLine{00458\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [3]}}
+\DoxyCodeLine{00433\ \ \ \textcolor{comment}{//\ GROSS\ photosynthesis\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00434\ \ \ \textcolor{keywordtype}{double}\ photosynthesis;}
+\DoxyCodeLine{00435\ \ \ \textcolor{comment}{//\ Leaf\ fall\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00436\ \ \ \textcolor{keywordtype}{double}\ leafLitter;}
+\DoxyCodeLine{00437\ \ \ \textcolor{comment}{//\ Wood\ flux\ to\ litter\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00438\ \ \ \textcolor{keywordtype}{double}\ woodLitter;}
+\DoxyCodeLine{00439\ \ \ \textcolor{comment}{//\ vegetation\ respiration\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00440\ \ \ \textcolor{keywordtype}{double}\ rVeg;}
+\DoxyCodeLine{00441\ \ \ \textcolor{comment}{//\ soil\ respiration\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00442\ \ \ \textcolor{keywordtype}{double}\ rSoil;}
+\DoxyCodeLine{00443\ \ \ \textcolor{comment}{//\ Liquid\ precipitation\ (cm\ water\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00444\ \ \ \textcolor{keywordtype}{double}\ rain;}
+\DoxyCodeLine{00445\ \ \ \textcolor{comment}{//\ Soil\ transpiration\ (cm\ water\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00446\ \ \ \textcolor{keywordtype}{double}\ transpiration;}
+\DoxyCodeLine{00447\ \ \ \textcolor{comment}{//\ drainage\ from\ soil\ out\ of\ system\ (cm\ water\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00448\ \ \ \textcolor{keywordtype}{double}\ drainage;}
+\DoxyCodeLine{00449\ }
+\DoxyCodeLine{00450\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00451\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [2]\ Sacks\ et\ al.\ (2006)}}
+\DoxyCodeLine{00452\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [2]}}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00454\ \ \ \textcolor{comment}{//\ litter\ fluxes}}
+\DoxyCodeLine{00455\ \ \ \textcolor{comment}{//\ litter\ turned\ into\ soil\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00456\ \ \ \textcolor{keywordtype}{double}\ litterToSoil;}
+\DoxyCodeLine{00457\ \ \ \textcolor{comment}{//\ respired\ by\ litter\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00458\ \ \ \textcolor{keywordtype}{double}\ rLitter;}
 \DoxyCodeLine{00459\ }
-\DoxyCodeLine{00460\ \ \ \textcolor{comment}{//\ Loss\ rate\ of\ fine\ roots\ (turnover\ +\ exudation)}}
-\DoxyCodeLine{00461\ \ \ \textcolor{keywordtype}{double}\ fineRootLoss;}
-\DoxyCodeLine{00462\ \ \ \textcolor{comment}{//\ Loss\ rate\ of\ coarse\ roots\ (turnover\ +\ exudation)}}
-\DoxyCodeLine{00463\ \ \ \textcolor{keywordtype}{double}\ coarseRootLoss;}
-\DoxyCodeLine{00464\ \ \ \textcolor{comment}{//\ Creation\ rate\ of\ fine\ roots}}
-\DoxyCodeLine{00465\ \ \ \textcolor{keywordtype}{double}\ fineRootCreation;}
-\DoxyCodeLine{00466\ \ \ \textcolor{comment}{//\ Creation\ rate\ of\ coarse\ roots}}
-\DoxyCodeLine{00467\ \ \ \textcolor{keywordtype}{double}\ coarseRootCreation;}
-\DoxyCodeLine{00468\ \ \ \textcolor{comment}{//\ Coarse\ root\ respiration}}
-\DoxyCodeLine{00469\ \ \ \textcolor{keywordtype}{double}\ rCoarseRoot;}
-\DoxyCodeLine{00470\ \ \ \textcolor{comment}{//\ Fine\ root\ respiration}}
-\DoxyCodeLine{00471\ \ \ \textcolor{keywordtype}{double}\ rFineRoot;}
-\DoxyCodeLine{00472\ }
-\DoxyCodeLine{00473\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00474\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [4]\ Zobitz\ (draft)}}
-\DoxyCodeLine{00475\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [4]}}
+\DoxyCodeLine{00460\ \ \ \textcolor{comment}{//\ snow\ fluxes}}
+\DoxyCodeLine{00461\ \ \ \textcolor{comment}{//\ snow\ addded\ (cm\ water\ equiv.\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00462\ \ \ \textcolor{keywordtype}{double}\ snowFall;}
+\DoxyCodeLine{00463\ \ \ \textcolor{comment}{//\ snow\ removed\ by\ melting\ (cm\ water\ equiv.\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00464\ \ \ \textcolor{keywordtype}{double}\ snowMelt;}
+\DoxyCodeLine{00465\ \ \ \textcolor{comment}{//\ snow\ removed\ by\ sublimation\ (cm\ water\ equiv.\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00466\ \ \ \textcolor{keywordtype}{double}\ sublimation;}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \ \ \textcolor{comment}{//\ more\ complex\ soil\ moisture\ system\ fluxes}}
+\DoxyCodeLine{00469\ \ \ \textcolor{comment}{//\ rain\ that's\ intercepted\ and\ immediately\ evaporated\ (cm\ water\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00470\ \ \ \textcolor{keywordtype}{double}\ immedEvap;}
+\DoxyCodeLine{00471\ \ \ \textcolor{comment}{//\ water\ entering\ soil\ that\ goes\ directly\ to\ drainage\ (out\ of\ system)}}
+\DoxyCodeLine{00472\ \ \ \textcolor{comment}{//\ (cm\ water\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00473\ \ \ \textcolor{keywordtype}{double}\ fastFlow;}
+\DoxyCodeLine{00474\ \ \ \textcolor{comment}{//\ evaporation\ from\ top\ of\ soil\ (cm\ water\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00475\ \ \ \textcolor{keywordtype}{double}\ evaporation;}
 \DoxyCodeLine{00476\ }
-\DoxyCodeLine{00477\ \ \ \textcolor{comment}{//\ Microbes\ [3]}}
-\DoxyCodeLine{00478\ \ \ \textcolor{comment}{//\ microbes\ on:\ microbial\ maintenance\ respiration\ rate}}
-\DoxyCodeLine{00479\ \ \ \textcolor{comment}{//\ microbes\ off:\ equivalent\ to\ rSoil,\ calc'd\ as\ described\ in\ [1],\ eq\ (A20)}}
-\DoxyCodeLine{00480\ \ \ \textcolor{comment}{//\ (g\ C\ m-\/2\ ground\ area\ day\string^-\/1)}}
-\DoxyCodeLine{00481\ \ \ \textcolor{keywordtype}{double}\ maintRespiration;}
-\DoxyCodeLine{00482\ \ \ \textcolor{comment}{//\ Flux\ that\ microbes\ remove\ from\ soil\ (mg\ C\ g\ soil\ day)}}
-\DoxyCodeLine{00483\ \ \ \textcolor{comment}{//\ TBD\ I\ highly\ doubt\ those\ units;\ this\ is\ calc'd\ as}}
-\DoxyCodeLine{00484\ \ \ \textcolor{comment}{//\ \ \ \ \ (g\ C\ *\ m-\/2)\ *\ (day-\/1)\ *\ (unitless\ terms)}}
-\DoxyCodeLine{00485\ \ \ \textcolor{keywordtype}{double}\ microbeIngestion;}
-\DoxyCodeLine{00486\ \ \ \textcolor{comment}{//\ Exudates\ into\ the\ soil}}
-\DoxyCodeLine{00487\ \ \ \textcolor{keywordtype}{double}\ soilPulse;}
-\DoxyCodeLine{00488\ }
-\DoxyCodeLine{00489\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00490\ \ \ \textcolor{comment}{//\ Fluxes\ from\ other\ sources,\ provenance\ TBD}}
-\DoxyCodeLine{00491\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00492\ }
-\DoxyCodeLine{00493\ \ \ \textcolor{comment}{//\ leaf\ creation\ term\ as\ determined\ by\ growing\ season\ boundaries\ (as\ in\ [1])}}
-\DoxyCodeLine{00494\ \ \ \textcolor{comment}{//\ and\ NPP\ (as\ in\ [2])}}
-\DoxyCodeLine{00495\ \ \ \textcolor{comment}{//\ C\ transferred\ from\ wood\ to\ leaves\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00496\ \ \ \textcolor{keywordtype}{double}\ leafCreation;}
-\DoxyCodeLine{00497\ \ \ \textcolor{comment}{//\ wood\ creation\ term,\ dependent\ on\ NPP\ similar\ to\ leaf\ creation,\ but}}
-\DoxyCodeLine{00498\ \ \ \textcolor{comment}{//\ provenance\ TBD\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
-\DoxyCodeLine{00499\ \ \ \textcolor{keywordtype}{double}\ woodCreation;}
-\DoxyCodeLine{00500\ }
-\DoxyCodeLine{00501\ \ \ \textcolor{comment}{//\ ****************************************}}
-\DoxyCodeLine{00502\ \ \ \textcolor{comment}{//\ Fluxes\ for\ event\ handling}}
-\DoxyCodeLine{00503\ \ \ \textcolor{comment}{//\ Note:\ this\ has\ no\ published\ reference\ source}}
-\DoxyCodeLine{00504\ \ \ \textcolor{comment}{//}}
-\DoxyCodeLine{00505\ }
-\DoxyCodeLine{00506\ \ \ \textcolor{comment}{//\ plantLeafC\ addition}}
-\DoxyCodeLine{00507\ \ \ \textcolor{keywordtype}{double}\ eventLeafC;}
-\DoxyCodeLine{00508\ \ \ \textcolor{comment}{//\ plantWoodC\ addition}}
-\DoxyCodeLine{00509\ \ \ \textcolor{keywordtype}{double}\ eventWoodC;}
-\DoxyCodeLine{00510\ \ \ \textcolor{comment}{//\ plantFineRootC\ addition}}
-\DoxyCodeLine{00511\ \ \ \textcolor{keywordtype}{double}\ eventFineRootC;}
-\DoxyCodeLine{00512\ \ \ \textcolor{comment}{//\ plantCoarseRootC\ addition}}
-\DoxyCodeLine{00513\ \ \ \textcolor{keywordtype}{double}\ eventCoarseRootC;}
-\DoxyCodeLine{00514\ \ \ \textcolor{comment}{//\ irrigation\ water\ that\ is\ immediately\ evaporated}}
-\DoxyCodeLine{00515\ \ \ \textcolor{keywordtype}{double}\ eventEvap;}
-\DoxyCodeLine{00516\ \ \ \textcolor{comment}{//\ irrigation\ water\ that\ goes\ to\ the\ soil}}
-\DoxyCodeLine{00517\ \ \ \textcolor{keywordtype}{double}\ eventSoilWater;}
-\DoxyCodeLine{00518\ \ \ \textcolor{comment}{//\ carbon\ added\ to\ litter\ pool\ (if\ used)\ or\ soil\ pool\ (if\ not)}}
-\DoxyCodeLine{00519\ \ \ \textcolor{keywordtype}{double}\ eventLitterC;}
-\DoxyCodeLine{00520\ \}\ Fluxes;}
+\DoxyCodeLine{00477\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00478\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [3]\ Zobitz\ et\ al.\ (2008)}}
+\DoxyCodeLine{00479\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [3]}}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ \ \ \textcolor{comment}{//\ Loss\ rate\ of\ fine\ roots\ (turnover\ +\ exudation)}}
+\DoxyCodeLine{00482\ \ \ \textcolor{keywordtype}{double}\ fineRootLoss;}
+\DoxyCodeLine{00483\ \ \ \textcolor{comment}{//\ Loss\ rate\ of\ coarse\ roots\ (turnover\ +\ exudation)}}
+\DoxyCodeLine{00484\ \ \ \textcolor{keywordtype}{double}\ coarseRootLoss;}
+\DoxyCodeLine{00485\ \ \ \textcolor{comment}{//\ Creation\ rate\ of\ fine\ roots}}
+\DoxyCodeLine{00486\ \ \ \textcolor{keywordtype}{double}\ fineRootCreation;}
+\DoxyCodeLine{00487\ \ \ \textcolor{comment}{//\ Creation\ rate\ of\ coarse\ roots}}
+\DoxyCodeLine{00488\ \ \ \textcolor{keywordtype}{double}\ coarseRootCreation;}
+\DoxyCodeLine{00489\ \ \ \textcolor{comment}{//\ Coarse\ root\ respiration}}
+\DoxyCodeLine{00490\ \ \ \textcolor{keywordtype}{double}\ rCoarseRoot;}
+\DoxyCodeLine{00491\ \ \ \textcolor{comment}{//\ Fine\ root\ respiration}}
+\DoxyCodeLine{00492\ \ \ \textcolor{keywordtype}{double}\ rFineRoot;}
+\DoxyCodeLine{00493\ }
+\DoxyCodeLine{00494\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00495\ \ \ \textcolor{comment}{//\ Fluxes\ from\ [4]\ Zobitz\ (draft)}}
+\DoxyCodeLine{00496\ \ \ \textcolor{comment}{//\ \ -\/\ fluxes\ tracked\ as\ part\ of\ modeling\ from\ [4]}}
+\DoxyCodeLine{00497\ }
+\DoxyCodeLine{00498\ \ \ \textcolor{comment}{//\ Microbes\ [3]}}
+\DoxyCodeLine{00499\ \ \ \textcolor{comment}{//\ microbes\ on:\ microbial\ maintenance\ respiration\ rate}}
+\DoxyCodeLine{00500\ \ \ \textcolor{comment}{//\ microbes\ off:\ equivalent\ to\ rSoil,\ calc'd\ as\ described\ in\ [1],\ eq\ (A20)}}
+\DoxyCodeLine{00501\ \ \ \textcolor{comment}{//\ (g\ C\ m-\/2\ ground\ area\ day\string^-\/1)}}
+\DoxyCodeLine{00502\ \ \ \textcolor{keywordtype}{double}\ maintRespiration;}
+\DoxyCodeLine{00503\ \ \ \textcolor{comment}{//\ Flux\ that\ microbes\ remove\ from\ soil\ (mg\ C\ g\ soil\ day)}}
+\DoxyCodeLine{00504\ \ \ \textcolor{comment}{//\ TBD\ I\ highly\ doubt\ those\ units;\ this\ is\ calc'd\ as}}
+\DoxyCodeLine{00505\ \ \ \textcolor{comment}{//\ \ \ \ \ (g\ C\ *\ m-\/2)\ *\ (day-\/1)\ *\ (unitless\ terms)}}
+\DoxyCodeLine{00506\ \ \ \textcolor{keywordtype}{double}\ microbeIngestion;}
+\DoxyCodeLine{00507\ \ \ \textcolor{comment}{//\ Exudates\ into\ the\ soil}}
+\DoxyCodeLine{00508\ \ \ \textcolor{keywordtype}{double}\ soilPulse;}
+\DoxyCodeLine{00509\ }
+\DoxyCodeLine{00510\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00511\ \ \ \textcolor{comment}{//\ Fluxes\ from\ other\ sources,\ provenance\ TBD}}
+\DoxyCodeLine{00512\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00513\ }
+\DoxyCodeLine{00514\ \ \ \textcolor{comment}{//\ leaf\ creation\ term\ as\ determined\ by\ growing\ season\ boundaries\ (as\ in\ [1])}}
+\DoxyCodeLine{00515\ \ \ \textcolor{comment}{//\ and\ NPP\ (as\ in\ [2])}}
+\DoxyCodeLine{00516\ \ \ \textcolor{comment}{//\ C\ transferred\ from\ wood\ to\ leaves\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00517\ \ \ \textcolor{keywordtype}{double}\ leafCreation;}
+\DoxyCodeLine{00518\ \ \ \textcolor{comment}{//\ wood\ creation\ term,\ dependent\ on\ NPP\ similar\ to\ leaf\ creation,\ but}}
+\DoxyCodeLine{00519\ \ \ \textcolor{comment}{//\ provenance\ TBD\ (g\ C\ *\ m\string^-\/2\ ground\ area\ *\ day\string^-\/1)}}
+\DoxyCodeLine{00520\ \ \ \textcolor{keywordtype}{double}\ woodCreation;}
 \DoxyCodeLine{00521\ }
-\DoxyCodeLine{00522\ \textcolor{comment}{//\ Global\ var}}
-\DoxyCodeLine{00523\ \textcolor{keyword}{extern}\ Fluxes\ fluxes;}
-\DoxyCodeLine{00524\ }
-\DoxyCodeLine{00525\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }TrackerVars\ \{\ \ \textcolor{comment}{//\ variables\ to\ track\ various\ things}}
-\DoxyCodeLine{00526\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up\ in\ this\ time\ interval;\ GROSS\ photosynthesis}}
-\DoxyCodeLine{00527\ \ \ \textcolor{keywordtype}{double}\ gpp;}
-\DoxyCodeLine{00528\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ respired\ in\ this\ time\ interval}}
-\DoxyCodeLine{00529\ \ \ \textcolor{keywordtype}{double}\ rtot;}
-\DoxyCodeLine{00530\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ autotrophic\ resp.\ in\ this\ time\ interval}}
-\DoxyCodeLine{00531\ \ \ \textcolor{keywordtype}{double}\ ra;}
-\DoxyCodeLine{00532\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ heterotrophic\ resp.\ in\ this\ time\ interval}}
-\DoxyCodeLine{00533\ \ \ \textcolor{keywordtype}{double}\ rh;}
-\DoxyCodeLine{00534\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up\ in\ this\ time\ interval}}
-\DoxyCodeLine{00535\ \ \ \textcolor{keywordtype}{double}\ npp;}
-\DoxyCodeLine{00536\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ given\ off\ in\ this\ time\ interval}}
-\DoxyCodeLine{00537\ \ \ \textcolor{keywordtype}{double}\ nee;}
-\DoxyCodeLine{00538\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ year\ to\ date:\ GROSS\ photosynthesis}}
-\DoxyCodeLine{00539\ \ \ \textcolor{keywordtype}{double}\ yearlyGpp;}
-\DoxyCodeLine{00540\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ respired,\ year\ to\ date}}
-\DoxyCodeLine{00541\ \ \ \textcolor{keywordtype}{double}\ yearlyRtot;}
-\DoxyCodeLine{00542\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ autotrophic\ resp.,\ year\ to\ date}}
-\DoxyCodeLine{00543\ \ \ \textcolor{keywordtype}{double}\ yearlyRa;}
-\DoxyCodeLine{00544\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ heterotrophic\ resp.,\ year\ to\ date}}
-\DoxyCodeLine{00545\ \ \ \textcolor{keywordtype}{double}\ yearlyRh;}
-\DoxyCodeLine{00546\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ year\ to\ date}}
-\DoxyCodeLine{00547\ \ \ \textcolor{keywordtype}{double}\ yearlyNpp;}
-\DoxyCodeLine{00548\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ given\ off,\ year\ to\ date}}
-\DoxyCodeLine{00549\ \ \ \textcolor{keywordtype}{double}\ yearlyNee;}
-\DoxyCodeLine{00550\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ to\ date:\ GROSS\ photosynthesis}}
-\DoxyCodeLine{00551\ \ \ \textcolor{keywordtype}{double}\ totGpp;}
-\DoxyCodeLine{00552\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ respired,\ to\ date}}
-\DoxyCodeLine{00553\ \ \ \textcolor{keywordtype}{double}\ totRtot;}
-\DoxyCodeLine{00554\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ autotrophic\ resp.,\ to\ date}}
-\DoxyCodeLine{00555\ \ \ \textcolor{keywordtype}{double}\ totRa;}
-\DoxyCodeLine{00556\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ heterotrophic\ resp.,\ to\ date}}
-\DoxyCodeLine{00557\ \ \ \textcolor{keywordtype}{double}\ totRh;}
-\DoxyCodeLine{00558\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ to\ date}}
-\DoxyCodeLine{00559\ \ \ \textcolor{keywordtype}{double}\ totNpp;}
-\DoxyCodeLine{00560\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ given\ off,\ to\ date}}
-\DoxyCodeLine{00561\ \ \ \textcolor{keywordtype}{double}\ totNee;}
-\DoxyCodeLine{00562\ \ \ \textcolor{comment}{//\ cm\ water\ evaporated/sublimated\ (sublimed???)\ or\ transpired\ in\ this\ time}}
-\DoxyCodeLine{00563\ \ \ \textcolor{comment}{//\ step}}
-\DoxyCodeLine{00564\ \ \ \textcolor{keywordtype}{double}\ evapotranspiration;}
-\DoxyCodeLine{00565\ \ \ \textcolor{comment}{//\ mean\ fractional\ soil\ wetness\ (soilWater/soilWHC)\ over\ this\ time\ step}}
-\DoxyCodeLine{00566\ \ \ \textcolor{comment}{//\ (linear\ mean:\ mean\ of\ wetness\ at\ start\ of\ time\ step\ and\ wetness\ at\ end\ of}}
-\DoxyCodeLine{00567\ \ \ \textcolor{comment}{//\ time\ step)}}
-\DoxyCodeLine{00568\ \ \ \textcolor{keywordtype}{double}\ soilWetnessFrac;}
-\DoxyCodeLine{00569\ }
-\DoxyCodeLine{00570\ \ \ \textcolor{comment}{//\ g\ C\ m-\/2\ of\ root\ respiration}}
-\DoxyCodeLine{00571\ \ \ \textcolor{keywordtype}{double}\ rRoot;}
-\DoxyCodeLine{00572\ \ \ \textcolor{comment}{//\ Soil\ respiration\ (microbes+root)}}
-\DoxyCodeLine{00573\ \ \ \textcolor{keywordtype}{double}\ rSoil;}
-\DoxyCodeLine{00574\ }
-\DoxyCodeLine{00575\ \ \ \textcolor{comment}{//\ Wood\ and\ foliar\ respiration}}
-\DoxyCodeLine{00576\ \ \ \textcolor{keywordtype}{double}\ rAboveground;}
-\DoxyCodeLine{00577\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ litterfall,\ year\ to\ date:\ SUM\ litter}}
-\DoxyCodeLine{00578\ \ \ \textcolor{keywordtype}{double}\ yearlyLitter;}
-\DoxyCodeLine{00579\ }
-\DoxyCodeLine{00580\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ wood\ creation}}
-\DoxyCodeLine{00581\ \ \ \textcolor{keywordtype}{double}\ woodCreation;}
-\DoxyCodeLine{00582\ }
-\DoxyCodeLine{00583\ \}\ Trackers;}
-\DoxyCodeLine{00584\ }
-\DoxyCodeLine{00585\ \textcolor{comment}{//\ Global\ var}}
-\DoxyCodeLine{00586\ \textcolor{keyword}{extern}\ Trackers\ trackers;}
-\DoxyCodeLine{00587\ }
-\DoxyCodeLine{00588\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }PhenologyTrackersStruct\ \{}
-\DoxyCodeLine{00589\ \ \ \textcolor{comment}{//\ variables\ to\ track\ each\ year's\ phenological\ development.\ Only\ used\ in}}
-\DoxyCodeLine{00590\ \ \ \textcolor{comment}{//\ leafFluxes\ function,\ but\ made\ global\ so\ can\ be\ initialized\ dynamically,}}
-\DoxyCodeLine{00591\ \ \ \textcolor{comment}{//\ based\ on\ day\ of\ year\ of\ first\ climate\ record}}
-\DoxyCodeLine{00592\ }
-\DoxyCodeLine{00593\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ growth\ at\ start\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
-\DoxyCodeLine{00594\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
-\DoxyCodeLine{00595\ \ \ \textcolor{keywordtype}{int}\ didLeafGrowth;}
-\DoxyCodeLine{00596\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ fall\ at\ end\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
-\DoxyCodeLine{00597\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
-\DoxyCodeLine{00598\ \ \ \textcolor{keywordtype}{int}\ didLeafFall;}
-\DoxyCodeLine{00599\ \ \ \textcolor{comment}{//\ year\ of\ previous\ time\ step,\ for\ tracking\ when\ we\ hit\ a\ new\ calendar\ year}}
-\DoxyCodeLine{00600\ \ \ \textcolor{keywordtype}{int}\ lastYear;}
-\DoxyCodeLine{00601\ \}\ PhenologyTrackers;}
-\DoxyCodeLine{00602\ }
-\DoxyCodeLine{00603\ \textcolor{comment}{//\ Global\ var}}
-\DoxyCodeLine{00604\ \textcolor{keyword}{extern}\ PhenologyTrackers\ phenologyTrackers;}
+\DoxyCodeLine{00522\ \ \ \textcolor{comment}{//\ ****************************************}}
+\DoxyCodeLine{00523\ \ \ \textcolor{comment}{//\ Fluxes\ for\ event\ handling}}
+\DoxyCodeLine{00524\ \ \ \textcolor{comment}{//\ Note:\ this\ has\ no\ published\ reference\ source}}
+\DoxyCodeLine{00525\ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00526\ }
+\DoxyCodeLine{00527\ \ \ \textcolor{comment}{//\ plantLeafC\ addition}}
+\DoxyCodeLine{00528\ \ \ \textcolor{keywordtype}{double}\ eventLeafC;}
+\DoxyCodeLine{00529\ \ \ \textcolor{comment}{//\ plantWoodC\ addition}}
+\DoxyCodeLine{00530\ \ \ \textcolor{keywordtype}{double}\ eventWoodC;}
+\DoxyCodeLine{00531\ \ \ \textcolor{comment}{//\ plantFineRootC\ addition}}
+\DoxyCodeLine{00532\ \ \ \textcolor{keywordtype}{double}\ eventFineRootC;}
+\DoxyCodeLine{00533\ \ \ \textcolor{comment}{//\ plantCoarseRootC\ addition}}
+\DoxyCodeLine{00534\ \ \ \textcolor{keywordtype}{double}\ eventCoarseRootC;}
+\DoxyCodeLine{00535\ \ \ \textcolor{comment}{//\ irrigation\ water\ that\ is\ immediately\ evaporated}}
+\DoxyCodeLine{00536\ \ \ \textcolor{keywordtype}{double}\ eventEvap;}
+\DoxyCodeLine{00537\ \ \ \textcolor{comment}{//\ irrigation\ water\ that\ goes\ to\ the\ soil}}
+\DoxyCodeLine{00538\ \ \ \textcolor{keywordtype}{double}\ eventSoilWater;}
+\DoxyCodeLine{00539\ \ \ \textcolor{comment}{//\ carbon\ added\ to\ litter\ pool\ (if\ used)\ or\ soil\ pool\ (if\ not)}}
+\DoxyCodeLine{00540\ \ \ \textcolor{keywordtype}{double}\ eventLitterC;}
+\DoxyCodeLine{00541\ \}\ Fluxes;}
+\DoxyCodeLine{00542\ }
+\DoxyCodeLine{00543\ \textcolor{comment}{//\ Global\ var}}
+\DoxyCodeLine{00544\ \textcolor{keyword}{extern}\ Fluxes\ fluxes;}
+\DoxyCodeLine{00545\ }
+\DoxyCodeLine{00546\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }TrackerVars\ \{\ \ \textcolor{comment}{//\ variables\ to\ track\ various\ things}}
+\DoxyCodeLine{00547\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up\ in\ this\ time\ interval;\ GROSS\ photosynthesis}}
+\DoxyCodeLine{00548\ \ \ \textcolor{keywordtype}{double}\ gpp;}
+\DoxyCodeLine{00549\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ respired\ in\ this\ time\ interval}}
+\DoxyCodeLine{00550\ \ \ \textcolor{keywordtype}{double}\ rtot;}
+\DoxyCodeLine{00551\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ autotrophic\ resp.\ in\ this\ time\ interval}}
+\DoxyCodeLine{00552\ \ \ \textcolor{keywordtype}{double}\ ra;}
+\DoxyCodeLine{00553\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ heterotrophic\ resp.\ in\ this\ time\ interval}}
+\DoxyCodeLine{00554\ \ \ \textcolor{keywordtype}{double}\ rh;}
+\DoxyCodeLine{00555\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up\ in\ this\ time\ interval}}
+\DoxyCodeLine{00556\ \ \ \textcolor{keywordtype}{double}\ npp;}
+\DoxyCodeLine{00557\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ given\ off\ in\ this\ time\ interval}}
+\DoxyCodeLine{00558\ \ \ \textcolor{keywordtype}{double}\ nee;}
+\DoxyCodeLine{00559\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ year\ to\ date:\ GROSS\ photosynthesis}}
+\DoxyCodeLine{00560\ \ \ \textcolor{keywordtype}{double}\ yearlyGpp;}
+\DoxyCodeLine{00561\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ respired,\ year\ to\ date}}
+\DoxyCodeLine{00562\ \ \ \textcolor{keywordtype}{double}\ yearlyRtot;}
+\DoxyCodeLine{00563\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ autotrophic\ resp.,\ year\ to\ date}}
+\DoxyCodeLine{00564\ \ \ \textcolor{keywordtype}{double}\ yearlyRa;}
+\DoxyCodeLine{00565\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ heterotrophic\ resp.,\ year\ to\ date}}
+\DoxyCodeLine{00566\ \ \ \textcolor{keywordtype}{double}\ yearlyRh;}
+\DoxyCodeLine{00567\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ year\ to\ date}}
+\DoxyCodeLine{00568\ \ \ \textcolor{keywordtype}{double}\ yearlyNpp;}
+\DoxyCodeLine{00569\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ given\ off,\ year\ to\ date}}
+\DoxyCodeLine{00570\ \ \ \textcolor{keywordtype}{double}\ yearlyNee;}
+\DoxyCodeLine{00571\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ to\ date:\ GROSS\ photosynthesis}}
+\DoxyCodeLine{00572\ \ \ \textcolor{keywordtype}{double}\ totGpp;}
+\DoxyCodeLine{00573\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ respired,\ to\ date}}
+\DoxyCodeLine{00574\ \ \ \textcolor{keywordtype}{double}\ totRtot;}
+\DoxyCodeLine{00575\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ autotrophic\ resp.,\ to\ date}}
+\DoxyCodeLine{00576\ \ \ \textcolor{keywordtype}{double}\ totRa;}
+\DoxyCodeLine{00577\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ heterotrophic\ resp.,\ to\ date}}
+\DoxyCodeLine{00578\ \ \ \textcolor{keywordtype}{double}\ totRh;}
+\DoxyCodeLine{00579\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ taken\ up,\ to\ date}}
+\DoxyCodeLine{00580\ \ \ \textcolor{keywordtype}{double}\ totNpp;}
+\DoxyCodeLine{00581\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ given\ off,\ to\ date}}
+\DoxyCodeLine{00582\ \ \ \textcolor{keywordtype}{double}\ totNee;}
+\DoxyCodeLine{00583\ \ \ \textcolor{comment}{//\ cm\ water\ evaporated/sublimated\ (sublimed???)\ or\ transpired\ in\ this\ time}}
+\DoxyCodeLine{00584\ \ \ \textcolor{comment}{//\ step}}
+\DoxyCodeLine{00585\ \ \ \textcolor{keywordtype}{double}\ evapotranspiration;}
+\DoxyCodeLine{00586\ \ \ \textcolor{comment}{//\ mean\ fractional\ soil\ wetness\ (soilWater/soilWHC)\ over\ this\ time\ step}}
+\DoxyCodeLine{00587\ \ \ \textcolor{comment}{//\ (linear\ mean:\ mean\ of\ wetness\ at\ start\ of\ time\ step\ and\ wetness\ at\ end\ of}}
+\DoxyCodeLine{00588\ \ \ \textcolor{comment}{//\ time\ step)}}
+\DoxyCodeLine{00589\ \ \ \textcolor{keywordtype}{double}\ soilWetnessFrac;}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \ \ \textcolor{comment}{//\ g\ C\ m-\/2\ of\ root\ respiration}}
+\DoxyCodeLine{00592\ \ \ \textcolor{keywordtype}{double}\ rRoot;}
+\DoxyCodeLine{00593\ \ \ \textcolor{comment}{//\ Soil\ respiration\ (microbes+root)}}
+\DoxyCodeLine{00594\ \ \ \textcolor{keywordtype}{double}\ rSoil;}
+\DoxyCodeLine{00595\ }
+\DoxyCodeLine{00596\ \ \ \textcolor{comment}{//\ Wood\ and\ foliar\ respiration}}
+\DoxyCodeLine{00597\ \ \ \textcolor{keywordtype}{double}\ rAboveground;}
+\DoxyCodeLine{00598\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ litterfall,\ year\ to\ date:\ SUM\ litter}}
+\DoxyCodeLine{00599\ \ \ \textcolor{keywordtype}{double}\ yearlyLitter;}
+\DoxyCodeLine{00600\ }
+\DoxyCodeLine{00601\ \ \ \textcolor{comment}{//\ g\ C\ *\ m\string^-\/2\ wood\ creation}}
+\DoxyCodeLine{00602\ \ \ \textcolor{keywordtype}{double}\ woodCreation;}
+\DoxyCodeLine{00603\ }
+\DoxyCodeLine{00604\ \}\ Trackers;}
 \DoxyCodeLine{00605\ }
-\DoxyCodeLine{00606\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_STATE\_H}}
+\DoxyCodeLine{00606\ \textcolor{comment}{//\ Global\ var}}
+\DoxyCodeLine{00607\ \textcolor{keyword}{extern}\ Trackers\ trackers;}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00609\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }PhenologyTrackersStruct\ \{}
+\DoxyCodeLine{00610\ \ \ \textcolor{comment}{//\ variables\ to\ track\ each\ year's\ phenological\ development.\ Only\ used\ in}}
+\DoxyCodeLine{00611\ \ \ \textcolor{comment}{//\ leafFluxes\ function,\ but\ made\ global\ so\ can\ be\ initialized\ dynamically,}}
+\DoxyCodeLine{00612\ \ \ \textcolor{comment}{//\ based\ on\ day\ of\ year\ of\ first\ climate\ record}}
+\DoxyCodeLine{00613\ }
+\DoxyCodeLine{00614\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ growth\ at\ start\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
+\DoxyCodeLine{00615\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
+\DoxyCodeLine{00616\ \ \ \textcolor{keywordtype}{int}\ didLeafGrowth;}
+\DoxyCodeLine{00617\ \ \ \textcolor{comment}{//\ have\ we\ done\ leaf\ fall\ at\ end\ of\ growing\ season\ this\ year?\ (0\ =\ no,}}
+\DoxyCodeLine{00618\ \ \ \textcolor{comment}{//\ 1\ =\ yes)}}
+\DoxyCodeLine{00619\ \ \ \textcolor{keywordtype}{int}\ didLeafFall;}
+\DoxyCodeLine{00620\ \ \ \textcolor{comment}{//\ year\ of\ previous\ time\ step,\ for\ tracking\ when\ we\ hit\ a\ new\ calendar\ year}}
+\DoxyCodeLine{00621\ \ \ \textcolor{keywordtype}{int}\ lastYear;}
+\DoxyCodeLine{00622\ \}\ PhenologyTrackers;}
+\DoxyCodeLine{00623\ }
+\DoxyCodeLine{00624\ \textcolor{comment}{//\ Global\ var}}
+\DoxyCodeLine{00625\ \textcolor{keyword}{extern}\ PhenologyTrackers\ phenologyTrackers;}
+\DoxyCodeLine{00626\ }
+\DoxyCodeLine{00627\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ SIPNET\_STATE\_H}}
 
 \end{DoxyCode}
