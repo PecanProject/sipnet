@@ -76,7 +76,7 @@
 //     Bowling, and D. S. Schimel. 2008. “Integration of Process-Based Soil
 //     Respiration Models with Whole-Ecosystem CO2 Measurements.” Ecosystems
 //     11 (2): 250–69. https://doi.org/10.1007/s10021-007-9120-1
-// Zobitz, et al. additions of and roots (also, soil multi-pool and soil
+// Zobitz, et al. additions of roots (also, soil multi-pool and soil
 // quality models, which are not currently included in this SIPNET - but we
 // now know the source if/when we want to reintroduce them)
 //
@@ -86,6 +86,9 @@
 // Zobitz et al.: this appears to be a prior draft of [3] above, which
 // includes the addition of microbes
 //
+// [5] LeBauer et al. (unpublished) "SIPNET 2: A lightweight, extensible model
+//     for coupled C–N–H₂O–GHG dynamics in managed ecosystems"
+// LeBauer et al.: addition of events and nitrogen cycle
 //
 // Note that Sacks, et al. (2007) is not referenced directly here, but is of
 // interest in that it represents a use of the more complex soil moisture
@@ -381,7 +384,11 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
   initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), ctx.microbes);
   initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes );
+  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
+
+  // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
+  initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
+
   // NOLINTEND
   // clang-format on
 
@@ -402,7 +409,7 @@ void outputHeader(FILE *out) {
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
   fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-               "evapotranspiration fluxestranspiration\n");
+               "evapotranspiration fluxestranspiration minN\n");
 }
 
 /*!
@@ -423,11 +430,11 @@ void outputState(FILE *out, int year, int day, double time) {
           trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f\n",
+          "%8.4f %8.3f\n",
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration);
+          fluxes.transpiration, envi.minN);
 }
 
 // de-allocate space used for climate linked list
@@ -1632,6 +1639,9 @@ void setupModel(void) {
   // one:
   ensureAllocation();
 
+  ///
+  /// PARAMS SETUP
+
   // If we aren't explicitly modeling microbe pool, then do not have a pulse to
   // microbes, exudates go directly to the soil
   if (!ctx.microbes) {
@@ -1681,6 +1691,9 @@ void setupModel(void) {
   params.baseMicrobeResp = params.baseMicrobeResp * 24;  // change from per hour
                                                          // to per day rate
 
+  ///
+  /// ENVIRONMENT SETUP
+
   envi.coarseRootC = params.coarseRootFrac * params.plantWoodInit;
   envi.fineRootC = params.fineRootFrac * params.plantWoodInit;
 
@@ -1692,6 +1705,12 @@ void setupModel(void) {
   }
 
   envi.snow = params.snowInit;
+
+  if (ctx.nitrogenCycle) {
+    envi.minN = params.minNInit;
+  } else {
+    envi.minN = 0.0;
+  }
 
   climate = firstClimate;
 

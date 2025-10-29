@@ -28,6 +28,7 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(snow),
     DECLARE_FLAG(soil-phenol),
     DECLARE_FLAG(water-hresp),
+    DECLARE_FLAG(nitrogen-cycle),
 
     DECLARE_FLAG(do-main-output),
     DECLARE_FLAG(do-single-outputs),
@@ -55,7 +56,7 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
     DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
-    DECLARE_ARG_FOR_MAP(waterHResp),
+    DECLARE_ARG_FOR_MAP(waterHResp), DECLARE_ARG_FOR_MAP(nitrogenCycle),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -81,6 +82,7 @@ void usage(char *progName) {
   printf("  --leaf-water         Calculate leaf pool and evaporate from that pool (0)\n");
   printf("  --litter-pool        Enable litter pool in addition to single soil carbon pool (0)\n");
   printf("  --microbes           Enable microbe modeling (0)\n");
+  printf("  --nitrogen-cycle     Enable modeling of the nitrogen cycle (0)\n");
   printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
   printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
   printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
@@ -102,6 +104,7 @@ void usage(char *progName) {
   printf("Note the following restrictions on these options:\n");
   printf(" --soil-phenol and --gdd may not both be turned on\n");
   printf(" --events and --microbes may not both be turned on\n");
+  printf(" --nitrogen-cycle and --microbes may not both be turned on\n");
   // clang-format on
 }
 
