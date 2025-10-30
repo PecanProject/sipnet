@@ -410,8 +410,9 @@ void outputHeader(FILE *out) {
   fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
-  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-               "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux\n");
+  fprintf(out,
+          "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
+          "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux\n");
 }
 
 /*!
