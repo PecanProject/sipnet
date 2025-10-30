@@ -33,33 +33,25 @@ Model state is updated in the following order:
 2. Process events — convert events to per‑day fluxes and accumulate into fluxes.
 3. Update pools — pools are updated from the accumulated fluxes and pool‑specific updates.
 
-### Notes on notation:
-
-Fluxes are denoted by $F$, except that respiration is denoted by $R$ following convention and previous descriptions of SIPNET.
-
-Parameters and other information can be found in the Parameters documentation. <!-- or maybe combined here?-->
 
 ### Scope
 
 This document provides an overview of the SIPNET model’s structure. It was written to 
+
 - Consolidate the descriptions from multiple papers (notably Braswell et al 2005 and Zobitz et al 2008). 
 - Provide enough detail to support the addition of agronomic events, CH4, and N2O fluxes.
 - Focus on features currently in regular use.
 
-There are multiple ways to configure the model structure, and not all model structures are listed, notably the litter quality model. 
+There are multiple ways to configure the model structure, and not all model structures or components are listed. 
+Implementation in source code (sipnet.c) is annotated with references to specific publications.  
 
-We aim to extend the scope of this document to be more comprehensive of the regularly used features.
+#### Notes on notation:
 
-### $\mathfrak{Proposed \ Features}$
+- The general approach used to define variables and subscripts is defined in @sec-notation.
+- Specific parameter, flux, and state definitions are documentated in @sec-parameters.
+- $\mathfrak{Fraktur Font}$ is used to identify features that have not been implemented. This font will be removed as features are implemented.
 
-Proposed features are indicated using the using $\mathfrak{Fraktur Font}$. Where an entire section is new, it is only used in the section heading. Otherwise, it is used for terms within equations. As these features are implemented, the `\mathfrak{}` commands should be removed.
-
-<!-- to remove
-- remove \mathfrak{}
-component out of 
--->
 ## Carbon Dynamics
-
 
 ### Litter Pool
 
