@@ -1294,6 +1294,8 @@ void calculateFluxes(void) {
   // Nitrogen cycle
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
+    // Leaching depends on drainage flux so makes sure calcNLeachingFlux
+    // occurs after calcSoilWaterFluxes
     calcNLeachingFlux();
   }
 }
@@ -1584,7 +1586,7 @@ void updatePoolsForSoil(void) {
 
   // Nitrogen Cycle
   // Added for MAGIC project
-  envi.minN -= (fluxes.nVolatilization - fluxes.nLeaching) * climate->length;
+  envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
 }
 
 // !!! main runner function !!!
