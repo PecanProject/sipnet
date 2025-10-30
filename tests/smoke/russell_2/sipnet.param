@@ -79,3 +79,4 @@ coarseRootExudation 0.01 0 0 1 0.001
 microbePulseEff 0.45 0 0 1 0.05
 mineralNInit 1.0 0 0 0 0
 nVolatilization 0.1 0 0 0 0
+nLeachingFrac 0.25 0 0 0 0
