@@ -16,53 +16,17 @@ jobs:
           - os: macos-latest
             artifact_os: macos
             binary_path: sipnet
-          - os: windows-latest
-            artifact_os: windows
-            binary_path: sipnet.exe
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup MSYS2 toolchain
-        if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          update: true
-          install: >-
-            base-devel
-            mingw-w64-x86_64-toolchain
-
-      - name: Build SIPNET (Ubuntu/MacOS)
-        if: runner.os != 'Windows'
+      - name: Build SIPNET
         run: make
         shell: bash
 
-      - name: Build SIPNET (windows)
-        if: runner.os == 'Windows'
-        run: make
-        shell: msys2 {0}
-
-      - name: Prepare release binary (Ubuntu/MacOS)
-        if: runner.os != 'Windows'
+      - name: Prepare release binary
         shell: bash
-        run: |
-          tag="${GITHUB_REF_NAME}"
-          src="${{ matrix.binary_path }}"
-          dest="sipnet-${tag}-${{ matrix.artifact_os }}"
-
-          if [ ! -f "$src" ]; then
-            echo "Expected build artifact '${src}' not found" >&2
-            exit 1
-          fi
-
-          mkdir -p dist
-          mv "$src" "dist/${dest}"
-
-      - name: Prepare release binary (windows)
-        if: runner.os == 'Windows'
-        shell: msys2 {0}
         run: |
           tag="${GITHUB_REF_NAME}"
           src="${{ matrix.binary_path }}"
