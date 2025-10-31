@@ -110,10 +110,15 @@ def check_results(smoke_dir: str, verbose: bool):
   git_result = git_result.stdout.strip()
   git_result = StringIO(git_result)
 
+  if not os.path.getsize(file):
+    print("sipnet.out is empty - check run for errors")
+    return
+
   # Figure out if there is a header
   with open(file) as res_file:
     # Check first row
     first = res_file.readline()
+
     if first.split()[0].startswith('Notes'):
       has_header = True
     else:
@@ -142,13 +147,18 @@ def check_results(smoke_dir: str, verbose: bool):
       git_df = git_df[common_columns]
       print("Comparing common columns")
   else:
-    cols = 'year day time plantWoodC plantLeafC soil microbeC coarseRootC fineRootC litter litterWater soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration fPAR'
+    cols = 'year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration'
     cols = cols.split(' ')
     # new_df = pd.read_table(file, sep=r'\s+', header=None, names=cols, dtype=float)
     # git_df = pd.read_table(git_result, sep=r'\s+', header=None, names=cols, dtype=float)
+
     new_df = pd.read_table(file, sep=r'\s+', header=None, dtype=float)
+
     if len(new_df.columns) != len(cols):
       print("Number of columns has changed for test without a header; no comparison can be performed. Skipping.")
+      print(f'len git cols: {len(cols)}  len new: {len(new_df.columns)}')
+      print(f'git cols (names): {cols}')
+      print(f'new cols  (inds):{new_df.columns}')
       return
 
     new_df.columns = cols

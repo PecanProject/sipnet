@@ -38,6 +38,7 @@ void initContext(void) {
   CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
+  CREATE_INT_CONTEXT(nitrogenCycle,   "NITROGEN_CYCLE",   ARG_OFF, FLAG_YES);
 
   // Flags, I/O
   CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  FLAG_YES);
@@ -190,6 +191,11 @@ void validateContext(void) {
 
   if (ctx.events && ctx.microbes) {
     logError("events and microbes may not both be turned on\n");
+    hasError = 1;
+  }
+
+  if (ctx.nitrogenCycle && ctx.microbes) {
+    logError("nitrogen-cycle and microbes may not both be turned on\n");
     hasError = 1;
   }
 
