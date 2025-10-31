@@ -6,20 +6,94 @@ on:
       - 'v*.*.*'  # Trigger on version tags
 
 jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_os: ubuntu
+            binary_path: sipnet
+          - os: macos-latest
+            artifact_os: macos
+            binary_path: sipnet
+          - os: windows-latest
+            artifact_os: windows
+            binary_path: sipnet.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2 toolchain
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            base-devel
+            mingw-w64-x86_64-toolchain
+
+      - name: Build SIPNET (Ubuntu/MacOS)
+        if: runner.os != 'Windows'
+        run: make
+        shell: bash
+
+      - name: Build SIPNET (windows)
+        if: runner.os == 'Windows'
+        run: make
+        shell: msys2 {0}
+
+      - name: Prepare release binary (Ubuntu/MacOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          src="${{ matrix.binary_path }}"
+          dest="sipnet-${tag}-${{ matrix.artifact_os }}"
+
+          if [ ! -f "$src" ]; then
+            echo "Expected build artifact '${src}' not found" >&2
+            exit 1
+          fi
+
+          mkdir -p dist
+          mv "$src" "dist/${dest}"
+
+      - name: Prepare release binary (windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          src="${{ matrix.binary_path }}"
+          dest="sipnet-${tag}-${{ matrix.artifact_os }}"
+
+          if [ ! -f "$src" ]; then
+            echo "Expected build artifact '${src}' not found" >&2
+            exit 1
+          fi
+
+          mkdir -p dist
+          mv "$src" "dist/${dest}"
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
+          path: dist/sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
+          if-no-files-found: error
+
   release:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
 
-      # Build SIPNET binary
-      - name: Build SIPNET
-        run: make
-
-      # Create GitHub Release and Upload Asset
-      - name: Create Release and Upload Asset
-        id: create_release
+      - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
@@ -27,6 +101,6 @@ jobs:
           body: |
             This release includes the latest SIPNET binary.
           draft: true  # Create the release as a draft
-          files: ./sipnet  # Path to the compiled binary
+          files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

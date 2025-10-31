@@ -28,6 +28,8 @@ sections to include in release notes:
 
 ### Added
 
+- Build and release binaries for MacOS and Windows on release (in addition to existing Linux builds)
+
 ### Fixed
 
 ### Changed
