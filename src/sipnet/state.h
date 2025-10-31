@@ -358,11 +358,14 @@ typedef struct Parameters {
   // ****************************************
   // Nitrogen Cycle
 
-  // Initial soil mineral nitrogen pool amount, g C * m^-2 ground area
+  // Initial soil mineral nitrogen pool amount, g N * m^-2 ground area
   double minNInit;
 
   // Fraction of mineral N volatilized per day, d^-1
   double nVolatilization;
+
+  // Fraction of mineral N lost to leaching per day
+  double nLeachingFrac;
 
 } Params;
 
@@ -529,6 +532,8 @@ typedef struct FluxVars {
 
   // Mineral N lost to volatilization
   double nVolatilization;
+  // Mineral N lost to leaching
+  double nLeaching;
 
   // ****************************************
   // Fluxes for event handling
