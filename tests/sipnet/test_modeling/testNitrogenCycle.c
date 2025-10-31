@@ -56,8 +56,8 @@ int checkNLeachingFlux(double expNLeachingFlux) {
   int status = 0;
   if (!compareDoubles(fluxes.nLeaching, expNLeachingFlux)) {
     status = 1;
-    logTest("N leaching flux is %f, expected %f\n",
-            fluxes.nLeaching, expNLeachingFlux);
+    logTest("N leaching flux is %f, expected %f\n", fluxes.nLeaching,
+            expNLeachingFlux);
   }
 
   return status;
