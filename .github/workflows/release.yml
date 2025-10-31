@@ -30,7 +30,7 @@ jobs:
         run: |
           tag="${GITHUB_REF_NAME}"
           src="${{ matrix.binary_path }}"
-          dest="sipnet-${tag}-${{ matrix.artifact_os }}"
+          dest="sipnet-${{ matrix.artifact_os }}-${tag}"
 
           if [ ! -f "$src" ]; then
             echo "Expected build artifact '${src}' not found" >&2
