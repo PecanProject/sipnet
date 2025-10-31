@@ -23,6 +23,7 @@
  * 2: as 1, but also prints file and line number in output
  */
 // clang-format off
+#define logAppend(...)  logprint(0, "",           FILE_NAME, __LINE__, __VA_ARGS__)
 #define logWarning(...) logprint(0, "[WARNING] ", FILE_NAME, __LINE__, __VA_ARGS__)
 #define logInfo(...)    logprint(0, "[INFO   ] ", FILE_NAME, __LINE__, __VA_ARGS__)
 #define logTest(...)    logprint(1, "[TEST   ] ", FILE_NAME, __LINE__, __VA_ARGS__)
