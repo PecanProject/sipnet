@@ -136,6 +136,8 @@ This graph shows which files directly or indirectly include this file:</div>
 Macros</h2></td></tr>
 <tr class="memitem:ab117546549783a058d0321a287699579" id="r_ab117546549783a058d0321a287699579"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d77/logging_8h.html#ab117546549783a058d0321a287699579">FILE_NAME</a>&#160;&#160;&#160;__FILE__</td></tr>
 <tr class="separator:ab117546549783a058d0321a287699579"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a8f9f7a44bc14cf417bbcedaf4d15fd" id="r_a7a8f9f7a44bc14cf417bbcedaf4d15fd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d77/logging_8h.html#a7a8f9f7a44bc14cf417bbcedaf4d15fd">logAppend</a>(...)&#160;&#160;&#160;<a class="el" href="../../d2/dbd/logging_8c.html#aaefb2aad1cd72e8eca30f50b85ab2d20">logprint</a>(0, &quot;&quot;,           <a class="el" href="../../d5/d77/logging_8h.html#ab117546549783a058d0321a287699579">FILE_NAME</a>, __LINE__, __VA_ARGS__)</td></tr>
+<tr class="separator:a7a8f9f7a44bc14cf417bbcedaf4d15fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a683d6ae10d139ab0d19204f4f6bec87b" id="r_a683d6ae10d139ab0d19204f4f6bec87b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d77/logging_8h.html#a683d6ae10d139ab0d19204f4f6bec87b">logWarning</a>(...)&#160;&#160;&#160;<a class="el" href="../../d2/dbd/logging_8c.html#aaefb2aad1cd72e8eca30f50b85ab2d20">logprint</a>(0, &quot;[WARNING] &quot;, FILE_NAME, __LINE__, __VA_ARGS__)</td></tr>
 <tr class="separator:a683d6ae10d139ab0d19204f4f6bec87b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf315d78a13752d852ac5aef893598ae" id="r_acf315d78a13752d852ac5aef893598ae"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d77/logging_8h.html#acf315d78a13752d852ac5aef893598ae">logInfo</a>(...)&#160;&#160;&#160;<a class="el" href="../../d2/dbd/logging_8c.html#aaefb2aad1cd72e8eca30f50b85ab2d20">logprint</a>(0, &quot;[INFO   ] &quot;, FILE_NAME, __LINE__, __VA_ARGS__)</td></tr>
@@ -169,6 +171,29 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a7a8f9f7a44bc14cf417bbcedaf4d15fd" name="a7a8f9f7a44bc14cf417bbcedaf4d15fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a8f9f7a44bc14cf417bbcedaf4d15fd">&#9670;&#160;</a></span>logAppend</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define logAppend</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="../../d2/dbd/logging_8c.html#aaefb2aad1cd72e8eca30f50b85ab2d20">logprint</a>(0, &quot;&quot;,           <a class="el" href="../../d5/d77/logging_8h.html#ab117546549783a058d0321a287699579">FILE_NAME</a>, __LINE__, __VA_ARGS__)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Someday, this might grow into a real logging system</p>
+<p>For now, it is just some convenience wrappers around printf that has access to the <a class="el" href="../../de/d66/struct_context.html">Context</a></p>
+<p>Also, logging levels: 0: silenced when &ndash;quiet 1: not silenced by &ndash;quiet 2: as 1, but also prints file and line number in output </p>
+
+<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00026">26</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
+
+</div>
+</div>
 <a id="a95d829d52ad9b078da34c2312388a48b" name="a95d829d52ad9b078da34c2312388a48b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a95d829d52ad9b078da34c2312388a48b">&#9670;&#160;</a></span>logError</h2>
 
@@ -185,7 +210,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">29</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00030">30</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
 
 </div>
 </div>
@@ -205,7 +230,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00027">27</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00028">28</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
 
 </div>
 </div>
@@ -225,7 +250,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00030">30</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00031">31</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
 
 </div>
 </div>
@@ -245,7 +270,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00028">28</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00029">29</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
 
 </div>
 </div>
@@ -264,11 +289,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Someday, this might grow into a real logging system</p>
-<p>For now, it is just some convenience wrappers around printf that has access to the <a class="el" href="../../de/d66/struct_context.html">Context</a></p>
-<p>Also, logging levels: 0: silenced when &ndash;quiet 1: not silenced by &ndash;quiet 2: as 1, but also prints file and line number in output </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00026">26</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d5/d77/logging_8h_source.html#l00027">27</a> of file <a class="el" href="../../d5/d77/logging_8h_source.html">logging.h</a>.</p>
 
 </div>
 </div>

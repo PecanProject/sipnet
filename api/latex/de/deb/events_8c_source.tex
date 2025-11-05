@@ -303,246 +303,250 @@
 \DoxyCodeLine{00308\ \ \ fluxes.eventEvap\ =\ 0.0;}
 \DoxyCodeLine{00309\ \ \ fluxes.eventSoilWater\ =\ 0.0;}
 \DoxyCodeLine{00310\ \ \ fluxes.eventLitterC\ =\ 0.0;}
-\DoxyCodeLine{00311\ \}}
-\DoxyCodeLine{00312\ }
-\DoxyCodeLine{00313\ \textcolor{keywordtype}{void}\ processEvents(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{00314\ \ \ \textcolor{comment}{//\ This\ should\ be\ in\ events.h/c,\ but\ with\ all\ the\ global\ state\ defined\ in}}
-\DoxyCodeLine{00315\ \ \ \textcolor{comment}{//\ this\ file,\ let's\ leave\ it\ here\ for\ now.\ Maybe\ someday\ we\ will\ factor\ that}}
-\DoxyCodeLine{00316\ \ \ \textcolor{comment}{//\ out.}}
-\DoxyCodeLine{00317\ }
-\DoxyCodeLine{00318\ \ \ \textcolor{comment}{//\ Set\ all\ event\ fluxes\ to\ zero,\ as\ these\ have\ no\ memory\ from\ one\ step\ to}}
-\DoxyCodeLine{00319\ \ \ \textcolor{comment}{//\ the\ next}}
-\DoxyCodeLine{00320\ \ \ resetEventFluxes();}
-\DoxyCodeLine{00321\ }
-\DoxyCodeLine{00322\ \ \ \textcolor{comment}{//\ If\ event\ starts\ off\ NULL,\ this\ function\ will\ just\ fall\ through,\ as\ it}}
-\DoxyCodeLine{00323\ \ \ \textcolor{comment}{//\ should.}}
-\DoxyCodeLine{00324\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ climYear\ =\ climate-\/>year;}
-\DoxyCodeLine{00325\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ climDay\ =\ climate-\/>day;}
-\DoxyCodeLine{00326\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ climLen\ =\ climate-\/>length;}
-\DoxyCodeLine{00327\ }
-\DoxyCodeLine{00328\ \ \ \textcolor{comment}{//\ As\ this\ is\ used\ as\ a\ divisor\ in\ many\ places,\ let's\ make\ sure\ it's\ >0}}
-\DoxyCodeLine{00329\ \ \ \textcolor{keywordflow}{if}\ (climLen\ <=\ 0)\ \{}
-\DoxyCodeLine{00330\ \ \ \ \ logError(\textcolor{stringliteral}{"{}climate\ length\ (\%f)\ on\ year\ \%d\ day\ \%d\ is\ non-\/positive;\ please\ "{}}}
-\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fix\ and\ re-\/run"{}},}
-\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ climLen,\ climYear,\ climDay);}
-\DoxyCodeLine{00333\ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
-\DoxyCodeLine{00334\ \ \ \}}
-\DoxyCodeLine{00335\ }
-\DoxyCodeLine{00336\ \ \ \textcolor{comment}{//\ The\ events\ file\ has\ been\ tested\ on\ read,\ so\ we\ know\ this\ event\ list}}
-\DoxyCodeLine{00337\ \ \ \textcolor{comment}{//\ should\ be\ in\ chrono\ order.\ However,\ we\ need\ to\ check\ to\ make\ sure\ the}}
-\DoxyCodeLine{00338\ \ \ \textcolor{comment}{//\ current\ event\ is\ not\ in\ the\ past,\ as\ that\ would\ indicate\ an\ event\ that}}
-\DoxyCodeLine{00339\ \ \ \textcolor{comment}{//\ did\ not\ have\ a\ corresponding\ climate\ file\ record.}}
-\DoxyCodeLine{00340\ \ \ \textcolor{keywordflow}{while}\ (gEvent\ !=\ NULL\ \&\&\ gEvent-\/>year\ <=\ climYear\ \&\&\ gEvent-\/>day\ <=\ climDay)\ \{}
-\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordflow}{if}\ (gEvent-\/>year\ <\ climYear\ ||\ gEvent-\/>day\ <\ climDay)\ \{}
-\DoxyCodeLine{00342\ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Agronomic\ event\ found\ for\ year:\ \%d\ day:\ \%d\ that\ does\ not\ "{}}}
-\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}have\ a\ corresponding\ record\ in\ the\ climate\ file\(\backslash\)n"{}},}
-\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gEvent-\/>year,\ gEvent-\/>day);}
-\DoxyCodeLine{00345\ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
-\DoxyCodeLine{00346\ \ \ \ \ \}}
-\DoxyCodeLine{00347\ \ \ \ \ \textcolor{keywordflow}{switch}\ (gEvent-\/>type)\ \{}
-\DoxyCodeLine{00348\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:\ \{}
-\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IrrigationParams\ *irrParams\ =\ gEvent-\/>eventParams;}
-\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ amount\ =\ irrParams-\/>amountAdded;}
-\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ soilAmount,\ evapAmount;}
-\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ CANOPY)\ \{}
-\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Part\ of\ the\ irrigation\ evaporates,\ and\ the\ rest\ makes\ it\ to\ the}}
-\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ soil.\ Evaporated\ fraction:}}
-\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ params.immedEvapFrac\ *\ amount;}
-\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soil\ fraction:}}
-\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount\ -\/\ evapAmount;}
-\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ SOIL)\ \{}
-\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ All\ goes\ to\ the\ soil}}
-\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ 0.0;}
-\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount;}
-\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Unknown\ irrigation\ method\ type:\ \%d\(\backslash\)n"{}},\ irrParams-\/>method);}
-\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
-\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ fluxes.eventEvap\ +=\ evapAmount\ /\ climLen;}
-\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ fluxes.eventSoilWater\ +=\ soilAmount\ /\ climLen;}
-\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 2,\ \textcolor{stringliteral}{"{}fluxes.eventSoilWater"{}},\ soilAmount\ /\ climLen,}
-\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventEvap"{}},\ evapAmount\ /\ climLen);}
-\DoxyCodeLine{00370\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00371\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:\ \{}
-\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ PlantingParams\ *plantParams\ =\ gEvent-\/>eventParams;}
-\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafC\ =\ plantParams-\/>leafC;}
-\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodC\ =\ plantParams-\/>woodC;}
-\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineRootC\ =\ plantParams-\/>fineRootC;}
-\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseRootC\ =\ plantParams-\/>coarseRootC;}
-\DoxyCodeLine{00377\ }
-\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ fluxes}}
-\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ fluxes.eventLeafC\ +=\ leafC\ /\ climLen;}
-\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ fluxes.eventWoodC\ +=\ woodC\ /\ climLen;}
-\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ fluxes.eventFineRootC\ +=\ fineRootC\ /\ climLen;}
-\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ fluxes.eventCoarseRootC\ +=\ coarseRootC\ /\ climLen;}
-\DoxyCodeLine{00383\ }
-\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ allocate\ to\ N\ pools}}
-\DoxyCodeLine{00385\ }
-\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 4,\ \textcolor{stringliteral}{"{}fluxes.eventLeafC"{}},\ leafC\ /\ climLen,}
-\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventWoodC"{}},\ woodC\ /\ climLen,}
-\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventFineRootC"{}},\ fineRootC\ /\ climLen,}
-\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventCoarseRootC"{}},\ coarseRootC\ /\ climLen);}
-\DoxyCodeLine{00390\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00391\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:\ \{}
-\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Harvest\ can\ both\ remove\ biomass\ and\ move\ biomass\ to\ the\ litter\ pool}}
-\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ HarvestParams\ *harvParams\ =\ gEvent-\/>eventParams;}
-\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRA\ =\ harvParams-\/>fractionRemovedAbove;}
-\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTA\ =\ harvParams-\/>fractionTransferredAbove;}
-\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRB\ =\ harvParams-\/>fractionRemovedBelow;}
-\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTB\ =\ harvParams-\/>fractionTransferredBelow;}
-\DoxyCodeLine{00398\ }
-\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Litter\ increase}}
-\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ litterAdd\ =\ fracTA\ *\ (envi.plantLeafC\ +\ envi.plantWoodC)\ +}
-\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fracTB\ *\ (envi.fineRootC\ +\ envi.coarseRootC);}
-\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ reductions,\ counting\ both\ mass\ moved\ to\ litter\ and\ removed\ by}}
-\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ harvest\ itself.\ Above-\/ground\ changes:}}
-\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafDelta\ =\ -\/envi.plantLeafC\ *\ (fracRA\ +\ fracTA);}
-\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodDelta\ =\ -\/envi.plantWoodC\ *\ (fracRA\ +\ fracTA);}
-\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Below-\/ground\ changes:}}
-\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineDelta\ =\ -\/envi.fineRootC\ *\ (fracRB\ +\ fracTB);}
-\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseDelta\ =\ -\/envi.coarseRootC\ *\ (fracRB\ +\ fracTB);}
-\DoxyCodeLine{00409\ }
-\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ updates:}}
-\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ fluxes.eventLitterC\ +=\ litterAdd\ /\ climLen;}
-\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ fluxes.eventLeafC\ +=\ leafDelta\ /\ climLen;}
-\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ fluxes.eventWoodC\ +=\ woodDelta\ /\ climLen;}
-\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ fluxes.eventFineRootC\ +=\ fineDelta\ /\ climLen;}
-\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ fluxes.eventCoarseRootC\ +=\ coarseDelta\ /\ climLen;}
-\DoxyCodeLine{00416\ }
-\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ move/remove\ biomass\ in\ N\ pools}}
-\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 5,\ \textcolor{stringliteral}{"{}fluxes.eventLitterC"{}},\ litterAdd\ /\ climLen,}
-\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventLeafC"{}},\ leafDelta\ /\ climLen,}
-\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventWoodC"{}},\ woodDelta\ /\ climLen,}
-\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventFineRootC"{}},\ fineDelta\ /\ climLen,}
-\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventCoarseRootC"{}},\ coarseDelta\ /\ climLen);}
-\DoxyCodeLine{00423\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00424\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:\ \{}
-\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ BIG\ NOTE:\ this\ is\ the\ one\ event\ type\ that\ is\ NOT\ modeled\ as\ a\ flux;}}
-\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ see\ updateEventTrackers()\ for\ more}}
-\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TillageParams\ *tillParams\ =\ gEvent-\/>eventParams;}
-\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ tillage\ mod\ for\ R\_H\ calculations;\ this\ will\ be\ slowly}}
-\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ reduced\ by\ an\ exponential\ decay\ function.\ Note\ we\ add\ here,\ not\ set,}}
-\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ as\ there\ may\ be\ lingering\ effects\ from\ a\ prior\ tillage.}}
-\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ eventTrackers.d\_till\_mod\ +=\ tillParams-\/>tillageEffect;}
-\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 1,\ \textcolor{stringliteral}{"{}eventTrackers.d\_till\_mod"{}},}
-\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tillParams-\/>tillageEffect);}
-\DoxyCodeLine{00434\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00435\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:\ \{}
-\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FertilizationParams\ *fertParams\ =\ gEvent-\/>eventParams;}
-\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ const\ double\ orgN\ =\ fertParams-\/>orgN;}}
-\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ orgC\ =\ fertParams-\/>orgC;}
-\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ const\ double\ minN\ =\ fertParams-\/>minN;}}
-\DoxyCodeLine{00440\ }
-\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ fluxes.eventLitterC\ +=\ orgC\ /\ climLen;}
-\DoxyCodeLine{00442\ }
-\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ allocate\ to\ N\ pools}}
+\DoxyCodeLine{00311\ \ \ fluxes.eventMinN\ =\ 0.0;}
+\DoxyCodeLine{00312\ \}}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \textcolor{keywordtype}{void}\ processEvents(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00315\ \ \ \textcolor{comment}{//\ This\ should\ be\ in\ events.h/c,\ but\ with\ all\ the\ global\ state\ defined\ in}}
+\DoxyCodeLine{00316\ \ \ \textcolor{comment}{//\ this\ file,\ let's\ leave\ it\ here\ for\ now.\ Maybe\ someday\ we\ will\ factor\ that}}
+\DoxyCodeLine{00317\ \ \ \textcolor{comment}{//\ out.}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \textcolor{comment}{//\ Set\ all\ event\ fluxes\ to\ zero,\ as\ these\ have\ no\ memory\ from\ one\ step\ to}}
+\DoxyCodeLine{00320\ \ \ \textcolor{comment}{//\ the\ next}}
+\DoxyCodeLine{00321\ \ \ resetEventFluxes();}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \ \ \textcolor{comment}{//\ If\ event\ starts\ off\ NULL,\ this\ function\ will\ just\ fall\ through,\ as\ it}}
+\DoxyCodeLine{00324\ \ \ \textcolor{comment}{//\ should.}}
+\DoxyCodeLine{00325\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ climYear\ =\ climate-\/>year;}
+\DoxyCodeLine{00326\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ climDay\ =\ climate-\/>day;}
+\DoxyCodeLine{00327\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ climLen\ =\ climate-\/>length;}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \textcolor{comment}{//\ As\ this\ is\ used\ as\ a\ divisor\ in\ many\ places,\ let's\ make\ sure\ it's\ >0}}
+\DoxyCodeLine{00330\ \ \ \textcolor{keywordflow}{if}\ (climLen\ <=\ 0)\ \{}
+\DoxyCodeLine{00331\ \ \ \ \ logError(\textcolor{stringliteral}{"{}climate\ length\ (\%f)\ on\ year\ \%d\ day\ \%d\ is\ non-\/positive;\ please\ "{}}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fix\ and\ re-\/run"{}},}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ climLen,\ climYear,\ climDay);}
+\DoxyCodeLine{00334\ \ \ \ \ exit(EXIT\_CODE\_BAD\_PARAMETER\_VALUE);}
+\DoxyCodeLine{00335\ \ \ \}}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \textcolor{comment}{//\ The\ events\ file\ has\ been\ tested\ on\ read,\ so\ we\ know\ this\ event\ list}}
+\DoxyCodeLine{00338\ \ \ \textcolor{comment}{//\ should\ be\ in\ chrono\ order.\ However,\ we\ need\ to\ check\ to\ make\ sure\ the}}
+\DoxyCodeLine{00339\ \ \ \textcolor{comment}{//\ current\ event\ is\ not\ in\ the\ past,\ as\ that\ would\ indicate\ an\ event\ that}}
+\DoxyCodeLine{00340\ \ \ \textcolor{comment}{//\ did\ not\ have\ a\ corresponding\ climate\ file\ record.}}
+\DoxyCodeLine{00341\ \ \ \textcolor{keywordflow}{while}\ (gEvent\ !=\ NULL\ \&\&\ gEvent-\/>year\ <=\ climYear\ \&\&\ gEvent-\/>day\ <=\ climDay)\ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \textcolor{keywordflow}{if}\ (gEvent-\/>year\ <\ climYear\ ||\ gEvent-\/>day\ <\ climDay)\ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Agronomic\ event\ found\ for\ year:\ \%d\ day:\ \%d\ that\ does\ not\ "{}}}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}have\ a\ corresponding\ record\ in\ the\ climate\ file\(\backslash\)n"{}},}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gEvent-\/>year,\ gEvent-\/>day);}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ exit(EXIT\_CODE\_INPUT\_FILE\_ERROR);}
+\DoxyCodeLine{00347\ \ \ \ \ \}}
+\DoxyCodeLine{00348\ \ \ \ \ \textcolor{keywordflow}{switch}\ (gEvent-\/>type)\ \{}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:\ \{}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ IrrigationParams\ *irrParams\ =\ gEvent-\/>eventParams;}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ amount\ =\ irrParams-\/>amountAdded;}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ soilAmount,\ evapAmount;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ CANOPY)\ \{}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Part\ of\ the\ irrigation\ evaporates,\ and\ the\ rest\ makes\ it\ to\ the}}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ soil.\ Evaporated\ fraction:}}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ params.immedEvapFrac\ *\ amount;}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Soil\ fraction:}}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount\ -\/\ evapAmount;}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (irrParams-\/>method\ ==\ SOIL)\ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ All\ goes\ to\ the\ soil}}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ evapAmount\ =\ 0.0;}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ soilAmount\ =\ amount;}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Unknown\ irrigation\ method\ type:\ \%d\(\backslash\)n"{}},\ irrParams-\/>method);}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ fluxes.eventEvap\ +=\ evapAmount\ /\ climLen;}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ fluxes.eventSoilWater\ +=\ soilAmount\ /\ climLen;}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 2,\ \textcolor{stringliteral}{"{}fluxes.eventSoilWater"{}},\ soilAmount\ /\ climLen,}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventEvap"{}},\ evapAmount\ /\ climLen);}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:\ \{}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ PlantingParams\ *plantParams\ =\ gEvent-\/>eventParams;}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafC\ =\ plantParams-\/>leafC;}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodC\ =\ plantParams-\/>woodC;}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineRootC\ =\ plantParams-\/>fineRootC;}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseRootC\ =\ plantParams-\/>coarseRootC;}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ fluxes}}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ fluxes.eventLeafC\ +=\ leafC\ /\ climLen;}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ fluxes.eventWoodC\ +=\ woodC\ /\ climLen;}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ fluxes.eventFineRootC\ +=\ fineRootC\ /\ climLen;}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ fluxes.eventCoarseRootC\ +=\ coarseRootC\ /\ climLen;}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ allocate\ to\ N\ pools}}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 4,\ \textcolor{stringliteral}{"{}fluxes.eventLeafC"{}},\ leafC\ /\ climLen,}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventWoodC"{}},\ woodC\ /\ climLen,}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventFineRootC"{}},\ fineRootC\ /\ climLen,}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventCoarseRootC"{}},\ coarseRootC\ /\ climLen);}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:\ \{}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Harvest\ can\ both\ remove\ biomass\ and\ move\ biomass\ to\ the\ litter\ pool}}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ HarvestParams\ *harvParams\ =\ gEvent-\/>eventParams;}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRA\ =\ harvParams-\/>fractionRemovedAbove;}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTA\ =\ harvParams-\/>fractionTransferredAbove;}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracRB\ =\ harvParams-\/>fractionRemovedBelow;}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fracTB\ =\ harvParams-\/>fractionTransferredBelow;}
+\DoxyCodeLine{00399\ }
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Litter\ increase}}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ litterAdd\ =\ fracTA\ *\ (envi.plantLeafC\ +\ envi.plantWoodC)\ +}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fracTB\ *\ (envi.fineRootC\ +\ envi.coarseRootC);}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ reductions,\ counting\ both\ mass\ moved\ to\ litter\ and\ removed\ by}}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ the\ harvest\ itself.\ Above-\/ground\ changes:}}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ leafDelta\ =\ -\/envi.plantLeafC\ *\ (fracRA\ +\ fracTA);}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ woodDelta\ =\ -\/envi.plantWoodC\ *\ (fracRA\ +\ fracTA);}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Below-\/ground\ changes:}}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ fineDelta\ =\ -\/envi.fineRootC\ *\ (fracRB\ +\ fracTB);}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ coarseDelta\ =\ -\/envi.coarseRootC\ *\ (fracRB\ +\ fracTB);}
+\DoxyCodeLine{00410\ }
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pool\ updates:}}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ fluxes.eventLitterC\ +=\ litterAdd\ /\ climLen;}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ fluxes.eventLeafC\ +=\ leafDelta\ /\ climLen;}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ fluxes.eventWoodC\ +=\ woodDelta\ /\ climLen;}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ fluxes.eventFineRootC\ +=\ fineDelta\ /\ climLen;}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ fluxes.eventCoarseRootC\ +=\ coarseDelta\ /\ climLen;}
+\DoxyCodeLine{00417\ }
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ move/remove\ biomass\ in\ N\ pools}}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 5,\ \textcolor{stringliteral}{"{}fluxes.eventLitterC"{}},\ litterAdd\ /\ climLen,}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventLeafC"{}},\ leafDelta\ /\ climLen,}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventWoodC"{}},\ woodDelta\ /\ climLen,}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventFineRootC"{}},\ fineDelta\ /\ climLen,}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventCoarseRootC"{}},\ coarseDelta\ /\ climLen);}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:\ \{}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ BIG\ NOTE:\ this\ is\ the\ one\ event\ type\ that\ is\ NOT\ modeled\ as\ a\ flux;}}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ see\ updateEventTrackers()\ for\ more}}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ TillageParams\ *tillParams\ =\ gEvent-\/>eventParams;}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ tillage\ mod\ for\ R\_H\ calculations;\ this\ will\ be\ slowly}}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ reduced\ by\ an\ exponential\ decay\ function.\ Note\ we\ add\ here,\ not\ set,}}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ as\ there\ may\ be\ lingering\ effects\ from\ a\ prior\ tillage.}}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ eventTrackers.d\_till\_mod\ +=\ tillParams-\/>tillageEffect;}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 1,\ \textcolor{stringliteral}{"{}eventTrackers.d\_till\_mod"{}},}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tillParams-\/>tillageEffect);}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:\ \{}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ FertilizationParams\ *fertParams\ =\ gEvent-\/>eventParams;}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ const\ double\ orgN\ =\ fertParams-\/>orgN;}}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ orgC\ =\ fertParams-\/>orgC;}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ minN\ =\ fertParams-\/>minN;}
+\DoxyCodeLine{00441\ }
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ fluxes.eventLitterC\ +=\ orgC\ /\ climLen;}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ fluxes.eventMinN\ +=\ minN\ /\ climLen;}
 \DoxyCodeLine{00444\ }
-\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ will\ (likely)\ be\ 3\ params\ eventually}}
-\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 1,\ \textcolor{stringliteral}{"{}fluxes.eventLitterC"{}},\ orgC\ /\ climLen);}
-\DoxyCodeLine{00447\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00448\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
-\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Unknown\ event\ type\ (\%d)\ in\ processEvents()\(\backslash\)n"{}},\ gEvent-\/>type);}
-\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
-\DoxyCodeLine{00451\ \ \ \ \ \}}
-\DoxyCodeLine{00452\ }
-\DoxyCodeLine{00453\ \ \ \ \ gEvent\ =\ gEvent-\/>nextEvent;}
-\DoxyCodeLine{00454\ \ \ \}}
-\DoxyCodeLine{00455\ \}}
-\DoxyCodeLine{00456\ }
-\DoxyCodeLine{00457\ \textcolor{keywordtype}{void}\ updatePoolsForEvents(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{00458\ \ \ \textcolor{comment}{//\ Harvest\ and\ planting\ events}}
-\DoxyCodeLine{00459\ \ \ envi.plantWoodC\ +=\ fluxes.eventWoodC\ *\ climate-\/>length;}
-\DoxyCodeLine{00460\ \ \ envi.plantLeafC\ +=\ fluxes.eventLeafC\ *\ climate-\/>length;}
-\DoxyCodeLine{00461\ }
-\DoxyCodeLine{00462\ \ \ \textcolor{comment}{//\ Irrigation\ events}}
-\DoxyCodeLine{00463\ \ \ envi.soilWater\ +=\ fluxes.eventSoilWater\ *\ climate-\/>length;}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FUTURE:\ allocate\ to\ N\ pools}}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ will\ (likely)\ be\ 3\ params\ eventually}}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ writeEventOut(gEvent,\ 2,\ \textcolor{stringliteral}{"{}fluxes.eventLitterC"{}},\ orgC\ /\ climLen,}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}fluxes.eventMinN"{}},\ minN\ /\ climLen);}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ logError(\textcolor{stringliteral}{"{}Unknown\ event\ type\ (\%d)\ in\ processEvents()\(\backslash\)n"{}},\ gEvent-\/>type);}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ exit(EXIT\_CODE\_UNKNOWN\_EVENT\_TYPE\_OR\_PARAM);}
+\DoxyCodeLine{00454\ \ \ \ \ \}}
+\DoxyCodeLine{00455\ }
+\DoxyCodeLine{00456\ \ \ \ \ gEvent\ =\ gEvent-\/>nextEvent;}
+\DoxyCodeLine{00457\ \ \ \}}
+\DoxyCodeLine{00458\ \}}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ \textcolor{keywordtype}{void}\ updatePoolsForEvents(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00461\ \ \ \textcolor{comment}{//\ Harvest\ and\ planting\ events}}
+\DoxyCodeLine{00462\ \ \ envi.plantWoodC\ +=\ fluxes.eventWoodC\ *\ climate-\/>length;}
+\DoxyCodeLine{00463\ \ \ envi.plantLeafC\ +=\ fluxes.eventLeafC\ *\ climate-\/>length;}
 \DoxyCodeLine{00464\ }
-\DoxyCodeLine{00465\ \ \ \textcolor{comment}{//\ Harvest\ and\ fertilization\ events}}
-\DoxyCodeLine{00466\ \ \ \textcolor{keywordflow}{if}\ (ctx.litterPool)\ \{}
-\DoxyCodeLine{00467\ \ \ \ \ envi.litter\ +=\ fluxes.eventLitterC\ *\ climate-\/>length;}
-\DoxyCodeLine{00468\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
-\DoxyCodeLine{00469\ \ \ \ \ envi.soil\ +=\ fluxes.eventLitterC\ *\ climate-\/>length;}
-\DoxyCodeLine{00470\ \ \ \}}
-\DoxyCodeLine{00471\ }
-\DoxyCodeLine{00472\ \ \ \textcolor{comment}{//\ Harvest\ and\ planting\ events}}
-\DoxyCodeLine{00473\ \ \ envi.coarseRootC\ +=\ fluxes.eventCoarseRootC\ *\ climate-\/>length;}
-\DoxyCodeLine{00474\ \ \ envi.fineRootC\ +=\ fluxes.eventFineRootC\ *\ climate-\/>length;}
-\DoxyCodeLine{00475\ \}}
-\DoxyCodeLine{00476\ }
-\DoxyCodeLine{00477\ \textcolor{keywordtype}{void}\ freeEventList(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{00478\ \ \ EventNode\ *curr,\ *prev;}
-\DoxyCodeLine{00479\ }
-\DoxyCodeLine{00480\ \ \ curr\ =\ gEvents;}
-\DoxyCodeLine{00481\ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ NULL)\ \{}
-\DoxyCodeLine{00482\ \ \ \ \ prev\ =\ curr;}
-\DoxyCodeLine{00483\ \ \ \ \ curr\ =\ curr-\/>nextEvent;}
-\DoxyCodeLine{00484\ \ \ \ \ free(prev);}
-\DoxyCodeLine{00485\ \ \ \}}
-\DoxyCodeLine{00486\ \}}
-\DoxyCodeLine{00487\ }
-\DoxyCodeLine{00488\ \textcolor{comment}{//\ Definition\ of\ global\ event\ trackers\ struct}}
-\DoxyCodeLine{00489\ EventTrackers\ eventTrackers;}
-\DoxyCodeLine{00490\ }
-\DoxyCodeLine{00491\ \textcolor{keywordtype}{void}\ initEventTrackers(\textcolor{keywordtype}{void})\ \{\ eventTrackers.d\_till\_mod\ =\ 0.0;\ \}}
-\DoxyCodeLine{00492\ }
-\DoxyCodeLine{00493\ \textcolor{keywordtype}{void}\ updateEventTrackers(\textcolor{keywordtype}{void})\ \{}
-\DoxyCodeLine{00494\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ climLen\ =\ climate-\/>length;}
-\DoxyCodeLine{00495\ }
-\DoxyCodeLine{00496\ \ \ \textcolor{comment}{//\ Tillage:\ decay\ any\ existing\ tillage\ effects\ at\ end\ of\ step}}
-\DoxyCodeLine{00497\ \ \ \textcolor{keywordflow}{if}\ (eventTrackers.d\_till\_mod\ >\ 0)\ \{}
-\DoxyCodeLine{00498\ \ \ \ \ eventTrackers.d\_till\_mod\ *=\ exp(-\/climLen\ *\ TILLAGE\_DECAY\_FACTOR);}
+\DoxyCodeLine{00465\ \ \ \textcolor{comment}{//\ Irrigation\ events}}
+\DoxyCodeLine{00466\ \ \ envi.soilWater\ +=\ fluxes.eventSoilWater\ *\ climate-\/>length;}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \ \ \textcolor{comment}{//\ Harvest\ and\ fertilization\ events}}
+\DoxyCodeLine{00469\ \ \ \textcolor{keywordflow}{if}\ (ctx.litterPool)\ \{}
+\DoxyCodeLine{00470\ \ \ \ \ envi.litter\ +=\ fluxes.eventLitterC\ *\ climate-\/>length;}
+\DoxyCodeLine{00471\ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00472\ \ \ \ \ envi.soil\ +=\ fluxes.eventLitterC\ *\ climate-\/>length;}
+\DoxyCodeLine{00473\ \ \ \}}
+\DoxyCodeLine{00474\ \ \ envi.minN\ +=\ fluxes.eventMinN\ *\ climate-\/>length;}
+\DoxyCodeLine{00475\ }
+\DoxyCodeLine{00476\ \ \ \textcolor{comment}{//\ Harvest\ and\ planting\ events}}
+\DoxyCodeLine{00477\ \ \ envi.coarseRootC\ +=\ fluxes.eventCoarseRootC\ *\ climate-\/>length;}
+\DoxyCodeLine{00478\ \ \ envi.fineRootC\ +=\ fluxes.eventFineRootC\ *\ climate-\/>length;}
+\DoxyCodeLine{00479\ \}}
+\DoxyCodeLine{00480\ }
+\DoxyCodeLine{00481\ \textcolor{keywordtype}{void}\ freeEventList(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00482\ \ \ EventNode\ *curr,\ *prev;}
+\DoxyCodeLine{00483\ }
+\DoxyCodeLine{00484\ \ \ curr\ =\ gEvents;}
+\DoxyCodeLine{00485\ \ \ \textcolor{keywordflow}{while}\ (curr\ !=\ NULL)\ \{}
+\DoxyCodeLine{00486\ \ \ \ \ prev\ =\ curr;}
+\DoxyCodeLine{00487\ \ \ \ \ curr\ =\ curr-\/>nextEvent;}
+\DoxyCodeLine{00488\ \ \ \ \ free(prev);}
+\DoxyCodeLine{00489\ \ \ \}}
+\DoxyCodeLine{00490\ \}}
+\DoxyCodeLine{00491\ }
+\DoxyCodeLine{00492\ \textcolor{comment}{//\ Definition\ of\ global\ event\ trackers\ struct}}
+\DoxyCodeLine{00493\ EventTrackers\ eventTrackers;}
+\DoxyCodeLine{00494\ }
+\DoxyCodeLine{00495\ \textcolor{keywordtype}{void}\ initEventTrackers(\textcolor{keywordtype}{void})\ \{\ eventTrackers.d\_till\_mod\ =\ 0.0;\ \}}
+\DoxyCodeLine{00496\ }
+\DoxyCodeLine{00497\ \textcolor{keywordtype}{void}\ updateEventTrackers(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00498\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ climLen\ =\ climate-\/>length;}
 \DoxyCodeLine{00499\ }
-\DoxyCodeLine{00500\ \ \ \ \ \textcolor{keywordflow}{if}\ (eventTrackers.d\_till\_mod\ <\ TILLAGE\_THRESHOLD)\ \{}
-\DoxyCodeLine{00501\ \ \ \ \ \ \ eventTrackers.d\_till\_mod\ =\ 0.0;}
-\DoxyCodeLine{00502\ \ \ \ \ \}}
-\DoxyCodeLine{00503\ \ \ \}}
-\DoxyCodeLine{00504\ \}}
-\DoxyCodeLine{00505\ }
-\DoxyCodeLine{00506\ \textcolor{keywordtype}{void}\ printEvent(EventNode\ *oneEvent)\ \{}
-\DoxyCodeLine{00507\ \ \ \textcolor{keywordflow}{if}\ (oneEvent\ ==\ NULL)\ \{}
-\DoxyCodeLine{00508\ \ \ \ \ \textcolor{keywordflow}{return};}
-\DoxyCodeLine{00509\ \ \ \}}
-\DoxyCodeLine{00510\ \ \ \textcolor{keywordtype}{int}\ year\ =\ oneEvent-\/>year;}
-\DoxyCodeLine{00511\ \ \ \textcolor{keywordtype}{int}\ day\ =\ oneEvent-\/>day;}
-\DoxyCodeLine{00512\ \ \ \textcolor{keywordflow}{switch}\ (oneEvent-\/>type)\ \{}
-\DoxyCodeLine{00513\ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:}
-\DoxyCodeLine{00514\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}IRRIGATION\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
-\DoxyCodeLine{00515\ \ \ \ \ \ \ IrrigationParams\ *\textcolor{keyword}{const}\ iParams\ =}
-\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ (IrrigationParams\ *)oneEvent-\/>eventParams;}
-\DoxyCodeLine{00517\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ amount\ added\ \%4.2f\(\backslash\)n"{}},\ iParams-\/>amountAdded);}
-\DoxyCodeLine{00518\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00519\ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:}
-\DoxyCodeLine{00520\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}FERTILIZATION\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
-\DoxyCodeLine{00521\ \ \ \ \ \ \ FertilizationParams\ *\textcolor{keyword}{const}\ fParams\ =}
-\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ (FertilizationParams\ *)oneEvent-\/>eventParams;}
-\DoxyCodeLine{00523\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ org\ N\ \%4.2f,\ org\ C\ \%4.2f,\ min\ N\ \%4.2f\(\backslash\)n"{}},}
-\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ \ fParams-\/>orgN,\ fParams-\/>orgC,\ fParams-\/>minN);}
-\DoxyCodeLine{00525\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00526\ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:}
-\DoxyCodeLine{00527\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}PLANTING\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
-\DoxyCodeLine{00528\ \ \ \ \ \ \ PlantingParams\ *\textcolor{keyword}{const}\ pParams\ =\ (PlantingParams\ *)oneEvent-\/>eventParams;}
-\DoxyCodeLine{00529\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ leaf\ C\ \%4.2f,\ wood\ C\ \%4.2f,\ fine\ root\ C\ \%4.2f,\ "{}}}
-\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}coarse\ root\ C\ \%4.2f\(\backslash\)n"{}},}
-\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ pParams-\/>leafC,\ pParams-\/>woodC,\ pParams-\/>fineRootC,}
-\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ pParams-\/>coarseRootC);}
-\DoxyCodeLine{00533\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00534\ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:}
-\DoxyCodeLine{00535\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}TILLAGE\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
-\DoxyCodeLine{00536\ \ \ \ \ \ \ TillageParams\ *\textcolor{keyword}{const}\ tParams\ =\ (TillageParams\ *)oneEvent-\/>eventParams;}
-\DoxyCodeLine{00537\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ tillageEffect\ \%4.2f\(\backslash\)n"{}},\ tParams-\/>tillageEffect);}
-\DoxyCodeLine{00538\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00539\ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:}
-\DoxyCodeLine{00540\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}HARVEST\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
-\DoxyCodeLine{00541\ \ \ \ \ \ \ HarvestParams\ *\textcolor{keyword}{const}\ hParams\ =\ (HarvestParams\ *)oneEvent-\/>eventParams;}
-\DoxyCodeLine{00542\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ frac\ removed\ above\ \%4.2f,\ frac\ removed\ below\ \%4.2f,\ "{}}}
-\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frac\ transferred\ above\ \%4.2f,\ frac\ transferred\ below\ \%4.2f\(\backslash\)n"{}},}
-\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionRemovedAbove,\ hParams-\/>fractionRemovedBelow,}
-\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionTransferredAbove,}
-\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionTransferredBelow);}
-\DoxyCodeLine{00547\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00548\ \ \ \ \ \textcolor{keywordflow}{default}:}
-\DoxyCodeLine{00549\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ printing\ oneEvent:\ unknown\ type\ \%d\(\backslash\)n"{}},\ oneEvent-\/>type);}
-\DoxyCodeLine{00550\ \ \ \}}
-\DoxyCodeLine{00551\ \}}
+\DoxyCodeLine{00500\ \ \ \textcolor{comment}{//\ Tillage:\ decay\ any\ existing\ tillage\ effects\ at\ end\ of\ step}}
+\DoxyCodeLine{00501\ \ \ \textcolor{keywordflow}{if}\ (eventTrackers.d\_till\_mod\ >\ 0)\ \{}
+\DoxyCodeLine{00502\ \ \ \ \ eventTrackers.d\_till\_mod\ *=\ exp(-\/climLen\ *\ TILLAGE\_DECAY\_FACTOR);}
+\DoxyCodeLine{00503\ }
+\DoxyCodeLine{00504\ \ \ \ \ \textcolor{keywordflow}{if}\ (eventTrackers.d\_till\_mod\ <\ TILLAGE\_THRESHOLD)\ \{}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ eventTrackers.d\_till\_mod\ =\ 0.0;}
+\DoxyCodeLine{00506\ \ \ \ \ \}}
+\DoxyCodeLine{00507\ \ \ \}}
+\DoxyCodeLine{00508\ \}}
+\DoxyCodeLine{00509\ }
+\DoxyCodeLine{00510\ \textcolor{keywordtype}{void}\ printEvent(EventNode\ *oneEvent)\ \{}
+\DoxyCodeLine{00511\ \ \ \textcolor{keywordflow}{if}\ (oneEvent\ ==\ NULL)\ \{}
+\DoxyCodeLine{00512\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00513\ \ \ \}}
+\DoxyCodeLine{00514\ \ \ \textcolor{keywordtype}{int}\ year\ =\ oneEvent-\/>year;}
+\DoxyCodeLine{00515\ \ \ \textcolor{keywordtype}{int}\ day\ =\ oneEvent-\/>day;}
+\DoxyCodeLine{00516\ \ \ \textcolor{keywordflow}{switch}\ (oneEvent-\/>type)\ \{}
+\DoxyCodeLine{00517\ \ \ \ \ \textcolor{keywordflow}{case}\ IRRIGATION:}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}IRRIGATION\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ IrrigationParams\ *\textcolor{keyword}{const}\ iParams\ =}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ (IrrigationParams\ *)oneEvent-\/>eventParams;}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ amount\ added\ \%4.2f\(\backslash\)n"{}},\ iParams-\/>amountAdded);}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{keywordflow}{case}\ FERTILIZATION:}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}FERTILIZATION\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ FertilizationParams\ *\textcolor{keyword}{const}\ fParams\ =}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ (FertilizationParams\ *)oneEvent-\/>eventParams;}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ org\ N\ \%4.2f,\ org\ C\ \%4.2f,\ min\ N\ \%4.2f\(\backslash\)n"{}},}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ fParams-\/>orgN,\ fParams-\/>orgC,\ fParams-\/>minN);}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00530\ \ \ \ \ \textcolor{keywordflow}{case}\ PLANTING:}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}PLANTING\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ PlantingParams\ *\textcolor{keyword}{const}\ pParams\ =\ (PlantingParams\ *)oneEvent-\/>eventParams;}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ leaf\ C\ \%4.2f,\ wood\ C\ \%4.2f,\ fine\ root\ C\ \%4.2f,\ "{}}}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}coarse\ root\ C\ \%4.2f\(\backslash\)n"{}},}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ pParams-\/>leafC,\ pParams-\/>woodC,\ pParams-\/>fineRootC,}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ pParams-\/>coarseRootC);}
+\DoxyCodeLine{00537\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00538\ \ \ \ \ \textcolor{keywordflow}{case}\ TILLAGE:}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}TILLAGE\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
+\DoxyCodeLine{00540\ \ \ \ \ \ \ TillageParams\ *\textcolor{keyword}{const}\ tParams\ =\ (TillageParams\ *)oneEvent-\/>eventParams;}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ tillageEffect\ \%4.2f\(\backslash\)n"{}},\ tParams-\/>tillageEffect);}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00543\ \ \ \ \ \textcolor{keywordflow}{case}\ HARVEST:}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}HARVEST\ on\ \%d\ \%d,\ "{}},\ year,\ day);}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ HarvestParams\ *\textcolor{keyword}{const}\ hParams\ =\ (HarvestParams\ *)oneEvent-\/>eventParams;}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}with\ params:\ frac\ removed\ above\ \%4.2f,\ frac\ removed\ below\ \%4.2f,\ "{}}}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}frac\ transferred\ above\ \%4.2f,\ frac\ transferred\ below\ \%4.2f\(\backslash\)n"{}},}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionRemovedAbove,\ hParams-\/>fractionRemovedBelow,}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionTransferredAbove,}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ hParams-\/>fractionTransferredBelow);}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00552\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00553\ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ERROR\ printing\ oneEvent:\ unknown\ type\ \%d\(\backslash\)n"{}},\ oneEvent-\/>type);}
+\DoxyCodeLine{00554\ \ \ \}}
+\DoxyCodeLine{00555\ \}}
 
 \end{DoxyCode}

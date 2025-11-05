@@ -454,7 +454,7 @@ Referenced by \textbf{ write\+Event\+Out()}.
 
 Deallocate space used for events linked list 
 
-Definition at line \textbf{ 477} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 481} of file \textbf{ events.\+c}.
 
 
 
@@ -511,7 +511,7 @@ Here is the call graph for this function\+:
 
 Initialize Event\+Trackers struct for tracking lingering event effects 
 
-Definition at line \textbf{ 491} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 495} of file \textbf{ events.\+c}.
 
 
 
@@ -569,11 +569,11 @@ For a given year and day (as determined by the global {\ttfamily climate} pointe
 
 For each event, modify flux variables according to the model for that event, and write a row to events.\+out listing the modified variables and the delta applied. 
 
-Definition at line \textbf{ 313} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 314} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ CANOPY}, \textbf{ climate}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Event\+Tracker\+Struct\+::d\+\_\+till\+\_\+mod}, \textbf{ Event\+Node\+::day}, \textbf{ Climate\+Vars\+::day}, \textbf{ envi}, \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Evap}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ event\+Trackers}, \textbf{ Flux\+Vars\+::event\+WoodC}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ g\+Event}, \textbf{ HARVEST}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Climate\+Vars\+::length}, \textbf{ log\+Error}, \textbf{ Irrigation\+Params\+::method}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ params}, \textbf{ PLANTING}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ reset\+Event\+Fluxes()}, \textbf{ SOIL}, \textbf{ TILLAGE}, \textbf{ Tillage\+Params\+::tillage\+Effect}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, \textbf{ write\+Event\+Out()}, \textbf{ Event\+Node\+::year}, and \textbf{ Climate\+Vars\+::year}.
+References \textbf{ Irrigation\+Params\+::amount\+Added}, \textbf{ CANOPY}, \textbf{ climate}, \textbf{ Planting\+Params\+::coarse\+RootC}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ Event\+Tracker\+Struct\+::d\+\_\+till\+\_\+mod}, \textbf{ Event\+Node\+::day}, \textbf{ Climate\+Vars\+::day}, \textbf{ envi}, \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Evap}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Flux\+Vars\+::event\+MinN}, \textbf{ Event\+Node\+::event\+Params}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ event\+Trackers}, \textbf{ Flux\+Vars\+::event\+WoodC}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+BAD\+\_\+\+PARAMETER\+\_\+\+VALUE}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+INPUT\+\_\+\+FILE\+\_\+\+ERROR}, \textbf{ EXIT\+\_\+\+CODE\+\_\+\+UNKNOWN\+\_\+\+EVENT\+\_\+\+TYPE\+\_\+\+OR\+\_\+\+PARAM}, \textbf{ FERTILIZATION}, \textbf{ Planting\+Params\+::fine\+RootC}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Above}, \textbf{ Harvest\+Params\+::fraction\+Removed\+Below}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Above}, \textbf{ Harvest\+Params\+::fraction\+Transferred\+Below}, \textbf{ g\+Event}, \textbf{ HARVEST}, \textbf{ Parameters\+::immed\+Evap\+Frac}, \textbf{ IRRIGATION}, \textbf{ Planting\+Params\+::leafC}, \textbf{ Climate\+Vars\+::length}, \textbf{ log\+Error}, \textbf{ Irrigation\+Params\+::method}, \textbf{ Fertilization\+Params\+::minN}, \textbf{ Event\+Node\+::next\+Event}, \textbf{ Fertilization\+Params\+::orgC}, \textbf{ params}, \textbf{ PLANTING}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ reset\+Event\+Fluxes()}, \textbf{ SOIL}, \textbf{ TILLAGE}, \textbf{ Tillage\+Params\+::tillage\+Effect}, \textbf{ Event\+Node\+::type}, \textbf{ Planting\+Params\+::woodC}, \textbf{ write\+Event\+Out()}, \textbf{ Event\+Node\+::year}, and \textbf{ Climate\+Vars\+::year}.
 
 
 
@@ -629,7 +629,7 @@ Definition at line \textbf{ 303} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Evap}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ Flux\+Vars\+::event\+WoodC}, and \textbf{ fluxes}.
+References \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Evap}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Flux\+Vars\+::event\+MinN}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ Flux\+Vars\+::event\+WoodC}, and \textbf{ fluxes}.
 
 
 
@@ -661,7 +661,7 @@ Referenced by \textbf{ run\+Model\+Output()}.
 
 Perform any needed udpates post fluxes-\/and-\/pools updates 
 
-Definition at line \textbf{ 493} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 497} of file \textbf{ events.\+c}.
 
 
 
@@ -679,11 +679,11 @@ Referenced by \textbf{ update\+State()}.
 
 Update relevant environment pools after event fluxes have been calculated 
 
-Definition at line \textbf{ 457} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 460} of file \textbf{ events.\+c}.
 
 
 
-References \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ ctx}, \textbf{ envi}, \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ Flux\+Vars\+::event\+WoodC}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Climate\+Vars\+::length}, \textbf{ Environment\+::litter}, \textbf{ Context\+::litter\+Pool}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Environment\+::soil}, and \textbf{ Environment\+::soil\+Water}.
+References \textbf{ climate}, \textbf{ Environment\+::coarse\+RootC}, \textbf{ ctx}, \textbf{ envi}, \textbf{ Flux\+Vars\+::event\+Coarse\+RootC}, \textbf{ Flux\+Vars\+::event\+Fine\+RootC}, \textbf{ Flux\+Vars\+::event\+LeafC}, \textbf{ Flux\+Vars\+::event\+LitterC}, \textbf{ Flux\+Vars\+::event\+MinN}, \textbf{ Flux\+Vars\+::event\+Soil\+Water}, \textbf{ Flux\+Vars\+::event\+WoodC}, \textbf{ Environment\+::fine\+RootC}, \textbf{ fluxes}, \textbf{ Climate\+Vars\+::length}, \textbf{ Environment\+::litter}, \textbf{ Context\+::litter\+Pool}, \textbf{ Environment\+::minN}, \textbf{ Environment\+::plant\+LeafC}, \textbf{ Environment\+::plant\+WoodC}, \textbf{ Environment\+::soil}, and \textbf{ Environment\+::soil\+Water}.
 
 
 
@@ -747,7 +747,7 @@ Here is the call graph for this function\+:
 
 
 
-Definition at line \textbf{ 489} of file \textbf{ events.\+c}.
+Definition at line \textbf{ 493} of file \textbf{ events.\+c}.
 
 
 
