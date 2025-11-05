@@ -521,7 +521,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for event handling
-  // Note: this has no published reference source
+  //  - fluxes tracked as part of modeling from [5]
   //
 
   // plantLeafC addition
@@ -538,6 +538,8 @@ typedef struct FluxVars {
   double eventSoilWater;
   // carbon added to litter pool (if used) or soil pool (if not)
   double eventLitterC;
+  // nitrogen added to soil mineral N pool
+  double eventMinN;
 } Fluxes;
 
 // Global var
