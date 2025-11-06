@@ -28,6 +28,7 @@ sections to include in release notes:
 
 ### Added
 
+- Build and release binaries for MacOS and Windows on release (in addition to existing Linux builds)
 - Support for tillage events (#158)
 - `woodCreation` as output (#161)
 - Soil mineral pool (#170)

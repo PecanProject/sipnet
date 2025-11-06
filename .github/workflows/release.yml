@@ -6,27 +6,65 @@ on:
       - 'v*.*.*'  # Trigger on version tags
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_os: ubuntu
+            binary_path: sipnet
+          - os: macos-latest
+            artifact_os: macos
+            binary_path: sipnet
+    runs-on: ${{ matrix.os }}
     steps:
-      # Checkout the repository
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # Build SIPNET binary
       - name: Build SIPNET
         run: make
+        shell: bash
 
-      # Create GitHub Release and Upload Asset
-      - name: Create Release and Upload Asset
-        id: create_release
+      - name: Prepare release binary
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          src="${{ matrix.binary_path }}"
+          dest="sipnet-${{ matrix.artifact_os }}-${tag}"
+
+          if [ ! -f "$src" ]; then
+            echo "Expected build artifact '${src}' not found" >&2
+            exit 1
+          fi
+
+          mkdir -p dist
+          mv "$src" "dist/${dest}"
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
+          path: dist/sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           body: |
             This release includes the latest SIPNET binary.
           draft: true  # Create the release as a draft
-          files: ./sipnet  # Path to the compiled binary
+          files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
