@@ -1091,14 +1091,22 @@ mkdocs<span class="w"> </span>serve
 <h2 id="releases">Releases<a class="headerlink" href="#releases" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Use <a href="https://semver.org/">Semantic Versioning v2</a> for SIPNET releases. </li>
-<li>Tag the git commit associated with the release <code>vX.Y.Z</code>.</li>
 <li>Update versions in:</li>
 <li><code>CITATION.cff</code></li>
 <li><code>src/sipnet/version.h</code></li>
 <li><code>docs/CHANGELOG.md</code></li>
 <li><code>docs/Doxyfile</code> (<code>PROJECT_NUMBER</code>)</li>
 <li>Run tests (<code>make test</code>).</li>
-<li>Publish the GitHub release; include <code>docs/CHANGELOG.md</code> content in release notes.</li>
+<li>Tag the git commit associated with the release <code>vX.Y.Z</code> and push tag to master.
+    <div class="highlight"><pre><span></span><code>git tag v&lt;X.Y.Z&gt;
+</code></pre></div></li>
+<li>Push tag to master branch, this will trigger a draft release
+    <div class="highlight"><pre><span></span><code>git push origin v0.0.0-test
+</code></pre></div></li>
+<li>Open draft on https://github.com/pecanProject/sipnet/releases.</li>
+<li>Add content from <code>docs/CHANGELOG.md</code> to release notes.</li>
+<li>Publish the GitHub release; this will trigger archiving on Zenodo</li>
+<li>Get doi for this release from Zenodo and add to release notes. (note: README has a doi that represents all versions, and resolves to latest)</li>
 </ul>
 
 
