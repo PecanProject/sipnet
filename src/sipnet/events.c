@@ -308,6 +308,7 @@ void resetEventFluxes(void) {
   fluxes.eventEvap = 0.0;
   fluxes.eventSoilWater = 0.0;
   fluxes.eventLitterC = 0.0;
+  fluxes.eventMinN = 0.0;
 }
 
 void processEvents(void) {
@@ -436,14 +437,16 @@ void processEvents(void) {
         const FertilizationParams *fertParams = gEvent->eventParams;
         // const double orgN = fertParams->orgN;
         const double orgC = fertParams->orgC;
-        // const double minN = fertParams->minN;
+        const double minN = fertParams->minN;
 
         fluxes.eventLitterC += orgC / climLen;
+        fluxes.eventMinN += minN / climLen;
 
         // FUTURE: allocate to N pools
 
         // This will (likely) be 3 params eventually
-        writeEventOut(gEvent, 1, "fluxes.eventLitterC", orgC / climLen);
+        writeEventOut(gEvent, 2, "fluxes.eventLitterC", orgC / climLen,
+                      "fluxes.eventMinN", minN / climLen);
       } break;
       default:
         logError("Unknown event type (%d) in processEvents()\n", gEvent->type);
@@ -468,6 +471,7 @@ void updatePoolsForEvents(void) {
   } else {
     envi.soil += fluxes.eventLitterC * climate->length;
   }
+  envi.minN += fluxes.eventMinN * climate->length;
 
   // Harvest and planting events
   envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;

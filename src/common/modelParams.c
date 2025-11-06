@@ -54,17 +54,15 @@ void checkAllRead(ModelParams *ModelParams) {
 
   // Inform if any optional params are not in the file; not an error, just a
   // note, and just one line instead of one for each
-  if (missingOptParam) {
-    logInfo("optional params not specified in input file:");
-    if (!ctx.quiet) {
-      for (i = 0; i < ModelParams->numParams; i++) {
-        param = &(ModelParams->params[i]);
-        if ((!param->isRead) && (param->isRequired == 0)) {
-          logWarning(" %s", param->name);
-        }
+  if ((missingOptParam) && (!ctx.quiet)) {
+    logWarning("optional params not specified in input file:");
+    for (i = 0; i < ModelParams->numParams; i++) {
+      param = &(ModelParams->params[i]);
+      if ((!param->isRead) && (param->isRequired == 0)) {
+        logAppend(" %s", param->name);
       }
-      logWarning("\n");
     }
+    logAppend("\n");
   }
 
   if (!okay) {
