@@ -372,14 +372,14 @@ $$
 
 $$\small j \in \{\text{soil, litter}\}$$
 
-### $\frak{Nitrogen \ Volatilization \ F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)}$
+### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)$
 
 
 The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate. 
 
 Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
 
-A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$.
+A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$ per day.
 
 $$
 F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n_vol}
