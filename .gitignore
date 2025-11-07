@@ -14,8 +14,14 @@ site_preview/*
 docs/api
 docs/latex
 
-# Test files - remember that tracked files are never ignored
-tests/
+# Test files
+tests/sipnet/*/*
+!tests/sipnet/*/*.c
+!tests/sipnet/*/*.h
+!tests/sipnet/*/*.in
+!tests/sipnet/*/*.out
+!tests/sipnet/*/*.clim
+!tests/sipnet/*/*.param
 
 # System-specific files
 .DS_Store
