@@ -1,6 +1,7 @@
 # build artifacts and executables
 # /sipnet instead of just sipnet to NOT ignore test dirs
 *.o
+*.a
 /sipnet
 subsetData
 transpose
@@ -12,6 +13,9 @@ site_preview/*
 # documentation
 docs/api
 docs/latex
+
+# Test files - remember that tracked files are never ignored
+tests/
 
 # System-specific files
 .DS_Store
