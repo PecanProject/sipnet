@@ -362,7 +362,7 @@ typedef struct Parameters {
   double minNInit;
 
   // Fraction of mineral N volatilized per day, d^-1
-  double nVolatilization;
+  double nVolatilizationFrac;
 
 } Params;
 
@@ -511,7 +511,8 @@ typedef struct FluxVars {
   double soilPulse;
 
   // ****************************************
-  // Fluxes from other sources, provenance TBD
+  // Fluxes from other sources
+  // - provenance TBD
   //
 
   // leaf creation term as determined by growing season boundaries (as in [1])
@@ -524,7 +525,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for nitrogen cycle
-  // Note: added as part of MAGIC project
+  // - nitrogen fluxes tracked as part of modeling from [5]
   //
 
   // Mineral N lost to volatilization
@@ -532,7 +533,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for event handling
-  //  - fluxes tracked as part of modeling from [5]
+  //  - event fluxes tracked as part of modeling from [5]
   //
 
   // plantLeafC addition
