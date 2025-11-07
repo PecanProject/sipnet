@@ -162,11 +162,21 @@ make -C tests/sipnet/test_events_infrastructure run
 ## Releases
 
 - Use [Semantic Versioning v2](https://semver.org/) for SIPNET releases. 
-- Tag the git commit associated with the release `vX.Y.Z`.
 - Update versions in:
   - `CITATION.cff`
   - `src/sipnet/version.h`
   - `docs/CHANGELOG.md`
   - `docs/Doxyfile` (`PROJECT_NUMBER`)
 - Run tests (`make test`).
-- Publish the GitHub release; include `docs/CHANGELOG.md` content in release notes.
+- Tag the git commit associated with the release `vX.Y.Z` and push tag to master.
+    ```
+    git tag v<X.Y.Z>
+    ```
+- Push tag to master branch, this will trigger a draft release
+    ```
+    git push origin v0.0.0-test
+    ```
+- Open draft on https://github.com/pecanProject/sipnet/releases.
+- Add content from `docs/CHANGELOG.md` to release notes.
+- Publish the GitHub release; this will trigger archiving on Zenodo
+- Get doi for this release from Zenodo and add to release notes. (note: README has a doi that represents all versions, and resolves to latest)
