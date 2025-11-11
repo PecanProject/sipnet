@@ -1232,8 +1232,7 @@ void calcNLeachingFlux() {
   // phi is (drainage / soilWHC) between 0 and 1
   if ((fluxes.drainage / params.soilWHC) < 1) {
     phi = fluxes.drainage / params.soilWHC;
-  }
-  else {
+  } else {
     phi = 1;
   }
   // flux = nMin * phi * leaching fraction, g N * m^-2 * day^-1

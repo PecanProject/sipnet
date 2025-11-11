@@ -74,12 +74,9 @@ int testNLeaching(void) {
   nLeachFrac = 0.5;
   fluxes.drainage = 5;
   initState(minN, 0, nLeachFrac);
-  if ((fluxes.drainage / params.soilWHC) < 1)
-  {
+  if ((fluxes.drainage / params.soilWHC) < 1) {
     phi = fluxes.drainage / params.soilWHC;
-  }
-  else
-  {
+  } else {
     phi = 1;
   }
   expNLeaching = minN * phi * nLeachFrac;
@@ -90,12 +87,9 @@ int testNLeaching(void) {
   nLeachFrac = 0.5;
   fluxes.drainage = 20;
   initState(minN, 0, nLeachFrac);
-    if ((fluxes.drainage / params.soilWHC) < 1)
-  {
+  if ((fluxes.drainage / params.soilWHC) < 1) {
     phi = fluxes.drainage / params.soilWHC;
-  }
-  else
-  {
+  } else {
     phi = 1;
   }
   expNLeaching = minN * phi * nLeachFrac;
