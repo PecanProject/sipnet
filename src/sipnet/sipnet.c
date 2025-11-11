@@ -1228,8 +1228,16 @@ void calcNVolatilizationFlux() {
  * Calculate mineral N leaching flux
  */
 void calcNLeachingFlux() {
-  // flux = nMin * drainage flux * leaching fraction
-  fluxes.nLeaching = envi.minN * fluxes.drainage * params.nLeachingFrac;
+  double phi;
+  // phi is (drainage / soilWHC) between 0 and 1
+  if ((fluxes.drainage / params.soilWHC) < 1) {
+    phi = fluxes.drainage / params.soilWHC;
+  }
+  else {
+    phi = 1;
+  }
+  // flux = nMin * phi * leaching fraction, g N * m^-2 * day^-1
+  fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
 }
 
 /*!
