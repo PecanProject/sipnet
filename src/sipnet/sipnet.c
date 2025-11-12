@@ -388,7 +388,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
   // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
   initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "nVolatilization", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
