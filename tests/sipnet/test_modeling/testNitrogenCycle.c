@@ -21,7 +21,7 @@ void setupTests(void) {
 void initState(double initN, double nVol, double nLeachFrac) {
   // per test
   envi.minN = initN;
-  params.nVolatilization = nVol;
+  params.nVolatilizationFrac = nVol;
   params.nLeachingFrac = nLeachFrac;
 
   // static
@@ -41,7 +41,7 @@ void initState(double initN, double nVol, double nLeachFrac) {
   params.soilRespQ10 = 2.9;
 }
 
-int checkFlux(double expNVolFlux) {
+int checkVolatilizationFlux(double expNVolFlux) {
   int status = 0;
   if (!compareDoubles(fluxes.nVolatilization, expNVolFlux)) {
     status = 1;
@@ -109,37 +109,31 @@ int testNLeaching(void) {
   return status;
 }
 
-int testNVol(void) {
+int testNVolatilization(void) {
   int status = 0;
   double minN;
-  double nVol;
-  double expNVol;
+  double nVolFrac;
+  double expNVolFlux;
 
   minN = 2;
-  nVol = 0.1;
-  initState(minN, nVol, 0);
+  nVolFrac = 0.1;
+  initState(minN, nVolFrac, 0);
   double tEffect = calcTempEffect(climate->tsoil);
   double mEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
-  expNVol = (nVol * minN * tEffect * mEffect) / climate->length;
+  expNVolFlux = nVolFrac * minN * tEffect * mEffect;
   calcNVolatilizationFlux();
-  status |= checkFlux(expNVol);
+  status |= checkVolatilizationFlux(expNVolFlux);
 
   // easy proportionality test - doubling params should double output
   minN *= 2;
-  expNVol *= 2;
-  initState(minN, nVol, 0);
+  expNVolFlux *= 2;
+  initState(minN, nVolFrac, 0);
   calcNVolatilizationFlux();
-  status |= checkFlux(expNVol);
-
-  expNVol *= 2;
-  initState(minN, nVol, 0);
-  params.baseSoilResp *= 2;  // should double tEffect
-  calcNVolatilizationFlux();
-  status |= checkFlux(expNVol);
+  status |= checkVolatilizationFlux(expNVolFlux);
 
   // Check minN for the last
   updatePoolsForSoil();
-  double expMinN = minN - (expNVol * climate->length);
+  double expMinN = minN - expNVolFlux * climate->length;
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
@@ -150,11 +144,11 @@ int testNVol(void) {
   return status;
 }
 
-int testFert(void) {
+int testFertilization(void) {
   int status = 0;
   double initN = 2.0;
   double nVolFrac = 0.1;
-  double expMinN, expEventMinN, expNVol;
+  double expMinN, expEventMinNFlux, expNVolFlux;
 
   // init minN 2, nVol 0.1
   initState(initN, nVolFrac, 0);
@@ -174,19 +168,19 @@ int testFert(void) {
   // fluxes: nVol, eventMinN
   double tEffect = calcTempEffect(climate->tsoil);
   double mEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
-  expNVol = (nVolFrac * initN * tEffect * mEffect) / climate->length;
-  expEventMinN = fertMinN / climate->length;
-  expMinN = initN + (expEventMinN - expNVol) * climate->length;
+  expNVolFlux = (nVolFrac * initN * tEffect * mEffect);
+  expEventMinNFlux = fertMinN / climate->length;
+  expMinN = initN + (expEventMinNFlux - expNVolFlux) * climate->length;
 
-  if (!compareDoubles(fluxes.nVolatilization, expNVol)) {
+  if (!compareDoubles(fluxes.nVolatilization, expNVolFlux)) {
     status = 1;
     logTest("fluxes.nVolatilization is %8.4f, expected %8.4f\n",
-            fluxes.nVolatilization, expNVol);
+            fluxes.nVolatilization, expNVolFlux);
   }
-  if (!compareDoubles(fluxes.eventMinN, expEventMinN)) {
+  if (!compareDoubles(fluxes.eventMinN, expEventMinNFlux)) {
     status = 1;
     logTest("fluxes.eventMinN is %8.4f, expected %8.4f\n", fluxes.eventMinN,
-            expEventMinN);
+            expEventMinNFlux);
   }
   if (!compareDoubles(envi.minN, expMinN)) {
     status = 1;
@@ -201,9 +195,9 @@ int run(void) {
 
   setupTests();
 
-  status |= testFert();
+  status |= testFertilization();
 
-  status |= testNVol();
+  status |= testNVolatilization();
 
   status |= testNLeaching();
 

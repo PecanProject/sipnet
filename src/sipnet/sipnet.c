@@ -387,9 +387,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
 
   // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
-  initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "nVolatilization", &(params.nVolatilization), ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
+    initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
+    initializeOneModelParam(modelParams, "nVolatilization", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
+    initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -1070,7 +1070,7 @@ double calcMoistEffect(double water, double whc) {
  */
 double calcTempEffect(double tsoil) {
   // :: from [1], D_temp calc as part of eq (A20)
-  return params.baseSoilResp * pow(params.soilRespQ10, tsoil / 10);
+  return pow(params.soilRespQ10, tsoil / 10);
 }
 
 /*!
@@ -1096,8 +1096,8 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
     double tillageEffect = 1 + eventTrackers.d_till_mod;
 
     // Put it all together!
-    fluxes.maintRespiration =
-        envi.soil * moistEffect * tempEffect * tillageEffect;
+    fluxes.maintRespiration = envi.soil * params.baseSoilResp * moistEffect *
+                              tempEffect * tillageEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
     fluxes.rSoil = fluxes.maintRespiration;
@@ -1147,7 +1147,7 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
 
 void calcLitterFluxes() {
   if (ctx.litterPool) {
-    double tempEffect = pow(params.soilRespQ10, climate->tsoil / 10.0);
+    double tempEffect = calcTempEffect(climate->tsoil);
     double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
     // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
     double litterBreakdown =
@@ -1217,11 +1217,13 @@ double calcRootAndWoodFluxes(void) {
  */
 void calcNVolatilizationFlux() {
   // flux = k_vol * nMin * Dtemp * Dwater
+  // Note k_vol is in units of day^-1, so we do not need to divide
+  // by climate length to make this a flux
   double d_temp = calcTempEffect(climate->tsoil);
   double d_water = calcMoistEffect(envi.soilWater, params.soilWHC);
 
   fluxes.nVolatilization =
-      (params.nVolatilization * envi.minN * d_temp * d_water) / climate->length;
+      params.nVolatilizationFrac * envi.minN * d_temp * d_water;
 }
 
 /*!
@@ -1596,7 +1598,6 @@ void updatePoolsForSoil(void) {
       climate->length;
 
   // Nitrogen Cycle
-  // Added for MAGIC project
   envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
 }
 
