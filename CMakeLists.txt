@@ -17,6 +17,7 @@ include_directories(tests/sipnet/test_events_infrastructure)
 include_directories(tests/sipnet/test_events_types)
 include_directories(tests/sipnet/test_bugfixes)
 include_directories(tests/sipnet/test_sipnet_infrastructure)
+include_directories(tests/sipnet/test_modeling)
 include_directories(tests/utils)
 
 add_compile_options(-Wall -Wpedantic -Werror)
@@ -48,6 +49,7 @@ add_library(tests
         tests/sipnet/test_events_types/testEventIrrigation.c
         tests/sipnet/test_events_types/testEventFertilization.c
         tests/sipnet/test_events_types/testEventHarvest.c
-#        tests/sipnet/test_events_types/testEventTillage.c
+        tests/sipnet/test_events_types/testEventTillage.c
         tests/sipnet/test_bugfixes/testEventFileOrderChecks.c
+        tests/sipnet/test_modeling/testNitrogenCycle.c
 )
