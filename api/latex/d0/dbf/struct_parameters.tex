@@ -154,6 +154,8 @@ double \textbf{ soil\+Resp\+Moist\+Effect}
 double \textbf{ leaf\+Pool\+Depth}
 \item 
 double \textbf{ min\+NInit}
+\item 
+double \textbf{ n\+Volatilization\+Frac}
 \end{DoxyCompactItemize}
 
 
@@ -851,6 +853,20 @@ Definition at line \textbf{ 362} of file \textbf{ state.\+h}.
 
 Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
+\label{struct_parameters_af8077952ecfe087243ac68460fa9c061} 
+\index{Parameters@{Parameters}!nVolatilizationFrac@{nVolatilizationFrac}}
+\index{nVolatilizationFrac@{nVolatilizationFrac}!Parameters@{Parameters}}
+\doxysubsubsection{nVolatilizationFrac}
+{\footnotesize\ttfamily double Parameters\+::n\+Volatilization\+Frac}
+
+
+
+Definition at line \textbf{ 365} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+NVolatilization\+Flux()}, and \textbf{ read\+Param\+Data()}.
+
 \label{struct_parameters_aaf9ff11261c3bc55ec3e589586d27236} 
 \index{Parameters@{Parameters}!plantWoodInit@{plantWoodInit}}
 \index{plantWoodInit@{plantWoodInit}!Parameters@{Parameters}}
@@ -1017,7 +1033,7 @@ Definition at line \textbf{ 158} of file \textbf{ state.\+h}.
 
 
 
-Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+Soil\+Maint\+Respiration()}, and \textbf{ read\+Param\+Data()}.
+Referenced by \textbf{ calc\+Temp\+Effect()}, and \textbf{ read\+Param\+Data()}.
 
 \label{struct_parameters_a8afe6aa97d8fb167fff5617fa4c4bf29} 
 \index{Parameters@{Parameters}!soilTempLeafOn@{soilTempLeafOn}}
@@ -1059,7 +1075,7 @@ Definition at line \textbf{ 172} of file \textbf{ state.\+h}.
 
 
 
-Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ calculate\+Fluxes()}, \textbf{ init\+Trackers()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, and \textbf{ update\+Trackers()}.
+Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+NVolatilization\+Flux()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ calculate\+Fluxes()}, \textbf{ init\+Trackers()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, and \textbf{ update\+Trackers()}.
 
 \label{struct_parameters_af822a3b2ee113cccfd6198802a4db11c} 
 \index{Parameters@{Parameters}!vegRespQ10@{vegRespQ10}}

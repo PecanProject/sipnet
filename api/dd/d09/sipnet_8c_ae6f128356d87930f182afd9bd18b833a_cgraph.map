@@ -1,5 +1,7 @@
 <map id="calcLitterFluxes" name="calcLitterFluxes">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,129,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,129,56"/>
 <area shape="rect" id="Node000002" href="$dd/d09/sipnet_8c.html#aed354ab7fee50e148ad65d20e7d65719" title=" " alt="" coords="177,5,299,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,15,163,15,163,21,130,21"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,31,163,26,164,32,130,37"/>
+<area shape="rect" id="Node000003" href="$dd/d09/sipnet_8c.html#a54a4100cc146c3807fe70c6ff527d5b2" title=" " alt="" coords="178,55,298,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="130,49,165,54,164,60,129,55"/>
 </map>

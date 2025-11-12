@@ -3,7 +3,7 @@ var searchData=
   ['name_0',['name',['../dd/df9/struct_single_output_item_struct.html#aa41c180b0c9900f0eab87e78598faf0a',1,'SingleOutputItemStruct::name'],['../df/d3a/struct_one_model_param_struct.html#a80c78b291ebc06ac9ccb58c6814e0f0e',1,'OneModelParamStruct::name']]],
   ['nametokey_1',['nameToKey',['../d8/dfa/context_8c.html#adea62cde04ed31fad01b81c933db6fcd',1,'context.c']]],
   ['nee_2',['nee',['../d3/d1f/struct_tracker_vars.html#a8b32589de454079b7d9e578f737373e7',1,'TrackerVars']]],
-  ['newmeantracker_3',['newmeantracker',['../de/d1e/runmean_8h.html#a05982cf71148e3b1c4d8a2a14e0c93ab',1,'newMeanTracker(double initMean, double totWeight, int maxEntries):&#160;runmean.c'],['../d5/d1f/runmean_8c.html#a05982cf71148e3b1c4d8a2a14e0c93ab',1,'newMeanTracker(double initMean, double totWeight, int maxEntries):&#160;runmean.c']]],
+  ['newmeantracker_3',['newmeantracker',['../d5/d1f/runmean_8c.html#a05982cf71148e3b1c4d8a2a14e0c93ab',1,'newMeanTracker(double initMean, double totWeight, int maxEntries):&#160;runmean.c'],['../de/d1e/runmean_8h.html#a05982cf71148e3b1c4d8a2a14e0c93ab',1,'newMeanTracker(double initMean, double totWeight, int maxEntries):&#160;runmean.c']]],
   ['newmodelparams_4',['newmodelparams',['../d3/ddd/model_params_8h.html#aa087ef12104270d1077ce38d5d1d53b5',1,'newModelParams(int maxParameters):&#160;modelParams.c'],['../d2/de5/model_params_8c.html#a6db6f8bbce7b7ee8d666e744366091a2',1,'newModelParams(int maxParams):&#160;modelParams.c']]],
   ['newoutputitems_5',['newoutputitems',['../da/db0/output_items_8h.html#af48aa4e86a751aa76c9a108ffa5a1858',1,'newOutputItems(char *filenameBase, char separator):&#160;outputItems.c'],['../dd/d66/output_items_8c.html#af48aa4e86a751aa76c9a108ffa5a1858',1,'newOutputItems(char *filenameBase, char separator):&#160;outputItems.c']]],
   ['newsingleoutputitem_6',['newSingleOutputItem',['../dd/d66/output_items_8c.html#af6f19a742a9ffe4e26766e24b1cc8bbe',1,'outputItems.c']]],
@@ -30,5 +30,7 @@ var searchData=
   ['num_5ftillage_5fparams_27',['NUM_TILLAGE_PARAMS',['../db/dd2/events_8h.html#a2728fe61e5d0849fe7e64a9e0002aca3',1,'events.h']]],
   ['numeric_5fversion_28',['NUMERIC_VERSION',['../df/dfc/version_8h.html#a029358f46b14f890a547758c3f5bea69',1,'version.h']]],
   ['numparams_29',['numParams',['../d8/dae/struct_model_params_struct.html#afaa276662aebf01c9ed5abca07956cda',1,'ModelParamsStruct']]],
-  ['numparamsread_30',['numParamsRead',['../d8/dae/struct_model_params_struct.html#a685a4cacf7bdf46a0e1d91b6f5cca613',1,'ModelParamsStruct']]]
+  ['numparamsread_30',['numParamsRead',['../d8/dae/struct_model_params_struct.html#a685a4cacf7bdf46a0e1d91b6f5cca613',1,'ModelParamsStruct']]],
+  ['nvolatilization_31',['nVolatilization',['../da/d95/struct_flux_vars.html#adf53dc00b1641e475cbfa6cbaf4829e1',1,'FluxVars']]],
+  ['nvolatilizationfrac_32',['nVolatilizationFrac',['../d0/dbf/struct_parameters.html#af8077952ecfe087243ac68460fa9c061',1,'Parameters']]]
 ];
