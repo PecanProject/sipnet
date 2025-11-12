@@ -361,7 +361,7 @@ typedef struct Parameters {
   // Initial soil mineral nitrogen pool amount, g N * m^-2 ground area
   double minNInit;
 
-  // Fraction of mineral N volatilized per day, d^-1
+  // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
   // Fraction of mineral N lost to leaching per day
