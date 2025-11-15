@@ -6,6 +6,7 @@ nav:
     - Parameters: parameters.md
     - Model Specification: model-structure.md
   - User Guide:
+      - Getting Started: user-guide/getting-started.md
       - Running SIPNET: user-guide/running-sipnet.md
       - Model Inputs: user-guide/model-inputs.md
       - Model Outputs: user-guide/model-outputs.md
@@ -16,6 +17,7 @@ nav:
       - Testing: developer-guide/testing.md
   - Contributing: CONTRIBUTING.md
   - API Reference: api/index.html
+  - Releases: https://github.com/PecanProject/sipnet/releases
   - Changelog: CHANGELOG.md
   - Code of Conduct: CODE_OF_CONDUCT.md
 
