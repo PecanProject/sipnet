@@ -6,7 +6,7 @@ SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is a lightweight
 
 [![DOI badge for the latest SIPNET release](https://zenodo.org/badge/DOI/10.5281/zenodo.17148669.svg)](https://doi.org/10.5281/zenodo.17148669)
 
-## Capabilities at a Glance
+## Features
 
 - Simulates photosynthesis, respiration, allocation, soil water, soil temperature, and nitrogen cycling <!--methane production--> on sub-daily time steps.
 - Tracks a compact set of vegetation, litter, soil, and mineral-N pools, enabling fast single-site runs, ensembles, and Monte Carlo experiments.
@@ -18,6 +18,7 @@ SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is a lightweight
 
 ## Where to Start
 
+- Browse the latest published documentation: https://pecanproject.github.io/sipnet/
 - **Getting started:** Follow the [quick-start guide](user-guide/getting-started.md) to install prerequisites, compile, and run smoke tests.
 - **Running the model:** The [user guide](user-guide/running-sipnet.md) explains configuration, climate/parameter files, and runtime options, with dedicated pages for [inputs](user-guide/model-inputs.md) and [outputs](user-guide/model-outputs.md).
 - **Understanding the code:** The [developer docs](model-structure.md) describe architecture, while sections on [testing](developer-guide/testing.md) and [CLI extensions](developer-guide/cli-options.md) cover contributions.
