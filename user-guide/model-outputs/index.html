@@ -1035,9 +1035,9 @@
 </tr>
 <tr>
 <td>13</td>
-<td><span class="arithmatex">\(f_{\text{WHC}}\)</span></td>
+<td><span class="arithmatex">\(\overline{f}_{\text{WHC}}\)</span></td>
 <td>soilWetnessFrac</td>
-<td>Soil water as fraction of holding capacity</td>
+<td>Mean soil wetness as fraction of water holding capacity over timestep [^1]</td>
 <td>unitless</td>
 </tr>
 <tr>
@@ -1147,6 +1147,8 @@
 | 27  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 -->
 
+<p>[^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics; internal 
+calculations of moisture effects use the soilWetnessFrac from the current time step. </p>
 <p>An example output file can be found in <a href="https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out">tests/smoke/sipnet.out</a>.</p>
 <div class="highlight"><pre><span></span><code>Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; Water and Snow in cm; SoilWetness is fraction of WHC;
 year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration minN
