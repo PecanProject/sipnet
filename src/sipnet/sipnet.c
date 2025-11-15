@@ -387,8 +387,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
 
   // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
-  initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
+    initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
+    initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
+    initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -409,8 +410,9 @@ void outputHeader(FILE *out) {
   fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
-  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-               "evapotranspiration fluxestranspiration minN n2oFlux\n");
+  fprintf(out,
+          "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
+          "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux\n");
 }
 
 /*!
@@ -431,11 +433,12 @@ void outputState(FILE *out, int year, int day, double time) {
           trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f %8.3f %8.6f\n",
+          "%8.4f %8.3f %8.6f %8.4f\n",
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration, envi.minN, fluxes.nVolatilization);
+          fluxes.transpiration, envi.minN, fluxes.nVolatilization,
+          fluxes.nLeaching);
 }
 
 // de-allocate space used for climate linked list
@@ -1224,6 +1227,21 @@ void calcNVolatilizationFlux() {
 }
 
 /*!
+ * Calculate mineral N leaching flux
+ */
+void calcNLeachingFlux() {
+  double phi;
+  // phi is (drainage / soilWHC) between 0 and 1
+  if ((fluxes.drainage / params.soilWHC) < 1) {
+    phi = fluxes.drainage / params.soilWHC;
+  } else {
+    phi = 1;
+  }
+  // flux = nMin * phi * leaching fraction, g N * m^-2 * day^-1
+  fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
+}
+
+/*!
  * Calculate flux terms for sipnet as part of main model flow
  *
  * All fluxes should be calculated before state variables are updated.
@@ -1289,6 +1307,9 @@ void calculateFluxes(void) {
   // Nitrogen cycle
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
+    // Leaching depends on drainage flux so makes sure calcNLeachingFlux
+    // occurs after calcSoilWaterFluxes
+    calcNLeachingFlux();
   }
 }
 
@@ -1577,7 +1598,7 @@ void updatePoolsForSoil(void) {
       climate->length;
 
   // Nitrogen Cycle
-  envi.minN -= fluxes.nVolatilization * climate->length;
+  envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
 }
 
 // !!! main runner function !!!

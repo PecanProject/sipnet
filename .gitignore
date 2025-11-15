@@ -27,6 +27,7 @@ tests/sipnet/*/*
 .DS_Store
 .Rproj.user
 .Rhistory
+src/sipnet/.vscode/*
 
 # Temporary and backup files
 *.bak

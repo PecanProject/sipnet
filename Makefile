@@ -81,7 +81,7 @@ clean:
 	rm -f .doxygen.stamp .mkdocs.stamp
 
 # UNIT TESTS
-SIPNET_TEST_DIRS:=$(shell find tests/sipnet -type d -mindepth 1 -maxdepth 1)
+SIPNET_TEST_DIRS:=$(shell find tests/sipnet -mindepth 1 -maxdepth 1 -type d)
 SIPNET_TEST_DIRS_RUN:= $(addsuffix .run, $(SIPNET_TEST_DIRS))
 SIPNET_TEST_DIRS_CLEAN:= $(addsuffix .clean, $(SIPNET_TEST_DIRS))
 
