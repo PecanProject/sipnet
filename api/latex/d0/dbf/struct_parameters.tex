@@ -156,6 +156,8 @@ double \textbf{ leaf\+Pool\+Depth}
 double \textbf{ min\+NInit}
 \item 
 double \textbf{ n\+Volatilization\+Frac}
+\item 
+double \textbf{ n\+Leaching\+Frac}
 \end{DoxyCompactItemize}
 
 
@@ -853,6 +855,20 @@ Definition at line \textbf{ 362} of file \textbf{ state.\+h}.
 
 Referenced by \textbf{ read\+Param\+Data()}, and \textbf{ setup\+Model()}.
 
+\label{struct_parameters_a9ab29748e391ed4cdfed28a35dceda71} 
+\index{Parameters@{Parameters}!nLeachingFrac@{nLeachingFrac}}
+\index{nLeachingFrac@{nLeachingFrac}!Parameters@{Parameters}}
+\doxysubsubsection{nLeachingFrac}
+{\footnotesize\ttfamily double Parameters\+::n\+Leaching\+Frac}
+
+
+
+Definition at line \textbf{ 368} of file \textbf{ state.\+h}.
+
+
+
+Referenced by \textbf{ calc\+NLeaching\+Flux()}, and \textbf{ read\+Param\+Data()}.
+
 \label{struct_parameters_af8077952ecfe087243ac68460fa9c061} 
 \index{Parameters@{Parameters}!nVolatilizationFrac@{nVolatilizationFrac}}
 \index{nVolatilizationFrac@{nVolatilizationFrac}!Parameters@{Parameters}}
@@ -1075,7 +1091,7 @@ Definition at line \textbf{ 172} of file \textbf{ state.\+h}.
 
 
 
-Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+NVolatilization\+Flux()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ calculate\+Fluxes()}, \textbf{ init\+Trackers()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, and \textbf{ update\+Trackers()}.
+Referenced by \textbf{ calc\+Litter\+Fluxes()}, \textbf{ calc\+NLeaching\+Flux()}, \textbf{ calc\+NVolatilization\+Flux()}, \textbf{ calc\+Soil\+Water\+Fluxes()}, \textbf{ calculate\+Fluxes()}, \textbf{ init\+Trackers()}, \textbf{ read\+Param\+Data()}, \textbf{ setup\+Model()}, and \textbf{ update\+Trackers()}.
 
 \label{struct_parameters_af822a3b2ee113cccfd6198802a4db11c} 
 \index{Parameters@{Parameters}!vegRespQ10@{vegRespQ10}}
