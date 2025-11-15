@@ -23,7 +23,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 10 |                  | fineRootC           | Fine root carbon                                                          | g C m$^{-2}$ |
 | 11 |                  | litter              | Litter carbon (0 if litter pool disabled)                                 | g C m$^{-2}$ |
 | 12 |                  | soilWater           | Soil water content                                                        | cm           |
-| 13 | $f_{\text{WHC}}$ | soilWetnessFrac     | Soil water as fraction of holding capacity                                | unitless     |
+| 13 | $\overline{f}_{\text{WHC}}$ | soilWetnessFrac     | Mean soil wetness as fraction of water holding capacity over timestep [^1] | unitless     |
 | 14 |                  | snow                | Snow water equivalent                                                     | cm           |
 | 15 |                  | npp                 | Net primary production for timestep                                       | g C m$^{-2}$ |
 | 16 |                  | nee                 | Net ecosystem exchange (sign convention per code: - (NPP - RH))           | g C m$^{-2}$ |
@@ -44,6 +44,9 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 26  | $F^N_\text{vol}$     | fluxesn2o           | Nitrous Oxide flux             | g N/m$^2$ / timestep |
 | 27  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 -->
+
+[^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics; internal 
+calculations of moisture effects use the soilWetnessFrac from the current time step. 
 
 An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
 
