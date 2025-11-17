@@ -305,7 +305,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | `GAMMA`                     | 66                      | psychometric constant (Pa/K)                         |
 | `E_STAR_SNOW`               | 0.6                     | approximate saturation vapor pressure at 0°C (kPa)   |
 
-## Input Files
+## Input Files {#input-files}
 
 See [Model Inputs](user-guide/model-inputs.md).
 
