@@ -34,7 +34,7 @@ SIPNET is distributed under the BSD 3-Clause license—see [LICENSE](../LICENSE)
 
 **Software**
 
-- Longfritz, M., W. J. Sacks, D. J. P. Moore, J. M. Zobitz, B. H. Braswell, D. S. Schimel, R. Kooper, M. C. Dietze, I. Fer, C. Black, and D. S. LeBauer. 2025. *SIPNET: Simple Photosynthesis and Evapotranspiration Model (v2.0.0).* [https://doi.org/10.5281/zenodo.17148669](https://doi.org/10.5281/zenodo.17148669)
+- Longfritz, M. J., W. J. Sacks, D. J. P. Moore, J. M. Zobitz, B. H. Braswell, D. S. Schimel, R. Kooper, M. C. Dietze, I. Fer, C. Black, and D. S. LeBauer. 2025. *SIPNET: Simple Photosynthesis and Evapotranspiration Model (v2.0.0).* [https://doi.org/10.5281/zenodo.17148669](https://doi.org/10.5281/zenodo.17148669)
 
 **Model foundations**
 
