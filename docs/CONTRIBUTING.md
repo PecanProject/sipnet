@@ -6,29 +6,9 @@ All contributors must follow the project [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Developer Quickstart
 
-- Clone the repository:
-   ```bash
-   git clone git@github.com:PecanProject/sipnet
-   cd sipnet
-   ```
-- Setup (once per clone, described below):
-  ```bash
-  tools/setup.sh
-  ```
-- Build:
-  ```bash
-  make
-  ```
-- Run a sample:
-  ```bash
-  cd tests/smoke/niwot
-  ../../../sipnet -i sipnet.in
-  ```
+New contributors are encouraged to start with [good first issues](../issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
 
-**Setup Script** The `tools/setup.sh` script verifies that Python ≥ 3.8 is available and that `clang-format`, `clang-tidy`, and `git clang-format` are installed. Automatically installs `clang` tools on macOS and prints installation instructions for Ubuntu/Debian. Then copies the clang pre‑commit hook into `.git/hooks` so that code formatting is checked on every commit.
-
-_Note – running `tools/setup.sh`  is not necessary for documentation‑only edits,
-but it will save you time whenever you touch C/C++ code._
+For a short quickstart and how to get the site and examples running, see the user guide: https://pecanproject.github.io/sipnet/#getting-started
 ## GitHub Workflow
 
 ### Branches
@@ -51,6 +31,29 @@ Expectations for merging:
   - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented.
 
 Pull requests must pass all required checks to be merged into master, including the code format and style checks described below.
+
+### Propose and Receive Feedback
+
+Before opening a pull request (PR), express your interest and get feedback by:
+
+- Asking to be assigned to an existing issue (comment on the issue and request assignment).
+- If the idea has not been proposed, or you want additional feedback, discuss it in the `#pecan` Slack channel.
+- Optional: if the task is complex and no issue exists, open a new issue summarizing the discussion, including motivation and a proposed solution.
+- Begin implementation once you have a thumbs-up (review/assignment) from a core maintainer (for example, `@Alomir` or `@dlebauer`).
+
+This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
+
+### PR expectations
+
+When opening a PR, include the following in your description:
+
+- **Motivation**: why the change is needed.
+- **What changed**: short summary of the functional or documentation changes.
+- **How to test**: steps to reproduce and verify the change (including commands if applicable).
+- **Related issues**: link the issue(s) that motivated the change (use `Fixes #123` when appropriate).
+- **Checklist**: ensure the PR includes tests (if code changes), documentation updates (if applicable), and an entry in `docs/CHANGELOG.md` for noteworthy changes.
+
+Maintain the same standards as other PRs: pass tests, include documentation updates, and request an approving review from another developer before merging.
   
 ## Code Format & Style
 
