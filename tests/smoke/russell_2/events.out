@@ -1,4 +1,5 @@
 year  day  type     param_name=delta[,param_name=delta,...]
+2016   90  fert     fluxes.eventLitterC=40.00,fluxes.eventMinN=80.00
 2016   92  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2016   96  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2016  100  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00

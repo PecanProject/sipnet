@@ -358,8 +358,14 @@ typedef struct Parameters {
   // ****************************************
   // Nitrogen Cycle
 
-  // Initial soil mineral nitrogen pool amount, g C * m^-2 ground area
+  // Initial soil mineral nitrogen pool amount, g N * m^-2 ground area
   double minNInit;
+
+  // Fraction of mineral N available to be volatilized per day, d^-1
+  double nVolatilizationFrac;
+
+  // Fraction of mineral N lost to leaching per day
+  double nLeachingFrac;
 
 } Params;
 
@@ -508,7 +514,8 @@ typedef struct FluxVars {
   double soilPulse;
 
   // ****************************************
-  // Fluxes from other sources, provenance TBD
+  // Fluxes from other sources
+  // - provenance TBD
   //
 
   // leaf creation term as determined by growing season boundaries (as in [1])
@@ -520,8 +527,18 @@ typedef struct FluxVars {
   double woodCreation;
 
   // ****************************************
+  // Fluxes for nitrogen cycle
+  // - nitrogen fluxes tracked as part of modeling from [5]
+  //
+
+  // Mineral N lost to volatilization
+  double nVolatilization;
+  // Mineral N lost to leaching
+  double nLeaching;
+
+  // ****************************************
   // Fluxes for event handling
-  //  - fluxes tracked as part of modeling from [5]
+  //  - event fluxes tracked as part of modeling from [5]
   //
 
   // plantLeafC addition
