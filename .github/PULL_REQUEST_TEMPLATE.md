@@ -16,7 +16,7 @@ Steps to reproduce and verify the change locally (commands, expected output):
 
 ## Checklist
 
-- [ ] Code builds and tests pass (`make test`)
+- [ ] Tests added for new features
 - [ ] Documentation updated (if applicable)
 - [ ] Update CHANGELOG.md
 - [ ] Requested review from at least one other developer
