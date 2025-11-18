@@ -48,8 +48,8 @@ jobs:
       github.event.action != 'closed'
     needs: build
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: pr-${{ github.event.pull_request.number }}
+      url: ${{ steps.deployment.outputs.preview_url }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -60,6 +60,21 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           preview: true
+      - name: Comment preview URL
+        if: ${{ steps.deployment.outputs.preview_url != '' }}
+        uses: actions/github-script@v7
+        permissions:
+          issues: write
+        with:
+          script: |
+            const url = '${{ steps.deployment.outputs.preview_url }}';
+            core.info(`Preview: ${url}`);
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Docs preview ready: ${url}`
+            });
 
   deploy:
     # Deploy on push to master (after PR merge)
