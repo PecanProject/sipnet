@@ -1,0 +1,56 @@
+name: Docs production build and deploy
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read      # needed for checkout
+  pages: write        # to deploy to GitHub Pages
+  id-token: write     # to authenticate with GitHub Pages
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
+          python3 -m pip install --upgrade pip
+          python3 -m pip install mkdocs mkdocs-material pymdown-extensions
+
+      - name: Build docs (MkDocs + Doxygen)
+        run: |
+          make clean document
+          touch site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    # Only deploy on push to master, NOT on pull_request
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
