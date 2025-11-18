@@ -49,7 +49,7 @@ jobs:
     needs: build
     environment:
       name: pr-${{ github.event.pull_request.number }}
-      url: ${{ steps.deployment.outputs.preview_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -62,11 +62,11 @@ jobs:
         with:
           preview: true
       - name: Comment preview URL
-        if: ${{ steps.deployment.outputs.preview_url != '' }}
+        if: ${{ steps.deployment.outputs.page_url != '' }}
         uses: actions/github-script@v7
         with:
           script: |
-            const url = '${{ steps.deployment.outputs.preview_url }}';
+            const url = '${{ steps.deployment.outputs.page_url }}';
             core.info(`Preview: ${url}`);
             await github.rest.issues.createComment({
               owner: context.repo.owner,
