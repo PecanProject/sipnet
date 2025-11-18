@@ -9,7 +9,6 @@
 
 Steps to reproduce and verify the change locally (commands, expected output):
 
-
 ## Related issues
 
 - Fixes or relates to: #<issue>
