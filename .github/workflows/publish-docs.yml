@@ -1,10 +1,11 @@
-name: Docs production build and deploy
+name: Docs build and deploy
 
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    types: [opened, synchronize, reopened, closed]
 
 permissions:
   contents: read      # needed for checkout
@@ -17,6 +18,7 @@ concurrency:
 
 jobs:
   build:
+    name: docs-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,8 +41,28 @@ jobs:
         with:
           path: site
 
+  deploy_preview:
+    # Deploy a preview for open PRs targeting master
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action != 'closed'
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy PR preview to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          preview: true
+
   deploy:
-    # Only deploy on push to master, NOT on pull_request
+    # Deploy on push to master (after PR merge)
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: build
     environment:
