@@ -18,7 +18,7 @@ Steps to reproduce and verify the change locally (commands, expected output):
 
 - [ ] Code builds and tests pass (`make test`)
 - [ ] Documentation updated (if applicable)
-- [ ] CHANGELOG updated (if this is user-facing)
+- [ ] Update CHANGELOG.md
 - [ ] Requested review from at least one other developer
 
 
