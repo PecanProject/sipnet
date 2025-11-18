@@ -54,6 +54,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      issues: write
     steps:
       - name: Deploy PR preview to GitHub Pages
         id: deployment
@@ -63,8 +64,6 @@ jobs:
       - name: Comment preview URL
         if: ${{ steps.deployment.outputs.preview_url != '' }}
         uses: actions/github-script@v7
-        permissions:
-          issues: write
         with:
           script: |
             const url = '${{ steps.deployment.outputs.preview_url }}';
