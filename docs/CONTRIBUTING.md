@@ -53,7 +53,12 @@ When opening a PR, include the following in your description:
 - **Related issues**: link the issue(s) that motivated the change (use `Fixes #123` when appropriate).
 - **Checklist**: ensure the PR includes tests (if code changes), documentation updates (if applicable), and an entry in `docs/CHANGELOG.md` for noteworthy changes.
 
-Maintain the same standards as other PRs: pass tests, include documentation updates, and request an approving review from another developer before merging.
+Prior to merging a PR, it must:
+- Include tests for new features
+- Include documentation updates to reflect changes to functionality.
+- Update CHANGELOG with any user-visible changes.
+- Pass tests.
+- Be approved by at least one maintainer.
   
 ## Code Format & Style
 
