@@ -395,17 +395,17 @@ Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available 
 
 ### $\frak{Nitrogen \ Fixation \ F^N_\text{fix}}$
 
-The rate at which N is fixed is a function of the NPP of the plant and a fixed parameter $K_\text{fix}$, and is modified by temperature.
+Nitrogen fixation is modeled as a carbon-limited flux proportional to recent net primary production (NPP).
+The carbon cost of N fixation is represented by the fixed parameter $K_\text{fix}$, following Gutschick (1981) and Rastetter et al. (2001). 
 
-For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to be driven by plant growth, and also depend on temperature.
+For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to be driven by plant growth, and the fixed nitrogen is directly used by the plant.
 
 $$
-F^N_\text{fix} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}} \tag{19}\label{eq:n_fix}
+F^N_\text{fix} = K_\text{fix} \cdot NPP \tag{19}\label{eq:n_fix}
 $$
 
-Nitrogen fixation is represented by adding fixed nitrogen directly to the soil mineral nitrogen pool. This is a reasonable first approximation, consistent with the simplicity of the nitrogen limitation model where limitation only occurs when nitrogen demand exceeds supply. 
-
-For nitrogen-fixing plants, most of the fixed nitrogen is directly used by the plant. It would be more complicated to model this by splitting, which could include splitting the fixed N into soil and plant pools and then meeting a portion of plant N demand with this flux.
+<!-- do parameter estimates / ranges go in this doc? in the params doc?-->
+Rastetter et al. (2001) use a value of 0.11gN/gC with a range of [0.07-0.17] in a sensitivity analysis of their theoretical model (inverse of r_nfix (gC/gN) in table 3).
 
 ### $\frak{Plant \ Nitrogen \ Uptake \ F^N_\text{uptake}}$
 
@@ -763,12 +763,15 @@ $$
 
 Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. Estimating Diurnal to Annual Ecosystem Parameters by Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem Exchange Observations. Global Change Biology 11 (2): 335–55. https://doi.org/10.1111/j.1365-2486.2005.00897.x.
 
+Gutschick, V.P., 1981. Evolved strategies in nitrogen acquisition by plants. Am. Nat. 118, 607–637. https://doi.org/10.1086/283858
 
 Libohova, Z., Seybold, C., Wysocki, D., Wills, S., Schoeneberger, P., Williams, C., Lindbo, D., Stott, D. and Owens, P.R., 2018. Reevaluating the effects of soil organic matter and other properties on available water-holding capacity using the National Cooperative Soil Survey Characterization Database. Journal of soil and water conservation, 73(4), pp.411-421.
 
 Manzoni, Stefano, and Amilcare Porporato. 2009. Soil Carbon and Nitrogen Mineralization: Theory and Models across Scales. Soil Biology and Biochemistry 41 (7): 1355–79. https://doi.org/10.1016/j.soilbio.2009.02.031.
 
 Parton, W. J., E. A. Holland, S. J. Del Grosso, M. D. Hartman, R. E. Martin, A. R. Mosier, D. S. Ojima, and D. S. Schimel. 2001. Generalized Model for NOx  and N2O Emissions from Soils. Journal of Geophysical Research: Atmospheres 106 (D15): 17403–19. https://doi.org/10.1029/2001JD900101.
+
+Rastetter, E.B., Vitousek, P.M., Field, C., Shaver, G.R., Herbert, D., Gren, G.I., 2001. Resource optimization and symbiotic nitrogen fixation. Ecosystems 4, 369–388. https://doi.org/10.1007/s10021-001-0018-z
 
 Wang H, Yan Z, Ju X, Song X, Zhang J, Li S and Zhu-Barker X (2023) Quantifying nitrous oxide production rates from nitrification and denitrification under various moisture conditions in agricultural soils: Laboratory study and literature synthesis. Front. Microbiol. 13:1110151. doi: 10.3389/fmicb.2022.1110151
 
