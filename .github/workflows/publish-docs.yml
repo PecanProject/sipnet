@@ -54,12 +54,25 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      issues: write
     steps:
       - name: Deploy PR preview to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         with:
           preview: true
+      - name: Comment preview URL
+        if: ${{ steps.deployment.outputs.preview_url != '' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = '${{ steps.deployment.outputs.preview_url }}';
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Docs preview ready: ${url}`
+            });
 
   deploy:
     # Deploy on push to master (after PR merge)
