@@ -404,8 +404,9 @@ $$
 F^N_\text{fix} = K_\text{fix} \cdot NPP \tag{19}\label{eq:n_fix}
 $$
 
-<!-- do parameter estimates / ranges go in this doc? in the params doc?-->
+<!-- do parameter estimates / ranges go in this doc? in the params doc?
 Rastetter et al. (2001) use a value of 0.11gN/gC with a range of [0.07-0.17] in a sensitivity analysis of their theoretical model (inverse of r_nfix (gC/gN) in table 3).
+-->
 
 ### $\frak{Plant \ Nitrogen \ Uptake \ F^N_\text{uptake}}$
 
