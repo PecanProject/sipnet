@@ -41,39 +41,6 @@ jobs:
         with:
           path: site
 
-  deploy_preview:
-    # Deploy a preview for open PRs targeting master
-    if: |
-      github.event_name == 'pull_request' &&
-      github.event.action != 'closed'
-    needs: build
-    environment:
-      name: pr-${{ github.event.pull_request.number }}
-      url: ${{ steps.deployment.outputs.preview_url }}
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-      issues: write
-    steps:
-      - name: Deploy PR preview to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          preview: true
-      - name: Comment preview URL
-        if: ${{ steps.deployment.outputs.preview_url != '' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const url = '${{ steps.deployment.outputs.preview_url }}';
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `Docs preview ready: ${url}`
-            });
-
   deploy:
     # Deploy on push to master (after PR merge)
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
