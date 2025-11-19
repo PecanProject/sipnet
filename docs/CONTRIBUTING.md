@@ -6,6 +6,27 @@ All contributors must follow the project [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Developer Quickstart
 
+- Clone the repository:
+   ```bash
+   git clone git@github.com:PecanProject/sipnet
+   cd sipnet
+   ```
+- Setup (once per clone, described below):
+  ```bash
+  tools/setup.sh
+  ```
+- Build:
+  ```bash
+  make
+  ```
+- Run a sample:
+  ```bash
+  cd tests/smoke/niwot
+  ../../../sipnet -i sipnet.in
+  ```
+
+**Setup Script** The `tools/setup.sh` script verifies that Python ≥ 3.8 is available and that `clang-format`, `clang-tidy`, and `git clang-format` are installed. Automatically installs `clang` tools on macOS and prints installation instructions for Ubuntu/Debian. Then copies the clang pre‑commit hook into `.git/hooks` so that code formatting is checked on every commit.
+
 New contributors are encouraged to start with [good first issues](../issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
 
 For a short quickstart and how to get the site and examples running, see the user guide: https://pecanproject.github.io/sipnet/#getting-started
@@ -49,7 +70,11 @@ When opening a PR, include the following in your description:
 
 - **Motivation**: why the change is needed.
 - **What changed**: short summary of the functional or documentation changes.
-- **How to test**: steps to reproduce and verify the change (including commands if applicable).
+- **How to test**:
+make
+cd tests/smoke/<new-or-updated-test>
+../../sipnet -i sipnet.in
+
 - **Related issues**: link the issue(s) that motivated the change (use `Fixes #123` when appropriate).
 - **Checklist**: ensure the PR includes tests (if code changes), documentation updates (if applicable), and an entry in `docs/CHANGELOG.md` for noteworthy changes.
 
