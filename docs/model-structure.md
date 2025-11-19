@@ -408,6 +408,8 @@ $$
 Rastetter et al. (2001) use a value of 0.11gN/gC with a range of [0.07-0.17] in a sensitivity analysis of their theoretical model (inverse of r_nfix (gC/gN) in table 3).
 -->
 
+We do not consider free-living nonsymbiotic N fixation which is approximately two orders of magnitude smaller (less than 2 kg N/ha/yr, Cleveland et al 1999) than crop N demand and typical N fertilization rates.
+
 ### $\frak{Plant \ Nitrogen \ Uptake \ F^N_\text{uptake}}$
 
 Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
