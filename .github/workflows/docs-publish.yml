@@ -1,19 +1,16 @@
-name: Docs build and deploy
+name: Publish Docs
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
-    types: [opened, synchronize, reopened, closed]
 
 permissions:
-  contents: read      # needed for checkout
-  pages: write        # to deploy to GitHub Pages
-  id-token: write     # to authenticate with GitHub Pages
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-prod"
   cancel-in-progress: true
 
 jobs:
@@ -42,8 +39,7 @@ jobs:
           path: site
 
   deploy:
-    # Deploy on push to master (after PR merge)
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    name: deploy-pages
     needs: build
     environment:
       name: github-pages
