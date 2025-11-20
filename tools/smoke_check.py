@@ -147,7 +147,7 @@ def check_results(smoke_dir: str, verbose: bool):
       git_df = git_df[common_columns]
       print("Comparing common columns")
   else:
-    cols = 'year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration'
+    cols = 'year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration minN soilOrgN litterOrgN n2oFlux nLeachFlux'
     cols = cols.split(' ')
     # new_df = pd.read_table(file, sep=r'\s+', header=None, names=cols, dtype=float)
     # git_df = pd.read_table(git_result, sep=r'\s+', header=None, names=cols, dtype=float)
@@ -156,6 +156,7 @@ def check_results(smoke_dir: str, verbose: bool):
 
     if len(new_df.columns) != len(cols):
       print("Number of columns has changed for test without a header; no comparison can be performed. Skipping.")
+      print("Note: git col info here may be out of date!")
       print(f'len git cols: {len(cols)}  len new: {len(new_df.columns)}')
       print(f'git cols (names): {cols}')
       print(f'new cols  (inds):{new_df.columns}')
