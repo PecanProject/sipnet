@@ -274,12 +274,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 -->
 
-## Default Parameters
-
-Background: Rastetter et al. (2001) report about 0.11 g N per g C for symbiotic fixation (range 0.07–0.17) in a sensitivity analysis of a theoretical model. While this N:C ratio is not used directly in the demand-based formulation here, it can inform calibration of fixation behavior (e.g., plausible ranges for $f_{\text{fix,max}}$ and $K_N$).
-
-
-
 ## Hard-coded Values
 
 | Parameter                   | Value                   | Description                                          |
