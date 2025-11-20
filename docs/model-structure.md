@@ -109,32 +109,25 @@ $$
 
 Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant biomass. NPP is allocated to plant biomass pools in proportion to their allocation parameters $\alpha_i$.
 
+To make explicit what contributes to autotrophic respiration, we decompose $R_A$ into maintenance and optional growth components:
+
 $$
-\text{NPP}=\sum_{1}^{i} \frac{dC_{\text{plant,}i}}{dt} \tag{2} \label{eq:npp_summ}
+R_A = R_\text{leaf} + R_\text{wood} + R_\text{root} \mathfrak{+\ R_\text{growth}} \tag{1a}\label{eq:ra_components}
 $$
 
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (Eqs. \eqref{eq:A18a}, \eqref{eq:A19}); $R_\text{root}$ denotes root maintenance respiration; and $\mathfrak{R_\text{growth}}$ is an optional growth respiration term. Because these components are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
 
 Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 $$
-dC_{\text{plant,}i} = \text{NPP} \cdot a_i \mathfrak{- 
-  F^C_{\text{harvest,removed,}i}} - F^C_{\text{litter,}i}
+\frac{dC_{\text{plant,}i}}{dt}
+  = \alpha_i \cdot \text{NPP}
+    - F^C_{\text{harvest,removed,}i}
+    - F^C_{\text{litter,}i}
   \tag{Zobitz 3}\label{eq:Z3}
 $$
 
-This results in the following constraints:
-- In the case of annuals, all biomass is either harvested and removed or added to litter pools. $F^C_{\text{harvest,removed,}i}$ is calculated by \eqref{eq:harvest}.
-- In the case of perennials, a fraction of the biomass remains except at the end of the perennial's life.
-
-$$\mathfrak{
-F^C_{\text{litter,}i} + F^C_{\text{harvest,removed,}i} =
-\begin{cases}
-1 & \text{annuals} \\
-\leq 1 & \text{perennials}
-\end{cases}
-}$$
-
+Summing Eq. \eqref{eq:Z3} over all plant pools shows that NPP is partitioned into biomass growth, litter production, and removed harvest.
 
 ### Plant Death
 
@@ -179,6 +172,8 @@ $$
 
 Wood maintenance respiration $(R_m)$ depends on the wood carbon content  $(C_\text{wood})$, 
 a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling function $D_{\text{temp,Q10}_v}$.
+
+Modeling choice: $R_\text{wood}$ contributes to autotrophic respiration $R_A$ (Eq. \eqref{eq:npp}) and thus reduces NPP. It is not subtracted directly from the wood carbon pool in Eq. \eqref{eq:A1}; the cost is assumed to be paid from current assimilates rather than from structural wood C.
 
 
 ### Litter Carbon
@@ -350,7 +345,6 @@ $$
   \frac{dN_\text{min}}{{dt}} = 
   F^N_\text{litter,min} +
   F^N_\text{soil,min} +
-  F^N_\text{fix} +  
   F^N_\text{fert,min} - 
   F^N_\mathrm{vol} - 
   F^N_\text{leach} - 
@@ -358,7 +352,7 @@ $$
   \tag{15}\label{eq:mineral_n_dndt}
 $$
 
-Mineralization, fertilization, and fixation add to the mineral nitrogen pool. Losses include mineralization, volatilization, leaching, and plant uptake, described below:
+Mineralization and fertilization add to the mineral nitrogen pool. Losses include volatilization, leaching, and plant uptake, described below. Fixed N enters the plant pool directly (Eq. \eqref{eq:n_fix_demand}) and therefore does not pass through the mineral N pool.
 
 ### $\frak{N \ Mineralization \ (F^N_\text{min})}$
 
@@ -395,32 +389,56 @@ Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available 
 
 ### $\frak{Nitrogen \ Fixation \ F^N_\text{fix}}$
 
-Nitrogen fixation is modeled as a carbon-limited flux proportional to recent net primary production (NPP).
-The carbon cost of N fixation is represented by the fixed parameter $K_\text{fix}$, following Gutschick (1981) and Rastetter et al. (2001). 
+For N-fixing crops (e.g., soybean, alfalfa), symbiotic nitrogen fixation is represented as supplying a fraction of plant nitrogen demand, down-regulated by soil mineral N. Plant N demand is defined as the sum of changes in plant N pools (Eq. \eqref{eq:plant_n_demand}).
 
-For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to be driven by plant growth, and the fixed nitrogen is directly used by the plant.
+We define the fraction of plant N demand met by biological N fixation as
 
 $$
-F^N_\text{fix} = K_\text{fix} \cdot NPP \tag{19}\label{eq:n_fix}
+f_\text{fix} = f_{\text{fix,max}} \cdot D_{N_\text{min}}
+\tag{19}\label{eq:f_fix}
 $$
 
-<!-- do parameter estimates / ranges go in this doc? in the params doc?
-Rastetter et al. (2001) use a value of 0.11gN/gC with a range of [0.07-0.17] in a sensitivity analysis of their theoretical model (inverse of r_nfix (gC/gN) in table 3).
--->
+where
 
-We do not consider free-living nonsymbiotic N fixation which is approximately two orders of magnitude smaller (less than 2 kg N/ha/yr, Cleveland et al 1999) than crop N demand and typical N fertilization rates.
+- $f_{\text{fix,max}}$ is the maximum fraction of plant N demand that can be met by fixation under low soil N (dimensionless, $0 \le f_{\text{fix,max}} \le 1$), and
+- $D_{N_\text{min}}$ is a suppression factor based on soil mineral N (dimensionless, $0 \le D_{N_\text{min}} \le 1$).
 
-### $\frak{Plant \ Nitrogen \ Uptake \ F^N_\text{uptake}}$
+We use a simple down-regulation function with increasing soil mineral N:
+
+$$
+D_{N_\text{min}} = \frac{1}{1 + \frac{N_\text{min}}{K_N}}
+\tag{19a}\label{eq:n_fix_supp_demand}
+$$
+
+where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the mineral N level at which fixation is reduced by half (g N m$^{-2}$).
+
+Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ (Eq. \eqref{eq:plant_n_demand}):
+
+$$
+F^N_\text{fix} = f_\text{fix} \cdot F^N_\text{demand}
+\tag{19b}\label{eq:n_fix_demand}
+$$
+
+$$
+F^N_\text{uptake} = (1 - f_\text{fix}) \cdot F^N_\text{demand}
+\tag{19c}\label{eq:n_uptake_demand}
+$$
+
+Fixed N ($F^N_\text{fix}$) is added directly to the plant N pool via Eq. \eqref{eq:plant_n}, while $F^N_\text{uptake}$ is removed from the soil mineral N pool in Eq. \eqref{eq:mineral_n_dndt}. If the available soil mineral N is insufficient to supply $F^N_\text{uptake}$, then actual uptake is capped at $N_\text{min}$ and any residual unmet demand contributes to nitrogen limitation as described in Eq. \eqref{eq:n_limit}.
+
+We do not consider free-living nonsymbiotic N fixation, which is approximately two orders of magnitude smaller (less than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and typical N fertilization rates.
+
+### $\frak{Plant \ Nitrogen \ Demand \ and \ Uptake \ $F^N_\text{uptake}}$, $F^N_\text{demand}$
 
 Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
 
 $$
-F^N_\text{uptake}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} \tag{20}\label{eq:plant_n_demand}
+F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} \tag{20}\label{eq:plant_n_demand}
 $$
 
 $$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
 
-Each term in the sum is calculated according to equation \eqref{eq:plant_n}.
+Each term in the sum is calculated according to equation \eqref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using Eqs. \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
 
 #### $\frak{Nitrogen \ Limitation \ Indicator \ Function \mathfrak{I_{\text{N limit}}}}$
 

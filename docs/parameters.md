@@ -11,76 +11,75 @@ format:
 
 # SIPNET Model States and Parameters  {@sec-parameters}
 
-<!--TODO insert overview here-->
-Note: this is a work in progress. 
-
-- Actual parameters used depend on the how the model structure is configured. 
-- Numbered items are cross-referenced with original documentation.
-- "Notation" section is consistent with model equations, some of the mathematical symbols in the tables may either be missing or need to be updated.
+Lists SIPNET state variables and tunable parameters, mapping symbols to the
+model equations, configuration names, units, and I/O fields. See
+[Model Inputs](user-guide/model-inputs.md) and
+[Model Outputs](user-guide/model-outputs.md) for file formats. Unless noted,
+pools are mass per ground area and rates are mass per area per day. The actual parameter set that is used depends on the configured model structure. For equation references, see the [model structure](model-structure.md) documentation.
 
 ## Notation
 
 ### Variables (Pools, Fluxes, and Parameters)
 
 
-| **Category**               | **Symbol** | **Description**                                         |
-|:---------------------------|:-----------|:--------------------------------------------------------|
-| **State variables**        |            |                                                         |
-|                            | $C$        | Carbon pool                                             |
-|                            | $N$        | Nitrogen pool                                           |
-|                            | $W$        | Water pool or content                                   |
-|                            | $CN$       | Carbon-to-Nitrogen ratio                                |
-| **Fluxes and rates**       |            |                                                         |
-|                            | $F$        | Generic flux of carbon, nitrogen, or water              |
-|                            | $A$        | Photosynthetic assimilation (net photosynthesis)        |
-|                            | $R$        | Respiration flux                                        |
-|                            | $ET$       | Evapotranspiration                                      |
-|                            | $GPP$      | Gross Primary Production                                |
-|                            | $NPP$      | Net Primary Production                                  |
-|                            | $NEE$      | Net Ecosystem Exchange                                  |
-| **Environmental drivers**  |            |                                                         |
-|                            | $T$        | Temperature                                             |
-|                            | $VPD$      | Vapor Pressure Deficit                                  |
-|                            | $PAR$      | Photosynthetically Active Radiation                     |
-|                            | $LAI$      | Leaf Area Index                                         |
-| **Parameters**             |            |                                                         |
-|                            | $K$        | Rate constant (e.g., for decomposition or respiration)  |
-|                            | $Q_{10}$   | Temperature sensitivity coefficient                     |
-|                            | $\alpha$   | Fraction of NPP allocated to a plant pool               |
-|                            | $f$        | Fraction of a pool or flux other than NPP               |
-|                            | $k$        | Scaling factor                                          |
-|                            | $D$        | Dependency or damping function                          |
+| **Category**              | **Symbol** | **Description**                                        |
+| :------------------------ | :--------- | :----------------------------------------------------- |
+| **State variables**       |            |                                                        |
+|                           | $C$        | Carbon pool                                            |
+|                           | $N$        | Nitrogen pool                                          |
+|                           | $W$        | Water pool or content                                  |
+|                           | $CN$       | Carbon-to-Nitrogen ratio                               |
+| **Fluxes and rates**      |            |                                                        |
+|                           | $F$        | Generic flux of carbon, nitrogen, or water             |
+|                           | $A$        | Photosynthetic assimilation (net photosynthesis)       |
+|                           | $R$        | Respiration flux                                       |
+|                           | $ET$       | Evapotranspiration                                     |
+|                           | $GPP$      | Gross Primary Production                               |
+|                           | $NPP$      | Net Primary Production                                 |
+|                           | $NEE$      | Net Ecosystem Exchange                                 |
+| **Environmental drivers** |            |                                                        |
+|                           | $T$        | Temperature                                            |
+|                           | $VPD$      | Vapor Pressure Deficit                                 |
+|                           | $PAR$      | Photosynthetically Active Radiation                    |
+|                           | $LAI$      | Leaf Area Index                                        |
+| **Parameters**            |            |                                                        |
+|                           | $K$        | Rate constant (e.g., for decomposition or respiration) |
+|                           | $Q_{10}$   | Temperature sensitivity coefficient                    |
+|                           | $\alpha$   | Fraction of NPP allocated to a plant pool              |
+|                           | $f$        | Fraction of a pool or flux other than NPP              |
+|                           | $k$        | Scaling factor                                         |
+|                           | $D$        | Dependency or damping function                         |
 
 ### Subscripts (Temporal, Spatial, or Contextual Identifiers)
 
 
-|**Category**                 | **Subscript**          | **Description**                                  |
-|:---------------------------|:-----------------------|:-------------------------------------------------|
-| **Temporal identifiers**   |                       |                                                   |
-|                            | $X_0$                 | Initial value                                     |
-|                            | $X_t$                 | Value at time $t$                                 |
-|                            | $X_d$                 | Daily value or average                            |
-|                            | $X_\text{avg}$        | Average value (e.g., over a timestep or spatial area) |
-|                            | $X_\text{max}$        | Maximum value (e.g., temperature or rate)         |
-|                            | $X_\text{min}$        | Minimum value (e.g., temperature or rate)         |
-|                            | $X_\text{opt}$        | Optimal value (e.g., temperature or rate)         |
-| **Structural components**  |              |                                                  |
-|                            | $X_\text{leaf}$       | Leaf pools or fluxes                             |
-|                            | $X_\text{wood}$       | Wood pools or fluxes                             |
-|                            | $X_\text{root}$       | Root pool                                        |
-|                            | $X_\text{fine root}$  | Fine root pool                                   |
-|                            | $X_\text{coarse root}$| Coarse root pool                                 |
-|                            | $X_\text{soil}$       | Soil pools or processes                          |
-|                            | $X_\text{litter}$     | Litter pools or processes                        |
-|                            | $X_\text{veg}$        | Vegetation processes (general)                   |
-| **Processes context**      |                       |                                                  |
-|                            | $X_\text{resp}$       | Respiration processes                            |
-|                            | $X_\text{dec}$        | Decomposition processes                          |
-|                            | $X_\text{vol}$        | Volatilization processes                         |
-| **Chemical / environmental identifiers** |          |                                                 |
-|                            | $X_\text{org}$        | Organic forms                                    |
-|                            | $X_\text{mineral}$    | Mineral forms                                    |
-|                            | $X_{\text{anaer}}$    | Anaerobic soil conditions                        |
+| **Category**                             | **Subscript**          | **Description**                                       |
+| :--------------------------------------- | :--------------------- | :---------------------------------------------------- |
+| **Temporal identifiers**                 |                        |                                                       |
+|                                          | $X_0$                  | Initial value                                         |
+|                                          | $X_t$                  | Value at time $t$                                     |
+|                                          | $X_d$                  | Daily value or average                                |
+|                                          | $X_\text{avg}$         | Average value (e.g., over a timestep or spatial area) |
+|                                          | $X_\text{max}$         | Maximum value (e.g., temperature or rate)             |
+|                                          | $X_\text{min}$         | Minimum value (e.g., temperature or rate)             |
+|                                          | $X_\text{opt}$         | Optimal value (e.g., temperature or rate)             |
+| **Structural components**                |                        |                                                       |
+|                                          | $X_\text{leaf}$        | Leaf pools or fluxes                                  |
+|                                          | $X_\text{wood}$        | Wood pools or fluxes                                  |
+|                                          | $X_\text{root}$        | Root pool                                             |
+|                                          | $X_\text{fine root}$   | Fine root pool                                        |
+|                                          | $X_\text{coarse root}$ | Coarse root pool                                      |
+|                                          | $X_\text{soil}$        | Soil pools or processes                               |
+|                                          | $X_\text{litter}$      | Litter pools or processes                             |
+|                                          | $X_\text{veg}$         | Vegetation processes (general)                        |
+| **Processes context**                    |                        |                                                       |
+|                                          | $X_\text{resp}$        | Respiration processes                                 |
+|                                          | $X_\text{dec}$         | Decomposition processes                               |
+|                                          | $X_\text{vol}$         | Volatilization processes                              |
+| **Chemical / environmental identifiers** |                        |                                                       |
+|                                          | $X_\text{org}$         | Organic forms                                         |
+|                                          | $X_\text{mineral}$     | Mineral forms                                         |
+|                                          | $X_{\text{anaer}}$     | Anaerobic soil conditions                             |
 
 Subscripts may be used in combination, e.g. $X_{\text{soil,mineral},0}$.
 
@@ -111,7 +110,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 7 |                                          | snowInit        | Initial snow water                        | cm water equiv.                |                                                   |
 |   |                                          | microbeInit     |                                           |                                |                                                   |
 
--->
+
 
 <!--if separating N_min into NH4 and NO3
 
@@ -122,7 +121,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 |     | ${NH_4}_{\text{soil},0}$ |                | Initial soil ammonium content | g N m$^{-2}$ |       |
 |     | ${NO_3}_{\text{soil},0}$ |                | Initial soil nitrate content  | g N m$^{-2}$ |       |
 
--->
+ 
 
 ### Litter Quality Parameters
 
@@ -151,17 +150,17 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Phenology-related parameters
 
-|     | Symbol               | Parameter Name   | Definition                                                              | Units                                                   | notes                                           |
-| --- | -------------------- | ---------------- | ----------------------------------------------------------------------- |---------------------------------------------------------|-------------------------------------------------|
-| 17  | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                                             |                                                 |
-| 18  |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                                         |                                                 |
-| 19  |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                                         |                                                 |
-| 20  | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                                         |                                                 |
-| 21  |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$         |                                                 |
-| 22  |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                                         |                                                 |
-| 23  | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                                         |                                                 |
-| 24  | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | $\text{y}^{-1}$                                         | converted to per-day rate internally            |
-|     | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code  |
+|     | Symbol               | Parameter Name   | Definition                                                              | Units                                                   | notes                                          |
+| --- | -------------------- | ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| 17  | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                                             |                                                |
+| 18  |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                                         |                                                |
+| 19  |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                                         |                                                |
+| 20  | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                                         |                                                |
+| 21  |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$         |                                                |
+| 22  |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                                         |                                                |
+| 23  | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                                         |                                                |
+| 24  | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | $\text{y}^{-1}$                                         | converted to per-day rate internally           |
+|     | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
 
 
 ### Allocation parameters
@@ -205,29 +204,15 @@ Run-time parameters can change from one run to the next, or when the model is st
 - $R_{dec}$: Rate of decomposition $(\text{day}^{-1})$ 
 - $Q_{10dec}$: Temperature coefficient for $R_{dec}$ (unitless)
 
-
 ### Nitrogen Cycle Parameters
 
-<!--
-- $K_{nitr}$: Rate constant for nitrification (day$^{-1}$)
-- $K_{denitr}$: Rate constant for denitrification (day$^{-1}$)
--->
-
-- $K_{n,vol}$: Rate constant for volatilization (day-1)
-- $f_{N2O_{vol}}$: Fraction of volatilization leading to N2O production
-- $R_{min}$: Rate of mineralization (day-1)
-- $I_\text{N limit}$: Indicator for nitrogen limitation
-
-<!--- $f_{N2O_{nitr}}$: Fraction of nitrification leading to N$_2$O production
-- $f_{N2O_{denitr}}$: Fraction of denitrification leading to N$_2$O production
--->
-
-<!--
-- $R_{nitr}$: Rate of nitrification (day$^{-1}$)
-- $R_{denitr}$: Rate of denitrification (day$^{-1}$)
-- $Q_{10nitr}$: Temperature coefficient for $R_{nitr}$ (unitless)
-- $Q_{10denitr}$: Temperature coefficient for $R_{denitr}$ (unitless)
--->
+|     | Symbol               | Parameter Name      | Definition                                                                                   | Units        | notes                      |
+| --- | -------------------- | ------------------- | -------------------------------------------------------------------------------------------- | ------------ | -------------------------- |
+| new | $N_{\text{min},0}$   | mineralNInit        | Initial soil mineral nitrogen pool                                                           | g N m$^{-2}$ | Initializes $N_\text{min}$ |
+| new | $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture)       | day$^{-1}$   | Eq. (17)                   |
+| new | $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                            | day$^{-1}$   | Eq. (18)                   |
+| new | $f_{\text{fix,max}}$ | nFixFracMax         | Maximum fraction of plant N demand that can be met by biological N fixation under low soil N | fraction     | Eq. (19)                   |
+| new | $K_N$                | nFixHalfSatMinN     | Mineral N level at which fixation suppression factor $D_{N_\text{min}}$ equals 0.5           | g N m$^{-2}$ | Eq. (19a)                  |
 
 ### Methane parameters
 
@@ -258,7 +243,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 ### Tree physiological parameters
 
 |     | Symbol                 | Parameter Name         | Definition                             | Units                | notes                                                              |
-| --- | ---------------------- | ---------------------- | -------------------------------------- |----------------------|--------------------------------------------------------------------|
+| --- | ---------------------- | ---------------------- | -------------------------------------- | -------------------- | ------------------------------------------------------------------ |
 | 53  | $SLW$                  | leafCSpWt              |                                        | g C * m^-2 leaf area |                                                                    |
 | 54  | $C_{frac}$             | cFracLeaf              |                                        | g leaf C * g^-1 leaf |                                                                    |
 | 55  | $K_\text{wood}$        | woodTurnoverRate       | average turnover rate of woody plant C | $\text{y}^{-1}$      | converted to per-day rate internally; leaf loss handled separately |
@@ -289,6 +274,12 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 -->
 
+## Default Parameters
+
+Background: Rastetter et al. (2001) report about 0.11 g N per g C for symbiotic fixation (range 0.07–0.17) in a sensitivity analysis of a theoretical model. While this N:C ratio is not used directly in the demand-based formulation here, it can inform calibration of fixation behavior (e.g., plausible ranges for $f_{\text{fix,max}}$ and $K_N$).
+
+
+
 ## Hard-coded Values
 
 | Parameter                   | Value                   | Description                                          |
@@ -304,11 +295,3 @@ Run-time parameters can change from one run to the next, or when the model is st
 | `CP`                        | 1005.                   | specific heat of air (J/(kg K))                      |
 | `GAMMA`                     | 66                      | psychometric constant (Pa/K)                         |
 | `E_STAR_SNOW`               | 0.6                     | approximate saturation vapor pressure at 0°C (kPa)   |
-
-## Input Files
-
-See [Model Inputs](user-guide/model-inputs.md).
-
-## Outputs
-
-See [Model Outputs](user-guide/model-outputs.md).
