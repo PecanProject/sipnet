@@ -387,9 +387,11 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
 
   // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
-    initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
-    initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
-    initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "soilOrgNInit", &(params.soilOrgNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "litterOrgNInit", &(params.litterOrgNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -410,9 +412,9 @@ void outputHeader(FILE *out) {
   fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
-  fprintf(out,
-          "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-          "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux\n");
+  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
+               "evapotranspiration fluxestranspiration minN soilOrgN "
+               "litterOrgN n2oFlux nLeachFlux\n");
 }
 
 /*!
@@ -433,12 +435,12 @@ void outputState(FILE *out, int year, int day, double time) {
           trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f %8.3f %8.6f %8.4f\n",
+          "%8.4f %8.3f %8.4f %8.4f %8.6f %8.4f\n",
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration, envi.minN, fluxes.nVolatilization,
-          fluxes.nLeaching);
+          fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterOrgN,
+          fluxes.nVolatilization, fluxes.nLeaching);
 }
 
 // de-allocate space used for climate linked list
@@ -1599,6 +1601,8 @@ void updatePoolsForSoil(void) {
 
   // Nitrogen Cycle
   envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
+  // envi.soilOrgN += ...  TBD
+  // envi.litterOrgN += ...  TBD
 }
 
 // !!! main runner function !!!
@@ -1757,8 +1761,12 @@ void setupModel(void) {
 
   if (ctx.nitrogenCycle) {
     envi.minN = params.minNInit;
+    envi.soilOrgN = params.soilOrgNInit;
+    envi.litterOrgN = params.litterOrgNInit;
   } else {
     envi.minN = 0.0;
+    envi.soilOrgN = 0.0;
+    envi.litterOrgN = 0.0;
   }
 
   climate = firstClimate;
