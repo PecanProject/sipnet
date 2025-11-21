@@ -125,6 +125,8 @@ Then link to that section from other pages using the file path plus `#id`, for e
 
 This makes cross-references robust to small edits in heading text and reduces broken links during refactors. Ensure `attr_list` is enabled in `mkdocs.yml` (it is enabled in this repo).
 
+### Compiling Documentation
+
 - Build API docs (Doxygen) and site (MkDocs):
   ```bash
   make document
