@@ -9,7 +9,7 @@ format:
       - \usepackage{amsmath}
 ---
 
-# SIPNET Model States and Parameters  {@sec-parameters}
+# SIPNET Model States and Parameters {#sec-parameters}
 
 <!--TODO insert overview here-->
 Note: this is a work in progress. 
@@ -18,7 +18,7 @@ Note: this is a work in progress.
 - Numbered items are cross-referenced with original documentation.
 - "Notation" section is consistent with model equations, some of the mathematical symbols in the tables may either be missing or need to be updated.
 
-## Notation
+## Notation {#sec-notation}
 
 ### Variables (Pools, Fluxes, and Parameters)
 
@@ -305,7 +305,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | `GAMMA`                     | 66                      | psychometric constant (Pa/K)                         |
 | `E_STAR_SNOW`               | 0.6                     | approximate saturation vapor pressure at 0°C (kPa)   |
 
-## Input Files
+## Input Files {#input-files}
 
 See [Model Inputs](user-guide/model-inputs.md).
 

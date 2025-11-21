@@ -37,6 +37,7 @@ theme:
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
+  - attr_list
   - toc:
       permalink: true
   - pymdownx.superfences

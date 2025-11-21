@@ -109,6 +109,24 @@ If a commit is blocked, format staged changes:
   ```
   Update `mkdocs.yml` if you add/move pages.
 
+### Using anchors for stable cross-references
+
+When creating or updating documentation links, prefer explicit heading anchors so references remain stable when headings change slightly. We use the `attr_list` MkDocs extension to allow adding anchors directly to headings. To add an anchor, append `{#id}` to the heading, for example:
+
+```
+## Notation {#sec-notation}
+```
+
+Then link to that section from other pages using the file path plus `#id`, for example:
+
+```
+[Notation](parameters.md#sec-notation)
+```
+
+This makes cross-references robust to small edits in heading text and reduces broken links during refactors. Ensure `attr_list` is enabled in `mkdocs.yml` (it is enabled in this repo).
+
+### Compiling Documentation
+
 - Build API docs (Doxygen) and site (MkDocs):
   ```bash
   make document
