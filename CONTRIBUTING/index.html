@@ -846,6 +846,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-anchors-for-stable-cross-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using anchors for stable cross-references
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compiling-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compiling Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1093,6 +1121,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-anchors-for-stable-cross-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using anchors for stable cross-references
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compiling-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compiling Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1233,20 +1289,27 @@ git<span class="w"> </span>add<span class="w"> </span>-u<span class="w"> </span>
 <li>Build API docs (Doxygen) and site (MkDocs):
   <div class="highlight"><pre><span></span><code>make<span class="w"> </span>document
 </code></pre></div></li>
-<li>
-<p>Live preview while editing docs:
+<li>Live preview while editing docs:
   <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>mkdocs<span class="w"> </span>mkdocs-material<span class="w"> </span>pymdown-extensions
 mkdocs<span class="w"> </span>serve
 <span class="c1"># open http://127.0.0.1:8000/</span>
 </code></pre></div>
-  Update <code>mkdocs.yml</code> if you add/move pages.</p>
-</li>
-<li>
-<p>Build API docs (Doxygen) and site (MkDocs):
+  Update <code>mkdocs.yml</code> if you add/move pages.</li>
+</ul>
+<h3 id="using-anchors-for-stable-cross-references">Using anchors for stable cross-references<a class="headerlink" href="#using-anchors-for-stable-cross-references" title="Permanent link">&para;</a></h3>
+<p>When creating or updating documentation links, prefer explicit heading anchors so references remain stable when headings change slightly. We use the <code>attr_list</code> MkDocs extension to allow adding anchors directly to headings. To add an anchor, append <code>{#id}</code> to the heading, for example:</p>
+<div class="highlight"><pre><span></span><code>## Notation {#sec-notation}
+</code></pre></div>
+<p>Then link to that section from other pages using the file path plus <code>#id</code>, for example:</p>
+<div class="highlight"><pre><span></span><code>[Notation](parameters.md#sec-notation)
+</code></pre></div>
+<p>This makes cross-references robust to small edits in heading text and reduces broken links during refactors. Ensure <code>attr_list</code> is enabled in <code>mkdocs.yml</code> (it is enabled in this repo).</p>
+<h3 id="compiling-documentation">Compiling Documentation<a class="headerlink" href="#compiling-documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Build API docs (Doxygen) and site (MkDocs):
   <div class="highlight"><pre><span></span><code>make<span class="w"> </span>document
 </code></pre></div>
-  Outputs: <code>docs/api/</code> and <code>site/</code>.</p>
-</li>
+  Outputs: <code>docs/api/</code> and <code>site/</code>.</li>
 <li>Live preview while editing docs:
   <div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>mkdocs<span class="w"> </span>mkdocs-material<span class="w"> </span>pymdown-extensions
 mkdocs<span class="w"> </span>serve
