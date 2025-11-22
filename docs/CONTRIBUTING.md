@@ -27,9 +27,12 @@ All contributors must follow the project [Code of Conduct](CODE_OF_CONDUCT.md).
 
 **Setup Script** The `tools/setup.sh` script verifies that Python ≥ 3.8 is available and that `clang-format`, `clang-tidy`, and `git clang-format` are installed. Automatically installs `clang` tools on macOS and prints installation instructions for Ubuntu/Debian. Then copies the clang pre‑commit hook into `.git/hooks` so that code formatting is checked on every commit.
 
-New contributors are encouraged to start with [good first issues](../issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
+_Note – running `tools/setup.sh`  is not necessary for documentation‑only edits,
+but it will save you time whenever you touch C/C++ code._
+ 
+New contributors are encouraged to start with [good first issues](https://github.com/PecanProject/sipnet/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
-For a short quickstart and how to get the site and examples running, see the user guide: https://pecanproject.github.io/sipnet/#getting-started
+For a short quickstart and how to get the site and examples running, see the user guide: [Getting Started](user-guide/getting-started.md)
 ## GitHub Workflow
 
 ### Branches
