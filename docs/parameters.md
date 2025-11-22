@@ -9,7 +9,7 @@ format:
       - \usepackage{amsmath}
 ---
 
-# SIPNET Model States and Parameters  {@sec-parameters}
+# SIPNET Model States and Parameters {#sec-parameters}
 
 Lists SIPNET state variables and tunable parameters, mapping symbols to the
 model equations, configuration names, units, and I/O fields. See
@@ -17,7 +17,7 @@ model equations, configuration names, units, and I/O fields. See
 [Model Outputs](user-guide/model-outputs.md) for file formats. Unless noted,
 pools are mass per ground area and rates are mass per area per day. The actual parameter set that is used depends on the configured model structure. For equation references, see the [model structure](model-structure.md) documentation.
 
-## Notation
+## Notation {#sec-notation}
 
 ### Variables (Pools, Fluxes, and Parameters)
 
@@ -289,3 +289,4 @@ Run-time parameters can change from one run to the next, or when the model is st
 | `CP`                        | 1005.                   | specific heat of air (J/(kg K))                      |
 | `GAMMA`                     | 66                      | psychometric constant (Pa/K)                         |
 | `E_STAR_SNOW`               | 0.6                     | approximate saturation vapor pressure at 0°C (kPa)   |
+
