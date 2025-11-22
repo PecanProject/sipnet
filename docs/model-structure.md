@@ -99,7 +99,7 @@ $$
 
 The total adjusted gross primary production (GPP) is the product of potential GPP  $(\text{GPP}_{\text{pot}})$ and the water stress factor $D_{\text{water,}A}$.
 
-The water stress factor $D_{\text{water,}A}$ is defined in equation \eqref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.
+The water stress factor $D_{\text{water,}A}$ is defined in equation \ref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
 ### Plant Growth
 
@@ -109,32 +109,25 @@ $$
 
 Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant biomass. NPP is allocated to plant biomass pools in proportion to their allocation parameters $\alpha_i$.
 
+To make explicit what contributes to autotrophic respiration, we decompose $R_A$ into maintenance and optional growth components:
+
 $$
-\text{NPP}=\sum_{1}^{i} \frac{dC_{\text{plant,}i}}{dt} \tag{2} \label{eq:npp_summ}
+R_A = R_\text{leaf} + R_\text{wood} + R_\text{root} +\ R_\text{growth} \tag{1a}\label{eq:ra_components}
 $$
 
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (Eqs. \ref{eq:A18a}, \ref{eq:A19}); $R_\text{root}$ denotes root maintenance respiration; and $R_\text{growth}$ is an optional growth respiration term. Because these components are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
 
 Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 $$
-dC_{\text{plant,}i} = \text{NPP} \cdot a_i \mathfrak{- 
-  F^C_{\text{harvest,removed,}i}} - F^C_{\text{litter,}i}
+\frac{dC_{\text{plant,}i}}{dt}
+  = \alpha_i \cdot \text{NPP}
+    - F^C_{\text{harvest,removed,}i}
+    - F^C_{\text{litter,}i}
   \tag{Zobitz 3}\label{eq:Z3}
 $$
 
-This results in the following constraints:
-- In the case of annuals, all biomass is either harvested and removed or added to litter pools. $F^C_{\text{harvest,removed,}i}$ is calculated by \eqref{eq:harvest}.
-- In the case of perennials, a fraction of the biomass remains except at the end of the perennial's life.
-
-$$\mathfrak{
-F^C_{\text{litter,}i} + F^C_{\text{harvest,removed,}i} =
-\begin{cases}
-1 & \text{annuals} \\
-\leq 1 & \text{perennials}
-\end{cases}
-}$$
-
+Summing \ref{eq:Z3} over all plant pools shows that NPP is partitioned into biomass growth, litter production, and removed harvest.
 
 ### Plant Death
 
@@ -179,7 +172,6 @@ $$
 
 Wood maintenance respiration $(R_m)$ depends on the wood carbon content  $(C_\text{wood})$, 
 a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling function $D_{\text{temp,Q10}_v}$.
-
 
 ### Litter Carbon
 
@@ -350,7 +342,6 @@ $$
   \frac{dN_\text{min}}{{dt}} = 
   F^N_\text{litter,min} +
   F^N_\text{soil,min} +
-  F^N_\text{fix} +  
   F^N_\text{fert,min} - 
   F^N_\mathrm{vol} - 
   F^N_\text{leach} - 
@@ -358,7 +349,7 @@ $$
   \tag{15}\label{eq:mineral_n_dndt}
 $$
 
-Mineralization, fertilization, and fixation add to the mineral nitrogen pool. Losses include mineralization, volatilization, leaching, and plant uptake, described below:
+Mineralization and fertilization add to the mineral nitrogen pool. Losses include volatilization, leaching, and plant uptake, described below. Fixed N enters the plant pool directly (Eq. \eqref{eq:n_fix_demand}).
 
 ### $\frak{N \ Mineralization \ (F^N_\text{min})}$
 
@@ -395,29 +386,56 @@ Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available 
 
 ### $\frak{Nitrogen \ Fixation \ F^N_\text{fix}}$
 
-The rate at which N is fixed is a function of the NPP of the plant and a fixed parameter $K_\text{fix}$, and is modified by temperature.
+For N-fixing plants, symbiotic nitrogen fixation is represented as supplying a fraction of plant nitrogen demand, and is inhibited by high soil mineral N. Plant N demand is defined in Eq. \ref{eq:plant_n_demand}.
 
-For nitrogen fixing plants, rates of symbiotic nitrogen fixation are assumed to be driven by plant growth, and also depend on temperature.
+The fraction of plant N demand met by biological N fixation is defined as:
 
 $$
-F^N_\text{fix} = K_\text{fix} \cdot NPP  \cdot D_{\text{temp}} \tag{19}\label{eq:n_fix}
+f_\text{fix} = f_{\text{fix,max}} \cdot D_{N_\text{min}}
+\tag{19}\label{eq:f_fix}
 $$
 
-Nitrogen fixation is represented by adding fixed nitrogen directly to the soil mineral nitrogen pool. This is a reasonable first approximation, consistent with the simplicity of the nitrogen limitation model where limitation only occurs when nitrogen demand exceeds supply. 
+where:
 
-For nitrogen-fixing plants, most of the fixed nitrogen is directly used by the plant. It would be more complicated to model this by splitting, which could include splitting the fixed N into soil and plant pools and then meeting a portion of plant N demand with this flux.
+- $f_{\text{fix,max}}$ is the maximum fraction of plant N demand that can be met by fixation under low soil N (dimensionless, $0 \le f_{\text{fix,max}} \le 1$), and
+- $D_{N_\text{min}}$ represents inhibition of N fixation by soil mineral N (dimensionless, $0 \le D_{N_\text{min}} \le 1$).
 
-### $\frak{Plant \ Nitrogen \ Uptake \ F^N_\text{uptake}}$
+We use a simple down-regulation function with increasing soil mineral N:
+
+$$
+D_{N_\text{min}} = \frac{1}{1 + \frac{N_\text{min}}{K_N}}
+\tag{19a}\label{eq:n_fix_supp_demand}
+$$
+
+where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is reduced by half (g N m$^{-2}$).
+
+Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ (Eq. \ref{eq:plant_n_demand}):
+
+$$
+F^N_\text{fix} = f_\text{fix} \cdot F^N_\text{demand}
+\tag{19b}\label{eq:n_fix_demand}
+$$
+
+$$
+F^N_\text{uptake} = (1 - f_\text{fix}) \cdot F^N_\text{demand}
+\tag{19c}\label{eq:n_uptake_demand}
+$$
+
+Fixed N ($F^N_\text{fix}$) is added directly to the plant N pool via Eq. \ref{eq:plant_n}, while $F^N_\text{uptake}$ is removed from the soil mineral N pool in Eq. \ref{eq:mineral_n_dndt}. If the available soil mineral N is insufficient to supply $F^N_\text{uptake}$, then actual uptake is capped at $N_\text{min}$ and any residual unmet demand contributes to nitrogen limitation as described in Eq. \ref{eq:n_limit}.
+
+We do not consider free-living nonsymbiotic N fixation, which is approximately two orders of magnitude smaller (less than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and typical N fertilization rates.
+
+### $\mathfrak{Plant\ Nitrogen\ Demand\ and\ Uptake\ (F^{N}_{\text{uptake}})}$, $F^{N}_{\text{demand}}$
 
 Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
 
 $$
-F^N_\text{uptake}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} \tag{20}\label{eq:plant_n_demand}
+F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} \tag{20}\label{eq:plant_n_demand}
 $$
 
 $$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
 
-Each term in the sum is calculated according to equation \eqref{eq:plant_n}.
+Each term in the sum is calculated according to equation \ref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using equations \ref{eq:n_fix_demand} and \ref{eq:n_uptake_demand}.
 
 #### $\frak{Nitrogen \ Limitation \ Indicator \ Function \mathfrak{I_{\text{N limit}}}}$
 
@@ -459,7 +477,7 @@ $$
 \tag{Braswell A4}\label{eq:A4}
 $$
 
-The term $(1-f_{\text{intercept}})F^W_{\text{precip}}$ is the portion of gross precipitation that reaches the soil (i.e. infiltration from precipitation). Intercepted water (fraction $f_{\text{intercept}}$ of precipitation or canopy‑applied irrigation) is assumed to evaporate the same day and therefore never enters $W_{\text{soil}}$ and does not appear in \eqref{eq:A4}. $F^W_{\text{trans}}$ here is identical to $F^W_{\text{transpiration}}$ used elsewhere.
+The term $(1-f_{\text{intercept}})F^W_{\text{precip}}$ is the portion of gross precipitation that reaches the soil (i.e. infiltration from precipitation). Intercepted water (fraction $f_{\text{intercept}}$ of precipitation or canopy‑applied irrigation) is assumed to evaporate the same day and therefore never enters $W_{\text{soil}}$ and does not appear in equation \ref{eq:A4}.
 
 ### Drainage
 
@@ -478,7 +496,7 @@ $$
 F^W_{\text{precip,soil}} = (1 - f_{\text{intercept}})\,F^W_{\text{precip}}
 $$
 
-$F^W_{\text{precip,soil}}$ is added to soil water in equation \eqref{eq:A4}.
+$F^W_{\text{precip,soil}}$ is added to soil water in equation \ref{eq:A4}.
 
 ### Evapotranspiration
 
@@ -667,7 +685,7 @@ $$
 D_{\textrm{till}}(t) = 1 + f_{\textrm{till}}\cdot e^{-t/30} \tag{25}\label{eq:till}
 $$
 
-$f_{\textrm{till}}$ is specified in the `events.in` file, and $D_{\textrm{till}}(t)$ is multiplied by the $KC$ term in the calculation of $R_H$ (Eq. \eqref{eq:rh}).
+$f_{\textrm{till}}$ is specified in the `events.in` file, and $D_{\textrm{till}}(t)$ is multiplied by the $KC$ term in the calculation of $R_H$ (Eq. \ref{eq:rh}).
 
 A value of $f_{\textrm{till}}=0.2$ represents an initial 20% increase that will exponentially decay. The rate of exponential decay is 1/30 days. This rate was chosen such that $D_{\textrm{till}}$ integrates to 30, which is equivalent to DayCent’s 30‑day step function.
 
@@ -681,7 +699,7 @@ $$
 
 A planting event is defined by its emergence date and directly specifies the amount of carbon added to each of four plant carbon pools: leaf, wood, fine root, and coarse root. On the emergence date, the model initializes the plant pools with the amounts of carbon specified in the events file.
 
-Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios following equation \eqref{eq:cn_stoich}.
+Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios following equation \ref{eq:cn_stoich}.
 
 ### $\frak{Harvest}$
 
@@ -706,7 +724,7 @@ $$
 F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} + f_{\text{transfer,below}} \cdot C_{\text{root}} \tag{28}\label{eq:harvest}
 $$
 
-This amount is then added to the litter flux in equation \eqref{eq:litter_flux}.
+This amount is then added to the litter flux in equation \ref{eq:litter_flux}.
 
 ### Irrigation
 
@@ -763,12 +781,15 @@ $$
 
 Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. Estimating Diurnal to Annual Ecosystem Parameters by Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem Exchange Observations. Global Change Biology 11 (2): 335–55. https://doi.org/10.1111/j.1365-2486.2005.00897.x.
 
+Gutschick, V.P., 1981. Evolved strategies in nitrogen acquisition by plants. Am. Nat. 118, 607–637. https://doi.org/10.1086/283858
 
 Libohova, Z., Seybold, C., Wysocki, D., Wills, S., Schoeneberger, P., Williams, C., Lindbo, D., Stott, D. and Owens, P.R., 2018. Reevaluating the effects of soil organic matter and other properties on available water-holding capacity using the National Cooperative Soil Survey Characterization Database. Journal of soil and water conservation, 73(4), pp.411-421.
 
 Manzoni, Stefano, and Amilcare Porporato. 2009. Soil Carbon and Nitrogen Mineralization: Theory and Models across Scales. Soil Biology and Biochemistry 41 (7): 1355–79. https://doi.org/10.1016/j.soilbio.2009.02.031.
 
 Parton, W. J., E. A. Holland, S. J. Del Grosso, M. D. Hartman, R. E. Martin, A. R. Mosier, D. S. Ojima, and D. S. Schimel. 2001. Generalized Model for NOx  and N2O Emissions from Soils. Journal of Geophysical Research: Atmospheres 106 (D15): 17403–19. https://doi.org/10.1029/2001JD900101.
+
+Rastetter, E.B., Vitousek, P.M., Field, C., Shaver, G.R., Herbert, D., Gren, G.I., 2001. Resource optimization and symbiotic nitrogen fixation. Ecosystems 4, 369–388. https://doi.org/10.1007/s10021-001-0018-z
 
 Wang H, Yan Z, Ju X, Song X, Zhang J, Li S and Zhu-Barker X (2023) Quantifying nitrous oxide production rates from nitrification and denitrification under various moisture conditions in agricultural soils: Laboratory study and literature synthesis. Front. Microbiol. 13:1110151. doi: 10.3389/fmicb.2022.1110151
 
