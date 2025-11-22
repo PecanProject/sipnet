@@ -1,22 +1,21 @@
-name: Docs production build and deploy
+name: Publish Docs
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 permissions:
-  contents: read      # needed for checkout
-  pages: write        # to deploy to GitHub Pages
-  id-token: write     # to authenticate with GitHub Pages
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-prod"
   cancel-in-progress: true
 
 jobs:
   build:
+    name: docs-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,8 +39,7 @@ jobs:
           path: site
 
   deploy:
-    # Only deploy on push to master, NOT on pull_request
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    name: deploy-pages
     needs: build
     environment:
       name: github-pages
