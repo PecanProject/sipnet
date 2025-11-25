@@ -367,6 +367,9 @@ typedef struct Parameters {
   // Fraction of mineral N lost to leaching per day
   double nLeachingFrac;
 
+  // Fraction of NPP available to be fixed by vegetation
+  double nFixationFrac;
+
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -535,6 +538,8 @@ typedef struct FluxVars {
   double nVolatilization;
   // Mineral N lost to leaching
   double nLeaching;
+  // Mineral N gained through plant fixation
+  double nFixation;
 
   // ****************************************
   // Fluxes for event handling

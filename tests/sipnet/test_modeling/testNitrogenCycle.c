@@ -17,7 +17,7 @@ void setupTests(void) {
   ctx.litterPool = 1;
   ctx.nitrogenCycle = 1;
 }
-
+/*
 void initState(double initN, double nVol, double nLeachFrac) {
   // per test
   envi.minN = initN;
@@ -40,7 +40,84 @@ void initState(double initN, double nVol, double nLeachFrac) {
   params.baseSoilResp = 0.06;
   params.soilRespQ10 = 2.9;
 }
+*/
+void initNLeachingState(double initN, double nLeachFrac) {
+  // per test
+  envi.minN = initN;
+  params.nLeachingFrac = nLeachFrac;
 
+  // static
+  envi.soilWater = 5.0;
+  envi.soil = 1.5;
+  envi.litter = 1;
+
+  params.minNInit = 0.0;
+  params.soilWHC = 10.0;
+
+  fluxes.nVolatilization = 0;
+  fluxes.nLeaching = 0;
+
+  // Values from russell_2 smoke test
+  params.soilRespMoistEffect = 1.0;
+  params.baseSoilResp = 0.06;
+  params.soilRespQ10 = 2.9;
+}
+
+void initNVolatilizationState(double initN, double nVol) {
+  // per test
+  envi.minN = initN;
+  params.nVolatilizationFrac = nVol;
+
+  // static
+  envi.soilWater = 5.0;
+  envi.soil = 1.5;
+  envi.litter = 1;
+
+  params.minNInit = 0.0;
+  params.soilWHC = 10.0;
+
+  fluxes.nVolatilization = 0;
+
+  // Values from russell_2 smoke test
+  params.soilRespMoistEffect = 1.0;
+  params.baseSoilResp = 0.06;
+  params.soilRespQ10 = 2.9;
+}
+
+void initNFixationState(double initN, double nFixFrac) {
+  // per test
+  envi.minN = initN;
+  params.nFixationFrac = nFixFrac;
+
+  // static
+  envi.soilWater = 5.0;
+  envi.soil = 1.5;
+  envi.litter = 1;
+
+  params.minNInit = 0.0;
+  params.soilWHC = 10.0;
+
+  fluxes.nVolatilization = 0;
+  fluxes.nLeaching = 0;
+  fluxes.nFixation = 0;
+
+  // Values from russell_2 smoke test
+  params.soilRespMoistEffect = 1.0;
+  params.baseSoilResp = 0.06;
+  params.soilRespQ10 = 2.9;
+}
+
+int checkFlux(double calcFlux, double expFlux) {
+  int status = 0;
+  if (!compareDoubles(calcFlux, expFlux)) {
+    status = 1;
+    logTest("Calculated N flux is %f, expected %f\n",
+            calcFlux, expFlux);
+  }
+
+  return status;
+}
+/*
 int checkVolatilizationFlux(double expNVolFlux) {
   int status = 0;
   if (!compareDoubles(fluxes.nVolatilization, expNVolFlux)) {
@@ -62,6 +139,40 @@ int checkNLeachingFlux(double expNLeachingFlux) {
 
   return status;
 }
+*/
+
+int testNFixation(void) {
+  int status = 0;
+  double minN;
+  double nFixFrac;
+  double expNFixation;
+  
+  minN = 1;
+  nFixFrac = 0.25;
+  initNFixationState(minN, nFixFrac);
+  expNFixation = nFixFrac;
+  calcNFixationFlux();
+  status |= checkFlux(fluxes.nFixation, expNFixation);
+
+  minN = 1;
+  nFixFrac = 0.5;
+  initNFixationState(minN, nFixFrac);
+  expNFixation = nFixFrac;
+  calcNFixationFlux();
+  status |= checkFlux(fluxes.nFixation, expNFixation);
+
+  // Check minN for the last
+  updatePoolsForSoil();
+  double expMinN = minN + (expNFixation * climate->length);
+  int minStatus = 0;
+  if (!compareDoubles(envi.minN, expMinN)) {
+    minStatus = 1;
+    logTest("Fixation minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+  }
+  status |= minStatus;
+
+  return status;
+}
 
 int testNLeaching(void) {
   int status = 0;
@@ -73,7 +184,7 @@ int testNLeaching(void) {
   minN = 1;
   nLeachFrac = 0.5;
   fluxes.drainage = 5;
-  initState(minN, 0, nLeachFrac);
+  initNLeachingState(minN, nLeachFrac);
   if ((fluxes.drainage / params.soilWHC) < 1) {
     phi = fluxes.drainage / params.soilWHC;
   } else {
@@ -81,12 +192,13 @@ int testNLeaching(void) {
   }
   expNLeaching = minN * phi * nLeachFrac;
   calcNLeachingFlux();
-  status |= checkNLeachingFlux(expNLeaching);
+  //status |= checkNLeachingFlux(expNLeaching);
+  status |= checkFlux(fluxes.nLeaching, expNLeaching);
 
   minN = 1;
   nLeachFrac = 0.5;
   fluxes.drainage = 20;
-  initState(minN, 0, nLeachFrac);
+  initNLeachingState(minN, nLeachFrac);
   if ((fluxes.drainage / params.soilWHC) < 1) {
     phi = fluxes.drainage / params.soilWHC;
   } else {
@@ -94,7 +206,8 @@ int testNLeaching(void) {
   }
   expNLeaching = minN * phi * nLeachFrac;
   calcNLeachingFlux();
-  status |= checkNLeachingFlux(expNLeaching);
+  //status |= checkNLeachingFlux(expNLeaching);
+  status |= checkFlux(fluxes.nLeaching, expNLeaching);
 
   // Check minN for the last
   updatePoolsForSoil();
@@ -102,7 +215,7 @@ int testNLeaching(void) {
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
-    logTest("minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+    logTest("Leaching minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
   }
   status |= minStatus;
 
@@ -117,19 +230,21 @@ int testNVolatilization(void) {
 
   minN = 2;
   nVolFrac = 0.1;
-  initState(minN, nVolFrac, 0);
+  initNVolatilizationState(minN, nVolFrac);
   double tEffect = calcTempEffect(climate->tsoil);
   double mEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
   expNVolFlux = nVolFrac * minN * tEffect * mEffect;
   calcNVolatilizationFlux();
-  status |= checkVolatilizationFlux(expNVolFlux);
+  //status |= checkVolatilizationFlux(expNVolFlux);
+  status |= checkFlux(fluxes.nVolatilization, expNVolFlux);
 
   // easy proportionality test - doubling params should double output
   minN *= 2;
   expNVolFlux *= 2;
-  initState(minN, nVolFrac, 0);
+  initNVolatilizationState(minN, nVolFrac);
   calcNVolatilizationFlux();
-  status |= checkVolatilizationFlux(expNVolFlux);
+  //status |= checkVolatilizationFlux(expNVolFlux);
+  status |= checkFlux(fluxes.nVolatilization, expNVolFlux);
 
   // Check minN for the last
   updatePoolsForSoil();
@@ -137,7 +252,7 @@ int testNVolatilization(void) {
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
-    logTest("minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+    logTest("Volatilization minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
   }
   status |= minStatus;
 
@@ -151,7 +266,7 @@ int testFertilization(void) {
   double expMinN, expEventMinNFlux, expNVolFlux;
 
   // init minN 2, nVol 0.1
-  initState(initN, nVolFrac, 0);
+  initNVolatilizationState(initN, nVolFrac);
 
   // fert event: 15 5 10
   double fertMinN = 10;
@@ -200,6 +315,8 @@ int run(void) {
   status |= testNVolatilization();
 
   status |= testNLeaching();
+
+  status |= testNFixation();
 
   return status;
 }
