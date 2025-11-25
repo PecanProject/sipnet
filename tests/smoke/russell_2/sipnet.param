@@ -82,4 +82,6 @@ soilOrgNInit 135.0
 litterOrgNInit 14.0
 nVolatilizationFrac 0.1
 nLeachingFrac 0.25
-plantCNRatio 20.0
+leafCNRatio 20.0
+woodCNRatio 100.0
+rootCNRatio 40.0
