@@ -47,8 +47,8 @@ Implementation in source code (sipnet.c) is annotated with references to specifi
 
 #### Notes on notation:
 
-- The general approach used to define variables and subscripts is defined in @sec-notation.
-- Specific parameter, flux, and state definitions are documentated in @sec-parameters.
+- The general approach used to define variables and subscripts is defined in [Notation](parameters.md#sec-notation).
+- Specific parameter, flux, and state definitions are documented in [Model States and Parameters](parameters.md#sec-parameters).
 - $\mathfrak{Fraktur Font}$ is used to identify features that have not been implemented. This font will be removed as features are implemented.
 
 ## Carbon Dynamics
