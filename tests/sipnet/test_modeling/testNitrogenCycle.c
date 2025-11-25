@@ -111,8 +111,7 @@ int checkFlux(double calcFlux, double expFlux) {
   int status = 0;
   if (!compareDoubles(calcFlux, expFlux)) {
     status = 1;
-    logTest("Calculated N flux is %f, expected %f\n",
-            calcFlux, expFlux);
+    logTest("Calculated N flux is %f, expected %f\n", calcFlux, expFlux);
   }
 
   return status;
@@ -146,7 +145,7 @@ int testNFixation(void) {
   double minN;
   double nFixFrac;
   double expNFixation;
-  
+
   minN = 1;
   nFixFrac = 0.25;
   initNFixationState(minN, nFixFrac);
@@ -167,7 +166,8 @@ int testNFixation(void) {
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
-    logTest("Fixation minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+    logTest("Fixation minN pool is %8.3f, expected %8.3f\n", envi.minN,
+            expMinN);
   }
   status |= minStatus;
 
@@ -192,7 +192,7 @@ int testNLeaching(void) {
   }
   expNLeaching = minN * phi * nLeachFrac;
   calcNLeachingFlux();
-  //status |= checkNLeachingFlux(expNLeaching);
+  // status |= checkNLeachingFlux(expNLeaching);
   status |= checkFlux(fluxes.nLeaching, expNLeaching);
 
   minN = 1;
@@ -206,7 +206,7 @@ int testNLeaching(void) {
   }
   expNLeaching = minN * phi * nLeachFrac;
   calcNLeachingFlux();
-  //status |= checkNLeachingFlux(expNLeaching);
+  // status |= checkNLeachingFlux(expNLeaching);
   status |= checkFlux(fluxes.nLeaching, expNLeaching);
 
   // Check minN for the last
@@ -215,7 +215,8 @@ int testNLeaching(void) {
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
-    logTest("Leaching minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+    logTest("Leaching minN pool is %8.3f, expected %8.3f\n", envi.minN,
+            expMinN);
   }
   status |= minStatus;
 
@@ -235,7 +236,7 @@ int testNVolatilization(void) {
   double mEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
   expNVolFlux = nVolFrac * minN * tEffect * mEffect;
   calcNVolatilizationFlux();
-  //status |= checkVolatilizationFlux(expNVolFlux);
+  // status |= checkVolatilizationFlux(expNVolFlux);
   status |= checkFlux(fluxes.nVolatilization, expNVolFlux);
 
   // easy proportionality test - doubling params should double output
@@ -243,7 +244,7 @@ int testNVolatilization(void) {
   expNVolFlux *= 2;
   initNVolatilizationState(minN, nVolFrac);
   calcNVolatilizationFlux();
-  //status |= checkVolatilizationFlux(expNVolFlux);
+  // status |= checkVolatilizationFlux(expNVolFlux);
   status |= checkFlux(fluxes.nVolatilization, expNVolFlux);
 
   // Check minN for the last
@@ -252,7 +253,8 @@ int testNVolatilization(void) {
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
-    logTest("Volatilization minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+    logTest("Volatilization minN pool is %8.3f, expected %8.3f\n", envi.minN,
+            expMinN);
   }
   status |= minStatus;
 

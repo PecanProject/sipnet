@@ -393,11 +393,11 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
     initializeOneModelParam(modelParams, "nFixationFrac", &(params.nFixationFrac), ctx.nitrogenCycle);
 
   // NOLINTEND
-  // clang-format on
+    // clang-format on
 
-  readModelParams(modelParams, paramF);
+    readModelParams(modelParams, paramF);
 
-  fclose(paramF);
+    fclose(paramF);
 }
 
 /*!
@@ -411,9 +411,9 @@ void outputHeader(FILE *out) {
   fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
-  fprintf(out,
-          "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-          "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux nFixationFlux\n");
+  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
+               "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux "
+               "nFixationFlux\n");
 }
 
 /*!
@@ -1610,7 +1610,8 @@ void updatePoolsForSoil(void) {
       climate->length;
 
   // Nitrogen Cycle
-  envi.minN += (fluxes.nFixation - fluxes.nVolatilization - fluxes.nLeaching) * climate->length;
+  envi.minN += (fluxes.nFixation - fluxes.nVolatilization - fluxes.nLeaching) *
+               climate->length;
 }
 
 // !!! main runner function !!!
