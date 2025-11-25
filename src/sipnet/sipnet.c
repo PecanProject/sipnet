@@ -392,6 +392,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "litterOrgNInit", &(params.litterOrgNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "leafCNRatio", &(params.leafCNRatio), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "woodCNRatio", &(params.woodCNRatio), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "rootCNRatio", &(params.rootCNRatio), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -1243,6 +1246,33 @@ void calcNLeachingFlux() {
   fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
 }
 
+/**
+ * Calculate organic nitrogen fluxes
+ */
+void calcOrgNFluxes() {
+  double litterCN, soilCN;
+  // for both litter and soil, mineralization is calculated as heterotrophic
+  // respiration divided by the C:N ratio of that pool.
+
+  // litter
+  // The litter org N flux is determined by the carbon fluxes from wood and leaf
+  // litter, and N loss due to mineralization. N added via fertilization
+  // is handled elsewhere.
+  litterCN = envi.litter / envi.litterOrgN;
+  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCNRatio +
+                      fluxes.woodLitter / params.woodCNRatio -
+                      fluxes.rLitter / litterCN;
+
+  // soil
+  // The soil org N flux is determined by the carbon flux from the litter pool,
+  // carbon fluxes from roots, and N loss due to mineralization
+  // (Note: woodCNRatio is used for coarse roots)
+  soilCN = envi.soil / envi.soilOrgN;
+  fluxes.nOrgSoil = (fluxes.litterToSoil - fluxes.rSoil) / soilCN +
+                    fluxes.fineRootLoss / params.rootCNRatio +
+                    fluxes.coarseRootLoss / params.woodCNRatio;
+}
+
 /*!
  * Calculate flux terms for sipnet as part of main model flow
  *
@@ -1307,11 +1337,14 @@ void calculateFluxes(void) {
   }
 
   // Nitrogen cycle
+  //
+  // Many of the nitrogen fluxes depend on carbon flux calculations, so make
+  // sure this stays at the bottom of this function (or after the carbon calcs,
+  // at least).
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
-    // Leaching depends on drainage flux so makes sure calcNLeachingFlux
-    // occurs after calcSoilWaterFluxes
     calcNLeachingFlux();
+    calcOrgNFluxes();
   }
 }
 
@@ -1598,11 +1631,22 @@ void updatePoolsForSoil(void) {
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss - fluxes.rFineRoot) *
       climate->length;
+}
 
+void updateNitrogenPools(void) {
   // Nitrogen Cycle
+  // :: from [5], nitrogen cycle model
+  // TBD: add equation numbers once published
+
+  // Soil mineral N (note we have one mineral pool for soil+litter)
+  // Mineral N additions from fertilization are handled with the events
   envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
-  // envi.soilOrgN += ...  TBD
-  // envi.litterOrgN += ...  TBD
+
+  // Soil organic N
+  envi.soilOrgN += fluxes.nOrgSoil * climate->length;
+
+  // Litter organic N
+  envi.litterOrgN += fluxes.nOrgLitter * climate->length;
 }
 
 // !!! main runner function !!!
@@ -1632,6 +1676,9 @@ void updateState(void) {
 
   // Update soil carbon pools
   updatePoolsForSoil();
+
+  // Update nitrogen cycle pools
+  updateNitrogenPools();
 
   // Update pools for fluxes from events
   updatePoolsForEvents();
