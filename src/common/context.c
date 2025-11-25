@@ -199,6 +199,11 @@ void validateContext(void) {
     hasError = 1;
   }
 
+  if (ctx.nitrogenCycle && !ctx.litterPool) {
+    logError("nitrogen-cycle require litter-pool to be turned on\n");
+    hasError = 1;
+  }
+
   if (hasError) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
