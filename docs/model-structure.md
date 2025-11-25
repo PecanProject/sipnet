@@ -328,17 +328,22 @@ $$
   F^N_\text{litter,min} \tag{13}\label{eq:litter_dndt}
 $$
 
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+$$\small i \in \{\text{leaf, wood}\}$$
 
 The flux of nitrogen from living biomass to the litter pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool \eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content and the C:N ratio of the inputs.
 
 ### $\frak{Soil \ Organic \ Nitrogen}$
 
+The change in soil nitrogen over time, $N_\text{org,soil}$ is determined by inputs including root loss, litter decomposition, and losses to mineralization:
+
 $$
-  \frac{dN_\text{org,soil}}{dt} = 
+  \frac{dN_\text{org,soil}}{dt} =
+  \sum_{i} F^N_i +
    F^N_\text{litter} -
    F^N_\text{soil,min} \tag{14}\label{eq:org_soil_dndt}
 $$
+
+$$\small i \in \{\text{fine root, coarse root}\}$$
 
 The change in nitrogen pools in this model is proportional to the ratio of carbon to nitrogen in the pool. Equations for the evolution of soil and litter CN are below.
 
