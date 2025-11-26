@@ -9,6 +9,10 @@
 
 Steps to reproduce and verify the change locally (commands, expected output):
 
+make
+cd tests/smoke/<new-or-updated-test>
+../../sipnet -i sipnet.in
+
 ## Related issues
 
 - Fixes or relates to: #<issue>
