@@ -4,31 +4,23 @@ This guide covers how to run SIPNET with command-line options and configuration 
 
 ## Quick Start
 
-The basic command to run SIPNET is:
+For installation, building, and your first simulation, see [Getting Started with SIPNET](getting-started.md).
+
+Once SIPNET is built, the basic command is:
 
 ```bash
 ./sipnet
 ```
 
-This will look for an input configuration file named `sipnet.in` in the current directory. If found, it reads settings from that file. If not found, it uses built-in defaults.
+This looks for a configuration file named `sipnet.in` (if present) and uses built-in defaults if not found.
 
-To use a different configuration file:
+## Configuration and Options
 
-```bash
-./sipnet --input-file myconfig.in
-```
+SIPNET options can be set in two places:
+1. **Configuration file** (`sipnet.in` or custom file via `--input-file`)
+2. **Command-line arguments** (passed to `./sipnet` on the command line)
 
-To use different input file prefixes (climate and parameter files):
-
-```bash
-./sipnet --file-name mysite
-```
-
-This will look for `mysite.clim` and `mysite.param` files.
-
-## Command-Line Options
-
-SIPNET accepts the following command-line options. All options are optional and override settings from the configuration file.
+When the same option is specified in both places, **command-line arguments take precedence** and override the configuration file, which overrides built-in defaults. See [Option Precedence](#option-precedence) below for details.
 
 ### Input/Output Options
 
@@ -189,71 +181,96 @@ Results in:
 | `events` | Command line | OFF (0) — `--no-events` overrides config file's `EVENTS 1` |
 | `litter-pool` | Config file | OFF (0) — not overridden |
 
-## Common Use Patterns
+## Tutorial: Common Use Cases
 
-### 1. Run with Default Settings and Standard File Names
+This section provides practical examples of running SIPNET to compare different configurations and settings.
 
-```bash
-./sipnet
+### Use Case 1: Compare Model Runs With and Without Microbes
+
+To evaluate the impact of microbial decomposition on your simulation, create two runs—one with microbes enabled and one without—and compare their outputs.
+
+**Create a base configuration file** (`sipnet_base.in`):
+```
+FILE_NAME niwot_site
+EVENTS 1
+GDD 1
+MICROBES 0
+DO_MAIN_OUTPUT 1
+DUMP_CONFIG 1
 ```
 
-This uses:
-- Configuration file: `sipnet.in` (if it exists)
-- Input files: `sipnet.param`, `sipnet.clim`
-- All defaults from the model
-
-### 2. Run a Specific Site with Custom Config
-
+**Run without microbes**:
 ```bash
-./sipnet --input-file site_configs/oak_forest.in --file-name oak_forest
+./sipnet --input-file sipnet_base.in
 ```
 
-This reads configuration from `site_configs/oak_forest.in` and looks for input files `oak_forest.param` and `oak_forest.clim`.
-
-### 3. Test Without Events
-
+**Run with microbes enabled** (override from command line):
 ```bash
-./sipnet --no-events
+./sipnet --input-file sipnet_base.in --microbes
 ```
 
-This disables agronomic events (management practices) even if `events.in` exists or events are enabled in the config file.
+Compare the outputs to understand the microbial impact on carbon cycling (pool dynamics, respiration rates, NEE).
 
-### 4. Enable Nitrogen Cycling
+### Use Case 2: Test Phenology Models
 
-```bash
-./sipnet --nitrogen-cycle
+SIPNET supports two phenology models: GDD-based (growing degree days) and soil-temperature-based. Compare runs using each model.
+
+**Create configuration** (`phenology_test.in`):
+```
+FILE_NAME my_site
+GDD 1
+SOIL_PHENOL 0
+DO_MAIN_OUTPUT 1
 ```
 
-This enables nitrogen cycle tracking for the simulation. Note: `--nitrogen-cycle` and `--microbes` are mutually exclusive.
-
-### 5. Generate Per-Variable Output Files
-
+**Run with GDD-based phenology**:
 ```bash
-./sipnet --do-single-outputs
+./sipnet --input-file phenology_test.in
 ```
 
-This creates separate output files for each variable (e.g., `sipnet.NEE`, `sipnet.GPP`, `sipnet.BIOMASS`) in addition to or instead of the main combined output.
-
-### 6. Silent Run with Config Dump
-
+**Run with soil-temperature-based phenology**:
 ```bash
-./sipnet --quiet --dump-config
+./sipnet --input-file phenology_test.in --no-gdd --soil-phenol
 ```
 
-This runs without console output and saves the final merged configuration to `sipnet.config` for inspection and reproduction.
+Compare LAI (leaf area index) timing in the output files to determine which phenology model better captures your site's growing season.
 
-### 7. Compare Two Configurations
+### Use Case 3: Explore Parameter Sensitivity
 
+To test how model results change with different parameter values, run the same configuration but modify key parameters in `sipnet.param`.
+
+**For low photosynthesis** (edit `my_site.param`, set `aMax 50`):
 ```bash
-# Run base scenario
-./sipnet --dump-config --file-name base > /dev/null
-
-# Run alternative scenario  
-./sipnet --input-file alt.in --file-name alt --dump-config > /dev/null
-
-# Compare outputs
-diff base.config alt.config
+./sipnet --file-name my_site
 ```
+
+**For high photosynthesis** (edit `my_site.param`, set `aMax 150`):
+```bash
+./sipnet --file-name my_site
+```
+
+Compare GPP and NEE in the output files to understand parameter sensitivity.
+
+### Use Case 4: Generate and Compare Model Configurations
+
+The `--dump-config` flag is useful for archiving exactly what settings were used in each run.
+
+**Run scenario A**:
+```bash
+./sipnet --input-file scenario_a.in --no-events --dump-config
+```
+
+**Run scenario B**:
+```bash
+./sipnet --input-file scenario_b.in --microbes --dump-config
+```
+
+**Compare the configurations**:
+```bash
+diff scenario_a.config scenario_b.config
+```
+
+This shows exactly which flags and parameters differ between runs.
 
 ## Output Files
 
