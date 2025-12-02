@@ -15,7 +15,7 @@ cd tests/smoke/<new-or-updated-test> ../../sipnet -i sipnet.in
 
 ## Related issues
 
-- Fixes or relates to: #<issue>
+- Fixes #<issue>  (or "Relates to #N" if this is not a resolution of that ticket)
 
 ## Checklist
 
