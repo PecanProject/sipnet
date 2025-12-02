@@ -412,12 +412,13 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 void outputHeader(FILE *out) {
   fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; "
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
-  fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
-  fprintf(out, "soil microbeC coarseRootC fineRootC ");
-  fprintf(out, "litter soilWater soilWetnessFrac snow ");
-  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-               "evapotranspiration fluxestranspiration minN soilOrgN "
-               "litterOrgN n2oFlux nLeachFlux\n");
+  fprintf(out, "year day  time plantWoodC plantLeafC woodCreation     ");
+  fprintf(out, "soil microbeC coarseRootC fineRootC   ");
+  fprintf(out, "litter soilWater soilWetnessFrac     snow      ");
+  fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
+               "rRoot       ra       rh     rtot evapotranspiration ");
+  fprintf(out, "fluxestranspiration     minN  soilOrgN litterOrgN   n2oFlux "
+               "nLeachFlux\n");
 }
 
 /*!
@@ -429,21 +430,22 @@ void outputHeader(FILE *out) {
  */
 void outputState(FILE *out, int year, int day, double time) {
 
-  fprintf(out, "%4d %3d %5.2f %8.2f %8.2f %8.2f ", year, day, time,
+  fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
           envi.plantWoodC, envi.plantLeafC, trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soil);
   fprintf(out, "%8.2f ", envi.microbeC);
-  fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
-  fprintf(out, " %8.2f %8.2f %8.3f %8.2f ", envi.litter, envi.soilWater,
+  fprintf(out, "%11.2f %9.2f", envi.coarseRootC, envi.fineRootC);
+  fprintf(out, " %8.2f %9.2f %15.3f %8.2f ", envi.litter, envi.soilWater,
           trackers.soilWetnessFrac, envi.snow);
-  fprintf(out,
-          "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f %8.3f %8.4f %8.4f %8.6f %8.4f\n",
-          trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
-          trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
-          trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterOrgN,
-          fluxes.nVolatilization, fluxes.nLeaching);
+  fprintf(
+      out,
+      "%8.2f %8.2f %8.2f %8.2f %12.3f %8.3f %8.3f %8.3f %8.3f %8.3f %18.8f ",
+      trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
+      trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
+      trackers.rh, trackers.rtot, trackers.evapotranspiration);
+  fprintf(out, "%19.4f %8.3f %9.4f %10.4f %9.6f %10.4f\n", fluxes.transpiration,
+          envi.minN, envi.soilOrgN, envi.litterOrgN, fluxes.nVolatilization,
+          fluxes.nLeaching);
 }
 
 // de-allocate space used for climate linked list
