@@ -410,12 +410,12 @@ typedef struct Environment {
   double microbeC;
 
   ///// From [5] LeBauer et al. (unpublished)
-  // soil mineral nitrogen pool (g C m^-2 ground area)
+  // soil mineral nitrogen pool (g N m^-2 ground area)
   // (really, soil+litter, we only have one mineral N pool)
   double minN;
-  // soil organic nitrogen pool (g C m^-2 ground area)
+  // soil organic nitrogen pool (g N m^-2 ground area)
   double soilOrgN;
-  // litter organic nitrogen pool (g C m^-2 ground area)
+  // litter organic nitrogen pool (g N m^-2 ground area)
   double litterOrgN;
 } Envi;
 
