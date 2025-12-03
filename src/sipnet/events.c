@@ -447,6 +447,7 @@ void processEvents(void) {
         const double orgC = fertParams->orgC;
         const double minN = fertParams->minN;
 
+        fluxes.eventOrgN += orgN / climLen;
         fluxes.eventLitterC += orgC / climLen;
         if (ctx.nitrogenCycle) {
           fluxes.eventOrgN += orgN / climLen;
@@ -479,8 +480,10 @@ void updatePoolsForEvents(void) {
 
   // Harvest and fertilization events
   if (ctx.litterPool) {
+    envi.litterOrgN += fluxes.eventOrgN * climate->length;
     envi.litter += fluxes.eventLitterC * climate->length;
   } else {
+    envi.soilOrgN += fluxes.eventOrgN * climate->length;
     envi.soil += fluxes.eventLitterC * climate->length;
   }
 

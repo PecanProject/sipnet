@@ -1426,6 +1426,11 @@ void ensureNonNegativeStocks(void) {
      if snow < TINY, then it was really supposed to be 0, but isn't because of
      rounding errors.*/
   ensureNonNegative(&(envi.snow), TINY);
+
+  // Nitrogen cycle stocks
+  ensureNonNegative(&(envi.minN), 0);
+  ensureNonNegative(&(envi.soilOrgN), 0);
+  ensureNonNegative(&(envi.litterOrgN), 0);
 }
 
 // update trackers at each time step
