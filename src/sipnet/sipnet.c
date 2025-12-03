@@ -390,13 +390,14 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
     initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
     initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
     initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
+    initializeOneModelParam(modelParams, "nFixationFrac", &(params.nFixationFrac), ctx.nitrogenCycle);
 
   // NOLINTEND
-  // clang-format on
+    // clang-format on
 
-  readModelParams(modelParams, paramF);
+    readModelParams(modelParams, paramF);
 
-  fclose(paramF);
+    fclose(paramF);
 }
 
 /*!
@@ -410,9 +411,9 @@ void outputHeader(FILE *out) {
   fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
   fprintf(out, "soil microbeC coarseRootC fineRootC ");
   fprintf(out, "litter soilWater soilWetnessFrac snow ");
-  fprintf(out,
-          "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-          "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux\n");
+  fprintf(out, "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
+               "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux "
+               "nFixationFlux\n");
 }
 
 /*!
@@ -433,12 +434,12 @@ void outputState(FILE *out, int year, int day, double time) {
           trackers.soilWetnessFrac, envi.snow);
   fprintf(out,
           "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f %8.3f %8.6f %8.4f\n",
+          "%8.4f %8.3f %8.6f %8.4f %8.6f\n",
           trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
           trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
           trackers.rh, trackers.rtot, trackers.evapotranspiration,
           fluxes.transpiration, envi.minN, fluxes.nVolatilization,
-          fluxes.nLeaching);
+          fluxes.nLeaching, fluxes.nFixation);
 }
 
 // de-allocate space used for climate linked list
@@ -1242,6 +1243,16 @@ void calcNLeachingFlux() {
 }
 
 /*!
+ * Calculate mineral N fixation flux
+ */
+void calcNFixationFlux() {
+  // flux = k_fix * NPP, g N * m^-2 * day^-1
+  // k_fix represents C cost to fix N in range 0.07-0.17 gN/gC
+
+  fluxes.nFixation = params.nFixationFrac * getMeanTrackerMean(meanNPP);
+}
+
+/*!
  * Calculate flux terms for sipnet as part of main model flow
  *
  * All fluxes should be calculated before state variables are updated.
@@ -1310,6 +1321,7 @@ void calculateFluxes(void) {
     // Leaching depends on drainage flux so makes sure calcNLeachingFlux
     // occurs after calcSoilWaterFluxes
     calcNLeachingFlux();
+    calcNFixationFlux();
   }
 }
 
@@ -1598,7 +1610,8 @@ void updatePoolsForSoil(void) {
       climate->length;
 
   // Nitrogen Cycle
-  envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
+  envi.minN += (fluxes.nFixation - fluxes.nVolatilization - fluxes.nLeaching) *
+               climate->length;
 }
 
 // !!! main runner function !!!
