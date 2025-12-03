@@ -29,6 +29,7 @@ jobs:
             --retry-wait-time 2
             --format markdown
             --exclude https://doi.org/*
+            --exclude https://russellranch.ucdavis.edu/
             .
           fail: true
         env:
