@@ -41,20 +41,20 @@ The `master` branch is the default branch for SIPNET. Development should be done
 
 ### Pull Requests
 
-Pull requests should be made from feature branches to the `master` branch. 
+Pull requests should be made from feature branches to the `master` branch.
 
-Pull request descriptions should include a brief summary of the changes and links to related issues. 
+**This repository has a PR template**; when opening a PR, make sure to fill out the template as indicated.
 
-Expectations for merging:
-- Pass all unit and integration tests. 
-- Approved by at least one other developer before being merged.
-- Include updates and additions to 
-  - Documentation
-  - Tests
-  - CHANGELOG.md
-  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented.
+**Prior to merging a PR, it must:**
+- Pass all unit and integration tests
+- Be approved by at least one CODEOWNER
+- Include updates and additions to:
+  - Tests (if code changes)
+  - Documentation (if applicable)
+  - `docs/CHANGELOG.md` for noteworthy changes
+  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented
 
-Pull requests must pass all required checks to be merged into master, including the code format and style checks described below.
+All required checks must pass before merging, including the code format and style checks described below.
 
 ### Propose and Receive Feedback
 
