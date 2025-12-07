@@ -68,25 +68,7 @@ Before opening a pull request (PR), express your interest and get feedback by:
 This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
 
 ### PR expectations
-
-When opening a PR, include the following in your description:
-
-- **Motivation**: why the change is needed.
-- **What changed**: short summary of the functional or documentation changes.
-- **How to test**:
-make
-cd tests/smoke/<new-or-updated-test>
-../../sipnet -i sipnet.in
-
-- **Related issues**: link the issue(s) that motivated the change (use `Fixes #123` when appropriate).
-- **Checklist**: ensure the PR includes tests (if code changes), documentation updates (if applicable), and an entry in `docs/CHANGELOG.md` for noteworthy changes.
-
-Prior to merging a PR, it must:
-- Include tests for new features
-- Include documentation updates to reflect changes to functionality.
-- Update CHANGELOG with any user-visible changes.
-- Pass tests.
-- Be approved by at least one maintainer.
+kindly refer to this [PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md) for PR template
   
 ## Code Format & Style
 

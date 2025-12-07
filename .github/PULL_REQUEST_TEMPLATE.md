@@ -11,8 +11,7 @@ Steps to reproduce and verify the change locally:
 
 ```bash
 make
-cd tests/smoke/<new-or-updated-test>
-../../sipnet -i sipnet.in
+cd tests/smoke/<new-or-updated-test> ../../sipnet -i sipnet.in
 ```
 
 ## Related issues
