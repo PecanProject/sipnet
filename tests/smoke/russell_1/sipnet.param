@@ -77,3 +77,11 @@ microbeNC 0.2
 fineRootExudation 0.01
 coarseRootExudation 0.01
 microbePulseEff 0.45
+mineralNInit 1.0
+soilOrgNInit 135.0
+litterOrgNInit 14.0
+nVolatilizationFrac 0.1
+nLeachingFrac 0.25
+leafCNRatio 20.0
+woodCNRatio 100.0
+rootCNRatio 40.0
