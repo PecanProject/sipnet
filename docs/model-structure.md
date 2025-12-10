@@ -236,7 +236,7 @@ $$
 R_{H} = f_{R_H} \cdot 
   \left(\sum_j  K_j \cdot C_j 
     \right) \cdot 
-    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \mathfrak{\cdot D_{\text{tillage}}} 
+    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \cdot D_{\text{tillage}}
     \tag{7}\label{eq:rh}
 $$
 
@@ -275,15 +275,15 @@ Where $i$ is the leaf, wood, fine root, or coarse root pool. This relationship a
 
 Soil organic matter and litter pools have dynamic CN that is determined below.
 
-### $\frak{Dynamic \ Soil  \ Organic \ Matter \ and \ Litter \ C:N \ Ratios}$
+### Dynamic Soil Organic Matter and Litter C:N Ratios
 
-The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.
+In SIPNET, the C:N ratio of soil and litter pools is calculated directly from the carbon and nitrogen pools.
 
 $$
-\frac{dCN_{\text{j}}}{dt} = \frac{1}{N_{\text{j}}} \left( \frac{dC_{\text{j}}}{dt} - CN_{\text{j}} \cdot \frac{dN_{\text{j}}}{dt} \right) \tag{10}\label{eq:cn}
+CN_j = \frac{C_j}{N_j}, \qquad j \in \{\text{soil, litter}\}.
 $$
 
-$$\small j \in \{\text{soil, litter}\}$$
+This is used to calculate C:N-dependency $D_{CN}$ used in Eq. \eqref{eq:cn_dep}.
 
 ### $\frak{C:N \ Dependency \ Function \ (D_{CN})}$
 
