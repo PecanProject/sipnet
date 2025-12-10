@@ -1098,8 +1098,8 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
     double tillageEffect = 1 + eventTrackers.d_till_mod;
 
     // Put it all together!
-    fluxes.soilMaintRespiration =
-        envi.soil * params.baseSoilResp * moistEffect * tempEffect * tillageEffect;
+    fluxes.soilMaintRespiration = envi.soil * params.baseSoilResp *
+                                  moistEffect * tempEffect * tillageEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
     fluxes.rSoil = fluxes.soilMaintRespiration;
@@ -1567,14 +1567,14 @@ void updatePoolsForSoil(void) {
     // :: from [4], eq (5.9) for first (ingestion) term,
     // ::      eq (5.11) used for soilPulse, and
     // ::      eq (5.12) used for maintRespiration
-      envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
+    envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
                       fluxes.microbeMaintRespiration) *
                      climate->length;
 
     // rSoil is maintenance resp + growth (microbe) resp
     // :: from [4], eq (5.10) for microbe term
-  fluxes.rSoil =
-        fluxes.microbeMaintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
+    fluxes.rSoil = fluxes.microbeMaintRespiration +
+                   (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // :: from [2], litter model description
