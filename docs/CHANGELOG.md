@@ -34,6 +34,10 @@ sections to include in release notes:
 - Soil mineral pool (#170)
 - Nitrogen effects of fertilization (#173)
 - `logAppend` logging function (#173)
+- Nitrogen volatilization (#175)
+- Nitrogen leaching (#178)
+- Soil and litter organic N pools (#195, #198)
+- Organic N handling for fertilization and soil dynamics (#198)
 
 ### Fixed
 
