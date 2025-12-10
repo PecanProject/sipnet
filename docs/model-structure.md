@@ -261,7 +261,7 @@ The calculation of methane flux  $(F^C_{CH_4})$ is analagous to to that of $R_H$
 
 The carbon and nitrogen cycle are tightly coupled by the C:N ratios of plant and organic matter pools. The C:N ratio of plant biomass pools is fixed, while the C:N ratio of soil organic matter and litter pools is dynamic.
 
-### $\frak{Fixed \ Plant \ C:N \ Ratios}$
+### Fixed Plant C:N Ratios
 
 Plant biomass pools have a fixed CN ratio and are thus stoichiometrically coupled to carbon:
 
@@ -308,7 +308,7 @@ $$
 $$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
 
 
-### $\frak{Litter \ Nitrogen}$
+### Litter Nitrogen $N_\text{litter}$
 
 The change in litter nitrogen over time, $N_\text{litter}$ is determined by inputs including leaf and wood litter, nitrogen in organic matter amendments, and losses to mineralization:
 
@@ -324,7 +324,7 @@ $$\small i \in \{\text{leaf, wood}\}$$
 
 The flux of nitrogen from living biomass to the litter pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool \eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content and the C:N ratio of the inputs.
 
-### $\frak{Soil \ Organic \ Nitrogen}$
+### Soil Organic Nitrogen $N_\text{org,soil}$
 
 The change in soil nitrogen over time, $N_\text{org,soil}$ is determined by inputs including root loss, litter decomposition, and losses to mineralization:
 
@@ -339,7 +339,7 @@ $$\small i \in \{\text{fine root, coarse root}\}$$
 
 The change in nitrogen pools in this model is proportional to the ratio of carbon to nitrogen in the pool. Equations for the evolution of soil and litter CN are below.
 
-### $\frak{Soil \ Mineral \ Nitrogen \ F^N_\text{min}}$
+### Soil Mineral Nitrogen $N_\text{min}$
 
 Change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization, and losses to volatilization, leaching, and plant uptake:
 
@@ -356,7 +356,7 @@ $$
 
 Mineralization and fertilization add to the mineral nitrogen pool. Losses include volatilization, leaching, and plant uptake, described below. Fixed N enters the plant pool directly (Eq. \eqref{eq:n_fix_demand}).
 
-### $\frak{N \ Mineralization \ (F^N_\text{min})}$
+### Nitrogen Mineralization $F^N_\text{min}$
 
 
 Total nitrogen mineralization is proportional to the total heterotrophic respiration from soil and litter pools, divided by the C:N ratio of the pool. The effects of temperature, moisture, tillage, and C:N ratio on mineralization rate are captured in the calculation of $R_\text{H}$.
@@ -381,7 +381,7 @@ $$
 F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n_vol}
 $$
 
-### $\frak{Nitrogen \ Leaching \ F^N_\text{leach}}$
+### Nitrogen Leaching $F^N_\text{leach}$
 
 $$
 F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} \tag{18}\label{eq:n_leach}
