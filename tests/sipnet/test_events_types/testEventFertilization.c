@@ -5,17 +5,26 @@
 
 #include "typesUtils.h"
 
-int checkOutput(double litterC, double minN) {
+int checkOutput(double orgN, double litterC, double minN) {
   int status = 0;
   double curLitterC = 0;
+  double curOrgN = 0;
   double curMinN = envi.minN;
   if (ctx.litterPool) {
     logTest("Checking litter pool\n");
     curLitterC = envi.litter;
+    curOrgN = envi.litterOrgN;
   } else {
     logTest("Checking soil pool\n");
     curLitterC = envi.soil;
-    litterC += 0.5;  // We bumped init soil C to distinguish
+    curOrgN = envi.soilOrgN;
+    // We bumped init soil C and N to distinguish
+    litterC += 0.5;
+    orgN += 0.5;
+  }
+  if (!compareDoubles(orgN, curOrgN)) {
+    logTest("Litter/soil org N is %f, expected %f\n", curOrgN, orgN);
+    status = 1;
   }
   if (!compareDoubles(litterC, curLitterC)) {
     logTest("Litter/soil C is %f, expected %f\n", curLitterC, litterC);
@@ -33,12 +42,13 @@ void initEnv(void) {
   envi.soil = 1.5;
   envi.litter = 1;
   envi.minN = 0;
-  // envi.orgN, eventually
+  envi.soilOrgN = 2.5;
+  envi.litterOrgN = 2;
 }
 
 int run(void) {
   int status = 0;
-  double expLitterC, expMinN;
+  double expLitterC, expMinN, expOrgN;
 
   // We will need to switch back and forth between litter pool and soil manually
   prepTypesTest();
@@ -54,10 +64,10 @@ int run(void) {
   procEvents();
 
   // First fert: (15-5-10)
+  expOrgN = 2 + 15;
   expLitterC = 1 + 5;
-  // litterN + 15
   expMinN = 0 + 10;
-  status |= checkOutput(expLitterC, expMinN);
+  status |= checkOutput(expOrgN, expLitterC, expMinN);
 
   //// TWO HARVEST EVENTS
   updateIntContext("litterPool", 1, CTX_TEST);
@@ -67,15 +77,15 @@ int run(void) {
   setupEvents();
   procEvents();
   // First event same as above (15-5-10)
+  expOrgN = 2 + 15;
   expLitterC = 1 + 5;
   expMinN = 0 + 10;
-  // expOrgN = ...
 
   // Second fert (5-2-3)
+  expOrgN += 5;
   expLitterC += 2;
   expMinN += 3;
-  // expOrgN = ...
-  status |= checkOutput(expLitterC, expMinN);
+  status |= checkOutput(expOrgN, expLitterC, expMinN);
 
   return status;
 }
