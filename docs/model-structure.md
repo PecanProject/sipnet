@@ -277,10 +277,10 @@ Soil organic matter and litter pools have dynamic CN that is determined below.
 
 ### $\frak{Dynamic \ Soil  \ Organic \ Matter \ and \ Litter \ C:N \ Ratios}$
 
-The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.
+In SIPNET, the C:N ratio of soil and litter pools is calculated from carbon and nitrogen pools and is used to calculate C:N-dependency $D_{CN}$ in Eq. \eqref{eq:cn_dep}.
 
 $$
-\frac{dCN_{\text{j}}}{dt} = \frac{1}{N_{\text{j}}} \left( \frac{dC_{\text{j}}}{dt} - CN_{\text{j}} \cdot \frac{dN_{\text{j}}}{dt} \right) \tag{10}\label{eq:cn}
+CN_j = \frac{C_j}{N_j}, \qquad j \in \{\text{soil, litter}\}.
 $$
 
 $$\small j \in \{\text{soil, litter}\}$$
@@ -290,10 +290,10 @@ $$\small j \in \{\text{soil, litter}\}$$
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
 
 $$
-  D_{CN} = \frac{1}{1+k_CN \cdot CN} \tag{11}\label{eq:cn_dep}
+  D_{CN} = \frac{1}{1+k_{CN} \cdot CN} \tag{11}\label{eq:cn_dep}
 $$
 
-Where $k_CN$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio. This parameter represents the half-saturation constant of the Michaelis-Menten equation.
+Where $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio. This parameter represents the half-saturation constant of the Michaelis-Menten equation.
 
 ## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
 
