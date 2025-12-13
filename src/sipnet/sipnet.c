@@ -9,20 +9,20 @@
    largely based on PnET
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "common/context.h"
 #include "common/exitCodes.h"
 #include "common/logging.h"
 #include "common/util.h"
 
-#include "sipnet.h"
 #include "events.h"
 #include "outputItems.h"
 #include "runmean.h"
+#include "sipnet.h"
 #include "state.h"
 
 #define C_WEIGHT 12.0  // molecular weight of carbon
@@ -1084,27 +1084,21 @@ double calcTempEffect(double tsoil) {
  */
 void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
-  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
-  // case, need to dig in. With that said...
+  double moistEffect = calcMoistEffect(water, whc);
 
-  if (!ctx.microbes) {
-    double moistEffect = calcMoistEffect(water, whc);
+  // :: from [1], remainder of eq (A20)
+  // See calcMoistEffect() for first part of eq (A20) calculation
+  double tempEffect = calcTempEffect(tsoil);
 
-    // :: from [1], remainder of eq (A20)
-    // See calcMoistEffect() for first part of eq (A20) calculation
-    double tempEffect = calcTempEffect(tsoil);
+  // Effects of tillage, if any
+  double tillageEffect = 1 + eventTrackers.d_till_mod;
 
-    // Effects of tillage, if any
-    double tillageEffect = 1 + eventTrackers.d_till_mod;
+  // Put it all together!
+  fluxes.soilMaintRespiration = envi.soil * params.baseSoilResp * moistEffect *
+                                tempEffect * tillageEffect;
 
-    // Put it all together!
-    fluxes.maintRespiration = envi.soil * params.baseSoilResp * moistEffect *
-                              tempEffect * tillageEffect;
-
-    // With no microbes, rSoil flux is just the maintenance respiration
-    fluxes.rSoil = fluxes.maintRespiration;
-  }
-  // else fluxes.rSoil = 0.0?
+  // With no microbes, rSoil flux is just the maintenance respiration
+  fluxes.rSoil = fluxes.soilMaintRespiration;
 }
 
 /*!
@@ -1137,12 +1131,19 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
     // respiration is determined by microbe biomass
     // :: from [4], eq (5.12) with addition of moisture effect
     // [TAG:UNKNOWN_PROVENANCE]  moistEffect
-    tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
-    fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
+    tempEffect = pow(params.microbeQ10, tsoil / 10);
+    fluxes.microbeMaintRespiration =
+        envi.microbeC * params.baseMicrobeResp * moistEffect * tempEffect;
+
+    // rSoil is maintenance respiration + growth (microbe) respiration
+    // :: from [4], eq (5.10) for microbe term
+    fluxes.rSoil = fluxes.microbeMaintRespiration +
+                   (1 - params.efficiency) * fluxes.microbeIngestion;
 
   } else {
     fluxes.microbeIngestion = 0.0;
     fluxes.soilPulse = 0.0;
+    fluxes.microbeMaintRespiration = 0.0;
     // fluxes.maintRespiration is otherwise set, do not set to zero here
   }
 }
@@ -1566,13 +1567,8 @@ void updatePoolsForSoil(void) {
     // ::      eq (5.11) used for soilPulse, and
     // ::      eq (5.12) used for maintRespiration
     envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
-                      fluxes.maintRespiration) *
+                      fluxes.microbeMaintRespiration) *
                      climate->length;
-
-    // rSoil is maintenance resp + growth (microbe) resp
-    // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil =
-        fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // :: from [2], litter model description
