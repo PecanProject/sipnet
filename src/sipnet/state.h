@@ -514,13 +514,14 @@ typedef struct FluxVars {
 
   // Microbes [3]
   // microbes on: microbial maintenance respiration rate
-  // microbes off: equivalent to rSoil, calc'd as described in [1], eq (A20)
   // (g C m-2 ground area day^-1)
   double microbeMaintRespiration;
   // Flux that microbes remove from soil (mg C g soil day)
   // TBD I highly doubt those units; this is calc'd as
   //     (g C * m-2) * (day-1) * (unitless terms)
   double microbeIngestion;
+  // microbes off: soil respiration equivalent to rSoil, calc'd as described in [1], eq (A20)
+  // (g C m-2 ground area day^-1)
   double soilMaintRespiration;
   // Exudates into the soil
   double soilPulse;

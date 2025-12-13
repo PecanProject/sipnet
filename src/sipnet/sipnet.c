@@ -1084,10 +1084,8 @@ double calcTempEffect(double tsoil) {
  */
 void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
-  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
-  // case, need to dig in. With that said...
 
-  if (!ctx.microbes) {
+  
     double moistEffect = calcMoistEffect(water, whc);
 
     // :: from [1], remainder of eq (A20)
@@ -1103,8 +1101,8 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
     // With no microbes, rSoil flux is just the maintenance respiration
     fluxes.rSoil = fluxes.soilMaintRespiration;
-  }
-  // else fluxes.rSoil = 0.0?
+  
+
 }
 
 /*!
@@ -1141,6 +1139,10 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
     fluxes.microbeMaintRespiration =
         envi.microbeC * params.baseMicrobeResp * moistEffect * tempEffect;
 
+    // rSoil is maintenance respiration + growth (microbe) respiration
+    // :: from [4], eq (5.10) for microbe term
+    fluxes.rSoil = fluxes.microbeMaintRespiration + (1 - params.efficiency) * fluxes.microbeIngestion;
+    
   } else {
     fluxes.microbeIngestion = 0.0;
     fluxes.soilPulse = 0.0;
@@ -1570,11 +1572,6 @@ void updatePoolsForSoil(void) {
     envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
                       fluxes.microbeMaintRespiration) *
                      climate->length;
-
-    // rSoil is maintenance resp + growth (microbe) resp
-    // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil = fluxes.microbeMaintRespiration +
-                   (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // :: from [2], litter model description
