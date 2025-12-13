@@ -25,32 +25,32 @@
 #include "sipnet.h"
 #include "state.h"
 
-#define C_WEIGHT 12.0 // molecular weight of carbon
+#define C_WEIGHT 12.0  // molecular weight of carbon
 // #define TEN_6 1000000.0  // for conversions from micro
-#define TEN_9 1000000000.0 // for conversions from nano
+#define TEN_9 1000000000.0  // for conversions from nano
 #define SEC_PER_DAY 86400.0
 
 // constants for tracking running mean of NPP:
-#define MEAN_NPP_DAYS 5 // over how many days do we keep the running mean?
-#define MEAN_NPP_MAX_ENTRIES (MEAN_NPP_DAYS * 50) //
+#define MEAN_NPP_DAYS 5  // over how many days do we keep the running mean?
+#define MEAN_NPP_MAX_ENTRIES (MEAN_NPP_DAYS * 50)  //
 // assume that the most pts we can have is two per hour
 
 // constants for tracking running mean of GPP:
-#define MEAN_GPP_SOIL_DAYS 5 // over how many days do we keep the running mean?
-#define MEAN_GPP_SOIL_MAX_ENTRIES (MEAN_GPP_SOIL_DAYS * 50) //
+#define MEAN_GPP_SOIL_DAYS 5  // over how many days do we keep the running mean?
+#define MEAN_GPP_SOIL_MAX_ENTRIES (MEAN_GPP_SOIL_DAYS * 50)  //
 // assume that the most pts we can have is one per hour
 
 // some constants for water submodel:
-#define LAMBDA 2501000.   // latent heat of vaporization (J/kg)
-#define LAMBDA_S 2835000. // latent heat of sublimation (J/kg)
-#define RHO 1.3           // air density (kg/m^3)
-#define CP 1005.          // specific heat of air (J/(kg K))
-#define GAMMA 66.         // psychometric constant (Pa/K)
-#define E_STAR_SNOW 0.6   //
+#define LAMBDA 2501000.  // latent heat of vaporization (J/kg)
+#define LAMBDA_S 2835000.  // latent heat of sublimation (J/kg)
+#define RHO 1.3  // air density (kg/m^3)
+#define CP 1005.  // specific heat of air (J/(kg K))
+#define GAMMA 66.  // psychometric constant (Pa/K)
+#define E_STAR_SNOW 0.6  //
 /* approximate saturation vapor pressure at 0 degrees C (kPa)
    (we assume snow temperature is 0 degrees C or slightly lower) */
 
-#define TINY 0.000001 // to avoid those nasty divide-by-zero errors
+#define TINY 0.000001  // to avoid those nasty divide-by-zero errors
 
 // end constant definitions
 
@@ -135,13 +135,13 @@ void readClimData(const char *climFile) {
   ClimateNode *curr, *next;
   int year, day;
   int lastYear = -1;
-  double time, length; // time in hours, length in days (or fraction of day)
+  double time, length;  // time in hours, length in days (or fraction of day)
   double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
 
-  double thisGdd;   // growing degree days of this time step
-  double gdd = 0.0; // growing degree days since the last Jan. 1
+  double thisGdd;  // growing degree days of this time step
+  double gdd = 0.0;  // growing degree days since the last Jan. 1
 
-  int status; // status of the read
+  int status;  // status of the read
 
   // for format check
   int firstLoc, dummyLoc, numFields;
@@ -149,48 +149,48 @@ void readClimData(const char *climFile) {
   int legacyFormat;
   char *firstLine = NULL;
   size_t lineCap = 0;
-  const char *SEPARATORS = " \t\n\r"; // characters that can separate values in
-                                      // parameter files
+  const char *SEPARATORS = " \t\n\r";  // characters that can separate values in
+                                       // parameter files
 
   in = openFile(climFile, "r");
 
   // Check format of first line to see if location is still specified (we will
   // ignore it if so)
-  if (getline(&firstLine, &lineCap, in) == -1) { // EOF
+  if (getline(&firstLine, &lineCap, in) == -1) {  // EOF
     logError("no climate data in %s\n", climFile);
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
   numFields = countFields(firstLine, SEPARATORS);
   switch (numFields) {
-  case NUM_CLIM_FILE_COLS:
-    // Standard format
-    expectedNumCols = NUM_CLIM_FILE_COLS;
-    legacyFormat = 0;
-    break;
-  case NUM_CLIM_FILE_COLS_LEGACY:
-    expectedNumCols = NUM_CLIM_FILE_COLS_LEGACY;
-    legacyFormat = 1;
-    logWarning("old climate file format detected (found %d cols); ignoring "
-               "location and soilWetness columns in %s\n",
-               numFields, climFile);
-    break;
-  default:
-    // Unrecognized format
-    logError("format unrecognized in climate file %s; %d columns found, "
-             "expected %d or %d (legacy format)\n",
-             climFile, numFields, NUM_CLIM_FILE_COLS,
-             NUM_CLIM_FILE_COLS_LEGACY);
-    exit(EXIT_CODE_INPUT_FILE_ERROR);
+    case NUM_CLIM_FILE_COLS:
+      // Standard format
+      expectedNumCols = NUM_CLIM_FILE_COLS;
+      legacyFormat = 0;
+      break;
+    case NUM_CLIM_FILE_COLS_LEGACY:
+      expectedNumCols = NUM_CLIM_FILE_COLS_LEGACY;
+      legacyFormat = 1;
+      logWarning("old climate file format detected (found %d cols); ignoring "
+                 "location and soilWetness columns in %s\n",
+                 numFields, climFile);
+      break;
+    default:
+      // Unrecognized format
+      logError("format unrecognized in climate file %s; %d columns found, "
+               "expected %d or %d (legacy format)\n",
+               climFile, numFields, NUM_CLIM_FILE_COLS,
+               NUM_CLIM_FILE_COLS_LEGACY);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
   if (legacyFormat) {
-    status = sscanf(firstLine, // NOLINT
+    status = sscanf(firstLine,  // NOLINT
                     "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                     &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
                     &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
   } else {
-    status = sscanf(firstLine, // NOLINT
+    status = sscanf(firstLine,  // NOLINT
                     "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
                     &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
                     &vpdSoil, &vPress, &wspd);
@@ -213,8 +213,8 @@ void readClimData(const char *climFile) {
     curr->day = day;
     curr->time = time;
 
-    if (length < 0) {            // parse as seconds
-      length = length / -86400.; // convert to days
+    if (length < 0) {  // parse as seconds
+      length = length / -86400.;  // convert to days
     }
     curr->length = length;
 
@@ -222,26 +222,26 @@ void readClimData(const char *climFile) {
     curr->tsoil = tsoil;
     curr->par = par * (1.0 / length);
     // convert par from Einsteins * m^-2 to Einsteins * m^-2 * day^-1
-    curr->precip = precip * 0.1; // convert from mm to cm
-    curr->vpd = vpd * 0.001;     // convert from Pa to kPa
+    curr->precip = precip * 0.1;  // convert from mm to cm
+    curr->vpd = vpd * 0.001;  // convert from Pa to kPa
     if (curr->vpd < TINY) {
-      curr->vpd = TINY; // avoid divide by zero
+      curr->vpd = TINY;  // avoid divide by zero
     }
-    curr->vpdSoil = vpdSoil * 0.001; // convert from Pa to kPa
-    curr->vPress = vPress * 0.001;   // convert from Pa to kPa
+    curr->vpdSoil = vpdSoil * 0.001;  // convert from Pa to kPa
+    curr->vPress = vPress * 0.001;  // convert from Pa to kPa
     curr->wspd = wspd;
     if (curr->wspd < TINY) {
-      curr->wspd = TINY; // avoid divide by zero
+      curr->wspd = TINY;  // avoid divide by zero
     }
 
     if (ctx.gdd) {
       // :: from [1], growing degree day calculations to support described
       //    modification to leaf phenology on pg 350
-      if (year != lastYear) { // HAPPY NEW YEAR!
-        gdd = 0;              // reset growing degree days
+      if (year != lastYear) {  // HAPPY NEW YEAR!
+        gdd = 0;  // reset growing degree days
       }
       thisGdd = tair * length;
-      if (thisGdd < 0) { // can't have negative growing degree days
+      if (thisGdd < 0) {  // can't have negative growing degree days
         thisGdd = 0;
       }
       gdd += thisGdd;
@@ -252,12 +252,12 @@ void readClimData(const char *climFile) {
 
     if (legacyFormat) {
       status =
-          fscanf(in, // NOLINT
+          fscanf(in,  // NOLINT
                  "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                  &dummyLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
                  &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
     } else {
-      status = fscanf(in, // NOLINT
+      status = fscanf(in,  // NOLINT
                       "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
                       &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
                       &vpdSoil, &vPress, &wspd);
@@ -281,10 +281,10 @@ void readClimData(const char *climFile) {
       curr->nextClim = next;
       // set this down here rather than at top of loop so head treated the
       // same as rest of list
-    } else {                 // status == EOF - no more records
-      curr->nextClim = NULL; // terminate this last linked list
+    } else {  // status == EOF - no more records
+      curr->nextClim = NULL;  // terminate this last linked list
     }
-  } // end while
+  }  // end while
 
   fclose(in);
 }
@@ -306,7 +306,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   paramF = openFile(paramFile, "r");
 
   *modelParamsPtr = newModelParams(NUM_PARAMS);
-  modelParams = *modelParamsPtr; // to prevent lots of unnecessary dereferences
+  modelParams = *modelParamsPtr;  // to prevent lots of unnecessary dereferences
 
   // clang-format off
   // NOLINTBEGIN
@@ -496,18 +496,18 @@ void calcLightEff(double *lightEff, double lai, double par) {
   // believe it or not, 6 layers gives approximately the same result as 100
   // layers
 
-  int layer;     // counter
-  double cumLai; // lai from this layer up
+  int layer;  // counter
+  double cumLai;  // lai from this layer up
   double lightIntensity;
   double currLightEff = 0.0, cumLightEff;
-  int coeff; // current coefficient in Simpson's rule
+  int coeff;  // current coefficient in Simpson's rule
 
-  if (lai > 0 && par > 0) { // must have at least some leaves and some light
-    cumLightEff = 0.0;      // the running sum
+  if (lai > 0 && par > 0) {  // must have at least some leaves and some light
+    cumLightEff = 0.0;  // the running sum
     layer = 0;
     coeff = 1;
 
-    while (layer <= NUM_LAYERS) { // layer 0 means top layer
+    while (layer <= NUM_LAYERS) {  // layer 0 means top layer
       // lai from this layer up, starting at top
       // :: from [1], description above eq (A11)
       cumLai = lai * ((double)layer / NUM_LAYERS);
@@ -528,14 +528,14 @@ void calcLightEff(double *lightEff, double lai, double par) {
 
       // now move to the next layer:
       layer++;
-      coeff = 2 * (1 + layer % 2); // coeff. goes 1, 4, 2, 4, ..., 2, 4, 2
+      coeff = 2 * (1 + layer % 2);  // coeff. goes 1, 4, 2, 4, ..., 2, 4, 2
     }
     // last value should have had a coefficient of 1, but actually had a
     // coefficient of 2, so subtract 1:
     cumLightEff -= currLightEff;
-    *lightEff = cumLightEff / (3.0 * NUM_LAYERS); // multiplying by (h/3) in
-                                                  // Simpson's rule
-  } else {                                        // no leaves or no light!
+    *lightEff = cumLightEff / (3.0 * NUM_LAYERS);  // multiplying by (h/3) in
+                                                   // Simpson's rule
+  } else {  // no leaves or no light!
     *lightEff = 0;
   }
 }
@@ -602,7 +602,7 @@ void potPsn(double *potGrossPsn, double *baseFolResp, double lai, double tair,
   // :: from [1], unit conversion taking into account eq (A8)
   conversion = C_WEIGHT * (1.0 / TEN_9) *
                (params.leafCSpWt / params.cFracLeaf) * lai *
-               SEC_PER_DAY; // to convert units
+               SEC_PER_DAY;  // to convert units
   // :: from [1], eq (A7)
   *potGrossPsn = grossAMax * dTemp * dVpd * dLight * conversion;
 
@@ -634,10 +634,10 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
   // water use efficiency, in mg CO2 fixed * g^-1 H20 transpired
   double wue;
 
-  if (potGrossPsn < TINY) { // avoid divide by 0
-    *trans = 0.0;           // no photosynthesis -> no transpiration
-    *dWater = 1;            // dWater doesn't matter, since we don't have any
-                            // photosynthesis
+  if (potGrossPsn < TINY) {  // avoid divide by 0
+    *trans = 0.0;  // no photosynthesis -> no transpiration
+    *dWater = 1;  // dWater doesn't matter, since we don't have any
+                  // photosynthesis
   } else {
     // :: from [1], eq (A13)
     wue = params.wueConst / vpd;
@@ -675,15 +675,15 @@ int pastLeafGrowth(void) {
   if (ctx.gdd) {
     // :: from [1], description on pg 350
     // null pointer dereference warning suppressed on the next line
-    return (climate->gdd >= params.gddLeafOn); // NOLINT
+    return (climate->gdd >= params.gddLeafOn);  // NOLINT
   } else if (ctx.soilPhenol) {
     // [TAG:UNKNOWN_PROVENANCE] soil phenol functionality
-    return (climate->tsoil >= params.soilTempLeafOn); // soil temperature
-                                                      // threshold
+    return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
+                                                       // threshold
   } else {
     // :: from [1]
     double currTime = (double)climate->day + climate->time / 24.0;
-    return (currTime >= params.leafOnDay); // turn-on day
+    return (currTime >= params.leafOnDay);  // turn-on day
   }
 }
 
@@ -692,8 +692,8 @@ int pastLeafGrowth(void) {
 int pastLeafFall(void) {
   // :: from [1]
   return ((climate->day + climate->time / 24.0) >=
-          params.leafOffDay); // turn-off
-                              // day
+          params.leafOffDay);  // turn-off
+                               // day
 }
 
 /*!
@@ -720,7 +720,7 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // and fall, instead of binary
   // [2]: leaf creation relationship with NPP
 
-  double npp; // temporal mean of recent npp (g C * m^-2 ground * day^-1)
+  double npp;  // temporal mean of recent npp (g C * m^-2 ground * day^-1)
 
   npp = getMeanTrackerMean(meanNPP);
   // first determine the fluxes that happen at every time step, not just start &
@@ -739,7 +739,7 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
 
   // first check for new year; if new year, reset trackers (since we haven't
   // done leaf growth or fall yet in this new year):
-  if (climate->year > phenologyTrackers.lastYear) { // HAPPY NEW YEAR!
+  if (climate->year > phenologyTrackers.lastYear) {  // HAPPY NEW YEAR!
     phenologyTrackers.didLeafGrowth = 0;
     phenologyTrackers.didLeafFall = 0;
     phenologyTrackers.lastYear = climate->year;
@@ -811,9 +811,9 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
   // 1000 converts kg to g, 1000 converts kPa to Pa, 1/10000 converts m^2 to
   // cm^2
 
-  double rd; // aerodynamic resistance between ground and canopy air space
-             // (sec/m)
-  double snowRemaining; // to make sure we don't get rid of more than there is
+  double rd;  // aerodynamic resistance between ground and canopy air space
+              // (sec/m)
+  double snowRemaining;  // to make sure we don't get rid of more than there is
 
   // if no snow, set fluxes to 0
   if (envi.snow <= 0) {
@@ -825,7 +825,7 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
   else {
     // first calculate sublimation, then snow melt
     // (if there's not enough snow to do both, priority given to sublimation)
-    rd = (params.rdConst) / (climate->wspd); // aerodynamic resistance (sec/m)
+    rd = (params.rdConst) / (climate->wspd);  // aerodynamic resistance (sec/m)
     *sublimation = CONVERSION * (E_STAR_SNOW - climate->vPress) / rd;
 
     snowRemaining = envi.snow + (snowFall * climate->length);
@@ -853,16 +853,16 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
 
     // above freezing: melt snow
     else {
-      *snowMelt = params.snowMelt * climate->tair; // snow melt proportional to
-                                                   // temp.
+      *snowMelt = params.snowMelt * climate->tair;  // snow melt proportional to
+                                                    // temp.
 
       // make sure we don't melt more than there is to melt:
       if (snowRemaining - (*snowMelt * climate->length) < 0) {
         *snowMelt = snowRemaining / climate->length;
       }
-    } // end else above freezing
-  } // end else there is snow
-} // end snowPack
+    }  // end else above freezing
+  }  // end else there is snow
+}  // end snowPack
 
 /*!
  *  Calculate fastFlow, evaporation, and drainage from soil
@@ -916,7 +916,7 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
   else {
     double waterFrac = water / params.soilWHC;
     rsoil = exp(params.rSoilConst1 - params.rSoilConst2 * (waterFrac));
-    rd = (params.rdConst) / (climate->wspd); // aerodynamic resistance (sec/m)
+    rd = (params.rdConst) / (climate->wspd);  // aerodynamic resistance (sec/m)
     *evaporation = CONVERSION * climate->vpdSoil / (rd + rsoil);
     // by using vpd we assume that relative humidity of soil pore space is 1
     // (when this isn't true, there won't be much water evaporated anyway)
@@ -1002,8 +1002,8 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
   *folResp = baseFolResp *
              pow(params.vegRespQ10, (climate->tair - params.psnTOpt) / 10.0);
   if (climate->tsoil < params.frozenSoilThreshold) {
-    *folResp *= params.frozenSoilFolREff; // allows foliar resp. to be shutdown
-                                          // by a given fraction in winter
+    *folResp *= params.frozenSoilFolREff;  // allows foliar resp. to be shutdown
+                                           // by a given fraction in winter
   }
   *woodResp = params.baseVegResp * envi.plantWoodC *
               pow(params.vegRespQ10, climate->tair / 10.0);
@@ -1050,7 +1050,7 @@ double calcMoistEffect(double water, double whc) {
     // if not waterHResp, soil moisture does not affect heterotrophic
     // respiration; else:
     // :: from [2], snowpack addition
-    moistEffect = 1.0; // Ignore moisture effects in frozen soils
+    moistEffect = 1.0;  // Ignore moisture effects in frozen soils
   } else {
     // :: from [1], first part of eq (A20), with added exponent
     // Original formulation from [1], based on PnET is:
@@ -1171,8 +1171,8 @@ void calcLitterFluxes() {
  * @return total root exudate for use with microbe model
  */
 double calcRootAndWoodFluxes(void) {
-  double coarseExudate, fineExudate; // exudates in and out of soil
-  double npp, gppSoil;               // running means of our tracker variables
+  double coarseExudate, fineExudate;  // exudates in and out of soil
+  double npp, gppSoil;  // running means of our tracker variables
 
   npp = getMeanTrackerMean(meanNPP);
   gppSoil = getMeanTrackerMean(meanGPP);
@@ -1267,7 +1267,7 @@ void calculateFluxes(void) {
   double netRain;
 
   // Psn, moisture and water fluxes
-  lai = envi.plantLeafC / params.leafCSpWt; // current lai
+  lai = envi.plantLeafC / params.leafCSpWt;  // current lai
 
   potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd,
          climate->par);
@@ -1403,9 +1403,9 @@ void ensureNonNegativeStocks(void) {
 // oldSoilWater is how much soil water there was at the beginning of the time
 // step (cm)
 void updateTrackers(double oldSoilWater) {
-  static int lastYear = -1; // what was the year of the last step?
+  static int lastYear = -1;  // what was the year of the last step?
 
-  if (climate->year != lastYear) { // new year: reset yearly trackers
+  if (climate->year != lastYear) {  // new year: reset yearly trackers
     trackers.yearlyGpp = 0.0;
     trackers.yearlyRtot = 0.0;
     trackers.yearlyRa = 0.0;
@@ -1460,14 +1460,14 @@ void updateTrackers(double oldSoilWater) {
 }
 
 void updateMeanTrackers(void) {
-  double npp; // net primary productivity, g C * m^-2 ground area * day^-1
+  double npp;  // net primary productivity, g C * m^-2 ground area * day^-1
   int err;
 
   npp = fluxes.photosynthesis - fluxes.rVeg - fluxes.rCoarseRoot -
         fluxes.rFineRoot;
 
-  err = addValueToMeanTracker(meanNPP, npp, climate->length); // update running
-                                                              // mean of NPP
+  err = addValueToMeanTracker(meanNPP, npp, climate->length);  // update running
+                                                               // mean of NPP
   if (err != 0) {
     printf("******* Error type %d while trying to add value to NPP mean "
            "tracker in sipnet:updateState() *******\n",
@@ -1478,7 +1478,7 @@ void updateMeanTrackers(void) {
   }
 
   err = addValueToMeanTracker(meanGPP, fluxes.photosynthesis,
-                              climate->length); // update running mean of GPP
+                              climate->length);  // update running mean of GPP
   if (err != 0) {
     printf("******* Error type %d while trying to add value to GPP mean "
            "tracker in sipnet:updateState() *******\n",
@@ -1655,11 +1655,11 @@ void updateState(void) {
 // year?)
 void initPhenologyTrackers(void) {
 
-  phenologyTrackers.didLeafGrowth = pastLeafGrowth(); // first year: have we
-                                                      // passed growing season
-                                                      // start date?
-  phenologyTrackers.didLeafFall = pastLeafFall(); // first year: have we passed
-                                                  // growing season end date?
+  phenologyTrackers.didLeafGrowth = pastLeafGrowth();  // first year: have we
+                                                       // passed growing season
+                                                       // start date?
+  phenologyTrackers.didLeafFall = pastLeafFall();  // first year: have we passed
+                                                   // growing season end date?
 
   /* if we think we've done leaf fall this year but not leaf growth, something's
      wrong this could happen if, e.g. we're using soil temp-based leaf growth,
@@ -1676,9 +1676,9 @@ void initPhenologyTrackers(void) {
     phenologyTrackers.didLeafGrowth = 1;
   }
   // printf("stuff: %8d %8d \n",phenologyTrackers.lastYear, climate->year);
-  phenologyTrackers.lastYear = climate->year; // set the year of the previous
-                                              // (non-existent) time step to be
-                                              // this year
+  phenologyTrackers.lastYear = climate->year;  // set the year of the previous
+                                               // (non-existent) time step to be
+                                               // this year
 }
 
 // See sipnet.h
@@ -1703,7 +1703,7 @@ void setupModel(void) {
   }
 
   // change units of parameters:
-  params.baseVegResp /= 365.0; // change from per-year to per-day rate
+  params.baseVegResp /= 365.0;  // change from per-year to per-day rate
   params.litterBreakdownRate /= 365.0;
   params.baseSoilResp /= 365.0;
   params.woodTurnoverRate /= 365.0;
@@ -1711,8 +1711,8 @@ void setupModel(void) {
 
   // calculate additional parameters:
   params.psnTMax =
-      params.psnTOpt + (params.psnTOpt - params.psnTMin); // assumed
-                                                          // symmetrical
+      params.psnTOpt + (params.psnTOpt - params.psnTMin);  // assumed
+                                                           // symmetrical
 
   envi.plantWoodC =
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
@@ -1742,8 +1742,8 @@ void setupModel(void) {
 
   params.baseCoarseRootResp /= 365.0;
   params.baseFineRootResp /= 365.0;
-  params.baseMicrobeResp = params.baseMicrobeResp * 24; // change from per hour
-                                                        // to per day rate
+  params.baseMicrobeResp = params.baseMicrobeResp * 24;  // change from per hour
+                                                         // to per day rate
 
   ///
   /// ENVIRONMENT SETUP
@@ -1775,10 +1775,10 @@ void setupModel(void) {
   initTrackers();
   initPhenologyTrackers();
   initEventTrackers();
-  resetMeanTracker(meanNPP, 0); // initialize with mean NPP (over last
-                                // MEAN_NPP_DAYS) of 0
-  resetMeanTracker(meanGPP, 0); // initialize with mean NPP (over last
-                                // MEAN_GPP_DAYS) of 0
+  resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
+                                 // MEAN_NPP_DAYS) of 0
+  resetMeanTracker(meanGPP, 0);  // initialize with mean NPP (over last
+                                 // MEAN_GPP_DAYS) of 0
 }
 
 // See sipnet.h

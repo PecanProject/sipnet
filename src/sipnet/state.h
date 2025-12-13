@@ -50,8 +50,8 @@ struct ClimateVars {
 };
 
 // Global vars
-extern ClimateNode *firstClimate; // pointer to first climate
-extern ClimateNode *climate;      // current climate
+extern ClimateNode *firstClimate;  // pointer to first climate
+extern ClimateNode *climate;  // current climate
 
 #define NUM_CLIM_FILE_COLS 12
 #define NUM_CLIM_FILE_COLS_LEGACY (NUM_CLIM_FILE_COLS + 2)
@@ -420,7 +420,7 @@ typedef struct Environment {
 } Envi;
 
 // Global var
-extern Envi envi; // state variables
+extern Envi envi;  // state variables
 
 // fluxes as per-day rates
 typedef struct FluxVars {
@@ -577,7 +577,7 @@ typedef struct FluxVars {
 // Global var
 extern Fluxes fluxes;
 
-typedef struct TrackerVars { // variables to track various things
+typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 taken up in this time interval; GROSS photosynthesis
   double gpp;
   // g C * m^-2 respired in this time interval
@@ -658,4 +658,4 @@ typedef struct PhenologyTrackersStruct {
 // Global var
 extern PhenologyTrackers phenologyTrackers;
 
-#endif // SIPNET_STATE_H
+#endif  // SIPNET_STATE_H
