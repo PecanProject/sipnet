@@ -277,10 +277,12 @@ Soil organic matter and litter pools have dynamic CN that is determined below.
 
 ### $\frak{Dynamic \ Soil  \ Organic \ Matter \ and \ Litter \ C:N \ Ratios}$
 
-The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.
+### $\frak{Dynamic \ Soil  \ Organic \ Matter \ and \ Litter \ C:N \ Ratios}$
+
+In SIPNET, the C:N ratio of soil and litter pools is calculated from carbon and nitrogen pools in order to calculate C:N-dependency $D_{CN}$ in Eq. \eqref{eq:cn_dep}.
 
 $$
-\frac{dCN_{\text{j}}}{dt} = \frac{1}{N_{\text{j}}} \left( \frac{dC_{\text{j}}}{dt} - CN_{\text{j}} \cdot \frac{dN_{\text{j}}}{dt} \right) \tag{10}\label{eq:cn}
+CN_j = \frac{C_j}{N_j}, \qquad j \in \{\text{soil, litter}\}.
 $$
 
 $$\small j \in \{\text{soil, litter}\}$$
@@ -290,10 +292,10 @@ $$\small j \in \{\text{soil, litter}\}$$
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
 
 $$
-  D_{CN} = \frac{1}{1+k_CN \cdot CN} \tag{11}\label{eq:cn_dep}
+  D_{CN} = \frac{1}{1+k_{CN} \cdot CN} \tag{11}\label{eq:cn_dep}
 $$
 
-Where $k_CN$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio. This parameter represents the half-saturation constant of the Michaelis-Menten equation.
+Where $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio. This parameter represents the half-saturation constant of the Michaelis-Menten equation.
 
 ## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
 
@@ -391,14 +393,17 @@ For N-fixing plants, symbiotic nitrogen fixation is represented as supplying a f
 The fraction of plant N demand met by biological N fixation is defined as:
 
 $$
-f_\text{fix} = f_{\text{fix,max}} \cdot D_{N_\text{min}}
+f_\text{fix} = f_{\text{nfix,base}} + \left(f_{\text{nfix,max}} - f_{\text{nfix,base}}\right) \cdot D_{N_\text{min}}
 \tag{19}\label{eq:f_fix}
 $$
 
 where:
 
-- $f_{\text{fix,max}}$ is the maximum fraction of plant N demand that can be met by fixation under low soil N (dimensionless, $0 \le f_{\text{fix,max}} \le 1$), and
+- $f_{\text{nfix,max}}$ is the maximum fraction of plant N demand that can be met by fixation under strong soil N limitation (dimensionless, $0 \le f_{\text{nfix,max}} \le 1$),
+- $f_{\text{nfix,base}}$ is the baseline fixation fraction realized when mineral N is plentiful ($0 \le f_{\text{nfix,base}} \le f_{\text{nfix,max}}$), and
 - $D_{N_\text{min}}$ represents inhibition of N fixation by soil mineral N (dimensionless, $0 \le D_{N_\text{min}} \le 1$).
+
+Both $f_{\text{nfix,base}}$ and $f_{\text{nfix,max}}$ are specified as PFT-level traits for N-fixing crops. For non–N-fixing PFTs, both are set to zero, yielding $f_\text{fix} = 0$ in all conditions.
 
 We use a simple down-regulation function with increasing soil mineral N:
 
@@ -424,6 +429,8 @@ $$
 Fixed N ($F^N_\text{fix}$) is added directly to the plant N pool via Eq. \ref{eq:plant_n}, while $F^N_\text{uptake}$ is removed from the soil mineral N pool in Eq. \ref{eq:mineral_n_dndt}. If the available soil mineral N is insufficient to supply $F^N_\text{uptake}$, then actual uptake is capped at $N_\text{min}$ and any residual unmet demand contributes to nitrogen limitation as described in Eq. \ref{eq:n_limit}.
 
 We do not consider free-living nonsymbiotic N fixation, which is approximately two orders of magnitude smaller (less than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and typical N fertilization rates.
+
+Equation \ref{eq:n_fix_supp_demand} (Eq. 19a) continues to modulate fixation based on mineral N availability, and all other mineralization, uptake, and nitrogen limitation equations remain unchanged. This formulation does not include any explicit carbon cost of fixation; fixation affects plant C balance only through N limitation and the imposed C:N stoichiometry.
 
 ### $\mathfrak{Plant\ Nitrogen\ Demand\ and\ Uptake\ (F^{N}_{\text{uptake}})}$, $F^{N}_{\text{demand}}$
 

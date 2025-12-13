@@ -211,8 +211,11 @@ Run-time parameters can change from one run to the next, or when the model is st
 | new | $N_{\text{min},0}$   | mineralNInit        | Initial soil mineral nitrogen pool                                                           | g N m$^{-2}$ | Initializes $N_\text{min}$ |
 | new | $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture)       | day$^{-1}$   | Eq. (17)                   |
 | new | $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                            | day$^{-1}$   | Eq. (18)                   |
-| new | $f_{\text{fix,max}}$ | nFixFracMax         | Maximum fraction of plant N demand that can be met by biological N fixation under low soil N | fraction     | Eq. (19)                   |
+| new | $f_{\text{nfix,max}}$ | nFixFracMax         | Maximum fraction of plant N demand that can be met by biological N fixation under strong soil N limitation; PFT-specific | fraction     | Eq. (19); set to 0 for non–N-fixing crops |
+| new | $f_{\text{nfix,base}}$ | nFixFracBase        | Baseline fraction of plant N demand met by biological N fixation when mineral N is plentiful; PFT-specific ($0 \le f_{\text{nfix,base}} \le f_{\text{nfix,max}}$) | fraction     | Eq. (19); set to 0 for non–N-fixing crops |
 | new | $K_N$                | nFixHalfSatMinN     | Mineral N level at which fixation suppression factor $D_{N_\text{min}}$ equals 0.5           | g N m$^{-2}$ | Eq. (19a)                  |
+
+For many applications, $f_{\text{nfix,base}}$ can be fixed (e.g., 0 or a small fraction of $f_{\text{nfix,max}}$) while $f_{\text{nfix,max}}$ is calibrated or explored in sensitivity analyses. This maintains biological interpretability while allowing users to manage identifiability through their choice of which parameters to fix.
 
 ### Methane parameters
 
@@ -289,4 +292,3 @@ Run-time parameters can change from one run to the next, or when the model is st
 | `CP`                        | 1005.                   | specific heat of air (J/(kg K))                      |
 | `GAMMA`                     | 66                      | psychometric constant (Pa/K)                         |
 | `E_STAR_SNOW`               | 0.6                     | approximate saturation vapor pressure at 0°C (kPa)   |
-
