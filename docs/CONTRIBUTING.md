@@ -29,6 +29,10 @@ All contributors must follow the project [Code of Conduct](CODE_OF_CONDUCT.md).
 
 _Note – running `tools/setup.sh`  is not necessary for documentation‑only edits,
 but it will save you time whenever you touch C/C++ code._
+ 
+New contributors are encouraged to start with [good first issues](https://github.com/PecanProject/sipnet/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
+For a short quickstart and how to get the site and examples running, see the user guide: [Getting Started](user-guide/getting-started.md)
 ## GitHub Workflow
 
 ### Branches
@@ -37,20 +41,34 @@ The `master` branch is the default branch for SIPNET. Development should be done
 
 ### Pull Requests
 
-Pull requests should be made from feature branches to the `master` branch. 
+Pull requests should be made from feature branches to the `master` branch.
 
-Pull request descriptions should include a brief summary of the changes and links to related issues. 
+**This repository has a PR template**; when opening a PR, make sure to fill out the template as indicated.
 
-Expectations for merging:
-- Pass all unit and integration tests. 
-- Approved by at least one other developer before being merged.
-- Include updates and additions to 
-  - Documentation
-  - Tests
-  - CHANGELOG.md
-  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented.
+**Prior to merging a PR, it must:**
+- Pass all unit and integration tests
+- Be approved by at least one CODEOWNER
+- Include updates and additions to:
+  - Tests (if code changes)
+  - Documentation (if applicable)
+  - `docs/CHANGELOG.md` for noteworthy changes
+  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented
 
-Pull requests must pass all required checks to be merged into master, including the code format and style checks described below.
+All required checks must pass before merging, including the code format and style checks described below.
+
+### Propose and Receive Feedback
+
+Before opening a pull request (PR), express your interest and get feedback by:
+
+- Asking to be assigned to an existing issue (comment on the issue and request assignment).
+- If the idea has not been proposed, or you want additional feedback, discuss it in the `#pecan` Slack channel.
+- Optional: if the task is complex and no issue exists, open a new issue summarizing the discussion, including motivation and a proposed solution.
+- Begin implementation once you have a thumbs-up (review/assignment) from a core maintainer (for example, `@Alomir` or `@dlebauer`).
+
+This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
+
+### PR expectations
+kindly refer to this [PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md) for PR template
   
 ## Code Format & Style
 
@@ -108,6 +126,24 @@ If a commit is blocked, format staged changes:
   # open http://127.0.0.1:8000/
   ```
   Update `mkdocs.yml` if you add/move pages.
+
+### Using anchors for stable cross-references
+
+When creating or updating documentation links, prefer explicit heading anchors so references remain stable when headings change slightly. We use the `attr_list` MkDocs extension to allow adding anchors directly to headings. To add an anchor, append `{#id}` to the heading, for example:
+
+```
+## Notation {#sec-notation}
+```
+
+Then link to that section from other pages using the file path plus `#id`, for example:
+
+```
+[Notation](parameters.md#sec-notation)
+```
+
+This makes cross-references robust to small edits in heading text and reduces broken links during refactors. Ensure `attr_list` is enabled in `mkdocs.yml` (it is enabled in this repo).
+
+### Compiling Documentation
 
 - Build API docs (Doxygen) and site (MkDocs):
   ```bash
