@@ -392,6 +392,10 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "litterOrgNInit", &(params.litterOrgNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "leafCN", &(params.leafCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "woodCN", &(params.woodCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "fineRootCN", &(params.fineRootCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "coarseRootCN", &(params.coarseRootCN), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
