@@ -211,6 +211,10 @@ Run-time parameters can change from one run to the next, or when the model is st
 | new | $N_{\text{min},0}$   | mineralNInit        | Initial soil mineral nitrogen pool                                                           | g N m$^{-2}$ | Initializes $N_\text{min}$ |
 | new | $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture)       | day$^{-1}$   | Eq. (17)                   |
 | new | $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                            | day$^{-1}$   | Eq. (18)                   |
+| new | $CN_{\text{leaf}}$   | leafCN              | Carbon to nitrogen ratio for leaves                                                          | g C / g N    | Eq. (12)                   |
+| new | $CN_{\text{wood}}$   | woodCN              | Carbon to nitrogen ratio for wood                                                            | g C / g N    | Eq. (12)                   |
+| new | $CN_{\text{froot}}$  | fineRootCN          | Carbon to nitrogen ratio for fine roots                                                      | g C / g N    | Eq. (12)                   |
+| new | $CN_{\text{croot}}$  | coarseRootCN        | Carbon to nitrogen ratio for coarse roots                                                    | g C / g N    | Eq. (12)                   |
 | new | $f_{\text{fix,max}}$ | nFixFracMax         | Maximum fraction of plant N demand that can be met by biological N fixation under low soil N | fraction     | Eq. (19)                   |
 | new | $K_N$                | nFixHalfSatMinN     | Mineral N level at which fixation suppression factor $D_{N_\text{min}}$ equals 0.5           | g N m$^{-2}$ | Eq. (19a)                  |
 
