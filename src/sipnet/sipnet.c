@@ -1296,11 +1296,7 @@ void calcPlantNDemandAndUptake() {
   nSupply = envi.minN / climate->length;
   
   // N uptake is minimum of demand and supply (F^N_uptake = min(N_min/dt, F^N_demand))
-  if (fluxes.plantNDemand < nSupply) {
-    fluxes.plantNUptake = fluxes.plantNDemand;
-  } else {
-    fluxes.plantNUptake = nSupply;
-  }
+  fluxes.plantNUptake = fmin(fluxes.plantNDemand, nSupply);
 }
 
 /*!
@@ -1387,8 +1383,8 @@ void calculateFluxes(void) {
     // N limitation: if demand exceeds supply, limit NPP by setting GPP = R_A
     // I_N = boolean(F^N_demand > N_min/dt)
     // if(I_N): NPP = 0; this is done by setting GPP = R_A
-    double nSupply = envi.minN / climate->length;
-    if (fluxes.plantNDemand > nSupply) {
+    // Note: nSupply was already calculated in calcPlantNDemandAndUptake
+    if (fluxes.plantNDemand > fluxes.plantNUptake) {
       // N is limiting, set photosynthesis to equal autotrophic respiration
       // This makes NPP = GPP - R_A = 0
       fluxes.photosynthesis = fluxes.rVeg;
