@@ -1716,12 +1716,11 @@ void updatePoolsForSoil(void) {
     
     // Update plant N pools based on growth and litter
     // Calculate the fraction of N that each pool gets based on their demand
-    double totalDemand = fluxes.plantNDemand;
     double k = 0.0;  // allocation factor
     
-    if (totalDemand > 0) {
+    if (fluxes.plantNDemand > 0) {
       // k = (N uptake) / (N demand)
-      k = fluxes.plantNUptake / totalDemand;
+      k = fluxes.plantNUptake / fluxes.plantNDemand;
     }
     
     // Update each plant N pool: dN/dt = (k * demand) - litter
