@@ -1244,6 +1244,62 @@ void calcNLeachingFlux() {
 }
 
 /*!
+ * Calculate plant N demand and uptake
+ * 
+ * Calculates N demand for each plant pool based on C flux and CN ratio (eq 12).
+ * Total demand is summed (eq 20) and compared to available mineral N.
+ * N uptake is the minimum of demand and available N supply.
+ */
+void calcPlantNDemandAndUptake() {
+  double nSupply;
+  
+  // Calculate N demand for each pool: dN/dt = dC/dt / CN
+  // Positive fluxes only (growth) require N uptake
+  
+  // Leaf N demand from leaf creation
+  if (fluxes.leafCreation > 0 && params.leafCN > 0) {
+    fluxes.leafNDemand = fluxes.leafCreation / params.leafCN;
+  } else {
+    fluxes.leafNDemand = 0;
+  }
+  
+  // Wood N demand from wood creation
+  if (fluxes.woodCreation > 0 && params.woodCN > 0) {
+    fluxes.woodNDemand = fluxes.woodCreation / params.woodCN;
+  } else {
+    fluxes.woodNDemand = 0;
+  }
+  
+  // Fine root N demand from fine root creation
+  if (fluxes.fineRootCreation > 0 && params.fineRootCN > 0) {
+    fluxes.fineRootNDemand = fluxes.fineRootCreation / params.fineRootCN;
+  } else {
+    fluxes.fineRootNDemand = 0;
+  }
+  
+  // Coarse root N demand from coarse root creation
+  if (fluxes.coarseRootCreation > 0 && params.coarseRootCN > 0) {
+    fluxes.coarseRootNDemand = fluxes.coarseRootCreation / params.coarseRootCN;
+  } else {
+    fluxes.coarseRootNDemand = 0;
+  }
+  
+  // Total plant N demand (eq 20: F^N_demand = sum dN_i/dt)
+  fluxes.plantNDemand = fluxes.leafNDemand + fluxes.woodNDemand + 
+                        fluxes.fineRootNDemand + fluxes.coarseRootNDemand;
+  
+  // N supply is available mineral N per day
+  nSupply = envi.minN / climate->length;
+  
+  // N uptake is minimum of demand and supply (F^N_uptake = min(N_min/dt, F^N_demand))
+  if (fluxes.plantNDemand < nSupply) {
+    fluxes.plantNUptake = fluxes.plantNDemand;
+  } else {
+    fluxes.plantNUptake = nSupply;
+  }
+}
+
+/*!
  * Calculate flux terms for sipnet as part of main model flow
  *
  * All fluxes should be calculated before state variables are updated.
@@ -1308,10 +1364,54 @@ void calculateFluxes(void) {
 
   // Nitrogen cycle
   if (ctx.nitrogenCycle) {
+    // Initialize plant N flux variables
+    fluxes.plantNDemand = 0;
+    fluxes.plantNUptake = 0;
+    fluxes.leafNDemand = 0;
+    fluxes.woodNDemand = 0;
+    fluxes.fineRootNDemand = 0;
+    fluxes.coarseRootNDemand = 0;
+    
     calcNVolatilizationFlux();
     // Leaching depends on drainage flux so makes sure calcNLeachingFlux
     // occurs after calcSoilWaterFluxes
     calcNLeachingFlux();
+    
+    // Calculate plant N demand and uptake
+    calcPlantNDemandAndUptake();
+    
+    // N limitation: if demand exceeds supply, limit NPP by setting GPP = R_A
+    // I_N = boolean(F^N_demand > N_min/dt)
+    // if(I_N): NPP = 0; this is done by setting GPP = R_A
+    double nSupply = envi.minN / climate->length;
+    if (fluxes.plantNDemand > nSupply) {
+      // N is limiting, set photosynthesis to equal autotrophic respiration
+      // This makes NPP = GPP - R_A = 0
+      fluxes.photosynthesis = fluxes.rVeg;
+      
+      // Recalculate plant N demand and uptake with zero NPP
+      // This means no growth, so no N demand
+      fluxes.leafNDemand = 0;
+      fluxes.woodNDemand = 0;
+      fluxes.fineRootNDemand = 0;
+      fluxes.coarseRootNDemand = 0;
+      fluxes.plantNDemand = 0;
+      fluxes.plantNUptake = 0;
+      
+      // Also need to zero out the growth fluxes since NPP = 0
+      fluxes.leafCreation = 0;
+      fluxes.woodCreation = 0;
+      fluxes.fineRootCreation = 0;
+      fluxes.coarseRootCreation = 0;
+    }
+  } else {
+    // Initialize to 0 when nitrogen cycle is off
+    fluxes.plantNDemand = 0;
+    fluxes.plantNUptake = 0;
+    fluxes.leafNDemand = 0;
+    fluxes.woodNDemand = 0;
+    fluxes.fineRootNDemand = 0;
+    fluxes.coarseRootNDemand = 0;
   }
 }
 
@@ -1396,6 +1496,10 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.minN), 0);
   ensureNonNegative(&(envi.soilOrgN), 0);
   ensureNonNegative(&(envi.litterOrgN), 0);
+  ensureNonNegative(&(envi.plantLeafN), 0);
+  ensureNonNegative(&(envi.plantWoodN), 0);
+  ensureNonNegative(&(envi.fineRootN), 0);
+  ensureNonNegative(&(envi.coarseRootN), 0);
 }
 
 // update trackers at each time step
@@ -1605,7 +1709,55 @@ void updatePoolsForSoil(void) {
       climate->length;
 
   // Nitrogen Cycle
-  envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
+  if (ctx.nitrogenCycle) {
+    // Update mineral N: subtract volatilization, leaching, and plant uptake
+    envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching + fluxes.plantNUptake) * 
+                 climate->length;
+    
+    // Update plant N pools based on growth and litter
+    // Calculate the fraction of N that each pool gets based on their demand
+    double totalDemand = fluxes.plantNDemand;
+    double k = 0.0;  // allocation factor
+    
+    if (totalDemand > 0) {
+      // k = (N uptake) / (N demand)
+      k = fluxes.plantNUptake / totalDemand;
+    }
+    
+    // Update each plant N pool: dN/dt = (k * demand) - litter
+    // Leaf N
+    double leafNGrowth = k * fluxes.leafNDemand;
+    double leafNLitter = 0;
+    if (params.leafCN > 0) {
+      leafNLitter = fluxes.leafLitter / params.leafCN;
+    }
+    envi.plantLeafN += (leafNGrowth - leafNLitter) * climate->length;
+    
+    // Wood N
+    double woodNGrowth = k * fluxes.woodNDemand;
+    double woodNLitter = 0;
+    if (params.woodCN > 0) {
+      woodNLitter = fluxes.woodLitter / params.woodCN;
+    }
+    envi.plantWoodN += (woodNGrowth - woodNLitter) * climate->length;
+    
+    // Fine root N
+    double fineRootNGrowth = k * fluxes.fineRootNDemand;
+    double fineRootNLoss = 0;
+    if (params.fineRootCN > 0) {
+      fineRootNLoss = fluxes.fineRootLoss / params.fineRootCN;
+    }
+    envi.fineRootN += (fineRootNGrowth - fineRootNLoss) * climate->length;
+    
+    // Coarse root N
+    double coarseRootNGrowth = k * fluxes.coarseRootNDemand;
+    double coarseRootNLoss = 0;
+    if (params.coarseRootCN > 0) {
+      coarseRootNLoss = fluxes.coarseRootLoss / params.coarseRootCN;
+    }
+    envi.coarseRootN += (coarseRootNGrowth - coarseRootNLoss) * climate->length;
+  }
+  
   // envi.soilOrgN += ...  TBD
   // envi.litterOrgN += ...  TBD
 }
@@ -1768,10 +1920,40 @@ void setupModel(void) {
     envi.minN = params.minNInit;
     envi.soilOrgN = params.soilOrgNInit;
     envi.litterOrgN = params.litterOrgNInit;
+    
+    // Initialize plant N pools based on C pools and CN ratios
+    // Only initialize if CN ratios are positive
+    if (params.leafCN > 0) {
+      envi.plantLeafN = envi.plantLeafC / params.leafCN;
+    } else {
+      envi.plantLeafN = 0.0;
+    }
+    
+    if (params.woodCN > 0) {
+      envi.plantWoodN = envi.plantWoodC / params.woodCN;
+    } else {
+      envi.plantWoodN = 0.0;
+    }
+    
+    if (params.fineRootCN > 0) {
+      envi.fineRootN = envi.fineRootC / params.fineRootCN;
+    } else {
+      envi.fineRootN = 0.0;
+    }
+    
+    if (params.coarseRootCN > 0) {
+      envi.coarseRootN = envi.coarseRootC / params.coarseRootCN;
+    } else {
+      envi.coarseRootN = 0.0;
+    }
   } else {
     envi.minN = 0.0;
     envi.soilOrgN = 0.0;
     envi.litterOrgN = 0.0;
+    envi.plantLeafN = 0.0;
+    envi.plantWoodN = 0.0;
+    envi.fineRootN = 0.0;
+    envi.coarseRootN = 0.0;
   }
 
   climate = firstClimate;
