@@ -67,7 +67,7 @@ Before opening a pull request (PR), express your interest and get feedback by:
 
 This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
 
-### PR expectations
+### PR Expectations
 Kindly refer to the [PULL_REQUEST_TEMPLATE.md](https://github.com/PecanProject/sipnet/blob/master/.github/PULL_REQUEST_TEMPLATE.md) for the PR template.
   
 ## Code Format & Style
