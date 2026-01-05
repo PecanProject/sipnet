@@ -314,7 +314,7 @@ $$
 $$
 
 Here, $k_CN$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio, with higher CN reducing the rate of decomposition.
-The value $\frac{1}{k_CN}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$.
+The value $\frac{1}{k_{CN}}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
 ## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
 
@@ -367,7 +367,7 @@ $$\small j \in \{\text{fine root, coarse root}\}$$
 $F^N_{\text{soil,}j}$ are organic nitrogen inputs to soil from belowground plant turnover and harvest
 transfers of belowground biomass. 
 $F^N_{\text{litter}}$ is the organic nitrogen transferred from litter to soil (calculated from
-$F^C_{\text{soil}}$ in Eq. \ref{eq:soil_carbon} based on litter C:N).
+$F^C_{\text{soil}}$ in Eq. \ref{eq:soil_carbon} based on litter C:N.
 
 ### Soil Mineral Nitrogen $N_\text{min}$
 
