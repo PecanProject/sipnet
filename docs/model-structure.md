@@ -648,10 +648,10 @@ Lets start with a two-parameter Beta function covering the range $50 < f_{\text{
 **Beta function**
 
 $$
-D_{\mathrm{moistur,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
+D_{\text{water,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
 $$
 
-Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maiximum and width.
+Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maximum and width.
 
 For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.
 
