@@ -34,6 +34,10 @@ sections to include in release notes:
 - Soil mineral pool (#170)
 - Nitrogen effects of fertilization (#173)
 - `logAppend` logging function (#173)
+- Plant nitrogen pools with C:N ratios for leaf, wood, fine root, and coarse root
+- Nitrogen demand calculation for plant growth (dN/dt = dC/dt / CN)
+- Nitrogen limitation of NPP when plant N demand exceeds mineral N supply
+- CN parameters: `leafCN`, `woodCN`, `fineRootCN`, `coarseRootCN`
 
 ### Fixed
 

@@ -373,6 +373,16 @@ typedef struct Parameters {
   // Fraction of mineral N lost to leaching per day
   double nLeachingFrac;
 
+  // C:N ratios for plant pools (g C per g N)
+  // C:N ratio of leaves
+  double leafCN;
+  // C:N ratio of wood
+  double woodCN;
+  // C:N ratio of fine roots
+  double fineRootCN;
+  // C:N ratio of coarse roots
+  double coarseRootCN;
+
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -417,6 +427,12 @@ typedef struct Environment {
   double soilOrgN;
   // litter organic nitrogen pool (g N m^-2 ground area)
   double litterOrgN;
+  
+  // plant nitrogen pools (g N m^-2 ground area)
+  double plantLeafN;
+  double plantWoodN;
+  double fineRootN;
+  double coarseRootN;
 } Envi;
 
 // Global var
@@ -546,6 +562,17 @@ typedef struct FluxVars {
   double nVolatilization;
   // Mineral N lost to leaching
   double nLeaching;
+  
+  // Plant N demand and uptake fluxes (g N * m^-2 ground area * day^-1)
+  // Total plant N demand
+  double plantNDemand;
+  // Actual N uptake by plants
+  double plantNUptake;
+  // N demand for each pool
+  double leafNDemand;
+  double woodNDemand;
+  double fineRootNDemand;
+  double coarseRootNDemand;
 
   // ****************************************
   // Fluxes for event handling

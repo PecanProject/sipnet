@@ -1,0 +1,7 @@
+year  day  type     param_name=delta[,param_name=delta,...]
+2023   65  plant    fluxes.eventLeafC=6.00,fluxes.eventWoodC=8.00,fluxes.eventFineRootC=10.00,fluxes.eventCoarseRootC=12.00
+2023   70  irrig    fluxes.eventSoilWater=10.00,fluxes.eventEvap=0.00
+2023  200  harv     fluxes.eventLitterC=10.93,fluxes.eventLeafC=-11.86,fluxes.eventWoodC=-9.50,fluxes.eventFineRootC=-7.46,fluxes.eventCoarseRootC=-7.78
+2024   65  plant    fluxes.eventLeafC=6.00,fluxes.eventWoodC=10.00,fluxes.eventFineRootC=14.00,fluxes.eventCoarseRootC=18.00
+2024   70  irrig    fluxes.eventSoilWater=5.00,fluxes.eventEvap=5.00
+2024  200  harv     fluxes.eventLitterC=8.51,fluxes.eventLeafC=-2.78,fluxes.eventWoodC=-3.27,fluxes.eventFineRootC=-5.04,fluxes.eventCoarseRootC=-5.93

@@ -82,3 +82,7 @@ soilOrgNInit 135.0
 litterOrgNInit 14.0
 nVolatilizationFrac 0.1
 nLeachingFrac 0.25
+leafCN 25.0
+woodCN 200.0
+fineRootCN 50.0
+coarseRootCN 150.0
