@@ -182,11 +182,10 @@ $$
 F^C_\text{litter} - F^C_{\text{decomp}}
 $$
 
-Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass into the litter pool through senescence, harvest transfer, and  organic matter additions \eqref{eq:litter_flux}. Belowground turnover is routed directly to the soil carbon pool (see Soil Carbon). 
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass into the litter pool through senescence, harvest transfer, and organic matter additions \eqref{eq:litter_flux}. Belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
 $F^C_{\text{decomp,litter}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and decomposition \eqref{eq:decomp_carbon}.
 
-The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer or biomass during harvest, and organic matter ammendments:
-
+The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter ammendments:
 $$
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
@@ -236,17 +235,6 @@ SIPNET assumes no loss of SOC to leaching or erosion.
 
 Accordingly, $F^C_{\text{soil}}$ includes both (i) litter-to-soil carbon transfer \eqref{eq:soil_carbon} and
 (ii) direct inputs from belowground plant turnover.
-
-The belowground carbon input routed directly to soil is:
-
-$$
-F^C_{\text{soil,root}} =
-  \sum_{j} K_{\text{plant,}j} \cdot C_{\text{plant,}j}
-$$
-
-$$\small j \in \{\text{fine root, coarse root}\}$$
-
-and is included in the soil carbon balance through $F^C_{\text{soil}}$.
 
 ### Heterotrophic Respiration $(C_\text{soil,litter} \rightarrow CO_2)$
 
@@ -313,7 +301,7 @@ $$
   D_{CN} = \frac{1}{1+k_{CN} \cdot CN} \tag{11}\label{eq:cn_dep}
 $$
 
-Here, $k_CN$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio, with higher CN reducing the rate of decomposition.
+Here, $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio, with higher CN reducing the rate of decomposition.
 The value $\frac{1}{k_{CN}}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
 ## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
@@ -355,14 +343,12 @@ The change in soil nitrogen over time, $N_\text{org,soil}$ is determined by inpu
 
 $$
   \frac{dN_\text{org,soil}}{dt} =
-  \sum_{j} F^N_j +
+  \sum_{j} F^N_{\text{soil,}j} +
    F^N_\text{litter} - 
    F^N_\text{soil,min} \tag{14}\label{eq:org_soil_dndt}
 $$
 
 $$\small j \in \{\text{fine root, coarse root}\}$$
-
-%The change in nitrogen pools in this model is proportional to the ratio of carbon to nitrogen in the pool. Equations for the evolution of soil and litter CN are below.
 
 $F^N_{\text{soil,}j}$ are organic nitrogen inputs to soil from belowground plant turnover and harvest
 transfers of belowground biomass. 
