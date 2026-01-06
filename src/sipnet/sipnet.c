@@ -9,6 +9,8 @@
    largely based on PnET
 */
 
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -449,7 +451,7 @@ void outputState(FILE *out, int year, int day, double time) {
 }
 
 // de-allocate space used for climate linked list
-void freeClimateList() {
+void freeClimateList(void) {
   ClimateNode *curr, *prev;
 
   curr = firstClimate;
@@ -1152,7 +1154,7 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
   }
 }
 
-void calcLitterFluxes() {
+void calcLitterFluxes(void) {
   if (ctx.litterPool) {
     double tempEffect = calcTempEffect(climate->tsoil);
     double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
@@ -1222,7 +1224,7 @@ double calcRootAndWoodFluxes(void) {
 /*!
  * Calculate mineral N volatilization flux
  */
-void calcNVolatilizationFlux() {
+void calcNVolatilizationFlux(void) {
   // flux = k_vol * nMin * Dtemp * Dwater
   // Note k_vol is in units of day^-1, so we do not need to divide
   // by climate length to make this a flux
@@ -1236,7 +1238,7 @@ void calcNVolatilizationFlux() {
 /*!
  * Calculate mineral N leaching flux
  */
-void calcNLeachingFlux() {
+void calcNLeachingFlux(void) {
   double phi;
   // phi is (drainage / soilWHC) between 0 and 1
   if ((fluxes.drainage / params.soilWHC) < 1) {
@@ -1527,7 +1529,7 @@ void updateMeanTrackers(void) {
 /*!
  * Update the main pools, leafC, woodC, soil and snow
  */
-void updateMainPools() {
+void updateMainPools(void) {
   // Update the stocks, with fluxes adjusted for length of time step.
   // Notes:
   // - GPP shows up twice (direct + via NPP --> woodCreation), but
@@ -1877,7 +1879,7 @@ void initModel(ModelParams **modelParams, const char *paramFile,
 }
 
 // See sipnet.h
-void cleanupModel() {
+void cleanupModel(void) {
   freeClimateList();
 
   deallocateMeanTracker(meanNPP);

@@ -9,6 +9,8 @@ project(sipnet C)
 
 set(CMAKE_C_STANDARD 23)
 
+add_compile_definitions(_POSIX_C_SOURCE=200809L)
+
 include_directories(src)
 include_directories(src/common)
 include_directories(src/sipnet)
