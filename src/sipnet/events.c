@@ -469,7 +469,7 @@ void updatePoolsForEvents(void) {
   if (ctx.litterPool) {
     envi.litter += fluxes.eventLitterC * climate->length;
   } else {
-    envi.soil += fluxes.eventLitterC * climate->length;
+  envi.soilC += fluxes.eventLitterC * climate->length;
   }
   envi.minN += fluxes.eventMinN * climate->length;
 

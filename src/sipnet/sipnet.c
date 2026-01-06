@@ -426,7 +426,7 @@ void outputState(FILE *out, int year, int day, double time) {
 
   fprintf(out, "%4d %3d %5.2f %8.2f %8.2f %8.2f ", year, day, time,
           envi.plantWoodC, envi.plantLeafC, trackers.woodCreation);
-  fprintf(out, "%8.2f ", envi.soil);
+  fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
   fprintf(out, " %8.2f %8.2f %8.3f %8.2f ", envi.litter, envi.soilWater,
@@ -1096,7 +1096,7 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
     double tillageEffect = 1 + eventTrackers.d_till_mod;
 
     // Put it all together!
-    fluxes.maintRespiration = envi.soil * params.baseSoilResp * moistEffect *
+    fluxes.maintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
                               tempEffect * tillageEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
@@ -1120,8 +1120,8 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
     //    eqs (5.9) and (5.10) in updatePoolsForSoil()
 
     // :: mu_max * g(C_S)
-    baseRate = params.maxIngestionRate * envi.soil /
-               (params.halfSatIngestion + envi.soil);
+    baseRate = params.maxIngestionRate * envi.soilC /
+               (params.halfSatIngestion + envi.soilC);
 
     // Flux that microbes remove from soil  (mg C g soil day)
     // Some is ingested, rest used for growth in updatePoolsForSoil()
@@ -1376,7 +1376,7 @@ void ensureNonNegativeStocks(void) {
     ensureNonNegative(&(envi.litter), 0);
   }
 
-  ensureNonNegative(&(envi.soil), 0);
+  ensureNonNegative(&(envi.soilC), 0);
   ensureNonNegative(&(envi.coarseRootC), 0);
   ensureNonNegative(&(envi.fineRootC), 0);
   ensureNonNegative(&(envi.microbeC), 0);
@@ -1491,7 +1491,7 @@ void updateMainPools() {
   // - GPP shows up twice (direct + via NPP --> woodCreation), but
   //   the math works out to:
   //     envi.plantWoodC += NPP_allocation_to_wood − woodLitter.
-  // - The soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
+  // - The soil C pool(s) (envi.soilC, envi.fineRootC, envi.CoarseRootC)
   //   are updated in updatePoolsForSoil().
 
   // :: from [1], eq (A1), where:
@@ -1549,7 +1549,7 @@ void updatePoolsForSoil(void) {
     // :: from [3] for root terms
     // :: from [4] for microbeIngestion term
     // Note: no rSoil term here, as soil resp is handled by microbeIngestion
-    envi.soil +=
+    envi.soilC +=
         (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
          fluxes.leafLitter - fluxes.microbeIngestion) *
         climate->length;
@@ -1574,7 +1574,7 @@ void updatePoolsForSoil(void) {
                      climate->length;
 
       // from [2] and [3], litter and root terms respectively
-      envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                     fluxes.litterToSoil - fluxes.rSoil) *
                    climate->length;
     } else {
@@ -1584,7 +1584,7 @@ void updatePoolsForSoil(void) {
       //     L_l = fluxes.leafLitter
       //     R_h = fluxes.rSoil
       // :: from [3], root terms
-      envi.soil += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                     fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
                    climate->length;
     }
@@ -1719,7 +1719,7 @@ void setupModel(void) {
     // Don't set a value if the litter pool is off
     envi.litter = 0.0;
   }
-  envi.soil = params.soilInit;
+  envi.soilC = params.soilInit;
 
   // change from per hour to per day rate
   params.maxIngestionRate = params.maxIngestionRate * 24;
