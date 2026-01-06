@@ -41,20 +41,20 @@ The `master` branch is the default branch for SIPNET. Development should be done
 
 ### Pull Requests
 
-Pull requests should be made from feature branches to the `master` branch. 
+Pull requests should be made from feature branches to the `master` branch.
 
-Pull request descriptions should include a brief summary of the changes and links to related issues. 
+**This repository has a PR template**; when opening a PR, make sure to fill out the template as indicated.
 
-Expectations for merging:
-- Pass all unit and integration tests. 
-- Approved by at least one other developer before being merged.
-- Include updates and additions to 
-  - Documentation
-  - Tests
-  - CHANGELOG.md
-  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented.
+**Prior to merging a PR, it must:**
+- Pass all unit and integration tests
+- Be approved by at least one CODEOWNER
+- Include updates and additions to:
+  - Tests (if code changes)
+  - Documentation (if applicable)
+  - `docs/CHANGELOG.md` for noteworthy changes
+  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented
 
-Pull requests must pass all required checks to be merged into master, including the code format and style checks described below.
+All required checks must pass before merging, including the code format and style checks described below.
 
 ### Propose and Receive Feedback
 
@@ -68,25 +68,7 @@ Before opening a pull request (PR), express your interest and get feedback by:
 This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
 
 ### PR expectations
-
-When opening a PR, include the following in your description:
-
-- **Motivation**: why the change is needed.
-- **What changed**: short summary of the functional or documentation changes.
-- **How to test**:
-make
-cd tests/smoke/<new-or-updated-test>
-../../sipnet -i sipnet.in
-
-- **Related issues**: link the issue(s) that motivated the change (use `Fixes #123` when appropriate).
-- **Checklist**: ensure the PR includes tests (if code changes), documentation updates (if applicable), and an entry in `docs/CHANGELOG.md` for noteworthy changes.
-
-Prior to merging a PR, it must:
-- Include tests for new features
-- Include documentation updates to reflect changes to functionality.
-- Update CHANGELOG with any user-visible changes.
-- Pass tests.
-- Be approved by at least one maintainer.
+kindly refer to this [PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md) for PR template
   
 ## Code Format & Style
 

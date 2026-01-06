@@ -340,7 +340,7 @@ typedef struct Parameters {
   // autotrophic respiration:
   // growth resp. as fraction of (GPP - woodResp - folResp)
   // Note: that comment may not be correct, growthResp is calc'd as
-  //       (mean GPP) * (growtheRespFrac)
+  //       (mean GPP) * (growthRespFrac)
   //       with no correction for woodResp or folResp
   double growthRespFrac;
 
@@ -361,11 +361,26 @@ typedef struct Parameters {
   // Initial soil mineral nitrogen pool amount, g N * m^-2 ground area
   double minNInit;
 
+  // Initial soil organic nitrogen pool amount, g N * m^-2 ground area
+  double soilOrgNInit;
+
+  // Initial litter organic nitrogen pool amount, g N * m^-2 ground area
+  double litterOrgNInit;
+
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
-  // Fraction of mineral N lost to leaching per day
+  // Fraction of mineral N available to be leached, unitless
   double nLeachingFrac;
+
+  // C:N ratio for leaves, assumed static, g C/g N
+  double leafCN;
+
+  // C:N ratio for wood (and coarse roots), assumed static, g C/g N
+  double woodCN;
+
+  // C:N ratio for fine roots, assumed static, g C/g N
+  double rootCN;
 
 } Params;
 
@@ -389,7 +404,7 @@ typedef struct Environment {
 
   ///// From [2] Sacks et al. 2006
   // carbon in litter (g C * m^-2 ground area)
-  double litter;
+  double litterC;
   // snow pack (cm water equiv.)
   double snow;
 
@@ -404,8 +419,13 @@ typedef struct Environment {
   double microbeC;
 
   ///// From [5] LeBauer et al. (unpublished)
-  // soil mineral nitrogen pool (g C m^-2 ground area)
+  // soil mineral nitrogen pool (g N m^-2 ground area)
+  // (really, soil+litter, we only have one mineral N pool)
   double minN;
+  // soil organic nitrogen pool (g N m^-2 ground area)
+  double soilOrgN;
+  // litter (organic) nitrogen pool (g N m^-2 ground area)
+  double litterN;
 } Envi;
 
 // Global var
@@ -503,13 +523,15 @@ typedef struct FluxVars {
 
   // Microbes [3]
   // microbes on: microbial maintenance respiration rate
-  // microbes off: equivalent to rSoil, calc'd as described in [1], eq (A20)
   // (g C m-2 ground area day^-1)
-  double maintRespiration;
+  double microbeMaintRespiration;
   // Flux that microbes remove from soil (mg C g soil day)
   // TBD I highly doubt those units; this is calc'd as
   //     (g C * m-2) * (day-1) * (unitless terms)
   double microbeIngestion;
+  // microbes off: soil respiration equivalent to rSoil, calc'd as described in
+  // [1], eq (A20) (g C m-2 ground area day^-1)
+  double soilMaintRespiration;
   // Exudates into the soil
   double soilPulse;
 
@@ -532,9 +554,17 @@ typedef struct FluxVars {
   //
 
   // Mineral N lost to volatilization
+  // g N * m^-2 ground area * day^-1
   double nVolatilization;
   // Mineral N lost to leaching
+  // g N * m^-2 ground area * day^-1
   double nLeaching;
+  // Organic N flux for the soil organic N pool
+  // g N * m^-2 ground area * day^-1
+  double nOrgSoil;
+  // Organic N flux for the litter N pool
+  // g N * m^-2 ground area * day^-1
+  double nOrgLitter;
 
   // ****************************************
   // Fluxes for event handling
@@ -557,6 +587,8 @@ typedef struct FluxVars {
   double eventLitterC;
   // nitrogen added to soil mineral N pool
   double eventMinN;
+  // nitrogen added to litter N pool (if used) or soil N pool (if not)
+  double eventOrgN;
 } Fluxes;
 
 // Global var

@@ -9,20 +9,20 @@
    largely based on PnET
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "common/context.h"
 #include "common/exitCodes.h"
 #include "common/logging.h"
 #include "common/util.h"
 
-#include "sipnet.h"
 #include "events.h"
 #include "outputItems.h"
 #include "runmean.h"
+#include "sipnet.h"
 #include "state.h"
 
 #define C_WEIGHT 12.0  // molecular weight of carbon
@@ -387,9 +387,14 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
 
   // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
-    initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
-    initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
-    initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "soilOrgNInit", &(params.soilOrgNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "litterOrgNInit", &(params.litterOrgNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "leafCN", &(params.leafCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "woodCN", &(params.woodCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "rootCN", &(params.rootCN), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -407,12 +412,13 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 void outputHeader(FILE *out) {
   fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; "
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
-  fprintf(out, "year day time plantWoodC plantLeafC woodCreation ");
-  fprintf(out, "soil microbeC coarseRootC fineRootC ");
-  fprintf(out, "litter soilWater soilWetnessFrac snow ");
-  fprintf(out,
-          "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-          "evapotranspiration fluxestranspiration minN n2oFlux nLeachFlux\n");
+  fprintf(out, "year day  time plantWoodC plantLeafC woodCreation     ");
+  fprintf(out, "soil microbeC coarseRootC fineRootC   ");
+  fprintf(out, "litter soilWater soilWetnessFrac     snow      ");
+  fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
+               "rRoot       ra       rh     rtot evapotranspiration ");
+  fprintf(out, "fluxestranspiration     minN  soilOrgN litterN   n2oFlux "
+               "nLeachFlux\n");
 }
 
 /*!
@@ -424,20 +430,21 @@ void outputHeader(FILE *out) {
  */
 void outputState(FILE *out, int year, int day, double time) {
 
-  fprintf(out, "%4d %3d %5.2f %8.2f %8.2f %8.2f ", year, day, time,
+  fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
           envi.plantWoodC, envi.plantLeafC, trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%8.2f ", envi.microbeC);
-  fprintf(out, "%8.2f %8.2f", envi.coarseRootC, envi.fineRootC);
-  fprintf(out, " %8.2f %8.2f %8.3f %8.2f ", envi.litter, envi.soilWater,
+  fprintf(out, "%11.2f %9.2f", envi.coarseRootC, envi.fineRootC);
+  fprintf(out, " %8.2f %9.2f %15.3f %8.2f ", envi.litterC, envi.soilWater,
           trackers.soilWetnessFrac, envi.snow);
-  fprintf(out,
-          "%8.2f %8.2f %8.2f %8.2f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.8f "
-          "%8.4f %8.3f %8.6f %8.4f\n",
-          trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
-          trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
-          trackers.rh, trackers.rtot, trackers.evapotranspiration,
-          fluxes.transpiration, envi.minN, fluxes.nVolatilization,
+  fprintf(
+      out,
+      "%8.2f %8.2f %8.2f %8.2f %12.3f %8.3f %8.3f %8.3f %8.3f %8.3f %18.8f ",
+      trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
+      trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
+      trackers.rh, trackers.rtot, trackers.evapotranspiration);
+  fprintf(out, "%19.4f %8.3f %9.4f %10.4f %9.6f %10.4f\n", fluxes.transpiration,
+          envi.minN, envi.soilOrgN, envi.litterN, fluxes.nVolatilization,
           fluxes.nLeaching);
 }
 
@@ -1082,18 +1089,18 @@ double calcTempEffect(double tsoil) {
  */
 void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
-  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
-  // case, need to dig in. With that said...
+  double moistEffect = calcMoistEffect(water, whc);
 
-  if (!ctx.microbes) {
-    double moistEffect = calcMoistEffect(water, whc);
+  // :: from [1], remainder of eq (A20)
+  // See calcMoistEffect() for first part of eq (A20) calculation
+  double tempEffect = calcTempEffect(tsoil);
 
-    // :: from [1], remainder of eq (A20)
-    // See calcMoistEffect() for first part of eq (A20) calculation
-    double tempEffect = calcTempEffect(tsoil);
+  // Effects of tillage, if any
+  double tillageEffect = 1 + eventTrackers.d_till_mod;
 
-    // Effects of tillage, if any
-    double tillageEffect = 1 + eventTrackers.d_till_mod;
+  // Put it all together!
+  fluxes.soilMaintRespiration = envi.soil * params.baseSoilResp * moistEffect *
+                                tempEffect * tillageEffect;
 
     // Put it all together!
     fluxes.maintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
@@ -1135,12 +1142,19 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
     // respiration is determined by microbe biomass
     // :: from [4], eq (5.12) with addition of moisture effect
     // [TAG:UNKNOWN_PROVENANCE]  moistEffect
-    tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
-    fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
+    tempEffect = pow(params.microbeQ10, tsoil / 10);
+    fluxes.microbeMaintRespiration =
+        envi.microbeC * params.baseMicrobeResp * moistEffect * tempEffect;
+
+    // rSoil is maintenance respiration + growth (microbe) respiration
+    // :: from [4], eq (5.10) for microbe term
+    fluxes.rSoil = fluxes.microbeMaintRespiration +
+                   (1 - params.efficiency) * fluxes.microbeIngestion;
 
   } else {
     fluxes.microbeIngestion = 0.0;
     fluxes.soilPulse = 0.0;
+    fluxes.microbeMaintRespiration = 0.0;
     // fluxes.maintRespiration is otherwise set, do not set to zero here
   }
 }
@@ -1151,7 +1165,7 @@ void calcLitterFluxes() {
     double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
     // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
     double litterBreakdown =
-        envi.litter * params.litterBreakdownRate * tempEffect * moistEffect;
+        envi.litterC * params.litterBreakdownRate * tempEffect * moistEffect;
 
     fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
@@ -1241,6 +1255,33 @@ void calcNLeachingFlux() {
   fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
 }
 
+/**
+ * Calculate organic nitrogen fluxes
+ */
+void calcOrgNFluxes() {
+  double litterCN, soilCN;
+  // for both litter and soil, mineralization is calculated as heterotrophic
+  // respiration divided by the C:N ratio of that pool.
+
+  // litter
+  // The litter org N flux is determined by the carbon fluxes from wood and leaf
+  // litter, and N loss due to mineralization. N added via fertilization
+  // is handled elsewhere.
+  litterCN = envi.litterC / (envi.litterN + TINY);
+  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
+                      fluxes.woodLitter / params.woodCN -
+                      fluxes.rLitter / litterCN;
+
+  // soil
+  // The soil org N flux is determined by the carbon flux from the litter pool,
+  // carbon fluxes from roots, and N loss due to mineralization
+  // (Note: woodCN is used for coarse roots)
+  soilCN = envi.soilC / (envi.soilOrgN + TINY);
+  fluxes.nOrgSoil = fluxes.litterToSoil / litterCN - fluxes.rSoil / soilCN +
+                    fluxes.fineRootLoss / params.rootCN +
+                    fluxes.coarseRootLoss / params.woodCN;
+}
+
 /*!
  * Calculate flux terms for sipnet as part of main model flow
  *
@@ -1305,11 +1346,14 @@ void calculateFluxes(void) {
   }
 
   // Nitrogen cycle
+  //
+  // Many of the nitrogen fluxes depend on carbon flux calculations, so make
+  // sure this stays at the bottom of this function (or after the carbon calcs,
+  // at least).
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
-    // Leaching depends on drainage flux so makes sure calcNLeachingFlux
-    // occurs after calcSoilWaterFluxes
     calcNLeachingFlux();
+    calcOrgNFluxes();
   }
 }
 
@@ -1373,7 +1417,7 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.plantLeafC), 0);
 
   if (ctx.litterPool) {
-    ensureNonNegative(&(envi.litter), 0);
+    ensureNonNegative(&(envi.litterC), 0);
   }
 
   ensureNonNegative(&(envi.soilC), 0);
@@ -1389,6 +1433,11 @@ void ensureNonNegativeStocks(void) {
      if snow < TINY, then it was really supposed to be 0, but isn't because of
      rounding errors.*/
   ensureNonNegative(&(envi.snow), TINY);
+
+  // Nitrogen cycle stocks
+  ensureNonNegative(&(envi.minN), 0);
+  ensureNonNegative(&(envi.soilOrgN), 0);
+  ensureNonNegative(&(envi.litterN), 0);
 }
 
 // update trackers at each time step
@@ -1559,19 +1608,14 @@ void updatePoolsForSoil(void) {
     // ::      eq (5.11) used for soilPulse, and
     // ::      eq (5.12) used for maintRespiration
     envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
-                      fluxes.maintRespiration) *
+                      fluxes.microbeMaintRespiration) *
                      climate->length;
-
-    // rSoil is maintenance resp + growth (microbe) resp
-    // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil =
-        fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // :: from [2], litter model description
-      envi.litter += (fluxes.woodLitter + fluxes.leafLitter -
-                      fluxes.litterToSoil - fluxes.rLitter) *
-                     climate->length;
+      envi.litterC += (fluxes.woodLitter + fluxes.leafLitter -
+                       fluxes.litterToSoil - fluxes.rLitter) *
+                      climate->length;
 
       // from [2] and [3], litter and root terms respectively
       envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
@@ -1596,9 +1640,22 @@ void updatePoolsForSoil(void) {
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss - fluxes.rFineRoot) *
       climate->length;
+}
 
+void updateNitrogenPools(void) {
   // Nitrogen Cycle
+  // :: from [5], nitrogen cycle model
+  // TBD: add equation numbers once published
+
+  // Soil mineral N (note we have one mineral pool for soil+litter)
+  // Mineral N additions from fertilization are handled with the events
   envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
+
+  // Soil organic N
+  envi.soilOrgN += fluxes.nOrgSoil * climate->length;
+
+  // Litter organic N
+  envi.litterN += fluxes.nOrgLitter * climate->length;
 }
 
 // !!! main runner function !!!
@@ -1628,6 +1685,9 @@ void updateState(void) {
 
   // Update soil carbon pools
   updatePoolsForSoil();
+
+  // Update nitrogen cycle pools
+  updateNitrogenPools();
 
   // Update pools for fluxes from events
   updatePoolsForEvents();
@@ -1714,10 +1774,10 @@ void setupModel(void) {
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
 
   if (ctx.litterPool) {
-    envi.litter = params.litterInit;
+    envi.litterC = params.litterInit;
   } else {
     // Don't set a value if the litter pool is off
-    envi.litter = 0.0;
+    envi.litterC = 0.0;
   }
   envi.soilC = params.soilInit;
 
@@ -1757,8 +1817,12 @@ void setupModel(void) {
 
   if (ctx.nitrogenCycle) {
     envi.minN = params.minNInit;
+    envi.soilOrgN = params.soilOrgNInit;
+    envi.litterN = params.litterOrgNInit;
   } else {
     envi.minN = 0.0;
+    envi.soilOrgN = 0.0;
+    envi.litterN = 0.0;
   }
 
   climate = firstClimate;
