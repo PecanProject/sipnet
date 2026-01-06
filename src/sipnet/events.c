@@ -32,11 +32,11 @@ static FILE *eventOutFile = NULL;
 
 EventNode *createEventNode(int year, int day, int eventType,
                            const char *eventParamsStr) {
+  static int nitrogenWarned = 0;
   EventNode *newEvent = (EventNode *)malloc(sizeof(EventNode));
   newEvent->year = year;
   newEvent->day = day;
   newEvent->type = eventType;
-  static int nitrogenWarned = 0;
 
   switch (eventType) {
     case HARVEST: {
@@ -453,9 +453,7 @@ void processEvents(void) {
           fluxes.eventMinN += minN / climLen;
         } else {
           // As the warning says in readEventData(), we ignore N when the
-          // nitrogen cycle model is off
-          fluxes.eventOrgN += 0;
-          fluxes.eventMinN += 0;
+          // nitrogen cycle model is off, so no update needed
         }
 
         writeEventOut(gEvent, 3, "fluxes.eventOrgN", orgN / climLen,
@@ -479,9 +477,9 @@ void updatePoolsForEvents(void) {
 
   // Harvest and fertilization events
   if (ctx.litterPool) {
-    envi.litter += fluxes.eventLitterC * climate->length;
+    envi.litterC += fluxes.eventLitterC * climate->length;
   } else {
-    envi.soil += fluxes.eventLitterC * climate->length;
+    envi.soilC += fluxes.eventLitterC * climate->length;
   }
 
   // Harvest and planting events
@@ -498,7 +496,7 @@ void updatePoolsForEvents(void) {
   // Note: litter_pool is required for nitrogen_cycle
   if (ctx.nitrogenCycle) {
     envi.minN += fluxes.eventMinN * climate->length;
-    envi.litterOrgN += fluxes.eventOrgN * climate->length;
+    envi.litterN += fluxes.eventOrgN * climate->length;
   }
 }
 

@@ -374,13 +374,13 @@ typedef struct Parameters {
   double nLeachingFrac;
 
   // C:N ratio for leaves, assumed static, g C/g N
-  double leafCNRatio;
+  double leafCN;
 
   // C:N ratio for wood (and coarse roots), assumed static, g C/g N
-  double woodCNRatio;
+  double woodCN;
 
   // C:N ratio for fine roots, assumed static, g C/g N
-  double rootCNRatio;
+  double rootCN;
 
 } Params;
 
@@ -398,13 +398,13 @@ typedef struct Environment {
   // carbon in leaves (g C * m^-2 ground area)
   double plantLeafC;
   // carbon in soil (g C * m^-2 ground area)
-  double soil;
+  double soilC;
   // plant available soil water (cm)
   double soilWater;
 
   ///// From [2] Sacks et al. 2006
   // carbon in litter (g C * m^-2 ground area)
-  double litter;
+  double litterC;
   // snow pack (cm water equiv.)
   double snow;
 
@@ -424,8 +424,8 @@ typedef struct Environment {
   double minN;
   // soil organic nitrogen pool (g N m^-2 ground area)
   double soilOrgN;
-  // litter organic nitrogen pool (g N m^-2 ground area)
-  double litterOrgN;
+  // litter (organic) nitrogen pool (g N m^-2 ground area)
+  double litterN;
 } Envi;
 
 // Global var

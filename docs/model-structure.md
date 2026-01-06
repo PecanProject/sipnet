@@ -291,11 +291,12 @@ $$
 CN_j = \frac{C_j}{N_j}, \qquad j \in \{\text{soil, litter}\}.
 $$
 
-This is used to calculate C:N-dependency $D_{CN}$ used in Eq. \eqref{eq:cn_dep}.
+This is used to calculate C:N-dependency $D_{CN}$ in Eq. \eqref{eq:cn_dep}.
 
 ### $\frak{C:N \ Dependency \ Function \ (D_{CN})}$
 
-To represent the influence of substrate quality on decomposition rate ($R_H$, \eqref{eq:rh}), we add a simple dependency function $D_{CN}$.
+To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
+This term is used in calculation of heterotrophic respiration in Eq. \eqref{eq:rh}.
 
 $$
   D_{CN} = \frac{1}{1+k_{CN} \cdot CN} \tag{11}\label{eq:cn_dep}
@@ -670,10 +671,10 @@ Lets start with a two-parameter Beta function covering the range $50 < f_{\text{
 **Beta function**
 
 $$
-D_{\mathrm{moistur,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
+D_{\text{water,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
 $$
 
-Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maiximum and width.
+Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maximum and width.
 
 For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.
 

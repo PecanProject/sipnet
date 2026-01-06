@@ -200,7 +200,7 @@ void validateContext(void) {
   }
 
   if (ctx.nitrogenCycle && !ctx.litterPool) {
-    logError("nitrogen-cycle require litter-pool to be turned on\n");
+    logError("nitrogen-cycle requires litter-pool to be turned on\n");
     hasError = 1;
   }
 
