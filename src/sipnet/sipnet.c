@@ -449,7 +449,7 @@ void outputState(FILE *out, int year, int day, double time) {
 }
 
 // de-allocate space used for climate linked list
-void freeClimateList() {
+void freeClimateList(void) {
   ClimateNode *curr, *prev;
 
   curr = firstClimate;
@@ -1098,18 +1098,12 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
   // Effects of tillage, if any
   double tillageEffect = 1 + eventTrackers.d_till_mod;
 
-  // Put it all together!
-  fluxes.soilMaintRespiration = envi.soil * params.baseSoilResp * moistEffect *
+  // Put it all together: maintenance respiration when microbes are OFF.
+  fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
                                 tempEffect * tillageEffect;
 
-    // Put it all together!
-    fluxes.maintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
-                              tempEffect * tillageEffect;
-
-    // With no microbes, rSoil flux is just the maintenance respiration
-    fluxes.rSoil = fluxes.maintRespiration;
-  }
-  // else fluxes.rSoil = 0.0?
+  // With no microbes, rSoil flux is just the maintenance respiration
+  fluxes.rSoil = fluxes.soilMaintRespiration;
 }
 
 /*!
@@ -1159,7 +1153,7 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
   }
 }
 
-void calcLitterFluxes() {
+void calcLitterFluxes(void) {
   if (ctx.litterPool) {
     double tempEffect = calcTempEffect(climate->tsoil);
     double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
@@ -1229,7 +1223,7 @@ double calcRootAndWoodFluxes(void) {
 /*!
  * Calculate mineral N volatilization flux
  */
-void calcNVolatilizationFlux() {
+void calcNVolatilizationFlux(void) {
   // flux = k_vol * nMin * Dtemp * Dwater
   // Note k_vol is in units of day^-1, so we do not need to divide
   // by climate length to make this a flux
@@ -1243,7 +1237,7 @@ void calcNVolatilizationFlux() {
 /*!
  * Calculate mineral N leaching flux
  */
-void calcNLeachingFlux() {
+void calcNLeachingFlux(void) {
   double phi;
   // phi is (drainage / soilWHC) between 0 and 1
   if ((fluxes.drainage / params.soilWHC) < 1) {
@@ -1258,7 +1252,7 @@ void calcNLeachingFlux() {
 /**
  * Calculate organic nitrogen fluxes
  */
-void calcOrgNFluxes() {
+void calcOrgNFluxes(void) {
   double litterCN, soilCN;
   // for both litter and soil, mineralization is calculated as heterotrophic
   // respiration divided by the C:N ratio of that pool.
@@ -1534,7 +1528,7 @@ void updateMeanTrackers(void) {
 /*!
  * Update the main pools, leafC, woodC, soil and snow
  */
-void updateMainPools() {
+void updateMainPools(void) {
   // Update the stocks, with fluxes adjusted for length of time step.
   // Notes:
   // - GPP shows up twice (direct + via NPP --> woodCreation), but
@@ -1619,8 +1613,8 @@ void updatePoolsForSoil(void) {
 
       // from [2] and [3], litter and root terms respectively
       envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                    fluxes.litterToSoil - fluxes.rSoil) *
-                   climate->length;
+                     fluxes.litterToSoil - fluxes.rSoil) *
+                    climate->length;
     } else {
       // Normal pool (single pool, no microbes)
       // :: from [1] (and others, TBD), eq (A3), where:
@@ -1629,8 +1623,8 @@ void updatePoolsForSoil(void) {
       //     R_h = fluxes.rSoil
       // :: from [3], root terms
       envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                    fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
-                   climate->length;
+                     fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
+                    climate->length;
     }
   }
   // :: from [3], root model description
@@ -1879,7 +1873,7 @@ void initModel(ModelParams **modelParams, const char *paramFile,
 }
 
 // See sipnet.h
-void cleanupModel() {
+void cleanupModel(void) {
   freeClimateList();
 
   deallocateMeanTracker(meanNPP);
