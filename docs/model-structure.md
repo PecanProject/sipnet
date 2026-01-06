@@ -283,11 +283,12 @@ $$
 CN_j = \frac{C_j}{N_j}, \qquad j \in \{\text{soil, litter}\}.
 $$
 
-This is used to calculate C:N-dependency $D_{CN}$ used in Eq. \eqref{eq:cn_dep}.
+This is used to calculate C:N-dependency $D_{CN}$ in Eq. \eqref{eq:cn_dep}.
 
 ### $\frak{C:N \ Dependency \ Function \ (D_{CN})}$
 
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
+This term is used in calculation of heterotrophic respiration in Eq. \eqref{eq:rh}.
 
 $$
   D_{CN} = \frac{1}{1+k_CN \cdot CN} \tag{11}\label{eq:cn_dep}
