@@ -1253,7 +1253,7 @@ void calcNLeachingFlux(void) {
 /**
  * Calculate organic nitrogen fluxes
  */
-void calcOrgNFluxes() {
+void calcOrgNFluxes(void) {
   double litterCN, soilCN;
   // for both litter and soil, mineralization is calculated as heterotrophic
   // respiration divided by the C:N ratio of that pool.
