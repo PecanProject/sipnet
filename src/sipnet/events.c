@@ -292,7 +292,7 @@ void writeEventOut(EventNode *oneEvent, int numParams, ...) {
   va_end(args);
 }
 
-void closeEventOutFile() {
+void closeEventOutFile(void) {
   if (eventOutFile) {
     fclose(eventOutFile);
   }
@@ -305,7 +305,7 @@ void initEvents(char *eventFile, int printHeader) {
   }
 }
 
-void setupEvents() { gEvent = gEvents; }
+void setupEvents(void) { gEvent = gEvents; }
 
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;
