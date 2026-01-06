@@ -19,8 +19,10 @@ EVENTS = 0
 GDD = 0
 ! Use growing degree days to determine leaf growth
 
-MICROBES = 1
+MICROBES = 0
 ! Enable microbe modeling
+
+
 
 SNOW = 0
 ! Keep track of snowpack, rather than assuming all precipitation is liquid
