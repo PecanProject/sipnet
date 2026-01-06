@@ -183,9 +183,9 @@ F^C_\text{litter} - F^C_{\text{decomp}}
 $$
 
 Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass into the litter pool through senescence, harvest transfer, and organic matter additions \eqref{eq:litter_flux}. Belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
-$F^C_{\text{decomp,litter}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and decomposition \eqref{eq:decomp_carbon}.
+$F^C_{\text{decomp}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and respiration \eqref{eq:decomp_carbon}.
 
-The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter ammendments:
+The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 $$
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
@@ -344,7 +344,7 @@ The change in soil nitrogen over time, $N_\text{org,soil}$ is determined by inpu
 $$
   \frac{dN_\text{org,soil}}{dt} =
   \sum_{j} F^N_{\text{soil,}j} +
-   F^N_\text{litter} - 
+   F^N_\text{soil} - 
    F^N_\text{soil,min} \tag{14}\label{eq:org_soil_dndt}
 $$
 
@@ -352,8 +352,9 @@ $$\small j \in \{\text{fine root, coarse root}\}$$
 
 $F^N_{\text{soil,}j}$ are organic nitrogen inputs to soil from belowground plant turnover and harvest
 transfers of belowground biomass. 
-$F^N_{\text{litter}}$ is the organic nitrogen transferred from litter to soil (calculated from
+$F^N_{\text{soil}}$ is the organic nitrogen transferred from litter to soil (calculated from
 $F^C_{\text{soil}}$ in Eq. \ref{eq:soil_carbon} based on litter C:N.
+$F^N_\text{soil,min}$ is the flux from soil organic N to soil mineral N. 
 
 ### Soil Mineral Nitrogen $N_\text{min}$
 
@@ -748,7 +749,7 @@ $$
 This amount is then added to the litter flux in equation \ref{eq:litter_flux}.
 
 Belowground harvest transfers are routed directly to the soil carbon pool and are therefore included in
-$F^C_{\text{soil}}$ in Eq. \ref{eq:A3}).
+$F^C_{\text{soil}}$ in Eq. \ref{eq:A3}.
 
 ### Irrigation
 
