@@ -184,6 +184,12 @@ void validateFilename(void) {
 void validateContext(void) {
   int hasError = 0;
 
+  if (ctx.microbes) {
+    logError("MICROBES option is deprecated and unsupported; please set "
+             "MICROBES=0\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
   if (ctx.soilPhenol && ctx.gdd) {
     logError("soil-phenol and gdd may not both be turned on\n");
     hasError = 1;
