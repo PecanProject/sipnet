@@ -175,7 +175,7 @@ a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling f
 
 ### Litter Carbon
 
-The change in the litter carbon pool over time is defined by the input of new litter and the loss to decomposition:
+The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition:
 
 $$
 \frac{dC_\text{litter}}{dt} =
@@ -183,9 +183,10 @@ F^C_\text{litter} - F^C_{\text{decomp}}
 $$
 
 Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass into the litter pool through senescence, harvest transfer, and organic matter additions \eqref{eq:litter_flux}. Belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
-$F^C_{\text{decomp}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and respiration \eqref{eq:decomp_carbon}.
+$F^C_{\text{decomp}}$ is the total litter decomposition flux, representing the rate at which litter carbon is processed by microbial activity.
 
 The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
+
 $$
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
@@ -202,56 +203,68 @@ $$\small i \in \{\text{leaf, wood}\}$$
 
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.
 
-The decomposition flux from litter carbon is divided into heterotrophic respiration and carbon transfer to soil:
+Litter decomposition is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
 
 $$
-F^C_{\text{decomp}} = R_{H,\text{litter}} + F^C_{\text{soil}} \tag{4}\label{eq:decomp_carbon}
+F^C_{\text{decomp}} =
+K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H}
+\tag{4a}\label{eq:decomp_rate}
 $$
 
-Where $R_{H_{\text{litter}}}$ is heterotrophic respiration from litter \eqref{eq:rh_litter}, and $F^C_{\text{soil}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is based on the fraction of litter that is respired, $f_{R_H}$.
+The products of litter decomposition are partitioned between heterotrophic respiration and transfer of carbon to the soil pool:
 
 $$
-R_{H_{\text{litter}}} = f_{R_H} \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{5}\label{eq:rh_litter}
+F^C_{\text{decomp}} = R_{\text{litter}} + F^C_{\text{soil}} \tag{4b}\label{eq:decomp_carbon}
 $$
 
+Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:rh_litter}, and $F^C_{\text{soil}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
+
 $$
-F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{6}\label{eq:soil_carbon}
+R_{\text{litter}} = f_{\text{litter}} \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{5}\label{eq:rh_litter}
 $$
 
-The rate of decomposition is a function of the litter carbon content and the decomposition rate $K_{\text{litter}}$ modified by temperature and moisture factors. $f_{R_H}$ is the fraction of litter carbon that is respired.
+The remainder of the decomposed litter carbon is transferred to the soil pool:
+
+$$
+F^C_{\text{soil}} =
+ (1 - f_{\text{litter}}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H}
+\tag{6}\label{eq:soil_carbon}
+$$
+
+The total litter decomposition rate is a function of litter carbon content and the decomposition rate $K_{\text{litter}}$, modified by temperature and moisture factors. The parameter $f_{\text{litter}}$ specifies the fraction of decomposed litter carbon released as heterotrophic respiration.
 
 ### Soil Carbon
 
+The change in the soil organic carbon (SOC) pool over time is determined by: (i) inputs of carbon transferred from litter during decomposition, (ii) direct inputs from belowground plant turnover, and (iii) losses of carbon due to heterotrophic respiration:
+
 $$
-\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} \tag{Braswell A3}\label{eq:A3}
 $$
 
-The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined by 
-(i) the transfer of decomposed litter carbon to soil, 
-(ii) belowground plant turnover routed directly to soil, and 
-(iii) the loss of carbon to heterotrophic respiration. 
+Accordingly, $F^C_{\text{soil}}$ represents the total carbon input to the soil pool and includes
+(i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
+(ii) direct inputs from belowground plant turnover.
 
 SIPNET assumes no loss of SOC to leaching or erosion.
 
-Accordingly, $F^C_{\text{soil}}$ includes both (i) litter-to-soil carbon transfer \eqref{eq:soil_carbon} and
-(ii) direct inputs from belowground plant turnover.
+### Heterotrophic Respiration $(C_\text{soil,litter} \rightarrow \text{CO}_2)$
 
-### Heterotrophic Respiration $(C_\text{soil,litter} \rightarrow CO_2)$
-
-Total heterotrophic respiration is the sum of respiration from soil and litter pools:
+Total heterotrophic respiration, $R_H$, is a derived flux defined as the sum of heterotrophic respiration from soil and litter pools:
 
 $$
-R_{H} = f_{R_H} \cdot 
-  \left(\sum_j  K_j \cdot C_j 
-    \right) \cdot 
-    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \cdot D_{\text{tillage}}
+R_H = R_{\text{soil}} + R_{\text{litter}}
     \tag{7}\label{eq:rh}
 $$
 
-$$\small j \in \{\text{soil, litter}\}$$
+Where the litter and soil components are defined above in Eqs. \ref{eq:rh_litter} and \ref{eq:soil_carbon}.
 
+Where heterotrophic respiration from a given pool is a function of the pool's carbon content,
+its associated decomposition rate, and modifying functions for temperature, moisture,
+substrate quality (CN), and tillage.
 
-Where heterotrophic respiration, $R_H$, is a function of each carbon pool $C_j$ and its associated decomposition rate $K_{C_j}$ adjusted by the fraction allocated to respiration, $f_{R_H}$, and the temperature, moisture, tillage, and _CN_ dependency  $(D_\star)$ functions.
+In the case of litter, the fraction $f_{\text{litter}}$ partitions litter decomposition
+into heterotrophic respiration and transfer of carbon to the soil pool
+(Eq. \ref{eq:decomp_carbon}), as defined in the Litter Carbon section.
 
 ### $\frak{Methane \ Production \ (C \rightarrow CH_4)}$
 
