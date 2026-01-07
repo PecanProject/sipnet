@@ -237,12 +237,25 @@ $$
 The change in the soil organic carbon (SOC) pool over time is determined by: (i) inputs of carbon transferred from litter during decomposition, (ii) direct inputs from belowground plant turnover, and (iii) losses of carbon due to heterotrophic respiration:
 
 $$
-\frac{dC_\text{soil}}{dt} = F^C_{\text{soil,litter}} - R_{\text{soil}} \tag{Braswell A3}\label{eq:A3}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} \tag{Braswell A3}\label{eq:A3}
 $$
 
-Accordingly, $F^C_{\text{soil}}$ represents the total carbon input to the soil pool and includes
+$F^C_{\text{soil}}$ represents the total carbon input to the soil pool and includes
 (i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
-(ii) direct inputs from belowground plant turnover.
+(ii) direct inputs from root turnover.
+
+Soil heterotrophic respiration is modeled as a first-order process proportional
+to soil organic carbon content and modified by environmental and management factors:
+
+$$
+R_{\text{soil}} =
+  K_{\text{soil}} \cdot C_{\text{soil}} \cdot
+  D_{\text{temp}} \cdot
+  D_{\text{water},R_H} \cdot
+  D_{CN} \cdot
+  D_{\text{tillage}}
+\label{eq:r_soil}
+$$
 
 SIPNET assumes no loss of SOC to leaching or erosion.
 
@@ -255,7 +268,7 @@ R_H = R_{\text{soil}} + R_{\text{litter}}
     \tag{7}\label{eq:rh}
 $$
 
-Where the litter and soil components are defined above in Eqs. \ref{eq:rh_litter} and \ref{eq:soil_carbon}.
+Where the litter and soil components are defined above in Eqs. \ref{eq:r_litter} and \ref{eq:soil_carbon}.
 
 Where heterotrophic respiration from a given pool is a function of the pool's carbon content,
 its associated decomposition rate, and modifying functions for temperature, moisture,
