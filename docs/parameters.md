@@ -126,7 +126,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 |     | Symbol                            | Name | Description                            | Units | Notes                                            |
 | --- | --------------------------------- | ---- | -------------------------------------- | ----- | ------------------------------------------------ |
-|     | $CN_{\textrm{wood, coarse root}}$ |      | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
+|     | $CN_{\textrm{wood}}$ |      | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
 |     | $CN_{\textrm{leaf}}$              |      | Carbon to Nitrogen ratio of leaves     |       |                                                  |
 |     | $CN_{\textrm{fine root}}$         |      | Carbon to Nitrogen ratio of fine roots |       |                                                  |
 |     | $k_\textit{CN}$                   |      | Decomposition CN scaling parameter     |       |                                                  |
