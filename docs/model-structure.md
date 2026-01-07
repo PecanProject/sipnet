@@ -188,7 +188,7 @@ $F^C_{\text{decomp}}$ is the total litter decomposition flux, representing the r
 The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 
 $$
-F^C_\text{litter,fert} = 
+F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
   \left(
     \sum_{i} F^C_{\text{harvest,transfer,}i} +
@@ -240,11 +240,15 @@ $$
 \frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} \tag{Braswell A3}\label{eq:A3}
 $$
 
-$F^C_{\text{soil}}$ represents the total carbon input to the soil pool and includes
+Total carbon input to the soil, $F^C_{\text{soil}}$, includes both
 (i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
-(ii) direct inputs from root turnover.
+(ii) inputs from root turnover:
 
-Soil heterotrophic respiration is modeled as a first-order process proportional
+$$
+F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}.
+$$
+
+Soil heterotrophic respiration, $R_{\text{soil}}$, is modeled as a first-order process proportional
 to soil organic carbon content and modified by environmental and management factors:
 
 $$
