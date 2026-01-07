@@ -9,8 +9,8 @@
 void initGeneralState(void) {
   // Static for all tests, just needs to be set once
   envi.soilWater = 5.0;
-  envi.soil = 1.5;
-  envi.litter = 1;
+  envi.soilC = 1.5;
+  envi.litterC = 1;
 
   params.minNInit = 0.0;
   params.soilWHC = 10.0;
@@ -19,9 +19,9 @@ void initGeneralState(void) {
   params.soilRespMoistEffect = 1.0;
   params.baseSoilResp = 0.06;
   params.soilRespQ10 = 2.9;
-  params.leafCNRatio = 20.0;
-  params.woodCNRatio = 100.0;
-  params.rootCNRatio = 40.0;
+  params.leafCN = 20.0;
+  params.woodCN = 100.0;
+  params.rootCN = 40.0;
 }
 
 void resetState() {
@@ -220,20 +220,20 @@ void initOrganicNState(double initLitterN, double initSoilN) {
 
   // envi
   envi.minN = 1;
-  envi.litter = 2;
-  envi.soil = 3;
-  envi.litterOrgN = initLitterN;
+  envi.litterC = 2;
+  envi.soilC = 3;
+  envi.litterN = initLitterN;
   envi.soilOrgN = initSoilN;
 
   // fluxes; these values make all terms in flux calc equal to 1 for
   // easy comparison
-  fluxes.leafLitter = params.leafCNRatio;
-  fluxes.woodLitter = params.woodCNRatio;
-  fluxes.fineRootLoss = params.rootCNRatio;
-  fluxes.coarseRootLoss = params.woodCNRatio;
-  fluxes.rLitter = envi.litter / envi.litterOrgN;
-  fluxes.litterToSoil = envi.soil / envi.soilOrgN;
-  fluxes.rSoil = envi.soil / envi.soilOrgN;
+  fluxes.leafLitter = params.leafCN;
+  fluxes.woodLitter = params.woodCN;
+  fluxes.fineRootLoss = params.rootCN;
+  fluxes.coarseRootLoss = params.woodCN;
+  fluxes.rLitter = envi.litterC / envi.litterN;
+  fluxes.litterToSoil = envi.soilC / envi.soilOrgN;
+  fluxes.rSoil = envi.soilC / envi.soilOrgN;
 }
 
 int testOrganicN(void) {

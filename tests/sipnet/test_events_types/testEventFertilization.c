@@ -8,14 +8,14 @@
 int checkOutput(double orgN, double litterC, double minN) {
   int status = 0;
   double curLitterC = 0;
-  double curOrgN = envi.litterOrgN;
+  double curOrgN = envi.litterN;
   double curMinN = envi.minN;
   if (ctx.litterPool) {
     logTest("Checking litter pool for carbon addition\n");
-    curLitterC = envi.litter;
+    curLitterC = envi.litterC;
   } else {
     logTest("Checking soil pool for carbon addition\n");
-    curLitterC = envi.soil;
+    curLitterC = envi.soilC;
     // We bumped init soil C to distinguish
     litterC += 0.5;
   }
@@ -36,11 +36,11 @@ int checkOutput(double orgN, double litterC, double minN) {
 }
 
 void initEnv(double minN, double orgN) {
-  envi.soil = 1.5;
-  envi.litter = 1;
+  envi.soilC = 1.5;
+  envi.litterC = 1;
   envi.minN = minN;
   envi.soilOrgN = 0;
-  envi.litterOrgN = orgN;
+  envi.litterN = orgN;
 }
 
 int run(void) {
