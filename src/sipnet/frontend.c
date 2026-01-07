@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #include "common/context.h"
 #include "common/exitCodes.h"
@@ -200,7 +201,7 @@ int main(int argc, char *argv[]) {
   runModelOutput(out, outputItems, ctx.printHeader);
 
   // 8. Cleanup
-  if (ctx.doMainOutput) {
+  if (ctx.doMainOutput && out != NULL) {
     fclose(out);
   }
 
