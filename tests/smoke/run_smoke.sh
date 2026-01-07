@@ -143,7 +143,8 @@ if  [ "$skip_count" -gt 0 ]; then
 fi
 
 if [ "$sipnet_fail_count" -gt 0 ] || [ "$event_fail_count" -gt 0 ] || [ "$config_fail_count" -gt 0 ]; then
-    echo "Some outputs have changed. This is expected with some changes to SIPNET. When this happens, assess correctness and then update the reference output files. See the report above for details."
+    echo "Some outputs have changed. This is expected with some changes to SIPNET. When this happens
+, assess correctness and then update the reference output files. See the report above for details."
     (( exit_code |= 1))
 fi
 
