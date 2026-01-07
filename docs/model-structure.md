@@ -188,7 +188,7 @@ $F^C_{\text{decomp}}$ is the total litter decomposition flux, representing the r
 The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 
 $$
-F^C_\text{litter} = 
+F^C_\text{litter,fert} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
   \left(
     \sum_{i} F^C_{\text{harvest,transfer,}i} +
@@ -214,20 +214,21 @@ $$
 The products of litter decomposition are partitioned between heterotrophic respiration and transfer of carbon to the soil pool:
 
 $$
-F^C_{\text{decomp}} = R_{\text{litter}} + F^C_{\text{soil}} \tag{4b}\label{eq:decomp_carbon}
+F^C_{\text{decomp}} = R_{\text{litter}} + F^C_{\text{soil,litter}} \tag{4b}\label{eq:decomp_carbon}
 $$
 
-Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:rh_litter}, and $F^C_{\text{soil}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
+Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:r_litter}, and $F^C_{\text{soil,litter}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
 
 $$
-R_{\text{litter}} = f_{\text{litter}} \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{5}\label{eq:rh_litter}
+R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{soil,litter}}
+\label{eq:r_litter}
 $$
 
 The remainder of the decomposed litter carbon is transferred to the soil pool:
 
 $$
-F^C_{\text{soil}} =
- (1 - f_{\text{litter}}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H}
+F^C_{\text{soil,litter}} =
+ (1 - f_{\text{litter}}) \cdot F^C_{\text{soil,litter}}
 \tag{6}\label{eq:soil_carbon}
 $$
 
@@ -238,7 +239,7 @@ The total litter decomposition rate is a function of litter carbon content and t
 The change in the soil organic carbon (SOC) pool over time is determined by: (i) inputs of carbon transferred from litter during decomposition, (ii) direct inputs from belowground plant turnover, and (iii) losses of carbon due to heterotrophic respiration:
 
 $$
-\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} \tag{Braswell A3}\label{eq:A3}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil,litter}} - R_{\text{soil}} \tag{Braswell A3}\label{eq:A3}
 $$
 
 Accordingly, $F^C_{\text{soil}}$ represents the total carbon input to the soil pool and includes
@@ -763,7 +764,7 @@ $$
 This amount is then added to the litter flux in equation \ref{eq:litter_flux}.
 
 Belowground harvest transfers are routed directly to the soil carbon pool and are therefore included in
-$F^C_{\text{soil}}$ in Eq. \ref{eq:A3}.
+$F^C_{\text{soil,roots}}$ in Eq. \ref{eq:A3}.
 
 ### Irrigation
 
