@@ -5,7 +5,6 @@ soilInit 2688.13907865276
 litterWFracInit 0.5
 soilWFracInit 0.261792101162425
 snowInit 1
-microbeInit 0.5
 fineRootFrac 0.2
 coarseRootFrac 0.2
 aMax 53.2895432752984
@@ -22,13 +21,11 @@ baseSoilResp 0.06
 baseSoilRespCold 0.015
 baseFineRootResp -0.00115163065955668
 baseCoarseRootResp 0.006
-baseMicrobeResp 0.0004
 vegRespQ10 1.48545154678972
 fineRootQ10 4.80341959232274
 coarseRootQ10 4.82091010894416
 soilRespQ10 2.9
 soilRespQ10Cold 2.9
-microbeQ10 2.3
 growthRespFrac 0.218386268943034
 E0 309
 T0 -46
@@ -69,11 +66,6 @@ leafCSpWt 62.4478060526809
 cFracLeaf 0.45136783760037
 qualityLeaf 0.7
 qualityWood 0.3
-efficiency 0.45
-maxIngestionRate 0.04
-halfSatIngestion 5000
 totNitrogen 0.02
-microbeNC 0.2
 fineRootExudation 0.01
 coarseRootExudation 0.01
-microbePulseEff 0.45
