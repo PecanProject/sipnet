@@ -211,28 +211,26 @@ K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water
 \tag{4a}\label{eq:decomp_rate}
 $$
 
-The products of litter decomposition are partitioned between heterotrophic respiration and transfer of carbon to the soil pool:
+The total litter decomposition flux is partitioned between heterotrophic respiration and transfer of carbon to the soil pool, satisfying the mass-balance relationship:
 
 $$
-F^C_{\text{decomp}} = R_{\text{litter}} + F^C_{\text{soil,litter}} \tag{4b}\label{eq:decomp_carbon}
+R_{\text{litter}} + F^C_{\text{soil,litter}} = F^C_{\text{decomp}} \tag{4b}\label{eq:decomp_carbon}
 $$
 
-Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:r_litter}, and $F^C_{\text{soil,litter}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
+Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:r_litter} and $F^C_{\text{soil,litter}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
 
 $$
-R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{soil,litter}}
-\label{eq:r_litter}
+R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{decomp}}
+\tag{5}\label{eq:r_litter}
 $$
 
 The remainder of the decomposed litter carbon is transferred to the soil pool:
 
 $$
 F^C_{\text{soil,litter}} =
- (1 - f_{\text{litter}}) \cdot F^C_{\text{soil,litter}}
+ (1 - f_{\text{litter}}) \cdot F^C_{\text{decomp}}
 \tag{6}\label{eq:soil_carbon}
 $$
-
-The total litter decomposition rate is a function of litter carbon content and the decomposition rate $K_{\text{litter}}$, modified by temperature and moisture factors. The parameter $f_{\text{litter}}$ specifies the fraction of decomposed litter carbon released as heterotrophic respiration.
 
 ### Soil Carbon
 
