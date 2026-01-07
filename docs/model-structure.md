@@ -272,7 +272,7 @@ R_H = R_{\text{soil}} + R_{\text{litter}}
     \tag{7}\label{eq:rh}
 $$
 
-Where the litter and soil components are defined above in Eqs. \ref{eq:r_litter} and \ref{eq:soil_carbon}.
+Where the litter and soil components are defined above in Eqs. \ref{eq:r_litter} and \ref{eq:r_soil}.
 
 Where heterotrophic respiration from a given pool is a function of the pool's carbon content,
 its associated decomposition rate, and modifying functions for temperature, moisture,

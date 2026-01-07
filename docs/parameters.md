@@ -124,12 +124,12 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Stoichiometry Parameters
 
-|     | Symbol                            | Name | Description                            | Units | Notes                                            |
-| --- | --------------------------------- | ---- | -------------------------------------- | ----- | ------------------------------------------------ |
-|     | $CN_{\textrm{wood, coarse root}}$ |      | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
-|     | $CN_{\textrm{leaf}}$              |      | Carbon to Nitrogen ratio of leaves     |       |                                                  |
-|     | $CN_{\textrm{fine root}}$         |      | Carbon to Nitrogen ratio of fine roots |       |                                                  |
-|     | $D_\textit{CN}$                   |      | Decomposition CN scaling parameter     |       |                                                  |
+|     | Symbol                    | Name | Description                            | Units | Notes                                            |
+| --- | ------------------------- | ---- | -------------------------------------- | ----- | ------------------------------------------------ |
+|     | $CN_{\textrm{wood}}$      |      | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
+|     | $CN_{\textrm{leaf}}$      |      | Carbon to Nitrogen ratio of leaves     |       |                                                  |
+|     | $CN_{\textrm{fine root}}$ |      | Carbon to Nitrogen ratio of fine roots |       |                                                  |
+|     | $k_\textit{CN}$           |      | Decomposition CN scaling parameter     |       |                                                  |
 
 ### Photosynthesis parameters
 
@@ -192,7 +192,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 30  | $K_\text{litter}$   | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | g C broken down \* g^-1 litter C \* day^-1    | read in as per-year rate                              |
 | 31  | $f_{\text{litter}}$ | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) |                                               |                                                       |
 | 32  | $K_{soil}$          | baseSoilResp        | Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil           | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
-| new | K_\text{meth}       | methOxidationRate   | Rate of methane oxidation                                                           | day$^{-1}$                                    |                                                       |
+| new | $K_{\text{meth}}$   | methOxidationRate   | Rate of methane oxidation                                                           | day$^{-1}$                                    |                                                       |
 | 34  | $Q_{10s}$           | soilRespQ10         | Soil respiration Q10                                                                |                                               | scalar determining effect of temp on soil respiration |
 | 39  |                     | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                               |                                                       |
 | new | $f_{\textrm{till}}$ | tillageEff          | Effect of tillage on decomposition that exponentially decays over time              | fraction                                      | Per‑event in `events.in`; 0 = no effect               |
