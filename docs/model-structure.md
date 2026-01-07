@@ -182,25 +182,25 @@ $$
 F^C_\text{litter} - F^C_{\text{decomp}}
 $$
 
-Where $F^C_\text{litter}$ is the carbon flux from plant biomass into the litter pool through senescence and harvest \eqref{eq:litter_flux}. $F^C_{\text{decomp,litter}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and decomposition \eqref{eq:decomp_carbon}.
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass into the litter pool through senescence, harvest transfer, and organic matter additions \eqref{eq:litter_flux}. Belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
+$F^C_{\text{decomp}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and respiration \eqref{eq:decomp_carbon}.
 
-The flux of carbon from the plant to the litter pool is the sum litter produced through senescence, transfer of any biomass pools during harvest, and organic matter ammendments:
-
+The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 $$
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
-  \mathfrak{
+  \left(
     \sum_{i} F^C_{\text{harvest,transfer,}i} +
   F^C_\text{fert,org}
-  } 
+  \right) 
   \tag{3}\label{eq:litter_flux}
 $$
 <!-- 
 _existing equation + harvest transfer and organic matter inputs
 -->
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+$$\small i \in \{\text{leaf, wood}\}$$
 
-Where $K$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.
+Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.
 
 The decomposition flux from litter carbon is divided into heterotrophic respiration and carbon transfer to soil:
 
@@ -226,7 +226,15 @@ $$
 \frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
 $$
 
-The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined by the addition of litter carbon and the loss of carbon to heterotrophic respiration. This model assumes no loss of SOC to leaching or erosion.
+The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined by 
+(i) the transfer of decomposed litter carbon to soil, 
+(ii) belowground plant turnover routed directly to soil, and 
+(iii) the loss of carbon to heterotrophic respiration. 
+
+SIPNET assumes no loss of SOC to leaching or erosion.
+
+Accordingly, $F^C_{\text{soil}}$ includes both (i) litter-to-soil carbon transfer \eqref{eq:soil_carbon} and
+(ii) direct inputs from belowground plant turnover.
 
 ### Heterotrophic Respiration $(C_\text{soil,litter} \rightarrow CO_2)$
 
@@ -236,7 +244,7 @@ $$
 R_{H} = f_{R_H} \cdot 
   \left(\sum_j  K_j \cdot C_j 
     \right) \cdot 
-    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \mathfrak{\cdot D_{\text{tillage}}} 
+    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \cdot D_{\text{tillage}}
     \tag{7}\label{eq:rh}
 $$
 
@@ -261,7 +269,7 @@ The calculation of methane flux  $(F^C_{CH_4})$ is analagous to to that of $R_H$
 
 The carbon and nitrogen cycle are tightly coupled by the C:N ratios of plant and organic matter pools. The C:N ratio of plant biomass pools is fixed, while the C:N ratio of soil organic matter and litter pools is dynamic.
 
-### $\frak{Fixed \ Plant \ C:N \ Ratios}$
+### Fixed Plant C:N Ratios
 
 Plant biomass pools have a fixed CN ratio and are thus stoichiometrically coupled to carbon:
 
@@ -275,25 +283,27 @@ Where $i$ is the leaf, wood, fine root, or coarse root pool. This relationship a
 
 Soil organic matter and litter pools have dynamic CN that is determined below.
 
-### $\frak{Dynamic \ Soil  \ Organic \ Matter \ and \ Litter \ C:N \ Ratios}$
+### Dynamic Soil Organic Matter and Litter C:N Ratios
 
-The change in the soil C:N ratio over time of soil and litter pools depends on the rate of change of carbon and nitrogen in the pool, normalized by the total nitrogen in the pool. This makes sense as it captures how changes in carbon and nitrogen affect their ratio.
+In SIPNET, the C:N ratio of soil and litter pools is calculated directly from the carbon and nitrogen pools.
 
 $$
-\frac{dCN_{\text{j}}}{dt} = \frac{1}{N_{\text{j}}} \left( \frac{dC_{\text{j}}}{dt} - CN_{\text{j}} \cdot \frac{dN_{\text{j}}}{dt} \right) \tag{10}\label{eq:cn}
+CN_j = \frac{C_j}{N_j}, \qquad j \in \{\text{soil, litter}\}.
 $$
 
-$$\small j \in \{\text{soil, litter}\}$$
+This is used to calculate C:N-dependency $D_{CN}$ in Eq. \eqref{eq:cn_dep}.
 
 ### $\frak{C:N \ Dependency \ Function \ (D_{CN})}$
 
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
+This term is used in calculation of heterotrophic respiration in Eq. \eqref{eq:rh}.
 
 $$
-  D_{CN} = \frac{1}{1+k_CN \cdot CN} \tag{11}\label{eq:cn_dep}
+  D_{CN} = \frac{1}{1+k_{CN} \cdot CN} \tag{11}\label{eq:cn_dep}
 $$
 
-Where $k_CN$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio. This parameter represents the half-saturation constant of the Michaelis-Menten equation.
+Here, $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio, with higher CN reducing the rate of decomposition.
+The value $\frac{1}{k_{CN}}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
 ## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
 
@@ -308,7 +318,7 @@ $$
 $$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
 
 
-### $\frak{Litter \ Nitrogen}$
+### Litter Nitrogen $N_\text{litter}$
 
 The change in litter nitrogen over time, $N_\text{litter}$ is determined by inputs including leaf and wood litter, nitrogen in organic matter amendments, and losses to mineralization:
 
@@ -320,21 +330,34 @@ $$
   F^N_\text{litter,min} \tag{13}\label{eq:litter_dndt}
 $$
 
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+$$\small i \in \{\text{leaf, wood}\}$$
 
-The flux of nitrogen from living biomass to the litter pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool \eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content and the C:N ratio of the inputs.
+Here, $F^N_{\text{litter,}i}$ includes nitrogen inputs to litter from both (i) senescence/turnover and
+(ii) harvest transfers of aboveground biomass pools. The flux of nitrogen from living biomass to the litter
+pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool
+\eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content
+and the C:N ratio of the inputs.
 
-### $\frak{Soil \ Organic \ Nitrogen}$
+### Soil Organic Nitrogen $N_\text{org,soil}$
+
+The change in soil nitrogen over time, $N_\text{org,soil}$ is determined by inputs including root loss, litter decomposition, and losses to mineralization:
 
 $$
-  \frac{dN_\text{org,soil}}{dt} = 
-   F^N_\text{litter} -
+  \frac{dN_\text{org,soil}}{dt} =
+  \sum_{j} F^N_{\text{soil,}j} +
+   F^N_\text{soil} - 
    F^N_\text{soil,min} \tag{14}\label{eq:org_soil_dndt}
 $$
 
-The change in nitrogen pools in this model is proportional to the ratio of carbon to nitrogen in the pool. Equations for the evolution of soil and litter CN are below.
+$$\small j \in \{\text{fine root, coarse root}\}$$
 
-### $\frak{Soil \ Mineral \ Nitrogen \ F^N_\text{min}}$
+$F^N_{\text{soil,}j}$ are organic nitrogen inputs to soil from belowground plant turnover and harvest
+transfers of belowground biomass. 
+$F^N_{\text{soil}}$ is the organic nitrogen transferred from litter to soil (calculated from
+$F^C_{\text{soil}}$ in Eq. \ref{eq:soil_carbon} based on litter C:N.
+$F^N_\text{soil,min}$ is the flux from soil organic N to soil mineral N. 
+
+### Soil Mineral Nitrogen $N_\text{min}$
 
 Change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization, and losses to volatilization, leaching, and plant uptake:
 
@@ -351,7 +374,7 @@ $$
 
 Mineralization and fertilization add to the mineral nitrogen pool. Losses include volatilization, leaching, and plant uptake, described below. Fixed N enters the plant pool directly (Eq. \eqref{eq:n_fix_demand}).
 
-### $\frak{N \ Mineralization \ (F^N_\text{min})}$
+### Nitrogen Mineralization $F^N_\text{min}$
 
 
 Total nitrogen mineralization is proportional to the total heterotrophic respiration from soil and litter pools, divided by the C:N ratio of the pool. The effects of temperature, moisture, tillage, and C:N ratio on mineralization rate are captured in the calculation of $R_\text{H}$.
@@ -376,7 +399,7 @@ $$
 F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n_vol}
 $$
 
-### $\frak{Nitrogen \ Leaching \ F^N_\text{leach}}$
+### Nitrogen Leaching $F^N_\text{leach}$
 
 $$
 F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} \tag{18}\label{eq:n_leach}
@@ -648,10 +671,10 @@ Lets start with a two-parameter Beta function covering the range $50 < f_{\text{
 **Beta function**
 
 $$
-D_{\mathrm{moistur,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
+D_{\text{water,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
 $$
 
-Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maiximum and width.
+Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular maximum and width.
 
 For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.
 
@@ -701,7 +724,7 @@ A planting event is defined by its emergence date and directly specifies the amo
 
 Following carbon addition, nitrogen for each pool is computed using the corresponding C:N stoichiometric ratios following equation \ref{eq:cn_stoich}.
 
-### $\frak{Harvest}$
+### Harvest
 
 A harvest event is specified by its date, the event type "harv", and the fractions of above and belowground carbon that is either transferred to litter or removed from the system.
 
@@ -721,10 +744,13 @@ $$
 The fraction transferred to litter is calculated as follows:
 
 $$
-F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} + f_{\text{transfer,below}} \cdot C_{\text{root}} \tag{28}\label{eq:harvest}
+F^C_{\text{harvest,litter}} = f_{\text{transfer,above}} \cdot C_{\text{leaf}} \tag{28}\label{eq:harvest}
 $$
 
 This amount is then added to the litter flux in equation \ref{eq:litter_flux}.
+
+Belowground harvest transfers are routed directly to the soil carbon pool and are therefore included in
+$F^C_{\text{soil}}$ in Eq. \ref{eq:A3}.
 
 ### Irrigation
 
