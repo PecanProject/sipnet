@@ -1040,7 +1040,10 @@ void ensureAllocation(void) {
 }
 
 /*!
- *  Calculate moisture effect on soil respiration
+ *  Calculate moisture dependency effect
+ *
+ *  Moisture dependency term is used in soil respiration, litter
+ *  breakdown, and nitrogen volatilization.
  *
  *  Depends on soil temperature and whether waterHResp is on.
  *
@@ -1073,11 +1076,33 @@ double calcMoistEffect(double water, double whc) {
 }
 
 /**
+ * Calculate temperature dependency effect
  *
+ * Temperature dependency term is used in soil respiration, litter
+ * breakdown, and nitrogen volatilization.
+ *
+ * @param tsoil soil temperature
+ * @return temperature effect as a fraction between 0 and 1
  */
 double calcTempEffect(double tsoil) {
   // :: from [1], D_temp calc as part of eq (A20)
   return pow(params.soilRespQ10, tsoil / 10);
+}
+
+/**
+ * Calculate C:N ratio dependency effect
+ *
+ * C:N ratio  dependency term is used in soil respiration and litter
+ * breakdown.
+ *
+ * @param kCN CN dependency control param for soil/litter
+ * @param cn Current C:N ratio for soil/litter
+ * @return temperature effect as a fraction between 0 and 1
+ */
+double calcCNRatioEffect(double kCN, double cn) {
+  // CN ratio dependency term, using k_CN term that indicates CN value
+  // at which the dependency is 1/2
+  return kCN / (kCN + cn);
 }
 
 /*!
