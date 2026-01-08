@@ -292,7 +292,7 @@ void writeEventOut(EventNode *oneEvent, int numParams, ...) {
   va_end(args);
 }
 
-void closeEventOutFile() {
+void closeEventOutFile(void) {
   if (eventOutFile) {
     fclose(eventOutFile);
   }
@@ -305,7 +305,7 @@ void initEvents(char *eventFile, int printHeader) {
   }
 }
 
-void setupEvents() { gEvent = gEvents; }
+void setupEvents(void) { gEvent = gEvents; }
 
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;
@@ -346,8 +346,11 @@ void processEvents(void) {
   // should be in chrono order. However, we need to check to make sure the
   // current event is not in the past, as that would indicate an event that
   // did not have a corresponding climate file record.
-  while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
-    if (gEvent->year < climYear || gEvent->day < climDay) {
+  while (gEvent != NULL &&
+         (gEvent->year < climYear ||
+          (gEvent->year == climYear && gEvent->day <= climDay))) {
+    if (gEvent->year < climYear ||
+        (gEvent->year == climYear && gEvent->day < climDay)) {
       logError("Agronomic event found for year: %d day: %d that does not "
                "have a corresponding record in the climate file\n",
                gEvent->year, gEvent->day);
