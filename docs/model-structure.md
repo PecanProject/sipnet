@@ -182,10 +182,9 @@ $$
 F^C_\text{litter} - F^C_{\text{decomp}}
 $$
 
-Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass into the litter pool through senescence, harvest transfer, and organic matter additions \eqref{eq:litter_flux}. Belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
-$F^C_{\text{decomp}}$ is the total litter decomposition flux, representing the rate at which litter carbon is processed by microbial activity.
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and $F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
 
-The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
+$F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 
 $$
 F^C_\text{litter} = 
@@ -203,7 +202,7 @@ $$\small i \in \{\text{leaf, wood}\}$$
 
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.
 
-Litter decomposition is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
+$F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter decomposition is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
 
 $$
 F^C_{\text{decomp}} =
