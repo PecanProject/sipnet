@@ -67,9 +67,6 @@ Before opening a pull request (PR), express your interest and get feedback by:
 
 This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
 
-### PR expectations
-kindly refer to this [PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md) for PR template
-  
 ## Code Format & Style
 
 We follow the standard LLVM/Clang formatting rules. Formatting is automated with a pre-commit hook, so you wil rarely have to think about them.
