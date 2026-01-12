@@ -471,7 +471,7 @@ void updatePoolsForEvents(void) {
     envi.litter += fluxes.eventLitterC * climate->length;
   } else {
     envi.soilOrgN += fluxes.eventOrgN * climate->length;
-    envi.soil += fluxes.eventLitterC * climate->length;
+    envi.soilC += fluxes.eventLitterC * climate->length;
   }
   envi.minN += fluxes.eventMinN * climate->length;
 

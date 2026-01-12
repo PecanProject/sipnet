@@ -41,7 +41,7 @@ int checkOutput(double litter, double leafC, double woodC, double fineC,
 }
 
 void initEnv(void) {
-  envi.soil = 1.5;
+  envi.soilC = 1.5;
   envi.litter = 1;
   envi.plantLeafC = 2;
   envi.plantWoodC = 3;

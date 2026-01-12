@@ -26,7 +26,7 @@ void initState(double initN, double nVol, double nLeachFrac) {
 
   // static
   envi.soilWater = 5.0;
-  envi.soil = 1.5;
+  envi.soilC = 1.5;
   envi.litter = 1;
 
   params.minNInit = 0.0;

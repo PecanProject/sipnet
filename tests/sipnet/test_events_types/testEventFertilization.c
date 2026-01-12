@@ -39,7 +39,7 @@ int checkOutput(double orgN, double litterC, double minN) {
 }
 
 void initEnv(void) {
-  envi.soil = 1.5;
+  envi.soilC = 1.5;
   envi.litter = 1;
   envi.minN = 0;
   envi.soilOrgN = 2.5;

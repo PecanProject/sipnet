@@ -1098,7 +1098,7 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
     double tillageEffect = 1 + eventTrackers.d_till_mod;
 
     // Put it all together!
-    fluxes.soilMaintRespiration = envi.soil * params.baseSoilResp *
+    fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp *
                                   moistEffect * tempEffect * tillageEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
@@ -1380,7 +1380,7 @@ void ensureNonNegativeStocks(void) {
     ensureNonNegative(&(envi.litter), 0);
   }
 
-  ensureNonNegative(&(envi.soil), 0);
+  ensureNonNegative(&(envi.soilC), 0);
   ensureNonNegative(&(envi.coarseRootC), 0);
   ensureNonNegative(&(envi.fineRootC), 0);
   ensureNonNegative(&(envi.microbeC), 0);
@@ -1558,7 +1558,7 @@ void updatePoolsForSoil(void) {
     // :: from [3] for root terms
     // :: from [4] for microbeIngestion term
     // Note: no rSoil term here, as soil resp is handled by microbeIngestion
-    envi.soil +=
+    envi.soilC +=
         (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
          fluxes.leafLitter - fluxes.microbeIngestion) *
         climate->length;
@@ -1730,7 +1730,7 @@ void setupModel(void) {
     // Don't set a value if the litter pool is off
     envi.litter = 0.0;
   }
-  envi.soil = params.soilInit;
+  envi.soilC = params.soilInit;
 
   // change from per hour to per day rate
   params.maxIngestionRate = params.maxIngestionRate * 24;

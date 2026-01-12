@@ -389,7 +389,7 @@ typedef struct Environment {
   // carbon in leaves (g C * m^-2 ground area)
   double plantLeafC;
   // carbon in soil (g C * m^-2 ground area)
-  double soil;
+  double soilC;
   // plant available soil water (cm)
   double soilWater;
 
