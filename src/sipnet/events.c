@@ -32,6 +32,7 @@ static FILE *eventOutFile = NULL;
 
 EventNode *createEventNode(int year, int day, int eventType,
                            const char *eventParamsStr) {
+  static int nitrogenWarned = 0;
   EventNode *newEvent = (EventNode *)malloc(sizeof(EventNode));
   newEvent->year = year;
   newEvent->day = day;
@@ -97,6 +98,12 @@ EventNode *createEventNode(int year, int day, int eventType,
       fParams->minN = minN;
       // params->nh4_no3_frac = nh4_nos_frac;
       newEvent->eventParams = fParams;
+
+      if (!ctx.nitrogenCycle && (orgN > 0.0 || minN > 0.0) && !nitrogenWarned) {
+        logWarning("Fertilization nitrogen quantities are being ignored since "
+                   "nitrogen cycle modeling is off\n");
+        nitrogenWarned = 1;
+      }
     } break;
     case PLANTING: {
       double leafC, woodC, fineRootC, coarseRootC;
@@ -440,9 +447,14 @@ void processEvents(void) {
         const double orgC = fertParams->orgC;
         const double minN = fertParams->minN;
 
-        fluxes.eventOrgN += orgN / climLen;
         fluxes.eventLitterC += orgC / climLen;
-        fluxes.eventMinN += minN / climLen;
+        if (ctx.nitrogenCycle) {
+          fluxes.eventOrgN += orgN / climLen;
+          fluxes.eventMinN += minN / climLen;
+        } else {
+          // As the warning says in readEventData(), we ignore N when the
+          // nitrogen cycle model is off, so no update needed
+        }
 
         writeEventOut(gEvent, 3, "fluxes.eventOrgN", orgN / climLen,
                       "fluxes.eventLitterC", orgC / climLen, "fluxes.eventMinN",
@@ -458,26 +470,34 @@ void processEvents(void) {
 }
 
 void updatePoolsForEvents(void) {
+  // CARBON
   // Harvest and planting events
   envi.plantWoodC += fluxes.eventWoodC * climate->length;
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
 
-  // Irrigation events
-  envi.soilWater += fluxes.eventSoilWater * climate->length;
-
   // Harvest and fertilization events
   if (ctx.litterPool) {
-    envi.litterOrgN += fluxes.eventOrgN * climate->length;
-    envi.litter += fluxes.eventLitterC * climate->length;
+    envi.litterC += fluxes.eventLitterC * climate->length;
   } else {
-    envi.soilOrgN += fluxes.eventOrgN * climate->length;
     envi.soilC += fluxes.eventLitterC * climate->length;
   }
-  envi.minN += fluxes.eventMinN * climate->length;
 
   // Harvest and planting events
   envi.coarseRootC += fluxes.eventCoarseRootC * climate->length;
   envi.fineRootC += fluxes.eventFineRootC * climate->length;
+
+  // WATER
+  // Irrigation events
+  envi.soilWater += fluxes.eventSoilWater * climate->length;
+
+  // NITROGEN
+  // Fertilization events
+  // (Harvest and planting events TBD)
+  // Note: litter_pool is required for nitrogen_cycle
+  if (ctx.nitrogenCycle) {
+    envi.minN += fluxes.eventMinN * climate->length;
+    envi.litterN += fluxes.eventOrgN * climate->length;
+  }
 }
 
 void freeEventList(void) {

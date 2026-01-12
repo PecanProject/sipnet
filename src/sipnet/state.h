@@ -340,7 +340,7 @@ typedef struct Parameters {
   // autotrophic respiration:
   // growth resp. as fraction of (GPP - woodResp - folResp)
   // Note: that comment may not be correct, growthResp is calc'd as
-  //       (mean GPP) * (growtheRespFrac)
+  //       (mean GPP) * (growthRespFrac)
   //       with no correction for woodResp or folResp
   double growthRespFrac;
 
@@ -370,8 +370,17 @@ typedef struct Parameters {
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
-  // Fraction of mineral N lost to leaching per day
+  // Fraction of mineral N available to be leached, unitless
   double nLeachingFrac;
+
+  // C:N ratio for leaves, assumed static, g C/g N
+  double leafCN;
+
+  // C:N ratio for wood (and coarse roots), assumed static, g C/g N
+  double woodCN;
+
+  // C:N ratio for fine roots, assumed static, g C/g N
+  double rootCN;
 
 } Params;
 
@@ -395,7 +404,7 @@ typedef struct Environment {
 
   ///// From [2] Sacks et al. 2006
   // carbon in litter (g C * m^-2 ground area)
-  double litter;
+  double litterC;
   // snow pack (cm water equiv.)
   double snow;
 
@@ -415,8 +424,8 @@ typedef struct Environment {
   double minN;
   // soil organic nitrogen pool (g N m^-2 ground area)
   double soilOrgN;
-  // litter organic nitrogen pool (g N m^-2 ground area)
-  double litterOrgN;
+  // litter (organic) nitrogen pool (g N m^-2 ground area)
+  double litterN;
 } Envi;
 
 // Global var
@@ -544,9 +553,17 @@ typedef struct FluxVars {
   //
 
   // Mineral N lost to volatilization
+  // g N * m^-2 ground area * day^-1
   double nVolatilization;
   // Mineral N lost to leaching
+  // g N * m^-2 ground area * day^-1
   double nLeaching;
+  // Organic N flux for the soil organic N pool
+  // g N * m^-2 ground area * day^-1
+  double nOrgSoil;
+  // Organic N flux for the litter N pool
+  // g N * m^-2 ground area * day^-1
+  double nOrgLitter;
 
   // ****************************************
   // Fluxes for event handling
