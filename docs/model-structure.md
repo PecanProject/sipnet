@@ -206,7 +206,9 @@ $F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by
 
 $$
 F^C_{\text{decomp}} =
-K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water},R_H}
+K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot
+D_{CN} \cdot
+D_{tillage} \cdot
 \tag{4a}\label{eq:decomp_rate}
 $$
 
