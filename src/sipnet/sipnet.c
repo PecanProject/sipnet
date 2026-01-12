@@ -1113,7 +1113,7 @@ double calcLitterCN(void) { return calcCN(envi.litterC, envi.litterN); }
  *
  * @param kCN CN dependency control param for soil/litter
  * @param cn Current C:N ratio for soil/litter
- * @return temperature effect as a fraction between 0 and 1
+ * @return C:N ratio effect as a fraction between 0 and 1
  */
 double calcCNEffect(double kCN, double poolC, double poolN) {
   if (!ctx.nitrogenCycle) {
