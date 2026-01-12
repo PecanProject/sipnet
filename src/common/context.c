@@ -192,10 +192,7 @@ void validateContext(void) {
   // MICROBES is deprecated and no longer supported
   if (ctx.microbes) {
     logError("MICROBES feature is deprecated and no longer supported.\n");
-    logError("Zobitz et al. (2008) found that microbial and litter-quality\n");
-    logError("structure is not identifiable from NEE. Future work exploring\n");
-    logError("microbial dynamics should use a parsimonious approach with C:N\n");
-    logError("constraints integrated with the nitrogen cycle.\n");
+    logError("See Zobitz et al. (2008) regarding microbial identifiability.\n");
     hasError = 1;
   }
 
