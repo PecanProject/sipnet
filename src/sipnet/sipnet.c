@@ -395,6 +395,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "leafCN", &(params.leafCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "woodCN", &(params.woodCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "rootCN", &(params.rootCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -1090,6 +1091,21 @@ double calcTempEffect(double tsoil) {
 }
 
 /**
+ * Calculate effect of tillage on soil respiration or litter breakdown
+ */
+double calcTillageEffect(void) { return 1 + eventTrackers.d_till_mod; }
+
+// The following three CN functions may seem trivial, but worth it to ensure
+// the divide-by-zero protection. Note that the calcSoil/LitterCN functions
+// should only be called when ctx.nitrogen_cycle is on.
+double calcCN(double c, double n) {
+  double effectiveN = n < TINY ? TINY : n;
+  return c / effectiveN;
+}
+double calcSoilCN(void) { return calcCN(envi.soilC, envi.soilOrgN); }
+double calcLitterCN(void) { return calcCN(envi.litterC, envi.litterN); }
+
+/**
  * Calculate C:N ratio dependency effect
  *
  * C:N ratio  dependency term is used in soil respiration and litter
@@ -1099,9 +1115,14 @@ double calcTempEffect(double tsoil) {
  * @param cn Current C:N ratio for soil/litter
  * @return temperature effect as a fraction between 0 and 1
  */
-double calcCNRatioEffect(double kCN, double cn) {
+double calcCNEffect(double kCN, double poolC, double poolN) {
+  if (!ctx.nitrogenCycle) {
+    return 1.0;
+  }
+
   // CN ratio dependency term, using k_CN term that indicates CN value
   // at which the dependency is 1/2
+  double cn = calcCN(poolC, poolN);
   return kCN / (kCN + cn);
 }
 
@@ -1125,11 +1146,14 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
     double tempEffect = calcTempEffect(tsoil);
 
     // Effects of tillage, if any
-    double tillageEffect = 1 + eventTrackers.d_till_mod;
+    double tillageEffect = calcTillageEffect();
+
+    // Effects of current CN
+    double cnEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
 
     // Put it all together!
     fluxes.maintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
-                              tempEffect * tillageEffect;
+                              tempEffect * tillageEffect * cnEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
     fluxes.rSoil = fluxes.maintRespiration;
@@ -1181,9 +1205,15 @@ void calcLitterFluxes() {
   if (ctx.litterPool) {
     double tempEffect = calcTempEffect(climate->tsoil);
     double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
+    // Effects of tillage, if any
+    double tillageEffect = calcTillageEffect();
+    // Effects of current CN
+    double cnEffect = calcCNEffect(params.kCN, envi.litterC, envi.litterN);
+
     // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
-    double litterBreakdown =
-        envi.litterC * params.litterBreakdownRate * tempEffect * moistEffect;
+    double litterBreakdown = envi.litterC * params.litterBreakdownRate *
+                             tempEffect * moistEffect * tillageEffect *
+                             cnEffect;
 
     fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
@@ -1285,7 +1315,7 @@ void calcOrgNFluxes() {
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter, and N loss due to mineralization. N added via fertilization
   // is handled elsewhere.
-  litterCN = envi.litterC / (envi.litterN + TINY);
+  litterCN = calcLitterCN();
   fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
                       fluxes.woodLitter / params.woodCN -
                       fluxes.rLitter / litterCN;
@@ -1294,7 +1324,7 @@ void calcOrgNFluxes() {
   // The soil org N flux is determined by the carbon flux from the litter pool,
   // carbon fluxes from roots, and N loss due to mineralization
   // (Note: woodCN is used for coarse roots)
-  soilCN = envi.soilC / (envi.soilOrgN + TINY);
+  soilCN = calcSoilCN();
   fluxes.nOrgSoil = fluxes.litterToSoil / litterCN - fluxes.rSoil / soilCN +
                     fluxes.fineRootLoss / params.rootCN +
                     fluxes.coarseRootLoss / params.woodCN;
