@@ -780,7 +780,7 @@ $$
 This amount is then added to the litter flux in equation \ref{eq:litter_flux}.
 
 Belowground harvest transfers are routed directly to the soil carbon pool and are therefore included in
-$F^C_{\text{soil,roots}}$ in Eq. \ref{eq:A3}.
+the total soil carbon input flux $F^C_{\text{soil}}$ in Eq. \ref{eq:A3}.
 
 ### Irrigation
 
