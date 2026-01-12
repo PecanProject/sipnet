@@ -275,13 +275,14 @@ $$
 
 Where the litter and soil components are defined above in Eqs. \ref{eq:r_litter} and \ref{eq:r_soil}.
 
-Where heterotrophic respiration from a given pool is a function of the pool's carbon content,
-its associated decomposition rate, and modifying functions for temperature, moisture,
-substrate quality (CN), and tillage.
+For the soil pool, $R_{\text{soil}}$ is modeled as a first-order process proportional to $C_{\text{soil}}$
+and modified by temperature, moisture, substrate quality (C:N), and tillage (Eq. \ref{eq:r_soil}).
 
-In the case of litter, the fraction $f_{\text{litter}}$ partitions litter decomposition
-into heterotrophic respiration and transfer of carbon to the soil pool
-(Eq. \ref{eq:decomp_carbon}), as defined in the Litter Carbon section.
+For the litter pool, litter decomposition $F^C_{\text{decomp}}$ is modeled as a first-order process proportional
+to $C_{\text{litter}}$ and modified by the same dependence functions (Eq. \ref{eq:decomp_rate}). Litter
+heterotrophic respiration is then defined as a fixed fraction of this decomposition flux via $f_{\text{litter}}$
+(Eqs. \ref{eq:decomp_carbon}--\ref{eq:r_litter}), with the remainder transferred to the soil carbon pool
+(Eq. \ref{eq:soil_carbon}).
 
 ### $\frak{Methane \ Production \ (C \rightarrow CH_4)}$
 
