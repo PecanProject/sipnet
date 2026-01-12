@@ -296,7 +296,7 @@ $$\small j \in \{\text{soil, litter}\}$$
 
 The calculation of methane flux  $(F^C_{CH_4})$ is analagous to to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
 
-## $\frak{Carbon:Nitrogen \ Ratio \ Dynamics (CN)}$
+## Carbon:Nitrogen Ratio Dynamics $(CN)$
 
 The carbon and nitrogen cycle are tightly coupled by the C:N ratios of plant and organic matter pools. The C:N ratio of plant biomass pools is fixed, while the C:N ratio of soil organic matter and litter pools is dynamic.
 
@@ -324,17 +324,17 @@ $$
 
 This is used to calculate C:N-dependency $D_{CN}$ in Eq. \eqref{eq:cn_dep}.
 
-### $\frak{C:N \ Dependency \ Function \ (D_{CN})}$
+### C:N Dependency Function $(D_{CN})$
 
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
 This term is used in calculation of heterotrophic respiration in Eq. \eqref{eq:rh}.
 
 $$
-  D_{CN} = \frac{1}{1+k_{CN} \cdot CN} \tag{11}\label{eq:cn_dep}
+  D_{CN} = \frac{k_{CN}}{k_{CN}+ CN} \tag{11}\label{eq:cn_dep}
 $$
 
 Here, $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio, with higher CN reducing the rate of decomposition.
-The value $\frac{1}{k_{CN}}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
+The value $k_{CN}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
 ## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
 
@@ -457,7 +457,7 @@ where:
 We use a simple down-regulation function with increasing soil mineral N:
 
 $$
-D_{N_\text{min}} = \frac{1}{1 + \frac{N_\text{min}}{K_N}}
+D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
 \tag{19a}\label{eq:n_fix_supp_demand}
 $$
 
