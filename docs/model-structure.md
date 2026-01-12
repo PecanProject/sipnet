@@ -254,7 +254,7 @@ to soil organic carbon content and modified by environmental and management fact
 
 $$
 R_{\text{soil}} =
-  K_{\text{soil}} \cdot C_{\text{soil}} \cdot
+  K_{dec} \cdot C_{\text{soil}} \cdot
   D_{\text{temp}} \cdot
   D_{\text{water},R_H} \cdot
   D_{CN} \cdot
