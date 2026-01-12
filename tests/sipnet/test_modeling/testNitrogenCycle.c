@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "utils/tUtils.h"
 #include "sipnet/events.c"
 #include "sipnet/sipnet.c"
