@@ -565,6 +565,9 @@ typedef struct FluxVars {
   // Organic N flux for the litter N pool
   // g N * m^-2 ground area * day^-1
   double nOrgLitter;
+  // Nitrogen mineralization flux
+  // g N * m^-2 ground area * day^-1
+  double nMin;
 
   // ****************************************
   // Fluxes for event handling

@@ -1304,30 +1304,35 @@ void calcNLeachingFlux() {
 }
 
 /**
- * Calculate organic nitrogen fluxes
+ * Calculate nitrogen fluxes for soil and litter pools
  */
-void calcOrgNFluxes() {
-  double litterCN, soilCN;
+void calcNPoolFluxes() {
+  // C:N ratios for litter and soil, needed in most of the succeeding calcs
+  double litterCN = calcLitterCN();
+  double soilCN = calcSoilCN();
+
   // for both litter and soil, mineralization is calculated as heterotrophic
   // respiration divided by the C:N ratio of that pool.
+  double litterMin = fluxes.rLitter / litterCN;
+  double soilMin = fluxes.rSoil / soilCN;
 
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter, and N loss due to mineralization. N added via fertilization
   // is handled elsewhere.
-  litterCN = calcLitterCN();
   fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
-                      fluxes.woodLitter / params.woodCN -
-                      fluxes.rLitter / litterCN;
+                      fluxes.woodLitter / params.woodCN - litterMin;
 
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
   // carbon fluxes from roots, and N loss due to mineralization
   // (Note: woodCN is used for coarse roots)
-  soilCN = calcSoilCN();
-  fluxes.nOrgSoil = fluxes.litterToSoil / litterCN - fluxes.rSoil / soilCN +
+  fluxes.nOrgSoil = fluxes.litterToSoil / litterCN - soilMin +
                     fluxes.fineRootLoss / params.rootCN +
                     fluxes.coarseRootLoss / params.woodCN;
+
+  // mineralization
+  fluxes.nMin = litterMin + soilMin;
 }
 
 /*!
@@ -1401,7 +1406,7 @@ void calculateFluxes(void) {
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
     calcNLeachingFlux();
-    calcOrgNFluxes();
+    calcNPoolFluxes();
   }
 }
 
@@ -1702,7 +1707,10 @@ void updateNitrogenPools(void) {
 
   // Soil mineral N (note we have one mineral pool for soil+litter)
   // Mineral N additions from fertilization are handled with the events
-  envi.minN -= (fluxes.nVolatilization + fluxes.nLeaching) * climate->length;
+  //
+  // TODO: add plant uptake flux once implemented
+  envi.minN += (fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching) *
+               climate->length;
 
   // Soil organic N
   envi.soilOrgN += fluxes.nOrgSoil * climate->length;
