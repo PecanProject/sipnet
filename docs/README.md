@@ -28,7 +28,7 @@ Need help? Open an issue on [GitHub](https://github.com/PecanProject/sipnet/issu
 
 ## License
 
-SIPNET is distributed under the BSD 3-Clause license—see [LICENSE](../LICENSE) for the full text.
+SIPNET is distributed under the BSD 3-Clause license—see [LICENSE](/LICENSE) for the full text.
 
 ## References & Releases
 
