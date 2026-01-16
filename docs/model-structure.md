@@ -294,7 +294,7 @@ $$
 $$\small j \in \{\text{soil, litter}\}$$
 
 
-The calculation of methane flux  $(F^C_{CH_4})$ is analagous to to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
+The calculation of methane flux  $(F^C_{CH_4})$ is analagous to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
 
 ## $\frak{Carbon:Nitrogen \ Ratio \ Dynamics (CN)}$
 
@@ -420,7 +420,7 @@ $$\small j \in \{\text{soil, litter}\}$$
 ### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)$
 
 
-The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate. 
+The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, Oleson et al. 2010). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate. 
 
 Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
 
@@ -792,7 +792,7 @@ Event parameters:
 	* Canopy irrigation (0): Water applied to the canopy.
 	*	Soil irrigation (1): Water directly added to the soil.
 
-The irrigation that that reaches the soil water pool is:
+The irrigation that reaches the soil water pool is:
 
 $$
 F^W_{\text{irrig,soil}} =
@@ -843,6 +843,8 @@ Gutschick, V.P., 1981. Evolved strategies in nitrogen acquisition by plants. Am.
 Libohova, Z., Seybold, C., Wysocki, D., Wills, S., Schoeneberger, P., Williams, C., Lindbo, D., Stott, D. and Owens, P.R., 2018. Reevaluating the effects of soil organic matter and other properties on available water-holding capacity using the National Cooperative Soil Survey Characterization Database. Journal of soil and water conservation, 73(4), pp.411-421.
 
 Manzoni, Stefano, and Amilcare Porporato. 2009. Soil Carbon and Nitrogen Mineralization: Theory and Models across Scales. Soil Biology and Biochemistry 41 (7): 1355–79. https://doi.org/10.1016/j.soilbio.2009.02.031.
+
+Oleson, K.W., Lawrence, D.M., Bonan, G.B., Flanner, M.G., Kluzek, E., Lawrence, P.J., Levis, S., Swenson, S.C., Thornton, P.E., Dai, A. and Decker, M., 2010. Technical description of version 4.0 of the Community Land Model (CLM). National Center for Atmospheric Research, Boulder, CO, USA.
 
 Parton, W. J., E. A. Holland, S. J. Del Grosso, M. D. Hartman, R. E. Martin, A. R. Mosier, D. S. Ojima, and D. S. Schimel. 2001. Generalized Model for NOx  and N2O Emissions from Soils. Journal of Geophysical Research: Atmospheres 106 (D15): 17403–19. https://doi.org/10.1029/2001JD900101.
 
