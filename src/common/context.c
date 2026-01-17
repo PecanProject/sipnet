@@ -189,6 +189,13 @@ void validateContext(void) {
     hasError = 1;
   }
 
+  // MICROBES is deprecated and no longer supported
+  if (ctx.microbes) {
+    logError("MICROBES feature is deprecated and no longer supported.\n");
+    logError("See Zobitz et al. (2008) regarding microbial identifiability.\n");
+    hasError = 1;
+  }
+
   if (ctx.events && ctx.microbes) {
     logError("events and microbes may not both be turned on\n");
     hasError = 1;
@@ -253,4 +260,13 @@ void printConfig(FILE *outFile) {
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
+}
+
+void destroyContextMetadata(void) {
+  struct context_metadata *s, *tmp;
+  HASH_ITER(hh, ctx.metaMap, s, tmp) {
+    HASH_DEL(ctx.metaMap, s);
+    free(s);
+  }
+  ctx.metaMap = NULL;
 }
