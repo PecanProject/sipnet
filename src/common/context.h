@@ -93,6 +93,14 @@ void createContextMetadata(const char *name, const char *printName,
                            context_source_t source, context_type_t type,
                            void *value, int isFlag);
 
+/*!
+ * Cleanup context metadata
+ *
+ * Free all allocated memory in the context metadata hash table.
+ * Call this when done using the context to prevent memory leaks.
+ */
+void destroyContextMetadata(void);
+
 void updateIntContext(const char *name, int value, context_source_t source);
 
 void updateCharContext(const char *name, const char *value,

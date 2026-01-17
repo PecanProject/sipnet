@@ -1888,4 +1888,6 @@ void cleanupModel() {
     freeEventList();
     closeEventOutFile();
   }
+
+  destroyContextMetadata();
 }
