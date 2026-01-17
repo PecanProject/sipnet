@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "utils/tUtils.h"
 #include "sipnet/events.c"
 #include "sipnet/sipnet.c"
@@ -249,18 +247,19 @@ int testOrganicN(void) {
   initOrganicNState(litterN, soilOrgN);
   expSoilOrgN = 2;
   expLitterN = 1;
-  calcOrgNFluxes();
+  calcNPoolFluxes();
 
   status |= checkFlux(fluxes.nOrgLitter, expLitterN, "Organic litter N");
   status |= checkFlux(fluxes.nOrgSoil, expSoilOrgN, "Organic soil N");
 
-  // Check minN for the last - it should remain unchanged
+  // Check minN for the last - it should have increased from mineralization
   updateNitrogenPools();
-  double expMinN = minN;
+  double expMinN = minN + 2 * climate->length;
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
     logTest("minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+    logTest("nMin flux is %8.3f\n", fluxes.nMin);
   }
   status |= minStatus;
 

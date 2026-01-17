@@ -36,8 +36,10 @@ sections to include in release notes:
 - `logAppend` logging function (#173)
 - Nitrogen volatilization (#175)
 - Nitrogen leaching (#178)
-- Soil and litter organic N pools (#195, #198)
-- Organic N handling for fertilization and soil dynamics (#198)
+- Soil and litter organic N pools (#195, #199)
+- Organic N handling for fertilization and soil dynamics (#199)
+- Dynamic C:N for soil and litter (#214)
+- Updates for soil and litter respiration (tillage and C:N effects) (#214)
 
 ### Fixed
 
