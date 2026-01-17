@@ -254,3 +254,12 @@ void printConfig(FILE *outFile) {
     }
   }
 }
+
+void destroyContextMetadata(void) {
+  struct context_metadata *s, *tmp;
+  HASH_ITER(hh, ctx.metaMap, s, tmp) {
+    HASH_DEL(ctx.metaMap, s);
+    free(s);
+  }
+  ctx.metaMap = NULL;
+}
