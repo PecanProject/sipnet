@@ -254,12 +254,12 @@ to soil organic carbon content and modified by environmental and management fact
 
 $$
 R_{\text{soil}} =
-  K_{dec} \cdot C_{\text{soil}} \cdot
-  D_{\text{temp}} \cdot
-  D_{\text{water},R_H} \cdot
-  D_{CN} \cdot
-  D_{\text{tillage}}
-\label{eq:r_soil}
+K_{dec} \cdot C_{\text{soil}} \cdot
+D_{\text{temp}} \cdot
+D_{\text{water},R_H} \cdot
+D_{CN} \cdot
+D_{\text{tillage}}
+\tag{6a}\label{eq:r_soil}
 $$
 
 SIPNET assumes no loss of SOC to leaching or erosion.
