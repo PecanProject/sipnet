@@ -363,10 +363,6 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "cFracLeaf", &(params.cFracLeaf), 1);
   initializeOneModelParam(modelParams, "woodTurnoverRate", &(params.woodTurnoverRate), 1);
 
-  initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), ctx.microbes);
-  initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), ctx.microbes);
-  initializeOneModelParam(modelParams, "halfSatIngestion", &(params.halfSatIngestion), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), ctx.microbes);
   initializeOneModelParam(modelParams, "fineRootFrac", &(params.fineRootFrac), 1);
   initializeOneModelParam(modelParams, "coarseRootFrac", &(params.coarseRootFrac), 1);
 
@@ -381,10 +377,6 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "baseCoarseRootResp", &(params.baseCoarseRootResp), 1);
   initializeOneModelParam(modelParams, "fineRootQ10", &(params.fineRootQ10), 1);
   initializeOneModelParam(modelParams, "coarseRootQ10", &(params.coarseRootQ10), 1);
-
-  initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
 
   // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
   initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
@@ -1089,69 +1081,21 @@ double calcTempEffect(double tsoil) {
  */
 void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
-  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
-  // case, need to dig in. With that said...
+  double moistEffect = calcMoistEffect(water, whc);
 
-  if (!ctx.microbes) {
-    double moistEffect = calcMoistEffect(water, whc);
+  // :: from [1], remainder of eq (A20)
+  // See calcMoistEffect() for first part of eq (A20) calculation
+  double tempEffect = calcTempEffect(tsoil);
 
-    // :: from [1], remainder of eq (A20)
-    // See calcMoistEffect() for first part of eq (A20) calculation
-    double tempEffect = calcTempEffect(tsoil);
+  // Effects of tillage, if any
+  double tillageEffect = 1 + eventTrackers.d_till_mod;
 
-    // Effects of tillage, if any
-    double tillageEffect = 1 + eventTrackers.d_till_mod;
+  // Put it all together!
+  fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp *
+                                moistEffect * tempEffect * tillageEffect;
 
-    // Put it all together!
-    fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp *
-                                  moistEffect * tempEffect * tillageEffect;
-
-    // With no microbes, rSoil flux is just the maintenance respiration
-    fluxes.rSoil = fluxes.soilMaintRespiration;
-  }
-  // else fluxes.rSoil = 0.0?
-}
-
-/*!
- * Calculates fluxes used when modeling microbes
- */
-void calcMicrobeFluxes(double tsoil, double water, double whc,
-                       double rootExudate) {
-  if (ctx.microbes) {
-    double baseRate;
-    double tempEffect;
-    double moistEffect = calcMoistEffect(water, whc);
-
-    // :: from [4], part of eqs (5.9) and (5.10)
-    //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
-    //    eqs (5.9) and (5.10) in updatePoolsForSoil()
-
-    // :: mu_max * g(C_S)
-    baseRate = params.maxIngestionRate * envi.soilC /
-               (params.halfSatIngestion + envi.soilC);
-
-    // Flux that microbes remove from soil  (mg C g soil day)
-    // Some is ingested, rest used for growth in updatePoolsForSoil()
-    // :: above * C_B
-    fluxes.microbeIngestion = baseRate * envi.microbeC;
-
-    // fluxes that get added to microbe pool
-    // :: from [4], eq (5.11) first line
-    fluxes.soilPulse = params.microbePulseEff * (rootExudate);
-
-    // respiration is determined by microbe biomass
-    // :: from [4], eq (5.12) with addition of moisture effect
-    // [TAG:UNKNOWN_PROVENANCE]  moistEffect
-    tempEffect = pow(params.microbeQ10, tsoil / 10);
-    fluxes.microbeMaintRespiration =
-        envi.microbeC * params.baseMicrobeResp * moistEffect * tempEffect;
-
-  } else {
-    fluxes.microbeIngestion = 0.0;
-    fluxes.soilPulse = 0.0;
-    fluxes.microbeMaintRespiration = 0.0;
-    // fluxes.maintRespiration is otherwise set, do not set to zero here
-  }
+  // rSoil flux is the maintenance respiration
+  fluxes.rSoil = fluxes.soilMaintRespiration;
 }
 
 void calcLitterFluxes() {
@@ -1329,16 +1273,9 @@ void calculateFluxes(void) {
   // Litter pool, if LITTER is on
   calcLitterFluxes();
 
-  // Roots and microbes
+  // Roots and soil respiration
   double rootExudate = calcRootAndWoodFluxes();
-
-  // Microbes
-  if (ctx.microbes) {
-    calcMicrobeFluxes(climate->tsoil, envi.soilWater, params.soilWHC,
-                      rootExudate);
-  } else {
-    calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
-  }
+  calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
 
   // Nitrogen cycle
   //
@@ -1586,52 +1523,26 @@ void updateMainPools() {
 void updatePoolsForSoil(void) {
 
   // UPDATE POOLS
-  if (ctx.microbes) {
-    double microbeEff = params.efficiency;
+  if (ctx.litterPool) {
+    // :: from [2], litter model description
+    envi.litterC += (fluxes.woodLitter + fluxes.leafLitter -
+                     fluxes.litterToSoil - fluxes.rLitter) *
+                    climate->length;
 
-    // :: from [1] for litter terms
-    // :: from [3] for root terms
-    // :: from [4] for microbeIngestion term
-    // Note: no rSoil term here, as soil resp is handled by microbeIngestion
-    envi.soilC +=
-        (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
-         fluxes.leafLitter - fluxes.microbeIngestion) *
-        climate->length;
-    // microbeC additions due to ingestion and incorporation of root exudates,
-    // with reduction from microbe respiration
-    // :: from [4], eq (5.9) for first (ingestion) term,
-    // ::      eq (5.11) used for soilPulse, and
-    // ::      eq (5.12) used for maintRespiration
-    envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
-                      fluxes.microbeMaintRespiration) *
-                     climate->length;
-
-    // rSoil is maintenance resp + growth (microbe) resp
-    // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil = fluxes.microbeMaintRespiration +
-                   (1 - microbeEff) * fluxes.microbeIngestion;
+    // from [2] and [3], litter and root terms respectively
+    envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                   fluxes.litterToSoil - fluxes.rSoil) *
+                  climate->length;
   } else {
-    if (ctx.litterPool) {
-      // :: from [2], litter model description
-      envi.litterC += (fluxes.woodLitter + fluxes.leafLitter -
-                       fluxes.litterToSoil - fluxes.rLitter) *
-                      climate->length;
-
-      // from [2] and [3], litter and root terms respectively
-      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                     fluxes.litterToSoil - fluxes.rSoil) *
-                    climate->length;
-    } else {
-      // Normal pool (single pool, no microbes)
-      // :: from [1] (and others, TBD), eq (A3), where:
-      //     L_w = fluxes.woodLitter
-      //     L_l = fluxes.leafLitter
-      //     R_h = fluxes.rSoil
-      // :: from [3], root terms
-      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                     fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
-                    climate->length;
-    }
+    // Single soil pool (no litter, no microbes)
+    // :: from [1] (and others, TBD), eq (A3), where:
+    //     L_w = fluxes.woodLitter
+    //     L_l = fluxes.leafLitter
+    //     R_h = fluxes.rSoil
+    // :: from [3], root terms
+    envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                   fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
+                  climate->length;
   }
   // :: from [3], root model description
   envi.coarseRootC +=
@@ -1751,12 +1662,6 @@ void setupModel(void) {
   ///
   /// PARAMS SETUP
 
-  // If we aren't explicitly modeling microbe pool, then do not have a pulse to
-  // microbes, exudates go directly to the soil
-  if (!ctx.microbes) {
-    params.microbePulseEff = 0;
-  }
-
   // change units of parameters:
   params.baseVegResp /= 365.0;  // change from per-year to per-day rate
   params.litterBreakdownRate /= 365.0;
@@ -1781,24 +1686,11 @@ void setupModel(void) {
   }
   envi.soilC = params.soilInit;
 
-  // change from per hour to per day rate
-  params.maxIngestionRate = params.maxIngestionRate * 24;
-
-  if (ctx.microbes) {
-    // convert to gC m-2
-    envi.microbeC = params.microbeInit * params.soilInit / 1000;
-  } else {
-    // Don't set a value if microbes is off
-    envi.microbeC = 0.0;
-  }
-
   params.fineRootTurnoverRate /= 365.0;
   params.coarseRootTurnoverRate /= 365.0;
 
   params.baseCoarseRootResp /= 365.0;
   params.baseFineRootResp /= 365.0;
-  params.baseMicrobeResp = params.baseMicrobeResp * 24;  // change from per hour
-                                                         // to per day rate
 
   ///
   /// ENVIRONMENT SETUP
