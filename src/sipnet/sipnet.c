@@ -1119,7 +1119,7 @@ void calcLitterFluxes() {
 /*!
  * Calculate root and wood creation and loss
  *
- * @return total root exudate for use with microbe model
+ * Updates flux variables for root loss and wood litter
  */
 double calcRootAndWoodFluxes(void) {
   double coarseExudate, fineExudate;  // exudates in and out of soil
@@ -1276,7 +1276,7 @@ void calculateFluxes(void) {
   calcLitterFluxes();
 
   // Roots and soil respiration
-  double rootExudate = calcRootAndWoodFluxes();
+  calcRootAndWoodFluxes();
   calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
 
   // Nitrogen cycle
