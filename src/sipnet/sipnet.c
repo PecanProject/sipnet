@@ -185,10 +185,11 @@ void readClimData(const char *climFile) {
   }
 
   if (legacyFormat) {
-    status = sscanf(firstLine,  // NOLINT
-                    "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                    &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
-                    &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+    status = sscanf(
+        firstLine,  // NOLINT
+        "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &firstLoc, &year,
+        &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil,
+        &vPress, &wspd, &soilWetness);
   } else {
     status = sscanf(firstLine,  // NOLINT
                     "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
@@ -475,7 +476,7 @@ void freeClimateList() {
  * cumLai is 0 at the canopy top and equals total LAI at the bottom.
  *
  * Note: SIPNET is not a multi-layer model; this function derives a
- * canopy‐averaged light effect that is then used to calculate calculate GPP for
+ * canopy-averaged light effect that is then used to calculate GPP for
  * the whole canopy.
  *
  * @param[out] lightEff Canopy average light effect.
@@ -1146,10 +1147,11 @@ double calcRootAndWoodFluxes(void) {
     coarseExudate = 0;
   }
 
-  // :: from [3], roots model descriptions and [4] eq (5.11)
-  fluxes.coarseRootLoss = (1 - params.microbePulseEff) * coarseExudate +
+  // :: from [3], roots model descriptions
+  // All root exudates contribute to root loss (microbes no longer modeled)
+  fluxes.coarseRootLoss = coarseExudate +
                           params.coarseRootTurnoverRate * envi.coarseRootC;
-  fluxes.fineRootLoss = (1 - params.microbePulseEff) * fineExudate +
+  fluxes.fineRootLoss = fineExudate +
                         params.fineRootTurnoverRate * envi.fineRootC;
 
   // Wood litter, in g C * m^-2 ground area * day^-1
@@ -1706,6 +1708,9 @@ void setupModel(void) {
   }
 
   envi.snow = params.snowInit;
+
+  // Deprecated microbes feature - kept for output compatibility
+  envi.microbeC = 0.0;
 
   if (ctx.nitrogenCycle) {
     envi.minN = params.minNInit;
