@@ -93,7 +93,7 @@ void createContextMetadata(const char *name, const char *printName,
                            context_source_t source, context_type_t type,
                            void *value, int isFlag);
 
-/*! 
+/*!
  * Free all context metadata allocated during initContext()
  *
  * Iterates through ctx.metaMap hash table and frees all allocated
@@ -101,6 +101,8 @@ void createContextMetadata(const char *name, const char *printName,
  * cleanup.
  */
 void freeContextMetadata(void);
+
+void updateIntContext(const char *name, int value, context_source_t source);
 
 void updateCharContext(const char *name, const char *value,
                        context_source_t source);
