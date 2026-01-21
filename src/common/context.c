@@ -259,7 +259,7 @@ void freeContextMetadata(void) {
   struct context_metadata *s;
   while (ctx.metaMap != NULL) {
     s = ctx.metaMap;
-    HASH_DEL(ctx.metaMap, s);
+    HASH_DEL(ctx.metaMap, s);  // NOLINT
     free(s);
   }
   HASH_CLEAR(hh, ctx.metaMap);
