@@ -262,4 +262,5 @@ void freeContextMetadata(void) {
     HASH_DEL(ctx.metaMap, s);
     free(s);
   }
+  HASH_CLEAR(hh, ctx.metaMap);
 }
