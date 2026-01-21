@@ -256,10 +256,10 @@ void printConfig(FILE *outFile) {
 }
 
 void destroyContextMetadata(void) {
-  struct context_metadata *s, *tmp;
-  HASH_ITER(hh, ctx.metaMap, s, tmp) {
+  struct context_metadata *s;
+  while (ctx.metaMap != NULL) {
+    s = ctx.metaMap;
     HASH_DEL(ctx.metaMap, s);
     free(s);
   }
-  ctx.metaMap = NULL;
 }
