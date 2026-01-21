@@ -380,7 +380,7 @@ typedef struct Parameters {
   double woodCN;
 
   // C:N ratio for fine roots, assumed static, g C/g N
-  double rootCN;
+  double fineRootCN;
 
   // C:N ratio at which D_CN is 1/2 for soil and litter
   double kCN;

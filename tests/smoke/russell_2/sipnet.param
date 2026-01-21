@@ -84,5 +84,5 @@ nVolatilizationFrac 0.1
 nLeachingFrac 0.25
 leafCN 20.0
 woodCN 100.0
-rootCN 40.0
+fineRootCN 40.0
 kCN 80.0

@@ -108,7 +108,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 <!--not used in CCMMF
 
 | 7 |                                          | snowInit        | Initial snow water                        | cm water equiv.                |                                                   |
-
+-->
 
 <!--if separating N_min into NH4 and NO3
 
@@ -124,12 +124,12 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Stoichiometry Parameters
 
-|     | Symbol                    | Name   | Description                            | Units | Notes                                            |
-| --- | ------------------------- | ------ | -------------------------------------- | ----- | ------------------------------------------------ |
-|     | $CN_{\textrm{wood}}$      | woodCN | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
-|     | $CN_{\textrm{leaf}}$      | leafCN | Carbon to Nitrogen ratio of leaves     |       |                                                  |
-|     | $CN_{\textrm{fine root}}$ | rootCN | Carbon to Nitrogen ratio of fine roots |       |                                                  |
-|     | $k_\textit{CN}$           | kCN    | Decomposition CN scaling parameter     |       |                                                  |
+|     | Symbol                    | Name        | Description                            | Units | Notes                                            |
+| --- | ------------------------- |-------------| -------------------------------------- | ----- | ------------------------------------------------ |
+|     | $CN_{\textrm{wood}}$      | woodCN      | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
+|     | $CN_{\textrm{leaf}}$      | leafCN      | Carbon to Nitrogen ratio of leaves     |       |                                                  |
+|     | $CN_{\textrm{fine root}}$ | fineRootCN  | Carbon to Nitrogen ratio of fine roots |       |                                                  |
+|     | $k_\textit{CN}$           | kCN         | Decomposition CN scaling parameter     |       |                                                  |
 
 ### Photosynthesis parameters
 

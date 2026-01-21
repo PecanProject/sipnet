@@ -19,7 +19,7 @@ void initGeneralState(void) {
   params.soilRespQ10 = 2.9;
   params.leafCN = 20.0;
   params.woodCN = 100.0;
-  params.rootCN = 40.0;
+  params.fineRootCN = 40.0;
 }
 
 void resetState() {
@@ -227,7 +227,7 @@ void initOrganicNState(double initLitterN, double initSoilN) {
   // easy comparison
   fluxes.leafLitter = params.leafCN;
   fluxes.woodLitter = params.woodCN;
-  fluxes.fineRootLoss = params.rootCN;
+  fluxes.fineRootLoss = params.fineRootCN;
   fluxes.coarseRootLoss = params.woodCN;
   fluxes.rLitter = envi.litterC / envi.litterN;
   fluxes.litterToSoil = envi.soilC / envi.soilOrgN;

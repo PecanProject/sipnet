@@ -394,7 +394,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "leafCN", &(params.leafCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "woodCN", &(params.woodCN), ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "rootCN", &(params.rootCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "fineRootCN", &(params.fineRootCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
 
   // NOLINTEND
@@ -421,8 +421,8 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   if (params.woodCN < TINY) {
     params.woodCN = TINY;  // avoid divide by zero
   }
-  if (params.rootCN < TINY) {
-    params.rootCN = TINY;  // avoid divide by zero
+  if (params.fineRootCN < TINY) {
+    params.fineRootCN = TINY;  // avoid divide by zero
   }
 
   fclose(paramF);
@@ -1351,7 +1351,7 @@ void calcNPoolFluxes() {
   // carbon fluxes from roots, and N loss due to mineralization
   // (Note: woodCN is used for coarse roots)
   fluxes.nOrgSoil = fluxes.litterToSoil / litterCN - soilMin +
-                    fluxes.fineRootLoss / params.rootCN +
+                    fluxes.fineRootLoss / params.fineRootCN +
                     fluxes.coarseRootLoss / params.woodCN;
 
   // mineralization
