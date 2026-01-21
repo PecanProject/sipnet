@@ -429,7 +429,6 @@ void outputHeader(FILE *out) {
   fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; "
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
   fprintf(out, "year day  time plantWoodC plantLeafC woodCreation     ");
-  fprintf(out, "soil microbeC coarseRootC fineRootC   ");
   fprintf(out, "litter soilWater soilWetnessFrac     snow      ");
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
@@ -449,7 +448,6 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
           envi.plantWoodC, envi.plantLeafC, trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
-  fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%11.2f %9.2f", envi.coarseRootC, envi.fineRootC);
   fprintf(out, " %8.2f %9.2f %15.3f %8.2f ", envi.litterC, envi.soilWater,
           trackers.soilWetnessFrac, envi.snow);
@@ -1380,7 +1378,6 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.soilC), 0);
   ensureNonNegative(&(envi.coarseRootC), 0);
   ensureNonNegative(&(envi.fineRootC), 0);
-  ensureNonNegative(&(envi.microbeC), 0);
   ensureNonNegative(&(envi.soilWater), 0);
 
   /* In the case of snow, the model has very different behavior for a snow pack
@@ -1733,7 +1730,6 @@ void setupModel(void) {
   envi.snow = params.snowInit;
 
   // Deprecated microbes feature - kept for output compatibility
-  envi.microbeC = 0.0;
 
   if (ctx.nitrogenCycle) {
     envi.minN = params.minNInit;
