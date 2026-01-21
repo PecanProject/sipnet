@@ -292,12 +292,6 @@ typedef struct Parameters {
   double coarseRootQ10;
 
   // ****************************************
-  // Deprecated microbe parameters (kept for compatibility, no longer used)
-  // ****************************************
-  // fraction of exudates that microbes immediately use (deprecated, set to 0)
-  double microbePulseEff;
-
-  // ****************************************
   // Other params, provenance TBD
   // ****************************************
 
@@ -388,10 +382,6 @@ typedef struct Environment {
   double coarseRootC;
   // carbon in fine roots (g C m^-2 ground area)
   double fineRootC;
-
-  ///// Deprecated microbe pool (kept for output compatibility, always 0)
-  // carbon in microbes (g C m^-2 ground area)
-  double microbeC;
 
   ///// From [5] LeBauer et al. (unpublished)
   // soil mineral nitrogen pool (g N m^-2 ground area)
