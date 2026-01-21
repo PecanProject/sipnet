@@ -402,6 +402,29 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
   readModelParams(modelParams, paramF);
 
+  // Validate parameters that are used as divisors to avoid division-by-zero
+  if (params.cFracLeaf < TINY) {
+    params.cFracLeaf = TINY;  // avoid divide by zero
+  }
+  if (params.halfSatPar < TINY) {
+    params.halfSatPar = TINY;  // avoid divide by zero
+  }
+  if (params.soilWHC < TINY) {
+    params.soilWHC = TINY;  // avoid divide by zero
+  }
+  if (params.leafCSpWt < TINY) {
+    params.leafCSpWt = TINY;  // avoid divide by zero
+  }
+  if (params.leafCN < TINY) {
+    params.leafCN = TINY;  // avoid divide by zero
+  }
+  if (params.woodCN < TINY) {
+    params.woodCN = TINY;  // avoid divide by zero
+  }
+  if (params.rootCN < TINY) {
+    params.rootCN = TINY;  // avoid divide by zero
+  }
+
   fclose(paramF);
 }
 
