@@ -45,7 +45,7 @@ void checkAllRead(ModelParams *ModelParams) {
     if (!param->isRead) {
       if (param->isRequired) {  // should have been read but wasn't!
         okay = 0;
-        logError("Did not find read required parameter %s\n", param->name);
+        logError("Did not find required parameter %s\n", param->name);
       } else {
         missingOptParam = 1;
       }
