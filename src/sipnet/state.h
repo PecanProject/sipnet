@@ -355,8 +355,10 @@ typedef struct Parameters {
   double woodCN;
 
   // C:N ratio for fine roots, assumed static, g C/g N
-  double rootCN;
+  double fineRootCN;
 
+  // C:N ratio at which D_CN is 1/2 for soil and litter
+  double kCN;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -515,6 +517,9 @@ typedef struct FluxVars {
   // Organic N flux for the litter N pool
   // g N * m^-2 ground area * day^-1
   double nOrgLitter;
+  // Nitrogen mineralization flux
+  // g N * m^-2 ground area * day^-1
+  double nMin;
 
   // ****************************************
   // Fluxes for event handling
