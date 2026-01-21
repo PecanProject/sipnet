@@ -1973,5 +1973,5 @@ void cleanupModel() {
     closeEventOutFile();
   }
 
-  destroyContextMetadata();
+  freeContextMetadata();
 }

@@ -255,7 +255,7 @@ void printConfig(FILE *outFile) {
   }
 }
 
-void destroyContextMetadata(void) {
+void freeContextMetadata(void) {
   struct context_metadata *s;
   while (ctx.metaMap != NULL) {
     s = ctx.metaMap;
