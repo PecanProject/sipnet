@@ -427,18 +427,33 @@ Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we 
 A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$ per day.
 
 $$
-F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n_vol}
+F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H}
+\tag{17}\label{eq:n_vol}
 $$
 
 ### Nitrogen Leaching $F^N_\text{leach}$
 
 $$
-F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} \tag{18}\label{eq:n_leach}
+F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} 
+\tag{18}\label{eq:n_leach}
 $$
 
 Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available to be leached, $F^W_{drainage}$ is drainage.
 
-### $\frak{Nitrogen \ Fixation \ F^N_\text{fix}}$
+### $\mathfrak{Plant \ Nitrogen \ Demand \ F^{N}_{\text{demand}}}$
+
+Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
+
+$$
+F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} 
+\tag{19}\label{eq:plant_n_demand}
+$$
+
+$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+
+Each term in the sum is calculated according to equation \ref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using equations \ref{eq:n_fix_demand} and \ref{eq:n_uptake_demand}.
+
+### $\frak{Nitrogen \ Fixation \ and \ Uptake \ F^N_\text{fix}, F^N_\text{uptake}}$
 
 For N-fixing plants, symbiotic nitrogen fixation is represented as supplying a fraction of plant nitrogen demand, and is inhibited by high soil mineral N. Plant N demand is defined in Eq. \ref{eq:plant_n_demand}.
 
@@ -446,7 +461,7 @@ The fraction of plant N demand met by biological N fixation is defined as:
 
 $$
 f_\text{fix} = f_{\text{fix,max}} \cdot D_{N_\text{min}}
-\tag{19}\label{eq:f_fix}
+\tag{20}\label{eq:f_fix}
 $$
 
 where:
@@ -458,7 +473,7 @@ We use a simple down-regulation function with increasing soil mineral N:
 
 $$
 D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
-\tag{19a}\label{eq:n_fix_supp_demand}
+\tag{21}\label{eq:n_fix_supp_demand}
 $$
 
 where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is reduced by half (g N m$^{-2}$).
@@ -467,50 +482,48 @@ Nitrogen fixation and soil N uptake are then partitioned from total plant N dema
 
 $$
 F^N_\text{fix} = f_\text{fix} \cdot F^N_\text{demand}
-\tag{19b}\label{eq:n_fix_demand}
+\tag{22a}\label{eq:n_fix_demand}
 $$
 
 $$
 F^N_\text{uptake} = (1 - f_\text{fix}) \cdot F^N_\text{demand}
-\tag{19c}\label{eq:n_uptake_demand}
+\tag{22b}\label{eq:n_uptake_demand}
 $$
 
 Fixed N ($F^N_\text{fix}$) is added directly to the plant N pool via Eq. \ref{eq:plant_n}, while $F^N_\text{uptake}$ is removed from the soil mineral N pool in Eq. \ref{eq:mineral_n_dndt}. If the available soil mineral N is insufficient to supply $F^N_\text{uptake}$, then actual uptake is capped at $N_\text{min}$ and any residual unmet demand contributes to nitrogen limitation as described in Eq. \ref{eq:n_limit}.
 
 We do not consider free-living nonsymbiotic N fixation, which is approximately two orders of magnitude smaller (less than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and typical N fertilization rates.
 
-### $\mathfrak{Plant\ Nitrogen\ Demand\ and\ Uptake\ (F^{N}_{\text{uptake}})}$, $F^{N}_{\text{demand}}$
-
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
-
-$$
-F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} \tag{20}\label{eq:plant_n_demand}
-$$
-
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
-
-Each term in the sum is calculated according to equation \ref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using equations \ref{eq:n_fix_demand} and \ref{eq:n_uptake_demand}.
-
-#### $\frak{Nitrogen \ Limitation \ Indicator \ Function \mathfrak{I_{\text{N limit}}}}$
+### $\frak{Nitrogen \ Limitation}$
 
 What happens when plant N demand exceeds available N? This is N limitation, a challenging process to represent in biogeochemical models.
 
 The initial approach to representing N limitation in SIPNET will be simple, and the primary motivation for implementing this is to avoid mass imbalance. First we will identify the presence of nitrogen limitation with an indicator variable:
+First we calculate the demand based on our 5-day time-averaged NPP, pool allocation parameters, and C:N ratio:
 
 $$
-I_{\text{N limit}} = \begin{cases}
-1, & \text{if } \frac{dN_\text{plant}}{dt} \leq N_{\text{min}} \\
-0, & \text{if } \frac{dN_\text{plant}}{dt} > N_{\text{min}}
-\end{cases} \tag{21}\label{eq:n_limit}
+N_\text{demand,est} = \overline{NPP} \cdot \sum_i{(\alpha_i \cdot CN_i)} 
+\tag{23}\label{eq:n_demand_est}
+$$
+$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+
+Note that this differs from Eq. \ref{eq:plant_n_demand} as this term is the expected growth, based solely on NPP.
+
+Next we compute the nitrogen deficit and convert back to carbon (in order to determine an appropriate scaling factor for GPP):
+$$
+\begin{array}{lcr}
+\Delta_N = N_\text{demand,est} - N_\text{min} \\
+\Delta_C = \frac{\Delta_N}{\sum_i{\alpha_I \cdot CN_i}} 
+\end{array}
+\tag{24}
+$$
+Next we define a nitrogen dependency function $D_N$ as a function of estimated demand and current mineral N, scaled to GPP:
+
+$$
+D_N = \min(1, \frac{\text{GPP} - \Delta_C}{\text{GPP}})
 $$
 
-When $I=0$, SIPNET will throw a warning and increase autotrophic respiration to $R_A=GPP$ to stop plant growth and associated N uptake:
-
-$$
-R_A = \max(R_A, I_{\text{N limit}} \cdot GPP) \tag{22}\label{eq:n_limit_ra}
-$$
-
-This will effectively stop plant growth and N uptake when there there is insufficient N.
+Last, we update GPP from Eq. \ref{eq:A17} by multiplying by this factor.
 
 We do expect N limitation to occur, including in vineyards and woodlands, but we assume that effect of nitrogen limitation on plant growth will have a relatively smaller impact on GHG budgets at the county and state scales. This is because nitrogen limitation should be rare in California's intensively managed croplands because the cost of N fertilzer is low compared to the impact of N limitation on crop yield.
 
