@@ -440,7 +440,7 @@ $$
 
 Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available to be leached, $F^W_{drainage}$ is drainage.
 
-### $\mathfrak{Plant \ Nitrogen \ Demand \ F^{N}_{\text{demand}}}$
+### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
 
 Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
 
@@ -453,7 +453,7 @@ $$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
 
 Each term in the sum is calculated according to equation \ref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using equations \ref{eq:n_fix_demand} and \ref{eq:n_uptake_demand}.
 
-### $\frak{Nitrogen \ Fixation \ and \ Uptake \ F^N_\text{fix}, F^N_\text{uptake}}$
+### Nitrogen Fixation and Uptake $F^N_\text{fix}, F^N_\text{uptake}$
 
 For N-fixing plants, symbiotic nitrogen fixation is represented as supplying a fraction of plant nitrogen demand, and is inhibited by high soil mineral N. Plant N demand is defined in Eq. \ref{eq:plant_n_demand}.
 
@@ -494,7 +494,7 @@ Fixed N ($F^N_\text{fix}$) is added directly to the plant N pool via Eq. \ref{eq
 
 We do not consider free-living nonsymbiotic N fixation, which is approximately two orders of magnitude smaller (less than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and typical N fertilization rates.
 
-### $\frak{Nitrogen \ Limitation}$
+### Nitrogen Limitation
 
 What happens when plant N demand exceeds available N? This is N limitation, a challenging process to represent in biogeochemical models.
 
