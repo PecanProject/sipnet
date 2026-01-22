@@ -62,6 +62,7 @@ When LITTER_POOL=0:
 - Carbon fluxes that would go to the litter pool ($F^C_\text{litter}$) are routed directly to the soil carbon pool
 - All decomposition occurs in the soil pool
 - This affects carbon routing from harvest events, organic matter additions, plant senescence, and other processes involving $F^C_\text{litter}$
+- All nitrogen cycle modeling is off (that is, NITROGEN_CYCLE=1 requires LITTER_POOL=1)
 
 ### Maximum Photosynthetic Rate
 
@@ -101,6 +102,8 @@ The total adjusted gross primary production (GPP) is the product of potential GP
 
 The water stress factor $D_{\text{water,}A}$ is defined in equation \ref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
+Note that nitrogen limitation can further reduce GPP; see [Nitrogen Limitation](#nitrogen-limitation).
+
 ### Plant Growth
 
 $$
@@ -112,10 +115,11 @@ Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant bioma
 To make explicit what contributes to autotrophic respiration, we decompose $R_A$ into maintenance and optional growth components:
 
 $$
-R_A = R_\text{leaf} + R_\text{wood} + R_\text{root} +\ R_\text{growth} \tag{1a}\label{eq:ra_components}
+R_A = R_\text{leaf} + R_\text{wood} + R_\text{fine_root} + R_\text{coarse_root} +\ R_\text{growth} \tag{1a}\label{eq:ra_components}
 $$
 
-Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (Eqs. \ref{eq:A18a}, \ref{eq:A19}); $R_\text{root}$ denotes root maintenance respiration; and $R_\text{growth}$ is an optional growth respiration term. Because these components are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
+Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (Eqs. \ref{eq:A18a}, \ref{eq:A19}); 
+$R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration; and $R_\text{growth}$ is an optional growth respiration term. Because these components are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
 
 Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
@@ -129,18 +133,30 @@ $$
 
 Summing \ref{eq:Z3} over all plant pools shows that NPP is partitioned into biomass growth, litter production, and removed harvest.
 
+**TODO:** do we need to explain the five-day averaging of NPP here, or is sufficient in the Wood Carbon section below?
+
 ### Plant Death
 
 Plant death is implemented as a harvest event with the fraction of biomass transferred to litter, $f_{\text{harvest,transfer,}i}$ set to 1.
 
 ### Wood Carbon
 
+SIPNET uses a five-day averaged NPP when allocating gained carbon to plant growth. To implement this, the adjusted GPP 
+is added to the wood carbon pool as a storage mechanism, and all allocations from the averaged NPP are deducted from that pool. 
+We can represent this storage of carbon conceptually as:
+$$ 
+NPP_\text{storage} = (GPP - R_a) - \overline{NPP}_\text{alloc}
 $$
-\frac{dC_\text{wood}}{dt} = \alpha_\text{wood}\cdot\text{NPP} - F^C_\text{litter,wood} \tag{Braswell A1}\label{eq:A1}
+where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. Note that we do not explicitly track this storage term.
+
+Thus, changes to wood carbon over time are determined by:
+
+$$
+\frac{dC_\text{wood}}{dt} = NPP_\text{storage} + \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood}
+\tag{Braswell A1, modified}\label{eq:A1}
 $$
 
-Change in plant wood carbon  $(C_W)$ over time is determined by the fraction of net primary productivity allocated to wood, and wood litter production  $(F^C_\text{litter,wood})$.
-
+where $\alpha_\text{wood}\cdot\overline{\text{NPP}}$ represents the amount of carbon allocated to growth and $(F^C_\text{litter,wood})$ is the wood litter production.
 
 ### Leaf Carbon
 
@@ -149,6 +165,22 @@ $$
 $$
 
 The change in plant leaf carbon  $(C_\text{leaf})$ over time is given by the balance of leaf production  $(L)$ and leaf litter production  $(F^C_\text{litter,leaf})$.
+
+**TODO:** explain $L$ in terms of $\alpha_\text{leaf}\cdot \overline{NPP}$ and leaf on/leaf off mechanics.
+
+### Root Carbon
+
+Both fine and coarse root carbon are treated similarly. Change in carbon for these pools is determined by these equations, applied separately to fine and coarse roots:
+
+$$
+\frac{dC_\text{i}}{dt} = \alpha_\text{i} \cdot \overline{NPP} - F^C_\text{i,root loss,}
+$$
+
+for $i \in \{\text{fine root}, \text{coarse root}\}$, where $F^C_\text{i,root loss}$ is determined by:
+$$
+F^C_\text{i,root loss} = k_\text{i,turnover} \cdot C_\text{i}
+$$
+and $k_\text{i,turnover}$ is the root turnover rate.
 
 ### Leaf Maintenance Respiration
 
