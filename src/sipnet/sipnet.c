@@ -192,9 +192,9 @@ void readClimData(const char *climFile) {
         &vPress, &wspd, &soilWetness);
   } else {
     status = sscanf(firstLine,  // NOLINT
-                    "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
-                    &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
-                    &vpdSoil, &vPress, &wspd);
+        "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
+        &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
+        &vpdSoil, &vPress, &wspd);
   }
   free(firstLine);
 
