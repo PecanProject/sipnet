@@ -1151,30 +1151,23 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
   double moistEffect = calcMoistEffect(water, whc);
 
-    // Effects of tillage, if any
-    double tillageEffect = calcTillageEffect();
+  // :: from [1], remainder of eq (A20)
+  // See calcMoistEffect() for first part of eq (A20) calculation
+  double tempEffect = calcTempEffect(tsoil);
 
-    // Effects of current CN
-    double cnEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
+  // Effects of tillage, if any
+  double tillageEffect = calcTillageEffect();
 
-    // Put it all together!
-    fluxes.maintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
-                              tempEffect * tillageEffect * cnEffect;
-
-    // With no microbes, rSoil flux is just the maintenance respiration
-    fluxes.rSoil = fluxes.maintRespiration;
-  }
-  // else fluxes.rSoil = 0.0?
-}
+  // Effects of current CN
+  double cnEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
 
   // Put it all together!
-  fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp *
-                                moistEffect * tempEffect * tillageEffect;
+  fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
+                                tempEffect * tillageEffect * cnEffect;
 
-  // rSoil flux is the maintenance respiration
+  // rSoil flux is the soil maintenance respiration
   fluxes.rSoil = fluxes.soilMaintRespiration;
 }
-
 void calcLitterFluxes() {
   if (ctx.litterPool) {
     double tempEffect = calcTempEffect(climate->tsoil);
