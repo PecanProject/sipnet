@@ -185,16 +185,17 @@ void readClimData(const char *climFile) {
   }
 
   if (legacyFormat) {
-    status = sscanf(firstLine,  // NOLINT
-                    "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                    &firstLoc, &year, &day, &time, &length, &tair, &tsoil,
-                    &par, &precip, &vpd, &vpdSoil, &vPress, &wspd,
-                    &soilWetness);
+    status =
+        sscanf(firstLine,  // NOLINT
+               "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+               &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
+               &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
   } else {
-    status = sscanf(firstLine,  // NOLINT
-                    "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
-                    &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
-                    &vpdSoil, &vPress, &wspd);
+    status =
+        sscanf(firstLine,  // NOLINT
+               "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year, &day,
+               &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil,
+               &vPress, &wspd);
   }
   free(firstLine);
 
@@ -1224,10 +1225,10 @@ double calcRootAndWoodFluxes(void) {
 
   // :: from [3], roots model descriptions
   // All root exudates contribute to root loss (microbes no longer modeled)
-  fluxes.coarseRootLoss = coarseExudate +
-                          params.coarseRootTurnoverRate * envi.coarseRootC;
-  fluxes.fineRootLoss = fineExudate +
-                        params.fineRootTurnoverRate * envi.fineRootC;
+  fluxes.coarseRootLoss =
+      coarseExudate + params.coarseRootTurnoverRate * envi.coarseRootC;
+  fluxes.fineRootLoss =
+      fineExudate + params.fineRootTurnoverRate * envi.fineRootC;
 
   // Wood litter, in g C * m^-2 ground area * day^-1
   // turnover rate is fraction lost per day
