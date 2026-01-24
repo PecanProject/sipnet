@@ -1,1 +1,0 @@
-{"name":"Local: solve","url":"\\\\wsl.localhost\\Ubuntu\\home\\ell\\sipnet\\solve.cpp","tests":[{"id":1768661003651,"input":"4\n4\n2 3 4 1\n3\n2 3 1\n5\n3 4 1 2 5\n5\n3 1 4 2 5\n","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"\\\\wsl.localhost\\Ubuntu\\home\\ell\\sipnet\\solve.cpp","group":"local","local":true}
