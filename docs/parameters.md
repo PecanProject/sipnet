@@ -32,10 +32,10 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 |                           | $F$        | Generic flux of carbon, nitrogen, or water             |
 |                           | $A$        | Photosynthetic assimilation (net photosynthesis)       |
 |                           | $R$        | Respiration flux                                       |
-|                           | $Rh$       | Heterotrophic respiration (soil/litter decomposition) |
-|                           | $Ra$       | Autotrophic respiration (vegetation respiration)       |
-|                           | $ET$       | Evapotranspiration                                     |
-|                           | $T$        | Transpiration                                          |
+|                           | $Rh$       | Heterotrophic respiration (tracked as `soilMaintRespiration` and `rLitter`) |
+|                           | $Ra$       | Autotrophic respiration (tracked as `rVeg`, `rFineRoot`, `rCoarseRoot`) |
+|                           | $ET$       | Evapotranspiration (sum of `evaporation` and `transpiration`) |
+|                           | $T$        | Transpiration (tracked as `transpiration`)             |
 |                           | $GPP$      | Gross Primary Production                               |
 |                           | $NPP$      | Net Primary Production                                 |
 |                           | $NEE$      | Net Ecosystem Exchange                                 |
