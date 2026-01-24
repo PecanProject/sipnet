@@ -144,10 +144,6 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "leafPoolDepth", params.leafPoolDepth);
   fprintf(out, "%s: %.2f\n", "woodTurnoverRate", params.woodTurnoverRate);
   fprintf(out, "%s: %.2f\n", "psnTMax", params.psnTMax);
-  fprintf(out, "%s: %.2f\n", "efficiency", params.efficiency);
-  fprintf(out, "%s: %.2f\n", "maxIngestionRate", params.maxIngestionRate);
-  fprintf(out, "%s: %.2f\n", "halfSatIngestion", params.halfSatIngestion);
-  fprintf(out, "%s: %.2f\n", "microbeInit", params.microbeInit);
   fprintf(out, "%s: %.2f\n", "fineRootFrac", params.fineRootFrac);
   fprintf(out, "%s: %.2f\n", "coarseRootFrac", params.coarseRootFrac);
   fprintf(out, "%s: %.2f\n", "fineRootAllocation", params.fineRootAllocation);
@@ -164,9 +160,6 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "baseCoarseRootResp", params.baseCoarseRootResp);
   fprintf(out, "%s: %.2f\n", "fineRootQ10", params.fineRootQ10);
   fprintf(out, "%s: %.2f\n", "coarseRootQ10", params.coarseRootQ10);
-  fprintf(out, "%s: %.2f\n", "baseMicrobeResp", params.baseMicrobeResp);
-  fprintf(out, "%s: %.2f\n", "microbeQ10", params.microbeQ10);
-  fprintf(out, "%s: %.2f\n", "microbePulseEff", params.microbePulseEff);
 
   fclose(out);
 }

@@ -46,10 +46,6 @@ cFracLeaf: 0.45
 leafPoolDepth: 0.00
 woodTurnoverRate: 0.01
 psnTMax: 0.00
-efficiency: 0.45
-maxIngestionRate: 0.04
-halfSatIngestion: 5000.00
-microbeInit: 0.50
 fineRootFrac: 0.20
 coarseRootFrac: 0.20
 fineRootAllocation: 0.40
@@ -63,6 +59,3 @@ baseFineRootResp: 0.09
 baseCoarseRootResp: 0.01
 fineRootQ10: 2.60
 coarseRootQ10: 2.60
-baseMicrobeResp: 0.00
-microbeQ10: 2.30
-microbePulseEff: 0.45
