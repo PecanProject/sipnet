@@ -472,7 +472,8 @@ typedef struct FluxVars {
   // ****************************************
   // Soil respiration fluxes (g C m-2 ground area day^-1)
   // ****************************************
-  // Maintenance respiration of soil (heterotrophic respiration as described in [1])
+  // Maintenance respiration of soil (heterotrophic respiration as
+  // described in [1])
   double soilMaintRespiration;
   // Exudates into the soil
   double soilPulse;
