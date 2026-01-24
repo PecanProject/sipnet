@@ -115,7 +115,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 <!--not used in CCMMF
 
 | 7 |                                          | snowInit        | Initial snow water                        | cm water equiv.                |                                                   |
-
+-->
 
 <!--if separating N_min into NH4 and NO3
 
@@ -131,12 +131,12 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Stoichiometry Parameters
 
-|     | Symbol                    | Name | Description                            | Units | Notes                                            |
-| --- | ------------------------- | ---- | -------------------------------------- | ----- | ------------------------------------------------ |
-|     | $CN_{\textrm{wood}}$      |      | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
-|     | $CN_{\textrm{leaf}}$      |      | Carbon to Nitrogen ratio of leaves     |       |                                                  |
-|     | $CN_{\textrm{fine root}}$ |      | Carbon to Nitrogen ratio of fine roots |       |                                                  |
-|     | $k_\textit{CN}$           |      | Decomposition CN scaling parameter     |       |                                                  |
+|     | Symbol                    | Name        | Description                            | Units | Notes                                            |
+| --- | ------------------------- |-------------| -------------------------------------- | ----- | ------------------------------------------------ |
+|     | $CN_{\textrm{wood}}$      | woodCN      | Carbon to Nitrogen ratio of wood       |       | $CN_{\textrm{coarse root}} = CN_{\textrm{wood}}$ |
+|     | $CN_{\textrm{leaf}}$      | leafCN      | Carbon to Nitrogen ratio of leaves     |       |                                                  |
+|     | $CN_{\textrm{fine root}}$ | fineRootCN  | Carbon to Nitrogen ratio of fine roots |       |                                                  |
+|     | $k_\textit{CN}$           | kCN         | Decomposition CN scaling parameter     |       |                                                  |
 
 ### Photosynthesis parameters
 
@@ -231,8 +231,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 50  |                          | rSoilConst1     |                                                                                                                        |                                                 | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
 | 51  |                          | rSoilConst2     |                                                                                                                        |                                                 | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
 
-
-
 ### Tree physiological parameters
 
 |     | Symbol                 | Parameter Name         | Definition                             | Units                | notes                                                              |
@@ -242,7 +240,6 @@ Run-time parameters can change from one run to the next, or when the model is st
 | 55  | $K_\text{wood}$        | woodTurnoverRate       | average turnover rate of woody plant C | $\text{y}^{-1}$      | converted to per-day rate internally; leaf loss handled separately |
 | 70  | $K_\text{fine root}$   | fineRootTurnoverRate   | turnover of fine roots                 | $\text{y}^{-1}$      | converted to per-day rate internally                               |
 | 71  | $K_\text{coarse root}$ | coarseRootTurnoverRate | turnover of coarse roots               | $\text{y}^{-1}$      | converted to per-day rate internally                               |
-
 
 ## Hard-coded Values
 
