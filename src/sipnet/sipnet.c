@@ -1346,7 +1346,7 @@ void calcNPoolFluxes() {
   // to prevent N duplication.
   fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
                       fluxes.woodLitter / params.woodCN - litterMin -
-                      (fluxes.litterToSoil / litterCN);
+                      fluxes.litterToSoil / litterCN;
 
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
