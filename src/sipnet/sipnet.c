@@ -184,18 +184,20 @@ void readClimData(const char *climFile) {
       exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
+  // clang-format off
   if (legacyFormat) {
-    status =
-        sscanf(firstLine,  // NOLINT
-               "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-               &firstLoc, &year, &day, &time, &length, &tair, &tsoil, &par,
-               &precip, &vpd, &vpdSoil, &vPress, &wspd, &soilWetness);
+    status = sscanf(
+        firstLine,  // NOLINT
+        "%d %d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &firstLoc, &year,
+        &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd, &vpdSoil,
+        &vPress, &wspd, &soilWetness);
   } else {
     status = sscanf(firstLine,  // NOLINT
-                    "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
-                    &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
-                    &vpdSoil, &vPress, &wspd);
+        "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", &year,
+        &day, &time, &length, &tair, &tsoil, &par, &precip, &vpd,
+        &vpdSoil, &vPress, &wspd);
   }
+  // clang-format on
   free(firstLine);
 
   if (status != expectedNumCols) {
