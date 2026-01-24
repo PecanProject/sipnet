@@ -95,6 +95,9 @@ int main() {
 void writeParams(const char *fname) {
 
   FILE *out = fopen(fname, "w");
+  if (out == NULL) {
+    return;
+  }
 
   fprintf(out, "%s: %.2f\n", "plantWoodInit", params.plantWoodInit);
   fprintf(out, "%s: %.2f\n", "laiInit", params.laiInit);
