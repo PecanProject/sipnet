@@ -1342,7 +1342,7 @@ void calcNPoolFluxes() {
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter, and N loss due to mineralization. N added via fertilization
-  // is handled elsewhere.Added subtraction of (fluxes.litterToSoil / litterCN) 
+  // is handled elsewhere.Added subtraction of (fluxes.litterToSoil / litterCN)
   // to prevent N duplication.
   fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
                       fluxes.woodLitter / params.woodCN - litterMin -
