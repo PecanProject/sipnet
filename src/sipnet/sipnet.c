@@ -1269,7 +1269,7 @@ double calcRootAndWoodFluxes(void) {
     fluxes.woodCreation = 0;
   }
 
-  if ((gppSoil > 0) & (envi.fineRootC > 0)) {
+  if ((gppSoil > 0) && (envi.fineRootC > 0)) {
     // :: from [3], eq (5)
     coarseExudate = params.coarseRootExudation * gppSoil;
     fineExudate = params.fineRootExudation * gppSoil;
