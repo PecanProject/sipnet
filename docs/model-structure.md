@@ -176,7 +176,7 @@ $F^C_\text{i,root loss}$ is determined by:
 
 \begin{equation}
 F^C_\text{i,root loss} = k_\text{i,turnover} \cdot C_\text{i}
-\lebel{eq:root_loss}
+\label{eq:root_loss}
 \end{equation}
 
 ### Leaf Maintenance Respiration
@@ -206,61 +206,61 @@ a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling f
 
 The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition:
 
-$$
-\frac{dC_\text{litter}}{dt} =
-F^C_\text{litter} - F^C_{\text{decomp}}
-$$
+\begin{equation}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}}
+\end{equation}
 
-Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and $F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and $F^C_{\text{decomp}}$ 
+is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover is routed directly to the
+soil carbon pool (see Soil Carbon).
 
 $F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 
-$$
+\begin{equation}
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
   \left(
     \sum_{i} F^C_{\text{harvest,transfer,}i} +
   F^C_\text{fert,org}
   \right) 
-  \tag{3}\label{eq:litter_flux}
-$$
-<!-- 
-_existing equation + harvest transfer and organic matter inputs
--->
+  \label{eq:litter_flux}
+\end{equation}
+
 $$\small i \in \{\text{leaf, wood}\}$$
 
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.
 
-$F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter decomposition is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
+$F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter decomposition 
+is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
 
-$$
+\begin{equation}
 F^C_{\text{decomp}} =
 K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot
 D_{CN} \cdot
 D_{tillage}
-\tag{4a}\label{eq:decomp_rate}
-$$
+\label{eq:decomp_rate}
+\end{equation}
 
 The total litter decomposition flux is partitioned between heterotrophic respiration and transfer of carbon to the soil pool, satisfying the mass-balance relationship:
 
-$$
-R_{\text{litter}} + F^C_{\text{soil,litter}} = F^C_{\text{decomp}} \tag{4b}\label{eq:decomp_carbon}
-$$
+\begin{equation}
+R_{\text{litter}} + F^C_{\text{soil,litter}} = F^C_{\text{decomp}} \label{eq:decomp_carbon}
+\end{equation}
 
 Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:r_litter} and $F^C_{\text{soil,litter}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
 
-$$
+\begin{equation}
 R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{decomp}}
-\tag{5}\label{eq:r_litter}
-$$
+\label{eq:r_litter}
+\end{equation}
 
 The remainder of the decomposed litter carbon is transferred to the soil pool:
 
-$$
+\begin{equation}
 F^C_{\text{soil,litter}} =
  (1 - f_{\text{litter}}) \cdot F^C_{\text{decomp}}
-\tag{6}\label{eq:soil_carbon}
-$$
+\label{eq:soil_carbon}
+\end{equation}
 
 ### Soil Carbon
 
@@ -273,6 +273,8 @@ $$
 Total carbon input to the soil, $F^C_{\text{soil}}$, includes both
 (i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
 (ii) inputs from root turnover:
+
+TODO: convert to equation autonumbering from here
 
 $$
 F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}.
@@ -400,7 +402,7 @@ and the C:N ratio of the inputs.
 
 ### Soil Organic Nitrogen $N_\text{org,soil}$
 
-The change in soil nitrogen over time, $N_\text{org,soil}$ is determined by inputs including root loss, litter decomposition, and losses to mineralization:
+The change in soil nitrogen $N_\text{org,soil}$ over time is determined by inputs including root loss, litter decomposition, and losses to mineralization:
 
 $$
   \frac{dN_\text{org,soil}}{dt} =
@@ -419,7 +421,9 @@ $F^N_\text{soil,min}$ is the flux from soil organic N to soil mineral N.
 
 ### Soil Mineral Nitrogen $N_\text{min}$
 
-Change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization, and losses to volatilization, leaching, and plant uptake:
+The soil mineral nitrogen pool $N_\text{min}$ is defined as the amount of mineral nitrogen in the soil that is available 
+for biomass use. The change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization,
+and losses to volatilization, leaching, and plant uptake:
 
 $$
   \frac{dN_\text{min}}{{dt}} = 
@@ -527,43 +531,22 @@ We do not consider free-living nonsymbiotic N fixation, which is approximately t
 
 What happens when plant N demand exceeds available N? This is N limitation, a challenging process to represent in biogeochemical models.
 
-The initial approach to representing N limitation in SIPNET will be simple. After computing all[^*] nitrogen 
-fluxes, we examine the right-hand side of \eqref{eq:mineral_n_dndt}. If this change in soil mineral nitrogen is 
-sufficient to exhaust our available mineral nitrogen, we will:
-* calculate the difference 
+The initial approach to representing N limitation in SIPNET will be simple. After computing all [^*] of the nitrogen 
+fluxes detailed here, we compute the right-hand side of \eqref{eq:mineral_n_dndt} as the demand on the soil mineral 
+nitrogen pool. If this demand is greater than our available mineral nitrogen, we will:
 
-[^*]: blather blather
+- calculate the amount that demand exceeds supply
+- scale down plant nitrogen uptake for each biomass pool so that demand equals supply
+- reduce biomass carbon pools by the equivalent amount
+- reduce GPP by the total carbon reduction to maintain mass balance
 
+[^*]: Nitrogen inputs from fertilization have not been computed at this point; however, this is a non-negative input,
+  so should not cause us to miss when nitrogen is limited
 
-First we calculate the demand based on our 5-day time-averaged NPP, pool allocation parameters, and C:N ratio:
-
-$$
-N_\text{demand,est} = \overline{NPP} \cdot \sum_i{(\alpha_i \cdot CN_i)} 
-\tag{23}\label{eq:n_demand_est}
-$$
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
-
-Note that this differs from Eq. \ref{eq:plant_n_demand} as this term is the expected growth, based solely on NPP.
-
-Next we compute the nitrogen deficit and convert back to carbon (in order to determine an appropriate scaling factor for GPP):
-$$
-\begin{array}{lcr}
-\Delta_N = N_\text{demand,est} - N_\text{min} \\
-\Delta_C = \frac{\Delta_N}{\sum_i{\alpha_I \cdot CN_i}} 
-\end{array}
-\tag{24}
-$$
-Next we define a nitrogen dependency function $D_N$ as a function of estimated demand and current mineral N, scaled to GPP:
-
-$$
-D_N = \min(1, \frac{\text{GPP} - \Delta_C}{\text{GPP}})
-$$
-
-Last, we update GPP from Eq. \ref{eq:A17} by multiplying by this factor.
-
-We do expect N limitation to occur, including in vineyards and woodlands, but we assume that effect of nitrogen limitation on plant growth will have a relatively smaller impact on GHG budgets at the county and state scales. This is because nitrogen limitation should be rare in California's intensively managed croplands because the cost of N fertilzer is low compared to the impact of N limitation on crop yield.
-
-If this scheme is too simple, we can adjust either the conditions under which N limitation occurs or develop an N dependency function based on the balance between plant N demand and N availability.
+We do expect N limitation to occur, including in vineyards and woodlands, but we assume that effect of nitrogen limitation
+on plant growth will have a relatively smaller impact on GHG budgets at the county and state scales. This is because nitrogen
+limitation should be rare in California's intensively managed croplands because the cost of N fertilizer is low compared 
+to the impact of N limitation on crop yield.
 
 ## Water Dynamics
 
@@ -690,7 +673,7 @@ $$
 
 Where $T_{\text{env}}$ may be soil or air temperature  $(T_\text{soil}$ or $T_\text{air})$. 
 
-Becuase the function is symmetric around $T_\text{opt}$, the parameters $T_{\text{min}}$ and $T_{\text{opt}}$ are provided and $T_{\text{max}}$ is calculated internally as $T_{\text{max}} = 2 \cdot T_{\text{opt}} - T_{\text{min}}$.
+Because the function is symmetric around $T_\text{opt}$, the parameters $T_{\text{min}}$ and $T_{\text{opt}}$ are provided and $T_{\text{max}}$ is calculated internally as $T_{\text{max}} = 2 \cdot T_{\text{opt}} - T_{\text{min}}$.
 
 #### Exponential Function for Respiration $D_{\text(temp,Q10)}$
 
