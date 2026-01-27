@@ -18,7 +18,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 5  |                  | plantLeafC          | Leaf carbon                                                               | g C m$^{-2}$ |
 | 6  |                  | woodCreation        | Carbon allocated to wood during timestep                                  | g C m$^{-2}$ |
 | 7  |                  | soil                | (Single) soil organic carbon (or mineral soil C pool)                     | g C m$^{-2}$ |
-| 8  |                  | microbeC            | Microbial carbon (0 if microbes flag off)                                 | g C m$^{-2}$ |
+| 8  |                  | microbeC            | Microbial carbon (always 0, microbes feature is deprecated)               | g C m$^{-2}$ |
 | 9  |                  | coarseRootC         | Coarse root carbon                                                        | g C m$^{-2}$ |
 | 10 |                  | fineRootC           | Fine root carbon                                                          | g C m$^{-2}$ |
 | 11 |                  | litter              | Litter carbon (0 if litter pool disabled)                                 | g C m$^{-2}$ |
@@ -30,7 +30,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 17 |                  | cumNEE              | Cumulative NEE since simulation start                                     | g C m$^{-2}$ |
 | 18 | $GPP$            | gpp                 | Gross primary production                                                  | g C m$^{-2}$ |
 | 19 |                  | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                       | g C m$^{-2}$ |
-| 20 | $R_H$            | rSoil               | Heterotrophic respiration (maintenance + microbe terms per configuration) | g C m$^{-2}$ |
+| 20 | $R_H$            | rSoil               | Heterotrophic respiration (soil organic matter decomposition)            | g C m$^{-2}$ |
 | 21 |                  | rRoot               | Root (autotrophic) respiration                                            | g C m$^{-2}$ |
 | 22 |                  | ra                  | Total autotrophic respiration (rAboveground + rRoot)                      | g C m$^{-2}$ |
 | 23 |                  | rh                  | Total heterotrophic respiration (litter + soil components)                | g C m$^{-2}$ |

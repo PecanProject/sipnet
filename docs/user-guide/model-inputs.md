@@ -37,7 +37,6 @@ soilInit 7000
 litterWFracInit 0.5
 soilWFracInit 0.6
 snowInit 1
-microbeInit 0.5
 fineRootFrac 0.2
 coarseRootFrac 0.2
 aMax 95
@@ -232,7 +231,6 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `growth-resp`    | off     | Explicitly model growth respiration, rather than including with maintenance respiration |
 | `leaf-water`     | off     | Calculate leaf pool and evaporate from that pool                                        |
 | `litter-pool`    | off     | Enable litter pool in addition to single soil carbon pool                               |
-| `microbes`       | off     | Enable microbe modeling                                                                 |
 | `nitrogen-cycle` | off     | Enable nitrogen cycle modeling                                                          |
 | `snow`           | on      | Keep track of snowpack, rather than assuming all precipitation is liquid                |
 | `soil-phenol`    | off     | Use soil temperature to determine leaf growth                                           |
@@ -240,7 +238,6 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
- - `events` and `microbes` may not both be turned on
 
 ### Command Line Arguments
 

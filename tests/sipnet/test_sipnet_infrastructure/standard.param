@@ -15,7 +15,6 @@ soilInit			1.04
 litterWFracInit		1.05
 soilWFracInit		1.06
 snowInit			1.07
-microbeInit			1.08
 fineRootFrac		1.09
 coarseRootFrac		1.10
 !!!!!!!!!!!!!!!
@@ -39,7 +38,6 @@ baseSoilResp		3.03
 baseSoilRespCold	3.04
 baseFineRootResp	3.05
 baseCoarseRootResp	3.06
-baseMicrobeResp		3.07
 
 !!! Q10s
 vegRespQ10			4.01
@@ -47,7 +45,6 @@ fineRootQ10			4.02
 coarseRootQ10		4.03
 soilRespQ10			4.04
 soilRespQ10Cold		4.05
-microbeQ10			4.06
 
 !!! Misc
 growthRespFrac		5.01
@@ -101,15 +98,7 @@ cFracLeaf			9.15
 qualityLeaf			10.01
 qualityWood			10.02
 
-!!! Microbe & Stoichiometry model parameters
-efficiency			11.01
-maxIngestionRate	11.02
-halfSatIngestion	11.03
-totNitrogen			11.04
-microbeNC			11.05
-
 !!! Pulsing parameters
 fineRootExudation	12.01
 coarseRootExudation	12.02
-microbePulseEff		12.03
 !!!!!!!!!!!!!!!

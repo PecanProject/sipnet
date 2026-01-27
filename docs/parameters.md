@@ -21,7 +21,6 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 
 ### Variables (Pools, Fluxes, and Parameters)
 
-
 | **Category**              | **Symbol** | **Description**                                        |
 | :------------------------ | :--------- | :----------------------------------------------------- |
 | **State variables**       |            |                                                        |
@@ -33,7 +32,10 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 |                           | $F$        | Generic flux of carbon, nitrogen, or water             |
 |                           | $A$        | Photosynthetic assimilation (net photosynthesis)       |
 |                           | $R$        | Respiration flux                                       |
-|                           | $ET$       | Evapotranspiration                                     |
+|                           | $Rh$       | Heterotrophic respiration (tracked as `soilMaintRespiration` and `rLitter`) |
+|                           | $Ra$       | Autotrophic respiration (tracked as `rVeg`, `rFineRoot`, `rCoarseRoot`) |
+|                           | $ET$       | Evapotranspiration (sum of `evaporation` and `transpiration`) |
+|                           | $T$        | Transpiration (tracked as `transpiration`)             |
 |                           | $GPP$      | Gross Primary Production                               |
 |                           | $NPP$      | Net Primary Production                                 |
 |                           | $NEE$      | Net Ecosystem Exchange                                 |
@@ -49,9 +51,11 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 |                           | $f$        | Fraction of a pool or flux other than NPP              |
 |                           | $k$        | Scaling factor                                         |
 |                           | $D$        | Dependency or damping function                         |
+|                           | $SLW$      | Specific Leaf Weight (leaf carbon per unit leaf area)  |
+
+**Note on superscripts:** Most variables use superscripts for process context (e.g., $X^{\text{growth}}$ for growth respiration). However, certain fluxes follow established scientific conventions and are written without superscripts: carbon fluxes ($NPP$, $GPP$, $Rh$, $Ra$) and water fluxes ($ET$, $T$). These terms are widely used in the scientific literature as standard measurements and retain this notation even when combined with subscripts (e.g., $Rh_{\text{litter}}$).
 
 ### Subscripts (Temporal, Spatial, or Contextual Identifiers)
-
 
 | **Category**                             | **Subscript**          | **Description**                                       |
 | :--------------------------------------- | :--------------------- | :---------------------------------------------------- |
@@ -59,29 +63,32 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 |                                          | $X_0$                  | Initial value                                         |
 |                                          | $X_t$                  | Value at time $t$                                     |
 |                                          | $X_d$                  | Daily value or average                                |
-|                                          | $X_\text{avg}$         | Average value (e.g., over a timestep or spatial area) |
-|                                          | $X_\text{max}$         | Maximum value (e.g., temperature or rate)             |
-|                                          | $X_\text{min}$         | Minimum value (e.g., temperature or rate)             |
-|                                          | $X_\text{opt}$         | Optimal value (e.g., temperature or rate)             |
+|                                          | $X_{\text{avg}}$       | Average value (e.g., over a timestep or spatial area) |
+|                                          | $X_{\text{max}}$       | Maximum value (e.g., temperature or rate)             |
+|                                          | $X_{\text{min}}$       | Minimum value (e.g., temperature or rate)             |
+|                                          | $X_{\text{opt}}$       | Optimal value (e.g., temperature or rate)             |
 | **Structural components**                |                        |                                                       |
-|                                          | $X_\text{leaf}$        | Leaf pools or fluxes                                  |
-|                                          | $X_\text{wood}$        | Wood pools or fluxes                                  |
-|                                          | $X_\text{root}$        | Root pool                                             |
-|                                          | $X_\text{fine root}$   | Fine root pool                                        |
-|                                          | $X_\text{coarse root}$ | Coarse root pool                                      |
-|                                          | $X_\text{soil}$        | Soil pools or processes                               |
-|                                          | $X_\text{litter}$      | Litter pools or processes                             |
-|                                          | $X_\text{veg}$         | Vegetation processes (general)                        |
+|                                          | $X_{\text{leaf}}$      | Leaf pools or fluxes                                  |
+|                                          | $X_{\text{wood}}$      | Wood pools or fluxes                                  |
+|                                          | $X_{\text{root}}$      | Root pool (general)                                   |
+|                                          | $X_{\text{fine root}}$ | Fine root pool                                        |
+|                                          | $X_{\text{coarse root}}$ | Coarse root pool                                    |
+|                                          | $X_{\text{soil}}$      | Soil pools or processes                               |
+|                                          | $X_{\text{litter}}$    | Litter pools or processes                             |
+|                                          | $X_{\text{veg}}$       | Vegetation processes (general)                        |
 | **Processes context**                    |                        |                                                       |
-|                                          | $X_\text{resp}$        | Respiration processes                                 |
-|                                          | $X_\text{dec}$         | Decomposition processes                               |
-|                                          | $X_\text{vol}$         | Volatilization processes                              |
+|                                          | $X_{\text{resp}}$      | Respiration processes                                 |
+|                                          | $X_{\text{growth}}$    | Growth respiration                                    |
+|                                          | $X_{\text{dec}}$       | Decomposition processes                               |
+|                                          | $X_{\text{vol}}$       | Volatilization processes                              |
+|                                          | $X_{\text{drain}}$     | Drainage processes                                    |
 | **Chemical / environmental identifiers** |                        |                                                       |
-|                                          | $X_\text{org}$         | Organic forms                                         |
-|                                          | $X_\text{mineral}$     | Mineral forms                                         |
+|                                          | $X_{\text{org}}$       | Organic forms                                         |
+|                                          | $X_{\text{mineral}}$   | Mineral forms                                         |
 |                                          | $X_{\text{anaer}}$     | Anaerobic soil conditions                             |
+|                                          | $X_{\text{HC}}$        | Water holding capacity                                |
 
-Subscripts may be used in combination, e.g. $X_{\text{soil,mineral},0}$.
+Subscripts may be used in combination, e.g., $X_{\text{soil,mineral},0}$.
 
 ## Run-time Parameters
 
@@ -133,45 +140,44 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Photosynthesis parameters
 
-|     | Symbol                        | Parameter Name  | Definition                                                           | Units                                                                        | notes                                                                     |
+| Row | Symbol                        | Parameter Name  | Definition                                                           | Units                                                                        | Notes                                                                     |
 | --- | ----------------------------- | --------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 8   | $A_{\text{max}}$              | aMax            | Maximum net CO2 assimilation rate                                    | $\text{nmol CO}_2 \cdot \text{g}^{-1} \cdot \text{leaf} \cdot \text{s}^{-1}$ | assuming max. possible PAR, all intercepted, no temp, water or VPD stress |
-| 9   | $f_{A_{\text{max},d}}$        | aMaxFrac        | avg. daily aMax as fraction of instantaneous                         | fraction                                                                     | Avg. daily max photosynthesis as fraction of $A_{\text{max}}$             |
-| 10  | $R_\text{leaf,opt}$           | baseFolRespFrac | basal Foliar maintenance respiration as fraction of $A_{\text{max}}$ | fraction                                                                     |                                                                           |
-| 11  | $T_{\text{min}}$              | psnTMin         | Minimum temperature at which net photosynthesis occurs               | $^{\circ}\text{C}$                                                           |                                                                           |
-| 12  | $T_{\text{opt}}$              | psnTOpt         | Optimum temperature at which net photosynthesis occurs               | $^{\circ}\text{C}$                                                           |                                                                           |
-| 13  | $K_\text{VPD}$                | dVpdSlope       | Slope of VPD–photosynthesis relationship                             | $kPa^{-1}$                                                                   | dVpd = 1 - dVpdSlope \* vpd^dVpdExp                                       |
-| 14  | $K_{\text{VPD}},{\text{exp}}$ | dVpdExp         | Exponent used to calculate VPD effect on Psn                         | dimensionless                                                                | dVpd = 1 - dVpdSlope \* vpd^dVpdExp                                       |
-| 15  | $\text{PAR}_{1/2}$            | halfSatPar      | Half saturation point of PAR–photosynthesis relationship             | $m^{-2}$\ ground area $\cdot$ day$^{-1}$                                     | PAR at which photosynthesis occurs at 1/2 theoretical maximum             |
-| 16  | $k$                           | attenuation     | Canopy PAR extinction coefficient                                    |                                                                              |                                                                           |
+| 20  | $A_{\text{max}}$              | aMax            | Maximum net CO₂ assimilation rate                                    | $\mu\text{mol CO}_2 \cdot \text{g}^{-1} \text{ leaf} \cdot \text{s}^{-1}$ | Assuming maximum PAR, full interception, no stress |
+| 21  | $f_{A_{\text{max},d}}$        | aMaxFrac        | Average daily $A_{\text{max}}$ as fraction of instantaneous          | unitless                                             | Accounts for diurnal variation in photosynthesis             |
+| 22  | $R_{\text{leaf,opt}}$         | baseFolRespFrac | Basal foliar maintenance respiration as fraction of $A_{\text{max}}$ | unitless                                             |                                                           |
+| 23  | $T_{\text{psn,min}}$          | psnTMin         | Minimum temperature for net photosynthesis                           | $°\text{C}$                                          |                                                           |
+| 24  | $T_{\text{psn,opt}}$          | psnTOpt         | Optimum temperature for net photosynthesis                           | $°\text{C}$                                          |                                                           |
+| 25  | $K_{\text{VPD}}$              | dVpdSlope       | Slope of VPD–photosynthesis relationship                             | $\text{kPa}^{-1}$                                    | $D_{\text{VPD}} = 1 - K_{\text{VPD}} \cdot VPD^{K_{\text{VPD,exp}}}$ |
+| 26  | $K_{\text{VPD,exp}}$          | dVpdExp         | Exponent for VPD effect on photosynthesis                            | unitless                                             | $D_{\text{VPD}} = 1 - K_{\text{VPD}} \cdot VPD^{K_{\text{VPD,exp}}}$ |
+| 27  | $\text{PAR}_{1/2}$            | halfSatPar      | Half-saturation point of PAR–photosynthesis relationship             | $\mu\text{mol} \cdot \text{m}^{-2} \cdot \text{s}^{-1}$ | PAR at half-maximum photosynthesis rate             |
+| 28  | $k_{\text{atten}}$            | attenuation     | Canopy PAR extinction coefficient                                    | unitless                                             |                                                           |
 
 ### Phenology-related parameters
 
-|     | Symbol               | Parameter Name   | Definition                                                              | Units                                                   | notes                                          |
-| --- | -------------------- | ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
-| 17  | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                                             |                                                |
-| 18  |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                                         |                                                |
-| 19  |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                                         |                                                |
-| 20  | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                                         |                                                |
-| 21  |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$         |                                                |
-| 22  |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                                         |                                                |
-| 23  | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                                         |                                                |
-| 24  | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | $\text{y}^{-1}$                                         | converted to per-day rate internally           |
-|     | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
-
+| Row | Symbol                 | Parameter Name   | Definition                                                              | Units                                                   | Notes                                          |
+| --- | ---------------------- | ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| 29  | $D_{\text{on}}$        | leafOnDay        | Day of year when leaves appear                                          | day of year (1–365)                                    |                                                |
+| 30  |                        | gddLeafOn        | GDD threshold for leaf appearance (GDD-based phenology)                 | $°\text{C} \cdot \text{day}$                            |                                                |
+| 31  |                        | soilTempLeafOn   | Soil temperature threshold for leaf appearance (temp-based phenology)   | $°\text{C}$                                            |                                                |
+| 32  | $D_{\text{off}}$       | leafOffDay       | Day of year for leaf drop                                               | day of year (1–365)                                    |                                                |
+| 33  |                        | leafGrowth       | Additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2}$                        |                                                |
+| 34  |                        | fracLeafFall     | Additional fraction of leaves that fall at end of growing season        | unitless                                                |                                                |
+| 35  | $\alpha_{\text{leaf}}$  | leafAllocation   | Fraction of $NPP$ allocated to leaf growth                              | unitless                                                |                                                |
+| 36  | $K_{\text{leaf}}$      | leafTurnoverRate | Average turnover rate of leaves                                         | $\text{year}^{-1}$                                      | Converted to per-day rate internally           |
+| 37  | $LAI_{\text{max}}$     | laiMax           | Maximum leaf area index                                                 | $\text{m}^2 \text{ leaf} \cdot \text{m}^{-2} \text{ ground}$ |                                                |
 
 ### Allocation parameters
 
-|     | Symbol                    | Parameter Name      | Definition                                                      | Units    | notes              |
-| --- | ------------------------- | ------------------- | --------------------------------------------------------------- | -------- | ------------------ |
-| 64  |                           | fineRootFrac        | fraction of wood carbon allocated to fine root                  |          |                    |
-| 65  |                           | coarseRootFrac      | fraction of wood carbon that is coarse root                     |          |                    |
-| 66  | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots                         |          |                    |
-| 67  | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood                               |          |                    |
-| 68  |                           | fineRootExudation   | fraction of GPP from fine roots exuded to the soil[^exudates]   | fraction | Pulsing parameters |
-| 69  |                           | coarseRootExudation | fraction of GPP from coarse roots exuded to the soil[^exudates] | fraction | Pulsing parameters |
+| Row | Symbol                      | Parameter Name        | Definition                                                      | Units    | Notes              |
+| --- | --------------------------- | --------------------- | --------------------------------------------------------------- | -------- | ------------------ |
+| 38  |                             | fineRootFrac          | Fraction of wood carbon allocated to fine roots                 | unitless |                    |
+| 39  |                             | coarseRootFrac        | Fraction of wood carbon that is coarse roots                    | unitless |                    |
+| 40  | $\alpha_{\text{fine root}}$ | fineRootAllocation    | Fraction of $NPP$ allocated to fine roots                       | unitless |                    |
+| 41  | $\alpha_{\text{wood}}$      | woodAllocation        | Fraction of $NPP$ allocated to wood                             | unitless |                    |
+| 42  |                             | fineRootExudation     | Fraction of $GPP$ from fine roots exuded to soil[^exudates]     | unitless | Pulsing parameters |
+| 43  |                             | coarseRootExudation   | Fraction of $GPP$ from coarse roots exuded to soil[^exudates]   | unitless | Pulsing parameters |
 
-[^exudates]: Fine and coarse root exudation are calculated as a fraction of GPP, but the exudates are subtracted from the fine and coarse root pools, respectively. <!--Note that previous versions incorrectly defined fine root exudates as a fraction of NPP-->
+[^exudates]: Fine and coarse root exudation are calculated as a fraction of $GPP$, but the exudates are subtracted from the fine and coarse root pools, respectively.
 
 ### Autotrophic respiration parameters
 
