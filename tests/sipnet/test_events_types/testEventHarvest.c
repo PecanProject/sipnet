@@ -11,10 +11,10 @@ int checkOutput(double litter, double leafC, double woodC, double fineC,
   double curLitter = 0;
   if (ctx.litterPool) {
     logTest("Checking litter pool\n");
-    curLitter = envi.litter;
+    curLitter = envi.litterC;
   } else {
     logTest("Checking soil pool\n");
-    curLitter = envi.soil;
+    curLitter = envi.soilC;
     litter += 0.5;  // We bumped init soil C to distinguish
   }
   if (!compareDoubles(litter, curLitter)) {
@@ -41,8 +41,8 @@ int checkOutput(double litter, double leafC, double woodC, double fineC,
 }
 
 void initEnv(void) {
-  envi.soil = 1.5;
-  envi.litter = 1;
+  envi.soilC = 1.5;
+  envi.litterC = 1;
   envi.plantLeafC = 2;
   envi.plantWoodC = 3;
   envi.fineRootC = 4;
