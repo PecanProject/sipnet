@@ -1176,7 +1176,7 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
 
     // Put it all together!
     fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
-                                 tempEffect * tillageEffect * cnEffect;
+        tempEffect * tillageEffect * cnEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
     fluxes.rSoil = fluxes.soilMaintRespiration;
