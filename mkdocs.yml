@@ -37,9 +37,14 @@ theme:
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
+  - attr_list
   - toc:
       permalink: true
   - pymdownx.superfences
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: PecanProject
+      repo: sipnet
 
 
 
