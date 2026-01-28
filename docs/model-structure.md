@@ -100,8 +100,7 @@ Note that nitrogen limitation can further reduce GPP; see [Nitrogen Limitation](
 \end{equation}
 
 Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant biomass. NPP is allocated to plant biomass 
-pools in proportion to their allocation parameters $\alpha_i$. As in Zobitz, et al., we use the mean NPP over the past
-five days, denoted $\overline{\text{NPP}}$. 
+pools in proportion to their allocation parameters $\alpha_i$. As in Zobitz, et al., plant growth is a determined by the running five-day mean NPP, $\overline{\text{NPP}}$.
 
 To make explicit what contributes to autotrophic respiration, we decompose $R_A$ into maintenance and optional growth components:
 
