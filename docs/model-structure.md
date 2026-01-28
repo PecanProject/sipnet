@@ -100,7 +100,7 @@ Note that nitrogen limitation can further reduce GPP; see [Nitrogen Limitation](
 \end{equation}
 
 Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant biomass. NPP is allocated to plant biomass 
-pools in proportion to their allocation parameters $\alpha_i$. As in Zobitz, et al., plant growth is a determined by the running five-day mean NPP, $\overline{\text{NPP}}$.
+pools in proportion to their allocation parameters $\alpha_i$. As in Zobitz, et al. (2008), plant growth is a determined by the running five-day mean NPP, $\overline{\text{NPP}}$.
 
 To make explicit what contributes to autotrophic respiration, we decompose $R_A$ into maintenance and optional growth components:
 
@@ -121,7 +121,7 @@ Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
   \tag{Zobitz 3, modified}
 \end{equation}
 
-This is an augmented form of Zobitz, et al. Eq (3). Summing over all plant pools shows that NPP is partitioned into biomass growth, litter production, and removed harvest.
+This is Zobitz, et al. Eq (3), augmented with the harvest and litter terms. Summing over all plant pools shows that NPP is partitioned into biomass growth, litter production, and removed harvest.
 
 ### Plant Death
 
@@ -129,8 +129,9 @@ Plant death is implemented as a harvest event with the fraction of biomass trans
 
 ### Wood Carbon
 
-As stated above, SIPNET uses a five-day averaged NPP when allocating gained carbon to plant growth. To implement this, the adjusted GPP 
-is added to the wood carbon pool where it acts as an _implicit_ storage pool, and all allocations from the averaged NPP are deducted from that pool.
+As stated above, SIPNET uses a five-day averaged NPP when allocating gained carbon to plant growth. To implement this, 
+the current timestep's net primary production (adjusted GPP - autotrophic respiration) is added to the wood carbon pool
+where it acts as an _implicit_ storage pool, and all allocations from the averaged NPP are deducted from that pool.
 We can represent this storage of carbon conceptually as:
 
 \begin{equation}
