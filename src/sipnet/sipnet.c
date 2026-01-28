@@ -1,4 +1,4 @@
-/* SiPnET: Simplified PnET
+/* SIPNET: Simplified PnET
 
    Author: Bill Sacks  wsacks@wisc.edu
    modified by...
