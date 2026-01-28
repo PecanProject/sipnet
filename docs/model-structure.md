@@ -323,8 +323,9 @@ $$
 
 $$\small j \in \{\text{soil, litter}\}$$
 
-
-The calculation of methane flux  $(F^C_{CH_4})$ is analagous to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
+The calculation of methane flux $(F^C_{CH_4})$ is analogous to that of $R_H$. It uses the same carbon pools as substrate
+and temperature dependence but has specific rate parameters $(K_{\mathit{CH_4,}j})$, a moisture dependence function 
+based on oxygen availability, and no direct dependence on tillage.
 
 ## Carbon:Nitrogen Ratio Dynamics $(CN)$
 
@@ -528,24 +529,30 @@ We do not consider free-living nonsymbiotic N fixation, which is approximately t
 
 ### Nitrogen Limitation
 
-What happens when plant N demand exceeds available N? This is N limitation, a challenging process to represent in biogeochemical models.
+Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of available mineral nitrogen. Plant nitrogen 
+demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
 
-The initial approach to representing N limitation in SIPNET will be simple. After computing all [^*] of the nitrogen 
-fluxes detailed here, we compute the right-hand side of \eqref{eq:mineral_n_dndt} as the demand on the soil mineral 
-nitrogen pool. If this demand is greater than our available mineral nitrogen, we will:
+If this demand is greater than available mineral nitrogen, nitrogen limitation reduces plant growth.
 
-- calculate the amount that demand exceeds supply
-- scale down plant nitrogen uptake for each biomass pool so that demand equals supply
-- reduce biomass carbon pools by the equivalent amount
-- reduce GPP by the total carbon reduction to maintain mass balance
+Nitrogen limitation is applied during the flux calculation stage of the model update sequence, prior to carbon 
+allocation to plant biomass pools and before any pool updates occur. N limitation is implemented as follows:
 
-[^*]: Nitrogen inputs from fertilization have not been computed at this point; however, this is a non-negative input,
-  so should not cause us to miss when nitrogen is limited
+- Calculate the amount by which plant N demand exceeds available supply [^*].
 
-We do expect N limitation to occur, including in vineyards and woodlands, but we assume that effect of nitrogen limitation
-on plant growth will have a relatively smaller impact on GHG budgets at the county and state scales. This is because nitrogen
-limitation should be rare in California's intensively managed croplands because the cost of N fertilizer is low compared 
-to the impact of N limitation on crop yield.
+- Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
+
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
+
+- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed 
+- stoichiometry.
+
+- Carbon associated with the unmet growth demand is subtracted from potential GPP to maintain mass balance \eqref{eq:A17} [^+].
+
+[^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen 
+uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
+
+[^+]: Under nitrogen limitation, excess carbon is prevented from entering the system by down-regulating GPP. This is 
+consistent with SIPNET's use of GPP as an effective ecosystem scale input rather than instantaneous leaf-level assimilation.
 
 ## Water Dynamics
 
