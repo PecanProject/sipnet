@@ -130,7 +130,7 @@ Plant death is implemented as a harvest event with the fraction of biomass trans
 ### Wood Carbon
 
 As stated above, SIPNET uses a five-day averaged NPP when allocating gained carbon to plant growth. To implement this, the adjusted GPP 
-is added to the wood carbon pool as a storage mechanism, and all allocations from the averaged NPP are deducted from that pool. 
+is added to the wood carbon pool where it acts as an _implicit_ storage pool, and all allocations from the averaged NPP are deducted from that pool.
 We can represent this storage of carbon conceptually as:
 
 \begin{equation}
