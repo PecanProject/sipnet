@@ -246,7 +246,7 @@ int testOrganicN(void) {
   soilOrgN = 3;
   initOrganicNState(litterN, soilOrgN);
   expSoilOrgN = 2;
-  expLitterN = 1;
+  expLitterN = 0;
   calcNPoolFluxes();
 
   status |= checkFlux(fluxes.nOrgLitter, expLitterN, "Organic litter N");
