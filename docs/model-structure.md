@@ -161,7 +161,7 @@ The change in plant leaf carbon  $(C_\text{leaf})$ over time is given by the bal
 
 ### Root Carbon
 
-Both fine and coarse root carbon are treated similarly. Change in carbon for these pools is determined as follows, 
+Both fine and coarse root carbon change in the same way as leaf carbon. Change in carbon for these pools is determined as follows, 
 applied separately to fine and coarse roots:
 
 \begin{equation}
