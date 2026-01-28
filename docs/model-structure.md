@@ -456,7 +456,7 @@ The simplest way to represent $N_2O$ flux is as a proportion of the mineral N po
 
 Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
 
-A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$ per day.
+A new parameter $K_\text{vol}$ represents the first-order rate constant governing volatilization losses from the soil mineral nitrogen pool. The realized volatilization flux is proportional to $N_\text{min}$ and depends on temperature and soil moisture.
 
 $$
 F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H}
