@@ -274,7 +274,11 @@ Total carbon input to the soil, $F^C_{\text{soil}}$, includes both
 (i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
 (ii) inputs from root turnover:
 
-TODO: convert to equation autonumbering from here
+<!--
+TODO: 
+  - convert to equation autonumbering from here
+  - move paper equation citations into surrounding text; mention if modified.
+-->
 
 $$
 F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}.
