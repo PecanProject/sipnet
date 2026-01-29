@@ -1222,7 +1222,7 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
     fluxes.microbeIngestion = 0.0;
     fluxes.soilPulse = 0.0;
     fluxes.microbeMaintRespiration = 0.0;
-    // fluxes.maintRespiration is otherwise set, do not set to zero here
+    fluxes.soilMaintRespiration = 0.0;
   }
 }
 
