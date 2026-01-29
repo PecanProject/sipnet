@@ -1,14 +1,3 @@
----
-format:
-  html:
-    engine: katex
-  pdf:
-    geometry: margin=0.5in
-    header-includes:
-      - \usepackage{longtable}
-      - \usepackage{amsmath}
----
-
 <!-- 
 How to Number Equations 
 (Haven't figured out how to number only the new ones automatically)
@@ -62,6 +51,7 @@ When LITTER_POOL=0:
 - Carbon fluxes that would go to the litter pool ($F^C_\text{litter}$) are routed directly to the soil carbon pool
 - All decomposition occurs in the soil pool
 - This affects carbon routing from harvest events, organic matter additions, plant senescence, and other processes involving $F^C_\text{litter}$
+- All nitrogen cycle modeling is off (that is, NITROGEN_CYCLE=1 requires LITTER_POOL=1)
 
 ### Maximum Photosynthetic Rate
 
@@ -101,33 +91,37 @@ The total adjusted gross primary production (GPP) is the product of potential GP
 
 The water stress factor $D_{\text{water,}A}$ is defined in equation \ref{eq:A16} as the ratio of actual to potential transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
+Note that nitrogen limitation can further reduce GPP; see [Nitrogen Limitation](#nitrogen-limitation).
+
 ### Plant Growth
 
-$$
-\text{NPP} = \text{GPP} - R_A \tag{1} \label{eq:npp}
-$$
+\begin{equation}
+\text{NPP} = \text{GPP} - R_A \label{eq:npp}
+\end{equation}
 
-Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant biomass. NPP is allocated to plant biomass pools in proportion to their allocation parameters $\alpha_i$.
+Net primary productivity  $(\text{NPP})$ is the total carbon gain of plant biomass. NPP is allocated to plant biomass 
+pools in proportion to their allocation parameters $\alpha_i$. As in Zobitz, et al. (2008), plant growth is a determined by the running five-day mean NPP, $\overline{\text{NPP}}$.
 
 To make explicit what contributes to autotrophic respiration, we decompose $R_A$ into maintenance and optional growth components:
 
-$$
-R_A = R_\text{leaf} + R_\text{wood} + R_\text{root} +\ R_\text{growth} \tag{1a}\label{eq:ra_components}
-$$
+\begin{equation}
+R_A = R_\text{leaf} + R_\text{wood} + R_\text{fine_root} + R_\text{coarse_root} +\ R_\text{growth} \label{eq:ra_components}
+\end{equation}
 
-Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (Eqs. \ref{eq:A18a}, \ref{eq:A19}); $R_\text{root}$ denotes root maintenance respiration; and $R_\text{growth}$ is an optional growth respiration term. Because these components are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
+Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (Eqs. \ref{eq:A18a}, \ref{eq:A19}); 
+$R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration; and $R_\text{growth}$ is an optional growth respiration term. Because these components are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
 
 Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
-$$
+\begin{equation}
 \frac{dC_{\text{plant,}i}}{dt}
-  = \alpha_i \cdot \text{NPP}
+  = \alpha_i \cdot \overline{\text{NPP}}
     - F^C_{\text{harvest,removed,}i}
     - F^C_{\text{litter,}i}
-  \tag{Zobitz 3}\label{eq:Z3}
-$$
+  \tag{Zobitz 3, modified}
+\end{equation}
 
-Summing \ref{eq:Z3} over all plant pools shows that NPP is partitioned into biomass growth, litter production, and removed harvest.
+This is Zobitz, et al. Eq (3), augmented with the harvest and litter terms. Summing over all plant pools shows that NPP is partitioned into biomass growth, litter production, and removed harvest.
 
 ### Plant Death
 
@@ -135,40 +129,75 @@ Plant death is implemented as a harvest event with the fraction of biomass trans
 
 ### Wood Carbon
 
-$$
-\frac{dC_\text{wood}}{dt} = \alpha_\text{wood}\cdot\text{NPP} - F^C_\text{litter,wood} \tag{Braswell A1}\label{eq:A1}
-$$
+As stated above, SIPNET uses a five-day averaged NPP when allocating gained carbon to plant growth. To implement this, 
+the current timestep's net primary production (adjusted GPP - autotrophic respiration) is added to the wood carbon pool
+where it acts as an _implicit_ storage pool, and all allocations from the averaged NPP are deducted from that pool.
+We can represent this storage of carbon conceptually as:
 
-Change in plant wood carbon  $(C_W)$ over time is determined by the fraction of net primary productivity allocated to wood, and wood litter production  $(F^C_\text{litter,wood})$.
+\begin{equation}
+NPP_\text{storage} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
+\end{equation}
 
+where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. Note that we do not explicitly track this storage term.
+
+Thus, changes to wood carbon over time are determined by:
+
+\begin{equation}
+\frac{dC_\text{wood}}{dt} = NPP_\text{storage} + \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood}
+\tag{Braswell A1, modified}\label{eq:A1}
+\end{equation}
+
+where $\alpha_\text{wood}\cdot\overline{\text{NPP}}$ represents the amount of carbon allocated to growth and $(F^C_\text{litter,wood})$ is the wood litter production.
 
 ### Leaf Carbon
 
-$$
+\begin{equation*}
 \frac{dC_\text{leaf}}{dt} = L - F^C_\text{litter,leaf} \tag{Braswell A2}\label{eq:A2}
-$$
+\end{equation*}
+
 
 The change in plant leaf carbon  $(C_\text{leaf})$ over time is given by the balance of leaf production  $(L)$ and leaf litter production  $(F^C_\text{litter,leaf})$.
 
+**TODO:** explain $L$ in terms of $\alpha_\text{leaf}\cdot \overline{NPP}$ and leaf on/leaf off mechanics.
+
+### Root Carbon
+
+Both fine and coarse root carbon change in the same way as leaf carbon. Change in carbon for these pools is determined as follows, 
+applied separately to fine and coarse roots:
+
+\begin{equation}
+\frac{dC_\text{i}}{dt} = \alpha_\text{i} \cdot \overline{NPP} - F^C_\text{i,root loss}
+\label{eq:root_carbon}
+\end{equation}
+
+
+for $i \in \{\text{fine root}, \text{coarse root}\}$, where $k_\text{i,turnover}$ is the root turnover rate and 
+$F^C_\text{i,root loss}$ is determined by:
+
+\begin{equation}
+F^C_\text{i,root loss} = k_\text{i,turnover} \cdot C_\text{i}
+\label{eq:root_loss}
+\end{equation}
+
 ### Leaf Maintenance Respiration
 
-$$
+\begin{equation*}
 R_\text{leaf,opt} = k_\text{leaf} \cdot A_{\text{max}} \cdot C_\text{leaf} \tag{Braswell A5}\label{eq:A5}
-$$
+\end{equation*}
 
 Where $R_\text{leaf,opt}$ is leaf maintenance respiration at $T_\text{opt}$, proportional to the maximum photosynthetic rate $A_{\text{max}}$ with a scaling factor $k_\text{leaf}$ multiplied by the mass of leaf $C_\text{leaf}$.
 
-$$
+\begin{equation*}
 R_\text{leaf} = R_\text{leaf,opt} \cdot D_{\text{temp,Q10}} \tag{Braswell A18a}\label{eq:A18a}
-$$
+\end{equation*}
 
 Actual foliar respiration  $(R_\text{leaf})$ is modeled as a function of the foliar respiration rate  $(R_\text{leaf,opt})$ at optimum temperature of leaf respiration $T_\text{opt}$ and the $Q_{10}$ temperature sensitivity factor.
 
 ### Wood Maintenance Respiration
 
-$$
+\begin{equation*}
 R_\text{wood} = K_\text{wood} \cdot C_\text{wood} \cdot D_{\text{temp,Q10}_v} \tag{Braswell A19}\label{eq:A19}
-$$
+\end{equation*}
 
 Wood maintenance respiration $(R_m)$ depends on the wood carbon content  $(C_\text{wood})$, 
 a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling function $D_{\text{temp,Q10}_v}$.
@@ -177,61 +206,61 @@ a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling f
 
 The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition:
 
-$$
-\frac{dC_\text{litter}}{dt} =
-F^C_\text{litter} - F^C_{\text{decomp}}
-$$
+\begin{equation}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}}
+\end{equation}
 
-Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and $F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and $F^C_{\text{decomp}}$ 
+is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover is routed directly to the
+soil carbon pool (see Soil Carbon).
 
 $F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 
-$$
+\begin{equation}
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
   \left(
     \sum_{i} F^C_{\text{harvest,transfer,}i} +
   F^C_\text{fert,org}
   \right) 
-  \tag{3}\label{eq:litter_flux}
-$$
-<!-- 
-_existing equation + harvest transfer and organic matter inputs
--->
+  \label{eq:litter_flux}
+\end{equation}
+
 $$\small i \in \{\text{leaf, wood}\}$$
 
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.
 
-$F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter decomposition is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
+$F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter decomposition 
+is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
 
-$$
+\begin{equation}
 F^C_{\text{decomp}} =
 K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot
 D_{CN} \cdot
 D_{tillage}
-\tag{4a}\label{eq:decomp_rate}
-$$
+\label{eq:decomp_rate}
+\end{equation}
 
 The total litter decomposition flux is partitioned between heterotrophic respiration and transfer of carbon to the soil pool, satisfying the mass-balance relationship:
 
-$$
-R_{\text{litter}} + F^C_{\text{soil,litter}} = F^C_{\text{decomp}} \tag{4b}\label{eq:decomp_carbon}
-$$
+\begin{equation}
+R_{\text{litter}} + F^C_{\text{soil,litter}} = F^C_{\text{decomp}} \label{eq:decomp_carbon}
+\end{equation}
 
 Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:r_litter} and $F^C_{\text{soil,litter}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
 
-$$
+\begin{equation}
 R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{decomp}}
-\tag{5}\label{eq:r_litter}
-$$
+\label{eq:r_litter}
+\end{equation}
 
 The remainder of the decomposed litter carbon is transferred to the soil pool:
 
-$$
+\begin{equation}
 F^C_{\text{soil,litter}} =
  (1 - f_{\text{litter}}) \cdot F^C_{\text{decomp}}
-\tag{6}\label{eq:soil_carbon}
-$$
+\label{eq:soil_carbon}
+\end{equation}
 
 ### Soil Carbon
 
@@ -245,6 +274,12 @@ Total carbon input to the soil, $F^C_{\text{soil}}$, includes both
 (i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
 (ii) inputs from root turnover:
 
+<!--
+TODO: 
+  - convert to equation autonumbering from here
+  - move paper equation citations into surrounding text; mention if modified.
+-->
+
 $$
 F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}.
 $$
@@ -254,12 +289,12 @@ to soil organic carbon content and modified by environmental and management fact
 
 $$
 R_{\text{soil}} =
-K_{dec} \cdot C_{\text{soil}} \cdot
-D_{\text{temp}} \cdot
-D_{\text{water},R_H} \cdot
-D_{CN} \cdot
-D_{\text{tillage}}
-\tag{6a}\label{eq:r_soil}
+  K_{dec} \cdot C_{\text{soil}} \cdot
+  D_{\text{temp}} \cdot
+  D_{\text{water},R_H} \cdot
+  D_{CN} \cdot
+  D_{\text{tillage}}
+\label{eq:r_soil}
 $$
 
 SIPNET assumes no loss of SOC to leaching or erosion.
@@ -293,8 +328,9 @@ $$
 
 $$\small j \in \{\text{soil, litter}\}$$
 
-
-The calculation of methane flux  $(F^C_{CH_4})$ is analagous to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
+The calculation of methane flux $(F^C_{CH_4})$ is analogous to that of $R_H$. It uses the same carbon pools as substrate
+and temperature dependence but has specific rate parameters $(K_{\mathit{CH_4,}j})$, a moisture dependence function 
+based on oxygen availability, and no direct dependence on tillage.
 
 ## Carbon:Nitrogen Ratio Dynamics $(CN)$
 
@@ -372,7 +408,7 @@ and the C:N ratio of the inputs.
 
 ### Soil Organic Nitrogen $N_\text{org,soil}$
 
-The change in soil nitrogen over time, $N_\text{org,soil}$ is determined by inputs including root loss, litter decomposition, and losses to mineralization:
+The change in soil nitrogen $N_\text{org,soil}$ over time is determined by inputs including root loss, litter decomposition, and losses to mineralization:
 
 $$
   \frac{dN_\text{org,soil}}{dt} =
@@ -391,7 +427,9 @@ $F^N_\text{soil,min}$ is the flux from soil organic N to soil mineral N.
 
 ### Soil Mineral Nitrogen $N_\text{min}$
 
-Change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization, and losses to volatilization, leaching, and plant uptake:
+The soil mineral nitrogen pool $N_\text{min}$ is defined as the amount of mineral nitrogen in the soil that is available 
+for biomass use. The change in the mineral nitrogen pool over time is determined by inputs from mineralization and fertilization,
+and losses to volatilization, leaching, and plant uptake:
 
 $$
   \frac{dN_\text{min}}{{dt}} = 
@@ -425,21 +463,36 @@ The simplest way to represent $N_2O$ flux is as a proportion of the mineral N po
 
 Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
 
-A new fixed parameter $K_\text{vol}$ will represent the proportion of $N_\text{min}$ that is volatilized as $N_2O$ per day.
+A new parameter $K_\text{vol}$ represents the first-order rate constant governing volatilization losses from the soil mineral nitrogen pool. The realized volatilization flux is proportional to $N_\text{min}$ and depends on temperature and soil moisture.
 
 $$
-F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{17}\label{eq:n_vol}
+F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H}
+\tag{17}\label{eq:n_vol}
 $$
 
 ### Nitrogen Leaching $F^N_\text{leach}$
 
 $$
-F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} \tag{18}\label{eq:n_leach}
+F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach} 
+\tag{18}\label{eq:n_leach}
 $$
 
 Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available to be leached, $F^W_{drainage}$ is drainage.
 
-### $\frak{Nitrogen \ Fixation \ F^N_\text{fix}}$
+### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
+
+Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
+
+$$
+F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} 
+\tag{19}\label{eq:plant_n_demand}
+$$
+
+$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+
+Each term in the sum is calculated according to equation \ref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using equations \ref{eq:n_fix_demand} and \ref{eq:n_uptake_demand}.
+
+### Nitrogen Fixation and Uptake $F^N_\text{fix}, F^N_\text{uptake}$
 
 For N-fixing plants, symbiotic nitrogen fixation is represented as supplying a fraction of plant nitrogen demand, and is inhibited by high soil mineral N. Plant N demand is defined in Eq. \ref{eq:plant_n_demand}.
 
@@ -447,7 +500,7 @@ The fraction of plant N demand met by biological N fixation is defined as:
 
 $$
 f_\text{fix} = f_{\text{fix,max}} \cdot D_{N_\text{min}}
-\tag{19}\label{eq:f_fix}
+\tag{20}\label{eq:f_fix}
 $$
 
 where:
@@ -459,7 +512,7 @@ We use a simple down-regulation function with increasing soil mineral N:
 
 $$
 D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
-\tag{19a}\label{eq:n_fix_supp_demand}
+\tag{21}\label{eq:n_fix_supp_demand}
 $$
 
 where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is reduced by half (g N m$^{-2}$).
@@ -468,54 +521,44 @@ Nitrogen fixation and soil N uptake are then partitioned from total plant N dema
 
 $$
 F^N_\text{fix} = f_\text{fix} \cdot F^N_\text{demand}
-\tag{19b}\label{eq:n_fix_demand}
+\tag{22a}\label{eq:n_fix_demand}
 $$
 
 $$
 F^N_\text{uptake} = (1 - f_\text{fix}) \cdot F^N_\text{demand}
-\tag{19c}\label{eq:n_uptake_demand}
+\tag{22b}\label{eq:n_uptake_demand}
 $$
 
 Fixed N ($F^N_\text{fix}$) is added directly to the plant N pool via Eq. \ref{eq:plant_n}, while $F^N_\text{uptake}$ is removed from the soil mineral N pool in Eq. \ref{eq:mineral_n_dndt}. If the available soil mineral N is insufficient to supply $F^N_\text{uptake}$, then actual uptake is capped at $N_\text{min}$ and any residual unmet demand contributes to nitrogen limitation as described in Eq. \ref{eq:n_limit}.
 
 We do not consider free-living nonsymbiotic N fixation, which is approximately two orders of magnitude smaller (less than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and typical N fertilization rates.
 
-### $\mathfrak{Plant\ Nitrogen\ Demand\ and\ Uptake\ (F^{N}_{\text{uptake}})}$, $F^{N}_{\text{demand}}$
+### Nitrogen Limitation
 
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
+Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of available mineral nitrogen. Plant nitrogen 
+demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
 
-$$
-F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} \tag{20}\label{eq:plant_n_demand}
-$$
+If this demand is greater than available mineral nitrogen, nitrogen limitation reduces plant growth.
 
-$$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
+Nitrogen limitation is applied during the flux calculation stage of the model update sequence, prior to carbon 
+allocation to plant biomass pools and before any pool updates occur. N limitation is implemented as follows:
 
-Each term in the sum is calculated according to equation \ref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using equations \ref{eq:n_fix_demand} and \ref{eq:n_uptake_demand}.
+- Calculate the amount by which plant N demand exceeds available supply [^*].
 
-#### $\frak{Nitrogen \ Limitation \ Indicator \ Function \mathfrak{I_{\text{N limit}}}}$
+- Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
 
-What happens when plant N demand exceeds available N? This is N limitation, a challenging process to represent in biogeochemical models.
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
 
-The initial approach to representing N limitation in SIPNET will be simple, and the primary motivation for implementing this is to avoid mass imbalance. First we will identify the presence of nitrogen limitation with an indicator variable:
+- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed 
+- stoichiometry.
 
-$$
-I_{\text{N limit}} = \begin{cases}
-1, & \text{if } \frac{dN_\text{plant}}{dt} \leq N_{\text{min}} \\
-0, & \text{if } \frac{dN_\text{plant}}{dt} > N_{\text{min}}
-\end{cases} \tag{21}\label{eq:n_limit}
-$$
+- Carbon associated with the unmet growth demand is subtracted from potential GPP to maintain mass balance \eqref{eq:A17} [^+].
 
-When $I=0$, SIPNET will throw a warning and increase autotrophic respiration to $R_A=GPP$ to stop plant growth and associated N uptake:
+[^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen 
+uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
 
-$$
-R_A = \max(R_A, I_{\text{N limit}} \cdot GPP) \tag{22}\label{eq:n_limit_ra}
-$$
-
-This will effectively stop plant growth and N uptake when there there is insufficient N.
-
-We do expect N limitation to occur, including in vineyards and woodlands, but we assume that effect of nitrogen limitation on plant growth will have a relatively smaller impact on GHG budgets at the county and state scales. This is because nitrogen limitation should be rare in California's intensively managed croplands because the cost of N fertilzer is low compared to the impact of N limitation on crop yield.
-
-If this scheme is too simple, we can adjust either the conditions under which N limitation occurs or develop an N dependency function based on the balance between plant N demand and N availability.
+[^+]: Under nitrogen limitation, excess carbon is prevented from entering the system by down-regulating GPP. This is 
+consistent with SIPNET's use of GPP as an effective ecosystem scale input rather than instantaneous leaf-level assimilation.
 
 ## Water Dynamics
 
@@ -642,7 +685,7 @@ $$
 
 Where $T_{\text{env}}$ may be soil or air temperature  $(T_\text{soil}$ or $T_\text{air})$. 
 
-Becuase the function is symmetric around $T_\text{opt}$, the parameters $T_{\text{min}}$ and $T_{\text{opt}}$ are provided and $T_{\text{max}}$ is calculated internally as $T_{\text{max}} = 2 \cdot T_{\text{opt}} - T_{\text{min}}$.
+Because the function is symmetric around $T_\text{opt}$, the parameters $T_{\text{min}}$ and $T_{\text{opt}}$ are provided and $T_{\text{max}}$ is calculated internally as $T_{\text{max}} = 2 \cdot T_{\text{opt}} - T_{\text{min}}$.
 
 #### Exponential Function for Respiration $D_{\text(temp,Q10)}$
 
