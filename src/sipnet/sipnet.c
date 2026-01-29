@@ -1175,11 +1175,12 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
     double cnEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
 
     // Put it all together!
-    fluxes.maintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
-                              tempEffect * tillageEffect * cnEffect;
+    fluxes.soilMaintRespiration = envi.soilC * params.baseSoilResp *
+                                  moistEffect * tempEffect * tillageEffect *
+                                  cnEffect;
 
     // With no microbes, rSoil flux is just the maintenance respiration
-    fluxes.rSoil = fluxes.maintRespiration;
+    fluxes.rSoil = fluxes.soilMaintRespiration;
   }
   // else fluxes.rSoil = 0.0?
 }
@@ -1214,13 +1215,15 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
     // respiration is determined by microbe biomass
     // :: from [4], eq (5.12) with addition of moisture effect
     // [TAG:UNKNOWN_PROVENANCE]  moistEffect
-    tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
-    fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
+    tempEffect = pow(params.microbeQ10, tsoil / 10);
+    fluxes.microbeMaintRespiration =
+        envi.microbeC * params.baseMicrobeResp * moistEffect * tempEffect;
 
   } else {
     fluxes.microbeIngestion = 0.0;
     fluxes.soilPulse = 0.0;
-    // fluxes.maintRespiration is otherwise set, do not set to zero here
+    fluxes.microbeMaintRespiration = 0.0;
+    fluxes.soilMaintRespiration = 0.0;
   }
 }
 
@@ -1686,13 +1689,13 @@ void updatePoolsForSoil(void) {
     // ::      eq (5.11) used for soilPulse, and
     // ::      eq (5.12) used for maintRespiration
     envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
-                      fluxes.maintRespiration) *
+                      fluxes.microbeMaintRespiration) *
                      climate->length;
 
     // rSoil is maintenance resp + growth (microbe) resp
     // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil =
-        fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
+    fluxes.rSoil = fluxes.microbeMaintRespiration +
+                   (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // :: from [2], litter model description
