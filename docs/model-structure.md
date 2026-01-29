@@ -351,14 +351,15 @@ $$\small i \in \{\text{leaf, wood, fine root, coarse root}\}$$
 
 ### Litter Nitrogen $N_\text{litter}$
 
-The change in litter nitrogen over time, $N_\text{litter}$ is determined by inputs including leaf and wood litter, nitrogen in organic matter amendments, and losses to mineralization:
+The change in litter nitrogen over time, $N_\text{litter}$ is determined by inputs including leaf and wood litter, nitrogen in organic matter amendments, and losses to mineralization as well as to transfer of organic nitrogen to the soil pool:
 
 
 $$
   \frac{dN_{\text{litter}}}{dt} = 
   \sum_{i} F^N_{\text{litter,}i} +
   F^N_\text{fert,org} - 
-  F^N_\text{litter,min} \tag{13}\label{eq:litter_dndt}
+  F^N_\text{litter,min} -
+  F^N_\text{soil} \tag{13}\label{eq:litter_dndt}
 $$
 
 $$\small i \in \{\text{leaf, wood}\}$$
