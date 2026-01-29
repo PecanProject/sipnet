@@ -55,6 +55,11 @@ void addOutputItem(OutputItems *outputItems, char *name, double *ptr);
  */
 void writeOutputItemLabels(OutputItems *outputItems, char *label);
 
+/* For each output item, write its name as a header
+   This writes the column header (variable name) to each output file
+ */
+void writeOutputItemHeaders(OutputItems *outputItems);
+
 // For each output item, write its current value, followed by a separator
 void writeOutputItemValues(OutputItems *outputItems);
 

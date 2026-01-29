@@ -430,6 +430,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
 
 /*!
  * Print header row to output file
+ * Header contains variable names only, single line, not commented
  *
  * @param out File pointer for output
  */
@@ -1926,6 +1927,10 @@ void setupModel(void) {
 void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
   if ((out != NULL) && printHeader) {
     outputHeader(out);
+  }
+
+  if ((outputItems != NULL) && printHeader) {
+    writeOutputItemHeaders(outputItems);
   }
 
   setupModel();
