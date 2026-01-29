@@ -1,4 +1,4 @@
-/* SiPnET: Simplified PnET
+/* SIPNET: Simplified PnET
 
    Author: Bill Sacks  wsacks@wisc.edu
    modified by...
@@ -1269,7 +1269,7 @@ double calcRootAndWoodFluxes(void) {
     fluxes.woodCreation = 0;
   }
 
-  if ((gppSoil > 0) & (envi.fineRootC > 0)) {
+  if ((gppSoil > 0) && (envi.fineRootC > 0)) {
     // :: from [3], eq (5)
     coarseExudate = params.coarseRootExudation * gppSoil;
     fineExudate = params.fineRootExudation * gppSoil;
@@ -1342,9 +1342,11 @@ void calcNPoolFluxes() {
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter, and N loss due to mineralization. N added via fertilization
-  // is handled elsewhere.
+  // is handled elsewhere.Added subtraction of (fluxes.litterToSoil / litterCN)
+  // to prevent N duplication.
   fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
-                      fluxes.woodLitter / params.woodCN - litterMin;
+                      fluxes.woodLitter / params.woodCN - litterMin -
+                      fluxes.litterToSoil / litterCN;
 
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
