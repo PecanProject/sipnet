@@ -1,4 +1,4 @@
-# SIPNET WISH LIST
+# SIPNET Wish List
 
 This is the spot to capture ideas on future work that have not been fully thought out (and should thus go into a 
 feature request).
