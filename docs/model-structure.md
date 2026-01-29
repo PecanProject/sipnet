@@ -423,14 +423,15 @@ Similar to the stoichiometric coupling of litter fluxes, the change in plant bio
 
 ### Litter Nitrogen $N_\text{litter}$
 
-The change in litter nitrogen over time, $N_\text{litter}$ is determined by inputs including leaf and wood litter, nitrogen in organic matter amendments, and losses to mineralization:
+The change in litter nitrogen over time, $N_\text{litter}$ is determined by inputs including leaf and wood litter, nitrogen in organic matter amendments, and losses to mineralization as well as to transfer of organic nitrogen to the soil pool:
 
 
 \begin{equation}
   \frac{dN_{\text{litter}}}{dt} = 
   \sum_{i} F^N_{\text{litter,}i} +
   F^N_\text{fert,org} - 
-  F^N_\text{litter,min}
+  F^N_\text{litter,min} -
+  F^N_\text{soil}
 \label{eq:litter_dndt}
 \end{equation}
 
@@ -463,7 +464,7 @@ The change in soil nitrogen $N_\text{org,soil}$ over time is determined by input
 $F^N_{\text{soil,}j}$ are organic nitrogen inputs to soil from belowground plant turnover and harvest
 transfers of belowground biomass. 
 $F^N_{\text{soil}}$ is the organic nitrogen transferred from litter to soil (calculated from
-$F^C_{\text{soil}}$ in \eqref{eq:soil_carbon} based on litter C:N.
+$F^C_{\text{soil}}$ in \eqref{eq:soil_carbon} based on litter C:N).
 $F^N_\text{soil,min}$ is the flux from soil organic N to soil mineral N. 
 
 ### Soil Mineral Nitrogen $N_\text{min}$
