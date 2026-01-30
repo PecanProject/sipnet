@@ -1,6 +1,6 @@
 ---
 name: Pull Request
-title: "<issue number> <Concise description of the proposed change>"
+title: "[#123] Concise description of the proposed change"
 ---
 <!-- Please fill out the sections below to help reviewers. -->
 
