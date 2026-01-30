@@ -270,4 +270,7 @@ WhitespaceSensitiveMacros:
   - NS_SWIFT_NAME
   - PP_STRINGIZE
   - STRINGIZE
+---
+Language:        JavaScript
+ColumnLimit:     80
 ...
