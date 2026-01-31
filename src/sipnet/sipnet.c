@@ -1760,6 +1760,58 @@ void updateState(void) {
   // All non-event fluxes
   calculateFluxes();
 
+  /*
+   * Energy Balance Sanity Check
+   * ----------------------------------------
+   * Verifies that Latent Energy (LE) flux does not exceed incoming Shortwave
+   * Radiation (SW).
+   *
+   * Physics Definitions:
+   * - LE (Latent Energy): Derived from Total Evapotranspiration * Heat of
+   * Vaporization (LAMBDA).
+   * - SW (Shortwave): Calculated from PAR (Photosynthetically Active
+   * Radiation). PAR is ~48.6% of SW. Conversion: SW (Energy) = (PAR_photons *
+   * EnergyPerPhoton) / 0.486 EnergyPerPhoton ~ 235,000 J/mol (for PAR
+   * wavelengths)
+   *
+   * Constraints:
+   * - The check is restricted to daylight hours (PAR > 1.0) to prevent
+   * numerical noise at night/dawn/dusk from triggering false positives.
+   */
+  if (climate->par > 1.0) {
+    // Aggregate individual water fluxes to calculate total ET (cm/day).
+    // Note: 'eventEvap' is intentionally excluded as processEvents() has not
+    // yet run.
+    double ET_sum = fluxes.transpiration + fluxes.immedEvap +
+                    fluxes.evaporation + fluxes.sublimation;
+
+    double LE_check = ET_sum * LAMBDA;
+
+    double SW_check = (climate->par * 235000.0) / 0.486;
+
+    // ALPHA represents a conservative estimate of absorbed SW (approx. 1 -
+    // albedo). Values exceeding this threshold warrant investigation but are
+    // not strictly impossible.
+    const double ALPHA = 0.8;
+
+    // Hard Physics Violation (Conservation of Energy)
+    // Latent energy output cannot physically exceed total energy input.
+    if (LE_check > SW_check) {
+      printf("[ERROR] Energy Balance Violation: Year %d Day %d Time %.2f\n",
+             climate->year, climate->day, climate->time);
+      printf("        LE (%f) > SW (%f)\n", LE_check, SW_check);
+      // exit(EXIT_FAILURE); // Uncomment to enforce model termination on error
+    }
+    // Soft Plausibility Warning
+    // Warn if LE consumes an unusually high percentage of available energy.
+    else if (LE_check > (ALPHA * SW_check)) {
+      printf("[WARNING] High Latent Energy: Year %d Day %d Time %.2f\n",
+             climate->year, climate->day, climate->time);
+      printf("          LE (%f) is > %.0f%% of SW (%f)\n", LE_check,
+             ALPHA * 100.0, SW_check);
+    }
+  }
+
   // All event handling, which is modeled as fluxes
   processEvents();
 
