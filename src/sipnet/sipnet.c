@@ -25,6 +25,19 @@
 #include "runmean.h"
 #include "state.h"
 
+/*
+ * Profiling Metrics
+ * Enabled via -DPROFILING compiler flag.
+ * Used to quantify I/O vs Compute bottlenecks by tracking execution time
+ * across the primary model stages: initialization, state updates, and output.
+ */
+#ifdef PROFILING
+#include <time.h>
+double t_read = 0.0;  // Cumulative time spent in climate data ingestion
+double t_write = 0.0;  // Cumulative time spent writing output files
+double t_compute = 0.0;  // Cumulative time spent in model state transitions
+#endif
+
 #define C_WEIGHT 12.0  // molecular weight of carbon
 // #define TEN_6 1000000.0  // for conversions from micro
 #define TEN_9 1000000000.0  // for conversions from nano
@@ -1932,15 +1945,40 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
   setupEvents();
 
   while (climate != NULL) {
+#ifdef PROFILING
+    clock_t start = clock();
+#endif
+
     updateState();
+
+#ifdef PROFILING
+    t_compute += (double)(clock() - start) / CLOCKS_PER_SEC;
+    start = clock();  // Re-start timer for the output phase
+#endif
+
     if (out != NULL) {
       outputState(out, climate->year, climate->day, climate->time);
     }
     if (outputItems != NULL) {
       writeOutputItemValues(outputItems);
     }
+#ifdef PROFILING
+    t_write += (double)(clock() - start) / CLOCKS_PER_SEC;
+#endif
     climate = climate->nextClim;
   }
+
+#ifdef PROFILING
+  // Generate a performance summary to stdout upon simulation completion
+  double total = t_read + t_compute + t_write;
+  printf("\n--- SIPNET PERFORMANCE PROFILE ---\n");
+  printf("READ PHASE    : %f sec\n", t_read);
+  printf("COMPUTE PHASE : %f sec\n", t_compute);
+  printf("WRITE PHASE   : %f sec\n", t_write);
+  printf("TOTAL RUNTIME : %f sec\n", total);
+  printf("----------------------------------\n");
+#endif
+
   if (outputItems != NULL) {
     terminateOutputItemLines(outputItems);
   }
@@ -1958,7 +1996,17 @@ void setupOutputItems(OutputItems *outputItems) {
 void initModel(ModelParams **modelParams, const char *paramFile,
                const char *climFile) {
   readParamData(modelParams, paramFile);
+
+#ifdef PROFILING
+  // Measure file-system latency for reading the primary climate time-series
+  clock_t start_read = clock();
+#endif
+
   readClimData(climFile);
+
+#ifdef PROFILING
+  t_read += (double)(clock() - start_read) / CLOCKS_PER_SEC;
+#endif
 
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
   meanGPP = newMeanTracker(0, MEAN_GPP_SOIL_DAYS, MEAN_GPP_SOIL_MAX_ENTRIES);
