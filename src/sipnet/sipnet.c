@@ -1769,8 +1769,10 @@ void updateState(void) {
    * Physics Definitions:
    * - LE (Latent Energy): Derived from Total Evapotranspiration * Heat of
    * Vaporization (LAMBDA).
-   * - SW (Shortwave): Approximated here using PAR (Photosynthetically Active
-   * Radiation).
+   * - SW (Shortwave): Calculated from PAR (Photosynthetically Active
+   * Radiation). PAR is ~48.6% of SW. Conversion: SW (Energy) = (PAR_photons *
+   * EnergyPerPhoton) / 0.486 EnergyPerPhoton ~ 235,000 J/mol (for PAR
+   * wavelengths)
    *
    * Constraints:
    * - The check is restricted to daylight hours (PAR > 1.0) to prevent
@@ -1784,7 +1786,8 @@ void updateState(void) {
                     fluxes.evaporation + fluxes.sublimation;
 
     double LE_check = ET_sum * LAMBDA;
-    double SW_check = climate->par;
+
+    double SW_check = (climate->par * 235000.0) / 0.486;
 
     // ALPHA represents a conservative estimate of absorbed SW (approx. 1 -
     // albedo). Values exceeding this threshold warrant investigation but are
