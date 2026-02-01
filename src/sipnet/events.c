@@ -198,6 +198,14 @@ EventNode *readEventData(char *eventFile) {
     return newEvents;
   }
 
+  // Check if line was truncated
+  size_t len = strlen(line);
+  if (len == EVENT_LINE_SIZE - 1 && line[len - 1] != '\n') {
+    logError("Event line too long (exceeds %d chars), data may be truncated\n",
+             EVENT_LINE_SIZE);
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
+  }
+
   int numRead = sscanf(line,  // NOLINT
                        "%d %d %s %n", &year, &day, eventTypeStr, &numBytes);
   if (numRead != NUM_EVENT_CORE_PARAMS) {
@@ -218,6 +226,13 @@ EventNode *readEventData(char *eventFile) {
   currDay = day;
 
   while (fgets(line, EVENT_LINE_SIZE, in) != NULL) {
+    // Check if line was truncated
+    size_t len = strlen(line);
+    if (len == EVENT_LINE_SIZE - 1 && line[len - 1] != '\n') {
+      logError("Event line too long (exceeds %d chars), data may be truncated\n",
+               EVENT_LINE_SIZE);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
+    }
     // We have another event
     curr = next;
     numRead = sscanf(line, "%d %d %s %n",  // NOLINT
