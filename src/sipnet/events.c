@@ -198,7 +198,7 @@ EventNode *readEventData(char *eventFile) {
     return newEvents;
   }
 
-  // Check if line was truncated
+  // Check for line truncation
   size_t len = strlen(line);
   if (len == EVENT_LINE_SIZE - 1 && line[len - 1] != '\n') {
     logError("Event line too long (exceeds %d chars), data may be truncated\n",
@@ -227,10 +227,11 @@ EventNode *readEventData(char *eventFile) {
 
   while (fgets(line, EVENT_LINE_SIZE, in) != NULL) {
     // Check if line was truncated
-    size_t len = strlen(line);
+    len = strlen(line);
     if (len == EVENT_LINE_SIZE - 1 && line[len - 1] != '\n') {
-      logError("Event line too long (exceeds %d chars), data may be truncated\n",
-               EVENT_LINE_SIZE);
+      logError(
+          "Event line too long (exceeds %d chars), data may be truncated\n",
+          EVENT_LINE_SIZE);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
     // We have another event
