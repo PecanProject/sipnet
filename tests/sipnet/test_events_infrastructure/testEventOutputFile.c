@@ -10,7 +10,7 @@
 void init(void) {
   // Values here don't matter, just want to make sure they are initialized to
   // something. Value checks are in other tests.
-  envi.litter = 1;
+  envi.litterC = 1;
   envi.plantLeafC = 2;
   envi.plantWoodC = 3;
   envi.fineRootC = 4;

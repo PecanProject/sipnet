@@ -37,13 +37,20 @@ theme:
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
+  - attr_list
   - toc:
       permalink: true
+  - footnotes
   - pymdownx.superfences
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: PecanProject
+      repo: sipnet
 
 
 
 extra_javascript:
+  - javascripts/mathjax-config.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 extra:
