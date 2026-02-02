@@ -140,8 +140,8 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         exit(EXIT_CODE_SUCCESS);
       case 'i':
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          logError("input filename %s exceeds maximum length of %d\n",
-                   optarg, FILENAME_MAXLEN);
+          logError("input filename %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
           logError("Either change the name or increase INPUT_MAXNAME in "
                    "frontend.c\n");
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);

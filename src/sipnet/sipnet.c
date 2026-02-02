@@ -1604,7 +1604,8 @@ void updateMeanTrackers(void) {
              err);
     logError("GPP = %f, climate->length = %f\n", fluxes.photosynthesis,
              climate->length);
-    logError("Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
+    logError(
+        "Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }
