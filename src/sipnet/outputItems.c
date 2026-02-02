@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include "outputItems.h"
 #include "common/util.h"
+#include "common/logging.h"
+#include "common/exitCodes.h"
 
 // Private/helper functions: not defined in outputItems.h:
 
@@ -19,10 +21,9 @@ SingleOutputItem *newSingleOutputItem(char *name, double *ptr) {
   SingleOutputItem *singleOutputItem;
 
   if (strlen(name) >= OUTPUT_ITEMS_MAXNAME) {
-    printf("ERROR in newSingleOutputItem: name '%s' exceeds maximum length of "
-           "%d\n",
-           name, OUTPUT_ITEMS_MAXNAME);
-    exit(1);
+    logError("newSingleOutputItem: name '%s' exceeds maximum length of %d\n",
+             name, OUTPUT_ITEMS_MAXNAME);
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 
   singleOutputItem = (SingleOutputItem *)malloc(sizeof(SingleOutputItem));

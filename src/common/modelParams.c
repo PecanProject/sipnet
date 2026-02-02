@@ -66,7 +66,8 @@ void checkAllRead(ModelParams *ModelParams) {
   }
 
   if (!okay) {
-    exit(1);
+    logError("Some required parameters were not read from file\n");
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 }
 
@@ -109,7 +110,7 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
              "parameters\n",
              name, modelParams->maxParams);
     logError("Check value of maxParams passed into newModelParams function\n");
-    exit(1);
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 
   // otherwise, get the index of the next uninitialized parameter
@@ -221,7 +222,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
   if (ferror(paramFile)) {
     logError("reading file in readModelParams\n");
     logError("ferror = %d\n", ferror(paramFile));
-    exit(1);
+    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
   }
 
   checkAllRead(modelParams);  // terminate program if some required parameters
