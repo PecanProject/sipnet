@@ -1,7 +1,8 @@
 # Model Inputs
 
 These are the input files needed to run SIPNET:
-1. `sipnet.param`: Model parameter file.
+
+1. `sipnet.param`: Model parameter file. See [Parameters](../parameters.md) for full description of this file.
 2. `<sitename>.clim`: Climate file, provides weather data for each time step of the simulation period.
 3. [optional] `events.in`: Agronomic events.
 4. [optional] Run time options (command line arguments or config file `sipnet.in`)
