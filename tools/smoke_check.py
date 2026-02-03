@@ -164,7 +164,7 @@ def check_results(smoke_dir: str, verbose: bool, base: bool):
       git_df = git_df[common_columns]
       print("Comparing common columns")
   else:
-    cols = 'year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration minN soilOrgN litterOrgN n2oFlux nLeachFlux'
+    cols = 'year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration minN soilOrgN litterOrgN n2oFlux nLeachFlux nppStorage bcdeltaC bcdeltaN'
     cols = cols.split(' ')
     # new_df = pd.read_table(file, sep=r'\s+', header=None, names=cols, dtype=float)
     # git_df = pd.read_table(git_result, sep=r'\s+', header=None, names=cols, dtype=float)
