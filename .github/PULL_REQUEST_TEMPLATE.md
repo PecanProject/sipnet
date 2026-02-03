@@ -1,3 +1,7 @@
+---
+name: Pull Request
+title: "[#123] Concise description of the proposed change"
+---
 <!-- Please fill out the sections below to help reviewers. -->
 
 ## Summary
@@ -32,3 +36,4 @@ cd tests/smoke/<new-or-updated-test> ../../sipnet -i sipnet.in
 ---
 
 **Note**: See [CONTRIBUTING.md](../docs/CONTRIBUTING.md) for additional guidance. This repository uses automated formatting checks; if the pre-commit hook blocks your commit, run `git clang-format` to format staged changes.
+
