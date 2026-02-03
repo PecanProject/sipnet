@@ -23,6 +23,8 @@
 
 #include "state.h"
 
+#define EVENT_LINE_SIZE 1024
+
 // Global event variables - definition
 EventNode *gEvents = NULL;
 EventNode *gEvent = NULL;
@@ -193,7 +195,6 @@ static void checkEventLineTruncation(const char *line, size_t len) {
 EventNode *readEventData(char *eventFile) {
   int year, day, eventType;
   int currYear, currDay;
-  int EVENT_LINE_SIZE = 1024;
   int numBytes;
   char *eventParamsStr;
   char eventTypeStr[20];
