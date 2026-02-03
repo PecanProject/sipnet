@@ -28,7 +28,7 @@ tests/sipnet/*/*
 .Rproj.user
 .Rhistory
 src/sipnet/.vscode/*
-
+tests/smoke
 # Temporary and backup files
 *.bak
 *~
