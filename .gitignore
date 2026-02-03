@@ -31,8 +31,9 @@ tests/sipnet/*/*
 src/sipnet/.vscode/*
 
 # Smoke tests directory (ignored)
-tests/smoke/
 # Temporary and backup files
+# Ensure `sipnet.out` files (authoritative model outputs) are never ignored
+!**/sipnet.out
 *.bak
 *~
 *.tmp
