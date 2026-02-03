@@ -162,10 +162,6 @@ void readClimData(const char *climFile) {
   }
 
   numFields = countFields(firstLine, SEPARATORS);
-  if (numFields == -1) {
-    logError("memory allocation failure in climate file processing\n");
-    exit(EXIT_CODE_INTERNAL_ERROR);
-  }
   switch (numFields) {
     case NUM_CLIM_FILE_COLS:
       // Standard format

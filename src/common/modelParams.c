@@ -127,10 +127,6 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
 
 void checkParamFormat(char *line, const char *sep) {
   int numParams = countFields(line, sep);
-  if (numParams == -1) {
-    logError("memory allocation failure in parameter file processing\n");
-    exit(EXIT_CODE_INTERNAL_ERROR);
-  }
   if (numParams > 2) {
     logWarning("extra columns in .param file are being ignored (found %d "
                "columns)\n",

@@ -12,6 +12,7 @@
 #include <errno.h>
 
 #include "exitCodes.h"
+#include "logging.h"
 #include "util.h"
 
 // our own openFile method, which exits gracefully if there's an error
@@ -53,7 +54,8 @@ int countFields(const char *line, const char *sep) {
   size_t lineLen = strlen(line);
   char *lineCopy = (char *)malloc(lineLen + 1);
   if (lineCopy == NULL) {
-    return -1;  // Handle allocation failure
+    logError("memory allocation failure in file processing\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
   strcpy(lineCopy, line);
 
