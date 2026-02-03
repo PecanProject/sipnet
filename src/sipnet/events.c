@@ -136,7 +136,8 @@ EventNode *createEventNode(int year, int day, int eventType,
     } break;
     default:
       // Unknown type, error and exit
-      logError("found unknown event type %d while reading event file\n", eventType);
+      logError("found unknown event type %d while reading event file\n",
+               eventType);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 
