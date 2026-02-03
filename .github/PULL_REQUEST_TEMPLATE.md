@@ -6,15 +6,16 @@
 - **Motivation**: Why is this change needed?
 
 ## How was this change tested?
-List steps taken to test change, with appropriate outputs is applicable
+List steps taken to test this change, with appropriate outputs if applicable
 
-If changes are made to any `sipnet.out` files in the `test/smoke` subdirectories, then include output from
+If changes are needed for any `sipnet.out` files in the `test/smoke` subdirectories, then include output from
 `tools/smoke_check.py` by running the commands below and pasting the output at the end of this PR. Note that 
-this must be done BEFORE submitting changes to any sipnet.out files.
+this must be run BEFORE submitting changes to any `sipnet.out` files.
 ```bash
 make smoke
-python tools/smoke_check.py run verbose <list test directories with changed outputs>
+python tools/smoke_check.py run verbose <list tests/smoke subdirectories with changed outputs>
 ```
+Run `python tools/smoke_check.py help` for more info.
 
 ## Reproduction steps
 
@@ -26,8 +27,8 @@ If appropriate, list steps to reproduce the change locally
 
 ## Checklist
 
-- [ ] PR title has the issue number in it ("[#123] <concise description of the proposed change>")
-- [ ] Related issues are listed above with the form "Fixes #<issue>"
+- [ ] Related issues are listed above
+- [ ] PR title has the issue number in it ("[#<number>] \<concise description of proposed change>")
 - [ ] Tests added for new features
 - [ ] Documentation updated (if applicable)
 - [ ] `docs/CHANGELOG.md` updated with noteworthy changes
