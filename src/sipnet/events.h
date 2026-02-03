@@ -117,13 +117,32 @@ void openEventOutFile(int printHeader);
  *
  * year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
  *
- * \param out       FILE pointer to events.out
  * \param oneEvent     Pointer to oneEvent node
- * \param numParams Number of param/value pairs to write
+ * \param numParams Number of param/value PAIRS to write
  * \param ...       Pairs of (char*, double) arguments to write, 2*numParams
  *                  values
  */
 void writeEventOut(EventNode *oneEvent, int numParams, ...);
+
+/*!
+ * \brief Write a line to events.out for a 'computed' event
+ *
+ * Same as writeEventOut, but for events that are computed internally, such
+ * as leaf on/leaf off events.
+ *
+ * Output format:
+ *
+ * year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
+ *
+ * \param year Year of event
+ * \param day  Day of event
+ * \param type Type of event
+ * \param numParams Number of param/value PAIRS to write
+ * \param ...       Pairs of (char*, double) arguments to write, 2*numParams
+ *                  values
+ */
+void writeComputedEventOut(int year, int day, const char *type, int numParams,
+                           ...);
 
 /*!
  * Close the event output file

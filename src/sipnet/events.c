@@ -192,7 +192,7 @@ EventNode *readEventData(char *eventFile) {
   if (access(eventFile, F_OK) != 0) {
     // no file found, which is fine; we're done, a vector of NULL is what we
     // want for newEvents
-    logInfo("No event file found, assuming no newEvents\n");
+    logInfo("No event file found, assuming no input events\n");
     return newEvents;
   }
 
@@ -271,24 +271,38 @@ void openEventOutFile(int printHeader) {
   }
 }
 
-void writeEventOut(EventNode *oneEvent, int numParams, ...) {
-  va_list args;
+void doWriteEventOut(int year, int day, const char *type, int numParams,
+                     va_list args) {
   int ind = 0;
 
   // Spec:
   // year day event_type <param name=delta>[,<param name>=<delta>,...]
 
   // Standard prefix for all
-  fprintf(eventOutFile, "%4d  %3d  %-7s  ", oneEvent->year, oneEvent->day,
-          eventTypeToString(oneEvent->type));
+  fprintf(eventOutFile, "%4d  %3d  %-7s  ", year, day, type);
+
   // Variable output per oneEvent type
-  va_start(args, numParams);
   for (ind = 0; ind < numParams - 1; ind++) {
     fprintf(eventOutFile, "%s=%-.2f,", va_arg(args, char *),
             va_arg(args, double));
   }
   fprintf(eventOutFile, "%s=%-.2f\n", va_arg(args, char *),
           va_arg(args, double));
+}
+
+void writeEventOut(EventNode *oneEvent, int numParams, ...) {
+  va_list args;
+  va_start(args, numParams);
+  doWriteEventOut(oneEvent->year, oneEvent->day,
+                  eventTypeToString(oneEvent->type), numParams, args);
+  va_end(args);
+}
+
+void writeComputedEventOut(int year, int day, const char *type, int numParams,
+                           ...) {
+  va_list args;
+  va_start(args, numParams);
+  doWriteEventOut(year, day, type, numParams, args);
   va_end(args);
 }
 
@@ -317,13 +331,14 @@ void resetEventFluxes(void) {
   fluxes.eventLitterC = 0.0;
   fluxes.eventMinN = 0.0;
   fluxes.eventOrgN = 0.0;
+  // mass balance
+  fluxes.eventInputC = 0.0;
+  fluxes.eventOutputC = 0.0;
+  fluxes.eventInputN = 0.0;
+  fluxes.eventOutputN = 0.0;
 }
 
 void processEvents(void) {
-  // This should be in events.h/c, but with all the global state defined in
-  // this file, let's leave it here for now. Maybe someday we will factor that
-  // out.
-
   // Set all event fluxes to zero, as these have no memory from one step to
   // the next
   resetEventFluxes();
@@ -390,7 +405,18 @@ void processEvents(void) {
         fluxes.eventFineRootC += fineRootC / climLen;
         fluxes.eventCoarseRootC += coarseRootC / climLen;
 
-        // FUTURE: allocate to N pools
+        // No need to allocate to biomass N pools, we don't track that N
+        // explicitly
+
+        // MASS BALANCE: this is a system input
+        fluxes.eventInputC += leafC + woodC + fineRootC + coarseRootC;
+        fluxes.eventInputC /= climLen;
+        if (ctx.nitrogenCycle) {
+          fluxes.eventInputN += leafC / params.leafCN + woodC / params.woodCN +
+                                fineRootC / params.fineRootCN +
+                                coarseRootC / params.woodCN;
+          fluxes.eventInputN /= climLen;
+        }
 
         writeEventOut(gEvent, 4, "fluxes.eventLeafC", leafC / climLen,
                       "fluxes.eventWoodC", woodC / climLen,
@@ -423,7 +449,24 @@ void processEvents(void) {
         fluxes.eventFineRootC += fineDelta / climLen;
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
-        // FUTURE: move/remove biomass in N pools
+        // No need to allocate to biomass N pools, we don't track that N
+        // explicitly. We do need to handle litter N, though.
+        // FUTURE (ticket #244): move/remove biomass in litter N
+
+        // MASS BALANCE: removed fractions are system outputs
+        fluxes.eventOutputC += (envi.plantWoodC + envi.plantLeafC) * fracRA +
+                               (envi.fineRootC + envi.coarseRootC) * fracRB;
+        fluxes.eventOutputC /= climLen;
+        if (ctx.nitrogenCycle) {
+          fluxes.eventOutputN += (envi.plantWoodC / params.woodCN +
+                                  envi.plantLeafC / params.leafCN) *
+                                     fracRA +
+                                 (envi.fineRootC / params.fineRootCN +
+                                  envi.coarseRootC / params.woodCN) *
+                                     fracRB;
+          fluxes.eventOutputN /= climLen;
+        }
+
         writeEventOut(gEvent, 5, "fluxes.eventLitterC", litterAdd / climLen,
                       "fluxes.eventLeafC", leafDelta / climLen,
                       "fluxes.eventWoodC", woodDelta / climLen,
@@ -454,6 +497,12 @@ void processEvents(void) {
         } else {
           // As the warning says in readEventData(), we ignore N when the
           // nitrogen cycle model is off, so no update needed
+        }
+
+        // MASS BALANCE: this is a system input
+        fluxes.eventInputC += orgC;
+        if (ctx.nitrogenCycle) {
+          fluxes.eventInputN += orgN + minN;
         }
 
         writeEventOut(gEvent, 3, "fluxes.eventOrgN", orgN / climLen,
