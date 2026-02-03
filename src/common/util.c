@@ -53,10 +53,10 @@ int countFields(const char *line, const char *sep) {
   size_t lineLen = strlen(line);
   char *lineCopy = (char *)malloc(lineLen + 1);
   if (lineCopy == NULL) {
-    return -1; // Handle allocation failure
+    return -1;  // Handle allocation failure
   }
   strcpy(lineCopy, line);
-  
+
   int numParams = 0;
   char *par = strtok(lineCopy, sep);
   while (par != NULL) {
