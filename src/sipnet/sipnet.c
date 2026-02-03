@@ -20,6 +20,7 @@
 #include "common/util.h"
 
 #include "sipnet.h"
+#include "balance.h"
 #include "events.h"
 #include "outputItems.h"
 #include "runmean.h"
@@ -438,11 +439,11 @@ void outputHeader(FILE *out) {
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
   fprintf(out, "year day  time plantWoodC plantLeafC woodCreation     ");
   fprintf(out, "soil microbeC coarseRootC fineRootC   ");
-  fprintf(out, "litter soilWater soilWetnessFrac     snow      ");
+  fprintf(out, "litter  soilWater soilWetnessFrac     snow      ");
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
-  fprintf(out, "fluxestranspiration     minN  soilOrgN litterN   n2oFlux "
-               "nLeachFlux\n");
+  fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN   n2oFlux "
+               "nLeachFlux  nppStorage  bcdeltaC  bcdeltaN\n");
 }
 
 /*!
@@ -455,11 +456,12 @@ void outputHeader(FILE *out) {
 void outputState(FILE *out, int year, int day, double time) {
 
   fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
-          envi.plantWoodC, envi.plantLeafC, trackers.woodCreation);
+          envi.plantWoodC + envi.nppStorage, envi.plantLeafC,
+          trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%11.2f %9.2f", envi.coarseRootC, envi.fineRootC);
-  fprintf(out, " %8.2f %9.2f %15.3f %8.2f ", envi.litterC, envi.soilWater,
+  fprintf(out, " %8.2f %10.2f %15.3f %8.2f ", envi.litterC, envi.soilWater,
           trackers.soilWetnessFrac, envi.snow);
   fprintf(
       out,
@@ -467,9 +469,11 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
-  fprintf(out, "%19.4f %8.3f %9.4f %10.4f %9.6f %10.4f\n", fluxes.transpiration,
+  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f", fluxes.transpiration,
           envi.minN, envi.soilOrgN, envi.litterN, fluxes.nVolatilization,
           fluxes.nLeaching);
+  fprintf(out, "%12.4f %9.5f %9.5f\n", envi.nppStorage, balanceTracker.deltaC,
+          balanceTracker.deltaN);
 }
 
 // de-allocate space used for climate linked list
@@ -764,7 +768,8 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
 
-  // now add additional fluxes at start/end of growing season:
+  // Now add additional fluxes at start/end of growing season:
+  // Note that these are basically events, and we will track them as such
 
   // first check for new year; if new year, reset trackers (since we haven't
   // done leaf growth or fall yet in this new year):
@@ -777,15 +782,25 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // check for start of growing season:
   if (!phenologyTrackers.didLeafGrowth && pastLeafGrowth()) {
     // we just reached the start of the growing season
-    *leafCreation += (params.leafGrowth / climate->length);
+    double leafOn = (params.leafGrowth / climate->length);
+    *leafCreation += leafOn;
     phenologyTrackers.didLeafGrowth = 1;
+    if (ctx.events) {
+      writeComputedEventOut(climate->year, climate->day, "leafon", 1,
+                            "fluxes.leafCreation", leafOn);
+    }
   }
 
   // check for end of growing season:
   if (!phenologyTrackers.didLeafFall && pastLeafFall()) {
     // we just reached the end of the growing season
-    *leafLitter += (plantLeafC * params.fracLeafFall) / climate->length;
+    double leafOff = (plantLeafC * params.fracLeafFall) / climate->length;
+    *leafLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
+    if (ctx.events) {
+      writeComputedEventOut(climate->year, climate->day, "leafoff", 1,
+                            "fluxes.leafLitter", leafOff);
+    }
   }
 }
 
@@ -1614,11 +1629,7 @@ void updateMeanTrackers(void) {
  */
 void updateMainPools() {
   // Update the stocks, with fluxes adjusted for length of time step.
-  // Notes:
-  // - GPP shows up twice (direct + via NPP --> woodCreation), but
-  //   the math works out to:
-  //     envi.plantWoodC += NPP_allocation_to_wood − woodLitter.
-  // - The soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
+  // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
   //   are updated in updatePoolsForSoil().
 
   // :: from [1], eq (A1), where:
@@ -1626,12 +1637,20 @@ void updateMainPools() {
   //     R_a = fluxes.rVeg
   //     L_w = fluxes.woodLitter
   //     L   = fluxes.leafCreation
-  // :: from [3], additional root terms (woodCreation, fineRootC, coarseRootC)
-  //    from NPP allocation
-  envi.plantWoodC += (fluxes.photosynthesis + fluxes.woodCreation -
-                      fluxes.leafCreation - fluxes.woodLitter - fluxes.rVeg -
-                      fluxes.coarseRootCreation - fluxes.fineRootCreation) *
-                     climate->length;
+  // :: also from [3], modified for root modeling
+  //
+  // WOOD CARBON MODEL
+  // As we implicitly store GPP in the wood carbon pool (to be doled out via
+  // time-averaged NPP allocation), we can think of it as:
+  // NPP_storage = (GPP - R_a) - (NPP allocation)
+  // woodC += NPP_storage + NPP_wood_alloc - wood_litter
+  double r_a = fluxes.rVeg + fluxes.rFineRoot + fluxes.rCoarseRoot;
+  double nppAllocations = fluxes.leafCreation + fluxes.woodCreation +
+                          fluxes.fineRootCreation + fluxes.coarseRootCreation;
+  envi.nppStorage +=
+      ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
+  envi.plantWoodC +=
+      (fluxes.woodCreation - fluxes.woodLitter) * climate->length;
 
   // :: from [1], eq (A2), where:
   //     L   = fluxes.leafCreation
@@ -1716,13 +1735,13 @@ void updatePoolsForSoil(void) {
                     climate->length;
     }
   }
-  // :: from [3], root model description
+  // :: from [3], root model description, except that we deal with
+  //    respiration in the woodC calculations (or, put another way, it's
+  //    implicit in the creation term)
   envi.coarseRootC +=
-      (fluxes.coarseRootCreation - fluxes.coarseRootLoss - fluxes.rCoarseRoot) *
-      climate->length;
+      (fluxes.coarseRootCreation - fluxes.coarseRootLoss) * climate->length;
   envi.fineRootC +=
-      (fluxes.fineRootCreation - fluxes.fineRootLoss - fluxes.rFineRoot) *
-      climate->length;
+      (fluxes.fineRootCreation - fluxes.fineRootLoss) * climate->length;
 }
 
 void updateNitrogenPools(void) {
@@ -1742,6 +1761,34 @@ void updateNitrogenPools(void) {
 
   // Litter organic N
   envi.litterN += fluxes.nOrgLitter * climate->length;
+}
+
+void updatePoolsAndBalance() {
+  // Calc total C and N before pool updates
+  updateBalanceTrackerPreUpdate();
+
+  // Update leafC, woodC, soil water and snow pools
+  updateMainPools();
+
+  // Update soil carbon pools
+  updatePoolsForSoil();
+
+  // Update nitrogen cycle pools
+  updateNitrogenPools();
+
+  // Update pools for fluxes from events
+  updatePoolsForEvents();
+
+  // Verify none of our stocks have gone negative (set any that are to zero)
+  // TODO: we need to log/warn when this happens, as mass balance will likely
+  //   be off
+  ensureNonNegativeStocks();
+
+  // Calc total C and N after pool updates, and total system inputs and outputs
+  updateBalanceTrackerPostUpdate();
+
+  // Perform balance check
+  checkBalance();
 }
 
 // !!! main runner function !!!
@@ -1766,20 +1813,8 @@ void updateState(void) {
   ///////////////////////
   // 2. Update Pools
 
-  // Update leafC, woodC, soil water and snow pools
-  updateMainPools();
-
-  // Update soil carbon pools
-  updatePoolsForSoil();
-
-  // Update nitrogen cycle pools
-  updateNitrogenPools();
-
-  // Update pools for fluxes from events
-  updatePoolsForEvents();
-
-  // Verify none of our stocks have gone negative (set any that are to zero)
-  ensureNonNegativeStocks();
+  // Call the wrapper function that updates all pools and checks mass balance
+  updatePoolsAndBalance();
 
   ///////////////////////
   // 3. Update trackers
@@ -1858,6 +1893,7 @@ void setupModel(void) {
   envi.plantWoodC =
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
+  envi.nppStorage = 0.0;
 
   if (ctx.litterPool) {
     envi.litterC = params.litterInit;
@@ -1916,6 +1952,7 @@ void setupModel(void) {
   initTrackers();
   initPhenologyTrackers();
   initEventTrackers();
+  initBalanceTracker(0.001);
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
                                  // MEAN_NPP_DAYS) of 0
   resetMeanTracker(meanGPP, 0);  // initialize with mean NPP (over last
