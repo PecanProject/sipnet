@@ -27,8 +27,11 @@ tests/sipnet/*/*
 .DS_Store
 .Rproj.user
 .Rhistory
+# Editor configs
 src/sipnet/.vscode/*
-tests/smoke
+
+# Smoke tests directory (ignored)
+tests/smoke/
 # Temporary and backup files
 *.bak
 *~
