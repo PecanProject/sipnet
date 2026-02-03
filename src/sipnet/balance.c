@@ -89,5 +89,13 @@ void checkBalance(void) {
   double systemNDelta = balanceTracker.inputsN - balanceTracker.outputsN;
   balanceTracker.deltaN = poolNDelta - systemNDelta;
 
+  // To avoid weird negative-zero issues...
+  if (balanceTracker.deltaC < 1e-8) {
+    balanceTracker.deltaC = 0.0;
+  }
+  if (balanceTracker.deltaN < 1e-8) {
+    balanceTracker.deltaN = 0.0;
+  }
+
   // TBD: warn if balance off?
 }
