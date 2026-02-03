@@ -428,6 +428,13 @@ typedef struct Environment {
   double soilOrgN;
   // litter (organic) nitrogen pool (g N m^-2 ground area)
   double litterN;
+
+  ///// New to SIPNET
+  // Conceptual "storage pool" for NPP carbon
+  // This has been split off of plantWoodC to enable nitrogen balance checks.
+  // Note that this can be negative. Also, we will report this as part of
+  // plantWoodC, as has traditionally been done.
+  double nppStorage;
 } Envi;
 
 // Global var
@@ -592,6 +599,15 @@ typedef struct FluxVars {
   double eventMinN;
   // nitrogen added to litter N pool (if used) or soil N pool (if not)
   double eventOrgN;
+  // MASS BALANCE HELPERS
+  // Total system carbon input, for mass balance checks
+  double eventInputC;
+  // Total system carbon output, for mass balance checks
+  double eventOutputC;
+  // Total system nitrogen input, for mass balance checks
+  double eventInputN;
+  // Total system nitrogen output, for mass balance checks
+  double eventOutputN;
 } Fluxes;
 
 // Global var
