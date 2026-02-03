@@ -60,11 +60,18 @@ void updateBalanceTrackerPostUpdate(void) {
   }
 }
 
-void initBalanceTracker(double tolerance) {
+void initBalanceTracker(void) {
   // Initialize all to zero
-  memset(&balanceTracker, 0, sizeof(balanceTracker));
-  // And then set tolerance
-  balanceTracker.tolerance = tolerance;
+  balanceTracker.preTotalC = 0.0;
+  balanceTracker.postTotalC = 0.0;
+  balanceTracker.inputsC = 0.0;
+  balanceTracker.outputsC = 0.0;
+  balanceTracker.preTotalN = 0.0;
+  balanceTracker.postTotalN = 0.0;
+  balanceTracker.inputsN = 0.0;
+  balanceTracker.outputsN = 0.0;
+  balanceTracker.deltaC = 0.0;
+  balanceTracker.deltaN = 0.0;
 }
 
 void checkBalance(void) {

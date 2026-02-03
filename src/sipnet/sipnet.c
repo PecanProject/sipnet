@@ -1952,7 +1952,7 @@ void setupModel(void) {
   initTrackers();
   initPhenologyTrackers();
   initEventTrackers();
-  initBalanceTracker(0.001);
+  initBalanceTracker();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
                                  // MEAN_NPP_DAYS) of 0
   resetMeanTracker(meanGPP, 0);  // initialize with mean NPP (over last

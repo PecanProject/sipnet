@@ -22,8 +22,7 @@ typedef struct BalanceTrackerStruct {
   double inputsN;
   double outputsN;
 
-  // Tolerance and checks
-  double tolerance;  // TBD: this may need to be dynamic
+  // Checks
   double deltaC;
   double deltaN;
 } BalanceTracker;
@@ -35,7 +34,7 @@ void updateBalanceTrackerPreUpdate(void);
 
 void updateBalanceTrackerPostUpdate(void);
 
-void initBalanceTracker(double tolerance);
+void initBalanceTracker(void);
 
 void checkBalance(void);
 
