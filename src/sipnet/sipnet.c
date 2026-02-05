@@ -456,7 +456,7 @@ void outputHeader(FILE *out) {
 void outputState(FILE *out, int year, int day, double time) {
 
   fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
-          envi.plantWoodC + envi.nppStorage, envi.plantLeafC,
+          (envi.plantWoodC + envi.plantWoodCStorageDelta), envi.plantLeafC,
           trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%8.2f ", envi.microbeC);
@@ -472,8 +472,8 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f", fluxes.transpiration,
           envi.minN, envi.soilOrgN, envi.litterN, fluxes.nVolatilization,
           fluxes.nLeaching);
-  fprintf(out, "%12.4f %9.5f %9.5f\n", envi.nppStorage, balanceTracker.deltaC,
-          balanceTracker.deltaN);
+  fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
+          balanceTracker.deltaC, balanceTracker.deltaN);
 }
 
 // de-allocate space used for climate linked list
@@ -1022,7 +1022,8 @@ void vegResp(double *folResp, double *woodResp, double baseFolResp) {
   // end snowpack addition
 
   // :: from [1], eq (A19)
-  *woodResp = params.baseVegResp * envi.plantWoodC *
+  *woodResp = params.baseVegResp *
+              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
               pow(params.vegRespQ10, climate->tair / 10.0);
 }
 
@@ -1049,7 +1050,8 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
     *folResp *= params.frozenSoilFolREff;  // allows foliar resp. to be shutdown
                                            // by a given fraction in winter
   }
-  *woodResp = params.baseVegResp * envi.plantWoodC *
+  *woodResp = params.baseVegResp *
+              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
               pow(params.vegRespQ10, climate->tair / 10.0);
 
   // Rg is a fraction of the recent mean NPP
@@ -1301,7 +1303,8 @@ double calcRootAndWoodFluxes(void) {
 
   // Wood litter, in g C * m^-2 ground area * day^-1
   // turnover rate is fraction lost per day
-  fluxes.woodLitter = envi.plantWoodC * params.woodTurnoverRate;
+  fluxes.woodLitter =
+      (envi.plantWoodC + envi.plantWoodCStorageDelta) * params.woodTurnoverRate;
 
   // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
@@ -1640,14 +1643,12 @@ void updateMainPools() {
   // :: also from [3], modified for root modeling
   //
   // WOOD CARBON MODEL
-  // As we implicitly store GPP in the wood carbon pool (to be doled out via
-  // time-averaged NPP allocation), we can think of it as:
-  // NPP_storage = (GPP - R_a) - (NPP allocation)
-  // woodC += NPP_storage + NPP_wood_alloc - wood_litter
+  // As described in state.h, we split woodC into two pieces so that we can
+  // track non-nitrogen-affecting changes
   double r_a = fluxes.rVeg + fluxes.rFineRoot + fluxes.rCoarseRoot;
   double nppAllocations = fluxes.leafCreation + fluxes.woodCreation +
                           fluxes.fineRootCreation + fluxes.coarseRootCreation;
-  envi.nppStorage +=
+  envi.plantWoodCStorageDelta +=
       ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
   envi.plantWoodC +=
       (fluxes.woodCreation - fluxes.woodLitter) * climate->length;
@@ -1892,8 +1893,8 @@ void setupModel(void) {
 
   envi.plantWoodC =
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
+  envi.plantWoodCStorageDelta = 0.0;
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
-  envi.nppStorage = 0.0;
 
   if (ctx.litterPool) {
     envi.litterC = params.litterInit;

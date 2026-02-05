@@ -409,19 +409,21 @@ void processEvents(void) {
         // explicitly
 
         // MASS BALANCE: this is a system input
-        fluxes.eventInputC += leafC + woodC + fineRootC + coarseRootC;
-        fluxes.eventInputC /= climLen;
+        const double inputC = leafC + woodC + fineRootC + coarseRootC;
+        double inputN = 0.0;
+        fluxes.eventInputC += inputC / climLen;
         if (ctx.nitrogenCycle) {
-          fluxes.eventInputN += leafC / params.leafCN + woodC / params.woodCN +
-                                fineRootC / params.fineRootCN +
-                                coarseRootC / params.woodCN;
-          fluxes.eventInputN /= climLen;
+          inputN = leafC / params.leafCN + woodC / params.woodCN +
+                   fineRootC / params.fineRootCN + coarseRootC / params.woodCN;
+          fluxes.eventInputN += inputN / climLen;
         }
 
-        writeEventOut(gEvent, 4, "fluxes.eventLeafC", leafC / climLen,
+        writeEventOut(gEvent, 6, "fluxes.eventLeafC", leafC / climLen,
                       "fluxes.eventWoodC", woodC / climLen,
                       "fluxes.eventFineRootC", fineRootC / climLen,
-                      "fluxes.eventCoarseRootC", coarseRootC / climLen);
+                      "fluxes.eventCoarseRootC", coarseRootC / climLen,
+                      "fluxes.eventInputC", inputC / climLen,
+                      "fluxes.eventInputN", inputN / climLen);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the litter pool
@@ -431,13 +433,14 @@ void processEvents(void) {
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
 
+        const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
         // Litter increase
-        const double litterAdd = fracTA * (envi.plantLeafC + envi.plantWoodC) +
+        const double litterAdd = fracTA * (envi.plantLeafC + woodC) +
                                  fracTB * (envi.fineRootC + envi.coarseRootC);
         // Pool reductions, counting both mass moved to litter and removed by
         // the harvest itself. Above-ground changes:
         const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
-        const double woodDelta = -envi.plantWoodC * (fracRA + fracTA);
+        const double woodDelta = -woodC * (fracRA + fracTA);
         // Below-ground changes:
         const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
@@ -452,26 +455,31 @@ void processEvents(void) {
         // No need to allocate to biomass N pools, we don't track that N
         // explicitly. We do need to handle litter N, though.
         // FUTURE (ticket #244): move/remove biomass in litter N
+        // Make sure to add it to writeEventOut below, too.
 
         // MASS BALANCE: removed fractions are system outputs
-        fluxes.eventOutputC += (envi.plantWoodC + envi.plantLeafC) * fracRA +
-                               (envi.fineRootC + envi.coarseRootC) * fracRB;
-        fluxes.eventOutputC /= climLen;
+        const double outputC = ((woodC + envi.plantLeafC) * fracRA +
+                                (envi.fineRootC + envi.coarseRootC) * fracRB);
+        double outputN = 0.0;
+        fluxes.eventOutputC += outputC / climLen;
         if (ctx.nitrogenCycle) {
-          fluxes.eventOutputN += (envi.plantWoodC / params.woodCN +
-                                  envi.plantLeafC / params.leafCN) *
-                                     fracRA +
-                                 (envi.fineRootC / params.fineRootCN +
-                                  envi.coarseRootC / params.woodCN) *
-                                     fracRB;
-          fluxes.eventOutputN /= climLen;
+          // just plantWoodC here, not woodC
+          outputN = ((envi.plantWoodC / params.woodCN +
+                      envi.plantLeafC / params.leafCN) *
+                         fracRA +
+                     (envi.fineRootC / params.fineRootCN +
+                      envi.coarseRootC / params.woodCN) *
+                         fracRB);
+          fluxes.eventOutputN += outputN / climLen;
         }
 
-        writeEventOut(gEvent, 5, "fluxes.eventLitterC", litterAdd / climLen,
+        writeEventOut(gEvent, 7, "fluxes.eventLitterC", litterAdd / climLen,
                       "fluxes.eventLeafC", leafDelta / climLen,
                       "fluxes.eventWoodC", woodDelta / climLen,
                       "fluxes.eventFineRootC", fineDelta / climLen,
-                      "fluxes.eventCoarseRootC", coarseDelta / climLen);
+                      "fluxes.eventCoarseRootC", coarseDelta / climLen,
+                      "fluxes.eventOutputC", outputC / climLen,
+                      "fluxes.eventOutputN", outputN / climLen);
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
@@ -486,28 +494,27 @@ void processEvents(void) {
       } break;
       case FERTILIZATION: {
         const FertilizationParams *fertParams = gEvent->eventParams;
-        const double orgN = fertParams->orgN;
         const double orgC = fertParams->orgC;
-        const double minN = fertParams->minN;
-
-        fluxes.eventLitterC += orgC / climLen;
-        if (ctx.nitrogenCycle) {
-          fluxes.eventOrgN += orgN / climLen;
-          fluxes.eventMinN += minN / climLen;
-        } else {
+        double orgN = fertParams->orgN;
+        double minN = fertParams->minN;
+        if (!ctx.nitrogenCycle) {
           // As the warning says in readEventData(), we ignore N when the
-          // nitrogen cycle model is off, so no update needed
+          // nitrogen cycle model is off
+          orgN = 0.0;
+          minN = 0.0;
         }
+        fluxes.eventLitterC += orgC / climLen;
+        fluxes.eventOrgN += orgN / climLen;
+        fluxes.eventMinN += minN / climLen;
 
         // MASS BALANCE: this is a system input
-        fluxes.eventInputC += orgC;
-        if (ctx.nitrogenCycle) {
-          fluxes.eventInputN += orgN + minN;
-        }
+        fluxes.eventInputC += orgC / climLen;
+        fluxes.eventInputN += (orgN + minN) / climLen;
 
-        writeEventOut(gEvent, 3, "fluxes.eventOrgN", orgN / climLen,
+        writeEventOut(gEvent, 5, "fluxes.eventOrgN", orgN / climLen,
                       "fluxes.eventLitterC", orgC / climLen, "fluxes.eventMinN",
-                      minN / climLen);
+                      minN / climLen, "fluxes.eventInputC", orgC / climLen,
+                      "fluxes.eventInputN", (orgN + minN) / climLen);
       } break;
       default:
         logError("Unknown event type (%d) in processEvents()\n", gEvent->type);

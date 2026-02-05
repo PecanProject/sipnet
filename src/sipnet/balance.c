@@ -1,18 +1,25 @@
 #include "balance.h"
+
+#include <math.h>
+
 #include "common/context.h"
+#include "common/exitCodes.h"
+#include "common/logging.h"
 #include "state.h"
 
 // Definition of global balance tracker struct
 BalanceTracker balanceTracker;
 
 void getMassTotals(double *carbon, double *nitrogen) {
-  *carbon = envi.plantWoodC + envi.plantLeafC + envi.fineRootC +
-            envi.coarseRootC + envi.soilC + envi.nppStorage;
+  *carbon = (envi.plantWoodC + envi.plantWoodCStorageDelta) + envi.plantLeafC +
+            envi.fineRootC + envi.coarseRootC + envi.soilC;
   if (ctx.litterPool) {
     *carbon += envi.litterC;
   }
 
   if (ctx.nitrogenCycle) {
+    // Note: this is the one place where we ust plantWoodC by itself; it's the
+    // reason plantNSCWoodCDelta was created, so that we can ignore it here.
     *nitrogen =
         envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN +
         envi.fineRootC / params.fineRootCN + envi.coarseRootC / params.woodCN +
@@ -90,12 +97,28 @@ void checkBalance(void) {
   balanceTracker.deltaN = poolNDelta - systemNDelta;
 
   // To avoid weird negative-zero issues...
-  if (balanceTracker.deltaC < 1e-8) {
+  if (fabs(balanceTracker.deltaC) < 1e-8) {
     balanceTracker.deltaC = 0.0;
   }
-  if (balanceTracker.deltaN < 1e-8) {
+  if (fabs(balanceTracker.deltaN) < 1e-8) {
     balanceTracker.deltaN = 0.0;
   }
 
-  // TBD: warn if balance off?
+  int err = 0;
+  if (fabs(balanceTracker.deltaC) > 0.0) {
+    err = 1;
+    logInternalError(
+        "Carbon balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        balanceTracker.deltaC, climate->year, climate->day, climate->time);
+  }
+  // RE-ENABLE WHEN N IS FIXED
+  // if (fabs(balanceTracker.deltaN) > 0.0) {
+  //  err = 1;
+  //  logInternalError("Nitrogen balance check failed (delta=%8.4f)\n",
+  //                   balanceTracker.deltaN);
+  //}
+  if (err) {
+    logInternalError("Exiting\n");
+    //  exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 }
