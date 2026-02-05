@@ -65,7 +65,7 @@ $(SIPNET_LIB): $(SIPNET_OFILES)
 GCC_VERSION = $(shell $(CC) --version)
 info:
 	@echo "System info"
-	@echo "ARCH: $(shell arch)"
+	@echo "ARCH: $(shell uname -m)"
 	@echo "CC: $(GCC_VERSION)"
 	@echo ""
 
