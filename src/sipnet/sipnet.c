@@ -1227,7 +1227,8 @@ void calcNVolatilizationFlux() {
   double d_temp = calcTempEffect(climate->tsoil);
   double d_water = calcMoistEffect(envi.soilWater, params.soilWHC);
 
-  fluxes.nVolatilization = params.nVolatilizationFrac * envi.minN * d_temp * d_water;
+  fluxes.nVolatilization =
+      params.nVolatilizationFrac * envi.minN * d_temp * d_water;
 }
 
 /*!
