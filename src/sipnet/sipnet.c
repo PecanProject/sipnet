@@ -1138,6 +1138,11 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
     tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
     fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
 
+    // rSoil is maintenance resp + growth (microbe) resp
+    // :: from [4], eq (5.10) for microbe term
+    fluxes.rSoil =
+        fluxes.maintRespiration + (1 - params.efficiency) * fluxes.microbeIngestion;
+
   } else {
     fluxes.microbeIngestion = 0.0;
     fluxes.soilPulse = 0.0;
@@ -1535,9 +1540,6 @@ void updateMainPools() {
  * Calculates soil respiration, method depending on the MICROBES and
  * LITTER_POOL flags. Updates carbon pools for soil, fine roots,
  * and coarse roots.
- *
- * TODO: split this apart - fluxes into calculateFluxes, with pool updates
- *       after, as is the general method for SIPNET.
  */
 void updatePoolsForSoil(void) {
 
@@ -1562,10 +1564,6 @@ void updatePoolsForSoil(void) {
                       fluxes.maintRespiration) *
                      climate->length;
 
-    // rSoil is maintenance resp + growth (microbe) resp
-    // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil =
-        fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
   } else {
     if (ctx.litterPool) {
       // :: from [2], litter model description
