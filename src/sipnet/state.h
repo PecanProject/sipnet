@@ -556,7 +556,7 @@ typedef struct FluxVars {
   double leafCreation;
   // creation from leaf-on event; separated from leafCreation for N balance (as
   // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
-  // double leafOnCreation;
+  double leafOnCreation;
   // wood creation term, dependent on NPP similar to leaf creation, but
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;

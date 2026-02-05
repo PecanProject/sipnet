@@ -742,11 +742,12 @@ int pastLeafFall(void) {
  * leafCreation is not from [1] (source TBD).
  *
  * @param[out] leafCreation (g C/m^2 ground/day)
+ * @param[out] leafOnCreation (g C/m^2 ground/day)
  * @param[out] leafLitter (g C/m^2 ground/day)
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
-void calcLeafFluxes(double *leafCreation, double *leafLitter,
-                    double plantLeafC) {
+void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
+                    double *leafLitter, double plantLeafC) {
   // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
   // [1]: growing season boundary effects, but modified to be partial growth
@@ -783,11 +784,11 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   if (!phenologyTrackers.didLeafGrowth && pastLeafGrowth()) {
     // we just reached the start of the growing season
     double leafOn = (params.leafGrowth / climate->length);
-    *leafCreation += leafOn;
+    *leafOnCreation += leafOn;
     phenologyTrackers.didLeafGrowth = 1;
     if (ctx.events) {
       writeComputedEventOut(climate->year, climate->day, "leafon", 1,
-                            "fluxes.leafCreation", leafOn);
+                            "fluxes.leafOnCreation", leafOn);
     }
   }
 
@@ -1425,7 +1426,8 @@ void calculateFluxes(void) {
   }
 
   // Leaf creation and litter
-  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
+  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafOnCreation),
+                 &(fluxes.leafLitter), envi.plantLeafC);
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
@@ -1651,13 +1653,16 @@ void updateMainPools() {
   envi.plantWoodCStorageDelta +=
       ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
   envi.plantWoodC +=
-      (fluxes.woodCreation - fluxes.woodLitter) * climate->length;
+      (fluxes.woodCreation - fluxes.woodLitter - fluxes.leafOnCreation) *
+      climate->length;
 
   // :: from [1], eq (A2), where:
   //     L   = fluxes.leafCreation
   //     L_L = fluxes.leafLitter
+  // Note: we have split leafCreation into two parts
   envi.plantLeafC +=
-      (fluxes.leafCreation - fluxes.leafLitter) * climate->length;
+      (fluxes.leafCreation + fluxes.leafOnCreation - fluxes.leafLitter) *
+      climate->length;
 
   // :: from [1], eq (A4), where:
   //     P = (fluxes.rain - fluxes.immedEvap)
