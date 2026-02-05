@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcommonlib.a CMakeFiles/commonlib.dir/src/common/context.c.o CMakeFiles/commonlib.dir/src/common/logging.c.o CMakeFiles/commonlib.dir/src/common/modelParams.c.o CMakeFiles/commonlib.dir/src/common/util.c.o
+/usr/bin/ranlib libcommonlib.a

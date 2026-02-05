@@ -1,0 +1,2 @@
+/usr/bin/ar qc libsipnetlib.a CMakeFiles/sipnetlib.dir/src/sipnet/cli.c.o CMakeFiles/sipnetlib.dir/src/sipnet/events.c.o CMakeFiles/sipnetlib.dir/src/sipnet/frontend.c.o CMakeFiles/sipnetlib.dir/src/sipnet/outputItems.c.o CMakeFiles/sipnetlib.dir/src/sipnet/runmean.c.o CMakeFiles/sipnetlib.dir/src/sipnet/sipnet.c.o CMakeFiles/sipnetlib.dir/src/sipnet/state.c.o CMakeFiles/sipnetlib.dir/src/sipnet/balance.c.o
+/usr/bin/ranlib libsipnetlib.a

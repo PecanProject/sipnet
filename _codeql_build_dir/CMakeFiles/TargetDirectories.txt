@@ -1,0 +1,5 @@
+/home/runner/work/sipnet/sipnet/_codeql_build_dir/CMakeFiles/commonlib.dir
+/home/runner/work/sipnet/sipnet/_codeql_build_dir/CMakeFiles/sipnetlib.dir
+/home/runner/work/sipnet/sipnet/_codeql_build_dir/CMakeFiles/tests.dir
+/home/runner/work/sipnet/sipnet/_codeql_build_dir/CMakeFiles/edit_cache.dir
+/home/runner/work/sipnet/sipnet/_codeql_build_dir/CMakeFiles/rebuild_cache.dir
