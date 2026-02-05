@@ -790,6 +790,8 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
       writeComputedEventOut(climate->year, climate->day, "leafon", 1,
                             "fluxes.leafOnCreation", leafOn);
     }
+  } else {
+    *leafOnCreation = 0.0;
   }
 
   // check for end of growing season:
