@@ -1140,8 +1140,8 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
 
     // rSoil is maintenance resp + growth (microbe) resp
     // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil =
-        fluxes.maintRespiration + (1 - params.efficiency) * fluxes.microbeIngestion;
+    fluxes.rSoil = fluxes.maintRespiration +
+                   (1 - params.efficiency) * fluxes.microbeIngestion;
 
   } else {
     fluxes.microbeIngestion = 0.0;
@@ -1227,8 +1227,7 @@ void calcNVolatilizationFlux() {
   double d_temp = calcTempEffect(climate->tsoil);
   double d_water = calcMoistEffect(envi.soilWater, params.soilWHC);
 
-  fluxes.nVolatilization =
-      params.nVolatilizationFrac * envi.minN * d_temp * d_water;
+  fluxes.nVolatilization = params.nVolatilizationFrac * envi.minN * d_temp * d_water;
 }
 
 /*!
