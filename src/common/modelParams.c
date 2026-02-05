@@ -148,7 +148,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
   double value;
   char *errc;
   int isComment;
-  char unknownParams[2048] = "";
+  char unknownParams[2048] = {0};
   char hasUnknownParams = 0;
 
   // Check for old-style (spatial param) format on first line containing params
