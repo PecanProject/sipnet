@@ -7,7 +7,7 @@ BalanceTracker balanceTracker;
 
 void getMassTotals(double *carbon, double *nitrogen) {
   *carbon = envi.plantWoodC + envi.plantLeafC + envi.fineRootC +
-            envi.coarseRootC + envi.soilC + envi.nppStorage;
+            envi.coarseRootC + envi.soilC + envi.woodCStorageDelta;
   if (ctx.litterPool) {
     *carbon += envi.litterC;
   }

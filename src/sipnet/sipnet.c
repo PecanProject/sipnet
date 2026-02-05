@@ -443,7 +443,7 @@ void outputHeader(FILE *out) {
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
   fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN   n2oFlux "
-               "nLeachFlux  nppStorage  bcdeltaC  bcdeltaN\n");
+               "nLeachFlux  woodCStorageDelta  bcdeltaC  bcdeltaN\n");
 }
 
 /*!
@@ -456,7 +456,7 @@ void outputHeader(FILE *out) {
 void outputState(FILE *out, int year, int day, double time) {
 
   fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
-          envi.plantWoodC + envi.nppStorage, envi.plantLeafC,
+          envi.plantWoodC + envi.woodCStorageDelta, envi.plantLeafC,
           trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%8.2f ", envi.microbeC);
@@ -472,7 +472,7 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f", fluxes.transpiration,
           envi.minN, envi.soilOrgN, envi.litterN, fluxes.nVolatilization,
           fluxes.nLeaching);
-  fprintf(out, "%12.4f %9.5f %9.5f\n", envi.nppStorage, balanceTracker.deltaC,
+  fprintf(out, "%12.4f %9.5f %9.5f\n", envi.woodCStorageDelta, balanceTracker.deltaC,
           balanceTracker.deltaN);
 }
 
@@ -1647,7 +1647,7 @@ void updateMainPools() {
   double r_a = fluxes.rVeg + fluxes.rFineRoot + fluxes.rCoarseRoot;
   double nppAllocations = fluxes.leafCreation + fluxes.woodCreation +
                           fluxes.fineRootCreation + fluxes.coarseRootCreation;
-  envi.nppStorage +=
+  envi.woodCStorageDelta +=
       ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
   envi.plantWoodC +=
       (fluxes.woodCreation - fluxes.woodLitter) * climate->length;
@@ -1893,7 +1893,7 @@ void setupModel(void) {
   envi.plantWoodC =
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
-  envi.nppStorage = 0.0;
+  envi.woodCStorageDelta = 0.0;
 
   if (ctx.litterPool) {
     envi.litterC = params.litterInit;

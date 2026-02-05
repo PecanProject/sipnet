@@ -434,7 +434,7 @@ typedef struct Environment {
   // This has been split off of plantWoodC to enable nitrogen balance checks.
   // Note that this can be negative. Also, we will report this as part of
   // plantWoodC, as has traditionally been done.
-  double nppStorage;
+  double woodCStorageDelta;
 } Envi;
 
 // Global var
