@@ -1001,7 +1001,7 @@ The balance checks are performed at each timestep after all pool updates are com
 
 - **Numerical Precision**: Small discrepancies ($< 10^{-8}$) are treated as zero to avoid false positives from floating-point rounding errors.
 
-If a balance check fails (i.e., $|\Delta C_\text{pools} - (C_\text{inputs} - C_\text{outputs})| > 0$), SIPNET logs an internal error with the timestep information and the magnitude of the imbalance.
+If a balance check fails (i.e., $|\Delta C_\text{pools} - (C_\text{inputs} - C_\text{outputs})| > 10^{-8}$), SIPNET logs an internal error with the timestep information and the magnitude of the imbalance.
 
 ## References
 

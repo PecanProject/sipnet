@@ -438,9 +438,9 @@ typedef struct Environment {
   // prior to accounting for N dynamics.
   // As this is a delta, it can be negative. Note that the actual "wood carbon"
   // is the sum of these two pools.
-  // plantWoodCStorageDelta term was previously named nppStorage and tracked
-  // implicitly; tracking it explicitly allows SIPNET to handle NPP and
-  // allocation prior to accounting for N dynamics.
+  // This storage concept was previously referred to as nppStorage in equations
+  // but was tracked implicitly within plantWoodC; tracking it explicitly allows
+  // SIPNET to handle NPP and allocation prior to accounting for N dynamics.
   double plantWoodCStorageDelta;
 } Envi;
 
