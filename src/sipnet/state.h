@@ -434,9 +434,13 @@ typedef struct Environment {
   // total nitrogen in the system. Since SIPNET uses a five-day time-averaged
   // NPP value for allocating plant growth, there is a lag from input to output
   // here that must be tracked. So, we split the wood pool into plantWoodC
-  // (above) and a new pool to track non-nitrogen-affecting changes over time.
+  // (above) and a new pool, plantWoodCStorageDelta, to track changes that occur
+  // prior to accounting for N dynamics.
   // As this is a delta, it can be negative. Note that the actual "wood carbon"
   // is the sum of these two pools.
+  // plantWoodCStorageDelta term was previously named nppStorage and tracked
+  // implicitly; tracking it explicitly allows SIPNET to handle NPP and
+  // allocation prior to accounting for N dynamics.
   double plantWoodCStorageDelta;
 } Envi;
 
