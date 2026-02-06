@@ -959,6 +959,50 @@ W_{\text{WHC}} - W_{\text{soil}} + F^W_{\text{irrigation}} & \text{flooding}
 
 -->
 
+## Mass Balance Checks
+
+SIPNET includes internal mass balance checks to ensure conservation of carbon and nitrogen throughout the simulation. These checks verify that changes in pool sizes match the difference between system inputs and outputs.
+
+### Carbon Balance
+
+The carbon balance check verifies that:
+
+\begin{equation}
+\Delta C_\text{pools} = C_\text{inputs} - C_\text{outputs}
+\end{equation}
+
+where:
+
+- $\Delta C_\text{pools}$ is the change in total carbon across all pools (wood, leaf, fine root, coarse root, soil, and litter if enabled)
+- $C_\text{inputs}$ includes photosynthesis (GPP) and carbon additions from agronomic events
+- $C_\text{outputs}$ includes autotrophic respiration ($R_a$: vegetation, fine root, and coarse root), heterotrophic respiration ($R_h$: soil and litter if enabled), and carbon removals from agronomic events
+
+### Nitrogen Balance
+
+When the nitrogen cycle is enabled (`nitrogenCycle=1`), a nitrogen balance check verifies that:
+
+\begin{equation}
+\Delta N_\text{pools} = N_\text{inputs} - N_\text{outputs}
+\end{equation}
+
+where:
+
+- $\Delta N_\text{pools}$ is the change in total nitrogen across all pools (plant biomass, soil organic, litter, and mineral nitrogen)
+- $N_\text{inputs}$ includes nitrogen fixation (when implemented) and nitrogen additions from fertilization and organic matter events
+- $N_\text{outputs}$ includes nitrogen volatilization ($F^N_\text{vol}$), leaching ($F^N_\text{leach}$), and nitrogen removals from harvest events
+
+### Implementation Details
+
+The balance checks are performed at each timestep after all pool updates are complete. The checks account for:
+
+- **Wood Carbon Storage**: To properly track carbon balance with the five-day NPP averaging, the wood pool is split into two components: `plantWoodC` and `plantWoodCStorageDelta`. The storage delta tracks the lag between NPP input and allocation output, ensuring accurate carbon accounting. The total wood carbon is the sum of these two pools.
+
+- **Climate Length Adjustment**: All fluxes are adjusted for the timestep length (`climate.length`) to ensure proper comparison between pool deltas and flux totals.
+
+- **Numerical Precision**: Small discrepancies ($< 10^{-8}$) are treated as zero to avoid false positives from floating-point rounding errors.
+
+If a balance check fails (i.e., $|\Delta C_\text{pools} - (C_\text{inputs} - C_\text{outputs})| > 0$), SIPNET logs an internal error with the timestep information and the magnitude of the imbalance.
+
 ## References
 
 Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. Estimating Diurnal to Annual Ecosystem Parameters by Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem Exchange Observations. Global Change Biology 11 (2): 335–55. https://doi.org/10.1111/j.1365-2486.2005.00897.x.
