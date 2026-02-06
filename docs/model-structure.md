@@ -134,7 +134,7 @@ As stated above, SIPNET uses a five-day averaged NPP when allocating gained carb
 the current timestep's net primary production (adjusted GPP - autotrophic respiration) is added to the wood carbon pool
 where it acts as a storage pool, and all allocations from the averaged NPP are deducted from that pool.
 
-Starting in SIPNET v2.1, to support accurate mass balance tracking, this storage is explicitly tracked as a separate pool called $C_{\text{wood,storage}}$ (`plantWoodCStorageDelta` in code). We can represent this storage of carbon as:
+Starting in SIPNET v2.1, to support mass balance tracking, this storage is explicitly tracked as a separate pool called $C_{\text{wood,storage}}$. We can represent this storage of carbon as:
 
 \begin{equation}
 C_{\text{wood,storage}} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}

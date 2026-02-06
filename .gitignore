@@ -24,6 +24,10 @@ tests/sipnet/*/*
 !tests/sipnet/*/*.out
 !tests/sipnet/*/*.clim
 !tests/sipnet/*/*.param
+# But exclude generated test outputs
+tests/sipnet/*/events.out
+tests/sipnet/*/sipnet.out
+tests/sipnet/*/sipnet.config
 
 # System-specific files
 .DS_Store

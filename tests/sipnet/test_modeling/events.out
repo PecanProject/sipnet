@@ -1,3 +1,0 @@
-year  day  type     param_name=delta[,param_name=delta,...]
-2016   47  leafon   fluxes.leafOnCreation=916.88
-2016   49  leafoff  fluxes.leafLitter=914.30
