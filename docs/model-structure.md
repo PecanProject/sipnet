@@ -132,25 +132,32 @@ Plant death is implemented as a harvest event with the fraction of biomass trans
 
 As stated above, SIPNET uses a five-day averaged NPP when allocating gained carbon to plant growth. To implement this, 
 the current timestep's net primary production (adjusted GPP - autotrophic respiration) is added to the wood carbon pool
-where it acts as an _implicit_ storage pool, and all allocations from the averaged NPP are deducted from that pool.
-We can represent this storage of carbon conceptually as:
+where it acts as a storage pool, and all allocations from the averaged NPP are deducted from that pool.
+
+Starting in SIPNET v2.1, to support accurate mass balance tracking, this storage is explicitly tracked as a separate pool called $C_{\text{wood,storage}}$ (`plantWoodCStorageDelta` in code). We can represent this storage of carbon as:
 
 \begin{equation}
-NPP_\text{storage} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
+C_{\text{wood,storage}} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
 \end{equation}
 
-where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. Note that we do not explicitly track this storage term.
+where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. This storage term represents the lag between NPP input and allocation output due to the five-day averaging.
+
+The total wood carbon is the sum of the structural wood carbon and the storage pool:
+
+\begin{equation}
+C_{\text{wood,total}} = C_{\text{wood}} + C_{\text{wood,storage}}
+\end{equation}
 
 Thus, changes to wood carbon over time are determined by:
 
 \begin{equation}
-\frac{dC_\text{wood}}{dt} = NPP_\text{storage} + \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood}
+\frac{dC_\text{wood}}{dt} = C_{\text{wood,storage}} + \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood}
 \label{eq:Braswell_A1}
 \end{equation}
 
 where $\alpha_\text{wood}\cdot\overline{\text{NPP}}$ represents the amount of carbon allocated to growth and $(F^C_\text{litter,wood})$ is the wood litter production.
 
-This is equation (A1) from Braswell, et al. (2005), manipulated to use NPP_\text{storage}.
+This is equation (A1) from Braswell, et al. (2005), modified to explicitly track the storage component.
 
 ### Leaf Carbon
 
@@ -958,50 +965,6 @@ W_{\text{WHC}} - W_{\text{soil}} + F^W_{\text{irrigation}} & \text{flooding}
 \end{equation}
 
 -->
-
-## Mass Balance Checks
-
-SIPNET includes internal mass balance checks to ensure conservation of carbon and nitrogen throughout the simulation. These checks verify that changes in pool sizes match the difference between system inputs and outputs.
-
-### Carbon Balance
-
-The carbon balance check verifies that:
-
-\begin{equation}
-\Delta C_\text{pools} = C_\text{inputs} - C_\text{outputs}
-\end{equation}
-
-where:
-
-- $\Delta C_\text{pools}$ is the change in total carbon across all pools (wood, leaf, fine root, coarse root, soil, and litter if enabled)
-- $C_\text{inputs}$ includes photosynthesis (GPP) and carbon additions from agronomic events
-- $C_\text{outputs}$ includes autotrophic respiration ($R_a$: vegetation, fine root, and coarse root), heterotrophic respiration ($R_h$: soil and litter if enabled), and carbon removals from agronomic events
-
-### Nitrogen Balance
-
-When the nitrogen cycle is enabled (`nitrogenCycle=1`), a nitrogen balance check verifies that:
-
-\begin{equation}
-\Delta N_\text{pools} = N_\text{inputs} - N_\text{outputs}
-\end{equation}
-
-where:
-
-- $\Delta N_\text{pools}$ is the change in total nitrogen across all pools (plant biomass, soil organic, litter, and mineral nitrogen)
-- $N_\text{inputs}$ includes nitrogen fixation (when implemented) and nitrogen additions from fertilization and organic matter events
-- $N_\text{outputs}$ includes nitrogen volatilization ($F^N_\text{vol}$), leaching ($F^N_\text{leach}$), and nitrogen removals from harvest events
-
-### Implementation Details
-
-The balance checks are performed at each timestep after all pool updates are complete. The checks account for:
-
-- **Wood Carbon Storage**: To properly track carbon balance with the five-day NPP averaging, the wood pool is split into two components: `plantWoodC` and `plantWoodCStorageDelta`. The storage delta tracks the lag between NPP input and allocation output, ensuring accurate carbon accounting. The total wood carbon is the sum of these two pools.
-
-- **Climate Length Adjustment**: All fluxes are adjusted for the timestep length (`climate.length`) to ensure proper comparison between pool deltas and flux totals.
-
-- **Numerical Precision**: Small discrepancies ($< 10^{-8}$) are treated as zero to avoid false positives from floating-point rounding errors.
-
-If a balance check fails (i.e., $|\Delta C_\text{pools} - (C_\text{inputs} - C_\text{outputs})| > 10^{-8}$), SIPNET logs an internal error with the timestep information and the magnitude of the imbalance.
 
 ## References
 
