@@ -175,17 +175,17 @@ a scaling constant  $(k_\text{wood})$, and the temperature sensitivity scaling f
 
 ### Litter Carbon
 
-The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition:
+The change in the litter carbon pool over time is defined by the input of new litter and the loss to decomposition:
 
 $$
 \frac{dC_\text{litter}}{dt} =
 F^C_\text{litter} - F^C_{\text{decomp}}
 $$
 
-Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and $F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass into the litter pool through senescence, harvest transfer, and organic matter additions \eqref{eq:litter_flux}. Belowground turnover is routed directly to the soil carbon pool (see Soil Carbon).
+$F^C_{\text{decomp}}$ is the total carbon flux lost from the litter pool due to decomposition and includes both transfer and respiration \eqref{eq:decomp_carbon}.
 
-$F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
-
+The flux of carbon from plant biomass to the litter pool is the sum of litter produced through aboveground senescence, transfer of biomass during harvest, and organic matter amendments:
 $$
 F^C_\text{litter} = 
   \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
@@ -202,87 +202,56 @@ $$\small i \in \{\text{leaf, wood}\}$$
 
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is transferred to litter.
 
-$F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter decomposition is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
+The decomposition flux from litter carbon is divided into heterotrophic respiration and carbon transfer to soil:
 
 $$
-F^C_{\text{decomp}} =
-K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot
-D_{CN} \cdot
-D_{tillage}
-\tag{4a}\label{eq:decomp_rate}
+F^C_{\text{decomp}} = R_{H,\text{litter}} + F^C_{\text{soil}} \tag{4}\label{eq:decomp_carbon}
 $$
 
-The total litter decomposition flux is partitioned between heterotrophic respiration and transfer of carbon to the soil pool, satisfying the mass-balance relationship:
+Where $R_{H_{\text{litter}}}$ is heterotrophic respiration from litter \eqref{eq:rh_litter}, and $F^C_{\text{soil}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is based on the fraction of litter that is respired, $f_{R_H}$.
 
 $$
-R_{\text{litter}} + F^C_{\text{soil,litter}} = F^C_{\text{decomp}} \tag{4b}\label{eq:decomp_carbon}
+R_{H_{\text{litter}}} = f_{R_H} \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{5}\label{eq:rh_litter}
 $$
 
-Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:r_litter} and $F^C_{\text{soil,litter}}$ is the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
-
 $$
-R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{decomp}}
-\tag{5}\label{eq:r_litter}
+F^C_{\text{soil}} = (1 - f_{R_H}) \cdot K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \tag{6}\label{eq:soil_carbon}
 $$
 
-The remainder of the decomposed litter carbon is transferred to the soil pool:
-
-$$
-F^C_{\text{soil,litter}} =
- (1 - f_{\text{litter}}) \cdot F^C_{\text{decomp}}
-\tag{6}\label{eq:soil_carbon}
-$$
+The rate of decomposition is a function of the litter carbon content and the decomposition rate $K_{\text{litter}}$ modified by temperature and moisture factors. $f_{R_H}$ is the fraction of litter carbon that is respired.
 
 ### Soil Carbon
 
-The change in the soil organic carbon (SOC) pool over time is determined by: (i) inputs of carbon transferred from litter during decomposition, (ii) direct inputs from belowground plant turnover, and (iii) losses of carbon due to heterotrophic respiration:
-
 $$
-\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} \tag{Braswell A3}\label{eq:A3}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{H_\text{soil}} \tag{Braswell A3}\label{eq:A3}
 $$
 
-Total carbon input to the soil, $F^C_{\text{soil}}$, includes both
-(i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
-(ii) inputs from root turnover:
-
-$$
-F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}.
-$$
-
-Soil heterotrophic respiration, $R_{\text{soil}}$, is modeled as a first-order process proportional
-to soil organic carbon content and modified by environmental and management factors:
-
-$$
-R_{\text{soil}} =
-K_{dec} \cdot C_{\text{soil}} \cdot
-D_{\text{temp}} \cdot
-D_{\text{water},R_H} \cdot
-D_{CN} \cdot
-D_{\text{tillage}}
-\tag{6a}\label{eq:r_soil}
-$$
+The change in the SOC pool over time $\frac{dC_\text{soil}}{dt}$ is determined by 
+(i) the transfer of decomposed litter carbon to soil, 
+(ii) belowground plant turnover routed directly to soil, and 
+(iii) the loss of carbon to heterotrophic respiration. 
 
 SIPNET assumes no loss of SOC to leaching or erosion.
 
-### Heterotrophic Respiration $(C_\text{soil,litter} \rightarrow \text{CO}_2)$
+Accordingly, $F^C_{\text{soil}}$ includes both (i) litter-to-soil carbon transfer \eqref{eq:soil_carbon} and
+(ii) direct inputs from belowground plant turnover.
 
-Total heterotrophic respiration, $R_H$, is a derived flux defined as the sum of heterotrophic respiration from soil and litter pools:
+### Heterotrophic Respiration $(C_\text{soil,litter} \rightarrow CO_2)$
+
+Total heterotrophic respiration is the sum of respiration from soil and litter pools:
 
 $$
-R_H = R_{\text{soil}} + R_{\text{litter}}
+R_{H} = f_{R_H} \cdot 
+  \left(\sum_j  K_j \cdot C_j 
+    \right) \cdot 
+    D_{\text{temp}} \cdot D_{\text{water,}R_H} \cdot D_{CN} \cdot D_{\text{tillage}}
     \tag{7}\label{eq:rh}
 $$
 
-Where the litter and soil components are defined above in Eqs. \ref{eq:r_litter} and \ref{eq:r_soil}.
+$$\small j \in \{\text{soil, litter}\}$$
 
-For the soil pool, $R_{\text{soil}}$ is modeled as a first-order process proportional to $C_{\text{soil}}$
-and modified by temperature, moisture, substrate quality (C:N), and tillage (Eq. \ref{eq:r_soil}).
 
-For the litter pool, litter decomposition $F^C_{\text{decomp}}$ is modeled as a first-order process proportional
-to $C_{\text{litter}}$ and modified by the same dependence functions (Eq. \ref{eq:decomp_rate}). Litter
-heterotrophic respiration is then defined as a fixed fraction of this decomposition flux via $f_{\text{litter}}$
-(Eqs. \ref{eq:decomp_carbon}--\ref{eq:r_litter}), with the remainder transferred to the soil carbon pool
-(Eq. \ref{eq:soil_carbon}).
+Where heterotrophic respiration, $R_H$, is a function of each carbon pool $C_j$ and its associated decomposition rate $K_{C_j}$ adjusted by the fraction allocated to respiration, $f_{R_H}$, and the temperature, moisture, tillage, and _CN_ dependency  $(D_\star)$ functions.
 
 ### $\frak{Methane \ Production \ (C \rightarrow CH_4)}$
 
@@ -294,9 +263,9 @@ $$
 $$\small j \in \{\text{soil, litter}\}$$
 
 
-The calculation of methane flux  $(F^C_{CH_4})$ is analagous to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
+The calculation of methane flux  $(F^C_{CH_4})$ is analagous to to that of $R_H$. It uses the same carbon pools as substrate and temperature dependence but has specific rate parameters  $(K_{\mathit{CH_4,}j})$, a moisture dependence function based on oxygen availability, and no direct dependence on tillage.
 
-## Carbon:Nitrogen Ratio Dynamics $(CN)$
+## $\frak{Carbon:Nitrogen \ Ratio \ Dynamics (CN)}$
 
 The carbon and nitrogen cycle are tightly coupled by the C:N ratios of plant and organic matter pools. The C:N ratio of plant biomass pools is fixed, while the C:N ratio of soil organic matter and litter pools is dynamic.
 
@@ -324,17 +293,17 @@ $$
 
 This is used to calculate C:N-dependency $D_{CN}$ in Eq. \eqref{eq:cn_dep}.
 
-### C:N Dependency Function $(D_{CN})$
+### $\frak{C:N \ Dependency \ Function \ (D_{CN})}$
 
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
 This term is used in calculation of heterotrophic respiration in Eq. \eqref{eq:rh}.
 
 $$
-  D_{CN} = \frac{k_{CN}}{k_{CN}+ CN} \tag{11}\label{eq:cn_dep}
+  D_{CN} = \frac{1}{1+k_{CN} \cdot CN} \tag{11}\label{eq:cn_dep}
 $$
 
 Here, $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposition rate to C:N ratio, with higher CN reducing the rate of decomposition.
-The value $k_{CN}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
+The value $\frac{1}{k_{CN}}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
 ## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
 
@@ -420,7 +389,7 @@ $$\small j \in \{\text{soil, litter}\}$$
 ### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)$
 
 
-The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, Oleson et al. 2010). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate. 
+The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$ (Thornton et al 2007, TK-ref CLM 4.0). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as a proportion of the N mineralization rate. 
 
 Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011).
 
@@ -457,7 +426,7 @@ where:
 We use a simple down-regulation function with increasing soil mineral N:
 
 $$
-D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
+D_{N_\text{min}} = \frac{1}{1 + \frac{N_\text{min}}{K_N}}
 \tag{19a}\label{eq:n_fix_supp_demand}
 $$
 
@@ -781,7 +750,7 @@ $$
 This amount is then added to the litter flux in equation \ref{eq:litter_flux}.
 
 Belowground harvest transfers are routed directly to the soil carbon pool and are therefore included in
-the total soil carbon input flux $F^C_{\text{soil}}$ in Eq. \ref{eq:A3}.
+$F^C_{\text{soil}}$ in Eq. \ref{eq:A3}.
 
 ### Irrigation
 
@@ -792,7 +761,7 @@ Event parameters:
 	* Canopy irrigation (0): Water applied to the canopy.
 	*	Soil irrigation (1): Water directly added to the soil.
 
-The irrigation that reaches the soil water pool is:
+The irrigation that that reaches the soil water pool is:
 
 $$
 F^W_{\text{irrig,soil}} =
@@ -843,8 +812,6 @@ Gutschick, V.P., 1981. Evolved strategies in nitrogen acquisition by plants. Am.
 Libohova, Z., Seybold, C., Wysocki, D., Wills, S., Schoeneberger, P., Williams, C., Lindbo, D., Stott, D. and Owens, P.R., 2018. Reevaluating the effects of soil organic matter and other properties on available water-holding capacity using the National Cooperative Soil Survey Characterization Database. Journal of soil and water conservation, 73(4), pp.411-421.
 
 Manzoni, Stefano, and Amilcare Porporato. 2009. Soil Carbon and Nitrogen Mineralization: Theory and Models across Scales. Soil Biology and Biochemistry 41 (7): 1355–79. https://doi.org/10.1016/j.soilbio.2009.02.031.
-
-Oleson, K.W., Lawrence, D.M., Bonan, G.B., Flanner, M.G., Kluzek, E., Lawrence, P.J., Levis, S., Swenson, S.C., Thornton, P.E., Dai, A. and Decker, M., 2010. Technical description of version 4.0 of the Community Land Model (CLM). National Center for Atmospheric Research, Boulder, CO, USA.
 
 Parton, W. J., E. A. Holland, S. J. Del Grosso, M. D. Hartman, R. E. Martin, A. R. Mosier, D. S. Ojima, and D. S. Schimel. 2001. Generalized Model for NOx  and N2O Emissions from Soils. Journal of Geophysical Research: Atmospheres 106 (D15): 17403–19. https://doi.org/10.1029/2001JD900101.
 

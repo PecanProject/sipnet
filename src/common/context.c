@@ -34,6 +34,7 @@ void initContext(void) {
   CREATE_INT_CONTEXT(growthResp,      "GROWTH_RESP",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(leafWater,       "LEAF_WATER",       ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(litterPool,      "LITTER_POOL",      ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(microbes,        "MICROBES",         ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
@@ -185,6 +186,23 @@ void validateContext(void) {
 
   if (ctx.soilPhenol && ctx.gdd) {
     logError("soil-phenol and gdd may not both be turned on\n");
+    hasError = 1;
+  }
+
+  // MICROBES is deprecated and no longer supported
+  if (ctx.microbes) {
+    logError("MICROBES feature is deprecated and no longer supported.\n");
+    logError("See Zobitz et al. (2008) regarding microbial identifiability.\n");
+    hasError = 1;
+  }
+
+  if (ctx.events && ctx.microbes) {
+    logError("events and microbes may not both be turned on\n");
+    hasError = 1;
+  }
+
+  if (ctx.nitrogenCycle && ctx.microbes) {
+    logError("nitrogen-cycle and microbes may not both be turned on\n");
     hasError = 1;
   }
 
