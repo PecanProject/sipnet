@@ -37,6 +37,7 @@ add_library(sipnetlib
         src/sipnet/runmean.c
         src/sipnet/sipnet.c
         src/sipnet/state.c
+        src/sipnet/balance.c
 )
 
 add_library(tests
@@ -52,4 +53,6 @@ add_library(tests
         tests/sipnet/test_events_types/testEventTillage.c
         tests/sipnet/test_bugfixes/testEventFileOrderChecks.c
         tests/sipnet/test_modeling/testNitrogenCycle.c
+        tests/sipnet/test_modeling/testDependencyFunctions.c
+        tests/sipnet/test_modeling/testBalance.c
 )
