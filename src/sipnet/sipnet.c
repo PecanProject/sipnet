@@ -1793,8 +1793,6 @@ void setupModel(void) {
 
   envi.snow = params.snowInit;
 
-  // Deprecated microbes feature - kept for output compatibility
-
   if (ctx.nitrogenCycle) {
     envi.minN = params.minNInit;
     envi.soilOrgN = params.soilOrgNInit;
