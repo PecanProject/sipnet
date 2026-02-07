@@ -89,7 +89,7 @@ void usage(char *progName) {
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
   printf("  --do-main-output     Print time series of all output variables to <file-name>.out (1)\n");
-  printf("  --do-single-outputs  Print outputs one variable per file (e.g. <file-name>.NEE)\n");
+  printf("  --do-single-outputs  Print selection* of outputs one variable per file (e.g. <file-name>.NEE)\n");
   printf("  --dump-config        Print final config to <file-name>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
@@ -97,6 +97,8 @@ void usage(char *progName) {
   printf("Info options:\n");
   printf("  -h, --help           Print this message and exit\n");
   printf("  -v, --version        Print version information and exit\n");
+  printf("\n");
+  printf("*do-single-outputs option outputs are: NEE, NEE_cum, GPP, GPP_cum\n");
   printf("\n");
   printf("Configuration options are read from <input_file>. Other options specified on the command\n");
   printf("line override settings from that file.\n");
