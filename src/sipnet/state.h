@@ -428,6 +428,16 @@ typedef struct Environment {
   double soilOrgN;
   // litter (organic) nitrogen pool (g N m^-2 ground area)
   double litterN;
+
+  ///// New to SIPNET in v2.1
+  // Carbon gains from photosynthesis and losses to respiration don't affect the
+  // total nitrogen in the system. Since SIPNET uses a five-day time-averaged
+  // NPP value for allocating plant growth, there is a lag from input to output
+  // here that must be tracked. So, we split the wood pool into plantWoodC
+  // (above) and a new pool to track non-nitrogen-affecting changes over time.
+  // As this is a delta, it can be negative. Note that the actual "wood carbon"
+  // is the sum of these two pools.
+  double plantWoodCStorageDelta;
 } Envi;
 
 // Global var
@@ -542,8 +552,11 @@ typedef struct FluxVars {
 
   // leaf creation term as determined by growing season boundaries (as in [1])
   // and NPP (as in [2])
-  // C transferred from wood to leaves (g C * m^-2 ground area * day^-1)
+  // leaf creation term from NPP
   double leafCreation;
+  // creation from leaf-on event; separated from leafCreation for N balance (as
+  // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
+  double leafOnCreation;
   // wood creation term, dependent on NPP similar to leaf creation, but
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;
@@ -592,6 +605,15 @@ typedef struct FluxVars {
   double eventMinN;
   // nitrogen added to litter N pool (if used) or soil N pool (if not)
   double eventOrgN;
+  // MASS BALANCE HELPERS
+  // Total system carbon input, for mass balance checks
+  double eventInputC;
+  // Total system carbon output, for mass balance checks
+  double eventOutputC;
+  // Total system nitrogen input, for mass balance checks
+  double eventInputN;
+  // Total system nitrogen output, for mass balance checks
+  double eventOutputN;
 } Fluxes;
 
 // Global var
