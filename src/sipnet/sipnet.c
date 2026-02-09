@@ -2020,4 +2020,6 @@ void cleanupModel() {
     freeEventList();
     closeEventOutFile();
   }
+
+  freeContextMetadata();
 }
