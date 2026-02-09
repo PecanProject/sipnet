@@ -121,10 +121,10 @@ R_A = R_\text{leaf} + R_\text{wood} + R_\text{fine_root} + R_\text{coarse_root} 
 \label{eq:ra_components}
 \end{equation}
 
-Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (\eqref{eq:Braswell_A18}, \eqref{eq:
-Braswell_A19}); $R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration (\eqref{eq:
-Zobitz_root_resp}); and $R_\text{growth}$ is an optional growth respiration term. Because these components are part
-of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
+Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (\eqref{eq:Braswell_A18},
+\eqref{eq:Braswell_A19}); $R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration
+(\eqref{eq:Zobitz_root_resp}); and $R_\text{growth}$ is an optional growth respiration term. Because these components
+are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
 
 Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
