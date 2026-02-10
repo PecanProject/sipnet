@@ -35,7 +35,7 @@ New contributors are encouraged to start with [good first issues](https://github
 For a short quickstart and how to get the site and examples running, see the user guide: [Getting Started](user-guide/getting-started.md)
 ## GitHub Workflow
 
-### Propose and Receive Feedback
+### Propose and Receive Feedback {#propose-and-receive-feedback}
 
 Before starting work on a proposed change, get approval first. 
 
