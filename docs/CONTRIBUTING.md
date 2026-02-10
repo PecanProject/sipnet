@@ -77,8 +77,7 @@ or perhaps "SIP321 Update cli help text" if you prefer that form.
   - Tests (if code changes)
   - Documentation (if applicable)
   - `docs/CHANGELOG.md` for noteworthy changes
-  - For new model features related to the structure, remove relevant `\fraktur` font formatting from 
-  - `docs/model-structure.md` to indicate that the feature has been implemented
+  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented
 
 All required checks must pass before merging, including the code format and style checks described below.
 
