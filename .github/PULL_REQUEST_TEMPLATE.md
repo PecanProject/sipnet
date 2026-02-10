@@ -23,13 +23,13 @@ If appropriate, list steps to reproduce the change locally
 
 ## Related issues
 
-- Fixes #<issue> (or "Relates to #<issue>" if this is not a resolution of that ticket)
+- Fixes #<issue>
 
 ## Checklist
 
-- [ ] Related issues are listed above
+- [ ] Related issues are listed above. **PRs without an approved related issue might not be reviewed.**
 - [ ] PR title has the issue number in it ("[#<number>] \<concise description of proposed change>")
-- [ ] Tests added for new features
+- [ ] Tests added for new features/updated for existing features (if applicable)
 - [ ] Documentation updated (if applicable)
 - [ ] `docs/CHANGELOG.md` updated with noteworthy changes
 - [ ] Code formatted with `clang-format` (run `git clang-format` if needed)
