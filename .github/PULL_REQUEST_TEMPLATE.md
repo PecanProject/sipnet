@@ -29,7 +29,7 @@ If appropriate, list steps to reproduce the change locally
 
 - [ ] Related issues are listed above. **PRs without an approved related issue might not be reviewed.**
 - [ ] PR title has the issue number in it ("[#<number>] \<concise description of proposed change>")
-- [ ] Tests added for new features/updated for existing features (if applicable)
+- [ ] Tests added/updated for new features (if applicable)
 - [ ] Documentation updated (if applicable)
 - [ ] `docs/CHANGELOG.md` updated with noteworthy changes
 - [ ] Code formatted with `clang-format` (run `git clang-format` if needed)
