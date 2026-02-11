@@ -49,6 +49,8 @@ sections to include in release notes:
 
 ### Removed
 
+- MICROBES option and related code (#257)
+
 ### Git SHA
 
 ## **SIPNET 2.0.0 - "SIPNET Overhaul"**
