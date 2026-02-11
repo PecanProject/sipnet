@@ -27,15 +27,12 @@ If appropriate, list steps to reproduce the change locally
 
 ## Checklist
 
-- [ ] Related issues are listed above. **PRs without an approved related issue might not be reviewed.**
+- [ ] Related issues are listed above. [PRs without an approved, related issue may not get reviewed](docs/CONTRIBUTING.md#propose-and-receive-feedback).
 - [ ] PR title has the issue number in it ("[#<number>] \<concise description of proposed change>")
 - [ ] Tests added/updated for new features (if applicable)
 - [ ] Documentation updated (if applicable)
 - [ ] `docs/CHANGELOG.md` updated with noteworthy changes
 - [ ] Code formatted with `clang-format` (run `git clang-format` if needed)
-
-**For model structure changes:**
-- [ ] Removed `\fraktur` font formatting from `docs/model-structure.md` for implemented features
 
 ---
 

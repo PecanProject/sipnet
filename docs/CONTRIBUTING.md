@@ -33,15 +33,16 @@ but it will save you time whenever you touch C/C++ code._
 New contributors are encouraged to start with [good first issues](https://github.com/PecanProject/sipnet/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 For a short quickstart and how to get the site and examples running, see the user guide: [Getting Started](user-guide/getting-started.md)
+
 ## GitHub Workflow
 
 ### Propose and Receive Feedback {#propose-and-receive-feedback}
 
-Before starting work on a proposed change, get approval first. 
+**Before starting work on a proposed change, get approval first.** 
 
 - For an existing (ticketed) issue, ask to be assigned to it (comment on the issue and request assignment).
 - If you want additional feedback, discuss it in the `#pecan` Slack channel.
-- If no issue exists for the proposed work, open a new issue summarizing the work, including motivation and a
+- If no issue exists for the proposed work, create a new issue summarizing the work, including motivation and a
   proposed solution.
 - The issue will be reviewed by one or more core maintainers, possibly with requests for clarification and/or 
   suggestions for changes.
@@ -50,11 +51,15 @@ Before starting work on a proposed change, get approval first.
 
 This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
 
-Note: If a proposed change is truly a trivial change, the above can be skipped and a pull request created and submitted.
-Trivial here means fixing typos or minor changes for clarity in comments and documentation. No changes to actual code
-are considered trivial.
+Exceptions (no issue required):
+- Maintainers may submit PRs without related tickets, based on internal team communication.
+- Trivial changes to documentation and comments (e.g. typo fixes, clarifications).
+- Smaller changes may be submitted with maintainer approval via Slack or email. This discussion should be summarized in
+  the PR.
 
-**PRs submitted outside the above process might not be reviewed.**
+Note: no changes to actual code are considered trivial.
+
+**PRs submitted outside the above process may not be reviewed.**
 
 ### Branches
 
@@ -77,7 +82,6 @@ or perhaps "SIP321 Update cli help text" if you prefer that form.
   - Tests (if code changes)
   - Documentation (if applicable)
   - `docs/CHANGELOG.md` for noteworthy changes
-  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented
 
 All required checks must pass before merging, including the code format and style checks described below.
 
