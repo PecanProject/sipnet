@@ -23,6 +23,8 @@
 
 #include "state.h"
 
+#define EVENT_LINE_SIZE 1024
+
 // Global event variables - definition
 EventNode *gEvents = NULL;
 EventNode *gEvent = NULL;
@@ -177,10 +179,22 @@ event_type_t eventStringToType(const char *eventTypeStr) {
   return UNKNOWN_EVENT;
 }
 
+/**
+ * Check if an event line was truncated during reading.
+ * @param line The line buffer that was read from the file
+ * @param len The length of the line string
+ */
+static void checkEventLineTruncation(const char *line, size_t len) {
+  if (len == EVENT_LINE_SIZE - 1 && line[len - 1] != '\n') {
+    logError("Event line too long (exceeds %d chars), data may be truncated\n",
+             EVENT_LINE_SIZE);
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
+  }
+}
+
 EventNode *readEventData(char *eventFile) {
   int year, day, eventType;
   int currYear, currDay;
-  int EVENT_LINE_SIZE = 1024;
   int numBytes;
   char *eventParamsStr;
   char eventTypeStr[20];
@@ -205,6 +219,10 @@ EventNode *readEventData(char *eventFile) {
     return newEvents;
   }
 
+  // Check for line truncation
+  size_t len = strlen(line);
+  checkEventLineTruncation(line, len);
+
   int numRead = sscanf(line,  // NOLINT
                        "%d %d %s %n", &year, &day, eventTypeStr, &numBytes);
   if (numRead != NUM_EVENT_CORE_PARAMS) {
@@ -225,6 +243,9 @@ EventNode *readEventData(char *eventFile) {
   currDay = day;
 
   while (fgets(line, EVENT_LINE_SIZE, in) != NULL) {
+    // Check if line was truncated
+    len = strlen(line);
+    checkEventLineTruncation(line, len);
     // We have another event
     curr = next;
     numRead = sscanf(line, "%d %d %s %n",  // NOLINT
