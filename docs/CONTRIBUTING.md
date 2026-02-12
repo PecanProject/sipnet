@@ -33,15 +33,45 @@ but it will save you time whenever you touch C/C++ code._
 New contributors are encouraged to start with [good first issues](https://github.com/PecanProject/sipnet/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 For a short quickstart and how to get the site and examples running, see the user guide: [Getting Started](user-guide/getting-started.md)
+
 ## GitHub Workflow
+
+### Propose and Receive Feedback {#propose-and-receive-feedback}
+
+**Before starting work on a proposed change, get approval first.** 
+
+- For an existing (ticketed) issue, ask to be assigned to it (comment on the issue and request assignment).
+- If you want additional feedback, discuss it in the `#pecan` Slack channel.
+- If no issue exists for the proposed work, create a new issue summarizing the work, including motivation and a
+  proposed solution.
+- The issue will be reviewed by one or more core maintainers, possibly with requests for clarification and/or 
+  suggestions for changes.
+- If the issue is approved, it will be assigned (likely to the creator).
+- Once a ticket is assigned (and only then) should implementation begin.
+
+This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
+
+Exceptions (no issue required):
+- Maintainers may submit PRs without related tickets, based on internal team communication.
+- Trivial changes to documentation and comments (e.g. typo fixes, clarifications).
+- Smaller changes may be submitted with maintainer approval via Slack or email. This discussion should be summarized in
+  the PR.
+
+Note: no changes to actual code are considered trivial.
+
+**PRs submitted outside the above process may not be reviewed.**
 
 ### Branches
 
-The `master` branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches should be named to clearly indicate the purpose, and may be combined with an associated issue, e.g. `ISSUE#-feature-name`.
+The `master` branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches 
+should be named to clearly indicate the purpose, and should start the number of its associated issue, e.g. 
+`ISSUE#-feature-name`. Development may also be done in a fork of the repo.
 
 ### Pull Requests
 
-Pull requests should be made from feature branches to the `master` branch.
+As stated above, pull requests should be made from feature branches to the `master` branch, or a repo fork. Pull 
+request titles should be of the form: `[<ISSUE#>] <Brief description of change>`, such as "[123] Add nitrogen balance check"
+or perhaps "SIP321 Update cli help text" if you prefer that form.
 
 **This repository has a PR template**; when opening a PR, make sure to fill out the template as indicated.
 
@@ -52,24 +82,12 @@ Pull requests should be made from feature branches to the `master` branch.
   - Tests (if code changes)
   - Documentation (if applicable)
   - `docs/CHANGELOG.md` for noteworthy changes
-  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented
 
 All required checks must pass before merging, including the code format and style checks described below.
 
-### Propose and Receive Feedback
-
-Before opening a pull request (PR), express your interest and get feedback by:
-
-- Asking to be assigned to an existing issue (comment on the issue and request assignment).
-- If the idea has not been proposed, or you want additional feedback, discuss it in the `#pecan` Slack channel.
-- Optional: if the task is complex and no issue exists, open a new issue summarizing the discussion, including motivation and a proposed solution.
-- Begin implementation once you have a thumbs-up (review/assignment) from a core maintainer (for example, `@Alomir` or `@dlebauer`).
-
-This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
-
 ## Code Format & Style
 
-We follow the standard LLVM/Clang formatting rules. Formatting is automated with a pre-commit hook, so you wil rarely have to think about them.
+We follow the standard LLVM/Clang formatting rules. Formatting is automated with a pre-commit hook, so you wil rarely have to think about them.
 
 To set up formatting and static analysis checks:
 
