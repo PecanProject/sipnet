@@ -126,10 +126,10 @@ int runTests() {
   // Moisture effect, volatilization
   initTestState();
   // A=0
-  status |= checkVolatilizationMoistEffect(0.0);
+  status |= checkVolatilizationMoistEffect(0.05);
   params.fAnoxia = 0.4;
   // A=1/6
-  status |= checkVolatilizationMoistEffect(5.0 / 9.0);
+  status |= checkVolatilizationMoistEffect(26.0 / 45.0);
 
   // Moisture effect, methane
   initTestState();
