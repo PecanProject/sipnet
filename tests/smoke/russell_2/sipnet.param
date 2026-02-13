@@ -86,6 +86,6 @@ leafCN 20.0
 woodCN 100.0
 fineRootCN 40.0
 kCN 80.0
-fAnoxia 0.6
-anaerobicDecompRate 0.01
+fAnoxia 0.7
+anaerobicDecompRate 0.5
 anaerobicTransExp 2.0
