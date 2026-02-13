@@ -399,8 +399,8 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
 
   // New moisture dependency params
-  initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.moistureDep || ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "anaerobicDecompRate", &(params.anaerobicDecompRate), ctx.moistureDep);
+  initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobicC || ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "anaerobicDecompRate", &(params.anaerobicDecompRate), ctx.anaerobicC);
   // TODO: this should depend on methane, when that gets in
   initializeOneModelParam(modelParams, "anaerobicTransExp", &(params.anaerobicTransExp), 0);
 
@@ -1102,7 +1102,7 @@ double calcAnaerobicIndex(double water, double whc) {
  *
  *  This dependency term is used in soil respiration and litter breakdown
  *
- *  Depends on soil temperature and the options waterHResp and moistureDep.
+ *  Depends on soil temperature and the options waterHResp and anaerobicC.
  *
  * @param water current soil water
  * @param whc water holding capacity
@@ -1118,7 +1118,7 @@ double calcRespMoistEffect(double water, double whc) {
     moistEffect = 1.0;
   } else {
     double f_whc = water / whc;
-    if (!ctx.moistureDep) {
+    if (!ctx.anaerobicC) {
       // :: from [1], first part of eq (A20), with added exponent
       // Original formulation from [1], based on PnET is:
       //   moistEffect = water / whc

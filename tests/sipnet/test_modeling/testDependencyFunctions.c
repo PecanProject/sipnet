@@ -7,7 +7,7 @@ void setupTests() {
   ctx.litterPool = 1;
   ctx.nitrogenCycle = 1;
   ctx.waterHResp = 1;
-  ctx.moistureDep = 0;
+  ctx.anaerobicC = 0;
 
   // Climate
   climate = (ClimateNode *)malloc(sizeof(ClimateNode));
@@ -40,7 +40,7 @@ void setupTests() {
 
 void initTestState(void) {
   ctx.waterHResp = 1;
-  ctx.moistureDep = 0;
+  ctx.anaerobicC = 0;
   envi.soilWater = 5.0;
   climate->tsoil = 20;
   eventTrackers.d_till_mod = 0.0;
@@ -116,7 +116,7 @@ int runTests() {
 
   // Moisture effect, with new dependency mode
   initTestState();
-  ctx.moistureDep = 1;
+  ctx.anaerobicC = 1;
   // D_aer=2/3, A=0
   status |= checkRespMoistEffect(2.0 / 3.0);
   params.fAnoxia = 0.4;

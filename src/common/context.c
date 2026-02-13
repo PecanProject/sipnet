@@ -39,7 +39,7 @@ void initContext(void) {
   CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(nitrogenCycle,   "NITROGEN_CYCLE",   ARG_OFF, FLAG_YES);
-  CREATE_INT_CONTEXT(moistureDep,     "MOISTURE_DEP",     ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(anaerobicC,     "MOISTURE_DEP",     ARG_OFF, FLAG_YES);
 
   // Flags, I/O
   CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  FLAG_YES);
@@ -200,13 +200,14 @@ void validateContext(void) {
     hasError = 1;
   }
 
-  if (ctx.nitrogenCycle && !ctx.litterPool) {
-    logError("nitrogen-cycle requires litter-pool to be turned on\n");
+  if (ctx.nitrogenCycle && !(ctx.litterPool && ctx.anaerobicC)) {
+    logError("nitrogen-cycle requires both litter-pool and anaerobic-c to be "
+             "turned on\n");
     hasError = 1;
   }
 
-  if (ctx.moistureDep && !ctx.waterHResp) {
-    logError("moisture-dep requires water-hresp to be turned on\n");
+  if (ctx.anaerobicC && !ctx.waterHResp) {
+    logError("anaerobic-c requires water-hresp to be turned on\n");
   }
 
   if (hasError) {

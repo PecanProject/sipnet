@@ -29,7 +29,7 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(soil-phenol),
     DECLARE_FLAG(water-hresp),
     DECLARE_FLAG(nitrogen-cycle),
-    DECLARE_FLAG(moisture-dep),
+    DECLARE_FLAG(anaerobic-c),
 
     DECLARE_FLAG(do-main-output),
     DECLARE_FLAG(do-single-outputs),
@@ -58,7 +58,7 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
     DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
     DECLARE_ARG_FOR_MAP(waterHResp), DECLARE_ARG_FOR_MAP(nitrogenCycle),
-    DECLARE_ARG_FOR_MAP(moistureDep),
+    DECLARE_ARG_FOR_MAP(anaerobicC),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -78,13 +78,13 @@ void usage(char *progName) {
   printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
+  printf("  --anaerobic-c        Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
   printf("  --events             Enable event handling (1)\n");
   printf("  --gdd                Use growing degree days to determine leaf growth (1)\n");
   printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
   printf("  --leaf-water         Calculate leaf pool and evaporate from that pool (0)\n");
   printf("  --litter-pool        Enable litter pool in addition to single soil carbon pool (0)\n");
   printf("  --microbes           Enable microbe modeling (0)\n");
-  printf("  --moisture-dep       Enable unimodal moisture dependency function (0)\n");
   printf("  --nitrogen-cycle     Enable modeling of the nitrogen cycle (0)\n");
   printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
   printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
@@ -110,7 +110,8 @@ void usage(char *progName) {
   printf(" --soil-phenol and --gdd may not both be turned on\n");
   printf(" --events and --microbes may not both be turned on\n");
   printf(" --nitrogen-cycle and --microbes may not both be turned on\n");
-  printf(" --moisture-dep requires --water-hresp\n");
+  printf(" --anaerobic-c requires --water-hresp\n");
+  printf(" --nitrogen-cycle requires both --litter-pool and --anaerobic-c\n");
   // clang-format on
 }
 
