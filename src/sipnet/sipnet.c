@@ -1168,8 +1168,9 @@ double calcVolatilizationMoistEffect(double water, double whc) {
   // Anaerobic index (oxygen limitation proxy)
   double A = calcAnaerobicIndex(water, whc);
 
-  // The factor of 4 keeps this on a [0, 1] scale
-  return 4 * A * (1 - A);
+  // 0.05 represents the baseline aerobic volatilization
+  // The factor of 3.8 makes the max = 1, as with other dependency functions
+  return 0.05 + 3.8 * A * (1 - A);
 }
 
 /*!
