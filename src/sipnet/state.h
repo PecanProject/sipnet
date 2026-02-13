@@ -5,7 +5,7 @@
 // [1] Braswell et al., 2005
 // [2] Sacks et al., 2006
 // [3] Zobitz et al., 2008
-// [5] LeBauer et al., unpublished
+// [4] LeBauer et al., unpublished
 
 typedef struct ClimateVars ClimateNode;
 
@@ -318,7 +318,7 @@ typedef struct Parameters {
   double leafPoolDepth;
 
   // ****************************************
-  // Params from [5] LeBauer et al. (unpublished)
+  // Params from [4] LeBauer et al. (unpublished)
   // ****************************************
   // Nitrogen Cycle
 
@@ -488,7 +488,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for nitrogen cycle
-  // - nitrogen fluxes tracked as part of modeling from [5]
+  // - nitrogen fluxes tracked as part of modeling from [4]
   //
 
   // Mineral N lost to volatilization
@@ -509,7 +509,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for event handling
-  //  - event fluxes tracked as part of modeling from [5]
+  //  - event fluxes tracked as part of modeling from [4]
   //
 
   // plantLeafC addition

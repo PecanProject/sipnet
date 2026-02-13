@@ -493,7 +493,7 @@ void freeClimateList() {
  * cumLai is 0 at the canopy top and equals total LAI at the bottom.
  *
  * Note: SIPNET is not a multi-layer model; this function derives a
- * canopy‐averaged light effect that is then used to  calculate GPP for the
+ * canopy‐averaged light effect that is then used to calculate GPP for the
  * whole canopy.
  *
  * @param[out] lightEff Canopy average light effect.
@@ -1158,7 +1158,7 @@ double calcCNEffect(double kCN, double poolC, double poolN) {
  * @param water Current soil water
  * @param whc Soil water holding capacity
  */
-void calcSoilMaintRespiration(double tsoil, double water, double whc) {
+void calcSoilRespiration(double tsoil, double water, double whc) {
   double moistEffect = calcMoistEffect(water, whc);
 
   // :: from [1], remainder of eq (A20)
@@ -1217,7 +1217,7 @@ void calcRootAndWoodFluxes(void) {
     fluxes.woodCreation = 0;
   }
 
-  // :: from [3], roots model descriptions and [4] eq (5.11)
+  // :: from [3], roots model descriptions
   fluxes.coarseRootLoss = params.coarseRootTurnoverRate * envi.coarseRootC;
   fluxes.fineRootLoss = params.fineRootTurnoverRate * envi.fineRootC;
 
@@ -1353,7 +1353,7 @@ void calculateFluxes(void) {
   calcRootAndWoodFluxes();
 
   // Soil respiration
-  calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
+  calcSoilRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
 
   // Nitrogen cycle
   //
@@ -1583,9 +1583,8 @@ void updateMainPools() {
 /*!
  * Calculate soil respiration flux and update carbon pools
  *
- * Calculates soil respiration, method depending on the MICROBES and
- * LITTER_POOL flags. Updates carbon pools for soil, fine roots,
- * and coarse roots.
+ * Calculates soil respiration, method depending on the LITTER_POOL
+ * flag. Updates carbon pools for soil, fine roots, and coarse roots.
  */
 void updatePoolsForSoil(void) {
   if (ctx.litterPool) {
