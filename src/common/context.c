@@ -208,6 +208,7 @@ void validateContext(void) {
 
   if (ctx.anaerobicC && !ctx.waterHResp) {
     logError("anaerobic-c requires water-hresp to be turned on\n");
+    hasError = 1;
   }
 
   if (hasError) {
