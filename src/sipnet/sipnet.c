@@ -1102,7 +1102,8 @@ double calcAnaerobicIndex(double water, double whc) {
  *
  *  This dependency term is used in soil respiration and litter breakdown
  *
- *  Depends on soil temperature and the options waterHResp and anaerobicC.
+ *  Calculation also depends on soil temperature and the options waterHResp and
+ *  anaerobicC.
  *
  * @param water current soil water
  * @param whc water holding capacity
@@ -1158,7 +1159,7 @@ double calcRespMoistEffect(double water, double whc) {
  *
  * This dependency term is used in nitrogen volatilization
  *
- * Depends on soil temperature.
+ * Calculation also depends on soil temperature.
  *
  * @param water current soil water
  * @param whc water holding capacity
@@ -1181,7 +1182,7 @@ double calcVolatilizationMoistEffect(double water, double whc) {
  *
  * This dependency term is used in methane production
  *
- * Depends on soil temperature.
+ * Calculation also depends on soil temperature.
  *
  * @param water current soil water
  * @param whc water holding capacity
@@ -2006,6 +2007,20 @@ void setupModel(void) {
   params.baseFineRootResp /= 365.0;
   params.baseMicrobeResp = params.baseMicrobeResp * 24;  // change from per hour
                                                          // to per day rate
+
+  /* Ensure fAnoxia stays within (0, 1) to avoid division by zero and NaNs */
+  if (params.fAnoxia <= 0.0) {
+    params.fAnoxia = TINY;
+  } else if (params.fAnoxia >= 1.0) {
+    params.fAnoxia = 1.0 - TINY;
+  }
+
+  // Constraint anaerobic decomp rate to (0,1]
+  if (params.anaerobicDecompRate <= 0.0) {
+    params.anaerobicDecompRate = TINY;
+  } else if (params.anaerobicDecompRate > 1.0) {
+    params.anaerobicDecompRate = 1.0;
+  }
 
   ///
   /// ENVIRONMENT SETUP
