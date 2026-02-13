@@ -17,7 +17,7 @@ model equations, configuration names, units, and I/O fields. See
 [Model Outputs](user-guide/model-outputs.md) for file formats. Unless noted,
 pools are mass per ground area and rates are mass per area per day. The actual parameter set that is used depends on the configured model structure. For equation references, see the [model structure](model-structure.md) documentation.
 
-## Notation {#sec-notation}
+## Notation
 
 ### Variables (Pools, Fluxes, and Parameters)
 

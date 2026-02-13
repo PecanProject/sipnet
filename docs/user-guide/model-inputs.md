@@ -227,6 +227,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 | Option           | Default | Description                                                                             |
 |------------------|---------|-----------------------------------------------------------------------------------------|
+| `anaerobic-c`    | off     | Enable modeling of methane and anaerobic effect on Rh moisture dependency               |
 | `events`         | on      | Enable event handling                                                                   |
 | `gdd`            | on      | Use growing degree days to determine leaf growth                                        |
 | `growth-resp`    | off     | Explicitly model growth respiration, rather than including with maintenance respiration |
@@ -241,6 +242,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
  - `events` and `microbes` may not both be turned on
+ - 'nitrogen-cycle' requires both 'litter-pool' and 'anaerobic-c'
 
 ### Command Line Arguments
 
