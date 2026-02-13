@@ -839,7 +839,7 @@ f_{\text{WHC}} & \text{if } T_{\text{soil}} > 0
 \label{eq:water_rh}
 \end{equation}
 
-If the command-line option `MOISTURE-DEP` is on, a more sophisticated dependence is used, represented as a partition 
+If the command-line option `ANAEROBIC-C` is on, the dependency is represented as a partition 
 between aerobic and anaerobic pathways:
 
 \begin{equation}
