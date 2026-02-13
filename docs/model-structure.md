@@ -855,11 +855,11 @@ The volatilized nitrogen flux (treated as N2O-dominated in the absence of explic
 intermediate redox conditions, where aerobic and anaerobic processes overlap:
 
 \begin{equation}
-D_{\text{water},N_{vol}} = 4 A (1-A)
+D_{\text{water},N_{vol}} = 0.05 + 3.8 A (1-A)
 \label{eq:water_nvol}
 \end{equation}
 
-where the factor 4 is used to scale the maximum value to 1.
+where 0.05 represents baseline aerobic volatilization and the factor 3.8 is used to scale the maximum value to 1.
 
 #### Methane Production Moisture Dependence $D_{\text{water},CH_4}$
 
