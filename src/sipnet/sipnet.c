@@ -398,6 +398,12 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "fineRootCN", &(params.fineRootCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
 
+  // New moisture dependency params
+  initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.moistureDep || ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "anaerobicDecompRate", &(params.anaerobicDecompRate), ctx.moistureDep);
+  // TODO: this should depend on methane, when that gets in
+  initializeOneModelParam(modelParams, "anaerobicTransExp", &(params.anaerobicTransExp), 0);
+
   // NOLINTEND
   // clang-format on
 
@@ -1083,40 +1089,108 @@ void ensureAllocation(void) {
   }
 }
 
+double calcAnaerobicIndex(double water, double whc) {
+  double f_whc = fmin(fmax(water / whc, 0), 1);
+  double f_a = params.fAnoxia;
+
+  // Anaerobic index (oxygen limitation proxy)
+  return fmin(fmax((f_whc - f_a) / (1 - f_a), 0), 1);
+}
+
 /*!
- *  Calculate moisture dependency effect
+ *  Calculate heterotrophic respiration moisture dependency effect
  *
- *  Moisture dependency term is used in soil respiration, litter
- *  breakdown, and nitrogen volatilization.
+ *  This dependency term is used in soil respiration and litter breakdown
  *
- *  Depends on soil temperature and whether waterHResp is on.
+ *  Depends on soil temperature and the options waterHResp and moistureDep.
  *
  * @param water current soil water
  * @param whc water holding capacity
  * @return moisture effect as a fraction between 0 and 1
  */
-double calcMoistEffect(double water, double whc) {
+double calcRespMoistEffect(double water, double whc) {
   double moistEffect;
 
   if ((!ctx.waterHResp) || (climate->tsoil < 0)) {
     // if not waterHResp, soil moisture does not affect heterotrophic
-    // respiration; else:
+    // respiration; also, ignore moisture effects in frozen soils
     // :: from [2], snowpack addition
-    moistEffect = 1.0;  // Ignore moisture effects in frozen soils
+    moistEffect = 1.0;
   } else {
-    // :: from [1], first part of eq (A20), with added exponent
-    // Original formulation from [1], based on PnET is:
-    //   moistEffect = water / whc
-    // which matches here with params.soilRespMoistEffect=1 (the default
-    // value)
-    //
-    // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
-    // Note: older versions of sipnet note this as "using PnET formulation",
-    // but we have been unable to verify that the exponent comes from PnET
-    moistEffect = pow((water / whc), params.soilRespMoistEffect);
+    double f_whc = water / whc;
+    if (!ctx.moistureDep) {
+      // :: from [1], first part of eq (A20), with added exponent
+      // Original formulation from [1], based on PnET is:
+      //   moistEffect = water / whc
+      // which matches here with params.soilRespMoistEffect=1 (the default
+      // value)
+      //
+      // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
+      // Note: older versions of sipnet note this as "using PnET formulation",
+      // but we have been unable to verify that the exponent comes from PnET
+      moistEffect = pow(f_whc, params.soilRespMoistEffect);
+    } else {
+      // Unimodal moisture response: suppressed under dry conditions, maximal
+      // at intermediate moisture, reduced under saturated/anoxic conditions
+
+      double f_a = params.fAnoxia;
+      // Aerobic water availability (dry limitation)
+      double D_aer = fmin(fmax(f_whc / f_a, 0), 1);
+      // Anaerobic index (oxygen limitation proxy)
+      double A = calcAnaerobicIndex(water, whc);
+      // Uni-modal moisture response
+      // Note that this will not go above 1, since:
+      // - when f_whc <= f_a, A = 0, and moistEffect = D_aer
+      // - when f_whc > f_a, D_aer caps at 1, and this becomes
+      //   moistEffect = 1 - (1 - adr)A, and adr <= 1
+      moistEffect = (1 - A) * D_aer + params.anaerobicDecompRate * A;
+    }
   }
 
   return moistEffect;
+}
+
+/*!
+ * Calculate volatilization moisture dependency effect
+ *
+ * The volatilized nitrogen flux is assumed to peak at intermediate redox
+ * conditions, where aerobic and anaerobic processes overlap.
+ *
+ * This dependency term is used in nitrogen volatilization
+ *
+ * Depends on soil temperature.
+ *
+ * @param water current soil water
+ * @param whc water holding capacity
+ * @return moisture effect as a fraction between 0 and 1
+ */
+double calcVolatilizationMoistEffect(double water, double whc) {
+  // Anaerobic index (oxygen limitation proxy)
+  double A = calcAnaerobicIndex(water, whc);
+
+  // The factor of 4 keeps this on a [0, 1] scale
+  return 4 * A * (1 - A);
+}
+
+/*!
+ * Calculate methane production moisture dependency effect
+ *
+ * Methane production increases monotonically with anoxia, so we calculate
+ * this dependency term as power of the anaerobic index.
+ *
+ * This dependency term is used in methane production
+ *
+ * Depends on soil temperature.
+ *
+ * @param water current soil water
+ * @param whc water holding capacity
+ * @return moisture effect as a fraction between 0 and 1
+ */
+double calcMethaneMoistEffect(double water, double whc) {
+  // Anaerobic index (oxygen limitation proxy)
+  double A = calcAnaerobicIndex(water, whc);
+
+  return pow(A, params.anaerobicTransExp);
 }
 
 /**
@@ -1182,7 +1256,7 @@ void calcSoilMaintRespiration(double tsoil, double water, double whc) {
   // case, need to dig in. With that said...
 
   if (!ctx.microbes) {
-    double moistEffect = calcMoistEffect(water, whc);
+    double moistEffect = calcRespMoistEffect(water, whc);
 
     // :: from [1], remainder of eq (A20)
     // See calcMoistEffect() for first part of eq (A20) calculation
@@ -1212,7 +1286,7 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
   if (ctx.microbes) {
     double baseRate;
     double tempEffect;
-    double moistEffect = calcMoistEffect(water, whc);
+    double moistEffect = calcRespMoistEffect(water, whc);
 
     // :: from [4], part of eqs (5.9) and (5.10)
     //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
@@ -1247,7 +1321,7 @@ void calcMicrobeFluxes(double tsoil, double water, double whc,
 void calcLitterFluxes() {
   if (ctx.litterPool) {
     double tempEffect = calcTempEffect(climate->tsoil);
-    double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
+    double moistEffect = calcRespMoistEffect(envi.soilWater, params.soilWHC);
     // Effects of tillage, if any
     double tillageEffect = calcTillageEffect();
     // Effects of current CN
@@ -1326,7 +1400,8 @@ void calcNVolatilizationFlux() {
   // Note k_vol is in units of day^-1, so we do not need to divide
   // by climate length to make this a flux
   double d_temp = calcTempEffect(climate->tsoil);
-  double d_water = calcMoistEffect(envi.soilWater, params.soilWHC);
+  double d_water =
+      calcVolatilizationMoistEffect(envi.soilWater, params.soilWHC);
 
   fluxes.nVolatilization =
       params.nVolatilizationFrac * envi.minN * d_temp * d_water;
