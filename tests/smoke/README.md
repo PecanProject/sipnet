@@ -36,6 +36,5 @@ NOTE: Run 4 has been disabled due to removal of microbes support.
 | SNOW                  |              | 1                   | 1     | 1     | 0     |            
 | GDD                   | !SOIL_PHENOL | 1                   | 1     | 1     | 0     | 
 | SOIL_PHENOL           | !GDD         | 0                   | 0     | 0     | 0     |        
-| NUM_SOIL_CARBON_POOLS |              | 1                   | 3     | 1     | 0     |
 | LITTER_POOL           |              | 0                   | 1     | 1     | 0     | 
 | NITROGEN_CYCLE        | LITTER_POOL  | 0                   | 1     | 1     | 0     | 
