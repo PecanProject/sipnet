@@ -129,11 +129,11 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         break;
       case 'f':
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          printf("ERROR: filename %s exceeds maximum length of %d\n", optarg,
-                 FILENAME_MAXLEN);
-          printf("Either change the name or increase INPUT_MAXNAME in "
-                 "frontend.c\n");
-          exit(1);
+          logError("filename %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          logError("Either change the name or increase INPUT_MAXNAME in "
+                   "frontend.c\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
         break;
@@ -142,11 +142,11 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         exit(EXIT_CODE_SUCCESS);
       case 'i':
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          printf("ERROR: input filename %s exceeds maximum length of %d\n",
-                 optarg, FILENAME_MAXLEN);
-          printf("Either change the name or increase INPUT_MAXNAME in "
-                 "frontend.c\n");
-          exit(1);
+          logError("input filename %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          logError("Either change the name or increase INPUT_MAXNAME in "
+                   "frontend.c\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);
         break;

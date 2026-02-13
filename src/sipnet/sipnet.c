@@ -1610,24 +1610,25 @@ void updateMeanTrackers(void) {
   err = addValueToMeanTracker(meanNPP, npp, climate->length);  // update running
                                                                // mean of NPP
   if (err != 0) {
-    printf("******* Error type %d while trying to add value to NPP mean "
-           "tracker in sipnet:updateState() *******\n",
-           err);
-    printf("npp = %f, climate->length = %f\n", npp, climate->length);
-    printf("Suggestion: try changing MEAN_NPP_MAX_ENTRIES in sipnet.c\n");
-    exit(1);
+    logError("Error type %d while trying to add value to NPP mean tracker in "
+             "sipnet:updateMeanTrackers()\n",
+             err);
+    logError("npp = %f, climate->length = %f\n", npp, climate->length);
+    logError("Suggestion: try changing MEAN_NPP_MAX_ENTRIES in sipnet.c\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 
   err = addValueToMeanTracker(meanGPP, fluxes.photosynthesis,
                               climate->length);  // update running mean of GPP
   if (err != 0) {
-    printf("******* Error type %d while trying to add value to GPP mean "
-           "tracker in sipnet:updateState() *******\n",
-           err);
-    printf("GPP = %f, climate->length = %f\n", fluxes.photosynthesis,
-           climate->length);
-    printf("Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
-    exit(1);
+    logError("Error type %d while trying to add value to GPP mean tracker in "
+             "sipnet:updateMeanTrackers()\n",
+             err);
+    logError("GPP = %f, climate->length = %f\n", fluxes.photosynthesis,
+             climate->length);
+    logError(
+        "Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }
 
