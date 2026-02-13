@@ -393,7 +393,7 @@ typedef struct Parameters {
   // limit aerobic respiration
   double fAnoxia;
 
-  // Relative araerobic decomposition rate, in (0,1]
+  // Relative anaerobic decomposition rate, in (0,1]
   double anaerobicDecompRate;
 
   // Methane anoxia sensitivity, controls sharpness of anaerobic transition
