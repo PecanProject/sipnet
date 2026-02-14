@@ -134,20 +134,6 @@ void writeOutputItemValues(OutputItems *outputItems) {
   }
 }
 
-/* For each output item, write its name (header) as a column label
-   This should be called once at the start to write column headers
- */
-void writeOutputItemHeaders(OutputItems *outputItems) {
-  SingleOutputItem *singleOutputItem;
-
-  singleOutputItem = outputItems->head->nextItem;
-  while (singleOutputItem != NULL) {
-    fprintf(singleOutputItem->f, "%s%c", singleOutputItem->name,
-            outputItems->separator);
-    singleOutputItem = singleOutputItem->nextItem;
-  }
-}
-
 /* For each output item, write a newline
    This is intended to be called at the end of each run
  */

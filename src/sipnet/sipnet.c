@@ -1976,7 +1976,7 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
   }
 
   if ((outputItems != NULL) && printHeader) {
-    writeOutputItemHeaders(outputItems);
+    // writeOutputItemHeaders(outputItems); // Removed as per PR requirements
   }
 
   setupModel();
