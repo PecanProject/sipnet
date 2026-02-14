@@ -435,12 +435,15 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
  * @param out File pointer for output
  */
 void outputHeader(FILE *out) {
-  fprintf(out,
-          "year day time plantWoodC plantLeafC woodCreation "
-          "soil microbeC coarseRootC fineRootC "
-          "litter soilWater soilWetnessFrac snow "
-          "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
-          "evapotranspiration fluxestranspiration minN soilOrgN litterN n2oFlux nLeachFlux nppStorage bcdeltaC bcdeltaN\n");
+  if (out == NULL) {
+    return;
+  }
+  fprintf(out, "year day time plantWoodC plantLeafC woodCreation "
+               "soil microbeC coarseRootC fineRootC "
+               "litter soilWater soilWetnessFrac snow "
+               "npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot "
+               "evapotranspiration fluxestranspiration minN soilOrgN litterN "
+               "n2oFlux nLeachFlux nppStorage bcdeltaC bcdeltaN\n");
 }
 
 /*!
