@@ -40,6 +40,7 @@ sections to include in release notes:
 - Organic N handling for fertilization and soil dynamics (#199)
 - Dynamic C:N for soil and litter (#214)
 - Updates for soil and litter respiration (tillage and C:N effects) (#214)
+- Adds Nitrogen demand, fixation flux, and uptake flux (#265)
 
 ### Fixed
 
