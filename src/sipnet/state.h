@@ -361,6 +361,12 @@ typedef struct Parameters {
   // Initial soil mineral nitrogen pool amount, g N * m^-2 ground area
   double minNInit;
 
+  // Initial soil organic nitrogen pool amount, g N * m^-2 ground area
+  double soilOrgNInit;
+
+  // Initial litter organic nitrogen pool amount, g N * m^-2 ground area
+  double litterOrgNInit;
+
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
@@ -404,8 +410,13 @@ typedef struct Environment {
   double microbeC;
 
   ///// From [5] LeBauer et al. (unpublished)
-  // soil mineral nitrogen pool (g C m^-2 ground area)
+  // soil mineral nitrogen pool (g N m^-2 ground area)
+  // (really, soil+litter, we only have one mineral N pool)
   double minN;
+  // soil organic nitrogen pool (g N m^-2 ground area)
+  double soilOrgN;
+  // litter organic nitrogen pool (g N m^-2 ground area)
+  double litterOrgN;
 } Envi;
 
 // Global var
@@ -557,6 +568,8 @@ typedef struct FluxVars {
   double eventLitterC;
   // nitrogen added to soil mineral N pool
   double eventMinN;
+  // nitrogen added to litter N pool (if used) or soil N pool (if not)
+  double eventOrgN;
 } Fluxes;
 
 // Global var
