@@ -55,6 +55,9 @@ void addOutputItem(OutputItems *outputItems, char *name, double *ptr);
  */
 void writeOutputItemLabels(OutputItems *outputItems, char *label);
 
+// For each output item, write its name as header
+void writeOutputItemHeaders(OutputItems *outputItems);
+
 // For each output item, write its current value, followed by a separator
 void writeOutputItemValues(OutputItems *outputItems);
 

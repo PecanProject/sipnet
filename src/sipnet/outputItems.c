@@ -121,6 +121,17 @@ void writeOutputItemLabels(OutputItems *outputItems, char *label) {
   }
 }
 
+// For each output item, write its name as header
+void writeOutputItemHeaders(OutputItems *outputItems) {
+  SingleOutputItem *singleOutputItem;
+
+  singleOutputItem = outputItems->head->nextItem;
+  while (singleOutputItem != NULL) {
+    fprintf(singleOutputItem->f, "%s\n", singleOutputItem->name);
+    singleOutputItem = singleOutputItem->nextItem;
+  }
+}
+
 // For each output item, write its current value, followed by a separator
 void writeOutputItemValues(OutputItems *outputItems) {
   SingleOutputItem *singleOutputItem;

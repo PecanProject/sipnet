@@ -19,6 +19,9 @@ sections to include in release notes:
 
 ### Changed
 
+- Changed sipnet.out header to be a single line with variable names only, no units or notes
+- Added headers to single-output files (one header per file with variable name)
+
 ### Removed
 
 ### Git SHA

@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
   }
 
   // 7. Do the run!
-  runModelOutput(out, outputItems, ctx.printHeader);
+  runModelOutput(out, outputItems);
 
   // 8. Cleanup
   if (ctx.doMainOutput) {

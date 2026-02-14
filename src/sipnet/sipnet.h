@@ -45,9 +45,8 @@ void cleanupModel(void);
  * @param out File pointer for main output; can be null to suppress this
  * @param outputItems OutputItems struct used for individual output param files
  *                    Can be null to suppress this output
- * @param printHeader Whether to print a header row in output and events.out
  */
-void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader);
+void runModelOutput(FILE *out, OutputItems *outputItems);
 
 /*!
    Setup outputItems structure
