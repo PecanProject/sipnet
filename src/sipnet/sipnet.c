@@ -434,7 +434,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
  *
  * @param out File pointer for output
  */
-void outputHeader(FILE *out) {
+void outputHeader(FILE *out) __attribute__((nonnull(1))) {
   if (out == NULL) {
     return;
   }
