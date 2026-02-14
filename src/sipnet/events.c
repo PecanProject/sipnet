@@ -478,17 +478,11 @@ void updatePoolsForEvents(void) {
 
   // Harvest and fertilization events
   if (ctx.litterPool) {
-<<<<<<< HEAD
-    envi.litterC += fluxes.eventLitterC * climate->length;
-  } else {
-    envi.soilC += fluxes.eventLitterC * climate->length;
-=======
     envi.litterOrgN += fluxes.eventOrgN * climate->length;
     envi.litter += fluxes.eventLitterC * climate->length;
   } else {
     envi.soilOrgN += fluxes.eventOrgN * climate->length;
     envi.soil += fluxes.eventLitterC * climate->length;
->>>>>>> 996ce3d (Update sipnet.out files with column headers)
   }
 
   // Harvest and planting events
@@ -505,7 +499,7 @@ void updatePoolsForEvents(void) {
   // Note: litter_pool is required for nitrogen_cycle
   if (ctx.nitrogenCycle) {
     envi.minN += fluxes.eventMinN * climate->length;
-    envi.litterN += fluxes.eventOrgN * climate->length;
+    envi.litterOrgN += fluxes.eventOrgN * climate->length;
   }
 }
 

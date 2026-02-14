@@ -40,7 +40,8 @@ sections to include in release notes:
 - Organic N handling for fertilization and soil dynamics (#199)
 - Dynamic C:N for soil and litter (#214)
 - Updates for soil and litter respiration (tillage and C:N effects) (#214)
-- Column headers added to sipnet.out
+- Column headers for sipnet.out (refactored to contain only variable names, no metadata)
+- Header support for single-output files
 
 ### Fixed
 
