@@ -384,6 +384,14 @@ typedef struct Parameters {
 
   // C:N ratio at which D_CN is 1/2 for soil and litter
   double kCN;
+
+  // Maximum fraction of plant N demand that can be met by fixation
+  // under low soil N, dimensionless between 0 and 1
+  double nFixationFracMax;
+
+  // Amount of mineral N at which fixation is reduced by half
+  // g N * m^-2 ground area
+  double nFixationHalved;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -581,6 +589,14 @@ typedef struct FluxVars {
   // Nitrogen mineralization flux
   // g N * m^-2 ground area * day^-1
   double nMin;
+
+  // Plant N gained from fixation
+  // g N * m^-2 ground area * day^-1
+  double nFixation;
+
+  // Mineral N drawn from soil pool to meet plant N demand
+  // g N * m^-2 ground area * day^-1
+  double nUptake;
 
   // ****************************************
   // Fluxes for event handling

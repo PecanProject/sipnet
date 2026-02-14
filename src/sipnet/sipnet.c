@@ -397,6 +397,8 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "woodCN", &(params.woodCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "fineRootCN", &(params.fineRootCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nFixationFracMax", &(params.nFixationFracMax), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nFixationHalved", &(params.nFixationHalved), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -443,7 +445,8 @@ void outputHeader(FILE *out) {
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
   fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN   n2oFlux "
-               "nLeachFlux  nppStorage  bcdeltaC  bcdeltaN\n");
+               "nLeachFlux  nFixationFlux  nUptakeFlux  nppStorage  bcdeltaC  "
+               "bcdeltaN\n");
 }
 
 /*!
@@ -469,9 +472,10 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
-  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f", fluxes.transpiration,
-          envi.minN, envi.soilOrgN, envi.litterN, fluxes.nVolatilization,
-          fluxes.nLeaching);
+  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f %14.4f %12.4f",
+          fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
+          fluxes.nVolatilization, fluxes.nLeaching, fluxes.nFixation,
+          fluxes.nUptake);
   fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
           balanceTracker.deltaC, balanceTracker.deltaN);
 }
@@ -1347,6 +1351,38 @@ void calcNLeachingFlux() {
   fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
 }
 
+/*!
+ * Calculate plant N demand
+ */
+double calcPlantNDemand() {
+  double demand = fluxes.woodCreation / params.woodCN +
+                  fluxes.leafCreation / params.leafCN +
+                  fluxes.fineRootCreation / params.fineRootCN +
+                  fluxes.coarseRootCreation / params.woodCN;
+  return demand;
+}
+
+/*!
+ * Calculate plant N fixation and uptake fluxes
+ */
+void calcNFixationAndUptakeFluxes() {
+  double nFixationInhibition;
+  double nFixationFrac;
+  // Calculate inhibition of N fixation by soil mineral N
+  // using down-regulation function with increasing soil min N
+  // dimensionless between 0 and 1
+  nFixationInhibition =
+      params.nFixationHalved / (params.nFixationHalved + envi.minN);
+  // Calculate fraction of plant N demand met by fixation
+  // dimensionless
+  nFixationFrac = params.nFixationFracMax * nFixationInhibition;
+  // Calculate N fixation flux
+  double nDemand = calcPlantNDemand();
+  fluxes.nFixation = nFixationFrac * nDemand;
+  // Calculate N uptake flux
+  fluxes.nUptake = (1 - nFixationFrac) * nDemand;
+}
+
 /**
  * Calculate nitrogen fluxes for soil and litter pools
  */
@@ -1453,6 +1489,7 @@ void calculateFluxes(void) {
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
     calcNLeachingFlux();
+    calcNFixationAndUptakeFluxes();
     calcNPoolFluxes();
   }
 }
@@ -1760,9 +1797,8 @@ void updateNitrogenPools(void) {
 
   // Soil mineral N (note we have one mineral pool for soil+litter)
   // Mineral N additions from fertilization are handled with the events
-  //
-  // TODO: add plant uptake flux once implemented
-  envi.minN += (fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching) *
+  envi.minN += (fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching -
+                fluxes.nUptake) *
                climate->length;
 
   // Soil organic N

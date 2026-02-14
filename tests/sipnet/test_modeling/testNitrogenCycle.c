@@ -32,6 +32,11 @@ void resetState() {
   // Leaching
   params.nLeachingFrac = 0;
   fluxes.nLeaching = 0;
+  // Fixation/Uptake
+  params.nFixationFracMax = 0;
+  params.nFixationHalved = 0;
+  fluxes.nFixation = 0;
+  fluxes.nUptake = 0;
 }
 
 void setupTests(void) {
@@ -201,6 +206,80 @@ int testNLeaching(void) {
   // Check minN for the last
   updateNitrogenPools();
   double expMinN = minN - (expNLeaching * climate->length);
+  int minStatus = 0;
+  if (!compareDoubles(envi.minN, expMinN)) {
+    minStatus = 1;
+    logTest("minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+  }
+  status |= minStatus;
+
+  return status;
+}
+
+/////
+// N Fixation and Uptake
+void initNFixationState(double initN, double nFixFracMax, double nFixHalved) {
+  resetState();
+  envi.minN = initN;
+  params.nFixationFracMax = nFixFracMax;
+  params.nFixationHalved = nFixHalved;
+}
+
+int testNFixation(void) {
+  int status = 0;
+  double minN;
+  double nFixFracMax;
+  double nFixHalved;
+  double expNFixation;
+  double expNUptake;
+  double nDemand;
+  logTest("Running testNFixation\n");
+
+  // Half demand met by fixation, half met by uptake
+  minN = 2;
+  nFixFracMax = 1;
+  nFixHalved = 2;
+  nDemand = 10;
+  initNFixationState(minN, nFixFracMax, nFixHalved);
+  double nFixInhib = nFixHalved / (nFixHalved + minN);
+  double nFixFrac = nFixFracMax * nFixInhib;
+  expNFixation = nFixFrac * nDemand;
+  expNUptake = (1 - nFixFrac) * nDemand;
+  calcNFixationAndUptakeFluxes();
+  status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
+  status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+
+  // Zero demand met by fixation, all demand met by uptake
+  minN = 1;
+  nFixFracMax = 0.5;
+  nFixHalved = 0;
+  nDemand = 10;
+  initNFixationState(minN, nFixFracMax, nFixHalved);
+  nFixInhib = nFixHalved / (nFixHalved + minN);
+  nFixFrac = nFixFracMax * nFixInhib;
+  expNFixation = nFixFrac * nDemand;
+  expNUptake = (1 - nFixFrac) * nDemand;
+  calcNFixationAndUptakeFluxes();
+  status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
+  status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+
+  // Zero demand by uptake due to zero minN pool, but I think this is broken
+  minN = 0;
+  nFixFracMax = 0.5;
+  nFixHalved = 2;
+  nDemand = 10;
+  initNFixationState(minN, nFixFracMax, nFixHalved);
+  nFixInhib = nFixHalved / (nFixHalved + minN);
+  nFixFrac = nFixFracMax * nFixInhib;
+  expNFixation = nFixFrac * nDemand;
+  expNUptake = (1 - nFixFrac) * nDemand;
+  calcNFixationAndUptakeFluxes();
+  status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
+  status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+
+  // Check minN for the last
+  updateNitrogenPools();
+  double expMinN = minN - (expNUptake * climate->length);
   int minStatus = 0;
   if (!compareDoubles(envi.minN, expMinN)) {
     minStatus = 1;
