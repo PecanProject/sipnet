@@ -29,32 +29,65 @@ All contributors must follow the project [Code of Conduct](CODE_OF_CONDUCT.md).
 
 _Note – running `tools/setup.sh`  is not necessary for documentation‑only edits,
 but it will save you time whenever you touch C/C++ code._
+ 
+New contributors are encouraged to start with [good first issues](https://github.com/PecanProject/sipnet/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
+For a short quickstart and how to get the site and examples running, see the user guide: [Getting Started](user-guide/getting-started.md)
+
 ## GitHub Workflow
+
+### Propose and Receive Feedback {#propose-and-receive-feedback}
+
+**Before starting work on a proposed change, get approval first.** 
+
+- For an existing (ticketed) issue, ask to be assigned to it (comment on the issue and request assignment).
+- If you want additional feedback, discuss it in the `#pecan` Slack channel.
+- If no issue exists for the proposed work, create a new issue summarizing the work, including motivation and a
+  proposed solution.
+- The issue will be reviewed by one or more core maintainers, possibly with requests for clarification and/or 
+  suggestions for changes.
+- If the issue is approved, it will be assigned (likely to the creator).
+- Once a ticket is assigned (and only then) should implementation begin.
+
+This helps avoid duplicate work and ensures contributors receive early feedback on scope and design.
+
+Exceptions (no issue required):
+- Maintainers may submit PRs without related tickets, based on internal team communication.
+- Trivial changes to documentation and comments (e.g. typo fixes, clarifications).
+- Smaller changes may be submitted with maintainer approval via Slack or email. This discussion should be summarized in
+  the PR.
+
+Note: no changes to actual code are considered trivial.
+
+**PRs submitted outside the above process may not be reviewed.**
 
 ### Branches
 
-The `master` branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches should be named to clearly indicate the purpose, and may be combined with an associated issue, e.g. `ISSUE#-feature-name`.
+The `master` branch is the default branch for SIPNET. Development should be done in feature branches. Feature branches 
+should be named to clearly indicate the purpose, and should start the number of its associated issue, e.g. 
+`ISSUE#-feature-name`. Development may also be done in a fork of the repo.
 
 ### Pull Requests
 
-Pull requests should be made from feature branches to the `master` branch. 
+As stated above, pull requests should be made from feature branches to the `master` branch, or a repo fork. Pull 
+request titles should be of the form: `[<ISSUE#>] <Brief description of change>`, such as "[123] Add nitrogen balance check"
+or perhaps "SIP321 Update cli help text" if you prefer that form.
 
-Pull request descriptions should include a brief summary of the changes and links to related issues. 
+**This repository has a PR template**; when opening a PR, make sure to fill out the template as indicated.
 
-Expectations for merging:
-- Pass all unit and integration tests. 
-- Approved by at least one other developer before being merged.
-- Include updates and additions to 
-  - Documentation
-  - Tests
-  - CHANGELOG.md
-  - For new model features related to the structure, remove relevant `\fraktur` font formatting from `docs/model-structure.md` to indicate that the feature has been implemented.
+**Prior to merging a PR, it must:**
+- Pass all unit and integration tests
+- Be approved by at least one CODEOWNER
+- Include updates and additions to:
+  - Tests (if code changes)
+  - Documentation (if applicable)
+  - `docs/CHANGELOG.md` for noteworthy changes
 
-Pull requests must pass all required checks to be merged into master, including the code format and style checks described below.
-  
+All required checks must pass before merging, including the code format and style checks described below.
+
 ## Code Format & Style
 
-We follow the standard LLVM/Clang formatting rules. Formatting is automated with a pre-commit hook, so you wil rarely have to think about them.
+We follow the standard LLVM/Clang formatting rules. Formatting is automated with a pre-commit hook, so you wil rarely have to think about them.
 
 To set up formatting and static analysis checks:
 
@@ -108,6 +141,24 @@ If a commit is blocked, format staged changes:
   # open http://127.0.0.1:8000/
   ```
   Update `mkdocs.yml` if you add/move pages.
+
+### Using anchors for stable cross-references
+
+When creating or updating documentation links, prefer explicit heading anchors so references remain stable when headings change slightly. We use the `attr_list` MkDocs extension to allow adding anchors directly to headings. To add an anchor, append `{#id}` to the heading, for example:
+
+```
+## Notation {#sec-notation}
+```
+
+Then link to that section from other pages using the file path plus `#id`, for example:
+
+```
+[Notation](parameters.md#sec-notation)
+```
+
+This makes cross-references robust to small edits in heading text and reduces broken links during refactors. Ensure `attr_list` is enabled in `mkdocs.yml` (it is enabled in this repo).
+
+### Compiling Documentation
 
 - Build API docs (Doxygen) and site (MkDocs):
   ```bash

@@ -199,6 +199,11 @@ void validateContext(void) {
     hasError = 1;
   }
 
+  if (ctx.nitrogenCycle && !ctx.litterPool) {
+    logError("nitrogen-cycle requires litter-pool to be turned on\n");
+    hasError = 1;
+  }
+
   if (hasError) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
@@ -248,4 +253,14 @@ void printConfig(FILE *outFile) {
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
+}
+
+void freeContextMetadata(void) {
+  struct context_metadata *s;
+  while (ctx.metaMap != NULL) {
+    s = ctx.metaMap;
+    HASH_DEL(ctx.metaMap, s);  // NOLINT
+    free(s);
+  }
+  HASH_CLEAR(hh, ctx.metaMap);
 }
