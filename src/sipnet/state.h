@@ -340,7 +340,7 @@ typedef struct Parameters {
   // autotrophic respiration:
   // growth resp. as fraction of (GPP - woodResp - folResp)
   // Note: that comment may not be correct, growthResp is calc'd as
-  //       (mean GPP) * (growthRespFrac)
+  //       (mean GPP) * (growtheRespFrac)
   //       with no correction for woodResp or folResp
   double growthRespFrac;
 
@@ -370,20 +370,9 @@ typedef struct Parameters {
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
-  // Fraction of mineral N available to be leached, unitless
+  // Fraction of mineral N lost to leaching per day
   double nLeachingFrac;
 
-  // C:N ratio for leaves, assumed static, g C/g N
-  double leafCN;
-
-  // C:N ratio for wood (and coarse roots), assumed static, g C/g N
-  double woodCN;
-
-  // C:N ratio for fine roots, assumed static, g C/g N
-  double fineRootCN;
-
-  // C:N ratio at which D_CN is 1/2 for soil and litter
-  double kCN;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -400,13 +389,13 @@ typedef struct Environment {
   // carbon in leaves (g C * m^-2 ground area)
   double plantLeafC;
   // carbon in soil (g C * m^-2 ground area)
-  double soilC;
+  double soil;
   // plant available soil water (cm)
   double soilWater;
 
   ///// From [2] Sacks et al. 2006
   // carbon in litter (g C * m^-2 ground area)
-  double litterC;
+  double litter;
   // snow pack (cm water equiv.)
   double snow;
 
@@ -426,8 +415,8 @@ typedef struct Environment {
   double minN;
   // soil organic nitrogen pool (g N m^-2 ground area)
   double soilOrgN;
-  // litter (organic) nitrogen pool (g N m^-2 ground area)
-  double litterN;
+  // litter organic nitrogen pool (g N m^-2 ground area)
+  double litterOrgN;
 } Envi;
 
 // Global var
@@ -554,20 +543,9 @@ typedef struct FluxVars {
   //
 
   // Mineral N lost to volatilization
-  // g N * m^-2 ground area * day^-1
   double nVolatilization;
   // Mineral N lost to leaching
-  // g N * m^-2 ground area * day^-1
   double nLeaching;
-  // Organic N flux for the soil organic N pool
-  // g N * m^-2 ground area * day^-1
-  double nOrgSoil;
-  // Organic N flux for the litter N pool
-  // g N * m^-2 ground area * day^-1
-  double nOrgLitter;
-  // Nitrogen mineralization flux
-  // g N * m^-2 ground area * day^-1
-  double nMin;
 
   // ****************************************
   // Fluxes for event handling

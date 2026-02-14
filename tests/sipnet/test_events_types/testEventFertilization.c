@@ -8,19 +8,22 @@
 int checkOutput(double orgN, double litterC, double minN) {
   int status = 0;
   double curLitterC = 0;
-  double curOrgN = envi.litterN;
+  double curOrgN = 0;
   double curMinN = envi.minN;
   if (ctx.litterPool) {
-    logTest("Checking litter pool for carbon addition\n");
-    curLitterC = envi.litterC;
+    logTest("Checking litter pool\n");
+    curLitterC = envi.litter;
+    curOrgN = envi.litterOrgN;
   } else {
-    logTest("Checking soil pool for carbon addition\n");
-    curLitterC = envi.soilC;
-    // We bumped init soil C to distinguish
+    logTest("Checking soil pool\n");
+    curLitterC = envi.soil;
+    curOrgN = envi.soilOrgN;
+    // We bumped init soil C and N to distinguish
     litterC += 0.5;
+    orgN += 0.5;
   }
   if (!compareDoubles(orgN, curOrgN)) {
-    logTest("Litter org N is %f, expected %f\n", curOrgN, orgN);
+    logTest("Litter/soil org N is %f, expected %f\n", curOrgN, orgN);
     status = 1;
   }
   if (!compareDoubles(litterC, curLitterC)) {
@@ -35,12 +38,12 @@ int checkOutput(double orgN, double litterC, double minN) {
   return status;
 }
 
-void initEnv(double minN, double orgN) {
-  envi.soilC = 1.5;
-  envi.litterC = 1;
-  envi.minN = minN;
-  envi.soilOrgN = 0;
-  envi.litterN = orgN;
+void initEnv(void) {
+  envi.soil = 1.5;
+  envi.litter = 1;
+  envi.minN = 0;
+  envi.soilOrgN = 2.5;
+  envi.litterOrgN = 2;
 }
 
 int run(void) {
@@ -51,37 +54,32 @@ int run(void) {
   prepTypesTest();
 
   // init values
-  initEnv(0, 0);
+  initEnv();
 
   //// ONE PLANTING EVENT
-  // We can't turn nitrogen_cycle on when litter_pool is off
   updateIntContext("litterPool", 0, CTX_TEST);
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
-  logTest("Nitrogen cycle is %s\n", ctx.nitrogenCycle ? "on" : "off");
   initEvents("events_one_fert.in", 0);
   setupEvents();
   procEvents();
 
   // First fert: (15-5-10)
-  expOrgN = 0;  // nitrogen cycle is off
+  expOrgN = 2 + 15;
   expLitterC = 1 + 5;
-  expMinN = 0;  // nitrogen cycle is off
+  expMinN = 0 + 10;
   status |= checkOutput(expOrgN, expLitterC, expMinN);
 
   //// TWO HARVEST EVENTS
   updateIntContext("litterPool", 1, CTX_TEST);
-  updateIntContext("nitrogenCycle", 1, CTX_TEST);
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
-  logTest("Nitrogen cycle is %s\n", ctx.nitrogenCycle ? "on" : "off");
-  initEnv(2, 3);
+  initEnv();
   initEvents("events_two_fert.in", 1);
   setupEvents();
   procEvents();
-
   // First event same as above (15-5-10)
-  expOrgN = 3 + 15;
+  expOrgN = 2 + 15;
   expLitterC = 1 + 5;
-  expMinN = 2 + 10;
+  expMinN = 0 + 10;
 
   // Second fert (5-2-3)
   expOrgN += 5;
