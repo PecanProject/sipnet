@@ -401,8 +401,11 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   // New moisture dependency params
   initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobicC || ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "anaerobicDecompRate", &(params.anaerobicDecompRate), ctx.anaerobicC);
-  // TODO: this should depend on methane, when that gets in
-  initializeOneModelParam(modelParams, "anaerobicTransExp", &(params.anaerobicTransExp), 0);
+
+  // Methane
+  initializeOneModelParam(modelParams, "anaerobicTransExp", &(params.anaerobicTransExp), ctx.anaerobicC);
+  initializeOneModelParam(modelParams, "soilMethaneRate", &(params.soilMethaneRate), ctx.anaerobicC);
+  initializeOneModelParam(modelParams, "litterMethaneRate", &(params.litterMethaneRate), ctx.anaerobicC);
 
   // NOLINTEND
   // clang-format on
@@ -1397,7 +1400,7 @@ double calcRootAndWoodFluxes(void) {
 /*!
  * Calculate mineral N volatilization flux
  */
-void calcNVolatilizationFlux() {
+void calcNVolatilizationFlux(void) {
   // flux = k_vol * nMin * Dtemp * Dwater
   // Note k_vol is in units of day^-1, so we do not need to divide
   // by climate length to make this a flux
@@ -1412,7 +1415,7 @@ void calcNVolatilizationFlux() {
 /*!
  * Calculate mineral N leaching flux
  */
-void calcNLeachingFlux() {
+void calcNLeachingFlux(void) {
   double phi;
   // phi is (drainage / soilWHC) between 0 and 1
   if ((fluxes.drainage / params.soilWHC) < 1) {
@@ -1427,7 +1430,7 @@ void calcNLeachingFlux() {
 /**
  * Calculate nitrogen fluxes for soil and litter pools
  */
-void calcNPoolFluxes() {
+void calcNPoolFluxes(void) {
   // C:N ratios for litter and soil, needed in most of the succeeding calcs
   double litterCN = calcLitterCN();
   double soilCN = calcSoilCN();
@@ -1456,6 +1459,21 @@ void calcNPoolFluxes() {
 
   // mineralization
   fluxes.nMin = litterMin + soilMin;
+}
+
+/**
+ * Calculate methane flux
+ */
+void calcMethaneFlux(void) {
+  // Like soil respiration, but with own moisture dep and no tillage or CN
+  double tempEffect = calcTempEffect(climate->tsoil);
+  double moistEffect = calcMethaneMoistEffect(envi.soilWater, params.soilWHC);
+  double soilCNEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
+  double litterCNEffect = calcCNEffect(params.kCN, envi.litterC, envi.litterN);
+
+  fluxes.methane = (params.soilMethaneRate * envi.soilC * soilCNEffect +
+                    params.litterMethaneRate * envi.litterC * litterCNEffect) *
+                   tempEffect * moistEffect;
 }
 
 /*!
@@ -1520,6 +1538,11 @@ void calculateFluxes(void) {
                       rootExudate);
   } else {
     calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
+  }
+
+  // Methane
+  if (ctx.anaerobicC) {
+    calcMethaneFlux();
   }
 
   // Nitrogen cycle
