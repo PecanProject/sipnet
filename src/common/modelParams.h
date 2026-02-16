@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #define MODEL_PARAM_MAXNAME 64
+#define MODEL_PARAM_ERROR_BUFFER_SIZE 2048
 #define OBSOLETE_PARAM (-1)
 
 // struct to hold a single param
