@@ -48,6 +48,7 @@ sections to include in release notes:
 ### Changed
 
 ### Removed
+- 'Notes' line at top of `sipnet.out` header (#267)
 
 ### Git SHA
 
