@@ -40,6 +40,9 @@ sections to include in release notes:
 - Organic N handling for fertilization and soil dynamics (#199)
 - Dynamic C:N for soil and litter (#214)
 - Updates for soil and litter respiration (tillage and C:N effects) (#214)
+- Carbon and nitrogen mass balance checks (#248)
+- Event tracking for leaf-on and leaf-off phenological transitions (#248)
+- Split wood carbon pool into `plantWoodC` and `plantWoodCStorageDelta` to track NPP storage lag (#248)
 - New moisture dependency function, controlled by the `anaerobic-c` cli option (#259)
 - New moisture dependency functions for N volatilization, methane (#259)
 
@@ -50,6 +53,8 @@ sections to include in release notes:
 ### Changed
 
 ### Removed
+
+- MICROBES option and related code (#257)
 
 ### Git SHA
 

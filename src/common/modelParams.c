@@ -149,7 +149,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
   double value;
   char *errc;
   int isComment;
-  char unknownParams[2048] = "";
+  char unknownParams[MODEL_PARAM_ERROR_BUFFER_SIZE] = {0};
   char hasUnknownParams = 0;
 
   // Check for old-style (spatial param) format on first line containing params
@@ -183,7 +183,9 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
 
       if (paramIndex == -1) {  // not found
         if (hasUnknownParams) {
-          if (strlen(unknownParams) + strlen(pName) > 2048) {
+          // Check if there's room for ", ", pName, and null terminator
+          if (strlen(unknownParams) + strlen(pName) + 3 >
+              MODEL_PARAM_ERROR_BUFFER_SIZE) {
             logError("Too many unknown params; please remove some from %s and "
                      "rerun\n",
                      paramFile);

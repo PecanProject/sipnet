@@ -36,11 +36,6 @@
 #define MEAN_NPP_MAX_ENTRIES (MEAN_NPP_DAYS * 50)  //
 // assume that the most pts we can have is two per hour
 
-// constants for tracking running mean of GPP:
-#define MEAN_GPP_SOIL_DAYS 5  // over how many days do we keep the running mean?
-#define MEAN_GPP_SOIL_MAX_ENTRIES (MEAN_GPP_SOIL_DAYS * 50)  //
-// assume that the most pts we can have is one per hour
-
 // some constants for water submodel:
 #define LAMBDA 2501000.  // latent heat of vaporization (J/kg)
 #define LAMBDA_S 2835000.  // latent heat of sublimation (J/kg)
@@ -111,9 +106,6 @@
 // running mean of NPP over some fixed time
 // (stored in g C * m^-2 * day^-1)
 static MeanTracker *meanNPP;
-// running mean of GPP over some fixed time for linkages
-// (stored in g C * m^-2 * day^-1)
-static MeanTracker *meanGPP;
 
 //
 // Infrastructure and I/O functions
@@ -364,18 +356,12 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "cFracLeaf", &(params.cFracLeaf), 1);
   initializeOneModelParam(modelParams, "woodTurnoverRate", &(params.woodTurnoverRate), 1);
 
-  initializeOneModelParam(modelParams, "efficiency", &(params.efficiency), ctx.microbes);
-  initializeOneModelParam(modelParams, "maxIngestionRate", &(params.maxIngestionRate), ctx.microbes);
-  initializeOneModelParam(modelParams, "halfSatIngestion", &(params.halfSatIngestion), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbeInit", &(params.microbeInit), ctx.microbes);
   initializeOneModelParam(modelParams, "fineRootFrac", &(params.fineRootFrac), 1);
   initializeOneModelParam(modelParams, "coarseRootFrac", &(params.coarseRootFrac), 1);
 
   initializeOneModelParam(modelParams, "fineRootAllocation", &(params.fineRootAllocation), 1);
   initializeOneModelParam(modelParams, "woodAllocation", &(params.woodAllocation), 1);
 
-  initializeOneModelParam(modelParams, "fineRootExudation", &(params.fineRootExudation), 1);
-  initializeOneModelParam(modelParams, "coarseRootExudation", &(params.coarseRootExudation), 1);
   initializeOneModelParam(modelParams, "fineRootTurnoverRate", &(params.fineRootTurnoverRate), 1);
   initializeOneModelParam(modelParams, "coarseRootTurnoverRate", &(params.coarseRootTurnoverRate), 1);
   initializeOneModelParam(modelParams, "baseFineRootResp", &(params.baseFineRootResp), 1);
@@ -383,9 +369,6 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "fineRootQ10", &(params.fineRootQ10), 1);
   initializeOneModelParam(modelParams, "coarseRootQ10", &(params.coarseRootQ10), 1);
 
-  initializeOneModelParam(modelParams, "baseMicrobeResp", &(params.baseMicrobeResp), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbeQ10", &(params.microbeQ10), ctx.microbes);
-  initializeOneModelParam(modelParams, "microbePulseEff", &(params.microbePulseEff), ctx.microbes);
 
   // Nitrogen cycle params from [5] LeBauer et al. (unpublished)
   initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
@@ -447,12 +430,12 @@ void outputHeader(FILE *out) {
   fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; "
                "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
   fprintf(out, "year day  time plantWoodC plantLeafC woodCreation     ");
-  fprintf(out, "soil microbeC coarseRootC fineRootC   ");
+  fprintf(out, "soil coarseRootC fineRootC   ");
   fprintf(out, "litter  soilWater soilWetnessFrac     snow      ");
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
   fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN   n2oFlux "
-               "nLeachFlux  nppStorage  bcdeltaC  bcdeltaN\n");
+               "nLeachFlux      ch4  nppStorage  bcdeltaC  bcdeltaN\n");
 }
 
 /*!
@@ -468,7 +451,6 @@ void outputState(FILE *out, int year, int day, double time) {
           (envi.plantWoodC + envi.plantWoodCStorageDelta), envi.plantLeafC,
           trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
-  fprintf(out, "%8.2f ", envi.microbeC);
   fprintf(out, "%11.2f %9.2f", envi.coarseRootC, envi.fineRootC);
   fprintf(out, " %8.2f %10.2f %15.3f %8.2f ", envi.litterC, envi.soilWater,
           trackers.soilWetnessFrac, envi.snow);
@@ -478,9 +460,9 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
-  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f", fluxes.transpiration,
-          envi.minN, envi.soilOrgN, envi.litterN, fluxes.nVolatilization,
-          fluxes.nLeaching);
+  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f %8.4f",
+          fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
+          fluxes.nVolatilization, fluxes.nLeaching, 0.0);
   fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
           balanceTracker.deltaC, balanceTracker.deltaN);
 }
@@ -520,8 +502,8 @@ void freeClimateList() {
  * cumLai is 0 at the canopy top and equals total LAI at the bottom.
  *
  * Note: SIPNET is not a multi-layer model; this function derives a
- * canopy‐averaged light effect that is then used to calculate calculate GPP for
- * the whole canopy.
+ * canopy‐averaged light effect that is then used to calculate GPP for the
+ * whole canopy.
  *
  * @param[out] lightEff Canopy average light effect.
  * @param[in] lai Leaf area index (m^2 leaf/m^2 ground).
@@ -1249,78 +1231,28 @@ double calcCNEffect(double kCN, double poolC, double poolN) {
 }
 
 /*!
- * Calculate the rSoil flux when microbes is off
+ * Calculate soil respiration flux
  *
- * @param tsoil
- * @param water
- * @param whc
+ * @param tsoil Temperature of the soil
+ * @param water Current soil water
+ * @param whc Soil water holding capacity
  */
-void calcSoilMaintRespiration(double tsoil, double water, double whc) {
+void calcSoilRespiration(double tsoil, double water, double whc) {
+  double moistEffect = calcRespMoistEffect(water, whc);
 
-  // TBD We seem to be conflating maintResp and rSoil in the non-microbe
-  // case, need to dig in. With that said...
+  // :: from [1], remainder of eq (A20)
+  // See calcMoistEffect() for first part of eq (A20) calculation
+  double tempEffect = calcTempEffect(tsoil);
 
-  if (!ctx.microbes) {
-    double moistEffect = calcRespMoistEffect(water, whc);
+  // Effects of tillage, if any
+  double tillageEffect = calcTillageEffect();
 
-    // :: from [1], remainder of eq (A20)
-    // See calcMoistEffect() for first part of eq (A20) calculation
-    double tempEffect = calcTempEffect(tsoil);
+  // Effects of current CN
+  double cnEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
 
-    // Effects of tillage, if any
-    double tillageEffect = calcTillageEffect();
-
-    // Effects of current CN
-    double cnEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
-
-    // Put it all together!
-    fluxes.maintRespiration = envi.soilC * params.baseSoilResp * moistEffect *
-                              tempEffect * tillageEffect * cnEffect;
-
-    // With no microbes, rSoil flux is just the maintenance respiration
-    fluxes.rSoil = fluxes.maintRespiration;
-  }
-  // else fluxes.rSoil = 0.0?
-}
-
-/*!
- * Calculates fluxes used when modeling microbes
- */
-void calcMicrobeFluxes(double tsoil, double water, double whc,
-                       double rootExudate) {
-  if (ctx.microbes) {
-    double baseRate;
-    double tempEffect;
-    double moistEffect = calcRespMoistEffect(water, whc);
-
-    // :: from [4], part of eqs (5.9) and (5.10)
-    //    Calculates mu_max * C_B * g(C_S), to be used to calculate both
-    //    eqs (5.9) and (5.10) in updatePoolsForSoil()
-
-    // :: mu_max * g(C_S)
-    baseRate = params.maxIngestionRate * envi.soilC /
-               (params.halfSatIngestion + envi.soilC);
-
-    // Flux that microbes remove from soil  (mg C g soil day)
-    // Some is ingested, rest used for growth in updatePoolsForSoil()
-    // :: above * C_B
-    fluxes.microbeIngestion = baseRate * envi.microbeC;
-
-    // fluxes that get added to microbe pool
-    // :: from [4], eq (5.11) first line
-    fluxes.soilPulse = params.microbePulseEff * (rootExudate);
-
-    // respiration is determined by microbe biomass
-    // :: from [4], eq (5.12) with addition of moisture effect
-    // [TAG:UNKNOWN_PROVENANCE]  moistEffect
-    tempEffect = params.baseMicrobeResp * pow(params.microbeQ10, tsoil / 10);
-    fluxes.maintRespiration = envi.microbeC * moistEffect * tempEffect;
-
-  } else {
-    fluxes.microbeIngestion = 0.0;
-    fluxes.soilPulse = 0.0;
-    // fluxes.maintRespiration is otherwise set, do not set to zero here
-  }
+  // Put it all together!
+  fluxes.rSoil = envi.soilC * params.baseSoilResp * moistEffect * tempEffect *
+                 tillageEffect * cnEffect;
 }
 
 void calcLitterFluxes() {
@@ -1348,15 +1280,11 @@ void calcLitterFluxes() {
 
 /*!
  * Calculate root and wood creation and loss
- *
- * @return total root exudate for use with microbe model
  */
-double calcRootAndWoodFluxes(void) {
-  double coarseExudate, fineExudate;  // exudates in and out of soil
-  double npp, gppSoil;  // running means of our tracker variables
+void calcRootAndWoodFluxes(void) {
+  double npp;  // running means of our tracker variables
 
   npp = getMeanTrackerMean(meanNPP);
-  gppSoil = getMeanTrackerMean(meanGPP);
   if (npp > 0) {
     // :: from [3], root model description and eq (3)
     fluxes.coarseRootCreation = params.coarseRootAllocation * npp;
@@ -1368,20 +1296,9 @@ double calcRootAndWoodFluxes(void) {
     fluxes.woodCreation = 0;
   }
 
-  if ((gppSoil > 0) && (envi.fineRootC > 0)) {
-    // :: from [3], eq (5)
-    coarseExudate = params.coarseRootExudation * gppSoil;
-    fineExudate = params.fineRootExudation * gppSoil;
-  } else {
-    fineExudate = 0;
-    coarseExudate = 0;
-  }
-
-  // :: from [3], roots model descriptions and [4] eq (5.11)
-  fluxes.coarseRootLoss = (1 - params.microbePulseEff) * coarseExudate +
-                          params.coarseRootTurnoverRate * envi.coarseRootC;
-  fluxes.fineRootLoss = (1 - params.microbePulseEff) * fineExudate +
-                        params.fineRootTurnoverRate * envi.fineRootC;
+  // :: from [3], roots model descriptions
+  fluxes.coarseRootLoss = params.coarseRootTurnoverRate * envi.coarseRootC;
+  fluxes.fineRootLoss = params.fineRootTurnoverRate * envi.fineRootC;
 
   // Wood litter, in g C * m^-2 ground area * day^-1
   // turnover rate is fraction lost per day
@@ -1393,8 +1310,6 @@ double calcRootAndWoodFluxes(void) {
                params.baseCoarseRootResp, envi.coarseRootC);
   calcRootResp(&fluxes.rFineRoot, params.fineRootQ10, params.baseFineRootResp,
                envi.fineRootC);
-
-  return fineExudate + coarseExudate;
 }
 
 /*!
@@ -1529,16 +1444,11 @@ void calculateFluxes(void) {
   // Litter pool, if LITTER is on
   calcLitterFluxes();
 
-  // Roots and microbes
-  double rootExudate = calcRootAndWoodFluxes();
+  // Roots
+  calcRootAndWoodFluxes();
 
-  // Microbes
-  if (ctx.microbes) {
-    calcMicrobeFluxes(climate->tsoil, envi.soilWater, params.soilWHC,
-                      rootExudate);
-  } else {
-    calcSoilMaintRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
-  }
+  // Soil respiration
+  calcSoilRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
 
   // Methane
   if (ctx.anaerobicC) {
@@ -1623,7 +1533,6 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.soilC), 0);
   ensureNonNegative(&(envi.coarseRootC), 0);
   ensureNonNegative(&(envi.fineRootC), 0);
-  ensureNonNegative(&(envi.microbeC), 0);
   ensureNonNegative(&(envi.soilWater), 0);
 
   /* In the case of snow, the model has very different behavior for a snow pack
@@ -1717,19 +1626,6 @@ void updateMeanTrackers(void) {
     logError("Suggestion: try changing MEAN_NPP_MAX_ENTRIES in sipnet.c\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
-
-  err = addValueToMeanTracker(meanGPP, fluxes.photosynthesis,
-                              climate->length);  // update running mean of GPP
-  if (err != 0) {
-    logError("Error type %d while trying to add value to GPP mean tracker in "
-             "sipnet:updateMeanTrackers()\n",
-             err);
-    logError("GPP = %f, climate->length = %f\n", fluxes.photosynthesis,
-             climate->length);
-    logError(
-        "Suggestion: try changing MEAN_GPP_SOIL_MAX_ENTRIES in sipnet.c\n");
-    exit(EXIT_CODE_INTERNAL_ERROR);
-  }
 }
 
 /*!
@@ -1787,63 +1683,32 @@ void updateMainPools() {
 /*!
  * Calculate soil respiration flux and update carbon pools
  *
- * Calculates soil respiration, method depending on the MICROBES and
- * LITTER_POOL flags. Updates carbon pools for soil, fine roots,
- * and coarse roots.
- *
- * TODO: split this apart - fluxes into calculateFluxes, with pool updates
- *       after, as is the general method for SIPNET.
+ * Calculates soil respiration, method depending on the LITTER_POOL
+ * flag. Updates carbon pools for soil, fine roots, and coarse roots.
  */
 void updatePoolsForSoil(void) {
+  if (ctx.litterPool) {
+    // :: from [2], litter model description
+    envi.litterC += (fluxes.woodLitter + fluxes.leafLitter -
+                     fluxes.litterToSoil - fluxes.rLitter) *
+                    climate->length;
 
-  // UPDATE POOLS
-  if (ctx.microbes) {
-    double microbeEff = params.efficiency;
-
-    // :: from [1] for litter terms
-    // :: from [3] for root terms
-    // :: from [4] for microbeIngestion term
-    // Note: no rSoil term here, as soil resp is handled by microbeIngestion
-    envi.soilC +=
-        (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
-         fluxes.leafLitter - fluxes.microbeIngestion) *
-        climate->length;
-    // microbeC additions due to ingestion and incorporation of root exudates,
-    // with reduction from microbe respiration
-    // :: from [4], eq (5.9) for first (ingestion) term,
-    // ::      eq (5.11) used for soilPulse, and
-    // ::      eq (5.12) used for maintRespiration
-    envi.microbeC += (microbeEff * fluxes.microbeIngestion + fluxes.soilPulse -
-                      fluxes.maintRespiration) *
-                     climate->length;
-
-    // rSoil is maintenance resp + growth (microbe) resp
-    // :: from [4], eq (5.10) for microbe term
-    fluxes.rSoil =
-        fluxes.maintRespiration + (1 - microbeEff) * fluxes.microbeIngestion;
+    // from [2] and [3], litter and root terms respectively
+    envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                   fluxes.litterToSoil - fluxes.rSoil) *
+                  climate->length;
   } else {
-    if (ctx.litterPool) {
-      // :: from [2], litter model description
-      envi.litterC += (fluxes.woodLitter + fluxes.leafLitter -
-                       fluxes.litterToSoil - fluxes.rLitter) *
-                      climate->length;
-
-      // from [2] and [3], litter and root terms respectively
-      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                     fluxes.litterToSoil - fluxes.rSoil) *
-                    climate->length;
-    } else {
-      // Normal pool (single pool, no microbes)
-      // :: from [1] (and others, TBD), eq (A3), where:
-      //     L_w = fluxes.woodLitter
-      //     L_l = fluxes.leafLitter
-      //     R_h = fluxes.rSoil
-      // :: from [3], root terms
-      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                     fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
-                    climate->length;
-    }
+    // Normal pool (single pool, no microbes)
+    // :: from [1] (and others, TBD), eq (A3), where:
+    //     L_w = fluxes.woodLitter
+    //     L_l = fluxes.leafLitter
+    //     R_h = fluxes.rSoil
+    // :: from [3], root terms
+    envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                   fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
+                  climate->length;
   }
+
   // :: from [3], root model description, except that we deal with
   //    respiration in the woodC calculations (or, put another way, it's
   //    implicit in the creation term)
@@ -1981,12 +1846,6 @@ void setupModel(void) {
   ///
   /// PARAMS SETUP
 
-  // If we aren't explicitly modeling microbe pool, then do not have a pulse to
-  // microbes, exudates go directly to the soil
-  if (!ctx.microbes) {
-    params.microbePulseEff = 0;
-  }
-
   // change units of parameters:
   params.baseVegResp /= 365.0;  // change from per-year to per-day rate
   params.litterBreakdownRate /= 365.0;
@@ -2012,24 +1871,12 @@ void setupModel(void) {
   }
   envi.soilC = params.soilInit;
 
-  // change from per hour to per day rate
-  params.maxIngestionRate = params.maxIngestionRate * 24;
-
-  if (ctx.microbes) {
-    // convert to gC m-2
-    envi.microbeC = params.microbeInit * params.soilInit / 1000;
-  } else {
-    // Don't set a value if microbes is off
-    envi.microbeC = 0.0;
-  }
-
+  // change from per year to per day rate
   params.fineRootTurnoverRate /= 365.0;
   params.coarseRootTurnoverRate /= 365.0;
 
   params.baseCoarseRootResp /= 365.0;
   params.baseFineRootResp /= 365.0;
-  params.baseMicrobeResp = params.baseMicrobeResp * 24;  // change from per hour
-                                                         // to per day rate
 
   /* Ensure fAnoxia stays within (0, 1) to avoid division by zero and NaNs */
   if (params.fAnoxia <= 0.0) {
@@ -2078,8 +1925,6 @@ void setupModel(void) {
   initBalanceTracker();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
                                  // MEAN_NPP_DAYS) of 0
-  resetMeanTracker(meanGPP, 0);  // initialize with mean NPP (over last
-                                 // MEAN_GPP_DAYS) of 0
 }
 
 // See sipnet.h
@@ -2121,7 +1966,6 @@ void initModel(ModelParams **modelParams, const char *paramFile,
   readClimData(climFile);
 
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
-  meanGPP = newMeanTracker(0, MEAN_GPP_SOIL_DAYS, MEAN_GPP_SOIL_MAX_ENTRIES);
 }
 
 // See sipnet.h
@@ -2129,7 +1973,6 @@ void cleanupModel() {
   freeClimateList();
 
   deallocateMeanTracker(meanNPP);
-  deallocateMeanTracker(meanGPP);
   if (ctx.events) {
     freeEventList();
     closeEventOutFile();
