@@ -12,6 +12,7 @@
 #include <errno.h>
 
 #include "exitCodes.h"
+#include "logging.h"
 #include "util.h"
 
 // our own openFile method, which exits gracefully if there's an error
@@ -50,13 +51,20 @@ int stripComment(char *line, const char *commentChars) {
 // count number of fields in a string separated by delimiter 'sep'
 int countFields(const char *line, const char *sep) {
   // strtok modifies string, so we need a copy
-  char lineCopy[256];
+  size_t lineLen = strlen(line);
+  char *lineCopy = (char *)malloc(lineLen + 1);
+  if (lineCopy == NULL) {
+    logError("memory allocation failure in file processing\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
   strcpy(lineCopy, line);
+
   int numParams = 0;
   char *par = strtok(lineCopy, sep);
   while (par != NULL) {
     ++numParams;
     par = strtok(NULL, sep);
   }
+  free(lineCopy);
   return numParams;
 }
