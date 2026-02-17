@@ -827,17 +827,19 @@ These two diagnostics partition moisture effects into water limitation at low mo
 
 #### Soil Respiration Moisture Dependence  $(D_{\text{water,}R_H})$
 
-The default moisture dependence of heterotrophic respiration is a linear function of soil water content when soil 
-temperature is above freezing:
-
+The default moisture dependence of heterotrophic respiration follows a power-law function of soil water content when soil temperature is above freezing:
 \begin{equation}
-D_{\text{water},R_H} = 
+D_{\text{water},R_H} =
 \begin{cases}
-1, & \text{if } T_{\text{soil}} \leq 0 \\
-f_{\text{WHC}} & \text{if } T_{\text{soil}} > 0
-\end{cases} 
+1, & \text{if } T_{\text{soil}} \le 0 \\
+f_{\text{WHC}}^{\,b}, & \text{if } T_{\text{soil}} > 0
+\end{cases}
 \label{eq:water_rh}
 \end{equation}
+
+where:
+- $f_{\text{WHC}} = W_{\text{soil}} / W_{\text{WHC}}$
+- $b = \text{soilRespMoistEffect}$
 
 If the command-line option `ANAEROBIC-C` is on, the dependency is represented as a partition 
 between aerobic and anaerobic pathways:
