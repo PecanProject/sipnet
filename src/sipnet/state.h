@@ -4,9 +4,8 @@
 // See sipnet.c for the list of references cited below. In short:
 // [1] Braswell et al., 2005
 // [2] Sacks et al., 2006
-// [3] Zobitz et al, 2008
-// [4] Zobitz (et al.?), date unknown, chapter 5 from unknown book
-// [5] LeBauer et al., unpublished
+// [3] Zobitz et al., 2008
+// [4] LeBauer et al., unpublished
 
 typedef struct ClimateVars ClimateNode;
 
@@ -274,10 +273,6 @@ typedef struct Parameters {
   double fineRootAllocation;
   // fraction of NPP allocated to the coarse roots (calculated param)
   double coarseRootAllocation;
-  // fraction of GPP exuded to the soil
-  double fineRootExudation;
-  // fraction of GPP exuded to the soil
-  double coarseRootExudation;
   // turnover of fine roots (per year rate)
   double fineRootTurnoverRate;
   // turnover of coarse roots (per year rate)
@@ -290,37 +285,6 @@ typedef struct Parameters {
   double fineRootQ10;
   // Q10 of coarse roots
   double coarseRootQ10;
-
-  // ****************************************
-  // Params from [4] Zobitz et al. (draft)
-  // ****************************************
-
-  // mg C / g soil microbe initial carbon amount, as fraction of soil init C
-  // :: equivalent to C_B,0 in [4]
-  double microbeInit;
-  // base respiration rate of microbes at 0 degrees C
-  // :: K_B in [4]
-  double baseMicrobeResp;
-  // Q10 of microbes
-  // :: Q10_B in [4]
-  double microbeQ10;
-  // fraction of exudates that microbes immediately use (microbe assimilation
-  // efficiency of root exudates)
-  // :: epsilon_R in [4]
-  double microbePulseEff;
-  // microbe efficiency to convert carbon to biomass
-  // :: epsilon in [4]
-  double efficiency;
-  // microbial maximum ingestion rate (hr-1)
-  // :: mu_MAX in [4]
-  double maxIngestionRate;
-  // half saturation ingestion rate of microbes (mg C g-1 soil)
-  // Note: those units can't be correct, as we add this to envi.soil; must be
-  //       (g C / m-2 ground area), as there are no conversions in the code.
-  //       Or, this is a bug. (This param is listed as g C/m-2 in [4], so
-  //       probably not a bug.)
-  // :: theta_B in [4]
-  double halfSatIngestion;
 
   // ****************************************
   // Other params, provenance TBD
@@ -354,7 +318,7 @@ typedef struct Parameters {
   double leafPoolDepth;
 
   // ****************************************
-  // Params from [5] LeBauer et al. (unpublished)
+  // Params from [4] LeBauer et al. (unpublished)
   // ****************************************
   // Nitrogen Cycle
 
@@ -431,11 +395,7 @@ typedef struct Environment {
   // carbon in fine roots (g C m^-2 ground area)
   double fineRootC;
 
-  ///// From [4] Zobitz (draft)
-  // carbon in microbes (g C m^-2 ground area)
-  double microbeC;
-
-  ///// From [5] LeBauer et al. (unpublished)
+  ///// From [4] LeBauer et al. (unpublished)
   // soil mineral nitrogen pool (g N m^-2 ground area)
   // (really, soil+litter, we only have one mineral N pool)
   double minN;
@@ -460,25 +420,6 @@ extern Envi envi;  // state variables
 
 // fluxes as per-day rates
 typedef struct FluxVars {
-  // Re: rSoil vs maintRespiration
-  // When microbes are in effect, maintResp is the respiration term for the
-  // microbes, and rSoil is calculated taking maintResp into account (which
-  // seems fine).
-  // However, when microbes are off, maintResp and rSoil are treated as the
-  // same, which makes _some_ sense (and maintResp is calculated as
-  // heterotrophic soil resp is described in [1]), but the use in the code is
-  // confusing. Also, the description of maintResp (before this update) only
-  // mentions the microbe case, furthering the confusion. For microbes off, I
-  // would have expected maintResp to be 0, and rSoil to be calc'd as maintResp
-  // is now.
-  // The GROWTH_RESP flag may also play in here, as when that is on, we split
-  // heterotrophic respiration into growth and maintenance resp. This means
-  // maintResp and rSoil should not be the same (microbes off), so again -
-  // confusing in the code. Also: are we handling all the permutations of
-  // GROWTH_RESP and MICROBES correctly?
-  // It's possible that better descriptions of these terms here, and more
-  // comments in the code are all that is needed.
-
   // ****************************************
   // Fluxes from [1] Braswell et al. (2005)
   //  - fluxes tracked as part of modeling from [1]
@@ -545,22 +486,6 @@ typedef struct FluxVars {
   double rFineRoot;
 
   // ****************************************
-  // Fluxes from [4] Zobitz (draft)
-  //  - fluxes tracked as part of modeling from [4]
-
-  // Microbes [3]
-  // microbes on: microbial maintenance respiration rate
-  // microbes off: equivalent to rSoil, calc'd as described in [1], eq (A20)
-  // (g C m-2 ground area day^-1)
-  double maintRespiration;
-  // Flux that microbes remove from soil (mg C g soil day)
-  // TBD I highly doubt those units; this is calc'd as
-  //     (g C * m-2) * (day-1) * (unitless terms)
-  double microbeIngestion;
-  // Exudates into the soil
-  double soilPulse;
-
-  // ****************************************
   // Fluxes from other sources
   // - provenance TBD
   //
@@ -578,7 +503,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for nitrogen cycle
-  // - nitrogen fluxes tracked as part of modeling from [5]
+  // - nitrogen fluxes tracked as part of modeling from [4]
   //
 
   // Mineral N lost to volatilization
@@ -599,7 +524,7 @@ typedef struct FluxVars {
 
   // ****************************************
   // Fluxes for event handling
-  //  - event fluxes tracked as part of modeling from [5]
+  //  - event fluxes tracked as part of modeling from [4]
   //
 
   // plantLeafC addition
@@ -618,8 +543,8 @@ typedef struct FluxVars {
   double eventLitterC;
   // nitrogen added to soil mineral N pool
   double eventMinN;
-  // nitrogen added to litter N pool (if used) or soil N pool (if not)
-  double eventOrgN;
+  // nitrogen added to litter N pool
+  double eventLitterN;
   // MASS BALANCE HELPERS
   // Total system carbon input, for mass balance checks
   double eventInputC;
