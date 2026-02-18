@@ -352,7 +352,7 @@ void resetEventFluxes(void) {
   fluxes.eventSoilWater = 0.0;
   fluxes.eventLitterC = 0.0;
   fluxes.eventMinN = 0.0;
-  fluxes.eventOrgN = 0.0;
+  fluxes.eventLitterN = 0.0;
   // mass balance
   fluxes.eventInputC = 0.0;
   fluxes.eventOutputC = 0.0;
@@ -476,9 +476,16 @@ void processEvents(void) {
 
         // No need to allocate to biomass N pools, we don't track that N
         // explicitly. We do need to handle litter N, though.
-        // FUTURE (ticket #244): move/remove biomass in litter N
-        // Make sure to add it to writeEventOut below, too.
-
+        // Litter N increase
+        double litterNAdd = 0.0;
+        if (ctx.nitrogenCycle) {
+          const double totalAbove = (envi.plantLeafC / params.leafCN) +
+                                    (envi.plantWoodC / params.woodCN);
+          const double totalBelow = (envi.fineRootC / params.fineRootCN) +
+                                    (envi.coarseRootC / params.woodCN);
+          litterNAdd = (fracTA * totalAbove) + (fracTB * totalBelow);
+          fluxes.eventLitterN += litterNAdd / climLen;
+        }
         // MASS BALANCE: removed fractions are system outputs
         const double outputC = ((woodC + envi.plantLeafC) * fracRA +
                                 (envi.fineRootC + envi.coarseRootC) * fracRB);
@@ -495,13 +502,13 @@ void processEvents(void) {
           fluxes.eventOutputN += outputN / climLen;
         }
 
-        writeEventOut(gEvent, 7, "fluxes.eventLitterC", litterAdd / climLen,
-                      "fluxes.eventLeafC", leafDelta / climLen,
-                      "fluxes.eventWoodC", woodDelta / climLen,
-                      "fluxes.eventFineRootC", fineDelta / climLen,
-                      "fluxes.eventCoarseRootC", coarseDelta / climLen,
-                      "fluxes.eventOutputC", outputC / climLen,
-                      "fluxes.eventOutputN", outputN / climLen);
+        writeEventOut(
+            gEvent, 8, "fluxes.eventLitterC", litterAdd / climLen,
+            "fluxes.eventLeafC", leafDelta / climLen, "fluxes.eventWoodC",
+            woodDelta / climLen, "fluxes.eventFineRootC", fineDelta / climLen,
+            "fluxes.eventCoarseRootC", coarseDelta / climLen,
+            "fluxes.eventLitterN", litterNAdd / climLen, "fluxes.eventOutputC",
+            outputC / climLen, "fluxes.eventOutputN", outputN / climLen);
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
@@ -526,7 +533,7 @@ void processEvents(void) {
           minN = 0.0;
         }
         fluxes.eventLitterC += orgC / climLen;
-        fluxes.eventOrgN += orgN / climLen;
+        fluxes.eventLitterN += orgN / climLen;
         fluxes.eventMinN += minN / climLen;
 
         // MASS BALANCE: this is a system input
@@ -574,7 +581,7 @@ void updatePoolsForEvents(void) {
   // Note: litter_pool is required for nitrogen_cycle
   if (ctx.nitrogenCycle) {
     envi.minN += fluxes.eventMinN * climate->length;
-    envi.litterN += fluxes.eventOrgN * climate->length;
+    envi.litterN += fluxes.eventLitterN * climate->length;
   }
 }
 
