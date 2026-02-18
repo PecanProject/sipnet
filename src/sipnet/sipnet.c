@@ -1119,9 +1119,8 @@ double calcRespMoistEffect(double water, double whc) {
       // Unimodal moisture response: suppressed under dry conditions, maximal
       // at intermediate moisture, reduced under saturated/anoxic conditions
 
-      double f_a = params.fAnoxia;
       // Aerobic water availability (dry limitation)
-      double D_aer = fmin(fmax(f_whc / f_a, 0), 1);
+      double D_aer = fmin(fmax(f_whc / params.fAnoxia, 0), 1);
       // Anaerobic index (oxygen limitation proxy)
       double A = calcAnaerobicIndex(water, whc);
       // Uni-modal moisture response
@@ -1383,11 +1382,9 @@ void calcMethaneFlux(void) {
   // Like soil respiration, but with own moisture dep and no tillage or CN
   double tempEffect = calcTempEffect(climate->tsoil);
   double moistEffect = calcMethaneMoistEffect(envi.soilWater, params.soilWHC);
-  double soilCNEffect = calcCNEffect(params.kCN, envi.soilC, envi.soilOrgN);
-  double litterCNEffect = calcCNEffect(params.kCN, envi.litterC, envi.litterN);
 
-  fluxes.methane = (params.soilMethaneRate * envi.soilC * soilCNEffect +
-                    params.litterMethaneRate * envi.litterC * litterCNEffect) *
+  fluxes.methane = (params.soilMethaneRate * envi.soilC +
+                    params.litterMethaneRate * envi.litterC) *
                    tempEffect * moistEffect;
 }
 
