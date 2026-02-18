@@ -10,14 +10,6 @@
 #define MAX_TOKENS 1024
 #define FORMAT_OUTPUT_FILE "format_check.out"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-#define MAX_LINE_LEN 4096
-#define MAX_TOKENS 1024
-
 /* Extract end indices of non-space tokens from a line.
    Returns number of tokens found. */
 int extract_token_end_indices(const char *line, int *end_indices) {
