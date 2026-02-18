@@ -350,9 +350,12 @@ void resetEventFluxes(void) {
   fluxes.eventCoarseRootC = 0.0;
   fluxes.eventEvap = 0.0;
   fluxes.eventSoilWater = 0.0;
+  fluxes.eventSoilC = 0.0;
   fluxes.eventLitterC = 0.0;
   fluxes.eventMinN = 0.0;
+  fluxes.eventSoilOrgN = 0.0;
   fluxes.eventLitterN = 0.0;
+
   // mass balance
   fluxes.eventInputC = 0.0;
   fluxes.eventOutputC = 0.0;
@@ -457,8 +460,9 @@ void processEvents(void) {
 
         const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
         // Litter increase
-        const double litterAdd = fracTA * (envi.plantLeafC + woodC) +
-                                 fracTB * (envi.fineRootC + envi.coarseRootC);
+        const double litterAdd = fracTA * (envi.plantLeafC + woodC);
+        const double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
+
         // Pool reductions, counting both mass moved to litter and removed by
         // the harvest itself. Above-ground changes:
         const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
@@ -468,24 +472,35 @@ void processEvents(void) {
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
 
         // Pool updates:
-        fluxes.eventLitterC += litterAdd / climLen;
+        if (ctx.litterPool) {
+          fluxes.eventLitterC += litterAdd / climLen;
+          fluxes.eventSoilC += soilAdd / climLen;
+        } else {
+          // send it all to the soil
+          fluxes.eventSoilC += (soilAdd + litterAdd) / climLen;
+        }
         fluxes.eventLeafC += leafDelta / climLen;
         fluxes.eventWoodC += woodDelta / climLen;
         fluxes.eventFineRootC += fineDelta / climLen;
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
         // No need to allocate to biomass N pools, we don't track that N
-        // explicitly. We do need to handle litter N, though.
+        // explicitly. We do need to handle soil and litter N, though.
+        // Note: ctx.NitrogenCycle implies ctx.litterPool
         // Litter N increase
         double litterNAdd = 0.0;
+        double soilNAdd = 0.0;
         if (ctx.nitrogenCycle) {
           const double totalAbove = (envi.plantLeafC / params.leafCN) +
                                     (envi.plantWoodC / params.woodCN);
           const double totalBelow = (envi.fineRootC / params.fineRootCN) +
                                     (envi.coarseRootC / params.woodCN);
-          litterNAdd = (fracTA * totalAbove) + (fracTB * totalBelow);
+          litterNAdd = fracTA * totalAbove;
+          soilNAdd = fracTB * totalBelow;
+          fluxes.eventSoilOrgN += soilNAdd / climLen;
           fluxes.eventLitterN += litterNAdd / climLen;
         }
+
         // MASS BALANCE: removed fractions are system outputs
         const double outputC = ((woodC + envi.plantLeafC) * fracRA +
                                 (envi.fineRootC + envi.coarseRootC) * fracRB);
@@ -503,12 +518,14 @@ void processEvents(void) {
         }
 
         writeEventOut(
-            gEvent, 8, "fluxes.eventLitterC", litterAdd / climLen,
-            "fluxes.eventLeafC", leafDelta / climLen, "fluxes.eventWoodC",
-            woodDelta / climLen, "fluxes.eventFineRootC", fineDelta / climLen,
+            gEvent, 10, "fluxes.eventSoilC", soilAdd / climLen,
+            "fluxes.eventLitterC", litterAdd / climLen, "fluxes.eventLeafC",
+            leafDelta / climLen, "fluxes.eventWoodC", woodDelta / climLen,
+            "fluxes.eventFineRootC", fineDelta / climLen,
             "fluxes.eventCoarseRootC", coarseDelta / climLen,
-            "fluxes.eventLitterN", litterNAdd / climLen, "fluxes.eventOutputC",
-            outputC / climLen, "fluxes.eventOutputN", outputN / climLen);
+            "fluxes.eventSoilOrgN", soilNAdd / climLen, "fluxes.eventLitterN",
+            litterNAdd / climLen, "fluxes.eventOutputC", outputC / climLen,
+            "fluxes.eventOutputN", outputN / climLen);
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
@@ -526,19 +543,25 @@ void processEvents(void) {
         const double orgC = fertParams->orgC;
         double orgN = fertParams->orgN;
         double minN = fertParams->minN;
-        if (!ctx.nitrogenCycle) {
+        if (ctx.litterPool) {
+          fluxes.eventLitterC += orgC / climLen;
+        } else {
+          fluxes.eventSoilC += orgC / climLen;
+        }
+
+        if (ctx.nitrogenCycle) {
           // As the warning says in readEventData(), we ignore N when the
           // nitrogen cycle model is off
-          orgN = 0.0;
-          minN = 0.0;
+          // Implies ctx.litterPool
+          fluxes.eventLitterN += orgN / climLen;
+          fluxes.eventMinN += minN / climLen;
         }
-        fluxes.eventLitterC += orgC / climLen;
-        fluxes.eventLitterN += orgN / climLen;
-        fluxes.eventMinN += minN / climLen;
 
         // MASS BALANCE: this is a system input
         fluxes.eventInputC += orgC / climLen;
-        fluxes.eventInputN += (orgN + minN) / climLen;
+        if (ctx.nitrogenCycle) {
+          fluxes.eventInputN += (orgN + minN) / climLen;
+        }
 
         writeEventOut(gEvent, 5, "fluxes.eventOrgN", orgN / climLen,
                       "fluxes.eventLitterC", orgC / climLen, "fluxes.eventMinN",
@@ -561,10 +584,9 @@ void updatePoolsForEvents(void) {
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
 
   // Harvest and fertilization events
+  envi.soilC += fluxes.eventSoilC * climate->length;
   if (ctx.litterPool) {
     envi.litterC += fluxes.eventLitterC * climate->length;
-  } else {
-    envi.soilC += fluxes.eventLitterC * climate->length;
   }
 
   // Harvest and planting events
@@ -576,11 +598,12 @@ void updatePoolsForEvents(void) {
   envi.soilWater += fluxes.eventSoilWater * climate->length;
 
   // NITROGEN
-  // Fertilization events
-  // (Harvest and planting events TBD)
-  // Note: litter_pool is required for nitrogen_cycle
+  // Harvest and fertilization events
+  // (Planting events don't explicitly handle N)
+  // Note: nitrogen_cycle implies litter_pool
   if (ctx.nitrogenCycle) {
     envi.minN += fluxes.eventMinN * climate->length;
+    envi.soilOrgN += fluxes.eventSoilOrgN * climate->length;
     envi.litterN += fluxes.eventLitterN * climate->length;
   }
 }
