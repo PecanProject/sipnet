@@ -34,7 +34,7 @@ void resetState() {
   fluxes.nLeaching = 0;
   // Fixation/Uptake
   params.nFixationFracMax = 0;
-  params.nFixationHalved = 0;
+  params.halfNFixationMax = 0;
   fluxes.nFixation = 0;
   fluxes.nUptake = 0;
 }
@@ -222,7 +222,7 @@ void initNFixationState(double initN, double nFixFracMax, double nFixHalved) {
   resetState();
   envi.minN = initN;
   params.nFixationFracMax = nFixFracMax;
-  params.nFixationHalved = nFixHalved;
+  params.halfNFixationMax = nFixHalved;
 }
 
 int testNFixation(void) {

@@ -74,4 +74,4 @@ woodCN 100.0
 fineRootCN 40.0
 kCN 80.0
 nFixationFracMax 0.5
-nFixationHalved 1.0
+halfNFixationMax 1.0

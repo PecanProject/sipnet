@@ -398,7 +398,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "fineRootCN", &(params.fineRootCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nFixationFracMax", &(params.nFixationFracMax), ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "nFixationHalved", &(params.nFixationHalved), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "halfNFixationMax", &(params.halfNFixationMax), ctx.nitrogenCycle);
 
   // NOLINTEND
   // clang-format on
@@ -445,7 +445,7 @@ void outputHeader(FILE *out) {
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
   fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN   n2oFlux "
-               "nLeachFlux  nFixationFlux  nUptakeFlux  nppStorage  bcdeltaC  "
+               "nLeaching  nFixation  nUptake  nppStorage  bcdeltaC  "
                "bcdeltaN\n");
 }
 
@@ -472,10 +472,10 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
-  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f %14.4f %12.4f",
+  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %9.4f %10.4f %8.4f",
           fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
-          fluxes.nVolatilization, fluxes.nLeaching, fluxes.nFixation,
-          fluxes.nUptake);
+          fluxes.nVolatilization, trackers.nLeaching, trackers.nFixation,
+          trackers.nUptake);
   fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
           balanceTracker.deltaC, balanceTracker.deltaN);
 }
@@ -1372,7 +1372,7 @@ void calcNFixationAndUptakeFluxes() {
   // using down-regulation function with increasing soil min N
   // dimensionless between 0 and 1
   nFixationInhibition =
-      params.nFixationHalved / (params.nFixationHalved + envi.minN);
+      params.halfNFixationMax / (params.halfNFixationMax + envi.minN);
   // Calculate fraction of plant N demand met by fixation
   // dimensionless
   nFixationFrac = params.nFixationFracMax * nFixationInhibition;
@@ -1635,6 +1635,11 @@ void updateTrackers(double oldSoilWater) {
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
 
   trackers.yearlyLitter += fluxes.leafLitter;
+
+  // N cycle trackers
+  trackers.nLeaching = fluxes.nLeaching * climate ->length;
+  trackers.nFixation = fluxes.nFixation * climate ->length;
+  trackers.nUptake = fluxes.nUptake * climate ->length;
 }
 
 void updateMeanTrackers(void) {

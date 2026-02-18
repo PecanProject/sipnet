@@ -391,7 +391,7 @@ typedef struct Parameters {
 
   // Amount of mineral N at which fixation is reduced by half
   // g N * m^-2 ground area
-  double nFixationHalved;
+  double halfNFixationMax;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -692,6 +692,15 @@ typedef struct TrackerVars {  // variables to track various things
 
   // g C * m^-2 wood creation
   double woodCreation;
+
+  // g N * m^-2 N leached from soil mineral N pool
+  double nLeaching;
+
+  // g N * m^-2 N fixed by plants
+  double nFixation;
+
+  // g N * m^-2 N taken up by plants from soil mineral N pool
+  double nUptake;
 
 } Trackers;
 
