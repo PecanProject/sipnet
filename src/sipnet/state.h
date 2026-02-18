@@ -565,8 +565,13 @@ typedef struct FluxVars {
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
 
+  // ****************************************
   // Methane production
-  double methane;
+
+  // Methane produced from soil
+  double soilMethane;
+  // Methane produced from litter
+  double litterMethane;
 } Fluxes;
 
 // Global var
@@ -630,6 +635,8 @@ typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 wood creation
   double woodCreation;
 
+  // g C * m^-2 methane production
+  double methane;
 } Trackers;
 
 // Global var
