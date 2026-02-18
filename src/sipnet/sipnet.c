@@ -462,7 +462,7 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
   fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f %8.4f",
           fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
-          fluxes.nVolatilization, fluxes.nLeaching, 0.0);
+          fluxes.nVolatilization, fluxes.nLeaching, trackers.methane);
   fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
           balanceTracker.deltaC, balanceTracker.deltaN);
 }
@@ -1383,9 +1383,14 @@ void calcMethaneFlux(void) {
   double tempEffect = calcTempEffect(climate->tsoil);
   double moistEffect = calcMethaneMoistEffect(envi.soilWater, params.soilWHC);
 
-  fluxes.methane = (params.soilMethaneRate * envi.soilC +
-                    params.litterMethaneRate * envi.litterC) *
-                   tempEffect * moistEffect;
+  fluxes.soilMethane =
+      params.soilMethaneRate * envi.soilC * tempEffect * moistEffect;
+  if (ctx.litterPool) {
+    fluxes.litterMethane =
+        params.litterMethaneRate * envi.litterC * tempEffect * moistEffect;
+  } else {
+    fluxes.litterMethane = 0.0;
+  }
 }
 
 /*!
@@ -1593,6 +1598,9 @@ void updateTrackers(double oldSoilWater) {
   trackers.totNee += trackers.nee;
   trackers.woodCreation = fluxes.woodCreation * climate->length;
 
+  trackers.methane =
+      (fluxes.soilMethane + fluxes.litterMethane) * climate->length;
+
   // evapotranspiration includes water lost to evaporation from canopy
   // irrigation (fluxes.eventEvap)
   trackers.evapotranspiration =
@@ -1686,13 +1694,14 @@ void updateMainPools() {
 void updatePoolsForSoil(void) {
   if (ctx.litterPool) {
     // :: from [2], litter model description
-    envi.litterC += (fluxes.woodLitter + fluxes.leafLitter -
-                     fluxes.litterToSoil - fluxes.rLitter) *
-                    climate->length;
+    envi.litterC +=
+        (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil -
+         fluxes.rLitter - fluxes.litterMethane) *
+        climate->length;
 
     // from [2] and [3], litter and root terms respectively
     envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                   fluxes.litterToSoil - fluxes.rSoil) *
+                   fluxes.litterToSoil - fluxes.rSoil - fluxes.soilMethane) *
                   climate->length;
   } else {
     // Normal pool (single pool, no microbes)
@@ -1701,9 +1710,10 @@ void updatePoolsForSoil(void) {
     //     L_l = fluxes.leafLitter
     //     R_h = fluxes.rSoil
     // :: from [3], root terms
-    envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                   fluxes.woodLitter + fluxes.leafLitter - fluxes.rSoil) *
-                  climate->length;
+    envi.soilC +=
+        (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
+         fluxes.leafLitter - fluxes.rSoil - fluxes.soilMethane) *
+        climate->length;
   }
 
   // :: from [3], root model description, except that we deal with
