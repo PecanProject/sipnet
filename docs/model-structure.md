@@ -933,7 +933,7 @@ f_{\text{WHC}}^{\,b}, & \text{if } T_{\text{soil}} > 0
 where $f_{\text{WHC}} = W_{\text{soil}} / W_{\text{WHC}}$ is the fraction of soil water holding capacity (soil water 
 divided by WHC), and $b$ is the soil respiration moisture effect exponent.
 
-If the command-line option `ANAEROBIC-C` is on, the dependency is represented as a partition 
+If the command-line option `ANAEROBIC` is on, the dependency is represented as a partition 
 between aerobic and anaerobic pathways:
 
 \begin{equation}
