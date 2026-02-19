@@ -27,7 +27,7 @@ void setupTests(ModelParams **modelParamsPtr) {
   ctx.nitrogenCycle = 1;
   ctx.gdd = 0;
   ctx.waterHResp = 1;
-  ctx.anaerobicC = 1;
+  ctx.anaerobic = 1;
 
   initModel(modelParamsPtr, "balance.param", "balance.clim");
   initEvents(EVENT_IN_FILE, ctx.printHeader);
