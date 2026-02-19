@@ -924,8 +924,8 @@ above freezing. With the default exponent $b=1$, the relationship is linear in s
 \begin{equation}
 D_{\text{water},R_H} =
 \begin{cases}
-1, & \text{if } T_{\text{soil}} \le 0 \\
-f_{\text{WHC}}^{\,b}, & \text{if } T_{\text{soil}} > 0
+1, & \text{if } T_{\text{soil}} \lt 0 \\
+(f_{\text{WHC}})^b, & \text{if } T_{\text{soil}} \ge 0
 \end{cases}
 \label{eq:water_rh}
 \end{equation}
