@@ -602,6 +602,9 @@ typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 wood creation
   double woodCreation;
 
+  // g N * m^-2 ground area, Mineral N lost to volatilization
+  double n2o;
+
 } Trackers;
 
 // Global var
