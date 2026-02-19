@@ -136,14 +136,14 @@ def check_results(smoke_dir: str, verbose: bool, base: bool):
     # Check first row
     first = res_file.readline()
 
-    if first.split()[0].startswith('Notes'):
+    if first.split()[0].startswith('year'):
       has_header = True
     else:
       has_header = False
 
   if has_header:
-    new_df = pd.read_table(file, skiprows=1, header=0, sep=r'\s+', dtype=float)
-    git_df = pd.read_table(git_result, skiprows=1, header=0, sep=r'\s+', dtype=float)
+    new_df = pd.read_table(file, skiprows=0, header=0, sep=r'\s+', dtype=float)
+    git_df = pd.read_table(git_result, skiprows=0, header=0, sep=r'\s+', dtype=float)
 
     if set(new_df.columns) != set(git_df.columns):
       print("Columns have changed!")
