@@ -382,13 +382,13 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
 
   // New moisture dependency params
-  initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobicC || ctx.nitrogenCycle);
-  initializeOneModelParam(modelParams, "anaerobicDecompRate", &(params.anaerobicDecompRate), ctx.anaerobicC);
+  initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobic || ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "anaerobicDecompRate", &(params.anaerobicDecompRate), ctx.anaerobic);
 
   // Methane
-  initializeOneModelParam(modelParams, "anaerobicTransExp", &(params.anaerobicTransExp), ctx.anaerobicC);
-  initializeOneModelParam(modelParams, "soilMethaneRate", &(params.soilMethaneRate), ctx.anaerobicC);
-  initializeOneModelParam(modelParams, "litterMethaneRate", &(params.litterMethaneRate), ctx.anaerobicC);
+  initializeOneModelParam(modelParams, "anaerobicTransExp", &(params.anaerobicTransExp), ctx.anaerobic);
+  initializeOneModelParam(modelParams, "soilMethaneRate", &(params.soilMethaneRate), ctx.anaerobic);
+  initializeOneModelParam(modelParams, "litterMethaneRate", &(params.litterMethaneRate), ctx.anaerobic);
 
   // NOLINTEND
   // clang-format on
@@ -1450,7 +1450,7 @@ void calculateFluxes(void) {
   calcSoilRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
 
   // Methane
-  if (ctx.anaerobicC) {
+  if (ctx.anaerobic) {
     calcMethaneFlux();
   }
 
