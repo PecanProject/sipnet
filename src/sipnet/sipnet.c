@@ -949,6 +949,7 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // else no snow pack:
   else {
+    // TODO: consider replacing this with getClippedWaterFrac()
     double waterFrac = water / params.soilWHC;
     rsoil = exp(params.rSoilConst1 - params.rSoilConst2 * (waterFrac));
     rd = (params.rdConst) / (climate->wspd);  // aerodynamic resistance (sec/m)
@@ -1071,8 +1072,12 @@ void ensureAllocation(void) {
   }
 }
 
+double getClippedWaterFrac(double water, double whc) {
+  return fmin(fmax(water / whc, 0.0), 1.0);
+}
+
 double calcAnaerobicIndex(double water, double whc) {
-  double f_whc = fmin(fmax(water / whc, 0), 1);
+  double f_whc = getClippedWaterFrac(water, whc);
   double f_a = params.fAnoxia;
 
   // Anaerobic index (oxygen limitation proxy)
@@ -1100,7 +1105,7 @@ double calcRespMoistEffect(double water, double whc) {
     // :: from [2], snowpack addition
     moistEffect = 1.0;
   } else {
-    double f_whc = water / whc;
+    double f_whc = getClippedWaterFrac(water, whc);
     if (!ctx.anaerobic) {
       // :: from [1], first part of eq (A20), with added exponent
       // Original formulation from [1], based on PnET is:
@@ -1907,6 +1912,8 @@ void setupModel(void) {
   if (envi.soilWater < 0) {
     envi.soilWater = 0;
   } else if (envi.soilWater > params.soilWHC) {
+    // TODO: consider removing this as part of waterDrainFrac
+    //   when #273 is implemented
     envi.soilWater = params.soilWHC;
   }
 

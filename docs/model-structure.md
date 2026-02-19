@@ -924,8 +924,8 @@ above freezing. With the default exponent $b=1$, the relationship is linear in s
 \begin{equation}
 D_{\text{water},R_H} =
 \begin{cases}
-1, & \text{if } T_{\text{soil}} \le 0 \\
-f_{\text{WHC}}^{\,b}, & \text{if } T_{\text{soil}} > 0
+1, & \text{if } T_{\text{soil}} \lt 0 \\
+(f_{\text{WHC}})^b, & \text{if } T_{\text{soil}} \ge 0
 \end{cases}
 \label{eq:water_rh}
 \end{equation}
@@ -953,7 +953,7 @@ D_{\text{water},N_{vol}} = 0.05 + 3.8 A (1-A)
 \label{eq:water_nvol}
 \end{equation}
 
-where 0.05 represents baseline aerobic volatilization and the factor 3.8 is used to scale the maximum value to 1.
+where 0.05 represents baseline aerobic volatilization and the factor 3.8 scales the quadratic term so that the maximum value is 1, and $D_{\mathrm{water},N_{vol}} \in [0.05, 1]$.
 
 #### Methane Production Moisture Dependence $D_{\text{water},CH_4}$
 
