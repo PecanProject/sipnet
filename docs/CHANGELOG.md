@@ -43,7 +43,7 @@ sections to include in release notes:
 - Carbon and nitrogen mass balance checks (#248)
 - Event tracking for leaf-on and leaf-off phenological transitions (#248)
 - Split wood carbon pool into `plantWoodC` and `plantWoodCStorageDelta` to track NPP storage lag (#248)
-- New moisture dependency function, controlled by the `anaerobic` cli option (#259)
+- New moisture dependency function option for soil respiration, controlled by the `anaerobic` cli option (#259)
 - New moisture dependency functions for N volatilization, methane (#259)
 
 ### Fixed
