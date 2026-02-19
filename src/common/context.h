@@ -49,7 +49,7 @@ struct Context {
   int soilPhenol;
   int waterHResp;
   int nitrogenCycle;
-  int anaerobicC;
+  int anaerobic;
 
   // * I/O
   int doMainOutput;

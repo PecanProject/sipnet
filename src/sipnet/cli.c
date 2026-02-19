@@ -28,7 +28,7 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(soil-phenol),
     DECLARE_FLAG(water-hresp),
     DECLARE_FLAG(nitrogen-cycle),
-    DECLARE_FLAG(anaerobic-c),
+    DECLARE_FLAG(anaerobic),
 
     DECLARE_FLAG(do-main-output),
     DECLARE_FLAG(do-single-outputs),
@@ -56,7 +56,7 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(snow),
     DECLARE_ARG_FOR_MAP(soilPhenol), DECLARE_ARG_FOR_MAP(waterHResp),
-    DECLARE_ARG_FOR_MAP(nitrogenCycle), DECLARE_ARG_FOR_MAP(anaerobicC),
+    DECLARE_ARG_FOR_MAP(nitrogenCycle), DECLARE_ARG_FOR_MAP(anaerobic),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -76,7 +76,7 @@ void usage(char *progName) {
   printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
-  printf("  --anaerobic-c        Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
+  printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
   printf("  --events             Enable event handling (1)\n");
   printf("  --gdd                Use growing degree days to determine leaf growth (1)\n");
   printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
@@ -105,8 +105,8 @@ void usage(char *progName) {
   printf("\n");
   printf("Note the following restrictions on these options:\n");
   printf(" --soil-phenol and --gdd may not both be turned on\n");
-  printf(" --anaerobic-c requires --water-hresp\n");
-  printf(" --nitrogen-cycle requires both --litter-pool and --anaerobic-c\n");
+  printf(" --anaerobic requires --water-hresp\n");
+  printf(" --nitrogen-cycle requires both --litter-pool and --anaerobic\n");
   // clang-format on
 }
 

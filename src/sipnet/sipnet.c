@@ -427,8 +427,6 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
  * @param out File pointer for output
  */
 void outputHeader(FILE *out) {
-  fprintf(out, "Notes: (PlantWoodC, PlantLeafC, Soil and Litter in g C/m^2; "
-               "Water and Snow in cm; SoilWetness is fraction of WHC;\n");
   fprintf(out, "year day  time plantWoodC plantLeafC woodCreation     ");
   fprintf(out, "soil coarseRootC fineRootC   ");
   fprintf(out, "litter  soilWater soilWetnessFrac     snow      ");
@@ -1088,7 +1086,7 @@ double calcAnaerobicIndex(double water, double whc) {
  *  This dependency term is used in soil respiration and litter breakdown
  *
  *  Calculation also depends on soil temperature and the options waterHResp and
- *  anaerobicC.
+ *  anaerobic.
  *
  * @param water current soil water
  * @param whc water holding capacity
@@ -1104,7 +1102,7 @@ double calcRespMoistEffect(double water, double whc) {
     moistEffect = 1.0;
   } else {
     double f_whc = water / whc;
-    if (!ctx.anaerobicC) {
+    if (!ctx.anaerobic) {
       // :: from [1], first part of eq (A20), with added exponent
       // Original formulation from [1], based on PnET is:
       //   moistEffect = water / whc
