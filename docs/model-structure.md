@@ -953,7 +953,7 @@ D_{\text{water},N_{vol}} = 0.05 + 3.8 A (1-A)
 \label{eq:water_nvol}
 \end{equation}
 
-where 0.05 represents baseline aerobic volatilization and the factor 3.8 is used to scale the maximum value to 1.
+where 0.05 represents baseline aerobic volatilization and the factor 3.8 scales the quadratic term so that the maximum value is 1, and $D_{\mathrm{water},N_{vol}} \in [0.05, 1]$.
 
 #### Methane Production Moisture Dependence $D_{\text{water},CH_4}$
 
