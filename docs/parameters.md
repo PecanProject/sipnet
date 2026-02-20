@@ -177,7 +177,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Autotrophic Respiration Parameters
 
-| Symbol                | Parameter Name      | Definition                                                               | Units                                          | notes                                                                                                                                              |
+| Symbol                | Parameter Name      | Definition                                                               | Units                                          | Notes                                                                                                                                              |
 | --------------------- | ------------------- | ------------------------------------------------------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | $R_{\text{a,wood},0}$ | baseVegResp         | Wood maintenance respiration rate at $0^\circ C$                         | $\text{g C respired} \cdot \text{g}^{-1} \text{ plant C} \cdot \text{day}^{-1}$ | read in as per-year rate only counts plant wood C; leaves handled elsewhere (both above and below-ground: assumed for now to have same resp. rate) |
 | $Q_{10v}$             | vegRespQ10          | Vegetation respiration Q10                                               | unitless                                             | Scalar determining effect of temp on veg. resp.                                                                                                    |
