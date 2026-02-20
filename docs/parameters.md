@@ -205,7 +205,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 Run-time parameters support mineralization, volatilization, leaching, and
 pool stoichiometry.
 
-| Symbol               | Parameter Name      | Definition                                                                                   | Units              | notes            |
+| Symbol               | Parameter Name      | Definition                                                                                   | Units              | Notes            |
 | -------------------- | ------------------- | -------------------------------------------------------------------------------------------- | ------------------ | ---------------- |
 | $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture)       | $\text{day}^{-1}$ | Eq. (17)         |
 | $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                            | $\text{day}^{-1}$ | Eq. (18)         |
