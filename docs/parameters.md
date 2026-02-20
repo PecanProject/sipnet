@@ -191,7 +191,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Soil Respiration Parameters
 
-| Symbol              | Parameter Name      | Definition                                                                          | Units                                         | notes                                                 |
+| Symbol              | Parameter Name      | Definition                                                                          | Units                                         | Notes                                                 |
 | ------------------- | ------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
 | $K_\text{litter}$   | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | $\text{g C broken down} \cdot \text{g}^{-1} \text{ litter C} \cdot \text{day}^{-1}$    | read in as per-year rate                              |
 | $f_{\text{litter}}$ | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) | unitless                                                       |                                                       |
