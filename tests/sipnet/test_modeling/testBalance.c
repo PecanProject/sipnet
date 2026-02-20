@@ -49,6 +49,9 @@ void step(void) {
 }
 
 int checkCarbon(void) {
+  // Make sure we didn't forget to update context, in case dependencies changed
+  validateContext();
+
   int status = 0;
   if (fabs(balanceTracker.deltaC) > TEST_EPS) {
     status = 1;
@@ -59,6 +62,9 @@ int checkCarbon(void) {
 }
 
 int checkNitrogen(void) {
+  // Make sure we didn't forget to update context, in case dependencies changed
+  validateContext();
+
   int status = 0;
   if (fabs(balanceTracker.deltaN) > TEST_EPS) {
     // ENABLE WHEN NITROGEN IS FINISHED AND LEAF ON/OFF IS HANDLED
