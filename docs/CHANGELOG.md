@@ -40,6 +40,9 @@ sections to include in release notes:
 - Organic N handling for fertilization and soil dynamics (#199)
 - Dynamic C:N for soil and litter (#214)
 - Updates for soil and litter respiration (tillage and C:N effects) (#214)
+- Carbon and nitrogen mass balance checks (#248)
+- Event tracking for leaf-on and leaf-off phenological transitions (#248)
+- Split wood carbon pool into `plantWoodC` and `plantWoodCStorageDelta` to track NPP storage lag (#248)
 - Adds Nitrogen demand, fixation flux, and uptake flux (#265)
 
 ### Fixed
@@ -49,6 +52,9 @@ sections to include in release notes:
 ### Changed
 
 ### Removed
+- 'Notes' line at top of `sipnet.out` header (#267)
+
+- MICROBES option and related code (#257)
 
 ### Git SHA
 
@@ -201,3 +207,6 @@ Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. 
 Sacks, William J., David S. Schimel, and Russell K. Monson. 2007. “Coupling between Carbon Cycling and Climate in a High-Elevation, Subalpine Forest: A Model-Data Fusion Analysis.” Oecologia 151 (1): 54–68. https://doi.org/10.1007/s00442-006-0565-2.
 
 Sacks, William J., David S. Schimel, Russell K. Monson, and Bobby H. Braswell. 2006. “Model‐data Synthesis of Diurnal and Seasonal CO2 Fluxes at Niwot Ridge, Colorado.” Global Change Biology 12 (2): 240–59. https://doi.org/10.1111/j.1365-2486.2005.01059.x.
+
+### Changed
+- Renamed n2oFlux output column to n2o and converted from flux (rate) to timestep-integrated amount.
