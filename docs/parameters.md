@@ -234,7 +234,7 @@ pool stoichiometry.
 
 ### Tree Physiological Parameters
 
-| Symbol                 | Parameter Name         | Definition                             | Units                | notes                                                              |
+| Symbol                 | Parameter Name         | Definition                             | Units                | Notes                                                              |
 | ---------------------- | ---------------------- | -------------------------------------- | -------------------- | ------------------------------------------------------------------ |
 | $SLW$                  | leafCSpWt              | Specific leaf weight (leaf carbon per unit leaf area) | $\text{g C} \cdot \text{m}^{-2} \text{ leaf area}$ |                                                                    |
 | $C_{\text{frac}}$      | cFracLeaf              | Carbon fraction of leaf dry mass                     | $\text{g leaf C} \cdot \text{g}^{-1} \text{ leaf}$ |                                                                    |
