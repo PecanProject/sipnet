@@ -348,6 +348,21 @@ typedef struct Parameters {
 
   // C:N ratio at which D_CN is 1/2 for soil and litter
   double kCN;
+
+  // ******
+  // New moisture dependency functions
+  // ******
+
+  // Onset of anoxia - soil wetness fraction at which O2 diffusion begins to
+  // limit aerobic respiration
+  double fAnoxia;
+
+  // Relative anaerobic decomposition rate, in (0,1]
+  double anaerobicDecompRate;
+
+  // Methane anoxia sensitivity, controls sharpness of anaerobic transition
+  // dimensionless, greater than 1
+  double anaerobicTransExp;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -601,6 +616,9 @@ typedef struct TrackerVars {  // variables to track various things
 
   // g C * m^-2 wood creation
   double woodCreation;
+
+  // g N * m^-2 ground area, Mineral N lost to volatilization
+  double n2o;
 
 } Trackers;
 
