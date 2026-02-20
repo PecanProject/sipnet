@@ -259,15 +259,17 @@ This is from Zobitz, et al. (2008), Sec. 5.4.2.
 
 ### Litter Carbon
 
-The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition:
+The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition 
+and methane production:
 
 \begin{equation}
-\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}} - F^C_\mathit{CH_4,litter}
 \end{equation}
 
-Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and
-$F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover
-is routed directly to the soil carbon pool (see Soil Carbon).
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux},
+$F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}, and $F^C_\mathit{CH_4,litter}$ is
+the methane flux from the litter \eqref{eq:ch4}. Note that belowground turnover is routed directly to the soil carbon
+pool (see Soil Carbon).
 
 $F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest,
 and organic matter amendments:
@@ -329,16 +331,19 @@ F^C_{\text{soil,litter}} =
 
 The change in the soil organic carbon (SOC) pool over time is determined by: (i) inputs of carbon transferred from
 litter during decomposition, (ii) direct inputs from belowground plant turnover, and (iii) losses of carbon due to
-heterotrophic respiration:
+heterotrophic respiration and methane production:
 
 \begin{equation}
-\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} - F^C_\mathit{CH_4,soil}
 \label{eq:Braswell_A3}
 \end{equation}
 
-This is equation (A3) from Braswell, et al. (2005).
+where $F^C_{\text{soil}}$ is the total carbon input to the soil, $R_{\text{soil}}$ is the soil heterotrophic 
+respiration, and $F^C_\mathit{CH_4,soil}$ is the methane flux from the soil. 
 
-Total carbon input to the soil, $F^C_{\text{soil}}$, includes both
+This is equation (A3) from Braswell, et al. (2005), with the addition of the methane flux.
+
+Total carbon input to the soil includes both
 (i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
 (ii) inputs from root turnover:
 
@@ -347,7 +352,7 @@ F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
 \label{eq:soil_carbon_flux}
 \end{equation}
 
-Soil heterotrophic respiration, $R_{\text{soil}}$, is modeled as a first-order process proportional
+Soil heterotrophic respiration is modeled as a first-order process proportional
 to soil organic carbon content and modified by environmental and management factors:
 
 \begin{equation}
@@ -383,10 +388,10 @@ heterotrophic respiration is then defined as a fixed fraction of this decomposit
 (\eqref{eq:decomp_carbon}--\eqref{eq:r_litter}), with the remainder transferred to the soil carbon pool
 (\eqref{eq:soil_carbon}).
 
-### $\frak{Methane \ Production \ (C \rightarrow CH_4)}$
+### Methane Production $(C \rightarrow CH_4)$
 
 \begin{equation}
-F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\mathrm{water, CH_4} \cdot D_\text{temp}
+F^C_\mathit{CH_4,j} = K_{CH_4,j} \cdot C_\text{j} \cdot D_\mathrm{water, CH_4} \cdot D_\text{temp}
 \label{eq:ch4}
 \end{equation}
 
@@ -394,7 +399,7 @@ F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\m
 \small j \in \{\text{soil, litter}\}
 \end{equation*}
 
-The calculation of methane flux $(F^C_{CH_4})$ is analogous to that of $R_H$. It uses the same carbon pools as substrate
+The calculation of methane flux $(F^C_{CH_4})$ for soil and litter is analogous to that of $R_H$. It uses the same carbon pools as substrate
 and temperature dependence but has specific rate parameters $(K_{\mathit{CH_4,}j})$, a moisture dependence function 
 based on oxygen availability \eqref{eq:water_ch4}, and no direct dependence on tillage.
 
