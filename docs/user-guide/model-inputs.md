@@ -37,7 +37,6 @@ soilInit 7000
 litterWFracInit 0.5
 soilWFracInit 0.6
 snowInit 1
-microbeInit 0.5
 fineRootFrac 0.2
 coarseRootFrac 0.2
 aMax 95
@@ -216,7 +215,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 ### Output Flags
 
 | Option              | Default | Description                                                    |
-| ------------------- | ------- | -------------------------------------------------------------- |
+|---------------------|---------|----------------------------------------------------------------|
 | `do-main-output`    | on      | Print time series of all output variables to `<file-name>.out` |
 | `do-single-outputs` | off     | Print outputs one variable per file (e.g. `<file-name>.NEE`)   |
 | `dump-config`       | on      | Print final config to `<file-name>.config`                     |
@@ -227,12 +226,12 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 | Option           | Default | Description                                                                             |
 |------------------|---------|-----------------------------------------------------------------------------------------|
+| `anaerobic`      | off     | Enable modeling of methane and anaerobic effect on Rh moisture dependency               |
 | `events`         | on      | Enable event handling                                                                   |
 | `gdd`            | on      | Use growing degree days to determine leaf growth                                        |
 | `growth-resp`    | off     | Explicitly model growth respiration, rather than including with maintenance respiration |
 | `leaf-water`     | off     | Calculate leaf pool and evaporate from that pool                                        |
 | `litter-pool`    | off     | Enable litter pool in addition to single soil carbon pool                               |
-| `microbes`       | off     | Enable microbe modeling                                                                 |
 | `nitrogen-cycle` | off     | Enable nitrogen cycle modeling                                                          |
 | `snow`           | on      | Keep track of snowpack, rather than assuming all precipitation is liquid                |
 | `soil-phenol`    | off     | Use soil temperature to determine leaf growth                                           |
@@ -240,7 +239,8 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
- - `events` and `microbes` may not both be turned on
+ - `anaerobic` requires `water-hresp`
+ - 'nitrogen-cycle' requires both 'litter-pool' and 'anaerobic'
 
 ### Command Line Arguments
 
@@ -283,7 +283,7 @@ GDD = 1
 GROWTH_RESP = 0
 LEAF_WATER = 0
 LITTER_POOL = 0
-MICROBES = 0
+NITROGEN_CYCLE = 0
 SNOW = 1
 SOIL_PHENOL = 0
 WATER_HRESP = 1

@@ -45,11 +45,11 @@ struct Context {
   int growthResp;
   int leafWater;
   int litterPool;
-  int microbes;
   int snow;
   int soilPhenol;
   int waterHResp;
   int nitrogenCycle;
+  int anaerobic;
 
   // * I/O
   int doMainOutput;

@@ -9,6 +9,8 @@ transpose
 .mkdocs.stamp
 site/*
 site_preview/*
+_codeql_build_dir/
+_codeql_detected_source_root
 
 # documentation
 docs/api
@@ -22,6 +24,10 @@ tests/sipnet/*/*
 !tests/sipnet/*/*.out
 !tests/sipnet/*/*.clim
 !tests/sipnet/*/*.param
+# But exclude generated test outputs
+tests/sipnet/*/events.out
+tests/sipnet/*/sipnet.out
+tests/sipnet/*/sipnet.config
 
 # System-specific files
 .DS_Store

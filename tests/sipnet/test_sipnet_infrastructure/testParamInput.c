@@ -95,6 +95,10 @@ int main() {
 void writeParams(const char *fname) {
 
   FILE *out = fopen(fname, "w");
+  if (!out) {
+    logTest("FOPEN failed, exiting\n");
+    exit(1);
+  }
 
   fprintf(out, "%s: %.2f\n", "plantWoodInit", params.plantWoodInit);
   fprintf(out, "%s: %.2f\n", "laiInit", params.laiInit);
@@ -144,16 +148,10 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "leafPoolDepth", params.leafPoolDepth);
   fprintf(out, "%s: %.2f\n", "woodTurnoverRate", params.woodTurnoverRate);
   fprintf(out, "%s: %.2f\n", "psnTMax", params.psnTMax);
-  fprintf(out, "%s: %.2f\n", "efficiency", params.efficiency);
-  fprintf(out, "%s: %.2f\n", "maxIngestionRate", params.maxIngestionRate);
-  fprintf(out, "%s: %.2f\n", "halfSatIngestion", params.halfSatIngestion);
-  fprintf(out, "%s: %.2f\n", "microbeInit", params.microbeInit);
   fprintf(out, "%s: %.2f\n", "fineRootFrac", params.fineRootFrac);
   fprintf(out, "%s: %.2f\n", "coarseRootFrac", params.coarseRootFrac);
   fprintf(out, "%s: %.2f\n", "fineRootAllocation", params.fineRootAllocation);
   fprintf(out, "%s: %.2f\n", "woodAllocation", params.woodAllocation);
-  fprintf(out, "%s: %.2f\n", "fineRootExudation", params.fineRootExudation);
-  fprintf(out, "%s: %.2f\n", "coarseRootExudation", params.coarseRootExudation);
   fprintf(out, "%s: %.2f\n", "coarseRootAllocation",
           params.coarseRootAllocation);
   fprintf(out, "%s: %.2f\n", "fineRootTurnoverRate",
@@ -164,9 +162,6 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "baseCoarseRootResp", params.baseCoarseRootResp);
   fprintf(out, "%s: %.2f\n", "fineRootQ10", params.fineRootQ10);
   fprintf(out, "%s: %.2f\n", "coarseRootQ10", params.coarseRootQ10);
-  fprintf(out, "%s: %.2f\n", "baseMicrobeResp", params.baseMicrobeResp);
-  fprintf(out, "%s: %.2f\n", "microbeQ10", params.microbeQ10);
-  fprintf(out, "%s: %.2f\n", "microbePulseEff", params.microbePulseEff);
 
   fclose(out);
 }

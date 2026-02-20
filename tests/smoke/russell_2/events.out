@@ -51,7 +51,7 @@ year  day  type     param_name=delta[,param_name=delta,...]
 2016  276  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2016  280  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2016  284  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
-2016  285  leafoff  fluxes.leafLitter=672.97
+2016  285  leafoff  fluxes.leafLitter=672.85
 2016  288  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2016  292  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2016  296  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
@@ -107,7 +107,7 @@ year  day  type     param_name=delta[,param_name=delta,...]
 2017  276  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2017  280  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2017  284  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
-2017  285  leafoff  fluxes.leafLitter=658.41
+2017  285  leafoff  fluxes.leafLitter=658.22
 2017  288  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2017  292  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00
 2017  296  irrig    fluxes.eventSoilWater=22.40,fluxes.eventEvap=0.00

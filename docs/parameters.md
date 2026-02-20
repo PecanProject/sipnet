@@ -17,7 +17,7 @@ model equations, configuration names, units, and I/O fields. See
 [Model Outputs](user-guide/model-outputs.md) for file formats. Unless noted,
 pools are mass per ground area and rates are mass per area per day. The actual parameter set that is used depends on the configured model structure. For equation references, see the [model structure](model-structure.md) documentation.
 
-## Notation {#sec-notation}
+## Notation
 
 ### Variables (Pools, Fluxes, and Parameters)
 
@@ -99,15 +99,19 @@ Run-time parameters can change from one run to the next, or when the model is st
 | Symbol                     | Parameter Name  | Definition                                                               | Units                                                | Notes                                                                              |
 | -------------------------- | --------------- | ------------------------------------------------------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | $C_{\text{wood},0}$        | plantWoodInit   | Initial wood carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ | Above-ground + roots                                                               |
+| $C_{\text{wood,storage}}$  |                 | Wood carbon storage pool (delta), initialized internally to 0            | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ | Not a runtime param; $C_{\text{wood,total}} = C_{\text{wood}} + C_{\text{wood,storage}}$ |
 | $LAI_0$                    | laiInit         | Initial leaf area                                                        | $\text{m}^2 \text{ leaves} \cdot \text{m}^{-2} \text{ ground area}$ | Multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$ |
 | $C_{\text{litter},0}$      | litterInit      | Initial litter carbon                                                    | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
 | $C_{\text{soil},0}$        | soilInit        | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
+| $W_{\text{litter},0}$      | litterWFracInit | Initial litter water content                                             | unitless                                             | Fraction of litterWHC                                                              |
 | $W_{\text{soil},0}$        | soilWFracInit   | Initial soil water content                                               | unitless                                             | Fraction of soilWHC                                                                |
 | $N_{\text{org, litter},0}$ | litterOrgNInit  | Initial litter organic nitrogen content                                  | $\text{g N} \cdot \text{m}^{-2}$                     |                                                                                    |
 | $N_{\text{org, soil},0}$   | soilOrgNInit    | Initial soil organic nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                     |                                                                                    |
 | $N_{\text{min, soil},0}$   | mineralNInit    | Initial soil mineral nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                     |                                                                                    |
+| $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   | unitless                                             |                                                                                    |
+| $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool | unitless                                             |                                                                                    |
 | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | $\text{g C} \cdot \text{m}^{-2}$                     | Documented in model structure; not currently a runtime param                       |
-| ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | $\text{g N} \cdot \text{m}^{-2}$                     | Documented in model structure; not currently a runtime param                       |
+| ${N_2O}_{\text{soil},0}$   |                 | Initial nitrous oxide concentration in the soil                          | $\text{g N} \cdot \text{m}^{-2}$                     | Documented in model structure; not currently a runtime param                       |
 | $W_{\text{snow},0}$        | snowInit        | Initial snow water equivalent                                            | cm water equivalent                                  |                                                                                    |
 
 <!--not used in CCMMF
