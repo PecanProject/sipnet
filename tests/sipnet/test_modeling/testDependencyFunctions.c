@@ -7,6 +7,7 @@ void setupTests() {
   ctx.litterPool = 1;
   ctx.nitrogenCycle = 1;
   ctx.waterHResp = 1;
+  ctx.anaerobic = 0;
 
   // Climate
   climate = (ClimateNode *)malloc(sizeof(ClimateNode));
@@ -20,6 +21,9 @@ void setupTests() {
   params.soilRespMoistEffect = 2.0;
   params.kCN = 10.0;
   params.soilRespQ10 = 3.0;
+  params.fAnoxia = 0.75;
+  params.anaerobicDecompRate = 0.5;
+  params.anaerobicTransExp = 2.0;
 
   // Environment
   envi.soilWater = 5.0;
@@ -36,8 +40,11 @@ void setupTests() {
 
 void initTestState(void) {
   ctx.waterHResp = 1;
+  ctx.anaerobic = 0;
+  envi.soilWater = 5.0;
   climate->tsoil = 20;
   eventTrackers.d_till_mod = 0.0;
+  params.fAnoxia = 0.75;
 }
 
 void checkStatus(int status, const char *label, double calc, double exp) {
@@ -46,10 +53,24 @@ void checkStatus(int status, const char *label, double calc, double exp) {
   }
 }
 
-int checkMoistEffect(double exp) {
-  double calc = calcMoistEffect(envi.soilWater, params.soilWHC);
+int checkRespMoistEffect(double exp) {
+  double calc = calcRespMoistEffect(envi.soilWater, params.soilWHC);
   int status = !compareDoubles(calc, exp);
-  checkStatus(status, "Moist effect", calc, exp);
+  checkStatus(status, "Moist effect (resp)", calc, exp);
+  return status;
+}
+
+int checkVolatilizationMoistEffect(double exp) {
+  double calc = calcVolatilizationMoistEffect(envi.soilWater, params.soilWHC);
+  int status = !compareDoubles(calc, exp);
+  checkStatus(status, "Moist effect (vol)", calc, exp);
+  return status;
+}
+
+int checkMethaneMoistEffect(double exp) {
+  double calc = calcMethaneMoistEffect(envi.soilWater, params.soilWHC);
+  int status = !compareDoubles(calc, exp);
+  checkStatus(status, "Moist effect (methane)", calc, exp);
   return status;
 }
 
@@ -86,12 +107,37 @@ int runTests() {
   // Moisture effect, making note of the decision branches about ctx flags and
   // temp
   initTestState();
-  status |= checkMoistEffect(0.25);
+  status |= checkRespMoistEffect(0.25);
   ctx.waterHResp = 0;
-  status |= checkMoistEffect(1);
+  status |= checkRespMoistEffect(1);
   ctx.waterHResp = 1;
   climate->tsoil = -10.0;
-  status |= checkMoistEffect(1);
+  status |= checkRespMoistEffect(1);
+
+  // Moisture effect, with new dependency mode
+  initTestState();
+  ctx.anaerobic = 1;
+  // D_aer=2/3, A=0
+  status |= checkRespMoistEffect(2.0 / 3.0);
+  params.fAnoxia = 0.4;
+  // D_aer=1, A=1/6
+  status |= checkRespMoistEffect(5.5 / 6.0);
+
+  // Moisture effect, volatilization
+  initTestState();
+  // A=0
+  status |= checkVolatilizationMoistEffect(0.05);
+  params.fAnoxia = 0.4;
+  // A=1/6
+  status |= checkVolatilizationMoistEffect(26.0 / 45.0);
+
+  // Moisture effect, methane
+  initTestState();
+  // A=0
+  status |= checkMethaneMoistEffect(0.0);
+  params.fAnoxia = 0.4;
+  // A=1/6
+  status |= checkMethaneMoistEffect(1.0 / 36.0);
 
   // Temp effect, no branches
   initTestState();
