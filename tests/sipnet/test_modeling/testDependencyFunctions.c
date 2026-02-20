@@ -114,6 +114,15 @@ int runTests() {
   climate->tsoil = -10.0;
   status |= checkRespMoistEffect(1);
 
+  // Moisture effect clipping in non-anaerobic mode
+  initTestState();
+  envi.soilWater = 12.0;
+  // f_whc clips to 1
+  status |= checkRespMoistEffect(1.0);
+  envi.soilWater = -1.0;
+  // f_whc clips to 0
+  status |= checkRespMoistEffect(0.0);
+
   // Moisture effect, with new dependency mode
   initTestState();
   ctx.anaerobic = 1;

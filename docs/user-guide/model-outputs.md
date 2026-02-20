@@ -44,8 +44,8 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 27  | $F^C_{\text{CH}_4}$  | fluxesch4           | Methane Flux                   | g C/m$^2$ / timestep |
 -->
 
-[^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics; internal 
-calculations of moisture effects use the soilWetnessFrac from the current time step. 
+[^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only.
+Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not this average), and clip that ratio to [0,1] where those dependency functions are defined.
 
 An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
 

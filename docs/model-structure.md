@@ -886,6 +886,10 @@ Where
 - $W_{\text{soil}}$: Soil water content
 - $W_{\text{WHC}}$: Soil water holding capacity
 
+For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis), SIPNET uses
+$\mathrm{clip}(f_{\text{WHC}},0,1)$ internally. This prevents supersaturated water states from pushing moisture
+response multipliers above their intended maxima.
+
 #### Water Stress Factor
 
 \begin{equation}
@@ -931,7 +935,8 @@ D_{\text{water},R_H} =
 \end{equation}
 
 where $f_{\text{WHC}} = W_{\text{soil}} / W_{\text{WHC}}$ is the fraction of soil water holding capacity (soil water 
-divided by WHC), and $b$ is the soil respiration moisture effect exponent.
+divided by WHC), and $b$ is the soil respiration moisture effect exponent. In implementation, this term is evaluated as
+$\left(\mathrm{clip}(f_{\text{WHC}},0,1)\right)^b$ when moisture dependency is active.
 
 If the command-line option `ANAEROBIC` is on, the dependency is represented as a partition 
 between aerobic and anaerobic pathways:
