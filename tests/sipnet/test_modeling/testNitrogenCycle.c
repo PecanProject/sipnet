@@ -81,7 +81,8 @@ int testNVolatilization(void) {
   nVolFrac = 0.1;
   initNVolatilizationState(minN, nVolFrac);
   double tEffect = calcTempEffect(climate->tsoil);
-  double mEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
+  double mEffect =
+      calcVolatilizationMoistEffect(envi.soilWater, params.soilWHC);
   expNVolFlux = nVolFrac * minN * tEffect * mEffect;
   calcNVolatilizationFlux();
   status |= checkFlux(fluxes.nVolatilization, expNVolFlux, "N volatilization");
@@ -133,7 +134,8 @@ int testFertilization(void) {
   // envi: minN
   // fluxes: nVol, eventMinN
   double tEffect = calcTempEffect(climate->tsoil);
-  double mEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
+  double mEffect =
+      calcVolatilizationMoistEffect(envi.soilWater, params.soilWHC);
   expNVolFlux = (nVolFrac * initN * tEffect * mEffect);
   expEventMinNFlux = fertMinN / climate->length;
   expMinN = initN + (expEventMinNFlux - expNVolFlux) * climate->length;

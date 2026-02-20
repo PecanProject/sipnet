@@ -381,6 +381,12 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "fineRootCN", &(params.fineRootCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
 
+  // New moisture dependency params
+  initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobic || ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "anaerobicDecompRate", &(params.anaerobicDecompRate), ctx.anaerobic);
+  // TODO: this should depend on methane, when that gets in
+  initializeOneModelParam(modelParams, "anaerobicTransExp", &(params.anaerobicTransExp), 0);
+
   // NOLINTEND
   // clang-format on
 
@@ -940,6 +946,7 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // else no snow pack:
   else {
+    // TODO: consider replacing this with getClippedWaterFrac()
     double waterFrac = water / params.soilWHC;
     rsoil = exp(params.rSoilConst1 - params.rSoilConst2 * (waterFrac));
     rd = (params.rdConst) / (climate->wspd);  // aerodynamic resistance (sec/m)
@@ -1062,40 +1069,118 @@ void ensureAllocation(void) {
   }
 }
 
+double getClippedWaterFrac(double water, double whc) {
+  // Keep moisture dependency terms bounded in [0, 1]. In configurations with
+  // WATER_HRESP=1 and ANAEROBIC=0 (e.g., russell_1 smoke test), this prevents
+  // super-saturated soil water (water > whc) from boosting respiration above
+  // the full-wet response.
+  return fmin(fmax(water / whc, 0.0), 1.0);
+}
+
+double calcAnaerobicIndex(double water, double whc) {
+  double f_whc = getClippedWaterFrac(water, whc);
+  double f_a = params.fAnoxia;
+
+  // Anaerobic index (oxygen limitation proxy)
+  return fmin(fmax((f_whc - f_a) / (1 - f_a), 0), 1);
+}
+
 /*!
- *  Calculate moisture dependency effect
+ *  Calculate heterotrophic respiration moisture dependency effect
  *
- *  Moisture dependency term is used in soil respiration, litter
- *  breakdown, and nitrogen volatilization.
+ *  This dependency term is used in soil respiration and litter breakdown
  *
- *  Depends on soil temperature and whether waterHResp is on.
+ *  Calculation also depends on soil temperature and the options waterHResp and
+ *  anaerobic.
  *
  * @param water current soil water
  * @param whc water holding capacity
  * @return moisture effect as a fraction between 0 and 1
  */
-double calcMoistEffect(double water, double whc) {
+double calcRespMoistEffect(double water, double whc) {
   double moistEffect;
 
   if ((!ctx.waterHResp) || (climate->tsoil < 0)) {
     // if not waterHResp, soil moisture does not affect heterotrophic
-    // respiration; else:
+    // respiration; also, ignore moisture effects in frozen soils
     // :: from [2], snowpack addition
-    moistEffect = 1.0;  // Ignore moisture effects in frozen soils
+    moistEffect = 1.0;
   } else {
-    // :: from [1], first part of eq (A20), with added exponent
-    // Original formulation from [1], based on PnET is:
-    //   moistEffect = water / whc
-    // which matches here with params.soilRespMoistEffect=1 (the default
-    // value)
-    //
-    // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
-    // Note: older versions of sipnet note this as "using PnET formulation",
-    // but we have been unable to verify that the exponent comes from PnET
-    moistEffect = pow((water / whc), params.soilRespMoistEffect);
+    double f_whc = getClippedWaterFrac(water, whc);
+    if (!ctx.anaerobic) {
+      // :: from [1], first part of eq (A20), with added exponent
+      // Original formulation from [1], based on PnET is:
+      //   moistEffect = water / whc
+      // which matches here with params.soilRespMoistEffect=1 (the default
+      // value)
+      //
+      // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
+      // Note: older versions of sipnet note this as "using PnET formulation",
+      // but we have been unable to verify that the exponent comes from PnET
+      moistEffect = pow(f_whc, params.soilRespMoistEffect);
+    } else {
+      // Unimodal moisture response: suppressed under dry conditions, maximal
+      // at intermediate moisture, reduced under saturated/anoxic conditions
+
+      double f_a = params.fAnoxia;
+      // Aerobic water availability (dry limitation)
+      double D_aer = fmin(fmax(f_whc / f_a, 0), 1);
+      // Anaerobic index (oxygen limitation proxy)
+      double A = calcAnaerobicIndex(water, whc);
+      // Uni-modal moisture response
+      // Note that this will not go above 1, since:
+      // - when f_whc <= f_a, A = 0, and moistEffect = D_aer
+      // - when f_whc > f_a, D_aer caps at 1, and this becomes
+      //   moistEffect = 1 - (1 - adr)A, and adr <= 1
+      moistEffect = (1 - A) * D_aer + params.anaerobicDecompRate * A;
+    }
   }
 
   return moistEffect;
+}
+
+/*!
+ * Calculate volatilization moisture dependency effect
+ *
+ * The volatilized nitrogen flux is assumed to peak at intermediate redox
+ * conditions, where aerobic and anaerobic processes overlap.
+ *
+ * This dependency term is used in nitrogen volatilization
+ *
+ * Calculation also depends on soil temperature.
+ *
+ * @param water current soil water
+ * @param whc water holding capacity
+ * @return moisture effect as a fraction between 0 and 1
+ */
+double calcVolatilizationMoistEffect(double water, double whc) {
+  // Anaerobic index (oxygen limitation proxy)
+  double A = calcAnaerobicIndex(water, whc);
+
+  // 0.05 represents the baseline aerobic volatilization
+  // The factor of 3.8 makes the max = 1, as with other dependency functions
+  return 0.05 + 3.8 * A * (1 - A);
+}
+
+/*!
+ * Calculate methane production moisture dependency effect
+ *
+ * Methane production increases monotonically with anoxia, so we calculate
+ * this dependency term as power of the anaerobic index.
+ *
+ * This dependency term is used in methane production
+ *
+ * Calculation also depends on soil temperature.
+ *
+ * @param water current soil water
+ * @param whc water holding capacity
+ * @return moisture effect as a fraction between 0 and 1
+ */
+double calcMethaneMoistEffect(double water, double whc) {
+  // Anaerobic index (oxygen limitation proxy)
+  double A = calcAnaerobicIndex(water, whc);
+
+  return pow(A, params.anaerobicTransExp);
 }
 
 /**
@@ -1156,7 +1241,7 @@ double calcCNEffect(double kCN, double poolC, double poolN) {
  * @param whc Soil water holding capacity
  */
 void calcSoilRespiration(double tsoil, double water, double whc) {
-  double moistEffect = calcMoistEffect(water, whc);
+  double moistEffect = calcRespMoistEffect(water, whc);
 
   // :: from [1], remainder of eq (A20)
   // See calcMoistEffect() for first part of eq (A20) calculation
@@ -1176,7 +1261,7 @@ void calcSoilRespiration(double tsoil, double water, double whc) {
 void calcLitterFluxes() {
   if (ctx.litterPool) {
     double tempEffect = calcTempEffect(climate->tsoil);
-    double moistEffect = calcMoistEffect(envi.soilWater, params.soilWHC);
+    double moistEffect = calcRespMoistEffect(envi.soilWater, params.soilWHC);
     // Effects of tillage, if any
     double tillageEffect = calcTillageEffect();
     // Effects of current CN
@@ -1238,7 +1323,8 @@ void calcNVolatilizationFlux() {
   // Note k_vol is in units of day^-1, so we do not need to divide
   // by climate length to make this a flux
   double d_temp = calcTempEffect(climate->tsoil);
-  double d_water = calcMoistEffect(envi.soilWater, params.soilWHC);
+  double d_water =
+      calcVolatilizationMoistEffect(envi.soilWater, params.soilWHC);
 
   fluxes.nVolatilization =
       params.nVolatilizationFrac * envi.minN * d_temp * d_water;
@@ -1776,6 +1862,20 @@ void setupModel(void) {
   params.baseCoarseRootResp /= 365.0;
   params.baseFineRootResp /= 365.0;
 
+  /* Ensure fAnoxia stays within (0, 1) to avoid division by zero and NaNs */
+  if (params.fAnoxia <= 0.0) {
+    params.fAnoxia = TINY;
+  } else if (params.fAnoxia >= 1.0) {
+    params.fAnoxia = 1.0 - TINY;
+  }
+
+  // Constraint anaerobic decomp rate to (0,1]
+  if (params.anaerobicDecompRate <= 0.0) {
+    params.anaerobicDecompRate = TINY;
+  } else if (params.anaerobicDecompRate > 1.0) {
+    params.anaerobicDecompRate = 1.0;
+  }
+
   ///
   /// ENVIRONMENT SETUP
 
@@ -1786,6 +1886,8 @@ void setupModel(void) {
   if (envi.soilWater < 0) {
     envi.soilWater = 0;
   } else if (envi.soilWater > params.soilWHC) {
+    // TODO: consider removing this as part of waterDrainFrac
+    //   when #273 is implemented
     envi.soilWater = params.soilWHC;
   }
 

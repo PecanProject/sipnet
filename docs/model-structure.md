@@ -28,11 +28,9 @@ Implementation in source code (sipnet.c) is annotated with references to specifi
 
 #### Notes on notation:
 
-- The general approach used to define variables and subscripts is defined in [Notation](parameters.md#sec-notation).
-- Specific parameter, flux, and state definitions are documented
-  in [Model States and Parameters](parameters.md#sec-parameters).
-- $\mathfrak{Fraktur Font}$ is used to identify features that have not been implemented. This font will be removed as
-  features are implemented.
+- The general approach used to define variables and subscripts is defined in [Notation](parameters.md#notation).
+- Specific parameter, flux, and state definitions are documented in [Model States and Parameters](parameters.md#run-time-parameters).
+- $\mathfrak{Fraktur Font}$ is used to identify features that have not been implemented. This font will be removed as features are implemented.
 
 ## Carbon Dynamics
 
@@ -388,7 +386,7 @@ heterotrophic respiration is then defined as a fixed fraction of this decomposit
 ### $\frak{Methane \ Production \ (C \rightarrow CH_4)}$
 
 \begin{equation}
-F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\mathrm{water, O_2} \cdot D_\text{temp}
+F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\mathrm{water, CH_4} \cdot D_\text{temp}
 \label{eq:ch4}
 \end{equation}
 
@@ -397,8 +395,8 @@ F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\m
 \end{equation*}
 
 The calculation of methane flux $(F^C_{CH_4})$ is analogous to that of $R_H$. It uses the same carbon pools as substrate
-and temperature dependence but has specific rate parameters $(K_{\mathit{CH_4,}j})$, a moisture dependence function
-based on oxygen availability, and no direct dependence on tillage.
+and temperature dependence but has specific rate parameters $(K_{\mathit{CH_4,}j})$, a moisture dependence function 
+based on oxygen availability \eqref{eq:water_ch4}, and no direct dependence on tillage.
 
 ## Carbon:Nitrogen Ratio Dynamics $(CN)$
 
@@ -559,6 +557,12 @@ of $N_\text{min}$ (Thornton et al 2007, Oleson et al. 2010). By contrast, Biome-
 Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005)
 represents $N_2O$ flux as a proportion of the N mineralization rate.
 
+The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N 
+mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$
+(Thornton et al 2007, Oleson et al. 2010). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005
+and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as
+a proportion of the N mineralization rate. 
+
 Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool
 size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and
 Dalmorech 2011).
@@ -568,7 +572,7 @@ mineral nitrogen pool. The realized volatilization flux is proportional to $N_\t
 soil moisture.
 
 \begin{equation}
-F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H}
+F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water},N_{vol}}
 \label{eq:n_vol}
 \end{equation}
 
@@ -649,7 +653,7 @@ more information.
 We do not consider free-living nonsymbiotic N fixation, which is approximately two orders of magnitude smaller (less
 than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and typical N fertilization rates.
 
-### Nitrogen Limitation {n_limit}
+### Nitrogen Limitation
 
 Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of available mineral nitrogen. Plant nitrogen
 demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
@@ -882,6 +886,10 @@ Where
 - $W_{\text{soil}}$: Soil water content
 - $W_{\text{WHC}}$: Soil water holding capacity
 
+For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis), SIPNET uses
+$\mathrm{clip}(f_{\text{WHC}},0,1)$ internally. This prevents supersaturated water states from pushing moisture
+response multipliers above their intended maxima.
+
 #### Water Stress Factor
 
 \begin{equation}
@@ -894,37 +902,75 @@ This is equation (A16) from Braswell, et al. (2005).
 The water stress factor $(D_{\text{water,}A})$ is the ratio of actual transpiration $(F^W_\text{trans})$ to potential
 transpiration $(F^W_\text{trans, pot})$.
 
-#### Soil Respiration Moisture Dependence  $(D_{\text{water,}R_H})$
+#### Diagnostic Moisture Indices
 
-The moisture dependence of heterotrophic respiration is a linear function of soil water content when soil temperature is
-above freezing:
+*Aerobic water availability* (dry limitation)
 
 \begin{equation}
-D_{\text{water} R_H} =
+D_\text{aer}(f_{\text{WHC}}) = \frac{f_{\text{WHC}}}{f_a}, \text{clipped to } [0, 1]
+\end{equation}
+
+*Anaerobic index* (oxygen limitation proxy)
+
+\begin{equation}
+A(f_{\text{WHC}}) = \frac{f_{\text{WHC}} − f_a}{1 - f_a}, \text{clipped to } [0, 1]
+\end{equation}
+
+where $f_a$ is the onset of anoxia, interpreted as the soil wetness at which $O_2$ diffusion begins to limit aerobic metabolism.
+
+These two diagnostics partition moisture effects into water limitation at low moisture and oxygen limitation at high moisture.
+
+#### Soil Respiration Moisture Dependence  $(D_{\text{water,}R_H})$
+
+The default heterotrophic respiration moisture dependence is a power-law of relative soil water content when soils are 
+above freezing. With the default exponent $b=1$, the relationship is linear in soil moisture.
+
+\begin{equation}
+D_{\text{water},R_H} =
 \begin{cases}
-1, & \text{if } T_{\text{soil}} \leq 0 \\
-f_{\text{WHC}} & \text{if } T_{\text{soil}} > 0
+1, & \text{if } T_{\text{soil}} \lt 0 \\
+(f_{\text{WHC}})^b, & \text{if } T_{\text{soil}} \ge 0
 \end{cases}
 \label{eq:water_rh}
 \end{equation}
 
-#### $\frak{Moisture \ Dependence \ For \ Anaerobic \ Metabolism \ with \ Soil \ Moisture \ Optimum}$
+where $f_{\text{WHC}} = W_{\text{soil}} / W_{\text{WHC}}$ is the fraction of soil water holding capacity (soil water 
+divided by WHC), and $b$ is the soil respiration moisture effect exponent. In implementation, this term is evaluated as
+$\left(\mathrm{clip}(f_{\text{WHC}},0,1)\right)^b$ when moisture dependency is active.
 
-There are many possible functions for the moisture dependence of anaerobic metabolism. The key feature is that there
-must be an optimum moisture level.
-
-Lets start with a two-parameter Beta function covering the range $50 < f_{\text{WHC}} < 120$.
-
-**Beta function**
+If the command-line option `ANAEROBIC` is on, the dependency is represented as a partition 
+between aerobic and anaerobic pathways:
 
 \begin{equation}
-D_{\text{water,O_2}} = (f_{WHC} - f_{WHC_\text{min}})^\beta \cdot (f_{WHC_\text{max}} - f_{WHC})^\gamma
+D_{\text{water},R_H} = (1 - A) D_\text{aer} + \eta A
+\label{eq:water_rh_2}
 \end{equation}
 
-Where $\beta$ and $\gamma$ are parameters that control the shape of the curve, and can be estimated for a particular
-maximum and width.
+where $\eta \in (0, 1]$ is the relative anaerobic decomposition rate.
 
-For the relationship between $N_2O$ flux and soil moisture, Wang et al (2023) suggest a Gaussian function.
+#### Nitrogen Volatilization Moisture Dependence $D_{\text{water},N_vol}$
+
+The volatilized nitrogen flux (treated as N2O-dominated in the absence of explicit speciation) is assumed to peak at 
+intermediate redox conditions, where aerobic and anaerobic processes overlap:
+
+\begin{equation}
+D_{\text{water},N_{vol}} = 0.05 + 3.8 A (1-A)
+\label{eq:water_nvol}
+\end{equation}
+
+where 0.05 represents baseline aerobic volatilization and the factor 3.8 scales the quadratic term so that the maximum value is 1, and $D_{\mathrm{water},N_{vol}} \in [0.05, 1]$.
+
+#### Methane Production Moisture Dependence $D_{\text{water},CH_4}$
+
+\begin{equation}
+D_{\text{water},CH_4} = A^p
+\label{eq:water_ch4}
+\end{equation}
+
+where $p \ge 1$ controls the sharpness of the anaerobic transition.
+
+This represents a collapsed redox ladder (i.e., $CH_4$ production once alternative electron acceptors are depleted), 
+without explicit electron-acceptor pools.
 
 ## Agronomic Management Events
 
