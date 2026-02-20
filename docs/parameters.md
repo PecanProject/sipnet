@@ -53,7 +53,7 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 |                           | $D$        | Dependency or damping function                         |
 |                           | $SLW$      | Specific Leaf Weight (leaf carbon per unit leaf area)  |
 
-**Note on superscripts:** Most variables use superscripts for process context (e.g., $X^{\text{growth}}$ for growth respiration). However, certain fluxes follow established scientific conventions and are written without superscripts: carbon fluxes ($NPP$, $GPP$, $Rh$, $Ra$) and water fluxes ($ET$, $T$). These terms are widely used in the scientific literature as standard measurements and retain this notation even when combined with subscripts (e.g., $Rh_{\text{litter}}$).
+**Note on superscripts:** Most variables use superscripts for process context (e.g., $X^{\text{growth}}$ for growth respiration). However, certain fluxes follow established scientific conventions and are written without superscripts: carbon fluxes ($NPP$, $GPP$, $R_H$, $R_A$) and water fluxes ($ET$, $T$). These terms are widely used in the scientific literature as standard measurements and retain this notation even when combined with subscripts (e.g., $R_{H,\text{litter}}$).
 
 ### Subscripts (Temporal, Spatial, or Contextual Identifiers)
 
