@@ -1070,6 +1070,10 @@ void ensureAllocation(void) {
 }
 
 double getClippedWaterFrac(double water, double whc) {
+  // Keep moisture dependency terms bounded in [0, 1]. In configurations with
+  // WATER_HRESP=1 and ANAEROBIC=0 (e.g., russell_1 smoke test), this prevents
+  // super-saturated soil water (water > whc) from boosting respiration above
+  // the full-wet response.
   return fmin(fmax(water / whc, 0.0), 1.0);
 }
 
