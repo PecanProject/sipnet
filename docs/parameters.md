@@ -207,8 +207,8 @@ pool stoichiometry.
 
 | Symbol               | Parameter Name      | Definition                                                                                   | Units              | Notes            |
 | -------------------- | ------------------- | -------------------------------------------------------------------------------------------- | ------------------ | ---------------- |
-| $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture)       | $\text{day}^{-1}$ | Eq. (17)         |
-| $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                            | $\text{day}^{-1}$ | Eq. (18)         |
+| $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture)       | $\text{day}^{-1}$ | \eqref{eq:n_vol}         |
+| $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                            | $\text{day}^{-1}$ | \eqref{eq:n_leach}         |
 | $\mathfrak{f}_{\text{fix,max}}$ | nFixFracMax         | Maximum fraction of plant N demand met by biological N fixation under low soil N            | fraction           |                                                                                    |
 | $\mathfrak{K}_N$                | nFixHalfSatMinN     | Mineral N level at which fixation suppression factor $D_{N_\text{min}}$ equals 0.5          | $\text{g N} \cdot \text{m}^{-2}$ |                                                                                    |
 
