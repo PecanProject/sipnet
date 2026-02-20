@@ -426,7 +426,8 @@ void outputHeader(FILE *out) {
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
   fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN       n2o "
-               "nLeaching  nFixation  nUptake      ch4  nppStorage  bcdeltaC  bcdeltaN\n");
+               "nLeaching  nFixation  nUptake      ch4  nppStorage  bcdeltaC  "
+               "bcdeltaN\n");
 }
 /*!
  * Print current state values to output file
