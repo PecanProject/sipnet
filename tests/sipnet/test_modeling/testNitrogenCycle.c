@@ -263,7 +263,8 @@ int testNFixation(void) {
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
 
-  // Zero demand by uptake due to zero minN pool, but I think this is broken
+  // Zero demand by uptake due to zero minN pool, this test will
+  // need to change when limitation is implemented
   minN = 0;
   nFixFracMax = 0.5;
   nFixHalved = 2;

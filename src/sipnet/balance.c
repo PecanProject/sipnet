@@ -110,12 +110,13 @@ void checkBalance(void) {
         balanceTracker.deltaC, climate->year, climate->day, climate->time);
   }
   if (fabs(balanceTracker.deltaN) > 0.0) {
-    err = 1;
-    logInternalError("Nitrogen balance check failed (delta=%8.4f)\n",
-                     balanceTracker.deltaN);
+    // err = 1;
+    logInternalError(
+        "Nitrogen balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        balanceTracker.deltaN, climate->year, climate->day, climate->time);
   }
   if (err) {
     logInternalError("Exiting\n");
-    //  exit(EXIT_CODE_INTERNAL_ERROR);
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }

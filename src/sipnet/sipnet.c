@@ -1355,8 +1355,14 @@ void calcNLeachingFlux() {
  * Calculate plant N demand
  */
 double calcPlantNDemand() {
+  // leafOnCreation is a transfer from the wood pool so
+  // demand should only count the difference in the N
+  // between those two pools, hence substracting
+  // params.woodCN from params.leafCN for leafOnCreation
   double demand = fluxes.woodCreation / params.woodCN +
                   fluxes.leafCreation / params.leafCN +
+                  fluxes.leafOnCreation / params.leafCN -
+                  fluxes.leafOnCreation / params.woodCN +
                   fluxes.fineRootCreation / params.fineRootCN +
                   fluxes.coarseRootCreation / params.woodCN;
   return demand;
@@ -1526,6 +1532,9 @@ void initTrackers(void) {
   trackers.rAboveground = 0.0;
 
   trackers.yearlyLitter = 0.0;
+  trackers.nLeaching = 0.0;
+  trackers.nFixation = 0.0;
+  trackers.nUptake = 0.0;
 }
 
 // If var < minVal, then set var = 0
@@ -1637,9 +1646,9 @@ void updateTrackers(double oldSoilWater) {
   trackers.yearlyLitter += fluxes.leafLitter;
 
   // N cycle trackers
-  trackers.nLeaching = fluxes.nLeaching * climate ->length;
-  trackers.nFixation = fluxes.nFixation * climate ->length;
-  trackers.nUptake = fluxes.nUptake * climate ->length;
+  trackers.nLeaching = fluxes.nLeaching * climate->length;
+  trackers.nFixation = fluxes.nFixation * climate->length;
+  trackers.nUptake = fluxes.nUptake * climate->length;
 }
 
 void updateMeanTrackers(void) {

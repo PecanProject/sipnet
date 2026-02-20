@@ -526,18 +526,18 @@ Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available 
 
 ### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
 
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N pools:
+Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of carbon creation fluxes divided by their respective C:N ratios:
 
 \begin{equation}
-F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt} 
+F^N_\text{demand} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
 \label{eq:plant_n_demand}
 \end{equation}
 
 \begin{equation*}
-\small i \in \{\text{leaf, wood, fine root, coarse root}\}
+\small i \in \{\text{wood, leaf, leaf on, fine root, coarse root}\}
 \end{equation*}
 
-Each term in the sum is calculated according to \eqref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
+Each term in the sum is calculated according to \eqref{eq:plant_n}. The sum includes a subtraction of the leaf on creation flux divided by the wood C:N ratio to account for the internal transfer of nitrogen from wood to leaf during leaf on events, thus meeting some nitrogen demand. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
 
 ### Nitrogen Fixation and Uptake $F^N_\text{fix}, F^N_\text{uptake}$
 
