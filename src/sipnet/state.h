@@ -349,6 +349,21 @@ typedef struct Parameters {
   // C:N ratio at which D_CN is 1/2 for soil and litter
   double kCN;
 
+  // ******
+  // New moisture dependency functions
+  // ******
+
+  // Onset of anoxia - soil wetness fraction at which O2 diffusion begins to
+  // limit aerobic respiration
+  double fAnoxia;
+
+  // Relative anaerobic decomposition rate, in (0,1]
+  double anaerobicDecompRate;
+
+  // Methane anoxia sensitivity, controls sharpness of anaerobic transition
+  // dimensionless, greater than 1
+  double anaerobicTransExp;
+
   // Maximum fraction of plant N demand that can be met by fixation
   // under low soil N, dimensionless between 0 and 1
   double nFixationFracMax;

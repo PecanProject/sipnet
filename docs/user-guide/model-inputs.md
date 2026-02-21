@@ -215,7 +215,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 ### Output Flags
 
 | Option              | Default | Description                                                    |
-| ------------------- | ------- | -------------------------------------------------------------- |
+|---------------------|---------|----------------------------------------------------------------|
 | `do-main-output`    | on      | Print time series of all output variables to `<file-name>.out` |
 | `do-single-outputs` | off     | Print outputs one variable per file (e.g. `<file-name>.NEE`)   |
 | `dump-config`       | on      | Print final config to `<file-name>.config`                     |
@@ -226,6 +226,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 | Option           | Default | Description                                                                             |
 |------------------|---------|-----------------------------------------------------------------------------------------|
+| `anaerobic`      | off     | Enable modeling of methane and anaerobic effect on Rh moisture dependency               |
 | `events`         | on      | Enable event handling                                                                   |
 | `gdd`            | on      | Use growing degree days to determine leaf growth                                        |
 | `growth-resp`    | off     | Explicitly model growth respiration, rather than including with maintenance respiration |
@@ -238,6 +239,8 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
+ - `anaerobic` requires `water-hresp`
+ - 'nitrogen-cycle' requires both 'litter-pool' and 'anaerobic'
 
 ### Command Line Arguments
 
