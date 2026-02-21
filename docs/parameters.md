@@ -172,7 +172,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | Symbol                      | Parameter Name        | Definition                                                      | Units    | Notes              |
 | --------------------------- | --------------------- | --------------------------------------------------------------- | -------- | ------------------ |
 | $\alpha_{\text{fine root}}$ | fineRootAllocation    | Fraction of $NPP$ allocated to fine roots                       | unitless |                    |
-| $\alpha_{\text{coarse root}}$ | coarseRootAllocation | Fraction of $NPP$ allocated to coarse roots                     | unitless | Calculated internally from remainder: $\alpha_{\text{coarse root}} = 1 - \alpha_{\text{leaf}} - \alpha_{\text{wood}} - \alpha_{\text{fine root}}$ |
+| $\alpha_{\text{coarse root}}$ |                      | Fraction of $NPP$ allocated to coarse roots                     | unitless | Calculated internally from remainder: $\alpha_{\text{coarse root}} = 1 - \alpha_{\text{leaf}} - \alpha_{\text{wood}} - \alpha_{\text{fine root}}$ |
 | $\alpha_{\text{wood}}$      | woodAllocation        | Fraction of $NPP$ allocated to wood                             | unitless |                    |
 
 ### Autotrophic Respiration Parameters
