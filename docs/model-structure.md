@@ -591,15 +591,30 @@ drainage.
 Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of carbon creation fluxes divided by their respective C:N ratios:
 
 \begin{equation}
-F^N_\text{demand} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
-\label{eq:plant_n_demand}
+F^N_{\text{demand,}leafOn} = \frac{F^C_{\text{creation,}leafOn}}{CN_{\text{leaf}}} -
+\frac{F^C_{\text{creation,}leafOn}}{CN_{\text{wood}}}
+\label{eq:leaf_on_n_demand}
+\end{equation}
+
+\begin{equation}
+F^N_{\text{demand,}creation} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
+\label{eq:creation_n_demand}
 \end{equation}
 
 \begin{equation*}
-\small i \in \{\text{wood, leaf, leaf on, fine root, coarse root}\}
+\small i \in \{\text{wood, leaf, fine root, coarse root}\}
 \end{equation*}
 
-Each term in the sum is calculated according to \eqref{eq:plant_n}. The sum includes a subtraction of the leaf on creation flux divided by the wood C:N ratio to account for the internal transfer of nitrogen from wood to leaf during leaf on events, thus meeting some nitrogen demand. Total plant N demand $F^N_\text{demand}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
+\begin{equation}
+F^N_{\text{demand,}total} =
+F^N_{\text{demand,}leafOn} +
+F^N_{\text{demand,}creation}
+\label{eq:plant_n_demand}
+\end{equation}
+
+Each term in the sum is calculated according to \eqref{eq:plant_n}. Total plant N demand $F^N_{\text{demand,}total}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
+
+**TODO:** possibly include more context about leaf on events
 
 ### Nitrogen Fixation and Uptake $F^N_\text{fix}, F^N_\text{uptake}$
 

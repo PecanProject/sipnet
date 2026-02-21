@@ -1357,13 +1357,16 @@ double calcPlantNDemand() {
   // demand should only count the difference in the N
   // between those two pools, hence substracting
   // params.woodCN from params.leafCN for leafOnCreation
-  double demand = fluxes.woodCreation / params.woodCN +
-                  fluxes.leafCreation / params.leafCN +
-                  fluxes.leafOnCreation / params.leafCN -
-                  fluxes.leafOnCreation / params.woodCN +
-                  fluxes.fineRootCreation / params.fineRootCN +
-                  fluxes.coarseRootCreation / params.woodCN;
-  return demand;
+  double leafOnDemand = fluxes.leafOnCreation / params.leafCN -
+                        fluxes.leafOnCreation / params.woodCN;
+  // calculate demand from all other creation terms
+  double creationDemand = fluxes.woodCreation / params.woodCN +
+                          fluxes.leafCreation / params.leafCN +
+                          fluxes.fineRootCreation / params.fineRootCN +
+                          fluxes.coarseRootCreation / params.woodCN;
+  // total demand is leafOnDemand plus creationDemand
+  double totalDemand = leafOnDemand + creationDemand;
+  return totalDemand;
 }
 
 /*!
