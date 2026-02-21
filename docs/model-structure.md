@@ -734,10 +734,10 @@ $F^W_{\text{precip,soil}}$ is added to soil water in \eqref{eq:Braswell_A4}.
 ### Evapotranspiration
 
 \begin{equation}
-ET = E + T
+ET = E + F^W_{\text{trans}}
 \end{equation}
 
-Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($T = F^W_{\text{trans}}$). These fluxes are defined below:
+Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($F^W_{\text{trans}}$). These fluxes are defined below:
 
 #### Evaporation
 
@@ -762,7 +762,7 @@ E_{\text{int,pot}} = f_{\text{intercept}} \cdot F^W_{\text{precip}}
 and is capped by an LAI-scaled maximum interception-evaporation flux:
 
 \begin{equation}
-E_{\text{int,max}} = LAI \cdot leafPoolDepth
+E_{\text{int,max}} = LAI \cdot WHC_{\text{leaf}}
 \end{equation}
 
 so that:
