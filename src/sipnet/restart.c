@@ -102,6 +102,24 @@ static int restartDoublesMatch(double a, double b) {
   return fabs(a - b) < 1e-10;
 }
 
+static int climateSignaturesMatch(const ClimateNode *actual,
+                                  const RestartClimateSignature *expected) {
+  int mismatch = 0;
+  mismatch |= (actual->year != expected->year);
+  mismatch |= (actual->day != expected->day);
+  mismatch |= !restartDoublesMatch(actual->time, expected->time);
+  mismatch |= !restartDoublesMatch(actual->length, expected->length);
+  mismatch |= !restartDoublesMatch(actual->tair, expected->tair);
+  mismatch |= !restartDoublesMatch(actual->tsoil, expected->tsoil);
+  mismatch |= !restartDoublesMatch(actual->par, expected->par);
+  mismatch |= !restartDoublesMatch(actual->precip, expected->precip);
+  mismatch |= !restartDoublesMatch(actual->vpd, expected->vpd);
+  mismatch |= !restartDoublesMatch(actual->vpdSoil, expected->vpdSoil);
+  mismatch |= !restartDoublesMatch(actual->vPress, expected->vPress);
+  mismatch |= !restartDoublesMatch(actual->wspd, expected->wspd);
+  return !mismatch;
+}
+
 static void sanitizeBuildInfo(char *dest, size_t destLen, const char *src) {
   if (destLen == 0) {
     return;
@@ -148,28 +166,30 @@ static void validateRestartBoundary(const RestartHeaderV1 *header) {
   }
 
   const RestartClimateSignature *expected = &(header->boundaryClimate);
-  int mismatch = 0;
-
-  mismatch |= (climate->year != expected->year);
-  mismatch |= (climate->day != expected->day);
-  mismatch |= !restartDoublesMatch(climate->time, expected->time);
-  mismatch |= !restartDoublesMatch(climate->length, expected->length);
-  mismatch |= !restartDoublesMatch(climate->tair, expected->tair);
-  mismatch |= !restartDoublesMatch(climate->tsoil, expected->tsoil);
-  mismatch |= !restartDoublesMatch(climate->par, expected->par);
-  mismatch |= !restartDoublesMatch(climate->precip, expected->precip);
-  mismatch |= !restartDoublesMatch(climate->vpd, expected->vpd);
-  mismatch |= !restartDoublesMatch(climate->vpdSoil, expected->vpdSoil);
-  mismatch |= !restartDoublesMatch(climate->vPress, expected->vPress);
-  mismatch |= !restartDoublesMatch(climate->wspd, expected->wspd);
-
-  if (mismatch) {
+  if (!climateSignaturesMatch(climate, expected)) {
     logError("Restart boundary mismatch: first climate row does not match "
              "checkpoint metadata\n");
     logError("Expected: year=%d day=%d time=%.8f\n", expected->year,
              expected->day, expected->time);
     logError("Found:    year=%d day=%d time=%.8f\n", climate->year,
              climate->day, climate->time);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
+static void validateRestartModelBuild(const RestartHeaderV1 *header) {
+  char currentBuildInfo[sizeof(header->buildInfo)];
+  sanitizeBuildInfo(currentBuildInfo, sizeof(currentBuildInfo), VERSION_STRING);
+
+  if (strcmp(header->modelVersion, NUMERIC_VERSION) != 0) {
+    logError("Restart model version mismatch: checkpoint=%s current=%s\n",
+             header->modelVersion, NUMERIC_VERSION);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
+  if (strcmp(header->buildInfo, currentBuildInfo) != 0) {
+    logError("Restart build info mismatch: checkpoint=%s current=%s\n",
+             header->buildInfo, currentBuildInfo);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
@@ -313,6 +333,7 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
   }
 
   checkRestartContextCompatibility(&header);
+  validateRestartModelBuild(&header);
   validateRestartBoundary(&header);
   applyRestartGddCarry(&header);
 

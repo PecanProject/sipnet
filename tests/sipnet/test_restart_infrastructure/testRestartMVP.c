@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/wait.h>
 
 #include "common/logging.h"
@@ -8,6 +9,11 @@
 
 #define SIPNET_CMD "../../../sipnet"
 #define CHECKPOINT_FILE "run.restart"
+#define RESTART_HEADER_MAGIC_SIZE 32
+#define RESTART_HEADER_SCHEMA_SIZE 4
+#define RESTART_HEADER_SCHEMA_OFFSET RESTART_HEADER_MAGIC_SIZE
+#define RESTART_HEADER_MODEL_VERSION_OFFSET                                    \
+  (RESTART_HEADER_MAGIC_SIZE + RESTART_HEADER_SCHEMA_SIZE)
 
 static int runShell(const char *cmd) {
   int rc = system(cmd);
@@ -35,6 +41,36 @@ static int runModel(const char *inputFile, const char *logFile) {
   char cmd[512];
   sprintf(cmd, "%s -i %s > %s 2>&1", SIPNET_CMD, inputFile, logFile);
   return runShell(cmd);
+}
+
+static int writeByteAtOffset(const char *file, long offset,
+                             unsigned char value) {
+  FILE *fp = fopen(file, "r+b");
+  if (fp == NULL) {
+    logTest("Unable to open %s for mutation\n", file);
+    return 1;
+  }
+  if (fseek(fp, offset, SEEK_SET) != 0) {
+    fclose(fp);
+    logTest("Unable to seek %s to offset %ld\n", file, offset);
+    return 1;
+  }
+  if (fwrite(&value, 1, 1, fp) != 1) {
+    fclose(fp);
+    logTest("Unable to write byte to %s\n", file);
+    return 1;
+  }
+
+  fclose(fp);
+  return 0;
+}
+
+static int truncateFileToSize(const char *file, long size) {
+  if (truncate(file, size) != 0) {
+    logTest("Unable to truncate %s to %ld bytes\n", file, size);
+    return 1;
+  }
+  return 0;
 }
 
 static int hasManagedEventOnDay(const char *eventFile, int year, int day) {
@@ -179,12 +215,112 @@ static int testNoRestartModeUnchanged(void) {
   return status;
 }
 
+static int testModelVersionMismatchFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim");
+  if (stepStatus) {
+    logTest(
+        "Failed to prepare files for model-version mismatch test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "model_mismatch_seg1.log") != 0);
+  status |= writeByteAtOffset(
+      CHECKPOINT_FILE, RESTART_HEADER_MODEL_VERSION_OFFSET, (unsigned char)'X');
+
+  stepStatus = prepRunFiles("restart_segment2.clim");
+  if (stepStatus) {
+    logTest(
+        "Failed to prepare files for model-version mismatch test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "model_mismatch_seg2.log");
+  status |= (rc == 0);
+
+  if (status) {
+    logTest("testModelVersionMismatchFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testSchemaMismatchFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for schema mismatch test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "schema_mismatch_seg1.log") != 0);
+  status |= writeByteAtOffset(CHECKPOINT_FILE, RESTART_HEADER_SCHEMA_OFFSET,
+                              (unsigned char)2);
+
+  stepStatus = prepRunFiles("restart_segment2.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for schema mismatch test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "schema_mismatch_seg2.log");
+  status |= (rc == 0);
+
+  if (status) {
+    logTest("testSchemaMismatchFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testTruncatedCheckpointFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for truncation test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "truncate_seg1.log") != 0);
+  status |= truncateFileToSize(CHECKPOINT_FILE, 16);
+
+  stepStatus = prepRunFiles("restart_segment2.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for truncation test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "truncate_seg2.log");
+  status |= (rc == 0);
+
+  if (status) {
+    logTest("testTruncatedCheckpointFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
   status |= testSegmentedEquivalence();
   status |= testStrictClimateMismatchFails();
   status |= testNoRestartModeUnchanged();
+  status |= testModelVersionMismatchFails();
+  status |= testSchemaMismatchFails();
+  status |= testTruncatedCheckpointFails();
 
   return status;
 }
