@@ -737,7 +737,7 @@ $F^W_{\text{precip,soil}}$ is added to soil water in \eqref{eq:Braswell_A4}.
 ET = E + T
 \end{equation}
 
-Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($F^W_{\text{trans}}$). These fluxes are defined below:
+Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($T=F^W_{\text{trans}}$). These fluxes are defined below:
 
 #### Evaporation
 
