@@ -10,6 +10,8 @@
       {"no-" #name, no_argument, &ctx.tmpFlag, 0}
 
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
+#define CLI_RESTART_IN 1001
+#define CLI_RESTART_OUT 1002
 
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 // See docs/developer-guide/cli-options.md for details on how to add a new
@@ -35,12 +37,15 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(dump-config),
     DECLARE_FLAG(print-header),
     DECLARE_FLAG(quiet),
+    DECLARE_FLAG(restart-strict),
 
     // These options don’t set a flag. We distinguish them by their indices.
     // name                         has_arg           flag  val (val is the
     // index)
     {"input-file", required_argument, 0, 'i'},
     {"file-name", no_argument, 0, 'f'},
+    {"restart-in", required_argument, 0, CLI_RESTART_IN},
+    {"restart-out", required_argument, 0, CLI_RESTART_OUT},
     {"help", no_argument, 0, 'h'},
     {"version", no_argument, 0, 'v'},
     {0, 0, 0, 0}};
@@ -61,7 +66,7 @@ char *argNameMap[] = {
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
     DECLARE_ARG_FOR_MAP(dumpConfig), DECLARE_ARG_FOR_MAP(printHeader),
-    DECLARE_ARG_FOR_MAP(quiet)};
+    DECLARE_ARG_FOR_MAP(quiet), DECLARE_ARG_FOR_MAP(restartStrict)};
 // clang-format on
 
 // Print the help message when requested
@@ -93,6 +98,9 @@ void usage(char *progName) {
   printf("  --dump-config        Print final config to <file-name>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
+  printf("  --restart-strict     Enforce strict boundary validation for restart_in/out (1)\n");
+  printf("  --restart-in <path>  Read a restart checkpoint from path\n");
+  printf("  --restart-out <path> Write a restart checkpoint to path at end of run\n");
   printf("\n");
   printf("Info options:\n");
   printf("  -h, --help           Print this message and exit\n");
@@ -140,6 +148,22 @@ void parseCommandLineArgs(int argc, char *argv[]) {
       case 'h':
         usage(argv[0]);
         exit(EXIT_CODE_SUCCESS);
+      case CLI_RESTART_IN:
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          logError("restart-in path %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("restartIn", optarg, CTX_COMMAND_LINE);
+        break;
+      case CLI_RESTART_OUT:
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          logError("restart-out path %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("restartOut", optarg, CTX_COMMAND_LINE);
+        break;
       case 'i':
         if (strlen(optarg) >= FILENAME_MAXLEN) {
           logError("input filename %s exceeds maximum length of %d\n", optarg,

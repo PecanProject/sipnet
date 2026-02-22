@@ -211,6 +211,8 @@ Thus, command-line arguments override settings in the configuration file, and co
 | ------------ | --------- | ------------------------------------- |
 | `input-file` | sipnet.in | Name of input config file             |
 | `file-name`  | sipnet    | Prefix of climate and parameter files |
+| `restart-in` | unset     | Path to restart checkpoint to load    |
+| `restart-out`| unset     | Path to restart checkpoint to write   |
 
 ### Output Flags
 
@@ -221,6 +223,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `dump-config`       | on      | Print final config to `<file-name>.config`                     |
 | `print-header`      | on      | Whether to print header row in output files                    |
 | `quiet`             | off     | Suppress info and warning message                              |
+| `restart-strict`    | on      | Strict restart validation; required when restart is used       |
 
 ### Model Flags
 

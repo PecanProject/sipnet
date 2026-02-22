@@ -620,6 +620,9 @@ typedef struct TrackerVars {  // variables to track various things
   // g N * m^-2 ground area, Mineral N lost to volatilization
   double n2o;
 
+  // Previous step year used for yearly tracker rollover logic
+  int lastYear;
+
 } Trackers;
 
 // Global var

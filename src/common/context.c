@@ -46,6 +46,7 @@ void initContext(void) {
   CREATE_INT_CONTEXT(dumpConfig,      "DUMP_CONFIG",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(printHeader,     "PRINT_HEADER",     ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(quiet,           "QUIET",            ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(restartStrict,   "RESTART_STRICT",   ARG_ON,  FLAG_YES);
 
   // Files
   CREATE_CHAR_CONTEXT(paramFile,      "PARAM_FILE",       NO_DEFAULT_FILE);
@@ -53,6 +54,8 @@ void initContext(void) {
   CREATE_CHAR_CONTEXT(outFile,        "OUT_FILE",         NO_DEFAULT_FILE);
   CREATE_CHAR_CONTEXT(outConfigFile,  "OUT_CONFIG_FILE",  NO_DEFAULT_FILE);
   CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE);
+  CREATE_CHAR_CONTEXT(restartIn,      "RESTART_IN",       NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(restartOut,     "RESTART_OUT",      NO_DEFAULT_FILE);
   // clang-format on
 
   // Other
@@ -165,6 +168,12 @@ int by_name(const struct context_metadata *a,
   return strcmp(a->keyName, b->keyName);
 }
 
+int isRestartConfigParam(const struct context_metadata *meta) {
+  return strcmp(meta->printName, "RESTART_IN") == 0 ||
+         strcmp(meta->printName, "RESTART_OUT") == 0 ||
+         strcmp(meta->printName, "RESTART_STRICT") == 0;
+}
+
 void validateFilename(void) {
   // We need to do this earlier than the rest of the validation
   // Make sure FILENAME is set and well-sized; everything else is optional (not
@@ -183,6 +192,8 @@ void validateFilename(void) {
 
 void validateContext(void) {
   int hasError = 0;
+  int usingRestart =
+      (strlen(ctx.restartIn) > 0) || (strlen(ctx.restartOut) > 0);
 
   if (ctx.soilPhenol && ctx.gdd) {
     logError("soil-phenol and gdd may not both be turned on\n");
@@ -197,6 +208,12 @@ void validateContext(void) {
 
   if (ctx.anaerobic && !ctx.waterHResp) {
     logError("anaerobic requires water-hresp to be turned on\n");
+    hasError = 1;
+  }
+
+  if (usingRestart && !ctx.restartStrict) {
+    logError("restart_strict must be enabled when using restart_in or "
+             "restart_out\n");
     hasError = 1;
   }
 
@@ -215,6 +232,9 @@ void printConfig(FILE *outFile) {
   unsigned int width = 0;
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
+    if (isRestartConfigParam(s)) {
+      continue;
+    }
     if (s->type == CTX_CHAR) {
       unsigned int len = strlen(s->printName);
       width = len > width ? len : width;
@@ -235,6 +255,9 @@ void printConfig(FILE *outFile) {
   // Config
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
+    if (isRestartConfigParam(s)) {
+      continue;
+    }
 
     if (s->type == CTX_INT) {
       fprintf(outFile, "%21s %13s %*d\n", s->printName,

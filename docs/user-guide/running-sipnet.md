@@ -28,6 +28,8 @@ When the same option is specified in both places, **command-line arguments take 
 | --- | --- | --- | --- | --- |
 | `--input-file` | `-i` | `<filename>` | `sipnet.in` | Name of input configuration file |
 | `--file-name` | `-f` | `<name>` | `sipnet` | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`) |
+| `--restart-in` |  | `<path>` | unset | Read a restart checkpoint (schema v1 binary) |
+| `--restart-out` |  | `<path>` | unset | Write a restart checkpoint at end of run |
 
 ### Model Feature Flags
 
@@ -62,6 +64,7 @@ These flags control what outputs are generated. Prepend `no-` to disable (e.g., 
 | `--dump-config` | OFF (0) | Write final merged configuration to `<file-name>.config` after running |
 | `--print-header` | ON (1) | Print header row with variable names in output files |
 | `--quiet` | OFF (0) | Suppress informational and warning messages to console |
+| `--restart-strict` | ON (1) | Strict restart validation mode (required when using restart options) |
 
 ### Information Options
 
@@ -96,6 +99,9 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | `CLIM_FILE` | string | Path to climate file (optional; defaults to `<FILE_NAME>.clim`) |
 | `OUT_FILE` | string | Path for main output file (optional; defaults to `<FILE_NAME>.out`) |
 | `OUT_CONFIG_FILE` | string | Path for config dump file (optional; defaults to `<FILE_NAME>.config`) |
+| `RESTART_IN` | string | Path to checkpoint to resume from |
+| `RESTART_OUT` | string | Path to checkpoint to write at end of run |
+| `RESTART_STRICT` | 0/1 | Strict restart validation mode; must be `1` when restart is used |
 
 #### Model Feature Keys
 
@@ -143,6 +149,39 @@ DO_SINGLE_OUTPUT 0
 PRINT_HEADER 1
 QUIET 0
 ```
+
+## Restart Checkpoints (MVP)
+
+SIPNET restart support is designed for segmented orchestration (for example, external workflow controllers). SIPNET only handles state checkpointing and strict resume validation.
+
+### What SIPNET stores in `RESTART_OUT` (schema v1)
+
+- Schema/version metadata (`SIPNET_RESTART_V1`, model/build info)
+- Processed step counter
+- Boundary climate signature (last processed timestep metadata)
+- Full environment pools (`envi.*`), including hidden pool `plantWoodCStorageDelta`
+- Full trackers (`trackers.*`) including cumulative totals and yearly rollover state
+- Phenology trackers (`didLeafGrowth`, `didLeafFall`, `lastYear`)
+- Event lingering state (`eventTrackers.d_till_mod`)
+- Event cursor state + deterministic hash checks for processed events
+- Full mean-NPP tracker internals (ring buffer arrays, indices, weighted sum)
+- GDD carry metadata for phenology continuity
+
+### Resume behavior with `RESTART_IN`
+
+1. SIPNET performs normal setup (`setupModel`, `setupEvents`)
+2. Checkpoint state overwrites runtime state
+3. Strict validation checks restart context and boundary climate row
+4. Event cursor is restored deterministically (with hash checks)
+5. Boundary row is consumed (already represented in checkpoint state), then run continues
+
+### Strict constraints and failure modes
+
+- `RESTART_STRICT` must be enabled when using restart options
+- First climate row in resumed segment must exactly match checkpoint boundary metadata
+- Changes to already-processed events are rejected (hard error)
+- Incompatible model flags between checkpoint and current run are rejected
+- SIPNET does not stitch/append outputs across segments; orchestration must stitch outputs externally
 
 ## Option Precedence
 

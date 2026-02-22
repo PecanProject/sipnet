@@ -167,6 +167,42 @@ void initEvents(char *eventFile, int printHeader);
 void setupEvents(void);
 
 /*!
+ * Get total number of events loaded from events.in
+ */
+int getEventCount(void);
+
+/*!
+ * Get the zero-based index of the current event cursor.
+ *
+ * Returns:
+ *   - index in [0, getEventCount()] if cursor is valid
+ *   - -1 if cursor is inconsistent with loaded event list
+ */
+int getEventCursorIndex(void);
+
+/*!
+ * Set event cursor by zero-based index.
+ *
+ * @return 0 on success, non-zero on invalid index.
+ */
+int setEventCursorIndex(int index);
+
+/*!
+ * Hash the first `count` events in event order.
+ *
+ * Returns 0 on invalid count.
+ */
+unsigned long long getEventPrefixHash(int count);
+
+/*!
+ * Hash event at zero-based index.
+ *
+ * Sets *hasEvent to 1 when index exists, otherwise 0.
+ * Returns 0 when index is invalid or no event exists.
+ */
+unsigned long long getEventHashAtIndex(int index, int *hasEvent);
+
+/*!
  * Set all event fluxes to zero
  *
  * Reset all event fluxes to zero in preparation for the next climate step.
