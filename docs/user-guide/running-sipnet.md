@@ -154,36 +154,15 @@ QUIET 0
 
 SIPNET restart support is designed for segmented orchestration (for example, external workflow controllers). SIPNET only handles state checkpointing and strict resume validation.
 
-### What SIPNET stores in `RESTART_OUT` (schema v1)
-
-- Schema/version metadata (`SIPNET_RESTART_V1`, model/build info)
-- Processed step counter
-- Boundary climate signature (last processed timestep metadata)
-- Full environment pools (`envi.*`), including hidden pool `plantWoodCStorageDelta`
-- Full trackers (`trackers.*`) including cumulative totals and yearly rollover state
-- Phenology trackers (`didLeafGrowth`, `didLeafFall`, `lastYear`)
-- Event lingering state (`eventTrackers.d_till_mod`)
-- Event cursor state + deterministic hash checks for processed events
-- Full mean-NPP tracker internals (ring buffer arrays, indices, weighted sum)
-- GDD carry metadata for phenology continuity
-
-### Resume behavior with `RESTART_IN`
-
-1. SIPNET performs normal setup (`setupModel`, `setupEvents`)
-2. Checkpoint state overwrites runtime state
-3. Strict validation checks restart context and boundary climate row
-4. Event cursor is restored deterministically (with hash checks)
-5. Boundary row is consumed (already represented in checkpoint state), then run continues
-
 ### Strict constraints and failure modes
 
 - `RESTART_STRICT` must be enabled when using restart options
 - First climate row in resumed segment must exactly match checkpoint boundary metadata
-- Checkpoint model version/build must match the current binary
-- Changes to already-processed events are rejected (hard error)
-- Incompatible model flags between checkpoint and current run are rejected
-- Corrupt/truncated or schema-mismatched checkpoints are rejected (hard error)
+- Checkpoint schema/version and model compatibility must match the current run
+- Invalid restart context (for example changed processed-event history) is rejected with a hard error
 - SIPNET does not stitch/append outputs across segments; orchestration must stitch outputs externally
+
+For the checkpoint schema, strict validation order, and implementation details, see [Restart Checkpoint Spec](../developer-guide/restart-checkpoint.md).
 
 ## Option Precedence
 
