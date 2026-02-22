@@ -43,7 +43,7 @@ static struct option long_options[] = {  // NOLINT
     // name                         has_arg           flag  val (val is the
     // index)
     {"input-file", required_argument, 0, 'i'},
-    {"file-name", no_argument, 0, 'f'},
+    {"file-name", required_argument, 0, 'f'},
     {"restart-in", required_argument, 0, CLI_RESTART_IN},
     {"restart-out", required_argument, 0, CLI_RESTART_OUT},
     {"help", no_argument, 0, 'h'},
@@ -121,13 +121,20 @@ void usage(char *progName) {
 // Print the version when requested
 void version(void) { printf("SIPNET version %s\n", VERSION_STRING); }
 
+static void requireCLIArg(const char *optionName) {
+  if (optarg == NULL) {
+    logError("option %s requires an argument\n", optionName);
+    exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+  }
+}
+
 // Parses command-line options using getopt_long
 void parseCommandLineArgs(int argc, char *argv[]) {
   /* getopt_long stores the option index here. */
   int longIndex = 0;
   int shortIndex;
   // get command-line arguments:
-  while ((shortIndex = getopt_long(argc, argv, "hi:v", long_options,
+  while ((shortIndex = getopt_long(argc, argv, "hf:i:v", long_options,
                                    &longIndex)) != -1) {
 
     switch (shortIndex) {
@@ -136,6 +143,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         updateIntContext(argNameMap[longIndex], ctx.tmpFlag, CTX_COMMAND_LINE);
         break;
       case 'f':
+        requireCLIArg("--file-name");
         if (strlen(optarg) >= FILENAME_MAXLEN) {
           logError("filename %s exceeds maximum length of %d\n", optarg,
                    FILENAME_MAXLEN);
@@ -149,6 +157,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         usage(argv[0]);
         exit(EXIT_CODE_SUCCESS);
       case CLI_RESTART_IN:
+        requireCLIArg("--restart-in");
         if (strlen(optarg) >= FILENAME_MAXLEN) {
           logError("restart-in path %s exceeds maximum length of %d\n", optarg,
                    FILENAME_MAXLEN);
@@ -157,6 +166,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         updateCharContext("restartIn", optarg, CTX_COMMAND_LINE);
         break;
       case CLI_RESTART_OUT:
+        requireCLIArg("--restart-out");
         if (strlen(optarg) >= FILENAME_MAXLEN) {
           logError("restart-out path %s exceeds maximum length of %d\n", optarg,
                    FILENAME_MAXLEN);
@@ -165,6 +175,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         updateCharContext("restartOut", optarg, CTX_COMMAND_LINE);
         break;
       case 'i':
+        requireCLIArg("--input-file");
         if (strlen(optarg) >= FILENAME_MAXLEN) {
           logError("input filename %s exceeds maximum length of %d\n", optarg,
                    FILENAME_MAXLEN);
