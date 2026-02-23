@@ -24,19 +24,19 @@ When the same option is specified in both places, **command-line arguments take 
 
 ### Input/Output Options
 
-| Option | Short | Argument | Default | Description |
-| --- | --- | --- | --- | --- |
-| `--input-file` | `-i` | `<filename>` | `sipnet.in` | Name of input configuration file |
-| `--file-name` | `-f` | `<name>` | `sipnet` | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`) |
-| `--restart-in` |  | `<path>` | unset | Read a restart checkpoint (schema `1.0`) |
-| `--restart-out` |  | `<path>` | unset | Write a restart checkpoint at end of run |
+| Option          | Short | Argument     | Default     | Description                                                                               |
+| --------------- | ----- | ------------ | ----------- | ----------------------------------------------------------------------------------------- |
+| `--input-file`  | `-i`  | `<filename>` | `sipnet.in` | Name of input configuration file                                                          |
+| `--file-name`   | `-f`  | `<name>`     | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`) |
+| `--restart-in`  |       | `<path>`     | unset       | Read a restart checkpoint (schema `1.0`)                                                  |
+| `--restart-out` |       | `<path>`     | unset       | Write a restart checkpoint at end of run                                                  |
 
 ### Model Feature Flags
 
 These flags enable or disable optional model processes. Prepend `no-` to the flag name to disable it (e.g., `--no-events`).
 
 | Flag               | Default | Description                                                                    |
-|--------------------|---------|--------------------------------------------------------------------------------|
+| ------------------ | ------- | ------------------------------------------------------------------------------ |
 | `--events`         | ON (1)  | Enable agronomic event handling from `events.in` file                          |
 | `--gdd`            | ON (1)  | Use growing degree days to determine when leaves grow                          |
 | `--growth-resp`    | OFF (0) | Explicitly model growth respiration separately from maintenance respiration    |
@@ -57,21 +57,21 @@ The following flag combinations are mutually exclusive:
 
 These flags control what outputs are generated. Prepend `no-` to disable (e.g., `--no-print-header`).
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--do-main-output` | ON (1) | Write time series of all output variables to `<file-name>.out` |
+| Flag                  | Default | Description                                                                     |
+| --------------------- | ------- | ------------------------------------------------------------------------------- |
+| `--do-main-output`    | ON (1)  | Write time series of all output variables to `<file-name>.out`                  |
 | `--do-single-outputs` | OFF (0) | Write one output variable per file (e.g., `<file-name>.NEE`, `<file-name>.GPP`) |
-| `--dump-config` | OFF (0) | Write final merged configuration to `<file-name>.config` after running |
-| `--print-header` | ON (1) | Print header row with variable names in output files |
-| `--quiet` | OFF (0) | Suppress informational and warning messages to console |
-| `--restart-strict` | ON (1) | Strict restart validation mode (required when using restart options) |
+| `--dump-config`       | OFF (0) | Write final merged configuration to `<file-name>.config` after running          |
+| `--print-header`      | ON (1)  | Print header row with variable names in output files                            |
+| `--quiet`             | OFF (0) | Suppress informational and warning messages to console                          |
+| `--restart-strict`    | ON (1)  | Strict restart validation mode (required when using restart options)            |
 
 ### Information Options
 
-| Option | Short | Description |
-| --- | --- | --- |
-| `--help` | `-h` | Print help message and exit |
-| `--version` | `-v` | Print SIPNET version and exit |
+| Option      | Short | Description                   |
+| ----------- | ----- | ----------------------------- |
+| `--help`    | `-h`  | Print help message and exit   |
+| `--version` | `-v`  | Print SIPNET version and exit |
 
 ## Configuration Files
 
@@ -91,41 +91,41 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 
 #### Input/Output Keys
 
-| Key | Value Type | Description |
-| --- | --- | --- |
-| `INPUT_FILE` | string | Name of configuration file to read |
-| `FILE_NAME` | string | Prefix for climate and parameter input files |
-| `PARAM_FILE` | string | Path to model parameters file (optional; defaults to `<FILE_NAME>.param`) |
-| `CLIM_FILE` | string | Path to climate file (optional; defaults to `<FILE_NAME>.clim`) |
-| `OUT_FILE` | string | Path for main output file (optional; defaults to `<FILE_NAME>.out`) |
-| `OUT_CONFIG_FILE` | string | Path for config dump file (optional; defaults to `<FILE_NAME>.config`) |
-| `RESTART_IN` | string | Path to checkpoint to resume from |
-| `RESTART_OUT` | string | Path to checkpoint to write at end of run |
-| `RESTART_STRICT` | 0/1 | Strict restart validation mode; must be `1` when restart is used |
+| Key               | Value Type | Description                                                               |
+| ----------------- | ---------- | ------------------------------------------------------------------------- |
+| `INPUT_FILE`      | string     | Name of configuration file to read                                        |
+| `FILE_NAME`       | string     | Prefix for climate and parameter input files                              |
+| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_NAME>.param`) |
+| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_NAME>.clim`)           |
+| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_NAME>.out`)       |
+| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_NAME>.config`)    |
+| `RESTART_IN`      | string     | Path to checkpoint to resume from                                         |
+| `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                 |
+| `RESTART_STRICT`  | 0/1        | Strict restart validation mode; must be `1` when restart is used          |
 
 #### Model Feature Keys
 
-| Key | Value (1/0) | Description |
-| --- | --- | --- |
-| `EVENTS` | 0 or 1 | Enable/disable event handling |
-| `GDD` | 0 or 1 | Use growing degree days for leaf growth |
-| `GROWTH_RESP` | 0 or 1 | Explicitly model growth respiration |
-| `LEAF_WATER` | 0 or 1 | Track separate leaf water pool |
-| `LITTER_POOL` | 0 or 1 | Enable separate litter pool |
-| `NITROGEN_CYCLE` | 0 or 1 | Enable nitrogen cycle modeling |
-| `SNOW` | 0 or 1 | Track snowpack |
-| `SOIL_PHENOL` | 0 or 1 | Use soil temperature for phenology |
-| `WATER_HRESP` | 0 or 1 | Allow soil moisture to affect respiration |
+| Key              | Value (1/0) | Description                               |
+| ---------------- | ----------- | ----------------------------------------- |
+| `EVENTS`         | 0 or 1      | Enable/disable event handling             |
+| `GDD`            | 0 or 1      | Use growing degree days for leaf growth   |
+| `GROWTH_RESP`    | 0 or 1      | Explicitly model growth respiration       |
+| `LEAF_WATER`     | 0 or 1      | Track separate leaf water pool            |
+| `LITTER_POOL`    | 0 or 1      | Enable separate litter pool               |
+| `NITROGEN_CYCLE` | 0 or 1      | Enable nitrogen cycle modeling            |
+| `SNOW`           | 0 or 1      | Track snowpack                            |
+| `SOIL_PHENOL`    | 0 or 1      | Use soil temperature for phenology        |
+| `WATER_HRESP`    | 0 or 1      | Allow soil moisture to affect respiration |
 
 #### Output Keys
 
-| Key | Value (1/0) | Description |
-| --- | --- | --- |
-| `DO_MAIN_OUTPUT` | 0 or 1 | Write combined output file |
-| `DO_SINGLE_OUTPUT` | 0 or 1 | Write individual output files per variable |
-| `DUMP_CONFIG` | 0 or 1 | Dump final configuration |
-| `PRINT_HEADER` | 0 or 1 | Include header row in output files |
-| `QUIET` | 0 or 1 | Suppress console messages |
+| Key                | Value (1/0) | Description                                |
+| ------------------ | ----------- | ------------------------------------------ |
+| `DO_MAIN_OUTPUT`   | 0 or 1      | Write combined output file                 |
+| `DO_SINGLE_OUTPUT` | 0 or 1      | Write individual output files per variable |
+| `DUMP_CONFIG`      | 0 or 1      | Dump final configuration                   |
+| `PRINT_HEADER`     | 0 or 1      | Include header row in output files         |
+| `QUIET`            | 0 or 1      | Suppress console messages                  |
 
 ### Example Configuration File
 
@@ -192,11 +192,11 @@ Running with command-line overrides:
 
 Results in:
 
-| Option | Source | Value |
-| --- | --- | --- |
-| `file-name` | Command line | `override_site` |
-| `events` | Command line | OFF (0) — `--no-events` overrides config file's `EVENTS 1` |
-| `litter-pool` | Config file | OFF (0) — not overridden |
+| Option        | Source       | Value                                                      |
+| ------------- | ------------ | ---------------------------------------------------------- |
+| `file-name`   | Command line | `override_site`                                            |
+| `events`      | Command line | OFF (0) — `--no-events` overrides config file's `EVENTS 1` |
+| `litter-pool` | Config file  | OFF (0) — not overridden                                   |
 
 ## Tutorial: Common Use Cases
 
@@ -273,13 +273,13 @@ SIPNET generates output files based on your configuration:
 
 This file contains time-series data with one row per time step and one column per output variable. If `--print-header` is enabled, the first row contains variable names.
 
-Example output (first 5 rows):
+Example output (header + first 3 rows, showing first six columns), showing three hour time steps starting Jan 1, 2016:
 
 ```
-GPP NEE BIOMASS LAI ...
-123.45 45.23 1234.5 3.2 ...
-125.12 46.01 1234.8 3.2 ...
-128.34 47.15 1235.2 3.3 ...
+year day time plantWoodC plantLeafC woodCreation soil ...
+2016 1 0.00 1313.61 0.00 0.00 2688.07 ...
+2016 1 3.00 1313.59 0.00 0.00 2688.00 ...
+2016 1 6.00 1313.56 0.00 0.00 2687.93 ...
 ...
 ```
 
@@ -340,10 +340,6 @@ SIPNET will exit with an error if you try to enable mutually exclusive flags:
 This warning occurs if `--gdd` is enabled but the climate file lacks necessary temperature data.
 
 **Solution**: Ensure your climate file includes both air temperature (`tair`) and soil temperature (`tsoil`) columns.
-
-## Advanced: Adding New CLI Options
-
-To add new command-line options to SIPNET, see [Adding CLI Options](../developer-guide/cli-options.md#naming).
 
 ## See Also
 
