@@ -220,7 +220,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 |---------------------|---------|----------------------------------------------------------------|
 | `do-main-output`    | on      | Print time series of all output variables to `<file-name>.out` |
 | `do-single-outputs` | off     | Print outputs one variable per file (e.g. `<file-name>.NEE`)   |
-| `dump-config`       | on      | Print final config to `<file-name>.config`                     |
+| `dump-config`       | off     | Print final config to `<file-name>.config`                     |
 | `print-header`      | on      | Whether to print header row in output files                    |
 | `quiet`             | off     | Suppress info and warning message                              |
 | `restart-strict`    | on      | Strict restart validation; required when restart is used       |
