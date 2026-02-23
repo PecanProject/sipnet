@@ -25,33 +25,19 @@ On resume, SIPNET executes:
 
 ## Schema v1.0 Overview
 
-Checkpoint file format is portable ASCII text, schema `1.0`, with deterministic field order.
+Checkpoint format is line-oriented text with one explicit key/value per line:
 
-Top-level records include:
+- header: `SIPNET_RESTART 1.0`
+- metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
+- mode flags: `flags.*`
+- boundary climate signature: `boundary.*`
+- deterministic event state: `event_state.*`
+- mean tracker metadata: `mean.*`
+- full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
+- mean ring buffers: `mean.values.length` + `mean.values.<idx>`, `mean.weights.length` + `mean.weights.<idx>`
+- end marker: `end_restart 1`
 
-- header:
-  - `SIPNET_RESTART_ASCII 1.0`
-  - `model_version`
-  - `build_info`
-  - `checkpoint_utc_epoch`
-  - `processed_steps`
-- model-mode flags:
-  - `flags` (events/gdd/growthResp/leafWater/litterPool/snow/soilPhenol/waterHResp/nitrogenCycle/anaerobic)
-- boundary and deterministic restart metadata:
-  - `boundary` climate signature (last processed row)
-  - `event_state` invariants (cursor/count/prefix hash/next-event hash)
-  - `mean_meta` (length/totWeight/start/last/sum)
-- full runtime state blocks:
-  - `envi`
-  - `trackers`
-  - `phenology`
-  - `event_trackers`
-  - `balance`
-  - `mean_values`
-  - `mean_weights`
-  - `end_restart`
-
-Model parameters from `.param` are intentionally not serialized in restart files.
+All values are named; there are no positional value lists.
 
 ## Strict Validation Contract
 

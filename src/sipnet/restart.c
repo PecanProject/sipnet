@@ -13,7 +13,7 @@
 #include "events.h"
 #include "version.h"
 
-#define RESTART_MAGIC "SIPNET_RESTART_ASCII"
+#define RESTART_MAGIC "SIPNET_RESTART"
 #define RESTART_SCHEMA_VERSION "1.0"
 #define RESTART_FLOAT_EPSILON 1e-8
 
@@ -135,53 +135,89 @@ static void sanitizeBuildInfo(char *dest, size_t destLen, const char *src) {
   dest[ind] = '\0';
 }
 
-static void readTag(FILE *in, const char *restartIn, const char *expectedTag) {
-  char tag[64];
-  if (fscanf(in, "%63s", tag) != 1) {
-    logError("Restart file %s ended unexpectedly while reading tag '%s'\n",
-             restartIn, expectedTag);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+static void parseError(const char *restartIn, const char *msg,
+                       const char *key) {
+  if (key != NULL) {
+    logError("Restart parse error in %s: %s (%s)\n", restartIn, msg, key);
+  } else {
+    logError("Restart parse error in %s: %s\n", restartIn, msg);
   }
-  if (strcmp(tag, expectedTag) != 0) {
-    logError("Restart parse error in %s: expected tag '%s', found '%s'\n",
-             restartIn, expectedTag, tag);
+  exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+}
+
+static void parseValueError(const char *restartIn, const char *key,
+                            const char *value) {
+  logError("Restart parse error in %s: invalid value '%s' for key '%s'\n",
+           restartIn, value, key);
+  exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+}
+
+static long long parseLongLongStrict(const char *restartIn, const char *key,
+                                     const char *value) {
+  char *end = NULL;
+  long long parsed = strtoll(value, &end, 10);
+  if (end == value || *end != '\0') {
+    parseValueError(restartIn, key, value);
+  }
+  return parsed;
+}
+
+static int parseIntStrict(const char *restartIn, const char *key,
+                          const char *value) {
+  long long parsed = parseLongLongStrict(restartIn, key, value);
+  return (int)parsed;
+}
+
+static unsigned long long parseUnsignedLongLongStrict(const char *restartIn,
+                                                      const char *key,
+                                                      const char *value) {
+  char *end = NULL;
+  unsigned long long parsed = strtoull(value, &end, 10);
+  if (end == value || *end != '\0') {
+    parseValueError(restartIn, key, value);
+  }
+  return parsed;
+}
+
+static double parseDoubleStrict(const char *restartIn, const char *key,
+                                const char *value) {
+  char *end = NULL;
+  double parsed = strtod(value, &end);
+  if (end == value || *end != '\0') {
+    parseValueError(restartIn, key, value);
+  }
+  return parsed;
+}
+
+static void checkLineLength(const char *line, size_t lineLen,
+                            const char *restartIn) {
+  if (lineLen > 0 && line[lineLen - 1] != '\n') {
+    parseError(restartIn, "line too long or truncated", NULL);
+  }
+}
+
+static void markSeen(int *seen, const char *restartIn, const char *key) {
+  if (*seen) {
+    logError("Restart parse error in %s: duplicate key '%s'\n", restartIn, key);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
-}
-
-static void readClimateSignature(FILE *in, const char *restartIn,
-                                 RestartClimateSignature *sig) {
-  int status = fscanf(in, "%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                      &(sig->year), &(sig->day), &(sig->time), &(sig->length),
-                      &(sig->tair), &(sig->tsoil), &(sig->par), &(sig->precip),
-                      &(sig->vpd), &(sig->vpdSoil), &(sig->vPress),
-                      &(sig->wspd), &(sig->gdd));
-  if (status != 13) {
-    logError("Restart parse error in %s: invalid boundary climate signature\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
-}
-
-static void writeClimateSignature(FILE *out,
-                                  const RestartClimateSignature *sig) {
-  fprintf(
-      out,
-      "%d %d %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g",
-      sig->year, sig->day, sig->time, sig->length, sig->tair, sig->tsoil,
-      sig->par, sig->precip, sig->vpd, sig->vpdSoil, sig->vPress, sig->wspd,
-      sig->gdd);
+  *seen = 1;
 }
 
 static void readRestartState(const char *restartIn, RestartStateV1 *state,
                              MeanTracker *meanNPP) {
   FILE *in = openFile(restartIn, "r");
 
+  char firstLine[256];
+  if (fgets(firstLine, sizeof(firstLine), in) == NULL) {
+    parseError(restartIn, "missing header line", NULL);
+  }
+  checkLineLength(firstLine, strlen(firstLine), restartIn);
+
   char magic[64];
   char schemaVersion[16];
-  if (fscanf(in, "%63s %15s", magic, schemaVersion) != 2) {
-    logError("Error reading restart header from %s\n", restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+  if (sscanf(firstLine, "%63s %15s", magic, schemaVersion) != 2) {
+    parseError(restartIn, "invalid header line", NULL);
   }
 
   if (strcmp(magic, RESTART_MAGIC) != 0) {
@@ -194,167 +230,672 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 
-  readTag(in, restartIn, "model_version");
-  if (fscanf(in, "%31s", state->modelVersion) != 1) {
-    logError("Restart parse error in %s: model_version missing\n", restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+  int seenModelVersion = 0;
+  int seenBuildInfo = 0;
+  int seenCheckpointUtcEpoch = 0;
+  int seenProcessedSteps = 0;
 
-  readTag(in, restartIn, "build_info");
-  if (fscanf(in, "%95s", state->buildInfo) != 1) {
-    logError("Restart parse error in %s: build_info missing\n", restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+  int seenFlags[10] = {0};
+  int seenBoundary[13] = {0};
+  int seenEventState[5] = {0};
+  int seenMeanMeta[5] = {0};
+  int seenEnvi[12] = {0};
+  int seenTrackers[27] = {0};
+  int seenPhenology[3] = {0};
+  int seenEventTrackers = 0;
+  int seenBalance[10] = {0};
 
-  readTag(in, restartIn, "checkpoint_utc_epoch");
-  if (fscanf(in, "%lld", &(state->checkpointUtcEpoch)) != 1) {
-    logError("Restart parse error in %s: checkpoint_utc_epoch missing\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+  int seenMeanValuesLength = 0;
+  int seenMeanWeightsLength = 0;
+  int meanValuesLength = -1;
+  int meanWeightsLength = -1;
+  int *seenMeanValues = NULL;
+  int *seenMeanWeights = NULL;
+  int seenEndRestart = 0;
 
-  readTag(in, restartIn, "processed_steps");
-  if (fscanf(in, "%lld", &(state->processedSteps)) != 1) {
-    logError("Restart parse error in %s: processed_steps missing\n", restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+  char line[4096];
+  while (fgets(line, sizeof(line), in) != NULL) {
+    size_t lineLen = strlen(line);
+    checkLineLength(line, lineLen, restartIn);
 
-  readTag(in, restartIn, "flags");
-  if (fscanf(in, "%d %d %d %d %d %d %d %d %d %d", &(state->events),
-             &(state->gdd), &(state->growthResp), &(state->leafWater),
-             &(state->litterPool), &(state->snow), &(state->soilPhenol),
-             &(state->waterHResp), &(state->nitrogenCycle),
-             &(state->anaerobic)) != 10) {
-    logError("Restart parse error in %s: invalid flags section\n", restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    char key[128];
+    char value[2048];
+    char extra[32];
+    int n = sscanf(line, " %127s %2047s %31s", key, value, extra);
+    if (n == 0) {
+      continue;
+    }
+    if (n != 2) {
+      parseError(restartIn, "line must contain exactly '<key> <value>'", NULL);
+    }
 
-  readTag(in, restartIn, "boundary");
-  readClimateSignature(in, restartIn, &(state->boundaryClimate));
+    if (strcmp(key, "model_version") == 0) {
+      markSeen(&seenModelVersion, restartIn, key);
+      strncpy(state->modelVersion, value, sizeof(state->modelVersion) - 1);
+      continue;
+    }
+    if (strcmp(key, "build_info") == 0) {
+      markSeen(&seenBuildInfo, restartIn, key);
+      strncpy(state->buildInfo, value, sizeof(state->buildInfo) - 1);
+      continue;
+    }
+    if (strcmp(key, "checkpoint_utc_epoch") == 0) {
+      markSeen(&seenCheckpointUtcEpoch, restartIn, key);
+      state->checkpointUtcEpoch = parseLongLongStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "processed_steps") == 0) {
+      markSeen(&seenProcessedSteps, restartIn, key);
+      state->processedSteps = parseLongLongStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "event_state");
-  if (fscanf(in, "%d %d %llu %d %llu", &(state->eventCursorIndex),
-             &(state->eventCount), &(state->eventPrefixHash),
-             &(state->eventHasNext), &(state->eventNextHash)) != 5) {
-    logError("Restart parse error in %s: invalid event_state section\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    if (strcmp(key, "flags.events") == 0) {
+      markSeen(&(seenFlags[0]), restartIn, key);
+      state->events = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.gdd") == 0) {
+      markSeen(&(seenFlags[1]), restartIn, key);
+      state->gdd = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.growthResp") == 0) {
+      markSeen(&(seenFlags[2]), restartIn, key);
+      state->growthResp = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.leafWater") == 0) {
+      markSeen(&(seenFlags[3]), restartIn, key);
+      state->leafWater = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.litterPool") == 0) {
+      markSeen(&(seenFlags[4]), restartIn, key);
+      state->litterPool = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.snow") == 0) {
+      markSeen(&(seenFlags[5]), restartIn, key);
+      state->snow = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.soilPhenol") == 0) {
+      markSeen(&(seenFlags[6]), restartIn, key);
+      state->soilPhenol = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.waterHResp") == 0) {
+      markSeen(&(seenFlags[7]), restartIn, key);
+      state->waterHResp = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.nitrogenCycle") == 0) {
+      markSeen(&(seenFlags[8]), restartIn, key);
+      state->nitrogenCycle = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "flags.anaerobic") == 0) {
+      markSeen(&(seenFlags[9]), restartIn, key);
+      state->anaerobic = parseIntStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "mean_meta");
-  if (fscanf(in, "%d %lf %d %d %lf", &(state->meanLength),
-             &(state->meanTotWeight), &(state->meanStart), &(state->meanLast),
-             &(state->meanSum)) != 5) {
-    logError("Restart parse error in %s: invalid mean_meta section\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    if (strcmp(key, "boundary.year") == 0) {
+      markSeen(&(seenBoundary[0]), restartIn, key);
+      state->boundaryClimate.year = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.day") == 0) {
+      markSeen(&(seenBoundary[1]), restartIn, key);
+      state->boundaryClimate.day = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.time") == 0) {
+      markSeen(&(seenBoundary[2]), restartIn, key);
+      state->boundaryClimate.time = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.length") == 0) {
+      markSeen(&(seenBoundary[3]), restartIn, key);
+      state->boundaryClimate.length = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.tair") == 0) {
+      markSeen(&(seenBoundary[4]), restartIn, key);
+      state->boundaryClimate.tair = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.tsoil") == 0) {
+      markSeen(&(seenBoundary[5]), restartIn, key);
+      state->boundaryClimate.tsoil = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.par") == 0) {
+      markSeen(&(seenBoundary[6]), restartIn, key);
+      state->boundaryClimate.par = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.precip") == 0) {
+      markSeen(&(seenBoundary[7]), restartIn, key);
+      state->boundaryClimate.precip = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.vpd") == 0) {
+      markSeen(&(seenBoundary[8]), restartIn, key);
+      state->boundaryClimate.vpd = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.vpdSoil") == 0) {
+      markSeen(&(seenBoundary[9]), restartIn, key);
+      state->boundaryClimate.vpdSoil = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.vPress") == 0) {
+      markSeen(&(seenBoundary[10]), restartIn, key);
+      state->boundaryClimate.vPress = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.wspd") == 0) {
+      markSeen(&(seenBoundary[11]), restartIn, key);
+      state->boundaryClimate.wspd = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "boundary.gdd") == 0) {
+      markSeen(&(seenBoundary[12]), restartIn, key);
+      state->boundaryClimate.gdd = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "envi");
-  if (fscanf(in, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-             &(state->envi.plantWoodC), &(state->envi.plantLeafC),
-             &(state->envi.soilC), &(state->envi.soilWater),
-             &(state->envi.litterC), &(state->envi.snow),
-             &(state->envi.coarseRootC), &(state->envi.fineRootC),
-             &(state->envi.minN), &(state->envi.soilOrgN),
-             &(state->envi.litterN),
-             &(state->envi.plantWoodCStorageDelta)) != 12) {
-    logError("Restart parse error in %s: invalid envi section\n", restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    if (strcmp(key, "event_state.cursor_index") == 0) {
+      markSeen(&(seenEventState[0]), restartIn, key);
+      state->eventCursorIndex = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "event_state.event_count") == 0) {
+      markSeen(&(seenEventState[1]), restartIn, key);
+      state->eventCount = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "event_state.prefix_hash") == 0) {
+      markSeen(&(seenEventState[2]), restartIn, key);
+      state->eventPrefixHash =
+          parseUnsignedLongLongStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "event_state.has_next") == 0) {
+      markSeen(&(seenEventState[3]), restartIn, key);
+      state->eventHasNext = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "event_state.next_hash") == 0) {
+      markSeen(&(seenEventState[4]), restartIn, key);
+      state->eventNextHash = parseUnsignedLongLongStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "trackers");
-  if (fscanf(in,
-             "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
-             "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %d",
-             &(state->trackers.gpp), &(state->trackers.rtot),
-             &(state->trackers.ra), &(state->trackers.rh),
-             &(state->trackers.npp), &(state->trackers.nee),
-             &(state->trackers.yearlyGpp), &(state->trackers.yearlyRtot),
-             &(state->trackers.yearlyRa), &(state->trackers.yearlyRh),
-             &(state->trackers.yearlyNpp), &(state->trackers.yearlyNee),
-             &(state->trackers.totGpp), &(state->trackers.totRtot),
-             &(state->trackers.totRa), &(state->trackers.totRh),
-             &(state->trackers.totNpp), &(state->trackers.totNee),
-             &(state->trackers.evapotranspiration),
-             &(state->trackers.soilWetnessFrac), &(state->trackers.rRoot),
-             &(state->trackers.rSoil), &(state->trackers.rAboveground),
-             &(state->trackers.yearlyLitter), &(state->trackers.woodCreation),
-             &(state->trackers.n2o), &(state->trackers.lastYear)) != 27) {
-    logError("Restart parse error in %s: invalid trackers section\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    if (strcmp(key, "mean.length") == 0) {
+      markSeen(&(seenMeanMeta[0]), restartIn, key);
+      state->meanLength = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "mean.totWeight") == 0) {
+      markSeen(&(seenMeanMeta[1]), restartIn, key);
+      state->meanTotWeight = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "mean.start") == 0) {
+      markSeen(&(seenMeanMeta[2]), restartIn, key);
+      state->meanStart = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "mean.last") == 0) {
+      markSeen(&(seenMeanMeta[3]), restartIn, key);
+      state->meanLast = parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "mean.sum") == 0) {
+      markSeen(&(seenMeanMeta[4]), restartIn, key);
+      state->meanSum = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "phenology");
-  if (fscanf(in, "%d %d %d", &(state->phenologyTrackers.didLeafGrowth),
-             &(state->phenologyTrackers.didLeafFall),
-             &(state->phenologyTrackers.lastYear)) != 3) {
-    logError("Restart parse error in %s: invalid phenology section\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    if (strcmp(key, "envi.plantWoodC") == 0) {
+      markSeen(&(seenEnvi[0]), restartIn, key);
+      state->envi.plantWoodC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.plantLeafC") == 0) {
+      markSeen(&(seenEnvi[1]), restartIn, key);
+      state->envi.plantLeafC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.soilC") == 0) {
+      markSeen(&(seenEnvi[2]), restartIn, key);
+      state->envi.soilC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.soilWater") == 0) {
+      markSeen(&(seenEnvi[3]), restartIn, key);
+      state->envi.soilWater = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.litterC") == 0) {
+      markSeen(&(seenEnvi[4]), restartIn, key);
+      state->envi.litterC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.snow") == 0) {
+      markSeen(&(seenEnvi[5]), restartIn, key);
+      state->envi.snow = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.coarseRootC") == 0) {
+      markSeen(&(seenEnvi[6]), restartIn, key);
+      state->envi.coarseRootC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.fineRootC") == 0) {
+      markSeen(&(seenEnvi[7]), restartIn, key);
+      state->envi.fineRootC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.minN") == 0) {
+      markSeen(&(seenEnvi[8]), restartIn, key);
+      state->envi.minN = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.soilOrgN") == 0) {
+      markSeen(&(seenEnvi[9]), restartIn, key);
+      state->envi.soilOrgN = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.litterN") == 0) {
+      markSeen(&(seenEnvi[10]), restartIn, key);
+      state->envi.litterN = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "envi.plantWoodCStorageDelta") == 0) {
+      markSeen(&(seenEnvi[11]), restartIn, key);
+      state->envi.plantWoodCStorageDelta =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "event_trackers");
-  if (fscanf(in, "%lf", &(state->eventTrackers.d_till_mod)) != 1) {
-    logError("Restart parse error in %s: invalid event_trackers section\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    if (strcmp(key, "trackers.gpp") == 0) {
+      markSeen(&(seenTrackers[0]), restartIn, key);
+      state->trackers.gpp = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.rtot") == 0) {
+      markSeen(&(seenTrackers[1]), restartIn, key);
+      state->trackers.rtot = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.ra") == 0) {
+      markSeen(&(seenTrackers[2]), restartIn, key);
+      state->trackers.ra = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.rh") == 0) {
+      markSeen(&(seenTrackers[3]), restartIn, key);
+      state->trackers.rh = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.npp") == 0) {
+      markSeen(&(seenTrackers[4]), restartIn, key);
+      state->trackers.npp = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.nee") == 0) {
+      markSeen(&(seenTrackers[5]), restartIn, key);
+      state->trackers.nee = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.yearlyGpp") == 0) {
+      markSeen(&(seenTrackers[6]), restartIn, key);
+      state->trackers.yearlyGpp = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.yearlyRtot") == 0) {
+      markSeen(&(seenTrackers[7]), restartIn, key);
+      state->trackers.yearlyRtot = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.yearlyRa") == 0) {
+      markSeen(&(seenTrackers[8]), restartIn, key);
+      state->trackers.yearlyRa = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.yearlyRh") == 0) {
+      markSeen(&(seenTrackers[9]), restartIn, key);
+      state->trackers.yearlyRh = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.yearlyNpp") == 0) {
+      markSeen(&(seenTrackers[10]), restartIn, key);
+      state->trackers.yearlyNpp = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.yearlyNee") == 0) {
+      markSeen(&(seenTrackers[11]), restartIn, key);
+      state->trackers.yearlyNee = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.totGpp") == 0) {
+      markSeen(&(seenTrackers[12]), restartIn, key);
+      state->trackers.totGpp = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.totRtot") == 0) {
+      markSeen(&(seenTrackers[13]), restartIn, key);
+      state->trackers.totRtot = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.totRa") == 0) {
+      markSeen(&(seenTrackers[14]), restartIn, key);
+      state->trackers.totRa = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.totRh") == 0) {
+      markSeen(&(seenTrackers[15]), restartIn, key);
+      state->trackers.totRh = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.totNpp") == 0) {
+      markSeen(&(seenTrackers[16]), restartIn, key);
+      state->trackers.totNpp = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.totNee") == 0) {
+      markSeen(&(seenTrackers[17]), restartIn, key);
+      state->trackers.totNee = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.evapotranspiration") == 0) {
+      markSeen(&(seenTrackers[18]), restartIn, key);
+      state->trackers.evapotranspiration =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.soilWetnessFrac") == 0) {
+      markSeen(&(seenTrackers[19]), restartIn, key);
+      state->trackers.soilWetnessFrac =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.rRoot") == 0) {
+      markSeen(&(seenTrackers[20]), restartIn, key);
+      state->trackers.rRoot = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.rSoil") == 0) {
+      markSeen(&(seenTrackers[21]), restartIn, key);
+      state->trackers.rSoil = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.rAboveground") == 0) {
+      markSeen(&(seenTrackers[22]), restartIn, key);
+      state->trackers.rAboveground = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.yearlyLitter") == 0) {
+      markSeen(&(seenTrackers[23]), restartIn, key);
+      state->trackers.yearlyLitter = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.woodCreation") == 0) {
+      markSeen(&(seenTrackers[24]), restartIn, key);
+      state->trackers.woodCreation = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.n2o") == 0) {
+      markSeen(&(seenTrackers[25]), restartIn, key);
+      state->trackers.n2o = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.lastYear") == 0) {
+      markSeen(&(seenTrackers[26]), restartIn, key);
+      state->trackers.lastYear = parseIntStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "balance");
-  if (fscanf(
-          in, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-          &(state->balanceTracker.preTotalC),
-          &(state->balanceTracker.postTotalC), &(state->balanceTracker.inputsC),
-          &(state->balanceTracker.outputsC), &(state->balanceTracker.preTotalN),
-          &(state->balanceTracker.postTotalN), &(state->balanceTracker.inputsN),
-          &(state->balanceTracker.outputsN), &(state->balanceTracker.deltaC),
-          &(state->balanceTracker.deltaN)) != 10) {
-    logError("Restart parse error in %s: invalid balance section\n", restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
+    if (strcmp(key, "phenology.didLeafGrowth") == 0) {
+      markSeen(&(seenPhenology[0]), restartIn, key);
+      state->phenologyTrackers.didLeafGrowth =
+          parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "phenology.didLeafFall") == 0) {
+      markSeen(&(seenPhenology[1]), restartIn, key);
+      state->phenologyTrackers.didLeafFall =
+          parseIntStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "phenology.lastYear") == 0) {
+      markSeen(&(seenPhenology[2]), restartIn, key);
+      state->phenologyTrackers.lastYear = parseIntStrict(restartIn, key, value);
+      continue;
+    }
 
-  readTag(in, restartIn, "mean_values");
-  int meanValuesLen = 0;
-  if (fscanf(in, "%d", &meanValuesLen) != 1) {
-    logError("Restart parse error in %s: mean_values length missing\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
-  if (meanValuesLen != meanNPP->length) {
-    logError("Restart mean-tracker length mismatch in %s\n", restartIn);
+    if (strcmp(key, "event_trackers.d_till_mod") == 0) {
+      markSeen(&seenEventTrackers, restartIn, key);
+      state->eventTrackers.d_till_mod =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+
+    if (strcmp(key, "balance.preTotalC") == 0) {
+      markSeen(&(seenBalance[0]), restartIn, key);
+      state->balanceTracker.preTotalC =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.postTotalC") == 0) {
+      markSeen(&(seenBalance[1]), restartIn, key);
+      state->balanceTracker.postTotalC =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.inputsC") == 0) {
+      markSeen(&(seenBalance[2]), restartIn, key);
+      state->balanceTracker.inputsC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.outputsC") == 0) {
+      markSeen(&(seenBalance[3]), restartIn, key);
+      state->balanceTracker.outputsC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.preTotalN") == 0) {
+      markSeen(&(seenBalance[4]), restartIn, key);
+      state->balanceTracker.preTotalN =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.postTotalN") == 0) {
+      markSeen(&(seenBalance[5]), restartIn, key);
+      state->balanceTracker.postTotalN =
+          parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.inputsN") == 0) {
+      markSeen(&(seenBalance[6]), restartIn, key);
+      state->balanceTracker.inputsN = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.outputsN") == 0) {
+      markSeen(&(seenBalance[7]), restartIn, key);
+      state->balanceTracker.outputsN = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.deltaC") == 0) {
+      markSeen(&(seenBalance[8]), restartIn, key);
+      state->balanceTracker.deltaC = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "balance.deltaN") == 0) {
+      markSeen(&(seenBalance[9]), restartIn, key);
+      state->balanceTracker.deltaN = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+
+    if (strcmp(key, "mean.values.length") == 0) {
+      markSeen(&seenMeanValuesLength, restartIn, key);
+      meanValuesLength = parseIntStrict(restartIn, key, value);
+      if (meanValuesLength < 0) {
+        parseValueError(restartIn, key, value);
+      }
+      seenMeanValues = (int *)calloc((size_t)meanValuesLength, sizeof(int));
+      if (seenMeanValues == NULL) {
+        parseError(restartIn, "unable to allocate mean values tracker", NULL);
+      }
+      continue;
+    }
+    if (strncmp(key, "mean.values.", strlen("mean.values.")) == 0) {
+      if (!seenMeanValuesLength) {
+        parseError(restartIn,
+                   "mean.values.length must appear before mean.values.<idx>",
+                   key);
+      }
+      int idx = parseIntStrict(restartIn, key, key + strlen("mean.values."));
+      if (idx < 0 || idx >= meanValuesLength) {
+        parseError(restartIn, "mean.values index out of range", key);
+      }
+      markSeen(&(seenMeanValues[idx]), restartIn, key);
+      meanNPP->values[idx] = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+
+    if (strcmp(key, "mean.weights.length") == 0) {
+      markSeen(&seenMeanWeightsLength, restartIn, key);
+      meanWeightsLength = parseIntStrict(restartIn, key, value);
+      if (meanWeightsLength < 0) {
+        parseValueError(restartIn, key, value);
+      }
+      seenMeanWeights = (int *)calloc((size_t)meanWeightsLength, sizeof(int));
+      if (seenMeanWeights == NULL) {
+        parseError(restartIn, "unable to allocate mean weights tracker", NULL);
+      }
+      continue;
+    }
+    if (strncmp(key, "mean.weights.", strlen("mean.weights.")) == 0) {
+      if (!seenMeanWeightsLength) {
+        parseError(restartIn,
+                   "mean.weights.length must appear before mean.weights.<idx>",
+                   key);
+      }
+      int idx = parseIntStrict(restartIn, key, key + strlen("mean.weights."));
+      if (idx < 0 || idx >= meanWeightsLength) {
+        parseError(restartIn, "mean.weights index out of range", key);
+      }
+      markSeen(&(seenMeanWeights[idx]), restartIn, key);
+      meanNPP->weights[idx] = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+
+    if (strcmp(key, "end_restart") == 0) {
+      markSeen(&seenEndRestart, restartIn, key);
+      continue;
+    }
+
+    logError("Restart parse error in %s: unknown key '%s'\n", restartIn, key);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
-  for (int i = 0; i < meanValuesLen; ++i) {
-    if (fscanf(in, "%lf", &(meanNPP->values[i])) != 1) {
-      logError("Restart parse error in %s: mean_values truncated\n", restartIn);
-      exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-    }
-  }
-
-  readTag(in, restartIn, "mean_weights");
-  int meanWeightsLen = 0;
-  if (fscanf(in, "%d", &meanWeightsLen) != 1) {
-    logError("Restart parse error in %s: mean_weights length missing\n",
-             restartIn);
-    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-  }
-  if (meanWeightsLen != meanNPP->length) {
-    logError("Restart mean-tracker length mismatch in %s\n", restartIn);
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-  }
-  for (int i = 0; i < meanWeightsLen; ++i) {
-    if (fscanf(in, "%lf", &(meanNPP->weights[i])) != 1) {
-      logError("Restart parse error in %s: mean_weights truncated\n",
-               restartIn);
-      exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-    }
-  }
-
-  readTag(in, restartIn, "end_restart");
 
   fclose(in);
+
+  if (!seenModelVersion || !seenBuildInfo || !seenCheckpointUtcEpoch ||
+      !seenProcessedSteps) {
+    parseError(restartIn, "missing required metadata keys", NULL);
+  }
+
+  for (int i = 0; i < 10; ++i) {
+    if (!seenFlags[i]) {
+      parseError(restartIn, "missing required flags.* keys", NULL);
+    }
+  }
+  for (int i = 0; i < 13; ++i) {
+    if (!seenBoundary[i]) {
+      parseError(restartIn, "missing required boundary.* keys", NULL);
+    }
+  }
+  for (int i = 0; i < 5; ++i) {
+    if (!seenEventState[i]) {
+      parseError(restartIn, "missing required event_state.* keys", NULL);
+    }
+  }
+  for (int i = 0; i < 5; ++i) {
+    if (!seenMeanMeta[i]) {
+      parseError(restartIn, "missing required mean.* keys", NULL);
+    }
+  }
+  for (int i = 0; i < 12; ++i) {
+    if (!seenEnvi[i]) {
+      parseError(restartIn, "missing required envi.* keys", NULL);
+    }
+  }
+  for (int i = 0; i < 27; ++i) {
+    if (!seenTrackers[i]) {
+      parseError(restartIn, "missing required trackers.* keys", NULL);
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    if (!seenPhenology[i]) {
+      parseError(restartIn, "missing required phenology.* keys", NULL);
+    }
+  }
+  if (!seenEventTrackers) {
+    parseError(restartIn, "missing required event_trackers.* keys", NULL);
+  }
+  for (int i = 0; i < 10; ++i) {
+    if (!seenBalance[i]) {
+      parseError(restartIn, "missing required balance.* keys", NULL);
+    }
+  }
+  if (!seenMeanValuesLength || !seenMeanWeightsLength) {
+    parseError(restartIn, "missing required mean array length keys", NULL);
+  }
+  if (!seenEndRestart) {
+    parseError(restartIn, "missing end_restart marker", NULL);
+  }
+
+  if (meanValuesLength != meanNPP->length ||
+      meanWeightsLength != meanNPP->length) {
+    logError("Restart mean-tracker length mismatch in %s\n", restartIn);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
+  for (int i = 0; i < meanValuesLength; ++i) {
+    if (!seenMeanValues[i]) {
+      parseError(restartIn, "mean.values array is incomplete", NULL);
+    }
+  }
+  for (int i = 0; i < meanWeightsLength; ++i) {
+    if (!seenMeanWeights[i]) {
+      parseError(restartIn, "mean.weights array is incomplete", NULL);
+    }
+  }
+
+  free(seenMeanValues);
+  free(seenMeanWeights);
+}
+
+static void writeKeyInt(FILE *out, const char *key, int value) {
+  fprintf(out, "%s %d\n", key, value);
+}
+
+static void writeKeyLongLong(FILE *out, const char *key, long long value) {
+  fprintf(out, "%s %lld\n", key, value);
+}
+
+static void writeKeyUnsignedLongLong(FILE *out, const char *key,
+                                     unsigned long long value) {
+  fprintf(out, "%s %llu\n", key, value);
+}
+
+static void writeKeyDouble(FILE *out, const char *key, double value) {
+  fprintf(out, "%s %.17g\n", key, value);
 }
 
 static void writeRestartState(const char *restartOut,
@@ -365,80 +906,122 @@ static void writeRestartState(const char *restartOut,
   fprintf(out, "%s %s\n", RESTART_MAGIC, RESTART_SCHEMA_VERSION);
   fprintf(out, "model_version %s\n", state->modelVersion);
   fprintf(out, "build_info %s\n", state->buildInfo);
-  fprintf(out, "checkpoint_utc_epoch %lld\n", state->checkpointUtcEpoch);
-  fprintf(out, "processed_steps %lld\n", state->processedSteps);
-  fprintf(out, "flags %d %d %d %d %d %d %d %d %d %d\n", state->events,
-          state->gdd, state->growthResp, state->leafWater, state->litterPool,
-          state->snow, state->soilPhenol, state->waterHResp,
-          state->nitrogenCycle, state->anaerobic);
+  writeKeyLongLong(out, "checkpoint_utc_epoch", state->checkpointUtcEpoch);
+  writeKeyLongLong(out, "processed_steps", state->processedSteps);
 
-  fprintf(out, "boundary ");
-  writeClimateSignature(out, &(state->boundaryClimate));
-  fprintf(out, "\n");
+  writeKeyInt(out, "flags.events", state->events);
+  writeKeyInt(out, "flags.gdd", state->gdd);
+  writeKeyInt(out, "flags.growthResp", state->growthResp);
+  writeKeyInt(out, "flags.leafWater", state->leafWater);
+  writeKeyInt(out, "flags.litterPool", state->litterPool);
+  writeKeyInt(out, "flags.snow", state->snow);
+  writeKeyInt(out, "flags.soilPhenol", state->soilPhenol);
+  writeKeyInt(out, "flags.waterHResp", state->waterHResp);
+  writeKeyInt(out, "flags.nitrogenCycle", state->nitrogenCycle);
+  writeKeyInt(out, "flags.anaerobic", state->anaerobic);
 
-  fprintf(out, "event_state %d %d %llu %d %llu\n", state->eventCursorIndex,
-          state->eventCount, state->eventPrefixHash, state->eventHasNext,
-          state->eventNextHash);
+  writeKeyInt(out, "boundary.year", state->boundaryClimate.year);
+  writeKeyInt(out, "boundary.day", state->boundaryClimate.day);
+  writeKeyDouble(out, "boundary.time", state->boundaryClimate.time);
+  writeKeyDouble(out, "boundary.length", state->boundaryClimate.length);
+  writeKeyDouble(out, "boundary.tair", state->boundaryClimate.tair);
+  writeKeyDouble(out, "boundary.tsoil", state->boundaryClimate.tsoil);
+  writeKeyDouble(out, "boundary.par", state->boundaryClimate.par);
+  writeKeyDouble(out, "boundary.precip", state->boundaryClimate.precip);
+  writeKeyDouble(out, "boundary.vpd", state->boundaryClimate.vpd);
+  writeKeyDouble(out, "boundary.vpdSoil", state->boundaryClimate.vpdSoil);
+  writeKeyDouble(out, "boundary.vPress", state->boundaryClimate.vPress);
+  writeKeyDouble(out, "boundary.wspd", state->boundaryClimate.wspd);
+  writeKeyDouble(out, "boundary.gdd", state->boundaryClimate.gdd);
 
-  fprintf(out, "mean_meta %d %.17g %d %d %.17g\n", state->meanLength,
-          state->meanTotWeight, state->meanStart, state->meanLast,
-          state->meanSum);
+  writeKeyInt(out, "event_state.cursor_index", state->eventCursorIndex);
+  writeKeyInt(out, "event_state.event_count", state->eventCount);
+  writeKeyUnsignedLongLong(out, "event_state.prefix_hash",
+                           state->eventPrefixHash);
+  writeKeyInt(out, "event_state.has_next", state->eventHasNext);
+  writeKeyUnsignedLongLong(out, "event_state.next_hash", state->eventNextHash);
 
-  fprintf(out,
-          "envi %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g "
-          "%.17g %.17g\n",
-          state->envi.plantWoodC, state->envi.plantLeafC, state->envi.soilC,
-          state->envi.soilWater, state->envi.litterC, state->envi.snow,
-          state->envi.coarseRootC, state->envi.fineRootC, state->envi.minN,
-          state->envi.soilOrgN, state->envi.litterN,
-          state->envi.plantWoodCStorageDelta);
+  writeKeyInt(out, "mean.length", state->meanLength);
+  writeKeyDouble(out, "mean.totWeight", state->meanTotWeight);
+  writeKeyInt(out, "mean.start", state->meanStart);
+  writeKeyInt(out, "mean.last", state->meanLast);
+  writeKeyDouble(out, "mean.sum", state->meanSum);
 
-  fprintf(
-      out,
-      "trackers %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g "
-      "%.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g "
-      "%.17g %.17g %.17g %.17g %.17g %d\n",
-      state->trackers.gpp, state->trackers.rtot, state->trackers.ra,
-      state->trackers.rh, state->trackers.npp, state->trackers.nee,
-      state->trackers.yearlyGpp, state->trackers.yearlyRtot,
-      state->trackers.yearlyRa, state->trackers.yearlyRh,
-      state->trackers.yearlyNpp, state->trackers.yearlyNee,
-      state->trackers.totGpp, state->trackers.totRtot, state->trackers.totRa,
-      state->trackers.totRh, state->trackers.totNpp, state->trackers.totNee,
-      state->trackers.evapotranspiration, state->trackers.soilWetnessFrac,
-      state->trackers.rRoot, state->trackers.rSoil,
-      state->trackers.rAboveground, state->trackers.yearlyLitter,
-      state->trackers.woodCreation, state->trackers.n2o,
-      state->trackers.lastYear);
+  writeKeyDouble(out, "envi.plantWoodC", state->envi.plantWoodC);
+  writeKeyDouble(out, "envi.plantLeafC", state->envi.plantLeafC);
+  writeKeyDouble(out, "envi.soilC", state->envi.soilC);
+  writeKeyDouble(out, "envi.soilWater", state->envi.soilWater);
+  writeKeyDouble(out, "envi.litterC", state->envi.litterC);
+  writeKeyDouble(out, "envi.snow", state->envi.snow);
+  writeKeyDouble(out, "envi.coarseRootC", state->envi.coarseRootC);
+  writeKeyDouble(out, "envi.fineRootC", state->envi.fineRootC);
+  writeKeyDouble(out, "envi.minN", state->envi.minN);
+  writeKeyDouble(out, "envi.soilOrgN", state->envi.soilOrgN);
+  writeKeyDouble(out, "envi.litterN", state->envi.litterN);
+  writeKeyDouble(out, "envi.plantWoodCStorageDelta",
+                 state->envi.plantWoodCStorageDelta);
 
-  fprintf(out, "phenology %d %d %d\n", state->phenologyTrackers.didLeafGrowth,
-          state->phenologyTrackers.didLeafFall,
-          state->phenologyTrackers.lastYear);
+  writeKeyDouble(out, "trackers.gpp", state->trackers.gpp);
+  writeKeyDouble(out, "trackers.rtot", state->trackers.rtot);
+  writeKeyDouble(out, "trackers.ra", state->trackers.ra);
+  writeKeyDouble(out, "trackers.rh", state->trackers.rh);
+  writeKeyDouble(out, "trackers.npp", state->trackers.npp);
+  writeKeyDouble(out, "trackers.nee", state->trackers.nee);
+  writeKeyDouble(out, "trackers.yearlyGpp", state->trackers.yearlyGpp);
+  writeKeyDouble(out, "trackers.yearlyRtot", state->trackers.yearlyRtot);
+  writeKeyDouble(out, "trackers.yearlyRa", state->trackers.yearlyRa);
+  writeKeyDouble(out, "trackers.yearlyRh", state->trackers.yearlyRh);
+  writeKeyDouble(out, "trackers.yearlyNpp", state->trackers.yearlyNpp);
+  writeKeyDouble(out, "trackers.yearlyNee", state->trackers.yearlyNee);
+  writeKeyDouble(out, "trackers.totGpp", state->trackers.totGpp);
+  writeKeyDouble(out, "trackers.totRtot", state->trackers.totRtot);
+  writeKeyDouble(out, "trackers.totRa", state->trackers.totRa);
+  writeKeyDouble(out, "trackers.totRh", state->trackers.totRh);
+  writeKeyDouble(out, "trackers.totNpp", state->trackers.totNpp);
+  writeKeyDouble(out, "trackers.totNee", state->trackers.totNee);
+  writeKeyDouble(out, "trackers.evapotranspiration",
+                 state->trackers.evapotranspiration);
+  writeKeyDouble(out, "trackers.soilWetnessFrac",
+                 state->trackers.soilWetnessFrac);
+  writeKeyDouble(out, "trackers.rRoot", state->trackers.rRoot);
+  writeKeyDouble(out, "trackers.rSoil", state->trackers.rSoil);
+  writeKeyDouble(out, "trackers.rAboveground", state->trackers.rAboveground);
+  writeKeyDouble(out, "trackers.yearlyLitter", state->trackers.yearlyLitter);
+  writeKeyDouble(out, "trackers.woodCreation", state->trackers.woodCreation);
+  writeKeyDouble(out, "trackers.n2o", state->trackers.n2o);
+  writeKeyInt(out, "trackers.lastYear", state->trackers.lastYear);
 
-  fprintf(out, "event_trackers %.17g\n", state->eventTrackers.d_till_mod);
+  writeKeyInt(out, "phenology.didLeafGrowth",
+              state->phenologyTrackers.didLeafGrowth);
+  writeKeyInt(out, "phenology.didLeafFall",
+              state->phenologyTrackers.didLeafFall);
+  writeKeyInt(out, "phenology.lastYear", state->phenologyTrackers.lastYear);
 
-  fprintf(
-      out,
-      "balance %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g %.17g\n",
-      state->balanceTracker.preTotalC, state->balanceTracker.postTotalC,
-      state->balanceTracker.inputsC, state->balanceTracker.outputsC,
-      state->balanceTracker.preTotalN, state->balanceTracker.postTotalN,
-      state->balanceTracker.inputsN, state->balanceTracker.outputsN,
-      state->balanceTracker.deltaC, state->balanceTracker.deltaN);
+  writeKeyDouble(out, "event_trackers.d_till_mod",
+                 state->eventTrackers.d_till_mod);
 
-  fprintf(out, "mean_values %d", meanNPP->length);
+  writeKeyDouble(out, "balance.preTotalC", state->balanceTracker.preTotalC);
+  writeKeyDouble(out, "balance.postTotalC", state->balanceTracker.postTotalC);
+  writeKeyDouble(out, "balance.inputsC", state->balanceTracker.inputsC);
+  writeKeyDouble(out, "balance.outputsC", state->balanceTracker.outputsC);
+  writeKeyDouble(out, "balance.preTotalN", state->balanceTracker.preTotalN);
+  writeKeyDouble(out, "balance.postTotalN", state->balanceTracker.postTotalN);
+  writeKeyDouble(out, "balance.inputsN", state->balanceTracker.inputsN);
+  writeKeyDouble(out, "balance.outputsN", state->balanceTracker.outputsN);
+  writeKeyDouble(out, "balance.deltaC", state->balanceTracker.deltaC);
+  writeKeyDouble(out, "balance.deltaN", state->balanceTracker.deltaN);
+
+  writeKeyInt(out, "mean.values.length", meanNPP->length);
   for (int i = 0; i < meanNPP->length; ++i) {
-    fprintf(out, " %.17g", meanNPP->values[i]);
+    fprintf(out, "mean.values.%d %.17g\n", i, meanNPP->values[i]);
   }
-  fprintf(out, "\n");
 
-  fprintf(out, "mean_weights %d", meanNPP->length);
+  writeKeyInt(out, "mean.weights.length", meanNPP->length);
   for (int i = 0; i < meanNPP->length; ++i) {
-    fprintf(out, " %.17g", meanNPP->weights[i]);
+    fprintf(out, "mean.weights.%d %.17g\n", i, meanNPP->weights[i]);
   }
-  fprintf(out, "\n");
 
-  fprintf(out, "end_restart\n");
+  fprintf(out, "end_restart 1\n");
 
   fclose(out);
 }

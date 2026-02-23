@@ -28,7 +28,7 @@ When the same option is specified in both places, **command-line arguments take 
 | --- | --- | --- | --- | --- |
 | `--input-file` | `-i` | `<filename>` | `sipnet.in` | Name of input configuration file |
 | `--file-name` | `-f` | `<name>` | `sipnet` | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`) |
-| `--restart-in` |  | `<path>` | unset | Read a restart checkpoint (ASCII schema `1.0`) |
+| `--restart-in` |  | `<path>` | unset | Read a restart checkpoint (schema `1.0`) |
 | `--restart-out` |  | `<path>` | unset | Write a restart checkpoint at end of run |
 
 ### Model Feature Flags
@@ -154,7 +154,7 @@ QUIET 0
 
 SIPNET restart support is designed for segmented orchestration (for example, external workflow controllers). SIPNET only handles state checkpointing and strict resume validation.
 
-`RESTART_OUT` writes a portable ASCII restart file (schema `1.0`) containing runtime state needed for strict resume.
+`RESTART_OUT` writes a text restart file (schema `1.0`) containing runtime state needed for strict resume.
 
 ### Strict constraints and failure modes
 

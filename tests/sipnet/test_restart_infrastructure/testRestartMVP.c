@@ -9,7 +9,7 @@
 
 #define SIPNET_CMD "../../../sipnet"
 #define CHECKPOINT_FILE "run.restart"
-#define RESTART_MAGIC_LINE "SIPNET_RESTART_ASCII 1.0"
+#define RESTART_MAGIC_LINE "SIPNET_RESTART 1.0"
 
 static int runShell(const char *cmd) {
   int rc = system(cmd);
@@ -333,8 +333,8 @@ static int testSchemaMismatchFails(void) {
     return stepStatus;
   }
   status |= (runModel("restart_seg1.in", "schema_mismatch_seg1.log") != 0);
-  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "SIPNET_RESTART_ASCII 1.0",
-                                   "SIPNET_RESTART_ASCII 9.9");
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "SIPNET_RESTART 1.0",
+                                   "SIPNET_RESTART 9.9");
 
   stepStatus = prepRunFiles("restart_segment2.clim");
   if (stepStatus) {
