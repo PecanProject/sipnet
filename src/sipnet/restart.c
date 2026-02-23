@@ -95,8 +95,9 @@ static void copyClimateSignature(RestartClimateSignature *dest,
   dest->gdd = src->gdd;
 }
 
-static int climateTimestampIsAfterBoundary(
-    const ClimateNode *actual, const RestartClimateSignature *boundary) {
+static int
+climateTimestampIsAfterBoundary(const ClimateNode *actual,
+                                const RestartClimateSignature *boundary) {
   if (actual->year != boundary->year) {
     return actual->year > boundary->year;
   }
@@ -1246,5 +1247,4 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
       exit(EXIT_CODE_BAD_PARAMETER_VALUE);
     }
   }
-
 }

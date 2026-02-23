@@ -4,14 +4,17 @@ This page documents SIPNET's restart checkpoint implementation.
 
 ## Scope and Intent
 
-The restart feature is designed to allow users and external workflows to stop the model, changing state and/or parameters. SIPNET's responsibility is:
+SIPNET restart is designed to allow users and external workflows to stop the
+model, change the state and/or parameters, and then restart.
+
+SIPNET's responsibility is:
 
 - stop at end of climate file
 - write full runtime state at segment end (`RESTART_OUT`)
 - restore full runtime state at segment start (`RESTART_IN`)
-- fail fast if restart context is not exactly compatible
+- fail if restart file is incompatible
 
-SIPNET does not stitch outputs across segments.
+SIPNET produces one output file per segment.
 
 ## Runtime Sequence
 
@@ -21,10 +24,9 @@ On resume, SIPNET executes:
 2. Load checkpoint and overwrite runtime state
 3. Validate strict compatibility checks
 4. Restore deterministic event cursor
-5. Consume boundary climate row (already represented in checkpoint state)
-6. Continue run from next timestep
+5. Continue run from resumed climate input (no boundary-row skip)
 
-## Schema v1.0 Overview
+## Restart Schema v1.0 Overview
 
 Checkpoint format is ASCII text with one key/value per line:
 
@@ -38,7 +40,7 @@ Checkpoint format is ASCII text with one key/value per line:
 - mean ring buffers: `mean.values.length` + `mean.values.<idx>`, `mean.weights.length` + `mean.weights.<idx>`
 - end marker: `end_restart 1`
 
-All values are named; there are no positional value lists.
+All values are named.
 
 ## Strict Validation Contract
 
