@@ -9,11 +9,7 @@
 
 #define SIPNET_CMD "../../../sipnet"
 #define CHECKPOINT_FILE "run.restart"
-#define RESTART_HEADER_MAGIC_SIZE 32
-#define RESTART_HEADER_SCHEMA_SIZE 4
-#define RESTART_HEADER_SCHEMA_OFFSET RESTART_HEADER_MAGIC_SIZE
-#define RESTART_HEADER_MODEL_VERSION_OFFSET                                    \
-  (RESTART_HEADER_MAGIC_SIZE + RESTART_HEADER_SCHEMA_SIZE)
+#define RESTART_MAGIC_LINE "SIPNET_RESTART_ASCII 1.0"
 
 static int runShell(const char *cmd) {
   int rc = system(cmd);
@@ -43,33 +39,107 @@ static int runModel(const char *inputFile, const char *logFile) {
   return runShell(cmd);
 }
 
-static int writeByteAtOffset(const char *file, long offset,
-                             unsigned char value) {
-  FILE *fp = fopen(file, "r+b");
-  if (fp == NULL) {
-    logTest("Unable to open %s for mutation\n", file);
-    return 1;
-  }
-  if (fseek(fp, offset, SEEK_SET) != 0) {
-    fclose(fp);
-    logTest("Unable to seek %s to offset %ld\n", file, offset);
-    return 1;
-  }
-  if (fwrite(&value, 1, 1, fp) != 1) {
-    fclose(fp);
-    logTest("Unable to write byte to %s\n", file);
-    return 1;
-  }
-
-  fclose(fp);
-  return 0;
-}
-
 static int truncateFileToSize(const char *file, long size) {
   if (truncate(file, size) != 0) {
     logTest("Unable to truncate %s to %ld bytes\n", file, size);
     return 1;
   }
+  return 0;
+}
+
+static int fileStartsWith(const char *file, const char *expectedPrefix) {
+  FILE *fp = fopen(file, "r");
+  if (fp == NULL) {
+    logTest("Unable to open %s\n", file);
+    return 0;
+  }
+
+  char line[512];
+  if (fgets(line, sizeof(line), fp) == NULL) {
+    fclose(fp);
+    return 0;
+  }
+  fclose(fp);
+
+  line[strcspn(line, "\r\n")] = '\0';
+  return strcmp(line, expectedPrefix) == 0;
+}
+
+static int replaceFirstOccurrence(const char *file, const char *needle,
+                                  const char *replacement) {
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s for reading\n", file);
+    return 1;
+  }
+
+  if (fseek(in, 0, SEEK_END) != 0) {
+    fclose(in);
+    return 1;
+  }
+  long size = ftell(in);
+  if (size < 0) {
+    fclose(in);
+    return 1;
+  }
+  if (fseek(in, 0, SEEK_SET) != 0) {
+    fclose(in);
+    return 1;
+  }
+
+  char *buffer = (char *)malloc((size_t)size + 1);
+  if (buffer == NULL) {
+    fclose(in);
+    return 1;
+  }
+  if (fread(buffer, 1, (size_t)size, in) != (size_t)size) {
+    free(buffer);
+    fclose(in);
+    return 1;
+  }
+  buffer[size] = '\0';
+  fclose(in);
+
+  char *pos = strstr(buffer, needle);
+  if (pos == NULL) {
+    free(buffer);
+    logTest("Could not find '%s' in %s\n", needle, file);
+    return 1;
+  }
+
+  size_t beforeLen = (size_t)(pos - buffer);
+  size_t needleLen = strlen(needle);
+  size_t replacementLen = strlen(replacement);
+  size_t afterLen = strlen(pos + needleLen);
+  size_t newLen = beforeLen + replacementLen + afterLen;
+
+  char *newContent = (char *)malloc(newLen + 1);
+  if (newContent == NULL) {
+    free(buffer);
+    return 1;
+  }
+
+  memcpy(newContent, buffer, beforeLen);
+  memcpy(newContent + beforeLen, replacement, replacementLen);
+  memcpy(newContent + beforeLen + replacementLen, pos + needleLen, afterLen);
+  newContent[newLen] = '\0';
+
+  FILE *out = fopen(file, "w");
+  if (out == NULL) {
+    free(buffer);
+    free(newContent);
+    return 1;
+  }
+  if (fwrite(newContent, 1, newLen, out) != newLen) {
+    free(buffer);
+    free(newContent);
+    fclose(out);
+    return 1;
+  }
+
+  free(buffer);
+  free(newContent);
+  fclose(out);
   return 0;
 }
 
@@ -124,6 +194,7 @@ static int testSegmentedEquivalence(void) {
   }
 
   status |= (runModel("restart_seg1.in", "seg1.log") != 0);
+  status |= !fileStartsWith(CHECKPOINT_FILE, RESTART_MAGIC_LINE);
   status |= rename("run.out", "seg1.out");
   status |= rename("events.out", "seg1.events");
 
@@ -229,8 +300,8 @@ static int testModelVersionMismatchFails(void) {
     return stepStatus;
   }
   status |= (runModel("restart_seg1.in", "model_mismatch_seg1.log") != 0);
-  status |= writeByteAtOffset(
-      CHECKPOINT_FILE, RESTART_HEADER_MODEL_VERSION_OFFSET, (unsigned char)'X');
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "model_version ",
+                                   "model_version X");
 
   stepStatus = prepRunFiles("restart_segment2.clim");
   if (stepStatus) {
@@ -262,8 +333,8 @@ static int testSchemaMismatchFails(void) {
     return stepStatus;
   }
   status |= (runModel("restart_seg1.in", "schema_mismatch_seg1.log") != 0);
-  status |= writeByteAtOffset(CHECKPOINT_FILE, RESTART_HEADER_SCHEMA_OFFSET,
-                              (unsigned char)2);
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "SIPNET_RESTART_ASCII 1.0",
+                                   "SIPNET_RESTART_ASCII 9.9");
 
   stepStatus = prepRunFiles("restart_segment2.clim");
   if (stepStatus) {
@@ -312,6 +383,40 @@ static int testTruncatedCheckpointFails(void) {
   return status;
 }
 
+static int testMalformedCheckpointFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim");
+  if (stepStatus) {
+    logTest(
+        "Failed to prepare files for malformed checkpoint test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "malformed_seg1.log") != 0);
+  status |=
+      replaceFirstOccurrence(CHECKPOINT_FILE, "event_state", "event_state_BAD");
+
+  stepStatus = prepRunFiles("restart_segment2.clim");
+  if (stepStatus) {
+    logTest(
+        "Failed to prepare files for malformed checkpoint test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "malformed_seg2.log");
+  status |= (rc == 0);
+
+  if (status) {
+    logTest("testMalformedCheckpointFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -321,6 +426,7 @@ int run(void) {
   status |= testModelVersionMismatchFails();
   status |= testSchemaMismatchFails();
   status |= testTruncatedCheckpointFails();
+  status |= testMalformedCheckpointFails();
 
   return status;
 }

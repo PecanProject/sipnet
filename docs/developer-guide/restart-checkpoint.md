@@ -23,28 +23,35 @@ On resume, SIPNET executes:
 5. Consume boundary climate row (already represented in checkpoint state)
 6. Continue run from next timestep
 
-## Schema v1 Overview
+## Schema v1.0 Overview
 
-Checkpoint file format is binary schema v1 with:
+Checkpoint file format is portable ASCII text, schema `1.0`, with deterministic field order.
 
-- header metadata:
-  - magic: `SIPNET_RESTART_V1`
-  - schema version
-  - model version and build info
-  - processed step counter
-  - context flags that change model behavior
-  - boundary climate signature (last processed row)
-  - event cursor invariants
-  - mean tracker scalar internals
-- payload structs:
-  - `Envi`
-  - `Trackers` (including yearly rollover state)
-  - `PhenologyTrackers`
-  - `EventTrackers`
-  - `BalanceTracker`
-- mean tracker ring buffer arrays:
-  - `meanNPP->values`
-  - `meanNPP->weights`
+Top-level records include:
+
+- header:
+  - `SIPNET_RESTART_ASCII 1.0`
+  - `model_version`
+  - `build_info`
+  - `checkpoint_utc_epoch`
+  - `processed_steps`
+- model-mode flags:
+  - `flags` (events/gdd/growthResp/leafWater/litterPool/snow/soilPhenol/waterHResp/nitrogenCycle/anaerobic)
+- boundary and deterministic restart metadata:
+  - `boundary` climate signature (last processed row)
+  - `event_state` invariants (cursor/count/prefix hash/next-event hash)
+  - `mean_meta` (length/totWeight/start/last/sum)
+- full runtime state blocks:
+  - `envi`
+  - `trackers`
+  - `phenology`
+  - `event_trackers`
+  - `balance`
+  - `mean_values`
+  - `mean_weights`
+  - `end_restart`
+
+Model parameters from `.param` are intentionally not serialized in restart files.
 
 ## Strict Validation Contract
 
@@ -63,7 +70,7 @@ On load, SIPNET enforces:
   - next-event hash/existence
 - ability to restore event cursor by index
 
-Any mismatch is a hard error.
+Any mismatch is a hard error. For floating-point boundary checks, comparisons use a small tolerance suitable for text serialization.
 
 ## Boundary Semantics
 
