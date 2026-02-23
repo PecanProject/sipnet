@@ -262,7 +262,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
     char value[2048];
     char extra[32];
     int n = sscanf(line, " %127s %2047s %31s", key, value, extra);
-    if (n == 0) {
+    if (n <= 0) {
       continue;
     }
     if (n != 2) {
@@ -908,6 +908,7 @@ static void writeRestartState(const char *restartOut,
   fprintf(out, "build_info %s\n", state->buildInfo);
   writeKeyLongLong(out, "checkpoint_utc_epoch", state->checkpointUtcEpoch);
   writeKeyLongLong(out, "processed_steps", state->processedSteps);
+  fprintf(out, "\n");
 
   writeKeyInt(out, "flags.events", state->events);
   writeKeyInt(out, "flags.gdd", state->gdd);
@@ -919,6 +920,7 @@ static void writeRestartState(const char *restartOut,
   writeKeyInt(out, "flags.waterHResp", state->waterHResp);
   writeKeyInt(out, "flags.nitrogenCycle", state->nitrogenCycle);
   writeKeyInt(out, "flags.anaerobic", state->anaerobic);
+  fprintf(out, "\n");
 
   writeKeyInt(out, "boundary.year", state->boundaryClimate.year);
   writeKeyInt(out, "boundary.day", state->boundaryClimate.day);
@@ -933,6 +935,7 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "boundary.vPress", state->boundaryClimate.vPress);
   writeKeyDouble(out, "boundary.wspd", state->boundaryClimate.wspd);
   writeKeyDouble(out, "boundary.gdd", state->boundaryClimate.gdd);
+  fprintf(out, "\n");
 
   writeKeyInt(out, "event_state.cursor_index", state->eventCursorIndex);
   writeKeyInt(out, "event_state.event_count", state->eventCount);
@@ -940,12 +943,14 @@ static void writeRestartState(const char *restartOut,
                            state->eventPrefixHash);
   writeKeyInt(out, "event_state.has_next", state->eventHasNext);
   writeKeyUnsignedLongLong(out, "event_state.next_hash", state->eventNextHash);
+  fprintf(out, "\n");
 
   writeKeyInt(out, "mean.length", state->meanLength);
   writeKeyDouble(out, "mean.totWeight", state->meanTotWeight);
   writeKeyInt(out, "mean.start", state->meanStart);
   writeKeyInt(out, "mean.last", state->meanLast);
   writeKeyDouble(out, "mean.sum", state->meanSum);
+  fprintf(out, "\n");
 
   writeKeyDouble(out, "envi.plantWoodC", state->envi.plantWoodC);
   writeKeyDouble(out, "envi.plantLeafC", state->envi.plantLeafC);
@@ -960,6 +965,7 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "envi.litterN", state->envi.litterN);
   writeKeyDouble(out, "envi.plantWoodCStorageDelta",
                  state->envi.plantWoodCStorageDelta);
+  fprintf(out, "\n");
 
   writeKeyDouble(out, "trackers.gpp", state->trackers.gpp);
   writeKeyDouble(out, "trackers.rtot", state->trackers.rtot);
@@ -990,15 +996,18 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "trackers.woodCreation", state->trackers.woodCreation);
   writeKeyDouble(out, "trackers.n2o", state->trackers.n2o);
   writeKeyInt(out, "trackers.lastYear", state->trackers.lastYear);
+  fprintf(out, "\n");
 
   writeKeyInt(out, "phenology.didLeafGrowth",
               state->phenologyTrackers.didLeafGrowth);
   writeKeyInt(out, "phenology.didLeafFall",
               state->phenologyTrackers.didLeafFall);
   writeKeyInt(out, "phenology.lastYear", state->phenologyTrackers.lastYear);
+  fprintf(out, "\n");
 
   writeKeyDouble(out, "event_trackers.d_till_mod",
                  state->eventTrackers.d_till_mod);
+  fprintf(out, "\n");
 
   writeKeyDouble(out, "balance.preTotalC", state->balanceTracker.preTotalC);
   writeKeyDouble(out, "balance.postTotalC", state->balanceTracker.postTotalC);
@@ -1010,16 +1019,19 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "balance.outputsN", state->balanceTracker.outputsN);
   writeKeyDouble(out, "balance.deltaC", state->balanceTracker.deltaC);
   writeKeyDouble(out, "balance.deltaN", state->balanceTracker.deltaN);
+  fprintf(out, "\n");
 
   writeKeyInt(out, "mean.values.length", meanNPP->length);
   for (int i = 0; i < meanNPP->length; ++i) {
     fprintf(out, "mean.values.%d %.17g\n", i, meanNPP->values[i]);
   }
+  fprintf(out, "\n");
 
   writeKeyInt(out, "mean.weights.length", meanNPP->length);
   for (int i = 0; i < meanNPP->length; ++i) {
     fprintf(out, "mean.weights.%d %.17g\n", i, meanNPP->weights[i]);
   }
+  fprintf(out, "\n");
 
   fprintf(out, "end_restart 1\n");
 
