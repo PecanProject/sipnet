@@ -48,7 +48,7 @@ On load, SIPNET enforces:
 - schema version match
 - model version/build match
 - context flag compatibility
-- exact first-row climate timestamp match (`year`, `day`, `time`)
+- first-row climate timestamp strictly after checkpoint boundary (`year`, `day`, `time`)
 - mean tracker shape/cursor validity
 - deterministic event replay invariants:
   - event count
@@ -61,7 +61,7 @@ Any mismatch is a hard error. For floating-point timestamp checks, comparisons u
 
 ## Climate Boundaries
 
-The resumed climate input must start with the same timestamp (`year`, `day`, `time`) as the last processed timestep captured in the checkpoint. SIPNET validates that first timestamp, then advances the climate cursor once so the resumed segment does not reprocess the boundary timestep.
+The resumed climate input must start with a timestamp (`year`, `day`, `time`) after the last processed timestep captured in the checkpoint. SIPNET validates that ordering and then continues processing from there (no boundary-row skip).
 
 ## Notes for Schema Changes
 

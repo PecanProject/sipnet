@@ -95,17 +95,15 @@ static void copyClimateSignature(RestartClimateSignature *dest,
   dest->gdd = src->gdd;
 }
 
-static int restartDoublesMatch(double a, double b) {
-  return fabs(a - b) <= RESTART_FLOAT_EPSILON;
-}
-
-static int climateSignaturesMatch(const ClimateNode *actual,
-                                  const RestartClimateSignature *expected) {
-  int mismatch = 0;
-  mismatch |= (actual->year != expected->year);
-  mismatch |= (actual->day != expected->day);
-  mismatch |= !restartDoublesMatch(actual->time, expected->time);
-  return !mismatch;
+static int climateTimestampIsAfterBoundary(
+    const ClimateNode *actual, const RestartClimateSignature *boundary) {
+  if (actual->year != boundary->year) {
+    return actual->year > boundary->year;
+  }
+  if (actual->day != boundary->day) {
+    return actual->day > boundary->day;
+  }
+  return actual->time > (boundary->time + RESTART_FLOAT_EPSILON);
 }
 
 static void sanitizeBuildInfo(char *dest, size_t destLen, const char *src) {
@@ -1073,10 +1071,10 @@ static void validateRestartBoundary(const RestartStateV1 *state) {
     exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 
-  if (!climateSignaturesMatch(climate, &(state->boundaryClimate))) {
+  if (!climateTimestampIsAfterBoundary(climate, &(state->boundaryClimate))) {
     logError("Restart boundary mismatch: first climate timestamp does not "
-             "match checkpoint metadata\n");
-    logError("Expected: year=%d day=%d time=%.8f\n",
+             "follow checkpoint boundary timestamp\n");
+    logError("Checkpoint boundary: year=%d day=%d time=%.8f\n",
              state->boundaryClimate.year, state->boundaryClimate.day,
              state->boundaryClimate.time);
     logError("Found:    year=%d day=%d time=%.8f\n", climate->year,
@@ -1090,13 +1088,19 @@ static void applyRestartGddCarry(const RestartStateV1 *state) {
     return;
   }
 
-  if (climate->year != state->boundaryClimate.year) {
-    return;
+  double firstStepGdd = climate->tair * climate->length;
+  if (firstStepGdd < 0) {
+    firstStepGdd = 0;
   }
 
-  double gddOffset = state->boundaryClimate.gdd - climate->gdd;
+  double expectedFirstGdd = firstStepGdd;
+  if (climate->year == state->boundaryClimate.year) {
+    expectedFirstGdd = state->boundaryClimate.gdd + firstStepGdd;
+  }
+
+  double gddOffset = expectedFirstGdd - climate->gdd;
   ClimateNode *curr = climate;
-  while (curr != NULL && curr->year == state->boundaryClimate.year) {
+  while (curr != NULL && curr->year == climate->year) {
     curr->gdd += gddOffset;
     curr = curr->nextClim;
   }
@@ -1243,8 +1247,4 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
     }
   }
 
-  // Boundary row is already accounted for in checkpoint state.
-  if (climate != NULL) {
-    climate = climate->nextClim;
-  }
 }
