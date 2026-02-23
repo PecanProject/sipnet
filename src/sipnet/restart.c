@@ -105,15 +105,6 @@ static int climateSignaturesMatch(const ClimateNode *actual,
   mismatch |= (actual->year != expected->year);
   mismatch |= (actual->day != expected->day);
   mismatch |= !restartDoublesMatch(actual->time, expected->time);
-  mismatch |= !restartDoublesMatch(actual->length, expected->length);
-  mismatch |= !restartDoublesMatch(actual->tair, expected->tair);
-  mismatch |= !restartDoublesMatch(actual->tsoil, expected->tsoil);
-  mismatch |= !restartDoublesMatch(actual->par, expected->par);
-  mismatch |= !restartDoublesMatch(actual->precip, expected->precip);
-  mismatch |= !restartDoublesMatch(actual->vpd, expected->vpd);
-  mismatch |= !restartDoublesMatch(actual->vpdSoil, expected->vpdSoil);
-  mismatch |= !restartDoublesMatch(actual->vPress, expected->vPress);
-  mismatch |= !restartDoublesMatch(actual->wspd, expected->wspd);
   return !mismatch;
 }
 
@@ -1083,8 +1074,8 @@ static void validateRestartBoundary(const RestartStateV1 *state) {
   }
 
   if (!climateSignaturesMatch(climate, &(state->boundaryClimate))) {
-    logError("Restart boundary mismatch: first climate row does not match "
-             "checkpoint metadata\n");
+    logError("Restart boundary mismatch: first climate timestamp does not "
+             "match checkpoint metadata\n");
     logError("Expected: year=%d day=%d time=%.8f\n",
              state->boundaryClimate.year, state->boundaryClimate.day,
              state->boundaryClimate.time);

@@ -159,7 +159,7 @@ SIPNET restart support is designed for segmented orchestration (for example, ext
 ### Strict constraints and failure modes
 
 - `RESTART_STRICT` must be enabled when using restart options
-- First climate row in resumed segment must exactly match checkpoint boundary metadata
+- First climate row in resumed segment must match checkpoint timestamp metadata (`year`, `day`, `time`)
 - Checkpoint schema/version and model compatibility must match the current run
 - Invalid restart context (for example changed processed-event history) is rejected with a hard error
 - SIPNET does not stitch/append outputs across segments; orchestration must stitch outputs externally
