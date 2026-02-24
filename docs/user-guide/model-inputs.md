@@ -212,7 +212,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `input-file` | sipnet.in | Name of input config file             |
 | `file-name`  | sipnet    | Prefix of climate and parameter files |
 | `restart-in` | unset     | Path to restart checkpoint to load    |
-| `restart-out`| unset     | Path to restart checkpoint to write   |
+| `restart-out` | unset    | Path to restart checkpoint to write   |
 
 ### Output Flags
 
