@@ -368,10 +368,10 @@ typedef struct Parameters {
   // Methane production
   // ******
 
-  // Rate of production of methane in the soil pool, in [0, 1)
+  // Relative methane production rate in the soil pool, in [0, 1), per day
   double soilMethaneRate;
 
-  // Rate of production of methane in the litter pool, in [0, 1)
+  // Relative methane production rate in the litter pool, in [0, 1), per day
   double litterMethaneRate;
 } Params;
 

@@ -1399,6 +1399,42 @@ void calcMethaneFlux(void) {
   }
 }
 
+void resetFluxes(void) {
+  fluxes.photosynthesis = 0.0;
+  fluxes.leafLitter = 0.0;
+  fluxes.woodLitter = 0.0;
+  fluxes.rVeg = 0.0;
+  fluxes.rSoil = 0.0;
+  fluxes.rain = 0.0;
+  fluxes.transpiration = 0.0;
+  fluxes.drainage = 0.0;
+  fluxes.litterToSoil = 0.0;
+  fluxes.rLitter = 0.0;
+  fluxes.snowFall = 0.0;
+  fluxes.snowMelt = 0.0;
+  fluxes.sublimation = 0.0;
+  fluxes.immedEvap = 0.0;
+  fluxes.fastFlow = 0.0;
+  fluxes.evaporation = 0.0;
+  fluxes.fineRootLoss = 0.0;
+  fluxes.coarseRootLoss = 0.0;
+  fluxes.fineRootCreation = 0.0;
+  fluxes.coarseRootCreation = 0.0;
+  fluxes.rCoarseRoot = 0.0;
+  fluxes.rFineRoot = 0.0;
+  fluxes.leafCreation = 0.0;
+  fluxes.leafOnCreation = 0.0;
+  fluxes.woodCreation = 0.0;
+  fluxes.nVolatilization = 0.0;
+  fluxes.nLeaching = 0.0;
+  fluxes.nOrgSoil = 0.0;
+  fluxes.nOrgLitter = 0.0;
+  fluxes.nMin = 0.0;
+  fluxes.soilMethane = 0.0;
+  fluxes.litterMethane = 0.0;
+  // event fluxes are handled in events.c:resetEventFluxes()
+}
+
 /*!
  * Calculate flux terms for sipnet as part of main model flow
  *
@@ -1420,6 +1456,9 @@ void calculateFluxes(void) {
   double growthResp;
   // net rain, equal to (rain - immedEvap) (cm/day)
   double netRain;
+
+  // Let's make sure to get all fluxes to zero before starting this
+  resetFluxes();
 
   // Psn, moisture and water fluxes
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai

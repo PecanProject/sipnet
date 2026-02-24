@@ -5,7 +5,7 @@ void resetState(void) {
   ctx.litterPool = 1;
   ctx.anaerobic = 1;
 
-  envi.soilWater = 5.0;
+  envi.soilWater = 7.5;
 
   params.soilMethaneRate = 0.05;
   params.litterMethaneRate = 0.1;
@@ -20,7 +20,7 @@ void setupTests(void) {
   climate->tsoil = 20.0;
 
   // Environment
-  envi.soilWater = 5.0;
+  envi.soilWater = 7.5;
   // soil CN 7.5
   envi.soilC = 15.0;
   envi.soilOrgN = 2.0;
@@ -30,7 +30,7 @@ void setupTests(void) {
 
   params.soilWHC = 10.0;
   params.soilRespQ10 = 3.0;
-  params.fAnoxia = 0.75;
+  params.fAnoxia = 0.6;
   params.anaerobicDecompRate = 0.5;
   params.anaerobicTransExp = 2.0;
 
@@ -83,6 +83,19 @@ int checkLitter(double flux, double pool) {
   return status;
 }
 
+void callCalcMethaneFlux(void) {
+  // Make sure we didn't make a dumb mistake with tests points
+  // That is, make sure we HAVE some methane flux
+  if (envi.soilWater / params.soilWHC <= params.fAnoxia + 0.1) {
+    logTest("Soil water is not high enough to trigger methane production!\n");
+    logTest("SoilW %8.4f WHC %8.4f f_a %8.4f\n", envi.soilWater, params.soilWHC,
+            params.fAnoxia);
+    exit(1);
+  }
+
+  calcMethaneFlux();
+}
+
 int testMethane(void) {
   int status = 0;
   double expSoilF, expSoilC;
@@ -92,9 +105,9 @@ int testMethane(void) {
   double moistEfffect = calcMethaneMoistEffect(envi.soilWater, params.soilWHC);
 
   // Standard
-  logTest("Standard\n");
+  logTest("  Test: standard\n");
   resetState();
-  calcMethaneFlux();
+  callCalcMethaneFlux();
   updatePoolsForSoil();
   expSoilF = 0.75 * tempEffect * moistEfffect;
   expLitterF = 0.75 * tempEffect * moistEfffect;
@@ -104,16 +117,16 @@ int testMethane(void) {
   status |= checkLitter(expLitterF, expLitterC);
 
   // No litter pool
-  logTest("No litter pool\n");
+  logTest("  Test: no litter pool\n");
   resetState();
   ctx.litterPool = 0;
-  calcMethaneFlux();
-  updatePoolsForSoil();
-  envi.soilC += envi.litterC;
+  envi.soilC = 20.0;
   envi.litterC = 0.0;
-  expSoilF = 1.125 * tempEffect * moistEfffect;
+  callCalcMethaneFlux();
+  updatePoolsForSoil();
+  expSoilF = 1.0 * tempEffect * moistEfffect;
   expLitterF = 0.0;
-  expSoilC = 22.5 - expSoilF * climate->length;
+  expSoilC = 20.0 - expSoilF * climate->length;
   expLitterC = 0.0;
   status |= checkSoil(expSoilF, expSoilC);
   status |= checkLitter(expLitterF, expLitterC);
