@@ -750,10 +750,9 @@ $F^W_{\text{precip,soil}}$ is added to soil water in \eqref{eq:Braswell_A4}.
 ET = E + T
 \end{equation}
 
-Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($T$), which are defined
-below:
+Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($T=F^W_{\text{trans}}$). These fluxes are defined below:
 
-### Evaporation
+#### Evaporation
 
 There are two components of evaporation: (1) immediate evaporation from intercepted precipitation or canopy irrigation
 and (2) soil surface evaporation.
@@ -763,6 +762,29 @@ and (2) soil surface evaporation.
 \begin{equation}
 F^W_{\text{intercept,evap}} = f_{\text{intercept}}\,(F^W_{\text{precip}} + F^W_{\text{irrig,canopy}})
 \end{equation}
+
+##### Canopy interception evaporation (optional leaf water pool)
+
+If `LEAF_WATER` is enabled (CLI: `--leaf-water`), SIPNET limits immediate evaporation from canopy interception
+using an LAI-scaled cap on the interception-evaporation flux. In `calcPrecip()`, potential interception evaporation is:
+
+\begin{equation}
+E_{\text{int,pot}} = f_{\text{intercept}} \cdot F^W_{\text{precip}}
+\end{equation}
+
+and is capped by an LAI-scaled maximum interception-evaporation flux:
+
+\begin{equation}
+E_{\text{int,max}} = LAI \cdot WHC_{\text{leaf}}
+\end{equation}
+
+so that:
+
+\begin{equation}
+E_{\text{int}} = \min(E_{\text{int,pot}}, E_{\text{int,max}})
+\end{equation}
+
+Any rainfall not evaporated immediately becomes throughfall to the soil.
 
 **Soil Evaporation**
 
@@ -783,12 +805,12 @@ r_d = \frac{\text{rdConst}}{u},
 
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
 
-#### Evaporation
+#### Total Evaporation
 
 Total evaporation is calculated as the sum of intercepted water, soil evaporation, and sublimation:
 
 \begin{equation}
-E = F^W_{\text{trans}} + F^W_{\text{intercept,evap}} + F^W_{\text{soil,evap}} + F^W_{\text{sublim}}
+E = F^W_{\text{intercept,evap}} + F^W_{\text{soil,evap}} + F^W_{\text{sublim}}
 \end{equation}
 
 ### Transpiration
@@ -807,13 +829,13 @@ Water Use Efficiency (WUE) is defined as the ratio of a constant $K_{\text{WUE}}
 #### Potential Transpiration
 
 \begin{equation}
-T_{\text{pot}} = \frac{\text{GPP}_{\text{pot}}}{\text{WUE}}
+F^W_{\text{trans,pot}} = \frac{\text{GPP}_{\text{pot}}}{\text{WUE}}
 \label{eq:Braswell_A14}
 \end{equation}
 
 This is equation (A14) from Braswell, et al. (2005).
 
-Potential transpiration  $(T_{\text{pot}})$ is calculated as the potential gross primary
+Potential transpiration  $(F^W_{\text{trans,pot}})$ is calculated as the potential gross primary
 production  $(\text{GPP}_{\text{pot}})$ divided by WUE.
 
 #### Actual Transpiration
@@ -825,7 +847,7 @@ F^W_\text{trans} = \min(F^W_\text{trans, pot}, f \cdot W_\text{soil})
 
 This is equation (A15) from Braswell, et al. (2005).
 
-Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{pot}})$ and the
+Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{trans,pot}})$ and the
 fraction  $(f)$ of the total soil water  $(W_\text{soil})$ that is removable in one day.
 
 ## Dependence Functions for Temperature and Moisture
