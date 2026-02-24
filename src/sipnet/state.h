@@ -314,7 +314,7 @@ typedef struct Parameters {
   double soilRespMoistEffect;
 
   // moisture related:
-  // leaf (evaporative) pool rim thickness in mm
+  // cap on interception-evaporation flux per unit LAI (cm/day)
   double leafPoolDepth;
 
   // ****************************************
