@@ -364,6 +364,7 @@ typedef struct Parameters {
   // dimensionless, greater than 1
   double anaerobicTransExp;
 
+<<<<<<< HEAD
   // Maximum fraction of plant N demand that can be met by fixation
   // under low soil N, dimensionless between 0 and 1
   double nFixationFracMax;
@@ -371,6 +372,17 @@ typedef struct Parameters {
   // Amount of mineral N at which fixation is reduced by half
   // g N * m^-2 ground area
   double halfNFixationMax;
+=======
+  // ******
+  // Methane production
+  // ******
+
+  // Relative methane production rate in the soil pool, in [0, 1), per day
+  double soilMethaneRate;
+
+  // Relative methane production rate in the litter pool, in [0, 1), per day
+  double litterMethaneRate;
+>>>>>>> master
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -570,6 +582,14 @@ typedef struct FluxVars {
   double eventInputN;
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
+
+  // ****************************************
+  // Methane production
+
+  // Methane produced from soil
+  double soilMethane;
+  // Methane produced from litter
+  double litterMethane;
 } Fluxes;
 
 // Global var
@@ -632,6 +652,9 @@ typedef struct TrackerVars {  // variables to track various things
 
   // g C * m^-2 wood creation
   double woodCreation;
+
+  // g C * m^-2 methane production
+  double methane;
 
   // g N * m^-2 ground area, Mineral N lost to volatilization
   double n2o;

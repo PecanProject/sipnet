@@ -51,12 +51,16 @@ void setupTests(void) {
   initContext();
   ctx.litterPool = 1;
   ctx.nitrogenCycle = 1;
+  ctx.anaerobic = 1;
 
   // Initialize general state
   initGeneralState();
 }
 
 int checkFlux(double calcFlux, double expFlux, const char *label) {
+  // Make sure we didn't forget to update context, in case dependencies changed
+  validateContext();
+
   int status = 0;
   if (!compareDoubles(calcFlux, expFlux)) {
     status = 1;

@@ -70,6 +70,7 @@ int run(void) {
 
   //// TWO HARVEST EVENTS
   updateIntContext("litterPool", 1, CTX_TEST);
+  updateIntContext("anaerobic", 1, CTX_TEST);
   updateIntContext("nitrogenCycle", 1, CTX_TEST);
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   logTest("Nitrogen cycle is %s\n", ctx.nitrogenCycle ? "on" : "off");
