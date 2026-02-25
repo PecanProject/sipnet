@@ -8,6 +8,7 @@
 #define DEBUG_C 0
 #define DEBUG_N 0
 #define DO_OUTPUT 0
+#define OUTPUT_FILE "balance.out"
 
 #if DO_OUTPUT
 FILE *out;
@@ -25,12 +26,14 @@ void setupTests(ModelParams **modelParamsPtr) {
   ctx.litterPool = 1;
   ctx.nitrogenCycle = 1;
   ctx.gdd = 0;
+  ctx.waterHResp = 1;
+  ctx.anaerobic = 1;
 
   initModel(modelParamsPtr, "balance.param", "balance.clim");
   initEvents(EVENT_IN_FILE, ctx.printHeader);
   reset();
 #if DO_OUTPUT
-  out = openFile("balance.out", "w");
+  out = openFile(OUTPUT_FILE, "w");
   outputHeader(out);
 #endif
 }
@@ -46,6 +49,9 @@ void step(void) {
 }
 
 int checkCarbon(void) {
+  // Make sure we didn't forget to update context, in case dependencies changed
+  validateContext();
+
   int status = 0;
   if (fabs(balanceTracker.deltaC) > TEST_EPS) {
     status = 1;
@@ -56,6 +62,9 @@ int checkCarbon(void) {
 }
 
 int checkNitrogen(void) {
+  // Make sure we didn't forget to update context, in case dependencies changed
+  validateContext();
+
   int status = 0;
   if (fabs(balanceTracker.deltaN) > TEST_EPS) {
     // ENABLE WHEN NITROGEN IS FINISHED AND LEAF ON/OFF IS HANDLED
@@ -97,6 +106,27 @@ int testBalanceLeaf(void) {
   return status;
 }
 
+int testBalanceNoLitterPool(void) {
+  logTest("Starting testBalanceNoLitterPool()\n");
+  int status = 0;
+  ctx.litterPool = 0;
+  ctx.nitrogenCycle = 0;  // requires litter-pool
+
+  // Run the whole climate file (5 days)
+  while (climate != NULL) {
+    step();
+
+    status |= checkCarbon();
+    // No nitrogen with no litter pool, but this is a good check that we
+    // aren't mishandling the case
+    status |= checkNitrogen();
+
+    climate = climate->nextClim;
+  }
+
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -107,6 +137,9 @@ int run(void) {
   reset();
 
   status |= testBalanceLeaf();
+  reset();
+
+  status |= testBalanceNoLitterPool();
 
   return status;
 }

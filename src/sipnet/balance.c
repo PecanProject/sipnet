@@ -45,9 +45,10 @@ void updateBalanceTrackerPostUpdate(void) {
   balanceTracker.outputsC = fluxes.rVeg + fluxes.rFineRoot +
                             fluxes.rCoarseRoot +  // R_a
                             fluxes.rSoil +  // R_h
+                            fluxes.soilMethane +  // methane
                             fluxes.eventOutputC;  // agro event removals
   if (ctx.litterPool) {
-    balanceTracker.outputsC += fluxes.rLitter;
+    balanceTracker.outputsC += fluxes.rLitter + fluxes.litterMethane;
   }
   // Account for climate length
   balanceTracker.inputsC *= climate->length;

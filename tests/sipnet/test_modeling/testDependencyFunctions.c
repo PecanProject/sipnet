@@ -4,10 +4,10 @@
 void setupTests() {
   // Set up the context
   initContext();
-  ctx.litterPool = 1;
-  ctx.nitrogenCycle = 1;
   ctx.waterHResp = 1;
+  ctx.litterPool = 1;
   ctx.anaerobic = 0;
+  ctx.nitrogenCycle = 0;
 
   // Climate
   climate = (ClimateNode *)malloc(sizeof(ClimateNode));
@@ -40,7 +40,9 @@ void setupTests() {
 
 void initTestState(void) {
   ctx.waterHResp = 1;
+  ctx.litterPool = 1;
   ctx.anaerobic = 0;
+  ctx.nitrogenCycle = 0;
   envi.soilWater = 5.0;
   climate->tsoil = 20;
   eventTrackers.d_till_mod = 0.0;
@@ -48,6 +50,9 @@ void initTestState(void) {
 }
 
 void checkStatus(int status, const char *label, double calc, double exp) {
+  // Make sure we didn't forget to update context, in case dependencies changed
+  validateContext();
+
   if (status) {
     logTest("%s is %f, expected %f\n", label, calc, exp);
   }
@@ -134,6 +139,8 @@ int runTests() {
 
   // Moisture effect, volatilization
   initTestState();
+  ctx.anaerobic = 1;  // req for nitrogenCycle
+  ctx.nitrogenCycle = 1;
   // A=0
   status |= checkVolatilizationMoistEffect(0.05);
   params.fAnoxia = 0.4;
@@ -142,6 +149,7 @@ int runTests() {
 
   // Moisture effect, methane
   initTestState();
+  ctx.anaerobic = 1;
   // A=0
   status |= checkMethaneMoistEffect(0.0);
   params.fAnoxia = 0.4;
@@ -161,6 +169,8 @@ int runTests() {
 
   // C:N effect, one branch
   initTestState();
+  ctx.anaerobic = 1;  // req for nitrogenCycle
+  ctx.nitrogenCycle = 1;
   status |= checkCNRatio(calcSoilCN(), 7.5, "Soil C:N ratio");
   status |= checkCNRatio(calcLitterCN(), 5.0, "Litter C:N ratio");
   status |=

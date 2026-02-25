@@ -363,6 +363,16 @@ typedef struct Parameters {
   // Methane anoxia sensitivity, controls sharpness of anaerobic transition
   // dimensionless, greater than 1
   double anaerobicTransExp;
+
+  // ******
+  // Methane production
+  // ******
+
+  // Relative methane production rate in the soil pool, in [0, 1), per day
+  double soilMethaneRate;
+
+  // Relative methane production rate in the litter pool, in [0, 1), per day
+  double litterMethaneRate;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -554,6 +564,14 @@ typedef struct FluxVars {
   double eventInputN;
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
+
+  // ****************************************
+  // Methane production
+
+  // Methane produced from soil
+  double soilMethane;
+  // Methane produced from litter
+  double litterMethane;
 } Fluxes;
 
 // Global var
@@ -616,6 +634,9 @@ typedef struct TrackerVars {  // variables to track various things
 
   // g C * m^-2 wood creation
   double woodCreation;
+
+  // g C * m^-2 methane production
+  double methane;
 
   // g N * m^-2 ground area, Mineral N lost to volatilization
   double n2o;
