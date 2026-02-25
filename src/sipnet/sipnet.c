@@ -1057,7 +1057,11 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
 /////////////////
 
 // ensure that all the allocation to wood + leaves + fine roots < 1,
-// and calculate coarse root allocation
+// calculate coarse root allocation as:
+//   coarse = 1 - leaf - wood - fine, making sum(params) = 1
+// require:
+//   leaf, wood, fine root < 1 individually
+//   coarse root >=0 which enforces leaf + wood + fine root <= 1
 void ensureAllocation(void) {
   // :: from [3], root model description
   params.coarseRootAllocation = 1 - params.leafAllocation -
