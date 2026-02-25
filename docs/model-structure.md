@@ -297,7 +297,7 @@ is modeled as a first-order process proportional to litter carbon content and mo
 
 \begin{equation}
 F^C_{\text{decomp}} =
-K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot
+K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water},R_H} \cdot
 D_{CN} \cdot
 D_{tillage}
 \label{eq:decomp_rate}
