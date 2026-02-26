@@ -67,3 +67,5 @@ kCN 80.0
 fAnoxia 0.7
 anaerobicDecompRate 0.5
 anaerobicTransExp 2.0
+nFixationFracMax 0.5
+halfNFixationMax 1.0

@@ -349,6 +349,14 @@ typedef struct Parameters {
   // C:N ratio at which D_CN is 1/2 for soil and litter
   double kCN;
 
+  // Maximum fraction of plant N demand that can be met by fixation
+  // under low soil N, dimensionless between 0 and 1
+  double nFixationFracMax;
+
+  // Amount of mineral N at which fixation is reduced by half
+  // g N * m^-2 ground area
+  double halfNFixationMax;
+
   // ******
   // New moisture dependency functions
   // ******
@@ -532,6 +540,14 @@ typedef struct FluxVars {
   // g N * m^-2 ground area * day^-1
   double nMin;
 
+  // Plant N gained from fixation
+  // g N * m^-2 ground area * day^-1
+  double nFixation;
+
+  // Mineral N drawn from soil pool to meet plant N demand
+  // g N * m^-2 ground area * day^-1
+  double nUptake;
+
   // ****************************************
   // Fluxes for event handling
   //  - event fluxes tracked as part of modeling from [4]
@@ -640,6 +656,15 @@ typedef struct TrackerVars {  // variables to track various things
 
   // g N * m^-2 ground area, Mineral N lost to volatilization
   double n2o;
+
+  // g N * m^-2 N leached from soil mineral N pool
+  double nLeaching;
+
+  // g N * m^-2 N fixed by plants
+  double nFixation;
+
+  // g N * m^-2 N taken up by plants from soil mineral N pool
+  double nUptake;
 
 } Trackers;
 
