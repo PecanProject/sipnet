@@ -349,6 +349,14 @@ typedef struct Parameters {
   // C:N ratio at which D_CN is 1/2 for soil and litter
   double kCN;
 
+  // Maximum fraction of plant N demand that can be met by fixation
+  // under low soil N, dimensionless between 0 and 1
+  double nFixationFracMax;
+
+  // Amount of mineral N at which fixation is reduced by half
+  // g N * m^-2 ground area
+  double halfNFixationMax;
+
   // ******
   // New moisture dependency functions
   // ******
@@ -364,15 +372,6 @@ typedef struct Parameters {
   // dimensionless, greater than 1
   double anaerobicTransExp;
 
-<<<<<<< HEAD
-  // Maximum fraction of plant N demand that can be met by fixation
-  // under low soil N, dimensionless between 0 and 1
-  double nFixationFracMax;
-
-  // Amount of mineral N at which fixation is reduced by half
-  // g N * m^-2 ground area
-  double halfNFixationMax;
-=======
   // ******
   // Methane production
   // ******
@@ -382,7 +381,6 @@ typedef struct Parameters {
 
   // Relative methane production rate in the litter pool, in [0, 1), per day
   double litterMethaneRate;
->>>>>>> master
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
