@@ -12,6 +12,7 @@
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
 #define CLI_RESTART_IN 1001
 #define CLI_RESTART_OUT 1002
+#define CLI_EVENTS_FILE 1003
 
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 // See docs/developer-guide/cli-options.md for details on how to add a new
@@ -37,13 +38,13 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(dump-config),
     DECLARE_FLAG(print-header),
     DECLARE_FLAG(quiet),
-    DECLARE_FLAG(restart-strict),
 
     // These options don’t set a flag. We distinguish them by their indices.
     // name                         has_arg           flag  val (val is the
     // index)
     {"input-file", required_argument, 0, 'i'},
     {"file-name", required_argument, 0, 'f'},
+    {"events-file", required_argument, 0, CLI_EVENTS_FILE},
     {"restart-in", required_argument, 0, CLI_RESTART_IN},
     {"restart-out", required_argument, 0, CLI_RESTART_OUT},
     {"help", no_argument, 0, 'h'},
@@ -66,7 +67,7 @@ char *argNameMap[] = {
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
     DECLARE_ARG_FOR_MAP(dumpConfig), DECLARE_ARG_FOR_MAP(printHeader),
-    DECLARE_ARG_FOR_MAP(quiet), DECLARE_ARG_FOR_MAP(restartStrict)};
+    DECLARE_ARG_FOR_MAP(quiet)};
 // clang-format on
 
 // Print the help message when requested
@@ -79,6 +80,7 @@ void usage(char *progName) {
   printf("Options: (defaults are shown in parens at end)\n");
   printf("  -i, --input-file <input-file>      Name of input config file ('sipnet.in')\n");
   printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
+  printf("      --events-file <name>           Prefix of events input file ('events' => 'events.in')\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
   printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
@@ -98,7 +100,6 @@ void usage(char *progName) {
   printf("  --dump-config        Print final config to <file-name>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
-  printf("  --restart-strict     Enforce strict boundary validation for restart_in/out (1)\n");
   printf("  --restart-in <path>  Read a restart checkpoint from path\n");
   printf("  --restart-out <path> Write a restart checkpoint to path at end of run\n");
   printf("\n");
@@ -164,6 +165,15 @@ void parseCommandLineArgs(int argc, char *argv[]) {
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("restartIn", optarg, CTX_COMMAND_LINE);
+        break;
+      case CLI_EVENTS_FILE:
+        requireCLIArg("--events-file");
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          logError("events-file value %s exceeds maximum length of %d\n",
+                   optarg, FILENAME_MAXLEN);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("eventsFile", optarg, CTX_COMMAND_LINE);
         break;
       case CLI_RESTART_OUT:
         requireCLIArg("--restart-out");

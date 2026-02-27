@@ -28,6 +28,7 @@ When the same option is specified in both places, **command-line arguments take 
 | --------------- | ----- | ------------ | ----------- | ----------------------------------------------------------------------------------------- |
 | `--input-file`  | `-i`  | `<filename>` | `sipnet.in` | Name of input configuration file                                                          |
 | `--file-name`   | `-f`  | `<name>`     | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`) |
+| `--events-file` |       | `<name>`     | `events`    | Prefix for events input file (SIPNET reads `<name>.in`)                                   |
 | `--restart-in`  |       | `<path>`     | unset       | Read a restart checkpoint (schema `1.0`)                                                  |
 | `--restart-out` |       | `<path>`     | unset       | Write a restart checkpoint at end of run                                                  |
 
@@ -64,7 +65,6 @@ These flags control what outputs are generated. Prepend `no-` to disable (e.g., 
 | `--dump-config`       | OFF (0) | Write final merged configuration to `<file-name>.config` after running          |
 | `--print-header`      | ON (1)  | Print header row with variable names in output files                            |
 | `--quiet`             | OFF (0) | Suppress informational and warning messages to console                          |
-| `--restart-strict`    | ON (1)  | Strict restart validation mode (required when using restart options)            |
 
 ### Information Options
 
@@ -99,9 +99,9 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_NAME>.clim`)           |
 | `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_NAME>.out`)       |
 | `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_NAME>.config`)    |
+| `EVENTS_FILE`     | string     | Prefix for events input file (SIPNET reads `<EVENTS_FILE>.in`)             |
 | `RESTART_IN`      | string     | Path to checkpoint to resume from                                         |
 | `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                 |
-| `RESTART_STRICT`  | 0/1        | Strict restart validation mode; must be `1` when restart is used          |
 
 #### Model Feature Keys
 
@@ -152,15 +152,15 @@ QUIET 0
 
 ## Restart Checkpoints (MVP)
 
-SIPNET restart support is designed for segmented orchestration (for example, external workflow controllers). SIPNET only handles state checkpointing and strict resume validation.
+SIPNET restart support is designed for segmented orchestration (for example, external workflow controllers). SIPNET only handles state checkpointing and resume validation.
 
-`RESTART_OUT` writes a text restart file (schema `1.0`) containing runtime state needed for strict resume.
+`RESTART_OUT` writes a text restart file (schema `1.0`) containing runtime state needed for deterministic resume.
 
-### Strict constraints and failure modes
+### Restart constraints and failure modes
 
-- `RESTART_STRICT` must be enabled when using restart options
 - First climate row in resumed segment must have a timestamp (`year`, `day`, `time`) after the checkpoint boundary timestamp
-- Checkpoint schema/version and model compatibility must match the current run
+- Checkpoint schema/version and numeric model version must match the current run
+- Build info mismatch is reported as a warning only
 - Invalid restart context (for example changed processed-event history) is rejected with a hard error
 - SIPNET does not stitch/append outputs across segments; orchestration must stitch outputs externally
 

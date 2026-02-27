@@ -4,15 +4,47 @@ This page documents SIPNET's restart checkpoint implementation.
 
 ## Scope and Intent
 
+<<<<<<< ours
+- write full runtime state at segment end (`RESTART_OUT`)
+- restore state at segment start (`RESTART_IN`)
+- reject incompatible restart files
+
+## Runtime Sequence
+
+On resume, SIPNET:
+
+1. Runs normal setup (`setupModel`, `setupEvents`)
+2. Loads restart state and overwrites runtime state
+3. Validates compatibility and boundary rules
+4. Continues from the provided resumed climate segment
+
+## Schema v1.0
+=======
 SIPNET restart is designed to allow users and external workflows to stop the
 model, change the state and/or parameters, and then restart.
+>>>>>>> theirs
 
 SIPNET's responsibility is:
 
+<<<<<<< ours
+- header: `SIPNET_RESTART 1.0`
+- metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
+- flags: `flags.*`
+- checkpoint boundary: `boundary.*`
+- mean metadata: `mean.*`
+- runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
+- mean buffers: `mean.values.length`, `mean.values.<idx>`, `mean.weights.length`, `mean.weights.<idx>`
+- trailer: `end_restart 1`
+
+`event_state.*` keys were removed.
+
+## Compatibility Policy
+=======
 - stop at end of climate file
 - write full runtime state at segment end (`RESTART_OUT`)
 - restore full runtime state at segment start (`RESTART_IN`)
 - fail if restart file is incompatible
+>>>>>>> theirs
 
 SIPNET produces one output file per segment.
 
@@ -22,7 +54,7 @@ On resume, SIPNET executes:
 
 1. Normal setup (`setupModel`, `setupEvents`)
 2. Load checkpoint and overwrite runtime state
-3. Validate strict compatibility checks
+3. Validate compatibility checks
 4. Restore deterministic event cursor
 5. Continue run from resumed climate input (no boundary-row skip)
 
@@ -42,13 +74,18 @@ Checkpoint format is ASCII text with one key/value per line:
 
 All values are named.
 
-## Strict Validation Contract
+<details>
+<sipnet.out>put example restart file content here</restart.out>
+</details>
+
+## Validation Contract
 
 On load, SIPNET enforces:
 
 - magic header match
 - schema version match
-- model version/build match
+- model numeric version match
+- build info mismatch logs warning only
 - context flag compatibility
 - first-row climate timestamp strictly after checkpoint boundary (`year`, `day`, `time`)
 - mean tracker shape/cursor validity
@@ -59,7 +96,7 @@ On load, SIPNET enforces:
   - next-event hash/existence
 - ability to restore event cursor by index
 
-Any mismatch is a hard error. For floating-point timestamp checks, comparisons use a small tolerance suitable for text serialization.
+All mismatches above are hard errors except build-info mismatch, which is warning-only. For floating-point timestamp checks, comparisons use a small tolerance suitable for text serialization.
 
 ## Climate Boundaries
 

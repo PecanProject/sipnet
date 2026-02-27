@@ -1060,9 +1060,8 @@ static void validateRestartModelBuild(const RestartStateV1 *state) {
   }
 
   if (strcmp(state->buildInfo, currentBuildInfo) != 0) {
-    logError("Restart build info mismatch: checkpoint=%s current=%s\n",
-             state->buildInfo, currentBuildInfo);
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+    logWarning("Restart build info mismatch: checkpoint=%s current=%s\n",
+               state->buildInfo, currentBuildInfo);
   }
 }
 

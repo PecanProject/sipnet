@@ -57,13 +57,13 @@ struct Context {
   int dumpConfig;
   int printHeader;
   int quiet;
-  int restartStrict;
 
   // Files
   char paramFile[CONTEXT_CHAR_MAXLEN];
   char climFile[CONTEXT_CHAR_MAXLEN];
   char outFile[CONTEXT_CHAR_MAXLEN];
   char outConfigFile[CONTEXT_CHAR_MAXLEN];
+  char eventsFile[CONTEXT_CHAR_MAXLEN];
   char inputFile[CONTEXT_CHAR_MAXLEN];
   char restartIn[CONTEXT_CHAR_MAXLEN];
   char restartOut[CONTEXT_CHAR_MAXLEN];
