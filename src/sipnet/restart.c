@@ -132,14 +132,14 @@ static void parseError(const char *restartIn, const char *msg,
   } else {
     logError("Restart parse error in %s: %s\n", restartIn, msg);
   }
-  exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+  exit(EXIT_CODE_BAD_PARAMETER_VALUE);
 }
 
 static void parseValueError(const char *restartIn, const char *key,
                             const char *value) {
   logError("Restart parse error in %s: invalid value '%s' for key '%s'\n",
            restartIn, value, key);
-  exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+  exit(EXIT_CODE_BAD_PARAMETER_VALUE);
 }
 
 static long long parseLongLongStrict(const char *restartIn, const char *key,
@@ -180,8 +180,8 @@ static double parseDoubleStrict(const char *restartIn, const char *key,
 }
 
 static void checkLineLength(const char *line, size_t lineLen,
-                            const char *restartIn) {
-  if (lineLen > 0 && line[lineLen - 1] != '\n') {
+                            const char *restartIn, FILE *in) {
+  if (lineLen > 0 && line[lineLen - 1] != '\n' && !feof(in)) {
     parseError(restartIn, "line too long or truncated", NULL);
   }
 }
@@ -202,7 +202,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   if (fgets(firstLine, sizeof(firstLine), in) == NULL) {
     parseError(restartIn, "missing header line", NULL);
   }
-  checkLineLength(firstLine, strlen(firstLine), restartIn);
+  checkLineLength(firstLine, strlen(firstLine), restartIn, in);
 
   char magic[64];
   char schemaVersion[16];
@@ -246,7 +246,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   char line[4096];
   while (fgets(line, sizeof(line), in) != NULL) {
     size_t lineLen = strlen(line);
-    checkLineLength(line, lineLen, restartIn);
+    checkLineLength(line, lineLen, restartIn, in);
 
     char key[128];
     char value[2048];

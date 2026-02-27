@@ -47,6 +47,39 @@ static int truncateFileToSize(const char *file, long size) {
   return 0;
 }
 
+static int stripFinalNewline(const char *file) {
+  FILE *fp = fopen(file, "rb");
+  if (fp == NULL) {
+    logTest("Unable to open %s\n", file);
+    return 1;
+  }
+
+  if (fseek(fp, 0, SEEK_END) != 0) {
+    fclose(fp);
+    return 1;
+  }
+
+  long size = ftell(fp);
+  if (size <= 0) {
+    fclose(fp);
+    return 1;
+  }
+
+  if (fseek(fp, size - 1, SEEK_SET) != 0) {
+    fclose(fp);
+    return 1;
+  }
+
+  int last = fgetc(fp);
+  fclose(fp);
+
+  if (last == '\n') {
+    return truncateFileToSize(file, size - 1);
+  }
+
+  return 0;
+}
+
 static int fileStartsWith(const char *file, const char *expectedPrefix) {
   FILE *fp = fopen(file, "r");
   if (fp == NULL) {
@@ -246,10 +279,41 @@ static int testStrictClimateMismatchFails(void) {
   }
 
   rc = runModel("restart_seg2_bad.in", "mismatch_seg2.log");
-  status |= (rc == 0);
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
 
   if (status) {
     logTest("testStrictClimateMismatchFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testMissingFinalNewlineCheckpointSucceeds(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for final-newline test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "final_newline_seg1.log") != 0);
+  status |= stripFinalNewline(CHECKPOINT_FILE);
+
+  stepStatus = prepRunFiles("restart_segment2.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for final-newline test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "final_newline_seg2.log");
+  status |= (rc != 0);
+
+  if (status) {
+    logTest("testMissingFinalNewlineCheckpointSucceeds failed (rc=%d)\n", rc);
   }
 
   return status;
@@ -311,7 +375,7 @@ static int testModelVersionMismatchFails(void) {
   }
 
   rc = runModel("restart_seg2.in", "model_mismatch_seg2.log");
-  status |= (rc == 0);
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
 
   if (status) {
     logTest("testModelVersionMismatchFails failed (rc=%d)\n", rc);
@@ -343,7 +407,7 @@ static int testSchemaMismatchFails(void) {
   }
 
   rc = runModel("restart_seg2.in", "schema_mismatch_seg2.log");
-  status |= (rc == 0);
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
 
   if (status) {
     logTest("testSchemaMismatchFails failed (rc=%d)\n", rc);
@@ -374,7 +438,7 @@ static int testTruncatedCheckpointFails(void) {
   }
 
   rc = runModel("restart_seg2.in", "truncate_seg2.log");
-  status |= (rc == 0);
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
 
   if (status) {
     logTest("testTruncatedCheckpointFails failed (rc=%d)\n", rc);
@@ -408,7 +472,7 @@ static int testMalformedCheckpointFails(void) {
   }
 
   rc = runModel("restart_seg2.in", "malformed_seg2.log");
-  status |= (rc == 0);
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
 
   if (status) {
     logTest("testMalformedCheckpointFails failed (rc=%d)\n", rc);
@@ -422,6 +486,7 @@ int run(void) {
 
   status |= testSegmentedEquivalence();
   status |= testStrictClimateMismatchFails();
+  status |= testMissingFinalNewlineCheckpointSucceeds();
   status |= testNoRestartModeUnchanged();
   status |= testModelVersionMismatchFails();
   status |= testSchemaMismatchFails();
