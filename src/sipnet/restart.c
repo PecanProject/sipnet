@@ -107,6 +107,43 @@ climateTimestampIsAfterBoundary(const ClimateNode *actual,
   return actual->time > (boundary->time + RESTART_FLOAT_EPSILON);
 }
 
+static int isLeapYear(int year) {
+  return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+}
+
+static int daysInYear(int year) { return isLeapYear(year) ? 366 : 365; }
+
+static void advanceOneDay(int *year, int *day) {
+  ++(*day);
+  if (*day > daysInYear(*year)) {
+    *day = 1;
+    ++(*year);
+  }
+}
+
+static void
+validateCheckpointBoundaryForWrite(const char *restartOut,
+                                   const RestartClimateSignature *boundary) {
+  double stepHours = boundary->length * 24.0;
+  if (stepHours <= RESTART_FLOAT_EPSILON) {
+    logError("Cannot write restart checkpoint %s: non-positive timestep length "
+             "at boundary (year=%d day=%d time=%.8f length=%.8f)\n",
+             restartOut, boundary->year, boundary->day, boundary->time,
+             boundary->length);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
+  double hoursUntilMidnight = 24.0 - boundary->time;
+  if (hoursUntilMidnight > (stepHours + RESTART_FLOAT_EPSILON)) {
+    logError("Cannot write restart checkpoint %s: last timestep ends more than "
+             "one timestep before midnight\n",
+             restartOut);
+    logError("Boundary timestep: year=%d day=%d time=%.8f length=%.8f\n",
+             boundary->year, boundary->day, boundary->time, boundary->length);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
 static void sanitizeBuildInfo(char *dest, size_t destLen, const char *src) {
   if (destLen == 0) {
     return;
@@ -1081,6 +1118,29 @@ static void validateRestartBoundary(const RestartStateV1 *state) {
              climate->day, climate->time);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
+
+  double firstStepHours = climate->length * 24.0;
+  if (firstStepHours <= RESTART_FLOAT_EPSILON) {
+    logError("Cannot restart: first climate timestep length is non-positive "
+             "(year=%d day=%d time=%.8f length=%.8f)\n",
+             climate->year, climate->day, climate->time, climate->length);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
+  int expectedYear = state->boundaryClimate.year;
+  int expectedDay = state->boundaryClimate.day;
+  advanceOneDay(&expectedYear, &expectedDay);
+
+  if (climate->year != expectedYear || climate->day != expectedDay ||
+      climate->time > (firstStepHours + RESTART_FLOAT_EPSILON)) {
+    logError("Restart boundary mismatch: resumed segment must start within one "
+             "timestep after midnight checkpoint boundary\n");
+    logError("Expected start on year=%d day=%d with time<=%.8f; found "
+             "year=%d day=%d time=%.8f length=%.8f\n",
+             expectedYear, expectedDay, firstStepHours, climate->year,
+             climate->day, climate->time, climate->length);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
 }
 
 static void applyRestartGddCarry(const RestartStateV1 *state) {
@@ -1124,6 +1184,7 @@ void restartWriteCheckpoint(const char *restartOut,
              restartOut);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
+  validateCheckpointBoundaryForWrite(restartOut, &lastProcessedClimate);
 
   RestartStateV1 state;
   memset(&state, 0, sizeof(state));

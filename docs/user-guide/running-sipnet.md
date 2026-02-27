@@ -159,6 +159,8 @@ SIPNET restart support is designed for segmented orchestration (for example, ext
 ### Restart constraints and failure modes
 
 - First climate row in resumed segment must have a timestamp (`year`, `day`, `time`) after the checkpoint boundary timestamp
+- Checkpoint writes are only allowed when the final climate step is within one timestep of midnight
+- Resumed segments must start on the midnight-following day and no later than one timestep after midnight
 - Checkpoint schema/version and numeric model version must match the current run
 - Build info mismatch is reported as a warning only
 - Invalid restart context (for example changed processed-event history) is rejected with a hard error
