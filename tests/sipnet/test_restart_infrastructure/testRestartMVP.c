@@ -203,6 +203,26 @@ static int hasManagedEventOnDay(const char *eventFile, int year, int day) {
   return found;
 }
 
+static int fileContains(const char *file, const char *needle) {
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s\n", file);
+    return 0;
+  }
+
+  char line[2048];
+  int found = 0;
+  while (fgets(line, sizeof(line), in) != NULL) {
+    if (strstr(line, needle) != NULL) {
+      found = 1;
+      break;
+    }
+  }
+
+  fclose(in);
+  return found;
+}
+
 static int testSegmentedEquivalence(void) {
   int status = 0;
   int stepStatus = 0;
@@ -283,6 +303,64 @@ static int testStrictClimateMismatchFails(void) {
 
   if (status) {
     logTest("testStrictClimateMismatchFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testCheckpointMustEndNearMidnight(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1_not_midnight.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for midnight-checkpoint test\n");
+    return stepStatus;
+  }
+
+  rc = runModel("restart_seg1.in", "midnight_checkpoint.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains(
+      "midnight_checkpoint.log",
+      "last timestep ends more than one timestep before midnight");
+
+  if (status) {
+    logTest("testCheckpointMustEndNearMidnight failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testRestartMustStartNearMidnight(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for restart-midnight test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "restart_midnight_seg1.log") != 0);
+
+  stepStatus = prepRunFiles("restart_segment2_late.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for restart-midnight test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "restart_midnight_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("restart_midnight_seg2.log",
+                          "must start within one timestep after midnight");
+
+  if (status) {
+    logTest("testRestartMustStartNearMidnight failed (rc=%d)\n", rc);
   }
 
   return status;
@@ -416,6 +494,45 @@ static int testSchemaMismatchFails(void) {
   return status;
 }
 
+static int testBuildInfoMismatchWarnsAndSucceeds(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+  const char *warnInputFile = "restart_seg2_build_warn.in";
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for build mismatch test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "build_mismatch_seg1.log") != 0);
+  status |=
+      replaceFirstOccurrence(CHECKPOINT_FILE, "build_info ", "build_info X");
+
+  stepStatus = prepRunFiles("restart_segment2.clim");
+  if (stepStatus) {
+    logTest("Failed to prepare files for build mismatch test segment 2\n");
+    return status | stepStatus;
+  }
+
+  status |= copyFile((char *)"restart_seg2.in", (char *)warnInputFile);
+  status |= replaceFirstOccurrence(warnInputFile, "QUIET 1", "QUIET 0");
+
+  rc = runModel(warnInputFile, "build_mismatch_seg2.log");
+  status |= (rc != 0);
+  status |=
+      !fileContains("build_mismatch_seg2.log", "Restart build info mismatch");
+  status |= (remove(warnInputFile) != 0);
+
+  if (status) {
+    logTest("testBuildInfoMismatchWarnsAndSucceeds failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
 static int testTruncatedCheckpointFails(void) {
   int status = 0;
   int stepStatus = 0;
@@ -486,10 +603,13 @@ int run(void) {
 
   status |= testSegmentedEquivalence();
   status |= testStrictClimateMismatchFails();
+  status |= testCheckpointMustEndNearMidnight();
+  status |= testRestartMustStartNearMidnight();
   status |= testMissingFinalNewlineCheckpointSucceeds();
   status |= testNoRestartModeUnchanged();
   status |= testModelVersionMismatchFails();
   status |= testSchemaMismatchFails();
+  status |= testBuildInfoMismatchWarnsAndSucceeds();
   status |= testTruncatedCheckpointFails();
   status |= testMalformedCheckpointFails();
 
