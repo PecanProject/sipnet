@@ -45,9 +45,10 @@ void updateBalanceTrackerPostUpdate(void) {
   balanceTracker.outputsC = fluxes.rVeg + fluxes.rFineRoot +
                             fluxes.rCoarseRoot +  // R_a
                             fluxes.rSoil +  // R_h
+                            fluxes.soilMethane +  // methane
                             fluxes.eventOutputC;  // agro event removals
   if (ctx.litterPool) {
-    balanceTracker.outputsC += fluxes.rLitter;
+    balanceTracker.outputsC += fluxes.rLitter + fluxes.litterMethane;
   }
   // Account for climate length
   balanceTracker.inputsC *= climate->length;
@@ -55,9 +56,7 @@ void updateBalanceTrackerPostUpdate(void) {
 
   // NITROGEN
   if (ctx.nitrogenCycle) {
-    balanceTracker.inputsN =
-        // TODO: fluxes.fixation +
-        fluxes.eventInputN;
+    balanceTracker.inputsN = fluxes.nFixation + fluxes.eventInputN;
     balanceTracker.outputsN =
         fluxes.nLeaching + fluxes.nVolatilization + fluxes.eventOutputN;
 
@@ -111,14 +110,14 @@ void checkBalance(void) {
         "Carbon balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
         balanceTracker.deltaC, climate->year, climate->day, climate->time);
   }
-  // RE-ENABLE WHEN N IS FIXED
-  // if (fabs(balanceTracker.deltaN) > 0.0) {
-  //  err = 1;
-  //  logInternalError("Nitrogen balance check failed (delta=%8.4f)\n",
-  //                   balanceTracker.deltaN);
-  //}
+  if (fabs(balanceTracker.deltaN) > 0.0) {
+    // err = 1;
+    logInternalError(
+        "Nitrogen balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        balanceTracker.deltaN, climate->year, climate->day, climate->time);
+  }
   if (err) {
     logInternalError("Exiting\n");
-    //  exit(EXIT_CODE_INTERNAL_ERROR);
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }

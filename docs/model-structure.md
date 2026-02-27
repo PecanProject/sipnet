@@ -259,15 +259,17 @@ This is from Zobitz, et al. (2008), Sec. 5.4.2.
 
 ### Litter Carbon
 
-The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition:
+The change in the litter carbon pool over time is defined by the input of new litter and losses due to decomposition 
+and methane production:
 
 \begin{equation}
-\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}} - F^C_\mathit{CH_4,litter}
 \end{equation}
 
-Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux} and
-$F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}. Note that belowground turnover
-is routed directly to the soil carbon pool (see Soil Carbon).
+Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux},
+$F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}, and $F^C_\mathit{CH_4,litter}$ is
+the methane flux from the litter \eqref{eq:ch4}. Note that belowground turnover is routed directly to the soil carbon
+pool (see Soil Carbon).
 
 $F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest,
 and organic matter amendments:
@@ -295,7 +297,7 @@ is modeled as a first-order process proportional to litter carbon content and mo
 
 \begin{equation}
 F^C_{\text{decomp}} =
-K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water}R_H} \cdot
+K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water},R_H} \cdot
 D_{CN} \cdot
 D_{tillage}
 \label{eq:decomp_rate}
@@ -329,16 +331,19 @@ F^C_{\text{soil,litter}} =
 
 The change in the soil organic carbon (SOC) pool over time is determined by: (i) inputs of carbon transferred from
 litter during decomposition, (ii) direct inputs from belowground plant turnover, and (iii) losses of carbon due to
-heterotrophic respiration:
+heterotrophic respiration and methane production:
 
 \begin{equation}
-\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} - F^C_\mathit{CH_4,soil}
 \label{eq:Braswell_A3}
 \end{equation}
 
-This is equation (A3) from Braswell, et al. (2005).
+where $F^C_{\text{soil}}$ is the total carbon input to the soil, $R_{\text{soil}}$ is the soil heterotrophic 
+respiration, and $F^C_\mathit{CH_4,soil}$ is the methane flux from the soil. 
 
-Total carbon input to the soil, $F^C_{\text{soil}}$, includes both
+This is equation (A3) from Braswell, et al. (2005), with the addition of the methane flux.
+
+Total carbon input to the soil includes both
 (i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
 (ii) inputs from root turnover:
 
@@ -347,7 +352,7 @@ F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
 \label{eq:soil_carbon_flux}
 \end{equation}
 
-Soil heterotrophic respiration, $R_{\text{soil}}$, is modeled as a first-order process proportional
+Soil heterotrophic respiration is modeled as a first-order process proportional
 to soil organic carbon content and modified by environmental and management factors:
 
 \begin{equation}
@@ -383,10 +388,10 @@ heterotrophic respiration is then defined as a fixed fraction of this decomposit
 (\eqref{eq:decomp_carbon}--\eqref{eq:r_litter}), with the remainder transferred to the soil carbon pool
 (\eqref{eq:soil_carbon}).
 
-### $\frak{Methane \ Production \ (C \rightarrow CH_4)}$
+### Methane Production $(C \rightarrow CH_4)$
 
 \begin{equation}
-F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\mathrm{water, CH_4} \cdot D_\text{temp}
+F^C_\mathit{CH_4,j} = K_{CH_4,j} \cdot C_\text{j} \cdot D_\mathrm{water, CH_4} \cdot D_\text{temp}
 \label{eq:ch4}
 \end{equation}
 
@@ -394,7 +399,7 @@ F^C_\mathit{CH_4} = \left(\sum_{j} K_{CH_4,j} \cdot C_\text{j}\right) \cdot D_\m
 \small j \in \{\text{soil, litter}\}
 \end{equation*}
 
-The calculation of methane flux $(F^C_{CH_4})$ is analogous to that of $R_H$. It uses the same carbon pools as substrate
+The calculation of methane flux $(F^C_{CH_4})$ for soil and litter is analogous to that of $R_H$. It uses the same carbon pools as substrate
 and temperature dependence but has specific rate parameters $(K_{\mathit{CH_4,}j})$, a moisture dependence function 
 based on oxygen availability \eqref{eq:water_ch4}, and no direct dependence on tillage.
 
@@ -588,20 +593,33 @@ drainage.
 
 ### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
 
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of changes in plant N
-pools:
+Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of carbon creation fluxes divided by their respective C:N ratios:
 
 \begin{equation}
-F^N_\text{demand}=\frac{dN_\text{plant}}{dt} = \sum_{i} \frac{dN_{\text{plant,}i}}{dt}
-\label{eq:plant_n_demand}
+F^N_{\text{demand,}leafOn} = \frac{F^C_{\text{creation,}leafOn}}{CN_{\text{leaf}}} -
+\frac{F^C_{\text{creation,}leafOn}}{CN_{\text{wood}}}
+\label{eq:leaf_on_n_demand}
+\end{equation}
+
+\begin{equation}
+F^N_{\text{demand,}creation} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
+\label{eq:creation_n_demand}
 \end{equation}
 
 \begin{equation*}
-\small i \in \{\text{leaf, wood, fine root, coarse root}\}
+\small i \in \{\text{wood, leaf, fine root, coarse root}\}
 \end{equation*}
 
-Each term in the sum is calculated according to \eqref{eq:plant_n}. Total plant N demand $F^N_\text{demand}$ is then
-partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
+\begin{equation}
+F^N_{\text{demand,}total} =
+F^N_{\text{demand,}leafOn} +
+F^N_{\text{demand,}creation}
+\label{eq:plant_n_demand}
+\end{equation}
+
+Each term in the sum is calculated according to \eqref{eq:plant_n}. Total plant N demand $F^N_{\text{demand,}total}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
+
+**TODO:** possibly include more context about leaf on events
 
 ### Nitrogen Fixation and Uptake $F^N_\text{fix}, F^N_\text{uptake}$
 
@@ -737,10 +755,9 @@ $F^W_{\text{precip,soil}}$ is added to soil water in \eqref{eq:Braswell_A4}.
 ET = E + T
 \end{equation}
 
-Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($T$), which are defined
-below:
+Evapotranspiration ($ET$) is calculated as the sum of evaporation ($E$) and transpiration ($T=F^W_{\text{trans}}$). These fluxes are defined below:
 
-### Evaporation
+#### Evaporation
 
 There are two components of evaporation: (1) immediate evaporation from intercepted precipitation or canopy irrigation
 and (2) soil surface evaporation.
@@ -750,6 +767,29 @@ and (2) soil surface evaporation.
 \begin{equation}
 F^W_{\text{intercept,evap}} = f_{\text{intercept}}\,(F^W_{\text{precip}} + F^W_{\text{irrig,canopy}})
 \end{equation}
+
+##### Canopy interception evaporation (optional leaf water pool)
+
+If `LEAF_WATER` is enabled (CLI: `--leaf-water`), SIPNET limits immediate evaporation from canopy interception
+using an LAI-scaled cap on the interception-evaporation flux. In `calcPrecip()`, potential interception evaporation is:
+
+\begin{equation}
+E_{\text{int,pot}} = f_{\text{intercept}} \cdot F^W_{\text{precip}}
+\end{equation}
+
+and is capped by an LAI-scaled maximum interception-evaporation flux:
+
+\begin{equation}
+E_{\text{int,max}} = LAI \cdot WHC_{\text{leaf}}
+\end{equation}
+
+so that:
+
+\begin{equation}
+E_{\text{int}} = \min(E_{\text{int,pot}}, E_{\text{int,max}})
+\end{equation}
+
+Any rainfall not evaporated immediately becomes throughfall to the soil.
 
 **Soil Evaporation**
 
@@ -770,12 +810,12 @@ r_d = \frac{\text{rdConst}}{u},
 
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
 
-#### Evaporation
+#### Total Evaporation
 
 Total evaporation is calculated as the sum of intercepted water, soil evaporation, and sublimation:
 
 \begin{equation}
-E = F^W_{\text{trans}} + F^W_{\text{intercept,evap}} + F^W_{\text{soil,evap}} + F^W_{\text{sublim}}
+E = F^W_{\text{intercept,evap}} + F^W_{\text{soil,evap}} + F^W_{\text{sublim}}
 \end{equation}
 
 ### Transpiration
@@ -794,13 +834,13 @@ Water Use Efficiency (WUE) is defined as the ratio of a constant $K_{\text{WUE}}
 #### Potential Transpiration
 
 \begin{equation}
-T_{\text{pot}} = \frac{\text{GPP}_{\text{pot}}}{\text{WUE}}
+F^W_{\text{trans,pot}} = \frac{\text{GPP}_{\text{pot}}}{\text{WUE}}
 \label{eq:Braswell_A14}
 \end{equation}
 
 This is equation (A14) from Braswell, et al. (2005).
 
-Potential transpiration  $(T_{\text{pot}})$ is calculated as the potential gross primary
+Potential transpiration  $(F^W_{\text{trans,pot}})$ is calculated as the potential gross primary
 production  $(\text{GPP}_{\text{pot}})$ divided by WUE.
 
 #### Actual Transpiration
@@ -812,7 +852,7 @@ F^W_\text{trans} = \min(F^W_\text{trans, pot}, f \cdot W_\text{soil})
 
 This is equation (A15) from Braswell, et al. (2005).
 
-Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{pot}})$ and the
+Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{trans,pot}})$ and the
 fraction  $(f)$ of the total soil water  $(W_\text{soil})$ that is removable in one day.
 
 ## Dependence Functions for Temperature and Moisture
