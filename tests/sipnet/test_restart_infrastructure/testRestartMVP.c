@@ -25,11 +25,11 @@ static int runShell(const char *cmd) {
   return 255;
 }
 
-static int prepRunFiles(const char *climFile) {
+static int prepRunFiles(const char *climFile, const char *eventFile) {
   int status = 0;
   status |= copyFile((char *)"restart.param", (char *)"run.param");
   status |= copyFile((char *)climFile, (char *)"run.clim");
-  status |= copyFile((char *)"events_base.in", (char *)"events.in");
+  status |= copyFile((char *)eventFile, (char *)"events.in");
   return status;
 }
 
@@ -230,7 +230,7 @@ static int testSegmentedEquivalence(void) {
   runShell("rm -f run.out events.out run.restart continuous.out seg1.out "
            "seg2.out segmented_joined.out *.log");
 
-  stepStatus = prepRunFiles("restart_full.clim");
+  stepStatus = prepRunFiles("restart_full.clim", "events_base.in");
   if (stepStatus) {
     logTest("Failed to prepare files for continuous run\n");
     return stepStatus;
@@ -240,7 +240,7 @@ static int testSegmentedEquivalence(void) {
   status |= rename("run.out", "continuous.out");
   status |= rename("events.out", "continuous.events");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for segment 1\n");
     return status | stepStatus;
@@ -248,10 +248,11 @@ static int testSegmentedEquivalence(void) {
 
   status |= (runModel("restart_seg1.in", "seg1.log") != 0);
   status |= !fileStartsWith(CHECKPOINT_FILE, RESTART_MAGIC_LINE);
+  status |= fileContains(CHECKPOINT_FILE, "event_state.");
   status |= rename("run.out", "seg1.out");
   status |= rename("events.out", "seg1.events");
 
-  stepStatus = prepRunFiles("restart_segment2.clim");
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
     logTest("Failed to prepare files for segment 2\n");
     return status | stepStatus;
@@ -284,7 +285,7 @@ static int testStrictClimateMismatchFails(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for mismatch test segment 1\n");
     return stepStatus;
@@ -292,7 +293,7 @@ static int testStrictClimateMismatchFails(void) {
 
   status |= (runModel("restart_seg1.in", "mismatch_seg1.log") != 0);
 
-  stepStatus = prepRunFiles("restart_segment2_bad.clim");
+  stepStatus = prepRunFiles("restart_segment2_bad.clim", "events_segment2.in");
   if (stepStatus) {
     logTest("Failed to prepare files for mismatch test segment 2\n");
     return status | stepStatus;
@@ -315,7 +316,8 @@ static int testCheckpointMustEndNearMidnight(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1_not_midnight.clim");
+  stepStatus =
+      prepRunFiles("restart_segment1_not_midnight.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for midnight-checkpoint test\n");
     return stepStatus;
@@ -341,14 +343,14 @@ static int testRestartMustStartNearMidnight(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for restart-midnight test segment 1\n");
     return stepStatus;
   }
   status |= (runModel("restart_seg1.in", "restart_midnight_seg1.log") != 0);
 
-  stepStatus = prepRunFiles("restart_segment2_late.clim");
+  stepStatus = prepRunFiles("restart_segment2_late.clim", "events_segment2.in");
   if (stepStatus) {
     logTest("Failed to prepare files for restart-midnight test segment 2\n");
     return status | stepStatus;
@@ -373,7 +375,7 @@ static int testMissingFinalNewlineCheckpointSucceeds(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for final-newline test segment 1\n");
     return stepStatus;
@@ -381,7 +383,7 @@ static int testMissingFinalNewlineCheckpointSucceeds(void) {
   status |= (runModel("restart_seg1.in", "final_newline_seg1.log") != 0);
   status |= stripFinalNewline(CHECKPOINT_FILE);
 
-  stepStatus = prepRunFiles("restart_segment2.clim");
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
     logTest("Failed to prepare files for final-newline test segment 2\n");
     return status | stepStatus;
@@ -403,7 +405,7 @@ static int testNoRestartModeUnchanged(void) {
 
   runShell("rm -f run.out events.out *.log no_restart_a.out no_restart_b.out");
 
-  stepStatus = prepRunFiles("restart_full.clim");
+  stepStatus = prepRunFiles("restart_full.clim", "events_base.in");
   if (stepStatus) {
     logTest("Failed to prepare files for no-restart A\n");
     return stepStatus;
@@ -411,7 +413,7 @@ static int testNoRestartModeUnchanged(void) {
   status |= (runModel("norestart_a.in", "norestart_a.log") != 0);
   status |= rename("run.out", "no_restart_a.out");
 
-  stepStatus = prepRunFiles("restart_full.clim");
+  stepStatus = prepRunFiles("restart_full.clim", "events_base.in");
   if (stepStatus) {
     logTest("Failed to prepare files for no-restart B\n");
     return status | stepStatus;
@@ -435,7 +437,7 @@ static int testModelVersionMismatchFails(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest(
         "Failed to prepare files for model-version mismatch test segment 1\n");
@@ -445,7 +447,7 @@ static int testModelVersionMismatchFails(void) {
   status |= replaceFirstOccurrence(CHECKPOINT_FILE, "model_version ",
                                    "model_version X");
 
-  stepStatus = prepRunFiles("restart_segment2.clim");
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
     logTest(
         "Failed to prepare files for model-version mismatch test segment 2\n");
@@ -469,7 +471,7 @@ static int testSchemaMismatchFails(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for schema mismatch test segment 1\n");
     return stepStatus;
@@ -478,7 +480,7 @@ static int testSchemaMismatchFails(void) {
   status |= replaceFirstOccurrence(CHECKPOINT_FILE, "SIPNET_RESTART 1.0",
                                    "SIPNET_RESTART 9.9");
 
-  stepStatus = prepRunFiles("restart_segment2.clim");
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
     logTest("Failed to prepare files for schema mismatch test segment 2\n");
     return status | stepStatus;
@@ -502,7 +504,7 @@ static int testBuildInfoMismatchWarnsAndSucceeds(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for build mismatch test segment 1\n");
     return stepStatus;
@@ -511,7 +513,7 @@ static int testBuildInfoMismatchWarnsAndSucceeds(void) {
   status |=
       replaceFirstOccurrence(CHECKPOINT_FILE, "build_info ", "build_info X");
 
-  stepStatus = prepRunFiles("restart_segment2.clim");
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
     logTest("Failed to prepare files for build mismatch test segment 2\n");
     return status | stepStatus;
@@ -540,7 +542,7 @@ static int testTruncatedCheckpointFails(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest("Failed to prepare files for truncation test segment 1\n");
     return stepStatus;
@@ -548,7 +550,7 @@ static int testTruncatedCheckpointFails(void) {
   status |= (runModel("restart_seg1.in", "truncate_seg1.log") != 0);
   status |= truncateFileToSize(CHECKPOINT_FILE, 16);
 
-  stepStatus = prepRunFiles("restart_segment2.clim");
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
     logTest("Failed to prepare files for truncation test segment 2\n");
     return status | stepStatus;
@@ -571,17 +573,17 @@ static int testMalformedCheckpointFails(void) {
 
   runShell("rm -f run.out events.out run.restart *.log");
 
-  stepStatus = prepRunFiles("restart_segment1.clim");
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (stepStatus) {
     logTest(
         "Failed to prepare files for malformed checkpoint test segment 1\n");
     return stepStatus;
   }
   status |= (runModel("restart_seg1.in", "malformed_seg1.log") != 0);
-  status |=
-      replaceFirstOccurrence(CHECKPOINT_FILE, "event_state", "event_state_BAD");
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "event_trackers",
+                                   "event_trackers_BAD");
 
-  stepStatus = prepRunFiles("restart_segment2.clim");
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
     logTest(
         "Failed to prepare files for malformed checkpoint test segment 2\n");

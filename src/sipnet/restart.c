@@ -53,13 +53,6 @@ typedef struct RestartStateV1 {
 
   RestartClimateSignature boundaryClimate;
 
-  // Event cursor metadata for deterministic replay checks
-  int eventCursorIndex;
-  int eventCount;
-  unsigned long long eventPrefixHash;
-  int eventHasNext;
-  unsigned long long eventNextHash;
-
   // Mean-tracker metadata
   int meanLength;
   double meanTotWeight;
@@ -195,17 +188,6 @@ static int parseIntStrict(const char *restartIn, const char *key,
   return (int)parsed;
 }
 
-static unsigned long long parseUnsignedLongLongStrict(const char *restartIn,
-                                                      const char *key,
-                                                      const char *value) {
-  char *end = NULL;
-  unsigned long long parsed = strtoull(value, &end, 10);
-  if (end == value || *end != '\0') {
-    parseValueError(restartIn, key, value);
-  }
-  return parsed;
-}
-
 static double parseDoubleStrict(const char *restartIn, const char *key,
                                 const char *value) {
   char *end = NULL;
@@ -264,7 +246,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
 
   int seenFlags[10] = {0};
   int seenBoundary[13] = {0};
-  int seenEventState[5] = {0};
   int seenMeanMeta[5] = {0};
   int seenEnvi[12] = {0};
   int seenTrackers[27] = {0};
@@ -431,33 +412,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
     if (strcmp(key, "boundary.gdd") == 0) {
       markSeen(&(seenBoundary[12]), restartIn, key);
       state->boundaryClimate.gdd = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-
-    if (strcmp(key, "event_state.cursor_index") == 0) {
-      markSeen(&(seenEventState[0]), restartIn, key);
-      state->eventCursorIndex = parseIntStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "event_state.event_count") == 0) {
-      markSeen(&(seenEventState[1]), restartIn, key);
-      state->eventCount = parseIntStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "event_state.prefix_hash") == 0) {
-      markSeen(&(seenEventState[2]), restartIn, key);
-      state->eventPrefixHash =
-          parseUnsignedLongLongStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "event_state.has_next") == 0) {
-      markSeen(&(seenEventState[3]), restartIn, key);
-      state->eventHasNext = parseIntStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "event_state.next_hash") == 0) {
-      markSeen(&(seenEventState[4]), restartIn, key);
-      state->eventNextHash = parseUnsignedLongLongStrict(restartIn, key, value);
       continue;
     }
 
@@ -848,11 +802,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
     }
   }
   for (int i = 0; i < 5; ++i) {
-    if (!seenEventState[i]) {
-      parseError(restartIn, "missing required event_state.* keys", NULL);
-    }
-  }
-  for (int i = 0; i < 5; ++i) {
     if (!seenMeanMeta[i]) {
       parseError(restartIn, "missing required mean.* keys", NULL);
     }
@@ -916,11 +865,6 @@ static void writeKeyLongLong(FILE *out, const char *key, long long value) {
   fprintf(out, "%s %lld\n", key, value);
 }
 
-static void writeKeyUnsignedLongLong(FILE *out, const char *key,
-                                     unsigned long long value) {
-  fprintf(out, "%s %llu\n", key, value);
-}
-
 static void writeKeyDouble(FILE *out, const char *key, double value) {
   fprintf(out, "%s %.17g\n", key, value);
 }
@@ -962,14 +906,6 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "boundary.vPress", state->boundaryClimate.vPress);
   writeKeyDouble(out, "boundary.wspd", state->boundaryClimate.wspd);
   writeKeyDouble(out, "boundary.gdd", state->boundaryClimate.gdd);
-  fprintf(out, "\n");
-
-  writeKeyInt(out, "event_state.cursor_index", state->eventCursorIndex);
-  writeKeyInt(out, "event_state.event_count", state->eventCount);
-  writeKeyUnsignedLongLong(out, "event_state.prefix_hash",
-                           state->eventPrefixHash);
-  writeKeyInt(out, "event_state.has_next", state->eventHasNext);
-  writeKeyUnsignedLongLong(out, "event_state.next_hash", state->eventNextHash);
   fprintf(out, "\n");
 
   writeKeyInt(out, "mean.length", state->meanLength);
@@ -1207,24 +1143,6 @@ void restartWriteCheckpoint(const char *restartOut,
 
   state.boundaryClimate = lastProcessedClimate;
 
-  if (ctx.events) {
-    state.eventCursorIndex = getEventCursorIndex();
-    if (state.eventCursorIndex < 0) {
-      logError("Internal error: invalid event cursor while writing restart\n");
-      exit(EXIT_CODE_INTERNAL_ERROR);
-    }
-    state.eventCount = getEventCount();
-    state.eventPrefixHash = getEventPrefixHash(state.eventCursorIndex);
-    state.eventNextHash =
-        getEventHashAtIndex(state.eventCursorIndex, &(state.eventHasNext));
-  } else {
-    state.eventCursorIndex = 0;
-    state.eventCount = 0;
-    state.eventPrefixHash = 0ULL;
-    state.eventHasNext = 0;
-    state.eventNextHash = 0ULL;
-  }
-
   state.meanLength = meanNPP->length;
   state.meanTotWeight = meanNPP->totWeight;
   state.meanStart = meanNPP->start;
@@ -1271,40 +1189,4 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
   processedStepCount = state.processedSteps;
   lastProcessedClimate = state.boundaryClimate;
   hasLastProcessedClimate = 1;
-
-  if (ctx.events) {
-    if (state.eventCount != getEventCount()) {
-      logError("Restart events mismatch: event count changed (%d vs %d)\n",
-               state.eventCount, getEventCount());
-      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-    }
-    if (state.eventCursorIndex < 0 ||
-        state.eventCursorIndex > state.eventCount) {
-      logError("Restart events mismatch: invalid cursor index %d\n",
-               state.eventCursorIndex);
-      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-    }
-
-    unsigned long long prefixHash = getEventPrefixHash(state.eventCursorIndex);
-    if (prefixHash != state.eventPrefixHash) {
-      logError("Restart events mismatch: processed event history changed\n");
-      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-    }
-
-    int hasNext = 0;
-    unsigned long long nextHash =
-        getEventHashAtIndex(state.eventCursorIndex, &hasNext);
-    if ((hasNext != state.eventHasNext) ||
-        (hasNext && nextHash != state.eventNextHash)) {
-      logError(
-          "Restart events mismatch: next event cursor is not deterministic\n");
-      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-    }
-
-    if (setEventCursorIndex(state.eventCursorIndex) != 0) {
-      logError("Restart events mismatch: unable to set event cursor to %d\n",
-               state.eventCursorIndex);
-      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-    }
-  }
 }

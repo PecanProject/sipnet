@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <unistd.h>  // for access()
 
 #include "common/exitCodes.h"
@@ -32,88 +31,6 @@ EventNode *gEvent = NULL;
 
 // events.out handle, only needed here
 static FILE *eventOutFile = NULL;
-
-static uint64_t hashBytes(uint64_t seed, const void *data, size_t len) {
-  const unsigned char *bytes = (const unsigned char *)data;
-  uint64_t hash = seed;
-
-  for (size_t i = 0; i < len; ++i) {
-    hash ^= bytes[i];
-    hash *= 1099511628211ULL;
-  }
-
-  return hash;
-}
-
-static uint64_t hashDouble(uint64_t seed, double val) {
-  union {
-    double d;
-    uint64_t u;
-  } bits;
-  bits.d = val;
-  return hashBytes(seed, &(bits.u), sizeof(bits.u));
-}
-
-static uint64_t hashEventNode(const EventNode *event) {
-  uint64_t hash = 1469598103934665603ULL;  // FNV-1a offset basis
-  int type = event->type;
-  hash = hashBytes(hash, &(event->year), sizeof(event->year));
-  hash = hashBytes(hash, &(event->day), sizeof(event->day));
-  hash = hashBytes(hash, &type, sizeof(type));
-
-  switch (event->type) {
-    case HARVEST: {
-      const HarvestParams *p = (const HarvestParams *)event->eventParams;
-      hash = hashDouble(hash, p->fractionRemovedAbove);
-      hash = hashDouble(hash, p->fractionRemovedBelow);
-      hash = hashDouble(hash, p->fractionTransferredAbove);
-      hash = hashDouble(hash, p->fractionTransferredBelow);
-    } break;
-    case IRRIGATION: {
-      const IrrigationParams *p = (const IrrigationParams *)event->eventParams;
-      int method = p->method;
-      hash = hashDouble(hash, p->amountAdded);
-      hash = hashBytes(hash, &method, sizeof(method));
-    } break;
-    case FERTILIZATION: {
-      const FertilizationParams *p =
-          (const FertilizationParams *)event->eventParams;
-      hash = hashDouble(hash, p->orgN);
-      hash = hashDouble(hash, p->orgC);
-      hash = hashDouble(hash, p->minN);
-    } break;
-    case PLANTING: {
-      const PlantingParams *p = (const PlantingParams *)event->eventParams;
-      hash = hashDouble(hash, p->leafC);
-      hash = hashDouble(hash, p->woodC);
-      hash = hashDouble(hash, p->fineRootC);
-      hash = hashDouble(hash, p->coarseRootC);
-    } break;
-    case TILLAGE: {
-      const TillageParams *p = (const TillageParams *)event->eventParams;
-      hash = hashDouble(hash, p->tillageEffect);
-    } break;
-    default:
-      break;
-  }
-
-  return hash;
-}
-
-static EventNode *getEventAtIndex(int index) {
-  if (index < 0) {
-    return NULL;
-  }
-
-  EventNode *curr = gEvents;
-  int currIndex = 0;
-  while (curr != NULL && currIndex < index) {
-    curr = curr->nextEvent;
-    ++currIndex;
-  }
-
-  return (currIndex == index) ? curr : NULL;
-}
 
 EventNode *createEventNode(int year, int day, int eventType,
                            const char *eventParamsStr) {
@@ -425,93 +342,6 @@ void initEvents(char *eventFile, int printHeader) {
 }
 
 void setupEvents() { gEvent = gEvents; }
-
-int getEventCount(void) {
-  int count = 0;
-  EventNode *curr = gEvents;
-  while (curr != NULL) {
-    ++count;
-    curr = curr->nextEvent;
-  }
-  return count;
-}
-
-int getEventCursorIndex(void) {
-  EventNode *curr = gEvents;
-  int index = 0;
-
-  while (curr != NULL && curr != gEvent) {
-    curr = curr->nextEvent;
-    ++index;
-  }
-
-  if (curr == gEvent) {
-    return index;
-  }
-  if (gEvent == NULL) {
-    return getEventCount();
-  }
-
-  return -1;
-}
-
-int setEventCursorIndex(int index) {
-  if (index < 0) {
-    return 1;
-  }
-
-  if (index == getEventCount()) {
-    gEvent = NULL;
-    return 0;
-  }
-
-  EventNode *target = getEventAtIndex(index);
-  if (target == NULL) {
-    return 1;
-  }
-
-  gEvent = target;
-  return 0;
-}
-
-unsigned long long getEventPrefixHash(int count) {
-  if (count < 0) {
-    return 0ULL;
-  }
-
-  uint64_t hash = 1469598103934665603ULL;  // FNV-1a offset basis
-  EventNode *curr = gEvents;
-  int seen = 0;
-
-  while (curr != NULL && seen < count) {
-    uint64_t oneHash = hashEventNode(curr);
-    hash = hashBytes(hash, &oneHash, sizeof(oneHash));
-    curr = curr->nextEvent;
-    ++seen;
-  }
-
-  if (seen != count) {
-    return 0ULL;
-  }
-
-  return hash;
-}
-
-unsigned long long getEventHashAtIndex(int index, int *hasEvent) {
-  EventNode *event = getEventAtIndex(index);
-  if (event == NULL) {
-    if (hasEvent != NULL) {
-      *hasEvent = 0;
-    }
-    return 0ULL;
-  }
-
-  if (hasEvent != NULL) {
-    *hasEvent = 1;
-  }
-
-  return hashEventNode(event);
-}
 
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;

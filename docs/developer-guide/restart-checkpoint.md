@@ -4,49 +4,14 @@ This page documents SIPNET's restart checkpoint implementation.
 
 ## Scope and Intent
 
-<<<<<<< ours
+SIPNET restart is designed for segmented orchestration:
+
+- stop at end of one climate segment
 - write full runtime state at segment end (`RESTART_OUT`)
-- restore state at segment start (`RESTART_IN`)
-- reject incompatible restart files
+- restore full runtime state at next segment start (`RESTART_IN`)
+- fail fast on incompatible restart/configuration inputs
 
-## Runtime Sequence
-
-On resume, SIPNET:
-
-1. Runs normal setup (`setupModel`, `setupEvents`)
-2. Loads restart state and overwrites runtime state
-3. Validates compatibility and boundary rules
-4. Continues from the provided resumed climate segment
-
-## Schema v1.0
-=======
-SIPNET restart is designed to allow users and external workflows to stop the
-model, change the state and/or parameters, and then restart.
->>>>>>> theirs
-
-SIPNET's responsibility is:
-
-<<<<<<< ours
-- header: `SIPNET_RESTART 1.0`
-- metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
-- flags: `flags.*`
-- checkpoint boundary: `boundary.*`
-- mean metadata: `mean.*`
-- runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
-- mean buffers: `mean.values.length`, `mean.values.<idx>`, `mean.weights.length`, `mean.weights.<idx>`
-- trailer: `end_restart 1`
-
-`event_state.*` keys were removed.
-
-## Compatibility Policy
-=======
-- stop at end of climate file
-- write full runtime state at segment end (`RESTART_OUT`)
-- restore full runtime state at segment start (`RESTART_IN`)
-- fail if restart file is incompatible
->>>>>>> theirs
-
-SIPNET produces one output file per segment.
+SIPNET itself does not stitch outputs across segments.
 
 ## Runtime Sequence
 
@@ -54,9 +19,8 @@ On resume, SIPNET executes:
 
 1. Normal setup (`setupModel`, `setupEvents`)
 2. Load checkpoint and overwrite runtime state
-3. Validate compatibility checks
-4. Restore deterministic event cursor
-5. Continue run from resumed climate input (no boundary-row skip)
+3. Validate compatibility checks and restart boundary constraints
+4. Continue run from resumed climate input
 
 ## Restart Schema v1.0 Overview
 
@@ -66,17 +30,12 @@ Checkpoint format is ASCII text with one key/value per line:
 - metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
 - mode flags: `flags.*`
 - boundary climate signature: `boundary.*`
-- deterministic event state: `event_state.*`
 - mean tracker metadata: `mean.*`
 - full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
 - mean ring buffers: `mean.values.length` + `mean.values.<idx>`, `mean.weights.length` + `mean.weights.<idx>`
 - end marker: `end_restart 1`
 
-All values are named.
-
-<details>
-<sipnet.out>put example restart file content here</restart.out>
-</details>
+`event_state.*` keys are not part of the schema.
 
 ## Validation Contract
 
@@ -88,19 +47,18 @@ On load, SIPNET enforces:
 - build info mismatch logs warning only
 - context flag compatibility
 - first-row climate timestamp strictly after checkpoint boundary (`year`, `day`, `time`)
+- resumed segment starts on the midnight-following day and within one timestep after midnight
 - mean tracker shape/cursor validity
-- deterministic event replay invariants:
-  - event count
-  - cursor index bounds
-  - processed prefix hash
-  - next-event hash/existence
-- ability to restore event cursor by index
 
-All mismatches above are hard errors except build-info mismatch, which is warning-only. For floating-point timestamp checks, comparisons use a small tolerance suitable for text serialization.
+All mismatches above are hard errors except build-info mismatch, which is warning-only.
 
-## Climate Boundaries
+## Climate and Event Boundaries
 
-The resumed climate input must start with a timestamp (`year`, `day`, `time`) after the last processed timestep captured in the checkpoint. SIPNET validates that ordering and then continues processing from there (no boundary-row skip).
+Restart writes are only allowed when the last processed climate step is within one timestep of midnight.
+
+Resumed climate segments must begin on the day after the checkpoint boundary and within one timestep after midnight.
+
+Event files must be segmented to the same time boundaries as climate segments.
 
 ## Notes for Schema Changes
 
