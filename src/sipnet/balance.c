@@ -78,6 +78,8 @@ void initBalanceTracker(void) {
   balanceTracker.outputsN = 0.0;
   balanceTracker.deltaC = 0.0;
   balanceTracker.deltaN = 0.0;
+  balanceTracker.clampedC = 0.0;
+  balanceTracker.clampedN = 0.0;
 }
 
 void checkBalance(void) {
@@ -86,14 +88,14 @@ void checkBalance(void) {
   double poolCDelta = balanceTracker.postTotalC - balanceTracker.preTotalC;
   // System delta
   double systemCDelta = balanceTracker.inputsC - balanceTracker.outputsC;
-  balanceTracker.deltaC = poolCDelta - systemCDelta;
+  balanceTracker.deltaC = poolCDelta - systemCDelta - balanceTracker.clampedC;
 
   // NITROGEN
   // Pool delta
   double poolNDelta = balanceTracker.postTotalN - balanceTracker.preTotalN;
   // System delta
   double systemNDelta = balanceTracker.inputsN - balanceTracker.outputsN;
-  balanceTracker.deltaN = poolNDelta - systemNDelta;
+  balanceTracker.deltaN = poolNDelta - systemNDelta - balanceTracker.clampedN;
 
   // To avoid weird negative-zero issues...
   if (fabs(balanceTracker.deltaC) < 1e-8) {

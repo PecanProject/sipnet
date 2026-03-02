@@ -22,6 +22,12 @@ typedef struct BalanceTrackerStruct {
   double inputsN;
   double outputsN;
 
+  // Stock clamping adjustments: mass added by clamping negative stocks to zero.
+  // Positive values indicate that stocks were clamped (mass was "created" to
+  // prevent negative pools).
+  double clampedC;
+  double clampedN;
+
   // Checks
   double deltaC;
   double deltaN;
@@ -29,6 +35,8 @@ typedef struct BalanceTrackerStruct {
 
 // Global var
 extern BalanceTracker balanceTracker;
+
+void getMassTotals(double *carbon, double *nitrogen);
 
 void updateBalanceTrackerPreUpdate(void);
 

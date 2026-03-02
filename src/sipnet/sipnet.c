@@ -1863,13 +1863,29 @@ void updatePoolsAndBalance() {
   // Update pools for fluxes from events
   updatePoolsForEvents();
 
-  // Verify none of our stocks have gone negative (set any that are to zero)
-  // TODO: we need to log/warn when this happens, as mass balance will likely
-  //   be off
+  // Verify none of our stocks have gone negative (set any that are to zero).
+  // We track the mass adjustment from clamping so the balance check can
+  // account for it.
+  double preClampC, preClampN;
+  getMassTotals(&preClampC, &preClampN);
+
   ensureNonNegativeStocks();
 
   // Calc total C and N after pool updates, and total system inputs and outputs
   updateBalanceTrackerPostUpdate();
+
+  // Compute the mass adjustment from clamping (positive = mass was added)
+  balanceTracker.clampedC = balanceTracker.postTotalC - preClampC;
+  balanceTracker.clampedN = balanceTracker.postTotalN - preClampN;
+
+  if (fabs(balanceTracker.clampedC) > 1e-8 ||
+      fabs(balanceTracker.clampedN) > 1e-8) {
+    logWarning(
+        "Non-negative stock constraint applied "
+        "(C: %+.6f, N: %+.6f) at Y: %d D: %d T: %.2f\n",
+        balanceTracker.clampedC, balanceTracker.clampedN, climate->year,
+        climate->day, climate->time);
+  }
 
   // Perform balance check
   checkBalance();
