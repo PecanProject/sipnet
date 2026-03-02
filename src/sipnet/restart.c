@@ -30,7 +30,6 @@ typedef struct RestartClimateSignature {
   double vpdSoil;
   double vPress;
   double wspd;
-  double gdd;
 } RestartClimateSignature;
 
 typedef struct RestartStateV1 {
@@ -85,7 +84,6 @@ static void copyClimateSignature(RestartClimateSignature *dest,
   dest->vpdSoil = src->vpdSoil;
   dest->vPress = src->vPress;
   dest->wspd = src->wspd;
-  dest->gdd = src->gdd;
 }
 
 static int
@@ -245,10 +243,10 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   int seenProcessedSteps = 0;
 
   int seenFlags[10] = {0};
-  int seenBoundary[13] = {0};
+  int seenBoundary[12] = {0};
   int seenMeanMeta[5] = {0};
   int seenEnvi[12] = {0};
-  int seenTrackers[27] = {0};
+  int seenTrackers[28] = {0};
   int seenPhenology[3] = {0};
   int seenEventTrackers = 0;
   int seenBalance[10] = {0};
@@ -409,12 +407,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       state->boundaryClimate.wspd = parseDoubleStrict(restartIn, key, value);
       continue;
     }
-    if (strcmp(key, "boundary.gdd") == 0) {
-      markSeen(&(seenBoundary[12]), restartIn, key);
-      state->boundaryClimate.gdd = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-
     if (strcmp(key, "mean.length") == 0) {
       markSeen(&(seenMeanMeta[0]), restartIn, key);
       state->meanLength = parseIntStrict(restartIn, key, value);
@@ -635,8 +627,13 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       state->trackers.n2o = parseDoubleStrict(restartIn, key, value);
       continue;
     }
-    if (strcmp(key, "trackers.lastYear") == 0) {
+    if (strcmp(key, "trackers.gdd") == 0) {
       markSeen(&(seenTrackers[26]), restartIn, key);
+      state->trackers.gdd = parseDoubleStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "trackers.lastYear") == 0) {
+      markSeen(&(seenTrackers[27]), restartIn, key);
       state->trackers.lastYear = parseIntStrict(restartIn, key, value);
       continue;
     }
@@ -796,7 +793,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       parseError(restartIn, "missing required flags.* keys", NULL);
     }
   }
-  for (int i = 0; i < 13; ++i) {
+  for (int i = 0; i < 12; ++i) {
     if (!seenBoundary[i]) {
       parseError(restartIn, "missing required boundary.* keys", NULL);
     }
@@ -811,7 +808,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       parseError(restartIn, "missing required envi.* keys", NULL);
     }
   }
-  for (int i = 0; i < 27; ++i) {
+  for (int i = 0; i < 28; ++i) {
     if (!seenTrackers[i]) {
       parseError(restartIn, "missing required trackers.* keys", NULL);
     }
@@ -905,7 +902,6 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "boundary.vpdSoil", state->boundaryClimate.vpdSoil);
   writeKeyDouble(out, "boundary.vPress", state->boundaryClimate.vPress);
   writeKeyDouble(out, "boundary.wspd", state->boundaryClimate.wspd);
-  writeKeyDouble(out, "boundary.gdd", state->boundaryClimate.gdd);
   fprintf(out, "\n");
 
   writeKeyInt(out, "mean.length", state->meanLength);
@@ -958,6 +954,7 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "trackers.yearlyLitter", state->trackers.yearlyLitter);
   writeKeyDouble(out, "trackers.woodCreation", state->trackers.woodCreation);
   writeKeyDouble(out, "trackers.n2o", state->trackers.n2o);
+  writeKeyDouble(out, "trackers.gdd", state->trackers.gdd);
   writeKeyInt(out, "trackers.lastYear", state->trackers.lastYear);
   fprintf(out, "\n");
 
@@ -1079,29 +1076,6 @@ static void validateRestartBoundary(const RestartStateV1 *state) {
   }
 }
 
-static void applyRestartGddCarry(const RestartStateV1 *state) {
-  if (!ctx.gdd || climate == NULL) {
-    return;
-  }
-
-  double firstStepGdd = climate->tair * climate->length;
-  if (firstStepGdd < 0) {
-    firstStepGdd = 0;
-  }
-
-  double expectedFirstGdd = firstStepGdd;
-  if (climate->year == state->boundaryClimate.year) {
-    expectedFirstGdd = state->boundaryClimate.gdd + firstStepGdd;
-  }
-
-  double gddOffset = expectedFirstGdd - climate->gdd;
-  ClimateNode *curr = climate;
-  while (curr != NULL && curr->year == climate->year) {
-    curr->gdd += gddOffset;
-    curr = curr->nextClim;
-  }
-}
-
 void restartResetRunState(void) {
   processedStepCount = 0;
   hasLastProcessedClimate = 0;
@@ -1167,7 +1141,6 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
   checkRestartContextCompatibility(&state);
   validateRestartModelBuild(&state);
   validateRestartBoundary(&state);
-  applyRestartGddCarry(&state);
 
   if (state.meanStart < 0 || state.meanStart >= meanNPP->length ||
       state.meanLast < 0 || state.meanLast >= meanNPP->length) {

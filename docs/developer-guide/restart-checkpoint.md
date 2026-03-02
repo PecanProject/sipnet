@@ -29,9 +29,10 @@ Checkpoint format is ASCII text with one key/value per line:
 - header: `SIPNET_RESTART 1.0`
 - metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
 - mode flags: `flags.*`
-- boundary climate signature: `boundary.*`
+- boundary climate signature: `boundary.*` (timestamp + forcing fields only; no cumulative GDD)
 - mean tracker metadata: `mean.*`
 - full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
+  - includes `trackers.gdd` for year-to-date cumulative GDD continuity
 - mean ring buffers: `mean.values.length` + `mean.values.<idx>`, `mean.weights.length` + `mean.weights.<idx>`
 - end marker: `end_restart 1`
 
@@ -59,6 +60,9 @@ Restart writes are only allowed when the last processed climate step is within o
 Resumed climate segments must begin on the day after the checkpoint boundary and within one timestep after midnight.
 
 Event files must be segmented to the same time boundaries as climate segments.
+
+When `--gdd` is enabled, checkpoint resume restores cumulative GDD from `trackers.gdd`.
+`boundary.*` does not contain cumulative GDD.
 
 ## Notes for Schema Changes
 

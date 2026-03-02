@@ -41,8 +41,8 @@ struct ClimateVars {
   double vPress;
   // avg. wind speed (m/s)
   double wspd;
-  // growing degree days from Jan. 1 to now. NOTE: Calculated, *not* read from
-  // file
+  // growing degree days contributed by this timestep, max(tair * length, 0)
+  // NOTE: Calculated, *not* read from file
   double gdd;
 
   ClimateNode *nextClim;
@@ -619,6 +619,9 @@ typedef struct TrackerVars {  // variables to track various things
 
   // g N * m^-2 ground area, Mineral N lost to volatilization
   double n2o;
+
+  // growing degree days since Jan 1 for the current model year
+  double gdd;
 
   // Previous step year used for yearly tracker rollover logic
   int lastYear;

@@ -249,6 +249,8 @@ static int testSegmentedEquivalence(void) {
   status |= (runModel("restart_seg1.in", "seg1.log") != 0);
   status |= !fileStartsWith(CHECKPOINT_FILE, RESTART_MAGIC_LINE);
   status |= fileContains(CHECKPOINT_FILE, "event_state.");
+  status |= !fileContains(CHECKPOINT_FILE, "trackers.gdd ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.gdd");
   status |= rename("run.out", "seg1.out");
   status |= rename("events.out", "seg1.events");
 
