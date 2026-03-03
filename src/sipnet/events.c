@@ -451,7 +451,10 @@ void processEvents(void) {
                       "fluxes.eventInputN", inputN / climLen);
       } break;
       case HARVEST: {
-        // Harvest can both remove biomass and move biomass to the litter pool
+        logInfo("Climate length %8.4f\n", climate->length);
+        logInfo("gEvent type %s\n", eventTypeToString(gEvent->type));
+        // Harvest can both remove biomass and move biomass to the soil/litter
+        // pools
         const HarvestParams *harvParams = gEvent->eventParams;
         const double fracRA = harvParams->fractionRemovedAbove;
         const double fracTA = harvParams->fractionTransferredAbove;
@@ -471,6 +474,7 @@ void processEvents(void) {
         const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
 
+#if 0
         // Pool updates:
         if (ctx.litterPool) {
           fluxes.eventLitterC += litterAdd / climLen;
@@ -526,6 +530,7 @@ void processEvents(void) {
             "fluxes.eventSoilOrgN", soilNAdd / climLen, "fluxes.eventLitterN",
             litterNAdd / climLen, "fluxes.eventOutputC", outputC / climLen,
             "fluxes.eventOutputN", outputN / climLen);
+#endif
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;

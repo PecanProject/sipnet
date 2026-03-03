@@ -96,8 +96,6 @@ int run(void) {
           ctx.litterPool ? "on" : "off", ctx.nitrogenCycle ? "on" : "off");
   initEvents("events_one_harvest.in", 0);
   setupEvents();
-  logInfo("Climate length %8.4f\n", climate->length);
-  logInfo("gEvent type %s\n", eventTypeToString(gEvent->type));
   // procEvents();
   // processEvents();
   // updatePoolsForEvents();
