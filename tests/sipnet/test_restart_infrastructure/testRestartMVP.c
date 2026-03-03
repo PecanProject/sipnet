@@ -237,6 +237,53 @@ static int fileContains(const char *file, const char *needle) {
   return found;
 }
 
+static int lineNumberContaining(const char *file, const char *needle) {
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s\n", file);
+    return -1;
+  }
+
+  char line[2048];
+  int lineNum = 0;
+  while (fgets(line, sizeof(line), in) != NULL) {
+    ++lineNum;
+    if (strstr(line, needle) != NULL) {
+      fclose(in);
+      return lineNum;
+    }
+  }
+
+  fclose(in);
+  return -1;
+}
+
+static int previousNonEmptyLineBeforeStartsWith(const char *file,
+                                                const char *targetLine,
+                                                const char *prefix) {
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s\n", file);
+    return 0;
+  }
+
+  char line[2048];
+  char prev[2048] = "";
+  while (fgets(line, sizeof(line), in) != NULL) {
+    line[strcspn(line, "\r\n")] = '\0';
+    if (strcmp(line, targetLine) == 0) {
+      fclose(in);
+      return strncmp(prev, prefix, strlen(prefix)) == 0;
+    }
+    if (line[0] != '\0') {
+      strcpy(prev, line);
+    }
+  }
+
+  fclose(in);
+  return 0;
+}
+
 static int testDefaultEventsFileUsedWhenUnset(void) {
   int status = 0;
   int stepStatus = 0;
@@ -353,6 +400,23 @@ static int testSegmentedEquivalence(void) {
   status |= fileContains(CHECKPOINT_FILE, "event_state.");
   status |= !fileContains(CHECKPOINT_FILE, "trackers.gdd ");
   status |= fileContains(CHECKPOINT_FILE, "boundary.gdd");
+  status |= fileContains(CHECKPOINT_FILE, "mean.length ");
+  status |= fileContains(CHECKPOINT_FILE, "mean.totWeight ");
+  status |= fileContains(CHECKPOINT_FILE, "mean.start ");
+  status |= fileContains(CHECKPOINT_FILE, "mean.last ");
+  status |= fileContains(CHECKPOINT_FILE, "mean.sum ");
+  status |= fileContains(CHECKPOINT_FILE, "mean.values.length ");
+  status |= fileContains(CHECKPOINT_FILE, "mean.weights.length ");
+  status |= !fileContains(CHECKPOINT_FILE, "mean.npp.length ");
+  status |= !fileContains(CHECKPOINT_FILE, "mean.npp.values.length ");
+  status |= !fileContains(CHECKPOINT_FILE, "mean.npp.weights.length ");
+  {
+    int meanLine = lineNumberContaining(CHECKPOINT_FILE, "mean.npp.length ");
+    int balanceLine = lineNumberContaining(CHECKPOINT_FILE, "balance.deltaN ");
+    status |= (meanLine < 0 || balanceLine < 0 || meanLine <= balanceLine);
+  }
+  status |= !previousNonEmptyLineBeforeStartsWith(
+      CHECKPOINT_FILE, "end_restart 1", "mean.npp.weights.");
   status |= rename("run.out", "seg1.out");
   status |= rename("events.out", "seg1.events");
 
@@ -669,6 +733,44 @@ static int testSchemaLayoutMismatchFails(void) {
   return status;
 }
 
+static int testSchemaLayoutOverflowMismatchFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest(
+        "Failed to prepare files for schema-layout overflow mismatch segment "
+        "1\n");
+    return stepStatus;
+  }
+  status |=
+      (runModel("restart_seg1.in", "schema_layout_overflow_seg1.log") != 0);
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, SCHEMA_LAYOUT_TRACKERS_LINE,
+                                   "schema_layout.trackers_size 4294967520");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for schema-layout overflow mismatch "
+            "segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "schema_layout_overflow_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("schema_layout_overflow_seg2.log",
+                          "Restart schema layout mismatch");
+
+  if (status) {
+    logTest("testSchemaLayoutOverflowMismatchFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
 static int testBuildInfoMismatchWarnsAndSucceeds(void) {
   int status = 0;
   int stepStatus = 0;
@@ -789,6 +891,7 @@ int run(void) {
   status |= testModelVersionMismatchFails();
   status |= testSchemaMismatchFails();
   status |= testSchemaLayoutMismatchFails();
+  status |= testSchemaLayoutOverflowMismatchFails();
   status |= testBuildInfoMismatchWarnsAndSucceeds();
   status |= testTruncatedCheckpointFails();
   status |= testMalformedCheckpointFails();

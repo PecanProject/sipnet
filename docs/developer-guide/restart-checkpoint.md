@@ -28,12 +28,13 @@ Checkpoint format is ASCII text with one key/value per line:
 
 - header: `SIPNET_RESTART 1.0`
 - metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
+- schema layout guard metadata: `schema_layout.envi_size`, `schema_layout.trackers_size`, `schema_layout.phenology_trackers_size`, `schema_layout.event_trackers_size`
 - mode flags: `flags.*`
 - boundary metadata: `boundary.year`, `boundary.day`, `boundary.time`, `boundary.length` (no forcing fields, no cumulative GDD)
-- mean tracker metadata: `mean.*`
+- mean tracker metadata: `mean.npp.*`
 - full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
   - includes `trackers.gdd` for year-to-date cumulative GDD continuity
-- mean ring buffers: `mean.values.length` + `mean.values.<idx>`, `mean.weights.length` + `mean.weights.<idx>`
+- mean ring buffers: `mean.npp.values.length` + `mean.npp.values.<idx>`, `mean.npp.weights.length` + `mean.npp.weights.<idx>`
 - end marker: `end_restart 1`
 
 `event_state.*` keys are not part of the schema.
@@ -45,6 +46,7 @@ On load, SIPNET enforces:
 - magic header match
 - schema version match
 - model numeric version match
+- `schema_layout.*` values exactly match the expected struct sizes for the running build
 - build info mismatch logs warning only
 - context flag compatibility
 - first-row climate timestamp strictly after checkpoint boundary (`year`, `day`, `time`)
@@ -64,13 +66,17 @@ Event files must be segmented to the same time boundaries as climate segments.
 When `--gdd` is enabled, checkpoint resume restores cumulative GDD from `trackers.gdd`.
 `boundary.*` does not contain cumulative GDD.
 
-## Notes for Schema Changes
+## Struct Drift Guard Workflow
 
-If schema contents change:
+Restart schema v1.0 includes compile-time and runtime drift guards so struct layout changes cannot silently pass:
 
-- increment schema version
-- update read/write logic with explicit compatibility handling
-- add integration tests for:
-  - old/new schema mismatch failure
-  - full continuous-vs-segmented equivalence
-  - corrupted/truncated checkpoint failure modes
+- Compile-time guards: `_Static_assert` checks in `src/sipnet/restart.c` for `Envi`, `Trackers`, `PhenologyTrackers`, and `EventTrackers`.
+- Runtime guards: `schema_layout.*` fields in each checkpoint are validated on load.
+- Test guardrails: `tests/sipnet/test_restart_infrastructure/testRestartMVP.c` verifies schema layout keys are present and rejects tampered values.
+
+When any guarded struct changes intentionally:
+
+1. Bump the restart schema version.
+2. Update the expected `RESTART_SCHEMA_LAYOUT_*` sizes and checkpoint read/write handling.
+3. Update restart fixtures/docs (`docs/developer-guide/sipnet.restart.example`) and restart tests.
+4. Re-run restart infrastructure tests plus continuous-vs-segmented equivalence checks.

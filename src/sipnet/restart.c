@@ -209,11 +209,11 @@ static double parseDoubleStrict(const char *restartIn, const char *key,
 }
 
 static void validateSchemaLayoutValue(const char *restartIn, const char *key,
-                                      const char *value, int expected) {
-  int parsed = parseIntStrict(restartIn, key, value);
+                                      const char *value, long long expected) {
+  long long parsed = parseLongLongStrict(restartIn, key, value);
   if (parsed != expected) {
     logError(
-        "Restart schema layout mismatch in %s: key=%s found=%d expected=%d "
+        "Restart schema layout mismatch in %s: key=%s found=%lld expected=%lld "
         "(schema %s)\n",
         restartIn, key, parsed, expected, RESTART_SCHEMA_VERSION);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
@@ -416,27 +416,27 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       state->boundaryClimate.length = parseDoubleStrict(restartIn, key, value);
       continue;
     }
-    if (strcmp(key, "mean.length") == 0) {
+    if (strcmp(key, "mean.npp.length") == 0) {
       markSeen(&(seenMeanMeta[0]), restartIn, key);
       state->meanLength = parseIntStrict(restartIn, key, value);
       continue;
     }
-    if (strcmp(key, "mean.totWeight") == 0) {
+    if (strcmp(key, "mean.npp.totWeight") == 0) {
       markSeen(&(seenMeanMeta[1]), restartIn, key);
       state->meanTotWeight = parseDoubleStrict(restartIn, key, value);
       continue;
     }
-    if (strcmp(key, "mean.start") == 0) {
+    if (strcmp(key, "mean.npp.start") == 0) {
       markSeen(&(seenMeanMeta[2]), restartIn, key);
       state->meanStart = parseIntStrict(restartIn, key, value);
       continue;
     }
-    if (strcmp(key, "mean.last") == 0) {
+    if (strcmp(key, "mean.npp.last") == 0) {
       markSeen(&(seenMeanMeta[3]), restartIn, key);
       state->meanLast = parseIntStrict(restartIn, key, value);
       continue;
     }
-    if (strcmp(key, "mean.sum") == 0) {
+    if (strcmp(key, "mean.npp.sum") == 0) {
       markSeen(&(seenMeanMeta[4]), restartIn, key);
       state->meanSum = parseDoubleStrict(restartIn, key, value);
       continue;
@@ -727,7 +727,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       continue;
     }
 
-    if (strcmp(key, "mean.values.length") == 0) {
+    if (strcmp(key, "mean.npp.values.length") == 0) {
       markSeen(&seenMeanValuesLength, restartIn, key);
       meanValuesLength = parseIntStrict(restartIn, key, value);
       if (meanValuesLength < 0) {
@@ -739,22 +739,24 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       }
       continue;
     }
-    if (strncmp(key, "mean.values.", strlen("mean.values.")) == 0) {
+    if (strncmp(key, "mean.npp.values.", strlen("mean.npp.values.")) == 0) {
       if (!seenMeanValuesLength) {
         parseError(restartIn,
-                   "mean.values.length must appear before mean.values.<idx>",
+                   "mean.npp.values.length must appear before "
+                   "mean.npp.values.<idx>",
                    key);
       }
-      int idx = parseIntStrict(restartIn, key, key + strlen("mean.values."));
+      int idx =
+          parseIntStrict(restartIn, key, key + strlen("mean.npp.values."));
       if (idx < 0 || idx >= meanValuesLength) {
-        parseError(restartIn, "mean.values index out of range", key);
+        parseError(restartIn, "mean.npp.values index out of range", key);
       }
       markSeen(&(seenMeanValues[idx]), restartIn, key);
       meanNPP->values[idx] = parseDoubleStrict(restartIn, key, value);
       continue;
     }
 
-    if (strcmp(key, "mean.weights.length") == 0) {
+    if (strcmp(key, "mean.npp.weights.length") == 0) {
       markSeen(&seenMeanWeightsLength, restartIn, key);
       meanWeightsLength = parseIntStrict(restartIn, key, value);
       if (meanWeightsLength < 0) {
@@ -766,15 +768,17 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       }
       continue;
     }
-    if (strncmp(key, "mean.weights.", strlen("mean.weights.")) == 0) {
+    if (strncmp(key, "mean.npp.weights.", strlen("mean.npp.weights.")) == 0) {
       if (!seenMeanWeightsLength) {
         parseError(restartIn,
-                   "mean.weights.length must appear before mean.weights.<idx>",
+                   "mean.npp.weights.length must appear before "
+                   "mean.npp.weights.<idx>",
                    key);
       }
-      int idx = parseIntStrict(restartIn, key, key + strlen("mean.weights."));
+      int idx =
+          parseIntStrict(restartIn, key, key + strlen("mean.npp.weights."));
       if (idx < 0 || idx >= meanWeightsLength) {
-        parseError(restartIn, "mean.weights index out of range", key);
+        parseError(restartIn, "mean.npp.weights index out of range", key);
       }
       markSeen(&(seenMeanWeights[idx]), restartIn, key);
       meanNPP->weights[idx] = parseDoubleStrict(restartIn, key, value);
@@ -814,7 +818,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   }
   for (int i = 0; i < 5; ++i) {
     if (!seenMeanMeta[i]) {
-      parseError(restartIn, "missing required mean.* keys", NULL);
+      parseError(restartIn, "missing required mean.npp.* keys", NULL);
     }
   }
   for (int i = 0; i < 12; ++i) {
@@ -855,12 +859,12 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
 
   for (int i = 0; i < meanValuesLength; ++i) {
     if (!seenMeanValues[i]) {
-      parseError(restartIn, "mean.values array is incomplete", NULL);
+      parseError(restartIn, "mean.npp.values array is incomplete", NULL);
     }
   }
   for (int i = 0; i < meanWeightsLength; ++i) {
     if (!seenMeanWeights[i]) {
-      parseError(restartIn, "mean.weights array is incomplete", NULL);
+      parseError(restartIn, "mean.npp.weights array is incomplete", NULL);
     }
   }
 
@@ -915,13 +919,6 @@ static void writeRestartState(const char *restartOut,
   writeKeyInt(out, "boundary.day", state->boundaryClimate.day);
   writeKeyDouble(out, "boundary.time", state->boundaryClimate.time);
   writeKeyDouble(out, "boundary.length", state->boundaryClimate.length);
-  fprintf(out, "\n");
-
-  writeKeyInt(out, "mean.length", state->meanLength);
-  writeKeyDouble(out, "mean.totWeight", state->meanTotWeight);
-  writeKeyInt(out, "mean.start", state->meanStart);
-  writeKeyInt(out, "mean.last", state->meanLast);
-  writeKeyDouble(out, "mean.sum", state->meanSum);
   fprintf(out, "\n");
 
   writeKeyDouble(out, "envi.plantWoodC", state->envi.plantWoodC);
@@ -994,15 +991,22 @@ static void writeRestartState(const char *restartOut,
   writeKeyDouble(out, "balance.deltaN", state->balanceTracker.deltaN);
   fprintf(out, "\n");
 
-  writeKeyInt(out, "mean.values.length", meanNPP->length);
+  writeKeyInt(out, "mean.npp.length", state->meanLength);
+  writeKeyDouble(out, "mean.npp.totWeight", state->meanTotWeight);
+  writeKeyInt(out, "mean.npp.start", state->meanStart);
+  writeKeyInt(out, "mean.npp.last", state->meanLast);
+  writeKeyDouble(out, "mean.npp.sum", state->meanSum);
+  fprintf(out, "\n");
+
+  writeKeyInt(out, "mean.npp.values.length", meanNPP->length);
   for (int i = 0; i < meanNPP->length; ++i) {
-    fprintf(out, "mean.values.%d %.17g\n", i, meanNPP->values[i]);
+    fprintf(out, "mean.npp.values.%d %.17g\n", i, meanNPP->values[i]);
   }
   fprintf(out, "\n");
 
-  writeKeyInt(out, "mean.weights.length", meanNPP->length);
+  writeKeyInt(out, "mean.npp.weights.length", meanNPP->length);
   for (int i = 0; i < meanNPP->length; ++i) {
-    fprintf(out, "mean.weights.%d %.17g\n", i, meanNPP->weights[i]);
+    fprintf(out, "mean.npp.weights.%d %.17g\n", i, meanNPP->weights[i]);
   }
   fprintf(out, "\n");
 
