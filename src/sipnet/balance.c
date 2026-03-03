@@ -98,10 +98,10 @@ void checkBalance(void) {
   balanceTracker.deltaN = poolNDelta - systemNDelta - balanceTracker.clampedN;
 
   // To avoid weird negative-zero issues...
-  if (fabs(balanceTracker.deltaC) < 1e-8) {
+  if (fabs(balanceTracker.deltaC) < BALANCE_TOLERANCE) {
     balanceTracker.deltaC = 0.0;
   }
-  if (fabs(balanceTracker.deltaN) < 1e-8) {
+  if (fabs(balanceTracker.deltaN) < BALANCE_TOLERANCE) {
     balanceTracker.deltaN = 0.0;
   }
 

@@ -1878,8 +1878,8 @@ void updatePoolsAndBalance() {
   balanceTracker.clampedC = balanceTracker.postTotalC - preClampC;
   balanceTracker.clampedN = balanceTracker.postTotalN - preClampN;
 
-  if (fabs(balanceTracker.clampedC) > 1e-8 ||
-      fabs(balanceTracker.clampedN) > 1e-8) {
+  if (fabs(balanceTracker.clampedC) > BALANCE_TOLERANCE ||
+      fabs(balanceTracker.clampedN) > BALANCE_TOLERANCE) {
     logWarning(
         "Non-negative stock constraint applied "
         "(C: %+.6f, N: %+.6f) at Y: %d D: %d T: %.2f\n",
