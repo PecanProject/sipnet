@@ -17,12 +17,14 @@ typedef struct BalanceTrackerStruct {
   // Carbon balance
   double preTotalC;
   double postTotalC;
+  double finalC;
   double inputsC;
   double outputsC;
 
   // Nitrogen balance
   double preTotalN;
   double postTotalN;
+  double finalN;
   double inputsN;
   double outputsN;
 
@@ -45,6 +47,8 @@ void getMassTotals(double *carbon, double *nitrogen);
 void updateBalanceTrackerPreUpdate(void);
 
 void updateBalanceTrackerPostUpdate(void);
+
+void updateBalanceTrackerPostClamp(void);
 
 void initBalanceTracker(void);
 
