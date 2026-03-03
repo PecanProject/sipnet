@@ -474,7 +474,6 @@ void processEvents(void) {
         const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
 
-#if 0
         // Pool updates:
         if (ctx.litterPool) {
           fluxes.eventLitterC += litterAdd / climLen;
@@ -487,6 +486,8 @@ void processEvents(void) {
         fluxes.eventWoodC += woodDelta / climLen;
         fluxes.eventFineRootC += fineDelta / climLen;
         fluxes.eventCoarseRootC += coarseDelta / climLen;
+
+#if 0
 
         // No need to allocate to biomass N pools, we don't track that N
         // explicitly. We do need to handle soil and litter N, though.
