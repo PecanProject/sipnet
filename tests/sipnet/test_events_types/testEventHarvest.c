@@ -68,6 +68,10 @@ void initEnv(void) {
     params.leafCN = 20;
     params.fineRootCN = 30;
   }
+
+  // not used here, but accessed
+  envi.soilWater = 10.0;
+  envi.minN = 10.0;
 }
 
 int run(void) {
@@ -101,6 +105,7 @@ int run(void) {
   expCoarseC = 5 * (1 - 0.2 - 0.4);  // 2.0
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
+  closeEventOutFile();
 
   //// TWO HARVEST
   // Ok, so, two harvest events on the same day shouldn't happen (seriously,
@@ -128,6 +133,7 @@ int run(void) {
 
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
+  closeEventOutFile();
 
   return status;
 }
