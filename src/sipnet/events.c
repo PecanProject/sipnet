@@ -487,8 +487,6 @@ void processEvents(void) {
         fluxes.eventFineRootC += fineDelta / climLen;
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
-#if 0
-
         // No need to allocate to biomass N pools, we don't track that N
         // explicitly. We do need to handle soil and litter N, though.
         // Note: ctx.NitrogenCycle implies ctx.litterPool
@@ -521,7 +519,8 @@ void processEvents(void) {
                          fracRB);
           fluxes.eventOutputN += outputN / climLen;
         }
-
+        logInfo("File handle: %px\n", (void *)eventOutFile);
+#if 0
         writeEventOut(
             gEvent, 10, "fluxes.eventSoilC", soilAdd / climLen,
             "fluxes.eventLitterC", litterAdd / climLen, "fluxes.eventLeafC",
