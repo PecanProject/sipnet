@@ -45,12 +45,20 @@ void updateBalanceTrackerPostClamp(void) {
   // Difference between post-update and post-clamp is the amount we "gained" by
   // setting negative values to zero
   balanceTracker.clampedC = balanceTracker.finalC - balanceTracker.postTotalC;
-  if (balanceTracker.clampedC < BALANCE_TOLERANCE) {
+  if (balanceTracker.clampedC < -EPS) {
+    // This shouldn't happen, by construction
+    logInternalError("Non-negative clamping has cause carbon loss\n");
+  }
+  if (balanceTracker.clampedC < EPS) {
     balanceTracker.clampedC = 0;
   }
 
   balanceTracker.clampedN = balanceTracker.finalN - balanceTracker.postTotalN;
-  if (balanceTracker.clampedN < BALANCE_TOLERANCE) {
+  if (balanceTracker.clampedN < -EPS) {
+    // This shouldn't happen, by construction
+    logInternalError("Non-negative clamping has cause nitrogen loss\n");
+  }
+  if (balanceTracker.clampedN < EPS) {
     balanceTracker.clampedN = 0;
   }
 
@@ -127,10 +135,10 @@ void checkBalance(void) {
   balanceTracker.deltaN = poolNDelta - systemNDelta;
 
   // To avoid weird negative-zero issues...
-  if (fabs(balanceTracker.deltaC) < BALANCE_TOLERANCE) {
+  if (fabs(balanceTracker.deltaC) < EPS) {
     balanceTracker.deltaC = 0.0;
   }
-  if (fabs(balanceTracker.deltaN) < BALANCE_TOLERANCE) {
+  if (fabs(balanceTracker.deltaN) < EPS) {
     balanceTracker.deltaN = 0.0;
   }
 

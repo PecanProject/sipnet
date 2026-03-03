@@ -3,7 +3,7 @@
 
 // Floating-point precision threshold for balance checks and clamping warnings.
 // Differences smaller than this are treated as numerical noise.
-#define BALANCE_TOLERANCE 1e-8
+#define EPS 1e-8
 
 typedef struct BalanceTrackerStruct {
   // Mass balance checks:

@@ -47,7 +47,6 @@
    (we assume snow temperature is 0 degrees C or slightly lower) */
 
 #define TINY 0.000001  // to avoid those nasty divide-by-zero errors
-#define EPS 1e-8  // zero threshold
 
 // end constant definitions
 
@@ -1611,8 +1610,8 @@ void ensureNonNegative(double *var, double minVal, const char *label) {
     if (fabs(*var) > EPS) {  // Don't print the zeros
       logWarning(
           "Non-negative stock constraint applied for %s (value %8.4f set "
-          "to %8.4f)\n",
-          label, *var, minVal);
+          "to zero)\n",
+          label, *var);
     }
     *var = 0.;
   }
