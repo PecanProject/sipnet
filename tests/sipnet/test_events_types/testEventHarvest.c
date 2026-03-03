@@ -90,7 +90,7 @@ int run(void) {
   //// ONE PLANTING EVENT
   logTest("Testing one event\n");
   updateIntContext("litterPool", 0, CTX_TEST);
-  // updateIntContext("nitrogenCycle", 0, CTX_TEST);
+  updateIntContext("nitrogenCycle", 0, CTX_TEST);
   logTest("Litter pool is %s, nitrogen cycle is %s\n",
           ctx.litterPool ? "on" : "off", ctx.nitrogenCycle ? "on" : "off");
   initEvents("events_one_harvest.in", 0);
