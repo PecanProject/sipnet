@@ -308,8 +308,8 @@ void doWriteEventOut(int year, int day, const char *type, int numParams,
     fprintf(eventOutFile, "%s=%-.2f,", va_arg(args, char *),
             va_arg(args, double));
   }
-  fprintf(eventOutFile, "%s=%-.2f\n", va_arg(args, char *),
-          va_arg(args, double));
+  //  fprintf(eventOutFile, "%s=%-.2f\n", va_arg(args, char *),
+  //          va_arg(args, double));
 }
 
 void writeEventOut(EventNode *oneEvent, int numParams, ...) {
@@ -451,8 +451,6 @@ void processEvents(void) {
                       "fluxes.eventInputN", inputN / climLen);
       } break;
       case HARVEST: {
-        logInfo("Climate length %8.4f\n", climate->length);
-        logInfo("gEvent type %s\n", eventTypeToString(gEvent->type));
         // Harvest can both remove biomass and move biomass to the soil/litter
         // pools
         const HarvestParams *harvParams = gEvent->eventParams;
@@ -519,8 +517,6 @@ void processEvents(void) {
                          fracRB);
           fluxes.eventOutputN += outputN / climLen;
         }
-        logInfo("File handle: %px\n", (void *)eventOutFile);
-#if 0
         writeEventOut(
             gEvent, 10, "fluxes.eventSoilC", soilAdd / climLen,
             "fluxes.eventLitterC", litterAdd / climLen, "fluxes.eventLeafC",
@@ -530,7 +526,6 @@ void processEvents(void) {
             "fluxes.eventSoilOrgN", soilNAdd / climLen, "fluxes.eventLitterN",
             litterNAdd / climLen, "fluxes.eventOutputC", outputC / climLen,
             "fluxes.eventOutputN", outputN / climLen);
-#endif
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
