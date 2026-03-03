@@ -70,6 +70,7 @@ void initEnv(void) {
   }
 
   // not used here, but accessed
+  envi.plantWoodCStorageDelta = 0.0;
   envi.soilWater = 10.0;
   envi.minN = 10.0;
 }
@@ -95,8 +96,10 @@ int run(void) {
           ctx.litterPool ? "on" : "off", ctx.nitrogenCycle ? "on" : "off");
   initEvents("events_one_harvest.in", 0);
   setupEvents();
+  logInfo("Climate length %8.4f\n", climate->length);
+  logInfo("gEvent type %s\n", eventTypeToString(gEvent->type));
   // procEvents();
-  processEvents();
+  // processEvents();
   // updatePoolsForEvents();
 
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
