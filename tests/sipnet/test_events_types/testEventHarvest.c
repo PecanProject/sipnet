@@ -96,9 +96,7 @@ int run(void) {
           ctx.litterPool ? "on" : "off", ctx.nitrogenCycle ? "on" : "off");
   initEvents("events_one_harvest.in", 0);
   setupEvents();
-  // procEvents();
-  processEvents();
-  // updatePoolsForEvents();
+  procEvents();
 
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
   expSoilC = 10 + 0.3 * (2 + 3) + 0.4 * (4 + 5);  // 1 + 1.5 + 3.6 = 6.1
@@ -111,7 +109,6 @@ int run(void) {
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
   closeEventOutFile();
 
-#if 0
   //// TWO HARVEST
   // Ok, so, two harvest events on the same day shouldn't happen (seriously,
   // model it as one harvest) - but we can test the arithmetic here
@@ -139,7 +136,6 @@ int run(void) {
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
   closeEventOutFile();
-#endif
 
   return status;
 }

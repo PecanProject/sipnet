@@ -517,19 +517,15 @@ void processEvents(void) {
                          fracRB);
           fluxes.eventOutputN += outputN / climLen;
         }
-        logInfo("gEvent type: %s\n", eventTypeToString(gEvent->type));
-
-        //        writeEventOut(
-        //            gEvent, 10, "fluxes.eventSoilC", soilAdd / climLen,
-        //            "fluxes.eventLitterC", litterAdd / climLen,
-        //            "fluxes.eventLeafC", leafDelta / climLen,
-        //            "fluxes.eventWoodC", woodDelta / climLen,
-        //            "fluxes.eventFineRootC", fineDelta / climLen,
-        //            "fluxes.eventCoarseRootC", coarseDelta / climLen,
-        //            "fluxes.eventSoilOrgN", soilNAdd / climLen,
-        //            "fluxes.eventLitterN", litterNAdd / climLen,
-        //            "fluxes.eventOutputC", outputC / climLen,
-        //            "fluxes.eventOutputN", outputN / climLen);
+        writeEventOut(
+            gEvent, 10, "fluxes.eventSoilC", soilAdd / climLen,
+            "fluxes.eventLitterC", litterAdd / climLen, "fluxes.eventLeafC",
+            leafDelta / climLen, "fluxes.eventWoodC", woodDelta / climLen,
+            "fluxes.eventFineRootC", fineDelta / climLen,
+            "fluxes.eventCoarseRootC", coarseDelta / climLen,
+            "fluxes.eventSoilOrgN", soilNAdd / climLen, "fluxes.eventLitterN",
+            litterNAdd / climLen, "fluxes.eventOutputC", outputC / climLen,
+            "fluxes.eventOutputN", outputN / climLen);
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
