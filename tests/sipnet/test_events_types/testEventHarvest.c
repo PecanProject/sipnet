@@ -97,7 +97,7 @@ int run(void) {
   initEvents("events_one_harvest.in", 0);
   setupEvents();
   // procEvents();
-  // processEvents();
+  processEvents();
   // updatePoolsForEvents();
 
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
