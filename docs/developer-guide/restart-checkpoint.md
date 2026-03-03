@@ -29,7 +29,7 @@ Checkpoint format is ASCII text with one key/value per line:
 - header: `SIPNET_RESTART 1.0`
 - metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
 - mode flags: `flags.*`
-- boundary climate signature: `boundary.*` (timestamp + forcing fields only; no cumulative GDD)
+- boundary metadata: `boundary.year`, `boundary.day`, `boundary.time`, `boundary.length` (no forcing fields, no cumulative GDD)
 - mean tracker metadata: `mean.*`
 - full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
   - includes `trackers.gdd` for year-to-date cumulative GDD continuity

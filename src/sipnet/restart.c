@@ -42,14 +42,6 @@ typedef struct RestartClimateSignature {
   int day;
   double time;
   double length;
-  double tair;
-  double tsoil;
-  double par;
-  double precip;
-  double vpd;
-  double vpdSoil;
-  double vPress;
-  double wspd;
 } RestartClimateSignature;
 
 typedef struct RestartStateV1 {
@@ -96,14 +88,6 @@ static void copyClimateSignature(RestartClimateSignature *dest,
   dest->day = src->day;
   dest->time = src->time;
   dest->length = src->length;
-  dest->tair = src->tair;
-  dest->tsoil = src->tsoil;
-  dest->par = src->par;
-  dest->precip = src->precip;
-  dest->vpd = src->vpd;
-  dest->vpdSoil = src->vpdSoil;
-  dest->vPress = src->vPress;
-  dest->wspd = src->wspd;
 }
 
 static int
@@ -284,7 +268,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   int seenSchemaLayout[4] = {0};
 
   int seenFlags[10] = {0};
-  int seenBoundary[12] = {0};
+  int seenBoundary[4] = {0};
   int seenMeanMeta[5] = {0};
   int seenEnvi[12] = {0};
   int seenTrackers[28] = {0};
@@ -430,46 +414,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
     if (strcmp(key, "boundary.length") == 0) {
       markSeen(&(seenBoundary[3]), restartIn, key);
       state->boundaryClimate.length = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.tair") == 0) {
-      markSeen(&(seenBoundary[4]), restartIn, key);
-      state->boundaryClimate.tair = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.tsoil") == 0) {
-      markSeen(&(seenBoundary[5]), restartIn, key);
-      state->boundaryClimate.tsoil = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.par") == 0) {
-      markSeen(&(seenBoundary[6]), restartIn, key);
-      state->boundaryClimate.par = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.precip") == 0) {
-      markSeen(&(seenBoundary[7]), restartIn, key);
-      state->boundaryClimate.precip = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.vpd") == 0) {
-      markSeen(&(seenBoundary[8]), restartIn, key);
-      state->boundaryClimate.vpd = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.vpdSoil") == 0) {
-      markSeen(&(seenBoundary[9]), restartIn, key);
-      state->boundaryClimate.vpdSoil = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.vPress") == 0) {
-      markSeen(&(seenBoundary[10]), restartIn, key);
-      state->boundaryClimate.vPress = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "boundary.wspd") == 0) {
-      markSeen(&(seenBoundary[11]), restartIn, key);
-      state->boundaryClimate.wspd = parseDoubleStrict(restartIn, key, value);
       continue;
     }
     if (strcmp(key, "mean.length") == 0) {
@@ -863,7 +807,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       parseError(restartIn, "missing required flags.* keys", NULL);
     }
   }
-  for (int i = 0; i < 12; ++i) {
+  for (int i = 0; i < 4; ++i) {
     if (!seenBoundary[i]) {
       parseError(restartIn, "missing required boundary.* keys", NULL);
     }
@@ -971,14 +915,6 @@ static void writeRestartState(const char *restartOut,
   writeKeyInt(out, "boundary.day", state->boundaryClimate.day);
   writeKeyDouble(out, "boundary.time", state->boundaryClimate.time);
   writeKeyDouble(out, "boundary.length", state->boundaryClimate.length);
-  writeKeyDouble(out, "boundary.tair", state->boundaryClimate.tair);
-  writeKeyDouble(out, "boundary.tsoil", state->boundaryClimate.tsoil);
-  writeKeyDouble(out, "boundary.par", state->boundaryClimate.par);
-  writeKeyDouble(out, "boundary.precip", state->boundaryClimate.precip);
-  writeKeyDouble(out, "boundary.vpd", state->boundaryClimate.vpd);
-  writeKeyDouble(out, "boundary.vpdSoil", state->boundaryClimate.vpdSoil);
-  writeKeyDouble(out, "boundary.vPress", state->boundaryClimate.vPress);
-  writeKeyDouble(out, "boundary.wspd", state->boundaryClimate.wspd);
   fprintf(out, "\n");
 
   writeKeyInt(out, "mean.length", state->meanLength);

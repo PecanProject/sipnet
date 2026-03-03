@@ -342,6 +342,14 @@ static int testSegmentedEquivalence(void) {
   status |= !fileContains(CHECKPOINT_FILE, SCHEMA_LAYOUT_TRACKERS_LINE);
   status |= !fileContains(CHECKPOINT_FILE, SCHEMA_LAYOUT_PHENOLOGY_LINE);
   status |= !fileContains(CHECKPOINT_FILE, SCHEMA_LAYOUT_EVENT_TRACKERS_LINE);
+  status |= fileContains(CHECKPOINT_FILE, "boundary.tair ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.tsoil ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.par ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.precip ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.vpd ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.vpdSoil ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.vPress ");
+  status |= fileContains(CHECKPOINT_FILE, "boundary.wspd ");
   status |= fileContains(CHECKPOINT_FILE, "event_state.");
   status |= !fileContains(CHECKPOINT_FILE, "trackers.gdd ");
   status |= fileContains(CHECKPOINT_FILE, "boundary.gdd");
