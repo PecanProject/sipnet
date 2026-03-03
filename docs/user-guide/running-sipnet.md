@@ -38,6 +38,7 @@ These flags enable or disable optional model processes. Prepend `no-` to the fla
 
 | Flag               | Default | Description                                                                    |
 | ------------------ | ------- | ------------------------------------------------------------------------------ |
+| `--anaerobic`      | OFF (0) | Enable modeling of methane and anaerobic effect on Rh moisture dependency      |
 | `--events`         | ON (1)  | Enable agronomic event handling from `events.in` file                          |
 | `--gdd`            | ON (1)  | Use growing degree days to determine when leaves grow                          |
 | `--growth-resp`    | OFF (0) | Explicitly model growth respiration separately from maintenance respiration    |
@@ -50,9 +51,11 @@ These flags enable or disable optional model processes. Prepend `no-` to the fla
 
 #### Model Flag Restrictions
 
-The following flag combinations are mutually exclusive:
+The following flag constraints are enforced:
 
 - `--soil-phenol` and `--gdd` cannot both be enabled
+- `--anaerobic` requires `--water-hresp`
+- `--nitrogen-cycle` requires both `--litter-pool` and `--anaerobic`
 
 ### Output Flags
 
@@ -61,7 +64,7 @@ These flags control what outputs are generated. Prepend `no-` to disable (e.g., 
 | Flag                  | Default | Description                                                                     |
 | --------------------- | ------- | ------------------------------------------------------------------------------- |
 | `--do-main-output`    | ON (1)  | Write time series of all output variables to `<file-name>.out`                  |
-| `--do-single-outputs` | OFF (0) | Write one output variable per file (e.g., `<file-name>.NEE`, `<file-name>.GPP`) |
+| `--do-single-outputs` | OFF (0) | Write selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) to separate files (e.g., `<file-name>.NEE`) |
 | `--dump-config`       | OFF (0) | Write final merged configuration to `<file-name>.config` after running          |
 | `--print-header`      | ON (1)  | Print header row with variable names in output files                            |
 | `--quiet`             | OFF (0) | Suppress informational and warning messages to console                          |
@@ -113,6 +116,7 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | `LEAF_WATER`     | 0 or 1      | Track separate leaf water pool            |
 | `LITTER_POOL`    | 0 or 1      | Enable separate litter pool               |
 | `NITROGEN_CYCLE` | 0 or 1      | Enable nitrogen cycle modeling            |
+| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
 | `SNOW`           | 0 or 1      | Track snowpack                            |
 | `SOIL_PHENOL`    | 0 or 1      | Use soil temperature for phenology        |
 | `WATER_HRESP`    | 0 or 1      | Allow soil moisture to affect respiration |
@@ -122,7 +126,7 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | Key                | Value (1/0) | Description                                |
 | ------------------ | ----------- | ------------------------------------------ |
 | `DO_MAIN_OUTPUT`   | 0 or 1      | Write combined output file                 |
-| `DO_SINGLE_OUTPUT` | 0 or 1      | Write individual output files per variable |
+| `DO_SINGLE_OUTPUTS` | 0 or 1     | Write selected single-output files (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) |
 | `DUMP_CONFIG`      | 0 or 1      | Dump final configuration                   |
 | `PRINT_HEADER`     | 0 or 1      | Include header row in output files         |
 | `QUIET`            | 0 or 1      | Suppress console messages                  |
@@ -145,7 +149,7 @@ NITROGEN_CYCLE 0
 
 # Output
 DO_MAIN_OUTPUT 1
-DO_SINGLE_OUTPUT 0
+DO_SINGLE_OUTPUTS 0
 PRINT_HEADER 1
 QUIET 0
 ```
@@ -165,6 +169,7 @@ When `--gdd` is enabled, year-to-date cumulative GDD is restored from `trackers.
 - Resumed segments must start on the midnight-following day and no later than one timestep after midnight (using the first resumed climate row's timestep length)
 - Event files must be segmented with the same time boundaries as climate segments
 - Checkpoint schema/version and numeric model version must match the current run
+- Checkpoint `schema_layout.*` guard values must match the current binary's struct layout (`envi`, `trackers`, `phenology_trackers`, `event_trackers`)
 - Build info mismatch is reported as a warning only
 - Invalid restart context is rejected with a hard error
 - SIPNET does not stitch/append outputs across segments; orchestration must stitch outputs externally
@@ -292,7 +297,7 @@ year day time plantWoodC plantLeafC woodCreation soil ...
 
 **Filename pattern**: `<file-name>.<VARIABLE>`  (if `--do-single-outputs` is enabled)
 
-Each variable is written to a separate file. Useful for working with specific model outputs (e.g., GPP for validation, LAI for remote sensing comparison).
+Only these selected outputs are written to separate files: `NEE`, `NEE_cum`, `GPP`, `GPP_cum`.
 
 ### Configuration Dump File
 

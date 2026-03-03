@@ -39,6 +39,8 @@ Checkpoint format is ASCII text with one key/value per line:
 
 `event_state.*` keys are not part of the schema.
 
+Example checkpoint: see [sipnet.restart.example](sipnet.restart.example).
+
 ## Validation Contract
 
 On load, SIPNET enforces:
@@ -66,7 +68,7 @@ Event files must be segmented to the same time boundaries as climate segments.
 When `--gdd` is enabled, checkpoint resume restores cumulative GDD from `trackers.gdd`.
 `boundary.*` does not contain cumulative GDD.
 
-## Struct Drift Guard Workflow
+## Struct Drift Guards
 
 Restart schema v1.0 includes compile-time and runtime drift guards so struct layout changes cannot silently pass:
 
@@ -74,9 +76,10 @@ Restart schema v1.0 includes compile-time and runtime drift guards so struct lay
 - Runtime guards: `schema_layout.*` fields in each checkpoint are validated on load.
 - Test guardrails: `tests/sipnet/test_restart_infrastructure/testRestartMVP.c` verifies schema layout keys are present and rejects tampered values.
 
-When any guarded struct changes intentionally:
+## Schema Bump Checklist
 
-1. Bump the restart schema version.
-2. Update the expected `RESTART_SCHEMA_LAYOUT_*` sizes and checkpoint read/write handling.
-3. Update restart fixtures/docs (`docs/developer-guide/sipnet.restart.example`) and restart tests.
-4. Re-run restart infrastructure tests plus continuous-vs-segmented equivalence checks.
+When intentionally changing the restart schema version:
+
+1. Update `src/sipnet/restart.c` in all schema touchpoints: `RESTART_SCHEMA_VERSION`, `RESTART_SCHEMA_LAYOUT_*`, `_Static_assert` layout guards, and checkpoint read/write + required-key validation logic.
+2. Update restart examples/fixtures to the new header and key set, including `docs/developer-guide/sipnet.restart.example`.
+3. Update docs that name schema version or key expectations: `docs/developer-guide/restart-checkpoint.md` and `docs/user-guide/running-sipnet.md`.
