@@ -17,6 +17,26 @@
 #define RESTART_SCHEMA_VERSION "1.0"
 #define RESTART_FLOAT_EPSILON 1e-8
 
+#define RESTART_SCHEMA_LAYOUT_ENVI_SIZE 96
+#define RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE 224
+#define RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE 12
+#define RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE 8
+
+_Static_assert(sizeof(Envi) == RESTART_SCHEMA_LAYOUT_ENVI_SIZE,
+               "Restart schema 1.0 drift: Envi changed; bump restart schema "
+               "version and update schema_layout.* checks");
+_Static_assert(sizeof(Trackers) == RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE,
+               "Restart schema 1.0 drift: Trackers changed; bump restart "
+               "schema version and update schema_layout.* checks");
+_Static_assert(
+    sizeof(PhenologyTrackers) == RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
+    "Restart schema 1.0 drift: PhenologyTrackers changed; bump restart "
+    "schema version and update schema_layout.* checks");
+_Static_assert(sizeof(EventTrackers) ==
+                   RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE,
+               "Restart schema 1.0 drift: EventTrackers changed; bump restart "
+               "schema version and update schema_layout.* checks");
+
 typedef struct RestartClimateSignature {
   int year;
   int day;
@@ -112,6 +132,14 @@ static void advanceOneDay(int *year, int *day) {
   }
 }
 
+static int dateIsBefore(int leftYear, int leftDay, int rightYear,
+                        int rightDay) {
+  if (leftYear != rightYear) {
+    return leftYear < rightYear;
+  }
+  return leftDay < rightDay;
+}
+
 static void
 validateCheckpointBoundaryForWrite(const char *restartOut,
                                    const RestartClimateSignature *boundary) {
@@ -196,6 +224,18 @@ static double parseDoubleStrict(const char *restartIn, const char *key,
   return parsed;
 }
 
+static void validateSchemaLayoutValue(const char *restartIn, const char *key,
+                                      const char *value, int expected) {
+  int parsed = parseIntStrict(restartIn, key, value);
+  if (parsed != expected) {
+    logError(
+        "Restart schema layout mismatch in %s: key=%s found=%d expected=%d "
+        "(schema %s)\n",
+        restartIn, key, parsed, expected, RESTART_SCHEMA_VERSION);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
 static void checkLineLength(const char *line, size_t lineLen,
                             const char *restartIn, FILE *in) {
   if (lineLen > 0 && line[lineLen - 1] != '\n' && !feof(in)) {
@@ -241,6 +281,7 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   int seenBuildInfo = 0;
   int seenCheckpointUtcEpoch = 0;
   int seenProcessedSteps = 0;
+  int seenSchemaLayout[4] = {0};
 
   int seenFlags[10] = {0};
   int seenBoundary[12] = {0};
@@ -293,6 +334,30 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
     if (strcmp(key, "processed_steps") == 0) {
       markSeen(&seenProcessedSteps, restartIn, key);
       state->processedSteps = parseLongLongStrict(restartIn, key, value);
+      continue;
+    }
+    if (strcmp(key, "schema_layout.envi_size") == 0) {
+      markSeen(&(seenSchemaLayout[0]), restartIn, key);
+      validateSchemaLayoutValue(restartIn, key, value,
+                                RESTART_SCHEMA_LAYOUT_ENVI_SIZE);
+      continue;
+    }
+    if (strcmp(key, "schema_layout.trackers_size") == 0) {
+      markSeen(&(seenSchemaLayout[1]), restartIn, key);
+      validateSchemaLayoutValue(restartIn, key, value,
+                                RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE);
+      continue;
+    }
+    if (strcmp(key, "schema_layout.phenology_trackers_size") == 0) {
+      markSeen(&(seenSchemaLayout[2]), restartIn, key);
+      validateSchemaLayoutValue(restartIn, key, value,
+                                RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE);
+      continue;
+    }
+    if (strcmp(key, "schema_layout.event_trackers_size") == 0) {
+      markSeen(&(seenSchemaLayout[3]), restartIn, key);
+      validateSchemaLayoutValue(restartIn, key, value,
+                                RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE);
       continue;
     }
 
@@ -787,6 +852,11 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       !seenProcessedSteps) {
     parseError(restartIn, "missing required metadata keys", NULL);
   }
+  for (int i = 0; i < 4; ++i) {
+    if (!seenSchemaLayout[i]) {
+      parseError(restartIn, "missing required schema_layout.* keys", NULL);
+    }
+  }
 
   for (int i = 0; i < 10; ++i) {
     if (!seenFlags[i]) {
@@ -876,6 +946,13 @@ static void writeRestartState(const char *restartOut,
   fprintf(out, "build_info %s\n", state->buildInfo);
   writeKeyLongLong(out, "checkpoint_utc_epoch", state->checkpointUtcEpoch);
   writeKeyLongLong(out, "processed_steps", state->processedSteps);
+  writeKeyInt(out, "schema_layout.envi_size", RESTART_SCHEMA_LAYOUT_ENVI_SIZE);
+  writeKeyInt(out, "schema_layout.trackers_size",
+              RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE);
+  writeKeyInt(out, "schema_layout.phenology_trackers_size",
+              RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE);
+  writeKeyInt(out, "schema_layout.event_trackers_size",
+              RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE);
   fprintf(out, "\n");
 
   writeKeyInt(out, "flags.events", state->events);
@@ -1076,6 +1153,22 @@ static void validateRestartBoundary(const RestartStateV1 *state) {
   }
 }
 
+static void validateRestartEventBoundary(const RestartStateV1 *state) {
+  if (!ctx.events || gEvent == NULL || climate == NULL) {
+    return;
+  }
+
+  if (dateIsBefore(gEvent->year, gEvent->day, climate->year, climate->day)) {
+    logError("Restart event boundary mismatch: first event (year=%d day=%d) is "
+             "before resumed climate start (year=%d day=%d)\n",
+             gEvent->year, gEvent->day, climate->year, climate->day);
+    logError("Checkpoint boundary was year=%d day=%d; event files must be "
+             "segmented to the same boundaries as climate segments\n",
+             state->boundaryClimate.year, state->boundaryClimate.day);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
 void restartResetRunState(void) {
   processedStepCount = 0;
   hasLastProcessedClimate = 0;
@@ -1141,6 +1234,7 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
   checkRestartContextCompatibility(&state);
   validateRestartModelBuild(&state);
   validateRestartBoundary(&state);
+  validateRestartEventBoundary(&state);
 
   if (state.meanStart < 0 || state.meanStart >= meanNPP->length ||
       state.meanLast < 0 || state.meanLast >= meanNPP->length) {

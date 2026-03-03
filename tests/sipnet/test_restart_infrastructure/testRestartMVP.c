@@ -10,6 +10,10 @@
 #define SIPNET_CMD "../../../sipnet"
 #define CHECKPOINT_FILE "run.restart"
 #define RESTART_MAGIC_LINE "SIPNET_RESTART 1.0"
+#define SCHEMA_LAYOUT_ENVI_LINE "schema_layout.envi_size 96"
+#define SCHEMA_LAYOUT_TRACKERS_LINE "schema_layout.trackers_size 224"
+#define SCHEMA_LAYOUT_PHENOLOGY_LINE "schema_layout.phenology_trackers_size 12"
+#define SCHEMA_LAYOUT_EVENT_TRACKERS_LINE "schema_layout.event_trackers_size 8"
 
 static int runShell(const char *cmd) {
   int rc = system(cmd);
@@ -33,10 +37,20 @@ static int prepRunFiles(const char *climFile, const char *eventFile) {
   return status;
 }
 
-static int runModel(const char *inputFile, const char *logFile) {
-  char cmd[512];
-  sprintf(cmd, "%s -i %s > %s 2>&1", SIPNET_CMD, inputFile, logFile);
+static int runModelWithArgs(const char *inputFile, const char *logFile,
+                            const char *extraArgs) {
+  char cmd[1024];
+  if (extraArgs != NULL && extraArgs[0] != '\0') {
+    sprintf(cmd, "%s -i %s %s > %s 2>&1", SIPNET_CMD, inputFile, extraArgs,
+            logFile);
+  } else {
+    sprintf(cmd, "%s -i %s > %s 2>&1", SIPNET_CMD, inputFile, logFile);
+  }
   return runShell(cmd);
+}
+
+static int runModel(const char *inputFile, const char *logFile) {
+  return runModelWithArgs(inputFile, logFile, NULL);
 }
 
 static int truncateFileToSize(const char *file, long size) {
@@ -223,6 +237,82 @@ static int fileContains(const char *file, const char *needle) {
   return found;
 }
 
+static int testDefaultEventsFileUsedWhenUnset(void) {
+  int status = 0;
+  int stepStatus = 0;
+
+  runShell("rm -f run.out events.out run.restart run.config custom_events.in "
+           "*.log");
+
+  stepStatus = prepRunFiles("restart_full.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for default-events-file test\n");
+    return stepStatus;
+  }
+  status |= copyFile((char *)"events_segment2.in", (char *)"custom_events.in");
+
+  status |= (runModel("restart_cont.in", "default_events_file.log") != 0);
+  status |= !hasManagedEventOnDay("events.out", 2016, 47);
+  status |= hasManagedEventOnDay("events.out", 2016, 49);
+
+  if (status) {
+    logTest("testDefaultEventsFileUsedWhenUnset failed\n");
+  }
+
+  return status;
+}
+
+static int testEventsFileCliOverrideUsed(void) {
+  int status = 0;
+  int stepStatus = 0;
+
+  runShell("rm -f run.out events.out run.restart run.config custom_events.in "
+           "*.log");
+
+  stepStatus = prepRunFiles("restart_full.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for events-file CLI override test\n");
+    return stepStatus;
+  }
+  status |= copyFile((char *)"events_segment2.in", (char *)"custom_events.in");
+
+  status |= (runModelWithArgs("restart_cont.in", "events_file_cli.log",
+                              "--events-file custom_events") != 0);
+  status |= hasManagedEventOnDay("events.out", 2016, 47);
+  status |= !hasManagedEventOnDay("events.out", 2016, 49);
+
+  if (status) {
+    logTest("testEventsFileCliOverrideUsed failed\n");
+  }
+
+  return status;
+}
+
+static int testConfigDumpIncludesRestartAndEventsKeys(void) {
+  int status = 0;
+  int stepStatus = 0;
+
+  runShell("rm -f run.out events.out run.restart run.config *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for config-dump test\n");
+    return stepStatus;
+  }
+
+  status |= (runModelWithArgs("restart_cont.in", "config_dump.log",
+                              "--dump-config") != 0);
+  status |= !fileContains("run.config", "RESTART_IN");
+  status |= !fileContains("run.config", "RESTART_OUT");
+  status |= !fileContains("run.config", "EVENTS_FILE");
+
+  if (status) {
+    logTest("testConfigDumpIncludesRestartAndEventsKeys failed\n");
+  }
+
+  return status;
+}
+
 static int testSegmentedEquivalence(void) {
   int status = 0;
   int stepStatus = 0;
@@ -248,6 +338,10 @@ static int testSegmentedEquivalence(void) {
 
   status |= (runModel("restart_seg1.in", "seg1.log") != 0);
   status |= !fileStartsWith(CHECKPOINT_FILE, RESTART_MAGIC_LINE);
+  status |= !fileContains(CHECKPOINT_FILE, SCHEMA_LAYOUT_ENVI_LINE);
+  status |= !fileContains(CHECKPOINT_FILE, SCHEMA_LAYOUT_TRACKERS_LINE);
+  status |= !fileContains(CHECKPOINT_FILE, SCHEMA_LAYOUT_PHENOLOGY_LINE);
+  status |= !fileContains(CHECKPOINT_FILE, SCHEMA_LAYOUT_EVENT_TRACKERS_LINE);
   status |= fileContains(CHECKPOINT_FILE, "event_state.");
   status |= !fileContains(CHECKPOINT_FILE, "trackers.gdd ");
   status |= fileContains(CHECKPOINT_FILE, "boundary.gdd");
@@ -365,6 +459,40 @@ static int testRestartMustStartNearMidnight(void) {
 
   if (status) {
     logTest("testRestartMustStartNearMidnight failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testRestartEventBoundaryRequiresSegmentedEvents(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for restart-event-boundary segment 1\n");
+    return stepStatus;
+  }
+  status |=
+      (runModel("restart_seg1.in", "restart_event_boundary_seg1.log") != 0);
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_base.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for restart-event-boundary segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "restart_event_boundary_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("restart_event_boundary_seg2.log",
+                          "Restart event boundary mismatch");
+
+  if (status) {
+    logTest("testRestartEventBoundaryRequiresSegmentedEvents failed (rc=%d)\n",
+            rc);
   }
 
   return status;
@@ -498,6 +626,41 @@ static int testSchemaMismatchFails(void) {
   return status;
 }
 
+static int testSchemaLayoutMismatchFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for schema-layout mismatch segment 1\n");
+    return stepStatus;
+  }
+  status |=
+      (runModel("restart_seg1.in", "schema_layout_mismatch_seg1.log") != 0);
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, SCHEMA_LAYOUT_TRACKERS_LINE,
+                                   "schema_layout.trackers_size 999");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for schema-layout mismatch segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "schema_layout_mismatch_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("schema_layout_mismatch_seg2.log",
+                          "Restart schema layout mismatch");
+
+  if (status) {
+    logTest("testSchemaLayoutMismatchFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
 static int testBuildInfoMismatchWarnsAndSucceeds(void) {
   int status = 0;
   int stepStatus = 0;
@@ -605,14 +768,19 @@ static int testMalformedCheckpointFails(void) {
 int run(void) {
   int status = 0;
 
+  status |= testDefaultEventsFileUsedWhenUnset();
+  status |= testEventsFileCliOverrideUsed();
+  status |= testConfigDumpIncludesRestartAndEventsKeys();
   status |= testSegmentedEquivalence();
   status |= testStrictClimateMismatchFails();
   status |= testCheckpointMustEndNearMidnight();
   status |= testRestartMustStartNearMidnight();
+  status |= testRestartEventBoundaryRequiresSegmentedEvents();
   status |= testMissingFinalNewlineCheckpointSucceeds();
   status |= testNoRestartModeUnchanged();
   status |= testModelVersionMismatchFails();
   status |= testSchemaMismatchFails();
+  status |= testSchemaLayoutMismatchFails();
   status |= testBuildInfoMismatchWarnsAndSucceeds();
   status |= testTruncatedCheckpointFails();
   status |= testMalformedCheckpointFails();

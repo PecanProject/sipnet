@@ -162,7 +162,7 @@ When `--gdd` is enabled, year-to-date cumulative GDD is restored from `trackers.
 
 - First climate row in resumed segment must have a timestamp (`year`, `day`, `time`) after the checkpoint boundary timestamp
 - Checkpoint writes are only allowed when the final climate step is within one timestep of midnight
-- Resumed segments must start on the midnight-following day and no later than one timestep after midnight
+- Resumed segments must start on the midnight-following day and no later than one timestep after midnight (using the first resumed climate row's timestep length)
 - Event files must be segmented with the same time boundaries as climate segments
 - Checkpoint schema/version and numeric model version must match the current run
 - Build info mismatch is reported as a warning only

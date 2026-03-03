@@ -1595,11 +1595,7 @@ void updateTrackers(double oldSoilWater) {
   trackers.yearlyLitter += fluxes.leafLitter;
 
   if (ctx.gdd) {
-    double thisGdd = climate->tair * climate->length;
-    if (thisGdd < 0.0) {
-      thisGdd = 0.0;
-    }
-    trackers.gdd += thisGdd;
+    trackers.gdd += climate->gdd;
   } else {
     trackers.gdd = 0.0;
   }
