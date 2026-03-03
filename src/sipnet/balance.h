@@ -42,8 +42,6 @@ typedef struct BalanceTrackerStruct {
 // Global var
 extern BalanceTracker balanceTracker;
 
-void getMassTotals(double *carbon, double *nitrogen);
-
 void updateBalanceTrackerPreUpdate(void);
 
 void updateBalanceTrackerPostUpdate(void);
