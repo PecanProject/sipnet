@@ -517,6 +517,7 @@ void processEvents(void) {
                          fracRB);
           fluxes.eventOutputN += outputN / climLen;
         }
+#if 0
         writeEventOut(
             gEvent, 10, "fluxes.eventSoilC", soilAdd / climLen,
             "fluxes.eventLitterC", litterAdd / climLen, "fluxes.eventLeafC",
@@ -526,6 +527,7 @@ void processEvents(void) {
             "fluxes.eventSoilOrgN", soilNAdd / climLen, "fluxes.eventLitterN",
             litterNAdd / climLen, "fluxes.eventOutputC", outputC / climLen,
             "fluxes.eventOutputN", outputN / climLen);
+#endif
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
