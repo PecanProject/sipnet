@@ -5,7 +5,6 @@
 #include <string.h>
 #include <time.h>
 
-#include "balance.h"
 #include "common/context.h"
 #include "common/exitCodes.h"
 #include "common/logging.h"
@@ -75,7 +74,6 @@ typedef struct RestartStateV1 {
   Trackers trackers;
   PhenologyTrackers phenologyTrackers;
   EventTrackers eventTrackers;
-  BalanceTracker balanceTracker;
 } RestartStateV1;
 
 static long long processedStepCount = 0;
@@ -274,7 +272,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   int seenTrackers[28] = {0};
   int seenPhenology[3] = {0};
   int seenEventTrackers = 0;
-  int seenBalance[10] = {0};
 
   int seenMeanValuesLength = 0;
   int seenMeanWeightsLength = 0;
@@ -672,61 +669,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
       continue;
     }
 
-    if (strcmp(key, "balance.preTotalC") == 0) {
-      markSeen(&(seenBalance[0]), restartIn, key);
-      state->balanceTracker.preTotalC =
-          parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.postTotalC") == 0) {
-      markSeen(&(seenBalance[1]), restartIn, key);
-      state->balanceTracker.postTotalC =
-          parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.inputsC") == 0) {
-      markSeen(&(seenBalance[2]), restartIn, key);
-      state->balanceTracker.inputsC = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.outputsC") == 0) {
-      markSeen(&(seenBalance[3]), restartIn, key);
-      state->balanceTracker.outputsC = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.preTotalN") == 0) {
-      markSeen(&(seenBalance[4]), restartIn, key);
-      state->balanceTracker.preTotalN =
-          parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.postTotalN") == 0) {
-      markSeen(&(seenBalance[5]), restartIn, key);
-      state->balanceTracker.postTotalN =
-          parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.inputsN") == 0) {
-      markSeen(&(seenBalance[6]), restartIn, key);
-      state->balanceTracker.inputsN = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.outputsN") == 0) {
-      markSeen(&(seenBalance[7]), restartIn, key);
-      state->balanceTracker.outputsN = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.deltaC") == 0) {
-      markSeen(&(seenBalance[8]), restartIn, key);
-      state->balanceTracker.deltaC = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-    if (strcmp(key, "balance.deltaN") == 0) {
-      markSeen(&(seenBalance[9]), restartIn, key);
-      state->balanceTracker.deltaN = parseDoubleStrict(restartIn, key, value);
-      continue;
-    }
-
     if (strcmp(key, "mean.npp.values.length") == 0) {
       markSeen(&seenMeanValuesLength, restartIn, key);
       meanValuesLength = parseIntStrict(restartIn, key, value);
@@ -838,11 +780,6 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
   }
   if (!seenEventTrackers) {
     parseError(restartIn, "missing required event_trackers.* keys", NULL);
-  }
-  for (int i = 0; i < 10; ++i) {
-    if (!seenBalance[i]) {
-      parseError(restartIn, "missing required balance.* keys", NULL);
-    }
   }
   if (!seenMeanValuesLength || !seenMeanWeightsLength) {
     parseError(restartIn, "missing required mean array length keys", NULL);
@@ -977,18 +914,6 @@ static void writeRestartState(const char *restartOut,
 
   writeKeyDouble(out, "event_trackers.d_till_mod",
                  state->eventTrackers.d_till_mod);
-  fprintf(out, "\n");
-
-  writeKeyDouble(out, "balance.preTotalC", state->balanceTracker.preTotalC);
-  writeKeyDouble(out, "balance.postTotalC", state->balanceTracker.postTotalC);
-  writeKeyDouble(out, "balance.inputsC", state->balanceTracker.inputsC);
-  writeKeyDouble(out, "balance.outputsC", state->balanceTracker.outputsC);
-  writeKeyDouble(out, "balance.preTotalN", state->balanceTracker.preTotalN);
-  writeKeyDouble(out, "balance.postTotalN", state->balanceTracker.postTotalN);
-  writeKeyDouble(out, "balance.inputsN", state->balanceTracker.inputsN);
-  writeKeyDouble(out, "balance.outputsN", state->balanceTracker.outputsN);
-  writeKeyDouble(out, "balance.deltaC", state->balanceTracker.deltaC);
-  writeKeyDouble(out, "balance.deltaN", state->balanceTracker.deltaN);
   fprintf(out, "\n");
 
   writeKeyInt(out, "mean.npp.length", state->meanLength);
@@ -1160,7 +1085,6 @@ void restartWriteCheckpoint(const char *restartOut,
   state.trackers = trackers;
   state.phenologyTrackers = phenologyTrackers;
   state.eventTrackers = eventTrackers;
-  state.balanceTracker = balanceTracker;
 
   writeRestartState(restartOut, &state, meanNPP);
 }
@@ -1186,7 +1110,6 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
   trackers = state.trackers;
   phenologyTrackers = state.phenologyTrackers;
   eventTrackers = state.eventTrackers;
-  balanceTracker = state.balanceTracker;
 
   meanNPP->totWeight = state.meanTotWeight;
   meanNPP->start = state.meanStart;

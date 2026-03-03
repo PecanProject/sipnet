@@ -237,27 +237,6 @@ static int fileContains(const char *file, const char *needle) {
   return found;
 }
 
-static int lineNumberContaining(const char *file, const char *needle) {
-  FILE *in = fopen(file, "r");
-  if (in == NULL) {
-    logTest("Unable to open %s\n", file);
-    return -1;
-  }
-
-  char line[2048];
-  int lineNum = 0;
-  while (fgets(line, sizeof(line), in) != NULL) {
-    ++lineNum;
-    if (strstr(line, needle) != NULL) {
-      fclose(in);
-      return lineNum;
-    }
-  }
-
-  fclose(in);
-  return -1;
-}
-
 static int previousNonEmptyLineBeforeStartsWith(const char *file,
                                                 const char *targetLine,
                                                 const char *prefix) {
@@ -410,11 +389,7 @@ static int testSegmentedEquivalence(void) {
   status |= !fileContains(CHECKPOINT_FILE, "mean.npp.length ");
   status |= !fileContains(CHECKPOINT_FILE, "mean.npp.values.length ");
   status |= !fileContains(CHECKPOINT_FILE, "mean.npp.weights.length ");
-  {
-    int meanLine = lineNumberContaining(CHECKPOINT_FILE, "mean.npp.length ");
-    int balanceLine = lineNumberContaining(CHECKPOINT_FILE, "balance.deltaN ");
-    status |= (meanLine < 0 || balanceLine < 0 || meanLine <= balanceLine);
-  }
+  status |= fileContains(CHECKPOINT_FILE, "balance.");
   status |= !previousNonEmptyLineBeforeStartsWith(
       CHECKPOINT_FILE, "end_restart 1", "mean.npp.weights.");
   status |= rename("run.out", "seg1.out");
@@ -771,6 +746,40 @@ static int testSchemaLayoutOverflowMismatchFails(void) {
   return status;
 }
 
+static int testLegacyBalanceKeyRejected(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for legacy-balance test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "legacy_balance_seg1.log") != 0);
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "end_restart 1",
+                                   "balance.preTotalC 0\nend_restart 1");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for legacy-balance test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "legacy_balance_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("legacy_balance_seg2.log",
+                          "unknown key 'balance.preTotalC'");
+
+  if (status) {
+    logTest("testLegacyBalanceKeyRejected failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
 static int testBuildInfoMismatchWarnsAndSucceeds(void) {
   int status = 0;
   int stepStatus = 0;
@@ -892,6 +901,7 @@ int run(void) {
   status |= testSchemaMismatchFails();
   status |= testSchemaLayoutMismatchFails();
   status |= testSchemaLayoutOverflowMismatchFails();
+  status |= testLegacyBalanceKeyRejected();
   status |= testBuildInfoMismatchWarnsAndSucceeds();
   status |= testTruncatedCheckpointFails();
   status |= testMalformedCheckpointFails();

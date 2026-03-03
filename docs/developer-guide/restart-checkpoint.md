@@ -32,7 +32,7 @@ Checkpoint format is ASCII text with one key/value per line:
 - mode flags: `flags.*`
 - boundary metadata: `boundary.year`, `boundary.day`, `boundary.time`, `boundary.length` (no forcing fields, no cumulative GDD)
 - mean tracker metadata: `mean.npp.*`
-- full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`, `balance.*`
+- full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`
   - includes `trackers.gdd` for year-to-date cumulative GDD continuity
 - mean ring buffers: `mean.npp.values.length` + `mean.npp.values.<idx>`, `mean.npp.weights.length` + `mean.npp.weights.<idx>`
 - end marker: `end_restart 1`
@@ -54,6 +54,7 @@ On load, SIPNET enforces:
 - first-row climate timestamp strictly after checkpoint boundary (`year`, `day`, `time`)
 - resumed segment starts on the midnight-following day and within one timestep after midnight
 - mean tracker shape/cursor validity
+- legacy `balance.*` keys are rejected as unknown keys
 
 All mismatches above are hard errors except build-info mismatch, which is warning-only.
 
