@@ -50,7 +50,7 @@ sections to include in release notes:
 
 ### Fixed
 
-- Balance check now accounts for mass adjustments from non-negative stock clamping
+- Balance check now accounts for mass adjustments from non-negative stock clamping (#282)
 - Out of order error message for events (#166)
 
 ### Changed
