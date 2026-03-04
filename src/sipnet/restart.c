@@ -1,5 +1,6 @@
 #include "restart.h"
 
+#include <limits.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -193,6 +194,9 @@ static long long parseLongLongStrict(const char *restartIn, const char *key,
 static int parseIntStrict(const char *restartIn, const char *key,
                           const char *value) {
   long long parsed = parseLongLongStrict(restartIn, key, value);
+  if (parsed < INT_MIN || parsed > INT_MAX) {
+    parseValueError(restartIn, key, value);
+  }
   return (int)parsed;
 }
 
@@ -200,7 +204,7 @@ static double parseDoubleStrict(const char *restartIn, const char *key,
                                 const char *value) {
   char *end = NULL;
   double parsed = strtod(value, &end);
-  if (end == value || *end != '\0') {
+  if (end == value || *end != '\0' || !isfinite(parsed)) {
     parseValueError(restartIn, key, value);
   }
   return parsed;
@@ -295,6 +299,9 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
     }
     if (n != 2) {
       parseError(restartIn, "line must contain exactly '<key> <value>'", NULL);
+    }
+    if (seenEndRestart) {
+      parseError(restartIn, "unexpected content after end_restart", key);
     }
 
     if (strcmp(key, "model_version") == 0) {
@@ -729,6 +736,9 @@ static void readRestartState(const char *restartIn, RestartStateV1 *state,
 
     if (strcmp(key, "end_restart") == 0) {
       markSeen(&seenEndRestart, restartIn, key);
+      if (parseIntStrict(restartIn, key, value) != 1) {
+        parseError(restartIn, "end_restart marker must be 1", key);
+      }
       continue;
     }
 

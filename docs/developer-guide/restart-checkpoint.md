@@ -54,6 +54,10 @@ On load, SIPNET enforces:
 - first-row climate timestamp strictly after checkpoint boundary (`year`, `day`, `time`)
 - resumed segment starts on the midnight-following day and within one timestep after midnight
 - mean tracker shape/cursor validity
+- `end_restart` marker value is exactly `1`
+- no non-empty key/value lines appear after `end_restart`
+- integer values must fit in signed 32-bit range
+- floating-point values must be finite (`nan`/`inf` are rejected)
 - legacy `balance.*` keys are rejected as unknown keys
 
 All mismatches above are hard errors except build-info mismatch, which is warning-only.

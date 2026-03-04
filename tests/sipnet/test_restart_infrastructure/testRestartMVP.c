@@ -190,6 +190,92 @@ static int replaceFirstOccurrence(const char *file, const char *needle,
   return 0;
 }
 
+static int replaceFirstLineStartingWith(const char *file, const char *prefix,
+                                        const char *replacementLine) {
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s for reading\n", file);
+    return 1;
+  }
+
+  if (fseek(in, 0, SEEK_END) != 0) {
+    fclose(in);
+    return 1;
+  }
+  long size = ftell(in);
+  if (size < 0) {
+    fclose(in);
+    return 1;
+  }
+  if (fseek(in, 0, SEEK_SET) != 0) {
+    fclose(in);
+    return 1;
+  }
+
+  char *buffer = (char *)malloc((size_t)size + 1);
+  if (buffer == NULL) {
+    fclose(in);
+    return 1;
+  }
+  if (fread(buffer, 1, (size_t)size, in) != (size_t)size) {
+    free(buffer);
+    fclose(in);
+    return 1;
+  }
+  buffer[size] = '\0';
+  fclose(in);
+
+  char *pos = buffer;
+  while ((pos = strstr(pos, prefix)) != NULL) {
+    if (pos == buffer || *(pos - 1) == '\n') {
+      break;
+    }
+    ++pos;
+  }
+  if (pos == NULL) {
+    free(buffer);
+    logTest("Could not find line starting with '%s' in %s\n", prefix, file);
+    return 1;
+  }
+
+  char *lineEnd = strchr(pos, '\n');
+  const char *afterLine =
+      (lineEnd == NULL) ? (pos + strlen(pos)) : (lineEnd + 1);
+  size_t beforeLen = (size_t)(pos - buffer);
+  size_t replacementLen = strlen(replacementLine);
+  size_t afterLen = strlen(afterLine);
+  size_t newLen = beforeLen + replacementLen + afterLen;
+
+  char *newContent = (char *)malloc(newLen + 1);
+  if (newContent == NULL) {
+    free(buffer);
+    return 1;
+  }
+
+  memcpy(newContent, buffer, beforeLen);
+  memcpy(newContent + beforeLen, replacementLine, replacementLen);
+  memcpy(newContent + beforeLen + replacementLen, afterLine, afterLen);
+  newContent[newLen] = '\0';
+
+  FILE *out = fopen(file, "w");
+  if (out == NULL) {
+    free(buffer);
+    free(newContent);
+    return 1;
+  }
+  if (fwrite(newContent, 1, newLen, out) != newLen) {
+    free(buffer);
+    free(newContent);
+    fclose(out);
+    return 1;
+  }
+
+  free(buffer);
+  free(newContent);
+  fclose(out);
+  return 0;
+}
+
 static int hasManagedEventOnDay(const char *eventFile, int year, int day) {
   FILE *in = fopen(eventFile, "r");
   if (in == NULL) {
@@ -746,6 +832,167 @@ static int testSchemaLayoutOverflowMismatchFails(void) {
   return status;
 }
 
+static int testEndRestartMustBeOneFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for end_restart value test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "end_restart_value_seg1.log") != 0);
+  status |=
+      replaceFirstOccurrence(CHECKPOINT_FILE, "end_restart 1", "end_restart 0");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for end_restart value test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "end_restart_value_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("end_restart_value_seg2.log",
+                          "end_restart marker must be 1");
+
+  if (status) {
+    logTest("testEndRestartMustBeOneFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testNoKeysAllowedAfterEndRestartFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for post-end key test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "post_end_key_seg1.log") != 0);
+  status |= replaceFirstLineStartingWith(CHECKPOINT_FILE,
+                                         SCHEMA_LAYOUT_ENVI_LINE, "");
+  status |=
+      replaceFirstOccurrence(CHECKPOINT_FILE, "end_restart 1",
+                             "end_restart 1\n" SCHEMA_LAYOUT_ENVI_LINE "\n");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for post-end key test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "post_end_key_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("post_end_key_seg2.log",
+                          "unexpected content after end_restart");
+
+  if (status) {
+    logTest("testNoKeysAllowedAfterEndRestartFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testMeanValueIndexOverflowFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for mean-index overflow test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "mean_index_overflow_seg1.log") != 0);
+  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "mean.npp.values.0 ",
+                                   "mean.npp.values.4294967296 ");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for mean-index overflow test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "mean_index_overflow_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("mean_index_overflow_seg2.log",
+                          "invalid value '4294967296'");
+
+  if (status) {
+    logTest("testMeanValueIndexOverflowFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testNonFiniteRestartValuesFail(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for non-finite boundary test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "nonfinite_boundary_seg1.log") != 0);
+  status |= replaceFirstLineStartingWith(CHECKPOINT_FILE, "boundary.time ",
+                                         "boundary.time nan\n");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for non-finite boundary test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "nonfinite_boundary_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("nonfinite_boundary_seg2.log",
+                          "invalid value 'nan' for key 'boundary.time'");
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for non-finite mean test segment 1\n");
+    return status | stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "nonfinite_mean_seg1.log") != 0);
+  status |= replaceFirstLineStartingWith(CHECKPOINT_FILE, "mean.npp.sum ",
+                                         "mean.npp.sum inf\n");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for non-finite mean test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "nonfinite_mean_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains("nonfinite_mean_seg2.log",
+                          "invalid value 'inf' for key 'mean.npp.sum'");
+
+  if (status) {
+    logTest("testNonFiniteRestartValuesFail failed\n");
+  }
+
+  return status;
+}
+
 static int testLegacyBalanceKeyRejected(void) {
   int status = 0;
   int stepStatus = 0;
@@ -901,6 +1148,10 @@ int run(void) {
   status |= testSchemaMismatchFails();
   status |= testSchemaLayoutMismatchFails();
   status |= testSchemaLayoutOverflowMismatchFails();
+  status |= testEndRestartMustBeOneFails();
+  status |= testNoKeysAllowedAfterEndRestartFails();
+  status |= testMeanValueIndexOverflowFails();
+  status |= testNonFiniteRestartValuesFail();
   status |= testLegacyBalanceKeyRejected();
   status |= testBuildInfoMismatchWarnsAndSucceeds();
   status |= testTruncatedCheckpointFails();
