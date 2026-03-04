@@ -349,6 +349,14 @@ typedef struct Parameters {
   // C:N ratio at which D_CN is 1/2 for soil and litter
   double kCN;
 
+  // Maximum fraction of plant N demand that can be met by fixation
+  // under low soil N, dimensionless between 0 and 1
+  double nFixationFracMax;
+
+  // Amount of mineral N at which fixation is reduced by half
+  // g N * m^-2 ground area
+  double halfNFixationMax;
+
   // ******
   // New moisture dependency functions
   // ******
@@ -363,6 +371,16 @@ typedef struct Parameters {
   // Methane anoxia sensitivity, controls sharpness of anaerobic transition
   // dimensionless, greater than 1
   double anaerobicTransExp;
+
+  // ******
+  // Methane production
+  // ******
+
+  // Relative methane production rate in the soil pool, in [0, 1), per day
+  double soilMethaneRate;
+
+  // Relative methane production rate in the litter pool, in [0, 1), per day
+  double litterMethaneRate;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -522,6 +540,14 @@ typedef struct FluxVars {
   // g N * m^-2 ground area * day^-1
   double nMin;
 
+  // Plant N gained from fixation
+  // g N * m^-2 ground area * day^-1
+  double nFixation;
+
+  // Mineral N drawn from soil pool to meet plant N demand
+  // g N * m^-2 ground area * day^-1
+  double nUptake;
+
   // ****************************************
   // Fluxes for event handling
   //  - event fluxes tracked as part of modeling from [4]
@@ -554,6 +580,14 @@ typedef struct FluxVars {
   double eventInputN;
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
+
+  // ****************************************
+  // Methane production
+
+  // Methane produced from soil
+  double soilMethane;
+  // Methane produced from litter
+  double litterMethane;
 } Fluxes;
 
 // Global var
@@ -617,6 +651,9 @@ typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 wood creation
   double woodCreation;
 
+  // g C * m^-2 methane production
+  double methane;
+
   // g N * m^-2 ground area, Mineral N lost to volatilization
   double n2o;
 
@@ -625,6 +662,15 @@ typedef struct TrackerVars {  // variables to track various things
 
   // Previous step year used for yearly tracker rollover logic
   int lastYear;
+
+  // g N * m^-2 N leached from soil mineral N pool
+  double nLeaching;
+
+  // g N * m^-2 N fixed by plants
+  double nFixation;
+
+  // g N * m^-2 N taken up by plants from soil mineral N pool
+  double nUptake;
 
 } Trackers;
 
