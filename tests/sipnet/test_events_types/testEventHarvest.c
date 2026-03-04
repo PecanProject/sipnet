@@ -97,7 +97,6 @@ int run(void) {
   initEvents("events_one_harvest.in", 0);
   setupEvents();
   procEvents();
-
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
   expSoilC = 10 + 0.3 * (2 + 3) + 0.4 * (4 + 5);  // 1 + 1.5 + 3.6 = 6.1
   expLitterC = 0.0;  // litter pool off
@@ -107,7 +106,6 @@ int run(void) {
   expCoarseC = 5 * (1 - 0.2 - 0.4);  // 2.0
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
-  closeEventOutFile();
 
   //// TWO HARVEST
   // Ok, so, two harvest events on the same day shouldn't happen (seriously,
@@ -135,7 +133,6 @@ int run(void) {
 
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
-  closeEventOutFile();
 
   return status;
 }

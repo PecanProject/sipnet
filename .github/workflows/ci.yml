@@ -7,6 +7,14 @@ on:
   pull_request:
 
 jobs:
+  # Debug environment
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
   # Build and Integration Test
   build:
     strategy:

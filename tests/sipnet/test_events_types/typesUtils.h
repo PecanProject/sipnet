@@ -19,6 +19,7 @@ void prepTypesTest() {
 void procEvents() {
   processEvents();
   updatePoolsForEvents();
+  closeEventOutFile();
 }
 
 #endif  // SIPNET_TYPESUTILS_H
