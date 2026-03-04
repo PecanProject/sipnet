@@ -475,6 +475,11 @@ static int testSegmentedEquivalence(void) {
   status |= !fileContains(CHECKPOINT_FILE, "mean.npp.length ");
   status |= !fileContains(CHECKPOINT_FILE, "mean.npp.values.length ");
   status |= !fileContains(CHECKPOINT_FILE, "mean.npp.weights.length ");
+  // These step-level diagnostics are intentionally omitted from restart schema.
+  status |= fileContains(CHECKPOINT_FILE, "trackers.methane ");
+  status |= fileContains(CHECKPOINT_FILE, "trackers.nLeaching ");
+  status |= fileContains(CHECKPOINT_FILE, "trackers.nFixation ");
+  status |= fileContains(CHECKPOINT_FILE, "trackers.nUptake ");
   status |= fileContains(CHECKPOINT_FILE, "balance.");
   status |= !previousNonEmptyLineBeforeStartsWith(
       CHECKPOINT_FILE, "end_restart 1", "mean.npp.weights.");
@@ -560,6 +565,41 @@ static int testCheckpointMustEndNearMidnight(void) {
 
   if (status) {
     logTest("testCheckpointMustEndNearMidnight failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
+static int testTamperedBoundaryNotNearMidnightFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for tampered-boundary test segment 1\n");
+    return stepStatus;
+  }
+  status |= (runModel("restart_seg1.in", "tampered_boundary_seg1.log") != 0);
+  status |= replaceFirstLineStartingWith(CHECKPOINT_FILE, "boundary.time ",
+                                         "boundary.time 12.0\n");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for tampered-boundary test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "tampered_boundary_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= !fileContains(
+      "tampered_boundary_seg2.log",
+      "checkpoint boundary is more than one timestep before midnight");
+
+  if (status) {
+    logTest("testTamperedBoundaryNotNearMidnightFails failed (rc=%d)\n", rc);
   }
 
   return status;
@@ -1097,6 +1137,46 @@ static int testTruncatedCheckpointFails(void) {
   return status;
 }
 
+static int testProcessedStepsOverflowFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for processed-steps overflow test "
+            "segment 1\n");
+    return stepStatus;
+  }
+  status |=
+      (runModel("restart_seg1.in", "processed_steps_overflow_seg1.log") != 0);
+  status |= replaceFirstLineStartingWith(
+      CHECKPOINT_FILE, "processed_steps ",
+      "processed_steps 999999999999999999999999999999\n");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest("Failed to prepare files for processed-steps overflow test "
+            "segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "processed_steps_overflow_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |=
+      !fileContains("processed_steps_overflow_seg2.log",
+                    "invalid value '999999999999999999999999999999' for key "
+                    "'processed_steps'");
+
+  if (status) {
+    logTest("testProcessedStepsOverflowFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
+}
+
 static int testMalformedCheckpointFails(void) {
   int status = 0;
   int stepStatus = 0;
@@ -1140,6 +1220,7 @@ int run(void) {
   status |= testSegmentedEquivalence();
   status |= testStrictClimateMismatchFails();
   status |= testCheckpointMustEndNearMidnight();
+  status |= testTamperedBoundaryNotNearMidnightFails();
   status |= testRestartMustStartNearMidnight();
   status |= testRestartEventBoundaryRequiresSegmentedEvents();
   status |= testMissingFinalNewlineCheckpointSucceeds();
@@ -1155,6 +1236,7 @@ int run(void) {
   status |= testLegacyBalanceKeyRejected();
   status |= testBuildInfoMismatchWarnsAndSucceeds();
   status |= testTruncatedCheckpointFails();
+  status |= testProcessedStepsOverflowFails();
   status |= testMalformedCheckpointFails();
 
   return status;
