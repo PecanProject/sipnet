@@ -5,25 +5,8 @@ on:
     branches:
       - master
   pull_request:
-  workflow_dispatch:
-    inputs:
-      debug_enabled:
-        type: boolean
-        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
-        required: false
-        default: false
 
 jobs:
-  # Debug environment
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install gdb
-        run: sudo apt install gdb
-      - name: Setup tmate session
-        if: ${{ inputs.debug_enabled }}
-        uses: mxschmitt/action-tmate@v3
 
   # Build and Integration Test
   build:
