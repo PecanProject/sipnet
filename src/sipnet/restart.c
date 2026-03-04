@@ -1,5 +1,6 @@
 #include "restart.h"
 
+#include <errno.h>
 #include <limits.h>
 #include <math.h>
 #include <stdlib.h>
@@ -22,12 +23,44 @@
 #define RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE 12
 #define RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE 8
 
+typedef struct RestartSerializedTrackersV1 {
+  double gpp;
+  double rtot;
+  double ra;
+  double rh;
+  double npp;
+  double nee;
+  double yearlyGpp;
+  double yearlyRtot;
+  double yearlyRa;
+  double yearlyRh;
+  double yearlyNpp;
+  double yearlyNee;
+  double totGpp;
+  double totRtot;
+  double totRa;
+  double totRh;
+  double totNpp;
+  double totNee;
+  double evapotranspiration;
+  double soilWetnessFrac;
+  double rRoot;
+  double rSoil;
+  double rAboveground;
+  double yearlyLitter;
+  double woodCreation;
+  double n2o;
+  double gdd;
+  int lastYear;
+} RestartSerializedTrackersV1;
+
 _Static_assert(sizeof(Envi) == RESTART_SCHEMA_LAYOUT_ENVI_SIZE,
                "Restart schema 1.0 drift: Envi changed; bump restart schema "
                "version and update schema_layout.* checks");
-_Static_assert(sizeof(Trackers) == RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE,
-               "Restart schema 1.0 drift: Trackers changed; bump restart "
-               "schema version and update schema_layout.* checks");
+_Static_assert(sizeof(RestartSerializedTrackersV1) ==
+                   RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE,
+               "Restart schema 1.0 drift: serialized trackers payload changed; "
+               "bump restart schema version and update schema_layout.* checks");
 _Static_assert(
     sizeof(PhenologyTrackers) == RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
     "Restart schema 1.0 drift: PhenologyTrackers changed; bump restart "
@@ -146,6 +179,31 @@ validateCheckpointBoundaryForWrite(const char *restartOut,
   }
 }
 
+static void
+validateCheckpointBoundaryForLoad(const char *restartIn,
+                                  const RestartClimateSignature *boundary) {
+  double stepHours = boundary->length * 24.0;
+  if (stepHours <= RESTART_FLOAT_EPSILON) {
+    logError("Restart boundary mismatch in %s: checkpoint boundary has "
+             "non-positive timestep length (year=%d day=%d time=%.8f "
+             "length=%.8f)\n",
+             restartIn, boundary->year, boundary->day, boundary->time,
+             boundary->length);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
+  double hoursUntilMidnight = 24.0 - boundary->time;
+  if (hoursUntilMidnight > (stepHours + RESTART_FLOAT_EPSILON)) {
+    logError(
+        "Restart boundary mismatch in %s: checkpoint boundary is more than "
+        "one timestep before midnight\n",
+        restartIn);
+    logError("Checkpoint boundary: year=%d day=%d time=%.8f length=%.8f\n",
+             boundary->year, boundary->day, boundary->time, boundary->length);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
 static void sanitizeBuildInfo(char *dest, size_t destLen, const char *src) {
   if (destLen == 0) {
     return;
@@ -184,8 +242,9 @@ static void parseValueError(const char *restartIn, const char *key,
 static long long parseLongLongStrict(const char *restartIn, const char *key,
                                      const char *value) {
   char *end = NULL;
+  errno = 0;
   long long parsed = strtoll(value, &end, 10);
-  if (end == value || *end != '\0') {
+  if (end == value || *end != '\0' || errno == ERANGE) {
     parseValueError(restartIn, key, value);
   }
   return parsed;
@@ -1105,6 +1164,7 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
 
   readRestartState(restartIn, &state, meanNPP);
 
+  validateCheckpointBoundaryForLoad(restartIn, &(state.boundaryClimate));
   checkRestartContextCompatibility(&state);
   validateRestartModelBuild(&state);
   validateRestartBoundary(&state);

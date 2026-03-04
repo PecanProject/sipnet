@@ -29,11 +29,15 @@ Checkpoint format is ASCII text with one key/value per line:
 - header: `SIPNET_RESTART 1.0`
 - metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
 - schema layout guard metadata: `schema_layout.envi_size`, `schema_layout.trackers_size`, `schema_layout.phenology_trackers_size`, `schema_layout.event_trackers_size`
+  - `schema_layout.trackers_size` guards the serialized tracker payload shape for schema v1.0
 - mode flags: `flags.*`
 - boundary metadata: `boundary.year`, `boundary.day`, `boundary.time`, `boundary.length` (no forcing fields, no cumulative GDD)
 - mean tracker metadata: `mean.npp.*`
-- full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`
+- full runtime state: `envi.*`, serialized `trackers.*`, `phenology.*`, `event_trackers.*`
   - includes `trackers.gdd` for year-to-date cumulative GDD continuity
+  - excludes step-level diagnostics that are recomputed on the next timestep:
+    `trackers.methane`, `trackers.nLeaching`, `trackers.nFixation`,
+    `trackers.nUptake`
 - mean ring buffers: `mean.npp.values.length` + `mean.npp.values.<idx>`, `mean.npp.weights.length` + `mean.npp.weights.<idx>`
 - end marker: `end_restart 1`
 
@@ -77,7 +81,7 @@ When `--gdd` is enabled, checkpoint resume restores cumulative GDD from `tracker
 
 Restart schema v1.0 includes compile-time and runtime drift guards so struct layout changes cannot silently pass:
 
-- Compile-time guards: `_Static_assert` checks in `src/sipnet/restart.c` for `Envi`, `Trackers`, `PhenologyTrackers`, and `EventTrackers`.
+- Compile-time guards: `_Static_assert` checks in `src/sipnet/restart.c` for `Envi`, serialized tracker payload shape, `PhenologyTrackers`, and `EventTrackers`.
 - Runtime guards: `schema_layout.*` fields in each checkpoint are validated on load.
 - Test guardrails: `tests/sipnet/test_restart_infrastructure/testRestartMVP.c` verifies schema layout keys are present and rejects tampered values.
 
