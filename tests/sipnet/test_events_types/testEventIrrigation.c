@@ -35,6 +35,7 @@ int run(void) {
   initEvents("events_one_irrig.in", 0);
   setupEvents();
   procEvents();
+  closeEventOutFile();
   // should have 5 going to the soil
   status |= checkOutput(5, 0);
 
@@ -44,6 +45,7 @@ int run(void) {
   initEvents("events_two_irrig.in", 1);
   setupEvents();
   procEvents();
+  closeEventOutFile();
   // event 1: 3 to soil
   // event 2: 2=4*0.5 to evap, the rest (2) to soil
   // (plus the five from the test above)

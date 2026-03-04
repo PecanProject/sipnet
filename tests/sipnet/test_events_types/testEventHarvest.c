@@ -97,6 +97,7 @@ int run(void) {
   initEvents("events_one_harvest.in", 0);
   setupEvents();
   procEvents();
+  closeEventOutFile();
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
   expSoilC = 10 + 0.3 * (2 + 3) + 0.4 * (4 + 5);  // 1 + 1.5 + 3.6 = 6.1
   expLitterC = 0.0;  // litter pool off
@@ -119,6 +120,7 @@ int run(void) {
   initEvents("events_two_harvest.in", 1);
   setupEvents();
   procEvents();
+  closeEventOutFile();
   // Two events are additive
   expSoilC = 10 + (0.3 + 0.2) * (4 + 5);
   expLitterC = 15 + (0.4 + 0.1) * (2 + 3);
