@@ -303,13 +303,19 @@ void doWriteEventOut(int year, int day, const char *type, int numParams,
   // Standard prefix for all
   fprintf(eventOutFile, "%4d  %3d  %-7s  ", year, day, type);
 
+  // For debugging on linux
+  char *param;
+  double val;
   // Variable output per oneEvent type
   for (ind = 0; ind < numParams - 1; ind++) {
-    fprintf(eventOutFile, "%s=%-.2f,", va_arg(args, char *),
-            va_arg(args, double));
+    // For debugging on linux
+    param = va_arg(args, char *);
+    val = va_arg(args, double);
+    fprintf(eventOutFile, "%s=%-.2f,", param, val);
   }
-  fprintf(eventOutFile, "%s=%-.2f\n", va_arg(args, char *),
-          va_arg(args, double));
+  param = va_arg(args, char *);
+  val = va_arg(args, double);
+  fprintf(eventOutFile, "%s=%-.2f\n", param, val);
 }
 
 void writeEventOut(EventNode *oneEvent, int numParams, ...) {
