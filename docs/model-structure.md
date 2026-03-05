@@ -263,11 +263,11 @@ The change in the litter carbon pool over time is defined by the input of new li
 and methane production:
 
 \begin{equation}
-\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}} - F^C_\mathit{CH_4,litter}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} - F^C_{\text{decomp}} - F^C_{\text{CH}_4\text{,litter}}
 \end{equation}
 
 Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux},
-$F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}, and $F^C_\mathit{CH_4,litter}$ is
+$F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}, and $F^C_{\text{CH}_4\text{,litter}}$ is
 the methane flux from the litter \eqref{eq:ch4}. Note that belowground turnover is routed directly to the soil carbon
 pool (see Soil Carbon).
 
@@ -334,12 +334,12 @@ litter during decomposition, (ii) direct inputs from belowground plant turnover,
 heterotrophic respiration and methane production:
 
 \begin{equation}
-\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} - F^C_\mathit{CH_4,soil}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} - R_{\text{soil}} - F^C_{\text{CH}_4\text{,soil}}
 \label{eq:Braswell_A3}
 \end{equation}
 
 where $F^C_{\text{soil}}$ is the total carbon input to the soil, $R_{\text{soil}}$ is the soil heterotrophic 
-respiration, and $F^C_\mathit{CH_4,soil}$ is the methane flux from the soil. 
+respiration, and $F^C_{\text{CH}_4\text{,soil}}$ is the methane flux from the soil. 
 
 This is equation (A3) from Braswell, et al. (2005), with the addition of the methane flux.
 
@@ -388,10 +388,10 @@ heterotrophic respiration is then defined as a fixed fraction of this decomposit
 (\eqref{eq:decomp_carbon}--\eqref{eq:r_litter}), with the remainder transferred to the soil carbon pool
 (\eqref{eq:soil_carbon}).
 
-### Methane Production $(C \rightarrow CH_4)$
+### Methane Production $(C \rightarrow \text{CH}_4)$
 
 \begin{equation}
-F^C_\mathit{CH_4,j} = K_{CH_4,j} \cdot C_\text{j} \cdot D_\mathrm{water, CH_4} \cdot D_\text{temp}
+F^C_{\text{CH}_4\text{,}j} = K_{\text{CH}_4\text{,}j} \cdot C_\text{j} \cdot D_{\text{water,CH}_4} \cdot D_\text{temp}
 \label{eq:ch4}
 \end{equation}
 
@@ -399,8 +399,8 @@ F^C_\mathit{CH_4,j} = K_{CH_4,j} \cdot C_\text{j} \cdot D_\mathrm{water, CH_4} \
 \small j \in \{\text{soil, litter}\}
 \end{equation*}
 
-The calculation of methane flux $(F^C_{CH_4})$ for soil and litter is analogous to that of $R_H$. It uses the same carbon pools as substrate
-and temperature dependence but has specific rate parameters $(K_{\mathit{CH_4,}j})$, a moisture dependence function 
+The calculation of methane flux $(F^C_{\text{CH}_4})$ for soil and litter is analogous to that of $R_H$. It uses the same carbon pools as substrate
+and temperature dependence but has specific rate parameters $(K_{\text{CH}_4\text{,}j})$, a moisture dependence function 
 based on oxygen availability \eqref{eq:water_ch4}, and no direct dependence on tillage.
 
 ## Carbon:Nitrogen Ratio Dynamics $(CN)$
@@ -530,7 +530,7 @@ and losses to volatilization, leaching, and plant uptake:
 F^N_\text{litter,min} +
 F^N_\text{soil,min} +
 F^N_\text{fert,min} -
-F^N_\mathrm{vol} -
+F^N_\text{vol} -
 F^N_\text{leach} -
 F^N_\text{uptake}
 \label{eq:mineral_n_dndt}
@@ -577,7 +577,7 @@ mineral nitrogen pool. The realized volatilization flux is proportional to $N_\t
 soil moisture.
 
 \begin{equation}
-F^N_\mathrm{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water},N_{vol}}
+F^N_\text{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water},N_\text{vol}}
 \label{eq:n_vol}
 \end{equation}
 
@@ -927,7 +927,7 @@ Where
 - $W_{\text{WHC}}$: Soil water holding capacity
 
 For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis), SIPNET uses
-$\mathrm{clip}(f_{\text{WHC}},0,1)$ internally. This prevents supersaturated water states from pushing moisture
+$\operatorname{clip}(f_{\text{WHC}},0,1)$ internally. This prevents supersaturated water states from pushing moisture
 response multipliers above their intended maxima.
 
 #### Water Stress Factor
@@ -976,7 +976,7 @@ D_{\text{water},R_H} =
 
 where $f_{\text{WHC}} = W_{\text{soil}} / W_{\text{WHC}}$ is the fraction of soil water holding capacity (soil water 
 divided by WHC), and $b$ is the soil respiration moisture effect exponent. In implementation, this term is evaluated as
-$\left(\mathrm{clip}(f_{\text{WHC}},0,1)\right)^b$ when moisture dependency is active.
+$\left(\operatorname{clip}(f_{\text{WHC}},0,1)\right)^b$ when moisture dependency is active.
 
 If the command-line option `ANAEROBIC` is on, the dependency is represented as a partition 
 between aerobic and anaerobic pathways:
@@ -988,7 +988,7 @@ D_{\text{water},R_H} = (1 - A) D_\text{aer} + \eta A
 
 where $\eta \in (0, 1]$ is the relative anaerobic decomposition rate.
 
-#### Nitrogen Volatilization Moisture Dependence $D_{\text{water},N_vol}$
+#### Nitrogen Volatilization Moisture Dependence $D_{\text{water},N_\text{vol}}$
 
 The volatilized nitrogen flux (treated as N2O-dominated in the absence of explicit speciation) is assumed to peak at 
 intermediate redox conditions, where aerobic and anaerobic processes overlap:
@@ -998,18 +998,18 @@ D_{\text{water},N_{vol}} = 0.05 + 3.8 A (1-A)
 \label{eq:water_nvol}
 \end{equation}
 
-where 0.05 represents baseline aerobic volatilization and the factor 3.8 scales the quadratic term so that the maximum value is 1, and $D_{\mathrm{water},N_{vol}} \in [0.05, 1]$.
+where 0.05 represents baseline aerobic volatilization and the factor 3.8 scales the quadratic term so that the maximum value is 1, and $D_{\text{water},N_\text{vol}} \in [0.05, 1]$.
 
-#### Methane Production Moisture Dependence $D_{\text{water},CH_4}$
+#### Methane Production Moisture Dependence $D_{\text{water},\text{CH}_4}$
 
 \begin{equation}
-D_{\text{water},CH_4} = A^p
+D_{\text{water},\text{CH}_4} = A^p
 \label{eq:water_ch4}
 \end{equation}
 
 where $p \ge 1$ controls the sharpness of the anaerobic transition.
 
-This represents a collapsed redox ladder (i.e., $CH_4$ production once alternative electron acceptors are depleted), 
+This represents a collapsed redox ladder (i.e., $\text{CH}_4$ production once alternative electron acceptors are depleted), 
 without explicit electron-acceptor pools.
 
 ## Agronomic Management Events
