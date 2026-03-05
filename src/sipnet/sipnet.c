@@ -380,6 +380,8 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "woodCN", &(params.woodCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "fineRootCN", &(params.fineRootCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "nFixationFracMax", &(params.nFixationFracMax), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "halfNFixationMax", &(params.halfNFixationMax), ctx.nitrogenCycle);
 
   // New moisture dependency params
   initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobic || ctx.nitrogenCycle);
@@ -433,7 +435,8 @@ void outputHeader(FILE *out) {
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
   fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN       n2o "
-               "nLeachFlux      ch4  nppStorage  bcdeltaC  bcdeltaN\n");
+               "nLeaching  nFixation  nUptake      ch4  nppStorage  bcdeltaC  "
+               "bcdeltaN\n");
 }
 /*!
  * Print current state values to output file
@@ -457,9 +460,10 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
-  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %10.4f %8.4f",
+  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %9.4f %10.4f %8.4f %8.4f",
           fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
-          fluxes.nVolatilization, fluxes.nLeaching, trackers.methane);
+          fluxes.nVolatilization, trackers.nLeaching, trackers.nFixation,
+          trackers.nUptake, trackers.methane);
   fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
           balanceTracker.deltaC, balanceTracker.deltaN);
 }
@@ -1351,6 +1355,47 @@ void calcNLeachingFlux(void) {
   fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
 }
 
+/*!
+ * Calculate plant N demand
+ */
+double calcPlantNDemand() {
+  // leafOnCreation is a transfer from the wood pool so
+  // demand should only count the difference in the N
+  // between those two pools, hence substracting
+  // params.woodCN from params.leafCN for leafOnCreation
+  double leafOnDemand = fluxes.leafOnCreation / params.leafCN -
+                        fluxes.leafOnCreation / params.woodCN;
+  // calculate demand from all other creation terms
+  double creationDemand = fluxes.woodCreation / params.woodCN +
+                          fluxes.leafCreation / params.leafCN +
+                          fluxes.fineRootCreation / params.fineRootCN +
+                          fluxes.coarseRootCreation / params.woodCN;
+  // total demand is leafOnDemand plus creationDemand
+  double totalDemand = leafOnDemand + creationDemand;
+  return totalDemand;
+}
+
+/*!
+ * Calculate plant N fixation and uptake fluxes
+ */
+void calcNFixationAndUptakeFluxes() {
+  double nFixationInhibition;
+  double nFixationFrac;
+  // Calculate inhibition of N fixation by soil mineral N
+  // using down-regulation function with increasing soil min N
+  // dimensionless between 0 and 1
+  nFixationInhibition =
+      params.halfNFixationMax / (params.halfNFixationMax + envi.minN);
+  // Calculate fraction of plant N demand met by fixation
+  // dimensionless
+  nFixationFrac = params.nFixationFracMax * nFixationInhibition;
+  // Calculate N fixation flux
+  double nDemand = calcPlantNDemand();
+  fluxes.nFixation = nFixationFrac * nDemand;
+  // Calculate N uptake flux
+  fluxes.nUptake = (1 - nFixationFrac) * nDemand;
+}
+
 /**
  * Calculate nitrogen fluxes for soil and litter pools
  */
@@ -1514,6 +1559,7 @@ void calculateFluxes(void) {
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
     calcNLeachingFlux();
+    calcNFixationAndUptakeFluxes();
     calcNPoolFluxes();
   }
 }
@@ -1550,14 +1596,23 @@ void initTrackers(void) {
   trackers.rAboveground = 0.0;
 
   trackers.yearlyLitter = 0.0;
+  trackers.nLeaching = 0.0;
+  trackers.nFixation = 0.0;
+  trackers.nUptake = 0.0;
 }
 
 // If var < minVal, then set var = 0
 // Note that if minVal = 0, then this will (as suggested) ensure that var >= 0
 //  If minVal > 0, then minVal can be thought of as some epsilon value, below
 //  which var is treated as 0
-void ensureNonNegative(double *var, double minVal) {
+void ensureNonNegative(double *var, double minVal, const char *label) {
   if (*var < minVal) {
+    if (fabs(*var) > EPS) {  // Don't print the zeros
+      logWarning(
+          "Non-negative stock constraint applied for %s (value %8.4f set "
+          "to zero)\n",
+          label, *var);
+    }
     *var = 0.;
   }
 }
@@ -1574,17 +1629,17 @@ void ensureNonNegative(double *var, double minVal) {
 //  stocks)
 void ensureNonNegativeStocks(void) {
 
-  ensureNonNegative(&(envi.plantWoodC), 0);
-  ensureNonNegative(&(envi.plantLeafC), 0);
+  ensureNonNegative(&(envi.plantWoodC), 0, "plantWoodC");
+  ensureNonNegative(&(envi.plantLeafC), 0, "plantLeafC");
 
   if (ctx.litterPool) {
-    ensureNonNegative(&(envi.litterC), 0);
+    ensureNonNegative(&(envi.litterC), 0, "litterC");
   }
 
-  ensureNonNegative(&(envi.soilC), 0);
-  ensureNonNegative(&(envi.coarseRootC), 0);
-  ensureNonNegative(&(envi.fineRootC), 0);
-  ensureNonNegative(&(envi.soilWater), 0);
+  ensureNonNegative(&(envi.soilC), 0, "soilC");
+  ensureNonNegative(&(envi.coarseRootC), 0, "coarseRootC");
+  ensureNonNegative(&(envi.fineRootC), 0, "fineRootC");
+  ensureNonNegative(&(envi.soilWater), 0, "soilWater");
 
   /* In the case of snow, the model has very different behavior for a snow pack
      of 0 vs. a snow pack of slightly greater than 0 (e.g. no soil evaporation
@@ -1592,12 +1647,12 @@ void ensureNonNegativeStocks(void) {
      we'll set snow = 0 any time it falls below TINY, the assumption being that
      if snow < TINY, then it was really supposed to be 0, but isn't because of
      rounding errors.*/
-  ensureNonNegative(&(envi.snow), TINY);
+  ensureNonNegative(&(envi.snow), TINY, "snow");
 
   // Nitrogen cycle stocks
-  ensureNonNegative(&(envi.minN), 0);
-  ensureNonNegative(&(envi.soilOrgN), 0);
-  ensureNonNegative(&(envi.litterN), 0);
+  ensureNonNegative(&(envi.minN), 0, "minN");
+  ensureNonNegative(&(envi.soilOrgN), 0, "soilOrgN");
+  ensureNonNegative(&(envi.litterN), 0, "litterN");
 }
 
 // update trackers at each time step
@@ -1662,6 +1717,11 @@ void updateTrackers(double oldSoilWater) {
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
 
   trackers.yearlyLitter += fluxes.leafLitter;
+
+  // N cycle trackers
+  trackers.nLeaching = fluxes.nLeaching * climate->length;
+  trackers.nFixation = fluxes.nFixation * climate->length;
+  trackers.nUptake = fluxes.nUptake * climate->length;
 }
 
 void updateMeanTrackers(void) {
@@ -1782,9 +1842,8 @@ void updateNitrogenPools(void) {
 
   // Soil mineral N (note we have one mineral pool for soil+litter)
   // Mineral N additions from fertilization are handled with the events
-  //
-  // TODO: add plant uptake flux once implemented
-  envi.minN += (fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching) *
+  envi.minN += (fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching -
+                fluxes.nUptake) *
                climate->length;
 
   // Soil organic N
@@ -1810,13 +1869,15 @@ void updatePoolsAndBalance() {
   // Update pools for fluxes from events
   updatePoolsForEvents();
 
-  // Verify none of our stocks have gone negative (set any that are to zero)
-  // TODO: we need to log/warn when this happens, as mass balance will likely
-  //   be off
+  // Calc total C and N after pool updates
+  updateBalanceTrackerPostUpdate();
+
+  // Verify none of our stocks have gone negative (set any that are to zero).
   ensureNonNegativeStocks();
 
-  // Calc total C and N after pool updates, and total system inputs and outputs
-  updateBalanceTrackerPostUpdate();
+  // Calc total C and N after non-negative check, and total system inputs and
+  // outputs
+  updateBalanceTrackerPostClamp();
 
   // Perform balance check
   checkBalance();
