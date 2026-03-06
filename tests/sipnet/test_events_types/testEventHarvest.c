@@ -88,7 +88,7 @@ int run(void) {
   // init values
   initEnv();
 
-  //// ONE PLANTING EVENT
+  //// ONE HARVEST EVENT
   logTest("Testing one event\n");
   updateIntContext("litterPool", 0, CTX_TEST);
   updateIntContext("nitrogenCycle", 0, CTX_TEST);
@@ -99,7 +99,7 @@ int run(void) {
   procEvents();
   closeEventOutFile();
   // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
-  expSoilC = 10 + 0.3 * (2 + 3) + 0.4 * (4 + 5);  // 1 + 1.5 + 3.6 = 6.1
+  expSoilC = 10 + 0.3 * (2 + 3) + 0.4 * (4 + 5);  // 10 + 1.5 + 3.6 = 15.1
   expLitterC = 0.0;  // litter pool off
   expLeafC = 2 * (1 - 0.1 - 0.3);  // 1.2
   expWoodC = 3 * (1 - 0.1 - 0.3);  // 1.8
@@ -108,9 +108,11 @@ int run(void) {
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
 
-  //// TWO HARVEST
+  //// TWO HARVEST EVENTS
   // Ok, so, two harvest events on the same day shouldn't happen (seriously,
   // model it as one harvest) - but we can test the arithmetic here
+  // fracRA = 0.1, fracRB = 0.2, frac TA = 0.3, fracTB = 0.4
+  // fracRA = 0.2, fracRB = 0.1, frac TA = 0.2, fracTB = 0.1
   logTest("Testing two events\n");
   updateIntContext("litterPool", 1, CTX_TEST);
   updateIntContext("nitrogenCycle", 1, CTX_TEST);
@@ -122,8 +124,8 @@ int run(void) {
   procEvents();
   closeEventOutFile();
   // Two events are additive
-  expSoilC = 10 + (0.3 + 0.2) * (4 + 5);
-  expLitterC = 15 + (0.4 + 0.1) * (2 + 3);
+  expSoilC = 10 + (0.4 + 0.1) * (4 + 5);
+  expLitterC = 15 + (0.3 + 0.2) * (2 + 3);
   expLeafC = 2 * (1 - 0.1 - 0.3 - 0.2 - 0.2);
   expWoodC = 3 * (1 - 0.1 - 0.3 - 0.2 - 0.2);
   expFineC = 4 * (1 - 0.2 - 0.4 - 0.1 - 0.1);

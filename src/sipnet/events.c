@@ -467,8 +467,8 @@ void processEvents(void) {
 
         const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
         // Litter increase
-        const double litterAdd = fracTA * (envi.plantLeafC + woodC);
-        const double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
+        double litterAdd = fracTA * (envi.plantLeafC + woodC);
+        double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
 
         // Pool reductions, counting both mass moved to litter and removed by
         // the harvest itself. Above-ground changes:
@@ -479,13 +479,13 @@ void processEvents(void) {
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
 
         // Pool updates:
-        if (ctx.litterPool) {
-          fluxes.eventLitterC += litterAdd / climLen;
-          fluxes.eventSoilC += soilAdd / climLen;
-        } else {
+        if (!ctx.litterPool) {
           // send it all to the soil
-          fluxes.eventSoilC += (soilAdd + litterAdd) / climLen;
+          soilAdd += litterAdd;
+          litterAdd = 0.0;
         }
+        fluxes.eventLitterC += litterAdd / climLen;
+        fluxes.eventSoilC += soilAdd / climLen;
         fluxes.eventLeafC += leafDelta / climLen;
         fluxes.eventWoodC += woodDelta / climLen;
         fluxes.eventFineRootC += fineDelta / climLen;
