@@ -493,7 +493,7 @@ void processEvents(void) {
 
         // No need to allocate to biomass N pools, we don't track that N
         // explicitly. We do need to handle soil and litter N, though.
-        // Note: ctx.NitrogenCycle implies ctx.litterPool
+        // Note: ctx.nitrogenCycle implies ctx.litterPool
         // Litter N increase
         double litterNAdd = 0.0;
         double soilNAdd = 0.0;
