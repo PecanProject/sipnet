@@ -447,16 +447,16 @@ void outputHeader(FILE *out) {
  */
 void outputState(FILE *out, int year, int day, double time) {
 
-  fprintf(out, "%4d %3d %5.2f %10.4f %10.4f %12.4f ", year, day, time,
+  fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
           (envi.plantWoodC + envi.plantWoodCStorageDelta), envi.plantLeafC,
           trackers.woodCreation);
-  fprintf(out, "%8.4f ", envi.soilC);
-  fprintf(out, "%11.4f %9.4f ", envi.coarseRootC, envi.fineRootC);
-  fprintf(out, "%8.4f %10.4f %15.4f %8.4f ", envi.litterC, envi.soilWater,
+  fprintf(out, "%8.2f ", envi.soilC);
+  fprintf(out, "%11.2f %9.2f ", envi.coarseRootC, envi.fineRootC);
+  fprintf(out, "%8.2f %10.3f %15.3f %8.2f ", envi.litterC, envi.soilWater,
           trackers.soilWetnessFrac, envi.snow);
   fprintf(
       out,
-      "%8.4f %8.4f %8.4f %8.4f %12.4f %8.4f %8.4f %8.4f %8.4f %8.4f %18.8f ",
+      "%8.3f %8.3f %8.3f %8.3f %12.3f %8.3f %8.3f %8.3f %8.3f %8.3f %18.8f ",
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
