@@ -13,6 +13,7 @@ jobs:
   # Debug environment
   debug:
     runs-on: ubuntu-latest
+    environment: debug
     steps:
       - uses: actions/checkout@v4
       - name: Install gdb
