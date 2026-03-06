@@ -1605,8 +1605,14 @@ void initTrackers(void) {
 // Note that if minVal = 0, then this will (as suggested) ensure that var >= 0
 //  If minVal > 0, then minVal can be thought of as some epsilon value, below
 //  which var is treated as 0
-void ensureNonNegative(double *var, double minVal) {
+void ensureNonNegative(double *var, double minVal, const char *label) {
   if (*var < minVal) {
+    if (fabs(*var) > EPS) {  // Don't print the zeros
+      logWarning(
+          "Non-negative stock constraint applied for %s (value %8.4f set "
+          "to zero)\n",
+          label, *var);
+    }
     *var = 0.;
   }
 }
@@ -1623,17 +1629,17 @@ void ensureNonNegative(double *var, double minVal) {
 //  stocks)
 void ensureNonNegativeStocks(void) {
 
-  ensureNonNegative(&(envi.plantWoodC), 0);
-  ensureNonNegative(&(envi.plantLeafC), 0);
+  ensureNonNegative(&(envi.plantWoodC), 0, "plantWoodC");
+  ensureNonNegative(&(envi.plantLeafC), 0, "plantLeafC");
 
   if (ctx.litterPool) {
-    ensureNonNegative(&(envi.litterC), 0);
+    ensureNonNegative(&(envi.litterC), 0, "litterC");
   }
 
-  ensureNonNegative(&(envi.soilC), 0);
-  ensureNonNegative(&(envi.coarseRootC), 0);
-  ensureNonNegative(&(envi.fineRootC), 0);
-  ensureNonNegative(&(envi.soilWater), 0);
+  ensureNonNegative(&(envi.soilC), 0, "soilC");
+  ensureNonNegative(&(envi.coarseRootC), 0, "coarseRootC");
+  ensureNonNegative(&(envi.fineRootC), 0, "fineRootC");
+  ensureNonNegative(&(envi.soilWater), 0, "soilWater");
 
   /* In the case of snow, the model has very different behavior for a snow pack
      of 0 vs. a snow pack of slightly greater than 0 (e.g. no soil evaporation
@@ -1641,12 +1647,12 @@ void ensureNonNegativeStocks(void) {
      we'll set snow = 0 any time it falls below TINY, the assumption being that
      if snow < TINY, then it was really supposed to be 0, but isn't because of
      rounding errors.*/
-  ensureNonNegative(&(envi.snow), TINY);
+  ensureNonNegative(&(envi.snow), TINY, "snow");
 
   // Nitrogen cycle stocks
-  ensureNonNegative(&(envi.minN), 0);
-  ensureNonNegative(&(envi.soilOrgN), 0);
-  ensureNonNegative(&(envi.litterN), 0);
+  ensureNonNegative(&(envi.minN), 0, "minN");
+  ensureNonNegative(&(envi.soilOrgN), 0, "soilOrgN");
+  ensureNonNegative(&(envi.litterN), 0, "litterN");
 }
 
 // update trackers at each time step
@@ -1863,13 +1869,15 @@ void updatePoolsAndBalance() {
   // Update pools for fluxes from events
   updatePoolsForEvents();
 
-  // Verify none of our stocks have gone negative (set any that are to zero)
-  // TODO: we need to log/warn when this happens, as mass balance will likely
-  //   be off
+  // Calc total C and N after pool updates
+  updateBalanceTrackerPostUpdate();
+
+  // Verify none of our stocks have gone negative (set any that are to zero).
   ensureNonNegativeStocks();
 
-  // Calc total C and N after pool updates, and total system inputs and outputs
-  updateBalanceTrackerPostUpdate();
+  // Calc total C and N after non-negative check, and total system inputs and
+  // outputs
+  updateBalanceTrackerPostClamp();
 
   // Perform balance check
   checkBalance();
