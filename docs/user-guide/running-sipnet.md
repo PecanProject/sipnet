@@ -160,8 +160,6 @@ SIPNET restart support is designed for segmented orchestration (for example, ext
 
 `RESTART_OUT` writes a text restart file (schema `1.0`) containing runtime state needed for deterministic resume.
 
-When `--gdd` is enabled, year-to-date cumulative GDD is restored from `trackers.gdd` in the checkpoint; boundary climate keys do not store cumulative GDD.
-
 ### Restart constraints and failure modes
 
 - First climate row in resumed segment must have a timestamp (`year`, `day`, `time`) after the checkpoint boundary timestamp

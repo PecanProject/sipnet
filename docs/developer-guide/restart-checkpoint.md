@@ -70,9 +70,6 @@ Resumed climate segments must begin on the day after the checkpoint boundary and
 
 Event files must be segmented to the same time boundaries as climate segments.
 
-When `--gdd` is enabled, checkpoint resume restores cumulative GDD from `trackers.gdd`.
-`boundary.*` does not contain cumulative GDD.
-
 ## Struct Drift Guards
 
 Restart schema v1.0 includes compile-time and runtime drift guards so struct layout changes cannot silently pass:

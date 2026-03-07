@@ -225,7 +225,6 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `print-header`      | on      | Whether to print header row in output files                    |
 | `quiet`             | off     | Suppress info and warning message                              |
 
-Restart validation is always enforced when `restart-in` is used; there is no separate strictness flag.
 
 ### Model Flags
 
