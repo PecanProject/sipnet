@@ -92,7 +92,7 @@ const char *eventTypeToString(event_type_t type);
 event_type_t eventStringToType(const char *eventTypeStr);
 
 /*!
- * Read event data from input filename (canonically events.in)
+ * Read event data from input filename
  *
  * Format: returned data is structured as an linked list of EventNode pointers.
  * It is assumed that the events are ordered by year and day.

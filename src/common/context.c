@@ -10,6 +10,7 @@
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
 #define DEFAULT_FILE_NAME "sipnet"
+#define DEFAULT_EVENTS_FILE "events"
 #define NO_DEFAULT_FILE ""
 #define ARG_OFF 0
 #define ARG_ON 1
@@ -52,7 +53,10 @@ void initContext(void) {
   CREATE_CHAR_CONTEXT(climFile,       "CLIM_FILE",        NO_DEFAULT_FILE);
   CREATE_CHAR_CONTEXT(outFile,        "OUT_FILE",         NO_DEFAULT_FILE);
   CREATE_CHAR_CONTEXT(outConfigFile,  "OUT_CONFIG_FILE",  NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(eventsFile,     "EVENTS_FILE",      DEFAULT_EVENTS_FILE);
   CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE);
+  CREATE_CHAR_CONTEXT(restartIn,      "RESTART_IN",       NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(restartOut,     "RESTART_OUT",      NO_DEFAULT_FILE);
   // clang-format on
 
   // Other
@@ -235,7 +239,6 @@ void printConfig(FILE *outFile) {
   // Config
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
-
     if (s->type == CTX_INT) {
       fprintf(outFile, "%21s %13s %*d\n", s->printName,
               getContextSourceString(s->source), width, *(int *)s->value);

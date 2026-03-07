@@ -137,6 +137,7 @@ int main(int argc, char *argv[]) {
   // char fileName[FILENAME_MAXLEN - 8];
   char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
   char paramFile[FILENAME_MAXLEN], climFile[FILENAME_MAXLEN];
+  char eventsInFile[FILENAME_MAXLEN];
 
   // 1. Initialize Context with default values
   initContext();
@@ -186,7 +187,14 @@ int main(int argc, char *argv[]) {
   initModel(&modelParams, paramFile, climFile);
 
   if (ctx.events) {
-    initEvents(EVENT_IN_FILE, ctx.printHeader);
+    if (strlen(ctx.eventsFile) > FILENAME_MAXLEN - 4) {
+      logError("events-file value %s is too long; max length is %d\n",
+               ctx.eventsFile, FILENAME_MAXLEN - 4);
+      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+    }
+    strcpy(eventsInFile, ctx.eventsFile);
+    strcat(eventsInFile, ".in");
+    initEvents(eventsInFile, ctx.printHeader);
   }
 
   if (ctx.doSingleOutputs) {

@@ -23,6 +23,7 @@
 #include "balance.h"
 #include "events.h"
 #include "outputItems.h"
+#include "restart.h"
 #include "runmean.h"
 #include "state.h"
 
@@ -127,12 +128,10 @@ void readClimData(const char *climFile) {
   FILE *in;
   ClimateNode *curr, *next;
   int year, day;
-  int lastYear = -1;
   double time, length;  // time in hours, length in days (or fraction of day)
   double tair, tsoil, par, precip, vpd, vpdSoil, vPress, wspd, soilWetness;
 
-  double thisGdd;  // growing degree days of this time step
-  double gdd = 0.0;  // growing degree days since the last Jan. 1
+  double thisGdd;  // growing degree days contributed by this time step
 
   int status;  // status of the read
 
@@ -228,20 +227,16 @@ void readClimData(const char *climFile) {
     }
 
     if (ctx.gdd) {
-      // :: from [1], growing degree day calculations to support described
-      //    modification to leaf phenology on pg 350
-      if (year != lastYear) {  // HAPPY NEW YEAR!
-        gdd = 0;  // reset growing degree days
-      }
+      // Keep per-step GDD in climate state; cumulative GDD is tracked in
+      // trackers.gdd for restart continuity.
       thisGdd = tair * length;
       if (thisGdd < 0) {  // can't have negative growing degree days
         thisGdd = 0;
       }
-      gdd += thisGdd;
-      curr->gdd = gdd;
+      curr->gdd = thisGdd;
+    } else {
+      curr->gdd = 0.0;
     }
-
-    lastYear = year;
 
     if (legacyFormat) {
       status =
@@ -699,8 +694,14 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
 int pastLeafGrowth(void) {
   if (ctx.gdd) {
     // :: from [1], description on pg 350
-    // null pointer dereference warning suppressed on the next line
-    return (climate->gdd >= params.gddLeafOn);  // NOLINT
+    // Compare threshold to year-to-date cumulative GDD:
+    // trackers.gdd holds prior-step cumulative GDD for this year, while
+    // climate->gdd is this step's non-negative contribution.
+    double cumulativeGdd = climate->gdd;
+    if (climate->year == trackers.lastYear) {
+      cumulativeGdd += trackers.gdd;
+    }
+    return (cumulativeGdd >= params.gddLeafOn);
   } else if (ctx.soilPhenol) {
     // [TAG:UNKNOWN_PROVENANCE] soil phenol functionality
     return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
@@ -1596,6 +1597,8 @@ void initTrackers(void) {
   trackers.rAboveground = 0.0;
 
   trackers.yearlyLitter = 0.0;
+  trackers.gdd = 0.0;
+  trackers.lastYear = -1;
   trackers.nLeaching = 0.0;
   trackers.nFixation = 0.0;
   trackers.nUptake = 0.0;
@@ -1659,17 +1662,16 @@ void ensureNonNegativeStocks(void) {
 // oldSoilWater is how much soil water there was at the beginning of the time
 // step (cm)
 void updateTrackers(double oldSoilWater) {
-  static int lastYear = -1;  // what was the year of the last step?
-
-  if (climate->year != lastYear) {  // new year: reset yearly trackers
+  if (climate->year != trackers.lastYear) {  // new year: reset yearly trackers
     trackers.yearlyGpp = 0.0;
     trackers.yearlyRtot = 0.0;
     trackers.yearlyRa = 0.0;
     trackers.yearlyRh = 0.0;
     trackers.yearlyNpp = 0.0;
     trackers.yearlyNee = 0.0;
+    trackers.gdd = 0.0;
 
-    lastYear = climate->year;
+    trackers.lastYear = climate->year;
   }
 
   trackers.gpp = fluxes.photosynthesis * climate->length;
@@ -1717,6 +1719,12 @@ void updateTrackers(double oldSoilWater) {
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
 
   trackers.yearlyLitter += fluxes.leafLitter;
+
+  if (ctx.gdd) {
+    trackers.gdd += climate->gdd;
+  } else {
+    trackers.gdd = 0.0;
+  }
 
   // N cycle trackers
   trackers.nLeaching = fluxes.nLeaching * climate->length;
@@ -2045,6 +2053,7 @@ void setupModel(void) {
   initBalanceTracker();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last
                                  // MEAN_NPP_DAYS) of 0
+  restartResetRunState();
 }
 
 // See sipnet.h
@@ -2055,6 +2064,9 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
 
   setupModel();
   setupEvents();
+  if (strlen(ctx.restartIn) > 0) {
+    restartLoadCheckpoint(ctx.restartIn, meanNPP);
+  }
 
   while (climate != NULL) {
     updateState();
@@ -2064,10 +2076,16 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
     if (outputItems != NULL) {
       writeOutputItemValues(outputItems);
     }
+    if (strlen(ctx.restartOut) > 0 || strlen(ctx.restartIn) > 0) {
+      restartNoteProcessedClimateStep(climate);
+    }
     climate = climate->nextClim;
   }
   if (outputItems != NULL) {
     terminateOutputItemLines(outputItems);
+  }
+  if (strlen(ctx.restartOut) > 0) {
+    restartWriteCheckpoint(ctx.restartOut, meanNPP);
   }
 }
 
