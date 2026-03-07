@@ -2076,7 +2076,9 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
     if (outputItems != NULL) {
       writeOutputItemValues(outputItems);
     }
-    restartNoteProcessedClimateStep(climate);
+    if (strlen(ctx.restartOut) > 0 || strlen(ctx.restartIn) > 0) {
+      restartNoteProcessedClimateStep(climate);
+    }
     climate = climate->nextClim;
   }
   if (outputItems != NULL) {
