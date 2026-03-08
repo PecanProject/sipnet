@@ -220,7 +220,11 @@ int main(int argc, char *argv[]) {
   runModelOutput(out, outputItems, ctx.printHeader);
 
   // 8. Cleanup
-  if (out != NULL) {
+  if (ctx.doMainOutput) {
+    if (out == NULL) {
+      logError("main output file handle missing during cleanup\n");
+      exit(EXIT_CODE_INTERNAL_ERROR);
+    }
     fclose(out);
   }
 
