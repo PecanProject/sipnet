@@ -358,7 +358,7 @@ static int testDefaultEventsFileUsedWhenUnset(void) {
 
   stepStatus = prepRunFiles("restart_full.clim", "events_segment1.in");
   if (stepStatus) {
-    logTest("Failed to prepare files for default-events-file test\n");
+    logTest("Failed to prepare files for default-events-prefix test\n");
     return stepStatus;
   }
   status |= copyFile((char *)"events_segment2.in", (char *)"custom_events.in");
@@ -374,27 +374,27 @@ static int testDefaultEventsFileUsedWhenUnset(void) {
   return status;
 }
 
-static int testEventsFileCliOverrideUsed(void) {
+static int testEventsPrefixCliOverrideUsed(void) {
   int status = 0;
   int stepStatus = 0;
 
-  runShell("rm -f run.out events.out run.restart run.config custom_events.in "
-           "*.log");
+  runShell("rm -f run.out events.out custom_events.out run.restart run.config "
+           "custom_events.in *.log");
 
   stepStatus = prepRunFiles("restart_full.clim", "events_segment1.in");
   if (stepStatus) {
-    logTest("Failed to prepare files for events-file CLI override test\n");
+    logTest("Failed to prepare files for events-prefix CLI override test\n");
     return stepStatus;
   }
   status |= copyFile((char *)"events_segment2.in", (char *)"custom_events.in");
 
-  status |= (runModelWithArgs("restart_cont.in", "events_file_cli.log",
-                              "--events-file custom_events") != 0);
-  status |= hasManagedEventOnDay("events.out", 2016, 47);
-  status |= !hasManagedEventOnDay("events.out", 2016, 49);
+  status |= (runModelWithArgs("restart_cont.in", "events_prefix_cli.log",
+                              "--events-prefix custom_events") != 0);
+  status |= hasManagedEventOnDay("custom_events.out", 2016, 47);
+  status |= !hasManagedEventOnDay("custom_events.out", 2016, 49);
 
   if (status) {
-    logTest("testEventsFileCliOverrideUsed failed\n");
+    logTest("testEventsPrefixCliOverrideUsed failed\n");
   }
 
   return status;
@@ -416,7 +416,7 @@ static int testConfigDumpIncludesRestartAndEventsKeys(void) {
                               "--dump-config") != 0);
   status |= !fileContains("run.config", "RESTART_IN");
   status |= !fileContains("run.config", "RESTART_OUT");
-  status |= !fileContains("run.config", "EVENTS_FILE");
+  status |= !fileContains("run.config", "EVENTS_PREFIX");
 
   if (status) {
     logTest("testConfigDumpIncludesRestartAndEventsKeys failed\n");
@@ -543,10 +543,11 @@ static int testStrictClimateMismatchFails(void) {
   return status;
 }
 
-static int testCheckpointMustEndNearMidnight(void) {
+static int testCheckpointFarFromMidnightWarnsAndWrites(void) {
   int status = 0;
   int stepStatus = 0;
   int rc;
+  const char *warnInputFile = "restart_seg1_warn.in";
 
   runShell("rm -f run.out events.out run.restart *.log");
 
@@ -557,14 +558,21 @@ static int testCheckpointMustEndNearMidnight(void) {
     return stepStatus;
   }
 
-  rc = runModel("restart_seg1.in", "midnight_checkpoint.log");
-  status |= (rc != EXIT_CODE_BAD_PARAMETER_VALUE);
+  status |= copyFile((char *)"restart_seg1.in", (char *)warnInputFile);
+  status |= replaceFirstOccurrence(warnInputFile, "QUIET 1", "QUIET 0");
+
+  rc = runModel(warnInputFile, "midnight_checkpoint.log");
+  status |= (rc != 0);
+  status |= !fileStartsWith(CHECKPOINT_FILE, RESTART_MAGIC_LINE);
   status |= !fileContains(
       "midnight_checkpoint.log",
       "last timestep ends more than one timestep before midnight");
+  status |=
+      !fileContains("midnight_checkpoint.log", "should not be used for resume");
+  status |= (remove(warnInputFile) != 0);
 
   if (status) {
-    logTest("testCheckpointMustEndNearMidnight failed (rc=%d)\n", rc);
+    logTest("testCheckpointFarFromMidnightWarnsAndWrites failed (rc=%d)\n", rc);
   }
 
   return status;
@@ -1215,11 +1223,11 @@ int run(void) {
   int status = 0;
 
   status |= testDefaultEventsFileUsedWhenUnset();
-  status |= testEventsFileCliOverrideUsed();
+  status |= testEventsPrefixCliOverrideUsed();
   status |= testConfigDumpIncludesRestartAndEventsKeys();
   status |= testSegmentedEquivalence();
   status |= testStrictClimateMismatchFails();
-  status |= testCheckpointMustEndNearMidnight();
+  status |= testCheckpointFarFromMidnightWarnsAndWrites();
   status |= testTamperedBoundaryNotNearMidnightFails();
   status |= testRestartMustStartNearMidnight();
   status |= testRestartEventBoundaryRequiresSegmentedEvents();

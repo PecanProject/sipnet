@@ -18,10 +18,17 @@
 #define RESTART_SCHEMA_VERSION "1.0"
 #define RESTART_FLOAT_EPSILON 1e-8
 
-#define RESTART_SCHEMA_LAYOUT_ENVI_SIZE 96
-#define RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE 224
-#define RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE 12
-#define RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE 8
+/*
+ * When the serialized restart contract changes, update:
+ * - RestartSerializedTrackersV1 (or the relevant saved payload type)
+ * - RESTART_SCHEMA_LAYOUT_* constants and related runtime checks
+ * - restart read/write logic, docs, and restart tests
+ * - RESTART_SCHEMA_VERSION
+ */
+#define RESTART_SCHEMA_LAYOUT_ENVI_SIZE (8 * 12)
+#define RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE ((8 * 27) + (4 * 1) + 4)
+#define RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE (4 * 3)
+#define RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE (8 * 1)
 
 typedef struct RestartSerializedTrackersV1 {
   double gpp;
@@ -111,8 +118,7 @@ typedef struct RestartStateV1 {
 } RestartStateV1;
 
 static long long processedStepCount = 0;
-static RestartClimateSignature lastProcessedClimate;
-static int hasLastProcessedClimate = 0;
+static const ClimateNode *lastProcessedClimateStep = NULL;
 
 static void copyClimateSignature(RestartClimateSignature *dest,
                                  const ClimateNode *src) {
@@ -170,12 +176,12 @@ validateCheckpointBoundaryForWrite(const char *restartOut,
 
   double hoursUntilMidnight = 24.0 - boundary->time;
   if (hoursUntilMidnight > (stepHours + RESTART_FLOAT_EPSILON)) {
-    logError("Cannot write restart checkpoint %s: last timestep ends more than "
-             "one timestep before midnight\n",
-             restartOut);
-    logError("Boundary timestep: year=%d day=%d time=%.8f length=%.8f\n",
-             boundary->year, boundary->day, boundary->time, boundary->length);
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+    logWarning("Writing restart checkpoint %s even though the last timestep "
+               "ends more than one timestep before midnight; this checkpoint "
+               "should not be used for resume\n",
+               restartOut);
+    logWarning("Boundary timestep: year=%d day=%d time=%.8f length=%.8f\n",
+               boundary->year, boundary->day, boundary->time, boundary->length);
   }
 }
 
@@ -1105,23 +1111,25 @@ static void validateRestartEventBoundary(const RestartStateV1 *state) {
 
 void restartResetRunState(void) {
   processedStepCount = 0;
-  hasLastProcessedClimate = 0;
+  lastProcessedClimateStep = NULL;
 }
 
 void restartNoteProcessedClimateStep(const ClimateNode *climateStep) {
-  copyClimateSignature(&lastProcessedClimate, climateStep);
-  hasLastProcessedClimate = 1;
+  lastProcessedClimateStep = climateStep;
   ++processedStepCount;
 }
 
 void restartWriteCheckpoint(const char *restartOut,
                             const MeanTracker *meanNPP) {
-  if (!hasLastProcessedClimate) {
+  RestartClimateSignature boundaryClimate;
+
+  if (lastProcessedClimateStep == NULL) {
     logError("Cannot write restart checkpoint %s: no timestep processed\n",
              restartOut);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
-  validateCheckpointBoundaryForWrite(restartOut, &lastProcessedClimate);
+  copyClimateSignature(&boundaryClimate, lastProcessedClimateStep);
+  validateCheckpointBoundaryForWrite(restartOut, &boundaryClimate);
 
   RestartStateV1 state;
   memset(&state, 0, sizeof(state));
@@ -1142,7 +1150,7 @@ void restartWriteCheckpoint(const char *restartOut,
   state.nitrogenCycle = ctx.nitrogenCycle;
   state.anaerobic = ctx.anaerobic;
 
-  state.boundaryClimate = lastProcessedClimate;
+  state.boundaryClimate = boundaryClimate;
 
   state.meanLength = meanNPP->length;
   state.meanTotWeight = meanNPP->totWeight;
@@ -1187,6 +1195,5 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
   meanNPP->sum = state.meanSum;
 
   processedStepCount = state.processedSteps;
-  lastProcessedClimate = state.boundaryClimate;
-  hasLastProcessedClimate = 1;
+  lastProcessedClimateStep = NULL;
 }

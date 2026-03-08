@@ -30,6 +30,7 @@ sections to include in release notes:
 
 - Build and release binaries for MacOS and Windows on release (in addition to existing Linux builds)
 - MVP restart checkpoints for segmented runs (`RESTART_IN` / `RESTART_OUT`) (#279)
+- Configurable events prefix for `<prefix>.in` / `<prefix>.out`
 - Support for tillage events (#158)
 - `woodCreation` as output (#161)
 - Soil mineral pool (#170)

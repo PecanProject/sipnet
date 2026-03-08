@@ -62,7 +62,7 @@ int run(void) {
   //// ONE PLANTING EVENT
   updateIntContext("litterPool", 0, CTX_TEST);
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
-  initEvents("events_one_harvest.in", 0);
+  initEvents("events_one_harvest.in", "events.out", 0);
   setupEvents();
   procEvents();
 
@@ -80,7 +80,7 @@ int run(void) {
   updateIntContext("litterPool", 1, CTX_TEST);
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   initEnv();
-  initEvents("events_two_harvest.in", 1);
+  initEvents("events_two_harvest.in", "events.out", 1);
   setupEvents();
   procEvents();
   // Two events are additive

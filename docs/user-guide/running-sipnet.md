@@ -26,9 +26,9 @@ When the same option is specified in both places, **command-line arguments take 
 
 | Option          | Short | Argument     | Default     | Description                                                                               |
 | --------------- | ----- | ------------ | ----------- | ----------------------------------------------------------------------------------------- |
-| `--input-file`  | `-i`  | `<filename>` | `sipnet.in` | Name of input configuration file                                                          |
+| `--input-file`  | `-i`  | `<name>`     | `sipnet.in` | Name of input configuration file                                                          |
 | `--file-name`   | `-f`  | `<name>`     | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`) |
-| `--events-file` |       | `<name>`     | `events`    | Prefix for events input file (SIPNET reads `<name>.in`)                                   |
+| `--events-prefix` | `-e` | `<name>`    | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)      |
 | `--restart-in`  |       | `<path>`     | unset       | Read a restart checkpoint (schema `1.0`)                                                  |
 | `--restart-out` |       | `<path>`     | unset       | Write a restart checkpoint at end of run                                                  |
 
@@ -39,7 +39,7 @@ These flags enable or disable optional model processes. Prepend `no-` to the fla
 | Flag               | Default | Description                                                                    |
 | ------------------ | ------- | ------------------------------------------------------------------------------ |
 | `--anaerobic`      | OFF (0) | Enable modeling of methane and anaerobic effect on Rh moisture dependency      |
-| `--events`         | ON (1)  | Enable agronomic event handling from `events.in` file                          |
+| `--events`         | ON (1)  | Enable events read from events input file                                      |
 | `--gdd`            | ON (1)  | Use growing degree days to determine when leaves grow                          |
 | `--growth-resp`    | OFF (0) | Explicitly model growth respiration separately from maintenance respiration    |
 | `--leaf-water`     | OFF (0) | Calculate a separate leaf water pool and evaporate from it                     |
@@ -102,7 +102,7 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_NAME>.clim`)           |
 | `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_NAME>.out`)       |
 | `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_NAME>.config`)    |
-| `EVENTS_FILE`     | string     | Prefix for events input file (SIPNET reads `<EVENTS_FILE>.in`)             |
+| `EVENTS_PREFIX`   | string     | Prefix used to derive events input and output filenames                     |
 | `RESTART_IN`      | string     | Path to checkpoint to resume from                                         |
 | `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                 |
 
@@ -163,7 +163,7 @@ SIPNET restart support is designed for segmented orchestration (for example, ext
 ### Restart constraints and failure modes
 
 - First climate row in resumed segment must have a timestamp (`year`, `day`, `time`) after the checkpoint boundary timestamp
-- Checkpoint writes are only allowed when the final climate step is within one timestep of midnight
+- Checkpoint writes always produce a checkpoint, but SIPNET warns when the final climate step is more than one timestep before midnight because that file should not be used for resume
 - Resumed segments must start on the midnight-following day and no later than one timestep after midnight (using the first resumed climate row's timestep length)
 - Event files must be segmented with the same time boundaries as climate segments
 - Checkpoint schema/version and numeric model version must match the current run

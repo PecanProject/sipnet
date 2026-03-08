@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
   // char fileName[FILENAME_MAXLEN - 8];
   char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
   char paramFile[FILENAME_MAXLEN], climFile[FILENAME_MAXLEN];
-  char eventsInFile[FILENAME_MAXLEN];
+  char eventsInFile[FILENAME_MAXLEN], eventsOutFile[FILENAME_MAXLEN];
 
   // 1. Initialize Context with default values
   initContext();
@@ -162,6 +162,25 @@ int main(int argc, char *argv[]) {
   strcpy(climFile, ctx.fileName);
   strcat(climFile, ".clim");
   updateCharContext("climFile", climFile, CTX_CALCULATED);
+  if (ctx.events) {
+    const size_t maxEventsPrefixLen = FILENAME_MAXLEN - sizeof(".out");
+    if (strlen(ctx.eventsPrefix) > maxEventsPrefixLen) {
+      logError("events-prefix value %s is too long; max length is %zu\n",
+               ctx.eventsPrefix, maxEventsPrefixLen);
+      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+    }
+    strcpy(eventsInFile, ctx.eventsPrefix);
+    strcat(eventsInFile, ".in");
+    strcpy(ctx.eventsInFile, eventsInFile);
+    strcpy(eventsOutFile, ctx.eventsPrefix);
+    strcat(eventsOutFile, ".out");
+    strcpy(ctx.eventsOutFile, eventsOutFile);
+  } else {
+    eventsInFile[0] = '\0';
+    eventsOutFile[0] = '\0';
+    ctx.eventsInFile[0] = '\0';
+    ctx.eventsOutFile[0] = '\0';
+  }
   if (ctx.doMainOutput) {
     strcpy(outFile, ctx.fileName);
     strcat(outFile, ".out");
@@ -187,14 +206,7 @@ int main(int argc, char *argv[]) {
   initModel(&modelParams, paramFile, climFile);
 
   if (ctx.events) {
-    if (strlen(ctx.eventsFile) > FILENAME_MAXLEN - 4) {
-      logError("events-file value %s is too long; max length is %d\n",
-               ctx.eventsFile, FILENAME_MAXLEN - 4);
-      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
-    }
-    strcpy(eventsInFile, ctx.eventsFile);
-    strcat(eventsInFile, ".in");
-    initEvents(eventsInFile, ctx.printHeader);
+    initEvents(ctx.eventsInFile, ctx.eventsOutFile, ctx.printHeader);
   }
 
   if (ctx.doSingleOutputs) {

@@ -63,7 +63,9 @@ struct Context {
   char climFile[CONTEXT_CHAR_MAXLEN];
   char outFile[CONTEXT_CHAR_MAXLEN];
   char outConfigFile[CONTEXT_CHAR_MAXLEN];
-  char eventsFile[CONTEXT_CHAR_MAXLEN];
+  char eventsPrefix[CONTEXT_CHAR_MAXLEN];
+  char eventsInFile[CONTEXT_CHAR_MAXLEN];
+  char eventsOutFile[CONTEXT_CHAR_MAXLEN];
   char inputFile[CONTEXT_CHAR_MAXLEN];
   char restartIn[CONTEXT_CHAR_MAXLEN];
   char restartOut[CONTEXT_CHAR_MAXLEN];

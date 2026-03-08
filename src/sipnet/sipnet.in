@@ -25,7 +25,7 @@ DUMP_CONFIG = 0
 ! If 0, do not print the config
 
 PRINT_HEADER = 1
-! If 1, print header on main output and events.out files
+! If 1, print header on main output and events output files
 ! If 0, don't print header
 
 QUIET = 0
@@ -36,7 +36,7 @@ QUIET = 0
 !! MODEL OPTIONS !!
 !!!!!!!!!!!!!!!!!!!
 EVENTS = 1
-! Process events found in events.in
+! Process events found in the configured events input file (default events.in)
 
 GDD = 1
 ! Use growing degree days to determine leaf growth

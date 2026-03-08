@@ -95,7 +95,9 @@ loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
 
 ## Agronomic Events
 
-Agronomic (management) events are read from an `events.in` file. This file specifies one event per line:
+Agronomic (management) events are read from `events.in` by default, or from
+`<EVENTS_PREFIX>.in` when `EVENTS_PREFIX` / `--events-prefix` is set. This
+file specifies one event per line:
 
 | col | parameter   | description                          | units  | notes                                            |
 | --- | ----------- | ------------------------------------ | ------ | ------------------------------------------------ |
@@ -207,13 +209,13 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 ### Input / Output Options
 
-| Option       | Default   | Description                           |
-| ------------ | --------- | ------------------------------------- |
-| `input-file` | sipnet.in | Name of input config file             |
-| `file-name`  | sipnet    | Prefix of climate and parameter files |
-| `events-file` | events   | Prefix for events input file (reads `<name>.in`) |
-| `restart-in` | unset     | Path to restart checkpoint to load    |
-| `restart-out` | unset    | Path to restart checkpoint to write   |
+| Option          | Default   | Description                                        |
+| --------------- | --------- | -------------------------------------------------- |
+| `input-file`    | sipnet.in | Name of input config file                          |
+| `file-name`     | sipnet    | Prefix of climate and parameter files              |
+| `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`) |
+| `restart-in`    | unset     | Path to restart checkpoint to load                 |
+| `restart-out`   | unset     | Path to restart checkpoint to write                |
 
 ### Output Flags
 

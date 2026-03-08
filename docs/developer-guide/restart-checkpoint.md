@@ -68,11 +68,21 @@ All mismatches above are hard errors except build-info mismatch, which is warnin
 
 ## Climate and Event Boundaries
 
-Restart writes are only allowed when the last processed climate step is within one timestep of midnight.
+Restart writes always emit a checkpoint. If the last processed climate step is
+more than one timestep before midnight, SIPNET logs a warning because that file
+is useful for debugging/state inspection but should not be used for resume.
 
 Resumed climate segments must begin on the day after the checkpoint boundary and within one timestep after midnight, where the window uses the first resumed climate row's timestep length.
 
 Event files must be segmented to the same time boundaries as climate segments.
+
+## When Saved State Changes
+
+If you add saved state or change an existing saved payload:
+
+1. Update the serialized payload type and restart read/write logic in `src/sipnet/restart.c`.
+2. Update the `RESTART_SCHEMA_LAYOUT_*` constants, static asserts, and runtime schema-layout validation.
+3. Update restart docs/tests and bump `RESTART_SCHEMA_VERSION`.
 
 ## Struct Drift Guards
 

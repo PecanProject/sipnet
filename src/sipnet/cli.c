@@ -12,7 +12,6 @@
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
 #define CLI_RESTART_IN 1001
 #define CLI_RESTART_OUT 1002
-#define CLI_EVENTS_FILE 1003
 
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 // See docs/developer-guide/cli-options.md for details on how to add a new
@@ -44,7 +43,7 @@ static struct option long_options[] = {  // NOLINT
     // index)
     {"input-file", required_argument, 0, 'i'},
     {"file-name", required_argument, 0, 'f'},
-    {"events-file", required_argument, 0, CLI_EVENTS_FILE},
+    {"events-prefix", required_argument, 0, 'e'},
     {"restart-in", required_argument, 0, CLI_RESTART_IN},
     {"restart-out", required_argument, 0, CLI_RESTART_OUT},
     {"help", no_argument, 0, 'h'},
@@ -78,9 +77,9 @@ void usage(char *progName) {
   printf("Run SIPNET model for one site with configured options.\n");
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
-  printf("  -i, --input-file <input-file>      Name of input config file ('sipnet.in')\n");
+  printf("  -i, --input-file <path>            Name of input config file ('sipnet.in')\n");
   printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
-  printf("      --events-file <name>           Prefix of events input file ('events' => 'events.in')\n");
+  printf("  -e, --events-prefix <name>         Prefix of events input/output files ('events' => 'events.in' / 'events.out')\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
   printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
@@ -135,7 +134,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
   int longIndex = 0;
   int shortIndex;
   // get command-line arguments:
-  while ((shortIndex = getopt_long(argc, argv, "hf:i:v", long_options,
+  while ((shortIndex = getopt_long(argc, argv, "he:f:i:v", long_options,
                                    &longIndex)) != -1) {
 
     switch (shortIndex) {
@@ -154,6 +153,15 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         }
         updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
         break;
+      case 'e':
+        requireCLIArg("--events-prefix");
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          logError("events-prefix value %s exceeds maximum length of %d\n",
+                   optarg, FILENAME_MAXLEN);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("eventsPrefix", optarg, CTX_COMMAND_LINE);
+        break;
       case 'h':
         usage(argv[0]);
         exit(EXIT_CODE_SUCCESS);
@@ -165,15 +173,6 @@ void parseCommandLineArgs(int argc, char *argv[]) {
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("restartIn", optarg, CTX_COMMAND_LINE);
-        break;
-      case CLI_EVENTS_FILE:
-        requireCLIArg("--events-file");
-        if (strlen(optarg) >= FILENAME_MAXLEN) {
-          logError("events-file value %s exceeds maximum length of %d\n",
-                   optarg, FILENAME_MAXLEN);
-          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
-        }
-        updateCharContext("eventsFile", optarg, CTX_COMMAND_LINE);
         break;
       case CLI_RESTART_OUT:
         requireCLIArg("--restart-out");
