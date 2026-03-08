@@ -34,6 +34,7 @@ int run(void) {
   initEvents("events_one_tillage.in", "events.out", 0);
   setupEvents();
   procEvents();
+  closeEventOutFile();
 
   // First tillage:
   expTillMod = 0.5;
@@ -64,6 +65,7 @@ int run(void) {
     status |= checkOutput("post-update", expTillMod);
     climate = climate->nextClim;
   }
+  closeEventOutFile();
 
   return status;
 }

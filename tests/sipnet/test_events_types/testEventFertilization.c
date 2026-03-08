@@ -61,6 +61,7 @@ int run(void) {
   initEvents("events_one_fert.in", "events.out", 0);
   setupEvents();
   procEvents();
+  closeEventOutFile();
 
   // First fert: (15-5-10)
   expOrgN = 0;  // nitrogen cycle is off
@@ -78,6 +79,7 @@ int run(void) {
   initEvents("events_two_fert.in", "events.out", 1);
   setupEvents();
   procEvents();
+  closeEventOutFile();
 
   // First event same as above (15-5-10)
   expOrgN = 3 + 15;

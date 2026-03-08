@@ -565,10 +565,14 @@ typedef struct FluxVars {
   double eventEvap;
   // irrigation water that goes to the soil
   double eventSoilWater;
-  // carbon added to litter pool (if used) or soil pool (if not)
+  // carbon added to soil pool
+  double eventSoilC;
+  // carbon added to litter pool
   double eventLitterC;
   // nitrogen added to soil mineral N pool
   double eventMinN;
+  // nitrogen added to soil org N pool
+  double eventSoilOrgN;
   // nitrogen added to litter N pool
   double eventLitterN;
   // MASS BALANCE HELPERS
