@@ -124,17 +124,16 @@ int run(void) {
   procEvents();
   closeEventOutFile();
   // Two events are additive
-  expSoilC = 10;
-  expLitterC = 15 + (0.3 + 0.2) * (2 + 3) + (0.4 + 0.1) * (4 + 5);
+  expSoilC = 10 + (0.4 + 0.1) * (4 + 5);
+  expLitterC = 15 + (0.3 + 0.2) * (2 + 3);
   expLeafC = 2 * (1 - 0.1 - 0.3 - 0.2 - 0.2);
   expWoodC = 3 * (1 - 0.1 - 0.3 - 0.2 - 0.2);
   expFineC = 4 * (1 - 0.2 - 0.4 - 0.1 - 0.1);
   expCoarseC = 5 * (1 - 0.2 - 0.4 - 0.1 - 0.1);
-  expSoilOrgN = 2;
-  expLitterN = 3 + (3 * (0.3 + 0.2)) / params.woodCN +
-               (2 * (0.3 + 0.2)) / params.leafCN +
-               (4 * (0.4 + 0.1)) / params.fineRootCN +
-               (5 * (0.4 + 0.1)) / params.woodCN;
+  expSoilOrgN = 2 + (4 * (0.4 + 0.1)) / params.fineRootCN +
+                (5 * (0.4 + 0.1)) / params.woodCN;
+  expLitterN =
+      3 + (3 * (0.3 + 0.2)) / params.woodCN + (2 * (0.3 + 0.2)) / params.leafCN;
 
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
