@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
   runModelOutput(out, outputItems, ctx.printHeader);
 
   // 8. Cleanup
-  if (ctx.doMainOutput) {
+  if (out != NULL) {
     fclose(out);
   }
 
