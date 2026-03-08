@@ -43,7 +43,8 @@ Checkpoint format is ASCII text with one key/value per line:
 
 `event_state.*` keys are not part of the schema.
 
-Example checkpoint: see [sipnet.restart.example](sipnet.restart.example).
+Example checkpoint content is exercised in
+`tests/sipnet/test_restart_infrastructure/testRestartMVP.c`.
 
 ## Validation Contract
 
@@ -97,5 +98,5 @@ Restart schema v1.0 includes compile-time and runtime drift guards so struct lay
 When intentionally changing the restart schema version:
 
 1. Update `src/sipnet/restart.c` in all schema touchpoints: `RESTART_SCHEMA_VERSION`, `RESTART_SCHEMA_LAYOUT_*`, `_Static_assert` layout guards, and checkpoint read/write + required-key validation logic.
-2. Update restart examples/fixtures to the new header and key set, including `docs/developer-guide/sipnet.restart.example`.
+2. Update restart examples/fixtures to the new header and key set, including the restart fixtures in `tests/sipnet/test_restart_infrastructure/testRestartMVP.c`.
 3. Update docs that name schema version or key expectations: `docs/developer-guide/restart-checkpoint.md` and `docs/user-guide/running-sipnet.md`.
