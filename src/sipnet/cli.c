@@ -24,11 +24,11 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(growth-resp),
     DECLARE_FLAG(leaf-water),
     DECLARE_FLAG(litter-pool),
-    DECLARE_FLAG(microbes),
     DECLARE_FLAG(snow),
     DECLARE_FLAG(soil-phenol),
     DECLARE_FLAG(water-hresp),
     DECLARE_FLAG(nitrogen-cycle),
+    DECLARE_FLAG(anaerobic),
 
     DECLARE_FLAG(do-main-output),
     DECLARE_FLAG(do-single-outputs),
@@ -54,9 +54,9 @@ char *argNameMap[] = {
     // Model options
     DECLARE_ARG_FOR_MAP(events), DECLARE_ARG_FOR_MAP(gdd),
     DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
-    DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
-    DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
-    DECLARE_ARG_FOR_MAP(waterHResp), DECLARE_ARG_FOR_MAP(nitrogenCycle),
+    DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(snow),
+    DECLARE_ARG_FOR_MAP(soilPhenol), DECLARE_ARG_FOR_MAP(waterHResp),
+    DECLARE_ARG_FOR_MAP(nitrogenCycle), DECLARE_ARG_FOR_MAP(anaerobic),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -76,12 +76,12 @@ void usage(char *progName) {
   printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
+  printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
   printf("  --events             Enable event handling (1)\n");
   printf("  --gdd                Use growing degree days to determine leaf growth (1)\n");
   printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
   printf("  --leaf-water         Calculate leaf pool and evaporate from that pool (0)\n");
   printf("  --litter-pool        Enable litter pool in addition to single soil carbon pool (0)\n");
-  printf("  --microbes           Enable microbe modeling (0)\n");
   printf("  --nitrogen-cycle     Enable modeling of the nitrogen cycle (0)\n");
   printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
   printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
@@ -89,7 +89,7 @@ void usage(char *progName) {
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
   printf("  --do-main-output     Print time series of all output variables to <file-name>.out (1)\n");
-  printf("  --do-single-outputs  Print outputs one variable per file (e.g. <file-name>.NEE)\n");
+  printf("  --do-single-outputs  Print selection* of outputs one variable per file (e.g. <file-name>.NEE)\n");
   printf("  --dump-config        Print final config to <file-name>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
@@ -98,13 +98,15 @@ void usage(char *progName) {
   printf("  -h, --help           Print this message and exit\n");
   printf("  -v, --version        Print version information and exit\n");
   printf("\n");
+  printf("*do-single-outputs option outputs are: NEE, NEE_cum, GPP, GPP_cum\n");
+  printf("\n");
   printf("Configuration options are read from <input_file>. Other options specified on the command\n");
   printf("line override settings from that file.\n");
   printf("\n");
   printf("Note the following restrictions on these options:\n");
   printf(" --soil-phenol and --gdd may not both be turned on\n");
-  printf(" --events and --microbes may not both be turned on\n");
-  printf(" --nitrogen-cycle and --microbes may not both be turned on\n");
+  printf(" --anaerobic requires --water-hresp\n");
+  printf(" --nitrogen-cycle requires both --litter-pool and --anaerobic\n");
   // clang-format on
 }
 
@@ -127,11 +129,11 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         break;
       case 'f':
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          printf("ERROR: filename %s exceeds maximum length of %d\n", optarg,
-                 FILENAME_MAXLEN);
-          printf("Either change the name or increase INPUT_MAXNAME in "
-                 "frontend.c\n");
-          exit(1);
+          logError("filename %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          logError("Either change the name or increase INPUT_MAXNAME in "
+                   "frontend.c\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
         break;
@@ -140,11 +142,11 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         exit(EXIT_CODE_SUCCESS);
       case 'i':
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          printf("ERROR: input filename %s exceeds maximum length of %d\n",
-                 optarg, FILENAME_MAXLEN);
-          printf("Either change the name or increase INPUT_MAXNAME in "
-                 "frontend.c\n");
-          exit(1);
+          logError("input filename %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          logError("Either change the name or increase INPUT_MAXNAME in "
+                   "frontend.c\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);
         break;

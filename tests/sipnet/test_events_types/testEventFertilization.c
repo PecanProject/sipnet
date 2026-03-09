@@ -61,6 +61,7 @@ int run(void) {
   initEvents("events_one_fert.in", 0);
   setupEvents();
   procEvents();
+  closeEventOutFile();
 
   // First fert: (15-5-10)
   expOrgN = 0;  // nitrogen cycle is off
@@ -70,6 +71,7 @@ int run(void) {
 
   //// TWO HARVEST EVENTS
   updateIntContext("litterPool", 1, CTX_TEST);
+  updateIntContext("anaerobic", 1, CTX_TEST);
   updateIntContext("nitrogenCycle", 1, CTX_TEST);
   logTest("Litter pool is %s\n", ctx.litterPool ? "on" : "off");
   logTest("Nitrogen cycle is %s\n", ctx.nitrogenCycle ? "on" : "off");
@@ -77,6 +79,7 @@ int run(void) {
   initEvents("events_two_fert.in", 1);
   setupEvents();
   procEvents();
+  closeEventOutFile();
 
   // First event same as above (15-5-10)
   expOrgN = 3 + 15;

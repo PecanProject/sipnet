@@ -46,3 +46,6 @@ LITTER_POOL = 1
 
 NITROGEN_CYCLE = 1
 ! Enable modeling of nitrogen cycle
+
+ANAEROBIC = 1
+! Enable methane and new moisture dep for Rh

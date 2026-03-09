@@ -33,26 +33,23 @@ When the same option is specified in both places, **command-line arguments take 
 
 These flags enable or disable optional model processes. Prepend `no-` to the flag name to disable it (e.g., `--no-events`).
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--events` | ON (1) | Enable agronomic event handling from `events.in` file |
-| `--gdd` | ON (1) | Use growing degree days to determine when leaves grow |
-| `--growth-resp` | OFF (0) | Explicitly model growth respiration separately from maintenance respiration |
-| `--leaf-water` | OFF (0) | Calculate a separate leaf water pool and evaporate from it |
-| `--litter-pool` | OFF (0) | Enable a separate litter pool in addition to the soil carbon pool |
-| `--microbes` | OFF (0) | Enable microbe modeling for more detailed decomposition |
-| `--nitrogen-cycle` | OFF (0) | Enable nitrogen cycle modeling (pool and flux tracking) |
-| `--snow` | ON (1) | Track snowpack separately; if disabled, all precipitation is treated as liquid |
-| `--soil-phenol` | OFF (0) | Use soil temperature (instead of growing degree days) to determine leaf growth |
-| `--water-hresp` | ON (1) | Allow soil moisture to affect heterotrophic respiration rates |
+| Flag               | Default | Description                                                                    |
+|--------------------|---------|--------------------------------------------------------------------------------|
+| `--events`         | ON (1)  | Enable agronomic event handling from `events.in` file                          |
+| `--gdd`            | ON (1)  | Use growing degree days to determine when leaves grow                          |
+| `--growth-resp`    | OFF (0) | Explicitly model growth respiration separately from maintenance respiration    |
+| `--leaf-water`     | OFF (0) | Calculate a separate leaf water pool and evaporate from it                     |
+| `--litter-pool`    | OFF (0) | Enable a separate litter pool in addition to the soil carbon pool              |
+| `--nitrogen-cycle` | OFF (0) | Enable nitrogen cycle modeling (pool and flux tracking)                        |
+| `--snow`           | ON (1)  | Track snowpack separately; if disabled, all precipitation is treated as liquid |
+| `--soil-phenol`    | OFF (0) | Use soil temperature (instead of growing degree days) to determine leaf growth |
+| `--water-hresp`    | ON (1)  | Allow soil moisture to affect heterotrophic respiration rates                  |
 
 #### Model Flag Restrictions
 
 The following flag combinations are mutually exclusive:
 
 - `--soil-phenol` and `--gdd` cannot both be enabled
-- `--events` and `--microbes` cannot both be enabled
-- `--nitrogen-cycle` and `--microbes` cannot both be enabled
 
 ### Output Flags
 
@@ -109,7 +106,6 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | `GROWTH_RESP` | 0 or 1 | Explicitly model growth respiration |
 | `LEAF_WATER` | 0 or 1 | Track separate leaf water pool |
 | `LITTER_POOL` | 0 or 1 | Enable separate litter pool |
-| `MICROBES` | 0 or 1 | Enable microbe modeling |
 | `NITROGEN_CYCLE` | 0 or 1 | Enable nitrogen cycle modeling |
 | `SNOW` | 0 or 1 | Track snowpack |
 | `SOIL_PHENOL` | 0 or 1 | Use soil temperature for phenology |
@@ -140,7 +136,6 @@ EVENTS 1
 GDD 1
 SNOW 1
 NITROGEN_CYCLE 0
-MICROBES 0
 
 # Output
 DO_MAIN_OUTPUT 1
@@ -185,33 +180,7 @@ Results in:
 
 This section provides practical examples of running SIPNET to compare different configurations and settings.
 
-### Use Case 1: Compare Model Runs With and Without Microbes
-
-To evaluate the impact of microbial decomposition on your simulation, create two runs—one with microbes enabled and one without—and compare their outputs.
-
-**Create a base configuration file** (`sipnet_base.in`):
-```
-FILE_NAME niwot_site
-EVENTS 1
-GDD 1
-MICROBES 0
-DO_MAIN_OUTPUT 1
-DUMP_CONFIG 1
-```
-
-**Run without microbes**:
-```bash
-./sipnet --input-file sipnet_base.in
-```
-
-**Run with microbes enabled** (override from command line):
-```bash
-./sipnet --input-file sipnet_base.in --microbes
-```
-
-Compare the outputs to understand the microbial impact on carbon cycling (pool dynamics, respiration rates, NEE).
-
-### Use Case 2: Test Phenology Models
+### Use Case 1: Test Phenology Models
 
 SIPNET supports two phenology models: GDD-based (growing degree days) and soil-temperature-based. Compare runs using each model.
 
@@ -235,7 +204,7 @@ DO_MAIN_OUTPUT 1
 
 Compare LAI (leaf area index) timing in the output files to determine which phenology model better captures your site's growing season.
 
-### Use Case 3: Explore Parameter Sensitivity
+### Use Case 2: Explore Parameter Sensitivity
 
 To test how model results change with different parameter values, run the same configuration but modify key parameters in `sipnet.param`.
 
@@ -251,7 +220,7 @@ To test how model results change with different parameter values, run the same c
 
 Compare GPP and NEE in the output files to understand parameter sensitivity.
 
-### Use Case 4: Generate and Compare Model Configurations
+### Use Case 3: Generate and Compare Model Configurations
 
 The `--dump-config` flag is useful for archiving exactly what settings were used in each run.
 
@@ -262,7 +231,7 @@ The `--dump-config` flag is useful for archiving exactly what settings were used
 
 **Run scenario B**:
 ```bash
-./sipnet --input-file scenario_b.in --microbes --dump-config
+./sipnet --input-file scenario_b.in --litter-pool --dump-config
 ```
 
 **Compare the configurations**:
@@ -341,8 +310,6 @@ This message appears if:
 
 SIPNET will exit with an error if you try to enable mutually exclusive flags:
 - `--soil-phenol` and `--gdd` together
-- `--events` and `--microbes` together
-- `--nitrogen-cycle` and `--microbes` together
 
 **Solution**: Choose one flag from each incompatible pair.
 

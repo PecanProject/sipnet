@@ -5,8 +5,12 @@ on:
     branches:
       - master
   pull_request:
+    paths-ignore:
+      # If we ONLY have files in /docs, don't run the build and test
+      - 'docs/**'
 
 jobs:
+
   # Build and Integration Test
   build:
     strategy:

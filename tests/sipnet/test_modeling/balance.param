@@ -2,7 +2,7 @@ plantWoodInit 2189.40929649864
 laiInit 0
 litterInit 280
 soilInit 2688.13907865276
-soilWFracInit 0.261792101162425
+soilWFracInit 0.75
 snowInit 1
 fineRootFrac 0.2
 coarseRootFrac 0.2
@@ -27,10 +27,10 @@ growthRespFrac 0.218386268943034
 frozenSoilFolREff 0
 frozenSoilThreshold 0
 soilRespMoistEffect 1
-leafOnDay 144
+leafOnDay 47
 gddLeafOn 495.32479952033
 soilTempLeafOn 12
-leafOffDay 285
+leafOffDay 49
 leafGrowth 114.609399041337
 fracLeafFall 0.996631622398798
 woodTurnoverRate 0.014
@@ -64,8 +64,10 @@ leafCN 20.0
 woodCN 100.0
 fineRootCN 40.0
 kCN 80.0
-fAnoxia 0.7
-anaerobicDecompRate 0.5
-anaerobicTransExp 2.0
 nFixationFracMax 0.5
 halfNFixationMax 1.0
+fAnoxia 0.6
+anaerobicDecompRate 0.01
+anaerobicTransExp 2.0
+soilMethaneRate 0.1
+litterMethaneRate 0.1
