@@ -429,7 +429,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
  * @param out File pointer for output
  */
 void outputHeader(FILE *out) {
-  fprintf(out, "year day  time plantWoodC plantLeafC woodCreation      ");
+  fprintf(out, "year day  time plantWoodC plantLeafC woodCreation     ");
   fprintf(out, "soil coarseRootC fineRootC   ");
   fprintf(out, "litter  soilWater soilWetnessFrac     snow      ");
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
