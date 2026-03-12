@@ -4,9 +4,15 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include "common/exitCodes.h"
+#include "common/logging.h"
 
-extern inline int copyFile(char *src, char *dest) {
+// This should be the correct relative path for where the tests are, not
+// for this file
+#define SIPNET_CMD "../../../sipnet"
+
+extern inline int copyFile(const char *src, const char *dest) {
   FILE *source = fopen(src, "rb");  // Binary mode for compatibility
   if (source == NULL) {
     printf("Error opening source file %s", src);
@@ -80,6 +86,134 @@ extern inline int diffFiles(const char *fname1, const char *fname2) {
   fclose(file2);
 
   return status;
+}
+
+extern inline int runShell(const char *cmd) {
+  int rc = system(cmd);
+  if (rc == -1) {
+    logTest("system() failed for command: %s\n", cmd);
+    return 255;
+  }
+
+  if (WIFEXITED(rc)) {
+    return WEXITSTATUS(rc);
+  }
+
+  return 255;
+}
+
+extern inline int runModelWithArgs(const char *inputFile, const char *logFile,
+                                   const char *extraArgs) {
+  char cmd[1024];
+  if (extraArgs != NULL && extraArgs[0] != '\0') {
+    sprintf(cmd, "%s -i %s %s > %s 2>&1", SIPNET_CMD, inputFile, extraArgs,
+            logFile);
+  } else {
+    sprintf(cmd, "%s -i %s > %s 2>&1", SIPNET_CMD, inputFile, logFile);
+  }
+  return runShell(cmd);
+}
+
+extern inline int runModel(const char *inputFile, const char *logFile) {
+  return runModelWithArgs(inputFile, logFile, NULL);
+}
+
+extern inline int fileContains(const char *file, const char *needle) {
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s\n", file);
+    return 0;
+  }
+
+  char line[2048];
+  int found = 0;
+  while (fgets(line, sizeof(line), in) != NULL) {
+    if (strstr(line, needle) != NULL) {
+      found = 1;
+      break;
+    }
+  }
+
+  fclose(in);
+  return found;
+}
+
+extern inline int replaceFirstOccurrence(const char *file, const char *needle,
+                                         const char *replacement) {
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s for reading\n", file);
+    return 1;
+  }
+
+  if (fseek(in, 0, SEEK_END) != 0) {
+    fclose(in);
+    return 1;
+  }
+  long size = ftell(in);
+  if (size < 0) {
+    fclose(in);
+    return 1;
+  }
+  if (fseek(in, 0, SEEK_SET) != 0) {
+    fclose(in);
+    return 1;
+  }
+
+  char *buffer = (char *)malloc((size_t)size + 1);
+  if (buffer == NULL) {
+    fclose(in);
+    return 1;
+  }
+  if (fread(buffer, 1, (size_t)size, in) != (size_t)size) {
+    free(buffer);
+    fclose(in);
+    return 1;
+  }
+  buffer[size] = '\0';
+  fclose(in);
+
+  char *pos = strstr(buffer, needle);
+  if (pos == NULL) {
+    free(buffer);
+    logTest("Could not find '%s' in %s\n", needle, file);
+    return 1;
+  }
+
+  size_t beforeLen = (size_t)(pos - buffer);
+  size_t needleLen = strlen(needle);
+  size_t replacementLen = strlen(replacement);
+  size_t afterLen = strlen(pos + needleLen);
+  size_t newLen = beforeLen + replacementLen + afterLen;
+
+  char *newContent = (char *)malloc(newLen + 1);
+  if (newContent == NULL) {
+    free(buffer);
+    return 1;
+  }
+
+  memcpy(newContent, buffer, beforeLen);
+  memcpy(newContent + beforeLen, replacement, replacementLen);
+  memcpy(newContent + beforeLen + replacementLen, pos + needleLen, afterLen);
+  newContent[newLen] = '\0';
+
+  FILE *out = fopen(file, "w");
+  if (out == NULL) {
+    free(buffer);
+    free(newContent);
+    return 1;
+  }
+  if (fwrite(newContent, 1, newLen, out) != newLen) {
+    free(buffer);
+    free(newContent);
+    fclose(out);
+    return 1;
+  }
+
+  free(buffer);
+  free(newContent);
+  fclose(out);
+  return 0;
 }
 
 #endif  // UTILS_H
