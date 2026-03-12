@@ -8,7 +8,7 @@ void restartResetRunState(void);
 
 void restartNoteProcessedClimateStep(const ClimateNode *climateStep);
 
-void restartWriteCheckpoint(const char *restartOut, const MeanTracker *meanNPP);
+void restartWriteCheckpoint(const char *restartOut, MeanTracker *meanNPP);
 
 void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP);
 
