@@ -8,7 +8,7 @@ LDFLAGS=-L$(ROOT_DIR)/libs
 LDLIBS=-lsipnet -lsipnet_common -lm
 
 # List test files in this directory here
-TEST_CFILES=testRestartMVP.c
+TEST_CFILES=testRestartMVP.c testRestartMissedEnvi.c testRestartMissedCtx.c
 
 # The rest is boilerplate, likely copyable as is to a new test directory
 TEST_OBJ_FILES=$(TEST_CFILES:%.c=%.o)
@@ -23,7 +23,16 @@ LIB_DEPS:=$(addprefix $(ROOT_DIR)/libs/, $(LIB_DEPS))
 
 all: tests
 
-tests: $(TEST_EXECUTABLES)
+mock_state.o: mock_state.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+mock_state: mock_state.o
+	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
+
+test_prep_mock: mock_state
+	./mock_state
+
+tests: $(TEST_EXECUTABLES) test_prep_mock
 
 $(TEST_EXECUTABLES): %: %.o
 	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
@@ -40,6 +49,8 @@ $(RUN_EXECUTABLES):
 	./$(basename $@)
 
 clean:
-	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) *.out *.events *.log *.restart events.in run.clim run.param
+	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) *.out *.events *.log *.restart
+	rm -f events.in custom_events.in custom_events.out run.clim run.param run.config
+	rm -f state.h* mock_state mock_state.o context.h* restart.clim
 
 .PHONY: all tests clean run $(RUN_EXECUTABLES)
