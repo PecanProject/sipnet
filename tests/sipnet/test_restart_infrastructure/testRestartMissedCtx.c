@@ -1,8 +1,8 @@
 #include "common/logging.h"
 #include "utils/tUtils.h"
 
-#define FAIL_MSG_1 "static assertion failed due to requirement"
-#define FAIL_MSG_2 " 'sizeof(struct RestartContextModelFlags)"
+#define FAIL_MSG_1 "static assertion failed"
+#define FAIL_MSG_2 "Model flags changed"
 
 int testMissedCtxUpdate(void) {
   int status = 0;
@@ -13,7 +13,8 @@ int testMissedCtxUpdate(void) {
                     "bad_code/ctx_fail.c > ctx.log 2>&1");
 
   status |= (rc == 0);
-  status |= !fileContains("ctx.log", FAIL_MSG_1 FAIL_MSG_2);
+  status |= !fileContains("ctx.log", FAIL_MSG_1);
+  status |= !fileContains("ctx.log", FAIL_MSG_2);
 
   if (status) {
     logTest("FAILED testMissedCtxUpdate\n");
