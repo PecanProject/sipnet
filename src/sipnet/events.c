@@ -352,6 +352,10 @@ void initEvents(const char *eventInFile, const char *eventOutFilePath,
 void setupEvents() { gEvent = gEvents; }
 
 int isFirstEventBefore(int year, int day) {
+  if (gEvents == NULL) {
+    // No events, so nothing to check
+    return 0;
+  }
   EventNode *firstEvent = gEvents;
   if (firstEvent->year != year) {
     return firstEvent->year < year;
