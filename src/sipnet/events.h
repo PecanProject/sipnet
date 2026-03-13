@@ -67,11 +67,6 @@ struct EventNode {
   EventNode *nextEvent;
 };
 
-// Global event variables
-
-extern EventNode *gEvents;
-extern EventNode *gEvent;
-
 /*!
  * Convert event enum value to corresponding string
  *
@@ -166,6 +161,14 @@ void initEvents(const char *eventInFile, const char *eventOutFile,
  * Initialize global event pointer
  */
 void setupEvents(void);
+
+/*!
+ * Check if the first event is before the input date
+ *
+ * @param year
+ * @param day
+ */
+int isFirstEventBefore(int year, int day);
 
 /*!
  * Set all event fluxes to zero

@@ -26,8 +26,8 @@
 #define EVENT_LINE_SIZE 1024
 
 // Global event variables - definition
-EventNode *gEvents = NULL;
-EventNode *gEvent = NULL;
+static EventNode *gEvents = NULL;
+static EventNode *gEvent = NULL;
 
 // events.out handle, only needed here
 static FILE *eventOutFile = NULL;
@@ -350,6 +350,14 @@ void initEvents(const char *eventInFile, const char *eventOutFilePath,
 }
 
 void setupEvents() { gEvent = gEvents; }
+
+int isFirstEventBefore(int year, int day) {
+  EventNode *firstEvent = gEvents;
+  if (firstEvent->year != year) {
+    return firstEvent->year < year;
+  }
+  return firstEvent->day < day;
+}
 
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;
