@@ -5,9 +5,6 @@
 
 #include "common/util.h"
 
-#define EVENT_IN_FILE "events.in"
-#define EVENT_OUT_FILE "events.out"
-
 typedef enum EventType {
   FERTILIZATION,
   HARVEST,
@@ -70,11 +67,6 @@ struct EventNode {
   EventNode *nextEvent;
 };
 
-// Global event variables
-
-extern EventNode *gEvents;
-extern EventNode *gEvent;
-
 /*!
  * Convert event enum value to corresponding string
  *
@@ -92,25 +84,27 @@ const char *eventTypeToString(event_type_t type);
 event_type_t eventStringToType(const char *eventTypeStr);
 
 /*!
- * Read event data from input filename (canonically events.in)
+ * Read event data from input filename
  *
  * Format: returned data is structured as an linked list of EventNode pointers.
  * It is assumed that the events are ordered by year and day.
  */
-EventNode *readEventData(char *eventFile);
+EventNode *readEventData(const char *eventFile);
 
 /*!
- * Open the event output file and optionally write a header row
+ * Open the configured event output file and optionally write a header row
+ * @param eventOutFile Path to event output file
  * @param printHeader Flag, non-zero value means write a header row
  * @return FILE pointer to output file
  */
-void openEventOutFile(int printHeader);
+void openEventOutFile(const char *eventOutFile, int printHeader);
 
 /*!
- * \brief Write a line to events.out for a single oneEvent
+ * \brief Write a line to the event output file for a single oneEvent
  *
- * Writes a single oneEvent to events.out. This is a variadic function which
- * expects to receive 2*numParams values in (char*, double) pairs after the
+ * Writes a single oneEvent to the configured event output file. This is a
+ * variadic function which expects to receive 2*numParams values in (char*,
+ * double) pairs after the
  * numParams argument.
  *
  * Output format:
@@ -125,7 +119,7 @@ void openEventOutFile(int printHeader);
 void writeEventOut(EventNode *oneEvent, int numParams, ...);
 
 /*!
- * \brief Write a line to events.out for a 'computed' event
+ * \brief Write a line to the event output file for a computed event
  *
  * Same as writeEventOut, but for events that are computed internally, such
  * as leaf on/leaf off events.
@@ -157,14 +151,24 @@ void closeEventOutFile(void);
  * - one line per event
  * - all events are ordered by year/day ascending
  *
- * @param eventFile Name of file containing event data
+ * @param eventInFile Name of file containing event data
+ * @param eventOutFile Name of file to write processed event output to
  */
-void initEvents(char *eventFile, int printHeader);
+void initEvents(const char *eventInFile, const char *eventOutFile,
+                int printHeader);
 
 /*!
  * Initialize global event pointer
  */
 void setupEvents(void);
+
+/*!
+ * Check if the first event is before the input date
+ *
+ * @param year
+ * @param day
+ */
+int isFirstEventBefore(int year, int day);
 
 /*!
  * Set all event fluxes to zero
@@ -181,8 +185,8 @@ void resetEventFluxes(void);
  * referenced location.
  *
  * For each event, modify flux variables according to the model for that event,
- * and write a row to events.out listing the modified variables and the delta
- * applied.
+ * and write a row to the configured event output file listing the modified
+ * variables and the delta applied.
  */
 void processEvents(void);
 

@@ -1,29 +1,28 @@
 # build artifacts and executables
 # /sipnet instead of just sipnet to NOT ignore test dirs
-*.o
-*.a
+**/*.o
+**/*.a
 /sipnet
-subsetData
-transpose
 .doxygen.stamp
 .mkdocs.stamp
-site/*
-site_preview/*
 _codeql_build_dir/
 _codeql_detected_source_root
 
 # documentation
 docs/api
 docs/latex
+docs/html
 
 # Test files
 tests/sipnet/*/*
+!tests/sipnet/*/*/
 !tests/sipnet/*/*.c
 !tests/sipnet/*/*.h
 !tests/sipnet/*/*.in
 !tests/sipnet/*/*.out
 !tests/sipnet/*/*.clim
 !tests/sipnet/*/*.param
+!**/.clang-tidy
 # But exclude generated test outputs
 tests/sipnet/*/events.out
 tests/sipnet/*/sipnet.out
@@ -34,8 +33,11 @@ tests/sipnet/*/sipnet.config
 .Rproj.user
 .Rhistory
 src/sipnet/.vscode/*
+cmake-build-debug-gcc/
+.vscode/
 
 # Temporary and backup files
 *.bak
 *~
 *.tmp
+/tmp/

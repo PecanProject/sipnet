@@ -32,7 +32,7 @@ int run(void) {
 
   //// ONE IRRIGATION EVENT
   // amount 5, method 1 (soil)
-  initEvents("events_one_irrig.in", 0);
+  initEvents("events_one_irrig.in", "events.out", 0);
   setupEvents();
   procEvents();
   closeEventOutFile();
@@ -42,7 +42,7 @@ int run(void) {
   //// TWO IRRIGATION EVENTS
   // amount 3, method 1 (soil)
   // amount 4, method 0 (canopy)
-  initEvents("events_two_irrig.in", 1);
+  initEvents("events_two_irrig.in", "events.out", 1);
   setupEvents();
   procEvents();
   closeEventOutFile();

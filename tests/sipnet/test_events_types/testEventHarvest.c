@@ -94,7 +94,7 @@ int run(void) {
   updateIntContext("nitrogenCycle", 0, CTX_TEST);
   logTest("Litter pool is %s, nitrogen cycle is %s\n",
           ctx.litterPool ? "on" : "off", ctx.nitrogenCycle ? "on" : "off");
-  initEvents("events_one_harvest.in", 0);
+  initEvents("events_one_harvest.in", "events.out", 0);
   setupEvents();
   procEvents();
   closeEventOutFile();
@@ -119,7 +119,7 @@ int run(void) {
   logTest("Litter pool is %s, nitrogen cycle is %s\n",
           ctx.litterPool ? "on" : "off", ctx.nitrogenCycle ? "on" : "off");
   initEnv();
-  initEvents("events_two_harvest.in", 1);
+  initEvents("events_two_harvest.in", "events.out", 1);
   setupEvents();
   procEvents();
   closeEventOutFile();

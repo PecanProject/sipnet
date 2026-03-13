@@ -35,6 +35,7 @@ struct context_metadata {
   UT_hash_handle hh;  // makes this structure hashable
 };
 
+#define NUM_CONTEXT_MODEL_FLAGS 10
 // See docs/developer-guide/cli-options.md for details on how to add a new
 // Context entry
 struct Context {
@@ -50,6 +51,8 @@ struct Context {
   int waterHResp;
   int nitrogenCycle;
   int anaerobic;
+  // IF ADDING A NEW MODEL FLAG, update NUM_CONTEXT_MODEL_FLAGS above and
+  // relevant code in restart.c
 
   // * I/O
   int doMainOutput;
@@ -63,7 +66,12 @@ struct Context {
   char climFile[CONTEXT_CHAR_MAXLEN];
   char outFile[CONTEXT_CHAR_MAXLEN];
   char outConfigFile[CONTEXT_CHAR_MAXLEN];
+  char eventsPrefix[CONTEXT_CHAR_MAXLEN];
+  char eventsInFile[CONTEXT_CHAR_MAXLEN];
+  char eventsOutFile[CONTEXT_CHAR_MAXLEN];
   char inputFile[CONTEXT_CHAR_MAXLEN];
+  char restartIn[CONTEXT_CHAR_MAXLEN];
+  char restartOut[CONTEXT_CHAR_MAXLEN];
 
   // Other
   // File prefix for climate and param files

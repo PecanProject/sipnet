@@ -79,7 +79,7 @@ int runTest(const char *prefix, int header) {
   strcpy(output, prefix);
   strcat(output, ".out");
 
-  initEvents(input, header);
+  initEvents(input, "events.out", header);
   runLoc();
 
   closeEventOutFile();

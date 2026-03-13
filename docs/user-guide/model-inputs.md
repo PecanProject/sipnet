@@ -95,7 +95,9 @@ loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
 
 ## Agronomic Events
 
-Agronomic (management) events are read from an `events.in` file. This file specifies one event per line:
+Agronomic (management) events are read from `events.in` by default, or from
+`<EVENTS_PREFIX>.in` when `EVENTS_PREFIX` / `--events-prefix` is set. This
+file specifies one event per line:
 
 | col | parameter   | description                          | units  | notes                                            |
 | --- | ----------- | ------------------------------------ | ------ | ------------------------------------------------ |
@@ -207,20 +209,24 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 ### Input / Output Options
 
-| Option       | Default   | Description                           |
-| ------------ | --------- | ------------------------------------- |
-| `input-file` | sipnet.in | Name of input config file             |
-| `file-name`  | sipnet    | Prefix of climate and parameter files |
+| Option          | Default   | Description                                        |
+| --------------- | --------- | -------------------------------------------------- |
+| `input-file`    | sipnet.in | Name of input config file                          |
+| `file-name`     | sipnet    | Prefix of climate and parameter files              |
+| `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`) |
+| `restart-in`    | unset     | Path to restart checkpoint to load                 |
+| `restart-out`   | unset     | Path to restart checkpoint to write                |
 
 ### Output Flags
 
 | Option              | Default | Description                                                    |
 |---------------------|---------|----------------------------------------------------------------|
 | `do-main-output`    | on      | Print time series of all output variables to `<file-name>.out` |
-| `do-single-outputs` | off     | Print outputs one variable per file (e.g. `<file-name>.NEE`)   |
-| `dump-config`       | on      | Print final config to `<file-name>.config`                     |
+| `do-single-outputs` | off     | Print selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) one variable per file (e.g. `<file-name>.NEE`) |
+| `dump-config`       | off     | Print final config to `<file-name>.config`                     |
 | `print-header`      | on      | Whether to print header row in output files                    |
 | `quiet`             | off     | Suppress info and warning message                              |
+
 
 ### Model Flags
 
@@ -260,24 +266,24 @@ See `sipnet --help` for a full list of available command-line options.
 SIPNET reads a configuration file that specifies run-time options without using command-line arguments. By default, SIPNET looks for a file named `sipnet.in` in the current directory. These will be overwritten by command-line arguments if specified.
 
 The configuration file uses a simple key-value format, `option = value`, 
-with one option per line; comments follow `#`. Flags are specified as 0 for off and 1 for on.
+with one option per line; comments follow `!`. Flags are specified as 0 for off and 1 for on.
 
 #### Example Configuration File
 
 Note that case is ignored for parameter names, as well as dashes and underscores.
 
 ```
-# Base filename (used for derived filenames)
+! Base filename (used for derived filenames)
 FILE_NAME = mysite
 
-# Output options
+! Output options
 DO_MAIN_OUTPUT = 1
 DO_SINGLE_OUTPUTS = 0
 DUMP_CONFIG = 1
 PRINT_HEADER = 1
 QUIET = 0
 
-# Model options
+! Model options
 EVENTS = 1
 GDD = 1
 GROWTH_RESP = 0

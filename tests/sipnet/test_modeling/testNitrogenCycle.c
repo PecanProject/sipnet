@@ -131,7 +131,7 @@ int testFertilization(void) {
 
   // fert event: 15 5 10
   double fertMinN = 10;
-  initEvents("events_fert.in", 0);
+  initEvents("events_fert.in", "events.out", 0);
   setupEvents();
 
   calcNVolatilizationFlux();
