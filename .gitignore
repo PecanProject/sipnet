@@ -15,6 +15,7 @@ _codeql_detected_source_root
 # documentation
 docs/api
 docs/latex
+docs/html
 
 # Test files
 tests/sipnet/*/*
