@@ -18,12 +18,14 @@ docs/latex
 
 # Test files
 tests/sipnet/*/*
+!tests/sipnet/*/*/
 !tests/sipnet/*/*.c
 !tests/sipnet/*/*.h
 !tests/sipnet/*/*.in
 !tests/sipnet/*/*.out
 !tests/sipnet/*/*.clim
 !tests/sipnet/*/*.param
+!**/.clang-tidy
 # But exclude generated test outputs
 tests/sipnet/*/events.out
 tests/sipnet/*/sipnet.out
