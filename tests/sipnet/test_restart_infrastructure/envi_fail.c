@@ -1,6 +1,4 @@
-
-// NOLINTNEXTLINE
-#include "state.h.envi"
+#include "state.h.envi"  // NOLINT
 #include "sipnet/restart.c"
 
 // This file will fail to compile, which is the point

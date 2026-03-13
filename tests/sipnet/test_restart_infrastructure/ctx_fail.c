@@ -1,5 +1,4 @@
-// NOLINTNEXTLINE
-#include "context.h.flag"
+#include "context.h.flag"  // NOLINT
 #include "sipnet/restart.c"
 
 // This file will fail to compile, which is the point
