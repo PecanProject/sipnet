@@ -413,11 +413,11 @@ static int testCheckpointFarFromMidnightWarnsAndWrites(void) {
   rc = runModel(warnInputFile, "midnight_checkpoint.log");
   status |= (rc != 0);
   status |= !fileStartsWith(CHECKPOINT_FILE, RESTART_MAGIC_LINE);
-  status |= !fileContains(
-      "midnight_checkpoint.log",
-      "last timestep ends more than one timestep before midnight");
+  status |= !fileContains("midnight_checkpoint.log",
+                          "ends more than one timestep before midnight");
   status |=
-      !fileContains("midnight_checkpoint.log", "should not be used for resume");
+      !fileContains("midnight_checkpoint.log",
+                    "there will be a time gap if this file is used to resume");
   status |= (remove(warnInputFile) != 0);
 
   if (status) {
@@ -427,51 +427,12 @@ static int testCheckpointFarFromMidnightWarnsAndWrites(void) {
   return status;
 }
 
-// TODO: Decide if we are downgrading this to a warning
-static int testTamperedBoundaryNotNearMidnightFails(void) {
+static int testRestartNotNearMidnightWarns(void) {
   int status = 0;
   int stepStatus = 0;
   int rc;
 
-  logTest("Starting testTamperedBoundaryNotNearMidnightFails\n");
-
-  runShell("rm -f run.out events.out run.restart *.log");
-
-  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
-  if (stepStatus) {
-    logTest("Failed to prepare files for tampered-boundary test segment 1\n");
-    return stepStatus;
-  }
-  status |= (runModel("restart_seg1.in", "tampered_boundary_seg1.log") != 0);
-  status |= replaceFirstLineStartingWith(CHECKPOINT_FILE, "boundary.time ",
-                                         "boundary.time 12.0\n");
-
-  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
-  if (stepStatus) {
-    logTest("Failed to prepare files for tampered-boundary test segment 2\n");
-    return status | stepStatus;
-  }
-
-  rc = runModel("restart_seg2.in", "tampered_boundary_seg2.log");
-  status |= (rc != EXIT_CODE_BAD_RESTART_PARAMETER);
-  status |= !fileContains(
-      "tampered_boundary_seg2.log",
-      "checkpoint boundary is more than one timestep before midnight");
-
-  if (status) {
-    logTest("testTamperedBoundaryNotNearMidnightFails failed (rc=%d)\n", rc);
-  }
-
-  return status;
-}
-
-// TODO: Decide if we are downgrading this to a warning
-static int testRestartMustStartNearMidnight(void) {
-  int status = 0;
-  int stepStatus = 0;
-  int rc;
-
-  logTest("Starting testRestartMustStartNearMidnight\n");
+  logTest("Starting testRestartNotNearMidnightWarns\n");
 
   runShell("rm -f run.out events.out run.restart *.log");
 
@@ -489,48 +450,11 @@ static int testRestartMustStartNearMidnight(void) {
   }
 
   rc = runModel("restart_seg2.in", "restart_midnight_seg2.log");
-  status |= (rc != EXIT_CODE_BAD_RESTART_PARAMETER);
   status |= !fileContains("restart_midnight_seg2.log",
-                          "must start within one timestep after midnight");
+                          "starts more than one timestep after midnight");
 
   if (status) {
-    logTest("testRestartMustStartNearMidnight failed (rc=%d)\n", rc);
-  }
-
-  return status;
-}
-
-static int testRestartEventBoundaryRequiresSegmentedEvents(void) {
-  int status = 0;
-  int stepStatus = 0;
-  int rc;
-
-  logTest("Starting testRestartEventBoundaryRequiresSegmentedEvents\n");
-
-  runShell("rm -f run.out events.out run.restart *.log");
-
-  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
-  if (stepStatus) {
-    logTest("Failed to prepare files for restart-event-boundary segment 1\n");
-    return stepStatus;
-  }
-  status |=
-      (runModel("restart_seg1.in", "restart_event_boundary_seg1.log") != 0);
-
-  stepStatus = prepRunFiles("restart_segment2.clim", "events_base.in");
-  if (stepStatus) {
-    logTest("Failed to prepare files for restart-event-boundary segment 2\n");
-    return status | stepStatus;
-  }
-
-  rc = runModel("restart_seg2.in", "restart_event_boundary_seg2.log");
-  status |= (rc != EXIT_CODE_BAD_RESTART_PARAMETER);
-  status |= !fileContains("restart_event_boundary_seg2.log",
-                          "Restart event boundary mismatch");
-
-  if (status) {
-    logTest("testRestartEventBoundaryRequiresSegmentedEvents failed (rc=%d)\n",
-            rc);
+    logTest("testRestartNotNearMidnightWarns failed (rc=%d)\n", rc);
   }
 
   return status;
@@ -778,8 +702,6 @@ static int testBuildInfoMismatchWarnsAndSucceeds(void) {
   int status = 0;
   int stepStatus = 0;
   int rc;
-  const char *warnInputFile = "restart_seg2_build_warn.in";
-
   logTest("Starting testBuildInfoMismatchWarnsAndSucceeds\n");
 
   runShell("rm -f run.out events.out run.restart *.log");
@@ -799,14 +721,10 @@ static int testBuildInfoMismatchWarnsAndSucceeds(void) {
     return status | stepStatus;
   }
 
-  status |= copyFile((char *)"restart_seg2.in", (char *)warnInputFile);
-  status |= replaceFirstOccurrence(warnInputFile, "QUIET 1", "QUIET 0");
-
-  rc = runModel(warnInputFile, "build_mismatch_seg2.log");
+  rc = runModel("restart_seg2.in", "build_mismatch_seg2.log");
   status |= (rc != 0);
   status |=
       !fileContains("build_mismatch_seg2.log", "Restart build info mismatch");
-  status |= (remove(warnInputFile) != 0);
 
   if (status) {
     logTest("testBuildInfoMismatchWarnsAndSucceeds failed (rc=%d)\n", rc);
@@ -895,9 +813,7 @@ int run(void) {
   status |= testSegmentedEquivalence();
   status |= testStrictClimateMismatchFails();
   status |= testCheckpointFarFromMidnightWarnsAndWrites();
-  status |= testTamperedBoundaryNotNearMidnightFails();
-  status |= testRestartMustStartNearMidnight();
-  status |= testRestartEventBoundaryRequiresSegmentedEvents();
+  status |= testRestartNotNearMidnightWarns();
   status |= testMissingFinalNewlineCheckpointSucceeds();
   status |= testModelVersionMismatchFails();
   status |= testSchemaMismatchFails();

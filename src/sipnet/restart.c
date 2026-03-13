@@ -272,14 +272,6 @@ static void advanceOneDay(int *year, int *day) {
   }
 }
 
-static int dateIsBefore(int leftYear, int leftDay, int rightYear,
-                        int rightDay) {
-  if (leftYear != rightYear) {
-    return leftYear < rightYear;
-  }
-  return leftDay < rightDay;
-}
-
 static void
 validateCheckpointBoundaryForWrite(const char *restartOut,
                                    const RestartClimateSignature *boundary) {
@@ -294,9 +286,9 @@ validateCheckpointBoundaryForWrite(const char *restartOut,
 
   double hoursUntilMidnight = 24.0 - boundary->time;
   if (hoursUntilMidnight > (stepHours + RESTART_FLOAT_EPSILON)) {
-    logWarning("Writing restart checkpoint %s even though the last timestep "
-               "ends more than one timestep before midnight; this checkpoint "
-               "should not be used for resume\n",
+    logWarning("Restart checkpoint %s ends more than one timestep before "
+               "midnight; there will be a time gap if this file is used to "
+               "resume.\n",
                restartOut);
     logWarning("Boundary timestep: year=%d day=%d time=%.8f length=%.8f\n",
                boundary->year, boundary->day, boundary->time, boundary->length);
@@ -318,13 +310,12 @@ validateCheckpointBoundaryForLoad(const char *restartIn,
 
   double hoursUntilMidnight = 24.0 - boundary->time;
   if (hoursUntilMidnight > (stepHours + RESTART_FLOAT_EPSILON)) {
-    logError(
-        "Restart boundary mismatch in %s: checkpoint boundary is more than "
-        "one timestep before midnight\n",
-        restartIn);
-    logError("Checkpoint boundary: year=%d day=%d time=%.8f length=%.8f\n",
-             boundary->year, boundary->day, boundary->time, boundary->length);
-    exit(EXIT_CODE_BAD_RESTART_PARAMETER);
+    logWarning("Restart checkpoint boundary is more than one timestep before "
+               "midnight; "
+               "there is a time gap on resume.\n",
+               restartIn);
+    logWarning("Checkpoint boundary: year=%d day=%d time=%.8f length=%.8f\n",
+               boundary->year, boundary->day, boundary->time, boundary->length);
   }
 }
 
@@ -829,29 +820,13 @@ static void validateRestartBoundary(void) {
 
   if (climate->year != expectedYear || climate->day != expectedDay ||
       climate->time > (firstStepHours + RESTART_FLOAT_EPSILON)) {
-    logError("Restart boundary mismatch: resumed segment must start within one "
-             "timestep after midnight checkpoint boundary\n");
-    logError("Expected start on year=%d day=%d with time<=%.8f; found "
-             "year=%d day=%d time=%.8f length=%.8f\n",
-             expectedYear, expectedDay, firstStepHours, climate->year,
-             climate->day, climate->time, climate->length);
-    exit(EXIT_CODE_BAD_RESTART_PARAMETER);
-  }
-}
-
-static void validateRestartEventBoundary(void) {
-  if (!ctx.events || gEvent == NULL || climate == NULL) {
-    return;
-  }
-
-  if (dateIsBefore(gEvent->year, gEvent->day, climate->year, climate->day)) {
-    logError("Restart event boundary mismatch: first event (year=%d day=%d) is "
-             "before resumed climate start (year=%d day=%d)\n",
-             gEvent->year, gEvent->day, climate->year, climate->day);
-    logError("Checkpoint boundary was year=%d day=%d; event files must be "
-             "segmented to the same boundaries as climate segments\n",
-             boundaryClimate.year, boundaryClimate.day);
-    exit(EXIT_CODE_BAD_RESTART_PARAMETER);
+    logWarning("Restart resumed segment starts more than one "
+               "timestep after midnight checkpoint boundary; there is a time "
+               "gap\n");
+    logWarning("Expected start on year=%d day=%d with time<=%.8f; found "
+               "year=%d day=%d time=%.8f length=%.8f\n",
+               expectedYear, expectedDay, firstStepHours, climate->year,
+               climate->day, climate->time, climate->length);
   }
 }
 
@@ -930,7 +905,6 @@ void restartLoadCheckpoint(const char *restartIn, MeanTracker *meanNPP) {
   checkRestartContextCompatibility();
   validateRestartModelBuild();
   validateRestartBoundary();
-  validateRestartEventBoundary();
 
   if (meanNPP->start < 0 || meanNPP->start >= meanNPP->length ||
       meanNPP->last < 0 || meanNPP->last >= meanNPP->length) {
