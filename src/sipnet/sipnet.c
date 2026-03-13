@@ -227,8 +227,6 @@ void readClimData(const char *climFile) {
     }
 
     if (ctx.gdd) {
-      // Keep per-step GDD in climate state; cumulative GDD is tracked in
-      // trackers.gdd for restart continuity.
       thisGdd = tair * length;
       if (thisGdd < 0) {  // can't have negative growing degree days
         thisGdd = 0;
@@ -2081,6 +2079,7 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
     }
     climate = climate->nextClim;
   }
+
   if (outputItems != NULL) {
     terminateOutputItemLines(outputItems);
   }

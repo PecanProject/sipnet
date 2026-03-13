@@ -24,20 +24,20 @@ When the same option is specified in both places, **command-line arguments take 
 
 ### Input/Output Options
 
-| Option          | Short | Argument     | Default     | Description                                                                               |
-| --------------- | ----- | ------------ | ----------- | ----------------------------------------------------------------------------------------- |
-| `--input-file`  | `-i`  | `<name>`     | `sipnet.in` | Name of input configuration file                                                          |
-| `--file-name`   | `-f`  | `<name>`     | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`) |
-| `--events-prefix` | `-e` | `<name>`    | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)      |
-| `--restart-in`  |       | `<path>`     | unset       | Read a restart checkpoint (schema `1.0`)                                                  |
-| `--restart-out` |       | `<path>`     | unset       | Write a restart checkpoint at end of run                                                  |
+| Option             | Short | Argument   | Default     | Description                                                                                |
+|--------------------|-------|------------|-------------|--------------------------------------------------------------------------------------------|
+| `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
+| `--file-name`      | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
+| `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
+| `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
+| `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |
 
 ### Model Feature Flags
 
 These flags enable or disable optional model processes. Prepend `no-` to the flag name to disable it (e.g., `--no-events`).
 
 | Flag               | Default | Description                                                                    |
-| ------------------ | ------- | ------------------------------------------------------------------------------ |
+|--------------------|---------|--------------------------------------------------------------------------------|
 | `--anaerobic`      | OFF (0) | Enable modeling of methane and anaerobic effect on Rh moisture dependency      |
 | `--events`         | ON (1)  | Enable events read from events input file                                      |
 | `--gdd`            | ON (1)  | Use growing degree days to determine when leaves grow                          |
@@ -160,17 +160,7 @@ SIPNET restart support is designed for segmented orchestration (for example, ext
 
 `RESTART_OUT` writes a text restart file (schema `1.0`) containing runtime state needed for deterministic resume.
 
-### Restart constraints and failure modes
-
-- First climate row in resumed segment must have a timestamp (`year`, `day`, `time`) after the checkpoint boundary timestamp
-- Checkpoint writes always produce a checkpoint, but SIPNET warns when the final climate step is more than one timestep before midnight because that file should not be used for resume
-- Resumed segments must start on the midnight-following day and no later than one timestep after midnight (using the first resumed climate row's timestep length)
-- Event files must be segmented with the same time boundaries as climate segments
-- Checkpoint schema/version and numeric model version must match the current run
-- Checkpoint `schema_layout.*` guard values must match the current binary's struct layout (`envi`, `trackers`, `phenology_trackers`, `event_trackers`)
-- Build info mismatch is reported as a warning only
-- Invalid restart context is rejected with a hard error
-- SIPNET does not stitch/append outputs across segments; orchestration must stitch outputs externally
+`RESTART_IN` loads a previously generated restart file and sets SIPNET's state accordingly.
 
 For the checkpoint schema, strict validation order, and implementation details, see [Restart Checkpoint Spec](../developer-guide/restart-checkpoint.md).
 

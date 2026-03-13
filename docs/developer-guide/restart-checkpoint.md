@@ -19,7 +19,7 @@ On resume, SIPNET executes:
 
 1. Normal setup (`setupModel`, `setupEvents`)
 2. Load checkpoint and overwrite runtime state
-3. Validate compatibility checks and restart boundary constraints
+3. Validate compatibility checks and restart boundary checks
 4. Continue run from resumed climate input
 
 ## Restart Schema v1.0 Overview
@@ -48,32 +48,31 @@ Example checkpoint content is exercised in
 
 ## Validation Contract
 
-On load, SIPNET enforces:
+On load, SIPNET enforces the following. Lines that start with (warning) log a warning and do not error.
 
 - magic header match
 - schema version match
 - model numeric version match
 - `schema_layout.*` values exactly match the expected struct sizes for the running build
-- build info mismatch logs warning only
+- (warning) build info mismatch 
 - context flag compatibility
 - first-row climate timestamp strictly after checkpoint boundary (`year`, `day`, `time`)
-- resumed segment starts on the midnight-following day and within one timestep after midnight
+- (warning) resumed segment starts on the midnight-following day and within one timestep after midnight
 - mean tracker shape/cursor validity
-- `end_restart` marker value is exactly `1`
-- no non-empty key/value lines appear after `end_restart`
+- All lines appearing after `end_restart` are ignored
 - integer values must fit in signed 32-bit range
 - floating-point values must be finite (`nan`/`inf` are rejected)
-- legacy `balance.*` keys are rejected as unknown keys
 
-All mismatches above are hard errors except build-info mismatch, which is warning-only.
+All mismatches above are hard errors except as indicated.
 
 ## Climate and Event Boundaries
 
 Restart writes always emit a checkpoint. If the last processed climate step is
-more than one timestep before midnight, SIPNET logs a warning because that file
-is useful for debugging/state inspection but should not be used for resume.
+more than one timestep before midnight, SIPNET logs a warning, as there will be a time gap in any resumption from that 
+file.
 
-Resumed climate segments must begin on the day after the checkpoint boundary and within one timestep after midnight, where the window uses the first resumed climate row's timestep length.
+Resumed climate segments must begin on the day after the checkpoint boundary. If they start more than one timestep 
+after midnight (using the first resumed climate row's timestep length) SIPNET logs a warning.
 
 Event files must be segmented to the same time boundaries as climate segments.
 
@@ -89,7 +88,7 @@ If you add saved state or change an existing saved payload:
 
 Restart schema v1.0 includes compile-time and runtime drift guards so struct layout changes cannot silently pass:
 
-- Compile-time guards: `_Static_assert` checks in `src/sipnet/restart.c` for `Envi`, serialized tracker payload shape, `PhenologyTrackers`, and `EventTrackers`.
+- Compile-time guards: `_Static_assert` checks in `src/sipnet/restart.c` for `Envi`, `Trackers`, `PhenologyTrackers`, `EventTrackers`, and expected number of model flags in `Context`.
 - Runtime guards: `schema_layout.*` fields in each checkpoint are validated on load.
 - Test guardrails: `tests/sipnet/test_restart_infrastructure/testRestartMVP.c` verifies schema layout keys are present and rejects tampered values.
 
