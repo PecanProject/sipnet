@@ -17,6 +17,7 @@
 #include "cli.h"
 #include "events.h"
 #include "sipnet.h"
+#include "state.h"
 #include "outputItems.h"
 
 void checkRuntype(const char *runType) {
@@ -207,6 +208,13 @@ int main(int argc, char *argv[]) {
 
   if (ctx.events) {
     initEvents(ctx.eventsInFile, ctx.eventsOutFile, ctx.printHeader);
+    // Check that first event is not before first climate record
+    if (isFirstEventBefore(firstClimate->year, firstClimate->day)) {
+      logError(
+          "First event occurs before the start of the climate file; please "
+          "fix and rerun\n");
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
+    }
   }
 
   if (ctx.doSingleOutputs) {
