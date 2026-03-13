@@ -1,3 +1,4 @@
+// NOLINTNEXTLINE
 #include "context.h.flag"
 #include "sipnet/restart.c"
 

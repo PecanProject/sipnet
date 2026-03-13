@@ -2,18 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #include "common/logging.h"
 #include "utils/tUtils.h"
 
 #define CHECKPOINT_FILE "run.restart"
 #define RESTART_MAGIC_LINE "SIPNET_RESTART 1.0"
-
-// THESE HAVE TO GO
-#define SCHEMA_LAYOUT_ENVI_LINE "schema_layout.envi_size 96"
-#define SCHEMA_LAYOUT_TRACKERS_LINE "schema_layout.trackers_size 224"
-#define SCHEMA_LAYOUT_PHENOLOGY_LINE "schema_layout.phenology_trackers_size 12"
-#define SCHEMA_LAYOUT_EVENT_TRACKERS_LINE "schema_layout.event_trackers_size 8"
+#define MAX_LINE_LENGTH 1028
 
 static int prepRunFiles(const char *climFile, const char *eventFile) {
   int status = 0;
@@ -31,21 +27,59 @@ static int truncateFileToSize(const char *file, long size) {
   return 0;
 }
 
+static int truncateFileToNLines(const char *file, int maxLines) {
+  struct stat st;
+  stat(file, &st);
+  long size = st.st_size;
+  if (size <= 0) {
+    return 1;
+  }
+  if (maxLines < 0)
+    return 1;
+
+  FILE *fp = fopen(file, "r");
+  if (fp == NULL) {
+    logTest("Unable to open %s for reading\n", file);
+    return 1;
+  }
+
+  int c;
+  int lines = 0;
+  long pos = 0;
+
+  while ((c = fgetc(fp)) != EOF) {
+    ++pos;
+
+    if (c == '\n') {
+      ++lines;
+      if (lines == maxLines)
+        break;
+    }
+  }
+
+  /* If file has fewer lines than requested, do nothing */
+  if (lines < maxLines) {
+    fclose(fp);
+    return 0;
+  }
+
+  fclose(fp);
+  int result = truncateFileToSize(file, pos);
+
+  return result;
+}
+
 static int stripFinalNewline(const char *file) {
+  struct stat st;
+  stat(file, &st);
+  long size = st.st_size;
+  if (size <= 0) {
+    return 1;
+  }
+
   FILE *fp = fopen(file, "rb");
   if (fp == NULL) {
     logTest("Unable to open %s\n", file);
-    return 1;
-  }
-
-  if (fseek(fp, 0, SEEK_END) != 0) {
-    fclose(fp);
-    return 1;
-  }
-
-  long size = ftell(fp);
-  if (size <= 0) {
-    fclose(fp);
     return 1;
   }
 
@@ -84,23 +118,16 @@ static int fileStartsWith(const char *file, const char *expectedPrefix) {
 
 static int replaceFirstLineStartingWith(const char *file, const char *prefix,
                                         const char *replacementLine) {
-  FILE *in = fopen(file, "r");
-  if (in == NULL) {
-    logTest("Unable to open %s for reading\n", file);
+  struct stat st;
+  stat(file, &st);
+  long size = st.st_size;
+  if (size <= 0) {
     return 1;
   }
 
-  if (fseek(in, 0, SEEK_END) != 0) {
-    fclose(in);
-    return 1;
-  }
-  long size = ftell(in);
-  if (size < 0) {
-    fclose(in);
-    return 1;
-  }
-  if (fseek(in, 0, SEEK_SET) != 0) {
-    fclose(in);
+  FILE *in = fopen(file, "r");
+  if (in == NULL) {
+    logTest("Unable to open %s for reading\n", file);
     return 1;
   }
 
@@ -803,7 +830,7 @@ static int testTruncatedCheckpointFails(void) {
     return stepStatus;
   }
   status |= (runModel("restart_seg1.in", "truncate_seg1.log") != 0);
-  status |= truncateFileToSize(CHECKPOINT_FILE, 285);
+  status |= truncateFileToNLines(CHECKPOINT_FILE, 8);
 
   stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
   if (stepStatus) {
@@ -813,8 +840,6 @@ static int testTruncatedCheckpointFails(void) {
 
   rc = runModel("restart_seg2.in", "truncate_seg2.log");
   status |= (rc != EXIT_CODE_BAD_RESTART_PARAMETER);
-  // This forces the truncation to be at a line break, but it is a better test
-  // that way
   status |= !fileContains("truncate_seg2.log", "missing required key");
 
   if (status) {

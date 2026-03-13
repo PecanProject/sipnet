@@ -1,3 +1,5 @@
+
+// NOLINTNEXTLINE
 #include "state.h.envi"
 #include "sipnet/restart.c"
 
