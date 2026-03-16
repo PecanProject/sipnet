@@ -455,7 +455,7 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
   fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %9.4f %10.4f %8.4f %8.4f",
           fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
-          fluxes.nVolatilization, trackers.nLeaching, trackers.nFixation,
+          trackers.n2o, trackers.nLeaching, trackers.nFixation,
           trackers.nUptake, trackers.methane);
   fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
           balanceTracker.deltaC, balanceTracker.deltaN);
