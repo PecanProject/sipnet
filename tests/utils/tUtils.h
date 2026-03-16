@@ -16,38 +16,43 @@
 // for this file
 #define SIPNET_CMD "../../../sipnet"
 
-extern inline int copyFile(const char *src, const char *dest) {
-  FILE *source = fopen(src, "rb");  // Binary mode for compatibility
-  if (source == NULL) {
-    printf("Error opening source file %s", src);
-    return 1;
+/////
+// SHELL EXECUTION UTILITIES
+/////
+
+extern inline int runShell(const char *cmd) {
+  int rc = system(cmd);
+  if (rc == -1) {
+    logTest("system() failed for command: %s\n", cmd);
+    return 255;
   }
 
-  FILE *destination = fopen(dest, "wb");
-  if (destination == NULL) {
-    printf("Error opening destination file %s", dest);
-    fclose(source);
-    return 1;
+  if (WIFEXITED(rc)) {
+    return WEXITSTATUS(rc);
   }
 
-  char buffer[4096];  // 4KB buffer
-  size_t bytesRead;
-
-  while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) {
-    if (ferror(source)) {
-      printf("Error reading file %s during file copy\n", src);
-      exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
-    }
-    fwrite(buffer, 1, bytesRead, destination);
-    if (feof(source)) {
-      break;
-    }
-  }
-
-  fclose(source);
-  fclose(destination);
-  return 0;
+  return 255;
 }
+
+extern inline int runModelWithArgs(const char *inputFile, const char *logFile,
+                                   const char *extraArgs) {
+  char cmd[1024];
+  if (extraArgs != NULL && extraArgs[0] != '\0') {
+    sprintf(cmd, "%s -i %s %s > %s 2>&1", SIPNET_CMD, inputFile, extraArgs,
+            logFile);
+  } else {
+    sprintf(cmd, "%s -i %s > %s 2>&1", SIPNET_CMD, inputFile, logFile);
+  }
+  return runShell(cmd);
+}
+
+extern inline int runModel(const char *inputFile, const char *logFile) {
+  return runModelWithArgs(inputFile, logFile, NULL);
+}
+
+/////
+// COMPARISON UTILITIES
+/////
 
 extern inline int compareDoubles(double a, double b) {
   return fabs(a - b) < 1e-6;
@@ -92,34 +97,41 @@ extern inline int diffFiles(const char *fname1, const char *fname2) {
   return status;
 }
 
-extern inline int runShell(const char *cmd) {
-  int rc = system(cmd);
-  if (rc == -1) {
-    logTest("system() failed for command: %s\n", cmd);
-    return 255;
+/////
+// FILE MANIPULATION UTILITIES
+/////
+
+extern inline int copyFile(const char *src, const char *dest) {
+  FILE *source = fopen(src, "rb");  // Binary mode for compatibility
+  if (source == NULL) {
+    printf("Error opening source file %s", src);
+    return 1;
   }
 
-  if (WIFEXITED(rc)) {
-    return WEXITSTATUS(rc);
+  FILE *destination = fopen(dest, "wb");
+  if (destination == NULL) {
+    printf("Error opening destination file %s", dest);
+    fclose(source);
+    return 1;
   }
 
-  return 255;
-}
+  char buffer[4096];  // 4KB buffer
+  size_t bytesRead;
 
-extern inline int runModelWithArgs(const char *inputFile, const char *logFile,
-                                   const char *extraArgs) {
-  char cmd[1024];
-  if (extraArgs != NULL && extraArgs[0] != '\0') {
-    sprintf(cmd, "%s -i %s %s > %s 2>&1", SIPNET_CMD, inputFile, extraArgs,
-            logFile);
-  } else {
-    sprintf(cmd, "%s -i %s > %s 2>&1", SIPNET_CMD, inputFile, logFile);
+  while ((bytesRead = fread(buffer, 1, sizeof(buffer), source)) > 0) {
+    if (ferror(source)) {
+      printf("Error reading file %s during file copy\n", src);
+      exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
+    }
+    fwrite(buffer, 1, bytesRead, destination);
+    if (feof(source)) {
+      break;
+    }
   }
-  return runShell(cmd);
-}
 
-extern inline int runModel(const char *inputFile, const char *logFile) {
-  return runModelWithArgs(inputFile, logFile, NULL);
+  fclose(source);
+  fclose(destination);
+  return 0;
 }
 
 extern inline int fileContains(const char *file, const char *needle) {
