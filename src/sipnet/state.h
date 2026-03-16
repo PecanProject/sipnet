@@ -41,8 +41,8 @@ struct ClimateVars {
   double vPress;
   // avg. wind speed (m/s)
   double wspd;
-  // growing degree days from Jan. 1 to now. NOTE: Calculated, *not* read from
-  // file
+  // growing degree days contributed by this timestep, max(tair * length, 0)
+  // NOTE: Calculated, *not* read from file
   double gdd;
 
   ClimateNode *nextClim;
@@ -606,10 +606,29 @@ typedef struct TrackerVars {  // variables to track various things
   double ra;
   // g C * m^-2 heterotrophic resp. in this time interval
   double rh;
+  // g C m-2 of root respiration
+  double rRoot;
+  // Soil respiration (microbes+root)
+  double rSoil;
+  // Wood and foliar respiration
+  double rAboveground;
   // g C * m^-2 taken up in this time interval
   double npp;
   // g C * m^-2 given off in this time interval
   double nee;
+  // g C * m^-2 wood creation
+  double woodCreation;
+
+  // growing degree days since Jan 1 for the current model year
+  double gdd;
+  // cm water evaporated/sublimated (sublimed???) or transpired in this time
+  // step
+  double evapotranspiration;
+  // mean fractional soil wetness (soilWater/soilWHC) over this time step
+  // (linear mean: mean of wetness at start of time step and wetness at end of
+  // time step)
+  double soilWetnessFrac;
+
   // g C * m^-2 taken up, year to date: GROSS photosynthesis
   double yearlyGpp;
   // g C * m^-2 respired, year to date
@@ -622,6 +641,8 @@ typedef struct TrackerVars {  // variables to track various things
   double yearlyNpp;
   // g C * m^-2 given off, year to date
   double yearlyNee;
+  // g C * m^-2 litterfall, year to date: SUM litter
+  double yearlyLitter;
   // g C * m^-2 taken up, to date: GROSS photosynthesis
   double totGpp;
   // g C * m^-2 respired, to date
@@ -634,39 +655,19 @@ typedef struct TrackerVars {  // variables to track various things
   double totNpp;
   // g C * m^-2 given off, to date
   double totNee;
-  // cm water evaporated/sublimated (sublimed???) or transpired in this time
-  // step
-  double evapotranspiration;
-  // mean fractional soil wetness (soilWater/soilWHC) over this time step
-  // (linear mean: mean of wetness at start of time step and wetness at end of
-  // time step)
-  double soilWetnessFrac;
 
-  // g C m-2 of root respiration
-  double rRoot;
-  // Soil respiration (microbes+root)
-  double rSoil;
-
-  // Wood and foliar respiration
-  double rAboveground;
-  // g C * m^-2 litterfall, year to date: SUM litter
-  double yearlyLitter;
-
-  // g C * m^-2 wood creation
-  double woodCreation;
+  // Previous step year used for yearly tracker rollover logic
+  int lastYear;
 
   // g C * m^-2 methane production
   double methane;
 
   // g N * m^-2 ground area, Mineral N lost to volatilization
   double n2o;
-
   // g N * m^-2 N leached from soil mineral N pool
   double nLeaching;
-
   // g N * m^-2 N fixed by plants
   double nFixation;
-
   // g N * m^-2 N taken up by plants from soil mineral N pool
   double nUptake;
 

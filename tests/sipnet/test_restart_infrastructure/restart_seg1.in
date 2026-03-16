@@ -1,0 +1,4 @@
+FILE_NAME run
+EVENTS 1
+QUIET 1
+RESTART_OUT run.restart

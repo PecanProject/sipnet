@@ -31,7 +31,7 @@ int run(void) {
   initEnv();
 
   //// ONE TILLAGE EVENT
-  initEvents("events_one_tillage.in", 0);
+  initEvents("events_one_tillage.in", "events.out", 0);
   setupEvents();
   procEvents();
   closeEventOutFile();
@@ -45,7 +45,7 @@ int run(void) {
 
   //// TWO TILLAGE EVENTS
   initEventTrackers();
-  initEvents("events_two_tillage.in", 0);
+  initEvents("events_two_tillage.in", "events.out", 0);
   setupEvents();
   readClimData("events_two_tillage.clim");
   climate = firstClimate;

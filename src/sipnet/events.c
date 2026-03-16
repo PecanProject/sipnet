@@ -3,10 +3,10 @@
  * @file events.c
  * @brief Handles reading, parsing, and storing agronomic events for SIPNET simulations.
  *
- * The `events.in` file specifies agronomic events. See the input documentation
- * (currently parameters.md) for information on the format of that file. Also,
- * see test examples in `tests/sipnet/test_events_infrastructure/` and
- * tests/sipnet/test_events_types/.
+ * The configured events input file specifies agronomic events. See the input
+ * documentation (currently parameters.md) for information on that format.
+ * Also, see test examples in `tests/sipnet/test_events_infrastructure/` and
+ * `tests/sipnet/test_events_types/`.
  */
 // clang-format on
 
@@ -26,8 +26,8 @@
 #define EVENT_LINE_SIZE 1024
 
 // Global event variables - definition
-EventNode *gEvents = NULL;
-EventNode *gEvent = NULL;
+static EventNode *gEvents = NULL;
+static EventNode *gEvent = NULL;
 
 // events.out handle, only needed here
 static FILE *eventOutFile = NULL;
@@ -193,7 +193,7 @@ static void checkEventLineTruncation(const char *line, size_t len) {
   }
 }
 
-EventNode *readEventData(char *eventFile) {
+EventNode *readEventData(const char *eventFile) {
   int year, day, eventType;
   int currYear, currDay;
   int numBytes;
@@ -283,8 +283,8 @@ EventNode *readEventData(char *eventFile) {
   return newEvents;
 }
 
-void openEventOutFile(int printHeader) {
-  eventOutFile = openFile(EVENT_OUT_FILE, "w");
+void openEventOutFile(const char *eventOutFilePath, int printHeader) {
+  eventOutFile = openFile(eventOutFilePath, "w");
   if (printHeader) {
     // Use format string analogous to the one in writeEventOut for
     // better alignment (won't be perfect, but definitely better)
@@ -337,17 +337,31 @@ void writeComputedEventOut(int year, int day, const char *type, int numParams,
 void closeEventOutFile() {
   if (eventOutFile) {
     fclose(eventOutFile);
+    eventOutFile = NULL;
   }
 }
 
-void initEvents(char *eventFile, int printHeader) {
+void initEvents(const char *eventInFile, const char *eventOutFilePath,
+                int printHeader) {
   if (ctx.events) {
-    gEvents = readEventData(eventFile);
-    openEventOutFile(printHeader);
+    gEvents = readEventData(eventInFile);
+    openEventOutFile(eventOutFilePath, printHeader);
   }
 }
 
 void setupEvents() { gEvent = gEvents; }
+
+int isFirstEventBefore(int year, int day) {
+  if (gEvents == NULL) {
+    // No events, so nothing to check
+    return 0;
+  }
+  EventNode *firstEvent = gEvents;
+  if (firstEvent->year != year) {
+    return firstEvent->year < year;
+  }
+  return firstEvent->day < day;
+}
 
 void resetEventFluxes(void) {
   fluxes.eventLeafC = 0.0;
