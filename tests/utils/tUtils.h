@@ -4,7 +4,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
+#include <unistd.h>
+
 #include "common/exitCodes.h"
 #include "common/logging.h"
 
@@ -214,6 +218,72 @@ extern inline int replaceFirstOccurrence(const char *file, const char *needle,
   free(newContent);
   fclose(out);
   return 0;
+}
+
+extern inline int truncateFileToSize(const char *file, long size) {
+  if (truncate(file, size) != 0) {
+    logTest("Unable to truncate %s to %ld bytes\n", file, size);
+    return 1;
+  }
+  return 0;
+}
+
+extern inline int getFileSize(const char *file, long *size) {
+  int status = 0;
+  struct stat st;
+  if (stat(file, &st)) {
+    // stat error
+    logTest("Error in stat() for %s\n", file);
+    status = 1;
+  } else {
+    *size = st.st_size;
+    if (*size <= 0) {
+      status = 1;
+    }
+  }
+
+  return status;
+}
+extern inline int truncateFileToNLines(const char *file, int maxLines) {
+  long size;
+  int status = getFileSize(file, &size);
+  if (status) {
+    return 1;
+  }
+
+  if (maxLines < 0)
+    return 1;
+
+  FILE *fp = fopen(file, "r");
+  if (fp == NULL) {
+    logTest("Unable to open %s for reading\n", file);
+    return 1;
+  }
+
+  int c;
+  int lines = 0;
+  long pos = 0;
+
+  while ((c = fgetc(fp)) != EOF) {
+    ++pos;
+
+    if (c == '\n') {
+      ++lines;
+      if (lines == maxLines)
+        break;
+    }
+  }
+
+  /* If file has fewer lines than requested, do nothing */
+  if (lines < maxLines) {
+    fclose(fp);
+    return 0;
+  }
+
+  fclose(fp);
+  int result = truncateFileToSize(file, pos);
+
+  return result;
 }
 
 #endif  // UTILS_H

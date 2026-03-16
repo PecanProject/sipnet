@@ -60,6 +60,6 @@ add_library(tests
         tests/sipnet/test_restart_infrastructure/testRestartMissedEnvi.c
         tests/sipnet/test_restart_infrastructure/testRestartMissedCtx.c
         tests/sipnet/test_restart_infrastructure/mock_state.c
-        tests/sipnet/test_restart_infrastructure/envi_fail.c
-        tests/sipnet/test_restart_infrastructure/ctx_fail.c
+        tests/sipnet/test_restart_infrastructure/bad_code/ctx_fail.c
+        tests/sipnet/test_restart_infrastructure/bad_code/envi_fail.c
 )

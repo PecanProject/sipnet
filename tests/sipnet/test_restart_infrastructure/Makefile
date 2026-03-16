@@ -51,6 +51,6 @@ $(RUN_EXECUTABLES):
 clean:
 	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) *.out *.events *.log *.restart
 	rm -f events.in custom_events.in custom_events.out run.clim run.param run.config
-	rm -f bad_code/*.h.* mock_state mock_state.o restart.clim
+	rm -f bad_code/*.h.* mock_state mock_state.o restart.clim *.o
 
 .PHONY: all tests clean run $(RUN_EXECUTABLES)

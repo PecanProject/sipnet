@@ -310,9 +310,8 @@ validateCheckpointBoundaryForLoad(const char *restartIn,
 
   double hoursUntilMidnight = 24.0 - boundary->time;
   if (hoursUntilMidnight > (stepHours + RESTART_FLOAT_EPSILON)) {
-    logWarning("Restart checkpoint boundary is more than one timestep before "
-               "midnight; "
-               "there is a time gap on resume.\n",
+    logWarning("Restart checkpoint boundary in %s is more than one timestep "
+               "before midnight; there is a time gap on resume.\n",
                restartIn);
     logWarning("Checkpoint boundary: year=%d day=%d time=%.8f length=%.8f\n",
                boundary->year, boundary->day, boundary->time, boundary->length);
@@ -386,7 +385,7 @@ static void validateSchemaLayoutValue(const char *restartIn, const char *key,
   long long parsed = parseIntStrict(restartIn, key, value);
   if (parsed != expected) {
     logError(
-        "Restart schema layout mismatch in %s: key=%s found=%d expected=%d "
+        "Restart schema layout mismatch in %s: key=%s found=%lld expected=%lld "
         "(schema %s)\n",
         restartIn, key, parsed, expected, RESTART_SCHEMA_VERSION);
     exit(EXIT_CODE_BAD_RESTART_PARAMETER);
@@ -418,7 +417,7 @@ void setFieldValue(StateField *sf, const void *valPtr) {
       // memset is needed here because the static char mem will be used more
       // than once when we have both load and write
       memset(sf->value, 0, sizeof(char) * len);
-      strncpy((char *)sf->value, (char *)valPtr, len);
+      strncpy((char *)sf->value, (char *)valPtr, len - 1);
     } break;
     case FT_SPECIAL:
     case FT_INVALID:

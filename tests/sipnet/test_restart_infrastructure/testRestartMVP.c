@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
 
 #include "common/logging.h"
 #include "utils/tUtils.h"
@@ -19,61 +17,10 @@ static int prepRunFiles(const char *climFile, const char *eventFile) {
   return status;
 }
 
-static int truncateFileToSize(const char *file, long size) {
-  if (truncate(file, size) != 0) {
-    logTest("Unable to truncate %s to %ld bytes\n", file, size);
-    return 1;
-  }
-  return 0;
-}
-
-static int truncateFileToNLines(const char *file, int maxLines) {
-  struct stat st;
-  stat(file, &st);
-  long size = st.st_size;
-  if (size <= 0) {
-    return 1;
-  }
-  if (maxLines < 0)
-    return 1;
-
-  FILE *fp = fopen(file, "r");
-  if (fp == NULL) {
-    logTest("Unable to open %s for reading\n", file);
-    return 1;
-  }
-
-  int c;
-  int lines = 0;
-  long pos = 0;
-
-  while ((c = fgetc(fp)) != EOF) {
-    ++pos;
-
-    if (c == '\n') {
-      ++lines;
-      if (lines == maxLines)
-        break;
-    }
-  }
-
-  /* If file has fewer lines than requested, do nothing */
-  if (lines < maxLines) {
-    fclose(fp);
-    return 0;
-  }
-
-  fclose(fp);
-  int result = truncateFileToSize(file, pos);
-
-  return result;
-}
-
 static int stripFinalNewline(const char *file) {
-  struct stat st;
-  stat(file, &st);
-  long size = st.st_size;
-  if (size <= 0) {
+  long size;
+  int status = getFileSize(file, &size);
+  if (status) {
     return 1;
   }
 
@@ -118,10 +65,9 @@ static int fileStartsWith(const char *file, const char *expectedPrefix) {
 
 static int replaceFirstLineStartingWith(const char *file, const char *prefix,
                                         const char *replacementLine) {
-  struct stat st;
-  stat(file, &st);
-  long size = st.st_size;
-  if (size <= 0) {
+  long size;
+  int status = getFileSize(file, &size);
+  if (status) {
     return 1;
   }
 
