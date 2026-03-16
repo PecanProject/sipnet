@@ -27,13 +27,13 @@ On resume, SIPNET executes:
 Checkpoint format is ASCII text with one key/value per line:
 
 - header: `SIPNET_RESTART 1.0`
-- metadata: `model_version`, `build_info`, `checkpoint_utc_epoch`, `processed_steps`
+- metadata: `meta_info.model_version`, `meta_info.build_info`, `meta_info.checkpoint_utc_epoch`, `meta_info.processed_steps`
 - schema layout guard metadata: `schema_layout.envi_size`, `schema_layout.trackers_size`, `schema_layout.phenology_trackers_size`, `schema_layout.event_trackers_size`
 - mode flags: `flags.*`
 - boundary metadata: `boundary.year`, `boundary.day`, `boundary.time`, `boundary.length`
 - mean tracker metadata: `mean.npp.*`
 - full runtime state: `envi.*`, `trackers.*`, `phenology.*`, `event_trackers.*`
-- mean ring buffers: `mean.npp.values.length` + `mean.npp.values.<idx>`, `mean.npp.weights.length` + `mean.npp.weights.<idx>`
+- mean ring buffers: `mean.npp.values.<idx>`, `mean.npp.weights.<idx>`
 - end marker: `end_restart 1`
 
 Example checkpoint content is exercised in
