@@ -321,7 +321,7 @@ validateCheckpointBoundaryForLoad(const char *restartIn,
 // Assumes input char *dest is BUILD_INFO_BUFFER_SIZE in length
 static void sanitizeBuildInfo(char *dest, const char *src) {
   size_t ind = 0;
-  while (src[ind] != '\0' && ind < (BUILD_INFO_BUFFER_SIZE - 1)) {
+  while (ind < (BUILD_INFO_BUFFER_SIZE - 1) && src[ind] != '\0') {
     char c = src[ind];
     if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
       dest[ind] = '_';
@@ -654,6 +654,14 @@ static void readRestartState(const char *restartIn, RestartState *state,
   }
 
   fclose(in);
+
+  // Validate that the checkpoint file did not attempt to resize the MeanTracker
+  if (meanNPP->length != meanLength) {
+    logError("Restart schema mismatch in %s: mean.npp.length (%d) does not "
+             "match the compiled model length (%d)\n",
+             restartIn, meanNPP->length, meanLength);
+    exit(EXIT_CODE_BAD_RESTART_PARAMETER);
+  }
 
   verifySeenBatch(state->metaPF, NUM_META_FIELDS, restartIn);
   verifySeenBatch(state->schemaPF, NUM_SCHEMA_FIELDS, restartIn);
