@@ -242,6 +242,7 @@ int testNFixation(void) {
   logTest("Running testNFixation\n");
 
   // Half demand met by fixation, half met by uptake
+  logTest("Checking 2 minN\n");
   minN = 2;
   nFixFracMax = 1;
   nFixHalved = 2;
@@ -256,6 +257,7 @@ int testNFixation(void) {
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
 
   // Zero demand met by fixation, all demand met by uptake
+  logTest("Checking 1 minN\n");
   minN = 1;
   nFixFracMax = 0.5;
   nFixHalved = 0;
@@ -269,20 +271,17 @@ int testNFixation(void) {
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
 
-  // Zero demand by uptake due to zero minN pool, this test will
-  // need to change when limitation is implemented
+  // Zero minN (which really shouldn't happen, but still good to test edge case)
+  // leads to zero growth (due to N limitation), and thus zero fluxes
+  logTest("Checking 0 minN\n");
   minN = 0;
   nFixFracMax = 0.5;
   nFixHalved = 2;
   nDemand = 10;
   initNFixationState(minN, nFixFracMax, nFixHalved);
-  nFixInhib = nFixHalved / (nFixHalved + minN);
-  nFixFrac = nFixFracMax * nFixInhib;
-  expNFixation = nFixFrac * nDemand;
-  expNUptake = (1 - nFixFrac) * nDemand;
   calcNFixationAndUptakeFluxes();
-  status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
-  status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  status |= checkFlux(fluxes.nFixation, 0, "N fixation");
+  status |= checkFlux(fluxes.nUptake, 0, "N uptake");
 
   // Check minN for the last
   updateNitrogenPools();
@@ -361,6 +360,7 @@ int run(void) {
   status |= testFertilization();
   status |= testNLeaching();
   status |= testOrganicN();
+  status |= testNFixation();
 
   return status;
 }
