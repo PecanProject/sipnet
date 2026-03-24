@@ -26,6 +26,11 @@ void resetState() {
   // State altered by one test or another, and needs to be reset at the
   // start of each test
 
+  // Respiration/Mineralization
+  fluxes.rSoil = 0.0;
+  fluxes.rLitter = 0.0;
+  fluxes.nMin = 0.0;
+
   // Volatilization
   params.nVolatilizationFrac = 0;
   fluxes.nVolatilization = 0;
@@ -229,6 +234,28 @@ void initNFixationState(double initN, double nFixFracMax, double nFixHalved) {
   envi.minN = initN;
   params.nFixationFracMax = nFixFracMax;
   params.halfNFixationMax = nFixHalved;
+
+  // We need some demand. For convenience:
+  //  leafCN = 20
+  //  woodCN = 100
+  //  fineRootCN = 40
+  fluxes.leafOnCreation = 0;  // too messy
+  fluxes.leafCreation = 60;  // 3 demand flux
+  fluxes.woodCreation = 500;  // 5
+  fluxes.fineRootCreation = 40;  // 1
+  fluxes.coarseRootCreation = 100;  // 1 = 10 total
+}
+
+int checkFinalMinN(double initMinN, double expMinN) {
+  int status = 0;
+  updateNitrogenPools();
+  if (!compareDoubles(envi.minN, expMinN)) {
+    status = 1;
+    logTest("For init minN %6.3f: minN pool is %8.3f, expected %8.3f\n",
+            initMinN, envi.minN, expMinN);
+  }
+
+  return status;
 }
 
 int testNFixation(void) {
@@ -239,11 +266,11 @@ int testNFixation(void) {
   double expNFixation;
   double expNUptake;
   double nDemand;
+  double expMinN;
   logTest("Running testNFixation\n");
 
-  // Half demand met by fixation, half met by uptake
-  logTest("Checking 2 minN\n");
-  minN = 2;
+  // Plenty of min N
+  minN = 4;
   nFixFracMax = 1;
   nFixHalved = 2;
   nDemand = 10;
@@ -255,12 +282,13 @@ int testNFixation(void) {
   calcNFixationAndUptakeFluxes();
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  expMinN = minN - expNUptake * climate->length;
+  status |= checkFinalMinN(minN, expMinN);
 
-  // Zero demand met by fixation, all demand met by uptake
-  logTest("Checking 1 minN\n");
+  // Just above min N needed
   minN = 1;
-  nFixFracMax = 0.5;
-  nFixHalved = 0;
+  nFixFracMax = 0.75;
+  nFixHalved = 1;
   nDemand = 10;
   initNFixationState(minN, nFixFracMax, nFixHalved);
   nFixInhib = nFixHalved / (nFixHalved + minN);
@@ -270,28 +298,38 @@ int testNFixation(void) {
   calcNFixationAndUptakeFluxes();
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  expMinN = minN - expNUptake * climate->length;
+  status |= checkFinalMinN(minN, expMinN);
+
+  // Just below min N needed; limitation will hit, should be 20% reduction
+  double red = 0.8;
+  minN = 0.5;
+  nFixFracMax = 0.75;
+  nFixHalved = 1;
+  nDemand = 10;
+  initNFixationState(minN, nFixFracMax, nFixHalved);
+  nFixInhib = nFixHalved / (nFixHalved + minN);
+  nFixFrac = nFixFracMax * nFixInhib;
+  expNFixation = nFixFrac * nDemand * red;
+  expNUptake = (1 - nFixFrac) * nDemand * red;
+  calcNFixationAndUptakeFluxes();
+  status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
+  status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  expMinN = minN - expNUptake * climate->length;
+  status |= checkFinalMinN(minN, expMinN);
 
   // Zero minN (which really shouldn't happen, but still good to test edge case)
-  // leads to zero growth (due to N limitation), and thus zero fluxes
-  logTest("Checking 0 minN\n");
+  // leads to minimal growth due to N limitation - but mineralization lets some
+  // happen
   minN = 0;
   nFixFracMax = 0.5;
   nFixHalved = 2;
-  nDemand = 10;
   initNFixationState(minN, nFixFracMax, nFixHalved);
   calcNFixationAndUptakeFluxes();
   status |= checkFlux(fluxes.nFixation, 0, "N fixation");
   status |= checkFlux(fluxes.nUptake, 0, "N uptake");
-
-  // Check minN for the last
-  updateNitrogenPools();
-  double expMinN = minN - (expNUptake * climate->length);
-  int minStatus = 0;
-  if (!compareDoubles(envi.minN, expMinN)) {
-    minStatus = 1;
-    logTest("minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
-  }
-  status |= minStatus;
+  expMinN = 0;
+  status |= checkFinalMinN(minN, expMinN);
 
   return status;
 }

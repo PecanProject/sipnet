@@ -1418,8 +1418,6 @@ void calcNFixationAndUptakeFluxes(void) {
   double nFixationFrac = calcNFixationFrac();
   double maxUptake = maxDemand * (1 - nFixationFrac);
 
-  logInfo("demand %f maxUptake %f availN %f\n", maxDemand, maxUptake,
-          availableMinN);
   if (maxUptake > TINY && maxUptake > availableMinN) {
     // More demand than supply - N limitation is in effect
     double reduction = availableMinN / maxUptake;
