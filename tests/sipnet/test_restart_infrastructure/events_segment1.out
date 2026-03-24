@@ -1,3 +1,0 @@
-year  day  type     param_name=delta[,param_name=delta,...]
-2016   47  fert     fluxes.eventOrgN=120.00,fluxes.eventLitterC=40.00,fluxes.eventMinN=80.00,fluxes.eventInputC=40.00,fluxes.eventInputN=200.00
-2016   47  till     eventTrackers.d_till_mod=0.20
