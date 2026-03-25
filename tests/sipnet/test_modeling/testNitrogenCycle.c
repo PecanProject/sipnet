@@ -355,9 +355,18 @@ void initNLimitationState(double initN, double initPhotosynthesis,
   fluxes.photosynthesis = initPhotosynthesis;
 }
 
-int testNLimitationOnPlantFluxes(void) {
+int checkNLimitationFlux(double flux, double exp, const char *label) {
   int status = 0;
-  logTest("Running testNLimitationOnPlantFluxes\n");
+  if (!compareDoubles(flux, exp)) {
+    status = 1;
+    logTest("%s is %8.4f, expected %8.4f\n", label, flux, exp);
+  }
+  return status;
+}
+
+int testNLimitation(void) {
+  int status = 0;
+  logTest("Running testNLimitation\n");
 
   // N limitation with no fixation - 50% reduction
   // maxDemandFlux = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
@@ -371,32 +380,18 @@ int testNLimitationOnPlantFluxes(void) {
 
   calcNFixationAndUptakeFluxes();
 
-  if (!compareDoubles(fluxes.leafCreation, 60 * reduction)) {
-    status = 1;
-    logTest("leafCreation is %8.4f, expected %8.4f\n", fluxes.leafCreation,
-            60 * reduction);
-  }
-  if (!compareDoubles(fluxes.woodCreation, 500 * reduction)) {
-    status = 1;
-    logTest("woodCreation is %8.4f, expected %8.4f\n", fluxes.woodCreation,
-            500 * reduction);
-  }
-  if (!compareDoubles(fluxes.fineRootCreation, 40 * reduction)) {
-    status = 1;
-    logTest("fineRootCreation is %8.4f, expected %8.4f\n",
-            fluxes.fineRootCreation, 40 * reduction);
-  }
-  if (!compareDoubles(fluxes.coarseRootCreation, 100 * reduction)) {
-    status = 1;
-    logTest("coarseRootCreation is %8.4f, expected %8.4f\n",
-            fluxes.coarseRootCreation, 100 * reduction);
-  }
+  status |=
+      checkNLimitationFlux(fluxes.leafCreation, 60 * reduction, "leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
+                                 "woodCreation");
+  status |= checkNLimitationFlux(fluxes.fineRootCreation, 40 * reduction,
+                                 "fineRootCreation");
+  status |= checkNLimitationFlux(fluxes.coarseRootCreation, 100 * reduction,
+                                 "coarseRootCreation");
+
   double expPhoto = initPhoto - preReductionFlux * (1 - reduction);
-  if (!compareDoubles(fluxes.photosynthesis, expPhoto)) {
-    status = 1;
-    logTest("photosynthesis is %8.4f, expected %8.4f\n",
-            fluxes.photosynthesis, expPhoto);
-  }
+  status |=
+      checkNLimitationFlux(fluxes.photosynthesis, expPhoto, "photosynthesis");
 
   // Sufficient mineralization (nMin) prevents N limitation
   // minN=0.1, nMin=12 -> availableMinN = 0.1 + 12 * 0.125 = 1.6 > 1.25
@@ -405,25 +400,12 @@ int testNLimitationOnPlantFluxes(void) {
   fluxes.nMin = 12.0;
 
   calcNFixationAndUptakeFluxes();
-
-  if (!compareDoubles(fluxes.leafCreation, 60)) {
-    status = 1;
-    logTest("With sufficient mineralization, leafCreation is %8.4f, expected "
-            "60\n",
-            fluxes.leafCreation);
-  }
-  if (!compareDoubles(fluxes.woodCreation, 500)) {
-    status = 1;
-    logTest("With sufficient mineralization, woodCreation is %8.4f, expected "
-            "500\n",
-            fluxes.woodCreation);
-  }
-  if (!compareDoubles(fluxes.photosynthesis, initPhoto)) {
-    status = 1;
-    logTest("With sufficient mineralization, photosynthesis is %8.4f, "
-            "expected %8.4f\n",
-            fluxes.photosynthesis, initPhoto);
-  }
+  status |= checkNLimitationFlux(fluxes.leafCreation, 60 * reduction,
+                                 "[sufficient mineralization] leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
+                                 "[sufficient mineralization] woodCreation");
+  status |= checkNLimitationFlux(fluxes.photosynthesis, initPhoto,
+                                 "[sufficient mineralization] photosynthesis");
 
   // leafOnCreation also gets reduced when N-limited
   // leafOnCreation=50: net demand = 50*(1/20-1/100) = 2.0, total demand = 12
@@ -432,23 +414,17 @@ int testNLimitationOnPlantFluxes(void) {
   double leafOnInit = 50.0;
   double leafOnReduction = 0.5;
   initNLimitationState(0.75, initPhoto, leafOnInit);
-  double preReductionFluxWithLeafOn = fluxes.leafOnCreation + fluxes.woodCreation +
-                                      fluxes.leafCreation + fluxes.fineRootCreation +
-                                      fluxes.coarseRootCreation;
+  double preReductionFluxWithLeafOn =
+      fluxes.leafOnCreation + fluxes.woodCreation + fluxes.leafCreation +
+      fluxes.fineRootCreation + fluxes.coarseRootCreation;
 
   calcNFixationAndUptakeFluxes();
 
-  if (!compareDoubles(fluxes.leafOnCreation, leafOnInit * leafOnReduction)) {
-    status = 1;
-    logTest("leafOnCreation is %8.4f, expected %8.4f\n",
-            fluxes.leafOnCreation, leafOnInit * leafOnReduction);
-  }
+  status |= checkNLimitationFlux(
+      fluxes.leafOnCreation, leafOnInit * leafOnReduction, "leafOnCreation");
   expPhoto = initPhoto - preReductionFluxWithLeafOn * (1 - leafOnReduction);
-  if (!compareDoubles(fluxes.photosynthesis, expPhoto)) {
-    status = 1;
-    logTest("With leafOnCreation, photosynthesis is %8.4f, expected %8.4f\n",
-            fluxes.photosynthesis, expPhoto);
-  }
+  status |= checkNLimitationFlux(fluxes.photosynthesis, expPhoto,
+                                 "[leafOn] photosynthesis");
 
   return status;
 }
@@ -518,7 +494,7 @@ int run(void) {
   status |= testNLeaching();
   status |= testOrganicN();
   status |= testNFixation();
-  status |= testNLimitationOnPlantFluxes();
+  status |= testNLimitation();
 
   return status;
 }
