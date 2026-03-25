@@ -30,6 +30,8 @@ void resetState() {
   fluxes.rSoil = 0.0;
   fluxes.rLitter = 0.0;
   fluxes.nMin = 0.0;
+  // Also reset photosynthesis since N limitation can modify it
+  fluxes.photosynthesis = 0.0;
 
   // Volatilization
   params.nVolatilizationFrac = 0;
@@ -335,6 +337,100 @@ int testNFixation(void) {
 }
 
 /////
+// N Limitation effects on plant growth fluxes
+void initNLimitationState(double initN, double initPhotosynthesis,
+                          double initLeafOnCreation) {
+  resetState();
+  envi.minN = initN;
+  params.nFixationFracMax = 0;  // No N fixation for clean testing
+  params.halfNFixationMax = 0;
+
+  // Demand setup (same layout as initNFixationState):
+  //  leafCN = 20, woodCN = 100, fineRootCN = 40
+  fluxes.leafOnCreation = initLeafOnCreation;
+  fluxes.leafCreation = 60;  // 3 demand flux
+  fluxes.woodCreation = 500;  // 5
+  fluxes.fineRootCreation = 40;  // 1
+  fluxes.coarseRootCreation = 100;  // 1; 10 total demand without leafOnCreation
+  fluxes.photosynthesis = initPhotosynthesis;
+}
+
+int checkNLimitationFlux(double flux, double exp, const char *label) {
+  int status = 0;
+  if (!compareDoubles(flux, exp)) {
+    status = 1;
+    logTest("%s is %8.4f, expected %8.4f\n", label, flux, exp);
+  }
+  return status;
+}
+
+int testNLimitation(void) {
+  int status = 0;
+  logTest("Running testNLimitation\n");
+
+  // N limitation with no fixation - 50% reduction
+  // maxDemandFlux = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
+  // availableMinN = 0.625 -> reduction = 0.625 / 1.25 = 0.5
+  double initPhoto = 1000.0;
+  double reduction = 0.5;
+  initNLimitationState(0.625, initPhoto, 0);
+  double preReductionFlux = fluxes.leafOnCreation + fluxes.woodCreation +
+                            fluxes.leafCreation + fluxes.fineRootCreation +
+                            fluxes.coarseRootCreation;
+
+  calcNFixationAndUptakeFluxes();
+
+  status |=
+      checkNLimitationFlux(fluxes.leafCreation, 60 * reduction, "leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
+                                 "[50%] woodCreation");
+  status |= checkNLimitationFlux(fluxes.fineRootCreation, 40 * reduction,
+                                 "[50%] fineRootCreation");
+  status |= checkNLimitationFlux(fluxes.coarseRootCreation, 100 * reduction,
+                                 "[50%] coarseRootCreation");
+
+  double expPhoto = initPhoto - preReductionFlux * (1 - reduction);
+  status |=
+      checkNLimitationFlux(fluxes.photosynthesis, expPhoto, "photosynthesis");
+
+  // Sufficient mineralization (nMin) prevents N limitation
+  // minN=0.1, nMin=12 -> availableMinN = 0.1 + 12 * 0.125 = 1.6 > 1.25
+  // -> no limitation, all creation fluxes stay at original values
+  initNLimitationState(0.1, initPhoto, 0);
+  fluxes.nMin = 12.0;
+
+  calcNFixationAndUptakeFluxes();
+  status |= checkNLimitationFlux(fluxes.leafCreation, 60,
+                                 "[boosted nMin] leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500,
+                                 "[boosted nMin] woodCreation");
+  status |= checkNLimitationFlux(fluxes.photosynthesis, initPhoto,
+                                 "[boosted nMin] photosynthesis");
+
+  // leafOnCreation also gets reduced when N-limited
+  // leafOnCreation=50: net demand = 50*(1/20-1/100) = 2.0, total demand = 12
+  // maxDemand = 12 * 0.125 = 1.5, maxUptake = 1.5
+  // minN = 0.75 -> reduction = 0.75 / 1.5 = 0.5
+  double leafOnInit = 50.0;
+  double leafOnReduction = 0.5;
+  initNLimitationState(0.75, initPhoto, leafOnInit);
+  double preReductionFluxWithLeafOn =
+      fluxes.leafOnCreation + fluxes.woodCreation + fluxes.leafCreation +
+      fluxes.fineRootCreation + fluxes.coarseRootCreation;
+
+  calcNFixationAndUptakeFluxes();
+
+  status |=
+      checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit * leafOnReduction,
+                           "[leafOn] leafOnCreation");
+  expPhoto = initPhoto - preReductionFluxWithLeafOn * (1 - leafOnReduction);
+  status |= checkNLimitationFlux(fluxes.photosynthesis, expPhoto,
+                                 "[leafOn] photosynthesis");
+
+  return status;
+}
+
+/////
 // Organic N pools
 void initOrganicNState(double initLitterN, double initSoilN) {
   resetState();
@@ -399,6 +495,7 @@ int run(void) {
   status |= testNLeaching();
   status |= testOrganicN();
   status |= testNFixation();
+  status |= testNLimitation();
 
   return status;
 }
