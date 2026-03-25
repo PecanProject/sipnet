@@ -348,8 +348,8 @@ void initNLimitationState(double initN, double initPhotosynthesis,
   // Demand setup (same layout as initNFixationState):
   //  leafCN = 20, woodCN = 100, fineRootCN = 40
   fluxes.leafOnCreation = initLeafOnCreation;
-  fluxes.leafCreation = 60;    // 3 demand flux
-  fluxes.woodCreation = 500;   // 5
+  fluxes.leafCreation = 60;  // 3 demand flux
+  fluxes.woodCreation = 500;  // 5
   fluxes.fineRootCreation = 40;  // 1
   fluxes.coarseRootCreation = 100;  // 1; 10 total demand without leafOnCreation
   fluxes.photosynthesis = initPhotosynthesis;
@@ -383,11 +383,11 @@ int testNLimitation(void) {
   status |=
       checkNLimitationFlux(fluxes.leafCreation, 60 * reduction, "leafCreation");
   status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
-                                 "woodCreation");
+                                 "[50%] woodCreation");
   status |= checkNLimitationFlux(fluxes.fineRootCreation, 40 * reduction,
-                                 "fineRootCreation");
+                                 "[50%] fineRootCreation");
   status |= checkNLimitationFlux(fluxes.coarseRootCreation, 100 * reduction,
-                                 "coarseRootCreation");
+                                 "[50%] coarseRootCreation");
 
   double expPhoto = initPhoto - preReductionFlux * (1 - reduction);
   status |=
@@ -400,12 +400,12 @@ int testNLimitation(void) {
   fluxes.nMin = 12.0;
 
   calcNFixationAndUptakeFluxes();
-  status |= checkNLimitationFlux(fluxes.leafCreation, 60 * reduction,
-                                 "[sufficient mineralization] leafCreation");
-  status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
-                                 "[sufficient mineralization] woodCreation");
+  status |= checkNLimitationFlux(fluxes.leafCreation, 60,
+                                 "[boosted nMin] leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500,
+                                 "[boosted nMin] woodCreation");
   status |= checkNLimitationFlux(fluxes.photosynthesis, initPhoto,
-                                 "[sufficient mineralization] photosynthesis");
+                                 "[boosted nMin] photosynthesis");
 
   // leafOnCreation also gets reduced when N-limited
   // leafOnCreation=50: net demand = 50*(1/20-1/100) = 2.0, total demand = 12
@@ -420,8 +420,9 @@ int testNLimitation(void) {
 
   calcNFixationAndUptakeFluxes();
 
-  status |= checkNLimitationFlux(
-      fluxes.leafOnCreation, leafOnInit * leafOnReduction, "leafOnCreation");
+  status |=
+      checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit * leafOnReduction,
+                           "[leafOn] leafOnCreation");
   expPhoto = initPhoto - preReductionFluxWithLeafOn * (1 - leafOnReduction);
   status |= checkNLimitationFlux(fluxes.photosynthesis, expPhoto,
                                  "[leafOn] photosynthesis");
