@@ -1445,7 +1445,7 @@ void calcNFixationAndUptakeFluxes(void) {
  * Write out a leafon event if one happened
  *
  * Delayed event writing for leaf-on, if appropriate, since the value may
-// have changed due to N limitation
+ * have changed due to N limitation
  */
 void writeLeafOnEventIfNeeded(void) {
   if (fluxes.leafOnCreation > TINY && ctx.events) {
