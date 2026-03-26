@@ -677,8 +677,8 @@ demand is diagnosed from potential biomass growth derived from five-day averaged
 
 If this demand is greater than available mineral nitrogen, nitrogen limitation reduces plant growth.
 
-Nitrogen limitation is applied during the flux calculation stage of the model update sequence, prior to carbon
-allocation to plant biomass pools and before any pool updates occur. N limitation is implemented as follows:
+Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
+implemented as follows:
 
 - Calculate the amount by which plant N demand exceeds available supply [^*].
 
