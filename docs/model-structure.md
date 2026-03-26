@@ -650,8 +650,8 @@ D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
 where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is
 reduced by half (g N m$^{-2}$).
 
-Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ (\eqref{eq:
-plant_n_demand}):
+Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ 
+\eqref{eq:plant_n_demand}:
 
 \begin{equation}
 F^N_\text{fix} = f_\text{fix} \cdot F^N_\text{demand}
@@ -690,15 +690,8 @@ allocation to plant biomass pools and before any pool updates occur. N limitatio
 - Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed
 - stoichiometry.
 
-- Carbon associated with the unmet growth demand is subtracted from potential GPP to maintain mass balance \eqref{eq:
-  Braswell_A17} [^+].
-
 [^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen
 uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
-
-[^+]: Under nitrogen limitation, excess carbon is prevented from entering the system by down-regulating GPP. This is
-consistent with SIPNET's use of GPP as an effective ecosystem scale input rather than instantaneous leaf-level
-assimilation.
 
 ## Water Dynamics
 
@@ -706,14 +699,12 @@ assimilation.
 
 \begin{equation}
 \frac{dW_{\text{soil}}}{dt} =
-(1 - f_{\text{intercept}})\,F^W_{\text{precip}}
-
-+ F^W_{\text{irrig,soil}}
-
-- F^W_{\text{drainage}}
-- F^W_{\text{trans}}
-  \label{eq:Braswell_A4}
-  \end{equation}
+(1 - f_{\text{intercept}})\,F^W_{\text{precip}} +
+F^W_{\text{irrig,soil}} -
+F^W_{\text{drainage}} -
+F^W_{\text{trans}}
+\label{eq:Braswell_A4}
+\end{equation}
 
 This is equation (A4) from Braswell, et al. (2005).
 
