@@ -385,6 +385,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "soilMethaneRate", &(params.soilMethaneRate), ctx.anaerobic);
   initializeOneModelParam(modelParams, "litterMethaneRate", &(params.litterMethaneRate), ctx.anaerobic);
 
+  // Water drainage
+  initializeOneModelParam(modelParams, "waterDrainFrac", &(params.waterDrainFrac), 1);
+
   // NOLINTEND
   // clang-format on
 
@@ -666,7 +669,9 @@ void moisture(double *trans, double *dWater, double potGrossPsn, double vpd,
     potTrans = potGrossPsn / wue * 1000.0 * (44.0 / 12.0) * (1.0 / 10000.0);
 
     // :: from [1], discussion below eq (A14)
-    removableWater = soilWater * params.waterRemoveFrac;
+    // Cap the available water at soil WHC; excess flooding/pooling is not
+    // available
+    removableWater = fmin(soilWater, params.soilWHC) * params.waterRemoveFrac;
 
     // :: from [2], snowpack modification
     if (climate->tsoil < params.frozenSoilThreshold) {
@@ -978,7 +983,8 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // drain any water that remains beyond water holding capacity:
   if (waterRemaining > params.soilWHC) {
-    *drainage = (waterRemaining - params.soilWHC) / (climate->length);
+    *drainage = (waterRemaining - params.soilWHC) / (climate->length) *
+                params.waterDrainFrac;
   } else {
     *drainage = 0;
   }
@@ -2025,10 +2031,6 @@ void setupModel(void) {
   envi.soilWater = params.soilWFracInit * params.soilWHC;
   if (envi.soilWater < 0) {
     envi.soilWater = 0;
-  } else if (envi.soilWater > params.soilWHC) {
-    // TODO: consider removing this as part of waterDrainFrac
-    //   when #273 is implemented
-    envi.soilWater = params.soilWHC;
   }
 
   envi.snow = params.snowInit;
