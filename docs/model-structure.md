@@ -30,7 +30,6 @@ Implementation in source code (sipnet.c) is annotated with references to specifi
 
 - The general approach used to define variables and subscripts is defined in [Notation](parameters.md#notation).
 - Specific parameter, flux, and state definitions are documented in [Model States and Parameters](parameters.md#run-time-parameters).
-- $\mathfrak{Fraktur Font}$ is used to identify features that have not been implemented. This font will be removed as features are implemented.
 
 ## Carbon Dynamics
 
@@ -440,7 +439,7 @@ CN_j = \frac{C_j}{N_j}.
 
 This is used to calculate C:N-dependency $D_{CN}$ in \eqref{eq:cn_dep}.
 
-### C:N Dependency Function $(D_{CN})$
+### C:N Dependency Function $D_{CN}$
 
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
 This term is used in calculation of heterotrophic respiration in \eqref{eq:rh}.
@@ -454,9 +453,9 @@ Here, $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposi
 reducing the rate of decomposition.
 The value $k_{CN}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
-## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
+## Nitrogen Dynamics $\frac{dN}{dt}$
 
-### $\frak{Plant \ Biomass \ Nitrogen}$
+### Plant Biomass Nitrogen
 
 Similar to the stoichiometric coupling of litter fluxes, the change in plant biomass N over time is stoichiometrically
 coupled to plant biomass C:
