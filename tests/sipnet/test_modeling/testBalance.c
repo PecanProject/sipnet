@@ -67,8 +67,7 @@ int checkNitrogen(void) {
 
   int status = 0;
   if (fabs(balanceTracker.deltaN) > TEST_EPS) {
-    // ENABLE WHEN NITROGEN IS FINISHED AND LEAF ON/OFF IS HANDLED
-    // status = 1;
+    status = 1;
     logTest("nitrogen balance check delta %8.5f (Y %d D %d T %4.2f)\n",
             balanceTracker.deltaN, climate->year, climate->day, climate->time);
   }
