@@ -1393,11 +1393,15 @@ double calcMinNNonUptakeFluxes(void) {
  */
 double calcNFixationFrac(void) {
   double nFixationInhibition;
-  // Calculate inhibition of N fixation by soil mineral N
-  // using down-regulation function with increasing soil min N
-  // dimensionless between 0 and 1
-  nFixationInhibition =
-      params.halfNFixationMax / (params.halfNFixationMax + envi.minN);
+  double denom = params.halfNFixationMax + envi.minN;
+  if (denom < TINY) {
+    nFixationInhibition = 1;
+  } else {
+    // Calculate inhibition of N fixation by soil mineral N
+    // using down-regulation function with increasing soil min N
+    // dimensionless between 0 and 1
+    nFixationInhibition = params.halfNFixationMax / denom;
+  }
   // Calculate fraction of plant N demand met by fixation
   // dimensionless
   return params.nFixationFracMax * nFixationInhibition;
@@ -1413,7 +1417,8 @@ void calcNFixationAndUptakeFluxes(void) {
   double nDemandFlux = maxDemandFlux;
 
   double nonUptakeFluxes = calcMinNNonUptakeFluxes();
-  double availableMinN = envi.minN + (nonUptakeFluxes * climate->length);
+  double availableMinN =
+      fmax(0, envi.minN + (nonUptakeFluxes * climate->length));
 
   double nFixationFrac = calcNFixationFrac();
   double maxUptake = maxDemand * (1 - nFixationFrac);
