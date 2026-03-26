@@ -1426,20 +1426,12 @@ void calcNFixationAndUptakeFluxes(void) {
             maxUptake, availableMinN, (1 - reduction) * 100, climate->year,
             climate->day, climate->time);
 
-    double preReductionFlux = fluxes.leafOnCreation + fluxes.woodCreation +
-                              fluxes.leafCreation + fluxes.fineRootCreation +
-                              fluxes.coarseRootCreation;
-
     // Reduce all drains on soil N
     fluxes.leafOnCreation *= reduction;
     fluxes.woodCreation *= reduction;
     fluxes.leafCreation *= reduction;
     fluxes.fineRootCreation *= reduction;
     fluxes.coarseRootCreation *= reduction;
-
-    // Reduce GPP by the same amount; note that this can drive GPP negative,
-    // which is not physically possible, but this is a bookkeeping activity
-    fluxes.photosynthesis -= preReductionFlux * (1 - reduction);
 
     nDemandFlux = calcPlantNDemand();
   }
