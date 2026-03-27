@@ -57,6 +57,8 @@ sections to include in release notes:
 
 ### Changed
 
+- Reduced many `logWarning` messages to `logInfo` (#302)
+
 ### Removed
 - 'Notes' line at top of `sipnet.out` header (#267)
 
