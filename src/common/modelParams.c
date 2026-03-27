@@ -32,8 +32,7 @@ void setAll(double *array, int length, double value) {
 
 // Checks to make sure that all parameters with isRequired=true have been read
 // If not, kills program
-// Writes out names of all parameters that weren't read (even if not required,
-// as a warning message)
+// Writes out names of all parameters that weren't read (even if not required)
 // Also prints out a list of obsolete params that were read
 void checkAllRead(ModelParams *ModelParams) {
   int i, okay, missingOptParam = 0;
