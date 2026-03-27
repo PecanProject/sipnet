@@ -163,9 +163,9 @@ void readClimData(const char *climFile) {
     case NUM_CLIM_FILE_COLS_LEGACY:
       expectedNumCols = NUM_CLIM_FILE_COLS_LEGACY;
       legacyFormat = 1;
-      logWarning("old climate file format detected (found %d cols); ignoring "
-                 "location and soilWetness columns in %s\n",
-                 numFields, climFile);
+      logInfo("old climate file format detected (found %d cols); ignoring "
+              "location and soilWetness columns in %s\n",
+              numFields, climFile);
       break;
     default:
       // Unrecognized format
