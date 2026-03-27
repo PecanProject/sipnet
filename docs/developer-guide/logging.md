@@ -48,7 +48,6 @@ Rule of thumb
     [ERROR  ] Missing required parameter: bar
     [ERROR (INTERNAL)] (myfile.c:123) Unexpected state: 5
     ```
-    
 ## Notes
 
 - Each log prints a fixed prefix (e.g., `[INFO   ]`, `[WARNING]`, `[ERROR  ]`).
