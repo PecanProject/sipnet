@@ -10,14 +10,23 @@ and implemented in `common/logging.c`.
 - 1: Always on (not suppressed).
 - 2: Always on and includes `file:line`.
 
+## Functions
+
+- `logInfo`: Level 0; routine progress, expected or supported behavior, configuration summaries, and transparency messages.
+- `logWarning`: Level 0; conditions that may affect validity or reliability, or likely require user attention.
+- `logTest`: Level 1; deterministic messages for tests/CI; not user-facing.
+- `logError`: Level 1; non-recoverable problems: the run cannot continue, state is invalid, or output cannot be trusted.
+- `logInternalError`: Level 2; errors that should never happen; include details and ask to report.
+
+### Choosing a function
+
+Rule of thumb
+
+- Use `logError` if the run should stop.
+- Use `logWarning` if the user should probably stop and check the run.
+- Use `logInfo` if the run can proceed and the message is mainly for transparency.
 
 ## Usage
-
-- `logInfo`: Level 0; routine progress, configuration summaries, expected state changes.
-- `logWarning`: Level 0; Recoverable issues or surprises; fallbacks, deprecated/ignored inputs.
-- `logTest`: Level 1; Deterministic messages for tests/CI; not user-facing.
-- `logError`: Level 1; Non-recoverable problems preventing correct operation; abort/exit or skip major task.
-- `logInternalError`: Level 2; Errors that should never happen; include details and ask to report.
 
 1. Include the header:
    ```c
@@ -39,9 +48,8 @@ and implemented in `common/logging.c`.
     [ERROR  ] Missing required parameter: bar
     [ERROR (INTERNAL)] (myfile.c:123) Unexpected state: 5
     ```
-
-
-## Notes:
+    
+## Notes
 
 - Each log prints a fixed prefix (e.g., `[INFO   ]`, `[WARNING]`, `[ERROR  ]`).
 - Messages use `printf`-style formatting. Include `\n` yourself if you want a newline.
