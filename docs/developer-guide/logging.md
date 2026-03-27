@@ -17,6 +17,7 @@ and implemented in `common/logging.c`.
 - `logTest`: Level 1; deterministic messages for tests/CI; not user-facing.
 - `logError`: Level 1; non-recoverable problems: the run cannot continue, state is invalid, or output cannot be trusted.
 - `logInternalError`: Level 2; errors that should never happen; include details and ask to report.
+- `logAppend`: Continue the current log line (for example, to add more text after a `logInfo` call) without starting a new prefix.
 
 ### Choosing a function
 
