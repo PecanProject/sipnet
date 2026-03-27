@@ -86,6 +86,7 @@ typedef struct RestartContextModelFlags {
   int waterHResp;
   int nitrogenCycle;
   int anaerobic;
+  int carbonSaturation;
 } RestartContextModelFlags;
 static RestartContextModelFlags modelFlags;
 
@@ -160,6 +161,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->flagsPF[7] = (StateField){"flags.waterHResp",    FT_INT, &modelFlags.waterHResp,    0};
   state->flagsPF[8] = (StateField){"flags.nitrogenCycle", FT_INT, &modelFlags.nitrogenCycle, 0};
   state->flagsPF[9] = (StateField){"flags.anaerobic",     FT_INT, &modelFlags.anaerobic,     0};
+  state->flagsPF[8] = (StateField){"flags.carbonSaturation", FT_INT, &modelFlags.carbonSaturation, 0};
   state->flagsPF[10] = (StateField){"flags.invalid",      FT_INVALID, NULL, FIELD_INVALID};
 
   state->boundaryPF[0] = (StateField){"boundary.year",    FT_INT,     &boundaryClimate.year,   0};
@@ -773,6 +775,7 @@ static void checkRestartContextCompatibility(void) {
   mismatch |= (ctx.waterHResp != modelFlags.waterHResp);
   mismatch |= (ctx.nitrogenCycle != modelFlags.nitrogenCycle);
   mismatch |= (ctx.anaerobic != modelFlags.anaerobic);
+  mismatch |= (ctx.carbonSaturation != modelFlags.carbonSaturation);
 
   if (mismatch) {
     logError("Restart context mismatch: model flags must match checkpoint "
@@ -893,6 +896,8 @@ void restartWriteCheckpoint(const char *restartOut, MeanTracker *meanNPP) {
   modelFlags.nitrogenCycle = ctx.nitrogenCycle;
   ++numFlagsSet;
   modelFlags.anaerobic = ctx.anaerobic;
+  ++numFlagsSet;
+  modelFlags.carbonSaturation = ctx.carbonSaturation;
   ++numFlagsSet;
   if (numFlagsSet != NUM_CONTEXT_MODEL_FLAGS) {
     logInternalError("Not all model flags set while writing checkpoint\n");
