@@ -47,8 +47,9 @@ sections to include in release notes:
 - Split wood carbon pool into `plantWoodC` and `plantWoodCStorageDelta` to track NPP storage lag (#248)
 - New moisture dependency function option for soil respiration, controlled by the `anaerobic` cli option (#259)
 - New moisture dependency functions for N volatilization, methane (#259)
-- Adds Nitrogen demand, fixation flux, and uptake flux (#265)
+- Nitrogen demand, fixation flux, and uptake flux (#265)
 - Methane production option, controlled by the `anaerobic` cli option (#269)
+- Nitrogen limitation support (#298)
 
 ### Fixed
 
