@@ -20,7 +20,7 @@ and implemented in `common/logging.c`.
 
 ### Choosing a function
 
-Rule of thumb
+Rule of thumb:
 
 - Use `logError` if the run should stop.
 - Use `logWarning` if the user should probably stop and check the run.
