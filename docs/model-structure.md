@@ -153,6 +153,7 @@ $C_{\text{wood,storage}}$, which is initialized to zero. We can represent this s
 
 \begin{equation}
 \frac{dC_{\text{wood,storage}}}{dt} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
+\label{eq:wood_c_storage}
 \end{equation}
 
 where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. This storage term
@@ -675,7 +676,9 @@ than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and t
 Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of plant-available nitrogen. Plant nitrogen
 demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
 
-If this demand is greater than available mineral nitrogen, nitrogen limitation reduces plant growth.
+If this demand is greater than plant-available nitrogen, allocation of C to new growth is limited to what the available
+nitrogen can support. The remainder remains in the wood storage pool \eqref{eq:wood_c_storage}. The effect of nitrogen
+limitation on total plant biomass accumulation is represented in the downstream effect of reduced leaf growth on GPP.
 
 Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
 implemented as follows:
