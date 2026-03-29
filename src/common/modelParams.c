@@ -32,8 +32,7 @@ void setAll(double *array, int length, double value) {
 
 // Checks to make sure that all parameters with isRequired=true have been read
 // If not, kills program
-// Writes out names of all parameters that weren't read (even if not required,
-// as a warning message)
+// Writes out names of all parameters that weren't read (even if not required)
 // Also prints out a list of obsolete params that were read
 void checkAllRead(ModelParams *ModelParams) {
   int i, okay, missingOptParam = 0;
@@ -55,7 +54,7 @@ void checkAllRead(ModelParams *ModelParams) {
   // Inform if any optional params are not in the file; not an error, just a
   // note, and just one line instead of one for each
   if ((missingOptParam) && (!ctx.quiet)) {
-    logWarning("optional params not specified in input file:");
+    logInfo("optional params not specified in input file:");
     for (i = 0; i < ModelParams->numParams; i++) {
       param = &(ModelParams->params[i]);
       if ((!param->isRead) && (param->isRequired == 0)) {
@@ -129,9 +128,9 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
 void checkParamFormat(char *line, const char *sep) {
   int numParams = countFields(line, sep);
   if (numParams > 2) {
-    logWarning("extra columns in .param file are being ignored (found %d "
-               "columns)\n",
-               numParams);
+    logInfo("extra columns in .param file are being ignored (found %d "
+            "columns)\n",
+            numParams);
   }
 }
 
@@ -217,7 +216,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
 
   // Warn if unknown params were found
   if (hasUnknownParams) {
-    logWarning("Unknown param(s) found (and ignored): %s\n", unknownParams);
+    logInfo("Unknown param(s) found (and ignored): %s\n", unknownParams);
   }
 
   // check for error in reading:

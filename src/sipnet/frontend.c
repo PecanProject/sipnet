@@ -75,7 +75,7 @@ void readInputFile(void) {
       // Find the metadata so we know what to do with this param
       struct context_metadata *ctx_meta = getContextMetadata(inputName);
       if (ctx_meta == NULL) {
-        logWarning("ignoring input file parameter %s\n", inputName);
+        logInfo("ignoring input file parameter %s\n", inputName);
         continue;
       }
 

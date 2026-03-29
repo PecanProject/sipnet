@@ -792,8 +792,8 @@ static void validateRestartModelBuild(void) {
   }
 
   if (strcmp(buildInfo, currentBuildInfo) != 0) {
-    logWarning("Restart build info mismatch: checkpoint=%s current=%s\n",
-               buildInfo, currentBuildInfo);
+    logInfo("Restart build info mismatch: checkpoint=%s current=%s\n",
+            buildInfo, currentBuildInfo);
   }
 }
 

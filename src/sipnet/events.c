@@ -102,8 +102,8 @@ EventNode *createEventNode(int year, int day, int eventType,
       newEvent->eventParams = fParams;
 
       if (!ctx.nitrogenCycle && (orgN > 0.0 || minN > 0.0) && !nitrogenWarned) {
-        logWarning("Fertilization nitrogen quantities are being ignored since "
-                   "nitrogen cycle modeling is off\n");
+        logInfo("Fertilization nitrogen quantities are being ignored since "
+                "nitrogen cycle modeling is off\n");
         nitrogenWarned = 1;
       }
     } break;
