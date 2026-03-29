@@ -41,11 +41,3 @@ cmake-build-debug-gcc/
 *~
 *.tmp
 /tmp/
-
-# Exclude generated restart and infrastructure test artifacts
-tests/sipnet/test_restart_infrastructure/*.out
-tests/sipnet/test_restart_infrastructure/*.in
-tests/sipnet/test_restart_infrastructure/*.clim
-tests/sipnet/test_restart_infrastructure/*.param
-tests/sipnet/test_restart_infrastructure/bad_code/*
-tests/sipnet/test_sipnet_infrastructure/format_check.out
