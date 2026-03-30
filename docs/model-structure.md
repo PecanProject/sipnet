@@ -67,6 +67,24 @@ It is not immediately clear to me why GPP is called Gross Photosynthetic Rate he
 
 Assuming implementation is correct because it derived from PnET and has been used in SIPNET by many people for many years.
 -->
+### Scaling from Leaf Carbon to Canopy Photosynthesis
+
+In SIPNET, plant leaf carbon is converted to leaf area index by dividing by leaf carbon per unit leaf area:
+
+\begin{equation}
+LAI = \frac{C_{\text{leaf}}}{SLWC}
+\label{eq:lai_calculation}
+\end{equation}
+
+where $C_{\text{leaf}}$ is leaf carbon mass, and $SLWC$ is specific leaf weight, with units of leaf carbon per unit leaf area.
+
+Photosynthesis is affected by LAI in two ways.
+
+First, LAI scales leaf-level photosynthetic capacity to canopy-scale carbon flux by contributing to the conversion from leaf-area based assimilation units to ground-area based GPP.
+
+Second, LAI determines canopy light attenuation through $D_{\text{light}}$ (Beer’s-law canopy light attenuation; Braswell et al. 2005).
+
+Thus, increasing $C_{\text{leaf}}$ increases canopy photosynthesis both by increasing leaf area per ground area and by increasing light interception through the canopy.
 
 ### Potential Photosynthesis
 
@@ -98,7 +116,7 @@ water stress factor $D_{\text{water,}A}$.
 The water stress factor $D_{\text{water,}A}$ is defined in \eqref{eq:Braswell_A16} as the ratio of actual to potential
 transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
-Note that nitrogen limitation can further reduce GPP; see Sec. [Nitrogen Limitation](#nitrogen-limitation).
+Note that nitrogen limitation does not directly reduce GPP, but indirectly reduces future potential GPP by reducing allocation to leaf growth; see Sec. [Nitrogen Limitation](#nitrogen-limitation).
 
 ### Plant Growth
 
@@ -678,7 +696,7 @@ demand is diagnosed from potential biomass growth derived from five-day averaged
 
 If this demand is greater than plant-available nitrogen, allocation of C to new growth is limited to what the available
 nitrogen can support. The remainder remains in the wood storage pool \eqref{eq:wood_c_storage}. The effect of nitrogen
-limitation on total plant biomass accumulation is represented in the downstream effect of reduced leaf growth on GPP.
+If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool (\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
 
 Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
 implemented as follows:
@@ -688,9 +706,10 @@ implemented as follows:
 - Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
 
 - Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
-
-- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed
-- stoichiometry.
+- Calculate the amount by which plant N demand exceeds available supply [^*].
+- Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in the wood storage pool \eqref{eq:wood_c_storage}.
+- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed stoichiometry.
 
 [^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen
 uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
