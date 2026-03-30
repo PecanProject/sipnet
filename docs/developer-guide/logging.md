@@ -17,7 +17,9 @@ and implemented in `common/logging.c`.
 - `logTest`: Level 1; deterministic messages for tests/CI; not user-facing.
 - `logError`: Level 1; non-recoverable problems: the run cannot continue, state is invalid, or output cannot be trusted.
 - `logInternalError`: Level 2; errors that should never happen; include details and ask to report.
-- `logAppend`: Continue the current log line (for example, to add more text after a `logInfo` call) without starting a new prefix.
+- `logAppend`:  Level 0; continue the current log message (for example, to add more text after a `logInfo` call) without starting a new prefix.
+
+Note that `logAppend` messages are hidden by `--quiet` regardless of the log level of the previous log line.
 
 ### Choosing a function
 
@@ -51,6 +53,6 @@ Rule of thumb:
     ```
 ## Notes
 
-- Each log prints a fixed prefix (e.g., `[INFO   ]`, `[WARNING]`, `[ERROR  ]`).
+- Each logging function (except `logAppend`) prints a fixed prefix (e.g., `[INFO   ]`, `[WARNING]`, `[ERROR  ]`).
 - Messages use `printf`-style formatting. Include `\n` yourself if you want a newline.
 - Level 2 (`logInternalError`) prints file:line; levels 0–1 print just the prefix.
