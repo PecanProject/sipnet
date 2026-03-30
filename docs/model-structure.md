@@ -694,9 +694,10 @@ than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and t
 Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of plant-available nitrogen. Plant nitrogen
 demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
 
-If this demand is greater than plant-available nitrogen, allocation of C to new growth is limited to what the available
-nitrogen can support. The remainder remains in the wood storage pool \eqref{eq:wood_c_storage}. The effect of nitrogen
-If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool (\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
+If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level
+that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool 
+(\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future 
+photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
 
 Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
 implemented as follows:
