@@ -30,7 +30,6 @@ Implementation in source code (sipnet.c) is annotated with references to specifi
 
 - The general approach used to define variables and subscripts is defined in [Notation](parameters.md#notation).
 - Specific parameter, flux, and state definitions are documented in [Model States and Parameters](parameters.md#run-time-parameters).
-- $\mathfrak{Fraktur Font}$ is used to identify features that have not been implemented. This font will be removed as features are implemented.
 
 ## Carbon Dynamics
 
@@ -68,6 +67,24 @@ It is not immediately clear to me why GPP is called Gross Photosynthetic Rate he
 
 Assuming implementation is correct because it derived from PnET and has been used in SIPNET by many people for many years.
 -->
+### Scaling from Leaf Carbon to Canopy Photosynthesis
+
+In SIPNET, plant leaf carbon is converted to leaf area index by dividing by leaf carbon per unit leaf area:
+
+\begin{equation}
+LAI = \frac{C_{\text{leaf}}}{SLWC}
+\label{eq:lai_calculation}
+\end{equation}
+
+where $C_{\text{leaf}}$ is leaf carbon mass, and $SLWC$ is specific leaf weight, with units of leaf carbon per unit leaf area.
+
+Photosynthesis is affected by LAI in two ways.
+
+First, LAI scales leaf-level photosynthetic capacity to canopy-scale carbon flux by contributing to the conversion from leaf-area based assimilation units to ground-area based GPP.
+
+Second, LAI determines canopy light attenuation through $D_{\text{light}}$ (Beer’s-law canopy light attenuation; Braswell et al. 2005).
+
+Thus, increasing $C_{\text{leaf}}$ increases canopy photosynthesis both by increasing leaf area per ground area and by increasing light interception through the canopy.
 
 ### Potential Photosynthesis
 
@@ -99,7 +116,7 @@ water stress factor $D_{\text{water,}A}$.
 The water stress factor $D_{\text{water,}A}$ is defined in \eqref{eq:Braswell_A16} as the ratio of actual to potential
 transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
-Note that nitrogen limitation can further reduce GPP; see Sec. [Nitrogen Limitation](#nitrogen-limitation).
+Note that nitrogen limitation does not directly reduce GPP, but indirectly reduces future potential GPP by reducing allocation to leaf growth; see Sec. [Nitrogen Limitation](#nitrogen-limitation).
 
 ### Plant Growth
 
@@ -154,6 +171,7 @@ $C_{\text{wood,storage}}$, which is initialized to zero. We can represent this s
 
 \begin{equation}
 \frac{dC_{\text{wood,storage}}}{dt} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
+\label{eq:wood_c_storage}
 \end{equation}
 
 where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. This storage term
@@ -440,7 +458,7 @@ CN_j = \frac{C_j}{N_j}.
 
 This is used to calculate C:N-dependency $D_{CN}$ in \eqref{eq:cn_dep}.
 
-### C:N Dependency Function $(D_{CN})$
+### C:N Dependency Function $D_{CN}$
 
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
 This term is used in calculation of heterotrophic respiration in \eqref{eq:rh}.
@@ -454,9 +472,9 @@ Here, $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposi
 reducing the rate of decomposition.
 The value $k_{CN}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
-## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
+## Nitrogen Dynamics $\frac{dN}{dt}$
 
-### $\frak{Plant \ Biomass \ Nitrogen}$
+### Plant Biomass Nitrogen
 
 Similar to the stoichiometric coupling of litter fluxes, the change in plant biomass N over time is stoichiometrically
 coupled to plant biomass C:
@@ -650,8 +668,8 @@ D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
 where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is
 reduced by half (g N m$^{-2}$).
 
-Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ (\eqref{eq:
-plant_n_demand}):
+Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ 
+\eqref{eq:plant_n_demand}:
 
 \begin{equation}
 F^N_\text{fix} = f_\text{fix} \cdot F^N_\text{demand}
@@ -673,32 +691,29 @@ than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and t
 
 ### Nitrogen Limitation
 
-Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of available mineral nitrogen. Plant nitrogen
+Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of plant-available nitrogen. Plant nitrogen
 demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
 
-If this demand is greater than available mineral nitrogen, nitrogen limitation reduces plant growth.
+If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level
+that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool 
+(\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future 
+photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
 
-Nitrogen limitation is applied during the flux calculation stage of the model update sequence, prior to carbon
-allocation to plant biomass pools and before any pool updates occur. N limitation is implemented as follows:
+Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
+implemented as follows:
 
 - Calculate the amount by which plant N demand exceeds available supply [^*].
 
 - Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
 
 - Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
-
-- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed
-- stoichiometry.
-
-- Carbon associated with the unmet growth demand is subtracted from potential GPP to maintain mass balance \eqref{eq:
-  Braswell_A17} [^+].
+- Calculate the amount by which plant N demand exceeds available supply [^*].
+- Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in the wood storage pool \eqref{eq:wood_c_storage}.
+- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed stoichiometry.
 
 [^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen
 uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
-
-[^+]: Under nitrogen limitation, excess carbon is prevented from entering the system by down-regulating GPP. This is
-consistent with SIPNET's use of GPP as an effective ecosystem scale input rather than instantaneous leaf-level
-assimilation.
 
 ## Water Dynamics
 
@@ -706,14 +721,12 @@ assimilation.
 
 \begin{equation}
 \frac{dW_{\text{soil}}}{dt} =
-(1 - f_{\text{intercept}})\,F^W_{\text{precip}}
-
-+ F^W_{\text{irrig,soil}}
-
-- F^W_{\text{drainage}}
-- F^W_{\text{trans}}
-  \label{eq:Braswell_A4}
-  \end{equation}
+(1 - f_{\text{intercept}})\,F^W_{\text{precip}} +
+F^W_{\text{irrig,soil}} -
+F^W_{\text{drainage}} -
+F^W_{\text{trans}}
+\label{eq:Braswell_A4}
+\end{equation}
 
 This is equation (A4) from Braswell, et al. (2005).
 
