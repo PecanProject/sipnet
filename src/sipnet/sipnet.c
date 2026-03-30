@@ -907,6 +907,23 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
   }  // end else there is snow
 }  // end snowPack
 
+/**
+ * Calculated water fraction bounded in [0,1]
+ *
+ * Keeps moisture dependency terms bounded in [0, 1]. In configurations with
+ * WATER_HRESP=1 and ANAEROBIC=0 (e.g., russell_1 smoke test), this prevents
+ * super-saturated soil water (water > whc) from boosting respiration above
+ * the full-wet response. Also used to constrain water frac for evapotrans
+ * calcs.
+ *
+ * @param water current water level
+ * @param whc water holding capacity
+ * @return bounded water fraction
+ */
+double getClippedWaterFrac(double water, double whc) {
+  return fmin(fmax(water / whc, 0.0), 1.0);
+}
+
 /*!
  *  Calculate fastFlow, evaporation, and drainage from soil
  *
@@ -934,13 +951,7 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
   // evaporate or drain too much, and so we can drain any overflow
   double waterRemaining;
   // keep track of net water into soil, in cm/day
-  double netIn;
-  // aerodynamic resistance between ground and canopy air space (sec/m)
-  double rd;
-  // bare soil surface resistance (sec/m)
-  double rsoil;
-
-  netIn = netRain + snowMelt;
+  double netIn = netRain + snowMelt;
 
   // fast flow: fraction that goes directly to drainage
   *fastFlow = netIn * params.fastFlowFrac;
@@ -957,13 +968,15 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // else no snow pack:
   else {
-    // TODO: consider replacing this with getClippedWaterFrac()
-    double waterFrac = water / params.soilWHC;
-    rsoil = exp(params.rSoilConst1 - params.rSoilConst2 * (waterFrac));
-    rd = (params.rdConst) / (climate->wspd);  // aerodynamic resistance (sec/m)
-    *evaporation = CONVERSION * climate->vpdSoil / (rd + rsoil);
+    double waterFrac = getClippedWaterFrac(water, params.soilWHC);
+    // aerodynamic resistance between ground and canopy airspace (sec/m)
+    double rd = (params.rdConst) / (climate->wspd);
+    // bare soil surface resistance (sec/m)
+    double rsoil = exp(params.rSoilConst1 - params.rSoilConst2 * (waterFrac));
+
     // by using vpd we assume that relative humidity of soil pore space is 1
     // (when this isn't true, there won't be much water evaporated anyway)
+    *evaporation = CONVERSION * climate->vpdSoil / (rd + rsoil);
 
     // remove to allow negative evaporation (i.e. condensation):
     if (*evaporation < 0) {
@@ -1083,14 +1096,6 @@ void ensureAllocation(void) {
            "and add to less than one\n");
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
-}
-
-double getClippedWaterFrac(double water, double whc) {
-  // Keep moisture dependency terms bounded in [0, 1]. In configurations with
-  // WATER_HRESP=1 and ANAEROBIC=0 (e.g., russell_1 smoke test), this prevents
-  // super-saturated soil water (water > whc) from boosting respiration above
-  // the full-wet response.
-  return fmin(fmax(water / whc, 0.0), 1.0);
 }
 
 double calcAnaerobicIndex(double water, double whc) {
