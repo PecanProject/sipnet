@@ -163,9 +163,9 @@ void readClimData(const char *climFile) {
     case NUM_CLIM_FILE_COLS_LEGACY:
       expectedNumCols = NUM_CLIM_FILE_COLS_LEGACY;
       legacyFormat = 1;
-      logWarning("old climate file format detected (found %d cols); ignoring "
-                 "location and soilWetness columns in %s\n",
-                 numFields, climFile);
+      logInfo("old climate file format detected (found %d cols); ignoring "
+              "location and soilWetness columns in %s\n",
+              numFields, climFile);
       break;
     default:
       // Unrecognized format
@@ -476,9 +476,9 @@ void freeClimateList() {
   }
 }
 
-//
-// Modeling functions
-//
+// ////////////////// //
+// Modeling Functions //
+// ////////////////// //
 
 /*!
  * @brief Compute canopy light effect using Simpson's rule.
@@ -782,10 +782,9 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
     double leafOn = (params.leafGrowth / climate->length);
     *leafOnCreation += leafOn;
     phenologyTrackers.didLeafGrowth = 1;
-    if (ctx.events) {
-      writeComputedEventOut(climate->year, climate->day, "leafon", 1,
-                            "fluxes.leafOnCreation", leafOn);
-    }
+    // This is a computed event - however, the value may get reduced by
+    // nitrogen limitation. The writeEvent call is in writeLeafOnEventIfNeeded,
+    // called after N limiting is checked.
   } else {
     *leafOnCreation = 0.0;
   }
@@ -796,7 +795,7 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
     double leafOff = (plantLeafC * params.fracLeafFall) / climate->length;
     *leafLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
-    if (ctx.events) {
+    if (leafOff > TINY && ctx.events) {
       writeComputedEventOut(climate->year, climate->day, "leafoff", 1,
                             "fluxes.leafLitter", leafOff);
     }
@@ -845,7 +844,7 @@ void calcPrecip(double *rain, double *snowFall, double *immedEvap, double lai) {
 
 // snowpack dynamics:
 // calculate snow melt (cm water equiv./day) & sublimation (cm water equiv./day)
-// ensure we don't overdrain the snowpack (so that it becomes negative)
+// ensure we don't over-drain the snowpack (so that it becomes negative)
 // snowFall in cm/day
 void snowPack(double *snowMelt, double *sublimation, double snowFall) {
   // conversion factor for sublimation
@@ -1076,8 +1075,6 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
     *growthResp = 0;
   }
 }
-
-/////////////////
 
 // ensure that all the allocation to wood + leaves + fine roots < 1,
 // calculate coarse root allocation as:
@@ -1370,9 +1367,13 @@ void calcNLeachingFlux(void) {
  * Calculate plant N demand
  */
 double calcPlantNDemand() {
+  if (!ctx.nitrogenCycle) {
+    return 0.0;
+  }
+
   // leafOnCreation is a transfer from the wood pool so
   // demand should only count the difference in the N
-  // between those two pools, hence substracting
+  // between those two pools, hence subtracting
   // params.woodCN from params.leafCN for leafOnCreation
   double leafOnDemand = fluxes.leafOnCreation / params.leafCN -
                         fluxes.leafOnCreation / params.woodCN;
@@ -1386,25 +1387,88 @@ double calcPlantNDemand() {
   return totalDemand;
 }
 
-/*!
- * Calculate plant N fixation and uptake fluxes
+/**
+ * Calculate all fluxes for soil mineral N EXCEPT uptake
+ *
+ * This is used to help determine N limitation as well as the final min N flux.
+ *
+ * @return Sum of non-uptake fluxes for soil mineral N
  */
-void calcNFixationAndUptakeFluxes() {
+double calcMinNNonUptakeFluxes(void) {
+  return fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching;
+}
+
+/**
+ * Calculate the N fixation fraction taking inhibition into account
+ *
+ * @return N fixation fraction used to compute amount of N fixation
+ */
+double calcNFixationFrac(void) {
   double nFixationInhibition;
-  double nFixationFrac;
-  // Calculate inhibition of N fixation by soil mineral N
-  // using down-regulation function with increasing soil min N
-  // dimensionless between 0 and 1
-  nFixationInhibition =
-      params.halfNFixationMax / (params.halfNFixationMax + envi.minN);
+  double denom = params.halfNFixationMax + envi.minN;
+  if (denom < TINY) {
+    nFixationInhibition = 1;
+  } else {
+    // Calculate inhibition of N fixation by soil mineral N
+    // using down-regulation function with increasing soil min N
+    // dimensionless between 0 and 1
+    nFixationInhibition = params.halfNFixationMax / denom;
+  }
   // Calculate fraction of plant N demand met by fixation
   // dimensionless
-  nFixationFrac = params.nFixationFracMax * nFixationInhibition;
-  // Calculate N fixation flux
-  double nDemand = calcPlantNDemand();
-  fluxes.nFixation = nFixationFrac * nDemand;
-  // Calculate N uptake flux
-  fluxes.nUptake = (1 - nFixationFrac) * nDemand;
+  return params.nFixationFracMax * nFixationInhibition;
+}
+
+/*!
+ * Calculate plant N fixation and uptake fluxes, checking for N limitation
+ */
+void calcNFixationAndUptakeFluxes(void) {
+  // First, determine if we are in a nitrogen-limited situation
+  double maxDemandFlux = calcPlantNDemand();
+  double maxDemand = maxDemandFlux * climate->length;
+  double nDemandFlux = maxDemandFlux;
+
+  double nonUptakeFluxes = calcMinNNonUptakeFluxes();
+  double availableMinN =
+      fmax(0, envi.minN + (nonUptakeFluxes * climate->length));
+
+  double nFixationFrac = calcNFixationFrac();
+  double maxUptake = maxDemand * (1 - nFixationFrac);
+
+  if (maxUptake > TINY && maxUptake > availableMinN) {
+    // More demand than supply - N limitation is in effect
+    double reduction = availableMinN / maxUptake;
+    logInfo("N uptake %.4f exceeds available soil min N %.4f, reducing plant "
+            "growth by %.2f%% on year %d day %d time %.3f\n",
+            maxUptake, availableMinN, (1 - reduction) * 100, climate->year,
+            climate->day, climate->time);
+
+    // Reduce all drains on soil N
+    fluxes.leafOnCreation *= reduction;
+    fluxes.woodCreation *= reduction;
+    fluxes.leafCreation *= reduction;
+    fluxes.fineRootCreation *= reduction;
+    fluxes.coarseRootCreation *= reduction;
+
+    nDemandFlux = calcPlantNDemand();
+  }
+
+  // Now, actually calculate fixation and uptake!
+  fluxes.nFixation = nFixationFrac * nDemandFlux;
+  fluxes.nUptake = (1 - nFixationFrac) * nDemandFlux;
+}
+
+/**
+ * Write out a leafon event if one happened
+ *
+ * Delayed event writing for leaf-on, if appropriate, since the value may
+ * have changed due to N limitation
+ */
+void writeLeafOnEventIfNeeded(void) {
+  if (fluxes.leafOnCreation > TINY && ctx.events) {
+    writeComputedEventOut(climate->year, climate->day, "leafon", 1,
+                          "fluxes.leafOnCreation", fluxes.leafOnCreation);
+  }
 }
 
 /**
@@ -1459,6 +1523,11 @@ void calcMethaneFlux(void) {
   }
 }
 
+/**
+ * Reset all (non-event) fluxes.
+ *
+ * Make sure to add new fluxes to this list!
+ */
 void resetFluxes(void) {
   fluxes.photosynthesis = 0.0;
   fluxes.leafLitter = 0.0;
@@ -1570,49 +1639,19 @@ void calculateFluxes(void) {
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
     calcNLeachingFlux();
-    calcNFixationAndUptakeFluxes();
     calcNPoolFluxes();
+    // Must be last for N limitation check
+    calcNFixationAndUptakeFluxes();
   }
+
+  // Delayed write needed due to N limitation check - leafOn value may have
+  // changed
+  writeLeafOnEventIfNeeded();
 }
 
-// !!! functions for updating tracker variables !!!
-
-// initialize trackers at start of simulation:
-void initTrackers(void) {
-  trackers.gpp = 0.0;
-  trackers.rtot = 0.0;
-  trackers.ra = 0.0;
-  trackers.rh = 0.0;
-  trackers.npp = 0.0;
-  trackers.nee = 0.0;
-  trackers.yearlyGpp = 0.0;
-  trackers.yearlyRtot = 0.0;
-  trackers.yearlyRa = 0.0;
-  trackers.yearlyRh = 0.0;
-  trackers.yearlyNpp = 0.0;
-  trackers.yearlyNee = 0.0;
-  trackers.totGpp = 0.0;
-  trackers.totRtot = 0.0;
-  trackers.totRa = 0.0;
-  trackers.totRh = 0.0;
-  trackers.totNpp = 0.0;
-  trackers.totNee = 0.0;
-  trackers.evapotranspiration = 0.0;
-  trackers.soilWetnessFrac = envi.soilWater / params.soilWHC;
-  trackers.rSoil = 0.0;
-  trackers.woodCreation = 0.0;
-
-  trackers.rRoot = 0.0;
-
-  trackers.rAboveground = 0.0;
-
-  trackers.yearlyLitter = 0.0;
-  trackers.gdd = 0.0;
-  trackers.lastYear = -1;
-  trackers.nLeaching = 0.0;
-  trackers.nFixation = 0.0;
-  trackers.nUptake = 0.0;
-}
+// /////////////////////// //
+// Stock (Pool) Validation //
+// /////////////////////// //
 
 // If var < minVal, then set var = 0
 // Note that if minVal = 0, then this will (as suggested) ensure that var >= 0
@@ -1622,9 +1661,9 @@ void ensureNonNegative(double *var, double minVal, const char *label) {
   if (*var < minVal) {
     if (fabs(*var) > EPS) {  // Don't print the zeros
       logWarning(
-          "Non-negative stock constraint applied for %s (value %8.4f set "
-          "to zero)\n",
-          label, *var);
+          "Non-negative stock constraint applied for %s (value %8.5f set "
+          "to zero) year %d day %d time %6.3f\n",
+          label, *var, climate->year, climate->day, climate->time);
     }
     *var = 0.;
   }
@@ -1668,9 +1707,54 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.litterN), 0, "litterN");
 }
 
-// update trackers at each time step
-// oldSoilWater is how much soil water there was at the beginning of the time
-// step (cm)
+// ////////////////// //
+// Tracker Management //
+// ////////////////// //
+
+/**
+ * Initialize trackers at start of simulation
+ */
+void initTrackers(void) {
+  trackers.gpp = 0.0;
+  trackers.rtot = 0.0;
+  trackers.ra = 0.0;
+  trackers.rh = 0.0;
+  trackers.npp = 0.0;
+  trackers.nee = 0.0;
+  trackers.yearlyGpp = 0.0;
+  trackers.yearlyRtot = 0.0;
+  trackers.yearlyRa = 0.0;
+  trackers.yearlyRh = 0.0;
+  trackers.yearlyNpp = 0.0;
+  trackers.yearlyNee = 0.0;
+  trackers.totGpp = 0.0;
+  trackers.totRtot = 0.0;
+  trackers.totRa = 0.0;
+  trackers.totRh = 0.0;
+  trackers.totNpp = 0.0;
+  trackers.totNee = 0.0;
+  trackers.evapotranspiration = 0.0;
+  trackers.soilWetnessFrac = envi.soilWater / params.soilWHC;
+  trackers.rSoil = 0.0;
+  trackers.woodCreation = 0.0;
+
+  trackers.rRoot = 0.0;
+
+  trackers.rAboveground = 0.0;
+
+  trackers.yearlyLitter = 0.0;
+  trackers.gdd = 0.0;
+  trackers.lastYear = -1;
+  trackers.nLeaching = 0.0;
+  trackers.nFixation = 0.0;
+  trackers.nUptake = 0.0;
+}
+
+/**
+ * Update trackers at each time step
+ *
+ * @param oldSoilWater how much soil water there was at time step start (cm)
+ */
 void updateTrackers(double oldSoilWater) {
   if (climate->year != trackers.lastYear) {  // new year: reset yearly trackers
     trackers.yearlyGpp = 0.0;
@@ -1742,6 +1826,37 @@ void updateTrackers(double oldSoilWater) {
   trackers.nUptake = fluxes.nUptake * climate->length;
 }
 
+// initialize phenology tracker structure, based on day of year of first climate
+// record (have the leaves come on yet this year? have they fallen off yet this
+// year?)
+void initPhenologyTrackers(void) {
+
+  phenologyTrackers.didLeafGrowth = pastLeafGrowth();  // first year: have we
+                                                       // passed growing season
+                                                       // start date?
+  phenologyTrackers.didLeafFall = pastLeafFall();  // first year: have we passed
+                                                   // growing season end date?
+
+  /* if we think we've done leaf fall this year but not leaf growth, something's
+     wrong this could happen if, e.g. we're using soil temp-based leaf growth,
+     and soil temp. on first day doesn't happen to pass threshold
+     fix this by setting didLeafGrowth to 1 in this case
+     Note: this won't catch all potential problems (e.g. with soil temp-based
+     leaf growth, temp. on first day may not pass threshold, but it may not yet
+     be the end of the growing season; in this case we could accidentally grow
+     the leaves again once the temp. rises past the threshold again. Also, we'll
+     have problems with GDD-based growth if first day of simulation is not
+     Jan. 1.)
+  */
+  if (phenologyTrackers.didLeafFall && !phenologyTrackers.didLeafGrowth) {
+    phenologyTrackers.didLeafGrowth = 1;
+  }
+  // printf("stuff: %8d %8d \n",phenologyTrackers.lastYear, climate->year);
+  phenologyTrackers.lastYear = climate->year;  // set the year of the previous
+                                               // (non-existent) time step to be
+                                               // this year
+}
+
 void updateMeanTrackers(void) {
   double npp;  // net primary productivity, g C * m^-2 ground area * day^-1
   int err;
@@ -1760,6 +1875,10 @@ void updateMeanTrackers(void) {
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
 }
+
+// //////////// //
+// Pool Updates //
+// //////////// //
 
 /*!
  * Update the main pools, leafC, woodC, soil and snow
@@ -1860,9 +1979,8 @@ void updateNitrogenPools(void) {
 
   // Soil mineral N (note we have one mineral pool for soil+litter)
   // Mineral N additions from fertilization are handled with the events
-  envi.minN += (fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching -
-                fluxes.nUptake) *
-               climate->length;
+  double nonUptakeFluxes = calcMinNNonUptakeFluxes();
+  envi.minN += (nonUptakeFluxes - fluxes.nUptake) * climate->length;
 
   // Soil organic N
   envi.soilOrgN += fluxes.nOrgSoil * climate->length;
@@ -1901,11 +2019,16 @@ void updatePoolsAndBalance() {
   checkBalance();
 }
 
-// !!! main runner function !!!
+// ////////////////////////// //
+// Runner/Scheduler Functions //
+// ////////////////////////// //
 
-// calculate all fluxes and update state for this time step
-// we calculate all fluxes before updating state in case flux calculations
-// depend on the old state
+/**
+ * Calculate all fluxes and update state for this time step
+ *
+ * Calculate all fluxes before updating state, as fluxes may depend on current
+ * state, and we want all flux calcs to use the same state
+ */
 void updateState(void) {
   // how much soil water was there before we updated it?
   // Used in trackers
@@ -1934,37 +2057,6 @@ void updateState(void) {
   updateMeanTrackers();
 
   updateEventTrackers();
-}
-
-// initialize phenology tracker structure, based on day of year of first climate
-// record (have the leaves come on yet this year? have they fallen off yet this
-// year?)
-void initPhenologyTrackers(void) {
-
-  phenologyTrackers.didLeafGrowth = pastLeafGrowth();  // first year: have we
-                                                       // passed growing season
-                                                       // start date?
-  phenologyTrackers.didLeafFall = pastLeafFall();  // first year: have we passed
-                                                   // growing season end date?
-
-  /* if we think we've done leaf fall this year but not leaf growth, something's
-     wrong this could happen if, e.g. we're using soil temp-based leaf growth,
-     and soil temp. on first day doesn't happen to pass threshold
-     fix this by setting didLeafGrowth to 1 in this case
-     Note: this won't catch all potential problems (e.g. with soil temp-based
-     leaf growth, temp. on first day may not pass threshold, but it may not yet
-     be the end of the growing season; in this case we could accidentally grow
-     the leaves again once the temp. rises past the threshold again. Also, we'll
-     have problems with GDD-based growth if first day of simulation is not
-     Jan. 1.)
-  */
-  if (phenologyTrackers.didLeafFall && !phenologyTrackers.didLeafGrowth) {
-    phenologyTrackers.didLeafGrowth = 1;
-  }
-  // printf("stuff: %8d %8d \n",phenologyTrackers.lastYear, climate->year);
-  phenologyTrackers.lastYear = climate->year;  // set the year of the previous
-                                               // (non-existent) time step to be
-                                               // this year
 }
 
 // See sipnet.h

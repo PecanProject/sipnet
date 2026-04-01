@@ -27,6 +27,24 @@ tests/sipnet/*/*
 tests/sipnet/*/events.out
 tests/sipnet/*/sipnet.out
 tests/sipnet/*/sipnet.config
+# test_restart_infrastructure generated files (by mock_state and test runs)
+tests/sipnet/test_restart_infrastructure/restart.clim
+tests/sipnet/test_restart_infrastructure/bad_code/context.h.flag
+tests/sipnet/test_restart_infrastructure/bad_code/state.h.envi
+tests/sipnet/test_restart_infrastructure/run.clim
+tests/sipnet/test_restart_infrastructure/run.param
+tests/sipnet/test_restart_infrastructure/events.in
+tests/sipnet/test_restart_infrastructure/run.out
+tests/sipnet/test_restart_infrastructure/continuous.out
+tests/sipnet/test_restart_infrastructure/seg1.out
+tests/sipnet/test_restart_infrastructure/seg2.out
+tests/sipnet/test_restart_infrastructure/segmented_joined.out
+tests/sipnet/test_restart_infrastructure/restart.out
+tests/sipnet/test_restart_infrastructure/events_segment1.out
+tests/sipnet/test_restart_infrastructure/custom_events.in
+tests/sipnet/test_restart_infrastructure/custom_events.out
+# test_sipnet_infrastructure generated files
+tests/sipnet/test_sipnet_infrastructure/format_check.out
 
 # System-specific files
 .DS_Store
