@@ -635,6 +635,9 @@ void freeEventList(void) {
   while (curr != NULL) {
     prev = curr;
     curr = curr->nextEvent;
+    if (prev->eventParams != NULL) {
+      free(prev->eventParams);
+    }
     free(prev);
   }
 }
