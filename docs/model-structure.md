@@ -725,11 +725,13 @@ irrigation) is assumed to evaporate the same day and therefore never enters $W_{
 ### Drainage
 
 Under well-drained conditions, drainage occurs when soil water content $(W_{\text{soil}})$ exceeds the soil water
-holding capacity  $(W_{\text{WHC}})$. Beyond this point, additional water drains off at a rate controlled by the
-drainage parameter $f_{\text{drain}}$ defined as the fraction of soil water that can be removed in one day. For well
-drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduces the rate of drainage. Flooding can be
-simulated by requiring a combination of a low $f_{\text{drain}}$ and sufficient $F^W_\text{irrig|precip,soil}$ to
-maintain flooded conditions.
+holding capacity $(W_{\text{WHC}})$. Beyond this point, additional water drains off at a rate controlled by the
+drainage parameter $f_{\text{drain}}$, defined as the fraction of excess soil water that can be removed per time step.
+For well drained soils, set $f_{\text{drain}} = 1$ to ensure full drainage with each step.
+
+Setting $f_{\text{drain}} < 1$ reduces the rate of drainage. Flooding can be simulated by using a combination of low 
+$f_{\text{drain}}$ and sufficient $F^W_\text{irrig|precip,soil}$ to maintain flooded conditions. Note, though, that 
+if the model time steps are not constant, the actual per-day drainage rate will differ in the different steps.
 
 \begin{equation}
 F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0)
