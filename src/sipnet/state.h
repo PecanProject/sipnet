@@ -182,8 +182,7 @@ typedef struct Parameters {
   double woodTurnoverRate;
 
   // Not from [1]
-  // Fraction of excess water that drains per time step; a value of 1 means
-  // soil water drains down to soilWHC.
+  // Fraction of excess soil water that can be removed per time step
   double waterDrainFrac;
 
   // ****************************************

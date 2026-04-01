@@ -996,6 +996,7 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // drain any water that remains beyond water holding capacity:
   if (waterRemaining > params.soilWHC) {
+    // waterDrainFrac is per-time-step, not per-day
     *drainage = (waterRemaining - params.soilWHC) / (climate->length) *
                 params.waterDrainFrac;
   } else {
