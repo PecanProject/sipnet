@@ -907,7 +907,7 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
 }  // end snowPack
 
 /**
- * Calculated water fraction bounded in [0,1]
+ * Calculate water fraction bounded in [0,1]
  *
  * Keeps moisture dependency terms bounded in [0, 1]. In configurations with
  * WATER_HRESP=1 and ANAEROBIC=0 (e.g., russell_1 smoke test), this prevents
