@@ -48,7 +48,7 @@ sections to include in release notes:
 - Nitrogen demand, fixation flux, and uptake flux (#265)
 - Methane production option, controlled by the `anaerobic` cli option (#269)
 - Nitrogen limitation support (#298)
-- Parameter waterDrainFrac to enable flooded conditions (#307)
+- Parameter waterDrainFrac to enable flooded conditions. Note that this is a required param, so older files without it will not run. (#307)
 
 ### Fixed
 
