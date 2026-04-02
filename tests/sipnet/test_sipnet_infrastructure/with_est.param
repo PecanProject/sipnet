@@ -95,7 +95,7 @@ rSoilConst1			8.200000	0	0.000000	16.400000	2.000000
 rSoilConst2			4.300000	0	0.000000	8.600000	1.000000
 leafCSpWt			270.00000	0	63.000000	500.000000	0.000000
 cFracLeaf			0.450000	0	0.400000	0.500000	0.010000
-
+waterDrainFrac      1.0         0   0           0           0
 
 !!! Nitrogen cycle params
 mineralNInit        1.0    0  0.0  0.0  0.0
