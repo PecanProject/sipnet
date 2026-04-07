@@ -197,6 +197,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $Q_{10s}$             | soilRespQ10         | Soil respiration Q10                                                                | unitless                                                                            | scalar determining effect of temp on soil respiration          |
 | $D_{\text{moisture}}$ | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 | unitless                                                                            |                                                                |
 | $f_{\text{till}}$     | tillageEff          | Effect of tillage on decomposition that exponentially decays over time              | fraction                                                                            | Documented in model structure; event-level term in `events.in` |
+| $f_{\text{incorp}}$   | incorporationFraction | fraction of litter C moved to soil pool at tillage event                          | fraction (0--1)                                                                     | optional 2nd param in `events.in` tillage line; defaults to 0 if omitted |
 
 ### Nitrogen Cycle Parameters
 
