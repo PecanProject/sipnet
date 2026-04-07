@@ -310,40 +310,46 @@ Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls 
 transferred to litter.
 
 $F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter
-decomposition
-is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
+decomposition is modeled as a first-order process proportional to litter carbon content and modified by
+temperature, moisture, and C:N ratio:
 
 \begin{equation}
 F^C_{\text{decomp}} =
 K_\text{litter} \cdot C_\text{litter} \cdot D_{\text{temp}} \cdot D_{\text{water},R_H} \cdot
-D_{CN} \cdot
-D_{tillage}
+D_{CN}
 \label{eq:decomp_rate}
 \end{equation}
 
-The total litter decomposition flux is partitioned between heterotrophic respiration and transfer of carbon to the soil
-pool, satisfying the mass-balance relationship:
+Note that, unlike soil respiration \eqref{eq:r_soil}, the tillage dependency $D_{\text{tillage}}$ is not applied to
+total litter decomposition. Instead, tillage affects litter through two separate pathways.
+
+First, $D_{\text{tillage}}$ accelerates only the respired fraction of litter decomposition -- aggregate disruption
+increases microbial access to litter C, but does not change the rate of transfer to the soil pool:
 
 \begin{equation}
-R_{\text{litter}} + F^C_{\text{soil,litter}} = F^C_{\text{decomp}} \label{eq:decomp_carbon}
-\end{equation}
-
-Where $R_{\text{litter}}$ is heterotrophic respiration from litter \eqref{eq:r_litter} and $F^C_{\text{soil,litter}}$ is
-the carbon transfer from the litter pool to the soil \eqref{eq:soil_carbon}. This partitioning is controlled by the
-fraction of decomposed carbon that is respired, $f_{\text{litter}}$:
-
-\begin{equation}
-R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{decomp}}
+R_{\text{litter}} = f_{\text{litter}} \cdot F^C_{\text{decomp}} \cdot D_{\text{tillage}}
 \label{eq:r_litter}
 \end{equation}
 
-The remainder of the decomposed litter carbon is transferred to the soil pool:
+The remainder of decomposed litter is transferred to the soil pool at its base rate:
 
 \begin{equation}
 F^C_{\text{soil,litter}} =
 (1 - f_{\text{litter}}) \cdot F^C_{\text{decomp}}
 \label{eq:soil_carbon}
 \end{equation}
+
+Second, tillage can physically incorporate litter into the soil as an instantaneous mass transfer at the time of the
+tillage event:
+
+\begin{equation}
+F^C_{\text{incorp}} = f_{\text{incorp}} \cdot C_{\text{litter}}
+\label{eq:litter_incorp}
+\end{equation}
+
+where $f_{\text{incorp}}$ is the incorporation fraction (0--1), specified per tillage event in `events.in`. This moves
+carbon from the litter pool directly to the soil pool without decomposition. When nitrogen cycling is enabled, litter N
+is transferred proportionally. When $f_{\text{incorp}} = 0$ (the default), only the decomposition pathway is active.
 
 ### Soil Carbon
 
