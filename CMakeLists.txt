@@ -52,6 +52,7 @@ add_library(tests
         tests/sipnet/test_events_types/testEventFertilization.c
         tests/sipnet/test_events_types/testEventHarvest.c
         tests/sipnet/test_events_types/testEventTillage.c
+        tests/sipnet/test_events_types/testEventTillageIncorp.c
         tests/sipnet/test_bugfixes/testEventFileOrderChecks.c
         tests/sipnet/test_modeling/testNitrogenCycle.c
         tests/sipnet/test_modeling/testDependencyFunctions.c
