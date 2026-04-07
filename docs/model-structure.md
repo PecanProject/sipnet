@@ -409,7 +409,7 @@ and modified by temperature, moisture, substrate quality (C:N), and tillage (\eq
 For the litter pool, litter decomposition $F^C_{\text{decomp}}$ is modeled as a first-order process proportional
 to $C_{\text{litter}}$ and modified by the same dependence functions (\eqref{eq:decomp_rate}). Litter
 heterotrophic respiration is then defined as a fixed fraction of this decomposition flux via $f_{\text{litter}}$
-(\eqref{eq:decomp_carbon}--\eqref{eq:r_litter}), with the remainder transferred to the soil carbon pool
+(\eqref{eq:r_litter}), with the remainder transferred to the soil carbon pool
 (\eqref{eq:soil_carbon}).
 
 ### Methane Production $(C \rightarrow \text{CH}_4)$
