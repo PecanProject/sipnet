@@ -49,9 +49,10 @@ typedef struct PlantingParams {
   double coarseRootC;
 } PlantingParams;
 
-#define NUM_TILLAGE_PARAMS 1
+#define NUM_TILLAGE_PARAMS 2
 typedef struct TillageParams {
   double tillageEffect;
+  double incorporationFraction;  // fraction of litter C moved to soil pool
 } TillageParams;
 // Tillage effect threshold, below which we call it done
 #define TILLAGE_THRESHOLD 0.01
