@@ -126,14 +126,22 @@ EventNode *createEventNode(int year, int day, int eventType,
     } break;
     case TILLAGE: {
       double tillEffect;
+      double incorpFrac = 0.0;
       TillageParams *tParams = (TillageParams *)malloc(sizeof(TillageParams));
       int numRead = sscanf(eventParamsStr,  // NOLINT
-                           "%lf", &tillEffect);
-      if (numRead != NUM_TILLAGE_PARAMS) {
+                           "%lf %lf", &tillEffect, &incorpFrac);
+      if (numRead < 1) {
         logError("parsing Tillage params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
+      if (incorpFrac < 0.0 || incorpFrac > 1.0) {
+        logError("incorporationFraction must be in [0,1], got %f "
+                 "(year %d day %d)\n",
+                 incorpFrac, year, day);
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+      }
       tParams->tillageEffect = tillEffect;
+      tParams->incorporationFraction = incorpFrac;
       newEvent->eventParams = tParams;
     } break;
     default:
@@ -548,15 +556,31 @@ void processEvents(void) {
             "fluxes.eventOutputN", outputN / climLen);
       } break;
       case TILLAGE: {
-        // BIG NOTE: this is the one event type that is NOT modeled as a flux;
-        // see updateEventTrackers() for more
         const TillageParams *tillParams = gEvent->eventParams;
-        // Update the tillage mod for R_H calculations; this will be slowly
-        // reduced by an exponential decay function. Note we add here, not set,
-        // as there may be lingering effects from a prior tillage.
+
+        // decomposition rate modifier (lingering, decays ~30d)
         eventTrackers.d_till_mod += tillParams->tillageEffect;
-        writeEventOut(gEvent, 1, "eventTrackers.d_till_mod",
-                      tillParams->tillageEffect);
+
+        // physical litter incorporation (instantaneous mass transfer)
+        // moves a fraction of litter C/N directly into soil pool without
+        // decomposition -- represents physical mixing by tillage implement
+        double litterIncorpC = 0.0;
+        double litterIncorpN = 0.0;
+        if (tillParams->incorporationFraction > 0.0 && ctx.litterPool) {
+          litterIncorpC = envi.litterC * tillParams->incorporationFraction;
+          fluxes.eventLitterC -= litterIncorpC / climLen;
+          fluxes.eventSoilC += litterIncorpC / climLen;
+          if (ctx.nitrogenCycle) {
+            litterIncorpN = envi.litterN * tillParams->incorporationFraction;
+            fluxes.eventLitterN -= litterIncorpN / climLen;
+            fluxes.eventSoilOrgN += litterIncorpN / climLen;
+          }
+        }
+
+        writeEventOut(gEvent, 3, "eventTrackers.d_till_mod",
+                      tillParams->tillageEffect, "litterIncorpC",
+                      litterIncorpC / climLen, "litterIncorpN",
+                      litterIncorpN / climLen);
       } break;
       case FERTILIZATION: {
         const FertilizationParams *fertParams = gEvent->eventParams;
@@ -691,7 +715,8 @@ void printEvent(EventNode *oneEvent) {
     case TILLAGE:
       printf("TILLAGE on %d %d, ", year, day);
       TillageParams *const tParams = (TillageParams *)oneEvent->eventParams;
-      printf("with params: tillageEffect %4.2f\n", tParams->tillageEffect);
+      printf("with params: tillageEffect %4.2f, incorporationFraction %4.2f\n",
+             tParams->tillageEffect, tParams->incorporationFraction);
       break;
     case HARVEST:
       printf("HARVEST on %d %d, ", year, day);
