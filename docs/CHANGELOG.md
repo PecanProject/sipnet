@@ -32,6 +32,7 @@ sections to include in release notes:
 - MVP restart checkpoints for segmented runs (`RESTART_IN` / `RESTART_OUT`) (#279)
 - Configurable events prefix for `<prefix>.in` / `<prefix>.out`
 - Support for tillage events (#158)
+- Tillage no longer accelerates litter-to-soil transfer; add incorporation fraction parameter for physical mixing
 - `woodCreation` as output (#161)
 - Soil mineral pool (#170)
 - Nitrogen effects of fertilization (#173)
