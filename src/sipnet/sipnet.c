@@ -1268,17 +1268,17 @@ void calcLitterFluxes() {
   if (ctx.litterPool) {
     double tempEffect = calcTempEffect(climate->tsoil);
     double moistEffect = calcRespMoistEffect(envi.soilWater, params.soilWHC);
-    // Effects of tillage, if any
     double tillageEffect = calcTillageEffect();
-    // Effects of current CN
     double cnEffect = calcCNEffect(params.kCN, envi.litterC, envi.litterN);
 
-    // total litter breakdown (i.e. litterToSoil + rLitter) (g C/m^2 ground/day)
+    // base litter decomposition without tillage multiplier.
+    // tillage accelerates only litter respiration (aggregate disruption
+    // increases microbial access), not litter-to-soil transfer (physical
+    // incorporation is handled as separate event flux)
     double litterBreakdown = envi.litterC * params.litterBreakdownRate *
-                             tempEffect * moistEffect * tillageEffect *
-                             cnEffect;
+                             tempEffect * moistEffect * cnEffect;
 
-    fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
+    fluxes.rLitter = litterBreakdown * params.fracLitterRespired * tillageEffect;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
   } else {
     // litterBreakdown = 0;
