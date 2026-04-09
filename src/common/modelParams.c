@@ -263,7 +263,7 @@ int locateParam(ModelParams *modelParams, char *name) {
 
 // Return 1 if parameter i has had its value set, 0 otherwise
 int valueSet(ModelParams *modelParams, int i) {
-  return modelParams->params[i].isRead;
+  return modelParams->params[i].isRead > 0;
 }
 
 void deleteModelParams(ModelParams *modelParams) {
