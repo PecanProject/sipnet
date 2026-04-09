@@ -386,7 +386,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "litterMethaneRate", &(params.litterMethaneRate), ctx.anaerobic);
 
   // Water drainage
-  initializeOneModelParam(modelParams, "waterDrainFrac", &(params.waterDrainFrac), 1);
+  initializeOneModelParam(modelParams, "waterDrainFrac", &(params.waterDrainFrac), ctx.flooding);
 
   // NOLINTEND
   // clang-format on
@@ -995,9 +995,11 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // drain any water that remains beyond water holding capacity:
   if (waterRemaining > params.soilWHC) {
-    // waterDrainFrac is per-time-step, not per-day
-    *drainage = (waterRemaining - params.soilWHC) / (climate->length) *
-                params.waterDrainFrac;
+    *drainage = (waterRemaining - params.soilWHC) / (climate->length);
+    if (ctx.flooding) {
+      double drainFrac = params.waterDrainFrac * climate->length;
+      *drainage *= drainFrac;
+    }
   } else {
     *drainage = 0;
   }
