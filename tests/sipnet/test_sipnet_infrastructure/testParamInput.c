@@ -162,15 +162,6 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "baseCoarseRootResp", params.baseCoarseRootResp);
   fprintf(out, "%s: %.2f\n", "fineRootQ10", params.fineRootQ10);
   fprintf(out, "%s: %.2f\n", "coarseRootQ10", params.coarseRootQ10);
-  fprintf(out, "%s: %.2f\n", "mineralNInit", params.minNInit);
-  fprintf(out, "%s: %.2f\n", "soilOrgNInit", params.soilOrgNInit);
-  fprintf(out, "%s: %.2f\n", "litterOrgNInit", params.litterOrgNInit);
-  fprintf(out, "%s: %.2f\n", "nVolatilizationFrac", params.nVolatilizationFrac);
-  fprintf(out, "%s: %.2f\n", "nLeachingFrac", params.nLeachingFrac);
-  fprintf(out, "%s: %.2f\n", "leafCN", params.leafCN);
-  fprintf(out, "%s: %.2f\n", "woodCN", params.woodCN);
-  fprintf(out, "%s: %.2f\n", "fineRootCN", params.fineRootCN);
-  fprintf(out, "%s: %.2f\n", "kCN", params.kCN);
   fprintf(out, "%s: %.2f\n", "waterDrainFrac", params.waterDrainFrac);
 
   fclose(out);

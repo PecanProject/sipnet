@@ -739,13 +739,15 @@ irrigation) is assumed to evaporate the same day and therefore never enters $W_{
 
 Under well-drained conditions, drainage occurs when soil water content $(W_{\text{soil}})$ exceeds the soil water
 holding capacity $(W_{\text{WHC}})$. Beyond this point, additional water drains off at a rate controlled by the
-drainage parameter $f_{\text{drain}}$, defined as the fraction of excess soil water that can be removed per day.
-For well drained soils, set $f_{\text{drain}} = 1$ to ensure full drainage each day.
+drainage parameter $f_{\text{drain}}$, defined as the fraction of excess soil water that can be removed per time step.
+For well drained soils, set $f_{\text{drain}} = 1$ to ensure full drainage with each step.
 
-Setting $f_{\text{drain}} < 1$ reduces the rate of drainage. Flooding can be simulated by using a combination of low
-$f_{\text{drain}}$ and sufficient $F^W_\text{irrig|precip,soil}$ to maintain flooded conditions. 
+Setting $f_{\text{drain}} < 1$ reduces the rate of drainage. Flooding can be simulated by using a combination of low 
+$f_{\text{drain}}$ and sufficient $F^W_\text{irrig|precip,soil}$ to maintain flooded conditions. Note, though, that 
+if the model time steps are not constant, the actual per-day drainage rate will differ in the different steps.
+
 \begin{equation}
-F^W_{\text{drainage}} = \frac{1}{\Delta t} f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0)
+F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0)
 \label{eq:drainage}
 \end{equation}
 
@@ -821,9 +823,6 @@ r_d = \frac{\text{rdConst}}{u},
 \qquad r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2}\frac{W_{\text{soil}}}{W_{\text{WHC}}}\right)
 \end{equation*}
 
-For soil evaporation, SIPNET assumes a saturated-surface approximation by clipping $\frac{W_\text{soil}}{W_\text{WHC}}$
-to $[0,1]$ before calculating $r_\text{soil}$.
-
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
 
 #### Total Evaporation
@@ -869,8 +868,7 @@ F^W_\text{trans} = \min(F^W_\text{trans, pot}, f \cdot W_\text{soil})
 This is equation (A15) from Braswell, et al. (2005).
 
 Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{trans,pot}})$ and the
-fraction  $(f)$ of the plant-available soil water  $(W_\text{soil})$ that is removable in one day.
-Plant-available soil water is capped at the water holding capacity $W_\text{WHC}$.
+fraction  $(f)$ of the total soil water  $(W_\text{soil})$ that is removable in one day.
 
 ## Dependence Functions for Temperature and Moisture
 

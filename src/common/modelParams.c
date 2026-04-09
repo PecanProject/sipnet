@@ -263,7 +263,7 @@ int locateParam(ModelParams *modelParams, char *name) {
 
 // Return 1 if parameter i has had its value set, 0 otherwise
 int valueSet(ModelParams *modelParams, int i) {
-  return modelParams->params[i].isRead > 0;
+  return modelParams->params[i].isRead;
 }
 
 void deleteModelParams(ModelParams *modelParams) {
@@ -271,11 +271,4 @@ void deleteModelParams(ModelParams *modelParams) {
   free(modelParams->params);
   free(modelParams->readIndices);
   free(modelParams);
-}
-
-void setDefaultParamValue(ModelParams *params, char *pName, double value) {
-  int paramIndex = locateParam(params, pName);
-  OneModelParam *param = &(params->params[paramIndex]);
-  *(param->value) = value;
-  param->isRead = -1;
 }
