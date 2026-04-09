@@ -281,7 +281,7 @@ void readClimData(const char *climFile) {
  * @param ModelParams struct
  */
 void setDefaultParamValues(ModelParams *modelParams) {
-  setDefaultParamValue(modelParams, "waterDrainFrac", 0.0);
+  setDefaultParamValue(modelParams, "waterDrainFrac", 1.0);
 }
 
 /*!
