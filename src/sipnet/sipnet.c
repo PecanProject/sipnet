@@ -275,6 +275,15 @@ void readClimData(const char *climFile) {
   fclose(in);
 }
 
+/**
+ * Set all param default values
+ *
+ * @param ModelParams struct
+ */
+void setDefaultParamValues(ModelParams *modelParams) {
+  setDefaultParamValue(modelParams, "waterDrainFrac", 0.0);
+}
+
 /*!
  * Read initial model parameter values from param file
  *
@@ -385,12 +394,16 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "soilMethaneRate", &(params.soilMethaneRate), ctx.anaerobic);
   initializeOneModelParam(modelParams, "litterMethaneRate", &(params.litterMethaneRate), ctx.anaerobic);
 
-  // Water drainage
-  initializeOneModelParam(modelParams, "waterDrainFrac", &(params.waterDrainFrac), ctx.flooding);
+  // Water drainage; this one has a default value = 1
+  initializeOneModelParam(modelParams, "waterDrainFrac", &(params.waterDrainFrac), 1);
 
   // NOLINTEND
   // clang-format on
 
+  // Any params that have defined default values, they get set here:
+  setDefaultParamValues(modelParams);
+
+  // After all the setup, read 'em in
   readModelParams(modelParams, paramF);
 
   // Validate parameters that are used as divisors to avoid division-by-zero
@@ -995,11 +1008,8 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // drain any water that remains beyond water holding capacity:
   if (waterRemaining > params.soilWHC) {
-    *drainage = (waterRemaining - params.soilWHC) / (climate->length);
-    if (ctx.flooding) {
-      double drainFrac = params.waterDrainFrac * climate->length;
-      *drainage *= drainFrac;
-    }
+    *drainage = params.waterDrainFrac * (waterRemaining - params.soilWHC) /
+                (climate->length);
   } else {
     *drainage = 0;
   }

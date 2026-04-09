@@ -272,3 +272,10 @@ void deleteModelParams(ModelParams *modelParams) {
   free(modelParams->readIndices);
   free(modelParams);
 }
+
+void setDefaultParamValue(ModelParams *params, char *pName, double value) {
+  int paramIndex = locateParam(params, pName);
+  OneModelParam *param = &(params->params[paramIndex]);
+  *(param->value) = value;
+  param->isRead = -1;
+}

@@ -15,7 +15,7 @@ typedef struct OneModelParamStruct {
                    //  0: optional param
                    // -1: obsolete param, warn if read
   double *value;  // a pointer to this param's (external location) value
-  int isRead;  // whether this param has been read
+  int isRead;  // whether this param has been read; -1 used for default values
 } OneModelParam;
 
 typedef struct ModelParamsStruct {
@@ -92,5 +92,7 @@ double getParam(ModelParams *params, int i);
 // Clean up: deallocate modelParams and any other dynamically-allocated
 // pointers that need deallocating
 void deleteModelParams(ModelParams *params);
+
+void setDefaultParamValue(ModelParams *params, char *pName, double value);
 
 #endif
