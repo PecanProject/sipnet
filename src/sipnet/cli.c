@@ -31,7 +31,6 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(water-hresp),
     DECLARE_FLAG(nitrogen-cycle),
     DECLARE_FLAG(anaerobic),
-    DECLARE_FLAG(flooding),
 
     DECLARE_FLAG(do-main-output),
     DECLARE_FLAG(do-single-outputs),
@@ -63,7 +62,6 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(snow),
     DECLARE_ARG_FOR_MAP(soilPhenol), DECLARE_ARG_FOR_MAP(waterHResp),
     DECLARE_ARG_FOR_MAP(nitrogenCycle), DECLARE_ARG_FOR_MAP(anaerobic),
-    DECLARE_ARG_FOR_MAP(flooding),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -86,7 +84,6 @@ void usage(char *progName) {
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
   printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
   printf("  --events             Enable event handling (1)\n");
-  printf("  --flooding           Enable soil moisture to go above water holding capacity\n");
   printf("  --gdd                Use growing degree days to determine leaf growth (1)\n");
   printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
   printf("  --leaf-water         Calculate leaf pool and evaporate from that pool (0)\n");
