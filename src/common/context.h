@@ -35,7 +35,7 @@ struct context_metadata {
   UT_hash_handle hh;  // makes this structure hashable
 };
 
-#define NUM_CONTEXT_MODEL_FLAGS 10
+#define NUM_CONTEXT_MODEL_FLAGS 11
 // See docs/developer-guide/cli-options.md for details on how to add a new
 // Context entry
 struct Context {
@@ -51,6 +51,8 @@ struct Context {
   int waterHResp;
   int nitrogenCycle;
   int anaerobic;
+  int flooding;
+
   // IF ADDING A NEW MODEL FLAG, update NUM_CONTEXT_MODEL_FLAGS above and
   // relevant code in restart.c
 
