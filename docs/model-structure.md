@@ -821,6 +821,9 @@ r_d = \frac{\text{rdConst}}{u},
 \qquad r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2}\frac{W_{\text{soil}}}{W_{\text{WHC}}}\right)
 \end{equation*}
 
+For soil evaporation, SIPNET assumes a saturated-surface approximation by clipping $\frac{W_\text{soil}}{W_\text{WHC}}$
+to $[0,1]$ before calculating $r_\text{soil}$.
+
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
 
 #### Total Evaporation
@@ -866,7 +869,8 @@ F^W_\text{trans} = \min(F^W_\text{trans, pot}, f \cdot W_\text{soil})
 This is equation (A15) from Braswell, et al. (2005).
 
 Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{trans,pot}})$ and the
-fraction  $(f)$ of the total soil water  $(W_\text{soil})$ that is removable in one day.
+fraction  $(f)$ of the plant-available soil water  $(W_\text{soil})$ that is removable in one day.
+Plant-available soil water is capped at the water holding capacity $W_\text{WHC}$.
 
 ## Dependence Functions for Temperature and Moisture
 
