@@ -182,7 +182,8 @@ typedef struct Parameters {
 
   // Not from [1]
   // Fraction of excess soil water that can be removed per day. Value above 1
-  // indicates soil that drains in less than a day.
+  // indicates soil that drains in less than a day. Used when flooding is
+  // enabled.
   double waterDrainFrac;
 
   // ****************************************
