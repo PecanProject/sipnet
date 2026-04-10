@@ -995,10 +995,11 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
 
   // drain any water that remains beyond water holding capacity:
   if (waterRemaining > params.soilWHC) {
-    *drainage = (waterRemaining - params.soilWHC) / (climate->length);
+    double excessWater = waterRemaining - params.soilWHC;
     if (ctx.flooding) {
-      double drainFrac = params.waterDrainFrac * climate->length;
-      *drainage *= drainFrac;
+      *drainage = excessWater * params.waterDrainFrac;
+    } else {
+      *drainage = excessWater / (climate->length);
     }
   } else {
     *drainage = 0;
