@@ -74,21 +74,21 @@ int testDrainageWithWaterDrainFrac(void) {
   double fastFlow, evaporation, drainage;
 
   double water = 12.0;  // 2 cm above soilWHC=10
-  double excessOverLen = (water - params.soilWHC) / climate->length;
+  double excessOverWHC = (water - params.soilWHC) / climate->length;
   double clen = climate->length;
-  double preFrac = excessOverLen * clen;
+  double preFrac = excessOverWHC * clen;
 
   ctx.flooding = 1;
 
   // Use snow to suppress evaporation so drainage calc is straightforward
   envi.snow = 1.0;
 
-  // waterDrainFrac = 1.0: all excess drains immediately
-  params.waterDrainFrac = 1.0;
+  // waterDrainFrac = 2.0: excess drains in half a day
+  params.waterDrainFrac = 2.0;
   calcSoilWaterFluxes(&fastFlow, &evaporation, &drainage, water, 0, 0, 0);
-  status |= checkValue(drainage, preFrac * 1.0, "drainage (frac=1.0)");
+  status |= checkValue(drainage, preFrac * 2.0, "drainage (frac=2.0)");
 
-  // waterDrainFrac = 0.5: half of excess drains per step
+  // waterDrainFrac = 0.5: half of excess drains per day
   params.waterDrainFrac = 0.5;
   calcSoilWaterFluxes(&fastFlow, &evaporation, &drainage, water, 0, 0, 0);
   status |= checkValue(drainage, preFrac * 0.5, "drainage (frac=0.5)");
