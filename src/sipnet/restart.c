@@ -161,7 +161,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->flagsPF[7] = (StateField){"flags.waterHResp",    FT_INT, &modelFlags.waterHResp,    0};
   state->flagsPF[8] = (StateField){"flags.nitrogenCycle", FT_INT, &modelFlags.nitrogenCycle, 0};
   state->flagsPF[9] = (StateField){"flags.anaerobic",     FT_INT, &modelFlags.anaerobic,     0};
-  state->flagsPF[10] = (StateField){"flags.flooding",     FT_INT, &modelFlags.flooding},
+  state->flagsPF[10] = (StateField){"flags.flooding",     FT_INT, &modelFlags.flooding,      0};
   state->flagsPF[11] = (StateField){"flags.invalid",      FT_INVALID, NULL, FIELD_INVALID};
 
   state->boundaryPF[0] = (StateField){"boundary.year",    FT_INT,     &boundaryClimate.year,   0};
