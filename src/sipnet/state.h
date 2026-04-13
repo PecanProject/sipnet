@@ -82,7 +82,7 @@ typedef struct Parameters {
   // initial soil C content, g C * m^-2 ground area
   // :: C_(S,0) in [1]
   double soilInit;
-  // unitless: fraction of soilWHC
+  // unitless: fraction of soilWHC; can be greater than 1 when modeling flooding
   // :: used to derive W_0 in [1]
   double soilWFracInit;
 
@@ -179,6 +179,12 @@ typedef struct Parameters {
   // handled separately). NOTE: read in as per-year rate!
   // :: K_w in [1]
   double woodTurnoverRate;
+
+  // Not from [1]
+  // Fraction of excess soil water that can be removed per day. Value above 1
+  // indicates soil that drains in less than a day. Used when flooding is
+  // enabled.
+  double waterDrainFrac;
 
   // ****************************************
   // Params from [2] Sacks et al. (2006)

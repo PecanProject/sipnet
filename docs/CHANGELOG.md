@@ -13,8 +13,6 @@ sections to include in release notes:
 
 ### Added
 
-- Add woodCreation to sipnet.out (#161)
-
 ### Fixed
 
 ### Changed
@@ -50,6 +48,7 @@ sections to include in release notes:
 - Nitrogen demand, fixation flux, and uptake flux (#265)
 - Methane production option, controlled by the `anaerobic` cli option (#269)
 - Nitrogen limitation support (#298)
+- `flooding` cli option and `waterDrainFrac` parameter added (#273, #307)
 
 ### Fixed
 
