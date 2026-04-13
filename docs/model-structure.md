@@ -837,6 +837,8 @@ to $[0,1]$ before calculating $r_\text{soil}$.
 
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
 
+For soil evaporation, SIPNET assumes a saturated-surface approximation by clipping $\frac{W_\text{soil}}{W_\text{WHC}}$ to $[0,1]$ before calculating $r_\text{soil}$.
+
 #### Total Evaporation
 
 Total evaporation is calculated as the sum of intercepted water, soil evaporation, and sublimation:
