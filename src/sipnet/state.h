@@ -603,8 +603,6 @@ typedef struct FluxVars {
 // Global var
 extern Fluxes fluxes;
 
-#define NUM_FLUXES (sizeof(Fluxes) / sizeof(double))
-
 typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 taken up in this time interval; GROSS photosynthesis
   double gpp;
