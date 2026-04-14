@@ -1536,7 +1536,7 @@ void calcMethaneFlux(void) {
  */
 void resetFluxes(void) {
   // This reset all fluxes, including the event fluxes (which we want)
-  memset(&fluxes, 0, sizeof(Fluxes));
+  fluxes = (struct FluxVars){0};
 }
 
 /*!
