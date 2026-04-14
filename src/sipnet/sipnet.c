@@ -997,9 +997,11 @@ void calcSoilWaterFluxes(double *fastFlow, double *evaporation,
   if (waterRemaining > params.soilWHC) {
     double excessWater = waterRemaining - params.soilWHC;
     if (ctx.flooding) {
-      *drainage = excessWater * params.waterDrainFrac;
+      // Careful not to drain more than all the excess water
+      *drainage = fmin(excessWater * params.waterDrainFrac,
+                       excessWater / climate->length);
     } else {
-      *drainage = excessWater / (climate->length);
+      *drainage = excessWater / climate->length;
     }
   } else {
     *drainage = 0;
@@ -1240,7 +1242,8 @@ double calcLitterCN(void) { return calcCN(envi.litterC, envi.litterN); }
  * breakdown.
  *
  * @param kCN CN dependency control param for soil/litter
- * @param cn Current C:N ratio for soil/litter
+ * @param poolC Current size of carbon pool
+ * @param poolN Current size of nitrogen pool
  * @return C:N ratio effect as a fraction between 0 and 1
  */
 double calcCNEffect(double kCN, double poolC, double poolN) {
@@ -1532,39 +1535,8 @@ void calcMethaneFlux(void) {
  * Make sure to add new fluxes to this list!
  */
 void resetFluxes(void) {
-  fluxes.photosynthesis = 0.0;
-  fluxes.leafLitter = 0.0;
-  fluxes.woodLitter = 0.0;
-  fluxes.rVeg = 0.0;
-  fluxes.rSoil = 0.0;
-  fluxes.rain = 0.0;
-  fluxes.transpiration = 0.0;
-  fluxes.drainage = 0.0;
-  fluxes.litterToSoil = 0.0;
-  fluxes.rLitter = 0.0;
-  fluxes.snowFall = 0.0;
-  fluxes.snowMelt = 0.0;
-  fluxes.sublimation = 0.0;
-  fluxes.immedEvap = 0.0;
-  fluxes.fastFlow = 0.0;
-  fluxes.evaporation = 0.0;
-  fluxes.fineRootLoss = 0.0;
-  fluxes.coarseRootLoss = 0.0;
-  fluxes.fineRootCreation = 0.0;
-  fluxes.coarseRootCreation = 0.0;
-  fluxes.rCoarseRoot = 0.0;
-  fluxes.rFineRoot = 0.0;
-  fluxes.leafCreation = 0.0;
-  fluxes.leafOnCreation = 0.0;
-  fluxes.woodCreation = 0.0;
-  fluxes.nVolatilization = 0.0;
-  fluxes.nLeaching = 0.0;
-  fluxes.nOrgSoil = 0.0;
-  fluxes.nOrgLitter = 0.0;
-  fluxes.nMin = 0.0;
-  fluxes.soilMethane = 0.0;
-  fluxes.litterMethane = 0.0;
-  // event fluxes are handled in events.c:resetEventFluxes()
+  // This reset all fluxes, including the event fluxes (which we want)
+  memset(&fluxes, 0, sizeof(Fluxes));
 }
 
 /*!
