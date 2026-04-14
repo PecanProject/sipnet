@@ -10,6 +10,8 @@
       {"no-" #name, no_argument, &ctx.tmpFlag, 0}
 
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
+#define CLI_RESTART_IN 1001
+#define CLI_RESTART_OUT 1002
 
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 // See docs/developer-guide/cli-options.md for details on how to add a new
@@ -24,11 +26,12 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(growth-resp),
     DECLARE_FLAG(leaf-water),
     DECLARE_FLAG(litter-pool),
-    DECLARE_FLAG(microbes),
     DECLARE_FLAG(snow),
     DECLARE_FLAG(soil-phenol),
     DECLARE_FLAG(water-hresp),
     DECLARE_FLAG(nitrogen-cycle),
+    DECLARE_FLAG(anaerobic),
+    DECLARE_FLAG(flooding),
 
     DECLARE_FLAG(do-main-output),
     DECLARE_FLAG(do-single-outputs),
@@ -40,7 +43,10 @@ static struct option long_options[] = {  // NOLINT
     // name                         has_arg           flag  val (val is the
     // index)
     {"input-file", required_argument, 0, 'i'},
-    {"file-name", no_argument, 0, 'f'},
+    {"file-name", required_argument, 0, 'f'},
+    {"events-prefix", required_argument, 0, 'e'},
+    {"restart-in", required_argument, 0, CLI_RESTART_IN},
+    {"restart-out", required_argument, 0, CLI_RESTART_OUT},
     {"help", no_argument, 0, 'h'},
     {"version", no_argument, 0, 'v'},
     {0, 0, 0, 0}};
@@ -54,9 +60,10 @@ char *argNameMap[] = {
     // Model options
     DECLARE_ARG_FOR_MAP(events), DECLARE_ARG_FOR_MAP(gdd),
     DECLARE_ARG_FOR_MAP(growthResp), DECLARE_ARG_FOR_MAP(leafWater),
-    DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(microbes),
-    DECLARE_ARG_FOR_MAP(snow), DECLARE_ARG_FOR_MAP(soilPhenol),
-    DECLARE_ARG_FOR_MAP(waterHResp), DECLARE_ARG_FOR_MAP(nitrogenCycle),
+    DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(snow),
+    DECLARE_ARG_FOR_MAP(soilPhenol), DECLARE_ARG_FOR_MAP(waterHResp),
+    DECLARE_ARG_FOR_MAP(nitrogenCycle), DECLARE_ARG_FOR_MAP(anaerobic),
+    DECLARE_ARG_FOR_MAP(flooding),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -72,16 +79,18 @@ void usage(char *progName) {
   printf("Run SIPNET model for one site with configured options.\n");
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
-  printf("  -i, --input-file <input-file>      Name of input config file ('sipnet.in')\n");
+  printf("  -i, --input-file <path>            Name of input config file ('sipnet.in')\n");
   printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
+  printf("  -e, --events-prefix <name>         Prefix of events input/output files ('events' => 'events.in' / 'events.out')\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
+  printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
   printf("  --events             Enable event handling (1)\n");
+  printf("  --flooding           Enable soil moisture to go above water holding capacity\n");
   printf("  --gdd                Use growing degree days to determine leaf growth (1)\n");
   printf("  --growth-resp        Explicitly model growth resp, rather than including with maint resp (0)\n");
   printf("  --leaf-water         Calculate leaf pool and evaporate from that pool (0)\n");
   printf("  --litter-pool        Enable litter pool in addition to single soil carbon pool (0)\n");
-  printf("  --microbes           Enable microbe modeling (0)\n");
   printf("  --nitrogen-cycle     Enable modeling of the nitrogen cycle (0)\n");
   printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
   printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
@@ -89,27 +98,38 @@ void usage(char *progName) {
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
   printf("  --do-main-output     Print time series of all output variables to <file-name>.out (1)\n");
-  printf("  --do-single-outputs  Print outputs one variable per file (e.g. <file-name>.NEE)\n");
+  printf("  --do-single-outputs  Print selection* of outputs one variable per file (e.g. <file-name>.NEE)\n");
   printf("  --dump-config        Print final config to <file-name>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
+  printf("  --restart-in <path>  Read a restart checkpoint from path\n");
+  printf("  --restart-out <path> Write a restart checkpoint to path at end of run\n");
   printf("\n");
   printf("Info options:\n");
   printf("  -h, --help           Print this message and exit\n");
   printf("  -v, --version        Print version information and exit\n");
+  printf("\n");
+  printf("*do-single-outputs option outputs are: NEE, NEE_cum, GPP, GPP_cum\n");
   printf("\n");
   printf("Configuration options are read from <input_file>. Other options specified on the command\n");
   printf("line override settings from that file.\n");
   printf("\n");
   printf("Note the following restrictions on these options:\n");
   printf(" --soil-phenol and --gdd may not both be turned on\n");
-  printf(" --events and --microbes may not both be turned on\n");
-  printf(" --nitrogen-cycle and --microbes may not both be turned on\n");
+  printf(" --anaerobic requires --water-hresp\n");
+  printf(" --nitrogen-cycle requires both --litter-pool and --anaerobic\n");
   // clang-format on
 }
 
 // Print the version when requested
 void version(void) { printf("SIPNET version %s\n", VERSION_STRING); }
+
+static void requireCLIArg(const char *optionName) {
+  if (optarg == NULL) {
+    logError("option %s requires an argument\n", optionName);
+    exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+  }
+}
 
 // Parses command-line options using getopt_long
 void parseCommandLineArgs(int argc, char *argv[]) {
@@ -117,7 +137,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
   int longIndex = 0;
   int shortIndex;
   // get command-line arguments:
-  while ((shortIndex = getopt_long(argc, argv, "hi:v", long_options,
+  while ((shortIndex = getopt_long(argc, argv, "he:f:i:v", long_options,
                                    &longIndex)) != -1) {
 
     switch (shortIndex) {
@@ -126,25 +146,54 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         updateIntContext(argNameMap[longIndex], ctx.tmpFlag, CTX_COMMAND_LINE);
         break;
       case 'f':
+        requireCLIArg("--file-name");
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          printf("ERROR: filename %s exceeds maximum length of %d\n", optarg,
-                 FILENAME_MAXLEN);
-          printf("Either change the name or increase INPUT_MAXNAME in "
-                 "frontend.c\n");
-          exit(1);
+          logError("filename %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          logError("Either change the name or increase INPUT_MAXNAME in "
+                   "frontend.c\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
+        break;
+      case 'e':
+        requireCLIArg("--events-prefix");
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          logError("events-prefix value %s exceeds maximum length of %d\n",
+                   optarg, FILENAME_MAXLEN);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("eventsPrefix", optarg, CTX_COMMAND_LINE);
         break;
       case 'h':
         usage(argv[0]);
         exit(EXIT_CODE_SUCCESS);
-      case 'i':
+      case CLI_RESTART_IN:
+        requireCLIArg("--restart-in");
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          printf("ERROR: input filename %s exceeds maximum length of %d\n",
-                 optarg, FILENAME_MAXLEN);
-          printf("Either change the name or increase INPUT_MAXNAME in "
-                 "frontend.c\n");
-          exit(1);
+          logError("restart-in path %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("restartIn", optarg, CTX_COMMAND_LINE);
+        break;
+      case CLI_RESTART_OUT:
+        requireCLIArg("--restart-out");
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          logError("restart-out path %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("restartOut", optarg, CTX_COMMAND_LINE);
+        break;
+      case 'i':
+        requireCLIArg("--input-file");
+        if (strlen(optarg) >= FILENAME_MAXLEN) {
+          logError("input filename %s exceeds maximum length of %d\n", optarg,
+                   FILENAME_MAXLEN);
+          logError("Either change the name or increase INPUT_MAXNAME in "
+                   "frontend.c\n");
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("inputFile", optarg, CTX_COMMAND_LINE);
         break;

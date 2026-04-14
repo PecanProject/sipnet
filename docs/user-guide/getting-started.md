@@ -25,7 +25,7 @@ Use this guide to install the prerequisites, build the model, and run your first
    ```
 4. Check the output:
    ```bash
-   cat niwot.out
+   cat sipnet.out
    ```
 
 ## Run Tests

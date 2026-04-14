@@ -2,7 +2,7 @@
 
 These are the input files needed to run SIPNET:
 
-1. `sipnet.param`: Model parameter file.
+1. `sipnet.param`: Model parameter file. See [Parameters](../parameters.md) for full description of this file.
 2. `<sitename>.clim`: Climate file, provides weather data for each time step of the simulation period.
 3. [optional] `events.in`: Agronomic events.
 4. [optional] Run time options (command line arguments or config file `sipnet.in`)
@@ -37,7 +37,6 @@ soilInit 7000
 litterWFracInit 0.5
 soilWFracInit 0.6
 snowInit 1
-microbeInit 0.5
 fineRootFrac 0.2
 coarseRootFrac 0.2
 aMax 95
@@ -96,7 +95,9 @@ loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
 
 ## Agronomic Events
 
-Agronomic (management) events are read from an `events.in` file. This file specifies one event per line:
+Agronomic (management) events are read from `events.in` by default, or from
+`<EVENTS_PREFIX>.in` when `EVENTS_PREFIX` / `--events-prefix` is set. This
+file specifies one event per line:
 
 | col | parameter   | description                          | units  | notes                                            |
 | --- | ----------- | ------------------------------------ | ------ | ------------------------------------------------ |
@@ -208,31 +209,35 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 ### Input / Output Options
 
-| Option       | Default   | Description                           |
-| ------------ | --------- | ------------------------------------- |
-| `input-file` | sipnet.in | Name of input config file             |
-| `file-name`  | sipnet    | Prefix of climate and parameter files |
+| Option          | Default   | Description                                        |
+| --------------- | --------- | -------------------------------------------------- |
+| `input-file`    | sipnet.in | Name of input config file                          |
+| `file-name`     | sipnet    | Prefix of climate and parameter files              |
+| `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`) |
+| `restart-in`    | unset     | Path to restart checkpoint to load                 |
+| `restart-out`   | unset     | Path to restart checkpoint to write                |
 
 ### Output Flags
 
 | Option              | Default | Description                                                    |
-| ------------------- | ------- | -------------------------------------------------------------- |
+|---------------------|---------|----------------------------------------------------------------|
 | `do-main-output`    | on      | Print time series of all output variables to `<file-name>.out` |
-| `do-single-outputs` | off     | Print outputs one variable per file (e.g. `<file-name>.NEE`)   |
-| `dump-config`       | on      | Print final config to `<file-name>.config`                     |
+| `do-single-outputs` | off     | Print selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) one variable per file (e.g. `<file-name>.NEE`) |
+| `dump-config`       | off     | Print final config to `<file-name>.config`                     |
 | `print-header`      | on      | Whether to print header row in output files                    |
 | `quiet`             | off     | Suppress info and warning message                              |
+
 
 ### Model Flags
 
 | Option           | Default | Description                                                                             |
 |------------------|---------|-----------------------------------------------------------------------------------------|
+| `anaerobic`      | off     | Enable modeling of methane and anaerobic effect on Rh moisture dependency               |
 | `events`         | on      | Enable event handling                                                                   |
 | `gdd`            | on      | Use growing degree days to determine leaf growth                                        |
 | `growth-resp`    | off     | Explicitly model growth respiration, rather than including with maintenance respiration |
 | `leaf-water`     | off     | Calculate leaf pool and evaporate from that pool                                        |
 | `litter-pool`    | off     | Enable litter pool in addition to single soil carbon pool                               |
-| `microbes`       | off     | Enable microbe modeling                                                                 |
 | `nitrogen-cycle` | off     | Enable nitrogen cycle modeling                                                          |
 | `snow`           | on      | Keep track of snowpack, rather than assuming all precipitation is liquid                |
 | `soil-phenol`    | off     | Use soil temperature to determine leaf growth                                           |
@@ -240,7 +245,8 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
- - `events` and `microbes` may not both be turned on
+ - `anaerobic` requires `water-hresp`
+ - 'nitrogen-cycle' requires both 'litter-pool' and 'anaerobic'
 
 ### Command Line Arguments
 
@@ -260,30 +266,30 @@ See `sipnet --help` for a full list of available command-line options.
 SIPNET reads a configuration file that specifies run-time options without using command-line arguments. By default, SIPNET looks for a file named `sipnet.in` in the current directory. These will be overwritten by command-line arguments if specified.
 
 The configuration file uses a simple key-value format, `option = value`, 
-with one option per line; comments follow `#`. Flags are specified as 0 for off and 1 for on.
+with one option per line; comments follow `!`. Flags are specified as 0 for off and 1 for on.
 
 #### Example Configuration File
 
 Note that case is ignored for parameter names, as well as dashes and underscores.
 
 ```
-# Base filename (used for derived filenames)
+! Base filename (used for derived filenames)
 FILE_NAME = mysite
 
-# Output options
+! Output options
 DO_MAIN_OUTPUT = 1
 DO_SINGLE_OUTPUTS = 0
 DUMP_CONFIG = 1
 PRINT_HEADER = 1
 QUIET = 0
 
-# Model options
+! Model options
 EVENTS = 1
 GDD = 1
 GROWTH_RESP = 0
 LEAF_WATER = 0
 LITTER_POOL = 0
-MICROBES = 0
+NITROGEN_CYCLE = 0
 SNOW = 1
 SOIL_PHENOL = 0
 WATER_HRESP = 1

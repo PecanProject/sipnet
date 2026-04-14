@@ -32,8 +32,7 @@ void setAll(double *array, int length, double value) {
 
 // Checks to make sure that all parameters with isRequired=true have been read
 // If not, kills program
-// Writes out names of all parameters that weren't read (even if not required,
-// as a warning message)
+// Writes out names of all parameters that weren't read (even if not required)
 // Also prints out a list of obsolete params that were read
 void checkAllRead(ModelParams *ModelParams) {
   int i, okay, missingOptParam = 0;
@@ -45,7 +44,7 @@ void checkAllRead(ModelParams *ModelParams) {
     if (!param->isRead) {
       if (param->isRequired) {  // should have been read but wasn't!
         okay = 0;
-        logError("Did not find read required parameter %s\n", param->name);
+        logError("Did not find required parameter %s\n", param->name);
       } else {
         missingOptParam = 1;
       }
@@ -55,7 +54,7 @@ void checkAllRead(ModelParams *ModelParams) {
   // Inform if any optional params are not in the file; not an error, just a
   // note, and just one line instead of one for each
   if ((missingOptParam) && (!ctx.quiet)) {
-    logWarning("optional params not specified in input file:");
+    logInfo("optional params not specified in input file:");
     for (i = 0; i < ModelParams->numParams; i++) {
       param = &(ModelParams->params[i]);
       if ((!param->isRead) && (param->isRequired == 0)) {
@@ -66,7 +65,8 @@ void checkAllRead(ModelParams *ModelParams) {
   }
 
   if (!okay) {
-    exit(1);
+    logError("Some required parameters were not read from file\n");
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 }
 
@@ -109,7 +109,7 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
              "parameters\n",
              name, modelParams->maxParams);
     logError("Check value of maxParams passed into newModelParams function\n");
-    exit(1);
+    exit(EXIT_CODE_INTERNAL_ERROR);
   }
 
   // otherwise, get the index of the next uninitialized parameter
@@ -128,9 +128,9 @@ void initializeOneModelParam(ModelParams *modelParams, char *name,
 void checkParamFormat(char *line, const char *sep) {
   int numParams = countFields(line, sep);
   if (numParams > 2) {
-    logWarning("extra columns in .param file are being ignored (found %d "
-               "columns)\n",
-               numParams);
+    logInfo("extra columns in .param file are being ignored (found %d "
+            "columns)\n",
+            numParams);
   }
 }
 
@@ -148,7 +148,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
   double value;
   char *errc;
   int isComment;
-  char unknownParams[2048] = "";
+  char unknownParams[MODEL_PARAM_ERROR_BUFFER_SIZE] = {0};
   char hasUnknownParams = 0;
 
   // Check for old-style (spatial param) format on first line containing params
@@ -182,7 +182,9 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
 
       if (paramIndex == -1) {  // not found
         if (hasUnknownParams) {
-          if (strlen(unknownParams) + strlen(pName) > 2048) {
+          // Check if there's room for ", ", pName, and null terminator
+          if (strlen(unknownParams) + strlen(pName) + 3 >
+              MODEL_PARAM_ERROR_BUFFER_SIZE) {
             logError("Too many unknown params; please remove some from %s and "
                      "rerun\n",
                      paramFile);
@@ -214,14 +216,14 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
 
   // Warn if unknown params were found
   if (hasUnknownParams) {
-    logWarning("Unknown param(s) found (and ignored): %s\n", unknownParams);
+    logInfo("Unknown param(s) found (and ignored): %s\n", unknownParams);
   }
 
   // check for error in reading:
   if (ferror(paramFile)) {
     logError("reading file in readModelParams\n");
     logError("ferror = %d\n", ferror(paramFile));
-    exit(1);
+    exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
   }
 
   checkAllRead(modelParams);  // terminate program if some required parameters

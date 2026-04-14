@@ -17,100 +17,104 @@ model equations, configuration names, units, and I/O fields. See
 [Model Outputs](user-guide/model-outputs.md) for file formats. Unless noted,
 pools are mass per ground area and rates are mass per area per day. The actual parameter set that is used depends on the configured model structure. For equation references, see the [model structure](model-structure.md) documentation.
 
-## Notation {#sec-notation}
+## Notation
 
 ### Variables (Pools, Fluxes, and Parameters)
 
+| **Category**              | **Symbol**           | **Description**                                        |
+| :------------------------ | :------------------- | :----------------------------------------------------- |
+| **State variables**       |                      |                                                        |
+|                           | $C$                  | Carbon pool                                            |
+|                           | $N$                  | Nitrogen pool                                          |
+|                           | $W$                  | Water pool or content                                  |
+|                           | $CN$                 | Carbon-to-Nitrogen ratio                               |
+| **Fluxes and rates**      |                      |                                                        |
+|                           | $F$                  | Generic flux of carbon, nitrogen, or water             |
+|                           | $A$                  | Photosynthetic assimilation (net photosynthesis)       |
+|                           | $R$                  | Respiration flux                                       |
+|                           | $R_H$                | Heterotrophic respiration (soil/litter decomposition)  |
+|                           | $R_A$                | Autotrophic respiration (vegetation respiration)       |
+|                           | $ET$                 | Evapotranspiration                                     |
+|                           | $F^W_{\text{trans}}$ | Transpiration                                          |
+|                           | $GPP$                | Gross Primary Production                               |
+|                           | $NPP$                | Net Primary Production                                 |
+|                           | $NEE$                | Net Ecosystem Exchange                                 |
+| **Environmental drivers** |                      |                                                        |
+|                           | $T$                  | Temperature                                            |
+|                           | $VPD$                | Vapor Pressure Deficit                                 |
+|                           | $PAR$                | Photosynthetically Active Radiation                    |
+|                           | $LAI$                | Leaf Area Index                                        |
+| **Parameters**            |                      |                                                        |
+|                           | $K$                  | Rate constant (e.g., for decomposition or respiration) |
+|                           | $Q_{10}$             | Temperature sensitivity coefficient                    |
+|                           | $\alpha$             | Fraction of NPP allocated to a plant pool              |
+|                           | $f$                  | Fraction of a pool or flux other than NPP              |
+|                           | $k$                  | Scaling factor                                         |
+|                           | $D$                  | Dependency or damping function                         |
+|                           | $SLW$                | Specific Leaf Weight (leaf carbon per unit leaf area)  |
 
-| **Category**              | **Symbol** | **Description**                                        |
-| :------------------------ | :--------- | :----------------------------------------------------- |
-| **State variables**       |            |                                                        |
-|                           | $C$        | Carbon pool                                            |
-|                           | $N$        | Nitrogen pool                                          |
-|                           | $W$        | Water pool or content                                  |
-|                           | $CN$       | Carbon-to-Nitrogen ratio                               |
-| **Fluxes and rates**      |            |                                                        |
-|                           | $F$        | Generic flux of carbon, nitrogen, or water             |
-|                           | $A$        | Photosynthetic assimilation (net photosynthesis)       |
-|                           | $R$        | Respiration flux                                       |
-|                           | $ET$       | Evapotranspiration                                     |
-|                           | $GPP$      | Gross Primary Production                               |
-|                           | $NPP$      | Net Primary Production                                 |
-|                           | $NEE$      | Net Ecosystem Exchange                                 |
-| **Environmental drivers** |            |                                                        |
-|                           | $T$        | Temperature                                            |
-|                           | $VPD$      | Vapor Pressure Deficit                                 |
-|                           | $PAR$      | Photosynthetically Active Radiation                    |
-|                           | $LAI$      | Leaf Area Index                                        |
-| **Parameters**            |            |                                                        |
-|                           | $K$        | Rate constant (e.g., for decomposition or respiration) |
-|                           | $Q_{10}$   | Temperature sensitivity coefficient                    |
-|                           | $\alpha$   | Fraction of NPP allocated to a plant pool              |
-|                           | $f$        | Fraction of a pool or flux other than NPP              |
-|                           | $k$        | Scaling factor                                         |
-|                           | $D$        | Dependency or damping function                         |
+**Note on superscripts:** Most variables use superscripts and subscripts (e.g., $F^C_{\text{growth}}$ for growth respiration flux). However, some terms that are widely used in the scientific literature use the common notation $NPP$, $GPP$, $R_H$, $R_A$, and $ET$.
 
 ### Subscripts (Temporal, Spatial, or Contextual Identifiers)
 
+| **Category**                             | **Subscript**            | **Description**                                       |
+| :--------------------------------------- | :----------------------- | :---------------------------------------------------- |
+| **Temporal identifiers**                 |                          |                                                       |
+|                                          | $X_0$                    | Initial value                                         |
+|                                          | $X_t$                    | Value at time $t$                                     |
+|                                          | $X_d$                    | Daily value or average                                |
+|                                          | $X_{\text{avg}}$         | Average value (e.g., over a timestep or spatial area) |
+|                                          | $X_{\text{max}}$         | Maximum value (e.g., temperature or rate)             |
+|                                          | $X_{\text{min}}$         | Minimum value (e.g., temperature or rate)             |
+|                                          | $X_{\text{opt}}$         | Optimal value (e.g., temperature or rate)             |
+| **Structural components**                |                          |                                                       |
+|                                          | $X_{\text{leaf}}$        | Leaf pools or fluxes                                  |
+|                                          | $X_{\text{wood}}$        | Wood pools or fluxes                                  |
+|                                          | $X_{\text{root}}$        | Root pool (general)                                   |
+|                                          | $X_{\text{fine root}}$   | Fine root pool                                        |
+|                                          | $X_{\text{coarse root}}$ | Coarse root pool                                      |
+|                                          | $X_{\text{soil}}$        | Soil pools or processes                               |
+|                                          | $X_{\text{litter}}$      | Litter pools or processes                             |
+|                                          | $X_{\text{veg}}$         | Vegetation processes (general)                        |
+| **Processes context**                    |                          |                                                       |
+|                                          | $X_{\text{resp}}$        | Respiration processes                                 |
+|                                          | $X_{\text{growth}}$      | Growth respiration                                    |
+|                                          | $X_{\text{dec}}$         | Decomposition processes                               |
+|                                          | $X_{\text{vol}}$         | Volatilization processes                              |
+|                                          | $X_{\text{drain}}$       | Drainage processes                                    |
+| **Chemical / environmental identifiers** |                          |                                                       |
+|                                          | $X_{\text{org}}$         | Organic forms                                         |
+|                                          | $X_{\text{mineral}}$     | Mineral forms                                         |
+|                                          | $X_{\text{anaer}}$       | Anaerobic soil conditions                             |
+|                                          | $X_{\text{HC}}$          | Water holding capacity                                |
 
-| **Category**                             | **Subscript**          | **Description**                                       |
-| :--------------------------------------- | :--------------------- | :---------------------------------------------------- |
-| **Temporal identifiers**                 |                        |                                                       |
-|                                          | $X_0$                  | Initial value                                         |
-|                                          | $X_t$                  | Value at time $t$                                     |
-|                                          | $X_d$                  | Daily value or average                                |
-|                                          | $X_\text{avg}$         | Average value (e.g., over a timestep or spatial area) |
-|                                          | $X_\text{max}$         | Maximum value (e.g., temperature or rate)             |
-|                                          | $X_\text{min}$         | Minimum value (e.g., temperature or rate)             |
-|                                          | $X_\text{opt}$         | Optimal value (e.g., temperature or rate)             |
-| **Structural components**                |                        |                                                       |
-|                                          | $X_\text{leaf}$        | Leaf pools or fluxes                                  |
-|                                          | $X_\text{wood}$        | Wood pools or fluxes                                  |
-|                                          | $X_\text{root}$        | Root pool                                             |
-|                                          | $X_\text{fine root}$   | Fine root pool                                        |
-|                                          | $X_\text{coarse root}$ | Coarse root pool                                      |
-|                                          | $X_\text{soil}$        | Soil pools or processes                               |
-|                                          | $X_\text{litter}$      | Litter pools or processes                             |
-|                                          | $X_\text{veg}$         | Vegetation processes (general)                        |
-| **Processes context**                    |                        |                                                       |
-|                                          | $X_\text{resp}$        | Respiration processes                                 |
-|                                          | $X_\text{dec}$         | Decomposition processes                               |
-|                                          | $X_\text{vol}$         | Volatilization processes                              |
-| **Chemical / environmental identifiers** |                        |                                                       |
-|                                          | $X_\text{org}$         | Organic forms                                         |
-|                                          | $X_\text{mineral}$     | Mineral forms                                         |
-|                                          | $X_{\text{anaer}}$     | Anaerobic soil conditions                             |
-
-Subscripts may be used in combination, e.g. $X_{\text{soil,mineral},0}$.
+Subscripts may be used in combination, e.g., $X_{\text{soil,mineral},0}$.
 
 ## Run-time Parameters
 
 Run-time parameters can change from one run to the next, or when the model is stopped and restarted. These include initial state values and parameters related to plant physiology, soil physics, and biogeochemical cycling.
 
-### Initial state values
+### Initial State Values
 
-|     | Symbol                     | Parameter Name  | Definition                                                               | Units                                                | notes                                                                              |
-| --- | -------------------------- | --------------- | ------------------------------------------------------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| 1   | $C_{\text{wood},0}$        | plantWoodInit   | Initial wood carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ | above-ground + roots                                                               |
-| 2   | $LAI_0$                    | laiInit         | Initial leaf area                                                        | m^2 leaves \* m^-2 ground area                       | multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$ |
-| 3   | $C_{\text{litter},0}$      | litterInit      | Initial litter carbon                                                    | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
-| 4   | $C_{\text{soil},0}$        | soilInit        | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$ |                                                                                    |
-| 5   | $W_{\text{litter},0}$      | litterWFracInit |                                                                          | unitless                                             | fraction of litterWHC                                                              |
-| 6   | $W_{\text{soil},0}$        | soilWFracInit   |                                                                          | unitless                                             | fraction of soilWHC                                                                |
-|     | $N_{\text{org, litter},0}$ |                 | Initial litter organic nitrogen content                                  | g N m$^{-2}$                                         |                                                                                    |
-|     | $N_{\text{org, soil},0}$   |                 | Initial soil organic nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
-|     | $N_{\text{min, soil},0}$   |                 | Initial soil mineral nitrogen content                                    | g N m$^{-2}$                                         |                                                                                    |
-|     | ${CH_4}_{\text{soil},0}$   |                 | Initial methane concentration in the soil                                | g C m$^{-2}$                                         |                                                                                    |
-|     | ${N_2O}_{\text{soil},0}$   |                 | Nitrous oxide concentration in the soil                                  | g N m$^{-2}$                                         |                                                                                    |
-|     | $f_{\text{fine root},0}$   | fineRootFrac    | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   |                                                      |                                                                                    |
-|     | $f_{\text{coarse root},0}$ | coarseRootFrac  | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool |                                                      |                                                                                    |
+| Symbol                            | Parameter Name | Definition                                                               | Units                                                               | Notes                                                                                    |
+|-----------------------------------|----------------|--------------------------------------------------------------------------|---------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| $C_{\text{wood},0}$               | plantWoodInit  | Initial wood carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$                | Above-ground + roots                                                                     |
+| $C_{\text{wood,storage}}$         |                | Wood carbon storage pool (delta), initialized internally to 0            | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$                | Not a runtime param; $C_{\text{wood,total}} = C_{\text{wood}} + C_{\text{wood,storage}}$ |
+| $LAI_0$                           | laiInit        | Initial leaf area                                                        | $\text{m}^2 \text{ leaves} \cdot \text{m}^{-2} \text{ ground area}$ | Multiply by SLW to get initial plant leaf C: $C_{\text{leaf},0} = LAI_0 \cdot SLW$       |
+| $C_{\text{litter},0}$             | litterInit     | Initial litter carbon                                                    | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$                |                                                                                          |
+| $C_{\text{soil},0}$               | soilInit       | Initial soil carbon                                                      | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$                |                                                                                          |
+| $W_{\text{soil},0}$               | soilWFracInit  | Initial soil water content                                               | unitless                                                            | Fraction of soilWHC, may be greater than 1 when initializing flooded conditions          |
+| $N_{\text{org, litter},0}$        | litterOrgNInit | Initial litter organic nitrogen content                                  | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
+| $N_{\text{org, soil},0}$          | soilOrgNInit   | Initial soil organic nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
+| $N_{\text{min, soil},0}$          | mineralNInit   | Initial soil mineral nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
+| $f_{\text{fine root},0}$          | fineRootFrac   | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   | unitless                                                            |                                                                                          |
+| $f_{\text{coarse root},0}$        | coarseRootFrac | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool | unitless                                                            |                                                                                          |
+| $W_{\text{snow},0}$               | snowInit       | Initial snow water equivalent                                            | cm water equivalent                                                 |                                                                                          |
 
 <!--not used in CCMMF
 
 | 7 |                                          | snowInit        | Initial snow water                        | cm water equiv.                |                                                   |
-|   |                                          | microbeInit     |                                           |                                |                                                   |
-
-
+-->
 
 <!--if separating N_min into NH4 and NO3
 
@@ -122,157 +126,119 @@ Run-time parameters can change from one run to the next, or when the model is st
 |     | ${NO_3}_{\text{soil},0}$ |                | Initial soil nitrate content  | g N m$^{-2}$ |       |
 
  
+-->
 
-### Litter Quality Parameters
+### Stoichiometry Parameters
 
-|     | Symbol                      | Name | Description                              | Units | Notes                    |
-| --- | --------------------------- | ---- | ---------------------------------------- | ----- | ------------------------ |
-|     | $CN_{\textrm{litter}}$      |      | Carbon to Nitrogen ratio of litter       |       |                          |
-|     | $CN_{\textrm{wood}}$        |      | Carbon to Nitrogen ratio of wood         |       | CN_coarse_root = CN_wood |
-|     | $CN_{\textrm{leaf}}$        |      | Carbon to Nitrogen ratio of leaves       |       |                          |
-|     | $CN_{\textrm{fine root}}$   |      | Carbon to Nitrogen ratio of fine roots   |       |                          |
-|     | $CN_{\textrm{coarse root}}$ |      | Carbon to Nitrogen ratio of coarse roots |       |                          |
-|     | $k_\textit{CN}$             |      | Decomposition CN scaling parameter       |       |                          |
+| Symbol                    | Name       | Description                            | Units | Notes                                            |
+| ------------------------- | ---------- | -------------------------------------- | ----- | ------------------------------------------------ |
+| $CN_{\text{wood}}$        | woodCN     | Carbon to Nitrogen ratio of wood       |       | $CN_{\text{coarse root}} = CN_{\text{wood}}$     |
+| $CN_{\text{leaf}}$        | leafCN     | Carbon to Nitrogen ratio of leaves     |       |                                                  |
+| $CN_{\text{fine root}}$   | fineRootCN | Carbon to Nitrogen ratio of fine roots |       |                                                  |
+| $k_{CN}$                  | kCN        | Decomposition CN scaling parameter     |       |                                                  |
 
-### Photosynthesis parameters
+### Photosynthesis Parameters
 
-|     | Symbol                        | Parameter Name  | Definition                                                           | Units                                                                        | notes                                                                     |
-| --- | ----------------------------- | --------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 8   | $A_{\text{max}}$              | aMax            | Maximum net CO2 assimilation rate                                    | $\text{nmol CO}_2 \cdot \text{g}^{-1} \cdot \text{leaf} \cdot \text{s}^{-1}$ | assuming max. possible PAR, all intercepted, no temp, water or VPD stress |
-| 9   | $f_{A_{\text{max},d}}$        | aMaxFrac        | avg. daily aMax as fraction of instantaneous                         | fraction                                                                     | Avg. daily max photosynthesis as fraction of $A_{\text{max}}$             |
-| 10  | $R_\text{leaf,opt}$           | baseFolRespFrac | basal Foliar maintenance respiration as fraction of $A_{\text{max}}$ | fraction                                                                     |                                                                           |
-| 11  | $T_{\text{min}}$              | psnTMin         | Minimum temperature at which net photosynthesis occurs               | $^{\circ}\text{C}$                                                           |                                                                           |
-| 12  | $T_{\text{opt}}$              | psnTOpt         | Optimum temperature at which net photosynthesis occurs               | $^{\circ}\text{C}$                                                           |                                                                           |
-| 13  | $K_\text{VPD}$                | dVpdSlope       | Slope of VPD–photosynthesis relationship                             | $kPa^{-1}$                                                                   | dVpd = 1 - dVpdSlope \* vpd^dVpdExp                                       |
-| 14  | $K_{\text{VPD}},{\text{exp}}$ | dVpdExp         | Exponent used to calculate VPD effect on Psn                         | dimensionless                                                                | dVpd = 1 - dVpdSlope \* vpd^dVpdExp                                       |
-| 15  | $\text{PAR}_{1/2}$            | halfSatPar      | Half saturation point of PAR–photosynthesis relationship             | $m^{-2}$\ ground area $\cdot$ day$^{-1}$                                     | PAR at which photosynthesis occurs at 1/2 theoretical maximum             |
-| 16  | $k$                           | attenuation     | Canopy PAR extinction coefficient                                    |                                                                              |                                                                           |
+| Symbol                 | Parameter Name  | Definition                                                           | Units                                                                            | Notes                                                                      |
+| ---------------------- | --------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| $A_{\text{max}}$       | aMax            | Maximum net CO$_2$ assimilation rate                                 | $\text{nmol CO}_2 \cdot \text{g}^{-1} \text{ leaf} \cdot \text{s}^{-1}$          | Assuming maximum PAR, full interception, no stress                         |
+| $f_{A_{\text{max},d}}$ | aMaxFrac        | Average daily $A_{\text{max}}$ as fraction of instantaneous          | unitless                                                                         | Accounts for diurnal variation in photosynthesis                           |
+| $R_{\text{leaf,opt}}$  | baseFolRespFrac | Basal foliar maintenance respiration as fraction of $A_{\text{max}}$ | unitless                                                                         |                                                                            |
+| $T_{\text{psn,min}}$   | psnTMin         | Minimum temperature for net photosynthesis                           | $^\circ\text{C}$                                                                 |                                                                            |
+| $T_{\text{psn,opt}}$   | psnTOpt         | Optimum temperature for net photosynthesis                           | $^\circ\text{C}$                                                                 |                                                                            |
+| $T_{\text{psn,max}}$   | psnTMax         | Maximum temperature for net photosynthesis                           | $^\circ\text{C}$                                                                 | Calculated internally as $2 \cdot T_{\text{psn,opt}} - T_{\text{psn,min}}$ |
+| $K_{\text{VPD}}$       | dVpdSlope       | Slope of VPD–photosynthesis relationship                             | $\text{kPa}^{-1}$                                                                | $D_{\text{VPD}} = 1 - K_{\text{VPD}} \cdot VPD^{K_{\text{VPD,exp}}}$       |
+| $K_{\text{VPD,exp}}$   | dVpdExp         | Exponent for VPD effect on photosynthesis                            | unitless                                                                         | $D_{\text{VPD}} = 1 - K_{\text{VPD}} \cdot VPD^{K_{\text{VPD,exp}}}$       |
+| $\text{PAR}_{1/2}$     | halfSatPar      | Half-saturation point of PAR–photosynthesis relationship             | $\text{Einsteins} \cdot \text{m}^{-2} \text{ ground area} \cdot \text{day}^{-1}$ | Must match PAR units used by runtime light calculations                    |
+| $k_{\text{atten}}$     | attenuation     | Canopy PAR extinction coefficient                                    | unitless                                                                         |                                                                            |
 
-### Phenology-related parameters
+### Phenology-Related Parameters
 
-|     | Symbol               | Parameter Name   | Definition                                                              | Units                                                   | notes                                          |
-| --- | -------------------- | ---------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
-| 17  | $D_{\text{on}}$      | leafOnDay        | Day of year when leaves appear                                          | day of year                                             |                                                |
-| 18  |                      | gddLeafOn        | with gdd-based phenology, gdd threshold for leaf appearance             |                                                         |                                                |
-| 19  |                      | soilTempLeafOn   | with soil temp-based phenology, soil temp threshold for leaf appearance |                                                         |                                                |
-| 20  | $D_{\text{off}}$     | leafOffDay       | Day of year for leaf drop                                               |                                                         |                                                |
-| 21  |                      | leafGrowth       | additional leaf growth at start of growing season                       | $\text{g C} \cdot \text{m}^{-2} \text{ ground}$         |                                                |
-| 22  |                      | fracLeafFall     | additional fraction of leaves that fall at end of growing season        |                                                         |                                                |
-| 23  | $\alpha_\text{leaf}$ | leafAllocation   | fraction of NPP allocated to leaf growth                                |                                                         |                                                |
-| 24  | $K_{leaf}$           | leafTurnoverRate | average turnover rate of leaves                                         | $\text{y}^{-1}$                                         | converted to per-day rate internally           |
-|     | $L_{\text{max}}$     |                  | Maximum leaf area index obtained                                        | $\text{m}^2 \text{ leaf } \text{m}^{-2} \text{ ground}$ | ? from Braswell et al 2005; can't find in code |
+| Symbol                   | Parameter Name   | Definition                                                            | Units                            | Notes                                |
+| ------------------------ | ---------------- | --------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
+| $D_{\text{on}}$          | leafOnDay        | Day of year when leaves appear                                        | unitless                         | day of year (1–365)                  |
+| $GDD_{\text{on}}$        | gddLeafOn        | GDD threshold for leaf appearance (GDD-based phenology)               | $°\text{C} \cdot \text{day}$     |                                      |
+| $T_{\text{on}}$          | soilTempLeafOn   | Soil temperature threshold for leaf appearance (temp-based phenology) | $°\text{C}$                      |                                      |
+| $D_{\text{off}}$         | leafOffDay       | Day of year for leaf drop                                             | unitless                         | day of year (1–365)                  |
+| $\Delta C_{\text{leaf}}$ | leafGrowth       | Additional leaf growth at start of growing season                     | $\text{g C} \cdot \text{m}^{-2}$ |                                      |
+| $f_{\text{fall}}$        | fracLeafFall     | Additional fraction of leaves that fall at end of growing season      | unitless                         |                                      |
+| $\alpha_{\text{leaf}}$   | leafAllocation   | Fraction of $NPP$ allocated to leaf growth                            | unitless                         |                                      |
+| $K_{\text{leaf}}$        | leafTurnoverRate | Average turnover rate of leaves                                       | $\text{year}^{-1}$               | Converted to per-day rate internally |
 
+### Allocation Parameters
 
-### Allocation parameters
+| Symbol                        | Parameter Name       | Definition                                  | Units    | Notes                                                                                                                                             |
+| ----------------------------- | -------------------- | ------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| $\alpha_{\text{fine root}}$   | fineRootAllocation   | Fraction of $NPP$ allocated to fine roots   | unitless |                                                                                                                                                   |
+| $\alpha_{\text{coarse root}}$ | coarseRootAllocation | Fraction of $NPP$ allocated to coarse roots | unitless | Calculated internally from remainder: $\alpha_{\text{coarse root}} = 1 - \alpha_{\text{leaf}} - \alpha_{\text{wood}} - \alpha_{\text{fine root}}$ |
+| $\alpha_{\text{wood}}$        | woodAllocation       | Fraction of $NPP$ allocated to wood         | unitless |                                                                                                                                                   |
 
-|     | Symbol                    | Parameter Name      | Definition                                                      | Units    | notes              |
-| --- | ------------------------- | ------------------- | --------------------------------------------------------------- | -------- | ------------------ |
-| 64  |                           | fineRootFrac        | fraction of wood carbon allocated to fine root                  |          |                    |
-| 65  |                           | coarseRootFrac      | fraction of wood carbon that is coarse root                     |          |                    |
-| 66  | $\alpha_\text{fine root}$ | fineRootAllocation  | fraction of NPP allocated to fine roots                         |          |                    |
-| 67  | $\alpha_\text{wood}$      | woodAllocation      | fraction of NPP allocated to wood                               |          |                    |
-| 68  |                           | fineRootExudation   | fraction of GPP from fine roots exuded to the soil[^exudates]   | fraction | Pulsing parameters |
-| 69  |                           | coarseRootExudation | fraction of GPP from coarse roots exuded to the soil[^exudates] | fraction | Pulsing parameters |
+### Autotrophic Respiration Parameters
 
-[^exudates]: Fine and coarse root exudation are calculated as a fraction of GPP, but the exudates are subtracted from the fine and coarse root pools, respectively. <!--Note that previous versions incorrectly defined fine root exudates as a fraction of NPP-->
+| Symbol                      | Parameter Name      | Definition                                                               | Units                                                                           | Notes                                                                                                                                              |
+| --------------------------- | ------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| $R_{\text{a,wood},0}$       | baseVegResp         | Wood maintenance respiration rate at $0^\circ C$                         | $\text{g C respired} \cdot \text{g}^{-1} \text{ plant C} \cdot \text{day}^{-1}$ | read in as per-year rate only counts plant wood C; leaves handled elsewhere (both above and below-ground: assumed for now to have same resp. rate) |
+| $Q_{10v}$                   | vegRespQ10          | Vegetation respiration Q10                                               | unitless                                                                        | Scalar determining effect of temp on veg. resp.                                                                                                    |
+| $f_{\text{growth}}$         | growthRespFrac      | growth respiration as a fraction of recent mean NPP.                     | unitless                                                                        |
+| $D_{\text{frozen}}$         | frozenSoilFolREff   | amount that foliar resp. is shutdown if soil is frozen                   | unitless                                                                        | 0 = full shutdown, 1 = no shutdown                                                                                                                 |
+| $T_{\text{frozen}}$         | frozenSoilThreshold | soil temperature below which frozenSoilFolREff and frozenSoilEff kick in | °C                                                                              |                                                                                                                                                    |
+| $R_{\text{fine root}}$      | baseFineRootResp    | base respiration rate of fine roots                                      | $\text{year}^{-1}$                                                              | per year rate                                                                                                                                      |
+| $R_{\text{coarse root}}$    | baseCoarseRootResp  | base respiration rate of coarse roots                                    | $\text{year}^{-1}$                                                              | per year rate                                                                                                                                      |
+| $Q_{10,\text{fine root}}$   | fineRootQ10         | Q10 for fine root respiration                                            | unitless                                                                        |                                                                                                                                                    |
+| $Q_{10,\text{coarse root}}$ | coarseRootQ10       | Q10 for coarse root respiration                                          | unitless                                                                        |                                                                                                                                                    |
 
-### Autotrophic respiration parameters
+### Soil Respiration Parameters
 
-|     | Symbol                | Parameter Name      | Definition                                                               | Units                                          | notes                                                                                                                                              |
-| --- | --------------------- | ------------------- | ------------------------------------------------------------------------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 25  | $R_{\text{a,wood},0}$ | baseVegResp         | Wood maintenance respiration rate at $0^\circ C$                         | g C respired \* g$^{-1}$ plant C \* day$^{-1}$ | read in as per-year rate only counts plant wood C; leaves handled elsewhere (both above and below-ground: assumed for now to have same resp. rate) |
-| 26  | $Q_{10v}$             | vegRespQ10          | Vegetation respiration Q10                                               |                                                | Scalar determining effect of temp on veg. resp.                                                                                                    |
-| 27  |                       | growthRespFrac      | growth respiration as a fraction of recent mean NPP.                     |                                                |
-| 28  |                       | frozenSoilFolREff   | amount that foliar resp. is shutdown if soil is frozen                   |                                                | 0 = full shutdown, 1 = no shutdown                                                                                                                 |
-| 29  |                       | frozenSoilThreshold | soil temperature below which frozenSoilFolREff and frozenSoilEff kick in | °C                                             |                                                                                                                                                    |  |  |
-| 72  |                       | baseFineRootResp    | base respiration rate of fine roots                                      | $\text{y}^{-1}$                                | per year rate                                                                                                                                      |
-| 73  |                       | baseCoarseRootResp  | base respiration rate of coarse roots                                    | $\text{y}^{-1}$                                | per year rate                                                                                                                                      |
-
-
-### Soil respiration parameters
-
-|     | Symbol              | Parameter Name      | Definition                                                                          | Units                                         | notes                                                 |
-| --- | ------------------- | ------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
-| 30  | $K_\text{litter}$   | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | g C broken down \* g^-1 litter C \* day^-1    | read in as per-year rate                              |
-| 31  |                     | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) |                                               |                                                       |
-| 32  | $K_{dec}$           | baseSoilResp        | Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil           | g C respired \* g$^{-1}$ soil C \* day$^{-1}$ | read in as per-year rate                              |
-| 34  | $Q_{10s}$           | soilRespQ10         | Soil respiration Q10                                                                |                                               | scalar determining effect of temp on soil respiration |
-| 39  |                     | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 |                                               |                                                       |
-|     |                     | baseMicrobeResp     |                                                                                     |                                               |                                                       |
-| new | $f_{\textrm{till}}$ | tillageEff          | Effect of tillage on decomposition that exponentially decays over time              | fraction                                      | Per‑event in `events.in`; 0 = no effect               |
-
-- $R_{dec}$: Rate of decomposition $(\text{day}^{-1})$ 
-- $Q_{10dec}$: Temperature coefficient for $R_{dec}$ (unitless)
+| Symbol                | Parameter Name      | Definition                                                                          | Units                                                                               | Notes                                                          |
+| --------------------- | ------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| $K_\text{litter}$     | litterBreakdownRate | rate at which litter is converted to soil / respired at 0°C and max soil moisture   | $\text{g C broken down} \cdot \text{g}^{-1} \text{ litter C} \cdot \text{day}^{-1}$ | read in as per-year rate                                       |
+| $f_{\text{litter}}$   | fracLitterRespired  | of the litter broken down, fraction respired (the rest is transferred to soil pool) | unitless                                                                            |                                                                |
+| $K_{\text{soil}}$     | baseSoilResp        | Soil respiration rate at $0 ^{\circ}\text{C}$ and moisture saturated soil           | $\text{g C respired} \cdot \text{g}^{-1} \text{ soil C} \cdot \text{day}^{-1}$      | read in as per-year rate                                       |
+| $Q_{10s}$             | soilRespQ10         | Soil respiration Q10                                                                | unitless                                                                            | scalar determining effect of temp on soil respiration          |
+| $D_{\text{moisture}}$ | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 | unitless                                                                            |                                                                |
+| $f_{\text{till}}$     | tillageEff          | Effect of tillage on decomposition that exponentially decays over time              | fraction                                                                            | Documented in model structure; event-level term in `events.in` |
 
 ### Nitrogen Cycle Parameters
 
-|     | Symbol               | Parameter Name      | Definition                                                                                   | Units        | notes                      |
-| --- | -------------------- | ------------------- | -------------------------------------------------------------------------------------------- | ------------ | -------------------------- |
-| new | $N_{\text{min},0}$   | mineralNInit        | Initial soil mineral nitrogen pool                                                           | g N m$^{-2}$ | Initializes $N_\text{min}$ |
-| new | $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture)       | day$^{-1}$   | Eq. (17)                   |
-| new | $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                            | day$^{-1}$   | Eq. (18)                   |
-| new | $f_{\text{fix,max}}$ | nFixFracMax         | Maximum fraction of plant N demand that can be met by biological N fixation under low soil N | fraction     | Eq. (19)                   |
-| new | $K_N$                | nFixHalfSatMinN     | Mineral N level at which fixation suppression factor $D_{N_\text{min}}$ equals 0.5           | g N m$^{-2}$ | Eq. (19a)                  |
+Run-time parameters support mineralization, volatilization, leaching, and
+pool stoichiometry.
 
-### Methane parameters
+| Symbol               | Parameter Name      | Definition                                                                             | Units             | Notes              |
+| -------------------- | ------------------- | -------------------------------------------------------------------------------------- | ----------------- | ------------------ |
+| $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture) | $\text{day}^{-1}$ | \eqref{eq:n_vol}   |
+| $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                      | $\text{day}^{-1}$ | \eqref{eq:n_leach} |
 
-- $R_{meth}$: Rate of methane production $(\text{day}^{-1})$
-- $K_{meth}$: Rate constant for methane production under anaerobic conditions $(\text{day}^{-1})$
-- $K_{methox}$: Rate constant, methane oxidation $(\text{day}^{-1})$
+### Moisture-Related Parameters
 
-### Moisture-related parameters
+| Symbol                          | Parameter Name      | Definition                                                                                                            | Units             | Notes                                                                                                                                                                                   |
+|---------------------------------|---------------------|-----------------------------------------------------------------------------------------------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| $f_{\text{trans,avail}}$        | waterRemoveFrac     | fraction of plant available soil water which can be removed per day by transpiration without water stress occurring | $\text{day}^{-1}$ |                                                                                                                                                                                         |
+| $D_{\text{frozen,water}}$       | frozenSoilEff       | fraction of water that is available if soil is frozen (0 = none available, 1 = all still available)                  | unitless          | if frozenSoilEff = 0, then shut down psn. even if WATER\_PSN = 0, if soil is frozen (if frozenSoilEff > 0, it has no effect if WATER\_PSN = 0)                                          |
+| $WUE$                           | wueConst            | water use efficiency constant                                                                                         | unitless          |                                                                                                                                                                                         |
+| $WHC_{\text{soil}}$             | soilWHC             | soil (transpiration layer) water holding capacity                                                                     | cm                |                                                                                                                                                                                         |
+| $WHC_{\text{leaf}}$             | leafPoolDepth       | leaf/canopy evaporative pool capacity per unit leaf area (used to limit interception evaporation when enabled)        | cm                | Only used when `LEAF_WATER = 1` (`--leaf-water`). defines LAI-scaled cap on interception evaporation: $immedEvap \le LAI \cdot WHC_{\text{leaf}}$. Excess throughfall goes to the soil. |
+| $f_{\text{intercept}}$          | immedEvapFrac       | fraction of rain that is immediately intercepted & evaporated                                                         | unitless          |                                                                                                                                                                                         |
+| $f_{\text{fastflow}}$           | fastFlowFrac        | fraction of water entering soil that goes directly to drainage                                                               | unitless                                       |                                                                                                                                                                                         |
+| $f_{\text{drain}}$              | waterDrainFrac      | fraction of excess soil water that drains per day                                                                            | $\text{day}^{-1}$                              |                                                                                                                                                                                         |
+| $f_a$                           | fAnoxia             | Soil wetness fraction at which oxygen diffusion begins to limit aerobic respiration                                          | unitless                                       | Used in moisture partitioning between aerobic and anaerobic pathways (\eqref{eq:water_rh_2} in model structure)                                                                         |
+| $\eta$                          | anaerobicDecompRate | Relative anaerobic decomposition rate                                                                                        | unitless                                       | Active when anaerobic pathway is enabled; expected range $(0,1]$                                                                                                                        |
+| $p$                             | anaerobicTransExp   | Methane anoxia sensitivity exponent in $D_{\text{water,CH}_4}=A^p$                                                           | unitless                                       | Expected range $\ge 1$                                                                                                                                                                  |
+| $K_{\text{CH}_4\text{,soil}}$   | soilMethaneRate     | First-order methane production rate constant for the soil C pool                                                             | $\text{day}^{-1}$                              | Expected range $\ge 0$                                                                                                                                                                  |
+| $K_{\text{CH}_4\text{,litter}}$ | litterMethaneRate   | First-order methane production rate constant for the litter C pool                                                           | $\text{day}^{-1}$                              | Expected range $\ge 0$                                                                                                                                                                  |
+| $M_{\text{snow}}$               | snowMelt            | rate at which snow melts                                                                                                     | cm water equivalent per degree Celsius per day |                                                                                                                                                                                         |
+| $r_{d}$                         | rdConst             | scalar determining amount of aerodynamic resistance                                                                          | unitless                                       |                                                                                                                                                                                         |
+| $r_{s,1}$                       | rSoilConst1         |                                                                                                                              | unitless                                       | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = clip(water/soilWHC,0,1)                                                                                                      |
+| $r_{s,2}$                       | rSoilConst2         |                                                                                                                              | unitless                                       | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = clip(water/soilWHC,0,1)                                                                                                      |
 
-|     | Symbol                   | Parameter Name  | Definition                                                                                                             | Units                                           | notes                                                                                                                                          |
-| --- | ------------------------ | --------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 40  | $f_{\text{trans,avail}}$ | waterRemoveFrac | fraction of plant available soil water which can be removed in one day by transpiration without water stress occurring |                                                 |                                                                                                                                                |
-| new | $f_\text{drain,0}$       | waterDrainFrac  | fraction of plant available soil water which can be removed in one day by drainage                                     | $d^{-1}$                                        | default 1 for well drained soils                                                                                                               |
-| 41  |                          | frozenSoilEff   | fraction of water that is available if soil is frozen (0 = none available, 1 = all still avail.)                       |                                                 | if frozenSoilEff = 0, then shut down psn. even if WATER\_PSN = 0, if soil is frozen (if frozenSoilEff > 0, it has no effect if WATER\_PSN = 0) |
-| 42  |                          | wueConst        | water use efficiency constant                                                                                          |                                                 |                                                                                                                                                |
-| 43  |                          | litterWHC       | litter (evaporative layer) water holding capacity                                                                      | cm                                              |                                                                                                                                                |
-| 44  |                          | soilWHC         | soil (transpiration layer) water holding capacity                                                                      | cm                                              |                                                                                                                                                |
-| 45  | $f_\text{intercept}      | immedEvapFrac   | fraction of rain that is immediately intercepted & evaporated                                                          |                                                 |                                                                                                                                                |
-| 46  |                          | fastFlowFrac    | fraction of water entering soil that goes directly to drainage                                                         |                                                 |                                                                                                                                                |
-|     | $k_\text{SOM,drain}$     |
-| 47  |                          | snowMelt        | rate at which snow melts                                                                                               | cm water equivavlent per degree Celsius per day |                                                                                                                                                |
-| 49  |                          | rdConst         | scalar determining amount of aerodynamic resistance                                                                    |                                                 |                                                                                                                                                |
-| 50  |                          | rSoilConst1     |                                                                                                                        |                                                 | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
-| 51  |                          | rSoilConst2     |                                                                                                                        |                                                 | soil resistance = e^(rSoilConst1 - rSoilConst2 \* W1) , where W1 = (litterWater/litterWHC)                                                     |
+### Tree Physiological Parameters
 
-
-
-### Tree physiological parameters
-
-|     | Symbol                 | Parameter Name         | Definition                             | Units                | notes                                                              |
-| --- | ---------------------- | ---------------------- | -------------------------------------- | -------------------- | ------------------------------------------------------------------ |
-| 53  | $SLW$                  | leafCSpWt              |                                        | g C * m^-2 leaf area |                                                                    |
-| 54  | $C_{frac}$             | cFracLeaf              |                                        | g leaf C * g^-1 leaf |                                                                    |
-| 55  | $K_\text{wood}$        | woodTurnoverRate       | average turnover rate of woody plant C | $\text{y}^{-1}$      | converted to per-day rate internally; leaf loss handled separately |
-| 70  | $K_\text{fine root}$   | fineRootTurnoverRate   | turnover of fine roots                 | $\text{y}^{-1}$      | converted to per-day rate internally                               |
-| 71  | $K_\text{coarse root}$ | coarseRootTurnoverRate | turnover of coarse roots               | $\text{y}^{-1}$      | converted to per-day rate internally                               |
-
-
-
-<!--
-### Quality model parameters
-
-
-|     | Symbol | Parameter Name   | Definition                                | Units                 | notes                         |
-| --- | ------ | ---------------- | ----------------------------------------- | --------------------- | ----------------------------- |
-| 58  |        | efficiency       | conversion efficiency of ingested carbon  |                       | Microbe & Stoichiometry model |
-| 59  |        | maxIngestionRate | maximum ingestion rate of the microbe     | hr-1                  | Microbe & Stoichiometry model |
-| 60  |        | halfSatIngestion | half saturation ingestion rate of microbe | mg C g-1 soil         | Microbe & Stoichiometry model |
-| 63  |        | microbeInit      |                                           | mg C / g soil microbe | initial carbon amount         | --> |
-
-
-
-<!-- Not used in CCMMF (two Q10s , soil and veg); no microbes
-| 74 |                   | fineRootQ10            | Q10 of fine roots                                  |                       |                               |
-| 75 |                   | coarseRootQ10          | Q10 of coarse roots                                |                       |                               |
-| 76 |                   | baseMicrobeResp        | base respiration rate of microbes                  |                       |                               |
-| 77 |                   | microbeQ10             | Q10 of microbes                                |                       |                               |
-| 78 |                   | microbePulseEff        | fraction of exudates that microbes immediately use |                       | Pulsing parameters            |
-
--->
+| Symbol                 | Parameter Name         | Definition                                            | Units                                              | Notes                                                              |
+| ---------------------- | ---------------------- | ----------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------ |
+| $SLW$                  | leafCSpWt              | Specific leaf weight (leaf carbon per unit leaf area) | $\text{g C} \cdot \text{m}^{-2} \text{ leaf area}$ |                                                                    |
+| $C_{\text{frac}}$      | cFracLeaf              | Carbon fraction of leaf dry mass                      | $\text{g leaf C} \cdot \text{g}^{-1} \text{ leaf}$ |                                                                    |
+| $K_\text{wood}$        | woodTurnoverRate       | average turnover rate of woody plant C                | $\text{year}^{-1}$                                 | converted to per-day rate internally; leaf loss handled separately |
+| $K_\text{fine root}$   | fineRootTurnoverRate   | turnover of fine roots                                | $\text{year}^{-1}$                                 | converted to per-day rate internally                               |
+| $K_\text{coarse root}$ | coarseRootTurnoverRate | turnover of coarse roots                              | $\text{year}^{-1}$                                 | converted to per-day rate internally                               |
 
 ## Hard-coded Values
 
@@ -281,12 +247,9 @@ Run-time parameters can change from one run to the next, or when the model is st
 | `C_WEIGHT`                  | 12.0                    | molecular weight of carbon                           |
 | `MEAN_NPP_DAYS`             | 5                       | over how many days do we keep the running mean       |
 | `MEAN_NPP_MAX_ENTRIES`      | `MEAN_NPP_DAYS`*50      | assume that the most pts we can have is two per hour |
-| `MEAN_GPP_SOIL_DAYS`        | 5                       | over how many days do we keep the running mean       |
-| `MEAN_GPP_SOIL_MAX_ENTRIES` | `MEAN_GPP_SOIL_DAYS`*50 | assume that the most pts we can have is one per hour |
 | `LAMBDA`                    | 2501000                 | latent heat of vaporization (J/kg)                   |
 | `LAMBDA_S`                  | 2835000                 | latent heat of sublimation (J/kg)                    |
 | `RHO`                       | 1.3                     | air density (kg/m^3)                                 |
 | `CP`                        | 1005.                   | specific heat of air (J/(kg K))                      |
 | `GAMMA`                     | 66                      | psychometric constant (Pa/K)                         |
 | `E_STAR_SNOW`               | 0.6                     | approximate saturation vapor pressure at 0°C (kPa)   |
-

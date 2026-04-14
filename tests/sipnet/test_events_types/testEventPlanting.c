@@ -42,17 +42,19 @@ int run(void) {
   initEnv();
 
   //// ONE PLANTING EVENT
-  initEvents("events_one_planting.in", 0);
+  initEvents("events_one_planting.in", "events.out", 0);
   setupEvents();
   procEvents();
+  closeEventOutFile();
   // added: leaf 10, wood 5, fine root 4, coarse root 3
   status |= checkOutput(1 + 10, 2 + 5, 3 + 4, 4 + 3);
 
   //// TWO PLANTING EVENTS
   initEnv();
-  initEvents("events_two_planting.in", 1);
+  initEvents("events_two_planting.in", "events.out", 1);
   setupEvents();
   procEvents();
+  closeEventOutFile();
   // leaf 10+9, wood 5+6, fine root 4+8, coarse root 3+4
   status |= checkOutput(1 + 19, 2 + 11, 3 + 12, 4 + 7);
 

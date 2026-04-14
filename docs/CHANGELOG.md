@@ -13,8 +13,6 @@ sections to include in release notes:
 
 ### Added
 
-- Add woodCreation to sipnet.out (#161)
-
 ### Fixed
 
 ### Changed
@@ -29,19 +27,42 @@ sections to include in release notes:
 ### Added
 
 - Build and release binaries for MacOS and Windows on release (in addition to existing Linux builds)
+- MVP restart checkpoints for segmented runs (`RESTART_IN` / `RESTART_OUT`) (#279)
+- Configurable events prefix for `<prefix>.in` / `<prefix>.out`
 - Support for tillage events (#158)
 - `woodCreation` as output (#161)
 - Soil mineral pool (#170)
 - Nitrogen effects of fertilization (#173)
 - `logAppend` logging function (#173)
+- Nitrogen volatilization (#175)
+- Nitrogen leaching (#178)
+- Soil and litter organic N pools (#195, #199)
+- Organic N handling for fertilization and soil dynamics (#199)
+- Dynamic C:N for soil and litter (#214)
+- Updates for soil and litter respiration (tillage and C:N effects) (#214)
+- Carbon and nitrogen mass balance checks (#248)
+- Event tracking for leaf-on and leaf-off phenological transitions (#248)
+- Split wood carbon pool into `plantWoodC` and `plantWoodCStorageDelta` to track NPP storage lag (#248)
+- New moisture dependency function option for soil respiration, controlled by the `anaerobic` cli option (#259)
+- New moisture dependency functions for N volatilization, methane (#259)
+- Nitrogen demand, fixation flux, and uptake flux (#265)
+- Methane production option, controlled by the `anaerobic` cli option (#269)
+- Nitrogen limitation support (#298)
+- `flooding` cli option and `waterDrainFrac` parameter added (#273, #307)
 
 ### Fixed
 
+- Balance check now accounts for mass adjustments from non-negative stock clamping (#282)
 - Out of order error message for events (#166)
 
 ### Changed
 
+- Reduced many `logWarning` messages to `logInfo` (#302)
+
 ### Removed
+- 'Notes' line at top of `sipnet.out` header (#267)
+
+- MICROBES option and related code (#257)
 
 ### Git SHA
 
@@ -194,3 +215,6 @@ Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. 
 Sacks, William J., David S. Schimel, and Russell K. Monson. 2007. “Coupling between Carbon Cycling and Climate in a High-Elevation, Subalpine Forest: A Model-Data Fusion Analysis.” Oecologia 151 (1): 54–68. https://doi.org/10.1007/s00442-006-0565-2.
 
 Sacks, William J., David S. Schimel, Russell K. Monson, and Bobby H. Braswell. 2006. “Model‐data Synthesis of Diurnal and Seasonal CO2 Fluxes at Niwot Ridge, Colorado.” Global Change Biology 12 (2): 240–59. https://doi.org/10.1111/j.1365-2486.2005.01059.x.
+
+### Changed
+- Renamed n2oFlux output column to n2o and converted from flux (rate) to timestep-integrated amount.
