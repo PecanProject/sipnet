@@ -77,6 +77,7 @@ sections to include in release notes:
 - 'Notes' line at top of `sipnet.out` header (#267)
 
 ### Git SHA
+[TBD]
 
 ## **SIPNET 2.0.0 - "SIPNET Overhaul"**
 
