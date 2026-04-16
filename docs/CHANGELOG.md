@@ -47,7 +47,7 @@ sections to include in release notes:
 - `logAppend` logging function (#173)
 - Nitrogen volatilization (#176)
 - Nitrogen leaching (#178)
-- Build and release binaries for MacOS and Windows on release (in addition to existing Linux builds) (#179)
+- Build and release binaries for macOS and Windows on release (in addition to existing Linux builds) (#179)
 - Soil and litter organic N pools and fluxes (#195, #199)
 - Organic N handling for fertilization and soil dynamics (#199)
 - Dynamic C:N for soil and litter (#214)
