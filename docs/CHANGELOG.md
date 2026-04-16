@@ -34,7 +34,7 @@ sections to include in release notes:
 
 ### Git SHA
 
-## SIPNET 2.1.0 Nitrogen Cycle, Methane, and Restart
+## **SIPNET 2.1.0 - "Nitrogen Cycle, Methane, and Restart"**
 
 ### Added
 
