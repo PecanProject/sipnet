@@ -74,6 +74,7 @@ sections to include in release notes:
 - Reduced many `logWarning` messages to `logInfo` (#302)
 
 ### Removed
+
 - `microbes` option and functionality (#257)
 - 'Notes' line at top of `sipnet.out` header (#267)
 
