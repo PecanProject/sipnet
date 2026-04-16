@@ -26,45 +26,60 @@ sections to include in release notes:
 
 ### Added
 
-- Build and release binaries for MacOS and Windows on release (in addition to existing Linux builds)
-- MVP restart checkpoints for segmented runs (`RESTART_IN` / `RESTART_OUT`) (#279)
+### Fixed
+
+### Changed
+
+### Removed
+
+### Git SHA
+
+## **SIPNET 2.1.0 - "Nitrogen Cycle, Methane, and Restart"**
+
+### Added
+
 - Configurable events prefix for `<prefix>.in` / `<prefix>.out`
 - Support for tillage events (#158)
 - `woodCreation` as output (#161)
-- Soil mineral pool (#170)
+- Soil mineral pool (#171)
+- `nitrogen-cycle` cli option (#171)
 - Nitrogen effects of fertilization (#173)
 - `logAppend` logging function (#173)
-- Nitrogen volatilization (#175)
+- Nitrogen volatilization (#176)
 - Nitrogen leaching (#178)
-- Soil and litter organic N pools (#195, #199)
+- Build and release binaries for macOS and Windows on release (in addition to existing Linux builds) (#179)
+- Soil and litter organic N pools and fluxes (#195, #199)
 - Organic N handling for fertilization and soil dynamics (#199)
 - Dynamic C:N for soil and litter (#214)
 - Updates for soil and litter respiration (tillage and C:N effects) (#214)
-- Carbon and nitrogen mass balance checks (#248)
+- Carbon and nitrogen mass balance checks (#248, #282)
 - Event tracking for leaf-on and leaf-off phenological transitions (#248)
 - Split wood carbon pool into `plantWoodC` and `plantWoodCStorageDelta` to track NPP storage lag (#248)
 - New moisture dependency function option for soil respiration, controlled by the `anaerobic` cli option (#259)
 - New moisture dependency functions for N volatilization, methane (#259)
 - Nitrogen demand, fixation flux, and uptake flux (#265)
-- Methane production option, controlled by the `anaerobic` cli option (#269)
+- Methane production, controlled by the new `anaerobic` cli option (#260, #269)
+- Nitrogen support for harvest and fertilization events (#270)
+- MVP restart checkpoints for segmented runs (`RESTART_IN` / `RESTART_OUT`) (#276)
 - Nitrogen limitation support (#298)
-- `flooding` cli option and `waterDrainFrac` parameter added (#273, #307)
+- `flooding` cli option and `waterDrainFrac` parameter added (#307, #315)
 
 ### Fixed
 
-- Balance check now accounts for mass adjustments from non-negative stock clamping (#282)
 - Out of order error message for events (#166)
+- `woodCreation` was being double counted; note that this change will likely require recalibration of SIPNET params (#282)
 
 ### Changed
 
 - Reduced many `logWarning` messages to `logInfo` (#302)
 
 ### Removed
+
+- `microbes` option and functionality (#257)
 - 'Notes' line at top of `sipnet.out` header (#267)
 
-- MICROBES option and related code (#257)
-
 ### Git SHA
+[TBD]
 
 ## **SIPNET 2.0.0 - "SIPNET Overhaul"**
 
