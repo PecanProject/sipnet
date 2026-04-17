@@ -1,7 +1,7 @@
 #ifndef SIPNET_VERSION_H
 #define SIPNET_VERSION_H
 
-#define NUMERIC_VERSION "2.0.0"
+#define NUMERIC_VERSION "2.1.0"
 
 // To enable, compile with `-DGIT_HASH="<your revision here>"`
 #ifdef GIT_HASH
