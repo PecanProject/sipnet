@@ -11,10 +11,10 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_os: ubuntu
+            artifact_name: linux-x86_64
             binary_path: sipnet
-          - os: macos-latest
-            artifact_os: macos
+          - os: macos-arm64
+            artifact_name: macos-arm64
             binary_path: sipnet
     runs-on: ${{ matrix.os }}
     steps:
@@ -30,7 +30,7 @@ jobs:
         run: |
           tag="${GITHUB_REF_NAME}"
           src="${{ matrix.binary_path }}"
-          dest="sipnet-${{ matrix.artifact_os }}-${tag}"
+          archive_base="sipnet-${{ matrix.artifact_name }}-${tag}"
 
           if [ ! -f "$src" ]; then
             echo "Expected build artifact '${src}' not found" >&2
@@ -38,13 +38,15 @@ jobs:
           fi
 
           mkdir -p dist
-          mv "$src" "dist/${dest}"
+          cp "$src" "dist/sipnet"
+          tar -C dist -czf "dist/${archive_base}.tar.gz" sipnet
+          rm -f "dist/sipnet"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
-          path: dist/sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
+          name: sipnet-${{ matrix.artifact_name }}-${{ github.ref_name }}
+          path: dist/sipnet-${{ matrix.artifact_name }}-${{ github.ref_name }}.tar.gz
           if-no-files-found: error
 
   release:
@@ -61,10 +63,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          name: ${{ github.ref_name }} [RELEASE NAME]
           body: |
-            This release includes the latest SIPNET binary.
-          draft: true  # Create the release as a draft
+            Draft release for ${{ github.ref_name }}.
+
+            - Replace [RELEASE NAME] in the title
+            - Curate highlights from changelog / release notes
+            - Confirm attached binaries
+          draft: true
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
