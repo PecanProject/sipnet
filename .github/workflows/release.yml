@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'  # Trigger on version tags
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -25,7 +28,7 @@ jobs:
         run: make
         shell: bash
 
-      - name: Prepare release binary
+      - name: Prepare release archive
         shell: bash
         run: |
           tag="${GITHUB_REF_NAME}"
@@ -69,7 +72,7 @@ jobs:
 
             - Replace [RELEASE NAME] in the title
             - Curate highlights from changelog / release notes
-            - Confirm attached binaries
+            - Confirm attached .tar.gz archives containing the sipnet binary
           draft: true
           files: dist/*
         env:
