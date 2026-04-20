@@ -34,8 +34,10 @@ def print_usage():
   print(f"  list:  list available smoke tests and exit")
   print(f"  run :  compare results from one or more smoke tests; see below")
   print(f"")
-  print(f"Run syntax: smoke_check run [verbose] [tests]")
-  print(f"  verbose: print the difference dataframe for each comparison")
+  print(f"Run syntax: smoke_check run [options] [tests]")
+  print(f"  options:")
+  print(f"    verbose: print the difference dataframe for each comparison")
+  print(f"    base   : attempt to compare to master branch version instead of previous commit")
   print(f"  tests  : list the tests to check; no list or 'all' runs all comparisons")
   print(f"")
   print(f"'smoke_check' with no arguments is equivalent to 'smoke_check run'")
@@ -47,6 +49,7 @@ def print_usage():
 def main():
   commands: list[str] = ['run', 'list', 'help', '-h', '--help']
   verbose: bool = False
+  base: bool = False  # compare to base instead of most recent parent
 
   test_dirs = get_test_dirs()
   args = sys.argv[1:]
@@ -71,9 +74,12 @@ def main():
       print(', '.join(test_dirs))
       sys.exit(0)
     case 'run':
-      if len(args) > 0 and args[0].lower() == 'verbose':
+      if 'verbose' in args:
         verbose = True
-        args = args[1:]
+        args.remove('verbose')
+      if 'base' in args:
+        base = True
+        args.remove('base')
       if len(args) < 1 or args[0].lower() == 'all':
         run_dirs = test_dirs
       else:
@@ -93,20 +99,31 @@ def main():
 
     # Only process if "skip" file does not exist
     if not os.path.exists(skip_file):
-      check_results(test_dir, verbose)
+      check_results(test_dir, verbose, base)
     else:
       print_sep(f"Skipping {test_dir} (found 'skip' file)")
 
 
-def check_results(smoke_dir: str, verbose: bool):
+def check_results(smoke_dir: str, verbose: bool, base: bool):
   print_sep(f'Running test {smoke_dir}')
 
   # File from recent smoke test run (presumably)
   file = smoke_dir + '/sipnet.out'
 
   # git version of file
-  # git show HEAD:<file>
-  git_result = subprocess.run(['git', 'show', 'HEAD:' + './' + file], capture_output=True, text=True, check=True)
+  if base:
+    # get the branch name, then
+    # git_ref: git merge-base master <branch>
+    # git show <git_ref>:<file>
+    git_branch = subprocess.run(['git', 'branch', '--show-current'], capture_output=True, text=True, check=True)
+    git_branch = git_branch.stdout.strip()
+    git_ref = subprocess.run(['git', 'merge-base', 'master', git_branch], capture_output=True, text=True, check=True)
+    git_ref = git_ref.stdout.strip()
+    git_result = subprocess.run(['git', 'show', git_ref + ':./' + file], capture_output=True, text=True, check=True)
+  else:
+    # git show HEAD:<file>
+    git_result = subprocess.run(['git', 'show', 'HEAD:' + './' + file], capture_output=True, text=True, check=True)
+
   git_result = git_result.stdout.strip()
   git_result = StringIO(git_result)
 
@@ -119,14 +136,14 @@ def check_results(smoke_dir: str, verbose: bool):
     # Check first row
     first = res_file.readline()
 
-    if first.split()[0].startswith('Notes'):
+    if first.split()[0].startswith('year'):
       has_header = True
     else:
       has_header = False
 
   if has_header:
-    new_df = pd.read_table(file, skiprows=1, header=0, sep=r'\s+', dtype=float)
-    git_df = pd.read_table(git_result, skiprows=1, header=0, sep=r'\s+', dtype=float)
+    new_df = pd.read_table(file, skiprows=0, header=0, sep=r'\s+', dtype=float)
+    git_df = pd.read_table(git_result, skiprows=0, header=0, sep=r'\s+', dtype=float)
 
     if set(new_df.columns) != set(git_df.columns):
       print("Columns have changed!")
@@ -147,7 +164,7 @@ def check_results(smoke_dir: str, verbose: bool):
       git_df = git_df[common_columns]
       print("Comparing common columns")
   else:
-    cols = 'year day time plantWoodC plantLeafC woodCreation soil microbeC coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration'
+    cols = 'year day time plantWoodC plantLeafC woodCreation soil coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration minN soilOrgN litterN n2o nLeaching nFixation nUptake ch4 nppStorage bcdeltaC bcdeltaN'
     cols = cols.split(' ')
     # new_df = pd.read_table(file, sep=r'\s+', header=None, names=cols, dtype=float)
     # git_df = pd.read_table(git_result, sep=r'\s+', header=None, names=cols, dtype=float)
@@ -156,6 +173,7 @@ def check_results(smoke_dir: str, verbose: bool):
 
     if len(new_df.columns) != len(cols):
       print("Number of columns has changed for test without a header; no comparison can be performed. Skipping.")
+      print("Note: git col info here may be out of date!")
       print(f'len git cols: {len(cols)}  len new: {len(new_df.columns)}')
       print(f'git cols (names): {cols}')
       print(f'new cols  (inds):{new_df.columns}')

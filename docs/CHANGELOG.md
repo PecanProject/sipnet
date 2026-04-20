@@ -13,8 +13,6 @@ sections to include in release notes:
 
 ### Added
 
-- Add woodCreation to sipnet.out (#161)
-
 ### Fixed
 
 ### Changed
@@ -28,22 +26,60 @@ sections to include in release notes:
 
 ### Added
 
-- Build and release binaries for MacOS and Windows on release (in addition to existing Linux builds)
-- Support for tillage events (#158)
-- `woodCreation` as output (#161)
-- Soil mineral pool (#170)
-- Nitrogen effects of fertilization (#173)
-- `logAppend` logging function (#173)
-
 ### Fixed
-
-- Out of order error message for events (#166)
 
 ### Changed
 
 ### Removed
 
 ### Git SHA
+
+## **SIPNET 2.1.0 - "Nitrogen Cycle, Methane, and Restart"**
+
+### Added
+
+- Configurable events prefix for `<prefix>.in` / `<prefix>.out`
+- Support for tillage events (#158)
+- `woodCreation` as output (#161)
+- Soil mineral pool (#171)
+- `nitrogen-cycle` cli option (#171)
+- Nitrogen effects of fertilization (#173)
+- `logAppend` logging function (#173)
+- Nitrogen volatilization (#176)
+- Nitrogen leaching (#178)
+- Build and release binaries for macOS and Windows on release (in addition to existing Linux builds) (#179)
+- Soil and litter organic N pools and fluxes (#195, #199)
+- Organic N handling for fertilization and soil dynamics (#199)
+- Dynamic C:N for soil and litter (#214)
+- Updates for soil and litter respiration (tillage and C:N effects) (#214)
+- Carbon and nitrogen mass balance checks (#248, #282)
+- Event tracking for leaf-on and leaf-off phenological transitions (#248)
+- Split wood carbon pool into `plantWoodC` and `plantWoodCStorageDelta` to track NPP storage lag (#248)
+- New moisture dependency function option for soil respiration, controlled by the `anaerobic` cli option (#259)
+- New moisture dependency functions for N volatilization, methane (#259)
+- Nitrogen demand, fixation flux, and uptake flux (#265)
+- Methane production, controlled by the new `anaerobic` cli option (#260, #269)
+- Nitrogen support for harvest and fertilization events (#270)
+- MVP restart checkpoints for segmented runs (`RESTART_IN` / `RESTART_OUT`) (#276)
+- Nitrogen limitation support (#298)
+- `flooding` cli option and `waterDrainFrac` parameter added (#307, #315)
+
+### Fixed
+
+- Out of order error message for events (#166)
+- `woodCreation` was being double counted; note that this change will likely require recalibration of SIPNET params (#282)
+
+### Changed
+
+- Reduced many `logWarning` messages to `logInfo` (#302)
+
+### Removed
+
+- `microbes` option and functionality (#257)
+- 'Notes' line at top of `sipnet.out` header (#267)
+
+### Git SHA
+[TBD]
 
 ## **SIPNET 2.0.0 - "SIPNET Overhaul"**
 
@@ -194,3 +230,6 @@ Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. 
 Sacks, William J., David S. Schimel, and Russell K. Monson. 2007. “Coupling between Carbon Cycling and Climate in a High-Elevation, Subalpine Forest: A Model-Data Fusion Analysis.” Oecologia 151 (1): 54–68. https://doi.org/10.1007/s00442-006-0565-2.
 
 Sacks, William J., David S. Schimel, Russell K. Monson, and Bobby H. Braswell. 2006. “Model‐data Synthesis of Diurnal and Seasonal CO2 Fluxes at Niwot Ridge, Colorado.” Global Change Biology 12 (2): 240–59. https://doi.org/10.1111/j.1365-2486.2005.01059.x.
+
+### Changed
+- Renamed n2oFlux output column to n2o and converted from flux (rate) to timestep-integrated amount.
