@@ -511,7 +511,7 @@ $$
 where:
 $$
 r_d = \frac{\text{rdConst}}{u}, \qquad
-r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2}\frac{W_{\text{soil}}}{W_{\text{WHC}}}\right)
+r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2} f_{\text{WHC}}\right)
 $$
 
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
