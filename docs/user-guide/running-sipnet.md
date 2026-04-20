@@ -27,7 +27,8 @@ When the same option is specified in both places, **command-line arguments take 
 | Option             | Short | Argument   | Default     | Description                                                                                |
 |--------------------|-------|------------|-------------|--------------------------------------------------------------------------------------------|
 | `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
-| `--file-name`      | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
+| `--file-prefix`    | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
+| `--file-name`      | `-f`  | `<name>`   | `sipnet`    | Backward-compatible alias for `--file-prefix`                                             |
 | `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
 | `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
 | `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |
@@ -63,9 +64,9 @@ These flags control what outputs are generated. Prepend `no-` to disable (e.g., 
 
 | Flag                  | Default | Description                                                                     |
 | --------------------- | ------- | ------------------------------------------------------------------------------- |
-| `--do-main-output`    | ON (1)  | Write time series of all output variables to `<file-name>.out`                  |
-| `--do-single-outputs` | OFF (0) | Write selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) to separate files (e.g., `<file-name>.NEE`) |
-| `--dump-config`       | OFF (0) | Write final merged configuration to `<file-name>.config` after running          |
+| `--do-main-output`    | ON (1)  | Write time series of all output variables to `<file-prefix>.out`                |
+| `--do-single-outputs` | OFF (0) | Write selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) to separate files (e.g., `<file-prefix>.NEE`) |
+| `--dump-config`       | OFF (0) | Write final merged configuration to `<file-prefix>.config` after running        |
 | `--print-header`      | ON (1)  | Print header row with variable names in output files                            |
 | `--quiet`             | OFF (0) | Suppress informational and warning messages to console                          |
 
@@ -185,14 +186,14 @@ LITTER_POOL 0
 Running with command-line overrides:
 
 ```bash
-./sipnet --file-name override_site --no-events
+./sipnet --file-prefix override_site --no-events
 ```
 
 Results in:
 
 | Option        | Source       | Value                                                      |
 | ------------- | ------------ | ---------------------------------------------------------- |
-| `file-name`   | Command line | `override_site`                                            |
+| `file-prefix` | Command line | `override_site`                                            |
 | `events`      | Command line | OFF (0) — `--no-events` overrides config file's `EVENTS 1` |
 | `litter-pool` | Config file  | OFF (0) — not overridden                                   |
 
@@ -230,12 +231,12 @@ To test how model results change with different parameter values, run the same c
 
 **For low photosynthesis** (edit `my_site.param`, set `aMax 50`):
 ```bash
-./sipnet --file-name my_site
+./sipnet --file-prefix my_site
 ```
 
 **For high photosynthesis** (edit `my_site.param`, set `aMax 150`):
 ```bash
-./sipnet --file-name my_site
+./sipnet --file-prefix my_site
 ```
 
 Compare GPP and NEE in the output files to understand parameter sensitivity.
@@ -267,7 +268,7 @@ SIPNET generates output files based on your configuration:
 
 ### Main Output File
 
-**Filename**: `<file-name>.out` (if `--do-main-output` is enabled, which is default)
+**Filename**: `<file-prefix>.out` (if `--do-main-output` is enabled, which is default)
 
 This file contains time-series data with one row per time step and one column per output variable. If `--print-header` is enabled, the first row contains variable names.
 
@@ -283,13 +284,13 @@ year day time plantWoodC plantLeafC woodCreation soil ...
 
 ### Per-Variable Output Files
 
-**Filename pattern**: `<file-name>.<VARIABLE>`  (if `--do-single-outputs` is enabled)
+**Filename pattern**: `<file-prefix>.<VARIABLE>`  (if `--do-single-outputs` is enabled)
 
 Only these selected outputs are written to separate files: `NEE`, `NEE_cum`, `GPP`, `GPP_cum`.
 
 ### Configuration Dump File
 
-**Filename**: `<file-name>.config` (if `--dump-config` is enabled)
+**Filename**: `<file-prefix>.config` (if `--dump-config` is enabled)
 
 Shows the final merged configuration after applying all defaults, config file, and command-line options. Useful for:
 - Reproducing a run exactly
