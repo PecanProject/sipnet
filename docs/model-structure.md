@@ -597,8 +597,15 @@ $$
 
 Where
 
+- $f_{\text{WHC}}$: Soil water content fraction (unbounded)
 - $W_{\text{soil}}$: Soil water content
 - $W_{\text{WHC}}$: Soil water holding capacity
+
+For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis), SIPNET uses a clipped value internally. This prevents supersaturated water states from pushing moisture response multipliers above their intended maxima. We denote this clipped fraction as:
+
+\begin{equation}
+f_{\text{WHC}^*} = \operatorname{clip}(f_{\text{WHC}}, 0, 1)
+\end{equation}
 
 #### Water Stress Factor
 
@@ -616,7 +623,7 @@ $$
 D_{\text{water} R_H} = 
 \begin{cases}
 1, & \text{if } T_{\text{soil}} \leq 0 \\
-f_{\text{WHC}} & \text{if } T_{\text{soil}} > 0
+f_{\text{WHC}^*} & \text{if } T_{\text{soil}} > 0
 \end{cases} \tag{24}\label{eq:water_rh}
 $$
 
