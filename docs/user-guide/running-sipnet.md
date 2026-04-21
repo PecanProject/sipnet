@@ -28,7 +28,7 @@ When the same option is specified in both places, **command-line arguments take 
 |--------------------|-------|------------|-------------|--------------------------------------------------------------------------------------------|
 | `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
 | `--file-prefix`    | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
-| `--file-name`      | `-f`  | `<name>`   | `sipnet`    | Backward-compatible alias for `--file-prefix`                                             |
+| `--file-name`      | `—`   | `<name>`   | `sipnet`    | Backward-compatible alias for `--file-prefix`                                             |
 | `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
 | `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
 | `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |

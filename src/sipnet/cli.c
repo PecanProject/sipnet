@@ -39,9 +39,10 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(print-header),
     DECLARE_FLAG(quiet),
 
-    // These options don’t set a flag. We distinguish them by their indices.
-    // name                         has_arg           flag  val (val is the
-    // index)
+    // These options don’t set a flag. We distinguish them by their val.
+    // Aliases share the same val (e.g. file-prefix and file-name both use
+    // 'f').
+    // name                         has_arg           flag  val
     {"input-file", required_argument, 0, 'i'},
     {"file-prefix", required_argument, 0, 'f'},
     {"file-name", required_argument, 0, 'f'},
@@ -148,12 +149,12 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         updateIntContext(argNameMap[longIndex], ctx.tmpFlag, CTX_COMMAND_LINE);
         break;
       case 'f':
-        requireCLIArg("--file-prefix");
+        requireCLIArg("--file-prefix/--file-name");
         if (strlen(optarg) >= FILENAME_MAXLEN) {
-          logError("filename %s exceeds maximum length of %d\n", optarg,
+          logError("file prefix '%s' exceeds maximum length of %d\n", optarg,
                    FILENAME_MAXLEN);
-          logError("Either change the name or increase INPUT_MAXNAME in "
-                   "frontend.c\n");
+          logError("Either shorten the prefix or increase FILENAME_MAXLEN in "
+                   "src/common/context.h\n");
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
         updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
