@@ -1381,8 +1381,10 @@ double calcPlantNDemand() {
   // demand should only count the difference in the N
   // between those two pools, hence subtracting
   // params.woodCN from params.leafCN for leafOnCreation
-  double leafOnDemand = fluxes.leafOnCreation / params.leafCN -
-                        fluxes.leafOnCreation / params.woodCN;
+  // Note we can have leafOn creation terms from two places
+  double leafOnCreation = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
+  double leafOnDemand =
+      leafOnCreation / params.leafCN - leafOnCreation / params.woodCN;
   // calculate demand from all other creation terms
   double creationDemand = fluxes.woodCreation / params.woodCN +
                           fluxes.leafCreation / params.leafCN +
@@ -1450,6 +1452,7 @@ void calcNFixationAndUptakeFluxes(void) {
             climate->day, climate->time);
 
     // Reduce all drains on soil N
+    fluxes.eventLeafOnCreation *= reduction;
     fluxes.leafOnCreation *= reduction;
     fluxes.woodCreation *= reduction;
     fluxes.leafCreation *= reduction;
@@ -1474,6 +1477,13 @@ void writeLeafOnEventIfNeeded(void) {
   if (fluxes.leafOnCreation > TINY && ctx.events) {
     writeComputedEventOut(climate->year, climate->day, "leafon", 1,
                           "fluxes.leafOnCreation", fluxes.leafOnCreation);
+  }
+  if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
+    // Not really a computed event, but we don't have the event object here, so
+    // we use this mechanism
+    writeComputedEventOut(climate->year, climate->day, "leafon", 1,
+                          "fluxes.eventLeafOnCreation",
+                          fluxes.eventLeafOnCreation);
   }
 }
 
@@ -1608,9 +1618,9 @@ void calculateFluxes(void) {
 
   // Nitrogen cycle
   //
-  // Many of the nitrogen fluxes depend on carbon flux calculations, so make
-  // sure this stays at the bottom of this function (or after the carbon calcs,
-  // at least).
+  // Many of the nitrogen fluxes depend on carbon and water flux calculations,
+  // so make sure this stays at the bottom of this function (or after the
+  // carbon and water calcs, at least).
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
     calcNLeachingFlux();
@@ -1787,7 +1797,9 @@ void updateTrackers(double oldSoilWater) {
   trackers.soilWetnessFrac =
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
 
-  trackers.yearlyLitter += fluxes.leafLitter;
+  // If we get another event flux in this function, we should create an
+  // updateTrackersForEvents() function in events.c|h
+  trackers.yearlyLitter += fluxes.leafLitter + fluxes.eventLeafOffLitter;
 
   if (ctx.gdd) {
     trackers.gdd += climate->gdd;
