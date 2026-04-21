@@ -150,10 +150,10 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         break;
       case 'f':
         requireCLIArg("--file-prefix/--file-name");
-        if (strlen(optarg) > FILENAME_MAXLEN - 10) {
+        if (strlen(optarg) > FILENAME_PREFIX_MAXLEN) {
           logError("file prefix '%s' exceeds maximum length of %d characters "
                    "(must leave room for file extensions)\n",
-                   optarg, FILENAME_MAXLEN - 10);
+                   optarg, FILENAME_PREFIX_MAXLEN);
           logError("Either shorten the prefix or increase FILENAME_MAXLEN in "
                    "src/common/context.h\n");
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);

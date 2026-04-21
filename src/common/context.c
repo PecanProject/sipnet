@@ -180,10 +180,10 @@ void validateFilename(void) {
     printf("Error: fileName must be set for SIPNET to run\n");
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
-  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
+  if (strlen(ctx.fileName) > FILENAME_PREFIX_MAXLEN) {
     // We need room to append .clim, .param, etc
     printf("Error: fileName is too long; max length is %d characters\n",
-           FILENAME_MAXLEN - 10);
+           FILENAME_PREFIX_MAXLEN);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }

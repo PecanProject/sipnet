@@ -8,6 +8,7 @@
 #define CONTEXT_CHAR_MAXLEN 256
 // For convenience
 #define FILENAME_MAXLEN CONTEXT_CHAR_MAXLEN
+#define FILENAME_PREFIX_MAXLEN (FILENAME_MAXLEN - 10)
 
 #include <stdio.h>
 
