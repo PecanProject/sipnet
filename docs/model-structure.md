@@ -954,7 +954,7 @@ Where
 - $W_{\text{soil}}$: Soil water content
 - $W_{\text{WHC}}$: Soil water holding capacity
 
-For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis) and evapotranspiration, SIPNET uses a clipped value internally. This prevents supersaturated water states from pushing moisture response multipliers above their intended maxima. We denote this clipped fraction as:
+For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis) and evapotranspiration, SIPNET uses the clipped ratio $f^*_{\text{WHC}}$. This prevents supersaturated water states from pushing moisture response multipliers above their intended maxima. We denote this clipped fraction as:
 
 \begin{equation}
 f_{\text{WHC}^*} = \operatorname{clip}(f_{\text{WHC}}, 0, 1)
