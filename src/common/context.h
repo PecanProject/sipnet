@@ -78,7 +78,7 @@ struct Context {
 
   // Other
   // File prefix for climate and param files
-  char fileName[CONTEXT_CHAR_MAXLEN];
+  char filePrefix[CONTEXT_CHAR_MAXLEN];
 
   // Temp space for handling command line flag args; we do not write directly
   // the params since we want to do a precedence check first. If the new source

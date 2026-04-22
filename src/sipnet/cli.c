@@ -158,7 +158,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
                    "src/common/context.h\n");
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
-        updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
+        updateCharContext("filePrefix", optarg, CTX_COMMAND_LINE);
         break;
       case 'e':
         requireCLIArg("--events-prefix");

@@ -212,7 +212,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 | Option          | Default   | Description                                        |
 | --------------- | --------- | -------------------------------------------------- |
 | `input-file`    | sipnet.in | Name of input config file                          |
-| `file-name`     | sipnet    | Prefix of climate and parameter files (CLI: `--file-prefix`, config file: `file-name`) |
+| `file-prefix`   | sipnet    | Prefix of climate and parameter files (alias: `file-name` for backwards compatibility) |
 | `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`) |
 | `restart-in`    | unset     | Path to restart checkpoint to load                 |
 | `restart-out`   | unset     | Path to restart checkpoint to write                |
@@ -221,9 +221,9 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 | Option              | Default | Description                                                    |
 |---------------------|---------|----------------------------------------------------------------|
-| `do-main-output`    | on      | Print time series of all output variables to `<file-name>.out` |
-| `do-single-outputs` | off     | Print selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) one variable per file (e.g. `<file-name>.NEE`) |
-| `dump-config`       | off     | Print final config to `<file-name>.config`                     |
+| `do-main-output`    | on      | Print time series of all output variables to `<file-prefix>.out` |
+| `do-single-outputs` | off     | Print selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) one variable per file (e.g. `<file-prefix>.NEE`) |
+| `dump-config`       | off     | Print final config to `<file-prefix>.config`                     |
 | `print-header`      | on      | Whether to print header row in output files                    |
 | `quiet`             | off     | Suppress info and warning message                              |
 
@@ -274,7 +274,7 @@ Note that case is ignored for parameter names, as well as dashes and underscores
 
 ```
 ! Base filename (used for derived filenames)
-FILE_NAME = mysite
+FILE_PREFIX = mysite
 
 ! Output options
 DO_MAIN_OUTPUT = 1
@@ -295,4 +295,4 @@ SOIL_PHENOL = 0
 WATER_HRESP = 1
 ```
 
-When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-name>.config`.
+When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-prefix>.config`.
