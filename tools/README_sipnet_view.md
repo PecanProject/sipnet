@@ -90,5 +90,5 @@ Notes
 
 Quick Test:
 ```zsh
-python3 tools/test_sipnet-view.py
+python3 tools/test_sipnet_view.py
 ```
