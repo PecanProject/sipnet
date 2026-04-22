@@ -118,8 +118,8 @@ def build_timestamp(year_value: float, day_value: float, hour_value: float) -> d
       f"Invalid day-of-year {day} for year {year}; "
       f"expected 1..{max_day_of_year(year)}."
     )
-  if hour < 0 or hour > 24:
-    fail(f"Invalid hour value {hour!r}; expected 0 <= hour <= 24.")
+  if hour < 0 or hour >= 24:
+    fail(f"Invalid hour value {hour!r}; expected 0 <= hour < 24.")
 
   return datetime(year, 1, 1) + timedelta(days=day - 1, hours=hour)
 
