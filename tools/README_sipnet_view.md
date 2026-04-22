@@ -30,6 +30,13 @@ Screenshot:
 
 See the install steps in the main [tools/README.md](README.md#install).
 
+To enable tab auto-completion for the `sipnet-view` command, run the following command in your terminal:
+```zsh
+eval "$(register-python-argcomplete sipnet-view)"
+```
+You may want to add this command to your shell's startup file (e.g., `~/.bashrc` or `~/.zshrc`) to enable
+auto-completion in all future terminal sessions.
+
 ## Run Examples
 
 From the repository root:
