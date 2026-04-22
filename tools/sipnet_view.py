@@ -835,7 +835,8 @@ class SipnetViewerWindow(QMainWindow):
         zorder=1,
       )
 
-    shown_types = [event_type for event_type in self.loaded_events.event_types if event_type in set(events["type"])]
+    shown_event_types = set(events["type"])
+    shown_types = [event_type for event_type in self.loaded_events.event_types if event_type in shown_event_types]
     return [
       Line2D(
         [0],
