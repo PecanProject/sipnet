@@ -17,4 +17,4 @@ python3 -m pip install -e .
 ## More Info
 
 - See the [SIPNET Viewer README](README_sipnet_view.md) for details on the viewer tool.
-- See the {doc TBD} for details on the smoke-check tool.
+- See the [smoke check README](README_smoke_check.md) for details on the smoke-check tool.
