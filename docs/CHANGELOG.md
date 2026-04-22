@@ -26,6 +26,8 @@ sections to include in release notes:
 
 ### Added
 
+- `sipnet-view` tool for visualizing SIPNET output files (#317)
+
 ### Fixed
 
 ### Changed
