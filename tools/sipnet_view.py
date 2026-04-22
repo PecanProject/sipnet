@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import argparse
+import argcomplete, argparse
 import sys
 import re
 from dataclasses import dataclass
@@ -230,6 +230,9 @@ def find_events_header_row(path: Path) -> int:
 
 
 def load_output_table(path: Path) -> LoadedSipnetData:
+  if path.is_dir():
+    path = path / 'sipnet.out'
+    
   if not path.exists():
     fail(f"Input file not found: {path}")
 
@@ -414,9 +417,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     "-i",
     "--input-file",
     default="sipnet.out",
-    help="Path to a SIPNET output file. Defaults to ./sipnet.out",
+    help="Path to a SIPNET output file. Defaults to ./sipnet.out. If directory, looks for sipnet.out there.",
   )
   parser.add_argument(
+    "-e",
     "--events-file",
     help="Optional path to an events output file. Defaults to events.out beside the main output.",
   )
@@ -441,8 +445,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
   parser.add_argument(
     "-l",
     "--layout",
-    choices=("combined", "subplots"),
-    default="combined",
+    choices=("subplots", "combined"),
+    default="subplots",
     help="Initial plot layout. 'combined' uses twinned y-axes.",
   )
   parser.add_argument(
@@ -636,7 +640,7 @@ class SipnetViewerWindow(QMainWindow):
 
     self.event_types_list.setSortingEnabled(True)
     self.event_types_list.sortItems()
-    
+
   def format_datetime_for_display(self, value: datetime) -> str:
     year = value.year
     day = value.timetuple().tm_yday
@@ -988,6 +992,7 @@ def load_initial_events(
 
 def main(argv: Sequence[str] | None = None) -> int:
   parser = build_arg_parser()
+  argcomplete.autocomplete(parser)
   args = parser.parse_args(argv)
 
   input_path = Path(args.input_file).expanduser()
