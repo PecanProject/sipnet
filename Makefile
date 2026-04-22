@@ -32,7 +32,7 @@ DOXYGEN_LATEX_DIR = docs/latex
 
 # Look up what Git revision we're building from
 # We use this below to compile the hash into the binary for ease of debugging
-GIT_HASH := $(shell git rev-parse --short=10 HEAD; git diff-index --quiet HEAD || echo " plus uncommitted changes")
+GIT_HASH := $(shell git describe --tags --abbrev=10 HEAD; git diff-index --quiet HEAD || echo " plus uncommitted changes")
 
 # all does everything build related (but not test)
 all: sipnet document

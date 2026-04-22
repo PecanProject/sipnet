@@ -105,6 +105,12 @@ int testDrainageWithWaterDrainFrac(void) {
                       0);
   status |= checkValue(drainage, 0.0, "no drainage at WHC");
 
+  // Last one - waterDrainFrac high enough to attempt to drain more than the
+  // excess (should be capped)
+  params.waterDrainFrac = 20.0;
+  calcSoilWaterFluxes(&fastFlow, &evaporation, &drainage, water, 0, 0, 0);
+  status |= checkValue(drainage, excessOverWHC, "capped drainage");
+
   envi.snow = 0;
   return status;
 }

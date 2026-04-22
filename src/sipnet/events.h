@@ -170,6 +170,8 @@ void setupEvents(void);
  */
 int isFirstEventBefore(int year, int day);
 
+// TODO: remove this function and its call sites, sipnet:resetFluxes now
+//  handles this
 /*!
  * Set all event fluxes to zero
  *
