@@ -583,7 +583,8 @@ class SipnetViewerWindow(QMainWindow):
 
   def set_status(self, message: str, is_error: bool = False) -> None:
     color = "#a40000" if is_error else "#1f4f7a"
-    self.status_label.setText(f"<span style='color:{color}'>{message}</span>")
+    self.status_label.setStyleSheet(f"color: {color};")
+    self.status_label.setText(message)
 
   def populate_output_controls(
       self,
