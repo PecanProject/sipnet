@@ -139,11 +139,11 @@ EventNode *createEventNode(int year, int day, int eventType,
     case LEAFON: {
       double dummy;
       LeafOnParams *lParams = (LeafOnParams *)malloc(sizeof(LeafOnParams));
-      // We're _checking_ for one param, but there shouldn't be any. This is
-      // both for consistency with other types, and to catch extraneous data
+      // Check for extraneous data: leafon takes no parameters, so error if any
+      // numbers are found. sscanf returns 0 or EOF (-1) for empty/whitespace.
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf", &dummy);
-      if (numRead != NUM_LEAFON_PARAMS) {
+      if (numRead > NUM_LEAFON_PARAMS) {
         logError("parsing LeafOn params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
@@ -152,11 +152,11 @@ EventNode *createEventNode(int year, int day, int eventType,
     case LEAFOFF: {
       double dummy;
       LeafOffParams *lParams = (LeafOffParams *)malloc(sizeof(LeafOffParams));
-      // We're _checking_ for one param, but there shouldn't be any. This is
-      // both for consistency with other types, and to catch extraneous data
+      // Check for extraneous data: leafoff takes no parameters, so error if
+      // any numbers are found. sscanf returns 0 or EOF (-1) for empty input.
       int numRead = sscanf(eventParamsStr,  // NOLINT
                            "%lf", &dummy);
-      if (numRead != NUM_LEAFOFF_PARAMS) {
+      if (numRead > NUM_LEAFOFF_PARAMS) {
         logError("parsing LeafOff params for year %d day %d\n", year, day);
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
@@ -631,7 +631,7 @@ void processEvents(void) {
         // limitation may change the amount
       } break;
       case LEAFOFF: {
-        double leafOff = envi.plantWoodC * params.fracLeafFall;
+        double leafOff = envi.plantLeafC * params.fracLeafFall;
         fluxes.eventLeafOffLitter += leafOff / climLen;
 
         // Nitrogen - need to account for leaf N moving to litter, as with

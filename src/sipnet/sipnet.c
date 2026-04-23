@@ -1539,12 +1539,12 @@ void calcMethaneFlux(void) {
 }
 
 /**
- * Reset all (non-event) fluxes.
+ * Reset all fluxes, including event fluxes.
  *
- * Make sure to add new fluxes to this list!
+ * This is called at the start of each time step (in updateState()), before
+ * event and non-event fluxes are calculated.
  */
 void resetFluxes(void) {
-  // This reset all fluxes, including the event fluxes (which we want)
   fluxes = (struct FluxVars){0};
 }
 
@@ -1552,6 +1552,8 @@ void resetFluxes(void) {
  * Calculate flux terms for sipnet as part of main model flow
  *
  * All fluxes should be calculated before state variables are updated.
+ * Note: fluxes are reset in updateState() before this is called, so that
+ * event fluxes set by processEvents() remain visible for N limitation checks.
  */
 void calculateFluxes(void) {
   // base foliar respiration, calc'd as part of potential photosynthesis
@@ -1569,9 +1571,6 @@ void calculateFluxes(void) {
   double growthResp;
   // net rain, equal to (rain - immedEvap) (cm/day)
   double netRain;
-
-  // Let's make sure to get all fluxes to zero before starting this
-  resetFluxes();
 
   // Psn, moisture and water fluxes
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai
@@ -2022,6 +2021,9 @@ void updateState(void) {
 
   ///////////////////////
   // 1. Calculate Fluxes
+
+  // Reset all fluxes to zero before calculating anything this time step.
+  resetFluxes();
 
   // All event handling, which is modeled as fluxes. Note that we have this
   // before the other fluxes so that everything is in place when we consider
