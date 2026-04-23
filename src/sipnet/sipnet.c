@@ -1503,8 +1503,7 @@ void calcNPoolFluxes(void) {
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter, and N loss due to mineralization. N added via fertilization
-  // is handled elsewhere.Added subtraction of (fluxes.litterToSoil / litterCN)
-  // to prevent N duplication.
+  // is handled elsewhere.
   fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
                       fluxes.woodLitter / params.woodCN - litterMin -
                       fluxes.litterToSoil / litterCN;
@@ -2024,11 +2023,13 @@ void updateState(void) {
   ///////////////////////
   // 1. Calculate Fluxes
 
+  // All event handling, which is modeled as fluxes. Note that we have this
+  // before the other fluxes so that everything is in place when we consider
+  // N limitation at the end of calculateFluxes().
+  processEvents();
+
   // All non-event fluxes
   calculateFluxes();
-
-  // All event handling, which is modeled as fluxes
-  processEvents();
 
   ///////////////////////
   // 2. Update Pools

@@ -622,12 +622,13 @@ void processEvents(void) {
 
         // Nitrogen is handled implicitly by relative CN ratios. Missing N
         // from low-N wood to higher-N leaves is accounted for in
-        // calcPlantNDemand()
+        // calcNFixationAndUptakeFluxes() via calcPlantNDemand()
 
-        // Unlike planting, this is NOT a system input
+        // Unlike planting, this is NOT a system input, so no adjustments to
+        // eventInputC or eventInputN
+
         // ALSO, unlike all other events, we don't write the event here, as N
         // limitation may change the amount
-        // writeEventOut(gEvent, 1, "fluxes.eventLeafOn", leafOn / climLen);
       } break;
       case LEAFOFF: {
         double leafOff = envi.plantWoodC * params.fracLeafFall;
@@ -636,10 +637,13 @@ void processEvents(void) {
         // Nitrogen - need to account for leaf N moving to litter, as with
         // harvests
         double litterNAdd = leafOff / params.leafCN;
-        fluxes.eventLitterN += litterNAdd * climLen;
+        fluxes.eventLitterN += litterNAdd / climLen;
 
-        writeEventOut(gEvent, 2, "fluxes.eventLeafOff", leafOff / climLen,
-                      "fluxes.eventLitterN", litterNAdd / climLen);
+        // clang-format off
+        writeEventOut(gEvent, 2,
+          "fluxes.eventLeafOff", leafOff / climLen,
+          "fluxes.eventLitterN", litterNAdd / climLen);
+        // clang-format on
       } break;
       default:
         logError("Unknown event type (%d) in processEvents()\n", gEvent->type);
