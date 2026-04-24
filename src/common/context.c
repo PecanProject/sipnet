@@ -81,16 +81,16 @@ void nameToKey(const char *name) {
     }
   }
   keyName[keyInd] = '\0';
+  // Backward compatibility for legacy FILE_NAME / file-name config keys.
+  if (strcmp(keyName, "filename") == 0) {
+    strcpy(keyName, "fileprefix");
+  }
 }
 
 struct context_metadata *getContextMetadata(const char *name) {
   struct context_metadata *s;
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s);
-  // Backward compatibility for legacy FILE_NAME / file-name config keys.
-  if (s == NULL && strcmp(keyName, "filename") == 0) {
-    HASH_FIND_STR(ctx.metaMap, "fileprefix", s);
-  }
   return s;
 }
 

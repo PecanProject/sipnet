@@ -28,7 +28,6 @@ When the same option is specified in both places, **command-line arguments take 
 |--------------------|-------|------------|-------------|--------------------------------------------------------------------------------------------|
 | `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
 | `--file-prefix`    | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
-| `--file-name`      | `—`   | `<name>`   | `sipnet`    | Backward-compatible alias for `--file-prefix`                                             |
 | `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
 | `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
 | `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |
@@ -77,6 +76,14 @@ These flags control what outputs are generated. Prepend `no-` to disable (e.g., 
 | `--help`    | `-h`  | Print help message and exit   |
 | `--version` | `-v`  | Print SIPNET version and exit |
 
+### Deprecated Options
+
+These options are kept for backward compatibility. Avoid using them in new configurations.
+
+| Option        | Short | Argument | Default  | Replaces        | Description                          |
+|---------------|-------|----------|----------|-----------------|--------------------------------------|
+| `--file-name` |       | `<name>` | `sipnet` | `--file-prefix` | Deprecated alias for `--file-prefix` |
+
 ## Configuration Files
 
 SIPNET reads configuration from a file (default: `sipnet.in`). This file uses a simple key-value format with one setting per line.
@@ -98,11 +105,11 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | Key               | Value Type | Description                                                               |
 | ----------------- | ---------- | ------------------------------------------------------------------------- |
 | `INPUT_FILE`      | string     | Name of configuration file to read                                        |
-| `FILE_NAME`       | string     | Prefix for climate and parameter input files                              |
-| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_NAME>.param`) |
-| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_NAME>.clim`)           |
-| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_NAME>.out`)       |
-| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_NAME>.config`)    |
+| `FILE_PREFIX`     | string     | Prefix for climate and parameter input files                                |
+| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`) |
+| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)           |
+| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)       |
+| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)    |
 | `EVENTS_PREFIX`   | string     | Prefix used to derive events input and output filenames                     |
 | `RESTART_IN`      | string     | Path to checkpoint to resume from                                         |
 | `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                 |
@@ -138,7 +145,7 @@ Here's an example `sipnet.in` configuration file:
 
 ```
 # Input files
-FILE_NAME my_site
+FILE_PREFIX my_site
 PARAM_FILE ../inputs/my_site.param
 CLIM_FILE  ../inputs/my_site.clim
 
@@ -178,7 +185,7 @@ SIPNET applies configuration in this order (later values override earlier ones):
 Given this configuration file (`sipnet.in`):
 
 ```
-FILE_NAME base_site
+FILE_PREFIX base_site
 EVENTS 1
 LITTER_POOL 0
 ```
@@ -207,7 +214,7 @@ SIPNET supports two phenology models: GDD-based (growing degree days) and soil-t
 
 **Create configuration** (`phenology_test.in`):
 ```
-FILE_NAME my_site
+FILE_PREFIX my_site
 GDD 1
 SOIL_PHENOL 0
 DO_MAIN_OUTPUT 1
@@ -303,7 +310,7 @@ Example:
 EVENTS 1
 GDD 1
 GROWTH_RESP 0
-FILE_NAME my_site
+FILE_PREFIX my_site
 PARAM_FILE my_site.param
 CLIM_FILE my_site.clim
 ...
