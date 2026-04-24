@@ -29,6 +29,7 @@ jobs:
         shell: bash
 
       - name: Prepare release archive
+        id: prepare_archive
         shell: bash
         run: |
           tag="${GITHUB_REF_NAME}"
@@ -44,12 +45,13 @@ jobs:
           cp "$src" "dist/sipnet"
           tar -C dist -czf "dist/${archive_base}.tar.gz" sipnet
           rm -f "dist/sipnet"
+          echo "archive_base=${archive_base}" >> "$GITHUB_OUTPUT"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sipnet-${{ matrix.artifact_name }}-${{ github.ref_name }}
-          path: dist/sipnet-${{ matrix.artifact_name }}-${{ github.ref_name }}.tar.gz
+          name: ${{ steps.prepare_archive.outputs.archive_base }}
+          path: dist/${{ steps.prepare_archive.outputs.archive_base }}.tar.gz
           if-no-files-found: error
 
   release:
