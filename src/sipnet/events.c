@@ -136,6 +136,32 @@ EventNode *createEventNode(int year, int day, int eventType,
       tParams->tillageEffect = tillEffect;
       newEvent->eventParams = tParams;
     } break;
+    case LEAFON: {
+      double dummy;
+      LeafOnParams *lParams = (LeafOnParams *)malloc(sizeof(LeafOnParams));
+      // Check for extraneous data: leafon takes no parameters, so error if any
+      // numbers are found. sscanf returns 0 or EOF (-1) for empty/whitespace.
+      int numRead = sscanf(eventParamsStr,  // NOLINT
+                           "%lf", &dummy);
+      if (numRead > NUM_LEAFON_PARAMS) {
+        logError("parsing LeafOn params for year %d day %d\n", year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
+      newEvent->eventParams = lParams;
+    } break;
+    case LEAFOFF: {
+      double dummy;
+      LeafOffParams *lParams = (LeafOffParams *)malloc(sizeof(LeafOffParams));
+      // Check for extraneous data: leafoff takes no parameters, so error if
+      // any numbers are found. sscanf returns 0 or EOF (-1) for empty input.
+      int numRead = sscanf(eventParamsStr,  // NOLINT
+                           "%lf", &dummy);
+      if (numRead > NUM_LEAFOFF_PARAMS) {
+        logError("parsing LeafOff params for year %d day %d\n", year, day);
+        exit(EXIT_CODE_INPUT_FILE_ERROR);
+      }
+      newEvent->eventParams = lParams;
+    } break;
     default:
       // Unknown type, error and exit
       logError("found unknown event type %d while reading event file\n",
@@ -159,6 +185,10 @@ const char *eventTypeToString(event_type_t type) {
       return "fert";
     case TILLAGE:
       return "till";
+    case LEAFON:
+      return "leafon";
+    case LEAFOFF:
+      return "leafoff";
     default:
       logError("unknown event type in eventTypeToString (%d)", type);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -168,15 +198,26 @@ const char *eventTypeToString(event_type_t type) {
 event_type_t eventStringToType(const char *eventTypeStr) {
   if (strcmp(eventTypeStr, "irrig") == 0) {
     return IRRIGATION;
-  } else if (strcmp(eventTypeStr, "fert") == 0) {
+  }
+  if (strcmp(eventTypeStr, "fert") == 0) {
     return FERTILIZATION;
-  } else if (strcmp(eventTypeStr, "plant") == 0) {
+  }
+  if (strcmp(eventTypeStr, "plant") == 0) {
     return PLANTING;
-  } else if (strcmp(eventTypeStr, "till") == 0) {
+  }
+  if (strcmp(eventTypeStr, "till") == 0) {
     return TILLAGE;
-  } else if (strcmp(eventTypeStr, "harv") == 0) {
+  }
+  if (strcmp(eventTypeStr, "harv") == 0) {
     return HARVEST;
   }
+  if (strcmp(eventTypeStr, "leafon") == 0) {
+    return LEAFON;
+  }
+  if (strcmp(eventTypeStr, "leafoff") == 0) {
+    return LEAFOFF;
+  }
+
   return UNKNOWN_EVENT;
 }
 
@@ -265,11 +306,9 @@ EventNode *readEventData(const char *eventFile) {
     }
 
     if ((year < currYear) || ((year == currYear) && (day < currDay))) {
-      // clang-format off
       logError("reading event file: last event was at (%d, %d), next event is "
                "at (%d, %d)\n", currYear, currDay, year, day);
       logError("event records must be in time-ascending order\n");
-      // clang-format on
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
 
@@ -363,30 +402,9 @@ int isFirstEventBefore(int year, int day) {
   return firstEvent->day < day;
 }
 
-void resetEventFluxes(void) {
-  fluxes.eventLeafC = 0.0;
-  fluxes.eventWoodC = 0.0;
-  fluxes.eventFineRootC = 0.0;
-  fluxes.eventCoarseRootC = 0.0;
-  fluxes.eventEvap = 0.0;
-  fluxes.eventSoilWater = 0.0;
-  fluxes.eventSoilC = 0.0;
-  fluxes.eventLitterC = 0.0;
-  fluxes.eventMinN = 0.0;
-  fluxes.eventSoilOrgN = 0.0;
-  fluxes.eventLitterN = 0.0;
-
-  // mass balance
-  fluxes.eventInputC = 0.0;
-  fluxes.eventOutputC = 0.0;
-  fluxes.eventInputN = 0.0;
-  fluxes.eventOutputN = 0.0;
-}
-
 void processEvents(void) {
-  // Set all event fluxes to zero, as these have no memory from one step to
-  // the next
-  resetEventFluxes();
+  // Event fluxes have all been reset to zero at the start of the time step,
+  // so we can just add to them as needed
 
   // If event starts off NULL, this function will just fall through, as it
   // should.
@@ -537,15 +555,20 @@ void processEvents(void) {
                          fracRB);
           fluxes.eventOutputN += outputN / climLen;
         }
+        // clang-format off
         writeEventOut(
-            gEvent, 10, "fluxes.eventSoilC", soilAdd / climLen,
-            "fluxes.eventLitterC", litterAdd / climLen, "fluxes.eventLeafC",
-            leafDelta / climLen, "fluxes.eventWoodC", woodDelta / climLen,
+            gEvent, 10,
+            "fluxes.eventSoilC", soilAdd / climLen,
+            "fluxes.eventLitterC", litterAdd / climLen,
+            "fluxes.eventLeafC", leafDelta / climLen,
+            "fluxes.eventWoodC", woodDelta / climLen,
             "fluxes.eventFineRootC", fineDelta / climLen,
             "fluxes.eventCoarseRootC", coarseDelta / climLen,
-            "fluxes.eventSoilOrgN", soilNAdd / climLen, "fluxes.eventLitterN",
-            litterNAdd / climLen, "fluxes.eventOutputC", outputC / climLen,
+            "fluxes.eventSoilOrgN", soilNAdd / climLen,
+            "fluxes.eventLitterN", litterNAdd / climLen,
+            "fluxes.eventOutputC", outputC / climLen,
             "fluxes.eventOutputN", outputN / climLen);
+        // clang-format on
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
@@ -583,10 +606,44 @@ void processEvents(void) {
           fluxes.eventInputN += (orgN + minN) / climLen;
         }
 
-        writeEventOut(gEvent, 5, "fluxes.eventOrgN", orgN / climLen,
-                      "fluxes.eventLitterC", orgC / climLen, "fluxes.eventMinN",
-                      minN / climLen, "fluxes.eventInputC", orgC / climLen,
-                      "fluxes.eventInputN", (orgN + minN) / climLen);
+        // clang-format off
+        writeEventOut(gEvent, 6,
+          "fluxes.eventLitterC", ctx.litterPool ? orgC / climLen : 0.0,
+          "fluxes.eventSoilC", ctx.litterPool ? 0.0 : orgC / climLen,
+          "fluxes.eventMinN", minN / climLen,
+          "fluxes.eventLitterN", orgN / climLen,
+          "fluxes.eventInputC", orgC / climLen,
+          "fluxes.eventInputN", (orgN + minN) / climLen);
+        // clang-format on
+      } break;
+      case LEAFON: {
+        double leafOn = params.leafGrowth;
+        fluxes.eventLeafOnCreation += leafOn / climLen;
+
+        // Nitrogen is handled implicitly by relative CN ratios. Missing N
+        // from low-N wood to higher-N leaves is accounted for in
+        // calcNFixationAndUptakeFluxes() via calcPlantNDemand()
+
+        // Unlike planting, this is NOT a system input, so no adjustments to
+        // eventInputC or eventInputN
+
+        // ALSO, unlike all other events, we don't write the event here, as N
+        // limitation may change the amount
+      } break;
+      case LEAFOFF: {
+        double leafOff = envi.plantLeafC * params.fracLeafFall;
+        fluxes.eventLeafOffLitter += leafOff / climLen;
+
+        // Nitrogen - need to account for leaf N moving to litter, as with
+        // harvests
+        double litterNAdd = leafOff / params.leafCN;
+        fluxes.eventLitterN += litterNAdd / climLen;
+
+        // clang-format off
+        writeEventOut(gEvent, 2,
+          "fluxes.eventLeafOff", leafOff / climLen,
+          "fluxes.eventLitterN", litterNAdd / climLen);
+        // clang-format on
       } break;
       default:
         logError("Unknown event type (%d) in processEvents()\n", gEvent->type);
@@ -607,6 +664,16 @@ void updatePoolsForEvents(void) {
   envi.soilC += fluxes.eventSoilC * climate->length;
   if (ctx.litterPool) {
     envi.litterC += fluxes.eventLitterC * climate->length;
+  }
+
+  // Leaf on and off events
+  envi.plantWoodC -= fluxes.eventLeafOnCreation * climate->length;
+  envi.plantLeafC += (fluxes.eventLeafOnCreation - fluxes.eventLeafOffLitter) *
+                     climate->length;
+  if (ctx.litterPool) {
+    envi.litterC += fluxes.eventLeafOffLitter * climate->length;
+  } else {
+    envi.soilC += fluxes.eventLeafOffLitter * climate->length;
   }
 
   // Harvest and planting events

@@ -1381,8 +1381,10 @@ double calcPlantNDemand() {
   // demand should only count the difference in the N
   // between those two pools, hence subtracting
   // params.woodCN from params.leafCN for leafOnCreation
-  double leafOnDemand = fluxes.leafOnCreation / params.leafCN -
-                        fluxes.leafOnCreation / params.woodCN;
+  // Note we can have leafOn creation terms from two places
+  double leafOnCreation = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
+  double leafOnDemand =
+      leafOnCreation / params.leafCN - leafOnCreation / params.woodCN;
   // calculate demand from all other creation terms
   double creationDemand = fluxes.woodCreation / params.woodCN +
                           fluxes.leafCreation / params.leafCN +
@@ -1450,6 +1452,7 @@ void calcNFixationAndUptakeFluxes(void) {
             climate->day, climate->time);
 
     // Reduce all drains on soil N
+    fluxes.eventLeafOnCreation *= reduction;
     fluxes.leafOnCreation *= reduction;
     fluxes.woodCreation *= reduction;
     fluxes.leafCreation *= reduction;
@@ -1475,6 +1478,13 @@ void writeLeafOnEventIfNeeded(void) {
     writeComputedEventOut(climate->year, climate->day, "leafon", 1,
                           "fluxes.leafOnCreation", fluxes.leafOnCreation);
   }
+  if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
+    // Not really a computed event, but we don't have the event object here, so
+    // we use this mechanism
+    writeComputedEventOut(climate->year, climate->day, "leafon", 1,
+                          "fluxes.eventLeafOnCreation",
+                          fluxes.eventLeafOnCreation);
+  }
 }
 
 /**
@@ -1493,8 +1503,7 @@ void calcNPoolFluxes(void) {
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter, and N loss due to mineralization. N added via fertilization
-  // is handled elsewhere.Added subtraction of (fluxes.litterToSoil / litterCN)
-  // to prevent N duplication.
+  // is handled elsewhere.
   fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
                       fluxes.woodLitter / params.woodCN - litterMin -
                       fluxes.litterToSoil / litterCN;
@@ -1530,12 +1539,12 @@ void calcMethaneFlux(void) {
 }
 
 /**
- * Reset all (non-event) fluxes.
+ * Reset all fluxes, including event fluxes.
  *
- * Make sure to add new fluxes to this list!
+ * This is called at the start of each time step (in updateState()), before
+ * event and non-event fluxes are calculated.
  */
 void resetFluxes(void) {
-  // This reset all fluxes, including the event fluxes (which we want)
   fluxes = (struct FluxVars){0};
 }
 
@@ -1543,6 +1552,8 @@ void resetFluxes(void) {
  * Calculate flux terms for sipnet as part of main model flow
  *
  * All fluxes should be calculated before state variables are updated.
+ * Note: fluxes are reset in updateState() before this is called, so that
+ * event fluxes set by processEvents() remain visible for N limitation checks.
  */
 void calculateFluxes(void) {
   // base foliar respiration, calc'd as part of potential photosynthesis
@@ -1560,9 +1571,6 @@ void calculateFluxes(void) {
   double growthResp;
   // net rain, equal to (rain - immedEvap) (cm/day)
   double netRain;
-
-  // Let's make sure to get all fluxes to zero before starting this
-  resetFluxes();
 
   // Psn, moisture and water fluxes
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai
@@ -1608,9 +1616,9 @@ void calculateFluxes(void) {
 
   // Nitrogen cycle
   //
-  // Many of the nitrogen fluxes depend on carbon flux calculations, so make
-  // sure this stays at the bottom of this function (or after the carbon calcs,
-  // at least).
+  // Many of the nitrogen fluxes depend on carbon and water flux calculations,
+  // so make sure this stays at the bottom of this function (or after the
+  // carbon and water calcs, at least).
   if (ctx.nitrogenCycle) {
     calcNVolatilizationFlux();
     calcNLeachingFlux();
@@ -1787,7 +1795,9 @@ void updateTrackers(double oldSoilWater) {
   trackers.soilWetnessFrac =
       (oldSoilWater + envi.soilWater) / (2.0 * params.soilWHC);
 
-  trackers.yearlyLitter += fluxes.leafLitter;
+  // If we get another event flux in this function, we should create an
+  // updateTrackersForEvents() function in events.c|h
+  trackers.yearlyLitter += fluxes.leafLitter + fluxes.eventLeafOffLitter;
 
   if (ctx.gdd) {
     trackers.gdd += climate->gdd;
@@ -2012,11 +2022,16 @@ void updateState(void) {
   ///////////////////////
   // 1. Calculate Fluxes
 
+  // Reset all fluxes to zero before calculating anything this time step.
+  resetFluxes();
+
+  // All event handling, which is modeled as fluxes. Note that we have this
+  // before the other fluxes so that everything is in place when we consider
+  // N limitation at the end of calculateFluxes().
+  processEvents();
+
   // All non-event fluxes
   calculateFluxes();
-
-  // All event handling, which is modeled as fluxes
-  processEvents();
 
   ///////////////////////
   // 2. Update Pools
