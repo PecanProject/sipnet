@@ -4,12 +4,6 @@ on:
   push:
     tags:
       - 'v*.*.*'  # Trigger on version tags
-  workflow_dispatch:
-    inputs:
-      release_ref:
-        description: 'Tag to build and release (e.g. v2.1.0)'
-        required: true
-        type: string
 
 permissions:
   contents: write
@@ -26,13 +20,9 @@ jobs:
             artifact_name: macos-arm64
             binary_path: sipnet
     runs-on: ${{ matrix.os }}
-    env:
-      RELEASE_TAG: ${{ github.event.inputs.release_ref || github.ref_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.release_ref || github.ref }}
 
       - name: Build SIPNET
         run: make
@@ -42,7 +32,7 @@ jobs:
         id: prepare_archive
         shell: bash
         run: |
-          tag="${RELEASE_TAG}"
+          tag="${GITHUB_REF_NAME}"
           src="${{ matrix.binary_path }}"
           archive_base="sipnet-${{ matrix.artifact_name }}-${tag}"
 
@@ -67,8 +57,6 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      RELEASE_TAG: ${{ github.event.inputs.release_ref || github.ref_name }}
     steps:
       - name: Download release artifacts
         uses: actions/download-artifact@v4
@@ -79,10 +67,10 @@ jobs:
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.release_ref || github.ref_name }}
-          name: ${{ github.event.inputs.release_ref || github.ref_name }} [RELEASE NAME]
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }} [RELEASE NAME]
           body: |
-            Draft release for ${{ github.event.inputs.release_ref || github.ref_name }}.
+            Draft release for ${{ github.ref_name }}.
 
             - Replace [RELEASE NAME] in the title
             - Curate highlights from changelog / release notes
