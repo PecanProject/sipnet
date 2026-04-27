@@ -1,0 +1,5 @@
+argcomplete>=3.6.3
+PySide6>=6.11.0
+matplotlib>=3.10.8
+pandas>=3.0.2
+numpy>=2.4.4
