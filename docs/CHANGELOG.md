@@ -26,6 +26,8 @@ sections to include in release notes:
 
 ### Added
 
+- `sipnet-view` tool for visualizing SIPNET output files (#317)
+
 ### Fixed
 
 ### Changed
@@ -67,7 +69,7 @@ sections to include in release notes:
 ### Fixed
 
 - Out of order error message for events (#166)
-- `woodCreation` was being double counted; note that this change will likely require recalibration of SIPNET params (#282)
+- `woodCreation` was being double counted; note that this change will likely require recalibration of SIPNET params (#208, #248)
 
 ### Changed
 
