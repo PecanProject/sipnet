@@ -1,5 +1,7 @@
 // Definition of global state variables
 
+#include <math.h>
+
 #include "state.h"
 
 // linked list of climate variables
@@ -12,3 +14,11 @@ Envi envi;  // state variables
 Trackers trackers;
 PhenologyTrackers phenologyTrackers;
 Fluxes fluxes;
+
+double getPlantWoodCTotal(void) {
+  return envi.plantWoodC + envi.plantWoodCStorageDelta;
+}
+
+double getStorageBackedWoodCarbon(void) {
+  return fmax(envi.plantWoodC, getPlantWoodCTotal());
+}

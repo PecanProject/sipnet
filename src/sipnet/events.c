@@ -479,15 +479,18 @@ void processEvents(void) {
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
 
-        const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
+        const double aboveHarvestFrac = fracRA + fracTA;
+        const double storageWoodC = fmax(0.0, envi.plantWoodCStorageDelta);
+        const double woodC = getStorageBackedWoodCarbon();
         // Litter increase
         double litterAdd = fracTA * (envi.plantLeafC + woodC);
         double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
 
         // Pool reductions, counting both mass moved to litter and removed by
         // the harvest itself. Above-ground changes:
-        const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
-        const double woodDelta = -woodC * (fracRA + fracTA);
+        const double leafDelta = -envi.plantLeafC * aboveHarvestFrac;
+        const double woodDelta = -envi.plantWoodC * aboveHarvestFrac;
+        const double storageWoodDelta = -storageWoodC * aboveHarvestFrac;
         // Below-ground changes:
         const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
@@ -502,6 +505,7 @@ void processEvents(void) {
         fluxes.eventSoilC += soilAdd / climLen;
         fluxes.eventLeafC += leafDelta / climLen;
         fluxes.eventWoodC += woodDelta / climLen;
+        fluxes.eventWoodStorageDelta += storageWoodDelta / climLen;
         fluxes.eventFineRootC += fineDelta / climLen;
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
@@ -601,6 +605,7 @@ void updatePoolsForEvents(void) {
   // CARBON
   // Harvest and planting events
   envi.plantWoodC += fluxes.eventWoodC * climate->length;
+  envi.plantWoodCStorageDelta += fluxes.eventWoodStorageDelta * climate->length;
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
 
   // Harvest and fertilization events

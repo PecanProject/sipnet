@@ -442,6 +442,9 @@ typedef struct Environment {
 // Global var
 extern Envi envi;  // state variables
 
+double getPlantWoodCTotal(void);
+double getStorageBackedWoodCarbon(void);
+
 // fluxes as per-day rates
 typedef struct FluxVars {
   // ****************************************
@@ -563,6 +566,8 @@ typedef struct FluxVars {
   double eventLeafC;
   // plantWoodC addition
   double eventWoodC;
+  // plantWoodCStorageDelta addition
+  double eventWoodStorageDelta;
   // plantFineRootC addition
   double eventFineRootC;
   // plantCoarseRootC addition
