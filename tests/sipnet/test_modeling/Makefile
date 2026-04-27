@@ -8,7 +8,7 @@ LDFLAGS=-L$(ROOT_DIR)/libs
 LDLIBS=-lsipnet -lsipnet_common -lm
 
 # List test files in this directory here
-TEST_CFILES=testNitrogenCycle.c testDependencyFunctions.c testBalance.c testMethane.c testSoilMoisture.c
+TEST_CFILES=testNitrogenCycle.c testDependencyFunctions.c testBalance.c testMethane.c testSoilMoisture.c testWoodStorage.c
 
 # The rest is boilerplate, likely copyable as is to a new test directory
 TEST_OBJ_FILES=$(TEST_CFILES:%.c=%.o)
@@ -40,6 +40,6 @@ $(RUN_EXECUTABLES):
 	./$(basename $@)
 
 clean:
-	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) events.in events.out balance.out
+	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) events.in events.out balance.out wood_storage.out storage_harvest.in
 
 .PHONY: all tests clean run $(RUN_EXECUTABLES)

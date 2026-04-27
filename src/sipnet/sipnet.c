@@ -444,8 +444,7 @@ void outputHeader(FILE *out) {
 void outputState(FILE *out, int year, int day, double time) {
 
   fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
-          (envi.plantWoodC + envi.plantWoodCStorageDelta), envi.plantLeafC,
-          trackers.woodCreation);
+          getPlantWoodCTotal(), envi.plantLeafC, trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%11.2f %9.2f ", envi.coarseRootC, envi.fineRootC);
   fprintf(out, "%8.2f %10.3f %15.3f %8.2f ", envi.litterC, envi.soilWater,
@@ -1041,8 +1040,7 @@ void vegResp(double *folResp, double *woodResp, double baseFolResp) {
   // end snowpack addition
 
   // :: from [1], eq (A19)
-  *woodResp = params.baseVegResp *
-              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
+  *woodResp = params.baseVegResp * getStorageBackedWoodCarbon() *
               pow(params.vegRespQ10, climate->tair / 10.0);
 }
 
@@ -1069,8 +1067,7 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
     *folResp *= params.frozenSoilFolREff;  // allows foliar resp. to be shutdown
                                            // by a given fraction in winter
   }
-  *woodResp = params.baseVegResp *
-              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
+  *woodResp = params.baseVegResp * getStorageBackedWoodCarbon() *
               pow(params.vegRespQ10, climate->tair / 10.0);
 
   // Rg is a fraction of the recent mean NPP
@@ -1329,8 +1326,7 @@ void calcRootAndWoodFluxes(void) {
 
   // Wood litter, in g C * m^-2 ground area * day^-1
   // turnover rate is fraction lost per day
-  fluxes.woodLitter =
-      (envi.plantWoodC + envi.plantWoodCStorageDelta) * params.woodTurnoverRate;
+  fluxes.woodLitter = getStorageBackedWoodCarbon() * params.woodTurnoverRate;
 
   // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
