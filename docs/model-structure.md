@@ -829,10 +829,10 @@ where:
 
 \begin{equation*}
 r_d = \frac{\text{rdConst}}{u},
-\qquad r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2} f_{\text{WHC}^*}\right)
+\qquad r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2} f^*_{\text{WHC}}\right)
 \end{equation*}
 
-For soil evaporation, SIPNET assumes a saturated-surface approximation by using the clipped fraction $f_{\text{WHC}^*}$ before calculating $r_\text{soil}$.
+For soil evaporation, SIPNET assumes a saturated-surface approximation by using the clipped fraction $f^*_{\text{WHC}}$ before calculating $r_\text{soil}$.
 
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
 
@@ -954,11 +954,7 @@ Where
 - $W_{\text{soil}}$: Soil water content
 - $W_{\text{WHC}}$: Soil water holding capacity
 
-For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis) and evapotranspiration, SIPNET uses the clipped ratio $f^*_{\text{WHC}}$. This prevents supersaturated water states from pushing moisture response multipliers above their intended maxima. We denote this clipped fraction as:
-
-\begin{equation}
-f_{\text{WHC}^*} = \operatorname{clip}(f_{\text{WHC}}, 0, 1)
-\end{equation}
+For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis) and evapotranspiration, SIPNET uses the clipped ratio $f^*_{\text{WHC}}$. This prevents supersaturated water states from pushing moisture response multipliers above their intended maxima.
 
 #### Water Stress Factor
 
@@ -977,13 +973,13 @@ transpiration $(F^W_\text{trans, pot})$.
 *Aerobic water availability* (dry limitation)
 
 \begin{equation}
-D_\text{aer}(f_{\text{WHC}^*}) = \frac{f_{\text{WHC}^*}}{f_a}, \text{clipped to } [0, 1]
+D_\text{aer}(f^*_{\text{WHC}}) = \frac{f^*_{\text{WHC}}}{f_a}, \text{clipped to } [0, 1]
 \end{equation}
 
 *Anaerobic index* (oxygen limitation proxy)
 
 \begin{equation}
-A(f_{\text{WHC}^*}) = \frac{f_{\text{WHC}^*} − f_a}{1 - f_a}, \text{clipped to } [0, 1]
+A(f^*_{\text{WHC}}) = \frac{f^*_{\text{WHC}} − f_a}{1 - f_a}, \text{clipped to } [0, 1]
 \end{equation}
 
 where $f_a$ is the onset of anoxia, interpreted as the soil wetness at which $O_2$ diffusion begins to limit aerobic metabolism.
@@ -999,12 +995,12 @@ above freezing. With the default exponent $b=1$, the relationship is linear in s
 D_{\text{water},R_H} =
 \begin{cases}
 1, & \text{if } T_{\text{soil}} \lt 0 \\
-(f_{\text{WHC}^*})^b, & \text{if } T_{\text{soil}} \ge 0
+(f^*_{\text{WHC}})^b, & \text{if } T_{\text{soil}} \ge 0
 \end{cases}
 \label{eq:water_rh}
 \end{equation}
 
-where $b$ is the soil respiration moisture effect exponent. In implementation, this term is evaluated as $\left(f_{\text{WHC}^*}\right)^b$ when moisture dependency is active.
+where $b$ is the soil respiration moisture effect exponent. In implementation, this term is evaluated as $\left(f^*_{\text{WHC}}\right)^b$ when moisture dependency is active.
 
 If the command-line option `ANAEROBIC` is on, the dependency is represented as a partition 
 between aerobic and anaerobic pathways:

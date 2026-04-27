@@ -32,8 +32,6 @@ sections to include in release notes:
 
 ### Changed
 
-- Clarified soil water fraction notation in parameter and model structure documentation (#309)
-
 ### Removed
 
 ### Git SHA
