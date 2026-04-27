@@ -11,7 +11,7 @@ COMMON_CFILES:=context.c logging.c modelParams.c util.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
 
-SIPNET_CFILES:=sipnet.c cli.c events.c frontend.c outputItems.c runmean.c state.c
+SIPNET_CFILES:=sipnet.c cli.c events.c frontend.c outputItems.c restart.c runmean.c state.c balance.c
 SIPNET_CFILES:=$(addprefix src/sipnet/, $(SIPNET_CFILES))
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNET_LIBS=-lsipnet_common
@@ -32,7 +32,7 @@ DOXYGEN_LATEX_DIR = docs/latex
 
 # Look up what Git revision we're building from
 # We use this below to compile the hash into the binary for ease of debugging
-GIT_HASH := $(shell git rev-parse --short=10 HEAD; git diff-index --quiet HEAD || echo " plus uncommitted changes")
+GIT_HASH := $(shell git describe --tags --abbrev=10 HEAD; git diff-index --quiet HEAD || echo " plus uncommitted changes")
 
 # all does everything build related (but not test)
 all: sipnet document
@@ -65,7 +65,7 @@ $(SIPNET_LIB): $(SIPNET_OFILES)
 GCC_VERSION = $(shell $(CC) --version)
 info:
 	@echo "System info"
-	@echo "ARCH: $(shell arch)"
+	@echo "ARCH: $(shell uname -m)"
 	@echo "CC: $(GCC_VERSION)"
 	@echo ""
 

@@ -10,6 +10,7 @@
 
 #define DEFAULT_INPUT_FILE "sipnet.in"
 #define DEFAULT_FILE_NAME "sipnet"
+#define DEFAULT_EVENTS_PREFIX "events"
 #define NO_DEFAULT_FILE ""
 #define ARG_OFF 0
 #define ARG_ON 1
@@ -25,6 +26,8 @@ static char keyName[CONTEXT_CHAR_MAXLEN];
 void initContext(void) {
   // Init hash map to NULL before adding anything to it
   ctx.metaMap = NULL;
+  ctx.eventsInFile[0] = '\0';
+  ctx.eventsOutFile[0] = '\0';
 
   // clang-format off
   // Init the params
@@ -34,11 +37,12 @@ void initContext(void) {
   CREATE_INT_CONTEXT(growthResp,      "GROWTH_RESP",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(leafWater,       "LEAF_WATER",       ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(litterPool,      "LITTER_POOL",      ARG_OFF, FLAG_YES);
-  CREATE_INT_CONTEXT(microbes,        "MICROBES",         ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(snow,            "SNOW",             ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(soilPhenol,      "SOIL_PHENOL",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(nitrogenCycle,   "NITROGEN_CYCLE",   ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(anaerobic,       "ANAEROBIC",        ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(flooding,        "FLOODING",         ARG_OFF, FLAG_YES);
 
   // Flags, I/O
   CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  FLAG_YES);
@@ -52,7 +56,10 @@ void initContext(void) {
   CREATE_CHAR_CONTEXT(climFile,       "CLIM_FILE",        NO_DEFAULT_FILE);
   CREATE_CHAR_CONTEXT(outFile,        "OUT_FILE",         NO_DEFAULT_FILE);
   CREATE_CHAR_CONTEXT(outConfigFile,  "OUT_CONFIG_FILE",  NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(eventsPrefix,   "EVENTS_PREFIX",    DEFAULT_EVENTS_PREFIX);
   CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE);
+  CREATE_CHAR_CONTEXT(restartIn,      "RESTART_IN",       NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(restartOut,     "RESTART_OUT",      NO_DEFAULT_FILE);
   // clang-format on
 
   // Other
@@ -189,13 +196,14 @@ void validateContext(void) {
     hasError = 1;
   }
 
-  if (ctx.events && ctx.microbes) {
-    logError("events and microbes may not both be turned on\n");
+  if (ctx.nitrogenCycle && !(ctx.litterPool && ctx.anaerobic)) {
+    logError("nitrogen-cycle requires both litter-pool and anaerobic to be "
+             "turned on\n");
     hasError = 1;
   }
 
-  if (ctx.nitrogenCycle && ctx.microbes) {
-    logError("nitrogen-cycle and microbes may not both be turned on\n");
+  if (ctx.anaerobic && !ctx.waterHResp) {
+    logError("anaerobic requires water-hresp to be turned on\n");
     hasError = 1;
   }
 
@@ -234,7 +242,6 @@ void printConfig(FILE *outFile) {
   // Config
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
-
     if (s->type == CTX_INT) {
       fprintf(outFile, "%21s %13s %*d\n", s->printName,
               getContextSourceString(s->source), width, *(int *)s->value);
@@ -248,4 +255,14 @@ void printConfig(FILE *outFile) {
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
+}
+
+void freeContextMetadata(void) {
+  struct context_metadata *s;
+  while (ctx.metaMap != NULL) {
+    s = ctx.metaMap;
+    HASH_DEL(ctx.metaMap, s);  // NOLINT
+    free(s);
+  }
+  HASH_CLEAR(hh, ctx.metaMap);
 }

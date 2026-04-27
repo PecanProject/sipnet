@@ -30,10 +30,12 @@ add_library(commonlib
 )
 
 add_library(sipnetlib
+        src/sipnet/balance.c
         src/sipnet/cli.c
         src/sipnet/events.c
         src/sipnet/frontend.c
         src/sipnet/outputItems.c
+        src/sipnet/restart.c
         src/sipnet/runmean.c
         src/sipnet/sipnet.c
         src/sipnet/state.c
@@ -52,4 +54,13 @@ add_library(tests
         tests/sipnet/test_events_types/testEventTillage.c
         tests/sipnet/test_bugfixes/testEventFileOrderChecks.c
         tests/sipnet/test_modeling/testNitrogenCycle.c
+        tests/sipnet/test_modeling/testDependencyFunctions.c
+        tests/sipnet/test_modeling/testBalance.c
+        tests/sipnet/test_modeling/testSoilMoisture.c
+        tests/sipnet/test_restart_infrastructure/testRestartMVP.c
+        tests/sipnet/test_restart_infrastructure/testRestartMissedEnvi.c
+        tests/sipnet/test_restart_infrastructure/testRestartMissedCtx.c
+        tests/sipnet/test_restart_infrastructure/mock_state.c
+        tests/sipnet/test_restart_infrastructure/bad_code/ctx_fail.c
+        tests/sipnet/test_restart_infrastructure/bad_code/envi_fail.c
 )

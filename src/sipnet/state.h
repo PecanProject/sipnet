@@ -4,9 +4,8 @@
 // See sipnet.c for the list of references cited below. In short:
 // [1] Braswell et al., 2005
 // [2] Sacks et al., 2006
-// [3] Zobitz et al, 2008
-// [4] Zobitz (et al.?), date unknown, chapter 5 from unknown book
-// [5] LeBauer et al., unpublished
+// [3] Zobitz et al., 2008
+// [4] LeBauer et al., unpublished
 
 typedef struct ClimateVars ClimateNode;
 
@@ -42,8 +41,8 @@ struct ClimateVars {
   double vPress;
   // avg. wind speed (m/s)
   double wspd;
-  // growing degree days from Jan. 1 to now. NOTE: Calculated, *not* read from
-  // file
+  // growing degree days contributed by this timestep, max(tair * length, 0)
+  // NOTE: Calculated, *not* read from file
   double gdd;
 
   ClimateNode *nextClim;
@@ -83,7 +82,7 @@ typedef struct Parameters {
   // initial soil C content, g C * m^-2 ground area
   // :: C_(S,0) in [1]
   double soilInit;
-  // unitless: fraction of soilWHC
+  // unitless: fraction of soilWHC; can be greater than 1 when modeling flooding
   // :: used to derive W_0 in [1]
   double soilWFracInit;
 
@@ -181,6 +180,12 @@ typedef struct Parameters {
   // :: K_w in [1]
   double woodTurnoverRate;
 
+  // Not from [1]
+  // Fraction of excess soil water that can be removed per day. Value above 1
+  // indicates soil that drains in less than a day. Used when flooding is
+  // enabled.
+  double waterDrainFrac;
+
   // ****************************************
   // Params from [2] Sacks et al. (2006)
   // ****************************************
@@ -274,10 +279,6 @@ typedef struct Parameters {
   double fineRootAllocation;
   // fraction of NPP allocated to the coarse roots (calculated param)
   double coarseRootAllocation;
-  // fraction of GPP exuded to the soil
-  double fineRootExudation;
-  // fraction of GPP exuded to the soil
-  double coarseRootExudation;
   // turnover of fine roots (per year rate)
   double fineRootTurnoverRate;
   // turnover of coarse roots (per year rate)
@@ -290,37 +291,6 @@ typedef struct Parameters {
   double fineRootQ10;
   // Q10 of coarse roots
   double coarseRootQ10;
-
-  // ****************************************
-  // Params from [4] Zobitz et al. (draft)
-  // ****************************************
-
-  // mg C / g soil microbe initial carbon amount, as fraction of soil init C
-  // :: equivalent to C_B,0 in [4]
-  double microbeInit;
-  // base respiration rate of microbes at 0 degrees C
-  // :: K_B in [4]
-  double baseMicrobeResp;
-  // Q10 of microbes
-  // :: Q10_B in [4]
-  double microbeQ10;
-  // fraction of exudates that microbes immediately use (microbe assimilation
-  // efficiency of root exudates)
-  // :: epsilon_R in [4]
-  double microbePulseEff;
-  // microbe efficiency to convert carbon to biomass
-  // :: epsilon in [4]
-  double efficiency;
-  // microbial maximum ingestion rate (hr-1)
-  // :: mu_MAX in [4]
-  double maxIngestionRate;
-  // half saturation ingestion rate of microbes (mg C g-1 soil)
-  // Note: those units can't be correct, as we add this to envi.soil; must be
-  //       (g C / m-2 ground area), as there are no conversions in the code.
-  //       Or, this is a bug. (This param is listed as g C/m-2 in [4], so
-  //       probably not a bug.)
-  // :: theta_B in [4]
-  double halfSatIngestion;
 
   // ****************************************
   // Other params, provenance TBD
@@ -340,7 +310,7 @@ typedef struct Parameters {
   // autotrophic respiration:
   // growth resp. as fraction of (GPP - woodResp - folResp)
   // Note: that comment may not be correct, growthResp is calc'd as
-  //       (mean GPP) * (growtheRespFrac)
+  //       (mean GPP) * (growthRespFrac)
   //       with no correction for woodResp or folResp
   double growthRespFrac;
 
@@ -350,23 +320,73 @@ typedef struct Parameters {
   double soilRespMoistEffect;
 
   // moisture related:
-  // leaf (evaporative) pool rim thickness in mm
+  // cap on interception-evaporation flux per unit LAI (cm/day)
   double leafPoolDepth;
 
   // ****************************************
-  // Params from [5] LeBauer et al. (unpublished)
+  // Params from [4] LeBauer et al. (unpublished)
   // ****************************************
   // Nitrogen Cycle
 
   // Initial soil mineral nitrogen pool amount, g N * m^-2 ground area
   double minNInit;
 
+  // Initial soil organic nitrogen pool amount, g N * m^-2 ground area
+  double soilOrgNInit;
+
+  // Initial litter organic nitrogen pool amount, g N * m^-2 ground area
+  double litterOrgNInit;
+
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
-  // Fraction of mineral N lost to leaching per day
+  // Fraction of mineral N available to be leached, unitless
   double nLeachingFrac;
 
+  // C:N ratio for leaves, assumed static, g C/g N
+  double leafCN;
+
+  // C:N ratio for wood (and coarse roots), assumed static, g C/g N
+  double woodCN;
+
+  // C:N ratio for fine roots, assumed static, g C/g N
+  double fineRootCN;
+
+  // C:N ratio at which D_CN is 1/2 for soil and litter
+  double kCN;
+
+  // Maximum fraction of plant N demand that can be met by fixation
+  // under low soil N, dimensionless between 0 and 1
+  double nFixationFracMax;
+
+  // Amount of mineral N at which fixation is reduced by half
+  // g N * m^-2 ground area
+  double halfNFixationMax;
+
+  // ******
+  // New moisture dependency functions
+  // ******
+
+  // Onset of anoxia - soil wetness fraction at which O2 diffusion begins to
+  // limit aerobic respiration
+  double fAnoxia;
+
+  // Relative anaerobic decomposition rate, in (0,1]
+  double anaerobicDecompRate;
+
+  // Methane anoxia sensitivity, controls sharpness of anaerobic transition
+  // dimensionless, greater than 1
+  double anaerobicTransExp;
+
+  // ******
+  // Methane production
+  // ******
+
+  // Relative methane production rate in the soil pool, in [0, 1), per day
+  double soilMethaneRate;
+
+  // Relative methane production rate in the litter pool, in [0, 1), per day
+  double litterMethaneRate;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -383,13 +403,13 @@ typedef struct Environment {
   // carbon in leaves (g C * m^-2 ground area)
   double plantLeafC;
   // carbon in soil (g C * m^-2 ground area)
-  double soil;
+  double soilC;
   // plant available soil water (cm)
   double soilWater;
 
   ///// From [2] Sacks et al. 2006
   // carbon in litter (g C * m^-2 ground area)
-  double litter;
+  double litterC;
   // snow pack (cm water equiv.)
   double snow;
 
@@ -399,13 +419,24 @@ typedef struct Environment {
   // carbon in fine roots (g C m^-2 ground area)
   double fineRootC;
 
-  ///// From [4] Zobitz (draft)
-  // carbon in microbes (g C m^-2 ground area)
-  double microbeC;
-
-  ///// From [5] LeBauer et al. (unpublished)
-  // soil mineral nitrogen pool (g C m^-2 ground area)
+  ///// From [4] LeBauer et al. (unpublished)
+  // soil mineral nitrogen pool (g N m^-2 ground area)
+  // (really, soil+litter, we only have one mineral N pool)
   double minN;
+  // soil organic nitrogen pool (g N m^-2 ground area)
+  double soilOrgN;
+  // litter (organic) nitrogen pool (g N m^-2 ground area)
+  double litterN;
+
+  ///// New to SIPNET in v2.1
+  // Carbon gains from photosynthesis and losses to respiration don't affect the
+  // total nitrogen in the system. Since SIPNET uses a five-day time-averaged
+  // NPP value for allocating plant growth, there is a lag from input to output
+  // here that must be tracked. So, we split the wood pool into plantWoodC
+  // (above) and a new pool to track non-nitrogen-affecting changes over time.
+  // As this is a delta, it can be negative. Note that the actual "wood carbon"
+  // is the sum of these two pools.
+  double plantWoodCStorageDelta;
 } Envi;
 
 // Global var
@@ -413,25 +444,6 @@ extern Envi envi;  // state variables
 
 // fluxes as per-day rates
 typedef struct FluxVars {
-  // Re: rSoil vs maintRespiration
-  // When microbes are in effect, maintResp is the respiration term for the
-  // microbes, and rSoil is calculated taking maintResp into account (which
-  // seems fine).
-  // However, when microbes are off, maintResp and rSoil are treated as the
-  // same, which makes _some_ sense (and maintResp is calculated as
-  // heterotrophic soil resp is described in [1]), but the use in the code is
-  // confusing. Also, the description of maintResp (before this update) only
-  // mentions the microbe case, furthering the confusion. For microbes off, I
-  // would have expected maintResp to be 0, and rSoil to be calc'd as maintResp
-  // is now.
-  // The GROWTH_RESP flag may also play in here, as when that is on, we split
-  // heterotrophic respiration into growth and maintenance resp. This means
-  // maintResp and rSoil should not be the same (microbes off), so again -
-  // confusing in the code. Also: are we handling all the permutations of
-  // GROWTH_RESP and MICROBES correctly?
-  // It's possible that better descriptions of these terms here, and more
-  // comments in the code are all that is needed.
-
   // ****************************************
   // Fluxes from [1] Braswell et al. (2005)
   //  - fluxes tracked as part of modeling from [1]
@@ -498,47 +510,53 @@ typedef struct FluxVars {
   double rFineRoot;
 
   // ****************************************
-  // Fluxes from [4] Zobitz (draft)
-  //  - fluxes tracked as part of modeling from [4]
-
-  // Microbes [3]
-  // microbes on: microbial maintenance respiration rate
-  // microbes off: equivalent to rSoil, calc'd as described in [1], eq (A20)
-  // (g C m-2 ground area day^-1)
-  double maintRespiration;
-  // Flux that microbes remove from soil (mg C g soil day)
-  // TBD I highly doubt those units; this is calc'd as
-  //     (g C * m-2) * (day-1) * (unitless terms)
-  double microbeIngestion;
-  // Exudates into the soil
-  double soilPulse;
-
-  // ****************************************
   // Fluxes from other sources
   // - provenance TBD
   //
 
   // leaf creation term as determined by growing season boundaries (as in [1])
   // and NPP (as in [2])
-  // C transferred from wood to leaves (g C * m^-2 ground area * day^-1)
+  // leaf creation term from NPP
   double leafCreation;
+  // creation from leaf-on event; separated from leafCreation for N balance (as
+  // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
+  double leafOnCreation;
   // wood creation term, dependent on NPP similar to leaf creation, but
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;
 
   // ****************************************
   // Fluxes for nitrogen cycle
-  // - nitrogen fluxes tracked as part of modeling from [5]
+  // - nitrogen fluxes tracked as part of modeling from [4]
   //
 
   // Mineral N lost to volatilization
+  // g N * m^-2 ground area * day^-1
   double nVolatilization;
   // Mineral N lost to leaching
+  // g N * m^-2 ground area * day^-1
   double nLeaching;
+  // Organic N flux for the soil organic N pool
+  // g N * m^-2 ground area * day^-1
+  double nOrgSoil;
+  // Organic N flux for the litter N pool
+  // g N * m^-2 ground area * day^-1
+  double nOrgLitter;
+  // Nitrogen mineralization flux
+  // g N * m^-2 ground area * day^-1
+  double nMin;
+
+  // Plant N gained from fixation
+  // g N * m^-2 ground area * day^-1
+  double nFixation;
+
+  // Mineral N drawn from soil pool to meet plant N demand
+  // g N * m^-2 ground area * day^-1
+  double nUptake;
 
   // ****************************************
   // Fluxes for event handling
-  //  - event fluxes tracked as part of modeling from [5]
+  //  - event fluxes tracked as part of modeling from [4]
   //
 
   // plantLeafC addition
@@ -553,10 +571,33 @@ typedef struct FluxVars {
   double eventEvap;
   // irrigation water that goes to the soil
   double eventSoilWater;
-  // carbon added to litter pool (if used) or soil pool (if not)
+  // carbon added to soil pool
+  double eventSoilC;
+  // carbon added to litter pool
   double eventLitterC;
   // nitrogen added to soil mineral N pool
   double eventMinN;
+  // nitrogen added to soil org N pool
+  double eventSoilOrgN;
+  // nitrogen added to litter N pool
+  double eventLitterN;
+  // MASS BALANCE HELPERS
+  // Total system carbon input, for mass balance checks
+  double eventInputC;
+  // Total system carbon output, for mass balance checks
+  double eventOutputC;
+  // Total system nitrogen input, for mass balance checks
+  double eventInputN;
+  // Total system nitrogen output, for mass balance checks
+  double eventOutputN;
+
+  // ****************************************
+  // Methane production
+
+  // Methane produced from soil
+  double soilMethane;
+  // Methane produced from litter
+  double litterMethane;
 } Fluxes;
 
 // Global var
@@ -571,10 +612,29 @@ typedef struct TrackerVars {  // variables to track various things
   double ra;
   // g C * m^-2 heterotrophic resp. in this time interval
   double rh;
+  // g C m-2 of root respiration
+  double rRoot;
+  // Soil respiration (microbes+root)
+  double rSoil;
+  // Wood and foliar respiration
+  double rAboveground;
   // g C * m^-2 taken up in this time interval
   double npp;
   // g C * m^-2 given off in this time interval
   double nee;
+  // g C * m^-2 wood creation
+  double woodCreation;
+
+  // growing degree days since Jan 1 for the current model year
+  double gdd;
+  // cm water evaporated/sublimated (sublimed???) or transpired in this time
+  // step
+  double evapotranspiration;
+  // mean fractional soil wetness (soilWater/soilWHC) over this time step
+  // (linear mean: mean of wetness at start of time step and wetness at end of
+  // time step)
+  double soilWetnessFrac;
+
   // g C * m^-2 taken up, year to date: GROSS photosynthesis
   double yearlyGpp;
   // g C * m^-2 respired, year to date
@@ -587,6 +647,8 @@ typedef struct TrackerVars {  // variables to track various things
   double yearlyNpp;
   // g C * m^-2 given off, year to date
   double yearlyNee;
+  // g C * m^-2 litterfall, year to date: SUM litter
+  double yearlyLitter;
   // g C * m^-2 taken up, to date: GROSS photosynthesis
   double totGpp;
   // g C * m^-2 respired, to date
@@ -599,26 +661,21 @@ typedef struct TrackerVars {  // variables to track various things
   double totNpp;
   // g C * m^-2 given off, to date
   double totNee;
-  // cm water evaporated/sublimated (sublimed???) or transpired in this time
-  // step
-  double evapotranspiration;
-  // mean fractional soil wetness (soilWater/soilWHC) over this time step
-  // (linear mean: mean of wetness at start of time step and wetness at end of
-  // time step)
-  double soilWetnessFrac;
 
-  // g C m-2 of root respiration
-  double rRoot;
-  // Soil respiration (microbes+root)
-  double rSoil;
+  // Previous step year used for yearly tracker rollover logic
+  int lastYear;
 
-  // Wood and foliar respiration
-  double rAboveground;
-  // g C * m^-2 litterfall, year to date: SUM litter
-  double yearlyLitter;
+  // g C * m^-2 methane production
+  double methane;
 
-  // g C * m^-2 wood creation
-  double woodCreation;
+  // g N * m^-2 ground area, Mineral N lost to volatilization
+  double n2o;
+  // g N * m^-2 N leached from soil mineral N pool
+  double nLeaching;
+  // g N * m^-2 N fixed by plants
+  double nFixation;
+  // g N * m^-2 N taken up by plants from soil mineral N pool
+  double nUptake;
 
 } Trackers;
 

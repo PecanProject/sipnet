@@ -17,6 +17,7 @@
 #include "cli.h"
 #include "events.h"
 #include "sipnet.h"
+#include "state.h"
 #include "outputItems.h"
 
 void checkRuntype(const char *runType) {
@@ -74,7 +75,7 @@ void readInputFile(void) {
       // Find the metadata so we know what to do with this param
       struct context_metadata *ctx_meta = getContextMetadata(inputName);
       if (ctx_meta == NULL) {
-        logWarning("ignoring input file parameter %s\n", inputName);
+        logInfo("ignoring input file parameter %s\n", inputName);
         continue;
       }
 
@@ -137,6 +138,7 @@ int main(int argc, char *argv[]) {
   // char fileName[FILENAME_MAXLEN - 8];
   char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
   char paramFile[FILENAME_MAXLEN], climFile[FILENAME_MAXLEN];
+  char eventsInFile[FILENAME_MAXLEN], eventsOutFile[FILENAME_MAXLEN];
 
   // 1. Initialize Context with default values
   initContext();
@@ -161,6 +163,25 @@ int main(int argc, char *argv[]) {
   strcpy(climFile, ctx.fileName);
   strcat(climFile, ".clim");
   updateCharContext("climFile", climFile, CTX_CALCULATED);
+  if (ctx.events) {
+    const size_t maxEventsPrefixLen = FILENAME_MAXLEN - sizeof(".out");
+    if (strlen(ctx.eventsPrefix) > maxEventsPrefixLen) {
+      logError("events-prefix value %s is too long; max length is %zu\n",
+               ctx.eventsPrefix, maxEventsPrefixLen);
+      exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+    }
+    strcpy(eventsInFile, ctx.eventsPrefix);
+    strcat(eventsInFile, ".in");
+    strcpy(ctx.eventsInFile, eventsInFile);
+    strcpy(eventsOutFile, ctx.eventsPrefix);
+    strcat(eventsOutFile, ".out");
+    strcpy(ctx.eventsOutFile, eventsOutFile);
+  } else {
+    eventsInFile[0] = '\0';
+    eventsOutFile[0] = '\0';
+    ctx.eventsInFile[0] = '\0';
+    ctx.eventsOutFile[0] = '\0';
+  }
   if (ctx.doMainOutput) {
     strcpy(outFile, ctx.fileName);
     strcat(outFile, ".out");
@@ -186,7 +207,14 @@ int main(int argc, char *argv[]) {
   initModel(&modelParams, paramFile, climFile);
 
   if (ctx.events) {
-    initEvents(EVENT_IN_FILE, ctx.printHeader);
+    initEvents(ctx.eventsInFile, ctx.eventsOutFile, ctx.printHeader);
+    // Check that first event is not before first climate record
+    if (isFirstEventBefore(firstClimate->year, firstClimate->day)) {
+      logError(
+          "First event occurs before the start of the climate file; please "
+          "fix and rerun\n");
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
+    }
   }
 
   if (ctx.doSingleOutputs) {
@@ -201,6 +229,10 @@ int main(int argc, char *argv[]) {
 
   // 8. Cleanup
   if (ctx.doMainOutput) {
+    if (out == NULL) {
+      logError("main output file handle missing during cleanup\n");
+      exit(EXIT_CODE_INTERNAL_ERROR);
+    }
     fclose(out);
   }
 
