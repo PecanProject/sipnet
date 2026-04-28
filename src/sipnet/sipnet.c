@@ -1552,8 +1552,8 @@ void resetFluxes(void) {
  * Calculate flux terms for sipnet as part of main model flow
  *
  * All fluxes should be calculated before state variables are updated.
- * Note: fluxes are reset in updateState() before this is called, so that
- * event fluxes set by processEvents() remain visible for N limitation checks.
+ * Note: fluxes are reset in updateState() before this is called, so we can
+ * assume fluxes start at zero here.
  */
 void calculateFluxes(void) {
   // base foliar respiration, calc'd as part of potential photosynthesis
