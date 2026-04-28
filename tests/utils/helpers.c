@@ -15,6 +15,8 @@ void prepTypesTest(void) {
   climate->year = 2024;
   climate->day = 70;
   climate->length = 0.125;
+  climate->time = 0.0;
+  climate->nextClim = NULL;
 }
 
 void procEvents(void) {
