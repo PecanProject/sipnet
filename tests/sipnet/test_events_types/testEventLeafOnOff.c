@@ -2,8 +2,7 @@
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
-
-#include "typesUtils.h"
+#include "utils/helpers.c"
 
 int checkLeafOn(const char *stage, double expWoodC, double expLeafC) {
   int status = 0;
