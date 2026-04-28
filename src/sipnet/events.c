@@ -585,8 +585,12 @@ void processEvents(void) {
       case FERTILIZATION: {
         const FertilizationParams *fertParams = gEvent->eventParams;
         const double orgC = fertParams->orgC;
-        double orgN = fertParams->orgN;
-        double minN = fertParams->minN;
+        double orgN = 0.0;
+        double minN = 0.0;
+        if (ctx.nitrogenCycle) {
+          orgN = fertParams->orgN;
+          minN = fertParams->minN;
+        }
         if (ctx.litterPool) {
           fluxes.eventLitterC += orgC / climLen;
         } else {
@@ -635,10 +639,13 @@ void processEvents(void) {
         double leafOff = envi.plantLeafC * params.fracLeafFall;
         fluxes.eventLeafOffLitter += leafOff / climLen;
 
-        // Nitrogen - need to account for leaf N moving to litter, as with
-        // harvests
-        double litterNAdd = leafOff / params.leafCN;
-        fluxes.eventLitterN += litterNAdd / climLen;
+        double litterNAdd = 0.0;
+        if (ctx.nitrogenCycle) {
+          // Nitrogen - need to account for leaf N moving to litter, as with
+          // harvests
+          litterNAdd = leafOff / params.leafCN;
+          fluxes.eventLitterN += litterNAdd / climLen;
+        }
 
         // clang-format off
         writeEventOut(gEvent, 2,
