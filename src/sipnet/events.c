@@ -642,7 +642,7 @@ void processEvents(void) {
 
         // clang-format off
         writeEventOut(gEvent, 2,
-          "fluxes.eventLeafOff", leafOff / climLen,
+          "fluxes.eventLeafOffLitter", leafOff / climLen,
           "fluxes.eventLitterN", litterNAdd / climLen);
         // clang-format on
       } break;
