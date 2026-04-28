@@ -1170,7 +1170,7 @@ the leaf carbon pool on the leaf off date.
 
 When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is transferred from the wood
 carbon pool to the leaf carbon pool. As leaf C:N is usually lower than wood C:N, the excess nitrogen
-implied by the static C:N rations is included as part of the plant nitrogen demand. If there is insufficient nitrogen
+implied by the static C:N ratios is included as part of the plant nitrogen demand. If there is insufficient nitrogen
 available for this lump-sum move, nitrogen limitation will occur. 
 
 When a leaf off event occurs, a fraction of the leaf carbon (specified by the `fracLeafFall` parameter) is transferred
