@@ -307,7 +307,8 @@ EventNode *readEventData(const char *eventFile) {
 
     if ((year < currYear) || ((year == currYear) && (day < currDay))) {
       logError("reading event file: last event was at (%d, %d), next event is "
-               "at (%d, %d)\n", currYear, currDay, year, day);
+               "at (%d, %d)\n",
+               currYear, currDay, year, day);
       logError("event records must be in time-ascending order\n");
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }

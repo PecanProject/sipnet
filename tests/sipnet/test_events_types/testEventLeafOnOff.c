@@ -128,8 +128,8 @@ int run(void) {
   closeEventOutFile();
 
   // Without litter pool, leaf C goes to soil C instead
-  status |= checkLeafOff("one leafoff (no litter pool)", 10.0 - 5.0,
-                          0.0 + 5.0, 0.0);
+  status |=
+      checkLeafOff("one leafoff (no litter pool)", 10.0 - 5.0, 0.0 + 5.0, 0.0);
 
   return status;
 }

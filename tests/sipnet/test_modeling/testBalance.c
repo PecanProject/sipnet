@@ -110,9 +110,9 @@ int testBalanceLeafEvents(void) {
   int status = 0;
 
   // Run the whole climate file (5 days), which includes model-based leaf-on
-  // and leaf-off events (days 47 and 49), PLUS event-file-based leaf-on/leaf-off
-  // events on different days to test that event-based leaf fluxes maintain
-  // carbon and nitrogen balance
+  // and leaf-off events (days 47 and 49), PLUS event-file-based
+  // leaf-on/leaf-off events on different days to test that event-based leaf
+  // fluxes maintain carbon and nitrogen balance
   while (climate != NULL) {
     step();
 

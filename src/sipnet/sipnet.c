@@ -1544,9 +1544,7 @@ void calcMethaneFlux(void) {
  * This is called at the start of each time step (in updateState()), before
  * event and non-event fluxes are calculated.
  */
-void resetFluxes(void) {
-  fluxes = (struct FluxVars){0};
-}
+void resetFluxes(void) { fluxes = (struct FluxVars){0}; }
 
 /*!
  * Calculate flux terms for sipnet as part of main model flow
