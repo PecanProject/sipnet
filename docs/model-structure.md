@@ -1179,11 +1179,11 @@ nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter 
 
 **Event parameters:**
 
-| Parameter | Value                 | Description       |
-|-----------|-----------------------|-------------------|
-| Type      | `leaf_on` /`leaf_off` | The type of event |
-| Year      | integer               | Year              |
-| Day       | integer               | Day of year       |
+| Parameter | Value                | Description       |
+|-----------|----------------------|-------------------|
+| Type      | `leafon` / `leafoff` | The type of event |
+| Year      | integer              | Year              |
+| Day       | integer              | Day of year       |
 
 There are no other parameters needed for these events, as the amount of transfer is determined by the parameters
 mentioned above.
