@@ -30,6 +30,7 @@ jobs:
             --format markdown
             --exclude '^https://doi\.org/'
             --exclude '^https://russellranch\.ucdavis\.edu'
+            --exclude '^https://join\.slack.\com'
             .
           fail: true
         env:
