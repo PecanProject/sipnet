@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
+#include "utils/exitHandler.c"
 #include "utils/helpers.c"
 
 int checkLeafOn(const char *stage, double expWoodC, double expLeafC) {
@@ -133,6 +134,104 @@ int run(void) {
   // Without litter pool, leaf C goes to soil C instead
   status |=
       checkLeafOff("one leafoff (no litter pool)", 10.0 - 5.0, 0.0 + 5.0, 0.0);
+
+  //// CHECK FOR CALCULATED LEAF EVENTS
+
+  // Restore context for the following tests: no flags set, leafOnDay and
+  // leafOffDay set to 0 (disabled), so readEventData should NOT error
+  updateIntContext("litterPool", 1, CTX_TEST);
+  updateIntContext("gdd", 0, CTX_TEST);
+  updateIntContext("soilPhenol", 0, CTX_TEST);
+  params.leafOnDay = 0;
+  params.leafOffDay = 0;
+
+  int jmp_rval;
+
+  // Baseline: no calculated leaf events configured; readEventData should
+  // succeed without calling exit()
+  logTest("Testing checkForCalculateLeafEvents: baseline (no conflict)\n");
+  should_exit = 0;
+  exit_result = 1;
+  jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    readEventData("events_one_leafon.in");
+  }
+  test_assert(jmp_rval == 0);
+  status |= !exit_result;
+  if (!exit_result) {
+    logTest("FAIL checkForCalculateLeafEvents baseline\n");
+  }
+
+  // ctx.gdd=1 should error
+  logTest("Testing checkForCalculateLeafEvents: gdd=1 conflicts\n");
+  updateIntContext("gdd", 1, CTX_TEST);
+  should_exit = 1;
+  exit_result = 1;
+  expected_code = EXIT_CODE_BAD_PARAMETER_VALUE;
+  jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    readEventData("events_one_leafon.in");
+  }
+  test_assert(jmp_rval == 1);
+  status |= !exit_result;
+  if (!exit_result) {
+    logTest("FAIL checkForCalculateLeafEvents with gdd=1\n");
+  }
+  updateIntContext("gdd", 0, CTX_TEST);
+
+  // ctx.soilPhenol=1 should error
+  logTest("Testing checkForCalculateLeafEvents: soilPhenol=1 conflicts\n");
+  updateIntContext("soilPhenol", 1, CTX_TEST);
+  should_exit = 1;
+  exit_result = 1;
+  expected_code = EXIT_CODE_BAD_PARAMETER_VALUE;
+  jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    readEventData("events_one_leafon.in");
+  }
+  test_assert(jmp_rval == 1);
+  status |= !exit_result;
+  if (!exit_result) {
+    logTest("FAIL checkForCalculateLeafEvents with soilPhenol=1\n");
+  }
+  updateIntContext("soilPhenol", 0, CTX_TEST);
+
+  // params.leafOnDay > 0 should error
+  logTest("Testing checkForCalculateLeafEvents: leafOnDay>0 conflicts\n");
+  params.leafOnDay = 47.0;
+  should_exit = 1;
+  exit_result = 1;
+  expected_code = EXIT_CODE_BAD_PARAMETER_VALUE;
+  jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    readEventData("events_one_leafon.in");
+  }
+  test_assert(jmp_rval == 1);
+  status |= !exit_result;
+  if (!exit_result) {
+    logTest("FAIL checkForCalculateLeafEvents with leafOnDay>0\n");
+  }
+  params.leafOnDay = 0;
+
+  // params.leafOffDay > 0 should error
+  logTest("Testing checkForCalculateLeafEvents: leafOffDay>0 conflicts\n");
+  params.leafOffDay = 285.0;
+  should_exit = 1;
+  exit_result = 1;
+  expected_code = EXIT_CODE_BAD_PARAMETER_VALUE;
+  jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    readEventData("events_one_leafoff.in");
+  }
+  test_assert(jmp_rval == 1);
+  status |= !exit_result;
+  if (!exit_result) {
+    logTest("FAIL checkForCalculateLeafEvents with leafOffDay>0\n");
+  }
+  params.leafOffDay = 0;
+
+  // Allow real exit for the remainder of the test
+  really_exit = 1;
 
   return status;
 }

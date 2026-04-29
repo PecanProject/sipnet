@@ -292,6 +292,13 @@ EventNode *readEventData(const char *eventFile) {
     exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 
+  if (eventType == LEAFOFF || eventType == LEAFON) {
+    // If we have a leaf event, make sure we aren't also looking for
+    // calculated leaf events.
+    checkForCalculateLeafEvents();
+    hasCheckedLeafEvents = 1;
+  }
+
   newEvents = createEventNode(year, day, eventType, eventParamsStr);
   next = newEvents;
   currYear = year;
