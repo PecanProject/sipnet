@@ -91,6 +91,9 @@ int testBalanceLeaf(void) {
   logTest("Starting testBalanceLeaf()\n");
   int status = 0;
 
+  params.leafOnDay = 0;
+  params.leafOffDay = 0;
+
   // Run the whole climate file (5 days), which includes a leaf-on event and a
   // leaf-off event
   while (climate != NULL) {

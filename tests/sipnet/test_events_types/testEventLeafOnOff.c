@@ -54,11 +54,14 @@ int run(void) {
 
   prepTypesTest();
   updateIntContext("litterPool", 1, CTX_TEST);
+  updateIntContext("gdd", 0, CTX_TEST);
 
   // Set params needed for leaf on/off events
   params.leafGrowth = 3.0;
   params.fracLeafFall = 0.5;
   params.leafCN = 30.0;
+  params.leafOnDay = 0;
+  params.leafOffDay = 0;
 
   //// ONE LEAFON EVENT
   logTest("Testing one leafon event\n");
