@@ -705,24 +705,32 @@ int pastLeafGrowth(void) {
       cumulativeGdd += trackers.gdd;
     }
     return (cumulativeGdd >= params.gddLeafOn);
-  } else if (ctx.soilPhenol) {
+  }
+  if (ctx.soilPhenol) {
     // [TAG:UNKNOWN_PROVENANCE] soil phenol functionality
     return (climate->tsoil >= params.soilTempLeafOn);  // soil temperature
                                                        // threshold
-  } else {
+  }
+  if (params.leafOnDay > 0) {
     // :: from [1]
     double currTime = (double)climate->day + climate->time / 24.0;
     return (currTime >= params.leafOnDay);  // turn-on day
   }
+
+  return 0;
 }
 
 // have we passed the growing season-end leaf fall trigger this year?
 // 0 = no, 1 = yes
 int pastLeafFall(void) {
   // :: from [1]
-  return ((climate->day + climate->time / 24.0) >=
-          params.leafOffDay);  // turn-off
-                               // day
+  if (params.leafOffDay > 0) {
+    return ((climate->day + climate->time / 24.0) >=
+            params.leafOffDay);  // turn-off
+    // day
+  }
+
+  return 0;
 }
 
 /*!
