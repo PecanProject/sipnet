@@ -234,6 +234,18 @@ static void checkEventLineTruncation(const char *line, size_t len) {
   }
 }
 
+void checkForCalculateLeafEvents(void) {
+  // We have a leaf event in events.in, so make sure we are not also
+  // calculating leaf events
+  if (ctx.gdd || ctx.soilPhenol || params.leafOnDay > 0 ||
+      params.leafOffDay > 0) {
+    logError("calculated leaf events (via leafOnDay/leafOffDay params or "
+             "gdd/soil-phenol command-line options) are not compatible "
+             "with user-specified leaf events in event file\n");
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+}
+
 EventNode *readEventData(const char *eventFile) {
   int year, day, eventType;
   int currYear, currDay;
@@ -243,6 +255,7 @@ EventNode *readEventData(const char *eventFile) {
   char line[EVENT_LINE_SIZE];
   EventNode *curr, *next;
   EventNode *newEvents = NULL;
+  int hasCheckedLeafEvents = 0;
 
   // Check for a non-empty file
   if (access(eventFile, F_OK) != 0) {
@@ -303,6 +316,15 @@ EventNode *readEventData(const char *eventFile) {
     if (eventType == UNKNOWN_EVENT) {
       logError("reading event file: unknown event type %s\n", eventTypeStr);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
+    }
+
+    if (eventType == LEAFOFF || eventType == LEAFON) {
+      // If we have a leaf event, make sure we aren't also looking for
+      // calculated leaf events.
+      if (!hasCheckedLeafEvents) {
+        checkForCalculateLeafEvents();
+        hasCheckedLeafEvents = 1;
+      }
     }
 
     if ((year < currYear) || ((year == currYear) && (day < currDay))) {
