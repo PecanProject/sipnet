@@ -2,8 +2,7 @@
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
-
-#include "typesUtils.h"
+#include "utils/helpers.c"
 
 int checkOutput(double orgN, double litterC, double minN) {
   int status = 0;

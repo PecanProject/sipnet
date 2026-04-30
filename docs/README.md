@@ -24,7 +24,7 @@ SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is a lightweight
 - **Understanding the code:** The [developer docs](model-structure.md) describe architecture, while sections on [testing](developer-guide/testing.md) and [CLI extensions](developer-guide/cli-options.md) cover contributions.
 - **Project practices:** Review the [Contributing guide](CONTRIBUTING.md), [Code of Conduct](CODE_OF_CONDUCT.md), and [Changelog](CHANGELOG.md) before opening PRs or issues.
 
-Need help? Open an issue on [GitHub](https://github.com/PecanProject/sipnet/issues) or join the [PEcAn community Slack](https://join.slack.com/t/pecanproject/shared_invite/zt-3ile31ylu-r1sMh~esl~7A_AolYNNYLQ).
+Need help? Open an issue on [GitHub](https://github.com/PecanProject/sipnet/issues) or join the [PEcAn community Slack](https://join.slack.com/t/pecanproject/shared_invite/zt-3wlzwms7n-mmoLuYsIfaDqp_FRZD1eQQ).
 
 ## License
 

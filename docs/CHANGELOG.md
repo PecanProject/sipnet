@@ -27,6 +27,7 @@ sections to include in release notes:
 ### Added
 
 - `sipnet-view` tool for visualizing SIPNET output files (#317)
+- `leafon` and `leafoff` events for tracking phenological transitions (#326)
 
 ### Fixed
 
