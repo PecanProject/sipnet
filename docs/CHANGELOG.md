@@ -27,10 +27,13 @@ sections to include in release notes:
 ### Added
 
 - `sipnet-view` tool for visualizing SIPNET output files (#317)
+- `leafon` and `leafoff` events for tracking phenological transitions (#326)
 
 ### Fixed
 
 ### Changed
+
+- Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
 
 ### Removed
 

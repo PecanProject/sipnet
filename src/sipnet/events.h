@@ -11,6 +11,8 @@ typedef enum EventType {
   IRRIGATION,
   PLANTING,
   TILLAGE,
+  LEAFON,
+  LEAFOFF,
   UNKNOWN_EVENT
 } event_type_t;
 
@@ -57,6 +59,18 @@ typedef struct TillageParams {
 #define TILLAGE_THRESHOLD 0.01
 // Tillage effect decay factor
 #define TILLAGE_DECAY_FACTOR (1 / 30.0)
+
+#define NUM_LEAFON_PARAMS 0
+typedef struct LeafOnParams {
+  // Currently none, but we need one for compilation
+  double dummy;
+} LeafOnParams;
+
+#define NUM_LEAFOFF_PARAMS 0
+typedef struct LeafOffParams {
+  // Currently none, but we need one for compilation
+  double dummy;
+} LeafOffParams;
 
 #define NUM_EVENT_CORE_PARAMS 3
 typedef struct EventNode EventNode;
@@ -169,15 +183,6 @@ void setupEvents(void);
  * @param day
  */
 int isFirstEventBefore(int year, int day);
-
-// TODO: remove this function and its call sites, sipnet:resetFluxes now
-//  handles this
-/*!
- * Set all event fluxes to zero
- *
- * Reset all event fluxes to zero in preparation for the next climate step.
- */
-void resetEventFluxes(void);
 
 /*!
  * \brief Process events for current location/year/day
