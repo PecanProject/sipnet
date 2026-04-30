@@ -234,7 +234,7 @@ static void checkEventLineTruncation(const char *line, size_t len) {
   }
 }
 
-void checkForCalculateLeafEvents(void) {
+void checkForCalculatedLeafEvents(void) {
   // We have a leaf event in events.in, so make sure we are not also
   // calculating leaf events
   if (ctx.gdd || ctx.soilPhenol || params.leafOnDay > 0 ||
@@ -295,7 +295,7 @@ EventNode *readEventData(const char *eventFile) {
   if (eventType == LEAFOFF || eventType == LEAFON) {
     // If we have a leaf event, make sure we aren't also looking for
     // calculated leaf events.
-    checkForCalculateLeafEvents();
+    checkForCalculatedLeafEvents();
     hasCheckedLeafEvents = 1;
   }
 
@@ -329,7 +329,7 @@ EventNode *readEventData(const char *eventFile) {
       // If we have a leaf event, make sure we aren't also looking for
       // calculated leaf events.
       if (!hasCheckedLeafEvents) {
-        checkForCalculateLeafEvents();
+        checkForCalculatedLeafEvents();
         hasCheckedLeafEvents = 1;
       }
     }
