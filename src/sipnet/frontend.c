@@ -157,10 +157,10 @@ int main(int argc, char *argv[]) {
   validateContext();
 
   // 5. Set calculated parameters
-  strcpy(paramFile, ctx.fileName);
+  strcpy(paramFile, ctx.filePrefix);
   strcat(paramFile, ".param");
   updateCharContext("paramFile", paramFile, CTX_CALCULATED);
-  strcpy(climFile, ctx.fileName);
+  strcpy(climFile, ctx.filePrefix);
   strcat(climFile, ".clim");
   updateCharContext("climFile", climFile, CTX_CALCULATED);
   if (ctx.events) {
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
     ctx.eventsOutFile[0] = '\0';
   }
   if (ctx.doMainOutput) {
-    strcpy(outFile, ctx.fileName);
+    strcpy(outFile, ctx.filePrefix);
     strcat(outFile, ".out");
     updateCharContext("outFile", outFile, CTX_CALCULATED);
     out = openFile(outFile, "w");
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
 
   // Lastly - do after all other config processing
   if (ctx.dumpConfig) {
-    strcpy(outConfigFile, ctx.fileName);
+    strcpy(outConfigFile, ctx.filePrefix);
     strcat(outConfigFile, ".config");
     updateCharContext("outConfigFile", outConfigFile, CTX_CALCULATED);
     outConfig = openFile(outConfigFile, "w");
@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (ctx.doSingleOutputs) {
-    outputItems = newOutputItems(ctx.fileName, ' ');
+    outputItems = newOutputItems(ctx.filePrefix, ' ');
     setupOutputItems(outputItems);
   } else {
     outputItems = NULL;
