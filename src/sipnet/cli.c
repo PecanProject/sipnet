@@ -39,10 +39,12 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(print-header),
     DECLARE_FLAG(quiet),
 
-    // These options don’t set a flag. We distinguish them by their indices.
-    // name                         has_arg           flag  val (val is the
-    // index)
+    // These options don’t set a flag. We distinguish them by their val.
+    // Aliases share the same val (e.g. file-prefix and file-name both use
+    // 'f').
+    // name                         has_arg           flag  val
     {"input-file", required_argument, 0, 'i'},
+    {"file-prefix", required_argument, 0, 'f'},
     {"file-name", required_argument, 0, 'f'},
     {"events-prefix", required_argument, 0, 'e'},
     {"restart-in", required_argument, 0, CLI_RESTART_IN},
@@ -80,7 +82,8 @@ void usage(char *progName) {
   printf("\n");
   printf("Options: (defaults are shown in parens at end)\n");
   printf("  -i, --input-file <path>            Name of input config file ('sipnet.in')\n");
-  printf("  -f, --file-name  <name>            Prefix of climate and parameter files ('sipnet')\n");
+  printf("  -f, --file-prefix <name>           Prefix of climate and parameter files ('sipnet')\n");
+  printf("      --file-name <name>             Backward-compatible alias for --file-prefix\n");
   printf("  -e, --events-prefix <name>         Prefix of events input/output files ('events' => 'events.in' / 'events.out')\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
@@ -97,9 +100,9 @@ void usage(char *progName) {
   printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
-  printf("  --do-main-output     Print time series of all output variables to <file-name>.out (1)\n");
-  printf("  --do-single-outputs  Print selection* of outputs one variable per file (e.g. <file-name>.NEE)\n");
-  printf("  --dump-config        Print final config to <file-name>.config (0)\n");
+  printf("  --do-main-output     Print time series of all output variables to <file-prefix>.out (1)\n");
+  printf("  --do-single-outputs  Print selection* of outputs one variable per file (e.g. <file-prefix>.NEE)\n");
+  printf("  --dump-config        Print final config to <file-prefix>.config (0)\n");
   printf("  --print-header       Whether to print header row in output files (1)\n");
   printf("  --quiet              Suppress info and warning message (0)\n");
   printf("  --restart-in <path>  Read a restart checkpoint from path\n");
@@ -146,15 +149,16 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         updateIntContext(argNameMap[longIndex], ctx.tmpFlag, CTX_COMMAND_LINE);
         break;
       case 'f':
-        requireCLIArg("--file-name");
-        if (strlen(optarg) >= FILENAME_MAXLEN) {
-          logError("filename %s exceeds maximum length of %d\n", optarg,
-                   FILENAME_MAXLEN);
-          logError("Either change the name or increase INPUT_MAXNAME in "
-                   "frontend.c\n");
+        requireCLIArg("--file-prefix/--file-name");
+        if (strlen(optarg) > FILENAME_PREFIX_MAXLEN) {
+          logError("file prefix '%s' exceeds maximum length of %d characters "
+                   "(must leave room for file extensions)\n",
+                   optarg, FILENAME_PREFIX_MAXLEN);
+          logError("Either shorten the prefix or increase FILENAME_MAXLEN in "
+                   "src/common/context.h\n");
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
-        updateCharContext("fileName", optarg, CTX_COMMAND_LINE);
+        updateCharContext("filePrefix", optarg, CTX_COMMAND_LINE);
         break;
       case 'e':
         requireCLIArg("--events-prefix");

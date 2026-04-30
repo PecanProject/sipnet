@@ -1162,6 +1162,32 @@ f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
 \label{eq:irrig_evap}
 \end{equation}
 
+### Leaf On/Leaf Off
+
+Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events directly
+specify the amount of carbon added to the leaf carbon pool on the leaf on date, and the fraction of carbon removed from
+the leaf carbon pool on the leaf off date. 
+
+When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is transferred from the wood
+carbon pool to the leaf carbon pool. As leaf C:N is usually lower than wood C:N, the excess nitrogen
+implied by the static C:N ratios is included as part of the plant nitrogen demand. If there is insufficient nitrogen
+available for this lump-sum move, nitrogen limitation will occur. 
+
+When a leaf off event occurs, a fraction of the leaf carbon (specified by the `fracLeafFall` parameter) is transferred
+from the leaf carbon pool to the litter pool (or soil pool, if the litter pool is not being used). The corresponding
+nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter or soil nitrogen pool.
+
+**Event parameters:**
+
+| Parameter | Value                | Description       |
+|-----------|----------------------|-------------------|
+| Year      | integer              | Year              |
+| Day       | integer              | Day of year       |
+| Type      | `leafon` / `leafoff` | The type of event |
+
+There are no other parameters needed for these events, as the amount of transfer is determined by the parameters
+mentioned above.
+
 <!-- 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
 
