@@ -590,6 +590,10 @@ typedef struct FluxVars {
   double eventInputN;
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
+  // Transfer from woodC to leafC from a leaf-on event
+  double eventLeafOnCreation;
+  // Transfer from leafC to soil/litter from a leaf-off event
+  double eventLeafOffLitter;
 
   // ****************************************
   // Methane production

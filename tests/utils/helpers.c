@@ -1,10 +1,11 @@
-#ifndef SIPNET_TYPESUTILS_H
-#define SIPNET_TYPESUTILS_H
+// Helper functions for setting up and processing events
+
+// NOTE: don't include sipnet.c as well as this file, it won't compile
 
 #include "common/context.h"
 #include "sipnet/sipnet.c"
 
-void prepTypesTest() {
+void prepTypesTest(void) {
   // Setup context
   initContext();
   updateIntContext("events", 1, CTX_TEST);
@@ -14,11 +15,12 @@ void prepTypesTest() {
   climate->year = 2024;
   climate->day = 70;
   climate->length = 0.125;
+  climate->time = 0.0;
+  climate->nextClim = NULL;
 }
 
-void procEvents() {
+void procEvents(void) {
+  resetFluxes();
   processEvents();
   updatePoolsForEvents();
 }
-
-#endif  // SIPNET_TYPESUTILS_H
