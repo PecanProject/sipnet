@@ -84,6 +84,7 @@ rSoilConst1			9.11
 rSoilConst2			9.12
 leafCSpWt			9.14
 cFracLeaf			9.15
+waterDrainFrac      1.00
 
 !!! Nitrogen cycle params
 mineralNInit        1.0

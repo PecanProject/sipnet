@@ -1,9 +1,7 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
-
-#include "typesUtils.h"
+#include "utils/helpers.c"
 
 int checkOutput(const char *stage, double expTillMod) {
   int status = 0;

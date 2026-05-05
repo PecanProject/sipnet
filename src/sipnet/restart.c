@@ -86,6 +86,7 @@ typedef struct RestartContextModelFlags {
   int waterHResp;
   int nitrogenCycle;
   int anaerobic;
+  int flooding;
   int carbonSaturation;
 } RestartContextModelFlags;
 static RestartContextModelFlags modelFlags;
@@ -161,8 +162,9 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->flagsPF[7] = (StateField){"flags.waterHResp",    FT_INT, &modelFlags.waterHResp,    0};
   state->flagsPF[8] = (StateField){"flags.nitrogenCycle", FT_INT, &modelFlags.nitrogenCycle, 0};
   state->flagsPF[9] = (StateField){"flags.anaerobic",     FT_INT, &modelFlags.anaerobic,     0};
-  state->flagsPF[10] = (StateField){"flags.carbonSaturation", FT_INT, &modelFlags.carbonSaturation, 0};
-  state->flagsPF[11] = (StateField){"flags.invalid",      FT_INVALID, NULL, FIELD_INVALID};
+  state->flagsPF[10] = (StateField){"flags.flooding",     FT_INT, &modelFlags.flooding,      0};
+  state->flagsPF[11] = (StateField){"flags.carbonSaturation", FT_INT, &modelFlags.carbonSaturation, 0};
+  state->flagsPF[12] = (StateField){"flags.invalid",      FT_INVALID, NULL, FIELD_INVALID};
 
   state->boundaryPF[0] = (StateField){"boundary.year",    FT_INT,     &boundaryClimate.year,   0};
   state->boundaryPF[1] = (StateField){"boundary.day",     FT_INT,     &boundaryClimate.day,    0};
@@ -775,6 +777,7 @@ static void checkRestartContextCompatibility(void) {
   mismatch |= (ctx.waterHResp != modelFlags.waterHResp);
   mismatch |= (ctx.nitrogenCycle != modelFlags.nitrogenCycle);
   mismatch |= (ctx.anaerobic != modelFlags.anaerobic);
+  mismatch |= (ctx.flooding != modelFlags.flooding);
   mismatch |= (ctx.carbonSaturation != modelFlags.carbonSaturation);
 
   if (mismatch) {
@@ -795,8 +798,8 @@ static void validateRestartModelBuild(void) {
   }
 
   if (strcmp(buildInfo, currentBuildInfo) != 0) {
-    logWarning("Restart build info mismatch: checkpoint=%s current=%s\n",
-               buildInfo, currentBuildInfo);
+    logInfo("Restart build info mismatch: checkpoint=%s current=%s\n",
+            buildInfo, currentBuildInfo);
   }
 }
 
@@ -896,6 +899,8 @@ void restartWriteCheckpoint(const char *restartOut, MeanTracker *meanNPP) {
   modelFlags.nitrogenCycle = ctx.nitrogenCycle;
   ++numFlagsSet;
   modelFlags.anaerobic = ctx.anaerobic;
+  ++numFlagsSet;
+  modelFlags.flooding = ctx.flooding;
   ++numFlagsSet;
   modelFlags.carbonSaturation = ctx.carbonSaturation;
   ++numFlagsSet;

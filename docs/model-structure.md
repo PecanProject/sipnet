@@ -30,7 +30,6 @@ Implementation in source code (sipnet.c) is annotated with references to specifi
 
 - The general approach used to define variables and subscripts is defined in [Notation](parameters.md#notation).
 - Specific parameter, flux, and state definitions are documented in [Model States and Parameters](parameters.md#run-time-parameters).
-- $\mathfrak{Fraktur Font}$ is used to identify features that have not been implemented. This font will be removed as features are implemented.
 
 ## Carbon Dynamics
 
@@ -68,6 +67,24 @@ It is not immediately clear to me why GPP is called Gross Photosynthetic Rate he
 
 Assuming implementation is correct because it derived from PnET and has been used in SIPNET by many people for many years.
 -->
+### Scaling from Leaf Carbon to Canopy Photosynthesis
+
+In SIPNET, plant leaf carbon is converted to leaf area index by dividing by leaf carbon per unit leaf area:
+
+\begin{equation}
+LAI = \frac{C_{\text{leaf}}}{SLWC}
+\label{eq:lai_calculation}
+\end{equation}
+
+where $C_{\text{leaf}}$ is leaf carbon mass, and $SLWC$ is specific leaf weight, with units of leaf carbon per unit leaf area.
+
+Photosynthesis is affected by LAI in two ways.
+
+First, LAI scales leaf-level photosynthetic capacity to canopy-scale carbon flux by contributing to the conversion from leaf-area based assimilation units to ground-area based GPP.
+
+Second, LAI determines canopy light attenuation through $D_{\text{light}}$ (Beer’s-law canopy light attenuation; Braswell et al. 2005).
+
+Thus, increasing $C_{\text{leaf}}$ increases canopy photosynthesis both by increasing leaf area per ground area and by increasing light interception through the canopy.
 
 ### Potential Photosynthesis
 
@@ -99,7 +116,7 @@ water stress factor $D_{\text{water,}A}$.
 The water stress factor $D_{\text{water,}A}$ is defined in \eqref{eq:Braswell_A16} as the ratio of actual to potential
 transpiration, and therefore couples GPP to transpiration by reducing GPP.
 
-Note that nitrogen limitation can further reduce GPP; see Sec. [Nitrogen Limitation](#nitrogen-limitation).
+Note that nitrogen limitation does not directly reduce GPP, but indirectly reduces future potential GPP by reducing allocation to leaf growth; see Sec. [Nitrogen Limitation](#nitrogen-limitation).
 
 ### Plant Growth
 
@@ -154,6 +171,7 @@ $C_{\text{wood,storage}}$, which is initialized to zero. We can represent this s
 
 \begin{equation}
 \frac{dC_{\text{wood,storage}}}{dt} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
+\label{eq:wood_c_storage}
 \end{equation}
 
 where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. This storage term
@@ -440,7 +458,7 @@ CN_j = \frac{C_j}{N_j}.
 
 This is used to calculate C:N-dependency $D_{CN}$ in \eqref{eq:cn_dep}.
 
-### C:N Dependency Function $(D_{CN})$
+### C:N Dependency Function $D_{CN}$
 
 To represent the influence of substrate quality on decomposition rate, we add a simple dependence function $D_{CN}$.
 This term is used in calculation of heterotrophic respiration in \eqref{eq:rh}.
@@ -454,9 +472,9 @@ Here, $k_{CN}$ is a scaling parameter that controls the sensitivity of decomposi
 reducing the rate of decomposition.
 The value $k_{CN}$ represents the C:N ratio at which decomposition is reduced by 50% ($D_{CN}= \frac{1}{2}$).
 
-## $\frak{Nitrogen \ Dynamics (\frac{dN}{dt})}$
+## Nitrogen Dynamics $\frac{dN}{dt}$
 
-### $\frak{Plant \ Biomass \ Nitrogen}$
+### Plant Biomass Nitrogen
 
 Similar to the stoichiometric coupling of litter fluxes, the change in plant biomass N over time is stoichiometrically
 coupled to plant biomass C:
@@ -650,8 +668,8 @@ D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
 where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is
 reduced by half (g N m$^{-2}$).
 
-Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ (\eqref{eq:
-plant_n_demand}):
+Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ 
+\eqref{eq:plant_n_demand}:
 
 \begin{equation}
 F^N_\text{fix} = f_\text{fix} \cdot F^N_\text{demand}
@@ -673,32 +691,29 @@ than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and t
 
 ### Nitrogen Limitation
 
-Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of available mineral nitrogen. Plant nitrogen
+Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of plant-available nitrogen. Plant nitrogen
 demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
 
-If this demand is greater than available mineral nitrogen, nitrogen limitation reduces plant growth.
+If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level
+that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool 
+(\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future 
+photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
 
-Nitrogen limitation is applied during the flux calculation stage of the model update sequence, prior to carbon
-allocation to plant biomass pools and before any pool updates occur. N limitation is implemented as follows:
+Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
+implemented as follows:
 
 - Calculate the amount by which plant N demand exceeds available supply [^*].
 
 - Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
 
 - Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
-
-- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed
-- stoichiometry.
-
-- Carbon associated with the unmet growth demand is subtracted from potential GPP to maintain mass balance \eqref{eq:
-  Braswell_A17} [^+].
+- Calculate the amount by which plant N demand exceeds available supply [^*].
+- Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in the wood storage pool \eqref{eq:wood_c_storage}.
+- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed stoichiometry.
 
 [^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen
 uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
-
-[^+]: Under nitrogen limitation, excess carbon is prevented from entering the system by down-regulating GPP. This is
-consistent with SIPNET's use of GPP as an effective ecosystem scale input rather than instantaneous leaf-level
-assimilation.
 
 ## Water Dynamics
 
@@ -706,14 +721,12 @@ assimilation.
 
 \begin{equation}
 \frac{dW_{\text{soil}}}{dt} =
-(1 - f_{\text{intercept}})\,F^W_{\text{precip}}
-
-+ F^W_{\text{irrig,soil}}
-
-- F^W_{\text{drainage}}
-- F^W_{\text{trans}}
-  \label{eq:Braswell_A4}
-  \end{equation}
+(1 - f_{\text{intercept}})\,F^W_{\text{precip}} +
+F^W_{\text{irrig,soil}} -
+F^W_{\text{drainage}} -
+F^W_{\text{trans}}
+\label{eq:Braswell_A4}
+\end{equation}
 
 This is equation (A4) from Braswell, et al. (2005).
 
@@ -724,17 +737,28 @@ irrigation) is assumed to evaporate the same day and therefore never enters $W_{
 
 ### Drainage
 
-Under well-drained conditions, drainage occurs when soil water content $(W_{\text{soil}})$ exceeds the soil water
-holding capacity  $(W_{\text{WHC}})$. Beyond this point, additional water drains off at a rate controlled by the
-drainage parameter $f_{\text{drain}}$ defined as the fraction of soil water that can be removed in one day. For well
-drained soils, this $f_{\text{drain}}=1$. Setting $f_{\text{drain}}<1$ reduces the rate of drainage. Flooding can be
-simulated by requiring a combination of a low $f_{\text{drain}}$ and sufficient $F^W_\text{irrig|precip,soil}$ to
-maintain flooded conditions.
+Drainage occurs when soil water content $(W_{\text{soil}})$ exceeds the soil water holding capacity $(W_{\text{WHC}})$.
+Beyond this point, additional water drains off at a rate that depends on whether `FLOODING` is enabled 
+(CLI: `--flooding`).
+
+If `FLOODING` is not enabled (the default behavior), all excess water drains away at each time step. This mode is
+appropriate for well-drained soil.
+
+\begin{equation}
+F^W_{\text{drainage}} = \frac{\max(W_{\text{soil}} - W_{\text{WHC}}, 0)}{\Delta t}
+\label{eq:drainage_no_flooding}
+\end{equation}
+
+If `FLOODING` is enabled, the rate is controlled by the drainage parameter $f_{\text{drain}}$, defined as the fraction
+of excess soil water that can be removed per day.
 
 \begin{equation}
 F^W_{\text{drainage}} = f_\text{drain} \cdot \max(W_{\text{soil}} - W_{\text{WHC}}, 0)
-\label{eq:drainage}
+\label{eq:drainage_flooding}
 \end{equation}
+
+Flooding can be simulated by using a combination of low $f_{\text{drain}}$ and sufficient 
+$F^W_\text{irrig|precip,soil}$ to maintain flooded conditions.
 
 This is adapted from the original SIPNET formulation (Braswell et al 2005), adding a new parameter that controls the
 drainage rate.
@@ -805,8 +829,10 @@ where:
 
 \begin{equation*}
 r_d = \frac{\text{rdConst}}{u},
-\qquad r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2}\frac{W_{\text{soil}}}{W_{\text{WHC}}}\right)
+\qquad r_{\text{soil}} = \exp\!\left(r_{\text{soil},1} - r_{\text{soil},2} f^*_{\text{WHC}}\right)
 \end{equation*}
+
+For soil evaporation, SIPNET assumes a saturated-surface approximation by using the clipped fraction $f^*_{\text{WHC}}$ before calculating $r_\text{soil}$.
 
 Negative (condensation) values are clipped to zero. If snow > 0 then $F^W_{\text{soil,evap}}=0$.
 
@@ -853,7 +879,8 @@ F^W_\text{trans} = \min(F^W_\text{trans, pot}, f \cdot W_\text{soil})
 This is equation (A15) from Braswell, et al. (2005).
 
 Actual transpiration  $(F^W_\text{trans})$ is the minimum of potential transpiration  $(F^W_{\text{trans,pot}})$ and the
-fraction  $(f)$ of the total soil water  $(W_\text{soil})$ that is removable in one day.
+fraction  $(f)$ of the plant-available soil water  $(W_\text{soil})$ that is removable in one day.
+Plant-available soil water is capped at the water holding capacity $W_\text{WHC}$.
 
 ## Dependence Functions for Temperature and Moisture
 
@@ -923,12 +950,11 @@ f_{\text{WHC}} = \frac{W_{\text{soil}}}{W_{\text{WHC}}}
 
 Where
 
+- $f_{\text{WHC}}$: Soil water content fraction (unbounded)
 - $W_{\text{soil}}$: Soil water content
 - $W_{\text{WHC}}$: Soil water holding capacity
 
-For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis), SIPNET uses
-$\operatorname{clip}(f_{\text{WHC}},0,1)$ internally. This prevents supersaturated water states from pushing moisture
-response multipliers above their intended maxima.
+For moisture *dependency functions* (heterotrophic respiration, volatilization, and methanogenesis) and evapotranspiration, SIPNET uses the clipped ratio $f^*_{\text{WHC}}$. This prevents supersaturated water states from pushing moisture response multipliers above their intended maxima.
 
 #### Water Stress Factor
 
@@ -947,13 +973,13 @@ transpiration $(F^W_\text{trans, pot})$.
 *Aerobic water availability* (dry limitation)
 
 \begin{equation}
-D_\text{aer}(f_{\text{WHC}}) = \frac{f_{\text{WHC}}}{f_a}, \text{clipped to } [0, 1]
+D_\text{aer}(f^*_{\text{WHC}}) = \frac{f^*_{\text{WHC}}}{f_a}, \text{clipped to } [0, 1]
 \end{equation}
 
 *Anaerobic index* (oxygen limitation proxy)
 
 \begin{equation}
-A(f_{\text{WHC}}) = \frac{f_{\text{WHC}} − f_a}{1 - f_a}, \text{clipped to } [0, 1]
+A(f^*_{\text{WHC}}) = \frac{f^*_{\text{WHC}} − f_a}{1 - f_a}, \text{clipped to } [0, 1]
 \end{equation}
 
 where $f_a$ is the onset of anoxia, interpreted as the soil wetness at which $O_2$ diffusion begins to limit aerobic metabolism.
@@ -969,14 +995,12 @@ above freezing. With the default exponent $b=1$, the relationship is linear in s
 D_{\text{water},R_H} =
 \begin{cases}
 1, & \text{if } T_{\text{soil}} \lt 0 \\
-(f_{\text{WHC}})^b, & \text{if } T_{\text{soil}} \ge 0
+(f^*_{\text{WHC}})^b, & \text{if } T_{\text{soil}} \ge 0
 \end{cases}
 \label{eq:water_rh}
 \end{equation}
 
-where $f_{\text{WHC}} = W_{\text{soil}} / W_{\text{WHC}}$ is the fraction of soil water holding capacity (soil water 
-divided by WHC), and $b$ is the soil respiration moisture effect exponent. In implementation, this term is evaluated as
-$\left(\operatorname{clip}(f_{\text{WHC}},0,1)\right)^b$ when moisture dependency is active.
+where $b$ is the soil respiration moisture effect exponent. In implementation, this term is evaluated as $\left(f^*_{\text{WHC}}\right)^b$ when moisture dependency is active.
 
 If the command-line option `ANAEROBIC` is on, the dependency is represented as a partition 
 between aerobic and anaerobic pathways:
@@ -1131,6 +1155,32 @@ f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
 \end{cases}
 \label{eq:irrig_evap}
 \end{equation}
+
+### Leaf On/Leaf Off
+
+Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events directly
+specify the amount of carbon added to the leaf carbon pool on the leaf on date, and the fraction of carbon removed from
+the leaf carbon pool on the leaf off date. 
+
+When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is transferred from the wood
+carbon pool to the leaf carbon pool. As leaf C:N is usually lower than wood C:N, the excess nitrogen
+implied by the static C:N ratios is included as part of the plant nitrogen demand. If there is insufficient nitrogen
+available for this lump-sum move, nitrogen limitation will occur. 
+
+When a leaf off event occurs, a fraction of the leaf carbon (specified by the `fracLeafFall` parameter) is transferred
+from the leaf carbon pool to the litter pool (or soil pool, if the litter pool is not being used). The corresponding
+nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter or soil nitrogen pool.
+
+**Event parameters:**
+
+| Parameter | Value                | Description       |
+|-----------|----------------------|-------------------|
+| Year      | integer              | Year              |
+| Day       | integer              | Day of year       |
+| Type      | `leafon` / `leafoff` | The type of event |
+
+There are no other parameters needed for these events, as the amount of transfer is determined by the parameters
+mentioned above.
 
 <!-- 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.

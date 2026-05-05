@@ -67,8 +67,7 @@ int checkNitrogen(void) {
 
   int status = 0;
   if (fabs(balanceTracker.deltaN) > TEST_EPS) {
-    // ENABLE WHEN NITROGEN IS FINISHED AND LEAF ON/OFF IS HANDLED
-    // status = 1;
+    status = 1;
     logTest("nitrogen balance check delta %8.5f (Y %d D %d T %4.2f)\n",
             balanceTracker.deltaN, climate->year, climate->day, climate->time);
   }
@@ -92,8 +91,31 @@ int testBalanceLeaf(void) {
   logTest("Starting testBalanceLeaf()\n");
   int status = 0;
 
+  params.leafOnDay = 0;
+  params.leafOffDay = 0;
+
   // Run the whole climate file (5 days), which includes a leaf-on event and a
   // leaf-off event
+  while (climate != NULL) {
+    step();
+
+    status |= checkCarbon();
+    status |= checkNitrogen();
+
+    climate = climate->nextClim;
+  }
+
+  return status;
+}
+
+int testBalanceLeafEvents(void) {
+  logTest("Starting testBalanceLeafEvents()\n");
+  int status = 0;
+
+  // Run the whole climate file (5 days), which includes model-based leaf-on
+  // and leaf-off events (days 47 and 49), PLUS event-file-based
+  // leaf-on/leaf-off events on different days to test that event-based leaf
+  // fluxes maintain carbon and nitrogen balance
   while (climate != NULL) {
     step();
 
@@ -137,6 +159,13 @@ int run(void) {
   reset();
 
   status |= testBalanceLeaf();
+  reset();
+
+  // Re-initialize events with leaf on/off events for the next test
+  closeEventOutFile();
+  initEvents("events_leaf.in", "events.out", 0);
+  setupEvents();
+  status |= testBalanceLeafEvents();
   reset();
 
   status |= testBalanceNoLitterPool();

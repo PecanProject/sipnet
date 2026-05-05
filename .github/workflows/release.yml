@@ -5,16 +5,19 @@ on:
     tags:
       - 'v*.*.*'  # Trigger on version tags
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_os: ubuntu
+            artifact_name: linux-x86_64
             binary_path: sipnet
           - os: macos-latest
-            artifact_os: macos
+            artifact_name: macos-arm64
             binary_path: sipnet
     runs-on: ${{ matrix.os }}
     steps:
@@ -25,12 +28,13 @@ jobs:
         run: make
         shell: bash
 
-      - name: Prepare release binary
+      - name: Prepare release archive
+        id: prepare_archive
         shell: bash
         run: |
           tag="${GITHUB_REF_NAME}"
           src="${{ matrix.binary_path }}"
-          dest="sipnet-${{ matrix.artifact_os }}-${tag}"
+          archive_base="sipnet-${{ matrix.artifact_name }}-${tag}"
 
           if [ ! -f "$src" ]; then
             echo "Expected build artifact '${src}' not found" >&2
@@ -38,13 +42,16 @@ jobs:
           fi
 
           mkdir -p dist
-          mv "$src" "dist/${dest}"
+          cp "$src" "dist/sipnet"
+          tar -C dist -czf "dist/${archive_base}.tar.gz" sipnet
+          rm -f "dist/sipnet"
+          echo "archive_base=${archive_base}" >> "$GITHUB_OUTPUT"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
-          path: dist/sipnet-${{ github.ref_name }}-${{ matrix.artifact_os }}
+          name: ${{ steps.prepare_archive.outputs.archive_base }}
+          path: dist/${{ steps.prepare_archive.outputs.archive_base }}.tar.gz
           if-no-files-found: error
 
   release:
@@ -61,10 +68,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          name: ${{ github.ref_name }} [RELEASE NAME]
           body: |
-            This release includes the latest SIPNET binary.
-          draft: true  # Create the release as a draft
+            Draft release for ${{ github.ref_name }}.
+
+            - Replace [RELEASE NAME] in the title
+            - Curate highlights from changelog / release notes
+            - Confirm attached .tar.gz archives containing the sipnet binary
+          draft: true
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

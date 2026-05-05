@@ -95,6 +95,7 @@ rSoilConst2			9.12
 m_ballBerry			9.13
 leafCSpWt			9.14
 cFracLeaf			9.15
+waterDrainFrac      1.00
 
 !!! Quality submodel parameters
 qualityLeaf			10.01

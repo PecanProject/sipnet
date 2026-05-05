@@ -2,8 +2,7 @@
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
-
-#include "typesUtils.h"
+#include "utils/helpers.c"
 
 int checkBioOutput(double leafC, double woodC, double fineC, double coarseC) {
   int status = 0;

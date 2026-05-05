@@ -8,6 +8,7 @@
 #define CONTEXT_CHAR_MAXLEN 256
 // For convenience
 #define FILENAME_MAXLEN CONTEXT_CHAR_MAXLEN
+#define FILENAME_PREFIX_MAXLEN (FILENAME_MAXLEN - 10)
 
 #include <stdio.h>
 
@@ -35,7 +36,7 @@ struct context_metadata {
   UT_hash_handle hh;  // makes this structure hashable
 };
 
-#define NUM_CONTEXT_MODEL_FLAGS 11
+#define NUM_CONTEXT_MODEL_FLAGS 12
 // See docs/developer-guide/cli-options.md for details on how to add a new
 // Context entry
 struct Context {
@@ -51,6 +52,7 @@ struct Context {
   int waterHResp;
   int nitrogenCycle;
   int anaerobic;
+  int flooding;
   int carbonSaturation;
   // IF ADDING A NEW MODEL FLAG, update NUM_CONTEXT_MODEL_FLAGS above and
   // relevant code in restart.c
@@ -76,7 +78,7 @@ struct Context {
 
   // Other
   // File prefix for climate and param files
-  char fileName[CONTEXT_CHAR_MAXLEN];
+  char filePrefix[CONTEXT_CHAR_MAXLEN];
 
   // Temp space for handling command line flag args; we do not write directly
   // the params since we want to do a precedence check first. If the new source

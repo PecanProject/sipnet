@@ -71,3 +71,4 @@ anaerobicDecompRate 0.01
 anaerobicTransExp 2.0
 soilMethaneRate 0.1
 litterMethaneRate 0.1
+waterDrainFrac 1.0

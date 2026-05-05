@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sipnet_tools"
+description = "A collection of tools for working with SIPNET model outputs."
+requires-python = ">=3.10"
+dynamic = ["version", "dependencies"]
+
+[project.scripts]
+sipnet-view = "tools.sipnet_view:main"
+smoke-check = "tools.smoke_check:main"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+version = {attr = "tools.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]

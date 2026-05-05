@@ -42,6 +42,7 @@ void initContext(void) {
   CREATE_INT_CONTEXT(waterHResp,      "WATER_HRESP",      ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(nitrogenCycle,   "NITROGEN_CYCLE",   ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(anaerobic,       "ANAEROBIC",        ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(flooding,        "FLOODING",         ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(carbonSaturation,"CARBON_SATURATION",ARG_OFF, FLAG_YES);
 
   // Flags, I/O
@@ -63,10 +64,8 @@ void initContext(void) {
   // clang-format on
 
   // Other
-  // Prefix for climate and parameter input files. We may want to rename this
-  // to siteName or such, as 'fileName' implies an actual file, though that
-  // would be a breaking change.
-  CREATE_CHAR_CONTEXT(fileName, "FILE_NAME", DEFAULT_FILE_NAME);
+  // Prefix for climate and parameter input files.
+  CREATE_CHAR_CONTEXT(filePrefix, "FILE_PREFIX", DEFAULT_FILE_NAME);
 }
 
 // With all the different permutations of spellings for config params, lets
@@ -83,6 +82,10 @@ void nameToKey(const char *name) {
     }
   }
   keyName[keyInd] = '\0';
+  // Backward compatibility for legacy FILE_NAME / file-name config keys.
+  if (strcmp(keyName, "filename") == 0) {
+    strcpy(keyName, "fileprefix");
+  }
 }
 
 struct context_metadata *getContextMetadata(const char *name) {
@@ -176,14 +179,14 @@ void validateFilename(void) {
   // We need to do this earlier than the rest of the validation
   // Make sure FILENAME is set and well-sized; everything else is optional (not
   // necessary or has a default)
-  if (strcmp(ctx.fileName, "") == 0) {
-    printf("Error: fileName must be set for SIPNET to run\n");
+  if (strcmp(ctx.filePrefix, "") == 0) {
+    printf("Error: filePrefix must be set for SIPNET to run\n");
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
-  if (strlen(ctx.fileName) > FILENAME_MAXLEN - 10) {
+  if (strlen(ctx.filePrefix) > FILENAME_PREFIX_MAXLEN) {
     // We need room to append .clim, .param, etc
-    printf("Error: fileName is too long; max length is %d characters\n",
-           FILENAME_MAXLEN - 10);
+    printf("Error: filePrefix is too long; max length is %d characters\n",
+           FILENAME_PREFIX_MAXLEN);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }

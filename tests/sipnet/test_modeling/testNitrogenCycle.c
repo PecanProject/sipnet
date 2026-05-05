@@ -26,6 +26,11 @@ void resetState() {
   // State altered by one test or another, and needs to be reset at the
   // start of each test
 
+  // Respiration/Mineralization
+  fluxes.rSoil = 0.0;
+  fluxes.rLitter = 0.0;
+  fluxes.nMin = 0.0;
+
   // Volatilization
   params.nVolatilizationFrac = 0;
   fluxes.nVolatilization = 0;
@@ -229,6 +234,28 @@ void initNFixationState(double initN, double nFixFracMax, double nFixHalved) {
   envi.minN = initN;
   params.nFixationFracMax = nFixFracMax;
   params.halfNFixationMax = nFixHalved;
+
+  // We need some demand. For convenience:
+  //  leafCN = 20
+  //  woodCN = 100
+  //  fineRootCN = 40
+  fluxes.leafOnCreation = 0;  // too messy
+  fluxes.leafCreation = 60;  // 3 demand flux
+  fluxes.woodCreation = 500;  // 5
+  fluxes.fineRootCreation = 40;  // 1
+  fluxes.coarseRootCreation = 100;  // 1 = 10 total
+}
+
+int checkFinalMinN(double initMinN, double expMinN) {
+  int status = 0;
+  updateNitrogenPools();
+  if (!compareDoubles(envi.minN, expMinN)) {
+    status = 1;
+    logTest("For init minN %6.3f: minN pool is %8.3f, expected %8.3f\n",
+            initMinN, envi.minN, expMinN);
+  }
+
+  return status;
 }
 
 int testNFixation(void) {
@@ -239,10 +266,11 @@ int testNFixation(void) {
   double expNFixation;
   double expNUptake;
   double nDemand;
+  double expMinN;
   logTest("Running testNFixation\n");
 
-  // Half demand met by fixation, half met by uptake
-  minN = 2;
+  // Plenty of min N
+  minN = 4;
   nFixFracMax = 1;
   nFixHalved = 2;
   nDemand = 10;
@@ -254,11 +282,13 @@ int testNFixation(void) {
   calcNFixationAndUptakeFluxes();
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  expMinN = minN - expNUptake * climate->length;
+  status |= checkFinalMinN(minN, expMinN);
 
-  // Zero demand met by fixation, all demand met by uptake
+  // Just above min N needed
   minN = 1;
-  nFixFracMax = 0.5;
-  nFixHalved = 0;
+  nFixFracMax = 0.75;
+  nFixHalved = 1;
   nDemand = 10;
   initNFixationState(minN, nFixFracMax, nFixHalved);
   nFixInhib = nFixHalved / (nFixHalved + minN);
@@ -268,31 +298,114 @@ int testNFixation(void) {
   calcNFixationAndUptakeFluxes();
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  expMinN = minN - expNUptake * climate->length;
+  status |= checkFinalMinN(minN, expMinN);
 
-  // Zero demand by uptake due to zero minN pool, this test will
-  // need to change when limitation is implemented
+  // Just below min N needed; limitation will hit, should be 20% reduction
+  double red = 0.8;
+  minN = 0.5;
+  nFixFracMax = 0.75;
+  nFixHalved = 1;
+  nDemand = 10;
+  initNFixationState(minN, nFixFracMax, nFixHalved);
+  nFixInhib = nFixHalved / (nFixHalved + minN);
+  nFixFrac = nFixFracMax * nFixInhib;
+  expNFixation = nFixFrac * nDemand * red;
+  expNUptake = (1 - nFixFrac) * nDemand * red;
+  calcNFixationAndUptakeFluxes();
+  status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
+  status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  expMinN = minN - expNUptake * climate->length;
+  status |= checkFinalMinN(minN, expMinN);
+
+  // Zero minN (which really shouldn't happen, but still good to test edge case)
+  // leads to minimal growth due to N limitation - but mineralization lets some
+  // happen
   minN = 0;
   nFixFracMax = 0.5;
   nFixHalved = 2;
-  nDemand = 10;
   initNFixationState(minN, nFixFracMax, nFixHalved);
-  nFixInhib = nFixHalved / (nFixHalved + minN);
-  nFixFrac = nFixFracMax * nFixInhib;
-  expNFixation = nFixFrac * nDemand;
-  expNUptake = (1 - nFixFrac) * nDemand;
   calcNFixationAndUptakeFluxes();
-  status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
-  status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
+  status |= checkFlux(fluxes.nFixation, 0, "N fixation");
+  status |= checkFlux(fluxes.nUptake, 0, "N uptake");
+  expMinN = 0;
+  status |= checkFinalMinN(minN, expMinN);
 
-  // Check minN for the last
-  updateNitrogenPools();
-  double expMinN = minN - (expNUptake * climate->length);
-  int minStatus = 0;
-  if (!compareDoubles(envi.minN, expMinN)) {
-    minStatus = 1;
-    logTest("minN pool is %8.3f, expected %8.3f\n", envi.minN, expMinN);
+  return status;
+}
+
+/////
+// N Limitation effects on plant growth fluxes
+void initNLimitationState(double initN, double initLeafOnCreation) {
+  resetState();
+  envi.minN = initN;
+  params.nFixationFracMax = 0;  // No N fixation for clean testing
+  params.halfNFixationMax = 0;
+
+  // Demand setup (same layout as initNFixationState):
+  //  leafCN = 20, woodCN = 100, fineRootCN = 40
+  fluxes.leafOnCreation = initLeafOnCreation;
+  fluxes.leafCreation = 60;  // 3 demand flux
+  fluxes.woodCreation = 500;  // 5
+  fluxes.fineRootCreation = 40;  // 1
+  fluxes.coarseRootCreation = 100;  // 1; 10 total demand without leafOnCreation
+}
+
+int checkNLimitationFlux(double flux, double exp, const char *label) {
+  int status = 0;
+  if (!compareDoubles(flux, exp)) {
+    status = 1;
+    logTest("%s is %8.4f, expected %8.4f\n", label, flux, exp);
   }
-  status |= minStatus;
+  return status;
+}
+
+int testNLimitation(void) {
+  int status = 0;
+  logTest("Running testNLimitation\n");
+
+  // N limitation with no fixation - 50% reduction
+  // maxDemandFlux = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
+  // availableMinN = 0.625 -> reduction = 0.625 / 1.25 = 0.5
+  double reduction = 0.5;
+  initNLimitationState(0.625, 0);
+
+  calcNFixationAndUptakeFluxes();
+
+  status |=
+      checkNLimitationFlux(fluxes.leafCreation, 60 * reduction, "leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
+                                 "[50%] woodCreation");
+  status |= checkNLimitationFlux(fluxes.fineRootCreation, 40 * reduction,
+                                 "[50%] fineRootCreation");
+  status |= checkNLimitationFlux(fluxes.coarseRootCreation, 100 * reduction,
+                                 "[50%] coarseRootCreation");
+
+  // Sufficient mineralization (nMin) prevents N limitation
+  // minN=0.1, nMin=12 -> availableMinN = 0.1 + 12 * 0.125 = 1.6 > 1.25
+  // -> no limitation, all creation fluxes stay at original values
+  initNLimitationState(0.1, 0);
+  fluxes.nMin = 12.0;
+
+  calcNFixationAndUptakeFluxes();
+  status |= checkNLimitationFlux(fluxes.leafCreation, 60,
+                                 "[boosted nMin] leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500,
+                                 "[boosted nMin] woodCreation");
+
+  // leafOnCreation also gets reduced when N-limited
+  // leafOnCreation=50: net demand = 50*(1/20-1/100) = 2.0, total demand = 12
+  // maxDemand = 12 * 0.125 = 1.5, maxUptake = 1.5
+  // minN = 0.75 -> reduction = 0.75 / 1.5 = 0.5
+  double leafOnInit = 50.0;
+  double leafOnReduction = 0.5;
+  initNLimitationState(0.75, leafOnInit);
+
+  calcNFixationAndUptakeFluxes();
+
+  status |=
+      checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit * leafOnReduction,
+                           "[leafOn] leafOnCreation");
 
   return status;
 }
@@ -361,6 +474,8 @@ int run(void) {
   status |= testFertilization();
   status |= testNLeaching();
   status |= testOrganicN();
+  status |= testNFixation();
+  status |= testNLimitation();
 
   return status;
 }

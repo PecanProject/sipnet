@@ -56,6 +56,7 @@ add_library(tests
         tests/sipnet/test_modeling/testNitrogenCycle.c
         tests/sipnet/test_modeling/testDependencyFunctions.c
         tests/sipnet/test_modeling/testBalance.c
+        tests/sipnet/test_modeling/testSoilMoisture.c
         tests/sipnet/test_restart_infrastructure/testRestartMVP.c
         tests/sipnet/test_restart_infrastructure/testRestartMissedEnvi.c
         tests/sipnet/test_restart_infrastructure/testRestartMissedCtx.c

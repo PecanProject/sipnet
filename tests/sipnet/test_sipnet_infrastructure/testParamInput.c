@@ -162,6 +162,7 @@ void writeParams(const char *fname) {
   fprintf(out, "%s: %.2f\n", "baseCoarseRootResp", params.baseCoarseRootResp);
   fprintf(out, "%s: %.2f\n", "fineRootQ10", params.fineRootQ10);
   fprintf(out, "%s: %.2f\n", "coarseRootQ10", params.coarseRootQ10);
+  fprintf(out, "%s: %.2f\n", "waterDrainFrac", params.waterDrainFrac);
 
   fclose(out);
 }
