@@ -149,8 +149,8 @@ Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 - F^C_{\text{harvest,removed,}i}
 - F^C_{\text{litter,}i}
-  \label{eq:Zobitz_3}
-  \end{equation}
+\label{eq:Zobitz_3}
+\end{equation}
 
 This is equation (3) from Zobitz, et al. (2008), augmented with the harvest and litter terms. Summing over all plant
 pools shows that NPP is partitioned into biomass growth, removed harvest, and litter production.
