@@ -19,8 +19,6 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 
 ## Notation
 
-Any symbols in blackboard bold, e.g. $\mathbb{X}$, indicate proposed model parameters that are documented but not yet implemented.
-
 ### Variables (Pools, Fluxes, and Parameters)
 
 | **Category**              | **Symbol**           | **Description**                                        |
@@ -109,8 +107,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $N_{\text{org, litter},0}$        | litterOrgNInit | Initial litter organic nitrogen content                                  | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
 | $N_{\text{org, soil},0}$          | soilOrgNInit   | Initial soil organic nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
 | $N_{\text{min, soil},0}$          | mineralNInit   | Initial soil mineral nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
-| $\mathbb{N}_{\text{plant,storage},0}$ | plantNStorageInit | Initial plant nitrogen storage                                      | $\text{g N} \cdot \text{m}^{-2}$                                    | Expected range $\ge 0$                                                                   |
-| $\mathbb{N}_{\text{plant,storage}}$   |                | Plant nitrogen storage pool                                         | $\text{g N} \cdot \text{m}^{-2}$                                    | Filled by leaf N resorption and used toward plant N demand, including leaf-on            |
+| $N_{\text{plant,storage},0}$ | plantNStorageInit | Initial plant nitrogen storage                                      | $\text{g N} \cdot \text{m}^{-2}$                                    | Expected range $\ge 0$                                                                   |
 | $f_{\text{fine root},0}$          | fineRootFrac   | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   | unitless                                                            |                                                                                          |
 | $f_{\text{coarse root},0}$        | coarseRootFrac | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool | unitless                                                            |                                                                                          |
 | $W_{\text{snow},0}$               | snowInit       | Initial snow water equivalent                                            | cm water equivalent                                                 |                                                                                          |
@@ -166,8 +163,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $D_{\text{off}}$          | leafOffDay       | Day of year for leaf drop                                             | unitless                         | day of year (1–365); 0 to turn off   |
 | $\Delta C_{\text{leaf}}$  | leafGrowth       | Additional leaf growth at start of growing season                     | $\text{g C} \cdot \text{m}^{-2}$ |                                      |
 | $f_{\text{fall}}$         | fracLeafFall     | Additional fraction of leaves that fall at end of growing season      | unitless                         |                                      |
-| $\mathbb{f}^C_{\text{realloc}}$ | leafOnReallocFrac | Fraction of wood and coarse root C available for leaf-on reallocation | unitless                         | Expected range $[0,1]$              |
-| $\mathbb{f}^N_{\text{resorb}}$  | leafNResorptionFrac | Fraction of senescing leaf N resorbed to plant N storage             | unitless                         | Expected range $[0,1]$              |
+| $f^C_{\text{realloc}}$ | leafOnReallocFrac | Fraction of wood and coarse root C available for leaf-on reallocation | unitless                         | Expected range $[0,1]$              |
 | $\alpha_{\text{leaf}}$    | leafAllocation   | Fraction of $NPP$ allocated to leaf growth                            | unitless                         |                                      |
 | $K_{\text{leaf}}$         | leafTurnoverRate | Average turnover rate of leaves                                       | $\text{year}^{-1}$               | Converted to per-day rate internally |
 
