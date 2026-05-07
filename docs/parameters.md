@@ -19,6 +19,8 @@ pools are mass per ground area and rates are mass per area per day. The actual p
 
 ## Notation
 
+Any symbols in blackboard bold, e.g. $\mathbb{X}$, indicate proposed model parameters that are documented but not yet implemented.
+
 ### Variables (Pools, Fluxes, and Parameters)
 
 | **Category**              | **Symbol**           | **Description**                                        |
