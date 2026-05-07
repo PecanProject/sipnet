@@ -30,7 +30,7 @@ Implementation in source code (sipnet.c) is annotated with references to specifi
 - The general approach used to define variables and subscripts is defined in [Notation](parameters.md#notation).
 - Specific parameter, flux, and state definitions are documented in [Model States and Parameters](parameters.md#run-time-parameters).
 
-Symbols in blackboard bold, e.g. $\mathbb{X}$ indicates proposed model quantities that are documented here but
+Symbols in blackboard bold, e.g. $\mathbb{X}$, indicate proposed model quantities that are documented here but
 not yet implemented.
 
 ## Carbon Dynamics
@@ -233,20 +233,20 @@ A minimal limiter combines carbon and nitrogen constraints:
 
 with $0 \le f^C_{\text{limit,}t} \le 1$ and $0 \le f^N_{\text{limit,}t} \le 1$.
 
-Leaf-on carbon is supplied by reallocatable perennial biomass from wood and coarse root pools:
+Carbon available for leaf growth at leaf-on comes from a fraction of the perennial wood and coarse root biomass pools:
 
 \begin{equation}
 \mathbb{C}_{\text{realloc,}t} =
-f^C_{\text{realloc}} \cdot
+\mathbb{f}^C_{\text{realloc}} \cdot
 (C_{\text{wood,}t} + C_{\text{coarse root,}t})
 \label{eq:leaf_on_realloc_c}
 \end{equation}
 
-where $0 \le f^C_{\text{realloc}} \le 1$. Leaf-on reallocation uses structural perennial biomass only. It does not draw
+where $0 \le \mathbb{f}^C_{\text{realloc}} \le 1$. Leaf-on reallocation uses structural perennial biomass only. It does not draw
 from $C_{\text{wood,storage}}$, because the storage pool is a bookkeeping buffer for recent carbon allocation lag rather than a carbon pool available for reallocation.
 
-If the source biomass is greater than zero, carbon transfer from source pools to leaf carbon is mass conserving. Source
-pools are debited in proportion to structural pool size:
+If structural biomass is greater than zero, carbon is transferred to leaf carbon. 
+Carbon is taken from the source pools in proportion to their size:
 
 \begin{equation}
 \mathbb{F}^C_{\text{source,}j,t} =
@@ -258,13 +258,6 @@ F^C_{\text{leaf,on,}t}
 \begin{equation*}
 \small j \in \{\text{wood, coarse root}\}
 \end{equation*}
-
-This makes the source-pool debit auditable:
-
-\begin{equation}
-\sum_j F^C_{\text{source,}j,t} = F^C_{\text{leaf,on,}t}
-\label{eq:leaf_on_source_c_sum}
-\end{equation}
 
 If the source biomass is zero, realized leaf-on growth is zero. If the source biomass is zero and there are no leaves,
 the plant will never regrow leaf biomass.
@@ -285,28 +278,28 @@ and the nitrogen-side limiter is:
 \label{eq:leaf_on_n_limiter}
 \end{equation}
 
-where $F^N_{\text{supply,leaf,on,}t}$ includes plant N storage, mineral uptake, and fixation.
+where $F^N_{\text{supply,leaf,on,}t}$ includes plant N storage, mineral N uptake, and N fixation.
 
 #### Leaf Off {#leaf-off}
 
 Leaf-off events define the timing of leaf senescence. A leaf-off event transfers leaf biomass carbon out of the leaf
-pool. When the `--litter-pool` model option is enabled, leaf litter enters the litter pool; otherwise, leaf litter is
+pool. When the litter pool is enabled, leaf litter enters the litter pool; otherwise, leaf litter is
 routed to soil carbon. A fraction of nitrogen from senescing leaves is resorbed into a plant storage pool before the
 rest is transferred to litter or soil. The resorption flux is:
 
 \begin{equation}
 \mathbb{F}^N_{\text{storage,in,}t} =
-f^N_{\text{resorb}} \cdot F^N_{\text{senescing,leaf,}t}
+\mathbb{f}^N_{\text{resorb}} \cdot F^N_{\text{senescing,leaf,}t}
 \label{eq:leaf_n_resorb}
 \end{equation}
 
 \begin{equation}
 F^N_{\text{litter,leaf,residual,}t} =
-(1 - f^N_{\text{resorb}}) \cdot F^N_{\text{senescing,leaf,}t}
+(1 - \mathbb{f}^N_{\text{resorb}}) \cdot F^N_{\text{senescing,leaf,}t}
 \label{eq:leaf_n_litter_residual}
 \end{equation}
 
-where $0 \le f^N_{\text{resorb}} \le 1$. The plant nitrogen storage pool balance is:
+where $0 \le \mathbb{f}^N_{\text{resorb}} \le 1$. The plant nitrogen storage pool balance is:
 
 \begin{equation}
 \frac{d\mathbb{N}_{\text{plant,storage}}}{dt} =
