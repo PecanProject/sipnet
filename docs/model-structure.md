@@ -25,7 +25,6 @@ This document provides an overview of the SIPNET model’s structure. It was wri
 There are multiple ways to configure the model structure, and not all model structures or components are listed.
 Implementation in source code (sipnet.c) is annotated with references to specific publications.
 
-
 #### Notes on notation:
 
 - The general approach used to define variables and subscripts is defined in [Notation](parameters.md#notation).
