@@ -23,11 +23,6 @@ void calcNitrogenFluxes(void);
  */
 void updateNitrogenPools(void);
 
-// Utilities
-double calcCN(double c, double n);
-double calcSoilCN(void);
-double calcLitterCN(void);
-
 // TEMP UNTIL REFACTOR COMPLETE
 void calcNFixationAndUptakeFluxes(void);
 

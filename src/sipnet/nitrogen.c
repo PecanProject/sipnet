@@ -4,19 +4,10 @@
 
 #include "common/context.h"
 #include "common/logging.h"
+#include "common/util.h"
 
 #include "depeffects.h"
 #include "state.h"
-
-// The following three CN functions may seem trivial, but worth it to ensure
-// the divide-by-zero protection. Note that the calcSoil/LitterCN functions
-// should only be called when ctx.nitrogen_cycle is on.
-double calcCN(const double c, const double n) {
-  double effectiveN = n < TINY ? TINY : n;
-  return c / effectiveN;
-}
-double calcSoilCN(void) { return calcCN(envi.soilC, envi.soilOrgN); }
-double calcLitterCN(void) { return calcCN(envi.litterC, envi.litterN); }
 
 /*!
  * Calculate mineral N volatilization flux
@@ -151,8 +142,8 @@ void calcNFixationAndUptakeFluxes(void) {
  */
 void calcNPoolFluxes(void) {
   // C:N ratios for litter and soil, needed in most of the succeeding calcs
-  double litterCN = calcLitterCN();
-  double soilCN = calcSoilCN();
+  double litterCN = calcRatio(envi.litterC, envi.litterN);
+  double soilCN = calcRatio(envi.soilC, envi.soilOrgN);
 
   // for both litter and soil, mineralization is calculated as heterotrophic
   // respiration divided by the C:N ratio of that pool.

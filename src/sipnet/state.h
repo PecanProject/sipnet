@@ -1,8 +1,6 @@
 #ifndef SIPNET_STATE_H
 #define SIPNET_STATE_H
 
-#define TINY 0.000001  // to avoid those nasty divide-by-zero errors
-
 // See sipnet.c for the list of references cited below. In short:
 // [1] Braswell et al., 2005
 // [2] Sacks et al., 2006

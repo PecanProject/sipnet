@@ -5,7 +5,6 @@
 #include "common/context.h"
 
 #include "events.h"
-#include "nitrogen.h"
 #include "state.h"
 
 double getClippedWaterFrac(double water, double whc) {
@@ -82,7 +81,7 @@ double calcCNEffect(double kCN, double poolC, double poolN) {
 
   // CN ratio dependency term, using k_CN term that indicates CN value
   // at which the dependency is 1/2
-  double cn = calcCN(poolC, poolN);
+  double cn = calcRatio(poolC, poolN);
   return kCN / (kCN + cn);
 }
 
