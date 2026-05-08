@@ -70,3 +70,4 @@ anaerobicTransExp 2.0
 nFixationFracMax 0.5
 halfNFixationMax 1.0
 waterDrainFrac 1.0
+soilCSaturation 1.0

@@ -66,8 +66,7 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(snow),
     DECLARE_ARG_FOR_MAP(soilPhenol), DECLARE_ARG_FOR_MAP(waterHResp),
     DECLARE_ARG_FOR_MAP(nitrogenCycle), DECLARE_ARG_FOR_MAP(anaerobic),
-    DECLARE_ARG_FOR_MAP(flooding),
-    DECLARE_ARG_FOR_MAP(carbonSaturation),
+    DECLARE_ARG_FOR_MAP(flooding), DECLARE_ARG_FOR_MAP(carbonSaturation),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),

@@ -388,6 +388,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   // Water drainage
   initializeOneModelParam(modelParams, "waterDrainFrac", &(params.waterDrainFrac), ctx.flooding);
 
+  // Soil carbon saturation
+  initializeOneModelParam(modelParams, "soilCSaturation", &(params.soilCSaturation), ctx.carbonSaturation);
+
   // NOLINTEND
   // clang-format on
 
@@ -1937,10 +1940,22 @@ void updatePoolsForSoil(void) {
          fluxes.rLitter - fluxes.litterMethane) *
         climate->length;
 
-    // from [2] and [3], litter and root terms respectively
-    envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                   fluxes.litterToSoil - fluxes.rSoil - fluxes.soilMethane) *
-                  climate->length;
+    if (ctx.carbonSaturation) {
+      double soilInputs =
+          fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
+      //
+      envi.soilC += (soilInputs * (1 - envi.soilC / params.soilCSaturation) -
+                     fluxes.rSoil - fluxes.soilMethane) *
+                    climate->length;
+      // send unstabilized carbon back to litter pool
+      fluxes.soilToLitter = envi.soilC / params.soilCSaturation;
+      envi.litterC += fluxes.soilToLitter * climate->length;
+    } else {
+      // from [2] and [3], litter and root terms respectively
+      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
+                     fluxes.litterToSoil - fluxes.rSoil - fluxes.soilMethane) *
+                    climate->length;
+    }
   } else {
     // Normal pool (single pool, no microbes)
     // :: from [1] (and others, TBD), eq (A3), where:

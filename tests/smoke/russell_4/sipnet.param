@@ -65,3 +65,4 @@ woodCN 100.0
 fineRootCN 40.0
 kCN 80.0
 waterDrainFrac 1.0
+soilCSaturation 1.0

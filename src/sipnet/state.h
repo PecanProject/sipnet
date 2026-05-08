@@ -387,6 +387,14 @@ typedef struct Parameters {
 
   // Relative methane production rate in the litter pool, in [0, 1), per day
   double litterMethaneRate;
+
+  // ******
+  // Soil carbon saturation
+  // ******
+
+  // Maximum threshold for stabilizing carbon in soil organic pool as
+  // slow-turnover pool units: g C * m^-2 ground area
+  double soilCSaturation;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -602,6 +610,13 @@ typedef struct FluxVars {
   double soilMethane;
   // Methane produced from litter
   double litterMethane;
+
+  // ****************************************
+  // Soil carbon saturation
+
+  // unstabilized soil C that exceeds soil C saturation threshold gets sent back
+  // to litter C pool as a fast-turnover pool (g C * m^-2 ground area * day^-1)
+  double soilToLitter;
 } Fluxes;
 
 // Global var
