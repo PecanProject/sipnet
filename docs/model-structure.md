@@ -1268,6 +1268,16 @@ f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
 \label{eq:irrig_evap}
 \end{equation}
 
+### Leaf On/Leaf Off Events
+
+Leaf-on and leaf-off may be triggered either by explicit `leafon` / `leafoff` records in `events.in` or by calculated phenology. 
+Explicit leaf events specify timing only and take no additional event-file parameters. 
+Calculated leaf-on timing is controlled by `gdd`, `soil-phenol` runtime options, or the `leafOnDay` parameter, depending on configuration; calculated
+leaf-off timing is controlled by `leafOffDay`. 
+Leaf on/off specified as events are incompatible with temperature (GDD or soil) or parameter based leaf timing.
+
+Once triggered, leaf-on and leaf-off use the same dynamics described in [Leaf On](#leaf-on) and [Leaf Off](#leaf-off).
+
 <!-- 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
 
