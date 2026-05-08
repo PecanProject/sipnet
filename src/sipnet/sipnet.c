@@ -22,6 +22,7 @@
 #include "sipnet.h"
 #include "balance.h"
 #include "events.h"
+#include "nitrogen.h"
 #include "outputItems.h"
 #include "restart.h"
 #include "runmean.h"
@@ -1961,23 +1962,6 @@ void updatePoolsForSoil(void) {
       (fluxes.coarseRootCreation - fluxes.coarseRootLoss) * climate->length;
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss) * climate->length;
-}
-
-void updateNitrogenPools(void) {
-  // Nitrogen Cycle
-  // :: from [5], nitrogen cycle model
-  // TBD: add equation numbers once published
-
-  // Soil mineral N (note we have one mineral pool for soil+litter)
-  // Mineral N additions from fertilization are handled with the events
-  double nonUptakeFluxes = calcMinNNonUptakeFluxes();
-  envi.minN += (nonUptakeFluxes - fluxes.nUptake) * climate->length;
-
-  // Soil organic N
-  envi.soilOrgN += fluxes.nOrgSoil * climate->length;
-
-  // Litter organic N
-  envi.litterN += fluxes.nOrgLitter * climate->length;
 }
 
 void updatePoolsAndBalance() {
