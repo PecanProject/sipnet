@@ -1,5 +1,5 @@
 #include "utils/tUtils.h"
-#include "sipnet/sipnet.c"
+#include "sipnet/depeffects.c"
 
 void setupTests() {
   // Set up the context

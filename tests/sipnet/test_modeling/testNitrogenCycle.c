@@ -1,6 +1,6 @@
 #include "utils/tUtils.h"
 #include "sipnet/events.c"
-#include "sipnet/sipnet.c"
+#include "sipnet/nitrogen.c"
 
 /////
 // Setup and general test state management

@@ -32,8 +32,10 @@ add_library(commonlib
 add_library(sipnetlib
         src/sipnet/balance.c
         src/sipnet/cli.c
+        src/sipnet/depeffects.c
         src/sipnet/events.c
         src/sipnet/frontend.c
+        src/sipnet/limitations.c
         src/sipnet/nitrogen.c
         src/sipnet/outputItems.c
         src/sipnet/restart.c
