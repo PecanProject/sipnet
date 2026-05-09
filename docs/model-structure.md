@@ -282,10 +282,21 @@ where $F^N_{\text{supply,leaf,on}}$ includes plant N storage, mineral uptake, an
 
 #### Leaf Off {#leaf-off}
 
-Leaf-off events define the timing of leaf senescence. A leaf-off event transfers leaf biomass carbon out of the leaf
-pool. When the litter pool is enabled, leaf litter enters the litter pool; otherwise, leaf litter is
-routed to soil carbon. A fraction of nitrogen from senescing leaves is resorbed into a plant storage pool before the
-rest is transferred to litter or soil. The resorption flux is:
+Leaf-off events define the timing of leaf senescence. 
+A leaf-off event transfers leaf biomass carbon out of the leaf pool. 
+The leaf-off carbon transfer is controlled by the leaf fall 
+fraction parameter, $f_{\text{fall}}$.
+
+\begin{equation}
+F^C_{\text{senescing,leaf}} = f_\text{fall} \cdot C_\text{leaf}
+\end{equation}
+
+When the litter pool is enabled, leaf litter enters the litter pool; 
+otherwise, leaf litter is routed to soil carbon.
+
+At leaf-off, a fraction of nitrogen from senescing leaves is resorbed 
+into a plant storage pool before the rest is transferred to litter or soil. 
+The resorption flux is:
 
 \begin{equation}
 F^N_{\text{storage,in}} =
