@@ -304,6 +304,10 @@ f^N_{\text{resorb}} \cdot F^N_{\text{senescing,leaf}}
 \label{eq:leaf_n_resorb}
 \end{equation}
 
+where 
+\begin{equation}
+F^N_{\text{senescing,leaf}} = F^C_{\text{senescing,leaf}} \cdot CN_\text{leaf}
+\end{equation}
 \begin{equation}
 F^N_{\text{litter,leaf,residual}} =
 (1 - f^N_{\text{resorb}}) \cdot F^N_{\text{senescing,leaf}}
