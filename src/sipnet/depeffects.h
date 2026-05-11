@@ -17,10 +17,14 @@
 double getClippedWaterFrac(double water, double whc);
 
 /**
+ * Calculate the anaerobic index
  *
- * @param water
- * @param whc
- * @return
+ * Calculate the index from current soil moisture, soil WHC, and the
+ * fAnoxia parameter
+ *
+ * @param water current soil water
+ * @param whc soil water holding capacity
+ * @return anaerobic index
  */
 double calcAnaerobicIndex(double water, double whc);
 

@@ -3,18 +3,21 @@
 
 // Nitrogen cycle related functions
 
+// TBD: will be used for leaf-on limit check; might be folded into
+// nitrogen use too, if appropriate
 /*!
  * Calculate available nitrogen for this step
  *
- * Takes into account demand, fixation, and ...
+ * Takes into account demand, fixation, and...
  *
  * @return available nitrogen
  */
 double calcAvailableNitrogen(void);
-// ABOVE NOT USED YET
 
 /*!
- * Calculate plant N demand
+ * Calculate plant N demand from biomass creation fluxes
+ *
+ * @return Total nitrogen demand from plant growth
  */
 double calcPlantNDemand();
 
@@ -35,16 +38,17 @@ double calcMinNNonUptakeFluxes(void);
 double calcNFixationFrac(void);
 
 /*!
+ * Calculate all nitrogen fluxes
  *
+ * This is the general flux calculation wrapper for sipnet.c
  */
 void calcNitrogenFluxes(void);
 
 /*!
+ * Update all pools from nitrogen fluxes
  *
+ * This is the general pool update wrapper for sipnet.c
  */
 void updateNitrogenPools(void);
-
-// TEMP UNTIL REFACTOR COMPLETE
-void calcNFixationAndUptakeFluxes(void);
 
 #endif  // NITROGEN_H
