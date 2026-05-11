@@ -14,6 +14,27 @@ double calcAvailableNitrogen(void);
 // ABOVE NOT USED YET
 
 /*!
+ * Calculate plant N demand
+ */
+double calcPlantNDemand();
+
+/**
+ * Calculate all fluxes for soil mineral N EXCEPT uptake
+ *
+ * This is used to help determine N limitation as well as the final min N flux.
+ *
+ * @return Sum of non-uptake fluxes for soil mineral N
+ */
+double calcMinNNonUptakeFluxes(void);
+
+/**
+ * Calculate the N fixation fraction taking inhibition into account
+ *
+ * @return N fixation fraction used to compute amount of N fixation
+ */
+double calcNFixationFrac(void);
+
+/*!
  *
  */
 void calcNitrogenFluxes(void);
