@@ -171,8 +171,10 @@ int runTests() {
   initTestState();
   ctx.anaerobic = 1;  // req for nitrogenCycle
   ctx.nitrogenCycle = 1;
-  status |= checkCNRatio(calcSoilCN(), 7.5, "Soil C:N ratio");
-  status |= checkCNRatio(calcLitterCN(), 5.0, "Litter C:N ratio");
+  status |=
+      checkCNRatio(calcRatio(envi.soilC, envi.soilOrgN), 7.5, "Soil C:N ratio");
+  status |= checkCNRatio(calcRatio(envi.litterC, envi.litterN), 5.0,
+                         "Litter C:N ratio");
   status |=
       checkCNEffect(envi.soilC, envi.soilOrgN, 10.0 / 17.5, "Soil C:N effect");
   status |= checkCNEffect(envi.litterC, envi.litterN, 10.0 / 15.0,
