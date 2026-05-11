@@ -1309,6 +1309,10 @@ void calcLitterFluxes() {
 
     fluxes.rLitter = litterBreakdown * params.fracLitterRespired;
     fluxes.litterToSoil = litterBreakdown * (1.0 - params.fracLitterRespired);
+    if (ctx.carbonSaturation) {
+      // unstabilized carbon returns to litter pool from soil
+      fluxes.soilToLitter = envi.soilC / params.soilCSaturation;
+    }
   } else {
     // litterBreakdown = 0;
     fluxes.rLitter = 0;
@@ -1934,23 +1938,22 @@ void updateMainPools() {
  */
 void updatePoolsForSoil(void) {
   if (ctx.litterPool) {
-    // :: from [2], litter model description
-    envi.litterC +=
-        (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil -
-         fluxes.rLitter - fluxes.litterMethane) *
-        climate->length;
-
     if (ctx.carbonSaturation) {
+      envi.litterC +=
+          (fluxes.woodLitter + fluxes.leafLitter + fluxes.soilToLitter -
+           fluxes.litterToSoil - fluxes.rLitter - fluxes.litterMethane) *
+          climate->length;
       double soilInputs =
           fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
-      //
-      envi.soilC += (soilInputs * (1 - envi.soilC / params.soilCSaturation) -
-                     fluxes.rSoil - fluxes.soilMethane) *
+      envi.soilC += (soilInputs * (1 - fluxes.soilToLitter) - fluxes.rSoil -
+                     fluxes.soilMethane) *
                     climate->length;
-      // send unstabilized carbon back to litter pool
-      fluxes.soilToLitter = envi.soilC / params.soilCSaturation;
-      envi.litterC += fluxes.soilToLitter * climate->length;
     } else {
+      // :: from [2], litter model description
+      envi.litterC +=
+          (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil -
+           fluxes.rLitter - fluxes.litterMethane) *
+          climate->length;
       // from [2] and [3], litter and root terms respectively
       envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
                      fluxes.litterToSoil - fluxes.rSoil - fluxes.soilMethane) *
