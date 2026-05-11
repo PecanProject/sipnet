@@ -1,6 +1,7 @@
 #include "utils/tUtils.h"
 #include "sipnet/events.c"
 #include "sipnet/nitrogen.c"
+#include "sipnet/limitations.c"
 
 /////
 // Setup and general test state management
@@ -258,6 +259,11 @@ int checkFinalMinN(double initMinN, double expMinN) {
   return status;
 }
 
+void doNFixUpLimitCalcs(void) {
+  calcNFixationAndUptakeFluxes();
+  checkNitrogenLimitation();
+}
+
 int testNFixation(void) {
   int status = 0;
   double minN;
@@ -279,7 +285,7 @@ int testNFixation(void) {
   double nFixFrac = nFixFracMax * nFixInhib;
   expNFixation = nFixFrac * nDemand;
   expNUptake = (1 - nFixFrac) * nDemand;
-  calcNFixationAndUptakeFluxes();
+  doNFixUpLimitCalcs();
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
   expMinN = minN - expNUptake * climate->length;
@@ -295,7 +301,7 @@ int testNFixation(void) {
   nFixFrac = nFixFracMax * nFixInhib;
   expNFixation = nFixFrac * nDemand;
   expNUptake = (1 - nFixFrac) * nDemand;
-  calcNFixationAndUptakeFluxes();
+  doNFixUpLimitCalcs();
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
   expMinN = minN - expNUptake * climate->length;
@@ -312,7 +318,7 @@ int testNFixation(void) {
   nFixFrac = nFixFracMax * nFixInhib;
   expNFixation = nFixFrac * nDemand * red;
   expNUptake = (1 - nFixFrac) * nDemand * red;
-  calcNFixationAndUptakeFluxes();
+  doNFixUpLimitCalcs();
   status |= checkFlux(fluxes.nFixation, expNFixation, "N fixation");
   status |= checkFlux(fluxes.nUptake, expNUptake, "N uptake");
   expMinN = minN - expNUptake * climate->length;
@@ -325,7 +331,7 @@ int testNFixation(void) {
   nFixFracMax = 0.5;
   nFixHalved = 2;
   initNFixationState(minN, nFixFracMax, nFixHalved);
-  calcNFixationAndUptakeFluxes();
+  doNFixUpLimitCalcs();
   status |= checkFlux(fluxes.nFixation, 0, "N fixation");
   status |= checkFlux(fluxes.nUptake, 0, "N uptake");
   expMinN = 0;
@@ -370,7 +376,7 @@ int testNLimitation(void) {
   double reduction = 0.5;
   initNLimitationState(0.625, 0);
 
-  calcNFixationAndUptakeFluxes();
+  doNFixUpLimitCalcs();
 
   status |=
       checkNLimitationFlux(fluxes.leafCreation, 60 * reduction, "leafCreation");
@@ -387,7 +393,7 @@ int testNLimitation(void) {
   initNLimitationState(0.1, 0);
   fluxes.nMin = 12.0;
 
-  calcNFixationAndUptakeFluxes();
+  doNFixUpLimitCalcs();
   status |= checkNLimitationFlux(fluxes.leafCreation, 60,
                                  "[boosted nMin] leafCreation");
   status |= checkNLimitationFlux(fluxes.woodCreation, 500,
@@ -401,7 +407,7 @@ int testNLimitation(void) {
   double leafOnReduction = 0.5;
   initNLimitationState(0.75, leafOnInit);
 
-  calcNFixationAndUptakeFluxes();
+  doNFixUpLimitCalcs();
 
   status |=
       checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit * leafOnReduction,
