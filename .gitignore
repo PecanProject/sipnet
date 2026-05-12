@@ -46,6 +46,10 @@ tests/sipnet/test_restart_infrastructure/custom_events.out
 # test_sipnet_infrastructure generated files
 tests/sipnet/test_sipnet_infrastructure/format_check.out
 
+# sipnet-tools artifacts
+sipnet_tools.egg-info/
+tools/__pycache__/
+
 # System-specific files
 .DS_Store
 .Rproj.user

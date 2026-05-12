@@ -4,8 +4,8 @@
 
 #include "utils/tUtils.h"
 #include "common/logging.h"
-#include "sipnet/sipnet.c"
-#include "sipnet/events.c"
+// #include "sipnet/sipnet.c"
+#include "utils/helpers.c"
 
 void init(void) {
   // Values here don't matter, just want to make sure they are initialized to
@@ -51,11 +51,6 @@ void init(void) {
   climate2->nextClim = climate3;
   climate1->nextClim = climate2;
   climate = climate1;
-}
-
-void procEvents() {
-  processEvents();
-  updatePoolsForEvents();
 }
 
 void runLoc(void) {

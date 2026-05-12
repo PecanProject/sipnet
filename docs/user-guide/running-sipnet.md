@@ -27,7 +27,7 @@ When the same option is specified in both places, **command-line arguments take 
 | Option             | Short | Argument   | Default     | Description                                                                                |
 |--------------------|-------|------------|-------------|--------------------------------------------------------------------------------------------|
 | `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
-| `--file-name`      | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
+| `--file-prefix`    | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
 | `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
 | `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
 | `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |
@@ -63,9 +63,9 @@ These flags control what outputs are generated. Prepend `no-` to disable (e.g., 
 
 | Flag                  | Default | Description                                                                     |
 | --------------------- | ------- | ------------------------------------------------------------------------------- |
-| `--do-main-output`    | ON (1)  | Write time series of all output variables to `<file-name>.out`                  |
-| `--do-single-outputs` | OFF (0) | Write selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) to separate files (e.g., `<file-name>.NEE`) |
-| `--dump-config`       | OFF (0) | Write final merged configuration to `<file-name>.config` after running          |
+| `--do-main-output`    | ON (1)  | Write time series of all output variables to `<file-prefix>.out`                |
+| `--do-single-outputs` | OFF (0) | Write selected outputs only (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) to separate files (e.g., `<file-prefix>.NEE`) |
+| `--dump-config`       | OFF (0) | Write final merged configuration to `<file-prefix>.config` after running        |
 | `--print-header`      | ON (1)  | Print header row with variable names in output files                            |
 | `--quiet`             | OFF (0) | Suppress informational and warning messages to console                          |
 
@@ -75,6 +75,14 @@ These flags control what outputs are generated. Prepend `no-` to disable (e.g., 
 | ----------- | ----- | ----------------------------- |
 | `--help`    | `-h`  | Print help message and exit   |
 | `--version` | `-v`  | Print SIPNET version and exit |
+
+### Deprecated Options
+
+These options are kept for backward compatibility. Avoid using them in new configurations.
+
+| Option        | Short | Argument | Default  | Replaces        | Description                          |
+|---------------|-------|----------|----------|-----------------|--------------------------------------|
+| `--file-name` |       | `<name>` | `sipnet` | `--file-prefix` | Deprecated alias for `--file-prefix` |
 
 ## Configuration Files
 
@@ -97,11 +105,11 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 | Key               | Value Type | Description                                                               |
 | ----------------- | ---------- | ------------------------------------------------------------------------- |
 | `INPUT_FILE`      | string     | Name of configuration file to read                                        |
-| `FILE_NAME`       | string     | Prefix for climate and parameter input files                              |
-| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_NAME>.param`) |
-| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_NAME>.clim`)           |
-| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_NAME>.out`)       |
-| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_NAME>.config`)    |
+| `FILE_PREFIX`     | string     | Prefix for climate and parameter input files                                |
+| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`) |
+| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)           |
+| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)       |
+| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)    |
 | `EVENTS_PREFIX`   | string     | Prefix used to derive events input and output filenames                     |
 | `RESTART_IN`      | string     | Path to checkpoint to resume from                                         |
 | `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                 |
@@ -137,7 +145,7 @@ Here's an example `sipnet.in` configuration file:
 
 ```
 # Input files
-FILE_NAME my_site
+FILE_PREFIX my_site
 PARAM_FILE ../inputs/my_site.param
 CLIM_FILE  ../inputs/my_site.clim
 
@@ -177,7 +185,7 @@ SIPNET applies configuration in this order (later values override earlier ones):
 Given this configuration file (`sipnet.in`):
 
 ```
-FILE_NAME base_site
+FILE_PREFIX base_site
 EVENTS 1
 LITTER_POOL 0
 ```
@@ -185,14 +193,14 @@ LITTER_POOL 0
 Running with command-line overrides:
 
 ```bash
-./sipnet --file-name override_site --no-events
+./sipnet --file-prefix override_site --no-events
 ```
 
 Results in:
 
 | Option        | Source       | Value                                                      |
 | ------------- | ------------ | ---------------------------------------------------------- |
-| `file-name`   | Command line | `override_site`                                            |
+| `file-prefix` | Command line | `override_site`                                            |
 | `events`      | Command line | OFF (0) — `--no-events` overrides config file's `EVENTS 1` |
 | `litter-pool` | Config file  | OFF (0) — not overridden                                   |
 
@@ -206,7 +214,7 @@ SIPNET supports two phenology models: GDD-based (growing degree days) and soil-t
 
 **Create configuration** (`phenology_test.in`):
 ```
-FILE_NAME my_site
+FILE_PREFIX my_site
 GDD 1
 SOIL_PHENOL 0
 DO_MAIN_OUTPUT 1
@@ -230,12 +238,12 @@ To test how model results change with different parameter values, run the same c
 
 **For low photosynthesis** (edit `my_site.param`, set `aMax 50`):
 ```bash
-./sipnet --file-name my_site
+./sipnet --file-prefix my_site
 ```
 
 **For high photosynthesis** (edit `my_site.param`, set `aMax 150`):
 ```bash
-./sipnet --file-name my_site
+./sipnet --file-prefix my_site
 ```
 
 Compare GPP and NEE in the output files to understand parameter sensitivity.
@@ -267,7 +275,7 @@ SIPNET generates output files based on your configuration:
 
 ### Main Output File
 
-**Filename**: `<file-name>.out` (if `--do-main-output` is enabled, which is default)
+**Filename**: `<file-prefix>.out` (if `--do-main-output` is enabled, which is default)
 
 This file contains time-series data with one row per time step and one column per output variable. If `--print-header` is enabled, the first row contains variable names.
 
@@ -283,13 +291,13 @@ year day time plantWoodC plantLeafC woodCreation soil ...
 
 ### Per-Variable Output Files
 
-**Filename pattern**: `<file-name>.<VARIABLE>`  (if `--do-single-outputs` is enabled)
+**Filename pattern**: `<file-prefix>.<VARIABLE>`  (if `--do-single-outputs` is enabled)
 
 Only these selected outputs are written to separate files: `NEE`, `NEE_cum`, `GPP`, `GPP_cum`.
 
 ### Configuration Dump File
 
-**Filename**: `<file-name>.config` (if `--dump-config` is enabled)
+**Filename**: `<file-prefix>.config` (if `--dump-config` is enabled)
 
 Shows the final merged configuration after applying all defaults, config file, and command-line options. Useful for:
 - Reproducing a run exactly
@@ -302,7 +310,7 @@ Example:
 EVENTS 1
 GDD 1
 GROWTH_RESP 0
-FILE_NAME my_site
+FILE_PREFIX my_site
 PARAM_FILE my_site.param
 CLIM_FILE my_site.clim
 ...

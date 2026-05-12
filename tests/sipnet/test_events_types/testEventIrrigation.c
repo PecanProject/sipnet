@@ -3,8 +3,7 @@
 #include <stdlib.h>
 
 #include "utils/tUtils.h"
-
-#include "typesUtils.h"
+#include "utils/helpers.c"
 
 int checkOutput(double soilWater, double eventEvap) {
   int status = 0;
