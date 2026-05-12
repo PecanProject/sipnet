@@ -24,7 +24,7 @@ This document provides an overview of the SIPNET model’s structure. It was wri
 - Focus on features currently in regular use.
 
 There are multiple ways to configure the model structure, and not all model structures or components are listed.
-Implementation in source code (sipnet.c) is annotated with references to specific publications.
+Implementation in source code is annotated with references to specific publications.
 
 #### Notes on notation:
 
@@ -1174,7 +1174,7 @@ nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter 
 **Event parameters:**
 
 | Parameter | Value                | Description       |
-|-----------|----------------------|-------------------|
+| --------- | -------------------- | ----------------- |
 | Year      | integer              | Year              |
 | Day       | integer              | Day of year       |
 | Type      | `leafon` / `leafoff` | The type of event |
