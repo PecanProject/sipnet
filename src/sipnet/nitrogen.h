@@ -19,7 +19,7 @@ double calcAvailableNitrogen(void);
  *
  * @return Total nitrogen demand from plant growth
  */
-double calcPlantNDemand();
+double calcPlantNDemand(void);
 
 /**
  * Calculate all fluxes for soil mineral N EXCEPT uptake

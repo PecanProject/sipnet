@@ -9,7 +9,10 @@
 #include "nitrogen.h"
 #include "state.h"
 
-void checkNitrogenLimitation(void) {
+/**
+ * Check for nitrogen limitation, and reduce growth if needed
+ */
+static void checkNitrogenLimitation(void) {
   // First, determine if we are in a nitrogen-limited situation
   double maxDemandFlux = calcPlantNDemand();
   double maxDemand = maxDemandFlux * climate->length;
@@ -41,7 +44,8 @@ void checkNitrogenLimitation(void) {
   }
 }
 
-void checkLimitations() {
+// See limitations.h
+void checkLimitations(void) {
   // EXPECTED: calcLeafOnLimitation()
 
   if (ctx.nitrogenCycle) {

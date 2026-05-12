@@ -12,7 +12,7 @@
 /*!
  * Calculate mineral N volatilization flux
  */
-void calcNVolatilizationFlux(void) {
+static void calcNVolatilizationFlux(void) {
   // flux = k_vol * nMin * Dtemp * Dwater
   // Note k_vol is in units of day^-1, so we do not need to divide
   // by climate length to make this a flux
@@ -27,7 +27,7 @@ void calcNVolatilizationFlux(void) {
 /*!
  * Calculate mineral N leaching flux
  */
-void calcNLeachingFlux(void) {
+static void calcNLeachingFlux(void) {
   double phi;
   // phi is (drainage / soilWHC) between 0 and 1
   if ((fluxes.drainage / params.soilWHC) < 1) {
@@ -40,9 +40,9 @@ void calcNLeachingFlux(void) {
 }
 
 /*!
- * Calculate plant N fixation and uptake fluxes, checking for N limitation
+ * Calculate plant N fixation and uptake fluxes
  */
-void calcNFixationAndUptakeFluxes(void) {
+static void calcNFixationAndUptakeFluxes(void) {
   // These values may change later if we are under nitrogen limitation
   double nDemandFlux = calcPlantNDemand();
   double nFixationFrac = calcNFixationFrac();
@@ -54,7 +54,7 @@ void calcNFixationAndUptakeFluxes(void) {
 /**
  * Calculate nitrogen fluxes for soil and litter pools
  */
-void calcNPoolFluxes(void) {
+static void calcNPoolFluxes(void) {
   // C:N ratios for litter and soil, needed in most of the succeeding calcs
   double litterCN = calcRatio(envi.litterC, envi.litterN);
   double soilCN = calcRatio(envi.soilC, envi.soilOrgN);
@@ -85,7 +85,7 @@ void calcNPoolFluxes(void) {
 }
 
 // see nitrogen.h
-double calcPlantNDemand() {
+double calcPlantNDemand(void) {
   if (!ctx.nitrogenCycle) {
     return 0.0;
   }
