@@ -84,6 +84,23 @@ static void calcNPoolFluxes(void) {
   fluxes.nMin = litterMin + soilMin;
 }
 
+/**
+ * Sum all mineral N fluxes for this time step
+ */
+static double calcMinNFluxes(void) {
+  return calcMinNNonUptakeFluxes() - fluxes.nUptake;
+}
+
+// see nitrogen.h
+double calcAvailableNitrogen(void) {
+  // Return "available nitrogen", which is mineral N +/- relevant fluxes
+  // from this time step.
+  double availableN = envi.minN;
+  double minNDelta = calcMinNFluxes() * climate->length;
+
+  return availableN + minNDelta;
+}
+
 // see nitrogen.h
 double calcPlantNDemand(void) {
   if (!ctx.nitrogenCycle) {
@@ -128,12 +145,6 @@ double calcNFixationFrac(void) {
   // Calculate fraction of plant N demand met by fixation
   // dimensionless
   return params.nFixationFracMax * nFixationInhibition;
-}
-
-// see nitrogen.h
-double calcAvailableNitrogen(void) {
-  // NOT USED YET
-  return 0.0;
 }
 
 // see nitrogen.h

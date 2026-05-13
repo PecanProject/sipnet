@@ -10,6 +10,68 @@
 #include "state.h"
 
 /**
+ * Check for carbon and nitrogen limitations for leaf-on events
+ */
+static void checkLeafOnLimitation(void) {
+  // Leaf on events are limited by:
+  // * leafGrowth parameter (this is already calculated)
+  // * available carbon
+  // * available nitrogen
+  double leafOnFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
+  double leafOnCDemand = leafOnFlux * climate->length;
+  double leafOnNDemand = 0.0;
+  double nLimitation = 1.0;
+  double availableN = 0.0;
+
+  if (leafOnCDemand < TINY) {
+    // Nothing to check
+    return;
+  }
+
+  // First up, carbon. We do not draw from the storage pool for this.
+  double availableC = envi.plantWoodC + envi.coarseRootC;
+  double cLimitation = (availableC > TINY) ? (availableC / leafOnCDemand) : 0;
+
+  // Next, nitrogen. This one is a little trickier, as 'available nitrogen' is
+  // harder to calculate (but we defer that to the nitrogen module).
+  if (ctx.nitrogenCycle) {
+    // Needed N for this transfer is (what leaves need) - (what wood provides)
+    // Reminder: both wood and coarseRoot use params.woodCN
+    leafOnNDemand =
+        leafOnCDemand / params.leafCN - leafOnCDemand / params.woodCN;
+    availableN = calcAvailableNitrogen();
+    nLimitation = (availableN > TINY) ? (availableN / leafOnNDemand) : 0;
+  }
+  double limitation = fmin(cLimitation, nLimitation);
+  limitation = fmax(fmin(limitation, 1.0), 0.0);
+
+  if (limitation < 1) {
+    if (ctx.nitrogenCycle) {
+      logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f and N "
+              "%.4f, "
+              "reducing leaf on by %.2f%% on year %d day %d time %.3f\n",
+              leafOnCDemand, leafOnNDemand, availableC, availableN,
+              (1 - limitation) * 100, climate->year, climate->day,
+              climate->time);
+      logInfo("envi.minN %.3f fluxes.nMin %.3f fluxes.nVol %.3f fluxes.nLeach "
+              "%.3f fluxes.nFix %.3f fluxes.nUptake %.3f\n",
+              envi.minN, fluxes.nMin * climate->length,
+              fluxes.nVolatilization * climate->length,
+              fluxes.nLeaching * climate->length,
+              fluxes.nFixation * climate->length,
+              fluxes.nUptake * climate->length);
+    } else {
+      logInfo("Leaf on creation %.4f exceeds available C %.4f, "
+              "reducing leaf on by %.2f%% on year %d day %d time %.3f\n",
+              leafOnCDemand, availableC, (1 - limitation) * 100, climate->year,
+              climate->day, climate->time);
+    }
+    fluxes.leafOnCreation *= limitation;
+    fluxes.eventLeafOnCreation *= limitation;
+  }
+}
+
+/**
  * Check for nitrogen limitation, and reduce growth if needed
  */
 static void checkNitrogenLimitation(void) {
@@ -46,7 +108,10 @@ static void checkNitrogenLimitation(void) {
 
 // See limitations.h
 void checkLimitations(void) {
-  // EXPECTED: calcLeafOnLimitation()
+
+  // First up - leaf on. This should be before the nitrogen limitation check,
+  // as the two are not independent.
+  checkLeafOnLimitation();
 
   if (ctx.nitrogenCycle) {
     checkNitrogenLimitation();

@@ -3,12 +3,12 @@
 
 // Nitrogen cycle related functions
 
-// TBD: will be used for leaf-on limit check; might be folded into
-// nitrogen use too, if appropriate
 /*!
  * Calculate available nitrogen for this step
  *
  * Takes into account demand, fixation, and...
+ *
+ * This function should only be called AFTER fluxes are calculated
  *
  * @return available nitrogen
  */
