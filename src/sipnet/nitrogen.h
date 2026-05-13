@@ -6,7 +6,10 @@
 /*!
  * Calculate available nitrogen for this step
  *
- * Takes into account demand, fixation, and...
+ * Calculate available nitrogen as mineral N pool plus relevant fluxes:
+ * - mineralization
+ * - leaching
+ * - volatilization
  *
  * This function should only be called AFTER fluxes are calculated
  *
@@ -36,6 +39,13 @@ double calcMinNNonUptakeFluxes(void);
  * @return N fixation fraction used to compute amount of N fixation
  */
 double calcNFixationFrac(void);
+
+/*!
+ * Calculate plant N fixation and uptake fluxes.
+ *
+ * This function is called directly by the leaf-on limitation check
+ */
+void calcNFixationAndUptakeFluxes(void);
 
 /*!
  * Calculate all nitrogen fluxes

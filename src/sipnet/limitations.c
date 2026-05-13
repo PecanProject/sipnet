@@ -39,15 +39,22 @@ static void checkLeafOnLimitation(void) {
     // Reminder: both wood and coarseRoot use params.woodCN
     leafOnNDemand =
         leafOnCDemand / params.leafCN - leafOnCDemand / params.woodCN;
-    availableN = calcAvailableNitrogen();
+    double minNFluxes = calcMinNNonUptakeFluxes() + fluxes.eventMinN;
+    availableN = envi.minN + minNFluxes * climate->length;
     nLimitation = (availableN > TINY) ? (availableN / leafOnNDemand) : 0;
   }
   double limitation = fmin(cLimitation, nLimitation);
   limitation = fmax(fmin(limitation, 1.0), 0.0);
 
   if (limitation < 1) {
+    fluxes.leafOnCreation *= limitation;
+    fluxes.eventLeafOnCreation *= limitation;
     if (ctx.nitrogenCycle) {
-      logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f and N "
+      // We need to recalculate fixation and uptake since the demand has now
+      // changed
+      calcNFixationAndUptakeFluxes();
+
+      logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f / N "
               "%.4f, "
               "reducing leaf on by %.2f%% on year %d day %d time %.3f\n",
               leafOnCDemand, leafOnNDemand, availableC, availableN,
@@ -66,8 +73,6 @@ static void checkLeafOnLimitation(void) {
               leafOnCDemand, availableC, (1 - limitation) * 100, climate->year,
               climate->day, climate->time);
     }
-    fluxes.leafOnCreation *= limitation;
-    fluxes.eventLeafOnCreation *= limitation;
   }
 }
 

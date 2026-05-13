@@ -39,18 +39,6 @@ static void calcNLeachingFlux(void) {
   fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
 }
 
-/*!
- * Calculate plant N fixation and uptake fluxes
- */
-static void calcNFixationAndUptakeFluxes(void) {
-  // These values may change later if we are under nitrogen limitation
-  double nDemandFlux = calcPlantNDemand();
-  double nFixationFrac = calcNFixationFrac();
-
-  fluxes.nFixation = nFixationFrac * nDemandFlux;
-  fluxes.nUptake = (1 - nFixationFrac) * nDemandFlux;
-}
-
 /**
  * Calculate nitrogen fluxes for soil and litter pools
  */
@@ -84,19 +72,12 @@ static void calcNPoolFluxes(void) {
   fluxes.nMin = litterMin + soilMin;
 }
 
-/**
- * Sum all mineral N fluxes for this time step
- */
-static double calcMinNFluxes(void) {
-  return calcMinNNonUptakeFluxes() - fluxes.nUptake;
-}
-
 // see nitrogen.h
 double calcAvailableNitrogen(void) {
   // Return "available nitrogen", which is mineral N +/- relevant fluxes
   // from this time step.
   double availableN = envi.minN;
-  double minNDelta = calcMinNFluxes() * climate->length;
+  double minNDelta = calcMinNNonUptakeFluxes() * climate->length;
 
   return availableN + minNDelta;
 }
@@ -145,6 +126,16 @@ double calcNFixationFrac(void) {
   // Calculate fraction of plant N demand met by fixation
   // dimensionless
   return params.nFixationFracMax * nFixationInhibition;
+}
+
+// See nitrogen.h
+void calcNFixationAndUptakeFluxes(void) {
+  // These values may change later if we are under nitrogen limitation
+  double nDemandFlux = calcPlantNDemand();
+  double nFixationFrac = calcNFixationFrac();
+
+  fluxes.nFixation = nFixationFrac * nDemandFlux;
+  fluxes.nUptake = (1 - nFixationFrac) * nDemandFlux;
 }
 
 // see nitrogen.h
