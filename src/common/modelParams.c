@@ -1,12 +1,12 @@
+#include "modelParams.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "common/context.h"
-
+#include "context.h"
 #include "exitCodes.h"
 #include "logging.h"
-#include "modelParams.h"
 #include "util.h"
 
 // Private/helper functions: not defined in modelParams.h
@@ -27,6 +27,25 @@ void setAll(double *array, int length, double value) {
 
   for (i = 0; i < length; i++) {
     array[i] = value;
+  }
+}
+
+DefaultParameter defaultParams[] = {{"leafOnReallocFrac", 0.20}};
+#define NUM_DEFAULT_PARAMS (sizeof(defaultParams) / sizeof(DefaultParameter))
+
+void populateDefaultParams(ModelParams *modelParams) {
+  for (int index = 0; index < NUM_DEFAULT_PARAMS; index++) {
+    char *paramName = defaultParams[index].name;
+    double defaultValue = defaultParams[index].defaultValue;
+    int paramIndex = locateParam(modelParams, paramName);
+    if (paramIndex < 0) {
+      logError("Default parameter %s not found in modelParams\n", paramName);
+      exit(EXIT_CODE_INTERNAL_ERROR);
+    }
+    if (!valueSet(modelParams, paramIndex)) {
+      *modelParams->params[paramIndex].value = defaultValue;
+      modelParams->params[paramIndex].isRead = 1;
+    }
   }
 }
 
@@ -226,6 +245,7 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
     exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
   }
 
+  populateDefaultParams(modelParams);
   checkAllRead(modelParams);  // terminate program if some required parameters
                               // weren't read
 }  // readModelParams
