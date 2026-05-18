@@ -363,6 +363,12 @@ typedef struct Parameters {
   // g N * m^-2 ground area
   double halfNFixationMax;
 
+  // Fraction of wood and coarse root C available for leaf-on reallocation
+  double leafOnReallocFrac;
+
+  // Fraction of senescing leaf N resorbed to plant N storage pool
+  double leafNResorptionFrac;
+
   // ******
   // New moisture dependency functions
   // ******
@@ -427,6 +433,11 @@ typedef struct Environment {
   double soilOrgN;
   // litter (organic) nitrogen pool (g N m^-2 ground area)
   double litterN;
+  // N storage pool, populated by resorption of nitrogen in leaf-off
+  // Primarily for satisfying leaf-on events, but available for general
+  // needs
+  // g N * m^-2 ground area
+  double plantStorageN;
 
   ///// New to SIPNET in v2.1
   // Carbon gains from photosynthesis and losses to respiration don't affect the

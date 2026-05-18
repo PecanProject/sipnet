@@ -376,6 +376,8 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nFixationFracMax", &(params.nFixationFracMax), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "halfNFixationMax", &(params.halfNFixationMax), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "leafOnReallocFrac", &(params.leafOnReallocFrac), 1);
+  initializeOneModelParam(modelParams, "leafNResorptionFrac", &(params.leafNResorptionFrac), ctx.nitrogenCycle);
 
   // New moisture dependency params
   initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobic || ctx.nitrogenCycle);
