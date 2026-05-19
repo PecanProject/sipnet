@@ -32,11 +32,6 @@ typedef struct ModelParamsStruct {
                      // later)
 } ModelParams;
 
-typedef struct {
-  char name[MODEL_PARAM_MAXNAME];
-  double defaultValue;
-} DefaultParameter;
-
 // allocate space for a new spatialParams structure, return a pointer to it
 ModelParams *newModelParams(int maxParameters);
 

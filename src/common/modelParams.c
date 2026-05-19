@@ -30,25 +30,6 @@ void setAll(double *array, int length, double value) {
   }
 }
 
-DefaultParameter defaultParams[] = {{"leafOnReallocFrac", 0.20}};
-#define NUM_DEFAULT_PARAMS (sizeof(defaultParams) / sizeof(DefaultParameter))
-
-void populateDefaultParams(ModelParams *modelParams) {
-  for (int index = 0; index < NUM_DEFAULT_PARAMS; index++) {
-    char *paramName = defaultParams[index].name;
-    double defaultValue = defaultParams[index].defaultValue;
-    int paramIndex = locateParam(modelParams, paramName);
-    if (paramIndex < 0) {
-      logError("Default parameter %s not found in modelParams\n", paramName);
-      exit(EXIT_CODE_INTERNAL_ERROR);
-    }
-    if (!valueSet(modelParams, paramIndex)) {
-      *modelParams->params[paramIndex].value = defaultValue;
-      modelParams->params[paramIndex].isRead = 1;
-    }
-  }
-}
-
 // Checks to make sure that all parameters with isRequired=true have been read
 // If not, kills program
 // Writes out names of all parameters that weren't read (even if not required)
@@ -245,7 +226,6 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
     exit(EXIT_CODE_FILE_OPEN_OR_READ_ERROR);
   }
 
-  populateDefaultParams(modelParams);
   checkAllRead(modelParams);  // terminate program if some required parameters
                               // weren't read
 }  // readModelParams
