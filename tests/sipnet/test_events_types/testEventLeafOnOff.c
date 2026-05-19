@@ -152,7 +152,8 @@ int run(void) {
   logTest("Testing C-limited leaf-on event\n");
   // leafGrowth=3.0, leafOnReallocFrac=0.5, woodC=1.0
   // availableC = woodC * leafOnReallocFrac = 0.5 < leafGrowth=3.0
-  // cRatio = 0.5/3.0 -> transferred = leafGrowth * (availableC/leafGrowth) = availableC = 0.5
+  // cRatio = 0.5/3.0 -> transferred = leafGrowth * (availableC/leafGrowth) =
+  // availableC = 0.5
   updateIntContext("litterPool", 1, CTX_TEST);
   initEnv(1.0, 0.0);
   resetFluxes();
@@ -197,8 +198,9 @@ int run(void) {
   //// LEAF-OFF N RESORPTION TEST
   logTest("Testing leaf-off N resorption updates plantStorageN\n");
   // leafOff = 10.0 * 0.5 = 5.0; leafN = 5.0/30.0
-  // leafNResorption = leafN * leafNResorptionFrac; litterNAdd = leafN - resorption
-  // After event: plantStorageN += leafNResorption, litterN += litterNAdd
+  // leafNResorption = leafN * leafNResorptionFrac; litterNAdd = leafN -
+  // resorption After event: plantStorageN += leafNResorption, litterN +=
+  // litterNAdd
   updateIntContext("litterPool", 1, CTX_TEST);
   updateIntContext("anaerobic", 1, CTX_TEST);
   updateIntContext("waterHResp", 1, CTX_TEST);

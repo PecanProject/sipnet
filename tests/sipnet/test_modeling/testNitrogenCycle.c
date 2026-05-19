@@ -483,7 +483,8 @@ int testOrganicNWithResorption(void) {
   // Same setup as testOrganicN but with non-zero leafOffNResorption.
   // Without resorption nOrgLitter = 0 (from testOrganicN).
   // With leafOffNResorption=0.5 subtracted:
-  //   nOrgLitter = leafLitter/leafCN - 0.5 + woodLitter/woodCN - litterMin - litterToSoil/litterCN
+  //   nOrgLitter = leafLitter/leafCN - 0.5 + woodLitter/woodCN - litterMin -
+  //   litterToSoil/litterCN
   //              = 1 - 0.5 + 1 - 1 - 1 = -0.5
   initOrganicNState(2.0, 3.0);
   fluxes.leafOffNResorption = 0.5;
@@ -506,7 +507,8 @@ int testNLimitationWithStorage(void) {
   // adding plantStorageN = minN removes the limitation entirely.
   // maxDemandFlux = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
   // With minN=0.625 alone: availableMinN=0.625 -> reduction=0.5
-  // With minN=0.625 + plantStorageN=0.625: availableMinN=1.25 >= maxUptake -> no limit
+  // With minN=0.625 + plantStorageN=0.625: availableMinN=1.25 >= maxUptake ->
+  // no limit
   initNLimitationState(0.625, 0);
   envi.plantStorageN = 0.625;
 
