@@ -753,7 +753,7 @@ int pastLeafFall(void) {
  * @param[out] leafCreation (g C/m^2 ground/day)
  * @param[out] leafOnCreation (g C/m^2 ground/day)
  * @param[out] leafLitter (g C/m^2 ground/day)
- * @param[out] leafOffNResorption (g C/m^2 ground/day)
+ * @param[out] leafOffNResorption (g N/m^2 ground/day)
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
 void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
