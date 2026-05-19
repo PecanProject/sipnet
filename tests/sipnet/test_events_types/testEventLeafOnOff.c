@@ -48,6 +48,7 @@ void initEnv(double woodC, double leafC) {
   envi.litterC = 0.0;
   envi.soilC = 0.0;
   envi.litterN = 0.0;
+  envi.plantStorageN = 0.0;
 }
 
 int run(void) {
@@ -63,6 +64,7 @@ int run(void) {
   params.leafCN = 30.0;
   params.leafOnDay = 0;
   params.leafOffDay = 0;
+  params.leafOnReallocFrac = 0.5;
 
   //// ONE LEAFON EVENT
   logTest("Testing one leafon event\n");
