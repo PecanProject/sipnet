@@ -611,12 +611,6 @@ typedef struct FluxVars {
   // Methane produced from litter
   double litterMethane;
 
-  // ****************************************
-  // Soil carbon saturation
-
-  // unstabilized soil C that exceeds soil C saturation threshold gets sent back
-  // to litter C pool as a fast-turnover pool (g C * m^-2 ground area * day^-1)
-  double soilToLitter;
 } Fluxes;
 
 // Global var
