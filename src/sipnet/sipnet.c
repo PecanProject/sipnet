@@ -368,6 +368,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "soilOrgNInit", &(params.soilOrgNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "litterOrgNInit", &(params.litterOrgNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "plantStorageNInit", &(params.plantStorageNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "leafCN", &(params.leafCN), ctx.nitrogenCycle);
@@ -433,9 +434,10 @@ void outputHeader(FILE *out) {
   fprintf(out, "litter  soilWater soilWetnessFrac     snow      ");
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
-  fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN       n2o "
-               "nLeaching  nFixation  nUptake      ch4  nppStorage  bcdeltaC  "
-               "bcdeltaN\n");
+  fprintf(out,
+          "fluxestranspiration     minN  soilOrgN    litterN  "
+          "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
+          "nppStorage\n");
 }
 /*!
  * Print current state values to output file
@@ -459,12 +461,12 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
-  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %9.4f %10.4f %8.4f %8.4f",
-          fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
-          trackers.n2o, trackers.nLeaching, trackers.nFixation,
-          trackers.nUptake, trackers.methane);
-  fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
-          balanceTracker.deltaC, balanceTracker.deltaN);
+  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %14.4f ", fluxes.transpiration,
+          envi.minN, envi.soilOrgN, envi.litterN, envi.plantStorageN);
+  fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
+          trackers.nLeaching, trackers.nFixation, trackers.nUptake,
+          trackers.methane);
+  fprintf(out, "%12.4f\n", envi.plantWoodCStorageDelta);
 }
 
 // de-allocate space used for climate linked list
@@ -751,10 +753,12 @@ int pastLeafFall(void) {
  * @param[out] leafCreation (g C/m^2 ground/day)
  * @param[out] leafOnCreation (g C/m^2 ground/day)
  * @param[out] leafLitter (g C/m^2 ground/day)
+ * @param[out] leafOffNResorption (g C/m^2 ground/day)
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
 void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
-                    double *leafLitter, double plantLeafC) {
+                    double *leafLitter, double *leafOffNResorption,
+                    double plantLeafC) {
   // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
   // [1]: growing season boundary effects, but modified to be partial growth
@@ -791,6 +795,7 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
   if (!phenologyTrackers.didLeafGrowth && pastLeafGrowth()) {
     // we just reached the start of the growing season
     double leafOn = (params.leafGrowth / climate->length);
+    checkLeafOnLimitation(&leafOn);
     *leafOnCreation += leafOn;
     phenologyTrackers.didLeafGrowth = 1;
     // This is a computed event - however, the value may get reduced by
@@ -807,8 +812,14 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
     *leafLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
     if (leafOff > TINY && ctx.events) {
-      writeComputedEventOut(climate->year, climate->day, "leafoff", 1,
-                            "fluxes.leafLitter", leafOff);
+      double nResorp = 0.0;
+      if (ctx.nitrogenCycle) {
+        nResorp = params.leafNResorptionFrac * leafOff / params.leafCN;
+        *leafOffNResorption += nResorp;
+      }
+      writeComputedEventOut(climate->year, climate->day, "leafoff", 2,
+                            "fluxes.leafLitter", leafOff,
+                            "fluxes.leafOffNResorption", nResorp);
     }
   }
 }
@@ -1273,7 +1284,8 @@ void calculateFluxes(void) {
 
   // Leaf creation and litter
   calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafOnCreation),
-                 &(fluxes.leafLitter), envi.plantLeafC);
+                 &(fluxes.leafLitter), &(fluxes.leafOffNResorption),
+                 envi.plantLeafC);
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
@@ -1784,6 +1796,7 @@ void setupModel(void) {
     envi.minN = params.minNInit;
     envi.soilOrgN = params.soilOrgNInit;
     envi.litterN = params.litterOrgNInit;
+    envi.plantStorageN = params.plantStorageNInit;
   } else {
     envi.minN = 0.0;
     envi.soilOrgN = 0.0;

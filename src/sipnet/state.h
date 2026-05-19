@@ -337,6 +337,10 @@ typedef struct Parameters {
   // Initial litter organic nitrogen pool amount, g N * m^-2 ground area
   double litterOrgNInit;
 
+  // Initial stored plant N available for growth (esp. leaf on)
+  // g N * m^-2 ground area
+  double plantStorageNInit;
+
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
@@ -565,6 +569,9 @@ typedef struct FluxVars {
   // g N * m^-2 ground area * day^-1
   double nUptake;
 
+  // Plant N stored in a leaf-off event
+  double leafOffNResorption;
+
   // ****************************************
   // Fluxes for event handling
   //  - event fluxes tracked as part of modeling from [4]
@@ -605,6 +612,8 @@ typedef struct FluxVars {
   double eventLeafOnCreation;
   // Transfer from leafC to soil/litter from a leaf-off event
   double eventLeafOffLitter;
+  // Resorption of leaf N from a leaf-off event
+  double eventLeafOffNResorption;
 
   // ****************************************
   // Methane production

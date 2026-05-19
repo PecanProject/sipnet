@@ -54,9 +54,10 @@ static void calcNPoolFluxes(void) {
 
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
-  // litter, and N loss due to mineralization. N added via fertilization
-  // is handled elsewhere.
-  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
+  // litter (modified by leaf N resorption), and N loss due to mineralization.
+  // N added via fertilization is handled elsewhere.
+  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN -
+                      fluxes.leafOffNResorption +
                       fluxes.woodLitter / params.woodCN - litterMin -
                       fluxes.litterToSoil / litterCN;
 
@@ -152,10 +153,18 @@ void updateNitrogenPools(void) {
   // :: from [5], nitrogen cycle model
   // TBD: add equation numbers once published
 
-  // Soil mineral N (note we have one mineral pool for soil+litter)
+  // Plant uptake is first taken from plantStorageN
+  double uptake = fluxes.nUptake * climate->length;
+  double uptakeFromStorage = fmin(uptake, envi.plantStorageN);
+  envi.plantStorageN +=
+      fluxes.leafOffNResorption * climate->length - uptakeFromStorage;
+
+  // Unmet uptake plus other fluxes go to soil mineral N (note we have one
+  // mineral pool for soil+litter).
   // Mineral N additions from fertilization are handled with the events
+  double uptakeFromMinN = uptake - uptakeFromStorage;
   double nonUptakeFluxes = calcMinNNonUptakeFluxes();
-  envi.minN += (nonUptakeFluxes - fluxes.nUptake) * climate->length;
+  envi.minN += nonUptakeFluxes * climate->length - uptakeFromMinN;
 
   // Soil organic N
   envi.soilOrgN += fluxes.nOrgSoil * climate->length;
