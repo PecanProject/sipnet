@@ -43,6 +43,9 @@ void resetState() {
   params.halfNFixationMax = 0;
   fluxes.nFixation = 0;
   fluxes.nUptake = 0;
+  // Plant storage N and leaf-off resorption flux (new in SIP336)
+  envi.plantStorageN = 0.0;
+  fluxes.leafOffNResorption = 0.0;
 }
 
 void setupTests(void) {
@@ -471,6 +474,108 @@ int testOrganicN(void) {
   return status;
 }
 
+/////
+// Organic N with leafOffNResorption
+int testOrganicNWithResorption(void) {
+  int status = 0;
+  logTest("Running testOrganicNWithResorption\n");
+
+  // Same setup as testOrganicN but with non-zero leafOffNResorption.
+  // Without resorption nOrgLitter = 0 (from testOrganicN).
+  // With leafOffNResorption=0.5 subtracted:
+  //   nOrgLitter = leafLitter/leafCN - 0.5 + woodLitter/woodCN - litterMin - litterToSoil/litterCN
+  //              = 1 - 0.5 + 1 - 1 - 1 = -0.5
+  initOrganicNState(2.0, 3.0);
+  fluxes.leafOffNResorption = 0.5;
+
+  calcNPoolFluxes();
+
+  status |= checkFlux(fluxes.nOrgLitter, -0.5,
+                      "Organic litter N with leafOffNResorption");
+
+  return status;
+}
+
+/////
+// N limitation with plantStorageN contributing to available N
+int testNLimitationWithStorage(void) {
+  int status = 0;
+  logTest("Running testNLimitationWithStorage\n");
+
+  // Reproduce the 50%-limited case from testNLimitation, then show that
+  // adding plantStorageN = minN removes the limitation entirely.
+  // maxDemandFlux = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
+  // With minN=0.625 alone: availableMinN=0.625 -> reduction=0.5
+  // With minN=0.625 + plantStorageN=0.625: availableMinN=1.25 >= maxUptake -> no limit
+  initNLimitationState(0.625, 0);
+  envi.plantStorageN = 0.625;
+
+  doNFixUpLimitCalcs();
+
+  // All creation fluxes should be unreduced
+  status |= checkNLimitationFlux(fluxes.leafCreation, 60.0,
+                                 "[storageN] leafCreation");
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500.0,
+                                 "[storageN] woodCreation");
+  status |= checkNLimitationFlux(fluxes.fineRootCreation, 40.0,
+                                 "[storageN] fineRootCreation");
+  status |= checkNLimitationFlux(fluxes.coarseRootCreation, 100.0,
+                                 "[storageN] coarseRootCreation");
+
+  return status;
+}
+
+/////
+// updateNitrogenPools draws uptake from plantStorageN before minN
+int testUpdateNitrogenPoolsFromStorage(void) {
+  int status = 0;
+  logTest("Running testUpdateNitrogenPoolsFromStorage\n");
+
+  // Case 1: uptake fully covered by storage
+  // nUptake=3.0, length=0.125 -> uptake=0.375; plantStorageN=0.5 >= 0.375
+  // -> all uptake from storage, minN unchanged
+  resetState();
+  envi.minN = 1.0;
+  envi.plantStorageN = 0.5;
+  fluxes.nUptake = 3.0;
+  updateNitrogenPools();
+
+  double expStorageN = 0.5 - 3.0 * climate->length;  // 0.5 - 0.375 = 0.125
+  if (!compareDoubles(envi.plantStorageN, expStorageN)) {
+    status = 1;
+    logTest("[full storage] plantStorageN is %8.4f, expected %8.4f\n",
+            envi.plantStorageN, expStorageN);
+  }
+  if (!compareDoubles(envi.minN, 1.0)) {
+    status = 1;
+    logTest("[full storage] minN is %8.4f, expected 1.0 (unchanged)\n",
+            envi.minN);
+  }
+
+  // Case 2: uptake partially covered by storage, remainder from minN
+  // plantStorageN=0.1 < uptake=0.375 -> 0.1 from storage, 0.275 from minN
+  // plantStorageN_new = 0.0, minN_new = 1.0 - 0.275 = 0.725
+  resetState();
+  envi.minN = 1.0;
+  envi.plantStorageN = 0.1;
+  fluxes.nUptake = 3.0;
+  updateNitrogenPools();
+
+  if (!compareDoubles(envi.plantStorageN, 0.0)) {
+    status = 1;
+    logTest("[partial storage] plantStorageN is %8.4f, expected 0.0\n",
+            envi.plantStorageN);
+  }
+  double expMinN = 1.0 - (3.0 * climate->length - 0.1);  // 1.0 - 0.275 = 0.725
+  if (!compareDoubles(envi.minN, expMinN)) {
+    status = 1;
+    logTest("[partial storage] minN is %8.4f, expected %8.4f\n", envi.minN,
+            expMinN);
+  }
+
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -482,6 +587,9 @@ int run(void) {
   status |= testOrganicN();
   status |= testNFixation();
   status |= testNLimitation();
+  status |= testNLimitationWithStorage();
+  status |= testUpdateNitrogenPoolsFromStorage();
+  status |= testOrganicNWithResorption();
 
   return status;
 }

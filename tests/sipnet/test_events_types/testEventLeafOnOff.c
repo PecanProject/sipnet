@@ -42,9 +42,20 @@ int checkLeafOff(const char *stage, double expLeafC, double expPoolC,
   return status;
 }
 
+int checkPlantStorageN(const char *stage, double expStorageN) {
+  int status = 0;
+  if (!compareDoubles(expStorageN, envi.plantStorageN)) {
+    logTest("%s: plantStorageN is %f, expected %f\n", stage, envi.plantStorageN,
+            expStorageN);
+    status = 1;
+  }
+  return status;
+}
+
 void initEnv(double woodC, double leafC) {
   envi.plantWoodC = woodC;
   envi.plantLeafC = leafC;
+  envi.coarseRootC = 0.0;
   envi.litterC = 0.0;
   envi.soilC = 0.0;
   envi.litterN = 0.0;
@@ -136,6 +147,83 @@ int run(void) {
   // Without litter pool, leaf C goes to soil C instead
   status |=
       checkLeafOff("one leafoff (no litter pool)", 10.0 - 5.0, 0.0 + 5.0, 0.0);
+
+  //// C-LIMITED LEAF-ON EVENT
+  logTest("Testing C-limited leaf-on event\n");
+  // leafGrowth=3.0, leafOnReallocFrac=0.5, woodC=1.0
+  // availableC = woodC * leafOnReallocFrac = 0.5 < leafGrowth=3.0
+  // cRatio = 0.5/3.0 -> transferred = leafGrowth * (availableC/leafGrowth) = availableC = 0.5
+  updateIntContext("litterPool", 1, CTX_TEST);
+  initEnv(1.0, 0.0);
+  resetFluxes();
+  initEvents("events_one_leafon.in", "events.out", 0);
+  setupEvents();
+  procEvents();
+  closeEventOutFile();
+
+  double availableC = 1.0 * params.leafOnReallocFrac;  // = 0.5
+  status |= checkLeafOn("C-limited leafon", 1.0 - availableC, availableC);
+
+  //// N-LIMITED LEAF-ON EVENT
+  logTest("Testing N-limited leaf-on event (with nitrogen cycle)\n");
+  // woodC=10.0 (C not limiting), plantStorageN=0.05 (N limiting)
+  // leafOnNDemand = leafGrowth*(1/leafCN - 1/woodCN) = 3*(1/30-1/100) = 0.07
+  // nRatio = 0.05/0.07 < cRatio -> transferred = leafGrowth * nRatio
+  updateIntContext("anaerobic", 1, CTX_TEST);
+  updateIntContext("waterHResp", 1, CTX_TEST);
+  updateIntContext("nitrogenCycle", 1, CTX_TEST);
+  params.woodCN = 100.0;
+  params.nFixationFracMax = 0.0;
+  params.halfNFixationMax = 0.0;
+  initEnv(10.0, 0.0);
+  envi.plantStorageN = 0.05;
+  resetFluxes();
+  initEvents("events_one_leafon.in", "events.out", 0);
+  setupEvents();
+  procEvents();
+  closeEventOutFile();
+
+  double leafOnNDemand =
+      params.leafGrowth / params.leafCN - params.leafGrowth / params.woodCN;
+  double nRatio = 0.05 / leafOnNDemand;
+  double transferred = params.leafGrowth * nRatio;
+  status |= checkLeafOn("N-limited leafon", 10.0 - transferred, transferred);
+
+  // Reset nitrogen-cycle context for subsequent tests
+  updateIntContext("nitrogenCycle", 0, CTX_TEST);
+  updateIntContext("anaerobic", 0, CTX_TEST);
+  updateIntContext("waterHResp", 0, CTX_TEST);
+
+  //// LEAF-OFF N RESORPTION TEST
+  logTest("Testing leaf-off N resorption updates plantStorageN\n");
+  // leafOff = 10.0 * 0.5 = 5.0; leafN = 5.0/30.0
+  // leafNResorption = leafN * leafNResorptionFrac; litterNAdd = leafN - resorption
+  // After event: plantStorageN += leafNResorption, litterN += litterNAdd
+  updateIntContext("litterPool", 1, CTX_TEST);
+  updateIntContext("anaerobic", 1, CTX_TEST);
+  updateIntContext("waterHResp", 1, CTX_TEST);
+  updateIntContext("nitrogenCycle", 1, CTX_TEST);
+  params.leafNResorptionFrac = 0.3;
+  initEnv(5.0, 10.0);
+  resetFluxes();
+  initEvents("events_one_leafoff.in", "events.out", 0);
+  setupEvents();
+  procEvents();
+  closeEventOutFile();
+
+  double leafOff = 10.0 * params.fracLeafFall;
+  double leafN = leafOff / params.leafCN;
+  double leafNResorption = leafN * params.leafNResorptionFrac;
+  double litterNAdd = leafN - leafNResorption;
+  status |= checkLeafOff("leaf-off N resorption", 10.0 - leafOff, leafOff,
+                         litterNAdd);
+  status |= checkPlantStorageN("leaf-off N resorption", leafNResorption);
+
+  // Reset for subsequent tests
+  params.leafNResorptionFrac = 0.0;
+  updateIntContext("nitrogenCycle", 0, CTX_TEST);
+  updateIntContext("anaerobic", 0, CTX_TEST);
+  updateIntContext("waterHResp", 0, CTX_TEST);
 
   //// CHECK FOR CALCULATED LEAF EVENTS
 
