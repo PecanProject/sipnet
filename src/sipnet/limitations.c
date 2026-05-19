@@ -28,7 +28,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   double cRatio = (availableC > TINY) ? (availableC / leafOnCDemand) : 0;
 
   double leafOnNDemand = 0.0;
-  double nRatio = 1.0;
+  double nRatio = 0.0;
   double availableN = 0.0;
   // Next, nitrogen. We only allow leaf-on to draw from the plantStorageN pool
   // as a simplification.
@@ -42,7 +42,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
         (leafOnCDemand / params.leafCN - leafOnCDemand / params.woodCN) *
         (1 - calcNFixationFrac());
     availableN = envi.plantStorageN;
-    if (availableN > TINY && leafOnNDemand > TINY) {
+    if (leafOnNDemand > TINY) {
       nRatio = availableN / leafOnNDemand;
     }
   }
