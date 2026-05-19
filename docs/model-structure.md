@@ -24,7 +24,7 @@ This document provides an overview of the SIPNET model’s structure. It was wri
 - Focus on features currently in regular use.
 
 There are multiple ways to configure the model structure, and not all model structures or components are listed.
-Implementation in source code (sipnet.c) is annotated with references to specific publications.
+Implementation in source code is annotated with references to specific publications.
 
 #### Notes on notation:
 
@@ -149,8 +149,8 @@ Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 - F^C_{\text{harvest,removed,}i}
 - F^C_{\text{litter,}i}
-  \label{eq:Zobitz_3}
-  \end{equation}
+\label{eq:Zobitz_3}
+\end{equation}
 
 This is equation (3) from Zobitz, et al. (2008), augmented with the harvest and litter terms. Summing over all plant
 pools shows that NPP is partitioned into biomass growth, removed harvest, and litter production.
@@ -1174,7 +1174,7 @@ nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter 
 **Event parameters:**
 
 | Parameter | Value                | Description       |
-|-----------|----------------------|-------------------|
+| --------- | -------------------- | ----------------- |
 | Year      | integer              | Year              |
 | Day       | integer              | Day of year       |
 | Type      | `leafon` / `leafoff` | The type of event |
