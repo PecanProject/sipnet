@@ -1937,13 +1937,13 @@ void updatePoolsForSoil(void) {
     if (ctx.carbonSaturation) {
       double saturationFraction = envi.soilC / params.soilCSaturation;
       double soilInputs =
-        fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
+          fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
 
-      envi.litterC +=
-          (fluxes.woodLitter + fluxes.leafLitter + (soilInputs * saturationFraction) -
-           fluxes.litterToSoil - fluxes.rLitter - fluxes.litterMethane) *
-          climate->length;
-    
+      envi.litterC += (fluxes.woodLitter + fluxes.leafLitter +
+                       (soilInputs * saturationFraction) - fluxes.litterToSoil -
+                       fluxes.rLitter - fluxes.litterMethane) *
+                      climate->length;
+
       envi.soilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
                      fluxes.soilMethane) *
                     climate->length;
