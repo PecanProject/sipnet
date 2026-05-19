@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "context.h"
 #include "exitCodes.h"
 #include "logging.h"
 #include "util.h"

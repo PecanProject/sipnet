@@ -4,20 +4,6 @@
 // Nitrogen cycle related functions
 
 /*!
- * Calculate available nitrogen for this step
- *
- * Calculate available nitrogen as mineral N pool plus relevant fluxes:
- * - mineralization
- * - leaching
- * - volatilization
- *
- * This function should only be called AFTER fluxes are calculated
- *
- * @return available nitrogen
- */
-double calcAvailableNitrogen(void);
-
-/*!
  * Calculate plant N demand from biomass creation fluxes
  *
  * @return Total nitrogen demand from plant growth

@@ -74,16 +74,6 @@ static void calcNPoolFluxes(void) {
 }
 
 // see nitrogen.h
-double calcAvailableNitrogen(void) {
-  // Return "available nitrogen", which is mineral N +/- relevant fluxes
-  // from this time step.
-  double availableN = envi.minN;
-  double minNDelta = calcMinNNonUptakeFluxes() * climate->length;
-
-  return availableN + minNDelta;
-}
-
-// see nitrogen.h
 double calcPlantNDemand(void) {
   if (!ctx.nitrogenCycle) {
     return 0.0;

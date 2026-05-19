@@ -25,25 +25,28 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   // First up, carbon. We do not draw from the C storage pool for this.
   double availableC =
       (envi.plantWoodC + envi.coarseRootC) * params.leafOnReallocFrac;
-  double cLimitation = (availableC > TINY) ? (availableC / leafOnCDemand) : 0;
+  double cRatio = (availableC > TINY) ? (availableC / leafOnCDemand) : 0;
 
   double leafOnNDemand = 0.0;
-  double nLimitation = 1.0;
+  double nRatio = 1.0;
   double availableN = 0.0;
   // Next, nitrogen. We only allow leaf-on to draw from the plantStorageN pool
   // as a simplification.
   if (ctx.nitrogenCycle) {
     // Needed N for this transfer is (what leaves need) - (what wood provides)
-    // Reminder: both wood and coarseRoot use params.woodCN
+    // We reduce that by the expected fixation contribution (else, it's not
+    // really all available)
+    // Reminder: both wood and coarseRoot use params.woodCN, so no need to
+    // treat those C demands separately
     leafOnNDemand =
         (leafOnCDemand / params.leafCN - leafOnCDemand / params.woodCN) *
         (1 - calcNFixationFrac());
     availableN = envi.plantStorageN;
     if (availableN > TINY && leafOnNDemand > TINY) {
-      nLimitation = availableN / leafOnNDemand;
+      nRatio = availableN / leafOnNDemand;
     }
   }
-  double limitation = fmin(cLimitation, nLimitation);
+  double limitation = fmin(cRatio, nRatio);
   limitation = fmax(fmin(limitation, 1.0), 0.0);
 
   if (limitation < 1) {
@@ -52,16 +55,15 @@ void checkLeafOnLimitation(double *leafOnFlux) {
       logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f / N "
               "%.4f (C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, leafOnNDemand, availableC, availableN, cLimitation,
-              nLimitation, (1 - limitation) * 100, climate->year, climate->day,
+              leafOnCDemand, leafOnNDemand, availableC, availableN, cRatio,
+              nRatio, (1 - limitation) * 100, climate->year, climate->day,
               climate->time);
     } else {
       logInfo("Leaf on creation %.4f exceeds available C %.4f "
               "(C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, cLimitation, nLimitation, availableC,
-              (1 - limitation) * 100, climate->year, climate->day,
-              climate->time);
+              leafOnCDemand, cRatio, nRatio, availableC, (1 - limitation) * 100,
+              climate->year, climate->day, climate->time);
     }
   }
 }
