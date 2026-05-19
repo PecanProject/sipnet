@@ -62,8 +62,9 @@ void checkLeafOnLimitation(double *leafOnFlux) {
       logInfo("Leaf on creation %.4f exceeds available C %.4f "
               "(C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, cRatio, nRatio, availableC, (1 - limitation) * 100,
-              climate->year, climate->day, climate->time);
+              leafOnCDemand, availableC, cRatio, nRatio,
+              (1 - limitation) * 100, climate->year, climate->day,
+              climate->time);
     }
   }
 }
