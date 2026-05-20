@@ -192,6 +192,8 @@ Specifically:
 | --------- | --- | -----| ---------------------- |
 | type      |  3  |  Y   | `leafon` or `leafoff`  |
  
+ <!-- TODO add "- Model representation:" section 
+ 
 ### Example of `events.in` file:
 
 ```
