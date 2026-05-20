@@ -322,7 +322,7 @@ F^N_{\text{storage,in}} - F^N_{\text{storage,use}}
 \label{eq:plant_n_storage}
 \end{equation}
 
-Stored nitrogen contributes to satisfying plant growth nitrogen demand, including leaf-on demand.
+Stored nitrogen contributes to satisfying plant growth nitrogen demand, including leaf-on demand (indicated as $F^N_{\text{storage,use}}$).
 
 ### Root Carbon
 
