@@ -255,7 +255,7 @@ F^C_{\text{leaf,on}}
 This makes the source-pool debit auditable:
 
 \begin{equation}
-\sum_j F^C_{\text{source,}j} = F^C_{\text{leaf,on}}
+\sum_j F^C_{\text{source,}j} + F^C_{\text{leaf,on}} = 0
 \label{eq:leaf_on_source_c_sum}
 \end{equation}
 
