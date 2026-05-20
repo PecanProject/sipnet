@@ -3,7 +3,6 @@
 #include <math.h>
 
 #include "common/context.h"
-#include "common/logging.h"
 #include "common/util.h"
 
 #include "depeffects.h"
@@ -74,27 +73,42 @@ static void calcNPoolFluxes(void) {
 }
 
 // see nitrogen.h
+double calcLeafOnNFromC(double leafOnC) {
+  return fmax(0.0, leafOnC / params.leafCN - leafOnC / params.woodCN);
+}
+
+// see nitrogen.h
 double calcPlantNDemand(void) {
   if (!ctx.nitrogenCycle) {
     return 0.0;
   }
+  // leaf on "demand" is satisfied entirely (and separately) by the
+  // plantStorageN pool, and is not considered demand for the purposes of this
+  // function
 
-  // leafOnCreation is a transfer from the wood pool so
-  // demand should only count the difference in the N
-  // between those two pools, hence subtracting
-  // params.woodCN from params.leafCN for leafOnCreation
-  // Note we can have leafOn creation terms from two places
-  double leafOnCreation = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
-  double leafOnDemand =
-      leafOnCreation / params.leafCN - leafOnCreation / params.woodCN;
-  // calculate demand from all other creation terms
+  // calculate demand from all creation terms
   double creationDemand = fluxes.woodCreation / params.woodCN +
                           fluxes.leafCreation / params.leafCN +
                           fluxes.fineRootCreation / params.fineRootCN +
                           fluxes.coarseRootCreation / params.woodCN;
-  // total demand is leafOnDemand plus creationDemand
-  double totalDemand = leafOnDemand + creationDemand;
-  return totalDemand;
+  return creationDemand;
+}
+
+// see nitrogen.h
+double calcPlantAvailableN(void) {
+  // Return total available N for growth; note that we DO consider this time
+  // step's fluxes here, unlike most other places. The idea is to prevent
+  // negative N pools at the end of the step (but negative in the middle of the
+  // step is ok).
+  double leafOnCFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
+  double leafOnNFlux = calcLeafOnNFromC(leafOnCFlux);
+  // Note: leafOnNFlux has already been limited to not exceed plantStorageN
+  double leafOffNFlux =
+      fluxes.leafOffNResorption + fluxes.eventLeafOffNResorption;
+  double unclaimedStorage =
+      envi.plantStorageN + (leafOffNFlux - leafOnNFlux) * climate->length;
+  double nonUptakeDelta = calcMinNNonUptakeFluxes() * climate->length;
+  return fmax(0.0, envi.minN + unclaimedStorage + nonUptakeDelta);
 }
 
 // see nitrogen.h
@@ -143,7 +157,12 @@ void updateNitrogenPools(void) {
   // :: from [5], nitrogen cycle model
   // TBD: add equation numbers once published
 
-  // Plant uptake is first taken from plantStorageN
+  // Storage N changes
+  // First, parcel plantStorageN to leaf-on demand and regular growth demand
+  // fluxes.eventLeafOnCreation has already been handled in events.c
+  double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
+  envi.plantStorageN -= leafOnNFlux * climate->length;
+  //  Remaining plantStorageN can go to demand
   double uptake = fluxes.nUptake * climate->length;
   double uptakeFromStorage = fmin(uptake, envi.plantStorageN);
   envi.plantStorageN +=

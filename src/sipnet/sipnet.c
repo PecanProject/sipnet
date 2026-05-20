@@ -756,8 +756,7 @@ int pastLeafFall(void) {
  * @param[out] leafOffNResorption (g N/m^2 ground/day)
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
-void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
-                    double *leafLitter, double *leafOffNResorption,
+void calcLeafFluxes(double *leafCreation, double *leafLitter,
                     double plantLeafC) {
   // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
@@ -779,8 +778,11 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
   }
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
+}
 
-  // Now add additional fluxes at start/end of growing season:
+void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOffNResorption,
+                         double *leafLitter, double plantLeafC) {
+  // Calc additional fluxes at start/end of growing season
   // Note that these are basically events, and we will track them as such
 
   // first check for new year; if new year, reset trackers (since we haven't
@@ -801,8 +803,6 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
     // This is a computed event - however, the value may get reduced by
     // nitrogen limitation. The writeEvent call is in writeLeafOnEventIfNeeded,
     // called after N limiting is checked.
-  } else {
-    *leafOnCreation = 0.0;
   }
 
   // check for end of growing season:
@@ -1283,9 +1283,11 @@ void calculateFluxes(void) {
   }
 
   // Leaf creation and litter
-  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafOnCreation),
-                 &(fluxes.leafLitter), &(fluxes.leafOffNResorption),
-                 envi.plantLeafC);
+  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
+
+  // Leaf on/off
+  calcLeafOnOffFluxes(&(fluxes.leafOnCreation), &(fluxes.leafOffNResorption),
+                      &(fluxes.leafLitter), envi.plantLeafC);
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
@@ -1647,6 +1649,13 @@ void updatePoolsAndBalance() {
   // Calc total C and N before pool updates
   updateBalanceTrackerPreUpdate();
 
+  // Update pools for fluxes from events
+  // There is a timing dependency for leaf-on events; event pools need to be
+  // updated before the nitrogen pools so that the storage pool is handled
+  // correctly. We put them first to be in sync with the order in
+  // calculateFluxes()_
+  updatePoolsForEvents();
+
   // Update leafC, woodC, soil water and snow pools
   updateMainPools();
 
@@ -1655,9 +1664,6 @@ void updatePoolsAndBalance() {
 
   // Update nitrogen cycle pools
   updateNitrogenPools();
-
-  // Update pools for fluxes from events
-  updatePoolsForEvents();
 
   // Calc total C and N after pool updates
   updateBalanceTrackerPostUpdate();

@@ -4,11 +4,26 @@
 // Nitrogen cycle related functions
 
 /*!
+ * Calculate excess N needed for leaf on events
+ */
+double calcLeafOnNFromC(double leafOnC);
+
+/*!
  * Calculate plant N demand from biomass creation fluxes
  *
  * @return Total nitrogen demand from plant growth
  */
 double calcPlantNDemand(void);
+
+/*!
+ * Calculate nitrogen available for plant growth
+ *
+ * Considers mineral N in soil, unclaimed plant storage N, and non-uptake
+ * fluxes that will affect soil mineral N
+ *
+ * @return Available N for plant growth
+ */
+double calcPlantAvailableN(void);
 
 /**
  * Calculate all fluxes for soil mineral N EXCEPT uptake

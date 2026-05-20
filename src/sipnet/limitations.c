@@ -34,13 +34,9 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   // as a simplification.
   if (ctx.nitrogenCycle) {
     // Needed N for this transfer is (what leaves need) - (what wood provides)
-    // We reduce that by the expected fixation contribution (else, it's not
-    // really all available)
     // Reminder: both wood and coarseRoot use params.woodCN, so no need to
     // treat those C demands separately
-    leafOnNDemand =
-        (leafOnCDemand / params.leafCN - leafOnCDemand / params.woodCN) *
-        (1 - calcNFixationFrac());
+    leafOnNDemand = calcLeafOnNFromC(leafOnCDemand);
     availableN = envi.plantStorageN;
     if (leafOnNDemand > TINY) {
       nRatio = availableN / leafOnNDemand;
@@ -76,9 +72,7 @@ static void checkNitrogenLimitation(void) {
   double maxDemandFlux = calcPlantNDemand();
   double maxDemand = maxDemandFlux * climate->length;
 
-  double nonUptakeFluxes = calcMinNNonUptakeFluxes();
-  double availableMinN = fmax(0, envi.minN + envi.plantStorageN +
-                                     (nonUptakeFluxes * climate->length));
+  double availableMinN = calcPlantAvailableN();
 
   double nFixationFrac = calcNFixationFrac();
   double maxUptake = maxDemand * (1 - nFixationFrac);

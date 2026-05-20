@@ -13,6 +13,7 @@
 #include "events.h"
 
 #include "limitations.h"
+#include "nitrogen.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -738,7 +739,9 @@ void updatePoolsForEvents(void) {
     envi.minN += fluxes.eventMinN * climate->length;
     envi.soilOrgN += fluxes.eventSoilOrgN * climate->length;
     envi.litterN += fluxes.eventLitterN * climate->length;
-    envi.plantStorageN += fluxes.eventLeafOffNResorption * climate->length;
+    double leafOnNFlux = calcLeafOnNFromC(fluxes.eventLeafOnCreation);
+    envi.plantStorageN +=
+        (fluxes.eventLeafOffNResorption - leafOnNFlux) * climate->length;
   }
 }
 
