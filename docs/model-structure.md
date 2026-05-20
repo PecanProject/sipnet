@@ -23,7 +23,7 @@ This document provides an overview of the SIPNET model’s structure. It was wri
 - Focus on features currently in regular use.
 
 There are multiple ways to configure the model structure, and not all model structures or components are listed.
-Implementation in source code (sipnet.c) is annotated with references to specific publications.
+Implementation in source code is annotated with references to specific publications.
 
 #### Notes on notation:
 
@@ -148,6 +148,10 @@ Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 \begin{equation}
 \frac{dC_{\text{plant,}i}}{dt} = \alpha_i \cdot \overline{\text{NPP}} - F^C_{\text{harvest,removed,}i} - F^C_{\text{litter,}i}
+\frac{dC_{\text{plant,}i}}{dt}
+= \alpha_i \cdot \overline{\text{NPP}}
+- F^C_{\text{harvest,removed,}i}
+- F^C_{\text{litter,}i}
 \label{eq:Zobitz_3}
 \end{equation}
 
