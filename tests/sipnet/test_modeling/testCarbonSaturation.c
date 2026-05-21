@@ -3,13 +3,19 @@
 
 void resetState(void) {
   ctx.litterPool = 1;
-  ctx.anaerobic = 1;
   ctx.carbonSaturation = 1;
 
-  envi.soilWater = 7.5;
+  envi.litterC = 10;
 
-  params.soilMethaneRate = 0.05;
-  params.litterMethaneRate = 0.1;
+  params.soilCSaturation = 10;
+
+  fluxes.woodLitter = 0;
+  fluxes.leafLitter = 0;
+  fluxes.litterToSoil = 0;
+  fluxes.rLitter = 0;
+  fluxes.litterMethane = 0;
+  fluxes.rSoil = 0;
+  fluxes.soilMethane = 0;
 }
 
 void setupTests(void) {
@@ -20,40 +26,11 @@ void setupTests(void) {
   climate->length = 0.125;
   climate->tsoil = 20.0;
 
-  // Environment
-  envi.soilWater = 7.5;
-  // soil CN 7.5
-  envi.soilC = 15.0;
-  envi.soilOrgN = 2.0;
-  // litter CN 5.0
-  envi.litterC = 7.5;
-  envi.litterN = 1.5;
-
-  params.soilWHC = 10.0;
-  params.soilRespQ10 = 3.0;
-  params.fAnoxia = 0.6;
-  params.anaerobicDecompRate = 0.5;
-  params.anaerobicTransExp = 2.0;
-
   // Initialize general state
   resetState();
 
   // Set up the context
   initContext();
-}
-
-int checkFlux(double calcFlux, double expFlux, const char *label) {
-  // Make sure we didn't forget to update context, in case dependencies changed
-  validateContext();
-
-  int status = 0;
-  if (!compareDoubles(calcFlux, expFlux)) {
-    status = 1;
-    logTest("Calculated %s flux is %f, expected %f\n", label, calcFlux,
-            expFlux);
-  }
-
-  return status;
 }
 
 int checkPool(double calcPool, double expPool, const char *label) {
@@ -70,52 +47,117 @@ int checkPool(double calcPool, double expPool, const char *label) {
   return status;
 }
 
-int checkSoil(double flux, double pool) {
+int checkSoil(double pool) {
   int status = 0;
-  status |= checkFlux(fluxes.soilMethane, flux, "soil");
   status |= checkPool(envi.soilC, pool, "soil");
   return status;
 }
 
-int checkLitter(double flux, double pool) {
+int checkLitter(double pool) {
   int status = 0;
-  status |= checkFlux(fluxes.litterMethane, flux, "litter");
   status |= checkPool(envi.litterC, pool, "litter");
   return status;
 }
 
-void callCalcMethaneFlux(void) {
-  // Make sure we didn't make a dumb mistake with tests points
-  // That is, make sure we HAVE some methane flux
-  if (envi.soilWater / params.soilWHC <= params.fAnoxia + 0.1) {
-    logTest("Soil water is not high enough to trigger methane production!\n");
-    logTest("SoilW %8.4f WHC %8.4f f_a %8.4f\n", envi.soilWater, params.soilWHC,
-            params.fAnoxia);
-    exit(1);
-  }
-
-  calcMethaneFlux();
-}
-
 int testCarbonSaturation(void) {
   int status = 0;
-  double expSoilF, expSoilC;
-  double expLitterF, expLitterC;
+  double expSoilC;
+  double expLitterC;
+  double saturationFraction;
+  double soilInputs;
 
-  double tempEffect = calcTempEffect(climate->tsoil);
-  double moistEfffect = calcMethaneMoistEffect(envi.soilWater, params.soilWHC);
-
-  // Standard
-  logTest("  Test: standard\n");
+  // Low C inputs, low saturationFraction
+  logTest("  Test: low soilInputs, low satFrac\n");
   resetState();
-  callCalcMethaneFlux();
+
+  expSoilC = 2.5;  // 25% saturation
+  envi.soilC = 2.5;
+  expLitterC = 10;
+  soilInputs = 100;
+  saturationFraction = expSoilC / params.soilCSaturation;
+
+  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
+                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
+                 fluxes.rLitter - fluxes.litterMethane) *
+                climate->length;
+
+  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
+               fluxes.soilMethane) *
+              climate->length;
+
   updatePoolsForSoil();
-  expSoilF = 0.75 * tempEffect * moistEfffect;
-  expLitterF = 0.75 * tempEffect * moistEfffect;
-  expSoilC = 15 - expSoilF * climate->length;
-  expLitterC = 7.5 - expLitterF * climate->length;
-  status |= checkSoil(expSoilF, expSoilC);
-  status |= checkLitter(expLitterF, expLitterC);
+  status |= checkSoil(expSoilC);
+  status |= checkLitter(expLitterC);
+
+  // High C inputs, low saturationFraction
+  logTest("  Test: high soilInputs, low satFrac\n");
+  resetState();
+
+  expSoilC = 2.5;  // 25% saturation
+  envi.soilC = 2.5;
+  expLitterC = 10;
+  soilInputs = 200;
+  saturationFraction = expSoilC / params.soilCSaturation;
+
+  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
+                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
+                 fluxes.rLitter - fluxes.litterMethane) *
+                climate->length;
+
+  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
+               fluxes.soilMethane) *
+              climate->length;
+
+  updatePoolsForSoil();
+  status |= checkSoil(expSoilC);
+  status |= checkLitter(expLitterC);
+
+  // Low C inputs, high saturationFraction
+  logTest("  Test: low soilInputs, high satFrac\n");
+  resetState();
+
+  expSoilC = 7.5;  // 75% saturation
+  envi.soilC = 7.5;
+  expLitterC = 10;
+  soilInputs = 100;
+  saturationFraction = expSoilC / params.soilCSaturation;
+
+  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
+                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
+                 fluxes.rLitter - fluxes.litterMethane) *
+                climate->length;
+
+  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
+               fluxes.soilMethane) *
+              climate->length;
+
+  updatePoolsForSoil();
+  status |= checkSoil(expSoilC);
+  status |= checkLitter(expLitterC);
+
+  // High C inputs, high saturationFraction
+  logTest("  Test: high soilInputs, high satFrac\n");
+  resetState();
+
+  expSoilC = 7.5;  // 75% saturation
+  envi.soilC = 7.5;
+  expLitterC = 10;
+  soilInputs = 200;
+  saturationFraction = expSoilC / params.soilCSaturation;
+
+  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
+                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
+                 fluxes.rLitter - fluxes.litterMethane) *
+                climate->length;
+
+  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
+               fluxes.soilMethane) *
+              climate->length;
+
+  updatePoolsForSoil();
+  status |= checkSoil(expSoilC);
+  status |= checkLitter(expLitterC);
+
   return status;
 }
 
