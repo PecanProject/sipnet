@@ -1653,7 +1653,7 @@ void updatePoolsAndBalance() {
   // There is a timing dependency for leaf-on events; event pools need to be
   // updated before the nitrogen pools so that the storage pool is handled
   // correctly. We put them first to be in sync with the order in
-  // calculateFluxes()_
+  // calculateFluxes().
   updatePoolsForEvents();
 
   // Update leafC, woodC, soil water and snow pools

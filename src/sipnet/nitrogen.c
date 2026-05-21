@@ -99,7 +99,7 @@ double calcPlantAvailableN(void) {
   // Return total available N for growth; note that we DO consider this time
   // step's fluxes here, unlike most other places. The idea is to prevent
   // negative N pools at the end of the step (but negative in the middle of the
-  // step is ok).
+  // step is ok). This is used in the determination of N limitation.
   double leafOnCFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
   double leafOnNFlux = calcLeafOnNFromC(leafOnCFlux);
   // Note: leafOnNFlux has already been limited to not exceed plantStorageN

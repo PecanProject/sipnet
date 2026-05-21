@@ -19,7 +19,10 @@ double calcPlantNDemand(void);
  * Calculate nitrogen available for plant growth
  *
  * Considers mineral N in soil, unclaimed plant storage N, and non-uptake
- * fluxes that will affect soil mineral N
+ * fluxes that will affect soil mineral N. That is, unlike most other functions,
+ * this one considers the current time step's fluxes as well as pools.
+ *
+ * This function is used to determine whether we are in nitrogen limitation.
  *
  * @return Available N for plant growth
  */

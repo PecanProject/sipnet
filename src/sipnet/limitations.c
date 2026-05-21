@@ -25,13 +25,12 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   // First up, carbon. We do not draw from the C storage pool for this.
   double availableC =
       (envi.plantWoodC + envi.coarseRootC) * params.leafOnReallocFrac;
-  double cRatio = (availableC > TINY) ? (availableC / leafOnCDemand) : 0;
+  double cRatio = availableC / leafOnCDemand;
 
   double leafOnNDemand = 0.0;
   double nRatio = 1.0;
   double availableN = 0.0;
-  // Next, nitrogen. We only allow leaf-on to draw from the plantStorageN pool
-  // as a simplification.
+  // Next, nitrogen; leaf-on only draws from the plantStorageN pool
   if (ctx.nitrogenCycle) {
     // Needed N for this transfer is (what leaves need) - (what wood provides)
     // Reminder: both wood and coarseRoot use params.woodCN, so no need to
