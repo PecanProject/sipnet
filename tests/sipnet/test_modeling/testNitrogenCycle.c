@@ -402,12 +402,16 @@ int testNLimitation(void) {
   status |= checkNLimitationFlux(fluxes.woodCreation, 500,
                                  "[boosted nMin] woodCreation");
 
-  // leafOnCreation also gets reduced when N-limited
-  // leafOnCreation=50: net demand = 50*(1/20-1/100) = 2.0, total demand = 12
-  // maxDemand = 12 * 0.125 = 1.5, maxUptake = 1.5
-  // minN = 0.75 -> reduction = 0.75 / 1.5 = 0.5
+  // leafOnCreation also gets reduced when N-limited.
+  // leaf-on N is NOT part of calcPlantNDemand(); instead it reduces
+  // calcPlantAvailableN() via unclaimedStorage:
+  //   leafOnNFlux = max(0, 50/20 - 50/100) = 2.0
+  //   unclaimedStorage = plantStorageN + (0 - 2.0) * 0.125 = -0.25
+  //   availableN = max(0, minN=0.75 + (-0.25)) = 0.5
+  //   demand (excl. leafOn) = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
+  //   reduction = 0.5 / 1.25 = 0.4
   double leafOnInit = 50.0;
-  double leafOnReduction = 0.5;
+  double leafOnReduction = 0.4;
   initNLimitationState(0.75, leafOnInit);
 
   doNFixUpLimitCalcs();
