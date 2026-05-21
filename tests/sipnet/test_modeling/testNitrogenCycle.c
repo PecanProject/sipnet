@@ -408,8 +408,8 @@ int testNLimitation(void) {
   //   leafOnNFlux = max(0, 50/20 - 50/100) = 2.0
   //   unclaimedStorage = plantStorageN + (0 - 2.0) * 0.125 = -0.25
   //   availableN = max(0, minN=0.75 + (-0.25)) = 0.5
-  //   demand (excl. leafOn) = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
-  //   reduction = 0.5 / 1.25 = 0.4
+  //   demand (excl. leafOn) = 10, maxDemand = 10 * 0.125 = 1.25,
+  //   maxUptake = 1.25 reduction = 0.5 / 1.25 = 0.4
   double leafOnInit = 50.0;
   double leafOnReduction = 0.4;
   initNLimitationState(0.75, leafOnInit);
