@@ -16,6 +16,7 @@ void resetState(void) {
   fluxes.litterMethane = 0;
   fluxes.rSoil = 0;
   fluxes.soilMethane = 0;
+  fluxes.fineRootLoss = 0;
 }
 
 void setupTests(void) {
@@ -73,7 +74,10 @@ int testCarbonSaturation(void) {
   expSoilC = 2.5;  // 25% saturation
   envi.soilC = 2.5;
   expLitterC = 10;
-  soilInputs = 100;
+  fluxes.coarseRootLoss = 100;
+
+  soilInputs =
+      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
   saturationFraction = expSoilC / params.soilCSaturation;
 
   expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
@@ -96,7 +100,10 @@ int testCarbonSaturation(void) {
   expSoilC = 2.5;  // 25% saturation
   envi.soilC = 2.5;
   expLitterC = 10;
-  soilInputs = 200;
+  fluxes.coarseRootLoss = 200;
+
+  soilInputs =
+      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
   saturationFraction = expSoilC / params.soilCSaturation;
 
   expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
@@ -119,7 +126,10 @@ int testCarbonSaturation(void) {
   expSoilC = 7.5;  // 75% saturation
   envi.soilC = 7.5;
   expLitterC = 10;
-  soilInputs = 100;
+  fluxes.coarseRootLoss = 100;
+
+  soilInputs =
+      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
   saturationFraction = expSoilC / params.soilCSaturation;
 
   expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
@@ -142,7 +152,10 @@ int testCarbonSaturation(void) {
   expSoilC = 7.5;  // 75% saturation
   envi.soilC = 7.5;
   expLitterC = 10;
-  soilInputs = 200;
+  fluxes.coarseRootLoss = 200;
+
+  soilInputs =
+      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
   saturationFraction = expSoilC / params.soilCSaturation;
 
   expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
