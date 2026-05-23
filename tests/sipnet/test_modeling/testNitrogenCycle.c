@@ -402,23 +402,30 @@ int testNLimitation(void) {
   status |= checkNLimitationFlux(fluxes.woodCreation, 500,
                                  "[boosted nMin] woodCreation");
 
-  // leafOnCreation also gets reduced when N-limited.
-  // leaf-on N is NOT part of calcPlantNDemand(); instead it reduces
-  // calcPlantAvailableN() via unclaimedStorage:
+  // leafOnCreation is NOT reduced by soil N limitation; leaf-on draws N from
+  // plantStorageN, not minN. However, leaf-on demand reduces available soil N
+  // for other fluxes via unclaimedStorage:
   //   leafOnNFlux = max(0, 50/20 - 50/100) = 2.0
   //   unclaimedStorage = plantStorageN + (0 - 2.0) * 0.125 = -0.25
   //   availableN = max(0, minN=0.75 + (-0.25)) = 0.5
   //   demand (excl. leafOn) = 10, maxDemand = 10 * 0.125 = 1.25,
-  //   maxUptake = 1.25 reduction = 0.5 / 1.25 = 0.4
+  //   maxUptake = 1.25 -> reduction = 0.5 / 1.25 = 0.4
   double leafOnInit = 50.0;
   double leafOnReduction = 0.4;
   initNLimitationState(0.75, leafOnInit);
 
   doNFixUpLimitCalcs();
 
+  // leafOnCreation is unchanged (not reduced by soil N limitation)
   status |=
-      checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit * leafOnReduction,
+      checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit,
                            "[leafOn] leafOnCreation");
+  // other growth fluxes are still reduced by 0.4 because leaf-on's N demand
+  // reduces available soil N through unclaimedStorage
+  status |= checkNLimitationFlux(fluxes.woodCreation, 500 * leafOnReduction,
+                                 "[leafOn] woodCreation");
+  status |= checkNLimitationFlux(fluxes.leafCreation, 60 * leafOnReduction,
+                                 "[leafOn] leafCreation");
 
   return status;
 }

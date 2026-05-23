@@ -658,8 +658,11 @@ void processEvents(void) {
         double leafOnFlux = params.leafGrowth / climLen;
         checkLeafOnLimitation(&leafOnFlux);
         fluxes.eventLeafOnCreation += leafOnFlux;
-        fluxes.eventLeafOnCreationFromWood =
-            leafOnFlux * envi.plantWoodC / (envi.plantWoodC + envi.coarseRootC);
+        double totalSourceC = envi.plantWoodC + envi.coarseRootC;
+        if (totalSourceC > TINY) {
+          fluxes.eventLeafOnCreationFromWood +=
+              leafOnFlux * envi.plantWoodC / totalSourceC;
+        }
 
         // Nitrogen is handled implicitly by relative CN ratios. Missing N
         // from low-N wood to higher-N leaves is accounted for in

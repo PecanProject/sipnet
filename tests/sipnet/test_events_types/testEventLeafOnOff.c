@@ -5,11 +5,17 @@
 #include "utils/exitHandler.c"
 #include "utils/helpers.c"
 
-int checkLeafOn(const char *stage, double expWoodC, double expLeafC) {
+int checkLeafOn(const char *stage, double expWoodC, double expCoarseRootC,
+                double expLeafC) {
   int status = 0;
   if (!compareDoubles(expWoodC, envi.plantWoodC)) {
     logTest("%s: plantWoodC is %f, expected %f\n", stage, envi.plantWoodC,
             expWoodC);
+    status = 1;
+  }
+  if (!compareDoubles(expCoarseRootC, envi.coarseRootC)) {
+    logTest("%s: coarseRootC is %f, expected %f\n", stage, envi.coarseRootC,
+            expCoarseRootC);
     status = 1;
   }
   if (!compareDoubles(expLeafC, envi.plantLeafC)) {
@@ -87,8 +93,8 @@ int run(void) {
   closeEventOutFile();
 
   // leafOn = params.leafGrowth = 3.0
-  // wood decreases by 3.0, leaf increases by 3.0
-  status |= checkLeafOn("one leafon", 10.0 - 3.0, 0.0 + 3.0);
+  // wood decreases by 3.0, leaf increases by 3.0 (coarseRootC=0 so all from wood)
+  status |= checkLeafOn("one leafon", 10.0 - 3.0, 0.0, 0.0 + 3.0);
 
   //// TWO LEAFON EVENTS
   logTest("Testing two leafon events\n");
@@ -99,8 +105,23 @@ int run(void) {
   procEvents();
   closeEventOutFile();
 
-  // Two leafOn events: total 2 * 3.0 = 6.0 from wood to leaf
-  status |= checkLeafOn("two leafon", 10.0 - 6.0, 0.0 + 6.0);
+  // Two leafOn events: total 2 * 3.0 = 6.0 from wood to leaf (coarseRootC=0)
+  status |= checkLeafOn("two leafon", 10.0 - 6.0, 0.0, 0.0 + 6.0);
+
+  //// LEAF-ON WITH PROPORTIONAL WOOD AND COARSE ROOT DRAW
+  logTest("Testing leaf-on draws proportionally from wood and coarseRootC\n");
+  // woodC=6.0, coarseRootC=4.0: wood fraction = 6/10=0.6, root fraction = 4/10=0.4
+  // leafGrowth=3.0 -> from wood: 3.0*0.6=1.8, from coarseRoot: 3.0*0.4=1.2
+  initEnv(6.0, 0.0);
+  envi.coarseRootC = 4.0;
+  resetFluxes();
+  initEvents("events_one_leafon.in", "events.out", 0);
+  setupEvents();
+  procEvents();
+  closeEventOutFile();
+
+  status |= checkLeafOn("leafon proportional split", 6.0 - 1.8, 4.0 - 1.2,
+                        0.0 + 3.0);
 
   //// ONE LEAFOFF EVENT (without nitrogen cycle)
   logTest("Testing one leafoff event (no nitrogen cycle)\n");
@@ -163,7 +184,7 @@ int run(void) {
   closeEventOutFile();
 
   double availableC = 1.0 * params.leafOnReallocFrac;  // = 0.5
-  status |= checkLeafOn("C-limited leafon", 1.0 - availableC, availableC);
+  status |= checkLeafOn("C-limited leafon", 1.0 - availableC, 0.0, availableC);
 
   //// N-LIMITED LEAF-ON EVENT
   logTest("Testing N-limited leaf-on event (with nitrogen cycle)\n");
@@ -188,7 +209,7 @@ int run(void) {
       params.leafGrowth / params.leafCN - params.leafGrowth / params.woodCN;
   double nRatio = 0.05 / leafOnNDemand;
   double transferred = params.leafGrowth * nRatio;
-  status |= checkLeafOn("N-limited leafon", 10.0 - transferred, transferred);
+  status |= checkLeafOn("N-limited leafon", 10.0 - transferred, 0.0, transferred);
 
   // Reset nitrogen-cycle context for subsequent tests
   updateIntContext("nitrogenCycle", 0, CTX_TEST);

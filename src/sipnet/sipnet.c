@@ -805,8 +805,10 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
     double leafOn = (params.leafGrowth / climate->length);
     checkLeafOnLimitation(&leafOn);
     *leafOnCreation += leafOn;
-    *leafOnFromWood =
-        leafOn * envi.plantWoodC / (envi.plantWoodC + envi.coarseRootC);
+    double totalSourceC = envi.plantWoodC + envi.coarseRootC;
+    if (totalSourceC > TINY) {
+      *leafOnFromWood = leafOn * envi.plantWoodC / totalSourceC;
+    }
     phenologyTrackers.didLeafGrowth = 1;
     // This is a computed event - however, the value may get reduced by
     // nitrogen limitation. The writeEvent call is in writeLeafOnEventIfNeeded,
