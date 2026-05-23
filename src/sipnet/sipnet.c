@@ -807,7 +807,7 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
     *leafOnCreation += leafOn;
     double totalSourceC = envi.plantWoodC + envi.coarseRootC;
     if (totalSourceC > TINY) {
-      *leafOnFromWood = leafOn * envi.plantWoodC / totalSourceC;
+      *leafOnFromWood += leafOn * envi.plantWoodC / totalSourceC;
     }
     phenologyTrackers.didLeafGrowth = 1;
     // This is a computed event - however, the value may get reduced by
