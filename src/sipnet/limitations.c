@@ -25,10 +25,10 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   // First up, carbon. We do not draw from the C storage pool for this.
   double availableC =
       (envi.plantWoodC + envi.coarseRootC) * params.leafOnReallocFrac;
-  double cRatio = availableC / leafOnCDemand;
+  double cLimiter = availableC / leafOnCDemand;
 
   double leafOnNDemand = 0.0;
-  double nRatio = 1.0;
+  double nlimiter = 1.0;
   double availableN = 0.0;
   // Next, nitrogen; leaf-on only draws from the plantStorageN pool
   if (ctx.nitrogenCycle) {
@@ -38,10 +38,10 @@ void checkLeafOnLimitation(double *leafOnFlux) {
     leafOnNDemand = calcLeafOnNFromC(leafOnCDemand);
     availableN = envi.plantStorageN;
     if (leafOnNDemand > TINY) {
-      nRatio = availableN / leafOnNDemand;
+      nlimiter = availableN / leafOnNDemand;
     }
   }
-  double limitation = fmin(cRatio, nRatio);
+  double limitation = fmin(cLimiter, nlimiter);
   limitation = fmax(fmin(limitation, 1.0), 0.0);
 
   if (limitation < 1) {
@@ -50,15 +50,16 @@ void checkLeafOnLimitation(double *leafOnFlux) {
       logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f / N "
               "%.4f (C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, leafOnNDemand, availableC, availableN, cRatio,
-              nRatio, (1 - limitation) * 100, climate->year, climate->day,
+              leafOnCDemand, leafOnNDemand, availableC, availableN, cLimiter,
+              nlimiter, (1 - limitation) * 100, climate->year, climate->day,
               climate->time);
     } else {
       logInfo("Leaf on creation %.4f exceeds available C %.4f "
               "(C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, availableC, cRatio, nRatio, (1 - limitation) * 100,
-              climate->year, climate->day, climate->time);
+              leafOnCDemand, availableC, cLimiter, nlimiter,
+              (1 - limitation) * 100, climate->year, climate->day,
+              climate->time);
     }
   }
 }
@@ -84,9 +85,8 @@ static void checkNitrogenLimitation(void) {
             maxUptake, availableMinN, (1 - reduction) * 100, climate->year,
             climate->day, climate->time);
 
-    // Reduce all drains on soil N
-    fluxes.eventLeafOnCreation *= reduction;
-    fluxes.leafOnCreation *= reduction;
+    // Reduce all drains on soil N (all fluxes used in calcPlantNDemand, plus
+    // fixation and uptake)
     fluxes.woodCreation *= reduction;
     fluxes.leafCreation *= reduction;
     fluxes.fineRootCreation *= reduction;

@@ -658,6 +658,8 @@ void processEvents(void) {
         double leafOnFlux = params.leafGrowth / climLen;
         checkLeafOnLimitation(&leafOnFlux);
         fluxes.eventLeafOnCreation += leafOnFlux;
+        fluxes.eventLeafOnCreationFromWood =
+            leafOnFlux * envi.plantWoodC / (envi.plantWoodC + envi.coarseRootC);
 
         // Nitrogen is handled implicitly by relative CN ratios. Missing N
         // from low-N wood to higher-N leaves is accounted for in
@@ -714,7 +716,11 @@ void updatePoolsForEvents(void) {
   }
 
   // Leaf on and off events
-  envi.plantWoodC -= fluxes.eventLeafOnCreation * climate->length;
+  // Leaf on draws from wood and coarse root pools in proportion to their sizes
+  envi.plantWoodC -= fluxes.eventLeafOnCreationFromWood * climate->length;
+  double fluxFromLeafOn =
+      fluxes.eventLeafOnCreation - fluxes.eventLeafOnCreationFromWood;
+  envi.coarseRootC -= fluxFromLeafOn * climate->length;
   envi.plantLeafC += (fluxes.eventLeafOnCreation - fluxes.eventLeafOffLitter) *
                      climate->length;
   if (ctx.litterPool) {

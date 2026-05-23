@@ -533,12 +533,15 @@ typedef struct FluxVars {
   // and NPP (as in [2])
   // leaf creation term from NPP
   double leafCreation;
-  // creation from leaf-on event; separated from leafCreation for N balance (as
-  // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
-  double leafOnCreation;
   // wood creation term, dependent on NPP similar to leaf creation, but
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;
+  // creation from leaf-on event; separated from leafCreation for N balance (as
+  // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
+  double leafOnCreation;
+  // Portion of leaf-on creation C that comes from wood C (the rest comes from
+  // coarse root C)
+  double leafOnCreationFromWood;
 
   // ****************************************
   // Fluxes for nitrogen cycle
@@ -610,6 +613,9 @@ typedef struct FluxVars {
   double eventOutputN;
   // Transfer from woodC to leafC from a leaf-on event
   double eventLeafOnCreation;
+  // Portion of leaf-on creation C that comes from wood C (the rest comes from
+  // coarse root C)
+  double eventLeafOnCreationFromWood;
   // Transfer from leafC to soil/litter from a leaf-off event
   double eventLeafOffLitter;
   // Resorption of leaf N from a leaf-off event

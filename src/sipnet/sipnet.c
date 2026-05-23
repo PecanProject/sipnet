@@ -751,9 +751,7 @@ int pastLeafFall(void) {
  * leafCreation is not from [1] (source TBD).
  *
  * @param[out] leafCreation (g C/m^2 ground/day)
- * @param[out] leafOnCreation (g C/m^2 ground/day)
  * @param[out] leafLitter (g C/m^2 ground/day)
- * @param[out] leafOffNResorption (g N/m^2 ground/day)
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
 void calcLeafFluxes(double *leafCreation, double *leafLitter,
@@ -779,9 +777,17 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
 }
-
-void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOffNResorption,
-                         double *leafLitter, double plantLeafC) {
+/**
+ *
+ * @param leafOnCreation
+ * @param leafOnFromWood
+ * @param leafOffNResorption
+ * @param leafLitter
+ * @param plantLeafC
+ */
+void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
+                         double *leafOffNResorption, double *leafLitter,
+                         double plantLeafC) {
   // Calc additional fluxes at start/end of growing season
   // Note that these are basically events, and we will track them as such
 
@@ -799,6 +805,8 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOffNResorption,
     double leafOn = (params.leafGrowth / climate->length);
     checkLeafOnLimitation(&leafOn);
     *leafOnCreation += leafOn;
+    *leafOnFromWood =
+        leafOn * envi.plantWoodC / (envi.plantWoodC + envi.coarseRootC);
     phenologyTrackers.didLeafGrowth = 1;
     // This is a computed event - however, the value may get reduced by
     // nitrogen limitation. The writeEvent call is in writeLeafOnEventIfNeeded,
@@ -1286,8 +1294,9 @@ void calculateFluxes(void) {
   calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
 
   // Leaf on/off
-  calcLeafOnOffFluxes(&(fluxes.leafOnCreation), &(fluxes.leafOffNResorption),
-                      &(fluxes.leafLitter), envi.plantLeafC);
+  calcLeafOnOffFluxes(&(fluxes.leafOnCreation), &fluxes.leafOnCreationFromWood,
+                      &(fluxes.leafOffNResorption), &(fluxes.leafLitter),
+                      envi.plantLeafC);
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
@@ -1556,7 +1565,7 @@ void updateMeanTrackers(void) {
 /*!
  * Update the main pools, leafC, woodC, soil and snow
  */
-void updateMainPools() {
+void updateMainPools(void) {
   // Update the stocks, with fluxes adjusted for length of time step.
   // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
   //   are updated in updatePoolsForSoil().
@@ -1576,9 +1585,9 @@ void updateMainPools() {
                           fluxes.fineRootCreation + fluxes.coarseRootCreation;
   envi.plantWoodCStorageDelta +=
       ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
-  envi.plantWoodC +=
-      (fluxes.woodCreation - fluxes.woodLitter - fluxes.leafOnCreation) *
-      climate->length;
+  envi.plantWoodC += (fluxes.woodCreation - fluxes.woodLitter -
+                      fluxes.leafOnCreationFromWood) *
+                     climate->length;
 
   // :: from [1], eq (A2), where:
   //     L   = fluxes.leafCreation
@@ -1639,8 +1648,10 @@ void updatePoolsForSoil(void) {
   // :: from [3], root model description, except that we deal with
   //    respiration in the woodC calculations (or, put another way, it's
   //    implicit in the creation term)
+  double fluxFromLeafOn = fluxes.leafOnCreation - fluxes.leafOnCreationFromWood;
   envi.coarseRootC +=
-      (fluxes.coarseRootCreation - fluxes.coarseRootLoss) * climate->length;
+      (fluxes.coarseRootCreation - fluxes.coarseRootLoss - fluxFromLeafOn) *
+      climate->length;
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss) * climate->length;
 }
