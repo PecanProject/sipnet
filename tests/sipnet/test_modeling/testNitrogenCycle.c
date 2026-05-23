@@ -417,9 +417,8 @@ int testNLimitation(void) {
   doNFixUpLimitCalcs();
 
   // leafOnCreation is unchanged (not reduced by soil N limitation)
-  status |=
-      checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit,
-                           "[leafOn] leafOnCreation");
+  status |= checkNLimitationFlux(fluxes.leafOnCreation, leafOnInit,
+                                 "[leafOn] leafOnCreation");
   // other growth fluxes are still reduced by 0.4 because leaf-on's N demand
   // reduces available soil N through unclaimedStorage
   status |= checkNLimitationFlux(fluxes.woodCreation, 500 * leafOnReduction,

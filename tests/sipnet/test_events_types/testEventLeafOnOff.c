@@ -93,7 +93,8 @@ int run(void) {
   closeEventOutFile();
 
   // leafOn = params.leafGrowth = 3.0
-  // wood decreases by 3.0, leaf increases by 3.0 (coarseRootC=0 so all from wood)
+  // wood decreases by 3.0, leaf increases by 3.0 (coarseRootC=0 so all from
+  // wood)
   status |= checkLeafOn("one leafon", 10.0 - 3.0, 0.0, 0.0 + 3.0);
 
   //// TWO LEAFON EVENTS
@@ -110,8 +111,9 @@ int run(void) {
 
   //// LEAF-ON WITH PROPORTIONAL WOOD AND COARSE ROOT DRAW
   logTest("Testing leaf-on draws proportionally from wood and coarseRootC\n");
-  // woodC=6.0, coarseRootC=4.0: wood fraction = 6/10=0.6, root fraction = 4/10=0.4
-  // leafGrowth=3.0 -> from wood: 3.0*0.6=1.8, from coarseRoot: 3.0*0.4=1.2
+  // woodC=6.0, coarseRootC=4.0: wood fraction = 6/10=0.6, root fraction =
+  // 4/10=0.4 leafGrowth=3.0 -> from wood: 3.0*0.6=1.8, from
+  // coarseRoot: 3.0*0.4=1.2
   initEnv(6.0, 0.0);
   envi.coarseRootC = 4.0;
   resetFluxes();
@@ -120,8 +122,8 @@ int run(void) {
   procEvents();
   closeEventOutFile();
 
-  status |= checkLeafOn("leafon proportional split", 6.0 - 1.8, 4.0 - 1.2,
-                        0.0 + 3.0);
+  status |=
+      checkLeafOn("leafon proportional split", 6.0 - 1.8, 4.0 - 1.2, 0.0 + 3.0);
 
   //// ONE LEAFOFF EVENT (without nitrogen cycle)
   logTest("Testing one leafoff event (no nitrogen cycle)\n");
@@ -209,7 +211,8 @@ int run(void) {
       params.leafGrowth / params.leafCN - params.leafGrowth / params.woodCN;
   double nRatio = 0.05 / leafOnNDemand;
   double transferred = params.leafGrowth * nRatio;
-  status |= checkLeafOn("N-limited leafon", 10.0 - transferred, 0.0, transferred);
+  status |=
+      checkLeafOn("N-limited leafon", 10.0 - transferred, 0.0, transferred);
 
   // Reset nitrogen-cycle context for subsequent tests
   updateIntContext("nitrogenCycle", 0, CTX_TEST);
