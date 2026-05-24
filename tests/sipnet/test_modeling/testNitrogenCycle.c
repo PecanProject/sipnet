@@ -27,25 +27,21 @@ void resetState() {
   // State altered by one test or another, and needs to be reset at the
   // start of each test
 
-  // Respiration/Mineralization
-  fluxes.rSoil = 0.0;
-  fluxes.rLitter = 0.0;
-  fluxes.nMin = 0.0;
+  // Reset all the fluxes
+  fluxes = (struct FluxVars){0};
 
+  // Params
   // Volatilization
   params.nVolatilizationFrac = 0;
-  fluxes.nVolatilization = 0;
   // Leaching
   params.nLeachingFrac = 0;
-  fluxes.nLeaching = 0;
   // Fixation/Uptake
   params.nFixationFracMax = 0;
   params.halfNFixationMax = 0;
-  fluxes.nFixation = 0;
-  fluxes.nUptake = 0;
+
+  // Pools
   // Plant storage N and leaf-off resorption flux (new in SIP336)
   envi.plantStorageN = 0.0;
-  fluxes.leafOffNResorption = 0.0;
 }
 
 void setupTests(void) {

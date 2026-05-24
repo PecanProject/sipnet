@@ -46,8 +46,6 @@ double calcNFixationFrac(void);
 
 /*!
  * Calculate plant N fixation and uptake fluxes.
- *
- * This function is called directly by the leaf-on limitation check
  */
 void calcNFixationAndUptakeFluxes(void);
 

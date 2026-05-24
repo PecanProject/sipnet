@@ -439,6 +439,7 @@ void outputHeader(FILE *out) {
           "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
           "nppStorage\n");
 }
+
 /*!
  * Print current state values to output file
  * @param out File pointer for output
@@ -777,6 +778,7 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
 }
+
 /*!
  * Calculate additional leaf-on and leaf-off fluxes at phenology transitions
  *
@@ -836,9 +838,9 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
         nResorp = params.leafNResorptionFrac * leafOff / params.leafCN;
         *leafOffNResorption += nResorp;
       }
-      writeComputedEventOut(climate->year, climate->day, "leafoff", 2,
-                            "fluxes.leafLitter", leafOff,
-                            "fluxes.leafOffNResorption", nResorp);
+      writeComputedEventOut(climate->year, climate->day,
+                            eventTypeToString(LEAFOFF), 2, "fluxes.leafLitter",
+                            leafOff, "fluxes.leafOffNResorption", nResorp);
     }
   }
 }
@@ -1234,22 +1236,26 @@ void calcMethaneFlux(void) {
 void resetFluxes(void) { fluxes = (struct FluxVars){0}; }
 
 /**
- * Write out a leafon event if one happened
+ * Write out a leaf-on event if one happened
  *
  * Delayed event writing for leaf-on, if appropriate, since the value may
  * have changed due to N limitation
  */
 void writeLeafOnEventIfNeeded(void) {
+  const char *type = eventTypeToString(LEAFON);
   if (fluxes.leafOnCreation > TINY && ctx.events) {
-    writeComputedEventOut(climate->year, climate->day, "leafon", 1,
-                          "fluxes.leafOnCreation", fluxes.leafOnCreation);
+    writeComputedEventOut(climate->year, climate->day, type, 2,
+                          "fluxes.leafOnCreation", fluxes.leafOnCreation,
+                          "fluxes.leafOnCreationFromWood",
+                          fluxes.leafOnCreationFromWood);
   }
   if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
     // Not really a computed event, but we don't have the event object here, so
     // we use this mechanism
-    writeComputedEventOut(climate->year, climate->day, "leafon", 1,
-                          "fluxes.eventLeafOnCreation",
-                          fluxes.eventLeafOnCreation);
+    writeComputedEventOut(
+        climate->year, climate->day, type, 2, "fluxes.eventLeafOnCreation",
+        fluxes.eventLeafOnCreation, "fluxes.eventLeafOnCreationFromWood",
+        fluxes.eventLeafOnCreationFromWood);
   }
 }
 
@@ -1393,9 +1399,12 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.snow), TINY, "snow");
 
   // Nitrogen cycle stocks
-  ensureNonNegative(&(envi.minN), 0, "minN");
-  ensureNonNegative(&(envi.soilOrgN), 0, "soilOrgN");
-  ensureNonNegative(&(envi.litterN), 0, "litterN");
+  // if (ctx.nitrogenCycle) {
+  ensureNonNegative(&envi.minN, 0, "minN");
+  ensureNonNegative(&envi.soilOrgN, 0, "soilOrgN");
+  ensureNonNegative(&envi.litterN, 0, "litterN");
+  ensureNonNegative(&envi.plantStorageN, 0, "plantStorageN");
+  //}
 }
 
 // ////////////////// //
@@ -1685,7 +1694,9 @@ void updatePoolsAndBalance() {
   updatePoolsForSoil();
 
   // Update nitrogen cycle pools
-  updateNitrogenPools();
+  if (ctx.nitrogenCycle) {
+    updateNitrogenPools();
+  }
 
   // Calc total C and N after pool updates
   updateBalanceTrackerPostUpdate();
