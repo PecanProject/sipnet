@@ -777,13 +777,22 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // a constant fraction of leaves fall in each time step
   *leafLitter = plantLeafC * params.leafTurnoverRate;
 }
-/**
+/*!
+ * Calculate additional leaf-on and leaf-off fluxes at phenology transitions
  *
- * @param leafOnCreation
- * @param leafOnFromWood
- * @param leafOffNResorption
- * @param leafLitter
- * @param plantLeafC
+ * This function computes the extra fluxes that occur when the model crosses
+ * the start or end of the growing season. These transition fluxes are tracked
+ * separately from the continuous leaf creation and litter fluxes calculated in
+ * calcLeafFluxes().
+ *
+ * @param[out] leafOnCreation Additional leaf creation flux at leaf-on
+ *   (g C/m^2 ground/day)
+ * @param[out] leafOnFromWood Carbon transferred from wood to leaves at
+ *   leaf-on (g C/m^2 ground/day)
+ * @param[out] leafOffNResorption Nitrogen resorbed from leaves at leaf-off
+ * @param[out] leafLitter Additional leaf litter flux at leaf-off
+ *   (g C/m^2 ground/day)
+ * @param[in] plantLeafC Leaf carbon pool size (g C/m^2 ground area)
  */
 void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
                          double *leafOffNResorption, double *leafLitter,
