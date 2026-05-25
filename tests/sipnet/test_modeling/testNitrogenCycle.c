@@ -593,8 +593,8 @@ int testLeafTurnoverNResorption(void) {
   // Case 1: leafOffNResorption (as populated by calcLeafFluxes for leaf
   // turnover) increases plantStorageN in updateNitrogenPools.
   // plantStorageN=0, leafOffNResorption=2.0, nUptake=0 (no demand)
-  //   uptake = 0 * 0.125 = 0; uptakeFromStorage = min(0, 0) = 0
-  //   plantStorageN_new = 0 + 2.0 * 0.125 - 0 = 0.25
+  //   uptake = 0 * climate->length = 0; uptakeFromStorage = min(0, 0) = 0
+  //   plantStorageN_new = 0 + 2.0 * climate->length - 0 = 0.25
   resetState();
   envi.minN = 1.0;
   envi.plantStorageN = 0.0;
@@ -612,12 +612,18 @@ int testLeafTurnoverNResorption(void) {
   // calcPlantAvailableN, reducing N limitation on plant growth.
   // Reproduce the 50%-limited case (minN=0.625, demand=10) then show that
   // leafOffNResorption=2.0 raises available N and eases the limitation:
-  //   leafOffNFlux = 2.0, unclaimedStorage = 0 + 2.0 * 0.125 = 0.25
+  //   leafOffNFlux = 2.0, unclaimedStorage = 0 + 2.0 * climate->length = 0.25
   //   availableN = max(0, 0.625 + 0.25) = 0.875
-  //   maxUptake = 10 * 0.125 = 1.25 -> reduction = 0.875 / 1.25 = 0.7
-  double reduction = 0.7;
-  initNLimitationState(0.625, 0);
-  fluxes.leafOffNResorption = 2.0;
+  //   maxUptake = 10 * climate->length = 1.25 -> reduction = 0.875 / 1.25 = 0.7
+  double minN2 = 0.625;
+  double resorpFlux = 2.0;
+  double demandFlux = 10.0;  // sum of demand fluxes set in initNLimitationState
+  double unclaimedStorage = resorpFlux * climate->length;
+  double availableN = minN2 + unclaimedStorage;
+  double maxUptake = demandFlux * climate->length;
+  double reduction = availableN / maxUptake;
+  initNLimitationState(minN2, 0);
+  fluxes.leafOffNResorption = resorpFlux;
 
   doNFixUpLimitCalcs();
 
