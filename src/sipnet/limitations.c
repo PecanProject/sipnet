@@ -28,7 +28,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   double cLimiter = availableC / leafOnCDemand;
 
   double leafOnNDemand = 0.0;
-  double nlimiter = 1.0;
+  double nLimiter = 1.0;
   double availableN = 0.0;
   // Next, nitrogen; leaf-on only draws from the plantStorageN pool
   if (ctx.nitrogenCycle) {
@@ -38,10 +38,10 @@ void checkLeafOnLimitation(double *leafOnFlux) {
     leafOnNDemand = calcLeafOnNFromC(leafOnCDemand);
     availableN = envi.plantStorageN;
     if (leafOnNDemand > TINY) {
-      nlimiter = availableN / leafOnNDemand;
+      nLimiter = availableN / leafOnNDemand;
     }
   }
-  double limitation = fmin(cLimiter, nlimiter);
+  double limitation = fmin(cLimiter, nLimiter);
   limitation = fmax(fmin(limitation, 1.0), 0.0);
 
   if (limitation < 1) {
@@ -51,13 +51,13 @@ void checkLeafOnLimitation(double *leafOnFlux) {
               "%.4f (C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
               leafOnCDemand, leafOnNDemand, availableC, availableN, cLimiter,
-              nlimiter, (1 - limitation) * 100, climate->year, climate->day,
+              nLimiter, (1 - limitation) * 100, climate->year, climate->day,
               climate->time);
     } else {
       logInfo("Leaf on creation %.4f exceeds available C %.4f "
               "(C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, availableC, cLimiter, nlimiter,
+              leafOnCDemand, availableC, cLimiter, nLimiter,
               (1 - limitation) * 100, climate->year, climate->day,
               climate->time);
     }

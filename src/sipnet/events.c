@@ -721,9 +721,9 @@ void updatePoolsForEvents(void) {
   // Leaf on and off events
   // Leaf on draws from wood and coarse root pools in proportion to their sizes
   envi.plantWoodC -= fluxes.eventLeafOnCreationFromWood * climate->length;
-  double fluxFromLeafOn =
+  double eventLeafOnCreationFromRoot =
       fluxes.eventLeafOnCreation - fluxes.eventLeafOnCreationFromWood;
-  envi.coarseRootC -= fluxFromLeafOn * climate->length;
+  envi.coarseRootC -= eventLeafOnCreationFromRoot * climate->length;
   envi.plantLeafC += (fluxes.eventLeafOnCreation - fluxes.eventLeafOffLitter) *
                      climate->length;
   if (ctx.litterPool) {

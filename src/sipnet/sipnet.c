@@ -753,10 +753,11 @@ int pastLeafFall(void) {
  *
  * @param[out] leafCreation (g C/m^2 ground/day)
  * @param[out] leafLitter (g C/m^2 ground/day)
+ * @param[out] leafOffNResorption Nitrogen resorbed from leaf turnover
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
 void calcLeafFluxes(double *leafCreation, double *leafLitter,
-                    double plantLeafC) {
+                    double *leafOffNResorption, double plantLeafC) {
   // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
   // [1]: growing season boundary effects, but modified to be partial growth
@@ -770,13 +771,16 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // end of growing season:
   if (npp > 0) {
     // a fraction of NPP is allocated to leaf growth
-    *leafCreation = npp * params.leafAllocation;
-  } else {
-    // net loss of C in this time step - no C left for growth
-    *leafCreation = 0;
+    *leafCreation += npp * params.leafAllocation;
   }
+
   // a constant fraction of leaves fall in each time step
-  *leafLitter = plantLeafC * params.leafTurnoverRate;
+  double litter = plantLeafC * params.leafTurnoverRate;
+  *leafLitter = litter;
+  if (ctx.nitrogenCycle) {
+    double nResorp = params.leafNResorptionFrac * litter / params.leafCN;
+    *leafOffNResorption += nResorp;
+  }
 }
 
 /*!
@@ -1308,7 +1312,8 @@ void calculateFluxes(void) {
   }
 
   // Leaf creation and litter
-  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter), envi.plantLeafC);
+  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter),
+                 &(fluxes.leafOffNResorption), envi.plantLeafC);
 
   // Leaf on/off
   calcLeafOnOffFluxes(&(fluxes.leafOnCreation), &fluxes.leafOnCreationFromWood,
@@ -1668,10 +1673,11 @@ void updatePoolsForSoil(void) {
   // :: from [3], root model description, except that we deal with
   //    respiration in the woodC calculations (or, put another way, it's
   //    implicit in the creation term)
-  double fluxFromLeafOn = fluxes.leafOnCreation - fluxes.leafOnCreationFromWood;
-  envi.coarseRootC +=
-      (fluxes.coarseRootCreation - fluxes.coarseRootLoss - fluxFromLeafOn) *
-      climate->length;
+  double leafOnCreationFromRoot =
+      fluxes.leafOnCreation - fluxes.leafOnCreationFromWood;
+  envi.coarseRootC += (fluxes.coarseRootCreation - fluxes.coarseRootLoss -
+                       leafOnCreationFromRoot) *
+                      climate->length;
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss) * climate->length;
 }
