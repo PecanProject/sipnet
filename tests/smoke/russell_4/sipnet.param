@@ -1,79 +1,58 @@
-plantWoodInit 30000 0 6600 14000 200
-laiInit 0 0 0 5.2 0.2
-litterInit 280 0 130 1200 25
-soilInit 5243.35615994556 1 3300 19000 3000
-litterWFracInit 0.5 0 0 1 0.1
-soilWFracInit 0.00287118103041723 1 0 1 0.1
-snowInit 1 0 0 0 1
-microbeInit 0.5 0 0.02 1 0.001
-fineRootFrac 0.2 0 0 1 0.001
-coarseRootFrac 0.2 0 0 1 0.001
-aMax 89.7681891177546 1 0 200 0.2
-aMaxFrac 0.639991846983321 0 0.66 0.86 0.005
+plantWoodInit 30000
+laiInit 0
+litterInit 280
+soilInit 5243.35615994556
+soilWFracInit 0.00287118103041723
+snowInit 1
+fineRootFrac 0.2
+coarseRootFrac 0.2
+aMax 89.7681891177546
+aMaxFrac 0.639991846983321
 psnTMin -4.48871541936206 1 -8 8 0.5
-psnTOpt 12.1751920301758 1 5 30 0.5
-dVpdSlope 0.131494389623404 1 0.01 0.25 0.005
-dVpdExp 1.55931336525828 0 1 3 0.2
-halfSatPar 10.9259948204271 1 4 27 5
-attenuation 0.619397682305425 0 0.38 0.62 0.04
-baseVegResp 0.00168176926358025 1 0.0006 0.06 0.00002
-baseFolRespFrac 0.0248308759456334 1 0.05 0.3 0.005
-baseSoilResp 0.06 1 0.003 0.6 0.00005
-baseSoilRespCold 0.015 0 0.006 0.15 0.00005
-baseFineRootResp 0.0000651788182561805 0 0.003 0.6 0.001
-baseCoarseRootResp 0.006 0 0.003 0.6 0.001
-baseMicrobeResp 0.0004 0 0.0003 0.005 0.0001
-vegRespQ10 1.58891680454835 1 1.4 2.6 0.05
-fineRootQ10 4.4793265869841 0 1.4 5 0.05
-coarseRootQ10 4.97119639357552 0 1.4 5 0.05
-soilRespQ10 2.9 1 1.4 5 0.05
-soilRespQ10Cold 2.9 0 1.4 3.5 0.05
-microbeQ10 2.3 0 1.4 5 0.05
-growthRespFrac 0.204928460905689 0 0.1 0.3 0.05
-E0 309 0 0 618 20
-T0 -46 0 -273 -25 5
-coldSoilThreshold 1 0 -2 4 0.5
-frozenSoilFolREff 0 0 0 1 0.2
+psnTOpt 12.1751920301758
+dVpdSlope 0.131494389623404
+dVpdExp 1.55931336525828
+halfSatPar 10.9259948204271
+attenuation 0.619397682305425
+baseVegResp 0.00168176926358025
+baseFolRespFrac 0.0248308759456334
+baseSoilResp 0.06
+baseFineRootResp 0.0000651788182561805
+baseCoarseRootResp 0.006
+vegRespQ10 1.58891680454835
+fineRootQ10 4.4793265869841
+coarseRootQ10 4.97119639357552
+soilRespQ10 2.9
+growthRespFrac 0.204928460905689
+frozenSoilFolREff 0
 frozenSoilThreshold 0 0 -5 5 0.5
-soilRespMoistEffect 1 0 0 2 0.1
-leafOnDay 144 0 91 181 15
-gddLeafOn 166.704771853983 1 100 900 200
-soilTempLeafOn 12 0 8 16 1
-leafOffDay 285 1 243 319 15
-leafGrowth 0 0 0 252 10
-fracLeafFall 0 1 0 1 0.1
-woodTurnoverRate 0.014 1 0.001 1 0.001
-leafTurnoverRate 1.21382545796387 1 0.001 1 0.03
-fineRootTurnoverRate 0.0768885627227875 0 0.001 1 0.001
-coarseRootTurnoverRate 0.056 0 0.001 1 0.001
-litterBreakdownRate 0.4 0 0.13 1.2 0.1
-fracLitterRespired 0.5 0 0.4 0.6 0.1
-fineRootAllocation 0.4 0 0 0.6 0.001
-woodAllocation 0.2 0 0 0.6 0.001
-leafAllocation 0.2 0 0 1 0.04
-waterRemoveFrac 0.088 0 0.001 0.16 0.008
-frozenSoilEff 1 1 0 1 0.2
-wueConst 10.9 1 0.01 109 0.5
-litterWHC 1 0 0.01 4 0.25
-soilWHC 12 1 0.1 36 1
-immedEvapFrac 0.1 0 0 0.2 0.025
-leafPoolDepth 0.1 0 0 0.2 0.025
-fastFlowFrac 0 0 0 0.2 0.025
-snowMelt 0.15 0 0.05 0.25 0.02
-litWaterDrainRate 0.1 0 0.01 1 0.1
-rdConst 300 0 1 1500 75
-rSoilConst1 8.2 0 0 16.4 2
-rSoilConst2 4.3 0 0 8.6 1
-m_ballBerry 3.89 0 0.5 15 0.5
-leafCSpWt 37.2890706126354 0 13 500 0
-cFracLeaf 0.492305106337912 0 0.4 0.5 0.01
-qualityLeaf 0.7 0 0 1 0.001
-qualityWood 0.3 0 0 1 0.001
-efficiency 0.45 0 0.1 0.9 0.001
-maxIngestionRate 0.04 0 0.01 0.5 0.01
-halfSatIngestion 5000 0 0 10000 0.001
-totNitrogen 0.02 0 0.005 0.3 0.001
-microbeNC 0.2 0 0.1 0.5 0.001
-fineRootExudation 0.01 0 0 1 0.001
-coarseRootExudation 0.01 0 0 1 0.001
-microbePulseEff 0.45 0 0 1 0.05
+soilRespMoistEffect 1
+leafOnDay 144
+gddLeafOn 166.704771853983
+soilTempLeafOn 12
+leafOffDay 285
+leafGrowth 0
+fracLeafFall 0
+woodTurnoverRate 0.014
+leafTurnoverRate 1.21382545796387
+fineRootTurnoverRate 0.0768885627227875
+coarseRootTurnoverRate 0.056
+litterBreakdownRate 0.4
+fracLitterRespired 0.5
+fineRootAllocation 0.4
+woodAllocation 0.2
+leafAllocation 0.2
+waterRemoveFrac 0.088
+frozenSoilEff 1
+wueConst 10.9
+soilWHC 12
+immedEvapFrac 0.1
+leafPoolDepth 0.1
+fastFlowFrac 0
+snowMelt 0.15
+rdConst 300
+rSoilConst1 8.2
+rSoilConst2 4.3
+leafCSpWt 37.2890706126354
+cFracLeaf 0.492305106337912
+leafOnReallocFrac 0.5
