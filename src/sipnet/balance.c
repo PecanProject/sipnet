@@ -23,7 +23,7 @@ void getMassTotals(double *carbon, double *nitrogen) {
     *nitrogen =
         envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN +
         envi.fineRootC / params.fineRootCN + envi.coarseRootC / params.woodCN +
-        envi.soilOrgN + envi.litterN + envi.minN;
+        envi.soilOrgN + envi.litterN + envi.minN + envi.plantStorageN;
   } else {
     *nitrogen = 0.0;
   }

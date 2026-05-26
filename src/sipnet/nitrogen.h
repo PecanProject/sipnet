@@ -3,16 +3,10 @@
 
 // Nitrogen cycle related functions
 
-// TBD: will be used for leaf-on limit check; might be folded into
-// nitrogen use too, if appropriate
 /*!
- * Calculate available nitrogen for this step
- *
- * Takes into account demand, fixation, and...
- *
- * @return available nitrogen
+ * Calculate excess N needed for leaf on events
  */
-double calcAvailableNitrogen(void);
+double calcLeafOnNFromC(double leafOnC);
 
 /*!
  * Calculate plant N demand from biomass creation fluxes
@@ -20,6 +14,19 @@ double calcAvailableNitrogen(void);
  * @return Total nitrogen demand from plant growth
  */
 double calcPlantNDemand(void);
+
+/*!
+ * Calculate nitrogen available for plant growth
+ *
+ * Considers mineral N in soil, unclaimed plant storage N, and non-uptake
+ * fluxes that will affect soil mineral N. That is, unlike most other functions,
+ * this one considers the current time step's fluxes as well as pools.
+ *
+ * This function is used to determine whether we are in nitrogen limitation.
+ *
+ * @return Available N for plant growth
+ */
+double calcPlantAvailableN(void);
 
 /**
  * Calculate all fluxes for soil mineral N EXCEPT uptake
@@ -36,6 +43,11 @@ double calcMinNNonUptakeFluxes(void);
  * @return N fixation fraction used to compute amount of N fixation
  */
 double calcNFixationFrac(void);
+
+/*!
+ * Calculate plant N fixation and uptake fluxes.
+ */
+void calcNFixationAndUptakeFluxes(void);
 
 /*!
  * Calculate all nitrogen fluxes

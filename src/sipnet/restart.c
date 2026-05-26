@@ -33,7 +33,7 @@
 #define NUM_META_FIELDS 4
 #define NUM_SCHEMA_FIELDS 4
 #define NUM_MEAN_META_FIELDS 5
-#define NUM_ENVI_FIELDS 12
+#define NUM_ENVI_FIELDS 13
 #define NUM_TRACKER_FIELDS 32
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_EVENT_TRACKERS_FIELDS 1
@@ -188,8 +188,9 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->enviPF[8] = (StateField){"envi.minN",                    FT_DOUBLE, &envi.minN,                   0};
   state->enviPF[9] = (StateField){"envi.soilOrgN",                FT_DOUBLE, &envi.soilOrgN,               0};
   state->enviPF[10] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
-  state->enviPF[11] = (StateField){"envi.plantWoodCStorageDelta", FT_DOUBLE, &envi.plantWoodCStorageDelta, 0};
-  state->enviPF[12] = (StateField){"envi.invalid",                FT_INVALID, NULL, FIELD_INVALID};
+  state->enviPF[11] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
+  state->enviPF[12] = (StateField){"envi.plantWoodCStorageDelta", FT_DOUBLE, &envi.plantWoodCStorageDelta, 0};
+  state->enviPF[13] = (StateField){"envi.invalid",                FT_INVALID, NULL, FIELD_INVALID};
 
   state->trackersPF[0] = (StateField){"trackers.gpp",                 FT_DOUBLE, &trackers.gpp,                0};
   state->trackersPF[1] = (StateField){"trackers.rtot",                FT_DOUBLE, &trackers.rtot,               0};
