@@ -72,3 +72,6 @@ anaerobicTransExp 2.0
 soilMethaneRate 0.1
 litterMethaneRate 0.1
 waterDrainFrac 1.0
+leafOnReallocFrac 0.2
+plantStorageNInit 5.0
+leafNResorptionFrac 0.5
