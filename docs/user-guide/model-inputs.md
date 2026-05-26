@@ -93,9 +93,9 @@ loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
 0	  1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690
 ```
 
-## Agronomic Events
+## Events
 
-Agronomic (management) events are read from `events.in` by default, or from
+Events are read from `events.in` by default, or from
 `<EVENTS_PREFIX>.in` when `EVENTS_PREFIX` / `--events-prefix` is set. This
 file specifies one event per line:
 
@@ -185,6 +185,14 @@ Specifically:
    - for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). 
   - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
    - root biomass is only removed for root crops
+ 
+### Leaf On and Off
+
+| parameter | col | req? | description            |
+| --------- | --- | -----| ---------------------- |
+| type      |  3  |  Y   | `leafon` or `leafoff`  |
+ 
+ <!-- TODO add "- Model representation:" section 
  
 ### Example of `events.in` file:
 
