@@ -69,7 +69,7 @@ void initEnv(void) {
   }
 
   // not used here, but accessed
-  envi.plantWoodCStorageDelta = 0.0;
+  envi.plantWoodCAccountingDelta = 0.0;
   envi.soilWater = 10.0;
   envi.minN = 10.0;
 }

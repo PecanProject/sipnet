@@ -163,26 +163,27 @@ litter, $f_{\text{harvest,transfer,}i}$ set to 1.
 ### Wood Carbon
 
 As stated above, SIPNET uses a five-day averaged NPP when allocating gained carbon to plant growth. To implement this,
-the current timestep's net primary production (adjusted GPP - autotrophic respiration) is added to the wood carbon pool
-where it acts as a storage pool, and all allocations from the averaged NPP are deducted from that pool.
+the current timestep's net primary production (adjusted GPP - autotrophic respiration) is accumulated in an accounting
+term, and all allocations from the averaged NPP are deducted from that term.
 
-Starting in SIPNET v2.1, to support mass balance tracking, this storage is explicitly tracked as a separate pool called
-$C_{\text{wood,storage}}$, which is initialized to zero. We can represent this storage of carbon as:
+Starting in SIPNET v2.1, to support mass balance tracking, this term is explicitly tracked as
+$C_{\text{wood,accounting}}$ (`plantWoodCAccountingDelta`), which is initialized to zero. We can represent this
+accounting delta as:
 
 \begin{equation}
-\frac{dC_{\text{wood,storage}}}{dt} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
-\label{eq:wood_c_storage}
+\frac{dC_{\text{wood,accounting}}}{dt} = (GPP - R_a) - \overline{\text{NPP}}_\text{alloc}
+\label{eq:wood_c_accounting}
 \end{equation}
 
-where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. This storage term
-represents the lag between NPP input and allocation output due to the five-day averaging. Tracking the storage term
-explicitly enables checking nitrogen mass balance, as the storage changes do not involve nitrogen changes, whereas
-growth allocation does.
+where $\overline{NPP}_\text{alloc}$ is the sum of the carbon allocated to the biomass pools as growth. This accounting
+term represents the lag between NPP input and allocation output due to the five-day averaging. Tracking it explicitly
+enables checking nitrogen mass balance, as these carbon changes do not involve nitrogen changes, whereas growth
+allocation does.
 
-The total wood carbon is the sum of the structural wood carbon and the storage pool:
+The total wood carbon is the sum of the structural wood carbon and the accounting delta:
 
 \begin{equation}
-C_{\text{wood,total}} = C_{\text{wood}} + C_{\text{wood,storage}}
+C_{\text{wood,total}} = C_{\text{wood}} + C_{\text{wood,accounting}}
 \end{equation}
 
 Thus, changes to (non-storage) wood carbon over time are determined by:
@@ -695,8 +696,8 @@ Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of plan
 demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
 
 If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level
-that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool 
-(\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future 
+that available nitrogen can support. Carbon not allocated to growth remains in the wood carbon accounting term
+(\eqref{eq:wood_c_accounting}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future
 photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
 
 Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
@@ -709,7 +710,7 @@ implemented as follows:
 - Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
 - Calculate the amount by which plant N demand exceeds available supply [^*].
 - Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
-- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in the wood storage pool \eqref{eq:wood_c_storage}.
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in the wood carbon accounting term \eqref{eq:wood_c_accounting}.
 - Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed stoichiometry.
 
 [^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen

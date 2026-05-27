@@ -447,11 +447,12 @@ typedef struct Environment {
   // Carbon gains from photosynthesis and losses to respiration don't affect the
   // total nitrogen in the system. Since SIPNET uses a five-day time-averaged
   // NPP value for allocating plant growth, there is a lag from input to output
-  // here that must be tracked. So, we split the wood pool into plantWoodC
-  // (above) and a new pool to track non-nitrogen-affecting changes over time.
-  // As this is a delta, it can be negative. Note that the actual "wood carbon"
-  // is the sum of these two pools.
-  double plantWoodCStorageDelta;
+  // here that must be tracked. plantWoodC (above) holds N-coupled structural
+  // wood; plantWoodCAccountingDelta tracks carbon changes with no associated
+  // nitrogen (an accounting term, not a storage pool). As this is a delta, it
+  // can be negative. Total wood carbon is plantWoodC +
+  // plantWoodCAccountingDelta.
+  double plantWoodCAccountingDelta;
 } Envi;
 
 // Global var

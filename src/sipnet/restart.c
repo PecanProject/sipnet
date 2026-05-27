@@ -17,6 +17,8 @@
 #define RESTART_MAGIC "SIPNET_RESTART"
 #define RESTART_SCHEMA_VERSION "1.0"
 #define RESTART_FLOAT_EPSILON 1e-8
+#define LEGACY_ENVI_PLANT_WOOD_C_STORAGE_DELTA "envi.plantWoodCStorageDelta"
+#define ENVI_PLANT_WOOD_C_ACCOUNTING_DELTA_INDEX 12
 
 /*
  * When the serialized restart contract changes, update:
@@ -189,7 +191,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->enviPF[9] = (StateField){"envi.soilOrgN",                FT_DOUBLE, &envi.soilOrgN,               0};
   state->enviPF[10] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
   state->enviPF[11] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
-  state->enviPF[12] = (StateField){"envi.plantWoodCStorageDelta", FT_DOUBLE, &envi.plantWoodCStorageDelta, 0};
+  state->enviPF[12] = (StateField){"envi.plantWoodCAccountingDelta", FT_DOUBLE, &envi.plantWoodCAccountingDelta, 0};
   state->enviPF[13] = (StateField){"envi.invalid",                FT_INVALID, NULL, FIELD_INVALID};
 
   state->trackersPF[0] = (StateField){"trackers.gpp",                 FT_DOUBLE, &trackers.gpp,                0};
@@ -532,6 +534,20 @@ void markSeen(int *seen, const char *restartIn, const char *key) {
   *seen = FIELD_SEEN;
 }
 
+static int setLegacyPlantWoodCAccountingDelta(const char *restartIn,
+                                              const char *key,
+                                              const char *value,
+                                              StateField *sf) {
+  if (strcmp(key, LEGACY_ENVI_PLANT_WOOD_C_STORAGE_DELTA) != 0) {
+    return 0;
+  }
+  checkSeen(sf, restartIn, key);
+  double val = parseDoubleStrict(restartIn, key, value);
+  *(double *)sf->value = val;
+  setSeen(sf);
+  return 1;
+}
+
 static void readRestartState(const char *restartIn, RestartState *state,
                              MeanTracker *meanNPP) {
   FILE *in = openFile(restartIn, "r");
@@ -608,6 +624,11 @@ static void readRestartState(const char *restartIn, RestartState *state,
     }
     if (checkAndSetBatch(state->enviPF, "envi.", NUM_ENVI_FIELDS, restartIn,
                          key, value)) {
+      continue;
+    }
+    if (setLegacyPlantWoodCAccountingDelta(
+            restartIn, key, value,
+            &state->enviPF[ENVI_PLANT_WOOD_C_ACCOUNTING_DELTA_INDEX])) {
       continue;
     }
     if (checkAndSetBatch(state->trackersPF, "trackers.", NUM_TRACKER_FIELDS,

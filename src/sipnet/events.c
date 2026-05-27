@@ -531,7 +531,7 @@ void processEvents(void) {
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
 
-        const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
+        const double woodC = envi.plantWoodC + envi.plantWoodCAccountingDelta;
         // Litter increase
         double litterAdd = fracTA * (envi.plantLeafC + woodC);
         double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);

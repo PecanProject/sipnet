@@ -69,6 +69,8 @@ after midnight (using the first resumed climate row's timestep length) SIPNET lo
 
 Event files must be segmented to the same time boundaries as climate segments.
 
+Restart checkpoints written after this rename use `envi.plantWoodCAccountingDelta`; checkpoints with the legacy key `envi.plantWoodCStorageDelta` remain readable.
+
 ## When Saved State Changes
 
 If you add saved state or change an existing saved payload:
