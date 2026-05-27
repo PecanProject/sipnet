@@ -10,6 +10,11 @@
 // Definition of global balance tracker struct
 BalanceTracker balanceTracker;
 
+// No leaf-water pool is tracked in envi; ctx.leafWater only caps the immedEvap
+// flux rate (see calcPrecip()). Excess intercepted water goes to soil via
+// netRain.
+static double getWaterTotal(void) { return envi.soilWater + envi.snow; }
+
 void getMassTotals(double *carbon, double *nitrogen) {
   *carbon = (envi.plantWoodC + envi.plantWoodCStorageDelta) + envi.plantLeafC +
             envi.fineRootC + envi.coarseRootC + envi.soilC;
@@ -32,15 +37,18 @@ void getMassTotals(double *carbon, double *nitrogen) {
 void updateBalanceTrackerPreUpdate(void) {
   // Set the pre-update pool totals
   getMassTotals(&balanceTracker.preTotalC, &balanceTracker.preTotalN);
+  balanceTracker.preTotalWater = getWaterTotal();
 }
 
 void updateBalanceTrackerPostUpdate(void) {
   // Set the post-update pool totals
   getMassTotals(&balanceTracker.postTotalC, &balanceTracker.postTotalN);
+  balanceTracker.postTotalWater = getWaterTotal();
 }
 
 void updateBalanceTrackerPostClamp(void) {
   getMassTotals(&balanceTracker.finalC, &balanceTracker.finalN);
+  balanceTracker.finalWater = getWaterTotal();
 
   // Difference between post-update and post-clamp is the amount we "gained" by
   // setting negative values to zero
@@ -60,6 +68,16 @@ void updateBalanceTrackerPostClamp(void) {
   }
   if (balanceTracker.clampedN < EPS) {
     balanceTracker.clampedN = 0;
+  }
+
+  balanceTracker.clampedWater =
+      balanceTracker.finalWater - balanceTracker.postTotalWater;
+  if (balanceTracker.clampedWater < -EPS) {
+    // This shouldn't happen, by construction
+    logInternalError("Non-negative clamping has cause water loss\n");
+  }
+  if (balanceTracker.clampedWater < EPS) {
+    balanceTracker.clampedWater = 0;
   }
 
   // Calculate the system inputs and outputs
@@ -89,11 +107,26 @@ void updateBalanceTrackerPostClamp(void) {
     balanceTracker.outputsN *= climate->length;
   }
 
+  // WATER
+  // eventEvap: irrigation water immediately evaporated; counted as both input
+  // (water entered the system) and output (left as vapour). Net to soil is
+  // eventSoilWater only. snowMelt is excluded (internal snow -> soil transfer).
+  balanceTracker.inputsWater =
+      fluxes.rain + fluxes.snowFall + fluxes.eventSoilWater + fluxes.eventEvap;
+  balanceTracker.outputsWater =
+      fluxes.immedEvap + fluxes.transpiration + fluxes.evaporation +
+      fluxes.sublimation + fluxes.drainage + fluxes.fastFlow + fluxes.eventEvap;
+
+  // Account for climate length
+  balanceTracker.inputsWater *= climate->length;
+  balanceTracker.outputsWater *= climate->length;
+
   // Account for gains from clamping
   balanceTracker.inputsC += balanceTracker.clampedC;
   if (ctx.nitrogenCycle) {
     balanceTracker.inputsN += balanceTracker.clampedN;
   }
+  balanceTracker.inputsWater += balanceTracker.clampedWater;
 }
 
 void initBalanceTracker(void) {
@@ -107,16 +140,23 @@ void initBalanceTracker(void) {
   balanceTracker.postTotalN = 0.0;
   balanceTracker.clampedN = 0.0;
   balanceTracker.finalN = 0.0;
+  balanceTracker.preTotalWater = 0.0;
+  balanceTracker.postTotalWater = 0.0;
+  balanceTracker.clampedWater = 0.0;
+  balanceTracker.finalWater = 0.0;
 
   // System I/O
   balanceTracker.inputsC = 0.0;
   balanceTracker.outputsC = 0.0;
   balanceTracker.inputsN = 0.0;
   balanceTracker.outputsN = 0.0;
+  balanceTracker.inputsWater = 0.0;
+  balanceTracker.outputsWater = 0.0;
 
   // Checks
   balanceTracker.deltaC = 0.0;
   balanceTracker.deltaN = 0.0;
+  balanceTracker.deltaWater = 0.0;
 }
 
 void checkBalance(void) {
@@ -134,12 +174,24 @@ void checkBalance(void) {
   double systemNDelta = balanceTracker.inputsN - balanceTracker.outputsN;
   balanceTracker.deltaN = poolNDelta - systemNDelta;
 
+  // WATER
+  // Pool delta
+  double poolWaterDelta =
+      balanceTracker.finalWater - balanceTracker.preTotalWater;
+  // System delta
+  double systemWaterDelta =
+      balanceTracker.inputsWater - balanceTracker.outputsWater;
+  balanceTracker.deltaWater = poolWaterDelta - systemWaterDelta;
+
   // To avoid weird negative-zero issues...
   if (fabs(balanceTracker.deltaC) < EPS) {
     balanceTracker.deltaC = 0.0;
   }
   if (fabs(balanceTracker.deltaN) < EPS) {
     balanceTracker.deltaN = 0.0;
+  }
+  if (fabs(balanceTracker.deltaWater) < EPS) {
+    balanceTracker.deltaWater = 0.0;
   }
 
   int err = 0;
@@ -161,6 +213,11 @@ void checkBalance(void) {
                balanceTracker.preTotalN, balanceTracker.postTotalN,
                balanceTracker.inputsN, balanceTracker.outputsN,
                balanceTracker.clampedN, balanceTracker.deltaN);
+  }
+  if (fabs(balanceTracker.deltaWater) > 0.0) {
+    logWarning(
+        "Water balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        balanceTracker.deltaWater, climate->year, climate->day, climate->time);
   }
   if (err) {
     logInternalError("Exiting\n");
