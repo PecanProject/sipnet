@@ -7,6 +7,7 @@
 // For help with debugging failures
 #define DEBUG_C 0
 #define DEBUG_N 0
+#define DEBUG_W 0
 #define DO_OUTPUT 0
 #define OUTPUT_FILE "balance.out"
 
@@ -74,6 +75,19 @@ int checkNitrogen(void) {
   return status;
 }
 
+int checkWater(void) {
+  validateContext();
+
+  int status = 0;
+  if (fabs(balanceTracker.deltaWater) > TEST_EPS) {
+    status = 1;
+    logTest("water balance check delta %8.5f (Y %d D %d T %4.2f)\n",
+            balanceTracker.deltaWater, climate->year, climate->day,
+            climate->time);
+  }
+  return status;
+}
+
 int testBalanceSimple(void) {
   logTest("Starting testBalanceSimple()\n");
   int status = 0;
@@ -83,6 +97,7 @@ int testBalanceSimple(void) {
 
   status |= checkCarbon();
   status |= checkNitrogen();
+  status |= checkWater();
 
   return status;
 }
@@ -101,6 +116,7 @@ int testBalanceLeaf(void) {
 
     status |= checkCarbon();
     status |= checkNitrogen();
+    status |= checkWater();
 
     climate = climate->nextClim;
   }
@@ -121,6 +137,7 @@ int testBalanceLeafEvents(void) {
 
     status |= checkCarbon();
     status |= checkNitrogen();
+    status |= checkWater();
 
     climate = climate->nextClim;
   }
@@ -142,6 +159,7 @@ int testBalanceNoLitterPool(void) {
     // No nitrogen with no litter pool, but this is a good check that we
     // aren't mishandling the case
     status |= checkNitrogen();
+    status |= checkWater();
 
     climate = climate->nextClim;
   }
@@ -191,7 +209,7 @@ int main(void) {
 }
 
 void dumpState(void) {
-#if DEBUG_C | DEBUG_N
+#if DEBUG_C | DEBUG_N | DEBUG_W
   double len = climate->length;
 #endif
 #if DEBUG_C
@@ -236,5 +254,15 @@ void dumpState(void) {
           fluxes.leafLitter * len / params.leafCN,
           fluxes.fineRootLoss * len / params.fineRootCN,
           fluxes.coarseRootLoss * len / params.woodCN);
+#endif
+#if DEBUG_W
+  logTest("preW %10.6f postW %10.6f inW %10.6f outW %10.6f pDelta %10.6f "
+          "sDelta %10.6f delta %10.6f\n",
+          balanceTracker.preTotalWater, balanceTracker.postTotalWater,
+          balanceTracker.inputsWater, balanceTracker.outputsWater,
+          balanceTracker.postTotalWater - balanceTracker.preTotalWater,
+          balanceTracker.inputsWater - balanceTracker.outputsWater,
+          balanceTracker.deltaWater);
+  logTest("  W:        soil %10.6f snow %10.6f\n", envi.soilWater, envi.snow);
 #endif
 }
