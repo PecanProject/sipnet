@@ -309,6 +309,13 @@ F^C_\text{fert,org}
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is
 transferred to litter.
 
+If soil carbon saturation is enabled, the litter carbon pool has an additional input of carbon that was not stabilized for long-term storage by the soil. This functionality is described in more detail below in the Soil Carbon section \eqref{eq:soil_carbon_saturation}.
+
+\begin{equation}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} + F^C_{\text{soil}} \cdot \frac{C_{\text{soil}}}{f_{\text{C,soil,saturation}}} - F^C_{\text{decomp}} - F^C_{\text{CH}_4\text{,litter}}
+\label{eq:soil_carbon_to_litter}
+\end{equation}
+
 $F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter
 decomposition
 is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
@@ -369,6 +376,15 @@ Total carbon input to the soil includes both
 F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
 \label{eq:soil_carbon_flux}
 \end{equation}
+
+If soil carbon saturation is enabled, only a fraction of the total carbon input will be added to the soil. The amount added to the soil carbon pool is a function of the proximity of the pool to the soil carbon saturation limit. As the soil carbon pool aqcuires more carbon and approaches its saturation limit, the amount of carbon stored in the pool decreases. This represents the physical and chemical constraints of the mineralogical surfaces of soil to stabilize carbon for long-term storage. The remaining carbon that is not stabilized in the soil carbon pool due to saturation constraints will be returned to the litter carbon pool to act as fast-turnover carbon \eqref{eq:soil_carbon_to_litter}.
+
+\begin{equation}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} \cdot (1 - \frac{C_{\text{soil}}}{f_{\text{C,soil,saturation}}}) - R_{\text{soil}} - F^C_{\text{CH}_4\text{,soil}}
+\label{eq:soil_carbon_saturation}
+\end{equation}
+
+where $f_{\text{C,soil,saturation}}$ is the soil carbon saturation limit entered as an input paramter.
 
 Soil heterotrophic respiration is modeled as a first-order process proportional
 to soil organic carbon content and modified by environmental and management factors:

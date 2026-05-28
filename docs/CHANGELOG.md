@@ -28,6 +28,7 @@ sections to include in release notes:
 
 - `sipnet-view` tool for visualizing SIPNET output files (#317)
 - `leafon` and `leafoff` events for tracking phenological transitions (#326)
+- `carbonSaturation` flag and calculation of soil and litter carbon pools that observes soil carbon saturating behavior (#301)
 
 ### Fixed
 
