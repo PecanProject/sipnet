@@ -39,6 +39,8 @@ sections to include in release notes:
 
 ### Removed
 
+- Schema version from restart checkpoint format; model version is sufficient (#338)
+
 ### Git SHA
 
 ## **SIPNET 2.1.0 - "Nitrogen Cycle, Methane, and Restart"**

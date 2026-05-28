@@ -22,11 +22,11 @@ On resume, SIPNET executes:
 3. Validate compatibility checks and restart boundary checks
 4. Continue run from resumed climate input
 
-## Restart Schema v1.0 Overview
+## Restart Checkpoint Overview
 
 Checkpoint format is ASCII text with one key/value per line:
 
-- header: `SIPNET_RESTART 1.0`
+- header: `SIPNET_RESTART`
 - metadata: `meta_info.model_version`, `meta_info.build_info`, `meta_info.checkpoint_utc_epoch`, `meta_info.processed_steps`
 - schema layout guard metadata: `schema_layout.envi_size`, `schema_layout.trackers_size`, `schema_layout.phenology_trackers_size`, `schema_layout.event_trackers_size`
 - mode flags: `flags.*`
@@ -44,7 +44,6 @@ Example checkpoint content is exercised in
 On load, SIPNET enforces the following. Lines that start with (warning) log a warning and do not error.
 
 - magic header match
-- schema version match
 - model numeric version match
 - `schema_layout.*` values exactly match the expected struct sizes for the running build
 - (warning) build info mismatch 
@@ -75,20 +74,20 @@ If you add saved state or change an existing saved payload:
 
 1. Update the serialized payload type and restart read/write logic in `src/sipnet/restart.c`.
 2. Update the `RESTART_SCHEMA_LAYOUT_*` constants, static asserts, and runtime schema-layout validation.
-3. Update restart docs/tests and bump `RESTART_SCHEMA_VERSION`.
+3. Update restart docs/tests.
 
 ## Struct Drift Guards
 
-Restart schema v1.0 includes compile-time and runtime drift guards so struct layout changes cannot silently pass:
+Restart checkpoints include compile-time and runtime drift guards so struct layout changes cannot silently pass:
 
 - Compile-time guards: `_Static_assert` checks in `src/sipnet/restart.c` for `Envi`, `Trackers`, `PhenologyTrackers`, `EventTrackers`, and expected number of model flags in `Context`.
 - Runtime guards: `schema_layout.*` fields in each checkpoint are validated on load.
 - Test guardrails: `tests/sipnet/test_restart_infrastructure/testRestartMVP.c` verifies schema layout keys are present and rejects tampered values.
 
-## Schema Bump Checklist
+## Schema Changes Checklist
 
-When intentionally changing the restart schema version:
+When intentionally changing the restart checkpoint format:
 
-1. Update `src/sipnet/restart.c` in all schema touchpoints: `RESTART_SCHEMA_VERSION`, `RESTART_SCHEMA_LAYOUT_*`, `_Static_assert` layout guards, and checkpoint read/write + required-key validation logic.
-2. Update restart examples/fixtures to the new header and key set, including the restart fixtures in `tests/sipnet/test_restart_infrastructure/testRestartMVP.c`.
-3. Update docs that name schema version or key expectations: `docs/developer-guide/restart-checkpoint.md` and `docs/user-guide/running-sipnet.md`.
+1. Update `src/sipnet/restart.c` in all schema touchpoints: `RESTART_SCHEMA_LAYOUT_*`, `_Static_assert` layout guards, and checkpoint read/write + required-key validation logic.
+2. Update restart examples/fixtures to the new key set, including the restart fixtures in `tests/sipnet/test_restart_infrastructure/testRestartMVP.c`.
+3. Update docs that name key expectations: `docs/developer-guide/restart-checkpoint.md` and `docs/user-guide/running-sipnet.md`.
