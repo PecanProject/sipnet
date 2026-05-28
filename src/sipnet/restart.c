@@ -47,15 +47,15 @@
   (8 * NUM_EVENT_TRACKERS_FIELDS)
 
 _Static_assert(sizeof(Envi) == RESTART_SCHEMA_LAYOUT_ENVI_SIZE,
-                "Restart schema drift: Envi changed; update schema_layout.* "
-                "checks");
+               "Restart schema drift: Envi changed; update schema_layout.* "
+               "checks");
 _Static_assert(sizeof(Trackers) == RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE,
-                "Restart schema drift: serialized trackers payload changed; "
-                "update schema_layout.* checks");
-_Static_assert(
-    sizeof(PhenologyTrackers) == RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
-    "Restart schema drift: PhenologyTrackers changed; update "
-    "schema_layout.* checks");
+               "Restart schema drift: serialized trackers payload changed; "
+               "update schema_layout.* checks");
+_Static_assert(sizeof(PhenologyTrackers) ==
+                   RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
+               "Restart schema drift: PhenologyTrackers changed; update "
+               "schema_layout.* checks");
 _Static_assert(sizeof(EventTrackers) ==
                    RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE,
                "Restart schema drift: EventTrackers changed; update "
@@ -385,9 +385,9 @@ static void validateSchemaLayoutValue(const char *restartIn, const char *key,
                                       const char *value, long long expected) {
   long long parsed = parseIntStrict(restartIn, key, value);
   if (parsed != expected) {
-    logError(
-        "Restart schema layout mismatch in %s: key=%s found=%lld expected=%lld\n",
-        restartIn, key, parsed, expected);
+    logError("Restart schema layout mismatch in %s: key=%s found=%lld "
+             "expected=%lld\n",
+             restartIn, key, parsed, expected);
     exit(EXIT_CODE_BAD_RESTART_PARAMETER);
   }
 }
@@ -539,12 +539,10 @@ static void readRestartState(const char *restartIn, RestartState *state,
   }
   checkLineLength(firstLine, strlen(firstLine), restartIn, in);
 
-  char magic[64];
-  if (sscanf(firstLine, "%63s", magic) != 1) {
-    parseError(restartIn, "invalid header line", NULL);
-  }
+  // Strip trailing newline/carriage return for exact comparison
+  firstLine[strcspn(firstLine, "\r\n")] = '\0';
 
-  if (strcmp(magic, RESTART_MAGIC) != 0) {
+  if (strcmp(firstLine, RESTART_MAGIC) != 0) {
     logError("Restart file %s has invalid magic header\n", restartIn);
     exit(EXIT_CODE_BAD_RESTART_PARAMETER);
   }
