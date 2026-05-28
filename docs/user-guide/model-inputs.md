@@ -242,6 +242,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `snow`           | on      | Keep track of snowpack, rather than assuming all precipitation is liquid                |
 | `soil-phenol`    | off     | Use soil temperature to determine leaf growth                                           |
 | `water-hresp`    | on      | Whether soil moisture affects heterotrophic respiration                                 |
+| `carbon-saturation`| off   | Enable soil carbon saturation behavior to constrain carbon stored in soil               |
 
 Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
