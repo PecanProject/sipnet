@@ -205,7 +205,7 @@ Run-time parameters support mineral nitrogen losses through volatilization and l
 | Symbol                 | Parameter Name       | Definition                                                                                                                           | Units             | Notes                            |
 | ---------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | -------------------------------- |
 | $K_\text{vol}$         | nVolatilizationFrac  | Nitrogen volatilization rate constant that determines the maximum rate of N volatilization as a proportion of available $N_\text{min}$ | $\text{day}^{-1}$ | \eqref{eq:n_vol}                 |
-| $f^N_{\text{leach}}$   | nLeachingFrac        | Fraction of $N_\text{min}$ available to be leached, applied after scaling by $\phi = \min(F^W_\text{drainage}/W_\text{WHC}, 1)$      | unitless          | \eqref{eq:n_leach}               |
+| $f^N_{\text{leach}}$   | nLeachingFrac        | Fraction of $N_\text{min}$ available to be leached, applied after scaling by $\phi = \min(F^W_\text{drainage}/W_\text{WHC}, 1)$      | $\text{day}^{-1}$  | \eqref{eq:n_leach}               |
 
 ### Moisture-Related Parameters
 

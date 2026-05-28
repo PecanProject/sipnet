@@ -575,7 +575,7 @@ F^N_\text{min} = \sum_j \left( \frac{R_{H\text{j}}}{CN_{\text{j}}} \right)
 ### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min} \rightarrow N_2O)$
 
 $K_\text{vol}$ is the nitrogen volatilization rate constant that determines the maximum rate of N volatilization as a
-proportion of available $N_\text{min}$. The realized volatilization flux is proportional to available Nmin through Kvol and depends on temperature and soil moisture.
+proportion of available $N_\text{min}$. The realized volatilization flux is proportional to available $N_\text{min}$, scaled by $K_\text{vol}$ and modified by temperature and soil moisture.
 
 \begin{equation}
 F^N_\text{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water},N_\text{vol}}
@@ -592,7 +592,7 @@ expected to dominate $N_2O$ emissions.
 ### Nitrogen Leaching $F^N_\text{leach}$
 
 \begin{equation}
-F^N_\text{leach} = N_\text{min} \cdot \phi \cdot f_{N leach}
+F^N_\text{leach} = N_\text{min} \cdot \phi \cdot f^N_\text{leach}
 \label{eq:n_leach}
 \end{equation}
 
@@ -912,9 +912,10 @@ provided and $T_{\text{max}}$ is calculated internally as $T_{\text{max}} = 2 \c
 The temperature response of autotrophic  $(R_a)$ and heterotrophic  $(R_H)$ respiration represented as an exponential
 relationship using a simplified Arrhenius function.
 
-\[
+\begin{equation}
 D_{\text{temp,Q10}} = Q_{10}^{\frac{(T-T_\text{opt})}{10}}
-\]
+\label{eq:Braswell_A18b}
+\end{equation}
 
 This is from equation (A18) from Braswell, et al. (2005)
 
