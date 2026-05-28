@@ -106,7 +106,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $f_{\text{WHC},0}$               | soilWFracInit  | Initial soil water fraction                                              | unitless                                                            | May exceed 1.0 when modeling flooded conditions; $W_{\text{soil},0} = f_{\text{WHC},0} \cdot W_{\text{WHC}}$          |
 | $N_{\text{org, litter},0}$        | litterOrgNInit | Initial litter organic nitrogen content                                  | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
 | $N_{\text{org, soil},0}$          | soilOrgNInit   | Initial soil organic nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
-| $N_{\text{min, soil},0}$          | mineralNInit   | Initial soil mineral nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
+| $N_{\text{min},0}$                | mineralNInit   | Initial mineral nitrogen content                                         | $\text{g N} \cdot \text{m}^{-2}$                                    | Single mineral N pool used by soil and litter N fluxes                                   |
 | $f_{\text{fine root},0}$          | fineRootFrac   | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   | unitless                                                            |                                                                                          |
 | $f_{\text{coarse root},0}$        | coarseRootFrac | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool | unitless                                                            |                                                                                          |
 | $W_{\text{snow},0}$               | snowInit       | Initial snow water equivalent                                            | cm water equivalent                                                 |                                                                                          |
@@ -200,13 +200,12 @@ Run-time parameters can change from one run to the next, or when the model is st
 
 ### Nitrogen Cycle Parameters
 
-Run-time parameters support mineralization, volatilization, leaching, and
-pool stoichiometry.
+Run-time parameters support mineral nitrogen losses through volatilization and leaching.
 
-| Symbol               | Parameter Name      | Definition                                                                             | Units             | Notes              |
-| -------------------- | ------------------- | -------------------------------------------------------------------------------------- | ----------------- | ------------------ |
-| $K_\text{vol}$       | nVolatilizationFrac | Fraction of $N_\text{min}$ volatilized per day (modulated by temperature and moisture) | $\text{day}^{-1}$ | \eqref{eq:n_vol}   |
-| $f^N_{\text{leach}}$ | nLeachingFrac       | Leaching coefficient applied to $N_\text{min}$ scaled by drainage                      | $\text{day}^{-1}$ | \eqref{eq:n_leach} |
+| Symbol                 | Parameter Name       | Definition                                                                                                                           | Units             | Notes                            |
+| ---------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | -------------------------------- |
+| $K_\text{vol}$         | nVolatilizationFrac  | Nitrogen volatilization rate constant that determines the maximum rate of N volatilization as a proportion of available $N_\text{min}$ | $\text{day}^{-1}$ | \eqref{eq:n_vol}                 |
+| $f^N_{\text{leach}}$   | nLeachingFrac        | Fraction of $N_\text{min}$ available to be leached, applied after scaling by $\phi = \min(F^W_\text{drainage}/W_\text{WHC}, 1)$      | $\text{day}^{-1}$  | \eqref{eq:n_leach}               |
 
 ### Moisture-Related Parameters
 
