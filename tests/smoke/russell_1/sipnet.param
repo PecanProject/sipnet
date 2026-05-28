@@ -69,5 +69,10 @@ anaerobicDecompRate 0.5
 anaerobicTransExp 2.0
 nFixationFracMax 0.5
 halfNFixationMax 1.0
+soilMethaneRate 0.01
+litterMethaneRate 0.01
 waterDrainFrac 1.0
+plantStorageNInit 5.0
+leafNResorptionFrac 0.5
+leafOnReallocFrac 0.2
 soilCSaturation 1.0

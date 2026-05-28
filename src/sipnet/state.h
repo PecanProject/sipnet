@@ -337,6 +337,10 @@ typedef struct Parameters {
   // Initial litter organic nitrogen pool amount, g N * m^-2 ground area
   double litterOrgNInit;
 
+  // Initial stored plant N available for growth (esp. leaf on)
+  // g N * m^-2 ground area
+  double plantStorageNInit;
+
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
@@ -362,6 +366,12 @@ typedef struct Parameters {
   // Amount of mineral N at which fixation is reduced by half
   // g N * m^-2 ground area
   double halfNFixationMax;
+
+  // Fraction of wood and coarse root C available for leaf-on reallocation
+  double leafOnReallocFrac;
+
+  // Fraction of senescing leaf N resorbed to plant N storage pool
+  double leafNResorptionFrac;
 
   // ******
   // New moisture dependency functions
@@ -435,6 +445,11 @@ typedef struct Environment {
   double soilOrgN;
   // litter (organic) nitrogen pool (g N m^-2 ground area)
   double litterN;
+  // N storage pool, populated by resorption of nitrogen in leaf-off
+  // Primarily for satisfying leaf-on events, but available for general
+  // needs
+  // g N * m^-2 ground area
+  double plantStorageN;
 
   ///// New to SIPNET in v2.1
   // Carbon gains from photosynthesis and losses to respiration don't affect the
@@ -526,12 +541,15 @@ typedef struct FluxVars {
   // and NPP (as in [2])
   // leaf creation term from NPP
   double leafCreation;
-  // creation from leaf-on event; separated from leafCreation for N balance (as
-  // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
-  double leafOnCreation;
   // wood creation term, dependent on NPP similar to leaf creation, but
   // provenance TBD (g C * m^-2 ground area * day^-1)
   double woodCreation;
+  // creation from leaf-on event; separated from leafCreation for N balance (as
+  // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
+  double leafOnCreation;
+  // Portion of leaf-on creation C that comes from wood C (the rest comes from
+  // coarse root C)
+  double leafOnCreationFromWood;
 
   // ****************************************
   // Fluxes for nitrogen cycle
@@ -561,6 +579,9 @@ typedef struct FluxVars {
   // Mineral N drawn from soil pool to meet plant N demand
   // g N * m^-2 ground area * day^-1
   double nUptake;
+
+  // Plant N stored in a leaf-off event
+  double leafOffNResorption;
 
   // ****************************************
   // Fluxes for event handling
@@ -600,8 +621,13 @@ typedef struct FluxVars {
   double eventOutputN;
   // Transfer from woodC to leafC from a leaf-on event
   double eventLeafOnCreation;
+  // Portion of leaf-on creation C that comes from wood C (the rest comes from
+  // coarse root C)
+  double eventLeafOnCreationFromWood;
   // Transfer from leafC to soil/litter from a leaf-off event
   double eventLeafOffLitter;
+  // Resorption of leaf N from a leaf-off event
+  double eventLeafOffNResorption;
 
   // ****************************************
   // Methane production
