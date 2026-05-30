@@ -69,9 +69,9 @@ after midnight (using the first resumed climate row's timestep length) SIPNET lo
 
 Event files must be segmented to the same time boundaries as climate segments.
 
-Restart checkpoints written after this rename use `envi.plantWoodCAccountingDelta`; checkpoints with the legacy key `envi.plantWoodCStorageDelta` remain readable.
-
 ## When Saved State Changes
+
+If you rename a serialized restart key without changing struct layout (for example `envi.plantWoodCStorageDelta` → `envi.plantWoodCAccountingDelta`), update the key in `src/sipnet/restart.c` and restart tests; checkpoints written by older builds with the previous key name will fail to load.
 
 If you add saved state or change an existing saved payload:
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "common/exitCodes.h"
 #include "common/logging.h"
 #include "utils/tUtils.h"
 
@@ -166,6 +167,46 @@ static int hasManagedEventOnDay(const char *eventFile, int year, int day) {
 
   fclose(in);
   return found;
+}
+
+static int testObsoletePlantWoodCStorageDeltaKeyFails(void) {
+  int status = 0;
+  int stepStatus = 0;
+  int rc;
+
+  logTest("Starting testObsoletePlantWoodCStorageDeltaKeyFails\n");
+
+  runShell("rm -f run.out events.out run.restart *.log");
+
+  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (stepStatus) {
+    logTest(
+        "Failed to prepare files for obsolete restart key test segment 1\n");
+    return stepStatus;
+  }
+
+  status |= (runModel("restart_seg1.in", "obsolete_key_seg1.log") != 0);
+  status |= !fileContains(CHECKPOINT_FILE, "envi.plantWoodCAccountingDelta ");
+  status |=
+      replaceFirstOccurrence(CHECKPOINT_FILE, "envi.plantWoodCAccountingDelta ",
+                             "envi.plantWoodCStorageDelta ");
+
+  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
+  if (stepStatus) {
+    logTest(
+        "Failed to prepare files for obsolete restart key test segment 2\n");
+    return status | stepStatus;
+  }
+
+  rc = runModel("restart_seg2.in", "obsolete_key_seg2.log");
+  status |= (rc != EXIT_CODE_BAD_RESTART_PARAMETER);
+  status |= !fileContains("obsolete_key_seg2.log", "unknown key");
+
+  if (status) {
+    logTest("testObsoletePlantWoodCStorageDeltaKeyFails failed (rc=%d)\n", rc);
+  }
+
+  return status;
 }
 
 static int testDefaultEventsFileUsedWhenUnset(void) {
@@ -757,6 +798,7 @@ int run(void) {
   status |= testEventsPrefixCliOverrideUsed();
   status |= testConfigDumpIncludesRestartAndEventsKeys();
   status |= testSegmentedEquivalence();
+  status |= testObsoletePlantWoodCStorageDeltaKeyFails();
   status |= testStrictClimateMismatchFails();
   status |= testCheckpointFarFromMidnightWarnsAndWrites();
   status |= testRestartNotNearMidnightWarns();
