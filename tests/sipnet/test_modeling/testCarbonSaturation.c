@@ -14,7 +14,6 @@ void resetState(void) {
   fluxes.litterToSoil = 0;
   fluxes.rLitter = 0;
   fluxes.litterMethane = 0;
-  fluxes.rSoil = 0;
   fluxes.soilMethane = 0;
   fluxes.fineRootLoss = 0;
 }
@@ -60,12 +59,26 @@ int checkLitter(double pool) {
   return status;
 }
 
+void calcCSaturation(double *expSoilC, double *expLitterC) {
+  double saturationFraction;
+  double soilInputs =
+      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
+
+  saturationFraction =
+      (ctx.carbonSaturation)
+          ? (fmin(1.0, fmax(0.0, *expSoilC / params.soilCSaturation)))
+          : 0.0;
+
+  *expLitterC += soilInputs * saturationFraction * climate->length;
+
+  *expSoilC +=
+      (soilInputs * (1 - saturationFraction) - fluxes.rSoil) * climate->length;
+}
+
 int testCarbonSaturation(void) {
   int status = 0;
   double expSoilC;
   double expLitterC;
-  double saturationFraction;
-  double soilInputs;
 
   // Low C inputs, low saturationFraction
   logTest("  Test: low soilInputs, low satFrac\n");
@@ -75,20 +88,9 @@ int testCarbonSaturation(void) {
   envi.soilC = 2.5;
   expLitterC = 10;
   fluxes.coarseRootLoss = 100;
+  fluxes.rSoil = 0;
 
-  soilInputs =
-      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
-  saturationFraction = expSoilC / params.soilCSaturation;
-
-  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
-                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
-                 fluxes.rLitter - fluxes.litterMethane) *
-                climate->length;
-
-  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
-               fluxes.soilMethane) *
-              climate->length;
-
+  calcCSaturation(&expSoilC, &expLitterC);
   updatePoolsForSoil();
   status |= checkSoil(expSoilC);
   status |= checkLitter(expLitterC);
@@ -101,20 +103,9 @@ int testCarbonSaturation(void) {
   envi.soilC = 2.5;
   expLitterC = 10;
   fluxes.coarseRootLoss = 200;
+  fluxes.rSoil = 0;
 
-  soilInputs =
-      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
-  saturationFraction = expSoilC / params.soilCSaturation;
-
-  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
-                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
-                 fluxes.rLitter - fluxes.litterMethane) *
-                climate->length;
-
-  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
-               fluxes.soilMethane) *
-              climate->length;
-
+  calcCSaturation(&expSoilC, &expLitterC);
   updatePoolsForSoil();
   status |= checkSoil(expSoilC);
   status |= checkLitter(expLitterC);
@@ -127,20 +118,9 @@ int testCarbonSaturation(void) {
   envi.soilC = 7.5;
   expLitterC = 10;
   fluxes.coarseRootLoss = 100;
+  fluxes.rSoil = 0;
 
-  soilInputs =
-      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
-  saturationFraction = expSoilC / params.soilCSaturation;
-
-  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
-                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
-                 fluxes.rLitter - fluxes.litterMethane) *
-                climate->length;
-
-  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
-               fluxes.soilMethane) *
-              climate->length;
-
+  calcCSaturation(&expSoilC, &expLitterC);
   updatePoolsForSoil();
   status |= checkSoil(expSoilC);
   status |= checkLitter(expLitterC);
@@ -153,21 +133,27 @@ int testCarbonSaturation(void) {
   envi.soilC = 7.5;
   expLitterC = 10;
   fluxes.coarseRootLoss = 200;
+  fluxes.rSoil = 0;
 
-  soilInputs =
-      fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
-  saturationFraction = expSoilC / params.soilCSaturation;
-
-  expLitterC += (fluxes.woodLitter + fluxes.leafLitter +
-                 (soilInputs * saturationFraction) - fluxes.litterToSoil -
-                 fluxes.rLitter - fluxes.litterMethane) *
-                climate->length;
-
-  expSoilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
-               fluxes.soilMethane) *
-              climate->length;
-
+  calcCSaturation(&expSoilC, &expLitterC);
   updatePoolsForSoil();
+  status |= checkSoil(expSoilC);
+  status |= checkLitter(expLitterC);
+
+  // Soil C Pool > saturationFraction
+  logTest("  Test: soilC > saturation\n");
+  resetState();
+
+  expSoilC = 12.5;  // 125% saturation
+  envi.soilC = 12.5;
+  expLitterC = 10;
+  fluxes.coarseRootLoss = 200;
+  fluxes.rSoil = 50;
+
+  calcCSaturation(&expSoilC, &expLitterC);
+  updatePoolsForSoil();
+  // logTest("   expSoilC is %f\n", expSoilC);
+  // logTest("   expLitterC is %f\n", expLitterC);
   status |= checkSoil(expSoilC);
   status |= checkLitter(expLitterC);
 

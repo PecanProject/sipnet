@@ -1650,30 +1650,28 @@ void updateMainPools(void) {
  */
 void updatePoolsForSoil(void) {
   if (ctx.litterPool) {
-    if (ctx.carbonSaturation) {
-      double saturationFraction = envi.soilC / params.soilCSaturation;
-      double soilInputs =
-          fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
-
-      envi.litterC += (fluxes.woodLitter + fluxes.leafLitter +
-                       (soilInputs * saturationFraction) - fluxes.litterToSoil -
-                       fluxes.rLitter - fluxes.litterMethane) *
-                      climate->length;
-
-      envi.soilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
-                     fluxes.soilMethane) *
+    double soilInputs =
+        fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
+    // Adding soil carbon saturation functionality
+    // soilFraction capped between zero and one
+    // if envi.soilC > params.soilCSaturation (due to initialization or events)
+    // saturationFraction will return 1 and no additional soil C inputs will be
+    // accepted to envi.soilC until losses due to respiration and methane reduce
+    // pool below saturation level, all inputs will be directed to envi.litterC
+    // pool while envi.soilC is above saturation level
+    double saturationFraction =
+        (ctx.carbonSaturation)
+            ? (fmin(1.0, fmax(0.0, envi.soilC / params.soilCSaturation)))
+            : 0.0;
+    // :: from [2], litter model description
+    envi.litterC += (fluxes.woodLitter + fluxes.leafLitter +
+                     (soilInputs * saturationFraction) - fluxes.litterToSoil -
+                     fluxes.rLitter - fluxes.litterMethane) *
                     climate->length;
-    } else {
-      // :: from [2], litter model description
-      envi.litterC +=
-          (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil -
-           fluxes.rLitter - fluxes.litterMethane) *
-          climate->length;
-      // from [2] and [3], litter and root terms respectively
-      envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                     fluxes.litterToSoil - fluxes.rSoil - fluxes.soilMethane) *
-                    climate->length;
-    }
+    // from [2] and [3], litter and root terms respectively
+    envi.soilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
+                   fluxes.soilMethane) *
+                  climate->length;
   } else {
     // Normal pool (single pool, no microbes)
     // :: from [1] (and others, TBD), eq (A3), where:
