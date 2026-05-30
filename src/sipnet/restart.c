@@ -189,7 +189,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->enviPF[9] = (StateField){"envi.soilOrgN",                FT_DOUBLE, &envi.soilOrgN,               0};
   state->enviPF[10] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
   state->enviPF[11] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
-  state->enviPF[12] = (StateField){"envi.plantWoodCStorageDelta", FT_DOUBLE, &envi.plantWoodCStorageDelta, 0};
+  state->enviPF[12] = (StateField){"envi.plantWoodCAccountingDelta", FT_DOUBLE, &envi.plantWoodCAccountingDelta, 0};
   state->enviPF[13] = (StateField){"envi.invalid",                FT_INVALID, NULL, FIELD_INVALID};
 
   state->trackersPF[0] = (StateField){"trackers.gpp",                 FT_DOUBLE, &trackers.gpp,                0};

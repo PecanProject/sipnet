@@ -14,8 +14,8 @@ int main(void) {
 
   // Missed envi update
   copyFile(STATE_FILE, BAD_STATE);
-  replaceFirstOccurrence(BAD_STATE, "double plantWoodCStorageDelta;",
-                         "double plantWoodCStorageDelta;double dummyPool;");
+  replaceFirstOccurrence(BAD_STATE, "double plantWoodCAccountingDelta;",
+                         "double plantWoodCAccountingDelta;double dummyPool;");
 
   // Missed context update
   copyFile(CONTEXT_FILE, BAD_CTX);

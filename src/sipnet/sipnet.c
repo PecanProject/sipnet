@@ -437,7 +437,7 @@ void outputHeader(FILE *out) {
   fprintf(out,
           "fluxestranspiration     minN  soilOrgN    litterN  "
           "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
-          "nppStorage\n");
+          "plantWoodCAccountingDelta\n");
 }
 
 /*!
@@ -450,7 +450,7 @@ void outputHeader(FILE *out) {
 void outputState(FILE *out, int year, int day, double time) {
 
   fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
-          (envi.plantWoodC + envi.plantWoodCStorageDelta), envi.plantLeafC,
+          (envi.plantWoodC + envi.plantWoodCAccountingDelta), envi.plantLeafC,
           trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%11.2f %9.2f ", envi.coarseRootC, envi.fineRootC);
@@ -467,7 +467,7 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
           trackers.nLeaching, trackers.nFixation, trackers.nUptake,
           trackers.methane);
-  fprintf(out, "%12.4f\n", envi.plantWoodCStorageDelta);
+  fprintf(out, "%27.4f\n", envi.plantWoodCAccountingDelta);
 }
 
 // de-allocate space used for climate linked list
@@ -1072,7 +1072,7 @@ void vegResp(double *folResp, double *woodResp, double baseFolResp) {
 
   // :: from [1], eq (A19)
   *woodResp = params.baseVegResp *
-              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
+              (envi.plantWoodC + envi.plantWoodCAccountingDelta) *
               pow(params.vegRespQ10, climate->tair / 10.0);
 }
 
@@ -1100,7 +1100,7 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
                                            // by a given fraction in winter
   }
   *woodResp = params.baseVegResp *
-              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
+              (envi.plantWoodC + envi.plantWoodCAccountingDelta) *
               pow(params.vegRespQ10, climate->tair / 10.0);
 
   // Rg is a fraction of the recent mean NPP
@@ -1203,8 +1203,8 @@ void calcRootAndWoodFluxes(void) {
 
   // Wood litter, in g C * m^-2 ground area * day^-1
   // turnover rate is fraction lost per day
-  fluxes.woodLitter =
-      (envi.plantWoodC + envi.plantWoodCStorageDelta) * params.woodTurnoverRate;
+  fluxes.woodLitter = (envi.plantWoodC + envi.plantWoodCAccountingDelta) *
+                      params.woodTurnoverRate;
 
   // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
@@ -1608,7 +1608,7 @@ void updateMainPools(void) {
   double r_a = fluxes.rVeg + fluxes.rFineRoot + fluxes.rCoarseRoot;
   double nppAllocations = fluxes.leafCreation + fluxes.woodCreation +
                           fluxes.fineRootCreation + fluxes.coarseRootCreation;
-  envi.plantWoodCStorageDelta +=
+  envi.plantWoodCAccountingDelta +=
       ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
   envi.plantWoodC += (fluxes.woodCreation - fluxes.woodLitter -
                       fluxes.leafOnCreationFromWood) *
@@ -1792,7 +1792,7 @@ void setupModel(void) {
 
   envi.plantWoodC =
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
-  envi.plantWoodCStorageDelta = 0.0;
+  envi.plantWoodCAccountingDelta = 0.0;
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
 
   if (ctx.litterPool) {

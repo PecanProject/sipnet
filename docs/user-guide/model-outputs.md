@@ -44,6 +44,9 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 |    |                             | nFixation           | Nitrogen demand met by fixation                                            | g N m$^{-2}$  |
 |    |                             | nUptake             | Nitrogen demand met by uptake from soil                                    | g N m$^{-2}$  |
 |    |                             | ch4                 | Methane production                                                         | g C m$^{-2}$  |
+|    | $C_{\text{wood,accounting}}$ | plantWoodCAccountingDelta | Wood carbon accounting delta (N-lag term; not N-coupled structural wood) | g C m$^{-2}$  |
+
+Note: this column was previously named `nppStorage`.
 
 [^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only.
 Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not this average), and clip that ratio to [0,1] where those dependency functions are defined.
