@@ -75,3 +75,4 @@ waterDrainFrac 1.0
 plantStorageNInit 5.0
 leafNResorptionFrac 0.5
 leafOnReallocFrac 0.2
+soilCSaturation 1.0

@@ -43,6 +43,7 @@ void initContext(void) {
   CREATE_INT_CONTEXT(nitrogenCycle,   "NITROGEN_CYCLE",   ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(anaerobic,       "ANAEROBIC",        ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(flooding,        "FLOODING",         ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(carbonSaturation,"CARBON_SATURATION",ARG_OFF, FLAG_YES);
 
   // Flags, I/O
   CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  FLAG_YES);
@@ -206,6 +207,12 @@ void validateContext(void) {
 
   if (ctx.anaerobic && !ctx.waterHResp) {
     logError("anaerobic requires water-hresp to be turned on\n");
+    hasError = 1;
+  }
+
+  if (ctx.carbonSaturation && !ctx.litterPool) {
+    logError("carbon-saturation requires litter-pool to be "
+             "turned on\n");
     hasError = 1;
   }
 

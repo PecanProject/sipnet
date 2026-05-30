@@ -68,3 +68,4 @@ nFixationFracMax 0.5
 halfNFixationMax 1.0
 waterDrainFrac 1.0
 leafOnReallocFrac 0.2
+soilCSaturation 1.0

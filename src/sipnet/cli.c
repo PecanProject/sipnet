@@ -32,6 +32,7 @@ static struct option long_options[] = {  // NOLINT
     DECLARE_FLAG(nitrogen-cycle),
     DECLARE_FLAG(anaerobic),
     DECLARE_FLAG(flooding),
+    DECLARE_FLAG(carbon-saturation),
 
     DECLARE_FLAG(do-main-output),
     DECLARE_FLAG(do-single-outputs),
@@ -65,7 +66,7 @@ char *argNameMap[] = {
     DECLARE_ARG_FOR_MAP(litterPool), DECLARE_ARG_FOR_MAP(snow),
     DECLARE_ARG_FOR_MAP(soilPhenol), DECLARE_ARG_FOR_MAP(waterHResp),
     DECLARE_ARG_FOR_MAP(nitrogenCycle), DECLARE_ARG_FOR_MAP(anaerobic),
-    DECLARE_ARG_FOR_MAP(flooding),
+    DECLARE_ARG_FOR_MAP(flooding), DECLARE_ARG_FOR_MAP(carbonSaturation),
 
     // I/O
     DECLARE_ARG_FOR_MAP(doMainOutput), DECLARE_ARG_FOR_MAP(doSingleOutputs),
@@ -98,6 +99,7 @@ void usage(char *progName) {
   printf("  --snow               Keep track of snowpack, rather than assuming all precipitation is liquid (1)\n");
   printf("  --soil-phenol        Use soil temperature to determine leaf growth (0)\n");
   printf("  --water-hresp        Whether soil moisture affects heterotrophic respiration (1)\n");
+  printf("  --carbon-saturation  Enable maximum storage limit of soil organic carbon (0)\n");
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
   printf("  --do-main-output     Print time series of all output variables to <file-prefix>.out (1)\n");
@@ -121,6 +123,7 @@ void usage(char *progName) {
   printf(" --soil-phenol and --gdd may not both be turned on\n");
   printf(" --anaerobic requires --water-hresp\n");
   printf(" --nitrogen-cycle requires both --litter-pool and --anaerobic\n");
+  printf(" --carbon-saturation requires --litter-pool\n");
   // clang-format on
 }
 

@@ -30,6 +30,7 @@ sections to include in release notes:
 - `leafon` and `leafoff` events for tracking phenological transitions (#326)
 - `leafon` limited by available carbon and nitrogen; N storage pool; N resorption on `leafoff` (#337)
 - New required parameter `leafOnReallocFrac` to control how much of wood and coarse root carbon is reallocated to leaves on `leafon` (#337)
+- `carbonSaturation` flag and calculation of soil and litter carbon pools that observes soil carbon saturating behavior (#301)
 
 ### Fixed
 

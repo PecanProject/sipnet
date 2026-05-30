@@ -309,6 +309,13 @@ F^C_\text{fert,org}
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is
 transferred to litter.
 
+When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as fast-turnover carbon. This functionality is described in more detail below in the Soil Carbon section \eqref{eq:soil_carbon_saturation}.
+
+\begin{equation}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} + F^C_{\text{soil}} \cdot \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}} - F^C_{\text{decomp}} - F^C_{\text{CH}_4\text{,litter}}
+\label{eq:soil_carbon_to_litter}
+\end{equation}
+
 $F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter
 decomposition
 is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
@@ -369,6 +376,15 @@ Total carbon input to the soil includes both
 F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
 \label{eq:soil_carbon_flux}
 \end{equation}
+
+When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs is added to the soil pool. This fraction declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining input C is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover carbon rather than being added to the soil pool.
+
+\begin{equation}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} \cdot (1 - \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}) - R_{\text{soil}} - F^C_{\text{CH}_4\text{,soil}}
+\label{eq:soil_carbon_saturation}
+\end{equation}
+
+where $C_{\text{soil,saturation}}$ is the soil carbon saturation limit entered as an input paramter. This is based on equation (3) from Stewart et al. (2007).
 
 Soil heterotrophic respiration is modeled as a first-order process proportional
 to soil organic carbon content and modified by environmental and management factors:

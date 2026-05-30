@@ -197,6 +197,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $Q_{10s}$             | soilRespQ10         | Soil respiration Q10                                                                | unitless                                                                            | scalar determining effect of temp on soil respiration          |
 | $D_{\text{moisture}}$ | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 | unitless                                                                            |                                                                |
 | $f_{\text{till}}$     | tillageEff          | Effect of tillage on decomposition that exponentially decays over time              | fraction                                                                            | Documented in model structure; event-level term in `events.in` |
+| $C_{\text{soil,saturation}}$ | soilCSaturation | Maximum amount of carbon that can be stabilized in the soil determined by soil texture        | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$                                                                                   |                                                                |
 
 ### Nitrogen Cycle Parameters
 
