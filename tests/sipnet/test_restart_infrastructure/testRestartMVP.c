@@ -6,7 +6,7 @@
 #include "utils/tUtils.h"
 
 #define CHECKPOINT_FILE "run.restart"
-#define RESTART_MAGIC_LINE "SIPNET_RESTART 1.0"
+#define RESTART_MAGIC_LINE "SIPNET_RESTART"
 #define MAX_LINE_LENGTH 1028
 
 static int prepRunFiles(const char *climFile, const char *eventFile) {
@@ -475,40 +475,6 @@ static int testModelVersionMismatchFails(void) {
   return status;
 }
 
-static int testSchemaMismatchFails(void) {
-  int status = 0;
-  int stepStatus = 0;
-  int rc;
-
-  logTest("Starting testSchemaMismatchFails\n");
-
-  runShell("rm -f run.out events.out run.restart *.log");
-
-  stepStatus = prepRunFiles("restart_segment1.clim", "events_segment1.in");
-  if (stepStatus) {
-    logTest("Failed to prepare files for schema mismatch test segment 1\n");
-    return stepStatus;
-  }
-  status |= (runModel("restart_seg1.in", "schema_mismatch_seg1.log") != 0);
-  status |= replaceFirstOccurrence(CHECKPOINT_FILE, "SIPNET_RESTART ",
-                                   "SIPNET_RESTART 1");
-
-  stepStatus = prepRunFiles("restart_segment2.clim", "events_segment2.in");
-  if (stepStatus) {
-    logTest("Failed to prepare files for schema mismatch test segment 2\n");
-    return status | stepStatus;
-  }
-
-  rc = runModel("restart_seg2.in", "schema_mismatch_seg2.log");
-  status |= (rc != EXIT_CODE_BAD_RESTART_PARAMETER);
-
-  if (status) {
-    logTest("testSchemaMismatchFails failed (rc=%d)\n", rc);
-  }
-
-  return status;
-}
-
 static int testSchemaLayoutMismatchFails(void) {
   int status = 0;
   int stepStatus = 0;
@@ -762,7 +728,6 @@ int run(void) {
   status |= testRestartNotNearMidnightWarns();
   status |= testMissingFinalNewlineCheckpointSucceeds();
   status |= testModelVersionMismatchFails();
-  status |= testSchemaMismatchFails();
   status |= testSchemaLayoutMismatchFails();
   status |= testMeanValueIndexOutOfRangeFails();
   status |= testNonFiniteRestartValuesFail();
