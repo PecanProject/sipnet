@@ -248,6 +248,7 @@ Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
  - `anaerobic` requires `water-hresp`
  - 'nitrogen-cycle' requires both 'litter-pool' and 'anaerobic'
+ - `carbon-saturation` requires `litter-pool`
 
 ### Command Line Arguments
 
