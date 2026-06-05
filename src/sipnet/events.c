@@ -11,6 +11,10 @@
 // clang-format on
 
 #include "events.h"
+
+#include "limitations.h"
+#include "nitrogen.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -651,8 +655,14 @@ void processEvents(void) {
         // clang-format on
       } break;
       case LEAFON: {
-        double leafOn = params.leafGrowth;
-        fluxes.eventLeafOnCreation += leafOn / climLen;
+        double leafOnFlux = params.leafGrowth / climLen;
+        checkLeafOnLimitation(&leafOnFlux);
+        fluxes.eventLeafOnCreation += leafOnFlux;
+        double totalSourceC = envi.plantWoodC + envi.coarseRootC;
+        if (totalSourceC > TINY) {
+          fluxes.eventLeafOnCreationFromWood +=
+              leafOnFlux * envi.plantWoodC / totalSourceC;
+        }
 
         // Nitrogen is handled implicitly by relative CN ratios. Missing N
         // from low-N wood to higher-N leaves is accounted for in
@@ -669,16 +679,21 @@ void processEvents(void) {
         fluxes.eventLeafOffLitter += leafOff / climLen;
 
         double litterNAdd = 0.0;
+        double leafNResorption = 0.0;
         if (ctx.nitrogenCycle) {
           // Nitrogen - need to account for leaf N moving to litter, as with
           // harvests
-          litterNAdd = leafOff / params.leafCN;
+          double leafN = leafOff / params.leafCN;
+          leafNResorption = leafN * params.leafNResorptionFrac;
+          litterNAdd = leafN - leafNResorption;
+          fluxes.eventLeafOffNResorption += leafNResorption / climLen;
           fluxes.eventLitterN += litterNAdd / climLen;
         }
 
         // clang-format off
-        writeEventOut(gEvent, 2,
+        writeEventOut(gEvent, 3,
           "fluxes.eventLeafOffLitter", leafOff / climLen,
+          "fluxes.eventLeafOffNResorption", leafNResorption / climLen,
           "fluxes.eventLitterN", litterNAdd / climLen);
         // clang-format on
       } break;
@@ -704,7 +719,11 @@ void updatePoolsForEvents(void) {
   }
 
   // Leaf on and off events
-  envi.plantWoodC -= fluxes.eventLeafOnCreation * climate->length;
+  // Leaf on draws from wood and coarse root pools in proportion to their sizes
+  envi.plantWoodC -= fluxes.eventLeafOnCreationFromWood * climate->length;
+  double eventLeafOnCreationFromRoot =
+      fluxes.eventLeafOnCreation - fluxes.eventLeafOnCreationFromWood;
+  envi.coarseRootC -= eventLeafOnCreationFromRoot * climate->length;
   envi.plantLeafC += (fluxes.eventLeafOnCreation - fluxes.eventLeafOffLitter) *
                      climate->length;
   if (ctx.litterPool) {
@@ -722,13 +741,16 @@ void updatePoolsForEvents(void) {
   envi.soilWater += fluxes.eventSoilWater * climate->length;
 
   // NITROGEN
-  // Harvest and fertilization events
+  // Harvest, fertilization, and leaf-off events
   // (Planting events don't explicitly handle N)
   // Note: nitrogen_cycle implies litter_pool
   if (ctx.nitrogenCycle) {
     envi.minN += fluxes.eventMinN * climate->length;
     envi.soilOrgN += fluxes.eventSoilOrgN * climate->length;
     envi.litterN += fluxes.eventLitterN * climate->length;
+    double leafOnNFlux = calcLeafOnNFromC(fluxes.eventLeafOnCreation);
+    envi.plantStorageN +=
+        (fluxes.eventLeafOffNResorption - leafOnNFlux) * climate->length;
   }
 }
 

@@ -113,3 +113,5 @@ fineRootExudation	12.01
 coarseRootExudation	12.02
 microbePulseEff		12.03
 !!!!!!!!!!!!!!!
+
+leafOnReallocFrac 0.2
