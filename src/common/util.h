@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 
+#define TINY 0.000001  // to avoid those nasty divide-by-zero errors
+
 // our own openFile method, which exits gracefully if there's an error
 FILE *openFile(const char *name, const char *mode);
 
@@ -20,5 +22,10 @@ FILE *openFile(const char *name, const char *mode);
 int stripComment(char *line, const char *commentChars);
 
 int countFields(const char *line, const char *sep);
+
+/**
+ * Calculate the ratio of the inputs safely
+ */
+double calcRatio(double num, double den);
 
 #endif

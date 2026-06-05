@@ -21,7 +21,10 @@
 
 #include "sipnet.h"
 #include "balance.h"
+#include "depeffects.h"
 #include "events.h"
+#include "limitations.h"
+#include "nitrogen.h"
 #include "outputItems.h"
 #include "restart.h"
 #include "runmean.h"
@@ -46,8 +49,6 @@
 #define E_STAR_SNOW 0.6  //
 /* approximate saturation vapor pressure at 0 degrees C (kPa)
    (we assume snow temperature is 0 degrees C or slightly lower) */
-
-#define TINY 0.000001  // to avoid those nasty divide-by-zero errors
 
 // end constant definitions
 
@@ -367,6 +368,7 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "mineralNInit", &(params.minNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "soilOrgNInit", &(params.soilOrgNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "litterOrgNInit", &(params.litterOrgNInit), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "plantStorageNInit", &(params.plantStorageNInit), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nVolatilizationFrac", &(params.nVolatilizationFrac), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nLeachingFrac", &(params.nLeachingFrac), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "leafCN", &(params.leafCN), ctx.nitrogenCycle);
@@ -375,6 +377,8 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   initializeOneModelParam(modelParams, "kCN", &(params.kCN), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "nFixationFracMax", &(params.nFixationFracMax), ctx.nitrogenCycle);
   initializeOneModelParam(modelParams, "halfNFixationMax", &(params.halfNFixationMax), ctx.nitrogenCycle);
+  initializeOneModelParam(modelParams, "leafOnReallocFrac", &(params.leafOnReallocFrac), 1);
+  initializeOneModelParam(modelParams, "leafNResorptionFrac", &(params.leafNResorptionFrac), ctx.nitrogenCycle);
 
   // New moisture dependency params
   initializeOneModelParam(modelParams, "fAnoxia", &(params.fAnoxia), ctx.anaerobic || ctx.nitrogenCycle);
@@ -430,10 +434,12 @@ void outputHeader(FILE *out) {
   fprintf(out, "litter  soilWater soilWetnessFrac     snow      ");
   fprintf(out, "npp      nee   cumNEE      gpp rAboveground    rSoil    "
                "rRoot       ra       rh     rtot evapotranspiration ");
-  fprintf(out, "fluxestranspiration     minN  soilOrgN    litterN       n2o "
-               "nLeaching  nFixation  nUptake      ch4  nppStorage  bcdeltaC  "
-               "bcdeltaN\n");
+  fprintf(out,
+          "fluxestranspiration     minN  soilOrgN    litterN  "
+          "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
+          "nppStorage\n");
 }
+
 /*!
  * Print current state values to output file
  * @param out File pointer for output
@@ -456,12 +462,12 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.npp, trackers.nee, trackers.totNee, trackers.gpp,
       trackers.rAboveground, trackers.rSoil, trackers.rRoot, trackers.ra,
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
-  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %9.6f %9.4f %10.4f %8.4f %8.4f",
-          fluxes.transpiration, envi.minN, envi.soilOrgN, envi.litterN,
-          trackers.n2o, trackers.nLeaching, trackers.nFixation,
-          trackers.nUptake, trackers.methane);
-  fprintf(out, "%12.4f %9.5f %9.5f\n", envi.plantWoodCStorageDelta,
-          balanceTracker.deltaC, balanceTracker.deltaN);
+  fprintf(out, "%19.4f %8.4f %9.4f %10.4f %14.4f ", fluxes.transpiration,
+          envi.minN, envi.soilOrgN, envi.litterN, envi.plantStorageN);
+  fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
+          trackers.nLeaching, trackers.nFixation, trackers.nUptake,
+          trackers.methane);
+  fprintf(out, "%12.4f\n", envi.plantWoodCStorageDelta);
 }
 
 // de-allocate space used for climate linked list
@@ -746,12 +752,12 @@ int pastLeafFall(void) {
  * leafCreation is not from [1] (source TBD).
  *
  * @param[out] leafCreation (g C/m^2 ground/day)
- * @param[out] leafOnCreation (g C/m^2 ground/day)
  * @param[out] leafLitter (g C/m^2 ground/day)
+ * @param[out] leafOffNResorption Nitrogen resorbed from leaf turnover
  * @param[in] plantLeafC (g C/m^2 ground area)
  */
-void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
-                    double *leafLitter, double plantLeafC) {
+void calcLeafFluxes(double *leafCreation, double *leafLitter,
+                    double *leafOffNResorption, double plantLeafC) {
   // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
   // [1]: growing season boundary effects, but modified to be partial growth
@@ -765,15 +771,39 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
   // end of growing season:
   if (npp > 0) {
     // a fraction of NPP is allocated to leaf growth
-    *leafCreation = npp * params.leafAllocation;
-  } else {
-    // net loss of C in this time step - no C left for growth
-    *leafCreation = 0;
+    *leafCreation += npp * params.leafAllocation;
   }
-  // a constant fraction of leaves fall in each time step
-  *leafLitter = plantLeafC * params.leafTurnoverRate;
 
-  // Now add additional fluxes at start/end of growing season:
+  // a constant fraction of leaves fall in each time step
+  double litter = plantLeafC * params.leafTurnoverRate;
+  *leafLitter = litter;
+  if (ctx.nitrogenCycle) {
+    double nResorp = params.leafNResorptionFrac * litter / params.leafCN;
+    *leafOffNResorption += nResorp;
+  }
+}
+
+/*!
+ * Calculate additional leaf-on and leaf-off fluxes at phenology transitions
+ *
+ * This function computes the extra fluxes that occur when the model crosses
+ * the start or end of the growing season. These transition fluxes are tracked
+ * separately from the continuous leaf creation and litter fluxes calculated in
+ * calcLeafFluxes().
+ *
+ * @param[out] leafOnCreation Additional leaf creation flux at leaf-on
+ *   (g C/m^2 ground/day)
+ * @param[out] leafOnFromWood Carbon transferred from wood to leaves at
+ *   leaf-on (g C/m^2 ground/day)
+ * @param[out] leafOffNResorption Nitrogen resorbed from leaves at leaf-off
+ * @param[out] leafLitter Additional leaf litter flux at leaf-off
+ *   (g C/m^2 ground/day)
+ * @param[in] plantLeafC Leaf carbon pool size (g C/m^2 ground area)
+ */
+void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
+                         double *leafOffNResorption, double *leafLitter,
+                         double plantLeafC) {
+  // Calc additional fluxes at start/end of growing season
   // Note that these are basically events, and we will track them as such
 
   // first check for new year; if new year, reset trackers (since we haven't
@@ -788,13 +818,16 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
   if (!phenologyTrackers.didLeafGrowth && pastLeafGrowth()) {
     // we just reached the start of the growing season
     double leafOn = (params.leafGrowth / climate->length);
+    checkLeafOnLimitation(&leafOn);
     *leafOnCreation += leafOn;
+    double totalSourceC = envi.plantWoodC + envi.coarseRootC;
+    if (totalSourceC > TINY) {
+      *leafOnFromWood += leafOn * envi.plantWoodC / totalSourceC;
+    }
     phenologyTrackers.didLeafGrowth = 1;
     // This is a computed event - however, the value may get reduced by
     // nitrogen limitation. The writeEvent call is in writeLeafOnEventIfNeeded,
     // called after N limiting is checked.
-  } else {
-    *leafOnCreation = 0.0;
   }
 
   // check for end of growing season:
@@ -804,8 +837,14 @@ void calcLeafFluxes(double *leafCreation, double *leafOnCreation,
     *leafLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
     if (leafOff > TINY && ctx.events) {
-      writeComputedEventOut(climate->year, climate->day, "leafoff", 1,
-                            "fluxes.leafLitter", leafOff);
+      double nResorp = 0.0;
+      if (ctx.nitrogenCycle) {
+        nResorp = params.leafNResorptionFrac * leafOff / params.leafCN;
+        *leafOffNResorption += nResorp;
+      }
+      writeComputedEventOut(climate->year, climate->day,
+                            eventTypeToString(LEAFOFF), 2, "fluxes.leafLitter",
+                            leafOff, "fluxes.leafOffNResorption", nResorp);
     }
   }
 }
@@ -913,23 +952,6 @@ void snowPack(double *snowMelt, double *sublimation, double snowFall) {
     }  // end else above freezing
   }  // end else there is snow
 }  // end snowPack
-
-/**
- * Calculate water fraction bounded in [0,1]
- *
- * Keeps moisture dependency terms bounded in [0, 1]. In configurations with
- * WATER_HRESP=1 and ANAEROBIC=0 (e.g., russell_1 smoke test), this prevents
- * super-saturated soil water (water > whc) from boosting respiration above
- * the full-wet response. Also used to constrain water frac for evapotrans
- * calcs.
- *
- * @param water current water level
- * @param whc water holding capacity
- * @return bounded water fraction
- */
-double getClippedWaterFrac(double water, double whc) {
-  return fmin(fmax(water / whc, 0.0), 1.0);
-}
 
 /*!
  *  Calculate fastFlow, evaporation, and drainage from soil
@@ -1109,162 +1131,6 @@ void ensureAllocation(void) {
   }
 }
 
-double calcAnaerobicIndex(double water, double whc) {
-  double f_whc = getClippedWaterFrac(water, whc);
-  double f_a = params.fAnoxia;
-
-  // Anaerobic index (oxygen limitation proxy)
-  return fmin(fmax((f_whc - f_a) / (1 - f_a), 0), 1);
-}
-
-/*!
- *  Calculate heterotrophic respiration moisture dependency effect
- *
- *  This dependency term is used in soil respiration and litter breakdown
- *
- *  Calculation also depends on soil temperature and the options waterHResp and
- *  anaerobic.
- *
- * @param water current soil water
- * @param whc water holding capacity
- * @return moisture effect as a fraction between 0 and 1
- */
-double calcRespMoistEffect(double water, double whc) {
-  double moistEffect;
-
-  if ((!ctx.waterHResp) || (climate->tsoil < 0)) {
-    // if not waterHResp, soil moisture does not affect heterotrophic
-    // respiration; also, ignore moisture effects in frozen soils
-    // :: from [2], snowpack addition
-    moistEffect = 1.0;
-  } else {
-    double f_whc = getClippedWaterFrac(water, whc);
-    if (!ctx.anaerobic) {
-      // :: from [1], first part of eq (A20), with added exponent
-      // Original formulation from [1], based on PnET is:
-      //   moistEffect = water / whc
-      // which matches here with params.soilRespMoistEffect=1 (the default
-      // value)
-      //
-      // [TAG:UNKNOWN_PROVENANCE] soilRespMoistEffect
-      // Note: older versions of sipnet note this as "using PnET formulation",
-      // but we have been unable to verify that the exponent comes from PnET
-      moistEffect = pow(f_whc, params.soilRespMoistEffect);
-    } else {
-      // Unimodal moisture response: suppressed under dry conditions, maximal
-      // at intermediate moisture, reduced under saturated/anoxic conditions
-
-      // Aerobic water availability (dry limitation)
-      double D_aer = fmin(fmax(f_whc / params.fAnoxia, 0), 1);
-      // Anaerobic index (oxygen limitation proxy)
-      double A = calcAnaerobicIndex(water, whc);
-      // Uni-modal moisture response
-      // Note that this will not go above 1, since:
-      // - when f_whc <= f_a, A = 0, and moistEffect = D_aer
-      // - when f_whc > f_a, D_aer caps at 1, and this becomes
-      //   moistEffect = 1 - (1 - adr)A, and adr <= 1
-      moistEffect = (1 - A) * D_aer + params.anaerobicDecompRate * A;
-    }
-  }
-
-  return moistEffect;
-}
-
-/*!
- * Calculate volatilization moisture dependency effect
- *
- * The volatilized nitrogen flux is assumed to peak at intermediate redox
- * conditions, where aerobic and anaerobic processes overlap.
- *
- * This dependency term is used in nitrogen volatilization
- *
- * Calculation also depends on soil temperature.
- *
- * @param water current soil water
- * @param whc water holding capacity
- * @return moisture effect as a fraction between 0 and 1
- */
-double calcVolatilizationMoistEffect(double water, double whc) {
-  // Anaerobic index (oxygen limitation proxy)
-  double A = calcAnaerobicIndex(water, whc);
-
-  // 0.05 represents the baseline aerobic volatilization
-  // The factor of 3.8 makes the max = 1, as with other dependency functions
-  return 0.05 + 3.8 * A * (1 - A);
-}
-
-/*!
- * Calculate methane production moisture dependency effect
- *
- * Methane production increases monotonically with anoxia, so we calculate
- * this dependency term as power of the anaerobic index.
- *
- * This dependency term is used in methane production
- *
- * Calculation also depends on soil temperature.
- *
- * @param water current soil water
- * @param whc water holding capacity
- * @return moisture effect as a fraction between 0 and 1
- */
-double calcMethaneMoistEffect(double water, double whc) {
-  // Anaerobic index (oxygen limitation proxy)
-  double A = calcAnaerobicIndex(water, whc);
-
-  return pow(A, params.anaerobicTransExp);
-}
-
-/**
- * Calculate temperature dependency effect
- *
- * Temperature dependency term is used in soil respiration, litter
- * breakdown, and nitrogen volatilization.
- *
- * @param tsoil soil temperature
- * @return temperature effect as a fraction between 0 and 1
- */
-double calcTempEffect(double tsoil) {
-  // :: from [1], D_temp calc as part of eq (A20)
-  return pow(params.soilRespQ10, tsoil / 10);
-}
-
-/**
- * Calculate effect of tillage on soil respiration or litter breakdown
- */
-double calcTillageEffect(void) { return 1 + eventTrackers.d_till_mod; }
-
-// The following three CN functions may seem trivial, but worth it to ensure
-// the divide-by-zero protection. Note that the calcSoil/LitterCN functions
-// should only be called when ctx.nitrogen_cycle is on.
-double calcCN(double c, double n) {
-  double effectiveN = n < TINY ? TINY : n;
-  return c / effectiveN;
-}
-double calcSoilCN(void) { return calcCN(envi.soilC, envi.soilOrgN); }
-double calcLitterCN(void) { return calcCN(envi.litterC, envi.litterN); }
-
-/**
- * Calculate C:N ratio dependency effect
- *
- * C:N ratio  dependency term is used in soil respiration and litter
- * breakdown.
- *
- * @param kCN CN dependency control param for soil/litter
- * @param poolC Current size of carbon pool
- * @param poolN Current size of nitrogen pool
- * @return C:N ratio effect as a fraction between 0 and 1
- */
-double calcCNEffect(double kCN, double poolC, double poolN) {
-  if (!ctx.nitrogenCycle) {
-    return 1.0;
-  }
-
-  // CN ratio dependency term, using k_CN term that indicates CN value
-  // at which the dependency is 1/2
-  double cn = calcCN(poolC, poolN);
-  return kCN / (kCN + cn);
-}
-
 /*!
  * Calculate soil respiration flux
  *
@@ -1347,187 +1213,6 @@ void calcRootAndWoodFluxes(void) {
                envi.fineRootC);
 }
 
-/*!
- * Calculate mineral N volatilization flux
- */
-void calcNVolatilizationFlux(void) {
-  // flux = k_vol * nMin * Dtemp * Dwater
-  // Note k_vol is in units of day^-1, so we do not need to divide
-  // by climate length to make this a flux
-  double d_temp = calcTempEffect(climate->tsoil);
-  double d_water =
-      calcVolatilizationMoistEffect(envi.soilWater, params.soilWHC);
-
-  fluxes.nVolatilization =
-      params.nVolatilizationFrac * envi.minN * d_temp * d_water;
-}
-
-/*!
- * Calculate mineral N leaching flux
- */
-void calcNLeachingFlux(void) {
-  double phi;
-  // phi is (drainage / soilWHC) between 0 and 1
-  if ((fluxes.drainage / params.soilWHC) < 1) {
-    phi = fluxes.drainage / params.soilWHC;
-  } else {
-    phi = 1;
-  }
-  // flux = nMin * phi * leaching fraction, g N * m^-2 * day^-1
-  fluxes.nLeaching = envi.minN * phi * params.nLeachingFrac;
-}
-
-/*!
- * Calculate plant N demand
- */
-double calcPlantNDemand() {
-  if (!ctx.nitrogenCycle) {
-    return 0.0;
-  }
-
-  // leafOnCreation is a transfer from the wood pool so
-  // demand should only count the difference in the N
-  // between those two pools, hence subtracting
-  // params.woodCN from params.leafCN for leafOnCreation
-  // Note we can have leafOn creation terms from two places
-  double leafOnCreation = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
-  double leafOnDemand =
-      leafOnCreation / params.leafCN - leafOnCreation / params.woodCN;
-  // calculate demand from all other creation terms
-  double creationDemand = fluxes.woodCreation / params.woodCN +
-                          fluxes.leafCreation / params.leafCN +
-                          fluxes.fineRootCreation / params.fineRootCN +
-                          fluxes.coarseRootCreation / params.woodCN;
-  // total demand is leafOnDemand plus creationDemand
-  double totalDemand = leafOnDemand + creationDemand;
-  return totalDemand;
-}
-
-/**
- * Calculate all fluxes for soil mineral N EXCEPT uptake
- *
- * This is used to help determine N limitation as well as the final min N flux.
- *
- * @return Sum of non-uptake fluxes for soil mineral N
- */
-double calcMinNNonUptakeFluxes(void) {
-  return fluxes.nMin - fluxes.nVolatilization - fluxes.nLeaching;
-}
-
-/**
- * Calculate the N fixation fraction taking inhibition into account
- *
- * @return N fixation fraction used to compute amount of N fixation
- */
-double calcNFixationFrac(void) {
-  double nFixationInhibition;
-  double denom = params.halfNFixationMax + envi.minN;
-  if (denom < TINY) {
-    nFixationInhibition = 1;
-  } else {
-    // Calculate inhibition of N fixation by soil mineral N
-    // using down-regulation function with increasing soil min N
-    // dimensionless between 0 and 1
-    nFixationInhibition = params.halfNFixationMax / denom;
-  }
-  // Calculate fraction of plant N demand met by fixation
-  // dimensionless
-  return params.nFixationFracMax * nFixationInhibition;
-}
-
-/*!
- * Calculate plant N fixation and uptake fluxes, checking for N limitation
- */
-void calcNFixationAndUptakeFluxes(void) {
-  // First, determine if we are in a nitrogen-limited situation
-  double maxDemandFlux = calcPlantNDemand();
-  double maxDemand = maxDemandFlux * climate->length;
-  double nDemandFlux = maxDemandFlux;
-
-  double nonUptakeFluxes = calcMinNNonUptakeFluxes();
-  double availableMinN =
-      fmax(0, envi.minN + (nonUptakeFluxes * climate->length));
-
-  double nFixationFrac = calcNFixationFrac();
-  double maxUptake = maxDemand * (1 - nFixationFrac);
-
-  if (maxUptake > TINY && maxUptake > availableMinN) {
-    // More demand than supply - N limitation is in effect
-    double reduction = availableMinN / maxUptake;
-    logInfo("N uptake %.4f exceeds available soil min N %.4f, reducing plant "
-            "growth by %.2f%% on year %d day %d time %.3f\n",
-            maxUptake, availableMinN, (1 - reduction) * 100, climate->year,
-            climate->day, climate->time);
-
-    // Reduce all drains on soil N
-    fluxes.eventLeafOnCreation *= reduction;
-    fluxes.leafOnCreation *= reduction;
-    fluxes.woodCreation *= reduction;
-    fluxes.leafCreation *= reduction;
-    fluxes.fineRootCreation *= reduction;
-    fluxes.coarseRootCreation *= reduction;
-
-    nDemandFlux = calcPlantNDemand();
-  }
-
-  // Now, actually calculate fixation and uptake!
-  fluxes.nFixation = nFixationFrac * nDemandFlux;
-  fluxes.nUptake = (1 - nFixationFrac) * nDemandFlux;
-}
-
-/**
- * Write out a leafon event if one happened
- *
- * Delayed event writing for leaf-on, if appropriate, since the value may
- * have changed due to N limitation
- */
-void writeLeafOnEventIfNeeded(void) {
-  if (fluxes.leafOnCreation > TINY && ctx.events) {
-    writeComputedEventOut(climate->year, climate->day, "leafon", 1,
-                          "fluxes.leafOnCreation", fluxes.leafOnCreation);
-  }
-  if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
-    // Not really a computed event, but we don't have the event object here, so
-    // we use this mechanism
-    writeComputedEventOut(climate->year, climate->day, "leafon", 1,
-                          "fluxes.eventLeafOnCreation",
-                          fluxes.eventLeafOnCreation);
-  }
-}
-
-/**
- * Calculate nitrogen fluxes for soil and litter pools
- */
-void calcNPoolFluxes(void) {
-  // C:N ratios for litter and soil, needed in most of the succeeding calcs
-  double litterCN = calcLitterCN();
-  double soilCN = calcSoilCN();
-
-  // for both litter and soil, mineralization is calculated as heterotrophic
-  // respiration divided by the C:N ratio of that pool.
-  double litterMin = fluxes.rLitter / litterCN;
-  double soilMin = fluxes.rSoil / soilCN;
-
-  // litter
-  // The litter org N flux is determined by the carbon fluxes from wood and leaf
-  // litter, and N loss due to mineralization. N added via fertilization
-  // is handled elsewhere.
-  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN +
-                      fluxes.woodLitter / params.woodCN - litterMin -
-                      fluxes.litterToSoil / litterCN;
-
-  // soil
-  // The soil org N flux is determined by the carbon flux from the litter pool,
-  // carbon fluxes from roots, and N loss due to mineralization
-  // (Note: woodCN is used for coarse roots)
-  fluxes.nOrgSoil = fluxes.litterToSoil / litterCN - soilMin +
-                    fluxes.fineRootLoss / params.fineRootCN +
-                    fluxes.coarseRootLoss / params.woodCN;
-
-  // mineralization
-  fluxes.nMin = litterMin + soilMin;
-}
-
 /**
  * Calculate methane flux
  */
@@ -1553,6 +1238,30 @@ void calcMethaneFlux(void) {
  * event and non-event fluxes are calculated.
  */
 void resetFluxes(void) { fluxes = (struct FluxVars){0}; }
+
+/**
+ * Write out a leaf-on event if one happened
+ *
+ * Delayed event writing for leaf-on, if appropriate, since the value may
+ * have changed due to N limitation
+ */
+void writeLeafOnEventIfNeeded(void) {
+  const char *type = eventTypeToString(LEAFON);
+  if (fluxes.leafOnCreation > TINY && ctx.events) {
+    writeComputedEventOut(climate->year, climate->day, type, 2,
+                          "fluxes.leafOnCreation", fluxes.leafOnCreation,
+                          "fluxes.leafOnCreationFromWood",
+                          fluxes.leafOnCreationFromWood);
+  }
+  if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
+    // Not really a computed event, but we don't have the event object here, so
+    // we use this mechanism
+    writeComputedEventOut(
+        climate->year, climate->day, type, 2, "fluxes.eventLeafOnCreation",
+        fluxes.eventLeafOnCreation, "fluxes.eventLeafOnCreationFromWood",
+        fluxes.eventLeafOnCreationFromWood);
+  }
+}
 
 /*!
  * Calculate flux terms for sipnet as part of main model flow
@@ -1603,8 +1312,13 @@ void calculateFluxes(void) {
   }
 
   // Leaf creation and litter
-  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafOnCreation),
-                 &(fluxes.leafLitter), envi.plantLeafC);
+  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter),
+                 &(fluxes.leafOffNResorption), envi.plantLeafC);
+
+  // Leaf on/off
+  calcLeafOnOffFluxes(&(fluxes.leafOnCreation), &fluxes.leafOnCreationFromWood,
+                      &(fluxes.leafOffNResorption), &(fluxes.leafLitter),
+                      envi.plantLeafC);
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
@@ -1626,12 +1340,11 @@ void calculateFluxes(void) {
   // so make sure this stays at the bottom of this function (or after the
   // carbon and water calcs, at least).
   if (ctx.nitrogenCycle) {
-    calcNVolatilizationFlux();
-    calcNLeachingFlux();
-    calcNPoolFluxes();
-    // Must be last for N limitation check
-    calcNFixationAndUptakeFluxes();
+    calcNitrogenFluxes();
   }
+
+  // Check limitations; must be after all flux calcs
+  checkLimitations();
 
   // Delayed write needed due to N limitation check - leafOn value may have
   // changed
@@ -1691,9 +1404,12 @@ void ensureNonNegativeStocks(void) {
   ensureNonNegative(&(envi.snow), TINY, "snow");
 
   // Nitrogen cycle stocks
-  ensureNonNegative(&(envi.minN), 0, "minN");
-  ensureNonNegative(&(envi.soilOrgN), 0, "soilOrgN");
-  ensureNonNegative(&(envi.litterN), 0, "litterN");
+  // if (ctx.nitrogenCycle) {
+  ensureNonNegative(&envi.minN, 0, "minN");
+  ensureNonNegative(&envi.soilOrgN, 0, "soilOrgN");
+  ensureNonNegative(&envi.litterN, 0, "litterN");
+  ensureNonNegative(&envi.plantStorageN, 0, "plantStorageN");
+  //}
 }
 
 // ////////////////// //
@@ -1874,7 +1590,7 @@ void updateMeanTrackers(void) {
 /*!
  * Update the main pools, leafC, woodC, soil and snow
  */
-void updateMainPools() {
+void updateMainPools(void) {
   // Update the stocks, with fluxes adjusted for length of time step.
   // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
   //   are updated in updatePoolsForSoil().
@@ -1894,9 +1610,9 @@ void updateMainPools() {
                           fluxes.fineRootCreation + fluxes.coarseRootCreation;
   envi.plantWoodCStorageDelta +=
       ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
-  envi.plantWoodC +=
-      (fluxes.woodCreation - fluxes.woodLitter - fluxes.leafOnCreation) *
-      climate->length;
+  envi.plantWoodC += (fluxes.woodCreation - fluxes.woodLitter -
+                      fluxes.leafOnCreationFromWood) *
+                     climate->length;
 
   // :: from [1], eq (A2), where:
   //     L   = fluxes.leafCreation
@@ -1957,32 +1673,25 @@ void updatePoolsForSoil(void) {
   // :: from [3], root model description, except that we deal with
   //    respiration in the woodC calculations (or, put another way, it's
   //    implicit in the creation term)
-  envi.coarseRootC +=
-      (fluxes.coarseRootCreation - fluxes.coarseRootLoss) * climate->length;
+  double leafOnCreationFromRoot =
+      fluxes.leafOnCreation - fluxes.leafOnCreationFromWood;
+  envi.coarseRootC += (fluxes.coarseRootCreation - fluxes.coarseRootLoss -
+                       leafOnCreationFromRoot) *
+                      climate->length;
   envi.fineRootC +=
       (fluxes.fineRootCreation - fluxes.fineRootLoss) * climate->length;
-}
-
-void updateNitrogenPools(void) {
-  // Nitrogen Cycle
-  // :: from [5], nitrogen cycle model
-  // TBD: add equation numbers once published
-
-  // Soil mineral N (note we have one mineral pool for soil+litter)
-  // Mineral N additions from fertilization are handled with the events
-  double nonUptakeFluxes = calcMinNNonUptakeFluxes();
-  envi.minN += (nonUptakeFluxes - fluxes.nUptake) * climate->length;
-
-  // Soil organic N
-  envi.soilOrgN += fluxes.nOrgSoil * climate->length;
-
-  // Litter organic N
-  envi.litterN += fluxes.nOrgLitter * climate->length;
 }
 
 void updatePoolsAndBalance() {
   // Calc total C and N before pool updates
   updateBalanceTrackerPreUpdate();
+
+  // Update pools for fluxes from events
+  // There is a timing dependency for leaf-on events; event pools need to be
+  // updated before the nitrogen pools so that the storage pool is handled
+  // correctly. We put them first to be in sync with the order in
+  // calculateFluxes().
+  updatePoolsForEvents();
 
   // Update leafC, woodC, soil water and snow pools
   updateMainPools();
@@ -1991,10 +1700,9 @@ void updatePoolsAndBalance() {
   updatePoolsForSoil();
 
   // Update nitrogen cycle pools
-  updateNitrogenPools();
-
-  // Update pools for fluxes from events
-  updatePoolsForEvents();
+  if (ctx.nitrogenCycle) {
+    updateNitrogenPools();
+  }
 
   // Calc total C and N after pool updates
   updateBalanceTrackerPostUpdate();
@@ -2133,6 +1841,7 @@ void setupModel(void) {
     envi.minN = params.minNInit;
     envi.soilOrgN = params.soilOrgNInit;
     envi.litterN = params.litterOrgNInit;
+    envi.plantStorageN = params.plantStorageNInit;
   } else {
     envi.minN = 0.0;
     envi.soilOrgN = 0.0;

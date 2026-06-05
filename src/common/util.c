@@ -68,3 +68,8 @@ int countFields(const char *line, const char *sep) {
   free(lineCopy);
   return numParams;
 }
+
+double calcRatio(const double num, const double den) {
+  const double effectiveDen = den < TINY ? TINY : den;
+  return num / effectiveDen;
+}

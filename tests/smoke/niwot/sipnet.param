@@ -128,3 +128,5 @@ fineRootExudation	0.0100000	0	0.000000	1.000000	0.001000
 coarseRootExudation	0.0100000	0	0.000000	1.000000	0.001000
 microbePulseEff		0.45		0	0.0000		1.0000		0.050000
 !!!!!!!!!!!!!!!
+
+leafOnReallocFrac 0.2 0 0 0 0

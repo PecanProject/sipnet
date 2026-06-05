@@ -8,14 +8,15 @@ This guide documents how state is advanced each timestep and the conventions tha
 - Zero all `fluxes.*` and `fluxes.event*`.
 
 2) Compute fluxes (pure calculations)
-- `calculateFluxes()` computes photosynthesis, respiration, water/snow, etc.
 - `processEvents()` converts scheduled/instant events to `fluxes.event*` deltas (no pool mutation).
--  No function in this phase mutates `envi.*` or `trackers.*`.
-
+- `calculateFluxes()` computes photosynthesis, respiration, water/snow, etc.
+- `checkLimitations()` may adjust already-computed fluxes when a flux is resource limited.
+- No function in this phase mutates `envi.*` or `trackers.*`.
 
 3) Apply pool updates (single place)
 - `updateMainPools()` updates leafC, woodC, soil water and snow pools
 - `updatePoolsForSoil()` updates soil carbon pools
+- `updateNitrogenPools()` updates mineral, soil organic, and litter nitrogen pools.
 - `updatePoolsForEvents()` updates pools for fluxes from events
 - The above functions are the only code that changes `envi.*`.
 - For each pool P: ΔP = ((sum of rate fluxes to P) + (sum of event fluxes to P)) * climate.length
