@@ -1,12 +1,11 @@
+#include "modelParams.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "common/context.h"
-
 #include "exitCodes.h"
 #include "logging.h"
-#include "modelParams.h"
 #include "util.h"
 
 // Private/helper functions: not defined in modelParams.h

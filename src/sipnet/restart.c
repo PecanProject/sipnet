@@ -15,7 +15,6 @@
 #include "version.h"
 
 #define RESTART_MAGIC "SIPNET_RESTART"
-#define RESTART_SCHEMA_VERSION "1.0"
 #define RESTART_FLOAT_EPSILON 1e-8
 
 /*
@@ -23,7 +22,6 @@
  * - Number of elements of changed payload struct (#defs immediately below)
  * - RESTART_SCHEMA_LAYOUT_* constants and related runtime checks
  * - restart read/write logic, docs, and restart tests
- * - RESTART_SCHEMA_VERSION
  */
 
 #define MODEL_VERSION_BUFFER_SIZE 32
@@ -33,7 +31,7 @@
 #define NUM_META_FIELDS 4
 #define NUM_SCHEMA_FIELDS 4
 #define NUM_MEAN_META_FIELDS 5
-#define NUM_ENVI_FIELDS 12
+#define NUM_ENVI_FIELDS 13
 #define NUM_TRACKER_FIELDS 32
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_EVENT_TRACKERS_FIELDS 1
@@ -49,19 +47,19 @@
   (8 * NUM_EVENT_TRACKERS_FIELDS)
 
 _Static_assert(sizeof(Envi) == RESTART_SCHEMA_LAYOUT_ENVI_SIZE,
-               "Restart schema 1.0 drift: Envi changed; bump restart schema "
-               "version and update schema_layout.* checks");
+               "Restart schema drift: Envi changed; update schema_layout.* "
+               "checks");
 _Static_assert(sizeof(Trackers) == RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE,
-               "Restart schema 1.0 drift: serialized trackers payload changed; "
-               "bump restart schema version and update schema_layout.* checks");
-_Static_assert(
-    sizeof(PhenologyTrackers) == RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
-    "Restart schema 1.0 drift: PhenologyTrackers changed; bump restart "
-    "schema version and update schema_layout.* checks");
+               "Restart schema drift: serialized trackers payload changed; "
+               "update schema_layout.* checks");
+_Static_assert(sizeof(PhenologyTrackers) ==
+                   RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
+               "Restart schema drift: PhenologyTrackers changed; update "
+               "schema_layout.* checks");
 _Static_assert(sizeof(EventTrackers) ==
                    RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE,
-               "Restart schema 1.0 drift: EventTrackers changed; bump restart "
-               "schema version and update schema_layout.* checks");
+               "Restart schema drift: EventTrackers changed; update "
+               "schema_layout.* checks");
 
 #define NUM_CLIMATE_SIGNATURE_FIELDS 4
 typedef struct RestartClimateSignature {
@@ -91,8 +89,8 @@ typedef struct RestartContextModelFlags {
 static RestartContextModelFlags modelFlags;
 
 _Static_assert(sizeof(RestartContextModelFlags) == NUM_CONTEXT_MODEL_FLAGS * 4,
-               "Restart schema 1.0 drift: Model flags changed; bump restart "
-               "schema version and update schema_layout.* checks");
+               "Restart schema drift: Model flags changed; update "
+               "schema_layout.* checks");
 
 typedef enum StateFieldType {
   FT_LONGLONG = 0,
@@ -188,8 +186,9 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->enviPF[8] = (StateField){"envi.minN",                    FT_DOUBLE, &envi.minN,                   0};
   state->enviPF[9] = (StateField){"envi.soilOrgN",                FT_DOUBLE, &envi.soilOrgN,               0};
   state->enviPF[10] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
-  state->enviPF[11] = (StateField){"envi.plantWoodCStorageDelta", FT_DOUBLE, &envi.plantWoodCStorageDelta, 0};
-  state->enviPF[12] = (StateField){"envi.invalid",                FT_INVALID, NULL, FIELD_INVALID};
+  state->enviPF[11] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
+  state->enviPF[12] = (StateField){"envi.plantWoodCStorageDelta", FT_DOUBLE, &envi.plantWoodCStorageDelta, 0};
+  state->enviPF[13] = (StateField){"envi.invalid",                FT_INVALID, NULL, FIELD_INVALID};
 
   state->trackersPF[0] = (StateField){"trackers.gpp",                 FT_DOUBLE, &trackers.gpp,                0};
   state->trackersPF[1] = (StateField){"trackers.rtot",                FT_DOUBLE, &trackers.rtot,               0};
@@ -386,10 +385,9 @@ static void validateSchemaLayoutValue(const char *restartIn, const char *key,
                                       const char *value, long long expected) {
   long long parsed = parseIntStrict(restartIn, key, value);
   if (parsed != expected) {
-    logError(
-        "Restart schema layout mismatch in %s: key=%s found=%lld expected=%lld "
-        "(schema %s)\n",
-        restartIn, key, parsed, expected, RESTART_SCHEMA_VERSION);
+    logError("Restart schema layout mismatch in %s: key=%s found=%lld "
+             "expected=%lld\n",
+             restartIn, key, parsed, expected);
     exit(EXIT_CODE_BAD_RESTART_PARAMETER);
   }
 }
@@ -541,19 +539,11 @@ static void readRestartState(const char *restartIn, RestartState *state,
   }
   checkLineLength(firstLine, strlen(firstLine), restartIn, in);
 
-  char magic[64];
-  char schemaVersion[16];
-  if (sscanf(firstLine, "%63s %15s", magic, schemaVersion) != 2) {
-    parseError(restartIn, "invalid header line", NULL);
-  }
+  // Strip trailing newline/carriage return for exact comparison
+  firstLine[strcspn(firstLine, "\r\n")] = '\0';
 
-  if (strcmp(magic, RESTART_MAGIC) != 0) {
+  if (strcmp(firstLine, RESTART_MAGIC) != 0) {
     logError("Restart file %s has invalid magic header\n", restartIn);
-    exit(EXIT_CODE_BAD_RESTART_PARAMETER);
-  }
-  if (strcmp(schemaVersion, RESTART_SCHEMA_VERSION) != 0) {
-    logError("Restart schema mismatch in %s: found %s expected %s\n", restartIn,
-             schemaVersion, RESTART_SCHEMA_VERSION);
     exit(EXIT_CODE_BAD_RESTART_PARAMETER);
   }
 
@@ -726,7 +716,7 @@ static void writeRestartState(const char *restartOut, const RestartState *state,
   FILE *out = openFile(restartOut, "w");
 
   // Magic header
-  fprintf(out, "%s %s\n", RESTART_MAGIC, RESTART_SCHEMA_VERSION);
+  fprintf(out, "%s\n", RESTART_MAGIC);
 
   // Schema batches
   writeKeysBatch(out, state->metaPF, NUM_META_FIELDS);

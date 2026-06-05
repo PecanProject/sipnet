@@ -92,7 +92,7 @@ const char *eventTypeToString(event_type_t type);
 /*!
  * Convert event string to corresponding enum value
  *
- * @param string string version of event enum type
+ * @param eventTypeStr string version of event enum type
  * @return enum value representing the event
  */
 event_type_t eventStringToType(const char *eventTypeStr);
@@ -154,7 +154,6 @@ void writeComputedEventOut(int year, int day, const char *type, int numParams,
 
 /*!
  * Close the event output file
- * @param file FILE pointer for output file
  */
 void closeEventOutFile(void);
 
