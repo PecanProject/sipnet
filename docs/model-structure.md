@@ -935,8 +935,7 @@ four $Q_{10}$ values ranged from 1.4 to 5.8 when SIPNET was calibrated to $CO_2$
 ### Moisture dependence functions $D_{water}$
 
 Moisture dependence functions are typically based on soil water content as a fraction of water holding capacity, also
-referred to as soil moisture or fractional soil wetness. SIPNET represents this fraction of soil wetness as
-$f_\text{WHC}$.
+referred to as soil moisture or fractional soil wetness ($f_\text{WHC}$).
 
 #### Soil Water Content Fraction
 
