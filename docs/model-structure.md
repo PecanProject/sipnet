@@ -316,6 +316,8 @@ When soil carbon saturation is enabled, a fraction of soil carbon inputs may be 
 \label{eq:soil_carbon_to_litter}
 \end{equation}
 
+Where $\frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}$ is bound from 0 to 1.
+
 $F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter
 decomposition
 is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
@@ -384,7 +386,7 @@ When soil carbon saturation is enabled, only a saturation-dependent fraction of 
 \label{eq:soil_carbon_saturation}
 \end{equation}
 
-where $C_{\text{soil,saturation}}$ is the soil carbon saturation limit entered as an input paramter. This is based on equation (3) from Stewart et al. (2007).
+where $C_{\text{soil,saturation}}$ is the soil carbon saturation limit entered as an input parameter. This is based on equation (3) from Stewart et al. (2007). $\frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}$ is bound from 0 to 1.
 
 Soil heterotrophic respiration is modeled as a first-order process proportional
 to soil organic carbon content and modified by environmental and management factors:

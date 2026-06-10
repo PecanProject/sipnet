@@ -636,7 +636,6 @@ typedef struct FluxVars {
   double soilMethane;
   // Methane produced from litter
   double litterMethane;
-
 } Fluxes;
 
 // Global var

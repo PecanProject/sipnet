@@ -120,13 +120,14 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 
 | Key              | Value (1/0) | Description                               |
 | ---------------- | ----------- | ----------------------------------------- |
+| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
+| `CARBON_SATURATION` | 0 or 1   | Enable soil carbon saturating behavior    |
 | `EVENTS`         | 0 or 1      | Enable/disable event handling             |
 | `GDD`            | 0 or 1      | Use growing degree days for leaf growth   |
 | `GROWTH_RESP`    | 0 or 1      | Explicitly model growth respiration       |
 | `LEAF_WATER`     | 0 or 1      | Track separate leaf water pool            |
 | `LITTER_POOL`    | 0 or 1      | Enable separate litter pool               |
 | `NITROGEN_CYCLE` | 0 or 1      | Enable nitrogen cycle modeling            |
-| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
 | `SNOW`           | 0 or 1      | Track snowpack                            |
 | `SOIL_PHENOL`    | 0 or 1      | Use soil temperature for phenology        |
 | `WATER_HRESP`    | 0 or 1      | Allow soil moisture to affect respiration |
