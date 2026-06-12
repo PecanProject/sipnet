@@ -35,8 +35,6 @@ double calcRatio(double num, double den);
  * @param preClip Pre-clipped value
  * @return Clipped value
  */
-extern inline double unitClip(double preClip) {
-  return fmin(fmax(preClip, 0.0), 1.0);
-}
+inline double unitClip(double preClip) { return fmin(fmax(preClip, 0.0), 1.0); }
 
 #endif
