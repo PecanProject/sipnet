@@ -56,6 +56,7 @@ add_library(tests
         tests/sipnet/test_events_types/testEventPlanting.c
         tests/sipnet/test_events_types/testEventTillage.c
         tests/sipnet/test_modeling/testBalance.c
+        tests/sipnet/test_modeling/testCarbonSaturation.c
         tests/sipnet/test_modeling/testDependencyFunctions.c
         tests/sipnet/test_modeling/testMethane.c
         tests/sipnet/test_modeling/testNitrogenCycle.c
