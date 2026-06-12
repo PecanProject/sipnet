@@ -41,8 +41,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
       nLimiter = availableN / leafOnNDemand;
     }
   }
-  double limitation = fmin(cLimiter, nLimiter);
-  limitation = fmax(fmin(limitation, 1.0), 0.0);
+  double limitation = unitClip(fmin(cLimiter, nLimiter));
 
   if (limitation < 1) {
     *leafOnFlux *= limitation;

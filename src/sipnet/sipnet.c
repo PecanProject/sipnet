@@ -1660,9 +1660,8 @@ void updatePoolsForSoil(void) {
     // pool below saturation level, all inputs will be directed to envi.litterC
     // pool while envi.soilC is above saturation level
     double saturationFraction =
-        (ctx.carbonSaturation)
-            ? (fmin(1.0, fmax(0.0, envi.soilC / params.soilCSaturation)))
-            : 0.0;
+        ctx.carbonSaturation ? unitClip(envi.soilC / params.soilCSaturation)
+                             : 0.0;
     // :: from [2], litter model description
     envi.litterC += (fluxes.woodLitter + fluxes.leafLitter +
                      (soilInputs * saturationFraction) - fluxes.litterToSoil -

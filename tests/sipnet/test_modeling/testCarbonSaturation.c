@@ -60,14 +60,10 @@ int checkLitter(double pool) {
 }
 
 void calcCSaturation(double *expSoilC, double *expLitterC) {
-  double saturationFraction;
   double soilInputs =
       fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
-
-  saturationFraction =
-      (ctx.carbonSaturation)
-          ? (fmin(1.0, fmax(0.0, *expSoilC / params.soilCSaturation)))
-          : 0.0;
+  double saturationFraction =
+      ctx.carbonSaturation ? unitClip(*expSoilC / params.soilCSaturation) : 0.0;
 
   *expLitterC += soilInputs * saturationFraction * climate->length;
 

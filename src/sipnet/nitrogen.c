@@ -59,9 +59,8 @@ static void calcNPoolFluxes(void) {
                        fluxes.coarseRootLoss / params.woodCN;
   // saturationFraction capped between zero and one
   double saturationFraction =
-      (ctx.carbonSaturation)
-          ? (fmin(1.0, fmax(0.0, envi.soilC / params.soilCSaturation)))
-          : 0.0;
+      ctx.carbonSaturation ? unitClip(envi.soilC / params.soilCSaturation)
+                           : 0.0;
 
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
