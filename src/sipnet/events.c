@@ -486,8 +486,8 @@ void processEvents(void) {
         }
         fluxes.eventEvap += evapAmount / climLen;
         fluxes.eventSoilWater += soilAmount / climLen;
-        writeEventOut(gEvent, 2, "fluxes.eventSoilWater", soilAmount / climLen,
-                      "fluxes.eventEvap", evapAmount / climLen);
+        writeEventOut(gEvent, 2, "eventSoilWater", soilAmount, "eventEvap",
+                      evapAmount);
       } break;
       case PLANTING: {
         const PlantingParams *plantParams = gEvent->eventParams;
@@ -515,12 +515,15 @@ void processEvents(void) {
           fluxes.eventInputN += inputN / climLen;
         }
 
-        writeEventOut(gEvent, 6, "fluxes.eventLeafC", leafC / climLen,
-                      "fluxes.eventWoodC", woodC / climLen,
-                      "fluxes.eventFineRootC", fineRootC / climLen,
-                      "fluxes.eventCoarseRootC", coarseRootC / climLen,
-                      "fluxes.eventInputC", inputC / climLen,
-                      "fluxes.eventInputN", inputN / climLen);
+        // clang-format off
+        writeEventOut(gEvent, 6,
+                      "eventLeafC", leafC,
+                      "eventWoodC", woodC,
+                      "eventFineRootC", fineRootC,
+                      "eventCoarseRootC", coarseRootC,
+                      "eventInputC", inputC,
+                      "eventInputN", inputN);
+        // clang-format on
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the soil/litter
@@ -592,16 +595,16 @@ void processEvents(void) {
         // clang-format off
         writeEventOut(
             gEvent, 10,
-            "fluxes.eventSoilC", soilAdd / climLen,
-            "fluxes.eventLitterC", litterAdd / climLen,
-            "fluxes.eventLeafC", leafDelta / climLen,
-            "fluxes.eventWoodC", woodDelta / climLen,
-            "fluxes.eventFineRootC", fineDelta / climLen,
-            "fluxes.eventCoarseRootC", coarseDelta / climLen,
-            "fluxes.eventSoilOrgN", soilNAdd / climLen,
-            "fluxes.eventLitterN", litterNAdd / climLen,
-            "fluxes.eventOutputC", outputC / climLen,
-            "fluxes.eventOutputN", outputN / climLen);
+            "eventSoilC", soilAdd,
+            "eventLitterC", litterAdd,
+            "eventLeafC", leafDelta,
+            "eventWoodC", woodDelta,
+            "eventFineRootC", fineDelta,
+            "eventCoarseRootC", coarseDelta,
+            "eventSoilOrgN", soilNAdd,
+            "eventLitterN", litterNAdd,
+            "eventOutputC", outputC,
+            "eventOutputN", outputN);
         // clang-format on
       } break;
       case TILLAGE: {
@@ -646,12 +649,12 @@ void processEvents(void) {
 
         // clang-format off
         writeEventOut(gEvent, 6,
-          "fluxes.eventLitterC", ctx.litterPool ? orgC / climLen : 0.0,
-          "fluxes.eventSoilC", ctx.litterPool ? 0.0 : orgC / climLen,
-          "fluxes.eventMinN", minN / climLen,
-          "fluxes.eventLitterN", orgN / climLen,
-          "fluxes.eventInputC", orgC / climLen,
-          "fluxes.eventInputN", (orgN + minN) / climLen);
+          "eventLitterC", ctx.litterPool ? orgC : 0.0,
+          "eventSoilC", ctx.litterPool ? 0.0 : orgC,
+          "eventMinN", minN,
+          "eventLitterN", orgN,
+          "eventInputC", orgC,
+          "eventInputN", (orgN + minN));
         // clang-format on
       } break;
       case LEAFON: {
@@ -692,9 +695,9 @@ void processEvents(void) {
 
         // clang-format off
         writeEventOut(gEvent, 3,
-          "fluxes.eventLeafOffLitter", leafOff / climLen,
-          "fluxes.eventLeafOffNResorption", leafNResorption / climLen,
-          "fluxes.eventLitterN", litterNAdd / climLen);
+          "eventLeafOffLitter", leafOff,
+          "eventLeafOffNResorption", leafNResorption,
+          "eventLitterN", litterNAdd);
         // clang-format on
       } break;
       default:
