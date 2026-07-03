@@ -344,7 +344,7 @@ typedef struct Parameters {
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
-  // Fraction of mineral N available to be leached, unitless
+  // Fraction of mineral N available to be leached per day, d^-1
   double nLeachingFrac;
 
   // C:N ratio for leaves, assumed static, g C/g N
@@ -397,6 +397,14 @@ typedef struct Parameters {
 
   // Relative methane production rate in the litter pool, in [0, 1), per day
   double litterMethaneRate;
+
+  // ******
+  // Soil carbon saturation
+  // ******
+
+  // Maximum threshold for stabilizing carbon in soil organic pool as
+  // slow-turnover pool units: g C * m^-2 ground area
+  double soilCSaturation;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))

@@ -51,22 +51,31 @@ static void calcNPoolFluxes(void) {
   double litterMin = fluxes.rLitter / litterCN;
   double soilMin = fluxes.rSoil / soilCN;
 
+  // Adding soil carbon saturation functionality so organic N fluxes to soil
+  // and litter are proportional to respective carbon fluxes dependent on
+  // soil carbon saturation
+  double soilNInputs = fluxes.litterToSoil / litterCN +
+                       fluxes.fineRootLoss / params.fineRootCN +
+                       fluxes.coarseRootLoss / params.woodCN;
+  // saturationFraction capped between zero and one
+  double saturationFraction =
+      ctx.carbonSaturation ? unitClip(envi.soilC / params.soilCSaturation)
+                           : 0.0;
+
   // litter
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter (modified by leaf N resorption), and N loss due to mineralization.
   // N added via fertilization is handled elsewhere.
-  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN -
-                      fluxes.leafOffNResorption +
-                      fluxes.woodLitter / params.woodCN - litterMin -
-                      fluxes.litterToSoil / litterCN;
+  fluxes.nOrgLitter =
+      fluxes.leafLitter / params.leafCN - fluxes.leafOffNResorption +
+      fluxes.woodLitter / params.woodCN - litterMin -
+      fluxes.litterToSoil / litterCN + (soilNInputs * saturationFraction);
 
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
   // carbon fluxes from roots, and N loss due to mineralization
   // (Note: woodCN is used for coarse roots)
-  fluxes.nOrgSoil = fluxes.litterToSoil / litterCN - soilMin +
-                    fluxes.fineRootLoss / params.fineRootCN +
-                    fluxes.coarseRootLoss / params.woodCN;
+  fluxes.nOrgSoil = soilNInputs * (1 - saturationFraction) - soilMin;
 
   // mineralization
   fluxes.nMin = litterMin + soilMin;

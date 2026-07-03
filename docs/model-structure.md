@@ -309,6 +309,15 @@ F^C_\text{fert,org}
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is
 transferred to litter.
 
+When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as fast-turnover carbon. This functionality is described in more detail below in the Soil Carbon section \eqref{eq:soil_carbon_saturation}.
+
+\begin{equation}
+\frac{dC_\text{litter}}{dt} = F^C_\text{litter} + F^C_{\text{soil}} \cdot \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}} - F^C_{\text{decomp}} - F^C_{\text{CH}_4\text{,litter}}
+\label{eq:soil_carbon_to_litter}
+\end{equation}
+
+Where $\frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}$ is bound from 0 to 1.
+
 $F^C_{\text{decomp}}$ represents the rate at which litter carbon is processed by microbial activity. Litter
 decomposition
 is modeled as a first-order process proportional to litter carbon content and modified by temperature and moisture:
@@ -369,6 +378,15 @@ Total carbon input to the soil includes both
 F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
 \label{eq:soil_carbon_flux}
 \end{equation}
+
+When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs is added to the soil pool. This fraction declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining input C is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover carbon rather than being added to the soil pool.
+
+\begin{equation}
+\frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} \cdot (1 - \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}) - R_{\text{soil}} - F^C_{\text{CH}_4\text{,soil}}
+\label{eq:soil_carbon_saturation}
+\end{equation}
+
+where $C_{\text{soil,saturation}}$ is the soil carbon saturation limit entered as an input parameter. This is based on equation (3) from Stewart et al. (2007). $\frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}$ is bound from 0 to 1.
 
 Soil heterotrophic respiration is modeled as a first-order process proportional
 to soil organic carbon content and modified by environmental and management factors:
@@ -572,42 +590,38 @@ F^N_\text{min} = \sum_j \left( \frac{R_{H\text{j}}}{CN_{\text{j}}} \right)
 \small j \in \{\text{soil, litter}\}
 \end{equation*}
 
-### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min,soil} \rightarrow N_2O)$
+### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min} \rightarrow N_2O)$
 
-The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N
-mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion
-of $N_\text{min}$ (Thornton et al 2007, Oleson et al. 2010). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and
-Rosenbloom, 2005 and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005)
-represents $N_2O$ flux as a proportion of the N mineralization rate.
-
-The simplest way to represent $N_2O$ flux is as a proportion of the mineral N pool $N_\text{min}$ or the N 
-mineralization rate $F^N_{min}$. For example, CLM-CN and CLM 4.0 represent $N_2O$ flux as a proportion of $N_\text{min}$
-(Thornton et al 2007, Oleson et al. 2010). By contrast, Biome-BGC (Golinkoff et al 2010; Thornton and Rosenbloom, 2005
-and https://github.com/bpbond/Biome-BGC, Golinkoff et al 2010; Thornton and Rosenbloom, 2005) represents $N_2O$ flux as
-a proportion of the N mineralization rate. 
-
-Because we expect $N_2O$ emissions will be dominated by fertilizer N inputs, we will start with the $N_\text{min}$ pool
-size approach. This approach also has the advantage of accounting for reduced $N_2O$ flux when N is limiting (Zahele and
-Dalmorech 2011).
-
-A new parameter $K_\text{vol}$ represents the first-order rate constant governing volatilization losses from the soil
-mineral nitrogen pool. The realized volatilization flux is proportional to $N_\text{min}$ and depends on temperature and
-soil moisture.
+$K_\text{vol}$ is the nitrogen volatilization rate constant that determines the maximum rate of N volatilization as a
+proportion of available $N_\text{min}$. The realized volatilization flux is proportional to available $N_\text{min}$, scaled by $K_\text{vol}$ and modified by temperature and soil moisture.
 
 \begin{equation}
 F^N_\text{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water},N_\text{vol}}
 \label{eq:n_vol}
 \end{equation}
 
+Justification: SIPNET represents $N_2O$ flux as a proportion of the mineral N pool $N_\text{min}$, rather than as a
+proportion of the N mineralization rate $F^N_\text{min}$. CLM-CN and CLM 4.0 use an $N_\text{min}$ approach (Thornton et
+al. 2007; Oleson et al. 2010), while Biome-BGC represents $N_2O$ flux as a proportion of the N mineralization rate
+(Golinkoff et al. 2010; Thornton and Rosenbloom, 2005; https://github.com/bpbond/Biome-BGC). The $N_\text{min}$
+approach accounts for reduced $N_2O$ flux when N is limiting (Zahele and Dalmorech 2011), and fertilizer N inputs are
+expected to dominate $N_2O$ emissions.
+
 ### Nitrogen Leaching $F^N_\text{leach}$
 
 \begin{equation}
-F^N_\text{leach} = N_\text{min} \cdot F^W_{drainage} \cdot f_{N leach}
+F^N_\text{leach} = N_\text{min} \cdot \phi \cdot f^N_\text{leach}
 \label{eq:n_leach}
 \end{equation}
 
-Where $f^N_\text{leach}$ is the fraction of $N_{min}$ in soil that is available to be leached, $F^W_{drainage}$ is
-drainage.
+where:
+
+\begin{equation}
+\phi = \min\left(\frac{F^W_\text{drainage}}{W_\text{WHC}}, 1\right)
+\end{equation}
+
+$f^N_\text{leach}$ is the fraction of $N_\text{min}$ available to be leached, $F^W_\text{drainage}$ is drainage, and
+$W_\text{WHC}$ is soil water holding capacity. SIPNET uses one mineral nitrogen pool, $N_\text{min}$; litter and soil mineralization are separate fluxes that both add to this pool.
 
 ### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
 
@@ -911,7 +925,7 @@ Where $T_{\text{env}}$ may be soil or air temperature  $(T_\text{soil}$ or $T_\t
 Because the function is symmetric around $T_\text{opt}$, the parameters $T_{\text{min}}$ and $T_{\text{opt}}$ are
 provided and $T_{\text{max}}$ is calculated internally as $T_{\text{max}} = 2 \cdot T_{\text{opt}} - T_{\text{min}}$.
 
-#### Exponential Function for Respiration $D_{\text(temp,Q10)}$
+#### Exponential Function for Respiration $D_{\text{temp,Q10}}$
 
 The temperature response of autotrophic  $(R_a)$ and heterotrophic  $(R_H)$ respiration represented as an exponential
 relationship using a simplified Arrhenius function.
@@ -939,8 +953,7 @@ four $Q_{10}$ values ranged from 1.4 to 5.8 when SIPNET was calibrated to $CO_2$
 ### Moisture dependence functions $D_{water}$
 
 Moisture dependence functions are typically based on soil water content as a fraction of water holding capacity, also
-referred to as soil moisture or fractional soil wetness. We will represent this fraction of soil wetness
-as $f_\text{WHC}$.
+referred to as soil moisture or fractional soil wetness ($f_\text{WHC}$).
 
 #### Soil Water Content Fraction
 

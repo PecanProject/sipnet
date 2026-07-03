@@ -48,6 +48,7 @@ These flags enable or disable optional model processes. Prepend `no-` to the fla
 | `--snow`           | ON (1)  | Track snowpack separately; if disabled, all precipitation is treated as liquid |
 | `--soil-phenol`    | OFF (0) | Use soil temperature (instead of growing degree days) to determine leaf growth |
 | `--water-hresp`    | ON (1)  | Allow soil moisture to affect heterotrophic respiration rates                  |
+| `--carbon-saturation`| OFF (0) | Enable soil carbon saturation behavior to constrain carbon stored in soil    |
 
 #### Model Flag Restrictions
 
@@ -56,6 +57,7 @@ The following flag constraints are enforced:
 - `--soil-phenol` and `--gdd` cannot both be enabled
 - `--anaerobic` requires `--water-hresp`
 - `--nitrogen-cycle` requires both `--litter-pool` and `--anaerobic`
+- `--carbon-saturation` requires `--litter-pool`
 
 ### Output Flags
 
@@ -118,13 +120,14 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 
 | Key              | Value (1/0) | Description                               |
 | ---------------- | ----------- | ----------------------------------------- |
+| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
+| `CARBON_SATURATION` | 0 or 1   | Enable soil carbon saturating behavior    |
 | `EVENTS`         | 0 or 1      | Enable/disable event handling             |
 | `GDD`            | 0 or 1      | Use growing degree days for leaf growth   |
 | `GROWTH_RESP`    | 0 or 1      | Explicitly model growth respiration       |
 | `LEAF_WATER`     | 0 or 1      | Track separate leaf water pool            |
 | `LITTER_POOL`    | 0 or 1      | Enable separate litter pool               |
 | `NITROGEN_CYCLE` | 0 or 1      | Enable nitrogen cycle modeling            |
-| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
 | `SNOW`           | 0 or 1      | Track snowpack                            |
 | `SOIL_PHENOL`    | 0 or 1      | Use soil temperature for phenology        |
 | `WATER_HRESP`    | 0 or 1      | Allow soil moisture to affect respiration |

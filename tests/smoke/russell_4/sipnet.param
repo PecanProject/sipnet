@@ -56,3 +56,4 @@ rSoilConst2 4.3
 leafCSpWt 37.2890706126354
 cFracLeaf 0.492305106337912
 leafOnReallocFrac 0.2
+soilCSaturation 1.0

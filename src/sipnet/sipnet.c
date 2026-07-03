@@ -392,6 +392,9 @@ void readParamData(ModelParams **modelParamsPtr, const char *paramFile) {
   // Water drainage
   initializeOneModelParam(modelParams, "waterDrainFrac", &(params.waterDrainFrac), ctx.flooding);
 
+  // Soil carbon saturation
+  initializeOneModelParam(modelParams, "soilCSaturation", &(params.soilCSaturation), ctx.carbonSaturation);
+
   // NOLINTEND
   // clang-format on
 
@@ -1647,15 +1650,26 @@ void updateMainPools(void) {
  */
 void updatePoolsForSoil(void) {
   if (ctx.litterPool) {
+    double soilInputs =
+        fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.litterToSoil;
+    // Adding soil carbon saturation functionality
+    // soilFraction capped between zero and one
+    // if envi.soilC > params.soilCSaturation (due to initialization or events)
+    // saturationFraction will return 1 and no additional soil C inputs will be
+    // accepted to envi.soilC until losses due to respiration and methane reduce
+    // pool below saturation level, all inputs will be directed to envi.litterC
+    // pool while envi.soilC is above saturation level
+    double saturationFraction =
+        ctx.carbonSaturation ? unitClip(envi.soilC / params.soilCSaturation)
+                             : 0.0;
     // :: from [2], litter model description
-    envi.litterC +=
-        (fluxes.woodLitter + fluxes.leafLitter - fluxes.litterToSoil -
-         fluxes.rLitter - fluxes.litterMethane) *
-        climate->length;
-
+    envi.litterC += (fluxes.woodLitter + fluxes.leafLitter +
+                     (soilInputs * saturationFraction) - fluxes.litterToSoil -
+                     fluxes.rLitter - fluxes.litterMethane) *
+                    climate->length;
     // from [2] and [3], litter and root terms respectively
-    envi.soilC += (fluxes.coarseRootLoss + fluxes.fineRootLoss +
-                   fluxes.litterToSoil - fluxes.rSoil - fluxes.soilMethane) *
+    envi.soilC += (soilInputs * (1 - saturationFraction) - fluxes.rSoil -
+                   fluxes.soilMethane) *
                   climate->length;
   } else {
     // Normal pool (single pool, no microbes)

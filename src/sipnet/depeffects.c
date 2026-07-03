@@ -8,7 +8,7 @@
 #include "state.h"
 
 double getClippedWaterFrac(double water, double whc) {
-  return fmin(fmax(water / whc, 0.0), 1.0);
+  return unitClip(water / whc);
 }
 
 double calcAnaerobicIndex(double water, double whc) {
@@ -16,7 +16,7 @@ double calcAnaerobicIndex(double water, double whc) {
   double f_a = params.fAnoxia;
 
   // Anaerobic index (oxygen limitation proxy)
-  return fmin(fmax((f_whc - f_a) / (1 - f_a), 0), 1);
+  return unitClip((f_whc - f_a) / (1 - f_a));
 }
 
 double calcRespMoistEffect(double water, double whc) {
@@ -45,7 +45,7 @@ double calcRespMoistEffect(double water, double whc) {
       // at intermediate moisture, reduced under saturated/anoxic conditions
 
       // Aerobic water availability (dry limitation)
-      double D_aer = fmin(fmax(f_whc / params.fAnoxia, 0), 1);
+      double D_aer = unitClip(f_whc / params.fAnoxia);
       // Anaerobic index (oxygen limitation proxy)
       double A = calcAnaerobicIndex(water, whc);
       // Uni-modal moisture response
