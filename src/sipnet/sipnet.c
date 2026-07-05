@@ -836,7 +836,8 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
   // check for end of growing season:
   if (!phenologyTrackers.didLeafFall && pastLeafFall()) {
     // we just reached the end of the growing season
-    double leafOff = (plantLeafC * params.fracLeafFall) / climate->length;
+    double len = climate->length;
+    double leafOff = (plantLeafC * params.fracLeafFall) / len;
     *leafLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
     if (leafOff > TINY && ctx.events) {
@@ -846,8 +847,8 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
         *leafOffNResorption += nResorp;
       }
       writeComputedEventOut(climate->year, climate->day,
-                            eventTypeToString(LEAFOFF), 2, "fluxes.leafLitter",
-                            leafOff, "fluxes.leafOffNResorption", nResorp);
+                            eventTypeToString(LEAFOFF), 2, "leafLitter",
+                            leafOff * len, "leafOffNResorption", nResorp * len);
     }
   }
 }
