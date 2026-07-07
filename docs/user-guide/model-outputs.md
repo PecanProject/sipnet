@@ -65,7 +65,7 @@ When event handling is enabled, SIPNET will create `events.out` by default, or
 This file is designed primarily for _testing and debugging_.  
 It contains one row for each agronomic event that is processed. 
 Each row lists the year, day, event type, and parameter name/value pairs. 
-The name/value pairs represent the state variables that are directly changed by an event, recording the change (delta) applied to each.
+The name/value pairs represent the change to a pool directly calculated from an event.
 
 Information in the events output file can, in principle, be reconstructed or
 inferred from the corresponding events input file and `sipnet.out` though this
@@ -78,10 +78,10 @@ Note the delimiters: spaces separate columns, commas separate name/value pairs, 
 
 ```
 year  day  type     param_name=delta[,param_name=delta,...]
-2023   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=4.00,envi.fineRootC=5.00,envi.coarseRootC=6.00
-2023   70  irrig    envi.soilWater=5.00
-2023  200  harv     env.litter=5.46,envi.plantLeafC=-5.93,envi.plantWoodC=-4.75,envi.fineRootC=-3.73,envi.coarseRootC=-3.89
-2024   65  plant    envi.plantLeafC=3.00,envi.plantWoodC=5.00,envi.fineRootC=7.00,envi.coarseRootC=9.00
-2024   70  irrig    fluxes.immedEvap=2.50,envi.soilWater=2.50
-2024  200  harv     env.litter=4.25,envi.plantLeafC=-1.39,envi.plantWoodC=-1.63,envi.fineRootC=-2.52,envi.coarseRootC=-2.97
+2023   65  plant    eventLeafC=3.00,eventWoodC=4.00,eventFineRootC=5.00,eventCoarseRootC=6.00,eventInputC=18.00,eventInputN=0.00
+2023   70  irrig    eventSoilWater=5.00,eventEvap=0.00
+2023  200  harv     eventSoilC=1.90,eventLitterC=3.56,eventLeafC=-5.93,eventWoodC=-4.75,eventFineRootC=-3.73,eventCoarseRootC=-3.89,eventSoilOrgN=0.00,eventLitterN=0.00,eventOutputC=12.83,eventOutputN=0.00
+2024   65  plant    eventLeafC=3.00,eventWoodC=5.00,eventFineRootC=7.00,eventCoarseRootC=9.00,eventInputC=24.00,eventInputN=0.00
+2024   70  irrig    eventSoilWater=2.50,eventEvap=2.50
+2024  200  harv     eventSoilC=2.74,eventLitterC=1.51,eventLeafC=-1.39,eventWoodC=-1.63,eventFineRootC=-2.52,eventCoarseRootC=-2.97,eventSoilOrgN=0.00,eventLitterN=0.00,eventOutputC=4.25,eventOutputN=0.00
 ```

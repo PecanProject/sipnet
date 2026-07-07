@@ -37,6 +37,7 @@ sections to include in release notes:
 ### Changed
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
+- Values in `events.out` changed to pool deltas rather than flux amounts (#349)
 
 ### Removed
 
