@@ -38,6 +38,7 @@ sections to include in release notes:
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
 - Renamed `plantWoodCStorageDelta` to `plantWoodCAccountingDelta` (internal/restart state) and output debug column `nppStorage` to `cnDelta` to reflect that the field is an accounting term for carbon not coupled to nitrogen, not a storage pool (#339).
+- Values in `events.out` changed to pool deltas rather than flux amounts (#349)
 
 ### Removed
 
