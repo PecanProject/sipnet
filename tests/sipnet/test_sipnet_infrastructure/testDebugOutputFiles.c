@@ -141,4 +141,5 @@ int main(void) {
   }
 
   logTest("PASSED testDebugOutputFiles\n");
+  return 0;
 }
