@@ -86,10 +86,6 @@ void nameToKey(const char *name) {
   // Backward compatibility for legacy FILE_NAME / file-name config keys.
   if (strcmp(keyName, "filename") == 0) {
     strcpy(keyName, "fileprefix");
-  } else if (strcmp(keyName, "debugoutputprefix") == 0) {
-    // Backward compatibility for legacy DEBUG_OUTPUT_PREFIX /
-    // debug-output-prefix config keys.
-    strcpy(keyName, "debuglogprefix");
   }
 }
 
