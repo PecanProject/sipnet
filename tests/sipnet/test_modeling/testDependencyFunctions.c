@@ -45,7 +45,7 @@ void initTestState(void) {
   ctx.nitrogenCycle = 0;
   envi.soilWater = 5.0;
   climate->tsoil = 20;
-  eventTrackers.d_till_mod = 0.0;
+  eventTillageTracker.d_till_mod = 0.0;
   params.fAnoxia = 0.75;
 }
 
@@ -164,7 +164,7 @@ int runTests() {
   // More complicated effects are tested elsewhere
   initTestState();
   status |= checkTillageEffect(1.0);
-  eventTrackers.d_till_mod = 1.0;
+  eventTillageTracker.d_till_mod = 1.0;
   status |= checkTillageEffect(2.0);
 
   // C:N effect, one branch

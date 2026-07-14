@@ -1,0 +1,4 @@
+#ifndef SIPNET_CARBON_H
+#define SIPNET_CARBON_H
+
+#endif  // SIPNET_CARBON_H

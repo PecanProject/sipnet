@@ -531,7 +531,7 @@ void processEvents(void) {
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
 
-        const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
+        const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
         // Litter increase
         double litterAdd = fracTA * (envi.plantLeafC + woodC);
         double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
@@ -611,8 +611,8 @@ void processEvents(void) {
         // Update the tillage mod for R_H calculations; this will be slowly
         // reduced by an exponential decay function. Note we add here, not set,
         // as there may be lingering effects from a prior tillage.
-        eventTrackers.d_till_mod += tillParams->tillageEffect;
-        writeEventOut(gEvent, 1, "eventTrackers.d_till_mod",
+        eventTillageTracker.d_till_mod += tillParams->tillageEffect;
+        writeEventOut(gEvent, 1, "eventTillageTracker.d_till_mod",
                       tillParams->tillageEffect);
       } break;
       case FERTILIZATION: {
@@ -768,20 +768,24 @@ void freeEventList(void) {
   }
 }
 
-// Definition of global event trackers struct
-EventTrackers eventTrackers;
+// Definition of global event trackers structs
+EventTillageTracker eventTillageTracker;
+EventHarvestTracker eventHarvestTracker;
 
-void initEventTrackers(void) { eventTrackers.d_till_mod = 0.0; }
+void initEventTrackers(void) {
+  eventTillageTracker.d_till_mod = 0.0;
+  // tbd harvest tracker
+}
 
 void updateEventTrackers(void) {
   const double climLen = climate->length;
 
   // Tillage: decay any existing tillage effects at end of step
-  if (eventTrackers.d_till_mod > 0) {
-    eventTrackers.d_till_mod *= exp(-climLen * TILLAGE_DECAY_FACTOR);
+  if (eventTillageTracker.d_till_mod > 0) {
+    eventTillageTracker.d_till_mod *= exp(-climLen * TILLAGE_DECAY_FACTOR);
 
-    if (eventTrackers.d_till_mod < TILLAGE_THRESHOLD) {
-      eventTrackers.d_till_mod = 0.0;
+    if (eventTillageTracker.d_till_mod < TILLAGE_THRESHOLD) {
+      eventTillageTracker.d_till_mod = 0.0;
     }
   }
 }

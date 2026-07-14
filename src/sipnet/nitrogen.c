@@ -81,6 +81,27 @@ static void calcNPoolFluxes(void) {
   fluxes.nMin = litterMin + soilMin;
 }
 
+/**
+ *
+ */
+double calcPoolNDemand(double poolC, double poolN, double creationC,
+                       double poolCN) {
+  double demand = 0.0;
+  // If creation is positive, calculate demand based on that value minus any
+  // leftover N from prior negative creation steps (if any).
+  // If creation is negative, we have no demand.
+  // Turnover, if any, will be handled (later) at this pool's C:N, so shouldn't
+  // affect this calc.
+  if (creationC > 0.0) {
+    // extraN should not ever be negative - but, if it does somehow end up
+    // there, then it represents missing N, so we're good with demand going up
+    // in that case
+    double extraNFlux = (poolN - poolC / poolCN) / climate->length;
+    demand = creationC / poolCN - extraNFlux;
+  }
+  return demand;
+}
+
 // see nitrogen.h
 double calcLeafOnNFromC(double leafOnC) {
   return fmax(0.0, leafOnC / params.leafCN - leafOnC / params.woodCN);
@@ -96,10 +117,15 @@ double calcPlantNDemand(void) {
   // function
 
   // calculate demand from all creation terms
-  double creationDemand = fluxes.woodCreation / params.woodCN +
-                          fluxes.leafCreation / params.leafCN +
-                          fluxes.fineRootCreation / params.fineRootCN +
-                          fluxes.coarseRootCreation / params.woodCN;
+  double creationDemand =
+      calcPoolNDemand(envi.plantWoodC, envi.plantWoodN, fluxes.woodCreation,
+                      params.woodCN) +
+      calcPoolNDemand(envi.plantLeafC, envi.plantLeafN, fluxes.leafCreation,
+                      params.leafCN) +
+      calcPoolNDemand(envi.coarseRootC, envi.coarseRootN,
+                      fluxes.coarseRootCreation, params.woodCN) +
+      calcPoolNDemand(envi.fineRootC, envi.fineRootN, fluxes.fineRootCreation,
+                      params.fineRootCN);
   return creationDemand;
 }
 
@@ -166,10 +192,13 @@ void updateNitrogenPools(void) {
   // :: from [5], nitrogen cycle model
   // TBD: add equation numbers once published
 
-  // Storage N changes
-  // First, parcel plantStorageN to leaf-on demand and regular growth demand
-  // fluxes.eventLeafOnCreation has already been handled in events.c
-  double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
+  // Biomass pool changes
+  envi.plantWoodN =
+
+      // Storage N changes
+      // First, parcel plantStorageN to leaf-on demand and regular growth demand
+      // fluxes.eventLeafOnCreation has already been handled in events.c
+      double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
   envi.plantStorageN -= leafOnNFlux * climate->length;
   //  Remaining plantStorageN can go to demand
   double uptake = fluxes.nUptake * climate->length;

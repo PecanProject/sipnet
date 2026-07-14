@@ -438,6 +438,18 @@ typedef struct Environment {
   double fineRootC;
 
   ///// From [4] LeBauer et al. (unpublished)
+  // The biomass N pools are loosely coupled to their corresponding C pools via
+  // their respective C:N ratios. These pools are initialized via those ratios
+  // and the corresponding initial C values.
+  // wood N pool (g N m^-2 ground area)
+  double plantWoodN;
+  // leaf N pool (g N m^-2 ground area)
+  double plantLeafN;
+  // coarse root N pool (g N m^-2 ground area)
+  double coarseRootN;
+  // fine root N pool (g N m^-2 ground area)
+  double fineRootN;
+
   // soil mineral nitrogen pool (g N m^-2 ground area)
   // (really, soil+litter, we only have one mineral N pool)
   double minN;
@@ -459,7 +471,7 @@ typedef struct Environment {
   // (above) and a new pool to track non-nitrogen-affecting changes over time.
   // As this is a delta, it can be negative. Note that the actual "wood carbon"
   // is the sum of these two pools.
-  double plantWoodCStorageDelta;
+  double plantCAccountingDelta;
 } Envi;
 
 // Global var
@@ -737,5 +749,13 @@ typedef struct PhenologyTrackersStruct {
 
 // Global var
 extern PhenologyTrackers phenologyTrackers;
+
+// Global var
+typedef struct PlantSurvivalStruct {
+  int isAlive;
+  int justDied;
+} PlantSurvival;
+
+extern PlantSurvival plantSurvival;
 
 #endif  // SIPNET_STATE_H

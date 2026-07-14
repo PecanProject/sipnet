@@ -42,6 +42,7 @@ add_library(sipnetlib
         src/sipnet/runmean.c
         src/sipnet/sipnet.c
         src/sipnet/state.c
+        src/sipnet/carbon.c
 )
 
 add_library(tests

@@ -11,7 +11,7 @@
 BalanceTracker balanceTracker;
 
 void getMassTotals(double *carbon, double *nitrogen) {
-  *carbon = (envi.plantWoodC + envi.plantWoodCStorageDelta) + envi.plantLeafC +
+  *carbon = (envi.plantWoodC + envi.plantCAccountingDelta) + envi.plantLeafC +
             envi.fineRootC + envi.coarseRootC + envi.soilC;
   if (ctx.litterPool) {
     *carbon += envi.litterC;
@@ -19,7 +19,7 @@ void getMassTotals(double *carbon, double *nitrogen) {
 
   if (ctx.nitrogenCycle) {
     // Note: this is the one place where we use plantWoodC by itself; it's the
-    // reason plantWoodCStorageDelta was created, so that we can ignore it here.
+    // reason plantCAccountingDelta was created, so that we can ignore it here.
     *nitrogen =
         envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN +
         envi.fineRootC / params.fineRootCN + envi.coarseRootC / params.woodCN +

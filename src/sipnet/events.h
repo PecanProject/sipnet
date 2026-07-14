@@ -211,12 +211,18 @@ typedef struct EventTrackerStruct {
   // Tillage effect on Rh; exponentially decays at each time step by a factor
   // equal to exp(-delta_t / 30)
   double d_till_mod;
-} EventTrackers;
+} EventTillageTracker;
 
-extern EventTrackers eventTrackers;
+extern EventTillageTracker eventTillageTracker;
+
+typedef struct EventHarvestTrackerStruct {
+  double tbd;
+} EventHarvestTracker;
+
+extern EventHarvestTracker eventHarvestTracker;
 
 /*!
- * Initialize EventTrackers struct for tracking lingering event effects
+ * Initialize EventTillageTracker struct for tracking lingering event effects
  */
 void initEventTrackers(void);
 

@@ -72,7 +72,7 @@ double calcTempEffect(double tsoil) {
   return pow(params.soilRespQ10, tsoil / 10);
 }
 
-double calcTillageEffect(void) { return 1 + eventTrackers.d_till_mod; }
+double calcTillageEffect(void) { return 1 + eventTillageTracker.d_till_mod; }
 
 double calcCNEffect(double kCN, double poolC, double poolN) {
   if (!ctx.nitrogenCycle) {

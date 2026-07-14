@@ -5,7 +5,7 @@
 
 int checkOutput(const char *stage, double expTillMod) {
   int status = 0;
-  double curTillMod = eventTrackers.d_till_mod;
+  double curTillMod = eventTillageTracker.d_till_mod;
   if (!compareDoubles(expTillMod, curTillMod)) {
     logTest("%s: (day %d, hour %4.2f) tillage mod is %f, expected %f\n", stage,
             climate->day, climate->time, curTillMod, expTillMod);

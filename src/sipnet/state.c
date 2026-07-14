@@ -9,6 +9,7 @@ ClimateNode *firstClimate;  // pointer to first climate
 ClimateNode *climate;  // current climate
 Params params;
 Envi envi;  // state variables
+Fluxes fluxes;  // fluxes
 Trackers trackers;
 PhenologyTrackers phenologyTrackers;
-Fluxes fluxes;
+PlantSurvival plantSurvival;

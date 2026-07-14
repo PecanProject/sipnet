@@ -31,7 +31,7 @@
 #define NUM_META_FIELDS 4
 #define NUM_SCHEMA_FIELDS 4
 #define NUM_MEAN_META_FIELDS 5
-#define NUM_ENVI_FIELDS 13
+#define NUM_ENVI_FIELDS 17
 #define NUM_TRACKER_FIELDS 32
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_EVENT_TRACKERS_FIELDS 1
@@ -56,9 +56,9 @@ _Static_assert(sizeof(PhenologyTrackers) ==
                    RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
                "Restart schema drift: PhenologyTrackers changed; update "
                "schema_layout.* checks");
-_Static_assert(sizeof(EventTrackers) ==
+_Static_assert(sizeof(EventTillageTracker) ==
                    RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE,
-               "Restart schema drift: EventTrackers changed; update "
+               "Restart schema drift: EventTillageTracker changed; update "
                "schema_layout.* checks");
 
 #define NUM_CLIMATE_SIGNATURE_FIELDS 4
@@ -185,12 +185,16 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->enviPF[5] = (StateField){"envi.snow",                    FT_DOUBLE, &envi.snow,                   0};
   state->enviPF[6] = (StateField){"envi.coarseRootC",             FT_DOUBLE, &envi.coarseRootC,            0};
   state->enviPF[7] = (StateField){"envi.fineRootC",               FT_DOUBLE, &envi.fineRootC,              0};
-  state->enviPF[8] = (StateField){"envi.minN",                    FT_DOUBLE, &envi.minN,                   0};
-  state->enviPF[9] = (StateField){"envi.soilOrgN",                FT_DOUBLE, &envi.soilOrgN,               0};
-  state->enviPF[10] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
-  state->enviPF[11] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
-  state->enviPF[12] = (StateField){"envi.plantWoodCStorageDelta", FT_DOUBLE, &envi.plantWoodCStorageDelta, 0};
-  state->enviPF[13] = (StateField){"envi.invalid",                FT_INVALID, NULL, FIELD_INVALID};
+  state->enviPF[8] = (StateField){"envi.plantWoodN",              FT_DOUBLE, &envi.plantWoodN,             0};
+  state->enviPF[9] = (StateField){"envi.plantLeafN",              FT_DOUBLE, &envi.plantLeafN,             0};
+  state->enviPF[10] = (StateField){"envi.coarseRootN",            FT_DOUBLE, &envi.coarseRootN,            0};
+  state->enviPF[11] = (StateField){"envi.fineRootN",              FT_DOUBLE, &envi.fineRootN,              0};
+  state->enviPF[12] = (StateField){"envi.minN",                   FT_DOUBLE, &envi.minN,                   0};
+  state->enviPF[13] = (StateField){"envi.soilOrgN",               FT_DOUBLE, &envi.soilOrgN,               0};
+  state->enviPF[14] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
+  state->enviPF[15] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
+  state->enviPF[16] = (StateField){"envi.plantCAccountingDelta",  FT_DOUBLE, &envi.plantCAccountingDelta, 0};
+  state->enviPF[17] = (StateField){"envi.invalid",                FT_INVALID,NULL, FIELD_INVALID};
 
   state->trackersPF[0] = (StateField){"trackers.gpp",                 FT_DOUBLE, &trackers.gpp,                0};
   state->trackersPF[1] = (StateField){"trackers.rtot",                FT_DOUBLE, &trackers.rtot,               0};
@@ -231,7 +235,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->phenologyPF[2] = (StateField){"phenology.lastYear",      FT_INT,     &phenologyTrackers.lastYear,      0};
   state->phenologyPF[3] = (StateField){"phenology.invalid",       FT_INVALID, NULL, FIELD_INVALID};
 
-  state->eventPF[0] = (StateField){"event_trackers.d_till_mod", FT_DOUBLE,  &eventTrackers.d_till_mod, 0};
+  state->eventPF[0] = (StateField){"event_trackers.d_till_mod", FT_DOUBLE,  &eventTillageTracker.d_till_mod, 0};
   state->eventPF[1] = (StateField){"event_trackers.invalid",    FT_INVALID, NULL, FIELD_INVALID};
 
   // meanNPP array handlers

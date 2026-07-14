@@ -232,7 +232,7 @@ def find_events_header_row(path: Path) -> int:
 def load_output_table(path: Path) -> LoadedSipnetData:
   if path.is_dir():
     path = path / 'sipnet.out'
-    
+
   if not path.exists():
     fail(f"Input file not found: {path}")
 
@@ -914,6 +914,7 @@ class SipnetViewerWindow(QMainWindow):
       )
 
     self.figure.autofmt_xdate()
+    self.figure.tight_layout()
     self.canvas.draw_idle()
 
   def plot_subplots(
@@ -952,8 +953,8 @@ class SipnetViewerWindow(QMainWindow):
         title="Events",
       )
 
-    self.figure.tight_layout()
     self.figure.autofmt_xdate()
+    self.figure.tight_layout()
     self.canvas.draw_idle()
 
 
