@@ -17,9 +17,9 @@
 #include "cli.h"
 #include "debug_log.h"
 #include "events.h"
-#include "outputItems.h"
 #include "sipnet.h"
 #include "state.h"
+#include "outputItems.h"
 
 void checkRuntype(const char *runType) {
   if (strcasecmp(runType, "standard") != 0) {

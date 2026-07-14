@@ -202,15 +202,12 @@ void closeDebugOutputFiles(DebugOutputFiles *debugOutputFiles) {
 
   if (debugOutputFiles->envi != NULL) {
     fclose(debugOutputFiles->envi);
-    debugOutputFiles->envi = NULL;
   }
   if (debugOutputFiles->fluxes != NULL) {
     fclose(debugOutputFiles->fluxes);
-    debugOutputFiles->fluxes = NULL;
   }
   if (debugOutputFiles->trackers != NULL) {
     fclose(debugOutputFiles->trackers);
-    debugOutputFiles->trackers = NULL;
   }
 }
 
