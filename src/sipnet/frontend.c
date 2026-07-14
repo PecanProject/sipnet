@@ -15,10 +15,11 @@
 #include "common/util.h"
 
 #include "cli.h"
+#include "debug_log.h"
 #include "events.h"
+#include "outputItems.h"
 #include "sipnet.h"
 #include "state.h"
-#include "outputItems.h"
 
 void checkRuntype(const char *runType) {
   if (strcasecmp(runType, "standard") != 0) {
@@ -138,14 +139,10 @@ int main(int argc, char *argv[]) {
 
   // char fileName[FILENAME_MAXLEN - 8];
   char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
-  char debugEnviFile[FILENAME_MAXLEN], debugFluxesFile[FILENAME_MAXLEN];
-  char debugTrackersFile[FILENAME_MAXLEN];
   char paramFile[FILENAME_MAXLEN], climFile[FILENAME_MAXLEN];
   char eventsInFile[FILENAME_MAXLEN], eventsOutFile[FILENAME_MAXLEN];
 
-  debugOutputFiles.envi = NULL;
-  debugOutputFiles.fluxes = NULL;
-  debugOutputFiles.trackers = NULL;
+  initDebugOutputFiles(&debugOutputFiles);
 
   // 1. Initialize Context with default values
   initContext();
@@ -197,19 +194,7 @@ int main(int argc, char *argv[]) {
   } else {
     out = NULL;
   }
-  if (strlen(ctx.debugOutputPrefix) > 0) {
-    strcpy(debugEnviFile, ctx.debugOutputPrefix);
-    strcat(debugEnviFile, "_envi.log");
-    debugOutputFiles.envi = openFile(debugEnviFile, "w");
-
-    strcpy(debugFluxesFile, ctx.debugOutputPrefix);
-    strcat(debugFluxesFile, "_fluxes.log");
-    debugOutputFiles.fluxes = openFile(debugFluxesFile, "w");
-
-    strcpy(debugTrackersFile, ctx.debugOutputPrefix);
-    strcat(debugTrackersFile, "_trackers.log");
-    debugOutputFiles.trackers = openFile(debugTrackersFile, "w");
-  }
+  openDebugOutputFiles(&debugOutputFiles, ctx.debugOutputPrefix);
 
   // Lastly - do after all other config processing
   if (ctx.dumpConfig) {
@@ -255,15 +240,7 @@ int main(int argc, char *argv[]) {
     }
     fclose(out);
   }
-  if (debugOutputFiles.envi != NULL) {
-    fclose(debugOutputFiles.envi);
-  }
-  if (debugOutputFiles.fluxes != NULL) {
-    fclose(debugOutputFiles.fluxes);
-  }
-  if (debugOutputFiles.trackers != NULL) {
-    fclose(debugOutputFiles.trackers);
-  }
+  closeDebugOutputFiles(&debugOutputFiles);
 
   cleanupModel();
   if (outputItems != NULL) {

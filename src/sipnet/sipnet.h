@@ -5,13 +5,8 @@
 
 #include <stdio.h>
 #include "common/modelParams.h"
+#include "debug_log.h"
 #include "outputItems.h"
-
-typedef struct DebugOutputFiles {
-  FILE *envi;
-  FILE *fluxes;
-  FILE *trackers;
-} DebugOutputFiles;
 
 // write to file which model components are turned on
 // (i.e. the value of the #DEFINE's at the top of file)
