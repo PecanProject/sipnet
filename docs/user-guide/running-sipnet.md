@@ -24,14 +24,14 @@ When the same option is specified in both places, **command-line arguments take 
 
 ### Input/Output Options
 
-| Option             | Short | Argument   | Default     | Description                                                                                |
-|--------------------|-------|------------|-------------|--------------------------------------------------------------------------------------------|
-| `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
-| `--file-prefix`    | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
-| `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
+| Option            | Short | Argument   | Default     | Description                                                                                 |
+|-------------------|-------|------------|-------------|---------------------------------------------------------------------------------------------|
+| `--input-file`    | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                            |
+| `--file-prefix`   | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)   |
+| `--events-prefix` | `-e`  | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)         |
 | `--debug-log`     |       | `<prefix>` | unset       | Write debug logs to `<prefix>_envi.log`, `<prefix>_fluxes.log`, and `<prefix>_trackers.log` |
-| `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
-| `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |
+| `--restart-in`    |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                    |
+| `--restart-out`   |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                    |
 
 ### Model Feature Flags
 
@@ -105,17 +105,18 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 
 #### Input/Output Keys
 
-| Key               | Value Type | Description                                                               |
-| ----------------- | ---------- | ------------------------------------------------------------------------- |
-| `INPUT_FILE`      | string     | Name of configuration file to read                                        |
-| `FILE_PREFIX`     | string     | Prefix for climate and parameter input files                                |
-| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`) |
-| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)           |
-| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)       |
-| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)    |
-| `EVENTS_PREFIX`   | string     | Prefix used to derive events input and output filenames                     |
-| `RESTART_IN`      | string     | Path to checkpoint to resume from                                         |
-| `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                 |
+| Key               | Value Type | Description                                                                                                       |
+|-------------------|------------|-------------------------------------------------------------------------------------------------------------------|
+| `INPUT_FILE`      | string     | Name of configuration file to read                                                                                |
+| `FILE_PREFIX`     | string     | Prefix for climate and parameter input files                                                                      |
+| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`)                                       |
+| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)                                                 |
+| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)                                             |
+| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)                                          |
+| `EVENTS_PREFIX`   | string     | Prefix used to derive events input and output filenames                                                           |
+| `RESTART_IN`      | string     | Path to checkpoint to resume from                                                                                 |
+| `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                                                         |
+| `DEBUG_LOG`       | string     | Prefix for debug log files (optional; writes `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
 #### Model Feature Keys
 
@@ -320,7 +321,7 @@ CLIM_FILE my_site.clim
 ...
 ```
 
-### Debug Output Files
+### Debug Log Files
 
 **Filename pattern**: `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log` (if `--debug-log <prefix>` is provided)
 

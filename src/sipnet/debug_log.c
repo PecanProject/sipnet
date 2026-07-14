@@ -1,8 +1,3 @@
-/* debug_log: structures and functions for per-timestep SIPNET debug logging
-   of envi, fluxes, and trackers state to separate log files when
-   --debug-log is enabled
- */
-
 #include <stdio.h>
 #include <string.h>
 
@@ -23,120 +18,140 @@ typedef struct DebugField {
   const void *value;
 } DebugField;
 
-static const DebugField ENVI_DEBUG_FIELDS[] = {
-    {"plantWoodC", DEBUG_FIELD_DOUBLE, &envi.plantWoodC},
-    {"plantLeafC", DEBUG_FIELD_DOUBLE, &envi.plantLeafC},
-    {"soilC", DEBUG_FIELD_DOUBLE, &envi.soilC},
-    {"soilWater", DEBUG_FIELD_DOUBLE, &envi.soilWater},
-    {"litterC", DEBUG_FIELD_DOUBLE, &envi.litterC},
-    {"snow", DEBUG_FIELD_DOUBLE, &envi.snow},
-    {"coarseRootC", DEBUG_FIELD_DOUBLE, &envi.coarseRootC},
-    {"fineRootC", DEBUG_FIELD_DOUBLE, &envi.fineRootC},
-    {"minN", DEBUG_FIELD_DOUBLE, &envi.minN},
-    {"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
-    {"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
-    {"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
-    {"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,
-     &envi.plantWoodCStorageDelta}};
+#define NUM_LOGGED_ENVI_FIELDS 13
+#define NUM_LOGGED_FLUX_FIELDS 55
+#define NUM_LOGGED_TRACKER_FIELDS 32
+#define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
 
-static const DebugField FLUXES_DEBUG_FIELDS[] = {
-    {"photosynthesis", DEBUG_FIELD_DOUBLE, &fluxes.photosynthesis},
-    {"leafLitter", DEBUG_FIELD_DOUBLE, &fluxes.leafLitter},
-    {"woodLitter", DEBUG_FIELD_DOUBLE, &fluxes.woodLitter},
-    {"rVeg", DEBUG_FIELD_DOUBLE, &fluxes.rVeg},
-    {"rSoil", DEBUG_FIELD_DOUBLE, &fluxes.rSoil},
-    {"rain", DEBUG_FIELD_DOUBLE, &fluxes.rain},
-    {"transpiration", DEBUG_FIELD_DOUBLE, &fluxes.transpiration},
-    {"drainage", DEBUG_FIELD_DOUBLE, &fluxes.drainage},
-    {"litterToSoil", DEBUG_FIELD_DOUBLE, &fluxes.litterToSoil},
-    {"rLitter", DEBUG_FIELD_DOUBLE, &fluxes.rLitter},
-    {"snowFall", DEBUG_FIELD_DOUBLE, &fluxes.snowFall},
-    {"snowMelt", DEBUG_FIELD_DOUBLE, &fluxes.snowMelt},
-    {"sublimation", DEBUG_FIELD_DOUBLE, &fluxes.sublimation},
-    {"immedEvap", DEBUG_FIELD_DOUBLE, &fluxes.immedEvap},
-    {"fastFlow", DEBUG_FIELD_DOUBLE, &fluxes.fastFlow},
-    {"evaporation", DEBUG_FIELD_DOUBLE, &fluxes.evaporation},
-    {"fineRootLoss", DEBUG_FIELD_DOUBLE, &fluxes.fineRootLoss},
-    {"coarseRootLoss", DEBUG_FIELD_DOUBLE, &fluxes.coarseRootLoss},
-    {"fineRootCreation", DEBUG_FIELD_DOUBLE, &fluxes.fineRootCreation},
-    {"coarseRootCreation", DEBUG_FIELD_DOUBLE, &fluxes.coarseRootCreation},
-    {"rCoarseRoot", DEBUG_FIELD_DOUBLE, &fluxes.rCoarseRoot},
-    {"rFineRoot", DEBUG_FIELD_DOUBLE, &fluxes.rFineRoot},
-    {"leafCreation", DEBUG_FIELD_DOUBLE, &fluxes.leafCreation},
-    {"woodCreation", DEBUG_FIELD_DOUBLE, &fluxes.woodCreation},
-    {"leafOnCreation", DEBUG_FIELD_DOUBLE, &fluxes.leafOnCreation},
-    {"leafOnCreationFromWood", DEBUG_FIELD_DOUBLE,
-     &fluxes.leafOnCreationFromWood},
-    {"nVolatilization", DEBUG_FIELD_DOUBLE, &fluxes.nVolatilization},
-    {"nLeaching", DEBUG_FIELD_DOUBLE, &fluxes.nLeaching},
-    {"nOrgSoil", DEBUG_FIELD_DOUBLE, &fluxes.nOrgSoil},
-    {"nOrgLitter", DEBUG_FIELD_DOUBLE, &fluxes.nOrgLitter},
-    {"nMin", DEBUG_FIELD_DOUBLE, &fluxes.nMin},
-    {"nFixation", DEBUG_FIELD_DOUBLE, &fluxes.nFixation},
-    {"nUptake", DEBUG_FIELD_DOUBLE, &fluxes.nUptake},
-    {"leafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.leafOffNResorption},
-    {"eventLeafC", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafC},
-    {"eventWoodC", DEBUG_FIELD_DOUBLE, &fluxes.eventWoodC},
-    {"eventFineRootC", DEBUG_FIELD_DOUBLE, &fluxes.eventFineRootC},
-    {"eventCoarseRootC", DEBUG_FIELD_DOUBLE, &fluxes.eventCoarseRootC},
-    {"eventEvap", DEBUG_FIELD_DOUBLE, &fluxes.eventEvap},
-    {"eventSoilWater", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilWater},
-    {"eventSoilC", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilC},
-    {"eventLitterC", DEBUG_FIELD_DOUBLE, &fluxes.eventLitterC},
-    {"eventMinN", DEBUG_FIELD_DOUBLE, &fluxes.eventMinN},
-    {"eventSoilOrgN", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilOrgN},
-    {"eventLitterN", DEBUG_FIELD_DOUBLE, &fluxes.eventLitterN},
-    {"eventInputC", DEBUG_FIELD_DOUBLE, &fluxes.eventInputC},
-    {"eventOutputC", DEBUG_FIELD_DOUBLE, &fluxes.eventOutputC},
-    {"eventInputN", DEBUG_FIELD_DOUBLE, &fluxes.eventInputN},
-    {"eventOutputN", DEBUG_FIELD_DOUBLE, &fluxes.eventOutputN},
-    {"eventLeafOnCreation", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOnCreation},
-    {"eventLeafOnCreationFromWood", DEBUG_FIELD_DOUBLE,
-     &fluxes.eventLeafOnCreationFromWood},
-    {"eventLeafOffLitter", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitter},
-    {"eventLeafOffNResorption", DEBUG_FIELD_DOUBLE,
-     &fluxes.eventLeafOffNResorption},
-    {"soilMethane", DEBUG_FIELD_DOUBLE, &fluxes.soilMethane},
-    {"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane}};
+typedef struct DebugFieldArrays {
+  DebugField enviDF[NUM_LOGGED_ENVI_FIELDS];
+  DebugField fluxDF[NUM_LOGGED_FLUX_FIELDS];
+  DebugField trackerDF[NUM_LOGGED_TRACKER_FIELDS];
+  DebugField phenoDF[NUM_LOGGED_PHEN_TRACKER_FIELDS];
+} DebugFieldArrays;
 
-static const DebugField TRACKERS_DEBUG_FIELDS[] = {
-    {"gpp", DEBUG_FIELD_DOUBLE, &trackers.gpp},
-    {"rtot", DEBUG_FIELD_DOUBLE, &trackers.rtot},
-    {"ra", DEBUG_FIELD_DOUBLE, &trackers.ra},
-    {"rh", DEBUG_FIELD_DOUBLE, &trackers.rh},
-    {"rRoot", DEBUG_FIELD_DOUBLE, &trackers.rRoot},
-    {"rSoil", DEBUG_FIELD_DOUBLE, &trackers.rSoil},
-    {"rAboveground", DEBUG_FIELD_DOUBLE, &trackers.rAboveground},
-    {"npp", DEBUG_FIELD_DOUBLE, &trackers.npp},
-    {"nee", DEBUG_FIELD_DOUBLE, &trackers.nee},
-    {"woodCreation", DEBUG_FIELD_DOUBLE, &trackers.woodCreation},
-    {"gdd", DEBUG_FIELD_DOUBLE, &trackers.gdd},
-    {"evapotranspiration", DEBUG_FIELD_DOUBLE, &trackers.evapotranspiration},
-    {"soilWetnessFrac", DEBUG_FIELD_DOUBLE, &trackers.soilWetnessFrac},
-    {"yearlyGpp", DEBUG_FIELD_DOUBLE, &trackers.yearlyGpp},
-    {"yearlyRtot", DEBUG_FIELD_DOUBLE, &trackers.yearlyRtot},
-    {"yearlyRa", DEBUG_FIELD_DOUBLE, &trackers.yearlyRa},
-    {"yearlyRh", DEBUG_FIELD_DOUBLE, &trackers.yearlyRh},
-    {"yearlyNpp", DEBUG_FIELD_DOUBLE, &trackers.yearlyNpp},
-    {"yearlyNee", DEBUG_FIELD_DOUBLE, &trackers.yearlyNee},
-    {"yearlyLitter", DEBUG_FIELD_DOUBLE, &trackers.yearlyLitter},
-    {"totGpp", DEBUG_FIELD_DOUBLE, &trackers.totGpp},
-    {"totRtot", DEBUG_FIELD_DOUBLE, &trackers.totRtot},
-    {"totRa", DEBUG_FIELD_DOUBLE, &trackers.totRa},
-    {"totRh", DEBUG_FIELD_DOUBLE, &trackers.totRh},
-    {"totNpp", DEBUG_FIELD_DOUBLE, &trackers.totNpp},
-    {"totNee", DEBUG_FIELD_DOUBLE, &trackers.totNee},
-    {"lastYear", DEBUG_FIELD_INT, &trackers.lastYear},
-    {"methane", DEBUG_FIELD_DOUBLE, &trackers.methane},
-    {"n2o", DEBUG_FIELD_DOUBLE, &trackers.n2o},
-    {"nLeaching", DEBUG_FIELD_DOUBLE, &trackers.nLeaching},
-    {"nFixation", DEBUG_FIELD_DOUBLE, &trackers.nFixation},
-    {"nUptake", DEBUG_FIELD_DOUBLE, &trackers.nUptake}};
+static DebugFieldArrays *debugFields = NULL;
 
-static const DebugField PHENOLOGY_DEBUG_FIELDS[] = {
-    {"didLeafGrowth", DEBUG_FIELD_INT, &phenologyTrackers.didLeafGrowth},
-    {"didLeafFall", DEBUG_FIELD_INT, &phenologyTrackers.didLeafFall},
-    {"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear}};
+void initDebugArrays() {
+  if (strlen(ctx.debugLogPrefix) == 0) {
+    return;
+  }
+
+  debugFields = malloc(sizeof(DebugFieldArrays));
+  int ind = 0;
+
+  // clang-format off
+  debugFields->enviDF[ind++] = (DebugField){"plantWoodC", DEBUG_FIELD_DOUBLE, &envi.plantWoodC},
+  debugFields->enviDF[ind++] = (DebugField){"plantLeafC", DEBUG_FIELD_DOUBLE, &envi.plantLeafC},
+  debugFields->enviDF[ind++] = (DebugField){"soilC", DEBUG_FIELD_DOUBLE, &envi.soilC},
+  debugFields->enviDF[ind++] = (DebugField){"soilWater", DEBUG_FIELD_DOUBLE, &envi.soilWater},
+  debugFields->enviDF[ind++] = (DebugField){"litterC", DEBUG_FIELD_DOUBLE, &envi.litterC},
+  debugFields->enviDF[ind++] = (DebugField){"snow", DEBUG_FIELD_DOUBLE, &envi.snow},
+  debugFields->enviDF[ind++] = (DebugField){"coarseRootC", DEBUG_FIELD_DOUBLE, &envi.coarseRootC},
+  debugFields->enviDF[ind++] = (DebugField){"fineRootC", DEBUG_FIELD_DOUBLE, &envi.fineRootC},
+  debugFields->enviDF[ind++] = (DebugField){"minN", DEBUG_FIELD_DOUBLE, &envi.minN},
+  debugFields->enviDF[ind++] = (DebugField){"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
+  debugFields->enviDF[ind++] = (DebugField){"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
+  debugFields->enviDF[ind++] = (DebugField){"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
+  debugFields->enviDF[ind  ] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantWoodCStorageDelta};
+
+  ind = 0;
+  debugFields->fluxDF[ind++] = (DebugField){"photosynthesis", DEBUG_FIELD_DOUBLE, &fluxes.photosynthesis};
+  debugFields->fluxDF[ind++] = (DebugField){"leafLitter", DEBUG_FIELD_DOUBLE, &fluxes.leafLitter},
+  debugFields->fluxDF[ind++] = (DebugField){"woodLitter", DEBUG_FIELD_DOUBLE, &fluxes.woodLitter},
+  debugFields->fluxDF[ind++] = (DebugField){"rVeg", DEBUG_FIELD_DOUBLE, &fluxes.rVeg},
+  debugFields->fluxDF[ind++] = (DebugField){"rSoil", DEBUG_FIELD_DOUBLE, &fluxes.rSoil},
+  debugFields->fluxDF[ind++] = (DebugField){"rain", DEBUG_FIELD_DOUBLE, &fluxes.rain},
+  debugFields->fluxDF[ind++] = (DebugField){"transpiration", DEBUG_FIELD_DOUBLE, &fluxes.transpiration},
+  debugFields->fluxDF[ind++] = (DebugField){"drainage", DEBUG_FIELD_DOUBLE, &fluxes.drainage},
+  debugFields->fluxDF[ind++] = (DebugField){"litterToSoil", DEBUG_FIELD_DOUBLE, &fluxes.litterToSoil},
+  debugFields->fluxDF[ind++] = (DebugField){"rLitter", DEBUG_FIELD_DOUBLE, &fluxes.rLitter},
+  debugFields->fluxDF[ind++] = (DebugField){"snowFall", DEBUG_FIELD_DOUBLE, &fluxes.snowFall},
+  debugFields->fluxDF[ind++] = (DebugField){"snowMelt", DEBUG_FIELD_DOUBLE, &fluxes.snowMelt},
+  debugFields->fluxDF[ind++] = (DebugField){"sublimation", DEBUG_FIELD_DOUBLE, &fluxes.sublimation},
+  debugFields->fluxDF[ind++] = (DebugField){"immedEvap", DEBUG_FIELD_DOUBLE, &fluxes.immedEvap},
+  debugFields->fluxDF[ind++] = (DebugField){"fastFlow", DEBUG_FIELD_DOUBLE, &fluxes.fastFlow},
+  debugFields->fluxDF[ind++] = (DebugField){"evaporation", DEBUG_FIELD_DOUBLE, &fluxes.evaporation},
+  debugFields->fluxDF[ind++] = (DebugField){"fineRootLoss", DEBUG_FIELD_DOUBLE, &fluxes.fineRootLoss},
+  debugFields->fluxDF[ind++] = (DebugField){"coarseRootLoss", DEBUG_FIELD_DOUBLE, &fluxes.coarseRootLoss},
+  debugFields->fluxDF[ind++] = (DebugField){"fineRootCreation", DEBUG_FIELD_DOUBLE, &fluxes.fineRootCreation},
+  debugFields->fluxDF[ind++] = (DebugField){"coarseRootCreation", DEBUG_FIELD_DOUBLE, &fluxes.coarseRootCreation},
+  debugFields->fluxDF[ind++] = (DebugField){"rCoarseRoot", DEBUG_FIELD_DOUBLE, &fluxes.rCoarseRoot},
+  debugFields->fluxDF[ind++] = (DebugField){"rFineRoot", DEBUG_FIELD_DOUBLE, &fluxes.rFineRoot},
+  debugFields->fluxDF[ind++] = (DebugField){"leafCreation", DEBUG_FIELD_DOUBLE, &fluxes.leafCreation},
+  debugFields->fluxDF[ind++] = (DebugField){"woodCreation", DEBUG_FIELD_DOUBLE, &fluxes.woodCreation},
+  debugFields->fluxDF[ind++] = (DebugField){"leafOnCreation", DEBUG_FIELD_DOUBLE, &fluxes.leafOnCreation},
+  debugFields->fluxDF[ind++] = (DebugField){"leafOnCreationFromWood", DEBUG_FIELD_DOUBLE, &fluxes.leafOnCreationFromWood},
+  debugFields->fluxDF[ind++] = (DebugField){"nVolatilization", DEBUG_FIELD_DOUBLE, &fluxes.nVolatilization},
+  debugFields->fluxDF[ind++] = (DebugField){"nLeaching", DEBUG_FIELD_DOUBLE, &fluxes.nLeaching},
+  debugFields->fluxDF[ind++] = (DebugField){"nOrgSoil", DEBUG_FIELD_DOUBLE, &fluxes.nOrgSoil},
+  debugFields->fluxDF[ind++] = (DebugField){"nOrgLitter", DEBUG_FIELD_DOUBLE, &fluxes.nOrgLitter},
+  debugFields->fluxDF[ind++] = (DebugField){"nMin", DEBUG_FIELD_DOUBLE, &fluxes.nMin},
+  debugFields->fluxDF[ind++] = (DebugField){"nFixation", DEBUG_FIELD_DOUBLE, &fluxes.nFixation},
+  debugFields->fluxDF[ind++] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &fluxes.nUptake},
+  debugFields->fluxDF[ind++] = (DebugField){"leafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.leafOffNResorption},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafC", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventWoodC", DEBUG_FIELD_DOUBLE, &fluxes.eventWoodC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventFineRootC", DEBUG_FIELD_DOUBLE, &fluxes.eventFineRootC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventCoarseRootC", DEBUG_FIELD_DOUBLE, &fluxes.eventCoarseRootC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventEvap", DEBUG_FIELD_DOUBLE, &fluxes.eventEvap},
+  debugFields->fluxDF[ind++] = (DebugField){"eventSoilWater", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilWater},
+  debugFields->fluxDF[ind++] = (DebugField){"eventSoilC", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLitterC", DEBUG_FIELD_DOUBLE, &fluxes.eventLitterC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventMinN", DEBUG_FIELD_DOUBLE, &fluxes.eventMinN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventSoilOrgN", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilOrgN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLitterN", DEBUG_FIELD_DOUBLE, &fluxes.eventLitterN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventInputC", DEBUG_FIELD_DOUBLE, &fluxes.eventInputC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventOutputC", DEBUG_FIELD_DOUBLE, &fluxes.eventOutputC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventInputN", DEBUG_FIELD_DOUBLE, &fluxes.eventInputN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventOutputN", DEBUG_FIELD_DOUBLE, &fluxes.eventOutputN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOnCreation", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOnCreation},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOnCreationFromWood", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOnCreationFromWood},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffLitter", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitter},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffNResorption},
+  debugFields->fluxDF[ind++] = (DebugField){"soilMethane", DEBUG_FIELD_DOUBLE, &fluxes.soilMethane},
+  debugFields->fluxDF[ind  ] = (DebugField){"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane};
+
+  ind = 0;
+  debugFields->trackerDF[ind++] = (DebugField){"gpp", DEBUG_FIELD_DOUBLE, &trackers.gpp},
+  debugFields->trackerDF[ind++] = (DebugField){"rtot", DEBUG_FIELD_DOUBLE, &trackers.rtot},
+  debugFields->trackerDF[ind++] = (DebugField){"ra", DEBUG_FIELD_DOUBLE, &trackers.ra},
+  debugFields->trackerDF[ind++] = (DebugField){"rh", DEBUG_FIELD_DOUBLE, &trackers.rh},
+  debugFields->trackerDF[ind++] = (DebugField){"rRoot", DEBUG_FIELD_DOUBLE, &trackers.rRoot},
+  debugFields->trackerDF[ind++] = (DebugField){"rSoil", DEBUG_FIELD_DOUBLE, &trackers.rSoil},
+  debugFields->trackerDF[ind++] = (DebugField){"rAboveground", DEBUG_FIELD_DOUBLE, &trackers.rAboveground},
+  debugFields->trackerDF[ind++] = (DebugField){"npp", DEBUG_FIELD_DOUBLE, &trackers.npp},
+  debugFields->trackerDF[ind++] = (DebugField){"nee", DEBUG_FIELD_DOUBLE, &trackers.nee},
+  debugFields->trackerDF[ind++] = (DebugField){"woodCreation", DEBUG_FIELD_DOUBLE, &trackers.woodCreation},
+  debugFields->trackerDF[ind++] = (DebugField){"gdd", DEBUG_FIELD_DOUBLE, &trackers.gdd},
+  debugFields->trackerDF[ind++] = (DebugField){"evapotranspiration", DEBUG_FIELD_DOUBLE, &trackers.evapotranspiration},
+  debugFields->trackerDF[ind++] = (DebugField){"soilWetnessFrac", DEBUG_FIELD_DOUBLE, &trackers.soilWetnessFrac},
+  debugFields->trackerDF[ind++] = (DebugField){"yearlyGpp", DEBUG_FIELD_DOUBLE, &trackers.yearlyGpp},
+  debugFields->trackerDF[ind++] = (DebugField){"yearlyRtot", DEBUG_FIELD_DOUBLE, &trackers.yearlyRtot},
+  debugFields->trackerDF[ind++] = (DebugField){"yearlyRa", DEBUG_FIELD_DOUBLE, &trackers.yearlyRa},
+  debugFields->trackerDF[ind++] = (DebugField){"yearlyRh", DEBUG_FIELD_DOUBLE, &trackers.yearlyRh},
+  debugFields->trackerDF[ind++] = (DebugField){"yearlyNpp", DEBUG_FIELD_DOUBLE, &trackers.yearlyNpp},
+  debugFields->trackerDF[ind++] = (DebugField){"yearlyNee", DEBUG_FIELD_DOUBLE, &trackers.yearlyNee},
+  debugFields->trackerDF[ind++] = (DebugField){"yearlyLitter", DEBUG_FIELD_DOUBLE, &trackers.yearlyLitter},
+  debugFields->trackerDF[ind++] = (DebugField){"totGpp", DEBUG_FIELD_DOUBLE, &trackers.totGpp},
+  debugFields->trackerDF[ind++] = (DebugField){"totRtot", DEBUG_FIELD_DOUBLE, &trackers.totRtot},
+  debugFields->trackerDF[ind++] = (DebugField){"totRa", DEBUG_FIELD_DOUBLE, &trackers.totRa},
+  debugFields->trackerDF[ind++] = (DebugField){"totRh", DEBUG_FIELD_DOUBLE, &trackers.totRh},
+  debugFields->trackerDF[ind++] = (DebugField){"totNpp", DEBUG_FIELD_DOUBLE, &trackers.totNpp},
+  debugFields->trackerDF[ind++] = (DebugField){"totNee", DEBUG_FIELD_DOUBLE, &trackers.totNee},
+  debugFields->trackerDF[ind++] = (DebugField){"lastYear", DEBUG_FIELD_INT, &trackers.lastYear},
+  debugFields->trackerDF[ind++] = (DebugField){"methane", DEBUG_FIELD_DOUBLE, &trackers.methane},
+  debugFields->trackerDF[ind++] = (DebugField){"n2o", DEBUG_FIELD_DOUBLE, &trackers.n2o},
+  debugFields->trackerDF[ind++] = (DebugField){"nLeaching", DEBUG_FIELD_DOUBLE, &trackers.nLeaching},
+  debugFields->trackerDF[ind++] = (DebugField){"nFixation", DEBUG_FIELD_DOUBLE, &trackers.nFixation},
+  debugFields->trackerDF[ind  ] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &trackers.nUptake};
+
+  ind = 0;
+  debugFields->phenoDF[ind++] = (DebugField){"didLeafGrowth", DEBUG_FIELD_INT, &phenologyTrackers.didLeafGrowth},
+  debugFields->phenoDF[ind++] = (DebugField){"didLeafFall", DEBUG_FIELD_INT, &phenologyTrackers.didLeafFall},
+  debugFields->phenoDF[ind  ] = (DebugField){"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear};
+  // clang-format on
+}
 
 static FILE *openDebugLogFile(const char *debugLogPrefix,
                                  const char *suffix) {
@@ -149,19 +164,25 @@ static FILE *openDebugLogFile(const char *debugLogPrefix,
 }
 
 static void outputDebugFieldHeader(FILE *out, const char *prefix,
-                                   const DebugField *fields,
-                                   size_t numFields) {
-  fprintf(out, "year day time");
+                                   const DebugField *fields, size_t numFields,
+                                   int fullLine) {
+  if (fullLine) {
+    fprintf(out, "year day time");
+  }
   for (size_t ind = 0; ind < numFields; ++ind) {
     fprintf(out, " %s%s", prefix, fields[ind].name);
   }
-  fprintf(out, "\n");
+  if (fullLine) {
+    fprintf(out, "\n");
+  }
 }
 
 static void outputDebugFieldValues(FILE *out, int year, int day, double time,
-                                   const DebugField *fields,
-                                   size_t numFields) {
-  fprintf(out, "%4d %3d %5.2f", year, day, time);
+                                   const DebugField *fields, size_t numFields,
+                                   int fullLine) {
+  if (fullLine) {
+    fprintf(out, "%4d %3d %5.2f", year, day, time);
+  }
   for (size_t ind = 0; ind < numFields; ++ind) {
     if (fields[ind].type == DEBUG_FIELD_INT) {
       fprintf(out, " %d", *((const int *)fields[ind].value));
@@ -169,7 +190,9 @@ static void outputDebugFieldValues(FILE *out, int year, int day, double time,
       fprintf(out, " %.15g", *((const double *)fields[ind].value));
     }
   }
-  fprintf(out, "\n");
+  if (fullLine) {
+    fprintf(out, "\n");
+  }
 }
 
 void initDebugLogFiles(DebugLogFiles *debugLogFiles) {
@@ -213,68 +236,58 @@ void closeDebugLogFiles(DebugLogFiles *debugLogFiles) {
   }
 }
 
+void freeDebugArrays(void) {
+  if (debugFields != NULL) {
+    free(debugFields);
+  }
+}
+
 void outputDebugHeaders(DebugLogFiles *debugLogFiles) {
-  if (debugLogFiles == NULL) {
+  if (debugLogFiles == NULL || debugFields == NULL) {
     return;
   }
 
   if (debugLogFiles->envi != NULL) {
-    outputDebugFieldHeader(debugLogFiles->envi, "", ENVI_DEBUG_FIELDS,
-                           sizeof(ENVI_DEBUG_FIELDS) / sizeof(DebugField));
+    outputDebugFieldHeader(debugLogFiles->envi, "", debugFields->enviDF,
+                           NUM_LOGGED_ENVI_FIELDS, 1);
   }
   if (debugLogFiles->fluxes != NULL) {
-    outputDebugFieldHeader(debugLogFiles->fluxes, "", FLUXES_DEBUG_FIELDS,
-                           sizeof(FLUXES_DEBUG_FIELDS) / sizeof(DebugField));
+    outputDebugFieldHeader(debugLogFiles->fluxes, "", debugFields->fluxDF,
+                           NUM_LOGGED_FLUX_FIELDS, 1);
   }
   if (debugLogFiles->trackers != NULL) {
     fprintf(debugLogFiles->trackers, "year day time");
-    for (size_t ind = 0;
-         ind < sizeof(TRACKERS_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
-      fprintf(debugLogFiles->trackers, " t.%s",
-              TRACKERS_DEBUG_FIELDS[ind].name);
-    }
-    for (size_t ind = 0;
-         ind < sizeof(PHENOLOGY_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
-      fprintf(debugLogFiles->trackers, " pt.%s",
-              PHENOLOGY_DEBUG_FIELDS[ind].name);
-    }
+    outputDebugFieldHeader(debugLogFiles->trackers, "t.",
+                           debugFields->trackerDF, NUM_LOGGED_TRACKER_FIELDS,
+                           0);
+    outputDebugFieldHeader(debugLogFiles->trackers, "pt.", debugFields->phenoDF,
+                           NUM_LOGGED_PHEN_TRACKER_FIELDS, 0);
     fprintf(debugLogFiles->trackers, "\n");
   }
 }
 
 void outputDebugState(DebugLogFiles *debugLogFiles, int year, int day,
                       double time) {
-  if (debugLogFiles == NULL) {
+  if (debugLogFiles == NULL || debugFields == NULL) {
     return;
   }
 
   if (debugLogFiles->envi != NULL) {
     outputDebugFieldValues(debugLogFiles->envi, year, day, time,
-                           ENVI_DEBUG_FIELDS,
-                           sizeof(ENVI_DEBUG_FIELDS) / sizeof(DebugField));
+                           debugFields->enviDF, NUM_LOGGED_ENVI_FIELDS, 1);
   }
   if (debugLogFiles->fluxes != NULL) {
     outputDebugFieldValues(debugLogFiles->fluxes, year, day, time,
-                           FLUXES_DEBUG_FIELDS,
-                           sizeof(FLUXES_DEBUG_FIELDS) / sizeof(DebugField));
+                           debugFields->fluxDF, NUM_LOGGED_FLUX_FIELDS, 1);
   }
   if (debugLogFiles->trackers != NULL) {
     fprintf(debugLogFiles->trackers, "%4d %3d %5.2f", year, day, time);
-    for (size_t ind = 0;
-         ind < sizeof(TRACKERS_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
-      if (TRACKERS_DEBUG_FIELDS[ind].type == DEBUG_FIELD_INT) {
-        fprintf(debugLogFiles->trackers, " %d",
-                *((const int *)TRACKERS_DEBUG_FIELDS[ind].value));
-      } else {
-        fprintf(debugLogFiles->trackers, " %.15g",
-                *((const double *)TRACKERS_DEBUG_FIELDS[ind].value));
-      }
-    }
-    for (size_t ind = 0;
-         ind < sizeof(PHENOLOGY_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
-      fprintf(debugLogFiles->trackers, " %d",
-              *((const int *)PHENOLOGY_DEBUG_FIELDS[ind].value));
-    }
+    outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
+                           debugFields->trackerDF, NUM_LOGGED_TRACKER_FIELDS,
+                           0);
+    outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
+                           debugFields->phenoDF, NUM_LOGGED_PHEN_TRACKER_FIELDS,
+                           0);
     fprintf(debugLogFiles->trackers, "\n");
   }
 }

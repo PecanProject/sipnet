@@ -14,9 +14,10 @@
 #define SIPNET_OUT_FILE TEST_WORK_DIR "/sipnet.out"
 
 #define EXPECTED_ENVI_FIELDS ((int)(sizeof(Envi) / sizeof(double)))
+#define EXPECTED_FLUX_FIELDS ((int)(sizeof(Fluxes) / sizeof(double)))
+// These are not all doubles
 #define EXPECTED_TRACKER_FIELDS 32
 #define EXPECTED_PHENOLOGY_FIELDS 3
-#define EXPECTED_FLUX_FIELDS ((int)(sizeof(Fluxes) / sizeof(double)))
 
 static int countTokens(const char *line) {
   int count = 0;
@@ -81,7 +82,8 @@ static int checkHeader(const char *path, int expectedTokens,
     return 1;
   }
   if (!strstr(line, requiredToken1) || !strstr(line, requiredToken2)) {
-    logTest("Header in %s missing required debug tokens\n", path);
+    logTest("Header in %s missing required debug tokens %s and/or %s\n", path,
+            requiredToken1, requiredToken2);
     return 1;
   }
 
@@ -93,6 +95,11 @@ int run(void) {
   char cmd[1024];
 
   status |= runShell("cd " TEST_WORK_DIR " && rm -rf debug_logs && mkdir -p debug_logs");
+  if (status != 0) {
+    logTest("Could not change to test directory %s, failed with status %d\n",
+            TEST_WORK_DIR, status);
+    return status;
+  }
 
   snprintf(cmd, sizeof(cmd),
            "cd %s && ../../../sipnet -i sipnet.in --debug-log %s > %s 2>&1",

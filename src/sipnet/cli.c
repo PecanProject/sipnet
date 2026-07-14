@@ -88,7 +88,6 @@ void usage(char *progName) {
   printf("  -f, --file-prefix <name>           Prefix of climate and parameter files ('sipnet')\n");
   printf("      --file-name <name>             Backward-compatible alias for --file-prefix\n");
   printf("  -e, --events-prefix <name>         Prefix of events input/output files ('events' => 'events.in' / 'events.out')\n");
-  printf("      --debug-log <prefix>           Write debug state logs to <prefix>_{envi,fluxes,trackers}.log\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
   printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
@@ -105,6 +104,7 @@ void usage(char *progName) {
   printf("  --carbon-saturation  Enable maximum storage limit of soil organic carbon (0)\n");
   printf("\n");
   printf("Output flags: (prepend flag with 'no-' to force off, eg '--no-print-header')\n");
+  printf("  --debug-log <prefix> Write debug state logs to <prefix>_{envi,fluxes,trackers}.log\n");
   printf("  --do-main-output     Print time series of all output variables to <file-prefix>.out (1)\n");
   printf("  --do-single-outputs  Print selection* of outputs one variable per file (e.g. <file-prefix>.NEE)\n");
   printf("  --dump-config        Print final config to <file-prefix>.config (0)\n");

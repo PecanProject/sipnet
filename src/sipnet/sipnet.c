@@ -1929,6 +1929,8 @@ void initModel(ModelParams **modelParams, const char *paramFile,
   readParamData(modelParams, paramFile);
   readClimData(climFile);
 
+  initDebugArrays();
+
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
 }
 
@@ -1942,5 +1944,6 @@ void cleanupModel() {
     closeEventOutFile();
   }
 
+  freeDebugArrays();
   freeContextMetadata();
 }

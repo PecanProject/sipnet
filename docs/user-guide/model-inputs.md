@@ -209,13 +209,14 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 ### Input / Output Options
 
-| Option          | Default   | Description                                        |
-| --------------- | --------- | -------------------------------------------------- |
-| `input-file`    | sipnet.in | Name of input config file                          |
-| `file-prefix`   | sipnet    | Prefix of climate and parameter files (alias: `file-name` for backwards compatibility) |
-| `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`) |
-| `restart-in`    | unset     | Path to restart checkpoint to load                 |
-| `restart-out`   | unset     | Path to restart checkpoint to write                |
+| Option          | Default   | Description                                                                                      |
+|-----------------|-----------|--------------------------------------------------------------------------------------------------|
+| `input-file`    | sipnet.in | Name of input config file                                                                        |
+| `file-prefix`   | sipnet    | Prefix of climate and parameter files (alias: `file-name` for backwards compatibility)           |
+| `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`)                                 |
+| `restart-in`    | unset     | Path to restart checkpoint to load                                                               |
+| `restart-out`   | unset     | Path to restart checkpoint to write                                                              |
+| 'debug-log'     | unset     | Prefix for debug log files (`<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
 ### Output Flags
 
