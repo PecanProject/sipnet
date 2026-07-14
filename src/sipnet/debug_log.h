@@ -1,4 +1,5 @@
-// header file for debug_log.c
+// header file for per-timestep SIPNET debug logging of envi, fluxes, and
+// trackers state
 
 #ifndef DEBUG_LOG_H
 #define DEBUG_LOG_H
