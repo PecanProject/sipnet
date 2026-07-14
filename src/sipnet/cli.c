@@ -197,7 +197,8 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         updateCharContext("restartOut", optarg, CTX_COMMAND_LINE);
         break;
       case CLI_DEBUG_OUTPUT: {
-        const size_t maxDebugPrefixLen = FILENAME_MAXLEN - sizeof("_trackers.log");
+        const size_t maxDebugPrefixLen =
+            FILENAME_MAXLEN - strlen("_trackers.log") - 1;
         requireCLIArg("--debug-output");
         if (strlen(optarg) > maxDebugPrefixLen) {
           logError("debug-output prefix %s is too long; max length is %zu\n",
