@@ -29,6 +29,7 @@ When the same option is specified in both places, **command-line arguments take 
 | `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
 | `--file-prefix`    | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
 | `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
+| `--debug-output`  |       | `<prefix>` | unset       | Write debug logs to `<prefix>_envi.log`, `<prefix>_fluxes.log`, and `<prefix>_trackers.log` |
 | `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
 | `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |
 
@@ -318,6 +319,16 @@ PARAM_FILE my_site.param
 CLIM_FILE my_site.clim
 ...
 ```
+
+### Debug Output Files
+
+**Filename pattern**: `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log` (if `--debug-output <prefix>` is provided)
+
+These files contain one row per time step. Each row starts with `year`, `day`, and `time`.
+
+- `<prefix>_envi.log` contains one column for each field in the global `envi` struct
+- `<prefix>_fluxes.log` contains one column for each field in the global `fluxes` struct
+- `<prefix>_trackers.log` contains one column for each field in `trackers` (prefixed `t.`) and `phenologyTrackers` (prefixed `pt.`)
 
 ## Input Files Reference
 

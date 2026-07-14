@@ -61,6 +61,7 @@ void initContext(void) {
   CREATE_CHAR_CONTEXT(inputFile,      "INPUT_FILE",       DEFAULT_INPUT_FILE);
   CREATE_CHAR_CONTEXT(restartIn,      "RESTART_IN",       NO_DEFAULT_FILE);
   CREATE_CHAR_CONTEXT(restartOut,     "RESTART_OUT",      NO_DEFAULT_FILE);
+  CREATE_CHAR_CONTEXT(debugOutputPrefix, "DEBUG_OUTPUT_PREFIX", NO_DEFAULT_FILE);
   // clang-format on
 
   // Other

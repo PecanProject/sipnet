@@ -75,6 +75,7 @@ struct Context {
   char inputFile[CONTEXT_CHAR_MAXLEN];
   char restartIn[CONTEXT_CHAR_MAXLEN];
   char restartOut[CONTEXT_CHAR_MAXLEN];
+  char debugOutputPrefix[CONTEXT_CHAR_MAXLEN];
 
   // Other
   // File prefix for climate and param files

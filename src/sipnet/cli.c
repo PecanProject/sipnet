@@ -12,6 +12,7 @@
 #define DECLARE_ARG_FOR_MAP(x) #x, #x
 #define CLI_RESTART_IN 1001
 #define CLI_RESTART_OUT 1002
+#define CLI_DEBUG_OUTPUT 1003
 
 // The struct 'option' is defined in getopt.h, and is expected by getopt_long()
 // See docs/developer-guide/cli-options.md for details on how to add a new
@@ -50,6 +51,7 @@ static struct option long_options[] = {  // NOLINT
     {"events-prefix", required_argument, 0, 'e'},
     {"restart-in", required_argument, 0, CLI_RESTART_IN},
     {"restart-out", required_argument, 0, CLI_RESTART_OUT},
+    {"debug-output", required_argument, 0, CLI_DEBUG_OUTPUT},
     {"help", no_argument, 0, 'h'},
     {"version", no_argument, 0, 'v'},
     {0, 0, 0, 0}};
@@ -86,6 +88,7 @@ void usage(char *progName) {
   printf("  -f, --file-prefix <name>           Prefix of climate and parameter files ('sipnet')\n");
   printf("      --file-name <name>             Backward-compatible alias for --file-prefix\n");
   printf("  -e, --events-prefix <name>         Prefix of events input/output files ('events' => 'events.in' / 'events.out')\n");
+  printf("      --debug-output <prefix>        Write debug state logs to <prefix>_{envi,fluxes,trackers}.log\n");
   printf("\n");
   printf("Model flags: (prepend flag with 'no-' to force off, eg '--no-events')\n");
   printf("  --anaerobic          Enable modeling of methane and anaerobic effect on Rh moisture dependency (0)\n");
@@ -193,6 +196,16 @@ void parseCommandLineArgs(int argc, char *argv[]) {
         }
         updateCharContext("restartOut", optarg, CTX_COMMAND_LINE);
         break;
+      case CLI_DEBUG_OUTPUT: {
+        const size_t maxDebugPrefixLen = FILENAME_MAXLEN - sizeof("_trackers.log");
+        requireCLIArg("--debug-output");
+        if (strlen(optarg) > maxDebugPrefixLen) {
+          logError("debug-output prefix %s is too long; max length is %zu\n",
+                   optarg, maxDebugPrefixLen);
+          exit(EXIT_CODE_BAD_CLI_ARGUMENT);
+        }
+        updateCharContext("debugOutputPrefix", optarg, CTX_COMMAND_LINE);
+      } break;
       case 'i':
         requireCLIArg("--input-file");
         if (strlen(optarg) >= FILENAME_MAXLEN) {

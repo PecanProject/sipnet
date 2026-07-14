@@ -7,6 +7,12 @@
 #include "common/modelParams.h"
 #include "outputItems.h"
 
+typedef struct DebugOutputFiles {
+  FILE *envi;
+  FILE *fluxes;
+  FILE *trackers;
+} DebugOutputFiles;
+
 // write to file which model components are turned on
 // (i.e. the value of the #DEFINE's at the top of file)
 // pre: out is open for writing
@@ -43,11 +49,14 @@ void cleanupModel(void);
 /*! Run the model using parameter values in modelParams
  *
  * @param out File pointer for main output; can be null to suppress this
+ * @param debugOutputFiles File pointers for debug outputs; can be null to
+ *                         suppress debug logging
  * @param outputItems OutputItems struct used for individual output param files
  *                    Can be null to suppress this output
  * @param printHeader Whether to print a header row in output files
  */
-void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader);
+void runModelOutput(FILE *out, DebugOutputFiles *debugOutputFiles,
+                    OutputItems *outputItems, int printHeader);
 
 /*!
    Setup outputItems structure

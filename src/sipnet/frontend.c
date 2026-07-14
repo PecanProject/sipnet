@@ -129,6 +129,7 @@ void readInputFile(void) {
 int main(int argc, char *argv[]) {
 
   FILE *out, *outConfig;
+  DebugOutputFiles debugOutputFiles;
 
   ModelParams *modelParams;  // the parameters used in the model
   OutputItems *outputItems;  // structure to hold information for output to
@@ -137,8 +138,14 @@ int main(int argc, char *argv[]) {
 
   // char fileName[FILENAME_MAXLEN - 8];
   char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
+  char debugEnviFile[FILENAME_MAXLEN], debugFluxesFile[FILENAME_MAXLEN];
+  char debugTrackersFile[FILENAME_MAXLEN];
   char paramFile[FILENAME_MAXLEN], climFile[FILENAME_MAXLEN];
   char eventsInFile[FILENAME_MAXLEN], eventsOutFile[FILENAME_MAXLEN];
+
+  debugOutputFiles.envi = NULL;
+  debugOutputFiles.fluxes = NULL;
+  debugOutputFiles.trackers = NULL;
 
   // 1. Initialize Context with default values
   initContext();
@@ -190,6 +197,19 @@ int main(int argc, char *argv[]) {
   } else {
     out = NULL;
   }
+  if (strlen(ctx.debugOutputPrefix) > 0) {
+    strcpy(debugEnviFile, ctx.debugOutputPrefix);
+    strcat(debugEnviFile, "_envi.log");
+    debugOutputFiles.envi = openFile(debugEnviFile, "w");
+
+    strcpy(debugFluxesFile, ctx.debugOutputPrefix);
+    strcat(debugFluxesFile, "_fluxes.log");
+    debugOutputFiles.fluxes = openFile(debugFluxesFile, "w");
+
+    strcpy(debugTrackersFile, ctx.debugOutputPrefix);
+    strcat(debugTrackersFile, "_trackers.log");
+    debugOutputFiles.trackers = openFile(debugTrackersFile, "w");
+  }
 
   // Lastly - do after all other config processing
   if (ctx.dumpConfig) {
@@ -225,7 +245,7 @@ int main(int argc, char *argv[]) {
   }
 
   // 7. Do the run!
-  runModelOutput(out, outputItems, ctx.printHeader);
+  runModelOutput(out, &debugOutputFiles, outputItems, ctx.printHeader);
 
   // 8. Cleanup
   if (ctx.doMainOutput) {
@@ -234,6 +254,15 @@ int main(int argc, char *argv[]) {
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
     fclose(out);
+  }
+  if (debugOutputFiles.envi != NULL) {
+    fclose(debugOutputFiles.envi);
+  }
+  if (debugOutputFiles.fluxes != NULL) {
+    fclose(debugOutputFiles.fluxes);
+  }
+  if (debugOutputFiles.trackers != NULL) {
+    fclose(debugOutputFiles.trackers);
   }
 
   cleanupModel();
