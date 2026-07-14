@@ -1896,8 +1896,7 @@ void runModelOutput(FILE *out, DebugLogFiles *debugLogFiles,
     if (out != NULL) {
       outputState(out, climate->year, climate->day, climate->time);
     }
-    outputDebugState(debugLogFiles, climate->year, climate->day,
-                     climate->time);
+    outputDebugState(debugLogFiles, climate->year, climate->day, climate->time);
     if (outputItems != NULL) {
       writeOutputItemValues(outputItems);
     }

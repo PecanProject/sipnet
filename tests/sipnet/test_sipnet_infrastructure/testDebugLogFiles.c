@@ -56,8 +56,7 @@ static int countLines(const char *path) {
 }
 
 static int checkHeader(const char *path, int expectedTokens,
-                       const char *requiredToken1,
-                       const char *requiredToken2) {
+                       const char *requiredToken1, const char *requiredToken2) {
   FILE *in = fopen(path, "r");
   char line[8192];
 
@@ -94,7 +93,8 @@ int run(void) {
   int status = 0;
   char cmd[1024];
 
-  status |= runShell("cd " TEST_WORK_DIR " && rm -rf debug_logs && mkdir -p debug_logs");
+  status |= runShell("cd " TEST_WORK_DIR
+                     " && rm -rf debug_logs && mkdir -p debug_logs");
   if (status != 0) {
     logTest("Could not change to test directory %s, failed with status %d\n",
             TEST_WORK_DIR, status);
@@ -112,8 +112,8 @@ int run(void) {
 
   status |= checkHeader(ENVI_FILE, 3 + EXPECTED_ENVI_FIELDS, "plantWoodC",
                         "plantWoodCStorageDelta");
-  status |= checkHeader(FLUXES_FILE, 3 + EXPECTED_FLUX_FIELDS,
-                        "photosynthesis", "litterMethane");
+  status |= checkHeader(FLUXES_FILE, 3 + EXPECTED_FLUX_FIELDS, "photosynthesis",
+                        "litterMethane");
   status |= checkHeader(TRACKERS_FILE,
                         3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS,
                         "t.gpp", "pt.lastYear");

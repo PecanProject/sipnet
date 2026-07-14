@@ -153,8 +153,7 @@ void initDebugArrays() {
   // clang-format on
 }
 
-static FILE *openDebugLogFile(const char *debugLogPrefix,
-                                 const char *suffix) {
+static FILE *openDebugLogFile(const char *debugLogPrefix, const char *suffix) {
   char filename[FILENAME_MAXLEN];
 
   strcpy(filename, debugLogPrefix);
@@ -212,12 +211,9 @@ void openDebugLogFiles(DebugLogFiles *debugLogFiles,
     return;
   }
 
-  debugLogFiles->envi =
-      openDebugLogFile(debugLogPrefix, "_envi.log");
-  debugLogFiles->fluxes =
-      openDebugLogFile(debugLogPrefix, "_fluxes.log");
-  debugLogFiles->trackers =
-      openDebugLogFile(debugLogPrefix, "_trackers.log");
+  debugLogFiles->envi = openDebugLogFile(debugLogPrefix, "_envi.log");
+  debugLogFiles->fluxes = openDebugLogFile(debugLogPrefix, "_fluxes.log");
+  debugLogFiles->trackers = openDebugLogFile(debugLogPrefix, "_trackers.log");
 }
 
 void closeDebugLogFiles(DebugLogFiles *debugLogFiles) {
