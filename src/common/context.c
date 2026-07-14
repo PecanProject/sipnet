@@ -22,6 +22,11 @@ struct Context ctx;
 // Temp space for name-to-key conversions
 static char keyName[CONTEXT_CHAR_MAXLEN];
 
+static int shouldSkipConfigEntry(const struct context_metadata *s) {
+  return (strcmp(s->keyName, "debugoutputprefix") == 0) &&
+         (((const char *)s->value)[0] == '\0');
+}
+
 // Default values for all context fields
 void initContext(void) {
   // Init hash map to NULL before adding anything to it
@@ -232,6 +237,9 @@ void printConfig(FILE *outFile) {
   unsigned int width = 0;
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
+    if (shouldSkipConfigEntry(s)) {
+      continue;
+    }
     if (s->type == CTX_CHAR) {
       unsigned int len = strlen(s->printName);
       width = len > width ? len : width;
@@ -252,6 +260,9 @@ void printConfig(FILE *outFile) {
   // Config
   for (s = ctx.metaMap; s != NULL;
        s = (struct context_metadata *)(s->hh.next)) {
+    if (shouldSkipConfigEntry(s)) {
+      continue;
+    }
     if (s->type == CTX_INT) {
       fprintf(outFile, "%21s %13s %*d\n", s->printName,
               getContextSourceString(s->source), width, *(int *)s->value);
