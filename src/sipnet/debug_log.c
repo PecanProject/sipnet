@@ -1,6 +1,6 @@
 /* debug_log: structures and functions for per-timestep SIPNET debug logging
    of envi, fluxes, and trackers state to separate log files when
-   --debug-output is enabled
+   --debug-log is enabled
  */
 
 #include <stdio.h>

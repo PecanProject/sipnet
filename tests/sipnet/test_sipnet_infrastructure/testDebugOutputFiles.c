@@ -95,8 +95,8 @@ int run(void) {
   status |= runShell("cd " TEST_WORK_DIR " && rm -rf debug_logs && mkdir -p debug_logs");
 
   snprintf(cmd, sizeof(cmd),
-           "cd %s && ../../../sipnet -i sipnet.in --debug-output %s > %s 2>&1",
-           TEST_WORK_DIR, DEBUG_PREFIX, "debug_output_test.log");
+           "cd %s && ../../../sipnet -i sipnet.in --debug-log %s > %s 2>&1",
+           TEST_WORK_DIR, DEBUG_PREFIX, "debug_log_test.log");
   status = runShell(cmd);
   if (status != 0) {
     logTest("sipnet failed with status %d\n", status);

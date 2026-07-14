@@ -42,6 +42,6 @@ $(RUN_EXECUTABLES):
 clean:
 	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) events.in events.out format_check.out
 	rm -rf ../../../tests/smoke/russell_1/debug_logs
-	rm -f ../../../tests/smoke/russell_1/debug_output_test.log
+	rm -f ../../../tests/smoke/russell_1/debug_log_test.log
 
 .PHONY: all tests clean run $(RUN_EXECUTABLES)
