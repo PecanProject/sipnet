@@ -121,7 +121,7 @@ int run(void) {
   }
   if (mainLines != enviLines || mainLines != fluxLines ||
       mainLines != trackerLines) {
-    logTest("Debug output line counts do not match sipnet.out (%d, %d, %d, %d)\n",
+    logTest("Debug log line counts do not match sipnet.out (%d, %d, %d, %d)\n",
             mainLines, enviLines, fluxLines, trackerLines);
     status = 1;
   }
@@ -132,14 +132,14 @@ int run(void) {
 int main(void) {
   int status;
 
-  logTest("Starting testDebugOutputFiles\n");
+  logTest("Starting testDebugLogFiles\n");
 
   status = run();
   if (status) {
-    logTest("FAILED testDebugOutputFiles with status %d\n", status);
+    logTest("FAILED testDebugLogFiles with status %d\n", status);
     exit(status);
   }
 
-  logTest("PASSED testDebugOutputFiles\n");
+  logTest("PASSED testDebugLogFiles\n");
   return 0;
 }

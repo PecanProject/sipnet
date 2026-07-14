@@ -6,18 +6,18 @@
 
 #include <stdio.h>
 
-typedef struct DebugOutputFiles {
+typedef struct DebugLogFiles {
   FILE *envi;
   FILE *fluxes;
   FILE *trackers;
-} DebugOutputFiles;
+} DebugLogFiles;
 
-void initDebugOutputFiles(DebugOutputFiles *debugOutputFiles);
-void openDebugOutputFiles(DebugOutputFiles *debugOutputFiles,
-                          const char *debugOutputPrefix);
-void closeDebugOutputFiles(DebugOutputFiles *debugOutputFiles);
-void outputDebugHeaders(DebugOutputFiles *debugOutputFiles);
-void outputDebugState(DebugOutputFiles *debugOutputFiles, int year, int day,
+void initDebugLogFiles(DebugLogFiles *debugLogFiles);
+void openDebugLogFiles(DebugLogFiles *debugLogFiles,
+                       const char *debugLogPrefix);
+void closeDebugLogFiles(DebugLogFiles *debugLogFiles);
+void outputDebugHeaders(DebugLogFiles *debugLogFiles);
+void outputDebugState(DebugLogFiles *debugLogFiles, int year, int day,
                       double time);
 
 #endif

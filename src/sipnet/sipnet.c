@@ -1876,13 +1876,13 @@ void setupModel(void) {
 }
 
 // See sipnet.h
-void runModelOutput(FILE *out, DebugOutputFiles *debugOutputFiles,
+void runModelOutput(FILE *out, DebugLogFiles *debugLogFiles,
                     OutputItems *outputItems, int printHeader) {
   if ((out != NULL) && printHeader) {
     outputHeader(out);
   }
   if (printHeader) {
-    outputDebugHeaders(debugOutputFiles);
+    outputDebugHeaders(debugLogFiles);
   }
 
   setupModel();
@@ -1896,7 +1896,7 @@ void runModelOutput(FILE *out, DebugOutputFiles *debugOutputFiles,
     if (out != NULL) {
       outputState(out, climate->year, climate->day, climate->time);
     }
-    outputDebugState(debugOutputFiles, climate->year, climate->day,
+    outputDebugState(debugLogFiles, climate->year, climate->day,
                      climate->time);
     if (outputItems != NULL) {
       writeOutputItemValues(outputItems);

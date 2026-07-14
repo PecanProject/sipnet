@@ -138,11 +138,11 @@ static const DebugField PHENOLOGY_DEBUG_FIELDS[] = {
     {"didLeafFall", DEBUG_FIELD_INT, &phenologyTrackers.didLeafFall},
     {"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear}};
 
-static FILE *openDebugOutputFile(const char *debugOutputPrefix,
+static FILE *openDebugLogFile(const char *debugLogPrefix,
                                  const char *suffix) {
   char filename[FILENAME_MAXLEN];
 
-  strcpy(filename, debugOutputPrefix);
+  strcpy(filename, debugLogPrefix);
   strcat(filename, suffix);
 
   return openFile(filename, "w");
@@ -172,109 +172,109 @@ static void outputDebugFieldValues(FILE *out, int year, int day, double time,
   fprintf(out, "\n");
 }
 
-void initDebugOutputFiles(DebugOutputFiles *debugOutputFiles) {
-  if (debugOutputFiles == NULL) {
+void initDebugLogFiles(DebugLogFiles *debugLogFiles) {
+  if (debugLogFiles == NULL) {
     return;
   }
 
-  debugOutputFiles->envi = NULL;
-  debugOutputFiles->fluxes = NULL;
-  debugOutputFiles->trackers = NULL;
+  debugLogFiles->envi = NULL;
+  debugLogFiles->fluxes = NULL;
+  debugLogFiles->trackers = NULL;
 }
 
-void openDebugOutputFiles(DebugOutputFiles *debugOutputFiles,
-                          const char *debugOutputPrefix) {
-  if ((debugOutputFiles == NULL) || (debugOutputPrefix == NULL) ||
-      (strlen(debugOutputPrefix) == 0)) {
+void openDebugLogFiles(DebugLogFiles *debugLogFiles,
+                       const char *debugLogPrefix) {
+  if ((debugLogFiles == NULL) || (debugLogPrefix == NULL) ||
+      (strlen(debugLogPrefix) == 0)) {
     return;
   }
 
-  debugOutputFiles->envi =
-      openDebugOutputFile(debugOutputPrefix, "_envi.log");
-  debugOutputFiles->fluxes =
-      openDebugOutputFile(debugOutputPrefix, "_fluxes.log");
-  debugOutputFiles->trackers =
-      openDebugOutputFile(debugOutputPrefix, "_trackers.log");
+  debugLogFiles->envi =
+      openDebugLogFile(debugLogPrefix, "_envi.log");
+  debugLogFiles->fluxes =
+      openDebugLogFile(debugLogPrefix, "_fluxes.log");
+  debugLogFiles->trackers =
+      openDebugLogFile(debugLogPrefix, "_trackers.log");
 }
 
-void closeDebugOutputFiles(DebugOutputFiles *debugOutputFiles) {
-  if (debugOutputFiles == NULL) {
+void closeDebugLogFiles(DebugLogFiles *debugLogFiles) {
+  if (debugLogFiles == NULL) {
     return;
   }
 
-  if (debugOutputFiles->envi != NULL) {
-    fclose(debugOutputFiles->envi);
+  if (debugLogFiles->envi != NULL) {
+    fclose(debugLogFiles->envi);
   }
-  if (debugOutputFiles->fluxes != NULL) {
-    fclose(debugOutputFiles->fluxes);
+  if (debugLogFiles->fluxes != NULL) {
+    fclose(debugLogFiles->fluxes);
   }
-  if (debugOutputFiles->trackers != NULL) {
-    fclose(debugOutputFiles->trackers);
+  if (debugLogFiles->trackers != NULL) {
+    fclose(debugLogFiles->trackers);
   }
 }
 
-void outputDebugHeaders(DebugOutputFiles *debugOutputFiles) {
-  if (debugOutputFiles == NULL) {
+void outputDebugHeaders(DebugLogFiles *debugLogFiles) {
+  if (debugLogFiles == NULL) {
     return;
   }
 
-  if (debugOutputFiles->envi != NULL) {
-    outputDebugFieldHeader(debugOutputFiles->envi, "", ENVI_DEBUG_FIELDS,
+  if (debugLogFiles->envi != NULL) {
+    outputDebugFieldHeader(debugLogFiles->envi, "", ENVI_DEBUG_FIELDS,
                            sizeof(ENVI_DEBUG_FIELDS) / sizeof(DebugField));
   }
-  if (debugOutputFiles->fluxes != NULL) {
-    outputDebugFieldHeader(debugOutputFiles->fluxes, "", FLUXES_DEBUG_FIELDS,
+  if (debugLogFiles->fluxes != NULL) {
+    outputDebugFieldHeader(debugLogFiles->fluxes, "", FLUXES_DEBUG_FIELDS,
                            sizeof(FLUXES_DEBUG_FIELDS) / sizeof(DebugField));
   }
-  if (debugOutputFiles->trackers != NULL) {
-    fprintf(debugOutputFiles->trackers, "year day time");
+  if (debugLogFiles->trackers != NULL) {
+    fprintf(debugLogFiles->trackers, "year day time");
     for (size_t ind = 0;
          ind < sizeof(TRACKERS_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
-      fprintf(debugOutputFiles->trackers, " t.%s",
+      fprintf(debugLogFiles->trackers, " t.%s",
               TRACKERS_DEBUG_FIELDS[ind].name);
     }
     for (size_t ind = 0;
          ind < sizeof(PHENOLOGY_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
-      fprintf(debugOutputFiles->trackers, " pt.%s",
+      fprintf(debugLogFiles->trackers, " pt.%s",
               PHENOLOGY_DEBUG_FIELDS[ind].name);
     }
-    fprintf(debugOutputFiles->trackers, "\n");
+    fprintf(debugLogFiles->trackers, "\n");
   }
 }
 
-void outputDebugState(DebugOutputFiles *debugOutputFiles, int year, int day,
+void outputDebugState(DebugLogFiles *debugLogFiles, int year, int day,
                       double time) {
-  if (debugOutputFiles == NULL) {
+  if (debugLogFiles == NULL) {
     return;
   }
 
-  if (debugOutputFiles->envi != NULL) {
-    outputDebugFieldValues(debugOutputFiles->envi, year, day, time,
+  if (debugLogFiles->envi != NULL) {
+    outputDebugFieldValues(debugLogFiles->envi, year, day, time,
                            ENVI_DEBUG_FIELDS,
                            sizeof(ENVI_DEBUG_FIELDS) / sizeof(DebugField));
   }
-  if (debugOutputFiles->fluxes != NULL) {
-    outputDebugFieldValues(debugOutputFiles->fluxes, year, day, time,
+  if (debugLogFiles->fluxes != NULL) {
+    outputDebugFieldValues(debugLogFiles->fluxes, year, day, time,
                            FLUXES_DEBUG_FIELDS,
                            sizeof(FLUXES_DEBUG_FIELDS) / sizeof(DebugField));
   }
-  if (debugOutputFiles->trackers != NULL) {
-    fprintf(debugOutputFiles->trackers, "%4d %3d %5.2f", year, day, time);
+  if (debugLogFiles->trackers != NULL) {
+    fprintf(debugLogFiles->trackers, "%4d %3d %5.2f", year, day, time);
     for (size_t ind = 0;
          ind < sizeof(TRACKERS_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
       if (TRACKERS_DEBUG_FIELDS[ind].type == DEBUG_FIELD_INT) {
-        fprintf(debugOutputFiles->trackers, " %d",
+        fprintf(debugLogFiles->trackers, " %d",
                 *((const int *)TRACKERS_DEBUG_FIELDS[ind].value));
       } else {
-        fprintf(debugOutputFiles->trackers, " %.15g",
+        fprintf(debugLogFiles->trackers, " %.15g",
                 *((const double *)TRACKERS_DEBUG_FIELDS[ind].value));
       }
     }
     for (size_t ind = 0;
          ind < sizeof(PHENOLOGY_DEBUG_FIELDS) / sizeof(DebugField); ++ind) {
-      fprintf(debugOutputFiles->trackers, " %d",
+      fprintf(debugLogFiles->trackers, " %d",
               *((const int *)PHENOLOGY_DEBUG_FIELDS[ind].value));
     }
-    fprintf(debugOutputFiles->trackers, "\n");
+    fprintf(debugLogFiles->trackers, "\n");
   }
 }

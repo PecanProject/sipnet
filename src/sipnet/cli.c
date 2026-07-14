@@ -205,7 +205,7 @@ void parseCommandLineArgs(int argc, char *argv[]) {
                    optarg, maxDebugPrefixLen);
           exit(EXIT_CODE_BAD_CLI_ARGUMENT);
         }
-        updateCharContext("debugOutputPrefix", optarg, CTX_COMMAND_LINE);
+        updateCharContext("debugLogPrefix", optarg, CTX_COMMAND_LINE);
       } break;
       case 'i':
         requireCLIArg("--input-file");

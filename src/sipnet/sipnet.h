@@ -44,13 +44,13 @@ void cleanupModel(void);
 /*! Run the model using parameter values in modelParams
  *
  * @param out File pointer for main output; can be null to suppress this
- * @param debugOutputFiles File pointers for debug outputs; can be null to
+ * @param debugLogFiles File pointers for debug logs; can be null to
  *                         suppress debug logging
  * @param outputItems OutputItems struct used for individual output param files
  *                    Can be null to suppress this output
  * @param printHeader Whether to print a header row in output files
  */
-void runModelOutput(FILE *out, DebugOutputFiles *debugOutputFiles,
+void runModelOutput(FILE *out, DebugLogFiles *debugLogFiles,
                     OutputItems *outputItems, int printHeader);
 
 /*!
