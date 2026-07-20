@@ -236,7 +236,7 @@ def find_events_header_row(path: Path) -> int:
 def load_output_table(path: Path) -> LoadedSipnetData:
   if path.is_dir():
     path = path / 'sipnet.out'
-    
+
   if not path.exists():
     fail(f"Input file not found: {path}")
 
@@ -531,6 +531,7 @@ class AddColumnDialog(QDialog):
     self.expression_edit = QLineEdit()
     form_layout.addRow("Name", self.name_edit)
     form_layout.addRow("Expression", self.expression_edit)
+    form_layout.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.ExpandingFieldsGrow)
     layout.addLayout(form_layout)
 
     self.error_label = QLabel()
@@ -541,6 +542,7 @@ class AddColumnDialog(QDialog):
     button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
     button_box.accepted.connect(self.try_submit)
     button_box.rejected.connect(self.reject)
+    button_box.setMinimumWidth(400)
     layout.addWidget(button_box)
 
   def try_submit(self) -> None:
