@@ -2,6 +2,7 @@
 
 This directory contains tools related to SIPNET, including:
 - `sipnet-view`: an interactive viewer for `sipnet.out` files, with optional overlays from `events.out`.
+- `sipnet-debug-view`: an interactive viewer for SIPNET debug log files (`*_envi.log`, `*_fluxes.log`, `*_trackers.log`).
 - `smoke-check`: a script to compare generated `sipnet.out` and `events.out` files to expected outputs for smoke tests.
 
 ## Install
@@ -17,4 +18,5 @@ python3 -m pip install -e .
 ## More Info
 
 - See the [SIPNET Viewer README](README_sipnet_view.md) for details on the viewer tool.
+- See the [SIPNET Debug Viewer README](README_sipnet_debug_view.md) for details on the debug log viewer tool.
 - See the [smoke check README](README_smoke_check.md) for details on the smoke-check tool.
