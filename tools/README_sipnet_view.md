@@ -13,6 +13,9 @@ Screenshot:
 - Uses `year`, `day`, and `time` to build the x-axis
 - Plots data columns as requested by the user from the y-axis column selector
   - Excludes `year`, `day`, and `time` from y-axis selections
+- Lets you add derived y-axis columns from Python-style mathematical expressions
+  - New column names must be legal C/Python variable names
+  - Expressions can reference existing columns, including previously added derived columns
 - Loads `events.out` from the same directory by default when present
 - Lets you browse and load a different events file
 - Reads event rows from the first three columns: `year`, `day`, `type`

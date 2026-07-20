@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import argcomplete, argparse
+import keyword
 import sys
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Sequence
+from typing import Callable, Sequence
 
 import matplotlib.dates as mdates
 import pandas as pd
@@ -19,6 +20,8 @@ from PySide6.QtWidgets import (
   QApplication,
   QAbstractItemView,
   QComboBox,
+  QDialog,
+  QDialogButtonBox,
   QFileDialog,
   QFormLayout,
   QHBoxLayout,
@@ -42,6 +45,7 @@ EVENT_DAY_END_COLUMN = "event_day_end__"
 TIME_POINT_PATTERN = re.compile(
   r"^\s*(?P<year>\d{4})-(?P<day>\d{1,3})-(?P<hour>\d+(?:\.\d+)?)\s*$"
 )
+VARIABLE_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 PLOT_COLOR_CYCLE = [
   "#1f77b4",
@@ -409,6 +413,51 @@ def validate_requested_values(
   return list(requested)
 
 
+def validate_new_column_name(name: str, existing_columns: Sequence[str]) -> str:
+  cleaned = name.strip()
+  if not cleaned:
+    fail("Column name is required.")
+  if VARIABLE_NAME_PATTERN.fullmatch(cleaned) is None or keyword.iskeyword(cleaned):
+    fail(
+      f"Invalid column name {cleaned!r}. "
+      "Use a legal C/Python variable name."
+    )
+  if cleaned in existing_columns:
+    fail(f"Column name {cleaned!r} already exists.")
+  return cleaned
+
+
+def evaluate_new_column_expression(frame: pd.DataFrame, expression: str) -> pd.Series:
+  cleaned = expression.strip()
+  if not cleaned:
+    fail("Expression is required.")
+
+  try:
+    result = frame.eval(cleaned, engine="python")
+  except Exception as exc:
+    fail(f"Failed to evaluate expression {cleaned!r}: {exc}")
+
+  if isinstance(result, pd.DataFrame):
+    fail("Expression must evaluate to a single column value.")
+  if not isinstance(result, pd.Series):
+    result = pd.Series(result, index=frame.index)
+  return result
+
+
+def add_derived_column(
+    loaded_output: LoadedSipnetData,
+    name: str,
+    expression: str,
+) -> str:
+  validated_name = validate_new_column_name(name, loaded_output.frame.columns)
+  loaded_output.frame[validated_name] = evaluate_new_column_expression(
+    loaded_output.frame,
+    expression,
+  )
+  loaded_output.plot_columns.append(validated_name)
+  return validated_name
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
   parser = argparse.ArgumentParser(
     description="Interactive explorer for SIPNET output and events files."
@@ -459,6 +508,50 @@ def build_arg_parser() -> argparse.ArgumentParser:
     ),
   )
   return parser
+
+
+class AddColumnDialog(QDialog):
+  def __init__(
+      self,
+      submit_new_column: Callable[[str, str], str],
+      parent: QWidget | None = None,
+  ) -> None:
+    super().__init__(parent)
+    self.submit_new_column = submit_new_column
+    self.column_name = ""
+
+    self.setWindowTitle("Add new column")
+
+    layout = QVBoxLayout(self)
+    form_layout = QFormLayout()
+
+    self.name_edit = QLineEdit()
+    self.expression_edit = QLineEdit()
+    form_layout.addRow("Name", self.name_edit)
+    form_layout.addRow("Expression", self.expression_edit)
+    layout.addLayout(form_layout)
+
+    self.error_label = QLabel()
+    self.error_label.setWordWrap(True)
+    self.error_label.setStyleSheet("color: #a40000;")
+    layout.addWidget(self.error_label)
+
+    button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+    button_box.accepted.connect(self.try_submit)
+    button_box.rejected.connect(self.reject)
+    layout.addWidget(button_box)
+
+  def try_submit(self) -> None:
+    try:
+      self.column_name = self.submit_new_column(
+        self.name_edit.text(),
+        self.expression_edit.text(),
+      )
+    except Exception as exc:
+      self.error_label.setText(str(exc))
+      return
+
+    self.accept()
 
 
 class SipnetViewerWindow(QMainWindow):
@@ -537,6 +630,7 @@ class SipnetViewerWindow(QMainWindow):
     self.event_types_list = QListWidget()
     self.event_types_list.setSelectionMode(QAbstractItemView.MultiSelection)
 
+    self.add_column_button = QPushButton("Add new column")
     self.apply_button = QPushButton("Apply")
     self.apply_button.setDefault(True)
 
@@ -552,7 +646,11 @@ class SipnetViewerWindow(QMainWindow):
     control_layout.addWidget(self.events_info_label)
 
     control_layout.addLayout(form_layout)
-    control_layout.addWidget(QLabel("Y-axis columns"))
+    columns_header = QHBoxLayout()
+    columns_header.addWidget(QLabel("Y-axis columns"))
+    columns_header.addStretch(1)
+    columns_header.addWidget(self.add_column_button)
+    control_layout.addLayout(columns_header)
     control_layout.addWidget(self.columns_list, stretch=1)
     control_layout.addWidget(QLabel("Event types"))
     control_layout.addWidget(self.event_types_list, stretch=0)
@@ -576,6 +674,7 @@ class SipnetViewerWindow(QMainWindow):
     self.output_load_button.clicked.connect(self.load_selected_output_file)
     self.events_browse_button.clicked.connect(self.browse_for_events_file)
     self.events_load_button.clicked.connect(self.load_selected_events_file)
+    self.add_column_button.clicked.connect(self.show_add_column_dialog)
     self.apply_button.clicked.connect(self.apply_view)
 
     self.populate_output_controls(initial_columns, initial_bounds)
@@ -624,6 +723,7 @@ class SipnetViewerWindow(QMainWindow):
         f"No events file loaded.\n"
         f"Default path: {requested_path}"
       )
+      self.adjust_event_types_list_height()
       return
 
     self.events_info_label.setText(
@@ -641,6 +741,34 @@ class SipnetViewerWindow(QMainWindow):
 
     self.event_types_list.setSortingEnabled(True)
     self.event_types_list.sortItems()
+    self.adjust_event_types_list_height()
+
+  def adjust_event_types_list_height(self) -> None:
+    row_height = self.event_types_list.sizeHintForRow(0)
+    if row_height < 0:
+      row_height = max(1, self.fontMetrics().height() + 4)
+
+    minimum_height = 2 * self.event_types_list.frameWidth() + row_height
+    reduced_height = max(
+      minimum_height,
+      self.event_types_list.sizeHint().height() - 5 * row_height,
+    )
+    self.event_types_list.setMaximumHeight(reduced_height)
+
+  def show_add_column_dialog(self) -> None:
+    dialog = AddColumnDialog(self.create_new_column, self)
+    if dialog.exec() == QDialog.Accepted:
+      self.set_status(
+        f"Added new column {dialog.column_name!r}. Click Apply to plot it.",
+        is_error=False,
+      )
+
+  def create_new_column(self, name: str, expression: str) -> str:
+    new_name = add_derived_column(self.loaded, name, expression)
+    self.columns_list.addItem(new_name)
+    item = self.columns_list.item(self.columns_list.count() - 1)
+    item.setSelected(True)
+    return new_name
 
   def format_datetime_for_display(self, value: datetime) -> str:
     year = value.year
