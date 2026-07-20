@@ -1,12 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "debug_log.h"
 
+#include "common/exitCodes.h"
+#include "common/logging.h"
 #include "common/context.h"
 #include "common/util.h"
 #include "state.h"
-
 typedef enum DebugFieldType {
   DEBUG_FIELD_INT = 0,
   DEBUG_FIELD_DOUBLE = 1
