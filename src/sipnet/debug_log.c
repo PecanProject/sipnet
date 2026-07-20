@@ -40,6 +40,10 @@ void initDebugArrays() {
   }
 
   debugFields = malloc(sizeof(DebugFieldArrays));
+  if (debugFields == NULL) {
+    logError("memory allocation failure in debug log initialization\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
   int ind = 0;
 
   // clang-format off
