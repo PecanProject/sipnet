@@ -669,6 +669,8 @@ class SipnetDebugViewerWindow(QMainWindow):
     base_axis.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%j\n%H:%M"))
 
     if series_handles:
+      # add_artist() is required here: calling legend() a second time for events
+      # would replace the series legend, so we must preserve it explicitly first.
       series_legend = base_axis.legend(
         series_handles,
         [handle.get_label() for handle in series_handles],
@@ -804,7 +806,12 @@ def load_initial_events(
 
   if args.events_file:
     events_path = Path(args.events_file).expanduser()
-    loaded_events = load_events_table(events_path, loaded)
+    try:
+      loaded_events = load_events_table(events_path, loaded)
+    except ValueError:
+      raise
+    except Exception as exc:
+      fail(f"Failed to load events file {events_path}: {exc}")
     selected_event_types = validate_requested_values(
       requested_event_types,
       loaded_events.event_types,
@@ -814,7 +821,12 @@ def load_initial_events(
 
   default_path = default_events_path(loaded.path)
   if default_path.exists():
-    loaded_events = load_events_table(default_path, loaded)
+    try:
+      loaded_events = load_events_table(default_path, loaded)
+    except ValueError:
+      raise
+    except Exception as exc:
+      fail(f"Failed to load default events file {default_path}: {exc}")
     selected_event_types = validate_requested_values(
       requested_event_types,
       loaded_events.event_types,
