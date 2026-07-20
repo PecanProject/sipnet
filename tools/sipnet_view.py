@@ -417,11 +417,13 @@ def validate_new_column_name(name: str, existing_columns: Sequence[str]) -> str:
   cleaned = name.strip()
   if not cleaned:
     fail("Column name is required.")
-  if VARIABLE_NAME_PATTERN.fullmatch(cleaned) is None or keyword.iskeyword(cleaned):
+  if VARIABLE_NAME_PATTERN.fullmatch(cleaned) is None:
     fail(
       f"Invalid column name {cleaned!r}. "
-      "Use a legal C/Python variable name."
+      "Use only ASCII letters, digits, and underscores, and do not start with a digit."
     )
+  if keyword.iskeyword(cleaned):
+    fail(f"Invalid column name {cleaned!r}. Python keywords are not allowed.")
   if cleaned in existing_columns:
     fail(f"Column name {cleaned!r} already exists.")
   return cleaned
@@ -438,7 +440,7 @@ def evaluate_new_column_expression(frame: pd.DataFrame, expression: str) -> pd.S
     fail(f"Failed to evaluate expression {cleaned!r}: {exc}")
 
   if isinstance(result, pd.DataFrame):
-    fail("Expression must evaluate to a single column value.")
+    fail("Expression must evaluate to a Series or scalar, not multiple columns.")
   if not isinstance(result, pd.Series):
     result = pd.Series(result, index=frame.index)
   return result
@@ -744,14 +746,18 @@ class SipnetViewerWindow(QMainWindow):
     self.adjust_event_types_list_height()
 
   def adjust_event_types_list_height(self) -> None:
-    row_height = self.event_types_list.sizeHintForRow(0)
-    if row_height < 0:
+    if self.event_types_list.count() > 0:
+      row_height = max(1, self.event_types_list.sizeHintForRow(0))
+      base_height = self.event_types_list.sizeHint().height()
+    else:
       row_height = max(1, self.fontMetrics().height() + 4)
+      base_height = 2 * self.event_types_list.frameWidth() + 8 * row_height
 
     minimum_height = 2 * self.event_types_list.frameWidth() + row_height
+    # Reduce the list by about five visible rows to leave more room for y-axis columns.
     reduced_height = max(
       minimum_height,
-      self.event_types_list.sizeHint().height() - 5 * row_height,
+      base_height - 5 * row_height,
     )
     self.event_types_list.setMaximumHeight(reduced_height)
 

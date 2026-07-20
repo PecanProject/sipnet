@@ -84,7 +84,7 @@ class SipnetViewTests(unittest.TestCase):
   def test_add_derived_column_rejects_invalid_name(self) -> None:
     loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
 
-    with self.assertRaisesRegex(ValueError, "legal C/Python variable name"):
+    with self.assertRaisesRegex(ValueError, "ASCII letters, digits, and underscores"):
       sipnet_view.add_derived_column(
         loaded_output,
         "1bad-name",
