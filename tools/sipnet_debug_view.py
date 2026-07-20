@@ -29,17 +29,23 @@ from PySide6.QtWidgets import (
 )
 
 from sipnet_view import (
+  EVENT_DAY_END_COLUMN,
+  EVENT_DAY_START_COLUMN,
+  EVENT_TIMESTAMP_COLUMN,
   INTERNAL_TIMESTAMP_COLUMN,
   PLOT_COLOR_CYCLE,
   TIME_COLUMN_NAMES,
   AddColumnDialog,
+  LoadedEventsData,
   LoadedSipnetData,
   TimeBounds,
   add_derived_column,
   build_timestamp,
+  default_events_path,
   fail,
   find_output_header_row,
   format_time_value,
+  load_events_table,
   parse_time_point,
   parse_time_range,
   split_csv_argument,
@@ -176,13 +182,16 @@ class SipnetDebugViewerWindow(QMainWindow):
   def __init__(
       self,
       loaded: LoadedSipnetData,
+      loaded_events: LoadedEventsData | None,
       initial_columns: Sequence[str],
+      initial_event_types: Sequence[str],
       initial_bounds: TimeBounds | None,
       initial_layout: str,
       many_columns_threshold: int,
   ) -> None:
     super().__init__()
     self.loaded = loaded
+    self.loaded_events = loaded_events
     self.many_columns_threshold = many_columns_threshold
 
     self.setWindowTitle("SIPNET Debug Log Viewer")
@@ -207,6 +216,22 @@ class SipnetDebugViewerWindow(QMainWindow):
     self.prefix_info_label = QLabel()
     self.prefix_info_label.setWordWrap(True)
 
+    events_row = QHBoxLayout()
+    initial_events_path = (
+      str(self.loaded_events.path)
+      if self.loaded_events is not None
+      else str(default_events_path(self.loaded.path))
+    )
+    self.events_edit = QLineEdit(initial_events_path)
+    self.events_browse_button = QPushButton("Browse events…")
+    self.events_load_button = QPushButton("Load events")
+    events_row.addWidget(self.events_edit)
+    events_row.addWidget(self.events_browse_button)
+    events_row.addWidget(self.events_load_button)
+
+    self.events_info_label = QLabel()
+    self.events_info_label.setWordWrap(True)
+
     form_layout = QFormLayout()
     self.start_edit = QLineEdit()
     self.end_edit = QLineEdit()
@@ -226,6 +251,9 @@ class SipnetDebugViewerWindow(QMainWindow):
     self.columns_list = QListWidget()
     self.columns_list.setSelectionMode(QAbstractItemView.MultiSelection)
 
+    self.event_types_list = QListWidget()
+    self.event_types_list.setSelectionMode(QAbstractItemView.MultiSelection)
+
     self.add_column_button = QPushButton("Add new column")
     self.apply_button = QPushButton("Apply")
     self.apply_button.setDefault(True)
@@ -237,6 +265,10 @@ class SipnetDebugViewerWindow(QMainWindow):
     control_layout.addLayout(prefix_row)
     control_layout.addWidget(self.prefix_info_label)
 
+    control_layout.addWidget(QLabel("Events output"))
+    control_layout.addLayout(events_row)
+    control_layout.addWidget(self.events_info_label)
+
     control_layout.addLayout(form_layout)
     columns_header = QHBoxLayout()
     columns_header.addWidget(QLabel("Y-axis columns"))
@@ -244,6 +276,8 @@ class SipnetDebugViewerWindow(QMainWindow):
     columns_header.addWidget(self.add_column_button)
     control_layout.addLayout(columns_header)
     control_layout.addWidget(self.columns_list, stretch=1)
+    control_layout.addWidget(QLabel("Event types"))
+    control_layout.addWidget(self.event_types_list, stretch=0)
     control_layout.addWidget(self.apply_button)
     control_layout.addWidget(self.status_label)
 
@@ -262,10 +296,13 @@ class SipnetDebugViewerWindow(QMainWindow):
 
     self.prefix_browse_button.clicked.connect(self.browse_for_prefix)
     self.prefix_load_button.clicked.connect(self.load_selected_debug_files)
+    self.events_browse_button.clicked.connect(self.browse_for_events_file)
+    self.events_load_button.clicked.connect(self.load_selected_events_file)
     self.add_column_button.clicked.connect(self.show_add_column_dialog)
     self.apply_button.clicked.connect(self.apply_view)
 
     self.populate_output_controls(initial_columns, initial_bounds)
+    self.populate_event_controls(initial_event_types)
 
   def set_status(self, message: str, is_error: bool = False) -> None:
     color = "#a40000" if is_error else "#1f4f7a"
@@ -327,15 +364,171 @@ class SipnetDebugViewerWindow(QMainWindow):
     self.loaded = loaded
     self.prefix_edit.setText(str(self.loaded.path))
     self.populate_output_controls(selected_columns=[], time_bounds=None)
+
+    default_path = default_events_path(self.loaded.path)
+    self.events_edit.setText(str(default_path))
+
+    if default_path.exists():
+      try:
+        self.loaded_events = load_events_table(default_path, self.loaded)
+      except Exception as exc:
+        self.loaded_events = None
+        self.populate_event_controls(selected_event_types=[])
+        self.figure.clear()
+        self.canvas.draw_idle()
+        self.set_status(
+          f"Debug logs loaded, but default events file could not be loaded: {exc}",
+          is_error=True,
+        )
+        return
+
+      self.populate_event_controls(selected_event_types=[])
+      message = (
+        "Debug log files loaded. Default events file loaded. "
+        "Select columns and optional event types, then click Apply."
+      )
+    else:
+      self.loaded_events = None
+      self.populate_event_controls(selected_event_types=[])
+      message = (
+        "Debug log files loaded. No sibling events.out was found. "
+        "Select columns and click Apply, or load an events file."
+      )
+
     self.figure.clear()
     self.canvas.draw_idle()
-    self.set_status(
-      "Debug log files loaded. Select columns and click Apply.",
-      is_error=False,
-    )
+    self.set_status(message, is_error=False)
 
   def selected_plot_columns(self) -> list[str]:
     return [item.text() for item in self.columns_list.selectedItems()]
+
+  def populate_event_controls(self, selected_event_types: Sequence[str]) -> None:
+    self.event_types_list.clear()
+
+    if self.loaded_events is None:
+      requested_path = (
+        Path(self.events_edit.text().strip())
+        if self.events_edit.text().strip()
+        else default_events_path(self.loaded.path)
+      )
+      self.events_info_label.setText(
+        f"No events file loaded.\n"
+        f"Default path: {requested_path}"
+      )
+      self.adjust_event_types_list_height()
+      return
+
+    self.events_info_label.setText(
+      f"Loaded file: {self.loaded_events.path.name}\n"
+      f"Events: {len(self.loaded_events.frame.index)}\n"
+      f"Event types found: {', '.join(self.loaded_events.event_types)}"
+    )
+
+    selected_set = set(selected_event_types)
+    for event_type in self.loaded_events.event_types:
+      self.event_types_list.addItem(event_type)
+      item = self.event_types_list.item(self.event_types_list.count() - 1)
+      if event_type in selected_set:
+        item.setSelected(True)
+
+    self.event_types_list.setSortingEnabled(True)
+    self.event_types_list.sortItems()
+    self.adjust_event_types_list_height()
+
+  def adjust_event_types_list_height(self) -> None:
+    if self.event_types_list.count() > 0:
+      row_height = max(1, self.event_types_list.sizeHintForRow(0))
+      base_height = self.event_types_list.sizeHint().height()
+    else:
+      row_height = max(1, self.fontMetrics().height() + 4)
+      base_height = 2 * self.event_types_list.frameWidth() + 8 * row_height
+
+    minimum_height = 2 * self.event_types_list.frameWidth() + row_height
+    reduced_height = max(
+      minimum_height,
+      base_height - 5 * row_height,
+    )
+    self.event_types_list.setMaximumHeight(reduced_height)
+
+  def browse_for_events_file(self) -> None:
+    current = self.events_edit.text().strip() or str(default_events_path(self.loaded.path))
+    start_dir = str(Path(current).expanduser().resolve().parent)
+    filename, _ = QFileDialog.getOpenFileName(
+      self,
+      "Select events output file",
+      start_dir,
+      "Output files (*.out);;All files (*)",
+    )
+    if filename:
+      self.events_edit.setText(filename)
+
+  def load_selected_events_file(self) -> None:
+    path_text = self.events_edit.text().strip()
+    if not path_text:
+      self.loaded_events = None
+      self.populate_event_controls(selected_event_types=[])
+      self.set_status("Events file cleared. No events will be shown.", is_error=False)
+      return
+
+    requested_path = Path(path_text).expanduser()
+    try:
+      self.loaded_events = load_events_table(requested_path, self.loaded)
+    except Exception as exc:
+      self.set_status(str(exc), is_error=True)
+      return
+
+    self.events_edit.setText(str(self.loaded_events.path))
+    self.populate_event_controls(selected_event_types=[])
+    self.set_status(
+      "Events file loaded. Select event types and click Apply to show them.",
+      is_error=False,
+    )
+
+  def selected_event_types(self) -> list[str]:
+    return [item.text() for item in self.event_types_list.selectedItems()]
+
+  def filtered_events(self, bounds: TimeBounds, event_types: Sequence[str]) -> pd.DataFrame | None:
+    if self.loaded_events is None or not event_types:
+      return None
+
+    filtered = self.loaded_events.frame.loc[
+      self.loaded_events.frame["type"].isin(event_types)
+      & (self.loaded_events.frame[EVENT_DAY_START_COLUMN] <= bounds.end)
+      & (self.loaded_events.frame[EVENT_DAY_END_COLUMN] >= bounds.start)
+      ]
+    return filtered.reset_index(drop=True)
+
+  def overlay_events_on_axis(self, axis, events: pd.DataFrame | None) -> list[Line2D]:
+    if events is None or events.empty or self.loaded_events is None:
+      return []
+
+    for event in events.itertuples(index=False):
+      axis.axvline(
+        getattr(event, EVENT_TIMESTAMP_COLUMN),
+        color=self.loaded_events.event_colors[event.type],
+        linestyle="--",
+        linewidth=1.2,
+        alpha=0.85,
+        zorder=1,
+      )
+
+    shown_event_types = set(events["type"])
+    shown_types = [
+      event_type
+      for event_type in self.loaded_events.event_types
+      if event_type in shown_event_types
+    ]
+    return [
+      Line2D(
+        [0],
+        [0],
+        color=self.loaded_events.event_colors[event_type],
+        linestyle="--",
+        linewidth=1.5,
+        label=event_type,
+      )
+      for event_type in shown_types
+    ]
 
   def current_time_bounds(self) -> TimeBounds:
     start_text = self.start_edit.text().strip()
@@ -361,7 +554,14 @@ class SipnetDebugViewerWindow(QMainWindow):
     return format_time_value(year, day, hour)
 
   def show_add_column_dialog(self) -> None:
-    dialog = AddColumnDialog(self.create_new_column, self)
+    dialog = AddColumnDialog(
+      self.create_new_column,
+      self,
+      expression_label=(
+        "Expression (use backtick syntax for prefixed names, "
+        "e.g. `envi.plantWoodC` + `flux.photosynthesis`)"
+      ),
+    )
     if dialog.exec() == QDialog.Accepted:
       self.set_status(
         f"Added new column {dialog.column_name!r}. Click Apply to plot it.",
@@ -399,21 +599,34 @@ class SipnetDebugViewerWindow(QMainWindow):
       self.set_status("No rows fall within the selected time range.", is_error=True)
       return
 
+    selected_event_types = self.selected_event_types()
+    filtered_events = self.filtered_events(bounds, selected_event_types)
+
     layout = self.layout_combo.currentData()
     if layout == "combined":
-      self.plot_combined(filtered_output, selected_columns)
+      self.plot_combined(filtered_output, selected_columns, filtered_events)
     else:
-      self.plot_subplots(filtered_output, selected_columns)
+      self.plot_subplots(filtered_output, selected_columns, filtered_events)
 
-    self.set_status(
-      f"Plotted {len(selected_columns)} column(s) using {len(filtered_output)} rows.",
-      is_error=False,
-    )
+    event_count = 0 if filtered_events is None else len(filtered_events.index)
+    if selected_event_types:
+      self.set_status(
+        f"Plotted {len(selected_columns)} column(s) using {len(filtered_output)} rows "
+        f"and displayed {event_count} event line(s).",
+        is_error=False,
+      )
+    else:
+      self.set_status(
+        f"Plotted {len(selected_columns)} column(s) using {len(filtered_output)} rows. "
+        f"No event types selected.",
+        is_error=False,
+      )
 
   def plot_combined(
       self,
       frame: pd.DataFrame,
       columns: Sequence[str],
+      events: pd.DataFrame | None,
   ) -> None:
     self.figure.clear()
 
@@ -448,18 +661,29 @@ class SipnetDebugViewerWindow(QMainWindow):
       axis.tick_params(axis="y", colors=color)
       series_handles.append(line)
 
+    event_handles = self.overlay_events_on_axis(base_axis, events)
+
     base_axis.set_title(f"{self.loaded.path.name} — combined view")
     base_axis.set_xlabel("Time")
     base_axis.grid(True, alpha=0.3)
     base_axis.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%j\n%H:%M"))
 
     if series_handles:
-      base_axis.legend(
+      series_legend = base_axis.legend(
         series_handles,
         [handle.get_label() for handle in series_handles],
         loc="upper left",
         fontsize="small",
         title="Series",
+      )
+      base_axis.add_artist(series_legend)
+
+    if event_handles:
+      base_axis.legend(
+        handles=event_handles,
+        loc="upper right",
+        fontsize="small",
+        title="Events",
       )
 
     self.figure.autofmt_xdate()
@@ -469,23 +693,37 @@ class SipnetDebugViewerWindow(QMainWindow):
       self,
       frame: pd.DataFrame,
       columns: Sequence[str],
+      events: pd.DataFrame | None,
   ) -> None:
     self.figure.clear()
     x_values = frame[INTERNAL_TIMESTAMP_COLUMN]
     axes = self.figure.subplots(len(columns), 1, sharex=True, squeeze=False)
     flat_axes = [axis for row in axes for axis in row]
 
+    event_handles: list[Line2D] = []
     for index, (axis, column) in enumerate(zip(flat_axes, columns)):
       color = PLOT_COLOR_CYCLE[index % len(PLOT_COLOR_CYCLE)]
       axis.plot(x_values, frame[column], color=color, linewidth=1.5, zorder=2)
       axis.set_ylabel(column)
       axis.grid(True, alpha=0.3)
 
+      current_event_handles = self.overlay_events_on_axis(axis, events)
+      if current_event_handles and not event_handles:
+        event_handles = current_event_handles
+
       if index == 0:
         axis.set_title(f"{self.loaded.path.name} — subplot view")
 
     flat_axes[-1].set_xlabel("Time")
     flat_axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%Y-%j\n%H:%M"))
+
+    if event_handles:
+      flat_axes[0].legend(
+        handles=event_handles,
+        loc="upper right",
+        fontsize="small",
+        title="Events",
+      )
 
     self.figure.tight_layout()
     self.figure.autofmt_xdate()
@@ -510,6 +748,14 @@ def build_arg_parser() -> argparse.ArgumentParser:
     ),
   )
   parser.add_argument(
+    "-e",
+    "--events-file",
+    help=(
+      "Optional path to an events output file (events.out). "
+      "Defaults to events.out in the same directory as the debug log prefix."
+    ),
+  )
+  parser.add_argument(
     "-t",
     "--time-range",
     help=(
@@ -526,6 +772,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
       "Use the prefixed names as shown in the Y-axis selector "
       "(e.g. envi.plantWoodC, flux.photosynthesis, tracker.t.gpp)."
     ),
+  )
+  parser.add_argument(
+    "--event-types",
+    help="Comma-separated list of event types to pre-select in the GUI.",
   )
   parser.add_argument(
     "-l",
@@ -546,6 +796,41 @@ def build_arg_parser() -> argparse.ArgumentParser:
   return parser
 
 
+def load_initial_events(
+    args: argparse.Namespace,
+    loaded: LoadedSipnetData,
+) -> tuple[LoadedEventsData | None, list[str]]:
+  requested_event_types = split_csv_argument(args.event_types)
+
+  if args.events_file:
+    events_path = Path(args.events_file).expanduser()
+    loaded_events = load_events_table(events_path, loaded)
+    selected_event_types = validate_requested_values(
+      requested_event_types,
+      loaded_events.event_types,
+      "event types",
+    )
+    return loaded_events, selected_event_types
+
+  default_path = default_events_path(loaded.path)
+  if default_path.exists():
+    loaded_events = load_events_table(default_path, loaded)
+    selected_event_types = validate_requested_values(
+      requested_event_types,
+      loaded_events.event_types,
+      "event types",
+    )
+    return loaded_events, selected_event_types
+
+  if requested_event_types:
+    fail(
+      "Event types were requested via --event-types, but no events file was found. "
+      "Use --events-file or place events.out beside the debug log files."
+    )
+
+  return None, []
+
+
 def main(argv: Sequence[str] | None = None) -> int:
   parser = build_arg_parser()
   argcomplete.autocomplete(parser)
@@ -562,12 +847,15 @@ def main(argv: Sequence[str] | None = None) -> int:
   )
 
   initial_bounds = parse_time_range(args.time_range) if args.time_range else None
+  loaded_events, selected_event_types = load_initial_events(args, loaded)
 
   app_argv = sys.argv if argv is None else [sys.argv[0], *argv]
   application = QApplication(app_argv)
   window = SipnetDebugViewerWindow(
     loaded=loaded,
+    loaded_events=loaded_events,
     initial_columns=selected_columns,
+    initial_event_types=selected_event_types,
     initial_bounds=initial_bounds,
     initial_layout=args.layout,
     many_columns_threshold=args.many_columns_threshold,

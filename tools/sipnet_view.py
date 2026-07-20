@@ -517,6 +517,7 @@ class AddColumnDialog(QDialog):
       self,
       submit_new_column: Callable[[str, str], str],
       parent: QWidget | None = None,
+      expression_label: str = "Expression",
   ) -> None:
     super().__init__(parent)
     self.submit_new_column = submit_new_column
@@ -530,7 +531,7 @@ class AddColumnDialog(QDialog):
     self.name_edit = QLineEdit()
     self.expression_edit = QLineEdit()
     form_layout.addRow("Name", self.name_edit)
-    form_layout.addRow("Expression", self.expression_edit)
+    form_layout.addRow(expression_label, self.expression_edit)
     form_layout.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.ExpandingFieldsGrow)
     layout.addLayout(form_layout)
 
