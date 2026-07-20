@@ -162,8 +162,12 @@ void initDebugArrays() {
 static FILE *openDebugLogFile(const char *debugLogPrefix, const char *suffix) {
   char filename[FILENAME_MAXLEN];
 
-  strcpy(filename, debugLogPrefix);
-  strcat(filename, suffix);
+  const int written =
+      snprintf(filename, sizeof(filename), "%s%s", debugLogPrefix, suffix);
+  if (written < 0 || (size_t)written >= sizeof(filename)) {
+    logError("debug-log prefix '%s' is too long\n", debugLogPrefix);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
 
   return openFile(filename, "w");
 }
