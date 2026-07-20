@@ -105,18 +105,18 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 
 #### Input/Output Keys
 
-| Key               | Value Type | Description                                                                                                       |
-|-------------------|------------|-------------------------------------------------------------------------------------------------------------------|
-| `INPUT_FILE`      | string     | Name of configuration file to read                                                                                |
-| `FILE_PREFIX`     | string     | Prefix for climate and parameter input files                                                                      |
-| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`)                                       |
-| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)                                                 |
-| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)                                             |
-| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)                                          |
-| `EVENTS_PREFIX`   | string     | Prefix used to derive events input and output filenames                                                           |
-| `RESTART_IN`      | string     | Path to checkpoint to resume from                                                                                 |
-| `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                                                         |
-| `DEBUG_LOG`       | string     | Prefix for debug log files (optional; writes `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
+| Key                | Value Type | Description                                                                                                       |
+|--------------------|------------|-------------------------------------------------------------------------------------------------------------------|
+| `INPUT_FILE`       | string     | Name of configuration file to read                                                                                |
+| `FILE_PREFIX`      | string     | Prefix for climate and parameter input files                                                                      |
+| `PARAM_FILE`       | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`)                                       |
+| `CLIM_FILE`        | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)                                                 |
+| `OUT_FILE`         | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)                                             |
+| `OUT_CONFIG_FILE`  | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)                                          |
+| `EVENTS_PREFIX`    | string     | Prefix used to derive events input and output filenames                                                           |
+| `RESTART_IN`       | string     | Path to checkpoint to resume from                                                                                 |
+| `RESTART_OUT`      | string     | Path to checkpoint to write at end of run                                                                         |
+| `DEBUG_LOG_PREFIX` | string     | Prefix for debug log files (optional; writes `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
 #### Model Feature Keys
 

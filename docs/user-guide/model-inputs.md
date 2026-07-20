@@ -216,7 +216,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`)                                 |
 | `restart-in`    | unset     | Path to restart checkpoint to load                                                               |
 | `restart-out`   | unset     | Path to restart checkpoint to write                                                              |
-| 'debug-log'     | unset     | Prefix for debug log files (`<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
+| `debug-log`     | unset     | Prefix for debug log files (`<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
 ### Output Flags
 
