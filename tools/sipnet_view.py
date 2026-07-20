@@ -655,6 +655,8 @@ class SipnetViewerWindow(QMainWindow):
     control_layout.addLayout(columns_header)
     control_layout.addWidget(self.columns_list, stretch=1)
     control_layout.addWidget(QLabel("Event types"))
+    # Keep event types at their natural reduced height so extra vertical space
+    # stays available for the y-axis column selector above.
     control_layout.addWidget(self.event_types_list, stretch=0)
     control_layout.addWidget(self.apply_button)
     control_layout.addWidget(self.status_label)

@@ -91,6 +91,16 @@ class SipnetViewTests(unittest.TestCase):
         "plantWoodC + plantLeafC",
       )
 
+  def test_add_derived_column_rejects_python_keyword_name(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    with self.assertRaisesRegex(ValueError, "Python keywords are not allowed"):
+      sipnet_view.add_derived_column(
+        loaded_output,
+        "class",
+        "plantWoodC + plantLeafC",
+      )
+
   def test_add_derived_column_rejects_unknown_expression_name(self) -> None:
     loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
 
@@ -100,6 +110,18 @@ class SipnetViewTests(unittest.TestCase):
         "bad_expr",
         "plantWoodC + missing_column",
       )
+
+  def test_add_derived_column_rejects_assignment_expression(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    with self.assertRaisesRegex(ValueError, "Series or scalar, not multiple columns"):
+      sipnet_view.add_derived_column(
+        loaded_output,
+        "bad_assignment",
+        "assigned = plantWoodC + plantLeafC",
+      )
+
+    self.assertNotIn("assigned", loaded_output.frame.columns)
 
   def test_event_headers_require_year_day_type(self) -> None:
     self.assertEqual(sipnet_view.find_events_header_row(RUSSELL_1_EVENTS), 0)
