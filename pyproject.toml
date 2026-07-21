@@ -10,6 +10,7 @@ dynamic = ["version", "dependencies"]
 
 [project.scripts]
 sipnet-view = "tools.sipnet_view:main"
+sipnet-debug-view = "tools.sipnet_debug_view:main"
 smoke-check = "tools.smoke_check:main"
 
 [tool.setuptools.dynamic]
