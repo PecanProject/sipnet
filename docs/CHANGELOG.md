@@ -31,12 +31,15 @@ sections to include in release notes:
 - `leafon` limited by available carbon and nitrogen; N storage pool; N resorption on `leafoff` (#337)
 - New required parameter `leafOnReallocFrac` to control how much of wood and coarse root carbon is reallocated to leaves on `leafon` (#337)
 - `carbonSaturation` cli option and calculation of soil and litter carbon pools that observes soil carbon saturating behavior (#301)
+- Added `--debug-log` CLI option to enable debug logging (#352)
+- Added ability to create derived columns in `sipnet-view` (#355)
 
 ### Fixed
 
 ### Changed
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
+- Values in `events.out` changed to pool deltas rather than flux amounts (#349)
 
 ### Removed
 

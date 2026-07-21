@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include "common/modelParams.h"
+#include "debug_log.h"
 #include "outputItems.h"
 
 // write to file which model components are turned on
@@ -43,11 +44,14 @@ void cleanupModel(void);
 /*! Run the model using parameter values in modelParams
  *
  * @param out File pointer for main output; can be null to suppress this
+ * @param debugLogFiles File pointers for debug logs; can be null to
+ *                         suppress debug logging
  * @param outputItems OutputItems struct used for individual output param files
  *                    Can be null to suppress this output
  * @param printHeader Whether to print a header row in output files
  */
-void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader);
+void runModelOutput(FILE *out, DebugLogFiles *debugLogFiles,
+                    OutputItems *outputItems, int printHeader);
 
 /*!
    Setup outputItems structure

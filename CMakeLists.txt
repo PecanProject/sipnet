@@ -32,6 +32,7 @@ add_library(commonlib
 add_library(sipnetlib
         src/sipnet/balance.c
         src/sipnet/cli.c
+        src/sipnet/debug_log.c
         src/sipnet/depeffects.c
         src/sipnet/events.c
         src/sipnet/frontend.c
@@ -67,6 +68,7 @@ add_library(tests
         tests/sipnet/test_restart_infrastructure/testRestartMissedCtx.c
         tests/sipnet/test_restart_infrastructure/testRestartMissedEnvi.c
         tests/sipnet/test_sipnet_infrastructure/testClimInput.c
+        tests/sipnet/test_sipnet_infrastructure/testDebugLogFiles.c
         tests/sipnet/test_sipnet_infrastructure/testOutputHeader.c
         tests/sipnet/test_sipnet_infrastructure/testParamInput.c
         tests/utils/helpers.c

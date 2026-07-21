@@ -4,7 +4,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-import sipnet_view
+import tools.sipnet_view as sipnet_view
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -41,6 +41,87 @@ class SipnetViewTests(unittest.TestCase):
     loaded_events = sipnet_view.load_events_table(RUSSELL_1_EVENTS, loaded_output)
     self.assertIn("leafon", loaded_events.event_types)
     self.assertIn("irrig", loaded_events.event_types)
+
+  def test_add_derived_column_appends_plot_column(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    new_name = sipnet_view.add_derived_column(
+      loaded_output,
+      "wood_plus_leaf",
+      "plantWoodC + plantLeafC",
+    )
+
+    self.assertEqual(new_name, "wood_plus_leaf")
+    self.assertIn("wood_plus_leaf", loaded_output.plot_columns)
+    self.assertTrue(
+      (
+        loaded_output.frame["wood_plus_leaf"]
+        == loaded_output.frame["plantWoodC"] + loaded_output.frame["plantLeafC"]
+      ).all()
+    )
+
+  def test_add_derived_column_can_reference_earlier_added_column(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    sipnet_view.add_derived_column(
+      loaded_output,
+      "wood_plus_leaf",
+      "plantWoodC + plantLeafC",
+    )
+    sipnet_view.add_derived_column(
+      loaded_output,
+      "double_wood_plus_leaf",
+      "wood_plus_leaf * 2",
+    )
+
+    self.assertTrue(
+      (
+        loaded_output.frame["double_wood_plus_leaf"]
+        == loaded_output.frame["wood_plus_leaf"] * 2
+      ).all()
+    )
+
+  def test_add_derived_column_rejects_invalid_name(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    with self.assertRaisesRegex(ValueError, "ASCII letters, digits, and underscores"):
+      sipnet_view.add_derived_column(
+        loaded_output,
+        "1bad-name",
+        "plantWoodC + plantLeafC",
+      )
+
+  def test_add_derived_column_rejects_python_keyword_name(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    with self.assertRaisesRegex(ValueError, "Python keywords are not allowed"):
+      sipnet_view.add_derived_column(
+        loaded_output,
+        "class",
+        "plantWoodC + plantLeafC",
+      )
+
+  def test_add_derived_column_rejects_unknown_expression_name(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    with self.assertRaisesRegex(ValueError, "Failed to evaluate expression"):
+      sipnet_view.add_derived_column(
+        loaded_output,
+        "bad_expr",
+        "plantWoodC + missing_column",
+      )
+
+  def test_add_derived_column_rejects_assignment_expression(self) -> None:
+    loaded_output = sipnet_view.load_output_table(RUSSELL_1_OUTPUT)
+
+    with self.assertRaisesRegex(ValueError, "Series or scalar, not multiple columns"):
+      sipnet_view.add_derived_column(
+        loaded_output,
+        "bad_assignment",
+        "assigned = plantWoodC + plantLeafC",
+      )
+
+    self.assertNotIn("assigned", loaded_output.frame.columns)
 
   def test_event_headers_require_year_day_type(self) -> None:
     self.assertEqual(sipnet_view.find_events_header_row(RUSSELL_1_EVENTS), 0)

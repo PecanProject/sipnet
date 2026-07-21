@@ -837,7 +837,8 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
   // check for end of growing season:
   if (!phenologyTrackers.didLeafFall && pastLeafFall()) {
     // we just reached the end of the growing season
-    double leafOff = (plantLeafC * params.fracLeafFall) / climate->length;
+    double len = climate->length;
+    double leafOff = (plantLeafC * params.fracLeafFall) / len;
     *leafLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
     if (leafOff > TINY && ctx.events) {
@@ -847,8 +848,8 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
         *leafOffNResorption += nResorp;
       }
       writeComputedEventOut(climate->year, climate->day,
-                            eventTypeToString(LEAFOFF), 2, "fluxes.leafLitter",
-                            leafOff, "fluxes.leafOffNResorption", nResorp);
+                            eventTypeToString(LEAFOFF), 2, "leafLitter",
+                            leafOff * len, "leafOffNResorption", nResorp * len);
     }
   }
 }
@@ -1256,19 +1257,20 @@ void resetFluxes(void) { fluxes = (struct FluxVars){0}; }
  */
 void writeLeafOnEventIfNeeded(void) {
   const char *type = eventTypeToString(LEAFON);
+  const double len = climate->length;
   if (fluxes.leafOnCreation > TINY && ctx.events) {
     writeComputedEventOut(climate->year, climate->day, type, 2,
-                          "fluxes.leafOnCreation", fluxes.leafOnCreation,
-                          "fluxes.leafOnCreationFromWood",
-                          fluxes.leafOnCreationFromWood);
+                          "leafOnCreation", fluxes.leafOnCreation * len,
+                          "leafOnCreationFromWood",
+                          fluxes.leafOnCreationFromWood * len);
   }
   if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
     // Not really a computed event, but we don't have the event object here, so
     // we use this mechanism
     writeComputedEventOut(
-        climate->year, climate->day, type, 2, "fluxes.eventLeafOnCreation",
-        fluxes.eventLeafOnCreation, "fluxes.eventLeafOnCreationFromWood",
-        fluxes.eventLeafOnCreationFromWood);
+        climate->year, climate->day, type, 2, "eventLeafOnCreation",
+        fluxes.eventLeafOnCreation * len, "eventLeafOnCreationFromWood",
+        fluxes.eventLeafOnCreationFromWood * len);
   }
 }
 
@@ -1952,9 +1954,13 @@ void setupModel(void) {
 }
 
 // See sipnet.h
-void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
+void runModelOutput(FILE *out, DebugLogFiles *debugLogFiles,
+                    OutputItems *outputItems, int printHeader) {
   if ((out != NULL) && printHeader) {
     outputHeader(out);
+  }
+  if (printHeader) {
+    outputDebugHeaders(debugLogFiles);
   }
 
   setupModel();
@@ -1968,6 +1974,7 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
     if (out != NULL) {
       outputState(out, climate->year, climate->day, climate->time);
     }
+    outputDebugState(debugLogFiles, climate->year, climate->day, climate->time);
     if (outputItems != NULL) {
       writeOutputItemValues(outputItems);
     }
@@ -1999,6 +2006,8 @@ void initModel(ModelParams **modelParams, const char *paramFile,
   readParamData(modelParams, paramFile);
   readClimData(climFile);
 
+  initDebugArrays();
+
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
 }
 
@@ -2012,5 +2021,6 @@ void cleanupModel() {
     closeEventOutFile();
   }
 
+  freeDebugArrays();
   freeContextMetadata();
 }
