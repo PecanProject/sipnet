@@ -4,8 +4,8 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-import sipnet_debug_view
-import sipnet_view
+import tools.sipnet_debug_view as sipnet_debug_view
+
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -15,7 +15,7 @@ SAMPLE_DEBUG_PREFIX = REPO_ROOT / "tests" / "data" / "debug" / "sample"
 class SipnetDebugViewTests(unittest.TestCase):
   def test_load_debug_tables_returns_merged_frame(self) -> None:
     loaded = sipnet_debug_view.load_debug_tables(SAMPLE_DEBUG_PREFIX)
-    self.assertIsInstance(loaded, sipnet_view.LoadedSipnetData)
+    self.assertIsInstance(loaded, sipnet_debug_view.LoadedSipnetData)
     self.assertGreater(len(loaded.frame), 0)
 
   def test_load_debug_tables_prefixes_envi_columns(self) -> None:

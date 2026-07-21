@@ -4,7 +4,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-import sipnet_view
+import tools.sipnet_view as sipnet_view
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
