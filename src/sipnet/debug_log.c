@@ -55,11 +55,15 @@ void initDebugArrays() {
   debugFields->enviDF[ind++] = (DebugField){"snow", DEBUG_FIELD_DOUBLE, &envi.snow},
   debugFields->enviDF[ind++] = (DebugField){"coarseRootC", DEBUG_FIELD_DOUBLE, &envi.coarseRootC},
   debugFields->enviDF[ind++] = (DebugField){"fineRootC", DEBUG_FIELD_DOUBLE, &envi.fineRootC},
+  debugFields->enviDF[ind++] = (DebugField){"plantWoodN", DEBUG_FIELD_DOUBLE, &envi.plantWoodN},
+  debugFields->enviDF[ind++] = (DebugField){"plantLeafN", DEBUG_FIELD_DOUBLE, &envi.plantLeafN},
+  debugFields->enviDF[ind++] = (DebugField){"coarseRootN", DEBUG_FIELD_DOUBLE, &envi.coarseRootN},
+  debugFields->enviDF[ind++] = (DebugField){"fineRootN", DEBUG_FIELD_DOUBLE, &envi.fineRootN},
   debugFields->enviDF[ind++] = (DebugField){"minN", DEBUG_FIELD_DOUBLE, &envi.minN},
   debugFields->enviDF[ind++] = (DebugField){"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
   debugFields->enviDF[ind++] = (DebugField){"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
   debugFields->enviDF[ind++] = (DebugField){"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
-  debugFields->enviDF[ind  ] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantWoodCStorageDelta};
+  debugFields->enviDF[ind  ] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
 
   ind = 0;
   debugFields->fluxDF[ind++] = (DebugField){"photosynthesis", DEBUG_FIELD_DOUBLE, &fluxes.photosynthesis};

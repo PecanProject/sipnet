@@ -193,12 +193,12 @@ void updateNitrogenPools(void) {
   // TBD: add equation numbers once published
 
   // Biomass pool changes
-  envi.plantWoodN =
+  envi.plantWoodN = 0;
 
-      // Storage N changes
-      // First, parcel plantStorageN to leaf-on demand and regular growth demand
-      // fluxes.eventLeafOnCreation has already been handled in events.c
-      double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
+  // Storage N changes
+  // First, parcel plantStorageN to leaf-on demand and regular growth demand
+  // fluxes.eventLeafOnCreation has already been handled in events.c
+  double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
   envi.plantStorageN -= leafOnNFlux * climate->length;
   //  Remaining plantStorageN can go to demand
   double uptake = fluxes.nUptake * climate->length;
