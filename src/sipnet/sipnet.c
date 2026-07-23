@@ -1876,9 +1876,13 @@ void setupModel(void) {
 }
 
 // See sipnet.h
-void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
+void runModelOutput(FILE *out, DebugLogFiles *debugLogFiles,
+                    OutputItems *outputItems, int printHeader) {
   if ((out != NULL) && printHeader) {
     outputHeader(out);
+  }
+  if (printHeader) {
+    outputDebugHeaders(debugLogFiles);
   }
 
   setupModel();
@@ -1892,6 +1896,7 @@ void runModelOutput(FILE *out, OutputItems *outputItems, int printHeader) {
     if (out != NULL) {
       outputState(out, climate->year, climate->day, climate->time);
     }
+    outputDebugState(debugLogFiles, climate->year, climate->day, climate->time);
     if (outputItems != NULL) {
       writeOutputItemValues(outputItems);
     }
@@ -1923,6 +1928,8 @@ void initModel(ModelParams **modelParams, const char *paramFile,
   readParamData(modelParams, paramFile);
   readClimData(climFile);
 
+  initDebugArrays();
+
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
 }
 
@@ -1936,5 +1943,6 @@ void cleanupModel() {
     closeEventOutFile();
   }
 
+  freeDebugArrays();
   freeContextMetadata();
 }

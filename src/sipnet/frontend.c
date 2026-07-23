@@ -15,6 +15,7 @@
 #include "common/util.h"
 
 #include "cli.h"
+#include "debug_log.h"
 #include "events.h"
 #include "sipnet.h"
 #include "state.h"
@@ -129,6 +130,7 @@ void readInputFile(void) {
 int main(int argc, char *argv[]) {
 
   FILE *out, *outConfig;
+  DebugLogFiles debugLogFiles;
 
   ModelParams *modelParams;  // the parameters used in the model
   OutputItems *outputItems;  // structure to hold information for output to
@@ -139,6 +141,8 @@ int main(int argc, char *argv[]) {
   char outFile[FILENAME_MAXLEN], outConfigFile[FILENAME_MAXLEN];
   char paramFile[FILENAME_MAXLEN], climFile[FILENAME_MAXLEN];
   char eventsInFile[FILENAME_MAXLEN], eventsOutFile[FILENAME_MAXLEN];
+
+  initDebugLogFiles(&debugLogFiles);
 
   // 1. Initialize Context with default values
   initContext();
@@ -190,6 +194,7 @@ int main(int argc, char *argv[]) {
   } else {
     out = NULL;
   }
+  openDebugLogFiles(&debugLogFiles, ctx.debugLogPrefix);
 
   // Lastly - do after all other config processing
   if (ctx.dumpConfig) {
@@ -225,7 +230,7 @@ int main(int argc, char *argv[]) {
   }
 
   // 7. Do the run!
-  runModelOutput(out, outputItems, ctx.printHeader);
+  runModelOutput(out, &debugLogFiles, outputItems, ctx.printHeader);
 
   // 8. Cleanup
   if (ctx.doMainOutput) {
@@ -235,6 +240,7 @@ int main(int argc, char *argv[]) {
     }
     fclose(out);
   }
+  closeDebugLogFiles(&debugLogFiles);
 
   cleanupModel();
   if (outputItems != NULL) {
