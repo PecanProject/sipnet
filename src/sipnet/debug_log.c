@@ -59,7 +59,7 @@ void initDebugArrays() {
   debugFields->enviDF[ind++] = (DebugField){"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
   debugFields->enviDF[ind++] = (DebugField){"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
   debugFields->enviDF[ind++] = (DebugField){"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
-  debugFields->enviDF[ind  ] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantWoodCStorageDelta};
+  debugFields->enviDF[ind  ] = (DebugField){"plantWoodCAccountingDelta", DEBUG_FIELD_DOUBLE, &envi.plantWoodCAccountingDelta};
 
   ind = 0;
   debugFields->fluxDF[ind++] = (DebugField){"photosynthesis", DEBUG_FIELD_DOUBLE, &fluxes.photosynthesis};
