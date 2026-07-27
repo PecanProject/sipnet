@@ -11,7 +11,7 @@ COMMON_CFILES:=context.c logging.c modelParams.c util.c
 COMMON_CFILES:=$(addprefix src/common/, $(COMMON_CFILES))
 COMMON_OFILES=$(COMMON_CFILES:.c=.o)
 
-SIPNET_CFILES:=sipnet.c cli.c debug_log.c depeffects.c events.c frontend.c limitations.c nitrogen.c outputItems.c restart.c runmean.c state.c balance.c
+SIPNET_CFILES:=sipnet.c cli.c debug_log.c depeffects.c events.c frontend.c limitations.c model_utils.c nitrogen.c outputItems.c restart.c runmean.c state.c balance.c
 SIPNET_CFILES:=$(addprefix src/sipnet/, $(SIPNET_CFILES))
 SIPNET_OFILES=$(SIPNET_CFILES:.c=.o)
 SIPNET_LIBS=-lsipnet_common
@@ -104,6 +104,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
 cleanall: clean testclean
+	rm -f ./tests/smoke/*/debug*.log
 
 .PHONY: all clean help document exec cleanall \
 		test testbuild $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun smoke unit

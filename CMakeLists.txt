@@ -37,13 +37,13 @@ add_library(sipnetlib
         src/sipnet/events.c
         src/sipnet/frontend.c
         src/sipnet/limitations.c
+        src/sipnet/model_utils.c
         src/sipnet/nitrogen.c
         src/sipnet/outputItems.c
         src/sipnet/restart.c
         src/sipnet/runmean.c
         src/sipnet/sipnet.c
         src/sipnet/state.c
-        src/sipnet/carbon.c
 )
 
 add_library(tests
