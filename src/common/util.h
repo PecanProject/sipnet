@@ -13,6 +13,10 @@
 
 #define TINY 0.000001  // to avoid those nasty divide-by-zero errors
 
+// Floating-point precision threshold for balance checks and clamping warnings.
+// Differences smaller than this are treated as numerical noise.
+#define EPS 1e-8
+
 // our own openFile method, which exits gracefully if there's an error
 FILE *openFile(const char *name, const char *mode);
 
