@@ -84,6 +84,8 @@ int checkOutput(void) {
 
 void init(void) {
   initTrackers();
+  meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
+
   // soilC is often 4 digits
   envi.soilC = 5555;
 }

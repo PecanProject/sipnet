@@ -66,6 +66,10 @@ void initEnv(void) {
     params.woodCN = 10;
     params.leafCN = 20;
     params.fineRootCN = 30;
+    envi.plantLeafN = envi.plantLeafC / params.leafCN;
+    envi.plantWoodN = envi.plantWoodC / params.woodCN;
+    envi.fineRootN = envi.fineRootC / params.fineRootCN;
+    envi.coarseRootN = envi.coarseRootC / params.woodCN;
   }
 
   // not used here, but accessed
