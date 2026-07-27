@@ -1,10 +1,13 @@
 #include "balance.h"
 
+#include "nitrogen.h"
+
 #include <math.h>
 
 #include "common/context.h"
 #include "common/exitCodes.h"
 #include "common/logging.h"
+#include "common/util.h"
 #include "state.h"
 
 // Definition of global balance tracker struct
@@ -20,10 +23,9 @@ void getMassTotals(double *carbon, double *nitrogen) {
   if (ctx.nitrogenCycle) {
     // Note: this is the one place where we use plantWoodC by itself; it's the
     // reason plantCAccountingDelta was created, so that we can ignore it here.
-    *nitrogen =
-        envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN +
-        envi.fineRootC / params.fineRootCN + envi.coarseRootC / params.woodCN +
-        envi.soilOrgN + envi.litterN + envi.minN + envi.plantStorageN;
+    *nitrogen = envi.plantWoodN + envi.plantLeafN + envi.fineRootN +
+                envi.coarseRootN + envi.soilOrgN + envi.litterN + envi.minN +
+                envi.plantStorageN;
   } else {
     *nitrogen = 0.0;
   }
@@ -147,20 +149,22 @@ void checkBalance(void) {
     // err = 1;
     //  logInternalError(  someday
     logWarning(
-        "Carbon balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        "Carbon balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
         balanceTracker.deltaC, climate->year, climate->day, climate->time);
   }
   if (fabs(balanceTracker.deltaN) > 0.0) {
     // err = 1;
     // logInternalError(  someday
     logWarning(
-        "Nitrogen balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        "Nitrogen balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
         balanceTracker.deltaN, climate->year, climate->day, climate->time);
-    logWarning("preTot %8.5f postTot %8.5f input %8.5f output %8.5f clamped "
-               "%8.5f delta %8.5f\n",
+    logWarning("preTot %.6f postTot %.6f input %.6f output %.6f clamped "
+               "%.6f delta %.6f\n",
                balanceTracker.preTotalN, balanceTracker.postTotalN,
                balanceTracker.inputsN, balanceTracker.outputsN,
                balanceTracker.clampedN, balanceTracker.deltaN);
+    logInfo("[balance] storageN %g extraN %g leafN %g\n", envi.plantStorageN,
+            nitrogenTrackers.leafExtraN, envi.plantLeafN);
   }
   if (err) {
     logInternalError("Exiting\n");

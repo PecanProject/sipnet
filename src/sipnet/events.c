@@ -454,17 +454,18 @@ void processEvents(void) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 
-  // The events file has been tested on read, so we know this event list
-  // should be in chrono order. However, we need to check to make sure the
-  // current event is not in the past, as that would indicate an event that
-  // did not have a corresponding climate file record.
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+    // The events file has been tested on read, so we know this event list
+    // should be in chrono order. However, we need to check to make sure the
+    // current event is not in the past, as that would indicate an event that
+    // did not have a corresponding climate file record.
     if (gEvent->year < climYear || gEvent->day < climDay) {
       logError("Agronomic event found for year: %d day: %d that does not "
                "have a corresponding record in the climate file\n",
                gEvent->year, gEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
+
     switch (gEvent->type) {
       case IRRIGATION: {
         const IrrigationParams *irrParams = gEvent->eventParams;
@@ -495,6 +496,10 @@ void processEvents(void) {
         const double woodC = plantParams->woodC;
         const double fineRootC = plantParams->fineRootC;
         const double coarseRootC = plantParams->coarseRootC;
+        double leafN = 0.0;
+        double woodN = 0.0;
+        double fineRootN = 0.0;
+        double coarseRootN = 0.0;
 
         // Update the fluxes
         fluxes.eventLeafC += leafC / climLen;
@@ -502,25 +507,38 @@ void processEvents(void) {
         fluxes.eventFineRootC += fineRootC / climLen;
         fluxes.eventCoarseRootC += coarseRootC / climLen;
 
-        // No need to allocate to biomass N pools, we don't track that N
-        // explicitly
-
         // MASS BALANCE: this is a system input
         const double inputC = leafC + woodC + fineRootC + coarseRootC;
-        double inputN = 0.0;
         fluxes.eventInputC += inputC / climLen;
+
+        // Nitrogen
+        double inputN = 0.0;
         if (ctx.nitrogenCycle) {
-          inputN = leafC / params.leafCN + woodC / params.woodCN +
-                   fineRootC / params.fineRootCN + coarseRootC / params.woodCN;
+          leafN = leafC / params.leafCN;
+          woodN = woodC / params.woodCN;
+          fineRootN = fineRootC / params.fineRootCN;
+          coarseRootN = coarseRootC / params.woodCN;
+
+          fluxes.eventLeafN += leafN / climLen;
+          fluxes.eventWoodN += woodN / climLen;
+          fluxes.eventFineRootN += fineRootN / climLen;
+          fluxes.eventCoarseRootN += coarseRootN / climLen;
+
+          // MASS BALANCE: this is a system input
+          inputN = leafN + woodN + fineRootN + coarseRootN;
           fluxes.eventInputN += inputN / climLen;
         }
 
         // clang-format off
-        writeEventOut(gEvent, 6,
+        writeEventOut(gEvent, 10,
                       "eventLeafC", leafC,
                       "eventWoodC", woodC,
                       "eventFineRootC", fineRootC,
                       "eventCoarseRootC", coarseRootC,
+                      "eventLeafN", leafN,
+                      "eventWoodN", woodN,
+                      "eventFineRootN", fineRootN,
+                      "eventCoarseRootN", coarseRootN,
                       "eventInputC", inputC,
                       "eventInputN", inputN);
         // clang-format on
@@ -541,11 +559,11 @@ void processEvents(void) {
 
         // Pool reductions, counting both mass moved to litter and removed by
         // the harvest itself. Above-ground changes:
-        const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
-        const double woodDelta = -woodC * (fracRA + fracTA);
+        const double leafCDelta = -envi.plantLeafC * (fracRA + fracTA);
+        const double woodCDelta = -woodC * (fracRA + fracTA);
         // Below-ground changes:
-        const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
-        const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
+        const double fineCDelta = -envi.fineRootC * (fracRB + fracTB);
+        const double coarseCDelta = -envi.coarseRootC * (fracRB + fracTB);
 
         // Pool updates:
         if (!ctx.litterPool) {
@@ -555,54 +573,68 @@ void processEvents(void) {
         }
         fluxes.eventLitterC += litterAdd / climLen;
         fluxes.eventSoilC += soilAdd / climLen;
-        fluxes.eventLeafC += leafDelta / climLen;
-        fluxes.eventWoodC += woodDelta / climLen;
-        fluxes.eventFineRootC += fineDelta / climLen;
-        fluxes.eventCoarseRootC += coarseDelta / climLen;
+        fluxes.eventLeafC += leafCDelta / climLen;
+        fluxes.eventWoodC += woodCDelta / climLen;
+        fluxes.eventFineRootC += fineCDelta / climLen;
+        fluxes.eventCoarseRootC += coarseCDelta / climLen;
 
-        // No need to allocate to biomass N pools, we don't track that N
-        // explicitly. We do need to handle soil and litter N, though.
+        // Nitrogen
+        double leafNDelta = 0.0;
+        double woodNDelta = 0.0;
+        double fineNDelta = 0.0;
+        double coarseNDelta = 0.0;
+
         // Note: ctx.nitrogenCycle implies ctx.litterPool
         // Litter N increase
         double litterNAdd = 0.0;
         double soilNAdd = 0.0;
         if (ctx.nitrogenCycle) {
-          const double totalAbove = (envi.plantLeafC / params.leafCN) +
-                                    (envi.plantWoodC / params.woodCN);
-          const double totalBelow = (envi.fineRootC / params.fineRootCN) +
-                                    (envi.coarseRootC / params.woodCN);
+          const double totalAbove = envi.plantLeafN + envi.plantWoodN;
+          const double totalBelow = envi.fineRootN + envi.coarseRootN;
           litterNAdd = fracTA * totalAbove;
           soilNAdd = fracTB * totalBelow;
           fluxes.eventSoilOrgN += soilNAdd / climLen;
           fluxes.eventLitterN += litterNAdd / climLen;
+
+          // Biomass changes
+          woodNDelta = -envi.plantWoodN * (fracRA + fracTA);
+          leafNDelta = -envi.plantLeafN * (fracRA + fracTA);
+          // Below-ground changes:
+          fineNDelta = -envi.fineRootN * (fracRB + fracTB);
+          coarseNDelta = -envi.coarseRootN * (fracRB + fracTB);
+
+          fluxes.eventLeafN += leafNDelta / climLen;
+          fluxes.eventWoodN += woodNDelta / climLen;
+          fluxes.eventFineRootN += fineNDelta / climLen;
+          fluxes.eventCoarseRootN += coarseNDelta / climLen;
         }
 
         // MASS BALANCE: removed fractions are system outputs
         const double outputC = ((woodC + envi.plantLeafC) * fracRA +
                                 (envi.fineRootC + envi.coarseRootC) * fracRB);
-        double outputN = 0.0;
         fluxes.eventOutputC += outputC / climLen;
+
+        double outputN = 0.0;
         if (ctx.nitrogenCycle) {
-          // just plantWoodC here, not woodC
-          outputN = ((envi.plantWoodC / params.woodCN +
-                      envi.plantLeafC / params.leafCN) *
-                         fracRA +
-                     (envi.fineRootC / params.fineRootCN +
-                      envi.coarseRootC / params.woodCN) *
-                         fracRB);
+          outputN = (envi.plantWoodN + envi.plantLeafN) * fracRA +
+                    (envi.fineRootN + envi.coarseRootN) * fracRB;
           fluxes.eventOutputN += outputN / climLen;
         }
         // clang-format off
         writeEventOut(
-            gEvent, 10,
+            gEvent, 14,
             "eventSoilC", soilAdd,
             "eventLitterC", litterAdd,
-            "eventLeafC", leafDelta,
-            "eventWoodC", woodDelta,
-            "eventFineRootC", fineDelta,
-            "eventCoarseRootC", coarseDelta,
+            "eventLeafC", leafCDelta,
+            "eventWoodC", woodCDelta,
+            "eventFineRootC", fineCDelta,
+            "eventCoarseRootC", coarseCDelta,
             "eventSoilOrgN", soilNAdd,
             "eventLitterN", litterNAdd,
+            "eventLeafN", leafNDelta,
+            "eventWoodN", woodNDelta,
+            "eventFineRootN", fineNDelta,
+            "eventCoarseRootN", coarseNDelta,
             "eventOutputC", outputC,
             "eventOutputN", outputN);
         // clang-format on
@@ -667,9 +699,9 @@ void processEvents(void) {
               leafOnFlux * envi.plantWoodC / totalSourceC;
         }
 
-        // Nitrogen is handled implicitly by relative CN ratios. Missing N
+        // Nitrogen is handled by relative C:N ratio. Missing N
         // from low-N wood to higher-N leaves is accounted for in
-        // calcNFixationAndUptakeFluxes() via calcPlantNDemand()
+        // calcNFixationAndUptakeFluxes() via calcPlantNDemandFlux()
 
         // Unlike planting, this is NOT a system input, so no adjustments to
         // eventInputC or eventInputN
@@ -834,6 +866,14 @@ void printEvent(EventNode *oneEvent) {
              hParams->fractionRemovedAbove, hParams->fractionRemovedBelow,
              hParams->fractionTransferredAbove,
              hParams->fractionTransferredBelow);
+      break;
+    case LEAFON:
+      printf("LEAFON on %d %d, ", year, day);
+      // No real params for leafon
+      break;
+    case LEAFOFF:
+      printf("LEAFOFF on %d %d, ", year, day);
+      // No real params for leafoff
       break;
     default:
       printf("ERROR printing oneEvent: unknown type %d\n", oneEvent->type);

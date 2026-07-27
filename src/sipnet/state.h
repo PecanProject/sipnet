@@ -616,12 +616,21 @@ typedef struct FluxVars {
   double eventSoilC;
   // carbon added to litter pool
   double eventLitterC;
+  // plantLeafN addition
+  double eventLeafN;
+  // plantWoodN addition
+  double eventWoodN;
+  // fineRootN addition
+  double eventFineRootN;
+  // coarseRootN addition
+  double eventCoarseRootN;
   // nitrogen added to soil mineral N pool
   double eventMinN;
   // nitrogen added to soil org N pool
   double eventSoilOrgN;
   // nitrogen added to litter N pool
   double eventLitterN;
+
   // MASS BALANCE HELPERS
   // Total system carbon input, for mass balance checks
   double eventInputC;
@@ -631,6 +640,8 @@ typedef struct FluxVars {
   double eventInputN;
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
+
+  // LEAF ON/OFF FLUXES
   // Transfer from woodC to leafC from a leaf-on event
   double eventLeafOnCreation;
   // Portion of leaf-on creation C that comes from wood C (the rest comes from
@@ -717,16 +728,6 @@ typedef struct TrackerVars {  // variables to track various things
 
   // g C * m^-2 methane production
   double methane;
-
-  // g N * m^-2 ground area, Mineral N lost to volatilization
-  double n2o;
-  // g N * m^-2 N leached from soil mineral N pool
-  double nLeaching;
-  // g N * m^-2 N fixed by plants
-  double nFixation;
-  // g N * m^-2 N taken up by plants from soil mineral N pool
-  double nUptake;
-
 } Trackers;
 
 // Global var

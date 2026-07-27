@@ -4,6 +4,7 @@
 
 #include "debug_log.h"
 
+#include "nitrogen.h"
 #include "common/exitCodes.h"
 #include "common/logging.h"
 #include "common/context.h"
@@ -20,16 +21,18 @@ typedef struct DebugField {
   const void *value;
 } DebugField;
 
-#define NUM_LOGGED_ENVI_FIELDS 13
+#define NUM_LOGGED_ENVI_FIELDS 17
 #define NUM_LOGGED_FLUX_FIELDS 55
-#define NUM_LOGGED_TRACKER_FIELDS 32
+#define NUM_LOGGED_TRACKER_FIELDS 28
 #define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
+#define NUM_LOGGED_NITROGEN_TRACKER_FIELDS 8
 
 typedef struct DebugFieldArrays {
   DebugField enviDF[NUM_LOGGED_ENVI_FIELDS];
   DebugField fluxDF[NUM_LOGGED_FLUX_FIELDS];
   DebugField trackerDF[NUM_LOGGED_TRACKER_FIELDS];
   DebugField phenoDF[NUM_LOGGED_PHEN_TRACKER_FIELDS];
+  DebugField nitroDF[NUM_LOGGED_NITROGEN_TRACKER_FIELDS];
 } DebugFieldArrays;
 
 static DebugFieldArrays *debugFields = NULL;
@@ -63,7 +66,11 @@ void initDebugArrays() {
   debugFields->enviDF[ind++] = (DebugField){"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
   debugFields->enviDF[ind++] = (DebugField){"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
   debugFields->enviDF[ind++] = (DebugField){"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
-  debugFields->enviDF[ind  ] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
+  debugFields->enviDF[ind++] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
+  if (ind != NUM_LOGGED_ENVI_FIELDS) {
+    logInternalError("Debug log enviDF array size mismatch\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   ind = 0;
   debugFields->fluxDF[ind++] = (DebugField){"photosynthesis", DEBUG_FIELD_DOUBLE, &fluxes.photosynthesis};
@@ -120,7 +127,11 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffLitter", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitter},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffNResorption},
   debugFields->fluxDF[ind++] = (DebugField){"soilMethane", DEBUG_FIELD_DOUBLE, &fluxes.soilMethane},
-  debugFields->fluxDF[ind  ] = (DebugField){"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane};
+  debugFields->fluxDF[ind++] = (DebugField){"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane};
+  if (ind != NUM_LOGGED_FLUX_FIELDS) {
+    logInternalError("Debug log fluxDF array size mismatch\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   ind = 0;
   debugFields->trackerDF[ind++] = (DebugField){"gpp", DEBUG_FIELD_DOUBLE, &trackers.gpp},
@@ -150,16 +161,35 @@ void initDebugArrays() {
   debugFields->trackerDF[ind++] = (DebugField){"totNpp", DEBUG_FIELD_DOUBLE, &trackers.totNpp},
   debugFields->trackerDF[ind++] = (DebugField){"totNee", DEBUG_FIELD_DOUBLE, &trackers.totNee},
   debugFields->trackerDF[ind++] = (DebugField){"lastYear", DEBUG_FIELD_INT, &trackers.lastYear},
-  debugFields->trackerDF[ind++] = (DebugField){"methane", DEBUG_FIELD_DOUBLE, &trackers.methane},
-  debugFields->trackerDF[ind++] = (DebugField){"n2o", DEBUG_FIELD_DOUBLE, &trackers.n2o},
-  debugFields->trackerDF[ind++] = (DebugField){"nLeaching", DEBUG_FIELD_DOUBLE, &trackers.nLeaching},
-  debugFields->trackerDF[ind++] = (DebugField){"nFixation", DEBUG_FIELD_DOUBLE, &trackers.nFixation},
-  debugFields->trackerDF[ind  ] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &trackers.nUptake};
+  debugFields->trackerDF[ind++] = (DebugField){"methane", DEBUG_FIELD_DOUBLE, &trackers.methane};
+  if (ind != NUM_LOGGED_TRACKER_FIELDS) {
+    logInternalError("Debug log trackerDF array size mismatch\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   ind = 0;
   debugFields->phenoDF[ind++] = (DebugField){"didLeafGrowth", DEBUG_FIELD_INT, &phenologyTrackers.didLeafGrowth},
   debugFields->phenoDF[ind++] = (DebugField){"didLeafFall", DEBUG_FIELD_INT, &phenologyTrackers.didLeafFall},
-  debugFields->phenoDF[ind  ] = (DebugField){"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear};
+  debugFields->phenoDF[ind++] = (DebugField){"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear};
+  if (ind != NUM_LOGGED_PHEN_TRACKER_FIELDS) {
+    logInternalError("Debug log phenoDF array size mismatch\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
+
+  ind = 0;
+  debugFields->nitroDF[ind++] = (DebugField){"n2o", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.n2o},
+  debugFields->nitroDF[ind++] = (DebugField){"nLeaching", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.nLeaching},
+  debugFields->nitroDF[ind++] = (DebugField){"nFixation", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.nFixation},
+  debugFields->nitroDF[ind++] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.nUptake},
+  debugFields->nitroDF[ind++] = (DebugField){"woodExtraN", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.woodExtraN},
+  debugFields->nitroDF[ind++] = (DebugField){"leafExtraN", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.leafExtraN},
+  debugFields->nitroDF[ind++] = (DebugField){"coarseRootExtraN", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.coarseRootExtraN},
+  debugFields->nitroDF[ind++] = (DebugField){"fineRootExtraN", DEBUG_FIELD_DOUBLE, &nitrogenTrackers.fineRootExtraN};
+  if (ind != NUM_LOGGED_NITROGEN_TRACKER_FIELDS) {
+    logInternalError("Debug log nitroDF array size mismatch\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
+
   // clang-format on
 }
 
@@ -272,6 +302,8 @@ void outputDebugHeaders(DebugLogFiles *debugLogFiles) {
                            0);
     outputDebugFieldHeader(debugLogFiles->trackers, "pt.", debugFields->phenoDF,
                            NUM_LOGGED_PHEN_TRACKER_FIELDS, 0);
+    outputDebugFieldHeader(debugLogFiles->trackers, "nt.", debugFields->nitroDF,
+                           NUM_LOGGED_NITROGEN_TRACKER_FIELDS, 0);
     fprintf(debugLogFiles->trackers, "\n");
   }
 }
@@ -298,6 +330,9 @@ void outputDebugState(DebugLogFiles *debugLogFiles, int year, int day,
     outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
                            debugFields->phenoDF, NUM_LOGGED_PHEN_TRACKER_FIELDS,
                            0);
+    outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
+                           debugFields->nitroDF,
+                           NUM_LOGGED_NITROGEN_TRACKER_FIELDS, 0);
     fprintf(debugLogFiles->trackers, "\n");
   }
 }

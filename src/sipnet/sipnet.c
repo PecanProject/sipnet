@@ -24,6 +24,7 @@
 #include "depeffects.h"
 #include "events.h"
 #include "limitations.h"
+#include "model_utils.h"
 #include "nitrogen.h"
 #include "outputItems.h"
 #include "restart.h"
@@ -468,9 +469,9 @@ void outputState(FILE *out, int year, int day, double time) {
       trackers.rh, trackers.rtot, trackers.evapotranspiration);
   fprintf(out, "%19.4f %8.4f %9.4f %10.4f %14.4f ", fluxes.transpiration,
           envi.minN, envi.soilOrgN, envi.litterN, envi.plantStorageN);
-  fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
-          trackers.nLeaching, trackers.nFixation, trackers.nUptake,
-          trackers.methane);
+  fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", nitrogenTrackers.n2o,
+          nitrogenTrackers.nLeaching, nitrogenTrackers.nFixation,
+          nitrogenTrackers.nUptake, trackers.methane);
   fprintf(out, "%12.4f %8.4f %8.4f %8.4f %8.4f %8.4f\n",
           envi.plantCAccountingDelta, npp, envi.plantWoodN, envi.plantLeafN,
           envi.coarseRootN, envi.fineRootN);
@@ -1366,21 +1367,6 @@ void calculateFluxes(void) {
 // Stock (Pool) Validation //
 // /////////////////////// //
 
-// If var < minVal, then set var = 0
-// Note that if minVal = 0, then this will (as suggested) ensure that var >= 0
-//  If minVal > 0, then minVal can be thought of as some epsilon value, below
-//  which var is treated as 0
-void ensureNonNegative(double *var, double minVal, const char *label) {
-  if (*var < minVal) {
-    if (fabs(*var) > EPS) {  // Don't print the zeros
-      logWarning("Non-negative stock constraint applied for %s (value %g set "
-                 "to zero) year %d day %d time %6.3f\n",
-                 label, *var, climate->year, climate->day, climate->time);
-    }
-    *var = 0.;
-  }
-}
-
 // Make sure all environment variables are positive after updating them:
 // Note: For some variables, there are checks elsewhere in the code to ensure
 // that fluxes don't make stocks go negative
@@ -1464,9 +1450,6 @@ void initTrackers(void) {
   trackers.yearlyLitter = 0.0;
   trackers.gdd = 0.0;
   trackers.lastYear = -1;
-  trackers.nLeaching = 0.0;
-  trackers.nFixation = 0.0;
-  trackers.nUptake = 0.0;
 }
 
 /**
@@ -1516,7 +1499,6 @@ void updateTrackers(double oldSoilWater) {
   trackers.totNpp += trackers.npp;
   trackers.totNee += trackers.nee;
   trackers.woodCreation = fluxes.woodCreation * climate->length;
-  trackers.n2o = fluxes.nVolatilization * climate->length;
 
   trackers.methane =
       (fluxes.soilMethane + fluxes.litterMethane) * climate->length;
@@ -1540,11 +1522,6 @@ void updateTrackers(double oldSoilWater) {
   } else {
     trackers.gdd = 0.0;
   }
-
-  // N cycle trackers
-  trackers.nLeaching = fluxes.nLeaching * climate->length;
-  trackers.nFixation = fluxes.nFixation * climate->length;
-  trackers.nUptake = fluxes.nUptake * climate->length;
 }
 
 // initialize phenology tracker structure, based on day of year of first climate
@@ -1621,9 +1598,6 @@ void updateMeanTrackers(void) {
  * Update the main pools, leafC, woodC, soil and snow
  */
 void updateMainPools(void) {
-  // Update the stocks, with fluxes adjusted for length of time step.
-  // Note: the soil C pool(s) (envi.soil, envi.fineRootC, envi.CoarseRootC)
-  //   are updated in updatePoolsForSoil().
 
   // :: from [1], eq (A1), where:
   //     GPP = fluxes.photosynthesis
@@ -1844,7 +1818,7 @@ void updateState(void) {
   // 3. Update trackers
 
   updateTrackers(oldSoilWater);
-
+  updateNitrogenTrackers();
   updateMeanTrackers();
 
   updateEventTrackers();
@@ -1882,13 +1856,6 @@ void setupModel(void) {
   envi.plantCAccountingDelta = 0.0;
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
 
-  if (ctx.nitrogenCycle) {
-    envi.plantLeafN = envi.plantWoodC / params.leafCN;
-    // Reminder: woodCN used for both wood and coarse root
-    envi.plantWoodN = envi.plantWoodC / params.woodCN;
-    envi.coarseRootN = envi.coarseRootC / params.woodCN;
-    envi.fineRootN = envi.fineRootC / params.fineRootCN;
-  }
   if (ctx.litterPool) {
     envi.litterC = params.litterInit;
   } else {
@@ -1924,6 +1891,14 @@ void setupModel(void) {
   envi.coarseRootC = params.coarseRootFrac * params.plantWoodInit;
   envi.fineRootC = params.fineRootFrac * params.plantWoodInit;
 
+  if (ctx.nitrogenCycle) {
+    envi.plantLeafN = envi.plantLeafC / params.leafCN;
+    // Reminder: woodCN used for both wood and coarse root
+    envi.plantWoodN = envi.plantWoodC / params.woodCN;
+    envi.coarseRootN = envi.coarseRootC / params.woodCN;
+    envi.fineRootN = envi.fineRootC / params.fineRootCN;
+  }
+
   envi.soilWater = params.soilWFracInit * params.soilWHC;
   if (envi.soilWater < 0) {
     envi.soilWater = 0;
@@ -1946,6 +1921,7 @@ void setupModel(void) {
 
   initTrackers();
   initPhenologyTrackers();
+  initNitrogenTrackers();
   initEventTrackers();
   initBalanceTracker();
   resetMeanTracker(meanNPP, 0);  // initialize with mean NPP (over last

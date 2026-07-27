@@ -36,7 +36,10 @@ void checkLeafOnLimitation(double *leafOnFlux) {
     // Reminder: both wood and coarseRoot use params.woodCN, so no need to
     // treat those C demands separately
     leafOnNDemand = calcLeafOnNFromC(leafOnCDemand);
-    availableN = envi.plantStorageN;
+    // For leaf on, we only rely on plantStorageN (from resorption) and any
+    // extra leaf N (from carbon respiration loss). We'll draw on the storage N
+    // first when it comes time to update the pools.
+    availableN = envi.plantStorageN + nitrogenTrackers.leafExtraN;
     if (leafOnNDemand > TINY) {
       nLimiter = availableN / leafOnNDemand;
     }
@@ -68,7 +71,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
  */
 static void checkNitrogenLimitation(void) {
   // First, determine if we are in a nitrogen-limited situation
-  double maxDemandFlux = calcPlantNDemand();
+  double maxDemandFlux = calcPlantNDemandFlux();
   double maxDemand = maxDemandFlux * climate->length;
 
   double availableMinN = calcPlantAvailableN();
@@ -84,8 +87,8 @@ static void checkNitrogenLimitation(void) {
             maxUptake, availableMinN, (1 - reduction) * 100, climate->year,
             climate->day, climate->time);
 
-    // Reduce all drains on soil N (all fluxes used in calcPlantNDemand, plus
-    // fixation and uptake)
+    // Reduce all drains on soil N (all fluxes used in calcPlantNDemandFlux,
+    // plus fixation and uptake)
     fluxes.woodCreation *= reduction;
     fluxes.leafCreation *= reduction;
     fluxes.fineRootCreation *= reduction;

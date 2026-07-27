@@ -13,7 +13,7 @@ double calcLeafOnNFromC(double leafOnC);
  *
  * @return Total nitrogen demand from plant growth
  */
-double calcPlantNDemand(void);
+double calcPlantNDemandFlux(void);
 
 /*!
  * Calculate nitrogen available for plant growth
@@ -63,4 +63,32 @@ void calcNitrogenFluxes(void);
  */
 void updateNitrogenPools(void);
 
+typedef struct NitrogenTrackersStruct {
+  // g N * m^-2 ground area, Mineral N lost to volatilization
+  double n2o;
+  // g N * m^-2 N leached from soil mineral N pool
+  double nLeaching;
+  // g N * m^-2 N fixed by plants
+  double nFixation;
+  // g N * m^-2 N taken up by plants from soil mineral N pool
+  double nUptake;
+
+  // Trackers for N in excess of (C / C:N) (g N / m^2)
+  double leafExtraN;
+  double woodExtraN;
+  double coarseRootExtraN;
+  double fineRootExtraN;
+} NitrogenTrackers;
+
+extern NitrogenTrackers nitrogenTrackers;
+
+/*!
+ * Initialize NitrogenTrackers struct for tracking nitrogen data
+ */
+void initNitrogenTrackers(void);
+
+/*!
+ * Perform any needed updates post fluxes-and-pools updates
+ */
+void updateNitrogenTrackers(void);
 #endif  // NITROGEN_H

@@ -3,9 +3,11 @@
 #include <math.h>
 
 #include "common/context.h"
+#include "common/logging.h"
 #include "common/util.h"
 
 #include "depeffects.h"
+#include "model_utils.h"
 #include "state.h"
 
 /*!
@@ -82,22 +84,27 @@ static void calcNPoolFluxes(void) {
 }
 
 /**
- *
+ * Calculate nitrogen demand flux for a given biomass pool
  */
-double calcPoolNDemand(double poolC, double poolN, double creationC,
-                       double poolCN) {
+double calcPoolNDemandFlux(double extraN, double creationCFlux, double poolCN) {
   double demand = 0.0;
   // If creation is positive, calculate demand based on that value minus any
   // leftover N from prior negative creation steps (if any).
   // If creation is negative, we have no demand.
   // Turnover, if any, will be handled (later) at this pool's C:N, so shouldn't
   // affect this calc.
-  if (creationC > 0.0) {
+  if (creationCFlux > 0.0) {
     // extraN should not ever be negative - but, if it does somehow end up
     // there, then it represents missing N, so we're good with demand going up
     // in that case
-    double extraNFlux = (poolN - poolC / poolCN) / climate->length;
-    demand = creationC / poolCN - extraNFlux;
+    double extraNFlux = extraN / climate->length;
+    // if (extraNFlux < TINY) {
+    //   double len = climate->length;
+    //   logInfo("extraN %.6f C %g N %g creationC %g CN %f y %d d %d t %f\n",
+    //     extraNFlux * len, poolC, poolN, creationCFlux * len, poolCN,
+    //     climate->year, climate->day, climate->time);
+    // }
+    demand = fmax(0.0, creationCFlux / poolCN - extraNFlux);
   }
   return demand;
 }
@@ -108,7 +115,7 @@ double calcLeafOnNFromC(double leafOnC) {
 }
 
 // see nitrogen.h
-double calcPlantNDemand(void) {
+double calcPlantNDemandFlux(void) {
   if (!ctx.nitrogenCycle) {
     return 0.0;
   }
@@ -118,14 +125,14 @@ double calcPlantNDemand(void) {
 
   // calculate demand from all creation terms
   double creationDemand =
-      calcPoolNDemand(envi.plantWoodC, envi.plantWoodN, fluxes.woodCreation,
-                      params.woodCN) +
-      calcPoolNDemand(envi.plantLeafC, envi.plantLeafN, fluxes.leafCreation,
-                      params.leafCN) +
-      calcPoolNDemand(envi.coarseRootC, envi.coarseRootN,
-                      fluxes.coarseRootCreation, params.woodCN) +
-      calcPoolNDemand(envi.fineRootC, envi.fineRootN, fluxes.fineRootCreation,
-                      params.fineRootCN);
+      calcPoolNDemandFlux(nitrogenTrackers.woodExtraN, fluxes.woodCreation,
+                          params.woodCN) +
+      calcPoolNDemandFlux(nitrogenTrackers.leafExtraN, fluxes.leafCreation,
+                          params.leafCN) +
+      calcPoolNDemandFlux(nitrogenTrackers.coarseRootExtraN,
+                          fluxes.coarseRootCreation, params.woodCN) +
+      calcPoolNDemandFlux(nitrogenTrackers.fineRootExtraN,
+                          fluxes.fineRootCreation, params.fineRootCN);
   return creationDemand;
 }
 
@@ -171,7 +178,7 @@ double calcNFixationFrac(void) {
 // See nitrogen.h
 void calcNFixationAndUptakeFluxes(void) {
   // These values may change later if we are under nitrogen limitation
-  double nDemandFlux = calcPlantNDemand();
+  double nDemandFlux = calcPlantNDemandFlux();
   double nFixationFrac = calcNFixationFrac();
 
   fluxes.nFixation = nFixationFrac * nDemandFlux;
@@ -193,13 +200,51 @@ void updateNitrogenPools(void) {
   // TBD: add equation numbers once published
 
   // Biomass pool changes
-  envi.plantWoodN = 0;
+  // First, standard creation and loss
+  double woodNDemandFlux = calcPoolNDemandFlux(
+      nitrogenTrackers.woodExtraN, fluxes.woodCreation, params.woodCN);
+  double woodNLossFlux = fluxes.woodLitter / params.woodCN;
+  envi.plantWoodN += (woodNDemandFlux - woodNLossFlux) * climate->length;
+
+  double leafNDemandFlux = calcPoolNDemandFlux(
+      nitrogenTrackers.leafExtraN, fluxes.leafCreation, params.leafCN);
+  double leafNLossFlux = fluxes.leafLitter / params.leafCN;
+  envi.plantLeafN += (leafNDemandFlux - leafNLossFlux) * climate->length;
+
+  double coarseRootNDemandFlux =
+      calcPoolNDemandFlux(nitrogenTrackers.coarseRootExtraN,
+                          fluxes.coarseRootCreation, params.woodCN);
+  double coarseRootNLossFlux = fluxes.coarseRootLoss / params.woodCN;
+  envi.coarseRootN +=
+      (coarseRootNDemandFlux - coarseRootNLossFlux) * climate->length;
+
+  double fineRootNDemandFlux =
+      calcPoolNDemandFlux(nitrogenTrackers.fineRootExtraN,
+                          fluxes.fineRootCreation, params.fineRootCN);
+  double fineRootNLossFlux = fluxes.fineRootLoss / params.fineRootCN;
+  envi.fineRootN += (fineRootNDemandFlux - fineRootNLossFlux) * climate->length;
+
+  // Now, leaf on creation
+  double leafOnC = fluxes.leafOnCreation;
+  double leafOnCWood = fluxes.leafOnCreationFromWood;
+  double leafOnCRoot = leafOnC - leafOnCWood;
+  // N added to leaf, at standard leaf C:N
+  envi.plantLeafN += (leafOnC / params.leafCN) * climate->length;
+  // N Removed from wood and coarse root; both use same C:N. The difference
+  // is handled as part of plantStorageN and uptake.
+  envi.plantWoodN -= (leafOnCWood / params.woodCN) * climate->length;
+  envi.coarseRootN -= (leafOnCRoot / params.woodCN) * climate->length;
 
   // Storage N changes
   // First, parcel plantStorageN to leaf-on demand and regular growth demand
   // fluxes.eventLeafOnCreation has already been handled in events.c
   double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
   envi.plantStorageN -= leafOnNFlux * climate->length;
+  // Make sure we didn't overshoot due to counting on leafExtraN
+  if (envi.plantStorageN < 0) {
+    envi.plantLeafN += envi.plantStorageN;
+    envi.plantStorageN = 0;
+  }
   //  Remaining plantStorageN can go to demand
   double uptake = fluxes.nUptake * climate->length;
   double uptakeFromStorage = fmin(uptake, envi.plantStorageN);
@@ -218,4 +263,47 @@ void updateNitrogenPools(void) {
 
   // Litter organic N
   envi.litterN += fluxes.nOrgLitter * climate->length;
+}
+
+NitrogenTrackers nitrogenTrackers;
+
+void initNitrogenTrackers(void) {
+  nitrogenTrackers.n2o = 0.0;
+  nitrogenTrackers.nLeaching = 0.0;
+  nitrogenTrackers.nFixation = 0.0;
+  nitrogenTrackers.nUptake = 0.0;
+
+  nitrogenTrackers.leafExtraN = 0.0;
+  nitrogenTrackers.woodExtraN = 0.0;
+  nitrogenTrackers.coarseRootExtraN = 0.0;
+  nitrogenTrackers.fineRootExtraN = 0.0;
+}
+
+void updateNitrogenTrackers(void) {
+  if (!ctx.nitrogenCycle) {
+    return;
+  }
+
+  // N cycle trackers
+  nitrogenTrackers.n2o = fluxes.nVolatilization * climate->length;
+  nitrogenTrackers.nLeaching = fluxes.nLeaching * climate->length;
+  nitrogenTrackers.nFixation = fluxes.nFixation * climate->length;
+  nitrogenTrackers.nUptake = fluxes.nUptake * climate->length;
+
+  // Nitrogen "overage" from C respiration loss
+  nitrogenTrackers.leafExtraN =
+      envi.plantLeafN - envi.plantLeafC / params.leafCN;
+  nitrogenTrackers.woodExtraN =
+      envi.plantWoodN - envi.plantWoodC / params.woodCN;
+  nitrogenTrackers.coarseRootExtraN =
+      envi.coarseRootN - envi.coarseRootC / params.woodCN;
+  nitrogenTrackers.fineRootExtraN =
+      envi.fineRootN - envi.fineRootC / params.fineRootCN;
+
+  // None of those overages should be negative - let's check. This will also
+  // convert any pesky `-1e-18` or `-0.000` roundoffs  to proper zero
+  ensureNonNegative(&nitrogenTrackers.leafExtraN, 0, "leafExtraN");
+  ensureNonNegative(&nitrogenTrackers.woodExtraN, 0, "woodExtraN");
+  ensureNonNegative(&nitrogenTrackers.coarseRootExtraN, 0, "coarseRootExtraN");
+  ensureNonNegative(&nitrogenTrackers.fineRootExtraN, 0, "fineRootExtraN");
 }

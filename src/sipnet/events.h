@@ -227,7 +227,7 @@ extern EventHarvestTracker eventHarvestTracker;
 void initEventTrackers(void);
 
 /*!
- * Perform any needed udpates post fluxes-and-pools updates
+ * Perform any needed updates post fluxes-and-pools updates
  */
 void updateEventTrackers(void);
 

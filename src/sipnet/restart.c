@@ -12,6 +12,7 @@
 #include "common/logging.h"
 #include "common/util.h"
 #include "events.h"
+#include "nitrogen.h"
 #include "version.h"
 
 #define RESTART_MAGIC "SIPNET_RESTART"
@@ -32,8 +33,10 @@
 #define NUM_SCHEMA_FIELDS 4
 #define NUM_MEAN_META_FIELDS 5
 #define NUM_ENVI_FIELDS 17
-#define NUM_TRACKER_FIELDS 32
+#define NUM_TRACKER_FIELDS 28
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
+#define NUM_NITROGEN_TRACKERS_FIELDS 8
+#define NUM_SURVIVAL_TRACKERS_FIELDS 2
 #define NUM_EVENT_TRACKERS_FIELDS 1
 
 // This one shouldn't change
@@ -43,6 +46,10 @@
 #define RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE (8 * NUM_TRACKER_FIELDS)
 #define RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE                          \
   (4 * NUM_PHENOLOGY_TRACKERS_FIELDS)
+#define RESTART_SCHEMA_LAYOUT_NITROGEN_TRACKERS_SIZE                           \
+  (8 * NUM_NITROGEN_TRACKERS_FIELDS)
+#define RESTART_SCHEMA_LAYOUT_SURVIVAL_TRACKERS_SIZE                           \
+  (4 * NUM_SURVIVAL_TRACKERS_FIELDS)
 #define RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE                              \
   (8 * NUM_EVENT_TRACKERS_FIELDS)
 
@@ -55,6 +62,14 @@ _Static_assert(sizeof(Trackers) == RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE,
 _Static_assert(sizeof(PhenologyTrackers) ==
                    RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE,
                "Restart schema drift: PhenologyTrackers changed; update "
+               "schema_layout.* checks");
+_Static_assert(sizeof(NitrogenTrackers) ==
+                   RESTART_SCHEMA_LAYOUT_NITROGEN_TRACKERS_SIZE,
+               "Restart schema drift: NitrogenTrackers changed; update "
+               "schema_layout.* checks");
+_Static_assert(sizeof(PlantSurvival) ==
+                   RESTART_SCHEMA_LAYOUT_SURVIVAL_TRACKERS_SIZE,
+               "Restart schema drift: PlantSurvival changed; update "
                "schema_layout.* checks");
 _Static_assert(sizeof(EventTillageTracker) ==
                    RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE,
@@ -131,7 +146,9 @@ typedef struct RestartState_s {
   StateField enviPF[NUM_ENVI_FIELDS + 1];
   StateField trackersPF[NUM_TRACKER_FIELDS + 1];
   StateField phenologyPF[NUM_PHENOLOGY_TRACKERS_FIELDS + 1];
+  StateField nitrogenPF[NUM_NITROGEN_TRACKERS_FIELDS + 1];
   StateField eventPF[NUM_EVENT_TRACKERS_FIELDS + 1];
+  StateField survivalPF[NUM_SURVIVAL_TRACKERS_FIELDS + 1];
   StateField endPF[1];  // Should only ever be exactly one here
 } RestartState;
 
@@ -224,16 +241,26 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->trackersPF[25] = (StateField){"trackers.totNee",             FT_DOUBLE, &trackers.totNee,             0};
   state->trackersPF[26] = (StateField){"trackers.lastYear",           FT_INT,    &trackers.lastYear,           0};
   state->trackersPF[27] = (StateField){"trackers.methane",            FT_DOUBLE, &trackers.methane,            0};
-  state->trackersPF[28] = (StateField){"trackers.n2o",                FT_DOUBLE, &trackers.n2o,                0};
-  state->trackersPF[29] = (StateField){"trackers.nLeaching",          FT_DOUBLE, &trackers.nLeaching,          0};
-  state->trackersPF[30] = (StateField){"trackers.nFixation",          FT_DOUBLE, &trackers.nFixation,          0};
-  state->trackersPF[31] = (StateField){"trackers.nUptake",            FT_DOUBLE, &trackers.nUptake,            0};
-  state->trackersPF[32] = (StateField){"trackers.invalid",            FT_INVALID, NULL, FIELD_INVALID};
+  state->trackersPF[28] = (StateField){"trackers.invalid",            FT_INVALID, NULL, FIELD_INVALID};
+
+  state->nitrogenPF[0] = (StateField){"nitrogen.n2o",              FT_DOUBLE, &nitrogenTrackers.n2o,              0};
+  state->nitrogenPF[1] = (StateField){"nitrogen.nLeaching",        FT_DOUBLE, &nitrogenTrackers.nLeaching,        0};
+  state->nitrogenPF[2] = (StateField){"nitrogen.nFixation",        FT_DOUBLE, &nitrogenTrackers.nFixation,        0};
+  state->nitrogenPF[3] = (StateField){"nitrogen.nUptake",          FT_DOUBLE, &nitrogenTrackers.nUptake,          0};
+  state->nitrogenPF[4] = (StateField){"nitrogen.woodExtraN",       FT_DOUBLE, &nitrogenTrackers.woodExtraN,       0};
+  state->nitrogenPF[5] = (StateField){"nitrogen.leafExtraN",       FT_DOUBLE, &nitrogenTrackers.leafExtraN,       0};
+  state->nitrogenPF[6] = (StateField){"nitrogen.coarseRootExtraN", FT_DOUBLE, &nitrogenTrackers.fineRootExtraN,   0};
+  state->nitrogenPF[7] = (StateField){"nitrogen.fineRootExtraN",   FT_DOUBLE, &nitrogenTrackers.coarseRootExtraN, 0};
+  state->nitrogenPF[8] = (StateField){"nitrogen.invalid",          FT_INVALID, NULL, FIELD_INVALID};
 
   state->phenologyPF[0] = (StateField){"phenology.didLeafGrowth", FT_INT,     &phenologyTrackers.didLeafGrowth, 0};
   state->phenologyPF[1] = (StateField){"phenology.didLeafFall",   FT_INT,     &phenologyTrackers.didLeafFall,   0};
   state->phenologyPF[2] = (StateField){"phenology.lastYear",      FT_INT,     &phenologyTrackers.lastYear,      0};
   state->phenologyPF[3] = (StateField){"phenology.invalid",       FT_INVALID, NULL, FIELD_INVALID};
+
+  state->survivalPF[0] = (StateField){"survival.isAlive",  FT_INT,     &plantSurvival.isAlive,  0};
+  state->survivalPF[1] = (StateField){"survival.justDied", FT_INT,     &plantSurvival.justDied, 0};
+  state->survivalPF[2] = (StateField){"survival.invalid",  FT_INVALID, NULL, FIELD_INVALID};
 
   state->eventPF[0] = (StateField){"event_trackers.d_till_mod", FT_DOUBLE,  &eventTillageTracker.d_till_mod, 0};
   state->eventPF[1] = (StateField){"event_trackers.invalid",    FT_INVALID, NULL, FIELD_INVALID};
@@ -614,6 +641,14 @@ static void readRestartState(const char *restartIn, RestartState *state,
                          value)) {
       continue;
     }
+    if (checkAndSetBatch(state->nitrogenPF, "nitrogen.",
+                         NUM_NITROGEN_TRACKERS_FIELDS, restartIn, key, value)) {
+      continue;
+    }
+    if (checkAndSetBatch(state->survivalPF, "survival.",
+                         NUM_SURVIVAL_TRACKERS_FIELDS, restartIn, key, value)) {
+      continue;
+    }
     if (checkAndSetBatch(state->eventPF, "event_trackers.",
                          NUM_EVENT_TRACKERS_FIELDS, restartIn, key, value)) {
       continue;
@@ -669,6 +704,8 @@ static void readRestartState(const char *restartIn, RestartState *state,
   verifySeenBatch(state->enviPF, NUM_ENVI_FIELDS, restartIn);
   verifySeenBatch(state->trackersPF, NUM_TRACKER_FIELDS, restartIn);
   verifySeenBatch(state->phenologyPF, NUM_PHENOLOGY_TRACKERS_FIELDS, restartIn);
+  verifySeenBatch(state->nitrogenPF, NUM_NITROGEN_TRACKERS_FIELDS, restartIn);
+  verifySeenBatch(state->survivalPF, NUM_SURVIVAL_TRACKERS_FIELDS, restartIn);
   verifySeenBatch(state->eventPF, NUM_EVENT_TRACKERS_FIELDS, restartIn);
   verifySeenBatch(state->endPF, NUM_END_FIELDS, restartIn);
 
@@ -737,6 +774,10 @@ static void writeRestartState(const char *restartOut, const RestartState *state,
   writeKeysBatch(out, state->trackersPF, NUM_TRACKER_FIELDS);
   fprintf(out, "\n");
   writeKeysBatch(out, state->phenologyPF, NUM_PHENOLOGY_TRACKERS_FIELDS);
+  fprintf(out, "\n");
+  writeKeysBatch(out, state->nitrogenPF, NUM_NITROGEN_TRACKERS_FIELDS);
+  fprintf(out, "\n");
+  writeKeysBatch(out, state->survivalPF, NUM_SURVIVAL_TRACKERS_FIELDS);
   fprintf(out, "\n");
   writeKeysBatch(out, state->eventPF, NUM_EVENT_TRACKERS_FIELDS);
   fprintf(out, "\n");
