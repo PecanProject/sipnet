@@ -19,6 +19,7 @@ class SipnetViewerWindow(SipnetViewerWindowCore):
       initial_bounds: TimeBounds | None,
       initial_layout: str,
       many_columns_threshold: int,
+      title: str,
   ) -> None:
     super().__init__(
       loaded=loaded_output,
@@ -28,7 +29,7 @@ class SipnetViewerWindow(SipnetViewerWindowCore):
       initial_bounds=initial_bounds,
       initial_layout=initial_layout,
       many_columns_threshold=many_columns_threshold,
-      title="SIPNET Output Viewer",
+      title=title,
       browse_output=("Browse output…","Load output"),
       output_label="Main SIPNET Output",
       loaded_label="Loaded file",
@@ -140,52 +141,23 @@ class SipnetViewerWindow(SipnetViewerWindowCore):
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
-  parser = argparse.ArgumentParser(
-    description="Interactive explorer for SIPNET output and events files."
+  parser = get_default_arg_parser(
+    "Interactive explorer for SIPNET output and events files."
   )
   parser.add_argument(
     "-i",
     "--input-file",
     default="sipnet.out",
-    help="Path to a SIPNET output file. Defaults to ./sipnet.out. If directory, looks for sipnet.out there.",
+    help= (
+      "Path to a SIPNET output file. Defaults to ./sipnet.out. If directory, "
+      "looks for sipnet.out there.",
+    )
   )
   parser.add_argument(
-    "-e",
-    "--events-file",
-    help="Optional path to an events output file. Defaults to events.out beside the main output.",
-  )
-  parser.add_argument(
-    "-t",
-    "--time-range",
+    "--title",
+    default="SIPNET Output Viewer",
     help=(
-      "Initial time range in the form "
-      "YYYY-DOY-HH,YYYY-DOY-HH "
-      "(example: 2016-001-00.00,2016-032-12.00)."
-    ),
-  )
-  parser.add_argument(
-    "-c",
-    "--columns",
-    help="Comma-separated list of SIPNET output columns to pre-select in the GUI.",
-  )
-  parser.add_argument(
-    "--event-types",
-    help="Comma-separated list of event types to pre-select in the GUI.",
-  )
-  parser.add_argument(
-    "-l",
-    "--layout",
-    choices=("subplots", "combined"),
-    default="subplots",
-    help="Initial plot layout. 'combined' uses twinned y-axes.",
-  )
-  parser.add_argument(
-    "--many-columns-threshold",
-    type=int,
-    default=6,
-    help=(
-      "Reserved for future use. Accepted for compatibility, "
-      "but warnings are currently disabled."
+      "Title displayed on the viewer window."
     ),
   )
   return parser
@@ -219,6 +191,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     initial_bounds=initial_bounds,
     initial_layout=args.layout,
     many_columns_threshold=args.many_columns_threshold,
+    title=args.title,
   )
   window.show()
   return application.exec()

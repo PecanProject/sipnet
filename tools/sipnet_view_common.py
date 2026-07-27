@@ -26,6 +26,7 @@ from PySide6.QtWidgets import (
   QListWidget,
   QMainWindow,
   QPushButton,
+  QRadioButton,
   QVBoxLayout,
   QWidget,
 )
@@ -135,6 +136,12 @@ def validate_new_column_name(name: str, existing_columns: Sequence[str]) -> str:
     fail(f"Column name {cleaned!r} already exists.")
   return cleaned
 
+
+def row_min(*cols):
+  return pd.concat(cols, axis=1).min(axis=1)
+
+def row_max(*cols):
+  return pd.concat(cols, axis=1).max(axis=1)
 
 def evaluate_new_column_expression(frame: pd.DataFrame, expression: str) -> pd.Series:
   cleaned = expression.strip()
@@ -499,6 +506,57 @@ def format_datetime_for_display(value: datetime) -> str:
   return format_time_value(year, day, hour)
 
 
+def get_default_arg_parser(desc: str) -> argparse.ArgumentParser:
+  parser = argparse.ArgumentParser(description=desc)
+  parser.add_argument(
+    "-e",
+    "--events-file",
+    help=(
+      "Optional path to an events output file (events.out). "
+      "Defaults to events.out in the same directory as the debug log prefix."
+    ),
+  )
+  parser.add_argument(
+    "-t",
+    "--time-range",
+    help=(
+      "Initial time range in the form "
+      "YYYY-DOY-HH,YYYY-DOY-HH "
+      "(example: 2016-001-00.00,2016-032-12.00)."
+    ),
+  )
+  parser.add_argument(
+    "-c",
+    "--columns",
+    help=(
+      "Comma-separated list of columns to pre-select in the GUI. "
+      "Use the prefixed names as shown in the Y-axis selector "
+      "(e.g. envi.plantWoodC, flux.photosynthesis, tracker.t.gpp)."
+    ),
+  )
+  parser.add_argument(
+    "--event-types",
+    help="Comma-separated list of event types to pre-select in the GUI.",
+  )
+  parser.add_argument(
+    "-l",
+    "--layout",
+    choices=("subplots", "combined"),
+    default="subplots",
+    help="Initial plot layout. 'combined' uses twinned y-axes.",
+  )
+  parser.add_argument(
+    "--many-columns-threshold",
+    type=int,
+    default=6,
+    help=(
+      "Reserved for future use. Accepted for compatibility, "
+      "but warnings are currently disabled."
+    ),
+  )
+
+  return parser
+
 class SipnetViewerWindowCore(QMainWindow):
   def __init__(
       self,
@@ -521,6 +579,10 @@ class SipnetViewerWindowCore(QMainWindow):
     self.many_columns_threshold = many_columns_threshold
     self.loaded_label = loaded_label
     self.loading_label_prefix=loading_label_prefix
+    self.show_lines = True
+    self.show_markers = False
+    self.marker_size = 5
+    self.marker_type = '.'
 
     self.setWindowTitle(title)
     self.resize(1500, 900)
@@ -533,6 +595,7 @@ class SipnetViewerWindowCore(QMainWindow):
     control_layout = QVBoxLayout(control_widget)
     control_layout.setContentsMargins(0, 0, 0, 0)
 
+    # Output
     output_row = QHBoxLayout()
     self.output_edit = QLineEdit(str(self.loaded.path))
     self.output_browse_button = QPushButton(browse_output[0])
@@ -544,6 +607,7 @@ class SipnetViewerWindowCore(QMainWindow):
     self.output_info_label = QLabel()
     self.output_info_label.setWordWrap(True)
 
+    # Events
     events_row = QHBoxLayout()
     initial_events_path = (
       str(self.loaded_events.path)
@@ -560,6 +624,8 @@ class SipnetViewerWindowCore(QMainWindow):
     self.events_info_label = QLabel()
     self.events_info_label.setWordWrap(True)
 
+    # Plot Controls
+    plot_row = QHBoxLayout()
     form_layout = QFormLayout()
     self.start_edit = QLineEdit()
     self.end_edit = QLineEdit()
@@ -575,6 +641,21 @@ class SipnetViewerWindowCore(QMainWindow):
     if combo_index >= 0:
       self.layout_combo.setCurrentIndex(combo_index)
     form_layout.addRow("Layout", self.layout_combo)
+    plot_row.addLayout(form_layout, stretch=1)
+
+    line_display = QVBoxLayout()
+    line_display.addWidget(QLabel("Lines/Markers"))
+    self.lines_button = QRadioButton("Lines")
+    self.lines_button.setChecked(True)
+    self.lines_button.toggled.connect(lambda:self.set_line_type(self.lines_button))
+    line_display.addWidget(self.lines_button)
+    self.markers_button = QRadioButton("Markers")
+    self.markers_button.toggled.connect(lambda:self.set_line_type(self.markers_button))
+    line_display.addWidget(self.markers_button)
+    self.both_button = QRadioButton("Both")
+    self.both_button.toggled.connect(lambda:self.set_line_type(self.both_button))
+    line_display.addWidget(self.both_button)
+    plot_row.addLayout(line_display, stretch=0)
 
     self.columns_list = QListWidget()
     self.columns_list.setSelectionMode(QAbstractItemView.MultiSelection)
@@ -608,7 +689,7 @@ class SipnetViewerWindowCore(QMainWindow):
     self.plot_group_box = QGroupBox("Plot controls")
     self.plot_group_box.setStyleSheet(GROUP_BOX_STYLE)
     layout = QVBoxLayout()
-    layout.addLayout(form_layout)
+    layout.addLayout(plot_row)
     columns_header = QHBoxLayout()
     columns_header.addWidget(QLabel("Y-axis columns"))
     columns_header.addStretch(1)
@@ -650,6 +731,17 @@ class SipnetViewerWindowCore(QMainWindow):
     color = "#a40000" if is_error else "#1f4f7a"
     self.status_label.setStyleSheet(f"color: {color};")
     self.status_label.setText(message)
+
+  def set_line_type(self, radio_button: QRadioButton):
+    # The True->False comes in first when a new button is selected, which should
+    # leave both show_lines and show_markers off
+    if radio_button.text() == "Both":
+      self.show_lines = radio_button.isChecked()
+      self.show_markers = radio_button.isChecked()
+    if radio_button.text() == "Lines":
+      self.show_lines = radio_button.isChecked()
+    if radio_button.text() == "Markers":
+      self.show_markers = radio_button.isChecked()
 
   def populate_output_controls(
       self,
@@ -938,6 +1030,15 @@ class SipnetViewerWindowCore(QMainWindow):
   ) -> None:
     self.figure.clear()
 
+    line_type_args = {}
+    if self.show_markers:
+      line_type_args['marker'] = self.marker_type
+      line_type_args['markersize'] = self.marker_size
+      line_type_args['linestyle'] = 'None'
+    if self.show_lines:
+      line_type_args['linestyle'] = '-'  # override, if both are set
+      line_type_args['linewidth'] = 1.5
+
     right_margin = max(0.35, 0.90 - 0.08 * max(0, len(columns) - 1))
     self.figure.subplots_adjust(left=0.10, right=right_margin, bottom=0.15, top=0.90)
 
@@ -962,8 +1063,8 @@ class SipnetViewerWindowCore(QMainWindow):
         frame[column],
         label=column,
         color=color,
-        linewidth=1.5,
         zorder=2,
+        **line_type_args,
       )
       axis.set_ylabel(column, color=color)
       axis.tick_params(axis="y", colors=color)
@@ -1004,6 +1105,15 @@ class SipnetViewerWindowCore(QMainWindow):
       events: pd.DataFrame | None,
   ) -> None:
     self.figure.clear()
+    line_type_args = {}
+    if self.show_markers:
+      line_type_args['marker'] = self.marker_type
+      line_type_args['markersize'] = self.marker_size
+      line_type_args['linestyle'] = 'None'
+    if self.show_lines:
+      line_type_args['linestyle'] = '-'  # override, if both are set
+      line_type_args['linewidth'] = 1.5
+
     x_values = frame[INTERNAL_TIMESTAMP_COLUMN]
     axes = self.figure.subplots(len(columns), 1, sharex=True, squeeze=False)
     flat_axes = [axis for row in axes for axis in row]
@@ -1011,7 +1121,7 @@ class SipnetViewerWindowCore(QMainWindow):
     event_handles: list[Line2D] = []
     for index, (axis, column) in enumerate(zip(flat_axes, columns)):
       color = PLOT_COLOR_CYCLE[index % len(PLOT_COLOR_CYCLE)]
-      axis.plot(x_values, frame[column], color=color, linewidth=1.5, zorder=2)
+      axis.plot(x_values, frame[column], color=color, zorder=2, **line_type_args)
       axis.set_ylabel(column)
       axis.grid(True, alpha=0.3)
 
