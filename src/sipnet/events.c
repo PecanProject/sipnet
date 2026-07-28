@@ -776,13 +776,37 @@ void updatePoolsForEvents(void) {
   envi.soilWater += fluxes.eventSoilWater * climate->length;
 
   // NITROGEN
-  // Harvest, fertilization, and leaf-off events
-  // (Planting events don't explicitly handle N)
   // Note: nitrogen_cycle implies litter_pool
   if (ctx.nitrogenCycle) {
+    // Mineral and organic N from fertilization, harvest, and leaf-off events
     envi.minN += fluxes.eventMinN * climate->length;
     envi.soilOrgN += fluxes.eventSoilOrgN * climate->length;
     envi.litterN += fluxes.eventLitterN * climate->length;
+
+    // Biomass N pools from planting and harvest events
+    envi.plantLeafN += fluxes.eventLeafN * climate->length;
+    envi.plantWoodN += fluxes.eventWoodN * climate->length;
+    envi.fineRootN += fluxes.eventFineRootN * climate->length;
+    envi.coarseRootN += fluxes.eventCoarseRootN * climate->length;
+
+    // Leaf-on event: N moves from wood/coarse root to leaf at their respective
+    // C:N ratios; any shortfall (leaf has lower C:N than wood) comes from
+    // plantStorageN.
+    double eventLeafOnFromRoot =
+        fluxes.eventLeafOnCreation - fluxes.eventLeafOnCreationFromWood;
+    envi.plantLeafN +=
+        (fluxes.eventLeafOnCreation / params.leafCN) * climate->length;
+    envi.plantWoodN -=
+        (fluxes.eventLeafOnCreationFromWood / params.woodCN) * climate->length;
+    envi.coarseRootN -=
+        (eventLeafOnFromRoot / params.woodCN) * climate->length;
+
+    // Leaf-off event: leaf N decreases; resorbed N goes to plantStorageN,
+    // remainder was already added to litterN above.
+    envi.plantLeafN -=
+        (fluxes.eventLeafOffLitter / params.leafCN) * climate->length;
+
+    // Storage: leaf-off resorption fills storage; leaf-on draws from storage
     double leafOnNFlux = calcLeafOnNFromC(fluxes.eventLeafOnCreation);
     envi.plantStorageN +=
         (fluxes.eventLeafOffNResorption - leafOnNFlux) * climate->length;

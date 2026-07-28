@@ -635,6 +635,268 @@ int testLeafTurnoverNResorption(void) {
   return status;
 }
 
+/////
+// calcPoolNDemandFlux: nitrogen demand for a single biomass pool
+
+int checkDemandFlux(double result, double expected, const char *label) {
+  int status = 0;
+  if (!compareDoubles(result, expected)) {
+    status = 1;
+    logTest("[calcPoolNDemandFlux] %s: got %8.4f, expected %8.4f\n", label,
+            result, expected);
+  }
+  return status;
+}
+
+int testCalcPoolNDemandFlux(void) {
+  int status = 0;
+  logTest("Running testCalcPoolNDemandFlux\n");
+
+  // climate->length = 0.125 (set in setupTests)
+  // leafCN = 20, woodCN = 100
+
+  // No extra N, positive creation: demand = creationCFlux / CN
+  status |= checkDemandFlux(calcPoolNDemandFlux(0.0, 60.0, params.leafCN),
+                             3.0, "no extraN, leafCN");
+  status |= checkDemandFlux(calcPoolNDemandFlux(0.0, 100.0, params.woodCN),
+                             1.0, "no extraN, woodCN");
+
+  // Zero creation: demand = 0 regardless of extraN
+  status |= checkDemandFlux(calcPoolNDemandFlux(0.0, 0.0, params.leafCN),
+                             0.0, "zero creation");
+  status |= checkDemandFlux(calcPoolNDemandFlux(1.0, 0.0, params.leafCN),
+                             0.0, "zero creation with extraN");
+
+  // Negative creation (e.g. loss without creation): demand = 0
+  status |= checkDemandFlux(calcPoolNDemandFlux(0.0, -10.0, params.leafCN),
+                             0.0, "negative creation");
+
+  // Partial extra N: demand reduced by extraNFlux = extraN / length
+  // extraNFlux = 0.25 / 0.125 = 2.0; demandFlux = 60/20 = 3.0
+  // result = max(0, 3.0 - 2.0) = 1.0
+  status |= checkDemandFlux(calcPoolNDemandFlux(0.25, 60.0, params.leafCN),
+                             1.0, "partial extraN");
+
+  // Extra N exactly covers demand: result = 0
+  // extraNFlux = 0.375 / 0.125 = 3.0 = demandFlux; result = max(0, 0) = 0
+  status |= checkDemandFlux(calcPoolNDemandFlux(0.375, 60.0, params.leafCN),
+                             0.0, "extraN exactly covers demand");
+
+  // Extra N exceeds demand: result clamped to 0
+  // extraNFlux = 0.5 / 0.125 = 4.0 > demandFlux 3.0; result = max(0, -1.0) = 0
+  status |= checkDemandFlux(calcPoolNDemandFlux(0.5, 60.0, params.leafCN),
+                             0.0, "extraN exceeds demand");
+
+  return status;
+}
+
+/////
+// updateNitrogenTrackers: verify extraN and N cycle tracker calculations
+
+int checkTrackerVal(double actual, double expected, const char *label) {
+  int status = 0;
+  if (!compareDoubles(actual, expected)) {
+    status = 1;
+    logTest("[updateNitrogenTrackers] %s: got %8.6f, expected %8.6f\n", label,
+            actual, expected);
+  }
+  return status;
+}
+
+int testUpdateNitrogenTrackers(void) {
+  int status = 0;
+  logTest("Running testUpdateNitrogenTrackers\n");
+
+  initNitrogenTrackers();
+
+  // Case 1: pools exactly at C/CN ratio -> all extraN == 0
+  // plantLeafC=40, leafCN=20 -> expected leafN=2; set plantLeafN=2
+  resetState();
+  envi.plantLeafC = 40.0;
+  envi.plantLeafN = 40.0 / params.leafCN;  // 2.0
+  envi.plantWoodC = 100.0;
+  envi.plantWoodN = 100.0 / params.woodCN;  // 1.0
+  envi.fineRootC = 80.0;
+  envi.fineRootN = 80.0 / params.fineRootCN;  // 2.0
+  envi.coarseRootC = 50.0;
+  envi.coarseRootN = 50.0 / params.woodCN;  // 0.5
+  fluxes.nVolatilization = 1.0;
+  fluxes.nLeaching = 0.5;
+  fluxes.nFixation = 0.2;
+  fluxes.nUptake = 0.3;
+
+  updateNitrogenTrackers();
+
+  status |= checkTrackerVal(nitrogenTrackers.leafExtraN, 0.0, "leafExtraN balanced");
+  status |= checkTrackerVal(nitrogenTrackers.woodExtraN, 0.0, "woodExtraN balanced");
+  status |= checkTrackerVal(nitrogenTrackers.fineRootExtraN, 0.0, "fineRootExtraN balanced");
+  status |= checkTrackerVal(nitrogenTrackers.coarseRootExtraN, 0.0,
+                            "coarseRootExtraN balanced");
+  // Trackers should capture fluxes * length
+  status |= checkTrackerVal(nitrogenTrackers.n2o, 1.0 * climate->length, "n2o");
+  status |= checkTrackerVal(nitrogenTrackers.nLeaching, 0.5 * climate->length,
+                            "nLeaching");
+  status |= checkTrackerVal(nitrogenTrackers.nFixation, 0.2 * climate->length,
+                            "nFixation");
+  status |= checkTrackerVal(nitrogenTrackers.nUptake, 0.3 * climate->length,
+                            "nUptake");
+
+  // Case 2: extra N in leaf pool (plantLeafN > plantLeafC/leafCN)
+  // plantLeafC=40, leafCN=20 -> expected=2; set plantLeafN=2.5 -> extraN=0.5
+  resetState();
+  envi.plantLeafC = 40.0;
+  envi.plantLeafN = 2.5;
+  envi.plantWoodC = 100.0;
+  envi.plantWoodN = 100.0 / params.woodCN;
+  envi.fineRootC = 80.0;
+  envi.fineRootN = 80.0 / params.fineRootCN;
+  envi.coarseRootC = 50.0;
+  envi.coarseRootN = 50.0 / params.woodCN;
+
+  updateNitrogenTrackers();
+
+  status |= checkTrackerVal(nitrogenTrackers.leafExtraN, 0.5, "leafExtraN positive");
+  status |= checkTrackerVal(nitrogenTrackers.woodExtraN, 0.0, "woodExtraN still 0");
+
+  // Case 3: N deficit in wood pool should be clamped to 0
+  // plantWoodN < plantWoodC/woodCN -> extraN negative -> clamped to 0
+  resetState();
+  envi.plantLeafC = 40.0;
+  envi.plantLeafN = 40.0 / params.leafCN;
+  envi.plantWoodC = 100.0;
+  envi.plantWoodN = 0.5;  // less than expected 1.0
+  envi.fineRootC = 80.0;
+  envi.fineRootN = 80.0 / params.fineRootCN;
+  envi.coarseRootC = 50.0;
+  envi.coarseRootN = 50.0 / params.woodCN;
+
+  updateNitrogenTrackers();
+
+  status |= checkTrackerVal(nitrogenTrackers.woodExtraN, 0.0,
+                            "woodExtraN deficit clamped to 0");
+
+  return status;
+}
+
+/////
+// updateNitrogenPools: biomass N pool updates from creation and loss fluxes
+
+int checkBiomassN(double actual, double expected, const char *label) {
+  int status = 0;
+  if (!compareDoubles(actual, expected)) {
+    status = 1;
+    logTest("[testBiomassNPools] %s: got %8.6f, expected %8.6f\n", label,
+            actual, expected);
+  }
+  return status;
+}
+
+int testBiomassNPoolUpdates(void) {
+  int status = 0;
+  logTest("Running testBiomassNPoolUpdates\n");
+
+  initNitrogenTrackers();
+
+  // Case 1: wood creation and loss update plantWoodN
+  // woodCreation=100/step, woodCN=100 -> woodNDemandFlux=1.0/step
+  // woodLitter=50/step, woodCN=100 -> woodNLossFlux=0.5/step
+  // net N change per step = (1.0 - 0.5) * 0.125 = 0.0625
+  resetState();
+  envi.plantWoodN = 1.0;
+  envi.plantWoodC = 100.0;
+  fluxes.woodCreation = 100.0;
+  fluxes.woodLitter = 50.0;
+
+  updateNitrogenPools();
+
+  double expWoodN = 1.0 + (100.0 / params.woodCN - 50.0 / params.woodCN) *
+                              climate->length;  // 1.0 + 0.0625
+  status |= checkBiomassN(envi.plantWoodN, expWoodN, "plantWoodN after creation/loss");
+
+  // Case 2: leaf creation and loss update plantLeafN
+  // leafCreation=40/step, leafCN=20 -> leafNDemandFlux=2.0/step
+  // leafLitter=20/step, leafCN=20 -> leafNLossFlux=1.0/step
+  // net N change = (2.0 - 1.0) * 0.125 = 0.125
+  resetState();
+  envi.plantLeafN = 0.5;
+  envi.plantLeafC = 10.0;
+  fluxes.leafCreation = 40.0;
+  fluxes.leafLitter = 20.0;
+
+  updateNitrogenPools();
+
+  double expLeafN = 0.5 + (40.0 / params.leafCN - 20.0 / params.leafCN) *
+                              climate->length;  // 0.5 + 0.125
+  status |= checkBiomassN(envi.plantLeafN, expLeafN, "plantLeafN after creation/loss");
+
+  // Case 3: fine root creation and loss update fineRootN
+  // fineRootCreation=80/step, fineRootCN=40 -> fineRootNDemandFlux=2.0/step
+  // fineRootLoss=40/step, fineRootCN=40 -> fineRootNLossFlux=1.0/step
+  // net N change = (2.0 - 1.0) * 0.125 = 0.125
+  resetState();
+  envi.fineRootN = 1.0;
+  envi.fineRootC = 40.0;
+  fluxes.fineRootCreation = 80.0;
+  fluxes.fineRootLoss = 40.0;
+
+  updateNitrogenPools();
+
+  double expFineN = 1.0 + (80.0 / params.fineRootCN - 40.0 / params.fineRootCN) *
+                               climate->length;
+  status |= checkBiomassN(envi.fineRootN, expFineN, "fineRootN after creation/loss");
+
+  // Case 4: leaf-on event redistributes N from wood/coarse root to leaf
+  // leafOnCreation=20, all from wood (leafOnCreationFromWood=20)
+  // leafN increases by 20/leafCN = 20/20 = 1.0 per step
+  // woodN decreases by 20/woodCN = 20/100 = 0.2 per step
+  // storageN decreases by calcLeafOnNFromC(20) = max(0,20/20-20/100) = 0.8 per step
+  resetState();
+  envi.plantLeafN = 0.5;
+  envi.plantWoodN = 2.0;
+  envi.coarseRootN = 1.0;
+  envi.plantStorageN = 1.0;  // enough for leaf-on N
+  fluxes.leafOnCreation = 20.0;
+  fluxes.leafOnCreationFromWood = 20.0;  // all from wood
+
+  updateNitrogenPools();
+
+  double leafOnLeafDelta = 20.0 / params.leafCN * climate->length;  // 0.125
+  double leafOnWoodDelta = 20.0 / params.woodCN * climate->length;  // 0.025
+  status |=
+      checkBiomassN(envi.plantLeafN, 0.5 + leafOnLeafDelta, "plantLeafN after leaf-on");
+  status |=
+      checkBiomassN(envi.plantWoodN, 2.0 - leafOnWoodDelta, "plantWoodN after leaf-on");
+  // coarseRootN unchanged since all came from wood
+  status |= checkBiomassN(envi.coarseRootN, 1.0, "coarseRootN unchanged after all-wood leaf-on");
+
+  // Case 5: leaf-on from both wood and coarse root
+  // leafOnCreation=20, leafOnCreationFromWood=10, rest from root
+  // leafN += 20/20 * dt = 1.0 * 0.125 = 0.125
+  // woodN -= 10/100 * dt = 0.1 * 0.125 = 0.0125
+  // coarseRootN -= 10/100 * dt = 0.1 * 0.125 = 0.0125
+  resetState();
+  envi.plantLeafN = 0.5;
+  envi.plantWoodN = 2.0;
+  envi.coarseRootN = 1.0;
+  envi.plantStorageN = 1.0;
+  fluxes.leafOnCreation = 20.0;
+  fluxes.leafOnCreationFromWood = 10.0;
+
+  updateNitrogenPools();
+
+  double leafOnLeafDelta2 = 20.0 / params.leafCN * climate->length;  // 0.125
+  double leafOnWoodDelta2 = 10.0 / params.woodCN * climate->length;  // 0.0125
+  double leafOnRootDelta2 = 10.0 / params.woodCN * climate->length;  // 0.0125
+  status |= checkBiomassN(envi.plantLeafN, 0.5 + leafOnLeafDelta2,
+                           "plantLeafN after split leaf-on");
+  status |= checkBiomassN(envi.plantWoodN, 2.0 - leafOnWoodDelta2,
+                           "plantWoodN after split leaf-on");
+  status |= checkBiomassN(envi.coarseRootN, 1.0 - leafOnRootDelta2,
+                           "coarseRootN after split leaf-on");
+
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -650,6 +912,9 @@ int run(void) {
   status |= testUpdateNitrogenPoolsFromStorage();
   status |= testOrganicNWithResorption();
   status |= testLeafTurnoverNResorption();
+  status |= testCalcPoolNDemandFlux();
+  status |= testUpdateNitrogenTrackers();
+  status |= testBiomassNPoolUpdates();
 
   return status;
 }
