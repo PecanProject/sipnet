@@ -88,10 +88,10 @@ int run(void) {
   params.woodCN = 10.0;
   params.fineRootCN = 40.0;
   initEnv();
-  envi.plantLeafN = envi.plantLeafC / params.leafCN;   // 1/20 = 0.05
-  envi.plantWoodN = envi.plantWoodC / params.woodCN;   // 2/10 = 0.2
-  envi.fineRootN = envi.fineRootC / params.fineRootCN; // 3/40 = 0.075
-  envi.coarseRootN = envi.coarseRootC / params.woodCN; // 4/10 = 0.4
+  envi.plantLeafN = envi.plantLeafC / params.leafCN;  // 1/20 = 0.05
+  envi.plantWoodN = envi.plantWoodC / params.woodCN;  // 2/10 = 0.2
+  envi.fineRootN = envi.fineRootC / params.fineRootCN;  // 3/40 = 0.075
+  envi.coarseRootN = envi.coarseRootC / params.woodCN;  // 4/10 = 0.4
   initEvents("events_one_planting.in", "events.out", 0);
   setupEvents();
   procEvents();

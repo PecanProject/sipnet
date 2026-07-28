@@ -115,10 +115,11 @@ int run(void) {
                         "plantCAccountingDelta");
   status |= checkHeader(FLUXES_FILE, 3 + EXPECTED_FLUX_FIELDS, "photosynthesis",
                         "litterMethane");
-  status |= checkHeader(TRACKERS_FILE,
-                        3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS +
-                            EXPECTED_NITROGEN_TRACKER_FIELDS,
-                        "t.gpp", "nt.n2o");
+  status |=
+      checkHeader(TRACKERS_FILE,
+                  3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS +
+                      EXPECTED_NITROGEN_TRACKER_FIELDS,
+                  "t.gpp", "nt.n2o");
 
   int mainLines = countLines(SIPNET_OUT_FILE);
   int enviLines = countLines(ENVI_FILE);

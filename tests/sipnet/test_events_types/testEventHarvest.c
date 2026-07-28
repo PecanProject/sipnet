@@ -156,16 +156,16 @@ int run(void) {
   expCoarseC = 5 * (1 - 0.2 - 0.4 - 0.1 - 0.1);
   // Litter/soil N uses biomass N pools (plantLeafN + plantWoodN = totalAbove)
   // Both events use the initial pool values since pools update after all fluxes
-  double initLeafN = 2.0 / params.leafCN;     // 2/20 = 0.1
-  double initWoodN = 3.0 / params.woodCN;     // 3/10 = 0.3
-  double initFineN = 4.0 / params.fineRootCN; // 4/30
-  double initCoarseN = 5.0 / params.woodCN;   // 5/10 = 0.5
+  double initLeafN = 2.0 / params.leafCN;  // 2/20 = 0.1
+  double initWoodN = 3.0 / params.woodCN;  // 3/10 = 0.3
+  double initFineN = 4.0 / params.fineRootCN;  // 4/30
+  double initCoarseN = 5.0 / params.woodCN;  // 5/10 = 0.5
   double totalAbove = initLeafN + initWoodN;
   double totalBelow = initFineN + initCoarseN;
   expSoilOrgN = 2 + (0.4 + 0.1) * totalBelow;
   expLitterN = 3 + (0.3 + 0.2) * totalAbove;
-  // Biomass N changes: both events reduce N at their combined (fracRA + fracTA) rates
-  // Event 1: fracRA=0.1, fracTA=0.3 -> above reduction = 0.4
+  // Biomass N changes: both events reduce N at their combined (fracRA + fracTA)
+  // rates Event 1: fracRA=0.1, fracTA=0.3 -> above reduction = 0.4
   //          fracRB=0.2, fracTB=0.4 -> below reduction = 0.6
   // Event 2: fracRA=0.2, fracTA=0.2 -> above reduction = 0.4
   //          fracRB=0.1, fracTB=0.1 -> below reduction = 0.2
