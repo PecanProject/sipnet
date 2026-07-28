@@ -249,8 +249,8 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->nitrogenPF[3] = (StateField){"nitrogen.nUptake",          FT_DOUBLE, &nitrogenTrackers.nUptake,          0};
   state->nitrogenPF[4] = (StateField){"nitrogen.woodExtraN",       FT_DOUBLE, &nitrogenTrackers.woodExtraN,       0};
   state->nitrogenPF[5] = (StateField){"nitrogen.leafExtraN",       FT_DOUBLE, &nitrogenTrackers.leafExtraN,       0};
-  state->nitrogenPF[6] = (StateField){"nitrogen.coarseRootExtraN", FT_DOUBLE, &nitrogenTrackers.fineRootExtraN,   0};
-  state->nitrogenPF[7] = (StateField){"nitrogen.fineRootExtraN",   FT_DOUBLE, &nitrogenTrackers.coarseRootExtraN, 0};
+  state->nitrogenPF[6] = (StateField){"nitrogen.coarseRootExtraN", FT_DOUBLE, &nitrogenTrackers.coarseRootExtraN, 0};
+  state->nitrogenPF[7] = (StateField){"nitrogen.fineRootExtraN",   FT_DOUBLE, &nitrogenTrackers.fineRootExtraN,   0};
   state->nitrogenPF[8] = (StateField){"nitrogen.invalid",          FT_INVALID, NULL, FIELD_INVALID};
 
   state->phenologyPF[0] = (StateField){"phenology.didLeafGrowth", FT_INT,     &phenologyTrackers.didLeafGrowth, 0};
