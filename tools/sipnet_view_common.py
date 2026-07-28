@@ -513,7 +513,7 @@ def get_default_arg_parser(desc: str) -> argparse.ArgumentParser:
     "--events-file",
     help=(
       "Optional path to an events output file (events.out). "
-      "Defaults to events.out in the same directory as the debug log prefix."
+      "Defaults to events.out in the same directory as the selected input."
     ),
   )
   parser.add_argument(
