@@ -150,7 +150,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     default="sipnet.out",
     help= (
       "Path to a SIPNET output file. Defaults to ./sipnet.out. If directory, "
-      "looks for sipnet.out there.",
+      "looks for sipnet.out there."
     )
   )
   parser.add_argument(
