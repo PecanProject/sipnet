@@ -807,9 +807,10 @@ void updatePoolsForEvents(void) {
         (fluxes.eventLeafOffLitter / params.leafCN) * climate->length;
 
     // Storage: leaf-off resorption fills storage; leaf-on draws from storage
-    double leafOnNFlux = calcLeafOnNFromC(fluxes.eventLeafOnCreation);
-    envi.plantStorageN +=
-        (fluxes.eventLeafOffNResorption - leafOnNFlux) * climate->length;
+    // leaf-on
+    doPlantStorageUpdateFromLeafOn(fluxes.eventLeafOnCreation);
+    // leaf-off
+    envi.plantStorageN += fluxes.eventLeafOffNResorption * climate->length;
   }
 }
 
