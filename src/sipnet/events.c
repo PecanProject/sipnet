@@ -798,8 +798,7 @@ void updatePoolsForEvents(void) {
         (fluxes.eventLeafOnCreation / params.leafCN) * climate->length;
     envi.plantWoodN -=
         (fluxes.eventLeafOnCreationFromWood / params.woodCN) * climate->length;
-    envi.coarseRootN -=
-        (eventLeafOnFromRoot / params.woodCN) * climate->length;
+    envi.coarseRootN -= (eventLeafOnFromRoot / params.woodCN) * climate->length;
 
     // Leaf-off event: leaf N decreases; resorbed N goes to plantStorageN,
     // remainder was already added to litterN above.
