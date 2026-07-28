@@ -57,6 +57,17 @@ void calcNFixationAndUptakeFluxes(void);
 void calcNitrogenFluxes(void);
 
 /*!
+ * Update the plantStorageN pool for the leaf-on creation flux
+ *
+ * Reduces plantStorageN based on leaf-on flux, and reduces plantLeafN if there
+ * is overshoot from factoring in any available leafExtraN. This function is
+ * used both in this nitrogen module and the events module.
+ *
+ * @param leafOnCFlux leaf-on carbon creation flux
+ */
+void doPlantStorageUpdateFromLeafOn(double leafOnCFlux);
+
+/*!
  * Update all pools from nitrogen fluxes
  *
  * This is the general pool update wrapper for sipnet.c

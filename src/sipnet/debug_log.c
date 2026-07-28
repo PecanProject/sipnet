@@ -22,7 +22,7 @@ typedef struct DebugField {
 } DebugField;
 
 #define NUM_LOGGED_ENVI_FIELDS 17
-#define NUM_LOGGED_FLUX_FIELDS 55
+#define NUM_LOGGED_FLUX_FIELDS 59
 #define NUM_LOGGED_TRACKER_FIELDS 28
 #define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
 #define NUM_LOGGED_NITROGEN_TRACKER_FIELDS 8
@@ -115,6 +115,10 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"eventSoilWater", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilWater},
   debugFields->fluxDF[ind++] = (DebugField){"eventSoilC", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilC},
   debugFields->fluxDF[ind++] = (DebugField){"eventLitterC", DEBUG_FIELD_DOUBLE, &fluxes.eventLitterC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafN", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventWoodN", DEBUG_FIELD_DOUBLE, &fluxes.eventWoodN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventFineRootN", DEBUG_FIELD_DOUBLE, &fluxes.eventFineRootN},
+  debugFields->fluxDF[ind++] = (DebugField){"eventCoarseRootN", DEBUG_FIELD_DOUBLE, &fluxes.eventCoarseRootN},
   debugFields->fluxDF[ind++] = (DebugField){"eventMinN", DEBUG_FIELD_DOUBLE, &fluxes.eventMinN},
   debugFields->fluxDF[ind++] = (DebugField){"eventSoilOrgN", DEBUG_FIELD_DOUBLE, &fluxes.eventSoilOrgN},
   debugFields->fluxDF[ind++] = (DebugField){"eventLitterN", DEBUG_FIELD_DOUBLE, &fluxes.eventLitterN},

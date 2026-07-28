@@ -25,6 +25,27 @@ int checkBioOutput(double leafC, double woodC, double fineC, double coarseC) {
   return status;
 }
 
+int checkBioNOutput(double leafN, double woodN, double fineN, double coarseN) {
+  int status = 0;
+  if (!compareDoubles(leafN, envi.plantLeafN)) {
+    logTest("Plant leaf N is %f, expected %f\n", envi.plantLeafN, leafN);
+    status = 1;
+  }
+  if (!compareDoubles(woodN, envi.plantWoodN)) {
+    logTest("Plant wood N is %f, expected %f\n", envi.plantWoodN, woodN);
+    status = 1;
+  }
+  if (!compareDoubles(fineN, envi.fineRootN)) {
+    logTest("Fine root N is %f, expected %f\n", envi.fineRootN, fineN);
+    status = 1;
+  }
+  if (!compareDoubles(coarseN, envi.coarseRootN)) {
+    logTest("Coarse root N is %f, expected %f\n", envi.coarseRootN, coarseN);
+    status = 1;
+  }
+  return status;
+}
+
 int checkSoilOutput(double soilC, double litterC, double soilOrgN,
                     double litterN) {
   int status = 0;
@@ -133,13 +154,29 @@ int run(void) {
   expWoodC = 3 * (1 - 0.1 - 0.3 - 0.2 - 0.2);
   expFineC = 4 * (1 - 0.2 - 0.4 - 0.1 - 0.1);
   expCoarseC = 5 * (1 - 0.2 - 0.4 - 0.1 - 0.1);
-  expSoilOrgN = 2 + (4 * (0.4 + 0.1)) / params.fineRootCN +
-                (5 * (0.4 + 0.1)) / params.woodCN;
-  expLitterN =
-      3 + (3 * (0.3 + 0.2)) / params.woodCN + (2 * (0.3 + 0.2)) / params.leafCN;
+  // Litter/soil N uses biomass N pools (plantLeafN + plantWoodN = totalAbove)
+  // Both events use the initial pool values since pools update after all fluxes
+  double initLeafN = 2.0 / params.leafCN;  // 2/20 = 0.1
+  double initWoodN = 3.0 / params.woodCN;  // 3/10 = 0.3
+  double initFineN = 4.0 / params.fineRootCN;  // 4/30
+  double initCoarseN = 5.0 / params.woodCN;  // 5/10 = 0.5
+  double totalAbove = initLeafN + initWoodN;
+  double totalBelow = initFineN + initCoarseN;
+  expSoilOrgN = 2 + (0.4 + 0.1) * totalBelow;
+  expLitterN = 3 + (0.3 + 0.2) * totalAbove;
+  // Biomass N changes: both events reduce N at their combined (fracRA + fracTA)
+  // rates Event 1: fracRA=0.1, fracTA=0.3 -> above reduction = 0.4
+  //          fracRB=0.2, fracTB=0.4 -> below reduction = 0.6
+  // Event 2: fracRA=0.2, fracTA=0.2 -> above reduction = 0.4
+  //          fracRB=0.1, fracTB=0.1 -> below reduction = 0.2
+  double expLeafN = initLeafN * (1 - (0.1 + 0.3) - (0.2 + 0.2));
+  double expWoodN = initWoodN * (1 - (0.1 + 0.3) - (0.2 + 0.2));
+  double expFineN = initFineN * (1 - (0.2 + 0.4) - (0.1 + 0.1));
+  double expCoarseN = initCoarseN * (1 - (0.2 + 0.4) - (0.1 + 0.1));
 
   status |= checkBioOutput(expLeafC, expWoodC, expFineC, expCoarseC);
   status |= checkSoilOutput(expSoilC, expLitterC, expSoilOrgN, expLitterN);
+  status |= checkBioNOutput(expLeafN, expWoodN, expFineN, expCoarseN);
 
   return status;
 }

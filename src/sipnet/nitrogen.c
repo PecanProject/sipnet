@@ -194,6 +194,17 @@ void calcNitrogenFluxes(void) {
 }
 
 // see nitrogen.h
+void doPlantStorageUpdateFromLeafOn(double leafOnCFlux) {
+  double leafOnNFlux = calcLeafOnNFromC(leafOnCFlux);
+  envi.plantStorageN -= leafOnNFlux * climate->length;
+  // Make sure we didn't overshoot due to counting on leafExtraN
+  if (envi.plantStorageN < 0) {
+    envi.plantLeafN += envi.plantStorageN;
+    envi.plantStorageN = 0;
+  }
+}
+
+// see nitrogen.h
 void updateNitrogenPools(void) {
   // Nitrogen Cycle
   // :: from [5], nitrogen cycle model
@@ -238,13 +249,8 @@ void updateNitrogenPools(void) {
   // Storage N changes
   // First, parcel plantStorageN to leaf-on demand and regular growth demand
   // fluxes.eventLeafOnCreation has already been handled in events.c
-  double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
-  envi.plantStorageN -= leafOnNFlux * climate->length;
-  // Make sure we didn't overshoot due to counting on leafExtraN
-  if (envi.plantStorageN < 0) {
-    envi.plantLeafN += envi.plantStorageN;
-    envi.plantStorageN = 0;
-  }
+  doPlantStorageUpdateFromLeafOn(fluxes.leafOnCreation);
+
   //  Remaining plantStorageN can go to demand
   double uptake = fluxes.nUptake * climate->length;
   double uptakeFromStorage = fmin(uptake, envi.plantStorageN);
