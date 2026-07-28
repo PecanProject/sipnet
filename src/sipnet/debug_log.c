@@ -66,7 +66,7 @@ void initDebugArrays() {
   debugFields->enviDF[ind++] = (DebugField){"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
   debugFields->enviDF[ind++] = (DebugField){"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
   debugFields->enviDF[ind++] = (DebugField){"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
-  debugFields->enviDF[ind++] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
+  debugFields->enviDF[ind++] = (DebugField){"plantCAccountingDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
   if (ind != NUM_LOGGED_ENVI_FIELDS) {
     logInternalError("Debug log enviDF array size mismatch\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
