@@ -30,6 +30,7 @@ from PySide6.QtWidgets import (
   QVBoxLayout,
   QWidget,
 )
+import numpy as np
 
 TIME_COLUMN_NAMES = ("year", "day", "time")
 EVENT_COLUMN_NAMES = ("year", "day", "type")
@@ -557,6 +558,45 @@ def get_default_arg_parser(desc: str) -> argparse.ArgumentParser:
 
   return parser
 
+def find_closest_sorted(arr, target):
+  # Find insertion index
+  idx = np.searchsorted(arr, target)
+
+  # Handle boundary edges
+  if idx == 0:
+    return 0
+  if idx == len(arr):
+    return -1
+
+  # Compare neighbors to see which is closer
+  before = arr[idx - 1]
+  after = arr[idx]
+  if after - target < target - before:
+    return idx
+  else:
+    return idx - 1
+
+class CustomNav2QT(NavigationToolbar2QT):
+  def mouse_move(self, event):
+    # Check if the mouse is inside an Axes
+    if event.inaxes:
+      ax = event.inaxes
+      line = ax.get_lines()[0]
+      xd = line.get_xdata()
+      yd = line.get_ydata()
+      # The event xdata is in days, but we need seconds
+      ed = (event.xdata * 86400).astype('datetime64[s]')
+      near_idx = find_closest_sorted(xd, ed)
+      #print(xd[near_idx], yd[near_idx])
+      x = np.datetime_as_string(xd[near_idx], unit='m')
+      y = yd[near_idx]
+      #breakpoint()
+      # Set a custom message on the toolbar status bar
+      self.set_message(f"Closest data point:\nX: {x}  Y: {y}")
+    else:
+      # Fallback for when the mouse leaves the plot area
+      self.set_message("Outside plotting area")
+
 class SipnetViewerWindowCore(QMainWindow):
   def __init__(
       self,
@@ -706,7 +746,7 @@ class SipnetViewerWindowCore(QMainWindow):
 
     self.figure = Figure()
     self.canvas = FigureCanvasQTAgg(self.figure)
-    self.toolbar = NavigationToolbar2QT(self.canvas, self)
+    self.toolbar = CustomNav2QT(self.canvas, self)
 
     plot_widget = QWidget(self)
     plot_layout = QVBoxLayout(plot_widget)
