@@ -307,7 +307,7 @@ void updateNitrogenTrackers(void) {
       envi.fineRootN - envi.fineRootC / params.fineRootCN;
 
   // None of those overages should be negative - let's check. This will also
-  // convert any pesky `-1e-18` or `-0.000` roundoffs  to proper zero
+  // convert any pesky `-1e-18` or `-0.000` roundoffs to proper zero
   ensureNonNegative(&nitrogenTrackers.leafExtraN, 0, "leafExtraN");
   ensureNonNegative(&nitrogenTrackers.woodExtraN, 0, "woodExtraN");
   ensureNonNegative(&nitrogenTrackers.coarseRootExtraN, 0, "coarseRootExtraN");
