@@ -1557,7 +1557,8 @@ void initPhenologyTrackers(void) {
 
 void initPlantSurvivalTracker(void) {
   plantSurvival.justDied = 0;
-  if (envi.plantWoodC > TINY && envi.coarseRootC > TINY) {
+  double totalRoots = envi.fineRootC + envi.coarseRootC;
+  if (envi.plantWoodC > TINY && totalRoots > TINY) {
     plantSurvival.isAlive = 1;
   } else {
     plantSurvival.isAlive = 0;
@@ -1700,26 +1701,63 @@ void updatePoolsForSoil(void) {
 /*!
  * Simple check for plant death, to perform needed cleanup.
  *
- * This avoids mistaken warnings in succeeding steps
+ * This avoids mistaken warnings in succeeding steps. Also checks for plant
+ * reemergence (say, after a planting)
  */
 void checkForMortality(void) {
+  double totalRoots = envi.fineRootC + envi.coarseRootC;
+  // Transition check 1: plant was dead, but is back
   if (!plantSurvival.isAlive) {
+    if (envi.plantWoodC > TINY && totalRoots > TINY) {
+      // It's back!
+      plantSurvival.isAlive = 1;
+      plantSurvival.justDied = 0;
+    }
+
+    // No cleanup needed for this transition
     return;
   }
-  if (envi.plantWoodC <= 0.0 || envi.coarseRootC <= 0.0) {
+
+  // Transition check 2: plant was alive, but is now dead
+
+  // Plant was alive last time step - are you still there?
+  if (envi.plantWoodC <= TINY || totalRoots <= TINY) {
     plantSurvival.isAlive = 0;
     plantSurvival.justDied = 1;
 
-    logInfo("Plant mortality detected: wood or coarse root carbon is zero or "
-            "negative (woodC %f, coarseRootC %f year %d day %d time %6.3f);"
-            "zeroing out biomass pools\n",
-            envi.plantWoodC, envi.coarseRootC, climate->year, climate->day,
-            climate->time);
-    // TODO: Add check for harvest cause, update info to say so; convert to
-    //       warning if not
+    logInfo("Plant mortality detected: wood or total root carbon is zero or "
+            "negative (woodC %f, coarseRootC %f fineRootC %f year %d day %d "
+            "time %6.3f); zeroing out biomass pools\n",
+            envi.plantWoodC, envi.coarseRootC, envi.fineRootC, climate->year,
+            climate->day, climate->time);
+    // TODO: Add check for harvest cause, update info to say so
+    //       add total harvest amount to message?
+    //       convert to warning if not harvest (leave info if so)
+
+    // TODO: add computed event on plant death
+    //       possibly include whether or not a harvest occurred, though that
+    //       will already be in events.out - so probably not - unless we want
+    //       a note of how much of the plant was harvested (removed+transferred)
+
+    // Move remnants to litter/soil as appropriate. Note we add all pools, even
+    // if some are negative, as we should for mass balance. Given that there are
+    // multiple processes being modeled, it's believable that there may be a bit
+    // of overshoot when a plant dies - for example, a 100% harvest event with
+    // any overall loss (respiration, turnover).
+    envi.soilC += totalRoots;
+    if (ctx.litterPool) {
+      envi.litterC +=
+          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+    } else {
+      envi.soilC +=
+          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+    }
+    if (ctx.nitrogenCycle) {  // litter pool implied
+      envi.soilOrgN += envi.fineRootN + envi.coarseRootN;
+      envi.litterN += envi.plantWoodN + envi.plantLeafN + envi.plantStorageN;
+    }
 
     // Force pools to zero
-    // TODO: add positive remnants to litter/soil as appropriate?
     envi.plantWoodC = 0.0;
     envi.plantLeafC = 0.0;
     envi.coarseRootC = 0.0;
