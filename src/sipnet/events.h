@@ -215,8 +215,11 @@ typedef struct EventTrackerStruct {
 
 extern EventTillageTracker eventTillageTracker;
 
+// TODO: consider combining this will eventTillageTracker
+//       i.e., revert back to eventTrackers
 typedef struct EventHarvestTrackerStruct {
-  double tbd;
+  double pctRemoved;
+  double pcdTransferred;
 } EventHarvestTracker;
 
 extern EventHarvestTracker eventHarvestTracker;

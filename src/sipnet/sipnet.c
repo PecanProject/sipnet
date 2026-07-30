@@ -1201,9 +1201,6 @@ void calcRootAndWoodFluxes(void) {
   double leafDeficit = envi.plantLeafC / climate->length + fluxes.leafCreation -
                        fluxes.leafLitter;
   if (leafDeficit < 0) {
-    // printf("e.w %f e.l %f f.wc %f f.lc %f f.ll %f\n",
-    //   envi.plantWoodC,envi.plantLeafC,
-    //   fluxes.woodCreation, fluxes.leafCreation, fluxes.leafLitter);
     fluxes.woodCreation += leafDeficit;
     fluxes.leafCreation -= leafDeficit;
   }
@@ -1564,6 +1561,14 @@ void initPlantSurvivalTracker(void) {
     plantSurvival.isAlive = 0;
   }
 }
+
+// Reset any trackers that need resetting at the beginning of each time step
+// void initPerStepTrackers(void) {
+//   initPlantSurvivalTracker();
+//
+//   // TODO: The event harvest tracking should be reset
+//   //initPerStepEventTrackers();
+// }
 
 void updateMeanTrackers(void) {
   if (!plantSurvival.isAlive) {

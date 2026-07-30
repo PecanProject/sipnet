@@ -94,16 +94,8 @@ double calcPoolNDemandFlux(double extraN, double creationCFlux, double poolCN) {
   // Turnover, if any, will be handled (later) at this pool's C:N, so shouldn't
   // affect this calc.
   if (creationCFlux > 0.0) {
-    // extraN should not ever be negative - but, if it does somehow end up
-    // there, then it represents missing N, so we're good with demand going up
-    // in that case
+    // extraN should not ever be negative (it does get checked)
     double extraNFlux = extraN / climate->length;
-    // if (extraNFlux < TINY) {
-    //   double len = climate->length;
-    //   logInfo("extraN %.6f C %g N %g creationC %g CN %f y %d d %d t %f\n",
-    //     extraNFlux * len, poolC, poolN, creationCFlux * len, poolCN,
-    //     climate->year, climate->day, climate->time);
-    // }
     demand = fmax(0.0, creationCFlux / poolCN - extraNFlux);
   }
   return demand;
@@ -119,9 +111,7 @@ double calcPlantNDemandFlux(void) {
   if (!ctx.nitrogenCycle) {
     return 0.0;
   }
-  // leaf on "demand" is satisfied entirely (and separately) by the
-  // plantStorageN pool, and is not considered demand for the purposes of this
-  // function
+  // leaf-on "demand" is handled elsewhere
 
   // calculate demand from all creation terms
   double creationDemand =
