@@ -111,7 +111,7 @@ int run(void) {
   }
 
   status |= checkHeader(ENVI_FILE, 3 + EXPECTED_ENVI_FIELDS, "plantWoodC",
-                        "plantWoodCStorageDelta");
+                        "plantCAccountingDelta");
   status |= checkHeader(FLUXES_FILE, 3 + EXPECTED_FLUX_FIELDS, "photosynthesis",
                         "litterMethane");
   status |= checkHeader(TRACKERS_FILE,
