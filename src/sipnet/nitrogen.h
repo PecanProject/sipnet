@@ -50,7 +50,18 @@ double calcNFixationFrac(void);
 void calcNFixationAndUptakeFluxes(void);
 
 /*!
- * Calculate all nitrogen fluxes
+ * Incrementally update the N resorption flux
+ *
+ * The input deltaC should be positive if the expectation is that the resorption
+ * flux will increase.
+ *
+ * @param deltaC Change in carbon pool
+ * @param cn C:N ratio of the pool losing carbon
+ */
+void updateNResorptionFlux(double deltaC, double cn);
+
+/*!
+ * Calculate all nitrogen fluxes (except N resorption)
  *
  * This is the general flux calculation wrapper for sipnet.c
  */

@@ -151,6 +151,10 @@ void calcNFixationAndUptakeFluxes(void) {
   fluxes.nFixation = nFixationFrac * nDemandFlux;
   fluxes.nUptake = (1 - nFixationFrac) * nDemandFlux;
 }
+// see nitrogen.h
+void updateNResorptionFlux(double deltaC, double cn) {
+  fluxes.leafOffNResorption += deltaC / cn;
+}
 
 // see nitrogen.h
 void calcNitrogenFluxes(void) {
