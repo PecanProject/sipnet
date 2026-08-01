@@ -453,7 +453,7 @@ void outputHeader(FILE *out) {
 void outputState(FILE *out, int year, int day, double time) {
 
   fprintf(out, "%4d %3d %5.2f %10.2f %10.2f %12.2f ", year, day, time,
-          (envi.plantWoodC + envi.plantWoodCStorageDelta), envi.plantLeafC,
+          (envi.plantWoodC + envi.plantCAccountingDelta), envi.plantLeafC,
           trackers.woodCreation);
   fprintf(out, "%8.2f ", envi.soilC);
   fprintf(out, "%11.2f %9.2f ", envi.coarseRootC, envi.fineRootC);
@@ -470,7 +470,7 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
           trackers.nLeaching, trackers.nFixation, trackers.nUptake,
           trackers.methane);
-  fprintf(out, "%12.4f\n", envi.plantWoodCStorageDelta);
+  fprintf(out, "%12.4f\n", envi.plantCAccountingDelta);
 }
 
 // de-allocate space used for climate linked list
@@ -767,15 +767,8 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
   // and fall, instead of binary
   // [2]: leaf creation relationship with NPP
 
-  double npp;  // temporal mean of recent npp (g C * m^-2 ground * day^-1)
-
-  npp = getMeanTrackerMean(meanNPP);
-  // first determine the fluxes that happen at every time step, not just start &
-  // end of growing season:
-  if (npp > 0) {
-    // a fraction of NPP is allocated to leaf growth
-    *leafCreation += npp * params.leafAllocation;
-  }
+  // temporal mean of recent npp (g C * m^-2 ground * day^-1)
+  double npp = getMeanTrackerMean(meanNPP);
 
   // a constant fraction of leaves fall in each time step
   double litter = plantLeafC * params.leafTurnoverRate;
@@ -784,6 +777,11 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
     double nResorp = params.leafNResorptionFrac * litter / params.leafCN;
     *leafOffNResorption += nResorp;
   }
+
+  // a fraction of NPP is allocated to leaf growth; negative mean NPP indicates
+  // carbon loss; note that we can't lose more than we have, but we'll handle
+  // that when we calc wood fluxes (as we will deduct from there instead)
+  *leafCreation = npp * params.leafAllocation;
 }
 
 /*!
@@ -820,7 +818,7 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
   // check for start of growing season:
   if (!phenologyTrackers.didLeafGrowth && pastLeafGrowth()) {
     // we just reached the start of the growing season
-    double leafOn = (params.leafGrowth / climate->length);
+    double leafOn = params.leafGrowth / climate->length;
     checkLeafOnLimitation(&leafOn);
     *leafOnCreation += leafOn;
     double totalSourceC = envi.plantWoodC + envi.coarseRootC;
@@ -1076,7 +1074,7 @@ void vegResp(double *folResp, double *woodResp, double baseFolResp) {
 
   // :: from [1], eq (A19)
   *woodResp = params.baseVegResp *
-              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
+              (envi.plantWoodC + envi.plantCAccountingDelta) *
               pow(params.vegRespQ10, climate->tair / 10.0);
 }
 
@@ -1104,7 +1102,7 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
                                            // by a given fraction in winter
   }
   *woodResp = params.baseVegResp *
-              (envi.plantWoodC + envi.plantWoodCStorageDelta) *
+              (envi.plantWoodC + envi.plantCAccountingDelta) *
               pow(params.vegRespQ10, climate->tair / 10.0);
 
   // Rg is a fraction of the recent mean NPP
@@ -1187,18 +1185,20 @@ void calcLitterFluxes() {
  * Calculate root and wood creation and loss
  */
 void calcRootAndWoodFluxes(void) {
-  double npp;  // running means of our tracker variables
+  double npp = getMeanTrackerMean(meanNPP);
 
-  npp = getMeanTrackerMean(meanNPP);
-  if (npp > 0) {
-    // :: from [3], root model description and eq (3)
-    fluxes.coarseRootCreation = params.coarseRootAllocation * npp;
-    fluxes.fineRootCreation = params.fineRootAllocation * npp;
-    fluxes.woodCreation = params.woodAllocation * npp;
-  } else {
-    fluxes.coarseRootCreation = 0;
-    fluxes.fineRootCreation = 0;
-    fluxes.woodCreation = 0;
+  // :: from [3], root model description and eq (3)
+  // negative mean NPP indicates carbon loss
+  fluxes.coarseRootCreation = params.coarseRootAllocation * npp;
+  fluxes.fineRootCreation = params.fineRootAllocation * npp;
+  fluxes.woodCreation = params.woodAllocation * npp;
+
+  // If leafCreation is too negative, we need to deduct from wood instead
+  double leafDeficit = envi.plantLeafC / climate->length + fluxes.leafCreation -
+                       fluxes.leafLitter;
+  if (leafDeficit < 0) {
+    fluxes.woodCreation += leafDeficit;
+    fluxes.leafCreation -= leafDeficit;
   }
 
   // :: from [3], roots model descriptions
@@ -1208,7 +1208,7 @@ void calcRootAndWoodFluxes(void) {
   // Wood litter, in g C * m^-2 ground area * day^-1
   // turnover rate is fraction lost per day
   fluxes.woodLitter =
-      (envi.plantWoodC + envi.plantWoodCStorageDelta) * params.woodTurnoverRate;
+      (envi.plantWoodC + envi.plantCAccountingDelta) * params.woodTurnoverRate;
 
   // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
@@ -1455,6 +1455,8 @@ void initTrackers(void) {
   trackers.yearlyLitter = 0.0;
   trackers.gdd = 0.0;
   trackers.lastYear = -1;
+
+  trackers.n2o = 0.0;
   trackers.nLeaching = 0.0;
   trackers.nFixation = 0.0;
   trackers.nUptake = 0.0;
@@ -1507,7 +1509,6 @@ void updateTrackers(double oldSoilWater) {
   trackers.totNpp += trackers.npp;
   trackers.totNee += trackers.nee;
   trackers.woodCreation = fluxes.woodCreation * climate->length;
-  trackers.n2o = fluxes.nVolatilization * climate->length;
 
   trackers.methane =
       (fluxes.soilMethane + fluxes.litterMethane) * climate->length;
@@ -1533,9 +1534,12 @@ void updateTrackers(double oldSoilWater) {
   }
 
   // N cycle trackers
-  trackers.nLeaching = fluxes.nLeaching * climate->length;
-  trackers.nFixation = fluxes.nFixation * climate->length;
-  trackers.nUptake = fluxes.nUptake * climate->length;
+  if (ctx.nitrogenCycle) {
+    trackers.n2o = fluxes.nVolatilization * climate->length;
+    trackers.nLeaching = fluxes.nLeaching * climate->length;
+    trackers.nFixation = fluxes.nFixation * climate->length;
+    trackers.nUptake = fluxes.nUptake * climate->length;
+  }
 }
 
 // initialize phenology tracker structure, based on day of year of first climate
@@ -1569,7 +1573,31 @@ void initPhenologyTrackers(void) {
                                                // this year
 }
 
+void initPlantSurvivalTracker(void) {
+  double totalRoots = envi.fineRootC + envi.coarseRootC;
+  if (envi.plantWoodC > TINY && totalRoots > TINY) {
+    plantSurvivalTracker.isAlive = 1;
+  } else {
+    plantSurvivalTracker.isAlive = 0;
+  }
+}
+
+// Reset any trackers that need resetting at the beginning of each time step
+// void initPerStepTrackers(void) {
+//   initPlantSurvivalTracker();
+//
+//   // TODO: The event harvest tracking should be reset
+//   //initPerStepEventTrackers();
+// }
+
 void updateMeanTrackers(void) {
+  if (!plantSurvivalTracker.isAlive) {
+    // If the plant is dead, there's no NPP to add
+    // In particular, if the plant JUST died (likely via harvest), we want to
+    // avoid the lingering NPP from that time step.
+    return;
+  }
+
   double npp;  // net primary productivity, g C * m^-2 ground area * day^-1
   int err;
 
@@ -1613,7 +1641,7 @@ void updateMainPools(void) {
   double r_a = fluxes.rVeg + fluxes.rFineRoot + fluxes.rCoarseRoot;
   double nppAllocations = fluxes.leafCreation + fluxes.woodCreation +
                           fluxes.fineRootCreation + fluxes.coarseRootCreation;
-  envi.plantWoodCStorageDelta +=
+  envi.plantCAccountingDelta +=
       ((fluxes.photosynthesis - r_a) - nppAllocations) * climate->length;
   envi.plantWoodC += (fluxes.woodCreation - fluxes.woodLitter -
                       fluxes.leafOnCreationFromWood) *
@@ -1698,6 +1726,79 @@ void updatePoolsForSoil(void) {
       (fluxes.fineRootCreation - fluxes.fineRootLoss) * climate->length;
 }
 
+/*!
+ * Simple check for plant death, to perform needed cleanup.
+ *
+ * This avoids mistaken warnings in succeeding steps. Also checks for plant
+ * reemergence (say, after a planting)
+ */
+void checkForMortality(void) {
+  double totalRoots = envi.fineRootC + envi.coarseRootC;
+  // Transition check 1: plant was dead, but is back
+  if (!plantSurvivalTracker.isAlive) {
+    if (envi.plantWoodC > TINY && totalRoots > TINY) {
+      // It's back!
+      plantSurvivalTracker.isAlive = 1;
+    }
+
+    // No cleanup needed for this transition
+    return;
+  }
+
+  // Transition check 2: plant was alive, but is now dead
+
+  // Plant was alive last time step - are you still there?
+  if (envi.plantWoodC <= TINY || totalRoots <= TINY) {
+    plantSurvivalTracker.isAlive = 0;
+
+    logInfo("Plant mortality detected: wood or total root carbon is zero or "
+            "negative (woodC %f, coarseRootC %f fineRootC %f year %d day %d "
+            "time %6.3f); zeroing out biomass pools\n",
+            envi.plantWoodC, envi.coarseRootC, envi.fineRootC, climate->year,
+            climate->day, climate->time);
+    // TODO: Add check for harvest cause, update info to say so
+    //       add total harvest amount to message?
+    //       convert to warning if not harvest (leave info if so)
+
+    // TODO: add computed event on plant death
+    //       possibly include whether or not a harvest occurred, though that
+    //       will already be in events.out - so probably not - unless we want
+    //       a note of how much of the plant was harvested (removed+transferred)
+
+    // Move remnants to litter/soil as appropriate. Note we add all pools, even
+    // if some are negative, as we should for mass balance. Given that there are
+    // multiple processes being modeled, it's believable that there may be a bit
+    // of overshoot when a plant dies - for example, a 100% harvest event with
+    // any overall loss (respiration, turnover).
+    envi.soilC += totalRoots;
+    if (ctx.litterPool) {
+      envi.litterC +=
+          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+    } else {
+      envi.soilC +=
+          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+    }
+    if (ctx.nitrogenCycle) {  // litter pool implied
+      envi.soilOrgN +=
+          envi.fineRootC / params.fineRootCN + envi.coarseRootC / params.woodCN;
+      envi.litterN += envi.plantWoodC / params.woodCN +
+                      envi.plantLeafC / params.leafCN + envi.plantStorageN;
+    }
+
+    // Force pools to zero
+    envi.plantWoodC = 0.0;
+    envi.plantLeafC = 0.0;
+    envi.coarseRootC = 0.0;
+    envi.fineRootC = 0.0;
+    envi.plantCAccountingDelta = 0.0;
+    if (ctx.nitrogenCycle) {
+      envi.plantStorageN = 0.0;
+    }
+    // Reset mean npp tracker to zero; there's nothing to grow
+    resetMeanTracker(meanNPP, 0.0);
+  }
+}
+
 void updatePoolsAndBalance() {
   // Calc total C and N before pool updates
   updateBalanceTrackerPreUpdate();
@@ -1722,6 +1823,9 @@ void updatePoolsAndBalance() {
 
   // Calc total C and N after pool updates
   updateBalanceTrackerPostUpdate();
+
+  // Check for obvious plant death (wood and/or roots at zero)
+  checkForMortality();
 
   // Verify none of our stocks have gone negative (set any that are to zero).
   ensureNonNegativeStocks();
@@ -1750,10 +1854,14 @@ void updateState(void) {
   double oldSoilWater = envi.soilWater;
 
   ///////////////////////
-  // 1. Calculate Fluxes
-
+  // 0. Per-step init
   // Reset all fluxes to zero before calculating anything this time step.
   resetFluxes();
+  // Set plant health
+  initPlantSurvivalTracker();
+
+  ///////////////////////
+  // 1. Calculate Fluxes
 
   // All event handling, which is modeled as fluxes. Note that we have this
   // before the other fluxes so that everything is in place when we consider
@@ -1808,7 +1916,7 @@ void setupModel(void) {
 
   envi.plantWoodC =
       (1 - params.coarseRootFrac - params.fineRootFrac) * params.plantWoodInit;
-  envi.plantWoodCStorageDelta = 0.0;
+  envi.plantCAccountingDelta = 0.0;
   envi.plantLeafC = params.laiInit * params.leafCSpWt;
 
   if (ctx.litterPool) {

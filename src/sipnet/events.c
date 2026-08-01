@@ -454,17 +454,18 @@ void processEvents(void) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 
-  // The events file has been tested on read, so we know this event list
-  // should be in chrono order. However, we need to check to make sure the
-  // current event is not in the past, as that would indicate an event that
-  // did not have a corresponding climate file record.
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+    // The events file has been tested on read, so we know this event list
+    // should be in chrono order. However, we need to check to make sure the
+    // current event is not in the past, as that would indicate an event that
+    // did not have a corresponding climate file record.
     if (gEvent->year < climYear || gEvent->day < climDay) {
       logError("Agronomic event found for year: %d day: %d that does not "
                "have a corresponding record in the climate file\n",
                gEvent->year, gEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
+
     switch (gEvent->type) {
       case IRRIGATION: {
         const IrrigationParams *irrParams = gEvent->eventParams;
@@ -534,7 +535,7 @@ void processEvents(void) {
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
 
-        const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
+        const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
         // Litter increase
         double litterAdd = fracTA * (envi.plantLeafC + woodC);
         double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
@@ -584,12 +585,12 @@ void processEvents(void) {
         fluxes.eventOutputC += outputC / climLen;
         if (ctx.nitrogenCycle) {
           // just plantWoodC here, not woodC
-          outputN = ((envi.plantWoodC / params.woodCN +
-                      envi.plantLeafC / params.leafCN) *
-                         fracRA +
-                     (envi.fineRootC / params.fineRootCN +
-                      envi.coarseRootC / params.woodCN) *
-                         fracRB);
+          outputN = (envi.plantWoodC / params.woodCN +
+                     envi.plantLeafC / params.leafCN) *
+                        fracRA +
+                    (envi.fineRootC / params.fineRootCN +
+                     envi.coarseRootC / params.woodCN) *
+                        fracRB;
           fluxes.eventOutputN += outputN / climLen;
         }
         // clang-format off
@@ -669,7 +670,7 @@ void processEvents(void) {
 
         // Nitrogen is handled implicitly by relative CN ratios. Missing N
         // from low-N wood to higher-N leaves is accounted for in
-        // calcNFixationAndUptakeFluxes() via calcPlantNDemand()
+        // calcNFixationAndUptakeFluxes() via calcPlantNDemandFlux()
 
         // Unlike planting, this is NOT a system input, so no adjustments to
         // eventInputC or eventInputN
@@ -830,6 +831,14 @@ void printEvent(EventNode *oneEvent) {
              hParams->fractionRemovedAbove, hParams->fractionRemovedBelow,
              hParams->fractionTransferredAbove,
              hParams->fractionTransferredBelow);
+      break;
+    case LEAFON:
+      printf("LEAFON on %d %d, ", year, day);
+      // No real params for leafon
+      break;
+    case LEAFOFF:
+      printf("LEAFOFF on %d %d, ", year, day);
+      // No real params for leafoff
       break;
     default:
       printf("ERROR printing oneEvent: unknown type %d\n", oneEvent->type);

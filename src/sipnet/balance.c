@@ -11,7 +11,7 @@
 BalanceTracker balanceTracker;
 
 void getMassTotals(double *carbon, double *nitrogen) {
-  *carbon = (envi.plantWoodC + envi.plantWoodCStorageDelta) + envi.plantLeafC +
+  *carbon = (envi.plantWoodC + envi.plantCAccountingDelta) + envi.plantLeafC +
             envi.fineRootC + envi.coarseRootC + envi.soilC;
   if (ctx.litterPool) {
     *carbon += envi.litterC;
@@ -147,17 +147,17 @@ void checkBalance(void) {
     // err = 1;
     //  logInternalError(  someday
     logWarning(
-        "Carbon balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        "Carbon balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
         balanceTracker.deltaC, climate->year, climate->day, climate->time);
   }
   if (fabs(balanceTracker.deltaN) > 0.0) {
     // err = 1;
     // logInternalError(  someday
     logWarning(
-        "Nitrogen balance check failed (delta=%8.4f, Y: %d D: %d T: %4.2f)\n",
+        "Nitrogen balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
         balanceTracker.deltaN, climate->year, climate->day, climate->time);
-    logWarning("preTot %8.5f postTot %8.5f input %8.5f output %8.5f clamped "
-               "%8.5f delta %8.5f\n",
+    logWarning("preTot %.6f postTot %.6f input %.6f output %.6f clamped "
+               "%.6f delta %.6f\n",
                balanceTracker.preTotalN, balanceTracker.postTotalN,
                balanceTracker.inputsN, balanceTracker.outputsN,
                balanceTracker.clampedN, balanceTracker.deltaN);

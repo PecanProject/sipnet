@@ -87,7 +87,7 @@ double calcLeafOnNFromC(double leafOnC) {
 }
 
 // see nitrogen.h
-double calcPlantNDemand(void) {
+double calcPlantNDemandFlux(void) {
   if (!ctx.nitrogenCycle) {
     return 0.0;
   }
@@ -145,7 +145,7 @@ double calcNFixationFrac(void) {
 // See nitrogen.h
 void calcNFixationAndUptakeFluxes(void) {
   // These values may change later if we are under nitrogen limitation
-  double nDemandFlux = calcPlantNDemand();
+  double nDemandFlux = calcPlantNDemandFlux();
   double nFixationFrac = calcNFixationFrac();
 
   fluxes.nFixation = nFixationFrac * nDemandFlux;

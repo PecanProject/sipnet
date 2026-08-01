@@ -8,6 +8,12 @@ cd "$(dirname "$0")" || { echo "Failed to change to script directory to $SCRIPT_
 SCRIPT_DIR="$(pwd)"
 echo "Changed to script directory $SCRIPT_DIR"
 
+debug=0
+if [[ "$1" == "debug" ]]; then
+    echo "Generating debug logs for each test"
+    debug=1
+fi
+
 # Initialize counters
 num_tests=0
 sipnet_pass_count=0
@@ -60,8 +66,13 @@ for DIR in "${SORTED_DIRS[@]}"; do
     else
         pwd
         # This is the command that all directories will run when options/config are in
-        ../../../sipnet -i sipnet.in
-
+        if [ "$debug" -eq 1 ]; then
+          echo "Running sipnet with debug logging"
+          ../../../sipnet -i sipnet.in --debug-log debug
+        else
+          ../../../sipnet -i sipnet.in
+        fi
+        
         # Make sure the program actually ran successfully
         if [ $? -ne 0 ]; then
           echo "Error: The sipnet run failed. Marking everything as ❌ for this test."

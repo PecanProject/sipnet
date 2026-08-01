@@ -211,6 +211,9 @@ typedef struct EventTrackerStruct {
   // Tillage effect on Rh; exponentially decays at each time step by a factor
   // equal to exp(-delta_t / 30)
   double d_till_mod;
+  // Fraction removed and transferred from harvest event this time step
+  // double fracRemoved;
+  // double fracTransferred;
 } EventTrackers;
 
 extern EventTrackers eventTrackers;

@@ -68,7 +68,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
  */
 static void checkNitrogenLimitation(void) {
   // First, determine if we are in a nitrogen-limited situation
-  double maxDemandFlux = calcPlantNDemand();
+  double maxDemandFlux = calcPlantNDemandFlux();
   double maxDemand = maxDemandFlux * climate->length;
 
   double availableMinN = calcPlantAvailableN();
@@ -84,8 +84,8 @@ static void checkNitrogenLimitation(void) {
             maxUptake, availableMinN, (1 - reduction) * 100, climate->year,
             climate->day, climate->time);
 
-    // Reduce all drains on soil N (all fluxes used in calcPlantNDemand, plus
-    // fixation and uptake)
+    // Reduce all drains on soil N (all fluxes used in calcPlantNDemandFlux,
+    // plus fixation and uptake)
     fluxes.woodCreation *= reduction;
     fluxes.leafCreation *= reduction;
     fluxes.fineRootCreation *= reduction;

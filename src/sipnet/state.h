@@ -459,7 +459,7 @@ typedef struct Environment {
   // (above) and a new pool to track non-nitrogen-affecting changes over time.
   // As this is a delta, it can be negative. Note that the actual "wood carbon"
   // is the sum of these two pools.
-  double plantWoodCStorageDelta;
+  double plantCAccountingDelta;
 } Envi;
 
 // Global var
@@ -610,6 +610,7 @@ typedef struct FluxVars {
   double eventSoilOrgN;
   // nitrogen added to litter N pool
   double eventLitterN;
+
   // MASS BALANCE HELPERS
   // Total system carbon input, for mass balance checks
   double eventInputC;
@@ -619,6 +620,8 @@ typedef struct FluxVars {
   double eventInputN;
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
+
+  // LEAF ON/OFF FLUXES
   // Transfer from woodC to leafC from a leaf-on event
   double eventLeafOnCreation;
   // Portion of leaf-on creation C that comes from wood C (the rest comes from
@@ -737,5 +740,12 @@ typedef struct PhenologyTrackersStruct {
 
 // Global var
 extern PhenologyTrackers phenologyTrackers;
+
+// Global var
+typedef struct PlantSurvivalStruct {
+  int isAlive;
+} PlantSurvivalTracker;
+
+extern PlantSurvivalTracker plantSurvivalTracker;
 
 #endif  // SIPNET_STATE_H

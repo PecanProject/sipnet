@@ -9,11 +9,11 @@
 double calcLeafOnNFromC(double leafOnC);
 
 /*!
- * Calculate plant N demand from biomass creation fluxes
+ * Calculate plant N demand flux from biomass creation fluxes
  *
- * @return Total nitrogen demand from plant growth
+ * @return Total nitrogen demand flux from plant growth
  */
-double calcPlantNDemand(void);
+double calcPlantNDemandFlux(void);
 
 /*!
  * Calculate nitrogen available for plant growth
