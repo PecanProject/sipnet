@@ -1,5 +1,7 @@
 #include "restart.h"
 
+#include "cli.h"
+
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
@@ -36,7 +38,7 @@
 #define NUM_TRACKER_FIELDS 28
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_NITROGEN_TRACKERS_FIELDS 8
-#define NUM_SURVIVAL_TRACKERS_FIELDS 2
+#define NUM_SURVIVAL_TRACKERS_FIELDS 1
 #define NUM_EVENT_TRACKERS_FIELDS 1
 
 // This one shouldn't change
@@ -67,7 +69,7 @@ _Static_assert(sizeof(NitrogenTrackers) ==
                    RESTART_SCHEMA_LAYOUT_NITROGEN_TRACKERS_SIZE,
                "Restart schema drift: NitrogenTrackers changed; update "
                "schema_layout.* checks");
-_Static_assert(sizeof(PlantSurvival) ==
+_Static_assert(sizeof(PlantSurvivalTracker) ==
                    RESTART_SCHEMA_LAYOUT_SURVIVAL_TRACKERS_SIZE,
                "Restart schema drift: PlantSurvival changed; update "
                "schema_layout.* checks");
@@ -153,117 +155,171 @@ typedef struct RestartState_s {
 } RestartState;
 
 void initResetState(RestartState *state, MeanTracker *npp) {
+  int ind = 0;
   // clang-format off
   // NOLINTBEGIN
-  state->metaPF[0] = (StateField){"meta_info.model_version",        FT_CHAR,      modelVersion,       MODEL_VERSION_BUFFER_SIZE};
-  state->metaPF[1] = (StateField){"meta_info.build_info",           FT_CHAR,      buildInfo,          BUILD_INFO_BUFFER_SIZE};
-  state->metaPF[2] = (StateField){"meta_info.checkpoint_utc_epoch", FT_LONGLONG, &checkpointUTCEpoch, 0};
-  state->metaPF[3] = (StateField){"meta_info.processed_steps",      FT_LONGLONG, &processedStepCount, 0};
-  state->metaPF[4] = (StateField){"meta.info.invalid",              FT_INVALID,   NULL,               FIELD_INVALID};
+  state->metaPF[ind++] = (StateField){"meta_info.model_version",        FT_CHAR,      modelVersion,       MODEL_VERSION_BUFFER_SIZE};
+  state->metaPF[ind++] = (StateField){"meta_info.build_info",           FT_CHAR,      buildInfo,          BUILD_INFO_BUFFER_SIZE};
+  state->metaPF[ind++] = (StateField){"meta_info.checkpoint_utc_epoch", FT_LONGLONG, &checkpointUTCEpoch, 0};
+  state->metaPF[ind++] = (StateField){"meta_info.processed_steps",      FT_LONGLONG, &processedStepCount, 0};
+  state->metaPF[ind++] = (StateField){"meta.info.invalid",              FT_INVALID,   NULL,               FIELD_INVALID};
+  if (ind != NUM_META_FIELDS) {
+    logInternalError("Restart array size mismatch: metaPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->schemaPF[0] = (StateField){"schema_layout.envi_size",               FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_ENVI_SIZE};
-  state->schemaPF[1] = (StateField){"schema_layout.trackers_size",           FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE};
-  state->schemaPF[2] = (StateField){"schema_layout.phenology_trackers_size", FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE};
-  state->schemaPF[3] = (StateField){"schema_layout.event_trackers_size",     FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE};
-  state->schemaPF[4] = (StateField){"schema_layout.invalid",                 FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->schemaPF[ind++] = (StateField){"schema_layout.envi_size",               FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_ENVI_SIZE};
+  state->schemaPF[ind++] = (StateField){"schema_layout.trackers_size",           FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE};
+  state->schemaPF[ind++] = (StateField){"schema_layout.phenology_trackers_size", FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE};
+  state->schemaPF[ind++] = (StateField){"schema_layout.event_trackers_size",     FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE};
+  state->schemaPF[ind++] = (StateField){"schema_layout.invalid",                 FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_SCHEMA_FIELDS) {
+    logInternalError("Restart array size mismatch: schemaPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->flagsPF[0] = (StateField){"flags.events",        FT_INT, &modelFlags.events,        0};
-  state->flagsPF[1] = (StateField){"flags.gdd",           FT_INT, &modelFlags.gdd,           0};
-  state->flagsPF[2] = (StateField){"flags.growthResp",    FT_INT, &modelFlags.growthResp,    0};
-  state->flagsPF[3] = (StateField){"flags.leafWater",     FT_INT, &modelFlags.leafWater,     0};
-  state->flagsPF[4] = (StateField){"flags.litterPool",    FT_INT, &modelFlags.litterPool,    0};
-  state->flagsPF[5] = (StateField){"flags.snow",          FT_INT, &modelFlags.snow,          0};
-  state->flagsPF[6] = (StateField){"flags.soilPhenol",    FT_INT, &modelFlags.soilPhenol,    0};
-  state->flagsPF[7] = (StateField){"flags.waterHResp",    FT_INT, &modelFlags.waterHResp,    0};
-  state->flagsPF[8] = (StateField){"flags.nitrogenCycle", FT_INT, &modelFlags.nitrogenCycle, 0};
-  state->flagsPF[9] = (StateField){"flags.anaerobic",     FT_INT, &modelFlags.anaerobic,     0};
-  state->flagsPF[10] = (StateField){"flags.flooding",     FT_INT, &modelFlags.flooding,      0};
-  state->flagsPF[11] = (StateField){"flags.carbonSaturation", FT_INT, &modelFlags.carbonSaturation, 0};
-  state->flagsPF[12] = (StateField){"flags.invalid",      FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->flagsPF[ind++] = (StateField){"flags.events",        FT_INT, &modelFlags.events,        0};
+  state->flagsPF[ind++] = (StateField){"flags.gdd",           FT_INT, &modelFlags.gdd,           0};
+  state->flagsPF[ind++] = (StateField){"flags.growthResp",    FT_INT, &modelFlags.growthResp,    0};
+  state->flagsPF[ind++] = (StateField){"flags.leafWater",     FT_INT, &modelFlags.leafWater,     0};
+  state->flagsPF[ind++] = (StateField){"flags.litterPool",    FT_INT, &modelFlags.litterPool,    0};
+  state->flagsPF[ind++] = (StateField){"flags.snow",          FT_INT, &modelFlags.snow,          0};
+  state->flagsPF[ind++] = (StateField){"flags.soilPhenol",    FT_INT, &modelFlags.soilPhenol,    0};
+  state->flagsPF[ind++] = (StateField){"flags.waterHResp",    FT_INT, &modelFlags.waterHResp,    0};
+  state->flagsPF[ind++] = (StateField){"flags.nitrogenCycle", FT_INT, &modelFlags.nitrogenCycle, 0};
+  state->flagsPF[ind++] = (StateField){"flags.anaerobic",     FT_INT, &modelFlags.anaerobic,     0};
+  state->flagsPF[ind++] = (StateField){"flags.flooding",     FT_INT, &modelFlags.flooding,      0};
+  state->flagsPF[ind++] = (StateField){"flags.carbonSaturation", FT_INT, &modelFlags.carbonSaturation, 0};
+  state->flagsPF[ind++] = (StateField){"flags.invalid",      FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_CONTEXT_MODEL_FLAGS) {
+    logInternalError("Restart array size mismatch: flagsPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->boundaryPF[0] = (StateField){"boundary.year",    FT_INT,     &boundaryClimate.year,   0};
-  state->boundaryPF[1] = (StateField){"boundary.day",     FT_INT,     &boundaryClimate.day,    0};
-  state->boundaryPF[2] = (StateField){"boundary.time",    FT_DOUBLE,  &boundaryClimate.time,   0};
-  state->boundaryPF[3] = (StateField){"boundary.length",  FT_DOUBLE,  &boundaryClimate.length, 0};
-  state->boundaryPF[4] = (StateField){"boundary.invalid", FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->boundaryPF[ind++] = (StateField){"boundary.year",    FT_INT,     &boundaryClimate.year,   0};
+  state->boundaryPF[ind++] = (StateField){"boundary.day",     FT_INT,     &boundaryClimate.day,    0};
+  state->boundaryPF[ind++] = (StateField){"boundary.time",    FT_DOUBLE,  &boundaryClimate.time,   0};
+  state->boundaryPF[ind++] = (StateField){"boundary.length",  FT_DOUBLE,  &boundaryClimate.length, 0};
+  state->boundaryPF[ind++] = (StateField){"boundary.invalid", FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_CLIMATE_SIGNATURE_FIELDS) {
+    logInternalError("Restart array size mismatch: boundaryPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->nppPF[0] = (StateField){"mean.npp.length",    FT_INT,     &npp->length,    0};
-  state->nppPF[1] = (StateField){"mean.npp.totWeight", FT_DOUBLE,  &npp->totWeight, 0};
-  state->nppPF[2] = (StateField){"mean.npp.start",     FT_INT,     &npp->start,     0};
-  state->nppPF[3] = (StateField){"mean.npp.last",      FT_INT,     &npp->last,      0};
-  state->nppPF[4] = (StateField){"mean.npp.sum",       FT_DOUBLE,  &npp->sum,       0};
-  state->nppPF[5] = (StateField){"mean.npp.invalid",   FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->nppPF[ind++] = (StateField){"mean.npp.length",    FT_INT,     &npp->length,    0};
+  state->nppPF[ind++] = (StateField){"mean.npp.totWeight", FT_DOUBLE,  &npp->totWeight, 0};
+  state->nppPF[ind++] = (StateField){"mean.npp.start",     FT_INT,     &npp->start,     0};
+  state->nppPF[ind++] = (StateField){"mean.npp.last",      FT_INT,     &npp->last,      0};
+  state->nppPF[ind++] = (StateField){"mean.npp.sum",       FT_DOUBLE,  &npp->sum,       0};
+  state->nppPF[ind++] = (StateField){"mean.npp.invalid",   FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_MEAN_META_FIELDS) {
+    logInternalError("Restart array size mismatch: nppPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->enviPF[0] = (StateField){"envi.plantWoodC",              FT_DOUBLE, &envi.plantWoodC,             0};
-  state->enviPF[1] = (StateField){"envi.plantLeafC",              FT_DOUBLE, &envi.plantLeafC,             0};
-  state->enviPF[2] = (StateField){"envi.soilC",                   FT_DOUBLE, &envi.soilC,                  0};
-  state->enviPF[3] = (StateField){"envi.soilWater",               FT_DOUBLE, &envi.soilWater,              0};
-  state->enviPF[4] = (StateField){"envi.litterC",                 FT_DOUBLE, &envi.litterC,                0};
-  state->enviPF[5] = (StateField){"envi.snow",                    FT_DOUBLE, &envi.snow,                   0};
-  state->enviPF[6] = (StateField){"envi.coarseRootC",             FT_DOUBLE, &envi.coarseRootC,            0};
-  state->enviPF[7] = (StateField){"envi.fineRootC",               FT_DOUBLE, &envi.fineRootC,              0};
-  state->enviPF[8] = (StateField){"envi.plantWoodN",              FT_DOUBLE, &envi.plantWoodN,             0};
-  state->enviPF[9] = (StateField){"envi.plantLeafN",              FT_DOUBLE, &envi.plantLeafN,             0};
-  state->enviPF[10] = (StateField){"envi.coarseRootN",            FT_DOUBLE, &envi.coarseRootN,            0};
-  state->enviPF[11] = (StateField){"envi.fineRootN",              FT_DOUBLE, &envi.fineRootN,              0};
-  state->enviPF[12] = (StateField){"envi.minN",                   FT_DOUBLE, &envi.minN,                   0};
-  state->enviPF[13] = (StateField){"envi.soilOrgN",               FT_DOUBLE, &envi.soilOrgN,               0};
-  state->enviPF[14] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
-  state->enviPF[15] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
-  state->enviPF[16] = (StateField){"envi.plantCAccountingDelta",  FT_DOUBLE, &envi.plantCAccountingDelta, 0};
-  state->enviPF[17] = (StateField){"envi.invalid",                FT_INVALID,NULL, FIELD_INVALID};
+  ind = 0;
+  state->enviPF[ind++] = (StateField){"envi.plantWoodC",              FT_DOUBLE, &envi.plantWoodC,             0};
+  state->enviPF[ind++] = (StateField){"envi.plantLeafC",              FT_DOUBLE, &envi.plantLeafC,             0};
+  state->enviPF[ind++] = (StateField){"envi.soilC",                   FT_DOUBLE, &envi.soilC,                  0};
+  state->enviPF[ind++] = (StateField){"envi.soilWater",               FT_DOUBLE, &envi.soilWater,              0};
+  state->enviPF[ind++] = (StateField){"envi.litterC",                 FT_DOUBLE, &envi.litterC,                0};
+  state->enviPF[ind++] = (StateField){"envi.snow",                    FT_DOUBLE, &envi.snow,                   0};
+  state->enviPF[ind++] = (StateField){"envi.coarseRootC",             FT_DOUBLE, &envi.coarseRootC,            0};
+  state->enviPF[ind++] = (StateField){"envi.fineRootC",               FT_DOUBLE, &envi.fineRootC,              0};
+  state->enviPF[ind++] = (StateField){"envi.plantWoodN",              FT_DOUBLE, &envi.plantWoodN,             0};
+  state->enviPF[ind++] = (StateField){"envi.plantLeafN",              FT_DOUBLE, &envi.plantLeafN,             0};
+  state->enviPF[ind++] = (StateField){"envi.coarseRootN",            FT_DOUBLE, &envi.coarseRootN,            0};
+  state->enviPF[ind++] = (StateField){"envi.fineRootN",              FT_DOUBLE, &envi.fineRootN,              0};
+  state->enviPF[ind++] = (StateField){"envi.minN",                   FT_DOUBLE, &envi.minN,                   0};
+  state->enviPF[ind++] = (StateField){"envi.soilOrgN",               FT_DOUBLE, &envi.soilOrgN,               0};
+  state->enviPF[ind++] = (StateField){"envi.litterN",                FT_DOUBLE, &envi.litterN,                0};
+  state->enviPF[ind++] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN, 0};
+  state->enviPF[ind++] = (StateField){"envi.plantCAccountingDelta",  FT_DOUBLE, &envi.plantCAccountingDelta, 0};
+  state->enviPF[ind++] = (StateField){"envi.invalid",                FT_INVALID,NULL, FIELD_INVALID};
+  if (ind != NUM_ENVI_FIELDS) {
+    logInternalError("Restart array size mismatch: enviPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->trackersPF[0] = (StateField){"trackers.gpp",                 FT_DOUBLE, &trackers.gpp,                0};
-  state->trackersPF[1] = (StateField){"trackers.rtot",                FT_DOUBLE, &trackers.rtot,               0};
-  state->trackersPF[2] = (StateField){"trackers.ra",                  FT_DOUBLE, &trackers.ra,                 0};
-  state->trackersPF[3] = (StateField){"trackers.rh",                  FT_DOUBLE, &trackers.rh,                 0};
-  state->trackersPF[4] = (StateField){"trackers.rRoot",               FT_DOUBLE, &trackers.rRoot,              0};
-  state->trackersPF[5] = (StateField){"trackers.rSoil",               FT_DOUBLE, &trackers.rSoil,              0};
-  state->trackersPF[6] = (StateField){"trackers.rAboveground",        FT_DOUBLE, &trackers.rAboveground,       0};
-  state->trackersPF[7] = (StateField){"trackers.npp",                 FT_DOUBLE, &trackers.npp,                0};
-  state->trackersPF[8] = (StateField){"trackers.nee",                 FT_DOUBLE, &trackers.nee,                0};
-  state->trackersPF[9] = (StateField){"trackers.woodCreation",        FT_DOUBLE, &trackers.woodCreation,       0};
-  state->trackersPF[10] = (StateField){"trackers.gdd",                FT_DOUBLE, &trackers.gdd,                0};
-  state->trackersPF[11] = (StateField){"trackers.evapotranspiration", FT_DOUBLE, &trackers.evapotranspiration, 0};
-  state->trackersPF[12] = (StateField){"trackers.soilWetnessFrac",    FT_DOUBLE, &trackers.soilWetnessFrac,    0},
-  state->trackersPF[13] = (StateField){"trackers.yearlyGpp",          FT_DOUBLE, &trackers.yearlyGpp,          0};
-  state->trackersPF[14] = (StateField){"trackers.yearlyRtot",         FT_DOUBLE, &trackers.yearlyRtot,         0};
-  state->trackersPF[15] = (StateField){"trackers.yearlyRa",           FT_DOUBLE, &trackers.yearlyRa,           0};
-  state->trackersPF[16] = (StateField){"trackers.yearlyRh",           FT_DOUBLE, &trackers.yearlyRh,           0};
-  state->trackersPF[17] = (StateField){"trackers.yearlyNpp",          FT_DOUBLE, &trackers.yearlyNpp,          0};
-  state->trackersPF[18] = (StateField){"trackers.yearlyNee",          FT_DOUBLE, &trackers.yearlyNee,          0};
-  state->trackersPF[19] = (StateField){"trackers.yearlyLitter",       FT_DOUBLE, &trackers.yearlyLitter,       0};
-  state->trackersPF[20] = (StateField){"trackers.totGpp",             FT_DOUBLE, &trackers.totGpp,             0};
-  state->trackersPF[21] = (StateField){"trackers.totRtot",            FT_DOUBLE, &trackers.totRtot,            0};
-  state->trackersPF[22] = (StateField){"trackers.totRa",              FT_DOUBLE, &trackers.totRa,              0};
-  state->trackersPF[23] = (StateField){"trackers.totRh",              FT_DOUBLE, &trackers.totRh,              0};
-  state->trackersPF[24] = (StateField){"trackers.totNpp",             FT_DOUBLE, &trackers.totNpp,             0};
-  state->trackersPF[25] = (StateField){"trackers.totNee",             FT_DOUBLE, &trackers.totNee,             0};
-  state->trackersPF[26] = (StateField){"trackers.lastYear",           FT_INT,    &trackers.lastYear,           0};
-  state->trackersPF[27] = (StateField){"trackers.methane",            FT_DOUBLE, &trackers.methane,            0};
-  state->trackersPF[28] = (StateField){"trackers.invalid",            FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->trackersPF[ind++] = (StateField){"trackers.gpp",                 FT_DOUBLE, &trackers.gpp,                0};
+  state->trackersPF[ind++] = (StateField){"trackers.rtot",                FT_DOUBLE, &trackers.rtot,               0};
+  state->trackersPF[ind++] = (StateField){"trackers.ra",                  FT_DOUBLE, &trackers.ra,                 0};
+  state->trackersPF[ind++] = (StateField){"trackers.rh",                  FT_DOUBLE, &trackers.rh,                 0};
+  state->trackersPF[ind++] = (StateField){"trackers.rRoot",               FT_DOUBLE, &trackers.rRoot,              0};
+  state->trackersPF[ind++] = (StateField){"trackers.rSoil",               FT_DOUBLE, &trackers.rSoil,              0};
+  state->trackersPF[ind++] = (StateField){"trackers.rAboveground",        FT_DOUBLE, &trackers.rAboveground,       0};
+  state->trackersPF[ind++] = (StateField){"trackers.npp",                 FT_DOUBLE, &trackers.npp,                0};
+  state->trackersPF[ind++] = (StateField){"trackers.nee",                 FT_DOUBLE, &trackers.nee,                0};
+  state->trackersPF[ind++] = (StateField){"trackers.woodCreation",        FT_DOUBLE, &trackers.woodCreation,       0};
+  state->trackersPF[ind++] = (StateField){"trackers.gdd",                FT_DOUBLE, &trackers.gdd,                0};
+  state->trackersPF[ind++] = (StateField){"trackers.evapotranspiration", FT_DOUBLE, &trackers.evapotranspiration, 0};
+  state->trackersPF[ind++] = (StateField){"trackers.soilWetnessFrac",    FT_DOUBLE, &trackers.soilWetnessFrac,    0},
+  state->trackersPF[ind++] = (StateField){"trackers.yearlyGpp",          FT_DOUBLE, &trackers.yearlyGpp,          0};
+  state->trackersPF[ind++] = (StateField){"trackers.yearlyRtot",         FT_DOUBLE, &trackers.yearlyRtot,         0};
+  state->trackersPF[ind++] = (StateField){"trackers.yearlyRa",           FT_DOUBLE, &trackers.yearlyRa,           0};
+  state->trackersPF[ind++] = (StateField){"trackers.yearlyRh",           FT_DOUBLE, &trackers.yearlyRh,           0};
+  state->trackersPF[ind++] = (StateField){"trackers.yearlyNpp",          FT_DOUBLE, &trackers.yearlyNpp,          0};
+  state->trackersPF[ind++] = (StateField){"trackers.yearlyNee",          FT_DOUBLE, &trackers.yearlyNee,          0};
+  state->trackersPF[ind++] = (StateField){"trackers.yearlyLitter",       FT_DOUBLE, &trackers.yearlyLitter,       0};
+  state->trackersPF[ind++] = (StateField){"trackers.totGpp",             FT_DOUBLE, &trackers.totGpp,             0};
+  state->trackersPF[ind++] = (StateField){"trackers.totRtot",            FT_DOUBLE, &trackers.totRtot,            0};
+  state->trackersPF[ind++] = (StateField){"trackers.totRa",              FT_DOUBLE, &trackers.totRa,              0};
+  state->trackersPF[ind++] = (StateField){"trackers.totRh",              FT_DOUBLE, &trackers.totRh,              0};
+  state->trackersPF[ind++] = (StateField){"trackers.totNpp",             FT_DOUBLE, &trackers.totNpp,             0};
+  state->trackersPF[ind++] = (StateField){"trackers.totNee",             FT_DOUBLE, &trackers.totNee,             0};
+  state->trackersPF[ind++] = (StateField){"trackers.lastYear",           FT_INT,    &trackers.lastYear,           0};
+  state->trackersPF[ind++] = (StateField){"trackers.methane",            FT_DOUBLE, &trackers.methane,            0};
+  state->trackersPF[ind++] = (StateField){"trackers.invalid",            FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_TRACKER_FIELDS) {
+    logInternalError("Restart array size mismatch: trackerPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->nitrogenPF[0] = (StateField){"nitrogen.n2o",              FT_DOUBLE, &nitrogenTrackers.n2o,              0};
-  state->nitrogenPF[1] = (StateField){"nitrogen.nLeaching",        FT_DOUBLE, &nitrogenTrackers.nLeaching,        0};
-  state->nitrogenPF[2] = (StateField){"nitrogen.nFixation",        FT_DOUBLE, &nitrogenTrackers.nFixation,        0};
-  state->nitrogenPF[3] = (StateField){"nitrogen.nUptake",          FT_DOUBLE, &nitrogenTrackers.nUptake,          0};
-  state->nitrogenPF[4] = (StateField){"nitrogen.woodExtraN",       FT_DOUBLE, &nitrogenTrackers.woodExtraN,       0};
-  state->nitrogenPF[5] = (StateField){"nitrogen.leafExtraN",       FT_DOUBLE, &nitrogenTrackers.leafExtraN,       0};
-  state->nitrogenPF[6] = (StateField){"nitrogen.coarseRootExtraN", FT_DOUBLE, &nitrogenTrackers.coarseRootExtraN, 0};
-  state->nitrogenPF[7] = (StateField){"nitrogen.fineRootExtraN",   FT_DOUBLE, &nitrogenTrackers.fineRootExtraN,   0};
-  state->nitrogenPF[8] = (StateField){"nitrogen.invalid",          FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.n2o",              FT_DOUBLE, &nitrogenTrackers.n2o,              0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.nLeaching",        FT_DOUBLE, &nitrogenTrackers.nLeaching,        0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.nFixation",        FT_DOUBLE, &nitrogenTrackers.nFixation,        0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.nUptake",          FT_DOUBLE, &nitrogenTrackers.nUptake,          0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.woodExtraN",       FT_DOUBLE, &nitrogenTrackers.woodExtraN,       0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.leafExtraN",       FT_DOUBLE, &nitrogenTrackers.leafExtraN,       0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.coarseRootExtraN", FT_DOUBLE, &nitrogenTrackers.coarseRootExtraN, 0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.fineRootExtraN",   FT_DOUBLE, &nitrogenTrackers.fineRootExtraN,   0};
+  state->nitrogenPF[ind++] = (StateField){"nitrogen.invalid",          FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_NITROGEN_TRACKERS_FIELDS) {
+    logInternalError("Restart array size mismatch: nitroPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->phenologyPF[0] = (StateField){"phenology.didLeafGrowth", FT_INT,     &phenologyTrackers.didLeafGrowth, 0};
-  state->phenologyPF[1] = (StateField){"phenology.didLeafFall",   FT_INT,     &phenologyTrackers.didLeafFall,   0};
-  state->phenologyPF[2] = (StateField){"phenology.lastYear",      FT_INT,     &phenologyTrackers.lastYear,      0};
-  state->phenologyPF[3] = (StateField){"phenology.invalid",       FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->phenologyPF[ind++] = (StateField){"phenology.didLeafGrowth", FT_INT,     &phenologyTrackers.didLeafGrowth, 0};
+  state->phenologyPF[ind++] = (StateField){"phenology.didLeafFall",   FT_INT,     &phenologyTrackers.didLeafFall,   0};
+  state->phenologyPF[ind++] = (StateField){"phenology.lastYear",      FT_INT,     &phenologyTrackers.lastYear,      0};
+  state->phenologyPF[ind++] = (StateField){"phenology.invalid",       FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_PHENOLOGY_TRACKERS_FIELDS) {
+    logInternalError("Restart array size mismatch: phenoPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->survivalPF[0] = (StateField){"survival.isAlive",  FT_INT,     &plantSurvival.isAlive,  0};
-  state->survivalPF[1] = (StateField){"survival.justDied", FT_INT,     &plantSurvival.justDied, 0};
-  state->survivalPF[2] = (StateField){"survival.invalid",  FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->survivalPF[ind++] = (StateField){"survival.isAlive",  FT_INT,     &plantSurvivalTracker.isAlive,  0};
+  state->survivalPF[ind++] = (StateField){"survival.invalid",  FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_SURVIVAL_TRACKERS_FIELDS) {
+    logInternalError("Restart array size mismatch: survivalPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
-  state->eventPF[0] = (StateField){"event_trackers.d_till_mod", FT_DOUBLE,  &eventTillageTracker.d_till_mod, 0};
-  state->eventPF[1] = (StateField){"event_trackers.invalid",    FT_INVALID, NULL, FIELD_INVALID};
+  ind = 0;
+  state->eventPF[ind++] = (StateField){"event_trackers.d_till_mod", FT_DOUBLE,  &eventTillageTracker.d_till_mod, 0};
+  state->eventPF[ind++] = (StateField){"event_trackers.invalid",    FT_INVALID, NULL, FIELD_INVALID};
+  if (ind != NUM_EVENT_TRACKERS_FIELDS) {
+    logInternalError("Restart array size mismatch: eventPF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   // meanNPP array handlers
 

@@ -589,19 +589,21 @@ void processEvents(void) {
         double litterNAdd = 0.0;
         double soilNAdd = 0.0;
         if (ctx.nitrogenCycle) {
-          const double totalAbove = envi.plantLeafN + envi.plantWoodN;
-          const double totalBelow = envi.fineRootN + envi.coarseRootN;
+          const double totalAbove =
+              envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN;
+          const double totalBelow = envi.coarseRootC / params.woodCN +
+                                    envi.fineRootC / params.fineRootCN;
           litterNAdd = fracTA * totalAbove;
           soilNAdd = fracTB * totalBelow;
           fluxes.eventSoilOrgN += soilNAdd / climLen;
           fluxes.eventLitterN += litterNAdd / climLen;
 
           // Biomass changes
-          woodNDelta = -envi.plantWoodN * (fracRA + fracTA);
-          leafNDelta = -envi.plantLeafN * (fracRA + fracTA);
+          woodNDelta = -envi.plantWoodC * (fracRA + fracTA) / params.woodCN;
+          leafNDelta = -envi.plantLeafC * (fracRA + fracTA) / params.leafCN;
           // Below-ground changes:
-          fineNDelta = -envi.fineRootN * (fracRB + fracTB);
-          coarseNDelta = -envi.coarseRootN * (fracRB + fracTB);
+          fineNDelta = -envi.fineRootC * (fracRB + fracTB) / params.fineRootCN;
+          coarseNDelta = -envi.coarseRootC * (fracRB + fracTB) / params.woodCN;
 
           fluxes.eventLeafN += leafNDelta / climLen;
           fluxes.eventWoodN += woodNDelta / climLen;
@@ -616,8 +618,13 @@ void processEvents(void) {
 
         double outputN = 0.0;
         if (ctx.nitrogenCycle) {
-          outputN = (envi.plantWoodN + envi.plantLeafN) * fracRA +
-                    (envi.fineRootN + envi.coarseRootN) * fracRB;
+          // just plantWoodC here, not woodC
+          outputN = (envi.plantWoodC / params.woodCN +
+                     envi.plantLeafC / params.leafCN) *
+                        fracRA +
+                    (envi.fineRootC / params.fineRootCN +
+                     envi.coarseRootC / params.woodCN) *
+                        fracRB;
           fluxes.eventOutputN += outputN / climLen;
         }
         // clang-format off

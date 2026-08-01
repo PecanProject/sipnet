@@ -1553,12 +1553,11 @@ void initPhenologyTrackers(void) {
 }
 
 void initPlantSurvivalTracker(void) {
-  plantSurvival.justDied = 0;
   double totalRoots = envi.fineRootC + envi.coarseRootC;
   if (envi.plantWoodC > TINY && totalRoots > TINY) {
-    plantSurvival.isAlive = 1;
+    plantSurvivalTracker.isAlive = 1;
   } else {
-    plantSurvival.isAlive = 0;
+    plantSurvivalTracker.isAlive = 0;
   }
 }
 
@@ -1571,7 +1570,7 @@ void initPlantSurvivalTracker(void) {
 // }
 
 void updateMeanTrackers(void) {
-  if (!plantSurvival.isAlive) {
+  if (!plantSurvivalTracker.isAlive) {
     // If the plant is dead, there's no NPP to add
     // In particular, if the plant JUST died (likely via harvest), we want to
     // avoid the lingering NPP from that time step.
@@ -1712,11 +1711,10 @@ void updatePoolsForSoil(void) {
 void checkForMortality(void) {
   double totalRoots = envi.fineRootC + envi.coarseRootC;
   // Transition check 1: plant was dead, but is back
-  if (!plantSurvival.isAlive) {
+  if (!plantSurvivalTracker.isAlive) {
     if (envi.plantWoodC > TINY && totalRoots > TINY) {
       // It's back!
-      plantSurvival.isAlive = 1;
-      plantSurvival.justDied = 0;
+      plantSurvivalTracker.isAlive = 1;
     }
 
     // No cleanup needed for this transition
@@ -1727,8 +1725,7 @@ void checkForMortality(void) {
 
   // Plant was alive last time step - are you still there?
   if (envi.plantWoodC <= TINY || totalRoots <= TINY) {
-    plantSurvival.isAlive = 0;
-    plantSurvival.justDied = 1;
+    plantSurvivalTracker.isAlive = 0;
 
     logInfo("Plant mortality detected: wood or total root carbon is zero or "
             "negative (woodC %f, coarseRootC %f fineRootC %f year %d day %d "
@@ -1773,6 +1770,7 @@ void checkForMortality(void) {
       envi.plantLeafN = 0.0;
       envi.coarseRootN = 0.0;
       envi.fineRootN = 0.0;
+      envi.plantStorageN = 0.0;
     }
     // Reset mean npp tracker to zero; there's nothing to grow
     resetMeanTracker(meanNPP, 0.0);

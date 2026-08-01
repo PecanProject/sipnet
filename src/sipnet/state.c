@@ -12,4 +12,4 @@ Envi envi;  // state variables
 Fluxes fluxes;  // fluxes
 Trackers trackers;
 PhenologyTrackers phenologyTrackers;
-PlantSurvival plantSurvival;
+PlantSurvivalTracker plantSurvivalTracker;

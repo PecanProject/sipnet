@@ -754,10 +754,8 @@ extern PhenologyTrackers phenologyTrackers;
 // Global var
 typedef struct PlantSurvivalStruct {
   int isAlive;
-  // TODO: remove justDied, it is serving no purpose
-  int justDied;
-} PlantSurvival;
+} PlantSurvivalTracker;
 
-extern PlantSurvival plantSurvival;
+extern PlantSurvivalTracker plantSurvivalTracker;
 
 #endif  // SIPNET_STATE_H
