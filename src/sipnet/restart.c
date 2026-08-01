@@ -154,7 +154,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->metaPF[ind++] = (StateField){"meta_info.checkpoint_utc_epoch", FT_LONGLONG, &checkpointUTCEpoch, 0};
   state->metaPF[ind++] = (StateField){"meta_info.processed_steps",      FT_LONGLONG, &processedStepCount, 0};
   state->metaPF[ind++] = (StateField){"meta.info.invalid",              FT_INVALID,   NULL,               FIELD_INVALID};
-  if (ind != NUM_META_FIELDS) {
+  if (ind != NUM_META_FIELDS + 1) {
     logInternalError("Restart array size mismatch: metaPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -165,7 +165,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->schemaPF[ind++] = (StateField){"schema_layout.phenology_trackers_size", FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE};
   state->schemaPF[ind++] = (StateField){"schema_layout.event_trackers_size",     FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE};
   state->schemaPF[ind++] = (StateField){"schema_layout.invalid",                 FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_SCHEMA_FIELDS) {
+  if (ind != NUM_SCHEMA_FIELDS + 1) {
     logInternalError("Restart array size mismatch: schemaPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -184,7 +184,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->flagsPF[ind++] = (StateField){"flags.flooding",     FT_INT, &modelFlags.flooding,      0};
   state->flagsPF[ind++] = (StateField){"flags.carbonSaturation", FT_INT, &modelFlags.carbonSaturation, 0};
   state->flagsPF[ind++] = (StateField){"flags.invalid",      FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_CONTEXT_MODEL_FLAGS) {
+  if (ind != NUM_CONTEXT_MODEL_FLAGS + 1) {
     logInternalError("Restart array size mismatch: flagsPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -195,7 +195,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->boundaryPF[ind++] = (StateField){"boundary.time",    FT_DOUBLE,  &boundaryClimate.time,   0};
   state->boundaryPF[ind++] = (StateField){"boundary.length",  FT_DOUBLE,  &boundaryClimate.length, 0};
   state->boundaryPF[ind++] = (StateField){"boundary.invalid", FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_CLIMATE_SIGNATURE_FIELDS) {
+  if (ind != NUM_CLIMATE_SIGNATURE_FIELDS + 1) {
     logInternalError("Restart array size mismatch: boundaryPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -207,7 +207,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->nppPF[ind++] = (StateField){"mean.npp.last",      FT_INT,     &npp->last,      0};
   state->nppPF[ind++] = (StateField){"mean.npp.sum",       FT_DOUBLE,  &npp->sum,       0};
   state->nppPF[ind++] = (StateField){"mean.npp.invalid",   FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_MEAN_META_FIELDS) {
+  if (ind != NUM_MEAN_META_FIELDS + 1) {
     logInternalError("Restart array size mismatch: nppPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -227,7 +227,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->enviPF[ind++] = (StateField){"envi.plantStorageN",          FT_DOUBLE, &envi.plantStorageN,         0};
   state->enviPF[ind++] = (StateField){"envi.plantCAccountingDelta",  FT_DOUBLE, &envi.plantCAccountingDelta, 0};
   state->enviPF[ind++] = (StateField){"envi.invalid",                FT_INVALID,NULL, FIELD_INVALID};
-  if (ind != NUM_ENVI_FIELDS) {
+  if (ind != NUM_ENVI_FIELDS + 1) {
     logInternalError("Restart array size mismatch: enviPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -266,7 +266,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->trackersPF[ind++] = (StateField){"trackers.nFixation",          FT_DOUBLE, &trackers.nFixation,        0};
   state->trackersPF[ind++] = (StateField){"trackers.nUptake",            FT_DOUBLE, &trackers.nUptake,          0};
   state->trackersPF[ind++] = (StateField){"trackers.invalid",            FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_TRACKER_FIELDS) {
+  if (ind != NUM_TRACKER_FIELDS + 1) {
     logInternalError("Restart array size mismatch: trackerPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -276,7 +276,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->phenologyPF[ind++] = (StateField){"phenology.didLeafFall",   FT_INT,     &phenologyTrackers.didLeafFall,   0};
   state->phenologyPF[ind++] = (StateField){"phenology.lastYear",      FT_INT,     &phenologyTrackers.lastYear,      0};
   state->phenologyPF[ind++] = (StateField){"phenology.invalid",       FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_PHENOLOGY_TRACKERS_FIELDS) {
+  if (ind != NUM_PHENOLOGY_TRACKERS_FIELDS + 1) {
     logInternalError("Restart array size mismatch: phenoPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -284,7 +284,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   ind = 0;
   state->survivalPF[ind++] = (StateField){"survival.isAlive",  FT_INT,     &plantSurvivalTracker.isAlive,  0};
   state->survivalPF[ind++] = (StateField){"survival.invalid",  FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_SURVIVAL_TRACKERS_FIELDS) {
+  if (ind != NUM_SURVIVAL_TRACKERS_FIELDS + 1) {
     logInternalError("Restart array size mismatch: survivalPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
@@ -292,7 +292,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   ind = 0;
   state->eventPF[ind++] = (StateField){"event_trackers.d_till_mod", FT_DOUBLE,  &eventTrackers.d_till_mod, 0};
   state->eventPF[ind++] = (StateField){"event_trackers.invalid",    FT_INVALID, NULL, FIELD_INVALID};
-  if (ind != NUM_EVENT_TRACKERS_FIELDS) {
+  if (ind != NUM_EVENT_TRACKERS_FIELDS + 1) {
     logInternalError("Restart array size mismatch: eventPF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
