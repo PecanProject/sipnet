@@ -743,7 +743,7 @@ int pastLeafFall(void) {
 }
 
 /*!
- * Calculate leaf creation and leaf litter fluxes
+ * Calculate wood and leaf creation and litter fluxes
  *
  * Leaf creation is a fraction of recent mean npp, plus some constant amount
  * at start of growing season. Leaf litter is a constant rate, plus some
@@ -753,35 +753,52 @@ int pastLeafFall(void) {
  * fraction of total leaves growing/falling to allow for continual growth and
  * litter as described in [2], Appendix: Model Description. Calculation of
  * leafCreation is not from [1] (source TBD).
- *
- * @param[out] leafCreation (g C/m^2 ground/day)
- * @param[out] leafLitter (g C/m^2 ground/day)
- * @param[out] leafOffNResorption Nitrogen resorbed from leaf turnover
- * @param[in] plantLeafC (g C/m^2 ground area)
  */
-void calcLeafFluxes(double *leafCreation, double *leafLitter,
-                    double *leafOffNResorption, double plantLeafC) {
+void calcWoodAndLeafFluxes(void) {
   // [TAG:UNKNOWN_PROVENANCE] leaf phenology combination
   // This function's exact source is still unknown, but is likely a combo of:
   // [1]: growing season boundary effects, but modified to be partial growth
   // and fall, instead of binary
   // [2]: leaf creation relationship with NPP
 
-  // temporal mean of recent npp (g C * m^-2 ground * day^-1)
-  double npp = getMeanTrackerMean(meanNPP);
+  // Wood litter, in g C * m^-2 ground area * day^-1
+  // turnover rate is fraction lost per day
+  fluxes.woodLitter +=
+      (envi.plantWoodC + envi.plantCAccountingDelta) * params.woodTurnoverRate;
+  // TODO: Should we resorb N from wood litter?
 
   // a constant fraction of leaves fall in each time step
-  double litter = plantLeafC * params.leafTurnoverRate;
-  *leafLitter = litter;
+  double leafLitter = envi.plantLeafC * params.leafTurnoverRate;
+  fluxes.leafLitter += leafLitter;
   if (ctx.nitrogenCycle) {
-    double nResorp = params.leafNResorptionFrac * litter / params.leafCN;
-    *leafOffNResorption += nResorp;
+    updateNResorptionFlux(params.leafNResorptionFrac * leafLitter,
+                          params.leafCN);
   }
+
+  // temporal mean of recent npp (g C * m^-2 ground * day^-1)
+  double npp = getMeanTrackerMean(meanNPP);
 
   // a fraction of NPP is allocated to leaf growth; negative mean NPP indicates
   // carbon loss; note that we can't lose more than we have, but we'll handle
   // that when we calc wood fluxes (as we will deduct from there instead)
-  *leafCreation = npp * params.leafAllocation;
+  double leafCreation = npp * params.leafAllocation;
+  double woodCreation = npp * params.woodAllocation;
+
+  // If leafCreation is too negative, we need to deduct from wood instead
+  double leafDeficit =
+      envi.plantLeafC / climate->length + leafCreation - leafLitter;
+  if (leafDeficit < 0) {
+    woodCreation += leafDeficit;
+    leafCreation -= leafDeficit;
+  }
+  fluxes.leafCreation += leafCreation;
+  fluxes.woodCreation += woodCreation;
+
+  // Capture the nitrogen if this is a negative growth situation
+  if (npp < 0.0) {
+    updateNResorptionFlux(-leafCreation, params.leafCN);
+    updateNResorptionFlux(-woodCreation, params.woodCN);
+  }
 }
 
 /*!
@@ -796,14 +813,12 @@ void calcLeafFluxes(double *leafCreation, double *leafLitter,
  *   (g C/m^2 ground/day)
  * @param[out] leafOnFromWood Carbon transferred from wood to leaves at
  *   leaf-on (g C/m^2 ground/day)
- * @param[out] leafOffNResorption Nitrogen resorbed from leaves at leaf-off
  * @param[out] leafLitter Additional leaf litter flux at leaf-off
  *   (g C/m^2 ground/day)
  * @param[in] plantLeafC Leaf carbon pool size (g C/m^2 ground area)
  */
 void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
-                         double *leafOffNResorption, double *leafLitter,
-                         double plantLeafC) {
+                         double *leafLitter, double plantLeafC) {
   // Calc additional fluxes at start/end of growing season
   // Note that these are basically events, and we will track them as such
 
@@ -841,8 +856,8 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
     if (leafOff > TINY && ctx.events) {
       double nResorp = 0.0;
       if (ctx.nitrogenCycle) {
-        nResorp = params.leafNResorptionFrac * leafOff / params.leafCN;
-        *leafOffNResorption += nResorp;
+        updateNResorptionFlux(params.leafNResorptionFrac * leafOff,
+                              params.leafCN);
       }
       writeComputedEventOut(climate->year, climate->day,
                             eventTypeToString(LEAFOFF), 2, "leafLitter",
@@ -1184,31 +1199,25 @@ void calcLitterFluxes() {
 /*!
  * Calculate root and wood creation and loss
  */
-void calcRootAndWoodFluxes(void) {
+void calcRootFluxes(void) {
   double npp = getMeanTrackerMean(meanNPP);
 
   // :: from [3], root model description and eq (3)
   // negative mean NPP indicates carbon loss
-  fluxes.coarseRootCreation = params.coarseRootAllocation * npp;
-  fluxes.fineRootCreation = params.fineRootAllocation * npp;
-  fluxes.woodCreation = params.woodAllocation * npp;
+  double coarseRootCreation = params.coarseRootAllocation * npp;
+  double fineRootCreation = params.fineRootAllocation * npp;
 
-  // If leafCreation is too negative, we need to deduct from wood instead
-  double leafDeficit = envi.plantLeafC / climate->length + fluxes.leafCreation -
-                       fluxes.leafLitter;
-  if (leafDeficit < 0) {
-    fluxes.woodCreation += leafDeficit;
-    fluxes.leafCreation -= leafDeficit;
+  fluxes.coarseRootCreation += coarseRootCreation;
+  fluxes.fineRootCreation += fineRootCreation;
+  // Capture the nitrogen if this is a negative growth situation
+  if (npp < 0.0) {
+    updateNResorptionFlux(-coarseRootCreation, params.woodCN);
+    updateNResorptionFlux(-fineRootCreation, params.fineRootCN);
   }
 
   // :: from [3], roots model descriptions
-  fluxes.coarseRootLoss = params.coarseRootTurnoverRate * envi.coarseRootC;
-  fluxes.fineRootLoss = params.fineRootTurnoverRate * envi.fineRootC;
-
-  // Wood litter, in g C * m^-2 ground area * day^-1
-  // turnover rate is fraction lost per day
-  fluxes.woodLitter =
-      (envi.plantWoodC + envi.plantCAccountingDelta) * params.woodTurnoverRate;
+  fluxes.coarseRootLoss += params.coarseRootTurnoverRate * envi.coarseRootC;
+  fluxes.fineRootLoss += params.fineRootTurnoverRate * envi.fineRootC;
 
   // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
@@ -1317,19 +1326,17 @@ void calculateFluxes(void) {
   }
 
   // Leaf creation and litter
-  calcLeafFluxes(&(fluxes.leafCreation), &(fluxes.leafLitter),
-                 &(fluxes.leafOffNResorption), envi.plantLeafC);
+  calcWoodAndLeafFluxes();
 
   // Leaf on/off
-  calcLeafOnOffFluxes(&(fluxes.leafOnCreation), &fluxes.leafOnCreationFromWood,
-                      &(fluxes.leafOffNResorption), &(fluxes.leafLitter),
-                      envi.plantLeafC);
+  calcLeafOnOffFluxes(&fluxes.leafOnCreation, &fluxes.leafOnCreationFromWood,
+                      &fluxes.leafLitter, envi.plantLeafC);
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
 
   // Roots
-  calcRootAndWoodFluxes();
+  calcRootFluxes();
 
   // Soil respiration
   calcSoilRespiration(climate->tsoil, envi.soilWater, params.soilWHC);
