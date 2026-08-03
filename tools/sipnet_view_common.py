@@ -578,19 +578,26 @@ def find_closest_sorted(arr, target):
 
 class CustomNav2QT(NavigationToolbar2QT):
   def mouse_move(self, event):
+    # Fall back to the default toolbar handler if we can't resolve a data point.
+    if not event.inaxes or event.xdata is None:
+      super().mouse_move(event)
+      return
+
     # Check if the mouse is inside an Axes
     if event.inaxes:
       ax = event.inaxes
-      line = ax.get_lines()[0]
+      lines = ax.get_lines()
+      if not lines:
+        super().mouse_move(event)
+        return
+      line = lines[0]
       xd = line.get_xdata()
       yd = line.get_ydata()
-      # The event xdata is in days, but we need seconds
-      ed = (event.xdata * 86400).astype('datetime64[s]')
-      near_idx = find_closest_sorted(xd, ed)
-      #print(xd[near_idx], yd[near_idx])
-      x = np.datetime_as_string(xd[near_idx], unit='m')
+      target_dt = mdates.num2date(event.xdata).replace(tzinfo=None)
+      target = np.datetime64(target_dt)
+      near_idx = find_closest_sorted(xd, target)
+      x = pd.to_datetime(xd[near_idx]).strftime('%Y-%j %H:%m')
       y = yd[near_idx]
-      #breakpoint()
       # Set a custom message on the toolbar status bar
       self.set_message(f"Closest data point:\nX: {x}  Y: {y}")
     else:

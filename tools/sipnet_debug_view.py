@@ -212,7 +212,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
   )
   parser.add_argument(
     "--title",
-    default="Sipnet Debug Log Viewer",
+    default="SIPNET Debug Log Viewer",
     help=(
       "Title displayed on the viewer window."
     ),
