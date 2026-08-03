@@ -1581,8 +1581,9 @@ void initPhenologyTrackers(void) {
 }
 
 void initPlantSurvivalTracker(void) {
+  double totalWoodC = envi.plantWoodC + envi.plantCAccountingDelta;
   double totalRoots = envi.fineRootC + envi.coarseRootC;
-  if (envi.plantWoodC > TINY && totalRoots > TINY) {
+  if (totalWoodC > TINY && totalRoots > TINY) {
     plantSurvivalTracker.isAlive = 1;
   } else {
     plantSurvivalTracker.isAlive = 0;
