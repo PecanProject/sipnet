@@ -31,7 +31,7 @@
 #define FIELD_SEEN (-1)
 #define FIELD_INVALID (-2)
 #define NUM_META_FIELDS 4
-#define NUM_SCHEMA_FIELDS 4
+#define NUM_SCHEMA_FIELDS 5
 #define NUM_MEAN_META_FIELDS 5
 #define NUM_ENVI_FIELDS 13
 #define NUM_TRACKER_FIELDS 32
@@ -163,7 +163,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->schemaPF[ind++] = (StateField){"schema_layout.envi_size",               FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_ENVI_SIZE};
   state->schemaPF[ind++] = (StateField){"schema_layout.trackers_size",           FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_TRACKERS_SIZE};
   state->schemaPF[ind++] = (StateField){"schema_layout.phenology_trackers_size", FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_PHENOLOGY_TRACKERS_SIZE};
-  state->schemaPF[ind++] = (StateField){"schema_layout.event_trackers_size",     FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE};
+  state->schemaPF[ind++] = (StateField){"schema_layout.survival_trackers_size",  FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_SURVIVAL_TRACKERS_SIZE};  state->schemaPF[ind++] = (StateField){"schema_layout.event_trackers_size",     FT_SPECIAL, 0, RESTART_SCHEMA_LAYOUT_EVENT_TRACKERS_SIZE};
   state->schemaPF[ind++] = (StateField){"schema_layout.invalid",                 FT_INVALID, NULL, FIELD_INVALID};
   if (ind != NUM_SCHEMA_FIELDS + 1) {
     logInternalError("Restart array size mismatch: schemaPF\n");
