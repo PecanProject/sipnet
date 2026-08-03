@@ -166,6 +166,11 @@ EventNode *createEventNode(int year, int day, int eventType,
       }
       newEvent->eventParams = lParams;
     } break;
+    case PLANTDEATH: {
+      logWarning("PLANTDEATH event found for year %d day %d, but not "
+                 "implemented as an input event; ignoring\n",
+                 gEvent->year, gEvent->day);
+    } break;
     default:
       // Unknown type, error and exit
       logError("found unknown event type %d while reading event file\n",
@@ -193,6 +198,8 @@ const char *eventTypeToString(event_type_t type) {
       return "leafon";
     case LEAFOFF:
       return "leafoff";
+    case PLANTDEATH:
+      return "plantdeath";
     default:
       logError("unknown event type in eventTypeToString (%d)", type);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -221,7 +228,9 @@ event_type_t eventStringToType(const char *eventTypeStr) {
   if (strcmp(eventTypeStr, "leafoff") == 0) {
     return LEAFOFF;
   }
-
+  if (strcmp(eventTypeStr, "plantdeath") == 0) {
+    return PLANTDEATH;
+  }
   return UNKNOWN_EVENT;
 }
 
@@ -454,6 +463,10 @@ void processEvents(void) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 
+  // Reset harvest tracking
+  eventTrackers.harvestFracRemoved = 0;
+  eventTrackers.harvestFracTransferred = 0;
+
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
     // The events file has been tested on read, so we know this event list
     // should be in chrono order. However, we need to check to make sure the
@@ -534,6 +547,9 @@ void processEvents(void) {
         const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
+
+        eventTrackers.harvestFracRemoved = fracRA + fracRB;
+        eventTrackers.harvestFracTransferred = fracTA + fracTB;
 
         const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
         // Litter increase
@@ -701,6 +717,12 @@ void processEvents(void) {
           "eventLitterN", litterNAdd);
         // clang-format on
       } break;
+      case PLANTDEATH:
+        // There should be no way to get here, but covering our bases...
+        logWarning("PLANTDEATH event found for year %d day %d, but not "
+                   "implemented as an input event; ignoring\n",
+                   gEvent->year, gEvent->day);
+        break;
       default:
         logError("Unknown event type (%d) in processEvents()\n", gEvent->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -839,6 +861,10 @@ void printEvent(EventNode *oneEvent) {
     case LEAFOFF:
       printf("LEAFOFF on %d %d, ", year, day);
       // No real params for leafoff
+      break;
+    case PLANTDEATH:
+      printf("PLANTDEATH on %d %d, ", year, day);
+      // No real params for plantdeath
       break;
     default:
       printf("ERROR printing oneEvent: unknown type %d\n", oneEvent->type);

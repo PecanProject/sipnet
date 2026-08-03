@@ -1589,14 +1589,6 @@ void initPlantSurvivalTracker(void) {
   }
 }
 
-// Reset any trackers that need resetting at the beginning of each time step
-// void initPerStepTrackers(void) {
-//   initPlantSurvivalTracker();
-//
-//   // TODO: The event harvest tracking should be reset
-//   //initPerStepEventTrackers();
-// }
-
 void updateMeanTrackers(void) {
   if (!plantSurvivalTracker.isAlive) {
     // If the plant is dead, there's no NPP to add
@@ -1740,10 +1732,11 @@ void updatePoolsForSoil(void) {
  * reemergence (say, after a planting)
  */
 void checkForMortality(void) {
-  double totalRoots = envi.fineRootC + envi.coarseRootC;
+  double totalWoodC = envi.plantWoodC + envi.plantCAccountingDelta;
+  double totalRootC = envi.fineRootC + envi.coarseRootC;
   // Transition check 1: plant was dead, but is back
   if (!plantSurvivalTracker.isAlive) {
-    if (envi.plantWoodC > TINY && totalRoots > TINY) {
+    if (totalWoodC > TINY && totalRootC > TINY) {
       // It's back!
       plantSurvivalTracker.isAlive = 1;
     }
@@ -1755,29 +1748,35 @@ void checkForMortality(void) {
   // Transition check 2: plant was alive, but is now dead
 
   // Plant was alive last time step - are you still there?
-  if (envi.plantWoodC <= TINY || totalRoots <= TINY) {
+  if (totalWoodC <= TINY || totalRootC <= TINY) {
     plantSurvivalTracker.isAlive = 0;
 
-    logInfo("Plant mortality detected: wood or total root carbon is zero or "
-            "negative (woodC %f, coarseRootC %f fineRootC %f year %d day %d "
-            "time %6.3f); zeroing out biomass pools\n",
-            envi.plantWoodC, envi.coarseRootC, envi.fineRootC, climate->year,
-            climate->day, climate->time);
-    // TODO: Add check for harvest cause, update info to say so
-    //       add total harvest amount to message?
-    //       convert to warning if not harvest (leave info if so)
-
-    // TODO: add computed event on plant death
-    //       possibly include whether or not a harvest occurred, though that
-    //       will already be in events.out - so probably not - unless we want
-    //       a note of how much of the plant was harvested (removed+transferred)
+    if (eventTrackers.harvestFracRemoved +
+            eventTrackers.harvestFracTransferred >=
+        TINY) {
+      logInfo("Plant mortality detected after harvest event: total fraction "
+              "removed %.3f total fraction transferred %.3f; woodC %f "
+              "coarseRootC %f fineRootC %f year %d day %d time %6.3f; zeroing "
+              "out biomass pools\n",
+              eventTrackers.harvestFracRemoved,
+              eventTrackers.harvestFracTransferred, totalWoodC,
+              envi.coarseRootC, envi.fineRootC, climate->year, climate->day,
+              climate->time);
+    } else {
+      logWarning(
+          "Plant mortality detected as wood or total root carbon is zero "
+          "or negative: woodC %f coarseRootC %f fineRootC %f year %d"
+          " day %d time %6.3f; zeroing out biomass pools\n",
+          totalWoodC, envi.coarseRootC, envi.fineRootC, climate->year,
+          climate->day, climate->time);
+    }
 
     // Move remnants to litter/soil as appropriate. Note we add all pools, even
     // if some are negative, as we should for mass balance. Given that there are
     // multiple processes being modeled, it's believable that there may be a bit
     // of overshoot when a plant dies - for example, a 100% harvest event with
     // any overall loss (respiration, turnover).
-    envi.soilC += totalRoots;
+    envi.soilC += totalRootC;
     if (ctx.litterPool) {
       envi.litterC +=
           envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
@@ -1803,6 +1802,12 @@ void checkForMortality(void) {
     }
     // Reset mean npp tracker to zero; there's nothing to grow
     resetMeanTracker(meanNPP, 0.0);
+
+    writeComputedEventOut(
+        climate->year, climate->day, eventTypeToString(PLANTDEATH), 4,
+        "harvestFracRemoved", eventTrackers.harvestFracRemoved,
+        "harvestFracTransferred", eventTrackers.harvestFracTransferred,
+        "totalWoodC", totalWoodC, "totalRootC", totalRootC);
   }
 }
 
