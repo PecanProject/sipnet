@@ -167,9 +167,9 @@ EventNode *createEventNode(int year, int day, int eventType,
       newEvent->eventParams = lParams;
     } break;
     case PLANTDEATH: {
-      logWarning("PLANTDEATH event found for year %d day %d, but not "
-                 "implemented as an input event; ignoring\n",
-                 gEvent->year, gEvent->day);
+      logError("PLANTDEATH event found for year %d day %d, but not implemented "
+               "as an input event; please remove and re-run\n",
+               year, day);
     } break;
     default:
       // Unknown type, error and exit
