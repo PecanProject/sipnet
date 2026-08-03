@@ -5,6 +5,14 @@
 /////
 // Setup and state management
 
+void resetContext(void) {
+  ctx.litterPool = 0;
+  ctx.nitrogenCycle = 0;
+  ctx.events = 0;
+  // waterHResp is on by default, no tests turn it off
+  ctx.anaerobic = 0;
+}
+
 void setupTests(void) {
   // Set up dummy climate
   climate = (ClimateNode *)malloc(sizeof(ClimateNode));
@@ -15,9 +23,7 @@ void setupTests(void) {
 
   // Set up the context
   initContext();
-  ctx.litterPool = 0;
-  ctx.nitrogenCycle = 0;
-  ctx.events = 0;
+  resetContext();
 
   // Initialize mean NPP tracker (needed by checkForMortality ->
   // resetMeanTracker)
@@ -59,6 +65,7 @@ int testInitPlantSurvivalTrackerAlive(void) {
   int status = 0;
   logTest("Running testInitPlantSurvivalTrackerAlive\n");
 
+  resetContext();
   resetEnv();  // woodC=5.0, fineRootC=3.0, coarseRootC=4.0
   initPlantSurvivalTracker();
   if (!plantSurvivalTracker.isAlive) {
@@ -72,6 +79,7 @@ int testInitPlantSurvivalTrackerDeadNoWood(void) {
   int status = 0;
   logTest("Running testInitPlantSurvivalTrackerDeadNoWood\n");
 
+  resetContext();
   resetEnv();
   envi.plantWoodC = 0.0;
   initPlantSurvivalTracker();
@@ -86,6 +94,7 @@ int testInitPlantSurvivalTrackerDeadNoRoots(void) {
   int status = 0;
   logTest("Running testInitPlantSurvivalTrackerDeadNoRoots\n");
 
+  resetContext();
   resetEnv();
   envi.fineRootC = 0.0;
   envi.coarseRootC = 0.0;
@@ -104,8 +113,7 @@ int testMortalityAliveStaysAlive(void) {
   int status = 0;
   logTest("Running testMortalityAliveStaysAlive\n");
 
-  ctx.litterPool = 0;
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetEnv();  // woodC=5, leafC=2, fineRoot=3, coarseRoot=4
   plantSurvivalTracker.isAlive = 1;
 
@@ -124,8 +132,7 @@ int testMortalityPlantDiesNoLitter(void) {
   int status = 0;
   logTest("Running testMortalityPlantDiesNoLitter\n");
 
-  ctx.litterPool = 0;
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetEnv();
   envi.plantWoodC = 0.0;  // woodC=0 triggers death
   plantSurvivalTracker.isAlive = 1;
@@ -154,8 +161,8 @@ int testMortalityPlantDiesWithLitter(void) {
   int status = 0;
   logTest("Running testMortalityPlantDiesWithLitter\n");
 
+  resetContext();
   ctx.litterPool = 1;
-  ctx.nitrogenCycle = 0;
   resetEnv();
   envi.litterC = 5.0;
   envi.plantWoodC = 0.0;  // trigger death
@@ -180,11 +187,10 @@ int testMortalityPlantDiesWithNitrogen(void) {
   logTest("Running testMortalityPlantDiesWithNitrogen\n");
 
   // Nitrogen cycle implies litter pool; set all required context flags
+  resetContext();
   ctx.litterPool = 1;
-  ctx.waterHResp = 1;
   ctx.anaerobic = 1;
   ctx.nitrogenCycle = 1;
-  validateContext();
 
   resetEnv();
   envi.litterC = 5.0;
@@ -217,8 +223,7 @@ int testMortalityDeadStaysDead(void) {
   int status = 0;
   logTest("Running testMortalityDeadStaysDead\n");
 
-  ctx.litterPool = 0;
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetEnv();
   // All pools are zero: plant is dead and stays dead
   envi.plantWoodC = 0.0;
@@ -242,8 +247,7 @@ int testMortalityReemergence(void) {
   int status = 0;
   logTest("Running testMortalityReemergence\n");
 
-  ctx.litterPool = 0;
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetEnv();  // woodC=5, roots=7
   plantSurvivalTracker.isAlive = 0;  // plant was previously dead
 
@@ -265,8 +269,7 @@ int testMortalityWithAccountingDelta(void) {
   int status = 0;
   logTest("Running testMortalityWithAccountingDelta\n");
 
-  ctx.litterPool = 0;
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetEnv();
   // plantWoodC=0 but plantCAccountingDelta=0 -> totalWoodC=0 -> death
   envi.plantWoodC = 0.0;

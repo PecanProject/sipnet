@@ -5,6 +5,14 @@
 /////
 // Setup and state management
 
+void resetContext(void) {
+  ctx.litterPool = 0;
+  ctx.nitrogenCycle = 0;
+  ctx.events = 0;
+  // waterHResp is on by default, no tests turn it off
+  ctx.anaerobic = 0;
+}
+
 void setupTests(void) {
   // Set up dummy climate
   climate = (ClimateNode *)malloc(sizeof(ClimateNode));
@@ -16,7 +24,7 @@ void setupTests(void) {
 
   // Set up the context
   initContext();
-  ctx.nitrogenCycle = 0;
+  resetContext();
 
   // Initialize mean NPP tracker
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
@@ -44,7 +52,7 @@ int testWoodAndLeafFluxesPositiveNPP(void) {
   int status = 0;
   logTest("Running testWoodAndLeafFluxesPositiveNPP\n");
 
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetFluxVars();
   // Set NPP mean to 10.0 g C/m^2/day
   resetMeanTracker(meanNPP, 10.0);
@@ -79,11 +87,10 @@ int testWoodAndLeafFluxesNegativeNPP(void) {
   int status = 0;
   logTest("Running testWoodAndLeafFluxesNegativeNPP\n");
 
+  resetContext();
   ctx.nitrogenCycle = 1;
   ctx.litterPool = 1;
-  ctx.waterHResp = 1;
   ctx.anaerobic = 1;
-  validateContext();
   resetFluxVars();
   // Set NPP mean to -2.0 (carbon loss)
   resetMeanTracker(meanNPP, -2.0);
@@ -124,7 +131,7 @@ int testWoodAndLeafFluxesLeafDeficit(void) {
   int status = 0;
   logTest("Running testWoodAndLeafFluxesLeafDeficit\n");
 
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetFluxVars();
   // Very negative NPP causes leaf deficit - excess deducted from wood
   resetMeanTracker(meanNPP, -5.0);
@@ -155,7 +162,7 @@ int testWoodAndLeafFluxesWithAccountingDelta(void) {
   int status = 0;
   logTest("Running testWoodAndLeafFluxesWithAccountingDelta\n");
 
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetFluxVars();
   resetMeanTracker(meanNPP, 0.0);  // zero NPP
 
@@ -179,7 +186,7 @@ int testWoodAndLeafFluxesIsAdditive(void) {
   int status = 0;
   logTest("Running testWoodAndLeafFluxesIsAdditive\n");
 
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetFluxVars();
   resetMeanTracker(meanNPP, 4.0);
 
@@ -209,7 +216,7 @@ int testRootFluxesPositiveNPP(void) {
   int status = 0;
   logTest("Running testRootFluxesPositiveNPP\n");
 
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetFluxVars();
   resetMeanTracker(meanNPP, 8.0);
 
@@ -247,11 +254,10 @@ int testRootFluxesNegativeNPP(void) {
   int status = 0;
   logTest("Running testRootFluxesNegativeNPP\n");
 
+  resetContext();
   ctx.nitrogenCycle = 1;
   ctx.litterPool = 1;
-  ctx.waterHResp = 1;
   ctx.anaerobic = 1;
-  validateContext();
   resetFluxVars();
   resetMeanTracker(meanNPP, -4.0);
 
@@ -288,7 +294,7 @@ int testRootFluxesIsAdditive(void) {
   int status = 0;
   logTest("Running testRootFluxesIsAdditive\n");
 
-  ctx.nitrogenCycle = 0;
+  resetContext();
   resetFluxVars();
   resetMeanTracker(meanNPP, 5.0);
 
