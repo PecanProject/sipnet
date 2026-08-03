@@ -19,7 +19,8 @@ void setupTests(void) {
   ctx.nitrogenCycle = 0;
   ctx.events = 0;
 
-  // Initialize mean NPP tracker (needed by checkForMortality -> resetMeanTracker)
+  // Initialize mean NPP tracker (needed by checkForMortality ->
+  // resetMeanTracker)
   meanNPP = newMeanTracker(0, MEAN_NPP_DAYS, MEAN_NPP_MAX_ENTRIES);
 
   // Initialize event trackers
@@ -144,7 +145,8 @@ int testMortalityPlantDiesNoLitter(void) {
   status |= checkPool(envi.plantLeafC, 0.0, "plantLeafC zeroed");
   status |= checkPool(envi.fineRootC, 0.0, "fineRootC zeroed");
   status |= checkPool(envi.coarseRootC, 0.0, "coarseRootC zeroed");
-  status |= checkPool(envi.plantCAccountingDelta, 0.0, "plantCAccountingDelta zeroed");
+  status |= checkPool(envi.plantCAccountingDelta, 0.0,
+                      "plantCAccountingDelta zeroed");
   return status;
 }
 
@@ -166,7 +168,8 @@ int testMortalityPlantDiesWithLitter(void) {
   checkForMortality();
 
   status |= checkPool(envi.soilC, expSoilC, "soilC after death (with litter)");
-  status |= checkPool(envi.litterC, expLitterC, "litterC after death (with litter)");
+  status |=
+      checkPool(envi.litterC, expLitterC, "litterC after death (with litter)");
   status |= checkPool(envi.plantWoodC, 0.0, "plantWoodC zeroed");
   status |= checkPool(envi.plantLeafC, 0.0, "plantLeafC zeroed");
   return status;
@@ -197,8 +200,9 @@ int testMortalityPlantDiesWithNitrogen(void) {
   envi.plantWoodC = 0.0;  // trigger death
   plantSurvivalTracker.isAlive = 1;
 
-  // soilOrgN += fineRoot/fineRootCN + coarseRoot/woodCN = 3/40 + 4/100 = 0.075 + 0.04 = 0.115
-  // litterN += woodC/woodCN + leafC/leafCN + storageN = 0/100 + 2/20 + 0.5 = 0.6
+  // soilOrgN += fineRoot/fineRootCN + coarseRoot/woodCN = 3/40 + 4/100 = 0.075
+  // + 0.04 = 0.115 litterN += woodC/woodCN + leafC/leafCN + storageN = 0/100 +
+  // 2/20 + 0.5 = 0.6
   double expSoilOrgN = 2.0 + 3.0 / 40.0 + 4.0 / 100.0;
   double expLitterN = 3.0 + 0.0 / 100.0 + 2.0 / 20.0 + 0.5;
   checkForMortality();
@@ -251,7 +255,8 @@ int testMortalityReemergence(void) {
     logTest("Expected plant to re-emerge when woodC>0 and rootC>0\n");
   }
   // Pools should be unchanged on re-emergence (no cleanup needed)
-  status |= checkPool(envi.plantWoodC, 5.0, "plantWoodC unchanged on reemergence");
+  status |=
+      checkPool(envi.plantWoodC, 5.0, "plantWoodC unchanged on reemergence");
   status |= checkPool(envi.soilC, 10.0, "soilC unchanged on reemergence");
   return status;
 }
