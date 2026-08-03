@@ -1803,11 +1803,13 @@ void checkForMortality(void) {
     // Reset mean npp tracker to zero; there's nothing to grow
     resetMeanTracker(meanNPP, 0.0);
 
-    writeComputedEventOut(
-        climate->year, climate->day, eventTypeToString(PLANTDEATH), 4,
-        "harvestFracRemoved", eventTrackers.harvestFracRemoved,
-        "harvestFracTransferred", eventTrackers.harvestFracTransferred,
-        "totalWoodC", totalWoodC, "totalRootC", totalRootC);
+    if (ctx.events) {
+      writeComputedEventOut(
+          climate->year, climate->day, eventTypeToString(PLANTDEATH), 4,
+          "harvestFracRemoved", eventTrackers.harvestFracRemoved,
+          "harvestFracTransferred", eventTrackers.harvestFracTransferred,
+          "totalWoodC", totalWoodC, "totalRootC", totalRootC);
+    }
   }
 }
 
