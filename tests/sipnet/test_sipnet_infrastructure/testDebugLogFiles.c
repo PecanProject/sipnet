@@ -173,7 +173,10 @@ int main(void) {
 
   status |= init();
 
-  status |= run();
+  // If init() fails, don't run(); but, we'll want to attempt cleanup()
+  if (!status) {
+    status |= run();
+  }
 
   status |= cleanup();
 
