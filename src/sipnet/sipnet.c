@@ -1525,8 +1525,8 @@ void updateTrackers(double oldSoilWater) {
     trackers.gdd = 0.0;
   }
 
-  double npp = getMeanTrackerMean(meanNPP);
-  trackers.npp = npp;
+  double mean_npp = getMeanTrackerMean(meanNPP);
+  trackers.meanNPP = mean_npp;
 
   // N cycle trackers
   if (ctx.nitrogenCycle) {
