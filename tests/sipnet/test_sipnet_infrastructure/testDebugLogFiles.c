@@ -133,6 +133,11 @@ int run(void) {
     status = 1;
   }
 
+  if (status == 0) {
+    runShell("cd " TEST_WORK_DIR
+             " && rm -rf debug_logs && rm -f debug_log_test.log");
+  }
+
   return status;
 }
 

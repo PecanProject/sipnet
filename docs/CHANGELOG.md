@@ -36,6 +36,8 @@ sections to include in release notes:
 
 ### Fixed
 
+- Fix testDebugLogFiles unit test leaving untracked log files in workspace after execution (#358)
+
 ### Changed
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
