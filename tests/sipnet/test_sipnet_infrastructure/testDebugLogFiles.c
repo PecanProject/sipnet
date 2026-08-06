@@ -16,8 +16,13 @@
 #define EXPECTED_ENVI_FIELDS ((int)(sizeof(Envi) / sizeof(double)))
 #define EXPECTED_FLUX_FIELDS ((int)(sizeof(Fluxes) / sizeof(double)))
 // These are not all doubles
-#define EXPECTED_TRACKER_FIELDS 32
+// Let's do a little more work for Trackers
+#define NUM_TRACKER_INTS 1
+#define TRACKERS_SIZE (int)(sizeof(Trackers) - NUM_TRACKER_INTS * sizeof(int))
+#define EXPECTED_TRACKER_FIELDS                                                \
+  ((int)(TRACKERS_SIZE / sizeof(double)) + NUM_TRACKER_INTS)
 #define EXPECTED_PHENOLOGY_FIELDS 3
+#define EXPECTED_SURVIVAL_FIELDS 1
 
 static int countTokens(const char *line) {
   int count = 0;
@@ -106,9 +111,11 @@ int run(void) {
                         "plantCAccountingDelta");
   status |= checkHeader(FLUXES_FILE, 3 + EXPECTED_FLUX_FIELDS, "photosynthesis",
                         "litterMethane");
-  status |= checkHeader(TRACKERS_FILE,
-                        3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS,
-                        "t.gpp", "pt.lastYear");
+  status |=
+      checkHeader(TRACKERS_FILE,
+                  3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS +
+                      EXPECTED_SURVIVAL_FIELDS,
+                  "t.gpp", "pt.lastYear");
 
   int mainLines = countLines(SIPNET_OUT_FILE);
   int enviLines = countLines(ENVI_FILE);

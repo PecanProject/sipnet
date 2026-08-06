@@ -78,8 +78,8 @@ int testWoodAndLeafFluxesPositiveNPP(void) {
   status |= checkFlux(fluxes.leafCreation, 3.0, "leafCreation (positive NPP)");
   status |= checkFlux(fluxes.woodCreation, 4.0, "woodCreation (positive NPP)");
   // No N resorption when NPP is positive
-  status |= checkFlux(fluxes.leafOffNResorption, 0.0,
-                      "leafOffNResorption (positive NPP)");
+  status |= checkFlux(fluxes.reductionNResorption, 0.0,
+                      "reductionNResorption (positive NPP)");
   return status;
 }
 
@@ -102,7 +102,6 @@ int testWoodAndLeafFluxesNegativeNPP(void) {
   params.leafTurnoverRate = 0.2;
   params.leafAllocation = 0.3;
   params.woodAllocation = 0.4;
-  params.leafNResorptionFrac = 0.0;  // disable turnover resorption for clarity
   params.leafCN = 20.0;
   params.woodCN = 100.0;
 
@@ -122,8 +121,8 @@ int testWoodAndLeafFluxesNegativeNPP(void) {
   status |= checkFlux(fluxes.leafLitter, 0.6, "leafLitter (negative NPP)");
   status |= checkFlux(fluxes.leafCreation, -0.6, "leafCreation (negative NPP)");
   status |= checkFlux(fluxes.woodCreation, -0.8, "woodCreation (negative NPP)");
-  status |= checkFlux(fluxes.leafOffNResorption, 0.038,
-                      "leafOffNResorption (negative NPP)");
+  status |= checkFlux(fluxes.reductionNResorption, 0.038,
+                      "reductionNResorption (negative NPP)");
   return status;
 }
 
@@ -245,8 +244,8 @@ int testRootFluxesPositiveNPP(void) {
       checkFlux(fluxes.coarseRootLoss, 0.05, "coarseRootLoss (positive NPP)");
   status |= checkFlux(fluxes.fineRootLoss, 0.06, "fineRootLoss (positive NPP)");
   // No N resorption when NPP is positive
-  status |= checkFlux(fluxes.leafOffNResorption, 0.0,
-                      "leafOffNResorption (positive NPP roots)");
+  status |= checkFlux(fluxes.reductionNResorption, 0.0,
+                      "reductionNResorption (positive NPP roots)");
   return status;
 }
 
@@ -285,8 +284,8 @@ int testRootFluxesNegativeNPP(void) {
                       "coarseRootCreation (negative NPP)");
   status |= checkFlux(fluxes.fineRootCreation, -0.8,
                       "fineRootCreation (negative NPP)");
-  status |= checkFlux(fluxes.leafOffNResorption, 0.024,
-                      "leafOffNResorption (negative NPP roots)");
+  status |= checkFlux(fluxes.reductionNResorption, 0.024,
+                      "reductionNResorption (negative NPP roots)");
   return status;
 }
 
