@@ -131,8 +131,8 @@ void checkBalance(void) {
   // Pool delta
   double poolNDelta = balanceTracker.finalN - balanceTracker.preTotalN;
   // System delta
-  double systemNDelta = balanceTracker.inputsN - balanceTracker.outputsN;
-  balanceTracker.deltaN = poolNDelta - systemNDelta;
+  double systemNDelta = balanceTracker.outputsN - balanceTracker.inputsN;
+  balanceTracker.deltaN = poolNDelta + systemNDelta;
 
   // To avoid weird negative-zero issues...
   if (fabs(balanceTracker.deltaC) < EPS) {
@@ -156,8 +156,8 @@ void checkBalance(void) {
     logWarning(
         "Nitrogen balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
         balanceTracker.deltaN, climate->year, climate->day, climate->time);
-    logWarning("preTot %.6f postTot %.6f input %.6f output %.6f clamped "
-               "%.6f delta %.6f\n",
+    logWarning("preTot %.7f postTot %.7f input %.7f output %.7f clamped "
+               "%.7f delta %.7f\n",
                balanceTracker.preTotalN, balanceTracker.postTotalN,
                balanceTracker.inputsN, balanceTracker.outputsN,
                balanceTracker.clampedN, balanceTracker.deltaN);
