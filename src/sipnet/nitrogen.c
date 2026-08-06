@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "common/context.h"
+#include "common/logging.h"
 #include "common/util.h"
 
 #include "depeffects.h"
@@ -100,7 +101,7 @@ double calcPlantNDemandFlux(void) {
                           fluxes.leafCreation / params.leafCN +
                           fluxes.fineRootCreation / params.fineRootCN +
                           fluxes.coarseRootCreation / params.woodCN;
-  return creationDemand;
+  return fmax(0.0, creationDemand);
 }
 
 // see nitrogen.h
@@ -151,9 +152,14 @@ void calcNFixationAndUptakeFluxes(void) {
   fluxes.nFixation = nFixationFrac * nDemandFlux;
   fluxes.nUptake = (1 - nFixationFrac) * nDemandFlux;
 }
+
 // see nitrogen.h
 void updateNResorptionFlux(double deltaC, double cn) {
-  fluxes.leafOffNResorption += deltaC / cn;
+  // Reminder: deltaC is expected to be the carbon REDUCTION, i.e. negative
+  if (deltaC > 0.0) {
+    logInternalError("updateNResorptionFlux() called with positive deltaC\n");
+  }
+  fluxes.reductionNResorption -= deltaC / cn;
 }
 
 // see nitrogen.h
@@ -179,7 +185,9 @@ void updateNitrogenPools(void) {
   double uptake = fluxes.nUptake * climate->length;
   double uptakeFromStorage = fmin(uptake, envi.plantStorageN);
   envi.plantStorageN +=
-      fluxes.leafOffNResorption * climate->length - uptakeFromStorage;
+      (fluxes.leafOffNResorption + fluxes.reductionNResorption) *
+          climate->length -
+      uptakeFromStorage;
 
   // Unmet uptake plus other fluxes go to soil mineral N (note we have one
   // mineral pool for soil+litter).

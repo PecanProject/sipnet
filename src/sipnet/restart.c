@@ -34,7 +34,7 @@
 #define NUM_SCHEMA_FIELDS 5
 #define NUM_MEAN_META_FIELDS 5
 #define NUM_ENVI_FIELDS 13
-#define NUM_TRACKER_FIELDS 32
+#define NUM_TRACKER_FIELDS 33
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_SURVIVAL_TRACKERS_FIELDS 1
 #define NUM_EVENT_TRACKERS_FIELDS 3
@@ -265,6 +265,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->trackersPF[ind++] = (StateField){"trackers.nLeaching",          FT_DOUBLE, &trackers.nLeaching,        0};
   state->trackersPF[ind++] = (StateField){"trackers.nFixation",          FT_DOUBLE, &trackers.nFixation,        0};
   state->trackersPF[ind++] = (StateField){"trackers.nUptake",            FT_DOUBLE, &trackers.nUptake,          0};
+  state->trackersPF[ind++] = (StateField){"trackers.meanNPP",            FT_DOUBLE, &trackers.meanNPP,          0};
   state->trackersPF[ind++] = (StateField){"trackers.invalid",            FT_INVALID, NULL, FIELD_INVALID};
   if (ind != NUM_TRACKER_FIELDS + 1) {
     logInternalError("Restart array size mismatch: trackerPF\n");

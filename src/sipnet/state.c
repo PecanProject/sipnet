@@ -13,3 +13,7 @@ Fluxes fluxes;  // fluxes
 Trackers trackers;
 PhenologyTrackers phenologyTrackers;
 PlantSurvivalTracker plantSurvivalTracker;
+
+double getTotalWoodC(void) {
+  return envi.plantWoodC + envi.plantCAccountingDelta;
+}

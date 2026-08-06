@@ -583,6 +583,9 @@ typedef struct FluxVars {
   // Plant N stored in a leaf-off event
   double leafOffNResorption;
 
+  // Plant N stored when mean NPP is < 0
+  double reductionNResorption;
+
   // ****************************************
   // Fluxes for event handling
   //  - event fluxes tracked as part of modeling from [4]
@@ -718,6 +721,8 @@ typedef struct TrackerVars {  // variables to track various things
   // g N * m^-2 N taken up by plants from soil mineral N pool
   double nUptake;
 
+  // This is mostly for debugging
+  double meanNPP;
 } Trackers;
 
 // Global var
@@ -747,5 +752,7 @@ typedef struct PlantSurvivalStruct {
 } PlantSurvivalTracker;
 
 extern PlantSurvivalTracker plantSurvivalTracker;
+
+double getTotalWoodC(void);
 
 #endif  // SIPNET_STATE_H
