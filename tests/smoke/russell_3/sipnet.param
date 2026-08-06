@@ -58,7 +58,7 @@ cFracLeaf 0.45136783760037
 mineralNInit 1.0
 soilOrgNInit 135.0
 litterOrgNInit 14.0
-nVolatilizationFrac 0.1
+nVolatilizationFrac 0.05
 nLeachingFrac 0.25
 leafCN 20.0
 woodCN 100.0
