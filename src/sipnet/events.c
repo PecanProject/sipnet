@@ -170,6 +170,7 @@ EventNode *createEventNode(int year, int day, int eventType,
       logError("PLANTDEATH event found for year %d day %d, but not implemented "
                "as an input event; please remove and re-run\n",
                year, day);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
     } break;
     default:
       // Unknown type, error and exit
