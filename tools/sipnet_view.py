@@ -224,6 +224,11 @@ def main(argv: Sequence[str] | None = None) -> int:
   return application.exec()
 
 
+def load_output_table(path: Path) -> LoadedSipnetData:
+  """Load the output table from *path*. Exposes the static method at module level for backwards compatibility."""
+  return SipnetViewerWindow.load_output(path)
+
+
 if __name__ == "__main__":
   try:
     raise SystemExit(main())
