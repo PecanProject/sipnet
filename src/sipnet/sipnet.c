@@ -1568,10 +1568,17 @@ void initPhenologyTrackers(void) {
                                                // this year
 }
 
-void initPlantSurvivalTracker(void) {
+// Check that woodC and total root C are both positive
+int hasSufficientBiomass(void) {
   double totalWoodC = getTotalWoodC();
-  double totalRoots = envi.fineRootC + envi.coarseRootC;
-  if (totalWoodC > TINY && totalRoots > TINY) {
+  double totalRootC = envi.fineRootC + envi.coarseRootC;
+  // We want to check that both plantWoodC AND totalWoodC are positive, as well
+  // as totalRootC
+  return envi.plantWoodC > TINY && totalWoodC > TINY && totalRootC > TINY;
+}
+
+void initPlantSurvivalTracker(void) {
+  if (hasSufficientBiomass()) {
     plantSurvivalTracker.isAlive = 1;
   } else {
     plantSurvivalTracker.isAlive = 0;
@@ -1721,15 +1728,12 @@ void updatePoolsForSoil(void) {
  * reemergence (say, after a planting)
  */
 void checkForMortality(void) {
-  double totalWoodC = getTotalWoodC();
-  double totalRootC = envi.fineRootC + envi.coarseRootC;
   // Transition check 1: plant was dead, but is back
   if (!plantSurvivalTracker.isAlive) {
-    if (totalWoodC > TINY && totalRootC > TINY) {
+    if (hasSufficientBiomass()) {
       // It's back!
       plantSurvivalTracker.isAlive = 1;
     }
-
     // No cleanup needed for this transition
     return;
   }
@@ -1737,27 +1741,29 @@ void checkForMortality(void) {
   // Transition check 2: plant was alive, but is now dead
 
   // Plant was alive last time step - are you still there?
-  if (totalWoodC <= TINY || totalRootC <= TINY) {
+  if (!hasSufficientBiomass()) {
     plantSurvivalTracker.isAlive = 0;
+    double totalWoodC = getTotalWoodC();
+    double totalRootC = envi.fineRootC + envi.coarseRootC;
 
     if (eventTrackers.harvestFracRemoved +
             eventTrackers.harvestFracTransferred >=
         TINY) {
       logInfo("Plant mortality detected after harvest event: total fraction "
               "removed %.3f total fraction transferred %.3f; woodC %f "
-              "coarseRootC %f fineRootC %f year %d day %d time %6.3f; zeroing "
-              "out biomass pools\n",
+              "totalWoodC %f coarseRootC %f fineRootC %f year %d day %d "
+              "time %6.3f; zeroing out biomass pools\n",
               eventTrackers.harvestFracRemoved,
-              eventTrackers.harvestFracTransferred, totalWoodC,
+              eventTrackers.harvestFracTransferred, envi.plantWoodC, totalWoodC,
               envi.coarseRootC, envi.fineRootC, climate->year, climate->day,
               climate->time);
     } else {
       logWarning(
           "Plant mortality detected as wood or total root carbon is zero "
-          "or negative: woodC %f coarseRootC %f fineRootC %f year %d"
-          " day %d time %6.3f; zeroing out biomass pools\n",
-          totalWoodC, envi.coarseRootC, envi.fineRootC, climate->year,
-          climate->day, climate->time);
+          "or negative: woodC %f totalWoodC %f coarseRootC %f fineRootC %f "
+          "year %d day %d time %6.3f; zeroing out biomass pools\n",
+          envi.plantWoodC, totalWoodC, envi.coarseRootC, envi.fineRootC,
+          climate->year, climate->day, climate->time);
     }
 
     // Move remnants to litter/soil as appropriate. Note we add all pools, even

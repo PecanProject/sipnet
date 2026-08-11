@@ -147,10 +147,22 @@ double calcNFixationFrac(void) {
 void calcNFixationAndUptakeFluxes(void) {
   // These values may change later if we are under nitrogen limitation
   double nDemandFlux = calcPlantNDemandFlux();
-  double nFixationFrac = calcNFixationFrac();
 
-  fluxes.nFixation = nFixationFrac * nDemandFlux;
-  fluxes.nUptake = (1 - nFixationFrac) * nDemandFlux;
+  // Calculate how much will be covered by the storage pool; take into account
+  // leaf-on fluxes, as they are demand too for the storage pool
+  double leafOnNFlux =
+      calcLeafOnNFromC(fluxes.leafOnCreation + fluxes.eventLeafOnCreation);
+  // The fmax for storageFlux should be unnecessary, as the leaf-on demand has
+  // been capped by the storage pool - but we'll cover our bases anyway
+  double storageFlux =
+      fmax(0.0, envi.plantStorageN / climate->length - leafOnNFlux);
+
+  // Remaining demand for uptake/fixation
+  double remDemandFlux = fmax(0.0, nDemandFlux - storageFlux);
+  // Now parcel that out between fixation and uptake
+  double nFixationFrac = calcNFixationFrac();
+  fluxes.nFixation = nFixationFrac * remDemandFlux;
+  fluxes.nUptake = (1 - nFixationFrac) * remDemandFlux;
 }
 
 // see nitrogen.h
@@ -177,24 +189,23 @@ void updateNitrogenPools(void) {
   // TBD: add equation numbers once published
 
   // Storage N changes
-  // First, parcel plantStorageN to leaf-on demand and regular growth demand
-  // fluxes.eventLeafOnCreation has already been handled in events.c
+  // fluxes nUptake  and nFixation handle part of the demand flux (see
+  // calcNFixationAndUptakeFluxes), but we expect the rest to come from the
+  // storage pool
+  double nDemandFlux = calcPlantNDemandFlux();
+  double storageDemandFlux = nDemandFlux - fluxes.nUptake - fluxes.nFixation;
+  // leaf-on; fluxes.eventLeafOnCreation is handled in events.c
   double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
-  envi.plantStorageN -= leafOnNFlux * climate->length;
-  //  Remaining plantStorageN can go to demand
-  double uptake = fluxes.nUptake * climate->length;
-  double uptakeFromStorage = fmin(uptake, envi.plantStorageN);
   envi.plantStorageN +=
-      (fluxes.leafOffNResorption + fluxes.reductionNResorption) *
-          climate->length -
-      uptakeFromStorage;
+      (fluxes.leafOffNResorption + fluxes.reductionNResorption -
+       storageDemandFlux - leafOnNFlux) *
+      climate->length;
 
   // Unmet uptake plus other fluxes go to soil mineral N (note we have one
   // mineral pool for soil+litter).
   // Mineral N additions from fertilization are handled with the events
-  double uptakeFromMinN = uptake - uptakeFromStorage;
   double nonUptakeFluxes = calcMinNNonUptakeFluxes();
-  envi.minN += nonUptakeFluxes * climate->length - uptakeFromMinN;
+  envi.minN += (nonUptakeFluxes - fluxes.nUptake) * climate->length;
 
   // Soil organic N
   envi.soilOrgN += fluxes.nOrgSoil * climate->length;

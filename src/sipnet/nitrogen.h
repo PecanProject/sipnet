@@ -5,6 +5,9 @@
 
 /*!
  * Calculate excess N needed for leaf on events
+ *
+ * Note: leafOnC can be either a flux or pool measurement; the returned
+ * value will match.
  */
 double calcLeafOnNFromC(double leafOnC);
 

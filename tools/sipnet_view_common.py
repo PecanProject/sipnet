@@ -596,7 +596,7 @@ class CustomNav2QT(NavigationToolbar2QT):
       target_dt = mdates.num2date(event.xdata).replace(tzinfo=None)
       target = np.datetime64(target_dt)
       near_idx = find_closest_sorted(xd, target)
-      x = pd.to_datetime(xd[near_idx]).strftime('%Y-%j %H:%m')
+      x = pd.to_datetime(xd[near_idx]).strftime('%Y-%j %H:%M')
       y = yd[near_idx]
       # Set a custom message on the toolbar status bar
       self.set_message(f"Closest data point:\nX: {x}  Y: {y}")

@@ -57,7 +57,7 @@ year  day  type     param_name=delta[,param_name=delta,...]
 2016  296  irrig    eventSoilWater=2.80,eventEvap=0.00
 2016  300  irrig    eventSoilWater=2.80,eventEvap=0.00
 2016  304  irrig    eventSoilWater=2.80,eventEvap=0.00
-2017   49  leafon   leafOnCreation=113.40,leafOnCreationFromWood=85.45
+2017   49  leafon   leafOnCreation=111.75,leafOnCreationFromWood=84.20
 2017   92  irrig    eventSoilWater=2.80,eventEvap=0.00
 2017   96  irrig    eventSoilWater=2.80,eventEvap=0.00
 2017  100  irrig    eventSoilWater=2.80,eventEvap=0.00
@@ -107,7 +107,7 @@ year  day  type     param_name=delta[,param_name=delta,...]
 2017  276  irrig    eventSoilWater=2.80,eventEvap=0.00
 2017  280  irrig    eventSoilWater=2.80,eventEvap=0.00
 2017  284  irrig    eventSoilWater=2.80,eventEvap=0.00
-2017  285  leafoff  leafLitter=61.82,leafOffNResorption=1.55
+2017  285  leafoff  leafLitter=60.78,leafOffNResorption=1.52
 2017  288  irrig    eventSoilWater=2.80,eventEvap=0.00
 2017  292  irrig    eventSoilWater=2.80,eventEvap=0.00
 2017  296  irrig    eventSoilWater=2.80,eventEvap=0.00

@@ -90,8 +90,9 @@ static void checkNitrogenLimitation(void) {
     fluxes.leafCreation *= reduction;
     fluxes.fineRootCreation *= reduction;
     fluxes.coarseRootCreation *= reduction;
-    fluxes.nFixation *= reduction;
-    fluxes.nUptake *= reduction;
+
+    // Reset fixation and uptake
+    calcNFixationAndUptakeFluxes();
   }
 }
 

@@ -170,7 +170,8 @@ EventNode *createEventNode(int year, int day, int eventType,
       logError("PLANTDEATH event found for year %d day %d, but not implemented "
                "as an input event; please remove and re-run\n",
                year, day);
-    } break;
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
+    }  // break;
     default:
       // Unknown type, error and exit
       logError("found unknown event type %d while reading event file\n",
@@ -547,11 +548,17 @@ void processEvents(void) {
         const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
-
-        eventTrackers.harvestFracRemoved = fracRA + fracRB;
-        eventTrackers.harvestFracTransferred = fracTA + fracTB;
-
         const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
+
+        // Record fraction of total biomass removed and transferred
+        double aboveMass = woodC + envi.plantLeafC;
+        double belowMass = envi.fineRootC + envi.coarseRootC;
+        double totalMass = aboveMass + belowMass;
+        double massRemoved = fracRA * aboveMass + fracRB * belowMass;
+        double massTransferred = fracTA * aboveMass + fracTB * belowMass;
+        eventTrackers.harvestFracRemoved = massRemoved / totalMass;
+        eventTrackers.harvestFracTransferred = massTransferred / totalMass;
+
         // Litter increase
         double litterAdd = fracTA * (envi.plantLeafC + woodC);
         double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);

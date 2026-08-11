@@ -42,7 +42,6 @@ sections to include in release notes:
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
 - Values in `events.out` changed to pool deltas rather than flux amounts (#349)
-- Renamed `nppStorage` output column to `nppDelta` to clarify that it is a delta rather than a pool value (#359)
 - Updated handling of carbon NPP accounting (#359)
 
 ### Removed
