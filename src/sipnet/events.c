@@ -554,10 +554,12 @@ void processEvents(void) {
         double aboveMass = woodC + envi.plantLeafC;
         double belowMass = envi.fineRootC + envi.coarseRootC;
         double totalMass = aboveMass + belowMass;
-        double massRemoved = fracRA * aboveMass + fracRB * belowMass;
-        double massTransferred = fracTA * aboveMass + fracTB * belowMass;
-        eventTrackers.harvestFracRemoved = massRemoved / totalMass;
-        eventTrackers.harvestFracTransferred = massTransferred / totalMass;
+        if (totalMass > TINY) {
+          double massRemoved = fracRA * aboveMass + fracRB * belowMass;
+          double massTransferred = fracTA * aboveMass + fracTB * belowMass;
+          eventTrackers.harvestFracRemoved += massRemoved / totalMass;
+          eventTrackers.harvestFracTransferred += massTransferred / totalMass;
+        }
 
         // Litter increase
         double litterAdd = fracTA * (envi.plantLeafC + woodC);
