@@ -535,24 +535,45 @@ int testNLimitationWithStorage(void) {
 
 /////
 // updateNitrogenPools draws uptake from plantStorageN before minN
+void initNitrogenPoolsFromStorageState(double plantStorageN) {
+  resetState();
+
+  // envi
+  envi.minN = 1;
+  envi.plantStorageN = plantStorageN;
+
+  // fluxes; these values make all terms plant N demand =2, so demand flux = 8,
+  // and demand = (8*climate->length) = 1
+  fluxes.leafCreation = params.leafCN * 2;
+  fluxes.woodCreation = params.woodCN * 2;
+  fluxes.fineRootCreation = params.fineRootCN * 2;
+  fluxes.coarseRootCreation = params.woodCN * 2;
+}
+
 int testUpdateNitrogenPoolsFromStorage(void) {
   int status = 0;
   logTest("Running testUpdateNitrogenPoolsFromStorage\n");
 
+  // Demand flux = 8 ==> demand = 1 for all cases
+
   // Case 1: uptake fully covered by storage
-  // nUptake=3.0, length=0.125 -> uptake=0.375; plantStorageN=0.5 >= 0.375
+  // plantNDemand = 4, storage = 5
   // -> all uptake from storage, minN unchanged
-  resetState();
-  envi.minN = 1.0;
-  envi.plantStorageN = 0.5;
-  fluxes.nUptake = 3.0;
+  initNitrogenPoolsFromStorageState(2.0);
+  calcNFixationAndUptakeFluxes();
   updateNitrogenPools();
 
-  double expStorageN = 0.5 - 3.0 * climate->length;  // 0.5 - 0.375 = 0.125
+  double expStorageN = 1.0;
   if (!compareDoubles(envi.plantStorageN, expStorageN)) {
     status = 1;
     logTest("[full storage] plantStorageN is %8.4f, expected %8.4f\n",
             envi.plantStorageN, expStorageN);
+  }
+  double expNUptake = 0.0;
+  if (!compareDoubles(fluxes.nUptake, expNUptake)) {
+    status = 1;
+    logTest("[full storage] nUptake is %8.4f, expected %8.4f\n", fluxes.nUptake,
+            expNUptake);
   }
   if (!compareDoubles(envi.minN, 1.0)) {
     status = 1;
@@ -561,12 +582,8 @@ int testUpdateNitrogenPoolsFromStorage(void) {
   }
 
   // Case 2: uptake partially covered by storage, remainder from minN
-  // plantStorageN=0.1 < uptake=0.375 -> 0.1 from storage, 0.275 from minN
-  // plantStorageN_new = 0.0, minN_new = 1.0 - 0.275 = 0.725
-  resetState();
-  envi.minN = 1.0;
-  envi.plantStorageN = 0.1;
-  fluxes.nUptake = 3.0;
+  initNitrogenPoolsFromStorageState(0.5);
+  calcNFixationAndUptakeFluxes();
   updateNitrogenPools();
 
   if (!compareDoubles(envi.plantStorageN, 0.0)) {
@@ -574,7 +591,13 @@ int testUpdateNitrogenPoolsFromStorage(void) {
     logTest("[partial storage] plantStorageN is %8.4f, expected 0.0\n",
             envi.plantStorageN);
   }
-  double expMinN = 1.0 - (3.0 * climate->length - 0.1);  // 1.0 - 0.275 = 0.725
+  expNUptake = 0.5 / climate->length;
+  if (!compareDoubles(fluxes.nUptake, expNUptake)) {
+    status = 1;
+    logTest("[partial storage] nUptake is %8.4f, expected %8.4f\n",
+            fluxes.nUptake, expNUptake);
+  }
+  double expMinN = 0.5;
   if (!compareDoubles(envi.minN, expMinN)) {
     status = 1;
     logTest("[partial storage] minN is %8.4f, expected %8.4f\n", envi.minN,
