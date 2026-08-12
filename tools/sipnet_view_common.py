@@ -531,8 +531,7 @@ def get_default_arg_parser(desc: str) -> argparse.ArgumentParser:
     "--columns",
     help=(
       "Comma-separated list of columns to pre-select in the GUI. "
-      "Use the prefixed names as shown in the Y-axis selector "
-      "(e.g. envi.plantWoodC, flux.photosynthesis, tracker.t.gpp)."
+      "Use the names as shown in the Y-axis selector."
     ),
   )
   parser.add_argument(
