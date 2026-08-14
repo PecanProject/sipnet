@@ -66,4 +66,9 @@ void calcNitrogenFluxes(void);
  */
 void updateNitrogenPools(void);
 
+/**
+ * In the public API for testing
+ */
+void calcReductionResorptionFlux(void);
+
 #endif  // NITROGEN_H
