@@ -34,7 +34,7 @@ sections to include in release notes:
 
 ### Git SHA
 
-## **SIPNET 2.2.0 - "Carbon-Nitrogen Refinement"**
+## **SIPNET 2.2.0 - "Carbon and Nitrogen in Sync"**
 
 ### Added
 
