@@ -106,6 +106,22 @@ int testInitPlantSurvivalTrackerDeadNoRoots(void) {
   return status;
 }
 
+int testInitPlantSurvivalTrackerDeadNegativeTotalWood(void) {
+  int status = 0;
+  logTest("Running testInitPlantSurvivalTrackerDeadNegativeTotalWood\n");
+
+  resetContext();
+  resetEnv();
+  envi.plantWoodC = 1.0;
+  envi.plantCAccountingDelta = -1.5;
+  initPlantSurvivalTracker();
+  if (plantSurvivalTracker.isAlive) {
+    status = 1;
+    logTest("Expected isAlive=0 with totalWoodC=-0.5, got 1\n");
+  }
+  return status;
+}
+
 /////
 // checkForMortality tests
 
@@ -271,19 +287,20 @@ int testMortalityWithAccountingDelta(void) {
 
   resetContext();
   resetEnv();
-  // plantWoodC=0 but plantCAccountingDelta=0 -> totalWoodC=0 -> death
-  envi.plantWoodC = 0.0;
-  envi.plantCAccountingDelta = 0.0;
+  // plantWoodC=1 but plantCAccountingDelta=-1.5 -> totalWoodC=-0.5 -> death
+  envi.plantWoodC = 1.0;
+  envi.plantCAccountingDelta = -1.5;
   plantSurvivalTracker.isAlive = 1;
 
-  double expSoilC = 10.0 + 3.0 + 4.0 + 0.0 + 2.0 + 0.0;
+  double expSoilC = 10.0 + 3.0 + 4.0 + 1.0 + 2.0 - 1.5;
   checkForMortality();
 
   if (plantSurvivalTracker.isAlive) {
     status = 1;
-    logTest("Expected plant to die when totalWoodC=0\n");
+    logTest("Expected plant to die when totalWoodC=-0.5\n");
   }
-  status |= checkPool(envi.soilC, expSoilC, "soilC after death (zero delta)");
+  status |= checkPool(envi.soilC, expSoilC,
+                      "soilC after death (negative totalWoodC)");
   return status;
 }
 
@@ -295,6 +312,7 @@ int run(void) {
   status |= testInitPlantSurvivalTrackerAlive();
   status |= testInitPlantSurvivalTrackerDeadNoWood();
   status |= testInitPlantSurvivalTrackerDeadNoRoots();
+  status |= testInitPlantSurvivalTrackerDeadNegativeTotalWood();
   status |= testMortalityAliveStaysAlive();
   status |= testMortalityPlantDiesNoLitter();
   status |= testMortalityPlantDiesWithLitter();
