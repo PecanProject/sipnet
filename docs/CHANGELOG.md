@@ -46,13 +46,13 @@ sections to include in release notes:
 - New `--debug-log` CLI option to enable debug logging (#352)
 - Ability to create derived columns in `sipnet-view` (#355)
 - New `sipnet-debug-view` tool for visualizing SIPNET debug output files (#359)
-- Plant mortality check with event output on occurrence (#359)
+- Plant mortality check with transfer of remaining carbon and nitrogen to litter and soil pools and a `plantdeath` record in `events.out` (#359).
 
 ### Fixed
 
-- Carbon pseudo-storage pool handling was fundamentally broken; PR #359 completely revamps C buffer accounting and biomass N handling (#350, #325)
-- Nitrogen cycle accounting and mass balance integrity in plant senescence (#359)
-- Plant mortality event carbon accounting (#359)
+- Corrected plant carbon accounting so the accounting-only carbon delta is not treated as nitrogen-bearing woody biomass (#359).
+- Corrected nitrogen resorption and storage accounting during senescence and negative growth, including the ordering of storage use, fixation, and uptake (#359).
+- Corrected the nitrogen mass-balance sign convention (#359).
 
 ### Changed
 
