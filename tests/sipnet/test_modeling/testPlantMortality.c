@@ -292,6 +292,8 @@ int testMortalityWithAccountingDelta(void) {
   envi.plantCAccountingDelta = -1.5;
   plantSurvivalTracker.isAlive = 1;
 
+  // soilC += fineRoot + coarseRoot + woodC + leafC + accountingDelta
+  //       = 10 + 3 + 4 + 1 + 2 - 1.5 = 18.5
   double expSoilC = 10.0 + 3.0 + 4.0 + 1.0 + 2.0 - 1.5;
   checkForMortality();
 
