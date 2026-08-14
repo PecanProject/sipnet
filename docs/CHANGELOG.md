@@ -26,6 +26,18 @@ sections to include in release notes:
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+### Git SHA
+
+## **SIPNET 2.2.0 - "Carbon-Nitrogen Refinement"**
+
+### Added
+
 - `sipnet-view` tool for visualizing SIPNET output files (#317)
 - `leafon` and `leafoff` events for tracking phenological transitions (#326)
 - `leafon` limited by available carbon and nitrogen; N storage pool; N resorption on `leafoff` (#337)
@@ -38,6 +50,10 @@ sections to include in release notes:
 
 ### Fixed
 
+- Carbon pseudo-storage pool handling was fundamentally broken; PR #359 completely revamps C buffer accounting and biomass N handling (#350, #325)
+- Nitrogen cycle accounting and mass balance integrity in plant senescence (#359)
+- Plant mortality event carbon accounting (#359)
+
 ### Changed
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
@@ -49,6 +65,8 @@ sections to include in release notes:
 - Schema version from restart checkpoint format; model version is sufficient (#338)
 
 ### Git SHA
+
+70762ca
 
 ## **SIPNET 2.1.0 - "Nitrogen Cycle, Methane, and Restart"**
 
