@@ -16,8 +16,13 @@
 #define EXPECTED_ENVI_FIELDS ((int)(sizeof(Envi) / sizeof(double)))
 #define EXPECTED_FLUX_FIELDS ((int)(sizeof(Fluxes) / sizeof(double)))
 // These are not all doubles
-#define EXPECTED_TRACKER_FIELDS 32
+// Let's do a little more work for Trackers
+#define NUM_TRACKER_INTS 1
+#define TRACKERS_SIZE (int)(sizeof(Trackers) - NUM_TRACKER_INTS * sizeof(int))
+#define EXPECTED_TRACKER_FIELDS                                                \
+  ((int)(TRACKERS_SIZE / sizeof(double)) + NUM_TRACKER_INTS)
 #define EXPECTED_PHENOLOGY_FIELDS 3
+#define EXPECTED_SURVIVAL_FIELDS 1
 
 static int countTokens(const char *line) {
   int count = 0;
@@ -93,14 +98,6 @@ int run(void) {
   int status = 0;
   char cmd[1024];
 
-  status |= runShell("cd " TEST_WORK_DIR
-                     " && rm -rf debug_logs && mkdir -p debug_logs");
-  if (status != 0) {
-    logTest("Could not change to test directory %s, failed with status %d\n",
-            TEST_WORK_DIR, status);
-    return status;
-  }
-
   snprintf(cmd, sizeof(cmd),
            "cd %s && ../../../sipnet -i sipnet.in --debug-log %s > %s 2>&1",
            TEST_WORK_DIR, DEBUG_PREFIX, "debug_log_test.log");
@@ -111,12 +108,14 @@ int run(void) {
   }
 
   status |= checkHeader(ENVI_FILE, 3 + EXPECTED_ENVI_FIELDS, "plantWoodC",
-                        "plantWoodCStorageDelta");
+                        "plantCAccountingDelta");
   status |= checkHeader(FLUXES_FILE, 3 + EXPECTED_FLUX_FIELDS, "photosynthesis",
                         "litterMethane");
-  status |= checkHeader(TRACKERS_FILE,
-                        3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS,
-                        "t.gpp", "pt.lastYear");
+  status |=
+      checkHeader(TRACKERS_FILE,
+                  3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS +
+                      EXPECTED_SURVIVAL_FIELDS,
+                  "t.gpp", "pt.lastYear");
 
   int mainLines = countLines(SIPNET_OUT_FILE);
   int enviLines = countLines(ENVI_FILE);
@@ -136,12 +135,58 @@ int run(void) {
   return status;
 }
 
+int init(void) {
+  int status = 0;
+
+  status |= runShell("cd " TEST_WORK_DIR
+                     " && rm -rf debug_logs && mkdir -p debug_logs");
+
+  status |=
+      runShell("cd " TEST_WORK_DIR " && cp sipnet.config sipnet.config.orig");
+
+  if (status != 0) {
+    logTest("Could not initialize test directory %s, failed with status %d\n",
+            TEST_WORK_DIR, status);
+    return status;
+  }
+
+  return status;
+}
+
+int cleanup(void) {
+  int status = 0;
+
+  status |=
+      runShell("cd " TEST_WORK_DIR " && cp sipnet.config.orig sipnet.config && "
+               " rm -f sipnet.config.orig");
+
+  status |= runShell("cd " TEST_WORK_DIR
+                     " && rm -rf debug_logs && rm -f debug_log_test.log");
+  if (status != 0) {
+    logTest("Could not clean up test directory %s, failed with status %d.\n"
+            "There are likely modified source file(s) and extra log files "
+            "still in place\n",
+            TEST_WORK_DIR, status);
+    return status;
+  }
+
+  return status;
+}
+
 int main(void) {
-  int status;
+  int status = 0;
 
   logTest("Starting testDebugLogFiles\n");
 
-  status = run();
+  status |= init();
+
+  // If init() fails, don't run(); but, we'll want to attempt cleanup()
+  if (!status) {
+    status |= run();
+  }
+
+  status |= cleanup();
+
   if (status) {
     logTest("FAILED testDebugLogFiles with status %d\n", status);
     exit(status);

@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "common/context.h"
+#include "common/util.h"
 
 #include "events.h"
 #include "state.h"
