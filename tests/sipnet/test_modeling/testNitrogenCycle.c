@@ -631,29 +631,37 @@ int testLeafTurnoverNResorption(void) {
             envi.plantStorageN, expStorageN);
   }
 
-  // Case 2: leafOffNResorption from turnover increases available N in
-  // calcPlantAvailableN, reducing N limitation on plant growth.
-  // Reproduce the 50%-limited case (minN=0.625, demand=10) then show that
-  // leafOffNResorption=2.0 raises available N and eases the limitation:
-  //   leafOffNFlux = 2.0, unclaimedStorage = 0 + 2.0 * climate->length = 0.25
-  //   availableN = max(0, 0.625 + 0.25) = 0.875
-  //   maxUptake = 10 * climate->length = 1.25 -> reduction = 0.875 / 1.25 = 0.7
+  // Case 2: UPDATE: leafOffNResorption no longer increases available N, as it
+  // is not directly available to offset minN loss in the same time step. Let's
+  // keep this case, and use it to verify that minN drops to zero (and not
+  // negative), and plantStorageN increases as expected. Repeat case above.
   double minN2 = 0.625;
   double resorpFlux = 2.0;
   double demandFlux = 10.0;  // sum of demand fluxes set in initNLimitationState
-  double unclaimedStorage = resorpFlux * climate->length;
-  double availableN = minN2 + unclaimedStorage;
+  double availableN = minN2;  // plus unclaimed plantStorageN, which is 0 here
   double maxUptake = demandFlux * climate->length;
   double reduction = availableN / maxUptake;
+
   initNLimitationState(minN2, 0);
   fluxes.leafOffNResorption = resorpFlux;
 
   doNFixUpLimitCalcs();
+  updateNitrogenPools();
 
   status |= checkNLimitationFlux(fluxes.leafCreation, 60 * reduction,
                                  "[turnover resorption] leafCreation");
   status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
                                  "[turnover resorption] woodCreation");
+  if (!compareDoubles(envi.plantStorageN, expStorageN)) {
+    status = 1;
+    logTest("[turnover resorption] plantStorageN is %8.4f, expected %8.4f\n",
+            envi.plantStorageN, resorpFlux * climate->length);
+  }
+  if (!compareDoubles(envi.minN, 0.0)) {
+    status = 1;
+    logTest("[turnover resorption] minN is %8.4f, expected %8.4f\n",
+            envi.plantStorageN, expStorageN);
+  }
 
   return status;
 }

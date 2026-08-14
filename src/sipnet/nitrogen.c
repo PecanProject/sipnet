@@ -110,13 +110,11 @@ double calcPlantAvailableN(void) {
   // step's fluxes here, unlike most other places. The idea is to prevent
   // negative N pools at the end of the step (but negative in the middle of the
   // step is ok). This is used in the determination of N limitation.
+  // Note, though, that we can't really use the incoming N to plantStorageN,
+  // as that is not immediately available to offset minN loss.
   double leafOnCFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
   double leafOnNFlux = calcLeafOnNFromC(leafOnCFlux);
-  // Note: leafOnNFlux has already been limited to not exceed plantStorageN
-  double leafOffNFlux =
-      fluxes.leafOffNResorption + fluxes.eventLeafOffNResorption;
-  double unclaimedStorage =
-      envi.plantStorageN + (leafOffNFlux - leafOnNFlux) * climate->length;
+  double unclaimedStorage = envi.plantStorageN - leafOnNFlux * climate->length;
   double nonUptakeDelta = calcMinNNonUptakeFluxes() * climate->length;
   return fmax(0.0, envi.minN + unclaimedStorage + nonUptakeDelta);
 }
