@@ -782,21 +782,8 @@ void calcWoodAndLeafFluxes(void) {
   double leafCreation = npp * params.leafAllocation;
   double woodCreation = npp * params.woodAllocation;
 
-  // If leafCreation is too negative, we need to deduct from wood instead
-  double leafDeficit =
-      envi.plantLeafC / climate->length + leafCreation - leafLitter;
-  if (leafDeficit < 0) {
-    woodCreation += leafDeficit;
-    leafCreation -= leafDeficit;
-  }
   fluxes.leafCreation += leafCreation;
   fluxes.woodCreation += woodCreation;
-
-  // Capture the nitrogen if this is a negative growth situation
-  if (npp < 0.0 && ctx.nitrogenCycle) {
-    updateNResorptionFlux(leafCreation, params.leafCN);
-    updateNResorptionFlux(woodCreation, params.woodCN);
-  }
 }
 
 /*!
@@ -1208,30 +1195,8 @@ void calcRootFluxes(void) {
   double coarseRootCreation = params.coarseRootAllocation * npp;
   double fineRootCreation = params.fineRootAllocation * npp;
 
-  double fineRootDeficit =
-      envi.fineRootC / climate->length + fineRootCreation - fluxes.fineRootLoss;
-  double coarseRootDeficit = envi.coarseRootC / climate->length +
-                             coarseRootCreation - fluxes.coarseRootLoss;
-  if ((fineRootDeficit < 0.0) != (coarseRootDeficit < 0.0)) {
-    // If neither are negative, nothing to do
-    // If both are negative, the plant will die in checkForMortality()
-    if (fineRootDeficit < 0.0) {
-      coarseRootCreation += fineRootDeficit;
-      fineRootCreation -= fineRootDeficit;
-    }
-    if (coarseRootDeficit < 0.0) {
-      fineRootCreation += coarseRootDeficit;
-      coarseRootCreation -= coarseRootDeficit;
-    }
-  }
   fluxes.coarseRootCreation += coarseRootCreation;
   fluxes.fineRootCreation += fineRootCreation;
-
-  // Capture the nitrogen if this is a negative growth situation
-  if (npp < 0.0 && ctx.nitrogenCycle) {
-    updateNResorptionFlux(coarseRootCreation, params.woodCN);
-    updateNResorptionFlux(fineRootCreation, params.fineRootCN);
-  }
 
   // :: from [3], root model description
   calcRootResp(&fluxes.rCoarseRoot, params.coarseRootQ10,
@@ -1359,6 +1324,9 @@ void calculateFluxes(void) {
   if (ctx.anaerobic) {
     calcMethaneFlux();
   }
+
+  // Check carbon flux limitations before moving to nitrogen
+  checkCarbonLimitations();
 
   // Nitrogen cycle
   //

@@ -163,21 +163,29 @@ void calcNFixationAndUptakeFluxes(void) {
   fluxes.nUptake = (1 - nFixationFrac) * remDemandFlux;
 }
 
-// see nitrogen.h
-void updateNResorptionFlux(double deltaC, double cn) {
-  // Reminder: deltaC is expected to be the carbon REDUCTION, i.e. negative
-  if (deltaC > 0.0) {
-    logInternalError("updateNResorptionFlux() called with positive deltaC\n");
+void calcReductionResorptionFlux(void) {
+  // If woodCreation is less than zero, we are in a negative growth scenario
+  // It might be nice to check meanNPP directly, but it's not worth refactoring
+  // that struct out of sipnet.c
+  if (fluxes.woodCreation < 0.0) {
+    // Note: we want these negative fluxes to INCREASE N resorption
+    fluxes.reductionNResorption -=
+        (fluxes.leafCreation / params.leafCN +
+         fluxes.woodCreation / params.woodCN +
+         fluxes.coarseRootCreation / params.woodCN +
+         fluxes.fineRootCreation / params.fineRootCN);
   }
-  fluxes.reductionNResorption -= deltaC / cn;
 }
 
 // see nitrogen.h
 void calcNitrogenFluxes(void) {
-  calcNVolatilizationFlux();
-  calcNLeachingFlux();
-  calcNPoolFluxes();
-  calcNFixationAndUptakeFluxes();
+  if (ctx.nitrogenCycle) {
+    calcReductionResorptionFlux();
+    calcNVolatilizationFlux();
+    calcNLeachingFlux();
+    calcNPoolFluxes();
+    calcNFixationAndUptakeFluxes();
+  }
 }
 
 // see nitrogen.h
