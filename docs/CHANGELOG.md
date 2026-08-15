@@ -46,7 +46,7 @@ sections to include in release notes:
 - New `--debug-log` CLI option to enable debug logging (#352)
 - Ability to create derived columns in `sipnet-view` (#355)
 - New `sipnet-debug-view` tool for visualizing SIPNET debug output files (#359)
-- Plant mortality check with transfer of remaining carbon and nitrogen to litter and soil pools and a `plantdeath` record in `events.out` (#359).
+- Plant mortality check with transfer of remaining carbon and nitrogen to litter and soil pools and a `plantdeath` record in `events.out` (#359)
 
 ### Fixed
 
