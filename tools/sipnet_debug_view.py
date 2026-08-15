@@ -34,6 +34,7 @@ class SipnetDebugViewerWindow(SipnetViewerWindowCore):
       initial_bounds: TimeBounds | None,
       initial_layout: str,
       many_columns_threshold: int,
+      title: str,
   ) -> None:
     super().__init__(
       loaded=loaded,
@@ -43,7 +44,7 @@ class SipnetDebugViewerWindow(SipnetViewerWindowCore):
       initial_bounds=initial_bounds,
       initial_layout=initial_layout,
       many_columns_threshold=many_columns_threshold,
-      title="SIPNET Debug Log Viewer",
+      title=title,
       browse_output=("Browse log…","Load debug logs"),
       output_label="Debug Log Output",
       loaded_label="Loaded prefix",
@@ -145,6 +146,8 @@ class SipnetDebugViewerWindow(SipnetViewerWindowCore):
     ):
       timestamps.append(build_timestamp(year_val, day_val, hour_val))
 
+    merged = merged.copy()  # de-fragment this monster
+
     merged[INTERNAL_TIMESTAMP_COLUMN] = timestamps
     merged = merged.sort_values(INTERNAL_TIMESTAMP_COLUMN, kind="stable").reset_index(drop=True)
 
@@ -192,11 +195,9 @@ class SipnetDebugViewerWindow(SipnetViewerWindowCore):
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
-  parser = argparse.ArgumentParser(
-    description=(
-      "Interactive explorer for SIPNET debug log files "
-      "(*_envi.log, *_fluxes.log, *_trackers.log)."
-    )
+  parser = get_default_arg_parser(
+    "Interactive explorer for SIPNET debug log files "
+    "(*_envi.log, *_fluxes.log, *_trackers.log)."
   )
   parser.add_argument(
     "-i",
@@ -204,54 +205,16 @@ def build_arg_parser() -> argparse.ArgumentParser:
     default="debug",
     help=(
       "Path/prefix for SIPNET debug log files. "
-      "The tool appends _envi.log, _fluxes.log, and _trackers.log to this prefix. "
-      "Defaults to ./debug; should match the prefix used with the --debug-log option of sipnet."
+      "The tool appends _envi.log, _fluxes.log, and _trackers.log to this "
+      "prefix. Defaults to ./debug; should match the prefix used with the "
+      "--debug-log option of sipnet."
     ),
   )
   parser.add_argument(
-    "-e",
-    "--events-file",
+    "--title",
+    default="SIPNET Debug Log Viewer",
     help=(
-      "Optional path to an events output file (events.out). "
-      "Defaults to events.out in the same directory as the debug log prefix."
-    ),
-  )
-  parser.add_argument(
-    "-t",
-    "--time-range",
-    help=(
-      "Initial time range in the form "
-      "YYYY-DOY-HH,YYYY-DOY-HH "
-      "(example: 2016-001-00.00,2016-032-12.00)."
-    ),
-  )
-  parser.add_argument(
-    "-c",
-    "--columns",
-    help=(
-      "Comma-separated list of columns to pre-select in the GUI. "
-      "Use the prefixed names as shown in the Y-axis selector "
-      "(e.g. envi.plantWoodC, flux.photosynthesis, tracker.t.gpp)."
-    ),
-  )
-  parser.add_argument(
-    "--event-types",
-    help="Comma-separated list of event types to pre-select in the GUI.",
-  )
-  parser.add_argument(
-    "-l",
-    "--layout",
-    choices=("subplots", "combined"),
-    default="subplots",
-    help="Initial plot layout. 'combined' uses twinned y-axes.",
-  )
-  parser.add_argument(
-    "--many-columns-threshold",
-    type=int,
-    default=6,
-    help=(
-      "Reserved for future use. Accepted for compatibility, "
-      "but warnings are currently disabled."
+      "Title displayed on the viewer window."
     ),
   )
   return parser
@@ -285,6 +248,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     initial_bounds=initial_bounds,
     initial_layout=args.layout,
     many_columns_threshold=args.many_columns_threshold,
+    title=args.title,
   )
   window.show()
   return application.exec()

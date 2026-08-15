@@ -400,15 +400,18 @@ int testNLimitation(void) {
 
   // leafOnCreation is NOT reduced by soil N limitation; leaf-on draws N from
   // plantStorageN, not minN. However, leaf-on demand reduces available soil N
-  // for other fluxes via unclaimedStorage:
+  // for other fluxes via unclaimedStorage. Note that leaf-on won't draw past
+  // plantStorageN
   //   leafOnNFlux = max(0, 50/20 - 50/100) = 2.0
-  //   unclaimedStorage = plantStorageN + (0 - 2.0) * 0.125 = -0.25
-  //   availableN = max(0, minN=0.75 + (-0.25)) = 0.5
+  //   unclaimedStorage = plantStorageN + (0 - 2.0) * 0.125 = 0.25
+  //   availableN = minN=0.75 + 0=nonUptakeFluxes) = 0.75
   //   demand (excl. leafOn) = 10, maxDemand = 10 * 0.125 = 1.25,
-  //   maxUptake = 1.25 -> reduction = 0.5 / 1.25 = 0.4
+  //   reduction = (availableN / (1-f) + S)/maxDemand, f = 0
+  //             = (0.75 + 0.25 ) / 1.25 = 0.8
   double leafOnInit = 50.0;
-  double leafOnReduction = 0.4;
+  double leafOnReduction = 0.8;
   initNLimitationState(0.75, leafOnInit);
+  envi.plantStorageN = 0.5;
 
   doNFixUpLimitCalcs();
 
@@ -503,12 +506,29 @@ int testOrganicNWithResorption(void) {
   return status;
 }
 
+int checkMinAndStorageN(const char *prefix, double expMinN,
+                        double expStorageN) {
+  int status = 0;
+  if (!compareDoubles(envi.minN, expMinN)) {
+    status = 1;
+    logTest("[%s] minN is %8.4f, expected %8.4f\n", prefix, envi.minN,
+            expStorageN);
+  }
+  if (!compareDoubles(envi.plantStorageN, expStorageN)) {
+    status = 1;
+    logTest("[%s] plantStorageN is %8.4f, expected %8.4f\n", prefix,
+            envi.plantStorageN, expStorageN);
+  }
+  return status;
+}
+
 /////
 // N limitation with plantStorageN contributing to available N
 int testNLimitationWithStorage(void) {
   int status = 0;
   logTest("Running testNLimitationWithStorage\n");
 
+  // Case 1
   // Reproduce the 50%-limited case from testNLimitation, then show that
   // adding plantStorageN = minN removes the limitation entirely.
   // maxDemandFlux = 10, maxDemand = 10 * 0.125 = 1.25, maxUptake = 1.25
@@ -519,6 +539,7 @@ int testNLimitationWithStorage(void) {
   envi.plantStorageN = 0.625;
 
   doNFixUpLimitCalcs();
+  updateNitrogenPools();
 
   // All creation fluxes should be unreduced
   status |= checkNLimitationFlux(fluxes.leafCreation, 60.0,
@@ -529,30 +550,97 @@ int testNLimitationWithStorage(void) {
                                  "[storageN] fineRootCreation");
   status |= checkNLimitationFlux(fluxes.coarseRootCreation, 100.0,
                                  "[storageN] coarseRootCreation");
+  status |= checkMinAndStorageN("storageN", 0.0, 0.0);
+
+  // Case 2
+  // Check this situation with fixation:
+  // minN=0.1, plantStorageN=0.5, nFixationFracMax=0.5, halfNFixationMax=1.0,
+  // timestep 0.125, standard demand fluxes 60/500/40/100) and after
+  // calcNFixationAndUptakeFluxes() + checkLimitations() + updateNitrogenPools()
+  // minN ended at -0.227273 (from copilot)
+  initNLimitationState(0.1, 0);
+  envi.plantStorageN = 0.5;
+  params.nFixationFracMax = 0.5;
+  params.halfNFixationMax = 1.0;
+
+  double len = climate->length;
+  logTest("minN %f storageN %f fixation %f uptake %f demand %f  "
+          "1-fixfrac %f\n",
+          envi.minN, envi.plantStorageN, fluxes.nFixation * len,
+          fluxes.nUptake * len, calcPlantNDemandFlux() * len,
+          1 - calcNFixationFrac());
+
+  // doNFixUpLimitCalcs();
+  calcNFixationAndUptakeFluxes();
+
+  logTest("minN %f storageN %f fixation %f uptake %f demand %f  "
+          "1-fixfrac %f\n",
+          envi.minN, envi.plantStorageN, fluxes.nFixation * len,
+          fluxes.nUptake * len, calcPlantNDemandFlux() * len,
+          1 - calcNFixationFrac());
+
+  checkNitrogenLimitation();
+
+  logTest("minN %f storageN %f fixation %f uptake %f demand %f  "
+          "1-fixfrac %f\n",
+          envi.minN, envi.plantStorageN, fluxes.nFixation * len,
+          fluxes.nUptake * len, calcPlantNDemandFlux() * len,
+          1 - calcNFixationFrac());
+
+  updateNitrogenPools();
+
+  logTest("minN %f storageN %f fixation %f uptake %f demand %f  "
+          "1-fixfrac %f\n",
+          envi.minN, envi.plantStorageN, fluxes.nFixation * len,
+          fluxes.nUptake * len, calcPlantNDemandFlux() * len,
+          1 - calcNFixationFrac());
+
+  status |= checkMinAndStorageN("storageN", 0.0, 0.0);
 
   return status;
 }
 
 /////
 // updateNitrogenPools draws uptake from plantStorageN before minN
+void initNitrogenPoolsFromStorageState(double plantStorageN) {
+  resetState();
+
+  // envi
+  envi.minN = 1;
+  envi.plantStorageN = plantStorageN;
+
+  // fluxes; these values make all terms plant N demand =2, so demand flux = 8,
+  // and demand = (8*climate->length) = 1
+  fluxes.leafCreation = params.leafCN * 2;
+  fluxes.woodCreation = params.woodCN * 2;
+  fluxes.fineRootCreation = params.fineRootCN * 2;
+  fluxes.coarseRootCreation = params.woodCN * 2;
+}
+
 int testUpdateNitrogenPoolsFromStorage(void) {
   int status = 0;
   logTest("Running testUpdateNitrogenPoolsFromStorage\n");
 
+  // Demand flux = 8 ==> demand = 1 for all cases
+
   // Case 1: uptake fully covered by storage
-  // nUptake=3.0, length=0.125 -> uptake=0.375; plantStorageN=0.5 >= 0.375
+  // plantNDemand = 4, storage = 5
   // -> all uptake from storage, minN unchanged
-  resetState();
-  envi.minN = 1.0;
-  envi.plantStorageN = 0.5;
-  fluxes.nUptake = 3.0;
+  initNitrogenPoolsFromStorageState(2.0);
+  calcNFixationAndUptakeFluxes();
   updateNitrogenPools();
 
-  double expStorageN = 0.5 - 3.0 * climate->length;  // 0.5 - 0.375 = 0.125
+  double expStorageN = 1.0;
   if (!compareDoubles(envi.plantStorageN, expStorageN)) {
     status = 1;
     logTest("[full storage] plantStorageN is %8.4f, expected %8.4f\n",
             envi.plantStorageN, expStorageN);
+  }
+  double expNUptake = 0.0;
+  if (!compareDoubles(fluxes.nUptake, expNUptake)) {
+    status = 1;
+    logTest("[full storage] nUptake is %8.4f, expected %8.4f\n", fluxes.nUptake,
+            expNUptake);
   }
   if (!compareDoubles(envi.minN, 1.0)) {
     status = 1;
@@ -561,12 +649,8 @@ int testUpdateNitrogenPoolsFromStorage(void) {
   }
 
   // Case 2: uptake partially covered by storage, remainder from minN
-  // plantStorageN=0.1 < uptake=0.375 -> 0.1 from storage, 0.275 from minN
-  // plantStorageN_new = 0.0, minN_new = 1.0 - 0.275 = 0.725
-  resetState();
-  envi.minN = 1.0;
-  envi.plantStorageN = 0.1;
-  fluxes.nUptake = 3.0;
+  initNitrogenPoolsFromStorageState(0.5);
+  calcNFixationAndUptakeFluxes();
   updateNitrogenPools();
 
   if (!compareDoubles(envi.plantStorageN, 0.0)) {
@@ -574,7 +658,13 @@ int testUpdateNitrogenPoolsFromStorage(void) {
     logTest("[partial storage] plantStorageN is %8.4f, expected 0.0\n",
             envi.plantStorageN);
   }
-  double expMinN = 1.0 - (3.0 * climate->length - 0.1);  // 1.0 - 0.275 = 0.725
+  expNUptake = 0.5 / climate->length;
+  if (!compareDoubles(fluxes.nUptake, expNUptake)) {
+    status = 1;
+    logTest("[partial storage] nUptake is %8.4f, expected %8.4f\n",
+            fluxes.nUptake, expNUptake);
+  }
+  double expMinN = 0.5;
   if (!compareDoubles(envi.minN, expMinN)) {
     status = 1;
     logTest("[partial storage] minN is %8.4f, expected %8.4f\n", envi.minN,
@@ -608,29 +698,49 @@ int testLeafTurnoverNResorption(void) {
             envi.plantStorageN, expStorageN);
   }
 
-  // Case 2: leafOffNResorption from turnover increases available N in
-  // calcPlantAvailableN, reducing N limitation on plant growth.
-  // Reproduce the 50%-limited case (minN=0.625, demand=10) then show that
-  // leafOffNResorption=2.0 raises available N and eases the limitation:
-  //   leafOffNFlux = 2.0, unclaimedStorage = 0 + 2.0 * climate->length = 0.25
-  //   availableN = max(0, 0.625 + 0.25) = 0.875
-  //   maxUptake = 10 * climate->length = 1.25 -> reduction = 0.875 / 1.25 = 0.7
+  // Case 2: UPDATE: leafOffNResorption no longer increases available N, as it
+  // is not directly available to offset minN loss in the same time step. Let's
+  // keep this case, and use it to verify that minN drops to zero (and not
+  // negative), and plantStorageN increases as expected. Repeat case above.
   double minN2 = 0.625;
   double resorpFlux = 2.0;
   double demandFlux = 10.0;  // sum of demand fluxes set in initNLimitationState
-  double unclaimedStorage = resorpFlux * climate->length;
-  double availableN = minN2 + unclaimedStorage;
+  double availableN = minN2;  // plus unclaimed plantStorageN, which is 0 here
   double maxUptake = demandFlux * climate->length;
   double reduction = availableN / maxUptake;
+
   initNLimitationState(minN2, 0);
   fluxes.leafOffNResorption = resorpFlux;
 
   doNFixUpLimitCalcs();
+  updateNitrogenPools();
 
   status |= checkNLimitationFlux(fluxes.leafCreation, 60 * reduction,
                                  "[turnover resorption] leafCreation");
   status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
                                  "[turnover resorption] woodCreation");
+  status |= checkMinAndStorageN("turnover resorption", 0.0,
+                                resorpFlux * climate->length);
+
+  return status;
+}
+
+int testUpdateNResorptionFlux(void) {
+  int status = 0;
+  logTest("Running testUpdateNResorptionFlux\n");
+
+  // DeltaC values are negative, as this function is used when growth is
+  // negative
+
+  // Basic: deltaC / cn added to leafOffNResorption
+  resetState();
+  updateNResorptionFlux(-10.0, 20.0);
+  status |= checkFlux(fluxes.reductionNResorption, 0.5, "N resorption (basic)");
+
+  // Additive: multiple calls accumulate
+  updateNResorptionFlux(-5.0, 25.0);
+  status |=
+      checkFlux(fluxes.reductionNResorption, 0.7, "N resorption (additive)");
 
   return status;
 }
@@ -650,6 +760,7 @@ int run(void) {
   status |= testUpdateNitrogenPoolsFromStorage();
   status |= testOrganicNWithResorption();
   status |= testLeafTurnoverNResorption();
+  status |= testUpdateNResorptionFlux();
 
   return status;
 }

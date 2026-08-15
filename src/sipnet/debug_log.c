@@ -21,15 +21,17 @@ typedef struct DebugField {
 } DebugField;
 
 #define NUM_LOGGED_ENVI_FIELDS 13
-#define NUM_LOGGED_FLUX_FIELDS 55
-#define NUM_LOGGED_TRACKER_FIELDS 32
+#define NUM_LOGGED_FLUX_FIELDS 56
+#define NUM_LOGGED_TRACKER_FIELDS 33
 #define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
+#define NUM_LOGGED_SURVIVAL_FIELDS 1
 
 typedef struct DebugFieldArrays {
   DebugField enviDF[NUM_LOGGED_ENVI_FIELDS];
   DebugField fluxDF[NUM_LOGGED_FLUX_FIELDS];
   DebugField trackerDF[NUM_LOGGED_TRACKER_FIELDS];
   DebugField phenoDF[NUM_LOGGED_PHEN_TRACKER_FIELDS];
+  DebugField survivalDF[NUM_LOGGED_SURVIVAL_FIELDS];
 } DebugFieldArrays;
 
 static DebugFieldArrays *debugFields = NULL;
@@ -59,7 +61,7 @@ void initDebugArrays() {
   debugFields->enviDF[ind++] = (DebugField){"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
   debugFields->enviDF[ind++] = (DebugField){"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
   debugFields->enviDF[ind++] = (DebugField){"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
-  debugFields->enviDF[ind  ] = (DebugField){"plantWoodCStorageDelta", DEBUG_FIELD_DOUBLE,&envi.plantWoodCStorageDelta};
+  debugFields->enviDF[ind  ] = (DebugField){"plantCAccountingDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
 
   ind = 0;
   debugFields->fluxDF[ind++] = (DebugField){"photosynthesis", DEBUG_FIELD_DOUBLE, &fluxes.photosynthesis};
@@ -96,6 +98,7 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"nFixation", DEBUG_FIELD_DOUBLE, &fluxes.nFixation},
   debugFields->fluxDF[ind++] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &fluxes.nUptake},
   debugFields->fluxDF[ind++] = (DebugField){"leafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.leafOffNResorption},
+  debugFields->fluxDF[ind++] = (DebugField){"reductionNResorption", DEBUG_FIELD_DOUBLE, &fluxes.reductionNResorption},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafC", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafC},
   debugFields->fluxDF[ind++] = (DebugField){"eventWoodC", DEBUG_FIELD_DOUBLE, &fluxes.eventWoodC},
   debugFields->fluxDF[ind++] = (DebugField){"eventFineRootC", DEBUG_FIELD_DOUBLE, &fluxes.eventFineRootC},
@@ -150,12 +153,16 @@ void initDebugArrays() {
   debugFields->trackerDF[ind++] = (DebugField){"n2o", DEBUG_FIELD_DOUBLE, &trackers.n2o},
   debugFields->trackerDF[ind++] = (DebugField){"nLeaching", DEBUG_FIELD_DOUBLE, &trackers.nLeaching},
   debugFields->trackerDF[ind++] = (DebugField){"nFixation", DEBUG_FIELD_DOUBLE, &trackers.nFixation},
-  debugFields->trackerDF[ind  ] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &trackers.nUptake};
+  debugFields->trackerDF[ind++] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &trackers.nUptake};
+  debugFields->trackerDF[ind  ] = (DebugField){"meanNPP", DEBUG_FIELD_DOUBLE, &trackers.meanNPP};
 
   ind = 0;
   debugFields->phenoDF[ind++] = (DebugField){"didLeafGrowth", DEBUG_FIELD_INT, &phenologyTrackers.didLeafGrowth},
   debugFields->phenoDF[ind++] = (DebugField){"didLeafFall", DEBUG_FIELD_INT, &phenologyTrackers.didLeafFall},
   debugFields->phenoDF[ind  ] = (DebugField){"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear};
+
+  ind = 0;
+  debugFields->survivalDF[ind] = (DebugField){"isAlive", DEBUG_FIELD_INT, &plantSurvivalTracker.isAlive};
   // clang-format on
 }
 
@@ -268,6 +275,9 @@ void outputDebugHeaders(DebugLogFiles *debugLogFiles) {
                            0);
     outputDebugFieldHeader(debugLogFiles->trackers, "pt.", debugFields->phenoDF,
                            NUM_LOGGED_PHEN_TRACKER_FIELDS, 0);
+    outputDebugFieldHeader(debugLogFiles->trackers, "s.",
+                           debugFields->survivalDF, NUM_LOGGED_SURVIVAL_FIELDS,
+                           0);
     fprintf(debugLogFiles->trackers, "\n");
   }
 }
@@ -293,6 +303,9 @@ void outputDebugState(DebugLogFiles *debugLogFiles, int year, int day,
                            0);
     outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
                            debugFields->phenoDF, NUM_LOGGED_PHEN_TRACKER_FIELDS,
+                           0);
+    outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
+                           debugFields->survivalDF, NUM_LOGGED_SURVIVAL_FIELDS,
                            0);
     fprintf(debugLogFiles->trackers, "\n");
   }

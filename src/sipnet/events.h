@@ -1,10 +1,6 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include <stdarg.h>
-
-#include "common/util.h"
-
 typedef enum EventType {
   FERTILIZATION,
   HARVEST,
@@ -13,6 +9,7 @@ typedef enum EventType {
   TILLAGE,
   LEAFON,
   LEAFOFF,
+  PLANTDEATH,
   UNKNOWN_EVENT
 } event_type_t;
 
@@ -71,6 +68,12 @@ typedef struct LeafOffParams {
   // Currently none, but we need one for compilation
   double dummy;
 } LeafOffParams;
+
+#define NUM_PLANTDEATH_PARAMS 0
+typedef struct PlantDeathParams {
+  // Currently none, but we need one for compilation
+  double dummy;
+} PlantDeathParams;
 
 #define NUM_EVENT_CORE_PARAMS 3
 typedef struct EventNode EventNode;
@@ -211,6 +214,10 @@ typedef struct EventTrackerStruct {
   // Tillage effect on Rh; exponentially decays at each time step by a factor
   // equal to exp(-delta_t / 30)
   double d_till_mod;
+
+  // Fraction removed and transferred from harvest event this time step
+  double harvestFracRemoved;
+  double harvestFracTransferred;
 } EventTrackers;
 
 extern EventTrackers eventTrackers;
@@ -221,7 +228,7 @@ extern EventTrackers eventTrackers;
 void initEventTrackers(void);
 
 /*!
- * Perform any needed udpates post fluxes-and-pools updates
+ * Perform any needed updates post fluxes-and-pools updates
  */
 void updateEventTrackers(void);
 

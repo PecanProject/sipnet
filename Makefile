@@ -104,6 +104,7 @@ $(SIPNET_TEST_DIRS_CLEAN):
 	$(MAKE) -C $(basename $@) clean
 
 cleanall: clean testclean
+	rm -f ./tests/smoke/*/debug*.log
 
 .PHONY: all clean help document exec cleanall \
 		test testbuild $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun smoke unit
@@ -124,6 +125,7 @@ help:
 	@echo "  testrun      - Run the unit tests (per-directory runners)"
 	@echo "  unit         - Build and run unit tests (wrapper with summary)"
 	@echo "  smoke        - Run smoke tests (end-to-end diffs)"
+	@echo "  smokedebug   - Run smoke tests (end-to-end diffs) with debug logging"
 	@echo "  testclean    - Clean build artifacts and executables from the unit tests"
 	@echo "  cleanall     - Run both clean and testclean"
 
@@ -133,6 +135,9 @@ unit: sipnet testbuild
 
 smoke: sipnet
 	./tests/smoke/run_smoke.sh
+
+smokedebug: sipnet
+	./tests/smoke/run_smoke.sh debug
 
 # Combined verification target
 test: sipnet testbuild

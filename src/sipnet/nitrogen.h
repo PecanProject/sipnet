@@ -5,15 +5,18 @@
 
 /*!
  * Calculate excess N needed for leaf on events
+ *
+ * Note: leafOnC can be either a flux or pool measurement; the returned
+ * value will match.
  */
 double calcLeafOnNFromC(double leafOnC);
 
 /*!
- * Calculate plant N demand from biomass creation fluxes
+ * Calculate plant N demand flux from biomass creation fluxes
  *
- * @return Total nitrogen demand from plant growth
+ * @return Total nitrogen demand flux from plant growth
  */
-double calcPlantNDemand(void);
+double calcPlantNDemandFlux(void);
 
 /*!
  * Calculate nitrogen available for plant growth
@@ -38,6 +41,11 @@ double calcPlantAvailableN(void);
 double calcMinNNonUptakeFluxes(void);
 
 /**
+ * Calculate how much of the plant storage N pool is not claimed by leaf-on
+ */
+double calcUnclaimedStorageN(void);
+
+/**
  * Calculate the N fixation fraction taking inhibition into account
  *
  * @return N fixation fraction used to compute amount of N fixation
@@ -50,7 +58,20 @@ double calcNFixationFrac(void);
 void calcNFixationAndUptakeFluxes(void);
 
 /*!
- * Calculate all nitrogen fluxes
+ * Incrementally update the N resorption flux for carbon loss
+ *
+ * The input deltaC is expected to be negative, as it represents a carbon loss.
+ * The function will update the reductionNResorption flux according to the
+ * provided C:N ratio (cn). This is used to track nitrogen resorption when
+ * plants lose carbon due to negative growth.
+ *
+ * @param deltaC Negative change in carbon pool
+ * @param cn C:N ratio of the pool losing carbon
+ */
+void updateNResorptionFlux(double deltaC, double cn);
+
+/*!
+ * Calculate all nitrogen fluxes (except N resorption)
  *
  * This is the general flux calculation wrapper for sipnet.c
  */
