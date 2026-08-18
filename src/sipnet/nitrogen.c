@@ -125,6 +125,16 @@ double calcMinNNonUptakeFluxes(void) {
 }
 
 // see nitrogen.h
+double calcUnclaimedStorageN(void) {
+  double leafOnCFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
+  double leafOnNFlux = calcLeafOnNFromC(leafOnCFlux);
+  double unclaimedStorage = envi.plantStorageN - leafOnNFlux * climate->length;
+  // The fmax here should be unnecessary, as the leaf-on demand has been capped
+  // by the storage pool - but we'll cover our bases anyway
+  return fmax(0.0, unclaimedStorage);
+}
+
+// see nitrogen.h
 double calcNFixationFrac(void) {
   double nFixationInhibition;
   double denom = params.halfNFixationMax + envi.minN;
@@ -146,14 +156,8 @@ void calcNFixationAndUptakeFluxes(void) {
   // These values may change later if we are under nitrogen limitation
   double nDemandFlux = calcPlantNDemandFlux();
 
-  // Calculate how much will be covered by the storage pool; take into account
-  // leaf-on fluxes, as they are demand too for the storage pool
-  double leafOnNFlux =
-      calcLeafOnNFromC(fluxes.leafOnCreation + fluxes.eventLeafOnCreation);
-  // The fmax for storageFlux should be unnecessary, as the leaf-on demand has
-  // been capped by the storage pool - but we'll cover our bases anyway
-  double storageFlux =
-      fmax(0.0, envi.plantStorageN / climate->length - leafOnNFlux);
+  // Calculate how much will be covered by the storage pool
+  double storageFlux = calcUnclaimedStorageN() / climate->length;
 
   // Remaining demand for uptake/fixation
   double remDemandFlux = fmax(0.0, nDemandFlux - storageFlux);

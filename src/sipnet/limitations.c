@@ -67,22 +67,39 @@ void checkLeafOnLimitation(double *leafOnFlux) {
  * Check for nitrogen limitation, and reduce growth if needed
  */
 static void checkNitrogenLimitation(void) {
-  // First, determine if we are in a nitrogen-limited situation
-  double maxDemandFlux = calcPlantNDemandFlux();
-  double maxDemand = maxDemandFlux * climate->length;
+  // First, determine if we are in a nitrogen-limited situation. The uptake
+  // flux has already taken the storage pool into account, so we just need to
+  // see if that uptake is too much, taking into account other fluxes to the
+  // minN pool.
+  // Calc total delta to minN pool
+  double len = climate->length;
+  double uptakeDemand = fluxes.nUptake * len;
+  double nonUptakeDelta = calcMinNNonUptakeFluxes() * len;
+  double availableMinN = envi.minN + nonUptakeDelta;
 
-  double availableMinN = calcPlantAvailableN();
-
-  double nFixationFrac = calcNFixationFrac();
-  double maxUptake = maxDemand * (1 - nFixationFrac);
-
-  if (maxUptake > TINY && maxUptake > availableMinN) {
+  if (uptakeDemand > TINY && uptakeDemand > availableMinN) {
     // More demand than supply - N limitation is in effect
-    double reduction = availableMinN / maxUptake;
-    logInfo("N uptake %.4f exceeds available soil min N %.4f, reducing plant "
-            "growth by %.2f%% on year %d day %d time %.3f\n",
-            maxUptake, availableMinN, (1 - reduction) * 100, climate->year,
-            climate->day, climate->time);
+    // Unfortunately, plantStorageN effects make this non-linear
+
+    // Unmet demand
+    // Current uptakeDemand is:
+    //   upD = (D - S) * u
+    // where D is plant demand, S is unclaimed storage, and u is the uptake frac
+    // This is currently more than N (available minN). We want reduction factor
+    // k such that:
+    //   upD = (kD - S) * u = N
+    // Solving for k:
+    //   k = [N/u + S] / D
+    double unclaimedStorage = calcUnclaimedStorageN();
+    double demand = calcPlantNDemandFlux() * len;
+    double uptakeFrac = 1 - calcNFixationFrac();
+    double reduction = (availableMinN / uptakeFrac + unclaimedStorage) / demand;
+
+    logInfo("N limitation: available soil min N %.4f + storage N %.4f < plant N"
+            " demand %.4f - N fixation %,4f, "
+            "reducing plant growth by %.2f%% on year %d day %d time %.3f\n",
+            availableMinN, unclaimedStorage, demand, fluxes.nFixation * len,
+            (1 - reduction) * 100, climate->year, climate->day, climate->time);
 
     // Reduce all drains on soil N (all fluxes used in calcPlantNDemandFlux,
     // plus fixation and uptake)

@@ -105,6 +105,7 @@ int testWoodAndLeafFluxesNegativeNPP(void) {
   params.leafCN = 20.0;
   params.woodCN = 100.0;
   params.fineRootCN = 40.0;
+
   // Expected:
   // woodLitter = 5.0 * 0.1 = 0.5
   // leafLitter = 3.0 * 0.2 = 0.6
