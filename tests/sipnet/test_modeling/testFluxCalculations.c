@@ -118,7 +118,7 @@ int testWoodAndLeafFluxesNegativeNPP(void) {
   //   total = 0.038
   calcWoodAndLeafFluxes();
   checkCarbonLimitations();
-  calcReductionResorptionFlux();
+  calcNResorptionFluxes();
 
   status |= checkFlux(fluxes.woodLitter, 0.5, "woodLitter (negative NPP)");
   status |= checkFlux(fluxes.leafLitter, 0.6, "leafLitter (negative NPP)");
@@ -276,7 +276,7 @@ int testRootFluxesNegativeNPP(void) {
   params.baseCoarseRootResp = 0.0;
   params.baseFineRootResp = 0.0;
 
-  // Need this for calcReductionResorptionFlux
+  // Need this for calcNResorptionFluxes
   fluxes.woodCreation = -1;
 
   // Expected:
@@ -288,7 +288,7 @@ int testRootFluxesNegativeNPP(void) {
   //   plus -1/100 for the woodCreation triggering term
   //   total = 0.034
   calcRootFluxes();
-  calcReductionResorptionFlux();
+  calcNResorptionFluxes();
 
   status |= checkFlux(fluxes.coarseRootCreation, -0.4,
                       "coarseRootCreation (negative NPP)");

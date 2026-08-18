@@ -763,15 +763,10 @@ void calcWoodAndLeafFluxes(void) {
   // Wood litter, in g C * m^-2 ground area * day^-1
   // turnover rate is fraction lost per day
   fluxes.woodLitter += getTotalWoodC() * params.woodTurnoverRate;
-  // TODO: Should we resorb N from wood litter?
 
   // a constant fraction of leaves fall in each time step
   double leafLitter = envi.plantLeafC * params.leafTurnoverRate;
   fluxes.leafLitter += leafLitter;
-  if (ctx.nitrogenCycle) {
-    fluxes.leafOffNResorption +=
-        params.leafNResorptionFrac * leafLitter / params.leafCN;
-  }
 
   // temporal mean of recent npp (g C * m^-2 ground * day^-1)
   double npp = getMeanTrackerMean(meanNPP);
@@ -839,14 +834,9 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
     *leafLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
     if (leafOff > TINY && ctx.events) {
-      double nResorp = 0.0;
-      if (ctx.nitrogenCycle) {
-        nResorp = params.leafNResorptionFrac * leafOff / params.leafCN;
-        fluxes.leafOffNResorption += nResorp;
-      }
       writeComputedEventOut(climate->year, climate->day,
-                            eventTypeToString(LEAFOFF), 2, "leafLitter",
-                            leafOff * len, "leafOffNResorption", nResorp * len);
+                            eventTypeToString(LEAFOFF), 1, "leafLitter",
+                            leafOff * len);
     }
   }
 }

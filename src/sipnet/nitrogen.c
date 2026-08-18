@@ -167,7 +167,7 @@ void calcNFixationAndUptakeFluxes(void) {
   fluxes.nUptake = (1 - nFixationFrac) * remDemandFlux;
 }
 
-void calcReductionResorptionFlux(void) {
+void calcNResorptionFluxes(void) {
   // We need to check if we are in a negative growth scenario. It would be nice
   // to check meanNPP directly, but it's not worth refactoring that struct out
   // of sipnet.c
@@ -184,12 +184,21 @@ void calcReductionResorptionFlux(void) {
          fluxes.coarseRootCreation / params.woodCN +
          fluxes.fineRootCreation / params.fineRootCN);
   }
+
+  // Leaf litter resorption; at this point, fluxes.leafLitter counts both normal
+  // turnover and leaf-off calcs. Note that event leaf off is handled in
+  // events.c
+  double nResorp =
+      params.leafNResorptionFrac * fluxes.leafLitter / params.leafCN;
+  fluxes.leafOffNResorption += nResorp;
+
+  // TODO: Should we resorb N from wood litter?
 }
 
 // see nitrogen.h
 void calcNitrogenFluxes(void) {
   if (ctx.nitrogenCycle) {
-    calcReductionResorptionFlux();
+    calcNResorptionFluxes();
     calcNVolatilizationFlux();
     calcNLeachingFlux();
     calcNPoolFluxes();
