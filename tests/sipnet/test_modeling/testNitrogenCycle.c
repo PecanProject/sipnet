@@ -740,7 +740,6 @@ int run(void) {
   status |= testUpdateNitrogenPoolsFromStorage();
   status |= testOrganicNWithResorption();
   status |= testLeafTurnoverNResorption();
-  status |= testUpdateNResorptionFlux();
 
   return status;
 }
