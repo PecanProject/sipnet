@@ -167,11 +167,16 @@ void calcNFixationAndUptakeFluxes(void) {
   fluxes.nUptake = (1 - nFixationFrac) * remDemandFlux;
 }
 
-void calcReductionResorptionFlux(void) {
-  // If woodCreation is less than zero, we are in a negative growth scenario
-  // It might be nice to check meanNPP directly, but it's not worth refactoring
-  // that struct out of sipnet.c
-  if (fluxes.woodCreation < 0.0) {
+void calcNResorptionFluxes(void) {
+  // We need to check if we are in a negative growth scenario. It would be nice
+  // to check meanNPP directly, but it's not worth refactoring that struct out
+  // of sipnet.c
+  // So, given that ALL of the creation terms are negative-or-not together
+  // (well, technically non-positive-or-not), we can check the sum of the
+  // creation terms.
+  if (fluxes.woodCreation + fluxes.leafCreation + fluxes.fineRootCreation +
+          fluxes.coarseRootCreation <
+      0.0) {
     // Note: we want these negative fluxes to INCREASE N resorption
     fluxes.reductionNResorption -=
         (fluxes.leafCreation / params.leafCN +
@@ -179,12 +184,21 @@ void calcReductionResorptionFlux(void) {
          fluxes.coarseRootCreation / params.woodCN +
          fluxes.fineRootCreation / params.fineRootCN);
   }
+
+  // Leaf litter resorption; at this point, fluxes.leafLitter counts both normal
+  // turnover and leaf-off calcs. Note that event leaf off is handled in
+  // events.c
+  double nResorp =
+      params.leafNResorptionFrac * fluxes.leafLitter / params.leafCN;
+  fluxes.leafOffNResorption += nResorp;
+
+  // TODO: Should we resorb N from wood litter?
 }
 
 // see nitrogen.h
 void calcNitrogenFluxes(void) {
   if (ctx.nitrogenCycle) {
-    calcReductionResorptionFlux();
+    calcNResorptionFluxes();
     calcNVolatilizationFlux();
     calcNLeachingFlux();
     calcNPoolFluxes();

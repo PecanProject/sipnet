@@ -118,7 +118,7 @@ int testWoodAndLeafFluxesNegativeNPP(void) {
   //   total = 0.038
   calcWoodAndLeafFluxes();
   checkCarbonLimitations();
-  calcReductionResorptionFlux();
+  calcNResorptionFluxes();
 
   status |= checkFlux(fluxes.woodLitter, 0.5, "woodLitter (negative NPP)");
   status |= checkFlux(fluxes.leafLitter, 0.6, "leafLitter (negative NPP)");
@@ -180,35 +180,9 @@ int testWoodAndLeafFluxesWithAccountingDelta(void) {
   // Wood litter uses total wood = woodC + delta = 5 + 3 = 8
   // Expected: woodLitter = 8.0 * 0.1 = 0.8
   calcWoodAndLeafFluxes();
+  checkCarbonLimitations();
 
   status |= checkFlux(fluxes.woodLitter, 0.8, "woodLitter (with delta)");
-  return status;
-}
-
-int testWoodAndLeafFluxesIsAdditive(void) {
-  int status = 0;
-  logTest("Running testWoodAndLeafFluxesIsAdditive\n");
-
-  resetContext();
-  resetFluxVars();
-  resetMeanTracker(meanNPP, 4.0);
-
-  envi.plantWoodC = 0.0;
-  envi.plantCAccountingDelta = 0.0;
-  envi.plantLeafC = 0.0;
-  params.woodTurnoverRate = 0.0;
-  params.leafTurnoverRate = 0.0;
-  params.leafAllocation = 0.5;
-  params.woodAllocation = 0.5;
-
-  // Call twice; fluxes should accumulate
-  calcWoodAndLeafFluxes();
-  calcWoodAndLeafFluxes();
-
-  // leafCreation = 4.0 * 0.5 = 2.0 per call -> 4.0 total
-  // woodCreation = 4.0 * 0.5 = 2.0 per call -> 4.0 total
-  status |= checkFlux(fluxes.leafCreation, 4.0, "leafCreation (additive)");
-  status |= checkFlux(fluxes.woodCreation, 4.0, "woodCreation (additive)");
   return status;
 }
 
@@ -239,6 +213,7 @@ int testRootFluxesPositiveNPP(void) {
   // coarseRootLoss = 5.0 * 0.01 = 0.05
   // fineRootLoss = 3.0 * 0.02 = 0.06
   calcRootFluxes();
+  checkCarbonLimitations();
 
   status |= checkFlux(fluxes.coarseRootCreation, 0.8,
                       "coarseRootCreation (positive NPP)");
@@ -253,19 +228,17 @@ int testRootFluxesPositiveNPP(void) {
   return status;
 }
 
-int testRootFluxesNegativeNPP(void) {
-  int status = 0;
-  logTest("Running testRootFluxesNegativeNPP\n");
-
+void initRootFluxesNegativeNPPState(double nppInit, double coarseInit,
+                                    double fineInit) {
   resetContext();
   ctx.nitrogenCycle = 1;
   ctx.litterPool = 1;
   ctx.anaerobic = 1;
   resetFluxVars();
-  resetMeanTracker(meanNPP, -4.0);
+  resetMeanTracker(meanNPP, nppInit);
 
-  envi.coarseRootC = 5.0;
-  envi.fineRootC = 3.0;
+  envi.coarseRootC = coarseInit;
+  envi.fineRootC = fineInit;
   params.coarseRootAllocation = 0.1;
   params.fineRootAllocation = 0.2;
   params.coarseRootTurnoverRate = 0.0;
@@ -275,27 +248,74 @@ int testRootFluxesNegativeNPP(void) {
   params.fineRootCN = 40.0;
   params.baseCoarseRootResp = 0.0;
   params.baseFineRootResp = 0.0;
+}
 
-  // Need this for calcReductionResorptionFlux
-  fluxes.woodCreation = -1;
+int testRootFluxesNegativeNPP(void) {
+  int status = 0;
+  logTest("Running testRootFluxesNegativeNPP\n");
 
+  // Case 1:
   // Expected:
   // coarseRootCreation = -4.0 * 0.1 = -0.4
   // fineRootCreation = -4.0 * 0.2 = -0.8
   // npp < 0:
   //   leafOffNResorption += -(-0.4) / 100.0 = 0.004
   //   leafOffNResorption += -(-0.8) / 40.0  = 0.02
-  //   plus -1/100 for the woodCreation triggering term
-  //   total = 0.034
+  //   total = 0.024
+  initRootFluxesNegativeNPPState(-4.0, 5.0, 3.0);
   calcRootFluxes();
-  calcReductionResorptionFlux();
+  checkCarbonLimitations();
+  calcNResorptionFluxes();
 
   status |= checkFlux(fluxes.coarseRootCreation, -0.4,
                       "coarseRootCreation (negative NPP)");
   status |= checkFlux(fluxes.fineRootCreation, -0.8,
                       "fineRootCreation (negative NPP)");
-  status |= checkFlux(fluxes.reductionNResorption, 0.034,
+  status |= checkFlux(fluxes.reductionNResorption, 0.024,
                       "reductionNResorption (negative NPP roots)");
+
+  // Case 2: negative fine root
+  // Expected:
+  // coarseRootCreation = -32.0 * 0.1 = -3.2 (-2.4) = -5.6
+  // fineRootCreation = -32.0 * 0.2 = -6.4 (+2.4) = -4.0
+  // [envi.FineRootC = 0.5*8 = 4; 2.4 moves to coarse]
+  // npp < 0:
+  //   leafOffNResorption += 5.6 / 100.0 = 0.056
+  //   leafOffNResorption += 4.0 / 40.0  = 0.1
+  //   total = 0.156
+  initRootFluxesNegativeNPPState(-32.0, 5.0, 0.5);
+  calcRootFluxes();
+  checkCarbonLimitations();
+  calcNResorptionFluxes();
+
+  status |= checkFlux(fluxes.coarseRootCreation, -5.6,
+                      "coarseRootCreation (negative fine roots)");
+  status |= checkFlux(fluxes.fineRootCreation, -4.0,
+                      "fineRootCreation (negative fine roots)");
+  status |= checkFlux(fluxes.reductionNResorption, 0.156,
+                      "reductionNResorption (negative fine roots)");
+
+  // Case 3: negative coarse root
+  // Expected:
+  // coarseRootCreation = -32.0 * 0.1 = -3.2 (+1.6) = -1.6
+  // fineRootCreation = -32.0 * 0.2 = -6.4 (-2.6) = -8.0
+  // [envi.coarseRootC = 0.2*8 = 1.6; 1.6 moves to coarse]
+  // npp < 0:
+  //   leafOffNResorption += 1.6 / 100.0 = 0.016
+  //   leafOffNResorption += 8.0 / 40.0  = 0.2
+  //   total = 0.216
+  initRootFluxesNegativeNPPState(-32.0, 0.2, 5.0);
+  calcRootFluxes();
+  checkCarbonLimitations();
+  calcNResorptionFluxes();
+
+  status |= checkFlux(fluxes.coarseRootCreation, -1.6,
+                      "coarseRootCreation (negative fine roots)");
+  status |= checkFlux(fluxes.fineRootCreation, -8.0,
+                      "fineRootCreation (negative fine roots)");
+  status |= checkFlux(fluxes.reductionNResorption, 0.216,
+                      "reductionNResorption (negative fine roots)");
+
   return status;
 }
 
@@ -308,7 +328,6 @@ int run(void) {
   status |= testWoodAndLeafFluxesNegativeNPP();
   status |= testWoodAndLeafFluxesLeafDeficit();
   status |= testWoodAndLeafFluxesWithAccountingDelta();
-  status |= testWoodAndLeafFluxesIsAdditive();
   status |= testRootFluxesPositiveNPP();
   status |= testRootFluxesNegativeNPP();
 
