@@ -168,10 +168,15 @@ void calcNFixationAndUptakeFluxes(void) {
 }
 
 void calcReductionResorptionFlux(void) {
-  // If woodCreation is less than zero, we are in a negative growth scenario
-  // It might be nice to check meanNPP directly, but it's not worth refactoring
-  // that struct out of sipnet.c
-  if (fluxes.woodCreation < 0.0) {
+  // We need to check if we are in a negative growth scenario. It would be nice
+  // to check meanNPP directly, but it's not worth refactoring that struct out
+  // of sipnet.c
+  // So, given that ALL of the creation terms are negative-or-not together
+  // (well, technically non-positive-or-not), we can check the sum of the
+  // creation terms.
+  if (fluxes.woodCreation + fluxes.leafCreation + fluxes.fineRootCreation +
+          fluxes.coarseRootCreation <
+      0.0) {
     // Note: we want these negative fluxes to INCREASE N resorption
     fluxes.reductionNResorption -=
         (fluxes.leafCreation / params.leafCN +
