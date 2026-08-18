@@ -58,7 +58,7 @@ double calcNFixationFrac(void);
 void calcNFixationAndUptakeFluxes(void);
 
 /*!
- * Calculate all nitrogen fluxes (except N resorption)
+ * Calculate all nitrogen fluxes
  *
  * This is the general flux calculation wrapper for sipnet.c
  */
