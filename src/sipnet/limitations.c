@@ -126,7 +126,7 @@ void checkLimitations(void) {
  *
  * Adjust if necessary
  */
-void checkNegativeCreation(void) {
+static void checkNegativeCreation(void) {
   // In the case of negative growth (mean npp < 0), we might be allocating that
   // negative growth to a pool that can't handle it (e.g., leaf creation is
   // negative, but leaf pool is already at 0). In those cases, adjust
@@ -134,8 +134,11 @@ void checkNegativeCreation(void) {
 
   // Above ground
   // If leafCreation is too negative, we need to deduct from wood instead
+  // Use only the continuous turnover term to match previous logic - but see
+  // SIPNET issue #372.
+  double leafLitterTurnover = envi.plantLeafC * params.leafTurnoverRate;
   double leafDeficit = envi.plantLeafC / climate->length + fluxes.leafCreation -
-                       fluxes.leafLitter;
+                       leafLitterTurnover;
   if (leafDeficit < 0) {
     fluxes.woodCreation += leafDeficit;
     fluxes.leafCreation -= leafDeficit;
