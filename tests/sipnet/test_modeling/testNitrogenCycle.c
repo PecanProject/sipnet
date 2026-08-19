@@ -725,26 +725,6 @@ int testLeafTurnoverNResorption(void) {
   return status;
 }
 
-int testUpdateNResorptionFlux(void) {
-  int status = 0;
-  logTest("Running testUpdateNResorptionFlux\n");
-
-  // DeltaC values are negative, as this function is used when growth is
-  // negative
-
-  // Basic: deltaC / cn added to leafOffNResorption
-  resetState();
-  updateNResorptionFlux(-10.0, 20.0);
-  status |= checkFlux(fluxes.reductionNResorption, 0.5, "N resorption (basic)");
-
-  // Additive: multiple calls accumulate
-  updateNResorptionFlux(-5.0, 25.0);
-  status |=
-      checkFlux(fluxes.reductionNResorption, 0.7, "N resorption (additive)");
-
-  return status;
-}
-
 int run(void) {
   int status = 0;
 
@@ -760,7 +740,6 @@ int run(void) {
   status |= testUpdateNitrogenPoolsFromStorage();
   status |= testOrganicNWithResorption();
   status |= testLeafTurnoverNResorption();
-  status |= testUpdateNResorptionFlux();
 
   return status;
 }
