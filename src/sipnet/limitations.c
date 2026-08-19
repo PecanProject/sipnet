@@ -120,8 +120,9 @@ void checkMineralNLimitation(void) {
   double len = climate->length;
   double pool = envi.minN + (fluxes.nMin + fluxes.eventMinN) * len;
   double loss = (fluxes.nLeaching + fluxes.nVolatilization) * len;
-  if (loss > pool) {
-    double reduction = (loss - pool) / loss;
+
+  if (loss > TINY && loss > pool) {
+    double reduction = pool / loss;
     fluxes.nLeaching *= reduction;
     fluxes.nVolatilization *= reduction;
   }
