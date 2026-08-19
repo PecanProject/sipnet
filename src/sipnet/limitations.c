@@ -113,10 +113,26 @@ static void checkNitrogenLimitation(void) {
   }
 }
 
+/**
+ * Check if leaching and volatilization will drive mineral N negative
+ */
+void checkMineralNLimitation(void) {
+  double len = climate->length;
+  double pool = envi.minN + (fluxes.nMin + fluxes.eventMinN) * len;
+  double loss = (fluxes.nLeaching + fluxes.nVolatilization) * len;
+  if (loss > pool) {
+    double reduction = (loss - pool) / loss;
+    fluxes.nLeaching *= reduction;
+    fluxes.nVolatilization *= reduction;
+  }
+}
+
 // See limitations.h
 void checkLimitations(void) {
   // Our only post-flux limitation to check
   if (ctx.nitrogenCycle) {
+    // Call the mineral N check before the general N Limitation check
+    checkMineralNLimitation();
     checkNitrogenLimitation();
   }
 }
