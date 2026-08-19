@@ -19,4 +19,11 @@ void checkLimitations(void);
  */
 void checkLeafOnLimitation(double *leafOnFlux);
 
+/** Check for carbon-specific limitations
+ *
+ * Check carbon limits that should be dealt with before nitrogen fluxes are
+ * calculated
+ */
+void checkCarbonLimitations(void);
+
 #endif  // SIPNET_LIMITATIONS_H
