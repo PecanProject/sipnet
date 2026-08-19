@@ -748,8 +748,11 @@ int testGuardAgainstNegativeMinN(void) {
   logTest("Running testGuardAgainstNegativeMinN\n");
 
   // Case 1: no leaching, as W_soil < WHC, but maxed vol
+  // We'll add some mineralization too, to make sure reduction is correct in
+  // that case
   // Vol
   resetState();
+  fluxes.nMin = 2.0;  // 0.25 extra min N
   envi.minN = 1.0;
   params.fAnoxia = 0.6;
   params.soilWHC = 10.0;
@@ -771,7 +774,8 @@ int testGuardAgainstNegativeMinN(void) {
   status |= checkVolAndLeachingFlux("volatilization", expNVol, expNLeach);
   // Call the limit check should reduce nVol to 8 (enough to just exhaust nMin)
   checkMineralNLimitation();
-  status |= checkVolAndLeachingFlux("volatilization", 8.0, 0.0);
+  expNVol *= 10.0 / expNVol;
+  status |= checkVolAndLeachingFlux("volatilization", expNVol, 0.0);
   // Check that minN is zero at end
   updateNitrogenPools();
   status |= checkMinAndStorageN("volatilization", 0.0, 0.0);
