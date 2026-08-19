@@ -772,7 +772,7 @@ int testGuardAgainstNegativeMinN(void) {
   calcNVolatilizationFlux();
   calcNLeachingFlux();
   status |= checkVolAndLeachingFlux("volatilization", expNVol, expNLeach);
-  // Call the limit check should reduce nVol to 8 (enough to just exhaust nMin)
+  // Call the limit check should reduce nVol to 10 (enough to just exhaust nMin)
   checkMineralNLimitation();
   expNVol *= 10.0 / expNVol;
   status |= checkVolAndLeachingFlux("volatilization", expNVol, 0.0);

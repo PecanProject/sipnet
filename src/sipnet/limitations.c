@@ -116,7 +116,7 @@ static void checkNitrogenLimitation(void) {
 /**
  * Check if leaching and volatilization will drive mineral N negative
  */
-void checkMineralNLimitation(void) {
+static void checkMineralNLimitation(void) {
   double len = climate->length;
   double pool = envi.minN + (fluxes.nMin + fluxes.eventMinN) * len;
   double loss = (fluxes.nLeaching + fluxes.nVolatilization) * len;
