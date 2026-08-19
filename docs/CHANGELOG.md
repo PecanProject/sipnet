@@ -48,6 +48,7 @@ sections to include in release notes:
 - New `sipnet-debug-view` tool for visualizing SIPNET debug output files (#359)
 - Plant mortality check with transfer of remaining carbon and nitrogen to litter and soil pools and a `plantdeath` record in `events.out` (#359)
 - New required nitrogen-cycle parameters `plantStorageNInit` and `leafNResorptionFrac` (#337)
+- Guard against negative mineral N due to volatilization and/or leaching (#375)
 
 ### Fixed
 
@@ -59,11 +60,12 @@ sections to include in release notes:
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
 - Values in `events.out` changed to pool deltas rather than flux amounts (#349)
-- Updated handling of carbon NPP accounting (#359)
+- Updated handling of carbon NPP accounting (#359, #368)
 
 ### Removed
 
 - Schema version from restart checkpoint format; model version is sufficient (#338)
+- Resorbed nitrogen from leaf-off events in events.out (this value can be calculated from leaf-off carbon and parameters) (#368)
 
 ### Git SHA
 

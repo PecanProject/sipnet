@@ -58,20 +58,7 @@ double calcNFixationFrac(void);
 void calcNFixationAndUptakeFluxes(void);
 
 /*!
- * Incrementally update the N resorption flux for carbon loss
- *
- * The input deltaC is expected to be negative, as it represents a carbon loss.
- * The function will update the reductionNResorption flux according to the
- * provided C:N ratio (cn). This is used to track nitrogen resorption when
- * plants lose carbon due to negative growth.
- *
- * @param deltaC Negative change in carbon pool
- * @param cn C:N ratio of the pool losing carbon
- */
-void updateNResorptionFlux(double deltaC, double cn);
-
-/*!
- * Calculate all nitrogen fluxes (except N resorption)
+ * Calculate all nitrogen fluxes
  *
  * This is the general flux calculation wrapper for sipnet.c
  */
@@ -83,5 +70,10 @@ void calcNitrogenFluxes(void);
  * This is the general pool update wrapper for sipnet.c
  */
 void updateNitrogenPools(void);
+
+/**
+ * In the public API for testing
+ */
+void calcNResorptionFluxes(void);
 
 #endif  // NITROGEN_H
