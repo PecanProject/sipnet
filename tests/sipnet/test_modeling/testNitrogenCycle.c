@@ -725,6 +725,94 @@ int testLeafTurnoverNResorption(void) {
   return status;
 }
 
+int checkVolAndLeachingFlux(const char *prefix, double expNVol,
+                            double expNLeach) {
+  int status = 0;
+  if (!compareDoubles(fluxes.nVolatilization, expNVol)) {
+    status = 1;
+    logTest("[%s] nVolatilization is %8.4f, expected %8.4f\n", prefix,
+            fluxes.nVolatilization, expNVol);
+  }
+  if (!compareDoubles(fluxes.nLeaching, expNLeach)) {
+    status = 1;
+    logTest("[%s] nLeaching is %8.4f, expected %8.4f\n", prefix,
+            fluxes.nLeaching, expNLeach);
+  }
+  return status;
+}
+
+/////
+// Test our guard against vol+leaching driving min N negative
+int testGuardAgainstNegativeMinN(void) {
+  int status = 0;
+  logTest("Running testGuardAgainstNegativeMinN\n");
+
+  // Case 1: no leaching, as W_soil < WHC, but maxed vol
+  // We'll add some mineralization too, to make sure reduction is correct in
+  // that case
+  // Vol
+  resetState();
+  fluxes.nMin = 2.0;  // 0.25 extra min N
+  envi.minN = 1.0;
+  params.fAnoxia = 0.6;
+  params.soilWHC = 10.0;
+  envi.soilWater = 8.0;  // anaerobic index = 0.5, D_water = 1
+  params.soilRespQ10 = 2.5;
+  climate->tsoil = 30.0;  // D_temp = 15.625
+  params.nVolatilizationFrac = 1.0;  // 100% can volatilize / day
+  double expNVol = 1 * 1 * 1 * 15.625;
+
+  // We'll set up the leaching, as we need some values for this
+  // Leaching
+  // nLeaching = 1.0 * 0.8 * 0.5 = 0.4
+  params.nLeachingFrac = 0.5;
+  fluxes.drainage = 0.0;
+  double expNLeach = 0.0;
+
+  calcNVolatilizationFlux();
+  calcNLeachingFlux();
+  status |= checkVolAndLeachingFlux("volatilization", expNVol, expNLeach);
+  // Call the limit check should reduce nVol to 10 (enough to just exhaust nMin)
+  checkMineralNLimitation();
+  expNVol *= 10.0 / expNVol;
+  status |= checkVolAndLeachingFlux("volatilization", expNVol, 0.0);
+  // Check that minN is zero at end
+  updateNitrogenPools();
+  status |= checkMinAndStorageN("volatilization", 0.0, 0.0);
+
+  // Case 2: Leaching
+  // We'll have a trickle of vol here, plus as much leaching as we can. Need
+  // hot + wet (flooding)
+  resetState();
+  envi.minN = 1.0;
+  // Leaching
+  envi.soilWater = 20.0;
+  fluxes.drainage = 10.0;  // phi = 1.0
+  params.nLeachingFrac = 8.0;  // 100% leached every three hours
+  expNLeach = 1.0 * 1.0 * 8.0;  // 8.0
+  // Vol
+  params.nVolatilizationFrac = 1.0;  // 100% can volatilize / day
+  params.soilRespQ10 = 3;
+  climate->tsoil = 20.0;  // D_temp = 9
+  // D_water = 0.05 now
+  expNVol = 1 * 1 * 0.05 * 9;  // 0.45
+
+  calcNVolatilizationFlux();
+  calcNLeachingFlux();
+  status |= checkVolAndLeachingFlux("leaching", expNVol, expNLeach);
+  // Call the limit check should reduce both to sum to 8
+  double reduction = 8.0 / 8.45;
+  expNVol *= reduction;
+  expNLeach *= reduction;
+  checkMineralNLimitation();
+  status |= checkVolAndLeachingFlux("leaching", expNVol, expNLeach);
+  // Check that minN is zero at end
+  updateNitrogenPools();
+  status |= checkMinAndStorageN("leaching", 0.0, 0.0);
+
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -740,6 +828,7 @@ int run(void) {
   status |= testUpdateNitrogenPoolsFromStorage();
   status |= testOrganicNWithResorption();
   status |= testLeafTurnoverNResorption();
+  status |= testGuardAgainstNegativeMinN();
 
   return status;
 }
