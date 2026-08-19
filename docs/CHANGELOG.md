@@ -35,6 +35,7 @@ sections to include in release notes:
 - Ability to create derived columns in `sipnet-view` (#355)
 - New `sipnet-debug-view` tool for visualizing SIPNET debug output files (#359)
 - Plant mortality check with event output on occurrence (#359)
+- Guard against negative mineral N due to volatilization and/or leaching (#375)
 
 ### Fixed
 
