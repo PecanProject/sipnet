@@ -47,6 +47,7 @@ sections to include in release notes:
 - Ability to create derived columns in `sipnet-view` (#355)
 - New `sipnet-debug-view` tool for visualizing SIPNET debug output files (#359)
 - Plant mortality check with transfer of remaining carbon and nitrogen to litter and soil pools and a `plantdeath` record in `events.out` (#359)
+- New required nitrogen-cycle parameters `plantStorageNInit` and `leafNResorptionFrac` (#337)
 
 ### Fixed
 
