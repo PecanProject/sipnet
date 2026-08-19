@@ -39,8 +39,6 @@ sections to include in release notes:
 
 ### Fixed
 
-- Restore module-level `load_output_table` and `load_debug_tables` functions to fix Python unit test failures (#364)
-
 ### Changed
 
 - Renamed the CLI option `--file-name` to `--file-prefix` for clarity while keeping `--file-name` as a backward-compatible alias (#320)
