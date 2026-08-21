@@ -12,6 +12,7 @@ permissions:
 jobs:
   link-check:
     runs-on: ubuntu-latest
+    if: github.repository == 'PecanProject/sipnet'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
