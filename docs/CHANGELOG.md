@@ -19,7 +19,6 @@ sections to include in release notes:
 
 ### Removed
 
-### Git SHA
 -->
 
 ## [Unreleased]
@@ -32,9 +31,7 @@ sections to include in release notes:
 
 ### Removed
 
-### Git SHA
-
-## **SIPNET 2.2.0 - "Carbon and Nitrogen in Sync"**
+## **SIPNET [2.2.0] - "Carbon and Nitrogen in Sync"**
 
 ### Added
 
@@ -67,11 +64,7 @@ sections to include in release notes:
 - Schema version from restart checkpoint format; model version is sufficient (#338)
 - Resorbed nitrogen from leaf-off events in events.out (this value can be calculated from leaf-off carbon and parameters) (#368)
 
-### Git SHA
-
-70762ca
-
-## **SIPNET 2.1.0 - "Nitrogen Cycle, Methane, and Restart"**
+## **SIPNET [2.1.0] - "Nitrogen Cycle, Methane, and Restart"**
 
 ### Added
 
@@ -115,10 +108,7 @@ sections to include in release notes:
 - `microbes` option and functionality (#257)
 - 'Notes' line at top of `sipnet.out` header (#267)
 
-### Git SHA
-[TBD]
-
-## **SIPNET 2.0.0 - "SIPNET Overhaul"**
+## **SIPNET [2.0.0] - "SIPNET Overhaul"**
 
 ### Added
 
@@ -166,10 +156,7 @@ sections to include in release notes:
 - Removed `soilWetness` mode (#127)
 - Removed obsolete model params; sipnet now warns on unknown params in the params file (#124)
 
-### Git SHA
-[TBD]
-
-## **SIPNET 1.3.0 - "Event Handler"**
+## **SIPNET [1.3.0] - "Event Handler"**
 
 v1.3.0 represents the initial development of support for agricultural management events.
 
@@ -184,10 +171,7 @@ v1.3.0 represents the initial development of support for agricultural management
 - Update Doxyfile
 - Add `make help`.
 
-### Git SHA
-8ff893e61d69d0374bdf0fa14d156fd621c40eb4
-
-## **SIPNET 1.2.1 - "Add LICENSE and minor fixes"**
+## **SIPNET [1.2.1] - "Add LICENSE and minor fixes"**
 
 ### Added
 
@@ -199,10 +183,7 @@ v1.3.0 represents the initial development of support for agricultural management
 - Minor fixes prior to agricultural management implementation.
 - Bug fix for output formatting (identified by @Qianyuxuan).
 
-### Git SHA
-0c77ce863ac61113740c759dbe502a74e2d64edf
-
-## **SIPNET 1.2.0 - "fAPAR assimilation"**
+## **SIPNET [1.2.0] - "fAPAR assimilation"**
 
 ### Added
 
@@ -212,10 +193,7 @@ v1.3.0 represents the initial development of support for agricultural management
 
 Zobitz, J.M., David J.P. Moore, Tristan Quaife, Bobby H. Braswell, Andrew Bergeson, Jeremy A. Anthony, and Russell K. Monson. 2014. “Joint Data Assimilation of Satellite Reflectance and Net Ecosystem Exchange Data Constrains Ecosystem Carbon Fluxes at a High-Elevation Subalpine Forest.” Agricultural and Forest Meteorology 195–196 (September):73–88. https://doi.org/10.1016/j.agrformet.2014.04.011.
 
-### Git SHA
-97a225956775035506f573a29c7022de8d7d269d
-
-## **SIPNET 1.1.0 - "Roots and Microbes"**
+## **SIPNET [1.1.0] - "Roots and Microbes"**
 
 **Moore et al. (2008)**
 
@@ -234,7 +212,7 @@ Moore, David J.P., Jia Hu, William J. Sacks, David S. Schimel, and Russell K. Mo
 
 Zobitz, J. M., D. J. P. Moore, W. J. Sacks, R. K. Monson, D. R. Bowling, and D. S. Schimel. 2008. “Integration of Process-Based Soil Respiration Models with Whole-Ecosystem CO2 Measurements.” Ecosystems 11 (2): 250–69. https://doi.org/10.1007/s10021-007-9120-1.
 
-## **SIPNET 1.0.0 - "SIPNET First Release"**
+## **SIPNET [1.0.0] - "SIPNET First Release"**
 
 The first release of SIPNET reflected a series of improvements over the original SIPNET model (Braswell et al., 2005).
 The model was developed by Bill Sacks and Dave Moore, with contributions from John Zobitz. The model was parameterized using data from the Harvard Forest flux tower using MCMC (Sacks et al., 2006).
@@ -257,9 +235,6 @@ The model was designed to simulate the carbon and water cycles of a forest ecosy
 - Shut down photosynthesis and foliar respiration when soil temperature < threshold.
 - Partition autotrophic and heterotrophic respiration.
 
-### Git SHA
-47d6546e245384dbda7e981a3bc8b729d4f756fc
-
 ### Publications
 
 Braswell, Bobby H., William J. Sacks, Ernst Linder, and David S. Schimel. 2005. “Estimating Diurnal to Annual Ecosystem Parameters by Synthesis of a Carbon Flux Model with Eddy Covariance Net Ecosystem Exchange Observations.” Global Change Biology 11 (2): 335–55. https://doi.org/10.1111/j.1365-2486.2005.00897.x.
@@ -270,3 +245,13 @@ Sacks, William J., David S. Schimel, Russell K. Monson, and Bobby H. Braswell. 2
 
 ### Changed
 - Renamed n2oFlux output column to n2o and converted from flux (rate) to timestep-integrated amount.
+
+[Unreleased]: https://github.com/PecanProject/sipnet/compare/v2.1.0...HEAD
+[2.2.0]: https://github.com/PecanProject/sipnet/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/PecanProject/sipnet/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/PecanProject/sipnet/compare/v1.3.0...v2.0.0
+[1.3.0]: https://github.com/PecanProject/sipnet/compare/v1.2.1...v1.3.0
+[1.2.1]: https://github.com/PecanProject/sipnet/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/PecanProject/sipnet/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/PecanProject/sipnet/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/PecanProject/sipnet/releases/tag/v1.0.0
