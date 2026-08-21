@@ -107,6 +107,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $N_{\text{org, litter},0}$        | litterOrgNInit | Initial litter organic nitrogen content                                  | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
 | $N_{\text{org, soil},0}$          | soilOrgNInit   | Initial soil organic nitrogen content                                    | $\text{g N} \cdot \text{m}^{-2}$                                    |                                                                                          |
 | $N_{\text{min, soil},0}$          | mineralNInit   | Initial mineral nitrogen content                                         | $\text{g N} \cdot \text{m}^{-2}$                                    | Single mineral N pool used by soil and litter N fluxes                                   |
+| $N_{\text{plant,storage},0}$      | plantStorageNInit | Initial plant nitrogen storage pool                                   | $\text{g N} \cdot \text{m}^{-2}$                                    | Use 0 unless initial storage pool is known or estimated                                          |
 | $f_{\text{fine root},0}$          | fineRootFrac   | Fraction of `plantWoodInit` allocated to initial fine root carbon pool   | unitless                                                            |                                                                                          |
 | $f_{\text{coarse root},0}$        | coarseRootFrac | Fraction of `plantWoodInit` allocated to initial coarse root carbon pool | unitless                                                            |                                                                                          |
 | $W_{\text{snow},0}$               | snowInit       | Initial snow water equivalent                                            | cm water equivalent                                                 |                                                                                          |
@@ -207,6 +208,7 @@ Run-time parameters support mineral nitrogen losses through volatilization and l
 | ---------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | -------------------------------- |
 | $K_\text{vol}$         | nVolatilizationFrac  | Nitrogen volatilization rate constant that determines the maximum rate of N volatilization as a proportion of available $N_\text{min}$ | $\text{day}^{-1}$ | \eqref{eq:n_vol}                 |
 | $f^N_{\text{leach}}$   | nLeachingFrac        | Fraction of $N_\text{min}$ available to be leached, applied after scaling by $\phi = \min(F^W_\text{drainage}/W_\text{WHC}, 1)$      | $\text{day}^{-1}$  | \eqref{eq:n_leach}               |
+| $f^N_{\text{resorb}}$ | leafNResorptionFrac | Fraction of senescing leaf nitrogen transferred to the plant nitrogen storage pool | unitless |  |
 
 ### Moisture-Related Parameters
 
