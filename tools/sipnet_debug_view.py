@@ -254,6 +254,11 @@ def main(argv: Sequence[str] | None = None) -> int:
   return application.exec()
 
 
+def load_debug_tables(prefix: Path) -> LoadedSipnetData:
+  """Load and merge the three debug log files at *prefix*. Exposes the static method at module level for backwards compatibility."""
+  return SipnetDebugViewerWindow.load_output(prefix)
+
+
 if __name__ == "__main__":
   try:
     raise SystemExit(main())
