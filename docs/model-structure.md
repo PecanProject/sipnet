@@ -207,9 +207,28 @@ This is equation (A1) from Braswell, et al. (2005), modified to explicitly track
 This is equation (A2) from Braswell, et al. (2005)
 
 The change in plant leaf carbon $(C_\text{leaf})$ over time is given by the balance of leaf production $(L)$ and leaf
-litter production $(F^C_\text{litter,leaf})$.
+litter production $(F^C_\text{litter,leaf})$. Each of those terms has a continuous component, active in every time
+step, and a pulse at the corresponding growing season boundary:
 
-**TODO:** explain $L$ in terms of $\alpha_\text{leaf}\cdot \overline{NPP}$ and leaf on/leaf off mechanics.
+\begin{equation}
+L = \alpha_\text{leaf} \cdot \overline{\text{NPP}} + F^C_{\text{creation,}leafOn}
+\label{eq:leaf_production}
+\end{equation}
+
+\begin{equation}
+F^C_\text{litter,leaf} = K_\text{leaf} \cdot C_\text{leaf} + F^C_{\text{litter,}leafOff}
+\label{eq:leaf_litter}
+\end{equation}
+
+The continuous components follow the same form as the other biomass pools \eqref{eq:Zobitz_3}: a fixed share
+$\alpha_\text{leaf}$ of five-day mean NPP is allocated to leaves, and a fixed fraction $K_\text{leaf}$ of the leaf pool
+is shed as litter each day.
+
+The pulse components carry the growing season transitions described in Sec. [Leaf On/Leaf Off](#leaf-onleaf-off).
+At leaf on the plant has little or no canopy, so leaves are not built from current production. Instead, the leaf on
+term is a reallocation of carbon the plant already holds, moved into leaves from wood and coarse roots, and is
+therefore not part of the NPP partition in \eqref{eq:Zobitz_3}. At leaf off, the leaf off term adds to leaf litter and
+is routed onward in the same way as continuous leaf turnover.
 
 ### Root Carbon
 
@@ -625,13 +644,11 @@ $W_\text{WHC}$ is soil water holding capacity. SIPNET uses one mineral nitrogen 
 
 ### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
 
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of carbon creation fluxes divided by their respective C:N ratios:
+Plant N demand is the amount of N required to support plant growth. Growth from NPP allocation and the leaf on
+transfer are accounted for separately, as they are met from different supplies.
 
-\begin{equation}
-F^N_{\text{demand,}leafOn} = \frac{F^C_{\text{creation,}leafOn}}{CN_{\text{leaf}}} -
-\frac{F^C_{\text{creation,}leafOn}}{CN_{\text{wood}}}
-\label{eq:leaf_on_n_demand}
-\end{equation}
+New tissue built from NPP requires nitrogen in proportion to the carbon allocated to each pool, at the fixed C:N ratio
+of that pool:
 
 \begin{equation}
 F^N_{\text{demand,}creation} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
@@ -642,16 +659,36 @@ F^N_{\text{demand,}creation} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text
 \small i \in \{\text{wood, leaf, fine root, coarse root}\}
 \end{equation*}
 
+Each term in the sum is calculated according to \eqref{eq:plant_n}.
+
+Leaf on moves existing tissue rather than building new tissue, so the carbon brings nitrogen with it and the demand is
+only the difference in stoichiometry between the source and the destination. The carbon arrives holding the nitrogen it
+held as wood or coarse root, $F^C_{\text{creation,}leafOn} / CN_{\text{wood}}$, and as leaf tissue it must hold
+$F^C_{\text{creation,}leafOn} / CN_{\text{leaf}}$. The shortfall is the additional nitrogen the plant has to supply:
+
 \begin{equation}
-F^N_{\text{demand,}total} =
-F^N_{\text{demand,}leafOn} +
-F^N_{\text{demand,}creation}
+F^N_{\text{demand,}leafOn} = \frac{F^C_{\text{creation,}leafOn}}{CN_{\text{leaf}}} -
+\frac{F^C_{\text{creation,}leafOn}}{CN_{\text{wood}}}
+\label{eq:leaf_on_n_demand}
+\end{equation}
+
+Leaves are more nitrogen rich than the tissue the carbon comes from, so the transfer requires additional nitrogen.
+Coarse roots share the wood C:N ratio, so the split of the transfer between the two source pools does not change it.
+
+The two demands are satisfied in sequence. Leaf on is met entirely from the plant nitrogen storage pool, which is
+filled by nitrogen resorbed from leaves as they senesce, and it has first claim on that pool. If the pool cannot cover
+the demand, the leaf on transfer itself is reduced (Sec. [Leaf On/Leaf Off](#leaf-onleaf-off)) rather than the
+shortfall being carried forward, so leaf on never draws on fixation or soil uptake. Storage nitrogen left after that
+claim, $F^N_{\text{storage}}$, is applied to the creation demand, and only what remains is met from outside the plant:
+
+\begin{equation}
+F^N_{\text{demand}} =
+\max\left(0,\; F^N_{\text{demand,}creation} - F^N_{\text{storage}}\right)
 \label{eq:plant_n_demand}
 \end{equation}
 
-Each term in the sum is calculated according to \eqref{eq:plant_n}. Total plant N demand $F^N_{\text{demand,}total}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
-
-**TODO:** possibly include more context about leaf on events
+$F^N_{\text{demand}}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and
+\eqref{eq:n_uptake_demand}.
 
 ### Nitrogen Fixation and Uptake $F^N_\text{fix}, F^N_\text{uptake}$
 
@@ -682,7 +719,7 @@ D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
 where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is
 reduced by half (g N m$^{-2}$).
 
-Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ 
+Nitrogen fixation and soil N uptake are then partitioned from plant N demand $F^N_\text{demand}$
 \eqref{eq:plant_n_demand}:
 
 \begin{equation}
@@ -1175,14 +1212,24 @@ Leaf on and leaf off events define the timing of leaf emergence and senescence, 
 specify the amount of carbon added to the leaf carbon pool on the leaf on date, and the fraction of carbon removed from
 the leaf carbon pool on the leaf off date. 
 
-When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is transferred from the wood
-carbon pool to the leaf carbon pool. As leaf C:N is usually lower than wood C:N, the excess nitrogen
-implied by the static C:N ratios is included as part of the plant nitrogen demand. If there is insufficient nitrogen
-available for this lump-sum move, nitrogen limitation will occur. 
+When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is moved into the leaf
+carbon pool from wood and coarse roots, drawn from those two pools in proportion to their current sizes. The plant may
+not be able to afford the full amount, so two constraints are applied:
+
+- Carbon: at most a fraction of wood and coarse root carbon (specified by the `leafOnReallocFrac` parameter) is
+  available to be reallocated. Carbon held in the wood storage pool \eqref{eq:wood_c_storage} is not drawn on.
+- Nitrogen: as leaf C:N is lower than wood C:N, the transfer requires the additional nitrogen of
+  \eqref{eq:leaf_on_n_demand}. That nitrogen is available only from the plant nitrogen storage pool.
+
+Whichever constraint is tighter scales the transfer down, and the scaled amount is what is applied to the pools. Since
+leaf on is capped at this point, it is not reduced again by the general nitrogen limitation
+(Sec. [Nitrogen Limitation](#nitrogen-limitation)).
 
 When a leaf off event occurs, a fraction of the leaf carbon (specified by the `fracLeafFall` parameter) is transferred
 from the leaf carbon pool to the litter pool (or soil pool, if the litter pool is not being used). The corresponding
-nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter or soil nitrogen pool.
+nitrogen (calculated from the leaf C:N ratio) follows that carbon, apart from the fraction retained by the plant
+(specified by the `leafNResorptionFrac` parameter), which is resorbed to the plant nitrogen storage pool before the
+litter leaves the plant.
 
 **Event parameters:**
 
