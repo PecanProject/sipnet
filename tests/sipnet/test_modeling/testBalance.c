@@ -117,8 +117,8 @@ int testBalanceLeafNegativeLeafOnN(void) {
   double originalLeafCN = params.leafCN;
   double originalWoodCN = params.woodCN;
 
-  params.leafOnDay = 0;
-  params.leafOffDay = 0;
+  // Keep leaf-on/off timing from balance.param so the simulation actually hits a
+  // leaf-on transition and exercises the negative leaf-on N case.
   params.leafCN = 20.0;
   params.woodCN = 10.0;
 
