@@ -157,8 +157,10 @@ pools shows that NPP is partitioned into biomass growth, removed harvest, and li
 
 ### Plant Death
 
-Plant death is implemented as a harvest event with the fraction of biomass transferred to
-litter, $f_{\text{harvest,transfer,}i}$ set to 1.
+Plant death is checked automatically after pool updates rather than being represented as an input harvest event.
+The model requires positive woody carbon, positive total woody carbon (including the NPP accounting / storage term),
+and positive total root carbon. When any of these become non-positive, SIPNET treats the plant as dead, transfers the
+remaining biomass to litter or soil as appropriate, zeros the living plant pools, and resets the running NPP tracker.
 
 ### Wood Carbon
 
@@ -1088,8 +1090,9 @@ without explicit electron-acceptor pools.
 
 ## Agronomic Management Events
 
-All management events are specified in the `events.in`. Each event is a separate record that includes the
-date of the event, the type of event, and associated parameters.
+User-specified management events are read from `events.in`. Each record includes the date of the event, the type of
+event, and any associated parameters. SIPNET can also generate internal event records such as `leafon`, `leafoff`,
+and `plantdeath`, which are written to `events.out` when event handling is enabled.
 
 ### Fertilizer and Organic Matter Additions
 
@@ -1208,9 +1211,9 @@ f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
 
 ### Leaf On/Leaf Off
 
-Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events directly
-specify the amount of carbon added to the leaf carbon pool on the leaf on date, and the fraction of carbon removed from
-the leaf carbon pool on the leaf off date. 
+Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events do not carry
+their own magnitude parameters; instead, the transferred carbon and nitrogen are computed from model state and the
+parameters `leafGrowth`, `leafOnReallocFrac`, `fracLeafFall`, and `leafNResorptionFrac`.
 
 When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is moved into the leaf
 carbon pool from wood and coarse roots, drawn from those two pools in proportion to their current sizes. The plant may
