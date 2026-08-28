@@ -6,8 +6,10 @@
 /*!
  * Calculate excess N needed for leaf on events
  *
- * Note: leafOnC can be either a flux or pool measurement; the returned
- * value will match.
+ * The input leafOnC can be either a flux or pool measurement; the returned
+ * value will match. Note that this will return a negative value in the rare
+ * case that params.woodCN < params.leafCN, indicating that some N should be
+ * resorbed.
  */
 double calcLeafOnNFromC(double leafOnC);
 
