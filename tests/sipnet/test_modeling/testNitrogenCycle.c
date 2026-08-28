@@ -263,6 +263,25 @@ void doNFixUpLimitCalcs(void) {
   checkNitrogenLimitation();
 }
 
+int testLeafOnNFromC(void) {
+  int status = 0;
+  double leafOnC = 50.0;
+  double originalLeafCN = params.leafCN;
+  double originalWoodCN = params.woodCN;
+  logTest("Running testLeafOnNFromC\n");
+
+  params.leafCN = 20.0;
+  params.woodCN = 100.0;
+  status |= checkFlux(calcLeafOnNFromC(leafOnC), 2.0, "positive leaf-on N");
+
+  params.woodCN = 10.0;
+  status |= checkFlux(calcLeafOnNFromC(leafOnC), -2.5, "negative leaf-on N");
+
+  params.leafCN = originalLeafCN;
+  params.woodCN = originalWoodCN;
+  return status;
+}
+
 int testNFixation(void) {
   int status = 0;
   double minN;
@@ -822,6 +841,7 @@ int run(void) {
   status |= testFertilization();
   status |= testNLeaching();
   status |= testOrganicN();
+  status |= testLeafOnNFromC();
   status |= testNFixation();
   status |= testNLimitation();
   status |= testNLimitationWithStorage();

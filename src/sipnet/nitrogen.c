@@ -84,7 +84,10 @@ static void calcNPoolFluxes(void) {
 
 // see nitrogen.h
 double calcLeafOnNFromC(double leafOnC) {
-  return fmax(0.0, leafOnC / params.leafCN - leafOnC / params.woodCN);
+  // If woodCN is less than leafCN (for whatever reason), this will return
+  // a negative value. This should be treated as N to be resorbed (which will
+  // likely happen automatically in plantStorageN pool updates).
+  return leafOnC / params.leafCN - leafOnC / params.woodCN;
 }
 
 // see nitrogen.h
@@ -112,9 +115,7 @@ double calcPlantAvailableN(void) {
   // step is ok). This is used in the determination of N limitation.
   // Note, though, that we can't really use the incoming N to plantStorageN,
   // as that is not immediately available to offset minN loss.
-  double leafOnCFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
-  double leafOnNFlux = calcLeafOnNFromC(leafOnCFlux);
-  double unclaimedStorage = envi.plantStorageN - leafOnNFlux * climate->length;
+  double unclaimedStorage = calcUnclaimedStorageN();
   double nonUptakeDelta = calcMinNNonUptakeFluxes() * climate->length;
   return fmax(0.0, envi.minN + unclaimedStorage + nonUptakeDelta);
 }
