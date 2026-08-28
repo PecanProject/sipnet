@@ -266,6 +266,8 @@ void doNFixUpLimitCalcs(void) {
 int testLeafOnNFromC(void) {
   int status = 0;
   double leafOnC = 50.0;
+  double originalLeafCN = params.leafCN;
+  double originalWoodCN = params.woodCN;
   logTest("Running testLeafOnNFromC\n");
 
   params.leafCN = 20.0;
@@ -275,8 +277,8 @@ int testLeafOnNFromC(void) {
   params.woodCN = 10.0;
   status |= checkFlux(calcLeafOnNFromC(leafOnC), -2.5, "negative leaf-on N");
 
-  params.leafCN = 20.0;
-  params.woodCN = 100.0;
+  params.leafCN = originalLeafCN;
+  params.woodCN = originalWoodCN;
   return status;
 }
 
