@@ -108,6 +108,37 @@ int testBalanceLeaf(void) {
   return status;
 }
 
+int testBalanceLeafNegativeLeafOnN(void) {
+  logTest("Starting testBalanceLeafNegativeLeafOnN()\n");
+  int status = 0;
+  ClimateNode *originalClimate = climate;
+  double originalLeafOnDay = params.leafOnDay;
+  double originalLeafOffDay = params.leafOffDay;
+  double originalLeafCN = params.leafCN;
+  double originalWoodCN = params.woodCN;
+
+  // Keep leaf-on/off timing from balance.param so the simulation actually hits
+  // a leaf-on transition and exercises the negative leaf-on N case.
+  params.leafCN = 20.0;
+  params.woodCN = 10.0;
+
+  while (climate != NULL) {
+    step();
+
+    status |= checkCarbon();
+    status |= checkNitrogen();
+
+    climate = climate->nextClim;
+  }
+
+  climate = originalClimate;
+  params.leafOnDay = originalLeafOnDay;
+  params.leafOffDay = originalLeafOffDay;
+  params.leafCN = originalLeafCN;
+  params.woodCN = originalWoodCN;
+  return status;
+}
+
 int testBalanceLeafEvents(void) {
   logTest("Starting testBalanceLeafEvents()\n");
   int status = 0;
@@ -159,6 +190,9 @@ int run(void) {
   reset();
 
   status |= testBalanceLeaf();
+  reset();
+
+  status |= testBalanceLeafNegativeLeafOnN();
   reset();
 
   // Re-initialize events with leaf on/off events for the next test
