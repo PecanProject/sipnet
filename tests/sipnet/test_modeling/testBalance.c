@@ -112,6 +112,8 @@ int testBalanceLeafNegativeLeafOnN(void) {
   logTest("Starting testBalanceLeafNegativeLeafOnN()\n");
   int status = 0;
   ClimateNode *originalClimate = climate;
+  double originalLeafOnDay = params.leafOnDay;
+  double originalLeafOffDay = params.leafOffDay;
   double originalLeafCN = params.leafCN;
   double originalWoodCN = params.woodCN;
 
@@ -130,6 +132,8 @@ int testBalanceLeafNegativeLeafOnN(void) {
   }
 
   climate = originalClimate;
+  params.leafOnDay = originalLeafOnDay;
+  params.leafOffDay = originalLeafOffDay;
   params.leafCN = originalLeafCN;
   params.woodCN = originalWoodCN;
   return status;
