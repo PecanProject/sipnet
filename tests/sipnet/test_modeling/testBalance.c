@@ -116,6 +116,7 @@ int testBalanceLeafNegativeLeafOnN(void) {
 
   params.leafOnDay = 0;
   params.leafOffDay = 0;
+  params.leafCN = 20.0;
   params.woodCN = 10.0;
 
   while (climate != NULL) {
