@@ -162,6 +162,8 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $D_{\text{off}}$          | leafOffDay       | Day of year for leaf drop                                             | unitless                         | day of year (1–365); 0 to turn off   |
 | $\Delta C_{\text{leaf}}$  | leafGrowth       | Additional leaf growth at start of growing season                     | $\text{g C} \cdot \text{m}^{-2}$ |                                      |
 | $f_{\text{fall}}$         | fracLeafFall     | Additional fraction of leaves that fall at end of growing season      | unitless                         |                                      |
+| $f_{\text{realloc}}$      | leafOnReallocFrac | Maximum fraction of wood + coarse root carbon available for leaf-on reallocation | unitless              |                                      |
+| $f_{\text{resorb}}$       | leafNResorptionFrac | Fraction of leaf nitrogen resorbed to plant storage during leaf-off  | unitless                         | Only used when `nitrogen-cycle` is enabled |
 | $\alpha_{\text{leaf}}$    | leafAllocation   | Fraction of $NPP$ allocated to leaf growth                            | unitless                         |                                      |
 | $K_{\text{leaf}}$         | leafTurnoverRate | Average turnover rate of leaves                                       | $\text{year}^{-1}$               | Converted to per-day rate internally |
 

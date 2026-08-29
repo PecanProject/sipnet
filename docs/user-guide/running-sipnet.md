@@ -139,7 +139,7 @@ output, but the current implementation recalculates them from `FILE_PREFIX` duri
 | Key                | Value (1/0) | Description                                |
 | ------------------ | ----------- | ------------------------------------------ |
 | `DO_MAIN_OUTPUT`   | 0 or 1      | Write combined output file                 |
-| `DO_SINGLE_OUTPUT` | 0 or 1      | Write selected single-output files (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) |
+| `DO_SINGLE_OUTPUTS` | 0 or 1     | Write selected single-output files (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) |
 | `DUMP_CONFIG`      | 0 or 1      | Dump final configuration                   |
 | `PRINT_HEADER`     | 0 or 1      | Include header row in output files         |
 | `QUIET`            | 0 or 1      | Suppress console messages                  |
@@ -161,7 +161,7 @@ FLOODING = 0
 
 ! Output
 DO_MAIN_OUTPUT = 1
-DO_SINGLE_OUTPUT = 0
+DO_SINGLE_OUTPUTS = 0
 PRINT_HEADER = 1
 QUIET = 0
 ```
