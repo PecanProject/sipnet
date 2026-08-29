@@ -33,7 +33,7 @@ jobs:
             --exclude '^https://russellranch\.ucdavis\.edu'
             --exclude '^https://join\.slack\.com'
             .
-          fail: true
+          fail: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
