@@ -14,7 +14,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 1  |                             | year                | Year of start of timestep                                                  | (integer)     |
 | 2  |                             | day                 | Day-of-year of start of timestep                                           | (integer)     |
 | 3  |                             | time                | Hour-of-day (fractional) at start of timestep                              | hours         |
-| 4  |                             | plantWoodC          | Woody plant carbon                                                         | g C m$^{-2}$  |
+| 4  |                             | plantWoodC          | Woody plant carbon (structural wood plus `nppStorage`)                     | g C m$^{-2}$  |
 | 5  |                             | plantLeafC          | Leaf carbon                                                                | g C m$^{-2}$  |
 | 6  |                             | woodCreation        | Carbon allocated to wood during timestep                                   | g C m$^{-2}$  |
 | 7  |                             | soil                | (Single) soil organic carbon (or mineral soil C pool)                      | g C m$^{-2}$  |

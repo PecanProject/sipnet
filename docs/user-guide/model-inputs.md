@@ -22,7 +22,7 @@ should use just these two fields.
 
 ### Example `sipnet.param` file
 
-Column names are not used, but conceptually the file is:
+Column names are not used, but are:
 
 ```
 param_name value
@@ -70,7 +70,7 @@ Note: An older format for this file included location as the first column and so
 
 ### Example `sipnet.clim` file
 
-For the current 12-column format, column names are not used, but conceptually the file is:
+Column names are not used, but are:
 
 ```
 year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
@@ -288,7 +288,7 @@ FILE_PREFIX = mysite
 
 ! Output options
 DO_MAIN_OUTPUT = 1
-DO_SINGLE_OUTPUT = 0
+DO_SINGLE_OUTPUTS = 0
 DUMP_CONFIG = 1
 PRINT_HEADER = 1
 QUIET = 0

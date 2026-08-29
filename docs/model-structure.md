@@ -1211,28 +1211,29 @@ f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
 
 ### Leaf On/Leaf Off
 
-Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events do not carry
-their own magnitude parameters; instead, the transferred carbon and nitrogen are computed from model state and the
-parameters `leafGrowth`, `leafOnReallocFrac`, `fracLeafFall`, and `leafNResorptionFrac`.
+Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events only specify
+the date, not the amount, of leaf biomass C and N added or subtracted; instead, the transferred carbon and nitrogen
+are computed from model state and the parameters $\Delta C_{\text{leaf}}$, $f_{\text{realloc}}$, $f_{\text{fall}}$,
+and $f_{\text{N,resorp}}$.
 
-When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is moved into the leaf
-carbon pool from wood and coarse roots, drawn from those two pools in proportion to their current sizes. The plant may
-not be able to afford the full amount, so two constraints are applied:
+When a leaf on event occurs, an amount of carbon $\Delta C_{\text{leaf}}$ is moved into the leaf carbon pool from wood
+and coarse roots, drawn from those two pools in proportion to their current sizes. The plant may not be able to afford
+the full amount, so two constraints are applied:
 
-- Carbon: at most a fraction of wood and coarse root carbon (specified by the `leafOnReallocFrac` parameter) is
-  available to be reallocated. Carbon held in the wood storage pool \eqref{eq:wood_c_storage} is not drawn on.
-- Nitrogen: as leaf C:N is lower than wood C:N, the transfer requires the additional nitrogen of
-  \eqref{eq:leaf_on_n_demand}. That nitrogen is available only from the plant nitrogen storage pool.
+- Carbon: at most a fraction $f_{\text{realloc}}$ of wood and coarse root carbon is available to be reallocated.
+  Carbon held in the wood storage pool \eqref{eq:wood_c_storage} is not drawn on.
+- Nitrogen (when enabled): for a realized leaf-on carbon transfer $C_{\text{leaf,on}}$, plant nitrogen storage changes
+  by $\Delta N = C_{\text{leaf,on}}(1/CN_{\text{leaf}} - 1/CN_{\text{wood}})$. Positive $\Delta N$ is drawn from
+  storage and can limit leaf on; negative $\Delta N$ is returned to storage.
 
-Whichever constraint is tighter scales the transfer down, and the scaled amount is what is applied to the pools. Since
-leaf on is capped at this point, it is not reduced again by the general nitrogen limitation
+The carbon constraint, and the nitrogen constraint when applicable, scale the transfer down. The scaled amount is
+applied to the pools and is not subsequently reduced by the general nitrogen limitation
 (Sec. [Nitrogen Limitation](#nitrogen-limitation)).
 
-When a leaf off event occurs, a fraction of the leaf carbon (specified by the `fracLeafFall` parameter) is transferred
-from the leaf carbon pool to the litter pool (or soil pool, if the litter pool is not being used). The corresponding
-nitrogen (calculated from the leaf C:N ratio) follows that carbon, apart from the fraction retained by the plant
-(specified by the `leafNResorptionFrac` parameter), which is resorbed to the plant nitrogen storage pool before the
-litter leaves the plant.
+When a leaf off event occurs, a fraction $f_{\text{fall}}$ of the leaf carbon pool is transferred to the litter pool
+(or soil pool, if the litter pool is not being used). When nitrogen cycling is enabled, the nitrogen corresponding to
+the transferred leaf carbon follows it, except for the fraction $f_{\text{N,resorp}}$ resorbed to the plant nitrogen
+storage pool. When nitrogen cycling is disabled, no nitrogen transfer or resorption is calculated.
 
 **Event parameters:**
 
