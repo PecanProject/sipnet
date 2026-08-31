@@ -47,7 +47,7 @@ void initContext(void) {
 
   // Flags, I/O
   CREATE_INT_CONTEXT(doMainOutput,    "DO_MAIN_OUTPUT",   ARG_ON,  FLAG_YES);
-  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUT", ARG_OFF, FLAG_YES);
+  CREATE_INT_CONTEXT(doSingleOutputs, "DO_SINGLE_OUTPUTS", ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(dumpConfig,      "DUMP_CONFIG",      ARG_OFF, FLAG_YES);
   CREATE_INT_CONTEXT(printHeader,     "PRINT_HEADER",     ARG_ON,  FLAG_YES);
   CREATE_INT_CONTEXT(quiet,           "QUIET",            ARG_OFF, FLAG_YES);
