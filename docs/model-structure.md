@@ -712,7 +712,8 @@ F^N_\text{min} = \sum_j \left( \frac{R_{H\text{j}}}{CN_{\text{j}}} \right)
 ### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min} \rightarrow N_2O)$
 
 $K_\text{vol}$ is the nitrogen volatilization rate constant that determines the maximum rate of N volatilization as a
-proportion of available $N_\text{min}$. The realized volatilization flux is proportional to available $N_\text{min}$, scaled by $K_\text{vol}$ and modified by temperature and soil moisture.
+proportion of available $N_\text{min}$. The realized volatilization flux is proportional to available $N_\text{min}$, 
+scaled by $K_\text{vol}$ and modified by temperature and soil moisture.
 
 \begin{equation}
 F^N_\text{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water},N_\text{vol}}
@@ -740,7 +741,8 @@ where:
 \end{equation}
 
 $f^N_\text{leach}$ is the fraction of $N_\text{min}$ available to be leached, $F^W_\text{drainage}$ is drainage, and
-$W_\text{WHC}$ is soil water holding capacity. SIPNET uses one mineral nitrogen pool, $N_\text{min}$; litter and soil mineralization are separate fluxes that both add to this pool.
+$W_\text{WHC}$ is soil water holding capacity. SIPNET uses one mineral nitrogen pool, $N_\text{min}$; litter and soil
+mineralization are separate fluxes that both add to this pool.
 
 ### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
 
@@ -751,7 +753,7 @@ New tissue built from NPP requires nitrogen in proportion to the carbon allocate
 of that pool:
 
 \begin{equation}
-F^N_{\text{demand,}creation} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
+F^N_{\text{demand,creation}} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
 \label{eq:creation_n_demand}
 \end{equation}
 
@@ -763,12 +765,12 @@ Each term in the sum is calculated according to \eqref{eq:plant_n}.
 
 Leaf on moves existing tissue rather than building new tissue, so the carbon brings nitrogen with it and the demand is
 only the difference in stoichiometry between the source and the destination. The carbon arrives holding the nitrogen it
-held as wood or coarse root, $F^C_{\text{creation,}leafOn} / CN_{\text{wood}}$, and as leaf tissue it must hold
-$F^C_{\text{creation,}leafOn} / CN_{\text{leaf}}$. The shortfall is the additional nitrogen the plant has to supply:
+held as wood or coarse root, $F^C_{\text{creation,leafOn}} / CN_{\text{wood}}$, and as leaf tissue it must hold
+$F^C_{\text{creation,leafOn}} / CN_{\text{leaf}}$. The shortfall is the additional nitrogen the plant has to supply:
 
 \begin{equation}
-F^N_{\text{demand,}leafOn} = \frac{F^C_{\text{creation,}leafOn}}{CN_{\text{leaf}}} -
-\frac{F^C_{\text{creation,}leafOn}}{CN_{\text{wood}}}
+F^N_{\text{demand,leafOn}} = \frac{F^C_{\text{creation,leafOn}}}{CN_{\text{leaf}}} -
+\frac{F^C_{\text{creation,leafOn}}}{CN_{\text{wood}}}
 \label{eq:leaf_on_n_demand}
 \end{equation}
 
@@ -780,6 +782,11 @@ filled by nitrogen resorbed from leaves as they senesce, and it has first claim 
 the demand, the leaf on transfer itself is reduced (Sec. [Leaf On/Leaf Off](#leaf-onleaf-off)) rather than the
 shortfall being carried forward, so leaf on never draws on fixation or soil uptake. Storage nitrogen left after that
 claim, $F^N_{\text{storage}}$, is applied to the creation demand, and only what remains is met from outside the plant:
+
+\begin{equation}
+F^N_\text{storage} = \frac{N_\text{plant,storage}}{\text{time step size}} - F^N_{\text{demand,leafOn}}
+\label{eq:plant_n_storage_flux}
+\end{equation}
 
 \begin{equation}
 F^N_{\text{demand}} =
@@ -843,28 +850,26 @@ than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and t
 ### Nitrogen Limitation
 
 Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of plant-available nitrogen. Plant nitrogen
-demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
+demand is diagnosed from the desired uptake flux \eqref{eq:n_uptake_demand} compared to the available supply of mineral
+nitrogen in the soil.
 
 If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level
 that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool 
 (\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future 
 photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
 
-Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
+Nitrogen limitation is applied after the flux calculation stage of the model update sequence. N limitation is 
 implemented as follows:
 
 - Calculate the amount by which plant N demand exceeds available supply [^*].
-
 - Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in
+  the wood storage pool \eqref{eq:wood_c_storage}.
+- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed 
+  stoichiometry.
 
-- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
-- Calculate the amount by which plant N demand exceeds available supply [^*].
-- Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
-- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in the wood storage pool \eqref{eq:wood_c_storage}.
-- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed stoichiometry.
-
-[^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen
-uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
+[^*]: Nitrogen limitation is evaluated accounting for biological nitrogen fixation and mineralization but before
+nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
 
 ## Water Dynamics
 
