@@ -180,7 +180,7 @@ Specifically:
 | fraction of aboveground biomass removed                    |   5   |   Y   |                       |
 | fraction of belowground biomass removed                    |   6   |   Y   |                       |
 | fraction of aboveground biomass transferred to litter pool |   7   |   Y   |                       |
-| fraction of belowground biomass transferred to litter pool |   8   |   Y   |                       |
+| fraction of belowground biomass transferred to soil pool  |   8   |   Y   |                       |
 
 - model representation:
   - biomass C and N pools are either removed or added to litter / soil
