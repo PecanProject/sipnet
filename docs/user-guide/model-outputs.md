@@ -29,7 +29,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 16 |                             | cumNEE              | Cumulative NEE since simulation start                                      | g C m$^{-2}$  |
 | 17 | $GPP$                       | gpp                 | Gross primary production                                                   | g C m$^{-2}$  |
 | 18 |                             | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                        | g C m$^{-2}$  |
-| 19 | $R_H$                       | rSoil               | Heterotrophic respiration                                                  | g C m$^{-2}$  |
+| 19 | $R_H$                       | rSoil               | Total belowground respiration (rRoot + rh).                                                  | g C m$^{-2}$  |
 | 20 |                             | rRoot               | Root (autotrophic) respiration                                             | g C m$^{-2}$  |
 | 21 |                             | ra                  | Total autotrophic respiration (rAboveground + rRoot)                       | g C m$^{-2}$  |
 | 22 |                             | rh                  | Total heterotrophic respiration (litter + soil components)                 | g C m$^{-2}$  |
