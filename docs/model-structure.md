@@ -44,7 +44,7 @@ When LITTER_POOL=0:
 - This affects carbon routing from harvest events, organic matter additions, plant senescence, and other processes
   involving $F^C_\text{litter}$
 - All decomposition occurs in the soil pool
-- All nitrogen cycle modeling is off (consequently, NITROGEN_CYCLE=1 requires LITTER_POOL=1)
+- All nitrogen cycle modeling is off (NITROGEN_CYCLE=1 requires LITTER_POOL=1)
 
 ### Maximum Photosynthetic Rate
 
@@ -136,31 +136,34 @@ R_A = R_\text{leaf} + R_\text{wood} + R_\text{fine_root} + R_\text{coarse_root} 
 \label{eq:ra_components}
 \end{equation}
 
-Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (\eqref{eq:Braswell_A18},
-\eqref{eq:Braswell_A19}); $R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration
-(\eqref{eq:Zobitz_root_resp}); and $R_\text{growth}$ is an optional growth respiration term. Because these components
+Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms \eqref{eq:Braswell_A18},
+\eqref{eq:Braswell_A19}; $R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration
+\eqref{eq:Zobitz_root_resp}; and $R_\text{growth}$ is an optional growth respiration term. Because these components
 are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
 
 Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 \begin{equation}
-\frac{dC_{\text{plant,}i}}{dt}
-= \alpha_i \cdot \overline{\text{NPP}}
-
-- F^C_{\text{harvest,removed,}i}
-- F^C_{\text{litter,}i}
+\frac{dC_{\text{plant,}i}}{dt} = \alpha_i \cdot \overline{\text{NPP}} - 
+F^C_{\text{harvest,removed,}i} - F^C_{\text{litter,}i}
 \label{eq:Zobitz_3}
 \end{equation}
 
 This is equation (3) from Zobitz, et al. (2008), augmented with the harvest and litter terms. Summing over all plant
 pools shows that NPP is partitioned into biomass growth, removed harvest, and litter production.
 
+Note that it is possible for $\overline{\text{NPP}}$ to be negative, which can occur when autotrophic respiration 
+exceeds GPP. In this case, the plant pools will shrink as carbon is lost to respiration and litter. Also, as this is not
+an instantaneous calculation of NPP, it is possible that a negative allocation may by applied to a pool even if the 
+pool is zero (or cannot support that much loss). In this case, care must be taken to avoid negative pool sizes, and the
+model will zero the pool and transfer any remaining loss to an appropriate other pool as described below.
+
 ### Plant Death
 
-Plant death is checked automatically after pool updates rather than being represented as an input harvest event.
-The model requires positive woody carbon, positive total woody carbon (including the NPP accounting / storage term),
-and positive total root carbon. When any of these become non-positive, SIPNET treats the plant as dead, transfers the
-remaining biomass to litter or soil as appropriate, zeros the living plant pools, and resets the running NPP tracker.
+Plant death is checked automatically after pool updates. The model requires positive woody carbon, positive total woody
+carbon (including the NPP accounting / storage term \eqref{eq:wood_c_storage}), and positive total root carbon. When
+any of these become non-positive, SIPNET treats the plant as dead, transfers the remaining biomass to litter or soil as
+appropriate, zeros the living plant pools, and resets the running mean NPP tracker.
 
 ### Wood Carbon
 
@@ -190,12 +193,16 @@ C_{\text{wood,total}} = C_{\text{wood}} + C_{\text{wood,storage}}
 Thus, changes to (non-storage) wood carbon over time are determined by:
 
 \begin{equation}
-\frac{dC_\text{wood}}{dt} = \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood}
+\frac{dC_\text{wood}}{dt} = \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood} -
+F^C_{\text{creation,leafOn}}*k_\text{wood}
 \label{eq:Braswell_A1}
 \end{equation}
 
-where $\alpha_\text{wood}\cdot\overline{\text{NPP}}$ represents the amount of carbon allocated to growth
-and $(F^C_\text{litter,wood})$ is the wood litter production.
+where $\alpha_\text{wood}\cdot\overline{\text{NPP}}$ represents the amount of carbon allocated to growth and
+$F^C_\text{litter,wood}$ is the wood litter production. 
+
+$F^C_{\text{creation,leafOn}}$ is the carbon reallocated to leaves when a leaf on event occurs, multiplied by the
+fraction of that carbon that is drawn from wood, $k_\text{wood} = C_\text{wood} / (C_\text{wood} + C_\text{coarse root})$
 
 This is equation (A1) from Braswell, et al. (2005), modified to explicitly track the storage component.
 
@@ -213,12 +220,12 @@ litter production $(F^C_\text{litter,leaf})$. Each of those terms has a continuo
 step, and a pulse at the corresponding growing season boundary:
 
 \begin{equation}
-L = \alpha_\text{leaf} \cdot \overline{\text{NPP}} + F^C_{\text{creation,}leafOn}
+L = \alpha_\text{leaf} \cdot \overline{\text{NPP}} + F^C_{\text{creation,leafOn}}
 \label{eq:leaf_production}
 \end{equation}
 
 \begin{equation}
-F^C_\text{litter,leaf} = K_\text{leaf} \cdot C_\text{leaf} + F^C_{\text{litter,}leafOff}
+F^C_\text{litter,leaf} = K_\text{leaf} \cdot C_\text{leaf} + F^C_{\text{litter,leafOff}}
 \label{eq:leaf_litter}
 \end{equation}
 
@@ -232,23 +239,76 @@ term is a reallocation of carbon the plant already holds, moved into leaves from
 therefore not part of the NPP partition in \eqref{eq:Zobitz_3}. At leaf off, the leaf off term adds to leaf litter and
 is routed onward in the same way as continuous leaf turnover.
 
+If the growth term is negative and the leaf pool is not large enough to support the loss, the leaf pool is zeroed and
+the remaining loss is transferred to the wood pool. If the wood pool is not large enough to support the loss, the plant
+mortality check will conclude that the plant is dead.
+
+### Leaf On/Leaf Off
+
+Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. For these events,
+transferred carbon and nitrogen are computed from model state and the parameters $\Delta C_{\text{leaf}}$,
+$f_{\text{realloc}}$, $f_{\text{fall}}$, and $f_{\text{N,resorp}}$.
+
+When a leaf on event occurs, an amount of carbon $\Delta C_{\text{leaf}}$ is moved into the leaf carbon pool from wood
+and coarse roots, drawn from those two pools in proportion to their current sizes. The plant may not be able to afford
+the full amount, so two constraints are applied:
+
+- Carbon: at most a fraction $f_{\text{realloc}}$ of wood and coarse root carbon is available to be reallocated.
+  Carbon held in the wood storage pool \eqref{eq:wood_c_storage} is not drawn on.
+- Nitrogen (when enabled): for a realized leaf-on carbon transfer $C_{\text{leaf,on}}$, plant nitrogen storage changes
+  by $\Delta N = C_{\text{leaf,on}}(1/CN_{\text{leaf}} - 1/CN_{\text{wood}})$. Positive $\Delta N$ is drawn from
+  storage and can limit leaf on; negative $\Delta N$ is returned to storage.
+
+The carbon constraint, and the nitrogen constraint when applicable, scale the transfer down. The scaled amount is
+applied to the pools and is not subsequently reduced by the general nitrogen limitation
+(Sec. [Nitrogen Limitation](#nitrogen-limitation)).
+
+When a leaf off event occurs, a fraction $f_{\text{fall}}$ of the leaf carbon pool is transferred to the litter pool
+(or soil pool, if the litter pool is not being used). When nitrogen cycling is enabled, the nitrogen corresponding to
+the transferred leaf carbon follows it, except for the fraction $f_{\text{N,resorp}}$ resorbed to the plant nitrogen
+storage pool. When nitrogen cycling is disabled, no nitrogen transfer or resorption is calculated.
+
+Leaf on and leaf off events may be specified in the events input file (Sec. 
+[Leaf On/Leaf Off Events](#leaf-onleaf-off-events)), or they may be calculated automatically by SIPNET based on:
+
+- the growing season start and end dates as specified by the parameters `leafOnDay` and `leafOffDay`, or
+- growing degree days when `GDD = 1`, or
+- soil temperature when `SOIL_TEMP = 1`.
+
+Leaf on and leaf off events may only be specified in the events file OR calculated automatically by SIPNET. If both are
+specified, SIPNET will error.
+
 ### Root Carbon
 
-Both fine and coarse root carbon change in the same way as leaf carbon. Change in carbon for these pools is determined
-as follows, applied separately to fine and coarse roots:
+Change in carbon for the fine root and coarse root pools is determined as follows::
 
 \begin{equation}
-\frac{dC_\text{i}}{dt} = \alpha_\text{i} \cdot \overline{NPP} - F^C_\text{i,root loss}
-\label{eq:root_carbon}
+\frac{dC_\text{fine root}}{dt} = \alpha_\text{fine root} \cdot \overline{NPP} - F^C_\text{fine root,root loss}
+\label{eq:fine_root_carbon}
 \end{equation}
 
-for $i \in \{\text{fine root}, \text{coarse root}\}$, where $k_\text{i,turnover}$ is the root turnover rate and
-$F^C_\text{i,root loss}$ is determined by:
+\begin{equation}
+\frac{dC_\text{coarse root}}{dt} = \alpha_\text{coarse root} \cdot \overline{NPP} - F^C_\text{coarse root,root loss} -
+F^C_{\text{creation,leafOn}}*k_\text{coarse root}
+\label{eq:coarse_root_carbon}
+\end{equation}
+
+where $k_\text{i,turnover}$ is the root turnover rate and $F^C_\text{i,root loss}$ is determined by:
 
 \begin{equation}
 F^C_\text{i,root loss} = k_\text{i,turnover} \cdot C_\text{i}
 \label{eq:root_loss}
 \end{equation}
+
+for $i \in \{\text{fine root}, \text{coarse root}\}$.
+
+$F^C_{\text{creation,leafOn}}*k_\text{coarse root}$ is the carbon reallocated to leaves when a leaf on event occurs, 
+multiplied by the fraction of that carbon that is drawn from coarse roots, $k_\text{coarse root} = C_\text{coarse root}
+/ (C_\text{wood} + C_\text{coarse root})$.
+
+If the growth terms are negative and either pool is not large enough to support the loss, SIPNET will attempt to draw
+from the other pool. If the combined pools are not large enough to support the total loss, the plant mortality check
+will conclude that the plant is dead.
 
 ### Leaf Maintenance Respiration
 
@@ -1209,31 +1269,9 @@ f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
 \label{eq:irrig_evap}
 \end{equation}
 
-### Leaf On/Leaf Off
+### Leaf On/Leaf Off Events
 
-Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events only specify
-the date, not the amount, of leaf biomass C and N added or subtracted; instead, the transferred carbon and nitrogen
-are computed from model state and the parameters $\Delta C_{\text{leaf}}$, $f_{\text{realloc}}$, $f_{\text{fall}}$,
-and $f_{\text{N,resorp}}$.
-
-When a leaf on event occurs, an amount of carbon $\Delta C_{\text{leaf}}$ is moved into the leaf carbon pool from wood
-and coarse roots, drawn from those two pools in proportion to their current sizes. The plant may not be able to afford
-the full amount, so two constraints are applied:
-
-- Carbon: at most a fraction $f_{\text{realloc}}$ of wood and coarse root carbon is available to be reallocated.
-  Carbon held in the wood storage pool \eqref{eq:wood_c_storage} is not drawn on.
-- Nitrogen (when enabled): for a realized leaf-on carbon transfer $C_{\text{leaf,on}}$, plant nitrogen storage changes
-  by $\Delta N = C_{\text{leaf,on}}(1/CN_{\text{leaf}} - 1/CN_{\text{wood}})$. Positive $\Delta N$ is drawn from
-  storage and can limit leaf on; negative $\Delta N$ is returned to storage.
-
-The carbon constraint, and the nitrogen constraint when applicable, scale the transfer down. The scaled amount is
-applied to the pools and is not subsequently reduced by the general nitrogen limitation
-(Sec. [Nitrogen Limitation](#nitrogen-limitation)).
-
-When a leaf off event occurs, a fraction $f_{\text{fall}}$ of the leaf carbon pool is transferred to the litter pool
-(or soil pool, if the litter pool is not being used). When nitrogen cycling is enabled, the nitrogen corresponding to
-the transferred leaf carbon follows it, except for the fraction $f_{\text{N,resorp}}$ resorbed to the plant nitrogen
-storage pool. When nitrogen cycling is disabled, no nitrogen transfer or resorption is calculated.
+Leaf on and leaf off events only specify the date, not the amount, of leaf biomass C and N added or subtracted. 
 
 **Event parameters:**
 
@@ -1244,7 +1282,7 @@ storage pool. When nitrogen cycling is disabled, no nitrogen transfer or resorpt
 | Type      | `leafon` / `leafoff` | The type of event |
 
 There are no other parameters needed for these events, as the amount of transfer is determined by the parameters
-mentioned above.
+mentioned in Sec. [Leaf On/Leaf Off](#leaf-onleaf-off).
 
 <!-- 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.
