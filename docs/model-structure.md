@@ -145,7 +145,8 @@ Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 \begin{equation}
 \frac{dC_{\text{plant,}i}}{dt} = \alpha_i \cdot \overline{\text{NPP}} - 
-F^C_{\text{harvest,removed,}i} - F^C_{\text{litter,}i}
+F^C_{\text{harvest,removed,}i} - 
+F^C_{\text{litter,}i}
 \label{eq:Zobitz_3}
 \end{equation}
 
@@ -368,7 +369,7 @@ and methane production:
 Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux},
 $F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}, and $F^C_{\text{CH}_4\text{,litter}}$ is
 the methane flux from the litter \eqref{eq:ch4}. Note that belowground turnover is routed directly to the soil carbon
-pool (see Soil Carbon).
+pool (see Sec. [Soil Carbon](#soil-carbon)).
 
 $F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest,
 and organic matter amendments:
@@ -390,7 +391,9 @@ F^C_\text{fert,org}
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is
 transferred to litter.
 
-When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as fast-turnover carbon. This functionality is described in more detail below in the Soil Carbon section \eqref{eq:soil_carbon_saturation}.
+When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as 
+fast-turnover carbon. This functionality is described in more detail below in Sec. 
+[Soil Carbon Saturation](#soil-carbon-saturation).
 
 \begin{equation}
 \frac{dC_\text{litter}}{dt} = F^C_\text{litter} + F^C_{\text{soil}} \cdot \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}} - F^C_{\text{decomp}} - F^C_{\text{CH}_4\text{,litter}}
@@ -460,7 +463,12 @@ F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
 \label{eq:soil_carbon_flux}
 \end{equation}
 
-When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs is added to the soil pool. This fraction declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining input C is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover carbon rather than being added to the soil pool.
+#### Soil Carbon Saturation
+
+When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs is added to the 
+soil pool. This fraction declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining
+input C is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover carbon rather than being 
+added to the soil pool.
 
 \begin{equation}
 \frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} \cdot (1 - \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}) - R_{\text{soil}} - F^C_{\text{CH}_4\text{,soil}}
@@ -539,7 +547,7 @@ N_i = \frac{C_i}{CN_{i}}
 \end{equation*}
 
 Where $i$ is the leaf, wood, fine root, or coarse root pool. This relationship applies to both pools $C,N$ and
-fluxes  $(F^C, F^N)$.
+fluxes  $(F^C, F^N)$. SIPNET assumes that the coarse root pool has the same C:N ratio as the wood pool.
 
 Soil organic matter and litter pools have dynamic CN that is determined below.
 
@@ -579,13 +587,30 @@ Similar to the stoichiometric coupling of litter fluxes, the change in plant bio
 coupled to plant biomass C:
 
 \begin{equation}
-\frac{dN_{\text{plant,}i}}{dt} = \frac{dC_{\text{plant,}i}}{dt} / CN_{\text{plant,}i}
+\frac{dN_{\text{plant,}i}}{dt} = \frac{dC_{\text{plant,}i}}{dt} \cdot \frac{1}{CN_{\text{plant,}i}}
 \label{eq:plant_n}
 \end{equation}
 
 \begin{equation*}
 \small i \in \{\text{leaf, wood, fine root, coarse root}\}
 \end{equation*}
+
+### Nitrogen Resorption
+
+When leaves senesce, nitrogen is resorbed from the leaves and returned to the plant. We represent this as a separate
+nitrogen storage pool $N_\text{plant,storage}$. The amount of nitrogen resorbed is determined by the parameter 
+$f_{\text{N,resorp}}$, which is a model input.
+
+\begin{equation}
+\frac{dN_\text{plant,storage}}{dt} = f_{\text{N,resorp}} \cdot \frac{F^C_\text{litter,leaf}}{CN_\text{leaf}}
+\label{eq:n_resorp}
+\end{equation}
+
+As described above, leaf litter production is calculated as a combination of continuous turnover and a pulse at leaf 
+off, all of which is subject to nitrogen resorption.
+
+The nitrogen storage pool primarily represents nitrogen that is resorbed from leaves at leaf off, and is used to
+support leaf growth at leaf on. It also supports growth of other plant pools when it is available. 
 
 ### Litter Nitrogen $N_\text{litter}$
 
@@ -597,6 +622,7 @@ soil pool:
 \frac{dN_{\text{litter}}}{dt} =
 \sum_{i} F^N_{\text{litter,}i} +
 F^N_\text{fert,org} -
+F^N_\text{leaf, resorption} -
 F^N_\text{litter,min} -
 F^N_\text{soil}
 \label{eq:litter_dndt}
@@ -610,7 +636,15 @@ Here, $F^N_{\text{litter,}i}$ includes nitrogen inputs to litter from both (i) s
 (ii) harvest transfers of aboveground biomass pools. The flux of nitrogen from living biomass to the litter
 pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool
 \eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content
-and the C:N ratio of the inputs.
+and the C:N ratio of the inputs. $F^N_\text{litter,min}$ is the flux from litter organic N to the mineral N 
+pool, and $F^N_\text{soil}$ is the flux from litter organic N to the soil organic N pool based on the litter 
+decomposition flux \eqref{eq:soil_carbon} and the C:N ratio of the litter pool. Finally, $F^N_\text{leaf, resorption}$
+is the flux of nitrogen resorbed from leaves at leaf off and returned to the plant nitrogen storage pool 
+\eqref{eq:n_resorp}.
+
+When carbon saturation is enabled, a fraction of soil nitrogen inputs is redirected to the litter pool in an analogous 
+manner to the soil carbon inputs, based on the same saturation fraction
+${C_{\text{soil}}}/{C_{\text{soil,saturation}}}$.
 
 ### Soil Organic Nitrogen $N_\text{org,soil}$
 
@@ -634,6 +668,10 @@ transfers of belowground biomass.
 $F^N_{\text{soil}}$ is the organic nitrogen transferred from litter to soil (calculated from
 $F^C_{\text{soil}}$ in \eqref{eq:soil_carbon} based on litter C:N).
 $F^N_\text{soil,min}$ is the flux from soil organic N to soil mineral N.
+
+When carbon saturation is enabled, a fraction of soil nitrogen inputs is redirected to the litter pool in an analogous
+manner to the soil carbon inputs, based on the same saturation fraction
+${C_{\text{soil}}}/{C_{\text{soil,saturation}}}$.
 
 ### Soil Mineral Nitrogen $N_\text{min}$
 
