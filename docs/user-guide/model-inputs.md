@@ -12,8 +12,7 @@ These are the input files needed to run SIPNET:
 Both initial conditions and parameters are specified in a file named `sipnet.param`.
 
 The SIPNET parameter file (`sipnet.param`) specifies model parameters and initial conditions for a simulation.
-Each non-comment line contains a parameter name followed by its value. Extra columns are ignored, but new files
-should use just these two fields.
+Each non-comment line contains a parameter name followed by its value. Extra columns are ignored.
 
 | Column         | Description                                |
 | -------------- | ------------------------------------------ |
