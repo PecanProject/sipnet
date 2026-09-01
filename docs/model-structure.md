@@ -784,7 +784,7 @@ shortfall being carried forward, so leaf on never draws on fixation or soil upta
 claim, $F^N_{\text{storage}}$, is applied to the creation demand, and only what remains is met from outside the plant:
 
 \begin{equation}
-F^N_\text{storage} = \frac{N_\text{plant,storage}}{\text{time step size}} - F^N_{\text{demand,leafOn}}
+F^N_\text{storage} = \frac{N_\text{plant,storage}}{\Delta t} - F^N_{\text{demand,leafOn}}
 \label{eq:plant_n_storage_flux}
 \end{equation}
 
