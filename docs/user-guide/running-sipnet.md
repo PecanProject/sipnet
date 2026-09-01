@@ -118,30 +118,30 @@ Derived paths including `PARAM_FILE`, `CLIM_FILE`, `OUT_FILE`, and `OUT_CONFIG_F
 
 #### Model Feature Keys
 
-| Key              | Value (1/0) | Description                               |
-| ---------------- | ----------- | ----------------------------------------- |
-| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
-| `CARBON_SATURATION` | 0 or 1   | Enable soil carbon saturating behavior    |
-| `EVENTS`         | 0 or 1      | Enable/disable event handling             |
-| `FLOODING`       | 0 or 1      | Allow soil water to exceed `soilWHC` and drain according to `waterDrainFrac` |
-| `GDD`            | 0 or 1      | Use growing degree days for leaf growth   |
-| `GROWTH_RESP`    | 0 or 1      | Explicitly model growth respiration       |
-| `LEAF_WATER`     | 0 or 1      | Track separate leaf water pool            |
-| `LITTER_POOL`    | 0 or 1      | Enable separate litter pool               |
-| `NITROGEN_CYCLE` | 0 or 1      | Enable nitrogen cycle modeling            |
-| `SNOW`           | 0 or 1      | Track snowpack                            |
-| `SOIL_PHENOL`    | 0 or 1      | Use soil temperature for phenology        |
-| `WATER_HRESP`    | 0 or 1      | Allow soil moisture to affect respiration |
+| Key                 | Value (1/0) | Description                                                                  |
+|---------------------|-------------|------------------------------------------------------------------------------|
+| `ANAEROBIC`         | 0 or 1      | Enable methane/anaerobic Rh moisture behavior                                |
+| `CARBON_SATURATION` | 0 or 1      | Enable soil carbon saturating behavior                                       |
+| `EVENTS`            | 0 or 1      | Enable/disable event handling                                                |
+| `FLOODING`          | 0 or 1      | Allow soil water to exceed `soilWHC` and drain according to `waterDrainFrac` |
+| `GDD`               | 0 or 1      | Use growing degree days for leaf growth                                      |
+| `GROWTH_RESP`       | 0 or 1      | Explicitly model growth respiration                                          |
+| `LEAF_WATER`        | 0 or 1      | Track separate leaf water pool                                               |
+| `LITTER_POOL`       | 0 or 1      | Enable separate litter pool                                                  |
+| `NITROGEN_CYCLE`    | 0 or 1      | Enable nitrogen cycle modeling                                               |
+| `SNOW`              | 0 or 1      | Track snowpack                                                               |
+| `SOIL_PHENOL`       | 0 or 1      | Use soil temperature for phenology                                           |
+| `WATER_HRESP`       | 0 or 1      | Allow soil moisture to affect respiration                                    |
 
 #### Output Keys
 
-| Key                | Value (1/0) | Description                                |
-| ------------------ | ----------- | ------------------------------------------ |
-| `DO_MAIN_OUTPUT`   | 0 or 1      | Write combined output file                 |
-| `DO_SINGLE_OUTPUTS` | 0 or 1     | Write selected single-output files (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) |
-| `DUMP_CONFIG`      | 0 or 1      | Dump final configuration                   |
-| `PRINT_HEADER`     | 0 or 1      | Include header row in output files         |
-| `QUIET`            | 0 or 1      | Suppress console messages                  |
+| Key                 | Value (1/0) | Description                                                             |
+|---------------------|-------------|-------------------------------------------------------------------------|
+| `DO_MAIN_OUTPUT`    | 0 or 1      | Write combined output file                                              |
+| `DO_SINGLE_OUTPUTS` | 0 or 1      | Write selected single-output files (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) |
+| `DUMP_CONFIG`       | 0 or 1      | Dump final configuration                                                |
+| `PRINT_HEADER`      | 0 or 1      | Include header row in output files                                      |
+| `QUIET`             | 0 or 1      | Suppress console messages                                               |
 
 ### Example Configuration File
 
