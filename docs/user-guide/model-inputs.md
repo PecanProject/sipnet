@@ -131,7 +131,6 @@ Specifically:
 
 - For `method=soil`, this amount of water is added directly to the `soilWater` state variable
 - For `method=canopy`, a fraction of the irrigation water (determined by input param `immedEvapFrac`) is added to the flux state variable `immedEvap`, with the remainder going to `soilWater`.
-- Other method codes are not currently supported and cause SIPNET to error.
 
 
 ### Fertilization
