@@ -63,6 +63,9 @@ For each step of the model, the following inputs are needed. These are provided 
 | 11  | vPress    | average vapor pressure in canopy airspace                            | kPa                                                                            | input is in Pa                                                                                                 |
 | 12  | wspd      | avg. wind speed                                                      | m/s                                                                            |                                                                                                                |
 
+
+Parameters calibrated or validated at one temporal resolution should be revalidated before use at another.
+
 Note: An older format for this file included location as the first column and soilWetness as the last column. Files with this older format can still be read by sipnet:
 * SIPNET will print a warning indicating that it is ignoring the obsolete columns
 * If there is more than one location specified in the file, SIPNET will error and halt
