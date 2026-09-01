@@ -100,7 +100,7 @@ Each line in the configuration file contains a key-value pair. SIPNET accepts wh
 KEY = VALUE
 ```
 
-Keys are case-insensitive. Non-alphanumeric characters are ignored when matching keys, so hyphens and underscores are interchangeable.
+Keys are case-insensitive, and hyphens and underscores are ignored, so `INPUT_FILE`, `inputfile`, and `iNPUtFiLE` are equivalent.
 
 ### Configuration File Keys
 
@@ -114,8 +114,7 @@ Keys are case-insensitive. Non-alphanumeric characters are ignored when matching
 | `RESTART_OUT`      | string     | Path to checkpoint to write at end of run                                                                         |
 | `DEBUG_LOG_PREFIX` | string     | Prefix for debug log files (optional; writes `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
-Derived paths such as `PARAM_FILE`, `CLIM_FILE`, `OUT_FILE`, and `OUT_CONFIG_FILE` appear in `--dump-config`
-output, but the current implementation recalculates them from `FILE_PREFIX` during startup.
+Derived paths including `PARAM_FILE`, `CLIM_FILE`, `OUT_FILE`, and `OUT_CONFIG_FILE` are derived from `FILE_PREFIX` and appear in `--dump-config` as calculated values.
 
 #### Model Feature Keys
 
