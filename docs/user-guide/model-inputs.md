@@ -46,7 +46,7 @@ aMaxFrac 0.85
 
 ## Climate
 
-For each step of the model, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns:
+For each step of the model, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns. Units are those used in the file; internal conversions are noted.
 
 | col | parameter | description                                                          | units                                                                          | notes                                                                                                          |
 | --- | --------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
@@ -56,11 +56,11 @@ For each step of the model, the following inputs are needed. These are provided 
 | 4   | length    | length of this timestep                                              | days                                                                           | variable-length timesteps allowed, typically not used                                                          |
 | 5   | tair      | avg. air temp for this time step                                     | degrees Celsius                                                                |                                                                                                                |
 | 6   | tsoil     | average soil temperature for this time step                          | degrees Celsius                                                                | can be estimated from Tair                                                                                     |
-| 7   | par       | average photosynthetically active radiation (PAR) for this time step | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$ | input is in Einsteins \* m^-2 ground area, summed over entire time step                                        |
-| 8   | precip    | total precip. for this time step                                     | cm                                                                             | input is in mm; water equivilant - either rain or snow                                                         |
-| 9   | vpd       | average vapor pressure deficit                                       | kPa                                                                            | input is in Pa, can be calculated from air temperature and relative humidity.                                  |
-| 10  | vpdSoil   | average vapor pressure deficit between soil and air                  | kPa                                                                            | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
-| 11  | vPress    | average vapor pressure in canopy airspace                            | kPa                                                                            | input is in Pa                                                                                                 |
+| 7   | par       | average photosynthetically active radiation (PAR) for this time step | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$ | summed over entire time step; converted internally to a per-day rate                                           |
+| 8   | precip    | total precip. for this time step                                     | mm                                                                             | water equivalent - either rain or snow; converted internally to cm                                             |
+| 9   | vpd       | average vapor pressure deficit                                       | Pa                                                                             | can be calculated from air temperature and relative humidity; converted internally to kPa                      |
+| 10  | vpdSoil   | average vapor pressure deficit between soil and air                  | Pa                                                                             | differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair; converted internally to kPa |
+| 11  | vPress    | average vapor pressure in canopy airspace                            | Pa                                                                             | converted internally to kPa                                                                                    |
 | 12  | wspd      | avg. wind speed                                                      | m/s                                                                            |                                                                                                                |
 
 Note: An older format for this file included location as the first column and soilWetness as the last column. Files with this older format can still be read by sipnet:
@@ -112,6 +112,7 @@ Rules:
 - Events are specified at day resolution (no sub‑daily timestamp).
 - Every (year, day) appearing in `events.in` must have at least one corresponding climate record; otherwise SIPNET errors.
 - Values in `events.in` are instantaneous amounts (cm or mass/area) applied on the date and time of the first climate record matching that event's year and day.
+- Event parameters are used as supplied; SIPNET applies no unit conversion.
 
 See subsections below for details and parameter definitions for each event type.
 
