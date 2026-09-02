@@ -94,7 +94,7 @@ SIPNET reads configuration from a file (default: `sipnet.in`). This file uses a 
 
 ### Configuration File Format
 
-Each line in the configuration file contains a key-value pair. SIPNET accepts whitespace, `=`, or `:` between the key and value, and `!` starts a comment:
+Each line in the configuration file uses KEY = VALUE syntax; ! starts a comment line.
 
 ```
 KEY = VALUE
@@ -188,9 +188,9 @@ SIPNET applies configuration in this order (later values override earlier ones):
 Given this configuration file (`sipnet.in`):
 
 ```
-FILE_PREFIX base_site
-EVENTS 1
-LITTER_POOL 0
+FILE_PREFIX = base_site
+EVENTS = 1
+LITTER_POOL = 0
 ```
 
 Running with command-line overrides:
@@ -204,7 +204,7 @@ Results in:
 | Option        | Source       | Value                                                      |
 | ------------- | ------------ | ---------------------------------------------------------- |
 | `file-prefix` | Command line | `override_site`                                            |
-| `events`      | Command line | OFF (0) — `--no-events` overrides config file's `EVENTS 1` |
+| `events`      | Command line | OFF (0) — `--no-events` overrides config file's `EVENTS = 1` |
 | `litter-pool` | Config file  | OFF (0) — not overridden                                   |
 
 ## Tutorial: Common Use Cases
@@ -217,10 +217,10 @@ SIPNET supports two phenology models: GDD-based (growing degree days) and soil-t
 
 **Create configuration** (`phenology_test.in`):
 ```
-FILE_PREFIX my_site
-GDD 1
-SOIL_PHENOL 0
-DO_MAIN_OUTPUT 1
+FILE_PREFIX = my_site
+GDD = 1
+SOIL_PHENOL = 0
+DO_MAIN_OUTPUT = 1
 ```
 
 **Run with GDD-based phenology**:
