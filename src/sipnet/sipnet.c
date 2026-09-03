@@ -206,6 +206,8 @@ void readClimData(const char *climFile) {
     curr->day = day;
     curr->time = time;
 
+    // TODO: remove this odd undocumented behavior that allows time as seconds
+    // if negative
     if (length < 0) {  // parse as seconds
       length = length / -86400.;  // convert to days
     }
@@ -440,7 +442,7 @@ void outputHeader(FILE *out) {
   fprintf(out,
           "fluxestranspiration     minN  soilOrgN    litterN  "
           "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
-          "nppStorage\n");
+          "nppStorage        lai\n");
 }
 
 /*!
@@ -469,7 +471,8 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
           trackers.nLeaching, trackers.nFixation, trackers.nUptake,
           trackers.methane);
-  fprintf(out, "%12.4f\n", envi.plantCAccountingDelta);
+  fprintf(out, "%12.4f %10.4f\n", envi.plantCAccountingDelta,
+          envi.plantLeafC / params.leafCSpWt);
 }
 
 // de-allocate space used for climate linked list

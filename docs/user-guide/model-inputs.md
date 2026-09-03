@@ -11,8 +11,8 @@ These are the input files needed to run SIPNET:
 
 Both initial conditions and parameters are specified in a file named `sipnet.param`.
 
-The SIPNET parameter file (`sipnet.param`) specifies model parameters and their properties for each simulation. 
-Each line in the file corresponds to a single parameter and contains five or six space-separated values.
+The SIPNET parameter file (`sipnet.param`) specifies model parameters and initial conditions for a simulation.
+Each non-comment line contains a parameter name followed by its value. Extra columns are ignored.
 
 | Column         | Description                                |
 | -------------- | ------------------------------------------ |
@@ -46,51 +46,54 @@ aMaxFrac 0.85
 
 ## Climate
 
-For each step of the model, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns:
+For each step of the model, the following inputs are needed. These are provided in a file named `<sitename>.clim` with the following columns. Units are those used in the file; internal conversions are noted.
 
 | col | parameter | description                                                          | units                                                                          | notes                                                                                                          |
 | --- | --------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
 | 1   | year      | year of start of this timestep                                       |                                                                                | integer, e.g. 2010                                                                                             |
 | 2   | day       | day of start of this timestep                                        | Day of year                                                                    | 1 = Jan 1                                                                                                      |
 | 3   | time      | time of start of this timestep                                       | hours after midnight                                                           | e.g. noon = 12.0, midnight = 0.0, can be a fraction                                                            |
-| 4   | length    | length of this timestep                                              | days                                                                           | variable-length timesteps allowed, typically not used                                                          |
+| 4   | length    | length of this timestep                                              | days                                                                           | must be positive; variable-length timesteps are allowed                                                        |
 | 5   | tair      | avg. air temp for this time step                                     | degrees Celsius                                                                |                                                                                                                |
 | 6   | tsoil     | average soil temperature for this time step                          | degrees Celsius                                                                | can be estimated from Tair                                                                                     |
-| 7   | par       | average photosynthetically active radiation (PAR) for this time step | $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{time step}^{-1}$ | input is in Einsteins \* m^-2 ground area, summed over entire time step                                        |
-| 8   | precip    | total precip. for this time step                                     | cm                                                                             | input is in mm; water equivilant - either rain or snow                                                         |
-| 9   | vpd       | average vapor pressure deficit                                       | kPa                                                                            | input is in Pa, can be calculated from air temperature and relative humidity.                                  |
-| 10  | vpdSoil   | average vapor pressure deficit between soil and air                  | kPa                                                                            | input is in Pa ; differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair |
-| 11  | vPress    | average vapor pressure in canopy airspace                            | kPa                                                                            | input is in Pa                                                                                                 |
+| 7   | par       | Total photosynthetically active radiation received during this timestep | $\text{Einsteins} \cdot m^{-2} \text{ground area}$ | Integrated over the timestep; divided by timestep length internally to obtain   $\text{Einsteins} \cdot m^{-2} \text{ground area} \cdot \text{day}^{-1}                                        |
+| 8   | precip    | total precip. for this time step                                     | mm                                                                             | water equivalent - either rain or snow; converted internally to cm                                             |
+| 9   | vpd       | average vapor pressure deficit                                       | Pa                                                                             | can be calculated from air temperature and relative humidity; converted internally to kPa                      |
+| 10  | vpdSoil   | average vapor pressure deficit between soil and air                  | Pa                                                                             | differs from vpd in that saturation vapor pressure is calculated using Tsoil rather than Tair; converted internally to kPa |
+| 11  | vPress    | average vapor pressure in canopy airspace                            | Pa                                                                             | converted internally to kPa                                                                                    |
 | 12  | wspd      | avg. wind speed                                                      | m/s                                                                            |                                                                                                                |
+
+
+Parameters calibrated or validated at one temporal resolution should be revalidated before use at another.
 
 Note: An older format for this file included location as the first column and soilWetness as the last column. Files with this older format can still be read by sipnet:
 * SIPNET will print a warning indicating that it is ignoring the obsolete columns
 * If there is more than one location specified in the file, SIPNET will error and halt
 
-### Example `sipnet.clim` file:
+### Example `sipnet.clim` file
 
 Column names are not used, but are:
 
 ```
-loc	year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
+year day  time length tair tsoil par    precip vpd   vpdSoil vPress wspd
 ```
 
 **Half-hour time step**
 
 ```
-0	1998 305  0.00    -1800   1.9000   1.2719   0.0000   0.0000 109.5364  77.5454 726.6196   1.6300
-0	1998 305  0.50    -1800   1.9000   1.1832   0.0000   0.0000 109.5364  73.1254 726.6196   1.6300
-0	1998 305  1.00    -1800   2.0300   1.1171   0.0000   0.0000 110.4243  63.9567 732.5092   0.6800
-0	1998 305  1.50    -1800   2.0300   1.0439   0.0000   0.0000 110.4243  60.3450 732.5092   0.6800
+1998 305  0.00 0.0208   1.9000   1.2719   0.0000   0.0000 109.5364  77.5454 726.6196   1.6300
+1998 305  0.50 0.0208   1.9000   1.1832   0.0000   0.0000 109.5364  73.1254 726.6196   1.6300
+1998 305  1.00 0.0208   2.0300   1.1171   0.0000   0.0000 110.4243  63.9567 732.5092   0.6800
+1998 305  1.50 0.0208   2.0300   1.0439   0.0000   0.0000 110.4243  60.3450 732.5092   0.6800
 ```
 
 **Variable time step**
 
 ```
-0	  1998 305  0.00  0.292 1.5  0.8   0.0000 0.0000 105.8 70.1    711.6  0.9200
-0	  1998 305  7.00  0.417 3.6  1.8   5.6016 0.0000 125.7 23.5    809.4  1.1270
-0	  1998 305 17.00  0.583 1.9  1.3   0.0000 0.0000 108.1 75.9    732.7  1.1350
-0	  1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690
+1998 305  0.00  0.292 1.5  0.8   0.0000 0.0000 105.8 70.1    711.6  0.9200
+1998 305  7.00  0.417 3.6  1.8   5.6016 0.0000 125.7 23.5    809.4  1.1270
+1998 305 17.00  0.583 1.9  1.3   0.0000 0.0000 108.1 75.9    732.7  1.1350
+1998 306  7.00  0.417 2.2  1.4   2.7104 1.0000 114.1 71.6    741.8  0.9690
 ```
 
 ## Agronomic Events
@@ -103,7 +106,7 @@ file specifies one event per line:
 | --- | ----------- | ------------------------------------ | ------ | ------------------------------------------------ |
 | 1   | year        | Year of the event                    |        | e.g. 2025                                        |
 | 2   | day         | Day of year of the event             | DOY    | 1 = Jan 1                                        |
-| 3   | event_type  | Event type code                      |        | one of: `plant`, `harv`, `till`, `fert`, `irrig` |
+| 3   | event_type  | Event type code                      |        | one of: `plant`, `harv`, `till`, `fert`, `irrig`, `leafon`, `leafoff` |
 | 4…n | event_param | Type‑specific parameters (see below) | varies | Order depends on event type                      |
 
 Rules:
@@ -120,15 +123,14 @@ See subsections below for details and parameter definitions for each event type.
 | parameter |  col  | req?  | description                                 |
 | --------- | :---: | :---: | ------------------------------------------- |
 | amount    |   5   |   Y   | Amount added (cm)                           |
-| method    |   6   |   Y   | 0=canopy<br>1=soil<br>2=flood (placeholder) |
+| method    |   6   |   Y   | 0=canopy<br>1=soil |
 
 Model representation: An irrigation event increases soil moisture. A fraction of canopy irrigation is immediately evaporated.
 
 Specifically: 
 
-- For `method=soil`, this amount of water is added directly to the `soilWater` state variable 
+- For `method=soil`, this amount of water is added directly to the `soilWater` state variable
 - For `method=canopy`, a fraction of the irrigation water (determined by input param `immedEvapFrac`) is added to the flux state variable `immedEvap`, with the remainder going to `soilWater`.
-- Initial implementation assumes that LITTER_WATER is not on. This might be revisited at a later date.
 
 
 ### Fertilization
@@ -142,7 +144,7 @@ Specifically:
 | min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | 
 -->
 
-  - Model representation: increases size of mineral N and litter C and N. Urea-N is assumed to be mineral N.
+  - Model representation: organic C is added to litter when `litter-pool` is on, otherwise directly to soil. Mineral N and organic N are added only when `nitrogen-cycle` is enabled; otherwise those N quantities are ignored with a warning. Urea-N is assumed to be mineral N.
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
   - The code that generates `events.in` will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools. In PEcAn this is done by the `PEcAn.SIPNET::write.configs.SIPNET()` function.
 
@@ -176,25 +178,30 @@ Specifically:
 | parameter                                                  |  col  | req?  | description           |
 | ---------------------------------------------------------- | :---: | :---: | --------------------- |
 | fraction of aboveground biomass removed                    |   5   |   Y   |                       |
-| fraction of belowground biomass removed                    |   6   |   N   | default = 0           |
-| fraction of aboveground biomass transferred to litter pool |   7   |   N   | default = 1 - removed |
-| fraction of belowground biomass transferred to litter pool |   8   |   N   | default = 1 - removed |
+| fraction of belowground biomass removed                    |   6   |   Y   |                       |
+| fraction of aboveground biomass transferred to litter pool |   7   |   Y   |                       |
+| fraction of belowground biomass transferred to soil pool  |   8   |   Y   |                       |
 
 - model representation:
-  - biomass C and N pools are either removed or added to litter
-   - for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). 
+  - biomass C and N pools are either removed or added to litter / soil
+   - for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1).
   - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
    - root biomass is only removed for root crops
- 
+
+### Leaf On / Leaf Off
+
+`leafon` and `leafoff` events take no additional parameters beyond year, day, and event type. When used as input
+events, they are incompatible with calculated leaf timing from `gdd`, `soil-phenol`, `leafOnDay`, or `leafOffDay`.
+
 ### Example of `events.in` file:
 
 ```
 2022  35  till   0.2      # tilled on day 35, f_till = 0.2 (20% boost to rate term)
 2022  40  till   0.1      # tilled on day 40, adds 0.1 to f_till
-2022  40  irrig  5 1      # 5cm canopy irrigation on day 40 applied to soil
+2022  40  irrig  5 1      # 5cm soil irrigation on day 40
 2022  40  fert   0 0 10   # fertilized with 10 g / m2 N_min on day 40 of 2022
-2022  50  plant  10 3 2 5 # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
-2022  250 harv   0.1      # harvest 10% of aboveground plant biomass on day 250
+2022  50  plant  10 3 2 5 # plant emergence on day 50 with 10/3/2/5 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools
+2022  250 harv   0.1 0 0.9 0   # harvest 10% of aboveground biomass and send the rest of it to litter on day 250
 ```
 
 ## Run-time Options
@@ -235,6 +242,7 @@ Thus, command-line arguments override settings in the configuration file, and co
 |------------------|---------|-----------------------------------------------------------------------------------------|
 | `anaerobic`      | off     | Enable modeling of methane and anaerobic effect on Rh moisture dependency               |
 | `events`         | on      | Enable event handling                                                                   |
+| `flooding`       | off     | Enable soil moisture to exceed water holding capacity                                   |
 | `gdd`            | on      | Use growing degree days to determine leaf growth                                        |
 | `growth-resp`    | off     | Explicitly model growth respiration, rather than including with maintenance respiration |
 | `leaf-water`     | off     | Calculate leaf pool and evaporate from that pool                                        |
@@ -268,8 +276,8 @@ See `sipnet --help` for a full list of available command-line options.
 
 SIPNET reads a configuration file that specifies run-time options without using command-line arguments. By default, SIPNET looks for a file named `sipnet.in` in the current directory. These will be overwritten by command-line arguments if specified.
 
-The configuration file uses a simple key-value format, `option = value`, 
-with one option per line; comments follow `!`. Flags are specified as 0 for off and 1 for on.
+The configuration file uses a simple key-value format with one option per line. SIPNET accepts whitespace, `=`, or
+`:` between the key and value; comments follow `!`. Flags are specified as 0 for off and 1 for on.
 
 #### Example Configuration File
 
@@ -296,6 +304,7 @@ NITROGEN_CYCLE = 0
 SNOW = 1
 SOIL_PHENOL = 0
 WATER_HRESP = 1
+FLOODING = 0
 ```
 
 When `DUMP_CONFIG` is on, SIPNET will output the final configuration (after applying all settings from defaults, configuration file, and command line) to a file named `<file-prefix>.config`.
