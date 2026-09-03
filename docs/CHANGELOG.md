@@ -39,14 +39,14 @@ sections to include in release notes:
 - `leafon` and `leafoff` events for tracking phenological transitions (#326)
 - `leafon` limited by available carbon and nitrogen; N storage pool; N resorption on `leafoff` (#337)
 - New required parameter `leafOnReallocFrac` to control how much of wood and coarse root carbon is reallocated to leaves on `leafon` (#337)
+- New required nitrogen-cycle parameters `plantStorageNInit` and `leafNResorptionFrac` (#337)
 - `carbonSaturation` cli option and calculation of soil and litter carbon pools that observes soil carbon saturating behavior (#301)
 - New `--debug-log` CLI option to enable debug logging (#352)
 - Ability to create derived columns in `sipnet-view` (#355)
 - New `sipnet-debug-view` tool for visualizing SIPNET debug output files (#359)
 - Plant mortality check with transfer of remaining carbon and nitrogen to litter and soil pools and a `plantdeath` record in `events.out` (#359)
-- New required nitrogen-cycle parameters `plantStorageNInit` and `leafNResorptionFrac` (#337)
 - Guard against negative mineral N due to volatilization and/or leaching (#375)
-- `lai` as an output column in `sipnet.out` (#393)
+- `lai` as an output column in `sipnet.out` (#394)
 ### Fixed
 
 - Preserve nitrogen balance during leaf-on when leaf C:N exceeds wood C:N (#381)
@@ -59,7 +59,7 @@ sections to include in release notes:
 
 ### Removed
 
-- Schema version from restart checkpoint format; model version is sufficient (#338)
+- Schema version from restart checkpoint format; model version is sufficient (#341)
 - Resorbed nitrogen from leaf-off events in events.out (this value can be calculated from leaf-off carbon and parameters) (#368)
 
 ## **SIPNET [2.1.0] - "Nitrogen Cycle, Methane, and Restart"**
