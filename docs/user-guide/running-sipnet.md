@@ -94,7 +94,7 @@ SIPNET reads configuration from a file (default: `sipnet.in`). This file uses a 
 
 ### Configuration File Format
 
-Each line in the configuration file contains a key-value pair. SIPNET accepts whitespace, `=`, or `:` between the key and value, and `!` starts a comment:
+Each line in the configuration file uses `KEY = VALUE` syntax; `!` starts a comment line:
 
 ```
 KEY = VALUE
