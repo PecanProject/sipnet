@@ -156,8 +156,7 @@ pools shows that NPP is partitioned into biomass growth, removed harvest, and li
 Note that it is possible for $\overline{\text{NPP}}$ to be negative, which can occur when autotrophic respiration 
 exceeds GPP. In this case, the plant pools will shrink as carbon is lost to respiration and litter. Also, as this is not
 an instantaneous calculation of NPP, it is possible that a negative allocation may by applied to a pool even if the 
-pool is zero (or cannot support that much loss). In this case, care must be taken to avoid negative pool sizes, and the
-model will zero the pool and transfer any remaining loss to an appropriate other pool as described below.
+pool is zero (or cannot support that much loss). In this case, SIPNET will zero the pool to avoid negative pool sizes and transfer any remaining loss to an appropriate other pool as described below.
 
 ### Plant Death
 
