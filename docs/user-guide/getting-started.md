@@ -23,10 +23,14 @@ Use this guide to install the prerequisites, build the model, and run your first
    cd tests/smoke/niwot
    ../../../sipnet -i sipnet.in
    ```
-4. Check the output:
+4. Check the outputs:
    ```bash
    cat sipnet.out
+   cat sipnet.config
    ```
+
+   The smoke-test configuration in `tests/smoke/niwot/sipnet.in` enables `DUMP_CONFIG`, so this run writes both the
+   main model output (`sipnet.out`) and a merged configuration report (`sipnet.config`).
 
 ## Run Tests
 

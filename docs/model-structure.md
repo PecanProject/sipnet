@@ -44,7 +44,7 @@ When LITTER_POOL=0:
 - This affects carbon routing from harvest events, organic matter additions, plant senescence, and other processes
   involving $F^C_\text{litter}$
 - All decomposition occurs in the soil pool
-- All nitrogen cycle modeling is off (consequently, NITROGEN_CYCLE=1 requires LITTER_POOL=1)
+- All nitrogen cycle modeling is off (NITROGEN_CYCLE=1 requires LITTER_POOL=1)
 
 ### Maximum Photosynthetic Rate
 
@@ -136,29 +136,34 @@ R_A = R_\text{leaf} + R_\text{wood} + R_\text{fine_root} + R_\text{coarse_root} 
 \label{eq:ra_components}
 \end{equation}
 
-Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms (\eqref{eq:Braswell_A18},
-\eqref{eq:Braswell_A19}); $R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration
-(\eqref{eq:Zobitz_root_resp}); and $R_\text{growth}$ is an optional growth respiration term. Because these components
+Here, $R_\text{leaf}$ and $R_\text{wood}$ are maintenance respiration terms \eqref{eq:Braswell_A18},
+\eqref{eq:Braswell_A19}; $R_\text{fine_root}$ and $R_\text{coarse_root}$ denote root maintenance respiration
+\eqref{eq:Zobitz_root_resp}; and $R_\text{growth}$ is an optional growth respiration term. Because these components
 are part of $R_A$, their costs are subtracted from GPP before calculating NPP and before allocating NPP to plant pools.
 
 Note that $\alpha_i$ are specified input parameters and $\sum_i{\alpha_i} = 1$.
 
 \begin{equation}
-\frac{dC_{\text{plant,}i}}{dt}
-= \alpha_i \cdot \overline{\text{NPP}}
-
-- F^C_{\text{harvest,removed,}i}
-- F^C_{\text{litter,}i}
+\frac{dC_{\text{plant,}i}}{dt} = \alpha_i \cdot \overline{\text{NPP}} - 
+F^C_{\text{harvest,removed,}i} - 
+F^C_{\text{litter,}i}
 \label{eq:Zobitz_3}
 \end{equation}
 
 This is equation (3) from Zobitz, et al. (2008), augmented with the harvest and litter terms. Summing over all plant
 pools shows that NPP is partitioned into biomass growth, removed harvest, and litter production.
 
+Note that it is possible for $\overline{\text{NPP}}$ to be negative, which can occur when autotrophic respiration 
+exceeds GPP. In this case, the plant pools will shrink as carbon is lost to respiration and litter. Also, as this is not
+an instantaneous calculation of NPP, it is possible that a negative allocation may by applied to a pool even if the 
+pool is zero (or cannot support that much loss). In this case, SIPNET will zero the pool to avoid negative pool sizes and transfer any remaining loss to an appropriate other pool as described below.
+
 ### Plant Death
 
-Plant death is implemented as a harvest event with the fraction of biomass transferred to
-litter, $f_{\text{harvest,transfer,}i}$ set to 1.
+Plant death is checked automatically after pool updates. The model requires positive woody carbon, positive total woody
+carbon (including the NPP accounting / storage term \eqref{eq:wood_c_storage}), and positive total root carbon. When
+any of these become non-positive, SIPNET treats the plant as dead, transfers the remaining biomass to litter or soil as
+appropriate, zeros the living plant pools, and resets the running mean NPP tracker.
 
 ### Wood Carbon
 
@@ -188,12 +193,16 @@ C_{\text{wood,total}} = C_{\text{wood}} + C_{\text{wood,storage}}
 Thus, changes to (non-storage) wood carbon over time are determined by:
 
 \begin{equation}
-\frac{dC_\text{wood}}{dt} = \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood}
+\frac{dC_\text{wood}}{dt} = \alpha_\text{wood} \cdot \overline{\text{NPP}} - F^C_\text{litter,wood} -
+F^C_{\text{creation,leafOn}}*k_\text{wood}
 \label{eq:Braswell_A1}
 \end{equation}
 
-where $\alpha_\text{wood}\cdot\overline{\text{NPP}}$ represents the amount of carbon allocated to growth
-and $(F^C_\text{litter,wood})$ is the wood litter production.
+where $\alpha_\text{wood}\cdot\overline{\text{NPP}}$ represents the amount of carbon allocated to growth and
+$F^C_\text{litter,wood}$ is the wood litter production. 
+
+$F^C_{\text{creation,leafOn}}$ is the carbon reallocated to leaves when a leaf on event occurs, multiplied by the
+fraction of that carbon that is drawn from wood, $k_\text{wood} = C_\text{wood} / (C_\text{wood} + C_\text{coarse root})$
 
 This is equation (A1) from Braswell, et al. (2005), modified to explicitly track the storage component.
 
@@ -207,27 +216,99 @@ This is equation (A1) from Braswell, et al. (2005), modified to explicitly track
 This is equation (A2) from Braswell, et al. (2005)
 
 The change in plant leaf carbon $(C_\text{leaf})$ over time is given by the balance of leaf production $(L)$ and leaf
-litter production $(F^C_\text{litter,leaf})$.
+litter production $(F^C_\text{litter,leaf})$. Each of those terms has a continuous component, active in every time
+step, and a pulse at the corresponding growing season boundary:
 
-**TODO:** explain $L$ in terms of $\alpha_\text{leaf}\cdot \overline{NPP}$ and leaf on/leaf off mechanics.
+\begin{equation}
+L = \alpha_\text{leaf} \cdot \overline{\text{NPP}} + F^C_{\text{creation,leafOn}}
+\label{eq:leaf_production}
+\end{equation}
+
+\begin{equation}
+F^C_\text{litter,leaf} = K_\text{leaf} \cdot C_\text{leaf} + F^C_{\text{litter,leafOff}}
+\label{eq:leaf_litter}
+\end{equation}
+
+The continuous components follow the same form as the other biomass pools \eqref{eq:Zobitz_3}: a fixed share
+$\alpha_\text{leaf}$ of five-day mean NPP is allocated to leaves, and a fixed fraction $K_\text{leaf}$ of the leaf pool
+is shed as litter each day.
+
+The pulse components carry the growing season transitions described in Sec. [Leaf On/Leaf Off](#leaf-onleaf-off).
+At leaf on the plant has little or no canopy, so leaves are not built from current production. Instead, the leaf on
+term is a reallocation of carbon the plant already holds, moved into leaves from wood and coarse roots, and is
+therefore not part of the NPP partition in \eqref{eq:Zobitz_3}. At leaf off, the leaf off term adds to leaf litter and
+is routed onward in the same way as continuous leaf turnover.
+
+If the growth term is negative and the leaf pool is not large enough to support the loss, the leaf pool is zeroed and
+the remaining loss is transferred to the wood pool. If the wood pool is not large enough to support the loss, the plant
+mortality check will conclude that the plant is dead.
+
+### Leaf On/Leaf Off
+
+Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. For these events,
+transferred carbon and nitrogen are computed from model state and the parameters $\Delta C_{\text{leaf}}$,
+$f_{\text{realloc}}$, $f_{\text{fall}}$, and $f_{\text{N,resorp}}$.
+
+When a leaf on event occurs, an amount of carbon $\Delta C_{\text{leaf}}$ is moved into the leaf carbon pool from wood
+and coarse roots, drawn from those two pools in proportion to their current sizes. The plant may not be able to afford
+the full amount, so two constraints are applied:
+
+- Carbon: at most a fraction $f_{\text{realloc}}$ of wood and coarse root carbon is available to be reallocated.
+  Carbon held in the wood storage pool \eqref{eq:wood_c_storage} is not drawn on.
+- Nitrogen (when enabled): for a realized leaf-on carbon transfer $C_{\text{leaf,on}}$, plant nitrogen storage changes
+  by $\Delta N = C_{\text{leaf,on}}(1/CN_{\text{leaf}} - 1/CN_{\text{wood}})$. Positive $\Delta N$ is drawn from
+  storage and can limit leaf on; negative $\Delta N$ is returned to storage.
+
+The carbon constraint, and the nitrogen constraint when applicable, scale the transfer down. The scaled amount is
+applied to the pools and is not subsequently reduced by the general nitrogen limitation
+(Sec. [Nitrogen Limitation](#nitrogen-limitation)).
+
+When a leaf off event occurs, a fraction $f_{\text{fall}}$ of the leaf carbon pool is transferred to the litter pool
+(or soil pool, if the litter pool is not being used). When nitrogen cycling is enabled, the nitrogen corresponding to
+the transferred leaf carbon follows it, except for the fraction $f_{\text{N,resorp}}$ resorbed to the plant nitrogen
+storage pool. When nitrogen cycling is disabled, no nitrogen transfer or resorption is calculated.
+
+Leaf on and leaf off events may be specified in the events input file (Sec. 
+[Leaf On/Leaf Off Events](#leaf-onleaf-off-events)), or they may be calculated automatically by SIPNET based on:
+
+- the growing season start and end dates as specified by the parameters `leafOnDay` and `leafOffDay`, or
+- growing degree days when `GDD = 1`, or
+- soil temperature when `SOIL_TEMP = 1`.
+
+Leaf on and leaf off events may only be specified in the events file OR calculated automatically by SIPNET. If both are
+specified, SIPNET will error.
 
 ### Root Carbon
 
-Both fine and coarse root carbon change in the same way as leaf carbon. Change in carbon for these pools is determined
-as follows, applied separately to fine and coarse roots:
+Change in carbon for the fine root and coarse root pools is determined as follows::
 
 \begin{equation}
-\frac{dC_\text{i}}{dt} = \alpha_\text{i} \cdot \overline{NPP} - F^C_\text{i,root loss}
-\label{eq:root_carbon}
+\frac{dC_\text{fine root}}{dt} = \alpha_\text{fine root} \cdot \overline{NPP} - F^C_\text{fine root,root loss}
+\label{eq:fine_root_carbon}
 \end{equation}
 
-for $i \in \{\text{fine root}, \text{coarse root}\}$, where $k_\text{i,turnover}$ is the root turnover rate and
-$F^C_\text{i,root loss}$ is determined by:
+\begin{equation}
+\frac{dC_\text{coarse root}}{dt} = \alpha_\text{coarse root} \cdot \overline{NPP} - F^C_\text{coarse root,root loss} -
+F^C_{\text{creation,leafOn}}*k_\text{coarse root}
+\label{eq:coarse_root_carbon}
+\end{equation}
+
+where $k_\text{i,turnover}$ is the root turnover rate and $F^C_\text{i,root loss}$ is determined by:
 
 \begin{equation}
 F^C_\text{i,root loss} = k_\text{i,turnover} \cdot C_\text{i}
 \label{eq:root_loss}
 \end{equation}
+
+for $i \in \{\text{fine root}, \text{coarse root}\}$.
+
+$F^C_{\text{creation,leafOn}}*k_\text{coarse root}$ is the carbon reallocated to leaves when a leaf on event occurs, 
+multiplied by the fraction of that carbon that is drawn from coarse roots, $k_\text{coarse root} = C_\text{coarse root}
+/ (C_\text{wood} + C_\text{coarse root})$.
+
+If the growth terms are negative and either pool is not large enough to support the loss, SIPNET will attempt to draw
+from the other pool. If the combined pools are not large enough to support the total loss, the plant mortality check
+will conclude that the plant is dead.
 
 ### Leaf Maintenance Respiration
 
@@ -287,7 +368,7 @@ and methane production:
 Where $F^C_\text{litter}$ is the carbon flux from aboveground plant biomass \eqref{eq:litter_flux},
 $F^C_{\text{decomp}}$ is the total litter decomposition flux \eqref{eq:decomp_rate}, and $F^C_{\text{CH}_4\text{,litter}}$ is
 the methane flux from the litter \eqref{eq:ch4}. Note that belowground turnover is routed directly to the soil carbon
-pool (see Soil Carbon).
+pool (see Sec. [Soil Carbon](#soil-carbon)).
 
 $F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest,
 and organic matter amendments:
@@ -309,7 +390,9 @@ F^C_\text{fert,org}
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is
 transferred to litter.
 
-When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as fast-turnover carbon. This functionality is described in more detail below in the Soil Carbon section \eqref{eq:soil_carbon_saturation}.
+When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as 
+fast-turnover carbon. This functionality is described in more detail below in Sec. 
+[Soil Carbon Saturation](#soil-carbon-saturation).
 
 \begin{equation}
 \frac{dC_\text{litter}}{dt} = F^C_\text{litter} + F^C_{\text{soil}} \cdot \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}} - F^C_{\text{decomp}} - F^C_{\text{CH}_4\text{,litter}}
@@ -379,7 +462,12 @@ F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
 \label{eq:soil_carbon_flux}
 \end{equation}
 
-When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs is added to the soil pool. This fraction declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining input C is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover carbon rather than being added to the soil pool.
+#### Soil Carbon Saturation
+
+When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs is added to the 
+soil pool. This fraction declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining
+input C is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover carbon rather than being 
+added to the soil pool.
 
 \begin{equation}
 \frac{dC_\text{soil}}{dt} = F^C_{\text{soil}} \cdot (1 - \frac{C_{\text{soil}}}{C_{\text{soil,saturation}}}) - R_{\text{soil}} - F^C_{\text{CH}_4\text{,soil}}
@@ -458,7 +546,7 @@ N_i = \frac{C_i}{CN_{i}}
 \end{equation*}
 
 Where $i$ is the leaf, wood, fine root, or coarse root pool. This relationship applies to both pools $C,N$ and
-fluxes  $(F^C, F^N)$.
+fluxes  $(F^C, F^N)$. SIPNET assumes that the coarse root pool has the same C:N ratio as the wood pool.
 
 Soil organic matter and litter pools have dynamic CN that is determined below.
 
@@ -498,13 +586,30 @@ Similar to the stoichiometric coupling of litter fluxes, the change in plant bio
 coupled to plant biomass C:
 
 \begin{equation}
-\frac{dN_{\text{plant,}i}}{dt} = \frac{dC_{\text{plant,}i}}{dt} / CN_{\text{plant,}i}
+\frac{dN_{\text{plant,}i}}{dt} = \frac{dC_{\text{plant,}i}}{dt} \cdot \frac{1}{CN_{\text{plant,}i}}
 \label{eq:plant_n}
 \end{equation}
 
 \begin{equation*}
 \small i \in \{\text{leaf, wood, fine root, coarse root}\}
 \end{equation*}
+
+### Nitrogen Resorption
+
+When leaves senesce, nitrogen is resorbed from the leaves and returned to the plant. We represent this as a separate
+nitrogen storage pool $N_\text{plant,storage}$. The amount of nitrogen resorbed is determined by the parameter 
+$f_{\text{N,resorp}}$, which is a model input.
+
+\begin{equation}
+\frac{dN_\text{plant,storage}}{dt} = f_{\text{N,resorp}} \cdot \frac{F^C_\text{litter,leaf}}{CN_\text{leaf}}
+\label{eq:n_resorp}
+\end{equation}
+
+As described above, leaf litter production is calculated as a combination of continuous turnover and a pulse at leaf 
+off, all of which is subject to nitrogen resorption.
+
+The nitrogen storage pool primarily represents nitrogen that is resorbed from leaves at leaf off, and is used to
+support leaf growth at leaf on. It also supports growth of other plant pools when it is available. 
 
 ### Litter Nitrogen $N_\text{litter}$
 
@@ -516,6 +621,7 @@ soil pool:
 \frac{dN_{\text{litter}}}{dt} =
 \sum_{i} F^N_{\text{litter,}i} +
 F^N_\text{fert,org} -
+F^N_\text{leaf, resorption} -
 F^N_\text{litter,min} -
 F^N_\text{soil}
 \label{eq:litter_dndt}
@@ -529,7 +635,15 @@ Here, $F^N_{\text{litter,}i}$ includes nitrogen inputs to litter from both (i) s
 (ii) harvest transfers of aboveground biomass pools. The flux of nitrogen from living biomass to the litter
 pool is proportional to the carbon content of the biomass, based on the C:N ratio of the biomass pool
 \eqref{eq:cn_stoich}. Similarly, nitrogen from organic matter amendments is calculated from the carbon content
-and the C:N ratio of the inputs.
+and the C:N ratio of the inputs. $F^N_\text{litter,min}$ is the flux from litter organic N to the mineral N 
+pool, and $F^N_\text{soil}$ is the flux from litter organic N to the soil organic N pool based on the litter 
+decomposition flux \eqref{eq:soil_carbon} and the C:N ratio of the litter pool. Finally, $F^N_\text{leaf, resorption}$
+is the flux of nitrogen resorbed from leaves at leaf off and returned to the plant nitrogen storage pool 
+\eqref{eq:n_resorp}.
+
+When carbon saturation is enabled, a fraction of soil nitrogen inputs is redirected to the litter pool in an analogous 
+manner to the soil carbon inputs, based on the same saturation fraction
+${C_{\text{soil}}}/{C_{\text{soil,saturation}}}$.
 
 ### Soil Organic Nitrogen $N_\text{org,soil}$
 
@@ -553,6 +667,10 @@ transfers of belowground biomass.
 $F^N_{\text{soil}}$ is the organic nitrogen transferred from litter to soil (calculated from
 $F^C_{\text{soil}}$ in \eqref{eq:soil_carbon} based on litter C:N).
 $F^N_\text{soil,min}$ is the flux from soil organic N to soil mineral N.
+
+When carbon saturation is enabled, a fraction of soil nitrogen inputs is redirected to the litter pool in an analogous
+manner to the soil carbon inputs, based on the same saturation fraction
+${C_{\text{soil}}}/{C_{\text{soil,saturation}}}$.
 
 ### Soil Mineral Nitrogen $N_\text{min}$
 
@@ -593,7 +711,8 @@ F^N_\text{min} = \sum_j \left( \frac{R_{H\text{j}}}{CN_{\text{j}}} \right)
 ### Nitrogen Volatilization $F^N_\text{vol}: (N_\text{min} \rightarrow N_2O)$
 
 $K_\text{vol}$ is the nitrogen volatilization rate constant that determines the maximum rate of N volatilization as a
-proportion of available $N_\text{min}$. The realized volatilization flux is proportional to available $N_\text{min}$, scaled by $K_\text{vol}$ and modified by temperature and soil moisture.
+proportion of available $N_\text{min}$. The realized volatilization flux is proportional to available $N_\text{min}$, 
+scaled by $K_\text{vol}$ and modified by temperature and soil moisture.
 
 \begin{equation}
 F^N_\text{vol} = K_\text{vol} \cdot N_\text{min} \cdot D_{\text{temp}} \cdot D_{\text{water},N_\text{vol}}
@@ -621,20 +740,19 @@ where:
 \end{equation}
 
 $f^N_\text{leach}$ is the fraction of $N_\text{min}$ available to be leached, $F^W_\text{drainage}$ is drainage, and
-$W_\text{WHC}$ is soil water holding capacity. SIPNET uses one mineral nitrogen pool, $N_\text{min}$; litter and soil mineralization are separate fluxes that both add to this pool.
+$W_\text{WHC}$ is soil water holding capacity. SIPNET uses one mineral nitrogen pool, $N_\text{min}$; litter and soil
+mineralization are separate fluxes that both add to this pool.
 
 ### Plant Nitrogen Demand  $F^{N}_{\text{demand}}$
 
-Plant N demand is the amount of N required to support plant growth. This is calculated as the sum of carbon creation fluxes divided by their respective C:N ratios:
+Plant N demand is the amount of N required to support plant growth. Growth from NPP allocation and the leaf on
+transfer are accounted for separately, as they are met from different supplies.
+
+New tissue built from NPP requires nitrogen in proportion to the carbon allocated to each pool, at the fixed C:N ratio
+of that pool:
 
 \begin{equation}
-F^N_{\text{demand,}leafOn} = \frac{F^C_{\text{creation,}leafOn}}{CN_{\text{leaf}}} -
-\frac{F^C_{\text{creation,}leafOn}}{CN_{\text{wood}}}
-\label{eq:leaf_on_n_demand}
-\end{equation}
-
-\begin{equation}
-F^N_{\text{demand,}creation} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
+F^N_{\text{demand,creation}} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text{i}}} 
 \label{eq:creation_n_demand}
 \end{equation}
 
@@ -642,16 +760,41 @@ F^N_{\text{demand,}creation} = \sum_{i} \frac{F^C_{\text{creation,}i}}{CN_{\text
 \small i \in \{\text{wood, leaf, fine root, coarse root}\}
 \end{equation*}
 
+Each term in the sum is calculated according to \eqref{eq:plant_n}.
+
+Leaf on moves existing tissue rather than building new tissue, so the carbon brings nitrogen with it and the demand is
+only the difference in stoichiometry between the source and the destination. The carbon arrives holding the nitrogen it
+held as wood or coarse root, $F^C_{\text{creation,leafOn}} / CN_{\text{wood}}$, and as leaf tissue it must hold
+$F^C_{\text{creation,leafOn}} / CN_{\text{leaf}}$. The shortfall is the additional nitrogen the plant has to supply:
+
 \begin{equation}
-F^N_{\text{demand,}total} =
-F^N_{\text{demand,}leafOn} +
-F^N_{\text{demand,}creation}
+F^N_{\text{demand,leafOn}} = \frac{F^C_{\text{creation,leafOn}}}{CN_{\text{leaf}}} -
+\frac{F^C_{\text{creation,leafOn}}}{CN_{\text{wood}}}
+\label{eq:leaf_on_n_demand}
+\end{equation}
+
+Leaves are more nitrogen rich than the tissue the carbon comes from, so the transfer requires additional nitrogen.
+Coarse roots share the wood C:N ratio, so the split of the transfer between the two source pools does not change it.
+
+The two demands are satisfied in sequence. Leaf on is met entirely from the plant nitrogen storage pool, which is
+filled by nitrogen resorbed from leaves as they senesce, and it has first claim on that pool. If the pool cannot cover
+the demand, the leaf on transfer itself is reduced (Sec. [Leaf On/Leaf Off](#leaf-onleaf-off)) rather than the
+shortfall being carried forward, so leaf on never draws on fixation or soil uptake. Storage nitrogen left after that
+claim, $F^N_{\text{storage}}$, is applied to the creation demand, and only what remains is met from outside the plant:
+
+\begin{equation}
+F^N_\text{storage} = \frac{N_\text{plant,storage}}{\Delta t} - F^N_{\text{demand,leafOn}}
+\label{eq:plant_n_storage_flux}
+\end{equation}
+
+\begin{equation}
+F^N_{\text{demand}} =
+\max\left(0,\; F^N_{\text{demand,}creation} - F^N_{\text{storage}}\right)
 \label{eq:plant_n_demand}
 \end{equation}
 
-Each term in the sum is calculated according to \eqref{eq:plant_n}. Total plant N demand $F^N_{\text{demand,}total}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and \eqref{eq:n_uptake_demand}.
-
-**TODO:** possibly include more context about leaf on events
+$F^N_{\text{demand}}$ is then partitioned between fixation and soil N uptake using \eqref{eq:n_fix_demand} and
+\eqref{eq:n_uptake_demand}.
 
 ### Nitrogen Fixation and Uptake $F^N_\text{fix}, F^N_\text{uptake}$
 
@@ -682,7 +825,7 @@ D_{N_\text{min}} = \frac{{K_N}}{{K_N} + N_\text{min}}
 where $N_\text{min}$ is the soil mineral N pool (g N m$^{-2}$) and $K_N$ is the amount of mineral N at which fixation is
 reduced by half (g N m$^{-2}$).
 
-Nitrogen fixation and soil N uptake are then partitioned from total plant N demand $F^N_\text{demand}$ 
+Nitrogen fixation and soil N uptake are then partitioned from plant N demand $F^N_\text{demand}$
 \eqref{eq:plant_n_demand}:
 
 \begin{equation}
@@ -706,28 +849,26 @@ than 2 kg N ha$^{-1}$ yr$^{-1}$, Cleveland et al. 1999) than crop N demand and t
 ### Nitrogen Limitation
 
 Nitrogen limitation occurs when plant nitrogen demand exceeds the supply of plant-available nitrogen. Plant nitrogen
-demand is diagnosed from potential biomass growth derived from five-day averaged NPP.
+demand is diagnosed from the desired uptake flux \eqref{eq:n_uptake_demand} compared to the available supply of mineral
+nitrogen in the soil.
 
 If plant nitrogen demand exceeds plant-available nitrogen, allocation of carbon to new growth is reduced to the level
 that available nitrogen can support. Carbon not allocated to growth remains in the wood storage pool 
 (\eqref{eq:wood_c_storage}). Thus, nitrogen limitation does not directly affect carbon uptake; it reduces future 
 photosynthesis by constraining increases in photosynthetically active leaf area \eqref{eq:lai_calculation}.
 
-Nitrogen limitation is applied during the flux calculation stage of the model update sequence. N limitation is 
+Nitrogen limitation is applied after the flux calculation stage of the model update sequence. N limitation is 
 implemented as follows:
 
 - Calculate the amount by which plant N demand exceeds available supply [^*].
-
 - Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
+- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in
+  the wood storage pool \eqref{eq:wood_c_storage}.
+- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed 
+  stoichiometry.
 
-- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools.
-- Calculate the amount by which plant N demand exceeds available supply [^*].
-- Calculate the fraction by which biomass growth must be reduced so that N demand equals supply.
-- Reduce biomass growth accordingly by scaling carbon allocation to plant biomass pools. Unallocated carbon remains in the wood storage pool \eqref{eq:wood_c_storage}.
-- Calculate nitrogen uptake as the amount of N required to support the realized plant growth, based on fixed stoichiometry.
-
-[^*]: Nitrogen limitation is evaluated after accounting for biological nitrogen fixation and before mineral nitrogen
-uptake or nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
+[^*]: Nitrogen limitation is evaluated accounting for biological nitrogen fixation and mineralization but before
+nitrogen fertilization. Any nitrogen fertilizer inputs alleviate N limitation in subsequent time steps.
 
 ## Water Dynamics
 
@@ -1051,8 +1192,9 @@ without explicit electron-acceptor pools.
 
 ## Agronomic Management Events
 
-All management events are specified in the `events.in`. Each event is a separate record that includes the
-date of the event, the type of event, and associated parameters.
+User-specified management events are read from `events.in`. Each record includes the date of the event, the type of
+event, and any associated parameters. SIPNET can also generate internal event records such as `leafon`, `leafoff`,
+and `plantdeath`, which are written to `events.out` when event handling is enabled.
 
 ### Fertilizer and Organic Matter Additions
 
@@ -1169,20 +1311,9 @@ f_{\text{intercept}} \, F^W_{\text{irrig}}, & I_{\text{irrigation}} = 0 \\
 \label{eq:irrig_evap}
 \end{equation}
 
-### Leaf On/Leaf Off
+### Leaf On/Leaf Off Events
 
-Leaf on and leaf off events define the timing of leaf emergence and senescence, respectively. These events directly
-specify the amount of carbon added to the leaf carbon pool on the leaf on date, and the fraction of carbon removed from
-the leaf carbon pool on the leaf off date. 
-
-When a leaf on event occurs, an amount of carbon (specified by the `leafGrowth` parameter) is transferred from the wood
-carbon pool to the leaf carbon pool. As leaf C:N is usually lower than wood C:N, the excess nitrogen
-implied by the static C:N ratios is included as part of the plant nitrogen demand. If there is insufficient nitrogen
-available for this lump-sum move, nitrogen limitation will occur. 
-
-When a leaf off event occurs, a fraction of the leaf carbon (specified by the `fracLeafFall` parameter) is transferred
-from the leaf carbon pool to the litter pool (or soil pool, if the litter pool is not being used). The corresponding
-nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter or soil nitrogen pool.
+Leaf on and leaf off events only specify the date, not the amount, of leaf biomass C and N added or subtracted. 
 
 **Event parameters:**
 
@@ -1193,7 +1324,7 @@ nitrogen (calculated from the leaf C:N ratio) is also transferred to the litter 
 | Type      | `leafon` / `leafoff` | The type of event |
 
 There are no other parameters needed for these events, as the amount of transfer is determined by the parameters
-mentioned above.
+mentioned in Sec. [Leaf On/Leaf Off](#leaf-onleaf-off).
 
 <!-- 
 **Flooding** increases soil water to water holding capacity and then adds water equivalent to the depth of flooding. Subsequent irrigation events maintain flooding by topping off water content.

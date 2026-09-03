@@ -205,7 +205,9 @@ void readClimData(const char *climFile) {
     curr->year = year;
     curr->day = day;
     curr->time = time;
-
+     
+    // TODO: remove this odd undocumented behavior that allows time as 
+    // seconds if negative 
     if (length < 0) {  // parse as seconds
       length = length / -86400.;  // convert to days
     }

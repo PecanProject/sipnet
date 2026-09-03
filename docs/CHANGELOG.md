@@ -49,9 +49,7 @@ sections to include in release notes:
 
 ### Fixed
 
-- Corrected plant carbon accounting so the accounting-only carbon delta is not treated as nitrogen-bearing woody biomass (#359).
-- Corrected nitrogen resorption and storage accounting during senescence and negative growth, including the ordering of storage use, fixation, and uptake (#359).
-- Corrected the nitrogen mass-balance sign convention (#359).
+- Preserve nitrogen balance during leaf-on when leaf C:N exceeds wood C:N (#381)
 
 ### Changed
 
