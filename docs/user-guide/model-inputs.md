@@ -112,7 +112,6 @@ Rules:
 - Events are specified at day resolution (no sub‑daily timestamp).
 - Every (year, day) appearing in `events.in` must have at least one corresponding climate record; otherwise SIPNET errors.
 - Values in `events.in` are instantaneous amounts (cm or mass/area) applied on the date and time of the first climate record matching that event's year and day.
-- Event parameters are used as supplied; SIPNET applies no unit conversion.
 
 See subsections below for details and parameter definitions for each event type.
 
