@@ -12,7 +12,7 @@ A clear and concise description of what the problem is. Ex. I'm always frustrate
 ## Use Cases and Requirements
 
 **Describe the use cases and requirements**
-Please focus on describing the problem and your requirements without going into the solution space. We believe in understanding requirements before design, and design before solution!
+Please focus on describing the problem and your requirements without going into the solution space.
 
 ## Additional Context 
 
