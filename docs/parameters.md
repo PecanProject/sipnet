@@ -161,7 +161,9 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $T_{\text{on}}$           | soilTempLeafOn   | Soil temperature threshold for leaf appearance (temp-based phenology) | $°\text{C}$                      |                                      |
 | $D_{\text{off}}$          | leafOffDay       | Day of year for leaf drop                                             | unitless                         | day of year (1–365); 0 to turn off   |
 | $\Delta C_{\text{leaf}}$  | leafGrowth       | Additional leaf growth at start of growing season                     | $\text{g C} \cdot \text{m}^{-2}$ |                                      |
+| $f_{\text{realloc}}$      | leafOnReallocFrac | Fraction of wood and coarse root carbon available for leaf-on reallocation | unitless                     |                                      |
 | $f_{\text{fall}}$         | fracLeafFall     | Additional fraction of leaves that fall at end of growing season      | unitless                         |                                      |
+| $f_{\text{N,resorp}}$     | leafNResorptionFrac | Fraction of leaf nitrogen resorbed to plant N storage at leaf off | unitless                         | Only used when nitrogen cycling is enabled |
 | $\alpha_{\text{leaf}}$    | leafAllocation   | Fraction of $NPP$ allocated to leaf growth                            | unitless                         |                                      |
 | $K_{\text{leaf}}$         | leafTurnoverRate | Average turnover rate of leaves                                       | $\text{year}^{-1}$               | Converted to per-day rate internally |
 

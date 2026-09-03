@@ -57,4 +57,4 @@ SIPNET is distributed under the BSD 3-Clause license—see [LICENSE](https://git
 - [v2.0.0 “Add Events and Refactor”](https://github.com/PecanProject/sipnet/releases/tag/v2.0.0): major refactor to add event system for managed ecosystems, modularize code, and improve build/test infrastructure.
 - [v1.2.0 “fAPAR assimilation”](https://github.com/PecanProject/sipnet/releases/tag/v1.2.0): MODIS-derived fAPAR assimilation for joint NEE + remote sensing workflows (Zobitz 2014).
 - [v1.1.0 “Roots and Microbes”](https://github.com/PecanProject/sipnet/releases/tag/v1.1.0): microbial soil respiration, root pools, and joint CO₂/H₂O assimilation (Moore 2008; Zobitz 2008).
-- [v1.0.0 “First release”](https://github.com/PecanProject/sipnet/releases/tag/v1.0.0): baseline Braswell (2005) model with with improved hydrology, evergreen phenology (Sacks 2006), and respiration partitioning (Sacks 2007).
+- [v1.0.0 “First release”](https://github.com/PecanProject/sipnet/releases/tag/v1.0.0): baseline Braswell (2005) model with improved hydrology, evergreen phenology (Sacks 2006), and respiration partitioning (Sacks 2007).

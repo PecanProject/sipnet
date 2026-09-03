@@ -14,7 +14,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 1  |                             | year                | Year of start of timestep                                                  | (integer)     |
 | 2  |                             | day                 | Day-of-year of start of timestep                                           | (integer)     |
 | 3  |                             | time                | Hour-of-day (fractional) at start of timestep                              | hours         |
-| 4  |                             | plantWoodC          | Woody plant carbon                                                         | g C m$^{-2}$  |
+| 4  |                             | plantWoodC          | Woody plant carbon (structural wood plus `nppStorage`)                     | g C m$^{-2}$  |
 | 5  |                             | plantLeafC          | Leaf carbon                                                                | g C m$^{-2}$  |
 | 6  |                             | woodCreation        | Carbon allocated to wood during timestep                                   | g C m$^{-2}$  |
 | 7  |                             | soil                | (Single) soil organic carbon (or mineral soil C pool)                      | g C m$^{-2}$  |
@@ -29,26 +29,26 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 16 |                             | cumNEE              | Cumulative NEE since simulation start                                      | g C m$^{-2}$  |
 | 17 | $GPP$                       | gpp                 | Gross primary production                                                   | g C m$^{-2}$  |
 | 18 |                             | rAboveground        | Aboveground autotrophic respiration (leaves + wood)                        | g C m$^{-2}$  |
-| 19 | $R_H$                       | rSoil               | Heterotrophic respiration                                                  | g C m$^{-2}$  |
+| 19 | $R_H$                       | rSoil               | Total belowground respiration (rRoot + rh).                                                  | g C m$^{-2}$  |
 | 20 |                             | rRoot               | Root (autotrophic) respiration                                             | g C m$^{-2}$  |
 | 21 |                             | ra                  | Total autotrophic respiration (rAboveground + rRoot)                       | g C m$^{-2}$  |
 | 22 |                             | rh                  | Total heterotrophic respiration (litter + soil components)                 | g C m$^{-2}$  |
 | 23 | $R$                         | rtot                | Total ecosystem respiration (ra + rh)                                      | g C m$^{-2}$  |
 | 24 |                             | evapotranspiration  | ET (transpiration + immedEvap + evaporation + sublimation) for timestep    | cm            |
 | 25 |                             | fluxestranspiration | Transpiration component only (as a flux)                                   | cm day$^{-1}$ |
-| 27 | $N_\textrm{min}$            | minN                | Soil mineral nitrogen                                                      | g N m$^{-2}$  |
-|    |                             | soilOrgN            | Soil organic nitrogen                                                      | g N m$^{-2}$  |
-|    |                             | litterN             | Litter nitrogen                                                            | g N m$^{-2}$  |
-|    |                             | plantStorageN       | Plant nitrogen storage                                                     | g N m$^{-2}$  |
-|    |                             | n2o                 | Nitrous oxide production                                                   | g N m$^{-2}$  |
-|    |                             | nLeaching           | Nitrogen lost to leaching                                                  | g N m$^{-2}$  |
-|    |                             | nFixation           | Nitrogen demand met by fixation                                            | g N m$^{-2}$  |
-|    |                             | nUptake             | Nitrogen demand met by uptake from soil                                    | g N m$^{-2}$  |
-|    |                             | ch4                 | Methane production                                                         | g C m$^{-2}$  |
-|    |                             | nppStorage          | Carbon stored for later allocation                                         | g C m$^{-2}$  |
-|    | $LAI$                       | lai                 | Leaf area index (`plantLeafC / leafCSpWt`)                                 | m$^2$ m$^{-2}$ |
+| 26 | $N_\textrm{min}$            | minN                | Soil mineral nitrogen                                                      | g N m$^{-2}$  |
+| 27 |                             | soilOrgN            | Soil organic nitrogen                                                      | g N m$^{-2}$  |
+| 28 |                             | litterN             | Litter nitrogen                                                            | g N m$^{-2}$  |
+| 29 |                             | plantStorageN       | Plant nitrogen storage pool; zero when `nitrogen-cycle` is off             | g N m$^{-2}$  |
+| 30 |                             | n2o                 | Nitrous oxide production                                                   | g N m$^{-2}$  |
+| 31 |                             | nLeaching           | Nitrogen lost to leaching                                                  | g N m$^{-2}$  |
+| 32 |                             | nFixation           | Nitrogen demand met by fixation                                            | g N m$^{-2}$  |
+| 33 |                             | nUptake             | Nitrogen demand met by uptake from soil                                    | g N m$^{-2}$  |
+| 34 |                             | ch4                 | Methane production                                                         | g C m$^{-2}$  |
+| 35 |                             | nppStorage          | Carbon accounting / storage term tracked separately for mass balance; included in `plantWoodC` | g C m$^{-2}$  |
+| 36 | $LAI$                       | lai                 | Leaf area index (`plantLeafC / leafCSpWt`)                                 | m$^2$ m$^{-2}$ |
 
-[^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only.
+[^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only, and it can exceed 1 when `flooding` is enabled.
 Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not this average), and clip that ratio to [0,1] where those dependency functions are defined.
 
 An example output file can be found in [tests/smoke/russell_1/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/russell_1/sipnet.out).
@@ -66,9 +66,9 @@ When event handling is enabled, SIPNET will create `events.out` by default, or
 `<EVENTS_PREFIX>.out` when a custom events prefix is configured.
 
 This file is designed primarily for _testing and debugging_.  
-It contains one row for each agronomic event that is processed. 
-Each row lists the year, day, event type, and parameter name/value pairs. 
-The name/value pairs represent the change to a pool directly calculated from an event.
+It contains one row for each user-specified or internally computed event that is processed.
+Each row lists the year, day, event type, and parameter name/value pairs.
+The name/value pairs record event-specific deltas and diagnostics written by the model.
 
 Information in the events output file can, in principle, be reconstructed or
 inferred from the corresponding events input file and `sipnet.out` though this
@@ -84,6 +84,8 @@ year  day  type     param_name=delta[,param_name=delta,...]
 2023   65  plant    eventLeafC=3.00,eventWoodC=4.00,eventFineRootC=5.00,eventCoarseRootC=6.00,eventInputC=18.00,eventInputN=0.00
 2023   70  irrig    eventSoilWater=5.00,eventEvap=0.00
 2023  200  harv     eventSoilC=1.90,eventLitterC=3.56,eventLeafC=-5.93,eventWoodC=-4.75,eventFineRootC=-3.73,eventCoarseRootC=-3.89,eventSoilOrgN=0.00,eventLitterN=0.00,eventOutputC=12.83,eventOutputN=0.00
+2023  245  leafon   eventLeafOnCreation=4.00,eventLeafOnCreationFromWood=2.50
+2023  300  plantdeath  harvestFracRemoved=1.00,harvestFracTransferred=0.00,totalWoodC=-0.02,totalRootC=0.15
 2024   65  plant    eventLeafC=3.00,eventWoodC=5.00,eventFineRootC=7.00,eventCoarseRootC=9.00,eventInputC=24.00,eventInputN=0.00
 2024   70  irrig    eventSoilWater=2.50,eventEvap=2.50
 2024  200  harv     eventSoilC=2.74,eventLitterC=1.51,eventLeafC=-1.39,eventWoodC=-1.63,eventFineRootC=-2.52,eventCoarseRootC=-2.97,eventSoilOrgN=0.00,eventLitterN=0.00,eventOutputC=4.25,eventOutputN=0.00
