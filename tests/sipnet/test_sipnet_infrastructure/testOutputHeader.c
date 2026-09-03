@@ -79,6 +79,28 @@ int checkOutput(void) {
     }
   }
 
+  char *header_saveptr;
+  char *value_saveptr;
+  char *header_token = strtok_r(line1, " \t\n", &header_saveptr);
+  char *value_token = strtok_r(line2, " \t\n", &value_saveptr);
+  while (header_token && value_token) {
+    char *next_header = strtok_r(NULL, " \t\n", &header_saveptr);
+    char *next_value = strtok_r(NULL, " \t\n", &value_saveptr);
+    if (!next_header && !next_value) {
+      break;
+    }
+    header_token = next_header;
+    value_token = next_value;
+  }
+  if (!header_token || strcmp(header_token, "lai") != 0) {
+    logTest("Expected final output column to be lai\n");
+    status = 1;
+  }
+  if (!value_token || atof(value_token) != 3.0) {
+    logTest("Expected LAI output value to be 3.0\n");
+    status = 1;
+  }
+
   return status;
 }
 
@@ -86,6 +108,8 @@ void init(void) {
   initTrackers();
   // soilC is often 4 digits
   envi.soilC = 5555;
+  envi.plantLeafC = 6.0;
+  params.leafCSpWt = 2.0;
 }
 
 void genOutput(FILE *out) {

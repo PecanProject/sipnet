@@ -39,11 +39,14 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 27 | $N_\textrm{min}$            | minN                | Soil mineral nitrogen                                                      | g N m$^{-2}$  |
 |    |                             | soilOrgN            | Soil organic nitrogen                                                      | g N m$^{-2}$  |
 |    |                             | litterN             | Litter nitrogen                                                            | g N m$^{-2}$  |
+|    |                             | plantStorageN       | Plant nitrogen storage                                                     | g N m$^{-2}$  |
 |    |                             | n2o                 | Nitrous oxide production                                                   | g N m$^{-2}$  |
 |    |                             | nLeaching           | Nitrogen lost to leaching                                                  | g N m$^{-2}$  |
 |    |                             | nFixation           | Nitrogen demand met by fixation                                            | g N m$^{-2}$  |
 |    |                             | nUptake             | Nitrogen demand met by uptake from soil                                    | g N m$^{-2}$  |
 |    |                             | ch4                 | Methane production                                                         | g C m$^{-2}$  |
+|    |                             | nppStorage          | Carbon stored for later allocation                                         | g C m$^{-2}$  |
+|    | $LAI$                       | lai                 | Leaf area index (`plantLeafC / leafCSpWt`)                                 | m$^2$ m$^{-2}$ |
 
 [^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only.
 Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not this average), and clip that ratio to [0,1] where those dependency functions are defined.
@@ -51,10 +54,10 @@ Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not
 An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
 
 ```
-year day  time plantWoodC plantLeafC woodCreation      soil coarseRootC fineRootC   litter  soilWater soilWetnessFrac     snow      npp      nee   cumNEE      gpp rAboveground    rSoil    rRoot       ra       rh     rtot evapotranspiration fluxestranspiration     minN  soilOrgN    litterN       n2o nLeaching  nFixation  nUptake      ch4 
-2016   1  0.00  1313.6134     0.0000       0.0000 2688.1376    437.8735  437.8621 279.9748     3.3419          0.2701   0.7981  -0.0258   0.0871   0.0871   0.0000       0.0226   0.0645   0.0032   0.0258   0.0612   0.0871         0.00157021              0.0000   1.0014  134.9991    13.9985  0.013744    0.0000     0.0000   0.0000   0.0000
-2016   1  3.00  1313.5850     0.0000       0.0000 2688.1342    437.8651  437.8423 279.9475     3.4565          0.2833   0.6794  -0.0221   0.0872   0.1743   0.0000       0.0189   0.0683   0.0032   0.0221   0.0651   0.0872         0.00411191              0.0000   1.0029  134.9981    13.9969  0.013748    0.0000     0.0000   0.0000   0.0000
-2016   1  6.00  1313.5586     0.0000       0.0000 2688.1296    437.8567  437.8225 279.9191     3.5189          0.2906   0.6125  -0.0201   0.0877   0.2619   0.0000       0.0169   0.0708   0.0033   0.0201   0.0675   0.0877         0.00442997              0.0000   1.0046  134.9970    13.9952  0.013810    0.0000     0.0000   0.0000   0.0000
+year day  time plantWoodC plantLeafC woodCreation     soil coarseRootC fineRootC   litter  soilWater soilWetnessFrac     snow      npp      nee   cumNEE      gpp rAboveground    rSoil    rRoot       ra       rh     rtot evapotranspiration fluxestranspiration     minN  soilOrgN    litterN  plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  nppStorage        lai
+1998 305  0.00    5759.61    1133.88         0.00 16000.06     1919.91   1919.79     0.00      5.997           0.500     0.00   -0.324    0.742    0.742    0.000        0.164    0.578    0.159    0.324    0.419    0.742         0.00302126              0.0000   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -0.3236     4.1996
+1998 305  7.00    5759.24    1133.71        -0.01 16000.08     1919.79   1919.48     0.00      5.995           0.500     0.00   -0.301    0.967    1.710    0.221        0.271    0.917    0.251    0.522    0.666    1.188         0.00240544              0.0022   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -0.5976     4.1989
+1998 305 17.00    5758.50    1133.46        -0.01 16000.15     1919.60   1919.03     0.00      5.988           0.499     0.00   -0.673    1.558    3.267    0.000        0.338    1.219    0.335    0.673    0.884    1.558         0.00662149              0.0000   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -1.1978     4.1980
 ```
 
 ## Events output
