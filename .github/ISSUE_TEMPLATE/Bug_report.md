@@ -12,11 +12,11 @@ In the format "When I do X, I expect Y but observe Z"
 
 ### To Reproduce
 
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Include all relevant information to reproduce the error, if possible, including:
+
+1. `sipnet` command run, with all command line options
+2. Input files used that show the problem
+3. Output files from the above
 
 ## Expected behavior
 
