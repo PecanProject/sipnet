@@ -79,13 +79,13 @@ int checkOutput(void) {
     }
   }
 
-return status;
+  return status;
 }
 
 void init(void) {
-initTrackers();
-// soilC is often 4 digits
-envi.soilC = 5555;
+  initTrackers();
+  // soilC is often 4 digits
+  envi.soilC = 5555;
 }
 
 void genOutput(FILE *out) {
