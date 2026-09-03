@@ -6,8 +6,8 @@ about: Suggest an idea for this project
 
 ## Description
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**A short summary of your requested feature ?**
+Please describe the problem you are trying to solve, or the functionality you would like to see added.
 
 ## Use Cases and Requirements
 
