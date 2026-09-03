@@ -51,7 +51,7 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 [^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only.
 Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not this average), and clip that ratio to [0,1] where those dependency functions are defined.
 
-An example output file can be found in [tests/smoke/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
+An example output file can be found in [tests/smoke/russell_1/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/russell_1/sipnet.out).
 
 ```
 year day  time plantWoodC plantLeafC woodCreation     soil coarseRootC fineRootC   litter  soilWater soilWetnessFrac     snow      npp      nee   cumNEE      gpp rAboveground    rSoil    rRoot       ra       rh     rtot evapotranspiration fluxestranspiration     minN  soilOrgN    litterN  plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  nppStorage        lai
