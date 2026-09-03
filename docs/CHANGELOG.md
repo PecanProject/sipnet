@@ -46,7 +46,7 @@ sections to include in release notes:
 - Plant mortality check with transfer of remaining carbon and nitrogen to litter and soil pools and a `plantdeath` record in `events.out` (#359)
 - New required nitrogen-cycle parameters `plantStorageNInit` and `leafNResorptionFrac` (#337)
 - Guard against negative mineral N due to volatilization and/or leaching (#375)
-
+- `lai` as an output column in `sipnet.out` (#393)
 ### Fixed
 
 - Preserve nitrogen balance during leaf-on when leaf C:N exceeds wood C:N (#381)

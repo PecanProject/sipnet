@@ -165,7 +165,7 @@ def check_results(smoke_dir: str, verbose: bool, base: bool):
       print("Comparing common columns")
   else:
     # Sigh - hopefully someday, we will ALWAYS print a header, and this can go away.
-    cols = 'year day time plantWoodC plantLeafC woodCreation soil coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration minN soilOrgN litterN plantStorageN n2o nLeaching nFixation nUptake ch4 nppStorage'
+    cols = 'year day time plantWoodC plantLeafC woodCreation soil coarseRootC fineRootC litter soilWater soilWetnessFrac snow npp nee cumNEE gpp rAboveground rSoil rRoot ra rh rtot evapotranspiration fluxestranspiration minN soilOrgN litterN plantStorageN n2o nLeaching nFixation nUptake ch4 nppStorage lai'
     cols = cols.split(' ')
     # new_df = pd.read_table(file, sep=r'\s+', header=None, names=cols, dtype=float)
     # git_df = pd.read_table(git_result, sep=r'\s+', header=None, names=cols, dtype=float)
@@ -182,9 +182,18 @@ def check_results(smoke_dir: str, verbose: bool, base: bool):
 
     new_df.columns = cols
     git_df = pd.read_table(git_result, sep=r'\s+', header=None, dtype=float)
-    git_df.columns = cols
+    git_column_count = len(git_df.columns)
+    git_df.columns = cols[:git_column_count]
+    if git_column_count != len(cols):
+      print("Columns have changed!")
+      print("No columns removed")
+      print(f"New columns: {cols[git_column_count:]}")
+      common_columns = cols[:git_column_count]
+      print(f"Common columns: {common_columns}")
+      new_df = new_df[common_columns]
+      print("Comparing common columns")
 
-  diff_df = git_df.compare(new_df, result_names=['old', 'new'])
+  diff_df = git_df.compare(new_df, result_names=('old', 'new'))
 
   if diff_df.empty:
     print("No differences found")
