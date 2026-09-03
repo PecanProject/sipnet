@@ -5,15 +5,20 @@
 
 /*!
  * Calculate excess N needed for leaf on events
+ *
+ * The input leafOnC can be either a flux or pool measurement; the returned
+ * value will match. Note that this will return a negative value in the rare
+ * case that params.woodCN < params.leafCN, indicating that some N should be
+ * resorbed.
  */
 double calcLeafOnNFromC(double leafOnC);
 
 /*!
- * Calculate plant N demand from biomass creation fluxes
+ * Calculate plant N demand flux from biomass creation fluxes
  *
- * @return Total nitrogen demand from plant growth
+ * @return Total nitrogen demand flux from plant growth
  */
-double calcPlantNDemand(void);
+double calcPlantNDemandFlux(void);
 
 /*!
  * Calculate nitrogen available for plant growth
@@ -36,6 +41,11 @@ double calcPlantAvailableN(void);
  * @return Sum of non-uptake fluxes for soil mineral N
  */
 double calcMinNNonUptakeFluxes(void);
+
+/**
+ * Calculate how much of the plant storage N pool is not claimed by leaf-on
+ */
+double calcUnclaimedStorageN(void);
 
 /**
  * Calculate the N fixation fraction taking inhibition into account
@@ -62,5 +72,10 @@ void calcNitrogenFluxes(void);
  * This is the general pool update wrapper for sipnet.c
  */
 void updateNitrogenPools(void);
+
+/**
+ * In the public API for testing
+ */
+void calcNResorptionFluxes(void);
 
 #endif  // NITROGEN_H

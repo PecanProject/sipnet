@@ -166,6 +166,12 @@ EventNode *createEventNode(int year, int day, int eventType,
       }
       newEvent->eventParams = lParams;
     } break;
+    case PLANTDEATH: {
+      logError("PLANTDEATH event found for year %d day %d, but not implemented "
+               "as an input event; please remove and re-run\n",
+               year, day);
+      exit(EXIT_CODE_INPUT_FILE_ERROR);
+    }  // break;
     default:
       // Unknown type, error and exit
       logError("found unknown event type %d while reading event file\n",
@@ -193,6 +199,8 @@ const char *eventTypeToString(event_type_t type) {
       return "leafon";
     case LEAFOFF:
       return "leafoff";
+    case PLANTDEATH:
+      return "plantdeath";
     default:
       logError("unknown event type in eventTypeToString (%d)", type);
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -221,7 +229,9 @@ event_type_t eventStringToType(const char *eventTypeStr) {
   if (strcmp(eventTypeStr, "leafoff") == 0) {
     return LEAFOFF;
   }
-
+  if (strcmp(eventTypeStr, "plantdeath") == 0) {
+    return PLANTDEATH;
+  }
   return UNKNOWN_EVENT;
 }
 
@@ -454,17 +464,22 @@ void processEvents(void) {
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 
-  // The events file has been tested on read, so we know this event list
-  // should be in chrono order. However, we need to check to make sure the
-  // current event is not in the past, as that would indicate an event that
-  // did not have a corresponding climate file record.
+  // Reset harvest tracking
+  eventTrackers.harvestFracRemoved = 0;
+  eventTrackers.harvestFracTransferred = 0;
+
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+    // The events file has been tested on read, so we know this event list
+    // should be in chrono order. However, we need to check to make sure the
+    // current event is not in the past, as that would indicate an event that
+    // did not have a corresponding climate file record.
     if (gEvent->year < climYear || gEvent->day < climDay) {
       logError("Agronomic event found for year: %d day: %d that does not "
                "have a corresponding record in the climate file\n",
                gEvent->year, gEvent->day);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
+
     switch (gEvent->type) {
       case IRRIGATION: {
         const IrrigationParams *irrParams = gEvent->eventParams;
@@ -486,8 +501,8 @@ void processEvents(void) {
         }
         fluxes.eventEvap += evapAmount / climLen;
         fluxes.eventSoilWater += soilAmount / climLen;
-        writeEventOut(gEvent, 2, "fluxes.eventSoilWater", soilAmount / climLen,
-                      "fluxes.eventEvap", evapAmount / climLen);
+        writeEventOut(gEvent, 2, "eventSoilWater", soilAmount, "eventEvap",
+                      evapAmount);
       } break;
       case PLANTING: {
         const PlantingParams *plantParams = gEvent->eventParams;
@@ -515,12 +530,15 @@ void processEvents(void) {
           fluxes.eventInputN += inputN / climLen;
         }
 
-        writeEventOut(gEvent, 6, "fluxes.eventLeafC", leafC / climLen,
-                      "fluxes.eventWoodC", woodC / climLen,
-                      "fluxes.eventFineRootC", fineRootC / climLen,
-                      "fluxes.eventCoarseRootC", coarseRootC / climLen,
-                      "fluxes.eventInputC", inputC / climLen,
-                      "fluxes.eventInputN", inputN / climLen);
+        // clang-format off
+        writeEventOut(gEvent, 6,
+                      "eventLeafC", leafC,
+                      "eventWoodC", woodC,
+                      "eventFineRootC", fineRootC,
+                      "eventCoarseRootC", coarseRootC,
+                      "eventInputC", inputC,
+                      "eventInputN", inputN);
+        // clang-format on
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the soil/litter
@@ -530,8 +548,19 @@ void processEvents(void) {
         const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
         const double fracTB = harvParams->fractionTransferredBelow;
+        const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
 
-        const double woodC = envi.plantWoodC + envi.plantWoodCStorageDelta;
+        // Record fraction of total biomass removed and transferred
+        double aboveMass = woodC + envi.plantLeafC;
+        double belowMass = envi.fineRootC + envi.coarseRootC;
+        double totalMass = aboveMass + belowMass;
+        if (totalMass > TINY) {
+          double massRemoved = fracRA * aboveMass + fracRB * belowMass;
+          double massTransferred = fracTA * aboveMass + fracTB * belowMass;
+          eventTrackers.harvestFracRemoved += massRemoved / totalMass;
+          eventTrackers.harvestFracTransferred += massTransferred / totalMass;
+        }
+
         // Litter increase
         double litterAdd = fracTA * (envi.plantLeafC + woodC);
         double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
@@ -581,27 +610,27 @@ void processEvents(void) {
         fluxes.eventOutputC += outputC / climLen;
         if (ctx.nitrogenCycle) {
           // just plantWoodC here, not woodC
-          outputN = ((envi.plantWoodC / params.woodCN +
-                      envi.plantLeafC / params.leafCN) *
-                         fracRA +
-                     (envi.fineRootC / params.fineRootCN +
-                      envi.coarseRootC / params.woodCN) *
-                         fracRB);
+          outputN = (envi.plantWoodC / params.woodCN +
+                     envi.plantLeafC / params.leafCN) *
+                        fracRA +
+                    (envi.fineRootC / params.fineRootCN +
+                     envi.coarseRootC / params.woodCN) *
+                        fracRB;
           fluxes.eventOutputN += outputN / climLen;
         }
         // clang-format off
         writeEventOut(
             gEvent, 10,
-            "fluxes.eventSoilC", soilAdd / climLen,
-            "fluxes.eventLitterC", litterAdd / climLen,
-            "fluxes.eventLeafC", leafDelta / climLen,
-            "fluxes.eventWoodC", woodDelta / climLen,
-            "fluxes.eventFineRootC", fineDelta / climLen,
-            "fluxes.eventCoarseRootC", coarseDelta / climLen,
-            "fluxes.eventSoilOrgN", soilNAdd / climLen,
-            "fluxes.eventLitterN", litterNAdd / climLen,
-            "fluxes.eventOutputC", outputC / climLen,
-            "fluxes.eventOutputN", outputN / climLen);
+            "eventSoilC", soilAdd,
+            "eventLitterC", litterAdd,
+            "eventLeafC", leafDelta,
+            "eventWoodC", woodDelta,
+            "eventFineRootC", fineDelta,
+            "eventCoarseRootC", coarseDelta,
+            "eventSoilOrgN", soilNAdd,
+            "eventLitterN", litterNAdd,
+            "eventOutputC", outputC,
+            "eventOutputN", outputN);
         // clang-format on
       } break;
       case TILLAGE: {
@@ -646,12 +675,12 @@ void processEvents(void) {
 
         // clang-format off
         writeEventOut(gEvent, 6,
-          "fluxes.eventLitterC", ctx.litterPool ? orgC / climLen : 0.0,
-          "fluxes.eventSoilC", ctx.litterPool ? 0.0 : orgC / climLen,
-          "fluxes.eventMinN", minN / climLen,
-          "fluxes.eventLitterN", orgN / climLen,
-          "fluxes.eventInputC", orgC / climLen,
-          "fluxes.eventInputN", (orgN + minN) / climLen);
+          "eventLitterC", ctx.litterPool ? orgC : 0.0,
+          "eventSoilC", ctx.litterPool ? 0.0 : orgC,
+          "eventMinN", minN,
+          "eventLitterN", orgN,
+          "eventInputC", orgC,
+          "eventInputN", (orgN + minN));
         // clang-format on
       } break;
       case LEAFON: {
@@ -666,7 +695,7 @@ void processEvents(void) {
 
         // Nitrogen is handled implicitly by relative CN ratios. Missing N
         // from low-N wood to higher-N leaves is accounted for in
-        // calcNFixationAndUptakeFluxes() via calcPlantNDemand()
+        // calcNFixationAndUptakeFluxes() via calcPlantNDemandFlux()
 
         // Unlike planting, this is NOT a system input, so no adjustments to
         // eventInputC or eventInputN
@@ -692,11 +721,17 @@ void processEvents(void) {
 
         // clang-format off
         writeEventOut(gEvent, 3,
-          "fluxes.eventLeafOffLitter", leafOff / climLen,
-          "fluxes.eventLeafOffNResorption", leafNResorption / climLen,
-          "fluxes.eventLitterN", litterNAdd / climLen);
+          "eventLeafOffLitter", leafOff,
+          "eventLeafOffNResorption", leafNResorption,
+          "eventLitterN", litterNAdd);
         // clang-format on
       } break;
+      case PLANTDEATH:
+        // There should be no way to get here, but covering our bases...
+        logWarning("PLANTDEATH event found for year %d day %d, but not "
+                   "implemented as an input event; ignoring\n",
+                   gEvent->year, gEvent->day);
+        break;
       default:
         logError("Unknown event type (%d) in processEvents()\n", gEvent->type);
         exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
@@ -827,6 +862,18 @@ void printEvent(EventNode *oneEvent) {
              hParams->fractionRemovedAbove, hParams->fractionRemovedBelow,
              hParams->fractionTransferredAbove,
              hParams->fractionTransferredBelow);
+      break;
+    case LEAFON:
+      printf("LEAFON on %d %d, ", year, day);
+      // No real params for leafon
+      break;
+    case LEAFOFF:
+      printf("LEAFOFF on %d %d, ", year, day);
+      // No real params for leafoff
+      break;
+    case PLANTDEATH:
+      printf("PLANTDEATH on %d %d, ", year, day);
+      // No real params for plantdeath
       break;
     default:
       printf("ERROR printing oneEvent: unknown type %d\n", oneEvent->type);

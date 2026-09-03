@@ -344,7 +344,7 @@ typedef struct Parameters {
   // Fraction of mineral N available to be volatilized per day, d^-1
   double nVolatilizationFrac;
 
-  // Fraction of mineral N available to be leached, unitless
+  // Fraction of mineral N available to be leached per day, d^-1
   double nLeachingFrac;
 
   // C:N ratio for leaves, assumed static, g C/g N
@@ -397,6 +397,14 @@ typedef struct Parameters {
 
   // Relative methane production rate in the litter pool, in [0, 1), per day
   double litterMethaneRate;
+
+  // ******
+  // Soil carbon saturation
+  // ******
+
+  // Maximum threshold for stabilizing carbon in soil organic pool as
+  // slow-turnover pool units: g C * m^-2 ground area
+  double soilCSaturation;
 } Params;
 
 #define NUM_PARAMS (sizeof(Params) / sizeof(double))
@@ -451,7 +459,7 @@ typedef struct Environment {
   // (above) and a new pool to track non-nitrogen-affecting changes over time.
   // As this is a delta, it can be negative. Note that the actual "wood carbon"
   // is the sum of these two pools.
-  double plantWoodCStorageDelta;
+  double plantCAccountingDelta;
 } Envi;
 
 // Global var
@@ -575,6 +583,9 @@ typedef struct FluxVars {
   // Plant N stored in a leaf-off event
   double leafOffNResorption;
 
+  // Plant N stored when mean NPP is < 0
+  double reductionNResorption;
+
   // ****************************************
   // Fluxes for event handling
   //  - event fluxes tracked as part of modeling from [4]
@@ -602,6 +613,7 @@ typedef struct FluxVars {
   double eventSoilOrgN;
   // nitrogen added to litter N pool
   double eventLitterN;
+
   // MASS BALANCE HELPERS
   // Total system carbon input, for mass balance checks
   double eventInputC;
@@ -611,6 +623,8 @@ typedef struct FluxVars {
   double eventInputN;
   // Total system nitrogen output, for mass balance checks
   double eventOutputN;
+
+  // LEAF ON/OFF FLUXES
   // Transfer from woodC to leafC from a leaf-on event
   double eventLeafOnCreation;
   // Portion of leaf-on creation C that comes from wood C (the rest comes from
@@ -707,6 +721,8 @@ typedef struct TrackerVars {  // variables to track various things
   // g N * m^-2 N taken up by plants from soil mineral N pool
   double nUptake;
 
+  // This is mostly for debugging
+  double meanNPP;
 } Trackers;
 
 // Global var
@@ -729,5 +745,14 @@ typedef struct PhenologyTrackersStruct {
 
 // Global var
 extern PhenologyTrackers phenologyTrackers;
+
+// Global var
+typedef struct PlantSurvivalStruct {
+  int isAlive;
+} PlantSurvivalTracker;
+
+extern PlantSurvivalTracker plantSurvivalTracker;
+
+double getTotalWoodC(void);
 
 #endif  // SIPNET_STATE_H

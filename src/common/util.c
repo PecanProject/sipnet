@@ -73,3 +73,6 @@ double calcRatio(const double num, const double den) {
   const double effectiveDen = den < TINY ? TINY : den;
   return num / effectiveDen;
 }
+
+// For global linkage
+extern inline double unitClip(double preClip);

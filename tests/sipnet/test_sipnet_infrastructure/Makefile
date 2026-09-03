@@ -8,7 +8,7 @@ LDFLAGS=-L$(ROOT_DIR)/libs
 LDLIBS=-lsipnet -lsipnet_common -lm
 
 # List test files in this directory here
-TEST_CFILES=testParamInput.c testClimInput.c testOutputHeader.c
+TEST_CFILES=testParamInput.c testClimInput.c testOutputHeader.c testDebugLogFiles.c
 
 # The rest is boilerplate, likely copyable as is to a new test directory
 TEST_OBJ_FILES=$(TEST_CFILES:%.c=%.o)
@@ -41,5 +41,7 @@ $(RUN_EXECUTABLES):
 
 clean:
 	rm -f $(TEST_OBJ_FILES) $(TEST_EXECUTABLES) events.in events.out format_check.out
+	rm -rf ../../../tests/smoke/russell_1/debug_logs
+	rm -f ../../../tests/smoke/russell_1/debug_log_test.log
 
 .PHONY: all tests clean run $(RUN_EXECUTABLES)

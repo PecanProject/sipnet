@@ -24,13 +24,14 @@ When the same option is specified in both places, **command-line arguments take 
 
 ### Input/Output Options
 
-| Option             | Short | Argument   | Default     | Description                                                                                |
-|--------------------|-------|------------|-------------|--------------------------------------------------------------------------------------------|
-| `--input-file`     | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                           |
-| `--file-prefix`    | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)  |
-| `--events-prefix`  |  `-e` | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)        |
-| `--restart-in`     |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                   |
-| `--restart-out`    |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                   |
+| Option            | Short | Argument   | Default     | Description                                                                                 |
+|-------------------|-------|------------|-------------|---------------------------------------------------------------------------------------------|
+| `--input-file`    | `-i`  | `<name>`   | `sipnet.in` | Name of input configuration file                                                            |
+| `--file-prefix`   | `-f`  | `<name>`   | `sipnet`    | Prefix for climate and parameter input files (looks for `<name>.clim` and `<name>.param`)   |
+| `--events-prefix` | `-e`  | `<name>`   | `events`    | Prefix for events input and output files (SIPNET uses `<name>.in` and `<name>.out`)         |
+| `--debug-log`     |       | `<prefix>` | unset       | Write debug logs to `<prefix>_envi.log`, `<prefix>_fluxes.log`, and `<prefix>_trackers.log` |
+| `--restart-in`    |       | `<path>`   | unset       | Read a restart checkpoint (schema `1.0`)                                                    |
+| `--restart-out`   |       | `<path>`   | unset       | Write a restart checkpoint at end of run                                                    |
 
 ### Model Feature Flags
 
@@ -48,6 +49,7 @@ These flags enable or disable optional model processes. Prepend `no-` to the fla
 | `--snow`           | ON (1)  | Track snowpack separately; if disabled, all precipitation is treated as liquid |
 | `--soil-phenol`    | OFF (0) | Use soil temperature (instead of growing degree days) to determine leaf growth |
 | `--water-hresp`    | ON (1)  | Allow soil moisture to affect heterotrophic respiration rates                  |
+| `--carbon-saturation`| OFF (0) | Enable soil carbon saturation behavior to constrain carbon stored in soil    |
 
 #### Model Flag Restrictions
 
@@ -56,6 +58,7 @@ The following flag constraints are enforced:
 - `--soil-phenol` and `--gdd` cannot both be enabled
 - `--anaerobic` requires `--water-hresp`
 - `--nitrogen-cycle` requires both `--litter-pool` and `--anaerobic`
+- `--carbon-saturation` requires `--litter-pool`
 
 ### Output Flags
 
@@ -102,29 +105,31 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 
 #### Input/Output Keys
 
-| Key               | Value Type | Description                                                               |
-| ----------------- | ---------- | ------------------------------------------------------------------------- |
-| `INPUT_FILE`      | string     | Name of configuration file to read                                        |
-| `FILE_PREFIX`     | string     | Prefix for climate and parameter input files                                |
-| `PARAM_FILE`      | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`) |
-| `CLIM_FILE`       | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)           |
-| `OUT_FILE`        | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)       |
-| `OUT_CONFIG_FILE` | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)    |
-| `EVENTS_PREFIX`   | string     | Prefix used to derive events input and output filenames                     |
-| `RESTART_IN`      | string     | Path to checkpoint to resume from                                         |
-| `RESTART_OUT`     | string     | Path to checkpoint to write at end of run                                 |
+| Key                | Value Type | Description                                                                                                       |
+|--------------------|------------|-------------------------------------------------------------------------------------------------------------------|
+| `INPUT_FILE`       | string     | Name of configuration file to read                                                                                |
+| `FILE_PREFIX`      | string     | Prefix for climate and parameter input files                                                                      |
+| `PARAM_FILE`       | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`)                                       |
+| `CLIM_FILE`        | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)                                                 |
+| `OUT_FILE`         | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)                                             |
+| `OUT_CONFIG_FILE`  | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)                                          |
+| `EVENTS_PREFIX`    | string     | Prefix used to derive events input and output filenames                                                           |
+| `RESTART_IN`       | string     | Path to checkpoint to resume from                                                                                 |
+| `RESTART_OUT`      | string     | Path to checkpoint to write at end of run                                                                         |
+| `DEBUG_LOG_PREFIX` | string     | Prefix for debug log files (optional; writes `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
 #### Model Feature Keys
 
 | Key              | Value (1/0) | Description                               |
 | ---------------- | ----------- | ----------------------------------------- |
+| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
+| `CARBON_SATURATION` | 0 or 1   | Enable soil carbon saturating behavior    |
 | `EVENTS`         | 0 or 1      | Enable/disable event handling             |
 | `GDD`            | 0 or 1      | Use growing degree days for leaf growth   |
 | `GROWTH_RESP`    | 0 or 1      | Explicitly model growth respiration       |
 | `LEAF_WATER`     | 0 or 1      | Track separate leaf water pool            |
 | `LITTER_POOL`    | 0 or 1      | Enable separate litter pool               |
 | `NITROGEN_CYCLE` | 0 or 1      | Enable nitrogen cycle modeling            |
-| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
 | `SNOW`           | 0 or 1      | Track snowpack                            |
 | `SOIL_PHENOL`    | 0 or 1      | Use soil temperature for phenology        |
 | `WATER_HRESP`    | 0 or 1      | Allow soil moisture to affect respiration |
@@ -315,6 +320,16 @@ PARAM_FILE my_site.param
 CLIM_FILE my_site.clim
 ...
 ```
+
+### Debug Log Files
+
+**Filename pattern**: `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log` (if `--debug-log <prefix>` is provided)
+
+These files contain one row per time step. Each row starts with `year`, `day`, and `time`.
+
+- `<prefix>_envi.log` contains one column for each field in the global `envi` struct
+- `<prefix>_fluxes.log` contains one column for each field in the global `fluxes` struct
+- `<prefix>_trackers.log` contains one column for each field in `trackers` (prefixed `t.`) and `phenologyTrackers` (prefixed `pt.`)
 
 ## Input Files Reference
 

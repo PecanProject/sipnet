@@ -209,13 +209,14 @@ Thus, command-line arguments override settings in the configuration file, and co
 
 ### Input / Output Options
 
-| Option          | Default   | Description                                        |
-| --------------- | --------- | -------------------------------------------------- |
-| `input-file`    | sipnet.in | Name of input config file                          |
-| `file-prefix`   | sipnet    | Prefix of climate and parameter files (alias: `file-name` for backwards compatibility) |
-| `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`) |
-| `restart-in`    | unset     | Path to restart checkpoint to load                 |
-| `restart-out`   | unset     | Path to restart checkpoint to write                |
+| Option          | Default   | Description                                                                                      |
+|-----------------|-----------|--------------------------------------------------------------------------------------------------|
+| `input-file`    | sipnet.in | Name of input config file                                                                        |
+| `file-prefix`   | sipnet    | Prefix of climate and parameter files (alias: `file-name` for backwards compatibility)           |
+| `events-prefix` | events    | Prefix for events input/output files (`<name>.in`, `<name>.out`)                                 |
+| `restart-in`    | unset     | Path to restart checkpoint to load                                                               |
+| `restart-out`   | unset     | Path to restart checkpoint to write                                                              |
+| `debug-log`     | unset     | Prefix for debug log files (`<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
 ### Output Flags
 
@@ -242,11 +243,13 @@ Thus, command-line arguments override settings in the configuration file, and co
 | `snow`           | on      | Keep track of snowpack, rather than assuming all precipitation is liquid                |
 | `soil-phenol`    | off     | Use soil temperature to determine leaf growth                                           |
 | `water-hresp`    | on      | Whether soil moisture affects heterotrophic respiration                                 |
+| `carbon-saturation`| off   | Enable soil carbon saturation behavior to constrain carbon stored in soil               |
 
 Note the following restrictions on these options:
  - `soil-phenol` and `gdd` may not both be turned on
  - `anaerobic` requires `water-hresp`
  - 'nitrogen-cycle' requires both 'litter-pool' and 'anaerobic'
+ - `carbon-saturation` requires `litter-pool`
 
 ### Command Line Arguments
 

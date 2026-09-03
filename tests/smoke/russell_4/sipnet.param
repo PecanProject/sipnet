@@ -17,7 +17,7 @@ attenuation 0.599056349736876
 baseVegResp 0.0329220943439083
 baseFolRespFrac 0.0322740185147172
 baseSoilResp 0.06
-baseFineRootResp -0.00115163065955668
+baseFineRootResp 0.006
 baseCoarseRootResp 0.006
 vegRespQ10 1.48545154678972
 fineRootQ10 4.80341959232274
@@ -58,7 +58,7 @@ cFracLeaf 0.45136783760037
 mineralNInit 1.0
 soilOrgNInit 135.0
 litterOrgNInit 14.0
-nVolatilizationFrac 0.1
+nVolatilizationFrac 0.05
 nLeachingFrac 0.25
 leafCN 20.0
 woodCN 100.0
@@ -66,3 +66,4 @@ fineRootCN 40.0
 kCN 80.0
 waterDrainFrac 1.0
 leafOnReallocFrac 0.2
+soilCSaturation 1.0
