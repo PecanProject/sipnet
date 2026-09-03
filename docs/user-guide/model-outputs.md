@@ -46,16 +46,18 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 | 33 |                             | nUptake             | Nitrogen demand met by uptake from soil                                    | g N m$^{-2}$  |
 | 34 |                             | ch4                 | Methane production                                                         | g C m$^{-2}$  |
 | 35 |                             | nppStorage          | Carbon accounting / storage term tracked separately for mass balance; included in `plantWoodC` | g C m$^{-2}$  |
+| 36 | $LAI$                       | lai                 | Leaf area index (`plantLeafC / leafCSpWt`)                                 | m$^2$ m$^{-2}$ |
 
 [^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only, and it can exceed 1 when `flooding` is enabled.
 Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not this average), and clip that ratio to [0,1] where those dependency functions are defined.
 
-An example output file can be found in [`tests/smoke/niwot/sipnet.out`](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/niwot/sipnet.out).
+An example output file can be found in [tests/smoke/russell_1/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/russell_1/sipnet.out).
 
 ```
-year day  time plantWoodC plantLeafC woodCreation     soil coarseRootC fineRootC   litter  soilWater soilWetnessFrac     snow      npp      nee   cumNEE      gpp rAboveground    rSoil    rRoot       ra       rh     rtot evapotranspiration fluxestranspiration     minN  soilOrgN    litterN  plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  nppStorage
-1998 305  0.00    5759.61    1133.88         0.00 16000.06     1919.91   1919.79     0.00      5.997           0.500     0.00   -0.324    0.742    0.742    0.000        0.164    0.578    0.159    0.324    0.419    0.742         0.00302126              0.0000   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -0.3236
-1998 305  7.00    5759.24    1133.71        -0.01 16000.08     1919.79   1919.48     0.00      5.995           0.500     0.00   -0.301    0.967    1.710    0.221        0.271    0.917    0.251    0.522    0.666    1.188         0.00240544              0.0022   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -0.5976
+year day  time plantWoodC plantLeafC woodCreation     soil coarseRootC fineRootC   litter  soilWater soilWetnessFrac     snow      npp      nee   cumNEE      gpp rAboveground    rSoil    rRoot       ra       rh     rtot evapotranspiration fluxestranspiration     minN  soilOrgN    litterN  plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  nppStorage        lai
+1998 305  0.00    5759.61    1133.88         0.00 16000.06     1919.91   1919.79     0.00      5.997           0.500     0.00   -0.324    0.742    0.742    0.000        0.164    0.578    0.159    0.324    0.419    0.742         0.00302126              0.0000   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -0.3236     4.1996
+1998 305  7.00    5759.24    1133.71        -0.01 16000.08     1919.79   1919.48     0.00      5.995           0.500     0.00   -0.301    0.967    1.710    0.221        0.271    0.917    0.251    0.522    0.666    1.188         0.00240544              0.0022   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -0.5976     4.1989
+1998 305 17.00    5758.50    1133.46        -0.01 16000.15     1919.60   1919.03     0.00      5.988           0.499     0.00   -0.673    1.558    3.267    0.000        0.338    1.219    0.335    0.673    0.884    1.558         0.00662149              0.0000   0.0000    0.0000     0.0000         0.0000  0.000000    0.0000     0.0000   0.0000   0.0000     -1.1978     4.1980
 ```
 
 ## Events output
