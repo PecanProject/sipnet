@@ -442,7 +442,7 @@ void outputHeader(FILE *out) {
   fprintf(out,
           "fluxestranspiration     minN  soilOrgN    litterN  "
           "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
-          "nppStorage\n");
+          "nppStorage  bcdeltaC  bcdeltaN  bcdeltaW\n");
 }
 
 /*!
@@ -471,7 +471,9 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
           trackers.nLeaching, trackers.nFixation, trackers.nUptake,
           trackers.methane);
-  fprintf(out, "%12.4f\n", envi.plantCAccountingDelta);
+  fprintf(out, "%12.4f %9.5f %9.5f %9.5f\n", envi.plantCAccountingDelta,
+          balanceTracker.deltaC, balanceTracker.deltaN,
+          balanceTracker.deltaWater);
 }
 
 // de-allocate space used for climate linked list
