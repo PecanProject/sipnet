@@ -319,6 +319,83 @@ int testRootFluxesNegativeNPP(void) {
   return status;
 }
 
+int testLeafOffAndEventDeficits(void) {
+  int status = 0;
+  logTest("Running testLeafOffAndEventDeficits\n");
+
+  // Test 1: Phenology leaf-off litter causes leaf deficit
+  resetContext();
+  resetFluxVars();
+  envi.plantLeafC = 1.0;
+  envi.plantWoodC = 10.0;
+  climate->length = 0.125;
+
+  fluxes.leafCreation = -10.0;
+  fluxes.woodCreation = 0.0;
+  fluxes.leafLitter = 16.0;  // turnover + phenology leaf-off
+
+  // Initial total creation = -10.0
+  // leafDeficit = 1.0/0.125 + (-10.0) - 16.0 = 8.0 - 10.0 - 16.0 = -18.0 < 0
+  // woodCreation += -18.0 => -18.0
+  // leafCreation -= -18.0 => +8.0
+  checkCarbonLimitations();
+
+  status |= checkFlux(fluxes.leafCreation, 8.0, "leafCreation (phenology leaf-off deficit)");
+  status |= checkFlux(fluxes.woodCreation, -18.0, "woodCreation (phenology leaf-off deficit)");
+  // Verify carbon conservation (sum of creation fluxes unchanged)
+  status |= checkFlux(fluxes.leafCreation + fluxes.woodCreation, -10.0,
+                      "above-ground carbon conservation (phenology leaf-off)");
+
+  // Test 2: Event leaf-off litter causes leaf deficit
+  resetContext();
+  resetFluxVars();
+  envi.plantLeafC = 2.0;
+  envi.plantWoodC = 10.0;
+  climate->length = 0.125;
+
+  fluxes.leafCreation = -10.0;
+  fluxes.woodCreation = 0.0;
+  fluxes.eventLeafOffLitter = 20.0;
+
+  // leafDeficit = 2.0/0.125 + (-10.0) - 20.0 = 16.0 - 10.0 - 20.0 = -14.0 < 0
+  // woodCreation += -14.0 => -14.0
+  // leafCreation -= -14.0 => 4.0
+  checkCarbonLimitations();
+
+  status |= checkFlux(fluxes.leafCreation, 4.0, "leafCreation (event leaf-off deficit)");
+  status |= checkFlux(fluxes.woodCreation, -14.0, "woodCreation (event leaf-off deficit)");
+  status |= checkFlux(fluxes.leafCreation + fluxes.woodCreation, -10.0,
+                      "above-ground carbon conservation (event leaf-off)");
+
+  // Test 3: Below-ground deficit with event root fluxes and leaf-on root allocation
+  resetContext();
+  resetFluxVars();
+  envi.fineRootC = 1.0;
+  envi.coarseRootC = 10.0;
+  climate->length = 0.125;
+
+  fluxes.fineRootCreation = -10.0;
+  fluxes.coarseRootCreation = 5.0;
+  fluxes.fineRootLoss = 0.0;
+  fluxes.coarseRootLoss = 0.0;
+  fluxes.leafOnCreation = 4.0;
+  fluxes.leafOnCreationFromWood = 1.0;
+  // leafOnFromRoot = 4.0 - 1.0 = 3.0
+
+  // fineRootDeficit = 1.0/0.125 + (-10.0) - 0.0 = -2.0 < 0
+  // coarseRootDeficit = 10.0/0.125 + 5.0 - 0.0 - 3.0 = 82.0 > 0
+  // coarseRootCreation += -2.0 => 3.0
+  // fineRootCreation -= -2.0 => -8.0
+  checkCarbonLimitations();
+
+  status |= checkFlux(fluxes.fineRootCreation, -8.0, "fineRootCreation (root event/leaf-on deficit)");
+  status |= checkFlux(fluxes.coarseRootCreation, 3.0, "coarseRootCreation (root event/leaf-on deficit)");
+  status |= checkFlux(fluxes.fineRootCreation + fluxes.coarseRootCreation, -5.0,
+                      "below-ground carbon conservation");
+
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -330,6 +407,7 @@ int run(void) {
   status |= testWoodAndLeafFluxesWithAccountingDelta();
   status |= testRootFluxesPositiveNPP();
   status |= testRootFluxesNegativeNPP();
+  status |= testLeafOffAndEventDeficits();
 
   return status;
 }
