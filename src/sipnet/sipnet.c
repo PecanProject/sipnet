@@ -1788,6 +1788,12 @@ void updatePoolsAndBalance() {
     updateNitrogenPools();
   }
 
+  // Complete harvest uses end-of-step pools, after growth, losses and N uptake.
+  if (updatePoolsForFullHarvest()) {
+    plantSurvivalTracker.isAlive = 0;
+    resetMeanTracker(meanNPP, 0.0);
+  }
+
   // Calc total C and N after pool updates
   updateBalanceTrackerPostUpdate();
 

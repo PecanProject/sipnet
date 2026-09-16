@@ -152,11 +152,13 @@ static void checkNegativeCreation(void) {
   double len = climate->length;
   // Above ground
   // If leafCreation is too negative, we need to deduct from wood instead
-  // Use only the continuous turnover term to match previous logic - but see
-  // SIPNET issue #372.
-  double leafLitterTurnover = envi.plantLeafC * params.leafTurnoverRate;
+  // Event leaf-off reserves beginning-state leaves before ordinary losses.
+  // Do not depend on new growth: nitrogen limitation can reduce it later.
+  double availableLeafRate =
+      fmax(0.0, envi.plantLeafC / len - fluxes.eventLeafOffLitter);
+  fluxes.leafLitter = fmin(fluxes.leafLitter, availableLeafRate);
   double leafDeficit =
-      envi.plantLeafC / len + fluxes.leafCreation - leafLitterTurnover;
+      availableLeafRate - fluxes.leafLitter + fluxes.leafCreation;
   if (leafDeficit < 0) {
     fluxes.woodCreation += leafDeficit;
     fluxes.leafCreation -= leafDeficit;

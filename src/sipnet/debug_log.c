@@ -21,7 +21,7 @@ typedef struct DebugField {
 } DebugField;
 
 #define NUM_LOGGED_ENVI_FIELDS 13
-#define NUM_LOGGED_FLUX_FIELDS 56
+#define NUM_LOGGED_FLUX_FIELDS 57
 #define NUM_LOGGED_TRACKER_FIELDS 33
 #define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
 #define NUM_LOGGED_SURVIVAL_FIELDS 1
@@ -101,6 +101,7 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"reductionNResorption", DEBUG_FIELD_DOUBLE, &fluxes.reductionNResorption},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafC", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafC},
   debugFields->fluxDF[ind++] = (DebugField){"eventWoodC", DEBUG_FIELD_DOUBLE, &fluxes.eventWoodC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventAccountingC", DEBUG_FIELD_DOUBLE, &fluxes.eventAccountingC},
   debugFields->fluxDF[ind++] = (DebugField){"eventFineRootC", DEBUG_FIELD_DOUBLE, &fluxes.eventFineRootC},
   debugFields->fluxDF[ind++] = (DebugField){"eventCoarseRootC", DEBUG_FIELD_DOUBLE, &fluxes.eventCoarseRootC},
   debugFields->fluxDF[ind++] = (DebugField){"eventEvap", DEBUG_FIELD_DOUBLE, &fluxes.eventEvap},

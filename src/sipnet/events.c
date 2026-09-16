@@ -12,6 +12,7 @@
 
 #include "events.h"
 
+#include "balance.h"
 #include "limitations.h"
 #include "nitrogen.h"
 
@@ -32,6 +33,13 @@
 // Global event variables - definition
 static EventNode *gEvents = NULL;
 static EventNode *gEvent = NULL;
+// Valid only between processEvents() and the final pool update.
+static EventNode *pendingFullHarvest = NULL;
+
+static int isFullHarvest(const HarvestParams *p) {
+  return p->fractionRemovedAbove + p->fractionTransferredAbove == 1.0 &&
+         p->fractionRemovedBelow + p->fractionTransferredBelow == 1.0;
+}
 
 // events.out handle, only needed here
 static FILE *eventOutFile = NULL;
@@ -56,10 +64,13 @@ EventNode *createEventNode(int year, int day, int eventType,
         exit(EXIT_CODE_INPUT_FILE_ERROR);
       }
       // Validate the params
-      if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
-        logError("invalid harvest newEvent for year %d day %d; above and below "
-                 "must each add to 1 or less",
-                 year, day);
+      if (!isfinite(fracRA) || !isfinite(fracRB) || !isfinite(fracTA) ||
+          !isfinite(fracTB) || fracRA < 0 || fracRB < 0 || fracTA < 0 ||
+          fracTB < 0 || (fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
+        logError(
+            "invalid harvest newEvent for year %d day %d; above and below "
+            "fractions must be finite, non-negative, and each sum to 1 or less",
+            year, day);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
       hParams->fractionRemovedAbove = fracRA;
@@ -432,7 +443,10 @@ void initEvents(const char *eventInFile, const char *eventOutFilePath,
   }
 }
 
-void setupEvents() { gEvent = gEvents; }
+void setupEvents() {
+  gEvent = gEvents;
+  pendingFullHarvest = NULL;
+}
 
 int isFirstEventBefore(int year, int day) {
   if (gEvents == NULL) {
@@ -446,7 +460,144 @@ int isFirstEventBefore(int year, int day) {
   return firstEvent->day < day;
 }
 
+static void calculateHarvestFluxes(EventNode *event) {
+  // Accounting C is signed and N-free. Effective wood C must still be valid.
+  const double pools[] = {envi.plantLeafC,
+                          envi.plantWoodC,
+                          envi.fineRootC,
+                          envi.coarseRootC,
+                          envi.plantWoodC + envi.plantCAccountingDelta,
+                          ctx.nitrogenCycle ? envi.plantStorageN : 0.0};
+  for (unsigned i = 0; i < sizeof(pools) / sizeof(pools[0]); i++) {
+    if (!isfinite(pools[i]) || pools[i] < -EPS) {
+      logError("Invalid plant pool before harvest (year %d day %d): "
+               "pool %u = %.15g\n",
+               climate->year, climate->day, i, pools[i]);
+      exit(EXIT_CODE_INTERNAL_ERROR);
+    }
+  }
+
+  const double climLen = climate->length;
+  // Harvest can both remove biomass and move biomass to the soil/litter
+  // pools
+  const HarvestParams *harvParams = event->eventParams;
+  const double fracRA = harvParams->fractionRemovedAbove;
+  const double fracTA = harvParams->fractionTransferredAbove;
+  const double fracRB = harvParams->fractionRemovedBelow;
+  const double fracTB = harvParams->fractionTransferredBelow;
+  const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
+
+  // Record fraction of total biomass removed and transferred
+  double aboveMass = woodC + envi.plantLeafC;
+  double belowMass = envi.fineRootC + envi.coarseRootC;
+  double totalMass = aboveMass + belowMass;
+  if (totalMass > TINY) {
+    double massRemoved = fracRA * aboveMass + fracRB * belowMass;
+    double massTransferred = fracTA * aboveMass + fracTB * belowMass;
+    eventTrackers.harvestFracRemoved += massRemoved / totalMass;
+    eventTrackers.harvestFracTransferred += massTransferred / totalMass;
+  }
+
+  // Litter increase
+  double litterAdd = fracTA * (envi.plantLeafC + woodC);
+  double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
+
+  // Pool reductions, counting both mass moved to litter and removed by
+  // the harvest itself. Above-ground changes:
+  const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
+  const double woodDelta = -envi.plantWoodC * (fracRA + fracTA);
+  const double accountingDelta =
+      -envi.plantCAccountingDelta * (fracRA + fracTA);
+  // Below-ground changes:
+  const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
+  const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
+
+  // Pool updates:
+  if (!ctx.litterPool) {
+    // send it all to the soil
+    soilAdd += litterAdd;
+    litterAdd = 0.0;
+  }
+  fluxes.eventLitterC += litterAdd / climLen;
+  fluxes.eventSoilC += soilAdd / climLen;
+  fluxes.eventLeafC += leafDelta / climLen;
+  fluxes.eventWoodC += woodDelta / climLen;
+  fluxes.eventAccountingC += accountingDelta / climLen;
+  fluxes.eventFineRootC += fineDelta / climLen;
+  fluxes.eventCoarseRootC += coarseDelta / climLen;
+
+  // No need to allocate to biomass N pools, we don't track that N
+  // explicitly. We do need to handle soil and litter N, though.
+  // Note: ctx.nitrogenCycle implies ctx.litterPool
+  // Litter N increase
+  double litterNAdd = 0.0;
+  double soilNAdd = 0.0;
+  if (ctx.nitrogenCycle) {
+    const double totalAbove =
+        (envi.plantLeafC / params.leafCN) + (envi.plantWoodC / params.woodCN);
+    const double totalBelow = (envi.fineRootC / params.fineRootCN) +
+                              (envi.coarseRootC / params.woodCN);
+    litterNAdd = fracTA * totalAbove;
+    if (isFullHarvest(harvParams))
+      litterNAdd += envi.plantStorageN;
+    soilNAdd = fracTB * totalBelow;
+    fluxes.eventSoilOrgN += soilNAdd / climLen;
+    fluxes.eventLitterN += litterNAdd / climLen;
+  }
+
+  // MASS BALANCE: removed fractions are system outputs
+  const double outputC = ((woodC + envi.plantLeafC) * fracRA +
+                          (envi.fineRootC + envi.coarseRootC) * fracRB);
+  double outputN = 0.0;
+  fluxes.eventOutputC += outputC / climLen;
+  if (ctx.nitrogenCycle) {
+    // just plantWoodC here, not woodC
+    outputN =
+        (envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN) *
+            fracRA +
+        (envi.fineRootC / params.fineRootCN +
+         envi.coarseRootC / params.woodCN) *
+            fracRB;
+    fluxes.eventOutputN += outputN / climLen;
+  }
+  // clang-format off
+  writeEventOut(
+      event, 11,
+      "eventSoilC", soilAdd,
+      "eventLitterC", litterAdd,
+      "eventLeafC", leafDelta,
+      "eventWoodC", woodDelta,
+      "eventAccountingC", accountingDelta,
+      "eventFineRootC", fineDelta,
+      "eventCoarseRootC", coarseDelta,
+      "eventSoilOrgN", soilNAdd,
+      "eventLitterN", litterNAdd,
+      "eventOutputC", outputC,
+      "eventOutputN", outputN);
+  // clang-format on
+}
+
 void processEvents(void) {
+  pendingFullHarvest = NULL;
+  // Reject ambiguous cohort operations before applying any of today's events.
+  int harvests = 0, plantings = 0, fullHarvests = 0;
+  for (EventNode *e = gEvent;
+       e && e->year == climate->year && e->day == climate->day;
+       e = e->nextEvent) {
+    if (e->type == HARVEST) {
+      harvests++;
+      fullHarvests += isFullHarvest(e->eventParams);
+    }
+    plantings += e->type == PLANTING;
+  }
+  if (fullHarvests && (harvests > 1 || plantings)) {
+    logError(
+        "Complete harvest cannot share a timestep with planting or another "
+        "harvest (year %d day %d)\n",
+        climate->year, climate->day);
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
+  }
+
   // Event fluxes have all been reset to zero at the start of the time step,
   // so we can just add to them as needed
 
@@ -541,97 +692,11 @@ void processEvents(void) {
         // clang-format on
       } break;
       case HARVEST: {
-        // Harvest can both remove biomass and move biomass to the soil/litter
-        // pools
-        const HarvestParams *harvParams = gEvent->eventParams;
-        const double fracRA = harvParams->fractionRemovedAbove;
-        const double fracTA = harvParams->fractionTransferredAbove;
-        const double fracRB = harvParams->fractionRemovedBelow;
-        const double fracTB = harvParams->fractionTransferredBelow;
-        const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
-
-        // Record fraction of total biomass removed and transferred
-        double aboveMass = woodC + envi.plantLeafC;
-        double belowMass = envi.fineRootC + envi.coarseRootC;
-        double totalMass = aboveMass + belowMass;
-        if (totalMass > TINY) {
-          double massRemoved = fracRA * aboveMass + fracRB * belowMass;
-          double massTransferred = fracTA * aboveMass + fracTB * belowMass;
-          eventTrackers.harvestFracRemoved += massRemoved / totalMass;
-          eventTrackers.harvestFracTransferred += massTransferred / totalMass;
+        if (isFullHarvest(gEvent->eventParams)) {
+          pendingFullHarvest = gEvent;
+        } else {
+          calculateHarvestFluxes(gEvent);
         }
-
-        // Litter increase
-        double litterAdd = fracTA * (envi.plantLeafC + woodC);
-        double soilAdd = fracTB * (envi.fineRootC + envi.coarseRootC);
-
-        // Pool reductions, counting both mass moved to litter and removed by
-        // the harvest itself. Above-ground changes:
-        const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
-        const double woodDelta = -woodC * (fracRA + fracTA);
-        // Below-ground changes:
-        const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
-        const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
-
-        // Pool updates:
-        if (!ctx.litterPool) {
-          // send it all to the soil
-          soilAdd += litterAdd;
-          litterAdd = 0.0;
-        }
-        fluxes.eventLitterC += litterAdd / climLen;
-        fluxes.eventSoilC += soilAdd / climLen;
-        fluxes.eventLeafC += leafDelta / climLen;
-        fluxes.eventWoodC += woodDelta / climLen;
-        fluxes.eventFineRootC += fineDelta / climLen;
-        fluxes.eventCoarseRootC += coarseDelta / climLen;
-
-        // No need to allocate to biomass N pools, we don't track that N
-        // explicitly. We do need to handle soil and litter N, though.
-        // Note: ctx.nitrogenCycle implies ctx.litterPool
-        // Litter N increase
-        double litterNAdd = 0.0;
-        double soilNAdd = 0.0;
-        if (ctx.nitrogenCycle) {
-          const double totalAbove = (envi.plantLeafC / params.leafCN) +
-                                    (envi.plantWoodC / params.woodCN);
-          const double totalBelow = (envi.fineRootC / params.fineRootCN) +
-                                    (envi.coarseRootC / params.woodCN);
-          litterNAdd = fracTA * totalAbove;
-          soilNAdd = fracTB * totalBelow;
-          fluxes.eventSoilOrgN += soilNAdd / climLen;
-          fluxes.eventLitterN += litterNAdd / climLen;
-        }
-
-        // MASS BALANCE: removed fractions are system outputs
-        const double outputC = ((woodC + envi.plantLeafC) * fracRA +
-                                (envi.fineRootC + envi.coarseRootC) * fracRB);
-        double outputN = 0.0;
-        fluxes.eventOutputC += outputC / climLen;
-        if (ctx.nitrogenCycle) {
-          // just plantWoodC here, not woodC
-          outputN = (envi.plantWoodC / params.woodCN +
-                     envi.plantLeafC / params.leafCN) *
-                        fracRA +
-                    (envi.fineRootC / params.fineRootCN +
-                     envi.coarseRootC / params.woodCN) *
-                        fracRB;
-          fluxes.eventOutputN += outputN / climLen;
-        }
-        // clang-format off
-        writeEventOut(
-            gEvent, 10,
-            "eventSoilC", soilAdd,
-            "eventLitterC", litterAdd,
-            "eventLeafC", leafDelta,
-            "eventWoodC", woodDelta,
-            "eventFineRootC", fineDelta,
-            "eventCoarseRootC", coarseDelta,
-            "eventSoilOrgN", soilNAdd,
-            "eventLitterN", litterNAdd,
-            "eventOutputC", outputC,
-            "eventOutputN", outputN);
-        // clang-format on
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
@@ -704,7 +769,11 @@ void processEvents(void) {
         // limitation may change the amount
       } break;
       case LEAFOFF: {
-        double leafOff = envi.plantLeafC * params.fracLeafFall;
+        // Multiple leaf-off events share the same beginning-state leaf budget.
+        double remainingLeaf =
+            fmax(0.0, envi.plantLeafC - fluxes.eventLeafOffLitter * climLen);
+        double leafOff =
+            fmin(envi.plantLeafC * params.fracLeafFall, remainingLeaf);
         fluxes.eventLeafOffLitter += leafOff / climLen;
 
         double litterNAdd = 0.0;
@@ -745,6 +814,7 @@ void updatePoolsForEvents(void) {
   // CARBON
   // Harvest and planting events
   envi.plantWoodC += fluxes.eventWoodC * climate->length;
+  envi.plantCAccountingDelta += fluxes.eventAccountingC * climate->length;
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
 
   // Harvest and fertilization events
@@ -789,7 +859,34 @@ void updatePoolsForEvents(void) {
   }
 }
 
+int updatePoolsForFullHarvest(void) {
+  if (!pendingFullHarvest)
+    return 0;
+
+  // Only apply the new harvest transfers; other event fluxes were applied
+  // earlier.
+  const Fluxes before = fluxes;
+  calculateHarvestFluxes(pendingFullHarvest);
+  envi.soilC += (fluxes.eventSoilC - before.eventSoilC) * climate->length;
+  envi.litterC += (fluxes.eventLitterC - before.eventLitterC) * climate->length;
+  if (ctx.nitrogenCycle) {
+    envi.soilOrgN +=
+        (fluxes.eventSoilOrgN - before.eventSoilOrgN) * climate->length;
+    envi.litterN +=
+        (fluxes.eventLitterN - before.eventLitterN) * climate->length;
+  }
+  envi.plantStorageN = 0.0;
+  envi.plantLeafC = 0.0;
+  envi.plantWoodC = 0.0;
+  envi.fineRootC = 0.0;
+  envi.coarseRootC = 0.0;
+  envi.plantCAccountingDelta = 0.0;
+  pendingFullHarvest = NULL;
+  return 1;
+}
+
 void freeEventList(void) {
+  pendingFullHarvest = NULL;
   EventNode *curr, *prev;
 
   curr = gEvents;

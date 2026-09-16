@@ -204,6 +204,11 @@ void processEvents(void);
  */
 void updatePoolsForEvents(void);
 
+/*! Apply a pending complete harvest after ordinary pool updates.
+ * Returns 1 when a complete harvest was applied, otherwise 0.
+ */
+int updatePoolsForFullHarvest(void);
+
 /*!
  * Deallocate space used for events linked list
  */

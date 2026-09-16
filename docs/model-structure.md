@@ -1145,8 +1145,12 @@ Following carbon addition, nitrogen for each pool is computed using the correspo
 A harvest event is specified by its date, the event type "harv", and the fractions of above and belowground carbon that
 is either removed from the system or transferred to litter or soil.
 
-Because a harvest event only specifies the fraction of above and belowground carbon that is removed or transferred,
-assume that the above terms apply to leaf + wood, and below terms apply to fine root + coarse root.
+Aboveground fractions apply to leaf, wood and signed accounting carbon; belowground fractions apply to
+fine and coarse roots. Wood and accounting carbon are reduced separately; accounting carbon carries no nitrogen.
+
+Complete harvest uses end-of-timestep pools, clears plant carbon and mean NPP, and transfers storage N to litter.
+Partial harvest uses beginning-of-timestep pools. See [harvest inputs](user-guide/model-inputs.md#harvest)
+for fraction requirements and event restrictions.
 
 The removed fraction is calculated as follows:
 
@@ -1230,6 +1234,11 @@ from the leaf carbon pool to the litter pool (or soil pool, if the litter pool i
 nitrogen (calculated from the leaf C:N ratio) follows that carbon, apart from the fraction retained by the plant
 (specified by the `leafNResorptionFrac` parameter), which is resorbed to the plant nitrogen storage pool before the
 litter leaves the plant.
+
+Repeated leaf-off events share the beginning-of-timestep leaf pool. Ordinary leaf turnover
+is limited to leaves remaining after leaf-off; negative leaf growth beyond that remainder
+is charged to wood. This budget does not rely on new growth, which may subsequently be
+reduced by nitrogen limitation.
 
 **Event parameters:**
 

@@ -173,19 +173,28 @@ Specifically:
 
 ### Harvest
 
-| parameter                                                  |  col  | req?  | description           |
-| ---------------------------------------------------------- | :---: | :---: | --------------------- |
-| fraction of aboveground biomass removed                    |   5   |   Y   |                       |
-| fraction of belowground biomass removed                    |   6   |   N   | default = 0           |
-| fraction of aboveground biomass transferred to litter pool |   7   |   N   | default = 1 - removed |
-| fraction of belowground biomass transferred to litter pool |   8   |   N   | default = 1 - removed |
+All four fractions are required, finite and non-negative. Aboveground fractions
+must sum to at most 1, and belowground fractions must sum to at most 1.
 
-- model representation:
-  - biomass C and N pools are either removed or added to litter
-   - for annuals or plants terminated, no biomass remains (col 5 + col 7 = 1 and col 6 + col 8 = 1). 
-  - for perennials, some biomass may remain (col 5 + col 7 <= 1 and col 6 + col 8 <= 1; remainder is living).
-   - root biomass is only removed for root crops
- 
+| Parameter | Column | Destination |
+| --- | --- | --- |
+| Aboveground fraction removed | 4 | Export from the system |
+| Belowground fraction removed | 5 | Export from the system |
+| Aboveground fraction transferred | 6 | Litter, or soil when litter is disabled |
+| Belowground fraction transferred | 7 | Soil |
+
+A **complete harvest** requires both fraction sums to equal exactly 1. After the
+timestep's growth, losses and nitrogen updates, it routes all plant carbon using
+these fractions. Storage nitrogen enters litter even when all biomass is
+exported. The plant remains dead until planting supplies new biomass.
+
+Partial harvest uses beginning-of-timestep pools. Complete harvest cannot share
+a timestep with planting or another harvest.
+
+In harvest output, `eventWoodC` reports structural wood changes and
+`eventAccountingC` reports signed, N-free accounting carbon changes: g C/m² in
+`events.out`, or g C/m²/day in the debug flux log.
+
 ### Example of `events.in` file:
 
 ```
@@ -194,7 +203,7 @@ Specifically:
 2022  40  irrig  5 1      # 5cm canopy irrigation on day 40 applied to soil
 2022  40  fert   0 0 10   # fertilized with 10 g / m2 N_min on day 40 of 2022
 2022  50  plant  10 3 2 5 # plant emergence on day 50 with 10/3/2/4 g C / m2, respectively, added to the leaf/wood/fine root/coarse root pools 
-2022  250 harv   0.1      # harvest 10% of aboveground plant biomass on day 250
+2022  250 harv   0.1 0 0 0 # export 10% of aboveground biomass; retain the rest
 ```
 
 ## Run-time Options
