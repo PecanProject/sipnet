@@ -1529,8 +1529,14 @@ void initPhenologyTrackers(void) {
                                                // this year
 }
 
-// Check that woodC and total root C are both positive
+// Check that woodC and total root C are both positive and that there was no
+// terminating harvest
 int hasSufficientBiomass(void) {
+  if (eventTrackers.harvestFracRemoved + eventTrackers.harvestFracTransferred >
+      1.0 - TINY) {
+    return 0;
+  }
+
   double totalWoodC = getTotalWoodC();
   double totalRootC = envi.fineRootC + envi.coarseRootC;
   // We want to check that both plantWoodC AND totalWoodC are positive, as well

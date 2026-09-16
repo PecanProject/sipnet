@@ -568,7 +568,9 @@ void processEvents(void) {
         // Pool reductions, counting both mass moved to litter and removed by
         // the harvest itself. Above-ground changes:
         const double leafDelta = -envi.plantLeafC * (fracRA + fracTA);
-        const double woodDelta = -woodC * (fracRA + fracTA);
+        const double woodDelta = -envi.plantWoodC * (fracRA + fracTA);
+        const double accountingDelta =
+            -envi.plantCAccountingDelta * (fracRA + fracTA);
         // Below-ground changes:
         const double fineDelta = -envi.fineRootC * (fracRB + fracTB);
         const double coarseDelta = -envi.coarseRootC * (fracRB + fracTB);
@@ -583,6 +585,7 @@ void processEvents(void) {
         fluxes.eventSoilC += soilAdd / climLen;
         fluxes.eventLeafC += leafDelta / climLen;
         fluxes.eventWoodC += woodDelta / climLen;
+        fluxes.eventAccountingC += accountingDelta / climLen;
         fluxes.eventFineRootC += fineDelta / climLen;
         fluxes.eventCoarseRootC += coarseDelta / climLen;
 
@@ -620,11 +623,12 @@ void processEvents(void) {
         }
         // clang-format off
         writeEventOut(
-            gEvent, 10,
+            gEvent, 11,
             "eventSoilC", soilAdd,
             "eventLitterC", litterAdd,
             "eventLeafC", leafDelta,
             "eventWoodC", woodDelta,
+            "eventAccountingC", accountingDelta,
             "eventFineRootC", fineDelta,
             "eventCoarseRootC", coarseDelta,
             "eventSoilOrgN", soilNAdd,
@@ -745,6 +749,7 @@ void updatePoolsForEvents(void) {
   // CARBON
   // Harvest and planting events
   envi.plantWoodC += fluxes.eventWoodC * climate->length;
+  envi.plantCAccountingDelta += fluxes.eventAccountingC * climate->length;
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
 
   // Harvest and fertilization events

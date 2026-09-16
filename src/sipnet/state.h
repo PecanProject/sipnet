@@ -595,6 +595,8 @@ typedef struct FluxVars {
   double eventLeafC;
   // plantWoodC addition
   double eventWoodC;
+  // N-free accounting carbon removed by harvest
+  double eventAccountingC;
   // plantFineRootC addition
   double eventFineRootC;
   // plantCoarseRootC addition
