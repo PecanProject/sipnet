@@ -40,6 +40,7 @@ These flags enable or disable optional model processes. Prepend `no-` to the fla
 | Flag               | Default | Description                                                                    |
 |--------------------|---------|--------------------------------------------------------------------------------|
 | `--anaerobic`      | OFF (0) | Enable modeling of methane and anaerobic effect on Rh moisture dependency      |
+| `--flooding`       | OFF (0) | Enable soil moisture to go above water holding capacity                        |
 | `--events`         | ON (1)  | Enable events read from events input file                                      |
 | `--gdd`            | ON (1)  | Use growing degree days to determine when leaves grow                          |
 | `--growth-resp`    | OFF (0) | Explicitly model growth respiration separately from maintenance respiration    |
@@ -93,13 +94,13 @@ SIPNET reads configuration from a file (default: `sipnet.in`). This file uses a 
 
 ### Configuration File Format
 
-Each line in the configuration file contains a key-value pair separated by whitespace:
+Each line in the configuration file uses `KEY = VALUE` syntax; `!` starts a comment line:
 
 ```
-KEY VALUE
+KEY = VALUE
 ```
 
-Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `events`, `EVENTS`, `events` are equivalent).
+Keys are case-insensitive, and hyphens and underscores are ignored, so `INPUT_FILE`, `inputfile`, and `iNPUtFiLE` are equivalent.
 
 ### Configuration File Keys
 
@@ -107,64 +108,61 @@ Keys are case-insensitive and can use hyphens or underscores (e.g., `EVENTS`, `e
 
 | Key                | Value Type | Description                                                                                                       |
 |--------------------|------------|-------------------------------------------------------------------------------------------------------------------|
-| `INPUT_FILE`       | string     | Name of configuration file to read                                                                                |
 | `FILE_PREFIX`      | string     | Prefix for climate and parameter input files                                                                      |
-| `PARAM_FILE`       | string     | Path to model parameters file (optional; defaults to `<FILE_PREFIX>.param`)                                       |
-| `CLIM_FILE`        | string     | Path to climate file (optional; defaults to `<FILE_PREFIX>.clim`)                                                 |
-| `OUT_FILE`         | string     | Path for main output file (optional; defaults to `<FILE_PREFIX>.out`)                                             |
-| `OUT_CONFIG_FILE`  | string     | Path for config dump file (optional; defaults to `<FILE_PREFIX>.config`)                                          |
 | `EVENTS_PREFIX`    | string     | Prefix used to derive events input and output filenames                                                           |
 | `RESTART_IN`       | string     | Path to checkpoint to resume from                                                                                 |
 | `RESTART_OUT`      | string     | Path to checkpoint to write at end of run                                                                         |
 | `DEBUG_LOG_PREFIX` | string     | Prefix for debug log files (optional; writes `<prefix>_envi.log`, `<prefix>_fluxes.log`, `<prefix>_trackers.log`) |
 
+Derived paths including `PARAM_FILE`, `CLIM_FILE`, `OUT_FILE`, and `OUT_CONFIG_FILE` are derived from `FILE_PREFIX` and appear in `--dump-config` as calculated values.
+
 #### Model Feature Keys
 
-| Key              | Value (1/0) | Description                               |
-| ---------------- | ----------- | ----------------------------------------- |
-| `ANAEROBIC`      | 0 or 1      | Enable methane/anaerobic Rh moisture behavior |
-| `CARBON_SATURATION` | 0 or 1   | Enable soil carbon saturating behavior    |
-| `EVENTS`         | 0 or 1      | Enable/disable event handling             |
-| `GDD`            | 0 or 1      | Use growing degree days for leaf growth   |
-| `GROWTH_RESP`    | 0 or 1      | Explicitly model growth respiration       |
-| `LEAF_WATER`     | 0 or 1      | Track separate leaf water pool            |
-| `LITTER_POOL`    | 0 or 1      | Enable separate litter pool               |
-| `NITROGEN_CYCLE` | 0 or 1      | Enable nitrogen cycle modeling            |
-| `SNOW`           | 0 or 1      | Track snowpack                            |
-| `SOIL_PHENOL`    | 0 or 1      | Use soil temperature for phenology        |
-| `WATER_HRESP`    | 0 or 1      | Allow soil moisture to affect respiration |
+| Key                 | Value (1/0) | Description                                                                  |
+|---------------------|-------------|------------------------------------------------------------------------------|
+| `ANAEROBIC`         | 0 or 1      | Enable methane/anaerobic Rh moisture behavior                                |
+| `CARBON_SATURATION` | 0 or 1      | Enable soil carbon saturating behavior                                       |
+| `EVENTS`            | 0 or 1      | Enable/disable event handling                                                |
+| `FLOODING`          | 0 or 1      | Allow soil water to exceed `soilWHC` and drain according to `waterDrainFrac` |
+| `GDD`               | 0 or 1      | Use growing degree days for leaf growth                                      |
+| `GROWTH_RESP`       | 0 or 1      | Explicitly model growth respiration                                          |
+| `LEAF_WATER`        | 0 or 1      | Track separate leaf water pool                                               |
+| `LITTER_POOL`       | 0 or 1      | Enable separate litter pool                                                  |
+| `NITROGEN_CYCLE`    | 0 or 1      | Enable nitrogen cycle modeling                                               |
+| `SNOW`              | 0 or 1      | Track snowpack                                                               |
+| `SOIL_PHENOL`       | 0 or 1      | Use soil temperature for phenology                                           |
+| `WATER_HRESP`       | 0 or 1      | Allow soil moisture to affect respiration                                    |
 
 #### Output Keys
 
-| Key                | Value (1/0) | Description                                |
-| ------------------ | ----------- | ------------------------------------------ |
-| `DO_MAIN_OUTPUT`   | 0 or 1      | Write combined output file                 |
-| `DO_SINGLE_OUTPUTS` | 0 or 1     | Write selected single-output files (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) |
-| `DUMP_CONFIG`      | 0 or 1      | Dump final configuration                   |
-| `PRINT_HEADER`     | 0 or 1      | Include header row in output files         |
-| `QUIET`            | 0 or 1      | Suppress console messages                  |
+| Key                 | Value (1/0) | Description                                                             |
+|---------------------|-------------|-------------------------------------------------------------------------|
+| `DO_MAIN_OUTPUT`    | 0 or 1      | Write combined output file                                              |
+| `DO_SINGLE_OUTPUTS` | 0 or 1      | Write selected single-output files (`NEE`, `NEE_cum`, `GPP`, `GPP_cum`) |
+| `DUMP_CONFIG`       | 0 or 1      | Dump final configuration                                                |
+| `PRINT_HEADER`      | 0 or 1      | Include header row in output files                                      |
+| `QUIET`             | 0 or 1      | Suppress console messages                                               |
 
 ### Example Configuration File
 
 Here's an example `sipnet.in` configuration file:
 
 ```
-# Input files
-FILE_PREFIX my_site
-PARAM_FILE ../inputs/my_site.param
-CLIM_FILE  ../inputs/my_site.clim
+! Input files
+FILE_PREFIX = my_site
 
-# Model features
-EVENTS 1
-GDD 1
-SNOW 1
-NITROGEN_CYCLE 0
+! Model features
+EVENTS = 1
+GDD = 1
+SNOW = 1
+NITROGEN_CYCLE = 0
+FLOODING = 0
 
-# Output
-DO_MAIN_OUTPUT 1
-DO_SINGLE_OUTPUTS 0
-PRINT_HEADER 1
-QUIET 0
+! Output
+DO_MAIN_OUTPUT = 1
+DO_SINGLE_OUTPUTS = 0
+PRINT_HEADER = 1
+QUIET = 0
 ```
 
 ## Restart Checkpoints (MVP)
@@ -272,7 +270,8 @@ The `--dump-config` flag is useful for archiving exactly what settings were used
 diff scenario_a.config scenario_b.config
 ```
 
-This shows exactly which flags and parameters differ between runs.
+This shows the final merged settings for each run, including their source (`DEFAULT`, `INPUT_FILE`, `COMMAND_LINE`,
+or `CALCULATED`).
 
 ## Output Files
 
@@ -312,12 +311,12 @@ Shows the final merged configuration after applying all defaults, config file, a
 Example:
 
 ```
-EVENTS 1
-GDD 1
-GROWTH_RESP 0
-FILE_PREFIX my_site
-PARAM_FILE my_site.param
-CLIM_FILE my_site.clim
+Final config for SIPNET run at 2026-08-28 00:00:00 UTC
+                 Name        Source           Value
+       DO_MAIN_OUTPUT    INPUT_FILE               1
+              EVENTS       DEFAULT               1
+         FILE_PREFIX    INPUT_FILE         my_site
+           CLIM_FILE    CALCULATED    my_site.clim
 ...
 ```
 
@@ -356,11 +355,12 @@ SIPNET will exit with an error if you try to enable mutually exclusive flags:
 
 **Solution**: Choose one flag from each incompatible pair.
 
-### "Growing degree days not calculated for this site"
+### Event Date Does Not Match Climate Data
 
-This warning occurs if `--gdd` is enabled but the climate file lacks necessary temperature data.
+SIPNET exits if an event date appears in `events.in` but there is no climate record for that same year and day.
 
-**Solution**: Ensure your climate file includes both air temperature (`tair`) and soil temperature (`tsoil`) columns.
+**Solution**: Make sure every event date has at least one corresponding row in the climate file, and that `events.in`
+is sorted in ascending year/day order.
 
 ## See Also
 
