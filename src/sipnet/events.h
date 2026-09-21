@@ -209,6 +209,15 @@ void updatePoolsForEvents(void);
  */
 void freeEventList(void);
 
+typedef struct HarvestTrackersStruct {
+  double totalFracRemoved;
+  double totalFracTransferred;
+  double totalFracRemovedAbove;
+  double totalFracRemovedBelow;
+  double totalFracTransferredAbove;
+  double totalFracTransferredBelow;
+} HarvestTrackers;
+
 // Variables to track events with lingering effects
 typedef struct EventTrackerStruct {
   // Tillage effect on Rh; exponentially decays at each time step by a factor
@@ -216,8 +225,7 @@ typedef struct EventTrackerStruct {
   double d_till_mod;
 
   // Fraction removed and transferred from harvest event this time step
-  double harvestFracRemoved;
-  double harvestFracTransferred;
+  HarvestTrackers harvestTrackers;
 } EventTrackers;
 
 extern EventTrackers eventTrackers;

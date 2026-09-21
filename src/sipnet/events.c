@@ -58,7 +58,13 @@ EventNode *createEventNode(int year, int day, int eventType,
       // Validate the params
       if ((fracRA + fracTA > 1) || (fracRB + fracTB > 1)) {
         logError("invalid harvest newEvent for year %d day %d; above and below "
-                 "must each add to 1 or less",
+                 "must each add to 1 or less\n",
+                 year, day);
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+      }
+      if (fracRA < 0.0 || fracRB < 0.0 || fracTA < 0.0 || fracTB < 0.0) {
+        logError("invalid harvest newEvent for year %d day %d; fractions must "
+                 "be non-negative\n",
                  year, day);
         exit(EXIT_CODE_BAD_PARAMETER_VALUE);
       }
@@ -465,8 +471,7 @@ void processEvents(void) {
   }
 
   // Reset harvest tracking
-  eventTrackers.harvestFracRemoved = 0;
-  eventTrackers.harvestFracTransferred = 0;
+  eventTrackers.harvestTrackers = (HarvestTrackers){0};
 
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
     // The events file has been tested on read, so we know this event list
@@ -545,8 +550,8 @@ void processEvents(void) {
         // pools
         const HarvestParams *harvParams = gEvent->eventParams;
         const double fracRA = harvParams->fractionRemovedAbove;
-        const double fracTA = harvParams->fractionTransferredAbove;
         const double fracRB = harvParams->fractionRemovedBelow;
+        const double fracTA = harvParams->fractionTransferredAbove;
         const double fracTB = harvParams->fractionTransferredBelow;
         const double woodC = envi.plantWoodC + envi.plantCAccountingDelta;
 
@@ -554,11 +559,32 @@ void processEvents(void) {
         double aboveMass = woodC + envi.plantLeafC;
         double belowMass = envi.fineRootC + envi.coarseRootC;
         double totalMass = aboveMass + belowMass;
+        HarvestTrackers *ht = &eventTrackers.harvestTrackers;
         if (totalMass > TINY) {
           double massRemoved = fracRA * aboveMass + fracRB * belowMass;
           double massTransferred = fracTA * aboveMass + fracTB * belowMass;
-          eventTrackers.harvestFracRemoved += massRemoved / totalMass;
-          eventTrackers.harvestFracTransferred += massTransferred / totalMass;
+          ht->totalFracRemoved += massRemoved / totalMass;
+          ht->totalFracTransferred += massTransferred / totalMass;
+          ht->totalFracRemovedAbove += fracRA;
+          ht->totalFracRemovedBelow += fracRB;
+          ht->totalFracTransferredAbove += fracTA;
+          ht->totalFracTransferredBelow += fracTB;
+          if (ht->totalFracRemovedAbove + ht->totalFracTransferredAbove >
+                  1.0 + TINY ||
+              ht->totalFracRemovedBelow + ht->totalFracTransferredBelow >
+                  1.0 + TINY) {
+            logError("Harvest event(s) at year %d day %d has total above-ground"
+                     " or below-ground removal + transfer fraction > 1.0"
+                     " (above %.3f, below %.3f)\n",
+                     gEvent->year, gEvent->day,
+                     ht->totalFracRemovedAbove + ht->totalFracTransferredAbove,
+                     ht->totalFracRemovedBelow + ht->totalFracTransferredBelow);
+            exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+          }
+        } else {
+          logWarning("Harvest event at year %d day %d has no biomass to remove "
+                     "or transfer\n",
+                     gEvent->year, gEvent->day);
         }
 
         // Litter increase

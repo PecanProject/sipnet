@@ -1532,7 +1532,9 @@ void initPhenologyTrackers(void) {
 // Check that woodC and total root C are both positive and that there was no
 // terminating harvest
 int hasSufficientBiomass(void) {
-  if (eventTrackers.harvestFracRemoved + eventTrackers.harvestFracTransferred >
+  // If there was a harvest termination event, the answer is no
+  if (eventTrackers.harvestTrackers.totalFracRemoved +
+          eventTrackers.harvestTrackers.totalFracTransferred >
       1.0 - TINY) {
     return 0;
   }
@@ -1712,18 +1714,15 @@ void checkForMortality(void) {
     plantSurvivalTracker.isAlive = 0;
     double totalWoodC = getTotalWoodC();
     double totalRootC = envi.fineRootC + envi.coarseRootC;
-
-    if (eventTrackers.harvestFracRemoved +
-            eventTrackers.harvestFracTransferred >=
-        TINY) {
+    HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+    int harvestOccurred =
+        ht->totalFracRemoved + ht->totalFracTransferred >= TINY;
+    if (harvestOccurred) {
       logInfo("Plant mortality detected after harvest event: total fraction "
-              "removed %.3f total fraction transferred %.3f; woodC %f "
-              "totalWoodC %f coarseRootC %f fineRootC %f year %d day %d "
+              "removed %.3f total fraction transferred %.3f on year %d day %d "
               "time %6.3f; zeroing out biomass pools\n",
-              eventTrackers.harvestFracRemoved,
-              eventTrackers.harvestFracTransferred, envi.plantWoodC, totalWoodC,
-              envi.coarseRootC, envi.fineRootC, climate->year, climate->day,
-              climate->time);
+              ht->totalFracRemoved, ht->totalFracTransferred, climate->year,
+              climate->day, climate->time);
     } else {
       logWarning(
           "Plant mortality detected as wood or total root carbon is zero "
@@ -1738,19 +1737,34 @@ void checkForMortality(void) {
     // multiple processes being modeled, it's believable that there may be a bit
     // of overshoot when a plant dies - for example, a 100% harvest event with
     // any overall loss (respiration, turnover).
-    envi.soilC += totalRootC;
+
+    // Also, if there was a harvest, reduce by the appropriate removal fraction
+    // (For no harvest, these will be 1)
+    double aboveRemovalReduction = (1 - ht->totalFracRemovedAbove);
+    double belowRemovalReduction = (1 - ht->totalFracRemovedBelow);
+
+    envi.soilC += totalRootC * belowRemovalReduction;
+    double aboveC =
+        envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
     if (ctx.litterPool) {
-      envi.litterC +=
-          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+      envi.litterC += aboveC * aboveRemovalReduction;
     } else {
-      envi.soilC +=
-          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+      envi.soilC += aboveC * aboveRemovalReduction;
     }
+    fluxes.eventOutputC += (aboveC * ht->totalFracRemovedAbove +
+                            totalRootC * ht->totalFracRemovedBelow) /
+                           climate->length;
+
     if (ctx.nitrogenCycle) {  // litter pool implied
-      envi.soilOrgN +=
+      double aboveN =
+          envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN;
+      double belowN =
           envi.fineRootC / params.fineRootCN + envi.coarseRootC / params.woodCN;
-      envi.litterN += envi.plantWoodC / params.woodCN +
-                      envi.plantLeafC / params.leafCN + envi.plantStorageN;
+      envi.soilOrgN += belowN * belowRemovalReduction;
+      envi.litterN += aboveN * aboveRemovalReduction + envi.plantStorageN;
+      fluxes.eventOutputN += (aboveN * ht->totalFracRemovedAbove +
+                              belowN * ht->totalFracRemovedBelow) /
+                             climate->length;
     }
 
     // Force pools to zero
@@ -1766,11 +1780,11 @@ void checkForMortality(void) {
     resetMeanTracker(meanNPP, 0.0);
 
     if (ctx.events) {
-      writeComputedEventOut(
-          climate->year, climate->day, eventTypeToString(PLANTDEATH), 4,
-          "harvestFracRemoved", eventTrackers.harvestFracRemoved,
-          "harvestFracTransferred", eventTrackers.harvestFracTransferred,
-          "totalWoodC", totalWoodC, "totalRootC", totalRootC);
+      writeComputedEventOut(climate->year, climate->day,
+                            eventTypeToString(PLANTDEATH), 4,
+                            "harvestFracRemoved", ht->totalFracRemoved,
+                            "harvestFracTransferred", ht->totalFracTransferred,
+                            "totalWoodC", totalWoodC, "totalRootC", totalRootC);
     }
   }
 }
@@ -1797,11 +1811,12 @@ void updatePoolsAndBalance() {
     updateNitrogenPools();
   }
 
+  // Check for obvious plant death (wood and/or roots at zero); also
+  // correct for harvest termination
+  checkForMortality();
+
   // Calc total C and N after pool updates
   updateBalanceTrackerPostUpdate();
-
-  // Check for obvious plant death (wood and/or roots at zero)
-  checkForMortality();
 
   // Verify none of our stocks have gone negative (set any that are to zero).
   ensureNonNegativeStocks();
