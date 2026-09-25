@@ -1349,10 +1349,10 @@ void calculateFluxes(void) {
 void ensureNonNegative(double *var, double minVal, const char *label) {
   if (*var < minVal) {
     if (fabs(*var) > EPS) {  // Don't print the zeros
-      logWarning(
-          "Non-negative stock constraint applied for %s (value %8.5f set "
-          "to zero) year %d day %d time %6.3f\n",
-          label, *var, climate->year, climate->day, climate->time);
+      logError("Non-negative stock constraint applied for %s (value %8.5f set "
+               "to zero) year %d day %d time %6.3f\n",
+               label, *var, climate->year, climate->day, climate->time);
+      exit(EXIT_CODE_INTERNAL_ERROR);
     }
     *var = 0.;
   }
