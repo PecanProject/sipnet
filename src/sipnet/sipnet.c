@@ -791,17 +791,8 @@ void calcWoodAndLeafFluxes(void) {
  * the start or end of the growing season. These transition fluxes are tracked
  * separately from the continuous leaf creation and litter fluxes calculated in
  * calcLeafFluxes().
- *
- * @param[out] leafOnCreation Additional leaf creation flux at leaf-on
- *   (g C/m^2 ground/day)
- * @param[out] leafOnFromWood Carbon transferred from wood to leaves at
- *   leaf-on (g C/m^2 ground/day)
- * @param[out] leafLitter Additional leaf litter flux at leaf-off
- *   (g C/m^2 ground/day)
- * @param[in] plantLeafC Leaf carbon pool size (g C/m^2 ground area)
  */
-void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
-                         double *leafLitter, double plantLeafC) {
+void calcLeafOnOffFluxes(void) {
   // Calc additional fluxes at start/end of growing season
   // Note that these are basically events, and we will track them as such
 
@@ -818,10 +809,10 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
     // we just reached the start of the growing season
     double leafOn = params.leafGrowth / climate->length;
     checkLeafOnLimitation(&leafOn);
-    *leafOnCreation += leafOn;
+    fluxes.leafOnCreation += leafOn;
     double totalSourceC = envi.plantWoodC + envi.coarseRootC;
     if (totalSourceC > TINY) {
-      *leafOnFromWood += leafOn * envi.plantWoodC / totalSourceC;
+      fluxes.leafOnCreationFromWood += leafOn * envi.plantWoodC / totalSourceC;
     }
     phenologyTrackers.didLeafGrowth = 1;
     // This is a computed event - however, the value may get reduced by
@@ -833,8 +824,8 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
   if (!phenologyTrackers.didLeafFall && pastLeafFall()) {
     // we just reached the end of the growing season
     double len = climate->length;
-    double leafOff = (plantLeafC * params.fracLeafFall) / len;
-    *leafLitter += leafOff;
+    double leafOff = (envi.plantLeafC * params.fracLeafFall) / len;
+    fluxes.leafOffLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
     if (leafOff > TINY && ctx.events) {
       writeComputedEventOut(climate->year, climate->day,
@@ -1301,8 +1292,7 @@ void calculateFluxes(void) {
   calcWoodAndLeafFluxes();
 
   // Leaf on/off
-  calcLeafOnOffFluxes(&fluxes.leafOnCreation, &fluxes.leafOnCreationFromWood,
-                      &fluxes.leafLitter, envi.plantLeafC);
+  calcLeafOnOffFluxes();
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
@@ -1478,7 +1468,7 @@ void updateTrackers(double oldSoilWater) {
 
   // If we get another event flux in this function, we should create an
   // updateTrackersForEvents() function in events.c|h
-  trackers.yearlyLitter += fluxes.leafLitter + fluxes.eventLeafOffLitter;
+  trackers.yearlyLitter += getLeafLitterFlux() + fluxes.eventLeafOffLitter;
 
   if (ctx.gdd) {
     trackers.gdd += climate->gdd;
@@ -1616,7 +1606,7 @@ void updateMainPools(void) {
   //     L_L = fluxes.leafLitter
   // Note: we have split leafCreation into two parts
   envi.plantLeafC +=
-      (fluxes.leafCreation + fluxes.leafOnCreation - fluxes.leafLitter) *
+      (fluxes.leafCreation + fluxes.leafOnCreation - getLeafLitterFlux()) *
       climate->length;
 
   // :: from [1], eq (A4), where:
@@ -1657,7 +1647,7 @@ void updatePoolsForSoil(void) {
         ctx.carbonSaturation ? unitClip(envi.soilC / params.soilCSaturation)
                              : 0.0;
     // :: from [2], litter model description
-    envi.litterC += (fluxes.woodLitter + fluxes.leafLitter +
+    envi.litterC += (fluxes.woodLitter + getLeafLitterFlux() +
                      (soilInputs * saturationFraction) - fluxes.litterToSoil -
                      fluxes.rLitter - fluxes.litterMethane) *
                     climate->length;
@@ -1669,12 +1659,12 @@ void updatePoolsForSoil(void) {
     // Normal pool (single pool, no microbes)
     // :: from [1] (and others, TBD), eq (A3), where:
     //     L_w = fluxes.woodLitter
-    //     L_l = fluxes.leafLitter
+    //     L_l = fluxes.leafLitter + fluxes.leafOffLitter
     //     R_h = fluxes.rSoil
     // :: from [3], root terms
     envi.soilC +=
         (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
-         fluxes.leafLitter - fluxes.rSoil - fluxes.soilMethane) *
+         getLeafLitterFlux() - fluxes.rSoil - fluxes.soilMethane) *
         climate->length;
   }
 

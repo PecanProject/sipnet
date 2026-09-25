@@ -81,6 +81,8 @@ struct EventNode {
   event_type_t type;
   int year, day;
   void *eventParams;
+  int numLogParamPairs;
+  char *logLine;
   EventNode *nextEvent;
 };
 
@@ -187,17 +189,30 @@ void setupEvents(void);
 int isFirstEventBefore(int year, int day);
 
 /*!
- * \brief Process events for current location/year/day
+ * \brief Process carbon effects from events for current day
  *
- * For a given year and day (as determined by the global `climate`
- * pointer), process all events listed in the global `events` pointer for the
- * referenced location.
- *
- * For each event, modify flux variables according to the model for that event,
- * and write a row to the configured event output file listing the modified
- * variables and the delta applied.
+ * Process all events for the current day, calculating all carbon
+ * effects. For each event, modify flux variables according to the model for
+ * that event type.
  */
-void processEvents(void);
+void processEventsForCarbon(EventNode *event);
+
+/*!
+ * \brief Process nitrogen effects from events for current day
+ *
+ * Process all events for the current day, calculating all nitrogen
+ * effects. For each event, modify flux variables according to the model for
+ * that event type.
+ *
+ * Carbon and nitrogen effects are calculated separately to allow carbon
+ * limitation checks to be run before any nitrogen calculations are made.
+ */
+void processEventsForNitrogen(EventNode *event);
+
+/*!
+ * \brief Write events to the events output file for the current date
+ */
+void writeAllEvents(void);
 
 /*!
  * Update relevant environment pools after event fluxes have been calculated

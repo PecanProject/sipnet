@@ -70,8 +70,8 @@ static void fullCase(int mode, int accounting, int dark, int limited,
                      const char *harvest, double aboveExport,
                      double belowExport) {
   // A no-harvest run supplies the independently calculated end-of-step pools.
-  logTest("Running full case with mode %d accounting %d dark %d limited %d"
-          " harvest %s aboveExport %.2f belowExport %.2f\n",
+  logTest("Running full case with mode: %d accounting: %d dark: %d limited: %d"
+          " harvest: %s aboveExport: %.2f belowExport: %.2f\n",
           mode, accounting, dark, limited, harvest ? harvest : "none",
           aboveExport, belowExport);
   Envi end = {0};
@@ -152,6 +152,8 @@ static void fullCase(int mode, int accounting, int dark, int limited,
 }
 
 static void partialCase(int accounting, const char *harvest, double fraction) {
+  logTest("Running partial case with accounting: %d harvest: %s fraction: %f\n",
+          accounting, harvest, fraction);
   start(2, harvest);
   envi.plantCAccountingDelta = accounting;
   Envi before = envi;
@@ -172,6 +174,7 @@ static void partialCase(int accounting, const char *harvest, double fraction) {
 }
 
 static void partialTimestepCase(int accounting) {
+  logTest("Running partial timestep case\n");
   start(2, ".1 .2 .3 .4");
   envi.plantCAccountingDelta = accounting;
   updateState();
@@ -219,6 +222,7 @@ static void invalidCase(int which) {
 }
 
 static void coincidentFertilizerCase(void) {
+  logTest("Running coincident fertilizer case\n");
   Envi expected = {0};
   for (int h = 0; h < 2; h++) {
     start(2, h ? "0 0 1 1" : NULL);
@@ -263,6 +267,8 @@ static void sameEnvi(const Envi *a, const Envi *b) {
 #undef E
 }
 static void coincidentEventCase(int type, const char *arguments) {
+  logTest("Running coincident event case with type: %s params: %s\n",
+          eventTypeToString(type), *arguments ? arguments : "<none>");
   Envi end;
   Fluxes ordinary;
   for (int order = 0; order < 3; order++) {
@@ -329,6 +335,7 @@ static void coincidentEventCase(int type, const char *arguments) {
 }
 
 static void restartCase(void) {
+  logTest("Running restart case\n");
   Envi expected;
   for (int resumed = 0; resumed < 2; resumed++) {
     start(2, "0 0 1 1");
@@ -369,13 +376,18 @@ static void restartCase(void) {
 }
 
 static void leafBudgetCases(void) {
-  for (int kind = 0; kind < 4; kind++)
-    for (int dark = 0; dark < 2; dark++)
-      for (int sign = -1; sign <= 1; sign++)
-        for (int account = -1; account <= 1; account++)
-          for (int limited = 0; limited < 2; limited++)
-            for (int resorb = 0; resorb < 3; resorb++)
+  for (int kind = 0; kind < 4; kind++) {
+    for (int dark = 0; dark < 2; dark++) {
+      for (int sign = -1; sign <= 1; sign++) {
+        for (int account = -1; account <= 1; account++) {
+          for (int limited = 0; limited < 2; limited++) {
+            for (int resorb = 0; resorb < 3; resorb++) {
               for (int harvest = 0; harvest < 2; harvest++) {
+                logTest("*** Running leaf budget case with kind: %d dark: %d "
+                        "sign %d"
+                        " account %d limited %d resorb %d harvest %s\n",
+                        kind, dark, sign, account, limited, resorb,
+                        harvest ? "0 0 1 1" : "none");
                 start(2, harvest ? "0 0 1 1" : NULL);
                 envi.plantLeafC = 1;
                 envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100;
@@ -411,7 +423,8 @@ static void leafBudgetCases(void) {
                 double beforeLitterN = envi.litterN;
                 updateState();
                 balanced();
-                double shed = (fluxes.leafLitter + fluxes.eventLeafOffLitter) *
+                double shed = (fluxes.leafLitter + fluxes.leafOffLitter +
+                               fluxes.eventLeafOffLitter) *
                               climate->length;
                 if (shed < -1e-10 || shed > 1 + 1e-10 ||
                     envi.plantLeafC < -1e-10) {
@@ -419,7 +432,9 @@ static void leafBudgetCases(void) {
                           envi.plantLeafC);
                   failures++;
                 }
-                double eventExpected = kind == 3 ? 0 : kind == 1 ? .25 : 1;
+
+                double expEventLOL[] = {1, .25, 1, 0};
+                double eventExpected = expEventLOL[kind];
                 near(fluxes.eventLeafOffLitter * climate->length, eventExpected,
                      "event leaves conserved");
                 if (!harvest) {
@@ -438,7 +453,18 @@ static void leafBudgetCases(void) {
                        "no regrowth after complete harvest");
                 }
                 finish();
-              }
+              }  // harvest loop
+            }  // resorb loop
+
+            logTest("Complete harvest failures: %d\n", failures);
+            logTest("Press return to continue\n");
+            getchar();
+
+          }  // limited loop
+        }  // account loop
+      }  // sign loop
+    }  // dark loop
+  }  // kind loop
 }
 
 // Full export during net loss must not borrow carbon from an empty soil pool.
@@ -475,19 +501,24 @@ int main(void) {
     partialCase(account, "0 0 .999999999 .999999999", .999999999);
   }
 
+  logTest("Running invalid case checks; six errors expected\n");
   for (int which = 0; which < 6; which++) {
     invalidCase(which);
   }
-
-  logTest("Press return to continue\n");
-  getchar();
 
   coincidentFertilizerCase();
   coincidentEventCase(LEAFON, "");
   coincidentEventCase(LEAFOFF, "");
   coincidentEventCase(IRRIGATION, "2 0");
   restartCase();
+
+  logTest("\n\n\n");
+
   leafBudgetCases();
+
+  logTest("Press return to continue\n");
+  getchar();
+
   exportLossCase();
   logTest("Complete harvest failures: %d\n", failures);
   return failures != 0;

@@ -473,7 +473,7 @@ typedef struct FluxVars {
 
   // GROSS photosynthesis (g C * m^-2 ground area * day^-1)
   double photosynthesis;
-  // Leaf fall (g C * m^-2 ground area * day^-1)
+  // Leaf fall (g C * m^-2 ground area * day^-1); excludes leaf-off events
   double leafLitter;
   // Wood flux to litter (g C * m^-2 ground area * day^-1)
   double woodLitter;
@@ -550,6 +550,9 @@ typedef struct FluxVars {
   // Portion of leaf-on creation C that comes from wood C (the rest comes from
   // coarse root C)
   double leafOnCreationFromWood;
+  // leaf fall from calculated leaf off 'events' (gdd, soil temp, day of year)
+  // (g C * m^-2 grount area * day^-1)
+  double leafOffLitter;
 
   // ****************************************
   // Fluxes for nitrogen cycle
@@ -756,5 +759,7 @@ typedef struct PlantSurvivalStruct {
 extern PlantSurvivalTracker plantSurvivalTracker;
 
 double getTotalWoodC(void);
+
+double getLeafLitterFlux(void);
 
 #endif  // SIPNET_STATE_H

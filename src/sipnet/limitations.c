@@ -150,17 +150,54 @@ static void checkNegativeCreation(void) {
   // appropriately.
 
   double len = climate->length;
+
+  logInfo("BEFORE: leafLitter %f eventLOLitter %f leafC %f leafCreation %f\n",
+          fluxes.leafLitter * len, fluxes.eventLeafOffLitter * len,
+          envi.plantLeafC, fluxes.leafCreation * len);
+
   // Above ground
   // If leafCreation is too negative, we need to deduct from wood instead
-  // Use only the continuous turnover term to match previous logic - but see
-  // SIPNET issue #372.
-  double leafLitterTurnover = envi.plantLeafC * params.leafTurnoverRate;
-  double leafDeficit =
-      envi.plantLeafC / len + fluxes.leafCreation - leafLitterTurnover;
-  if (leafDeficit < 0) {
-    fluxes.woodCreation += leafDeficit;
-    fluxes.leafCreation -= leafDeficit;
+  // Need to make sure we don't go too far the other way. Leaf off litter
+  // (either fluxes.leafLitter or fluxes.eventLeafOffLitter) might also
+  // incorrectly drive the pool negative, sp adjust for that too.
+
+  // First we handle leaf litter. Assuming params.leafTurnoverRate is valid
+  // (ie, <=1), availableLeafRate should be non-negative.
+  double availableLeafRate = envi.plantLeafC / len - fluxes.leafLitter;
+
+  // Reminder: litter and creation fluxes "point" in the opposite direction, so
+  // their signs are opposite here
+  double deficit = fluxes.leafOffLitter + fluxes.eventLeafOffLitter -
+                   fluxes.leafCreation - availableLeafRate;
+  if (deficit > 0) {
+    // If negative growth + leaf off is too much, let's first reduce leaf off
+    if (fluxes.eventLeafOffLitter > 0) {
+      double adjust = fmin(fluxes.eventLeafOffLitter, deficit);
+      fluxes.eventLeafOffLitter -= adjust;
+      deficit -= adjust;
+      // If we change EVENT leaf off litter, we need to adjust eventLitterN, as
+      // it has already been calculated
+      fluxes.eventLitterN
+    }
+    if (deficit > 0) {
+      if (fluxes.leafOffLitter > 0) {
+        double adjust = fmin(fluxes.leafOffLitter, deficit);
+        fluxes.leafOffLitter -= adjust;
+        deficit -= adjust;
+      }
+    }
+    // Next, move some negative growth to the wood pool
+    if (deficit > 0) {
+      // If this is too much for the wood pool to handle, we have an error that
+      // will be caught in ensureNonNegative
+      fluxes.woodCreation -= deficit;
+      fluxes.leafCreation += deficit;
+    }
   }
+
+  logInfo("AFTER:  leafLitter %f eventLOLitter %f leafC %f leafCreation %f\n",
+          fluxes.leafLitter * len, fluxes.eventLeafOffLitter * len,
+          envi.plantLeafC, fluxes.leafCreation * len);
 
   // Below ground
   double fineRootDeficit =

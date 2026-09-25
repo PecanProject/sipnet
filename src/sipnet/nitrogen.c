@@ -68,7 +68,7 @@ static void calcNPoolFluxes(void) {
   // litter (modified by leaf N resorption), and N loss due to mineralization.
   // N added via fertilization is handled elsewhere.
   fluxes.nOrgLitter =
-      fluxes.leafLitter / params.leafCN - fluxes.leafOffNResorption +
+      getLeafLitterFlux() / params.leafCN - fluxes.leafOffNResorption +
       fluxes.woodLitter / params.woodCN - litterMin -
       fluxes.litterToSoil / litterCN + (soilNInputs * saturationFraction);
 
@@ -186,11 +186,10 @@ void calcNResorptionFluxes(void) {
          fluxes.fineRootCreation / params.fineRootCN);
   }
 
-  // Leaf litter resorption; at this point, fluxes.leafLitter counts both normal
-  // turnover and leaf-off calcs. Note that event leaf off is handled in
-  // events.c
+  // Leaf litter resorption; at this point. Note that event leaf off is handled
+  // in events.c
   double nResorp =
-      params.leafNResorptionFrac * fluxes.leafLitter / params.leafCN;
+      params.leafNResorptionFrac * getLeafLitterFlux() / params.leafCN;
   fluxes.leafOffNResorption += nResorp;
 
   // TODO: Should we resorb N from wood litter?
