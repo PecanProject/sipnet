@@ -117,7 +117,7 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"eventOutputN", DEBUG_FIELD_DOUBLE, &fluxes.eventOutputN},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOnCreation", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOnCreation},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOnCreationFromWood", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOnCreationFromWood},
-  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffLitter", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitter},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffLitter", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitterC},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffNResorption},
   debugFields->fluxDF[ind++] = (DebugField){"soilMethane", DEBUG_FIELD_DOUBLE, &fluxes.soilMethane},
   debugFields->fluxDF[ind  ] = (DebugField){"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane};

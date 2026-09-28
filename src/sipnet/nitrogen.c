@@ -72,6 +72,13 @@ static void calcNPoolFluxes(void) {
       fluxes.woodLitter / params.woodCN - litterMin -
       fluxes.litterToSoil / litterCN + (soilNInputs * saturationFraction);
 
+  double len = climate->length;
+  logInfo("NPoolFluxes: leaf litter %f, leafOffNResorp %f, litterMin %f "
+          "nOrgLitter %f\n",
+          getLeafLitterFlux() / params.leafCN * len,
+          fluxes.leafOffNResorption * len, litterMin * len,
+          fluxes.nOrgLitter * len);
+
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
   // carbon fluxes from roots, and N loss due to mineralization
@@ -190,7 +197,7 @@ void calcNResorptionFluxes(void) {
   // in events.c
   double nResorp =
       params.leafNResorptionFrac * getLeafLitterFlux() / params.leafCN;
-  fluxes.leafOffNResorption += nResorp;
+  fluxes.leafOffNResorption = nResorp;
 
   // TODO: Should we resorb N from wood litter?
 }
@@ -236,4 +243,19 @@ void updateNitrogenPools(void) {
 
   // Litter organic N
   envi.litterN += fluxes.nOrgLitter * climate->length;
+  logInfo("Update N Pools: envi.litterN += %f\n",
+          fluxes.nOrgLitter * climate->length);
+}
+
+void calcLeafOffNEffects(double leafOffC, double *resorptionFlux,
+                         double *litterFlux) {
+  double climLen = climate->length;
+  double leafN = leafOffC / params.leafCN;
+  double leafNResorption = leafN * params.leafNResorptionFrac;
+  double litterNAdd = leafN - leafNResorption;
+  *resorptionFlux += leafNResorption / climLen;
+  *litterFlux += litterNAdd / climLen;
+
+  logInfo("calcLONEffects: resorpN %f litterN %f\n", *resorptionFlux * climLen,
+          *litterFlux * climLen);
 }

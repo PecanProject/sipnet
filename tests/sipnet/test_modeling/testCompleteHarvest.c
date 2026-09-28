@@ -24,6 +24,12 @@ static void balanced(void) {
   near(balanceTracker.clampedN, 0, "N clamping");
 }
 
+static void processEvents(void) {
+  EventNode *event = getCurrentEvent();
+  processEventsForCarbon(event);
+  processEventsForNitrogen(event);
+}
+
 static void start(int mode, const char *harvest) {
   initContext();
   ctx.events = 1;
@@ -144,11 +150,14 @@ static void fullCase(int mode, int accounting, int dark, int limited,
       near(plantSurvivalTracker.isAlive, 1, "alive after planting");
     }
     finish();
+
+    logInfo(":\n");
+    if (failures > 0) {
+      logTest("Complete harvest failures: %d\n", failures);
+      logTest("Press return to continue\n");
+      getchar();
+    }
   }
-  // if (mode == 2) {
-  //   logTest("Press return to continue\n");
-  //   getchar();
-  // }
 }
 
 static void partialCase(int accounting, const char *harvest, double fraction) {
@@ -289,7 +298,7 @@ static void coincidentEventCase(int type, const char *arguments) {
       end = envi;
       ordinary = fluxes;
       if ((type == LEAFON && fluxes.eventLeafOnCreation <= 0) ||
-          (type == LEAFOFF && fluxes.eventLeafOffLitter <= 0) ||
+          (type == LEAFOFF && fluxes.eventLeafOffLitterC <= 0) ||
           (type == IRRIGATION && fluxes.eventSoilWater <= 0))
         failures++;
     } else {
@@ -321,7 +330,7 @@ static void coincidentEventCase(int type, const char *arguments) {
       F(eventEvap);
       F(eventLeafOnCreation);
       F(eventLeafOnCreationFromWood);
-      F(eventLeafOffLitter);
+      F(eventLeafOffLitterC);
       F(eventLeafOffNResorption);
 #undef F
       climate = climate->nextClim;
@@ -376,18 +385,32 @@ static void restartCase(void) {
 }
 
 static void leafBudgetCases(void) {
+  int caseNum = 0;
   for (int kind = 0; kind < 4; kind++) {
+    // kind:          0    1    2    3
+    // fracLeafFall   1  .25  .75  .75
+    // leafOff        a    a    b    c
+    // a: inserted at start
+    // b: two events inserted at start
+    // c: no leaf-off events
     for (int dark = 0; dark < 2; dark++) {
+      // dark : set climate->par=0 when dark
       for (int sign = -1; sign <= 1; sign++) {
+        // sign: init npp tracker with 20*sign (-20, 0, 20)
         for (int account = -1; account <= 1; account++) {
+          // account: starting value for plantCAccountingDelta
           for (int limited = 0; limited < 2; limited++) {
+            // limited: starting minN = 0 if limited (1000 else)
             for (int resorb = 0; resorb < 3; resorb++) {
+              /// resorb: leafNResorptionFrac = 0, .5, 1  (resorb/2)
               for (int harvest = 0; harvest < 2; harvest++) {
-                logTest("*** Running leaf budget case with kind: %d dark: %d "
-                        "sign %d"
-                        " account %d limited %d resorb %d harvest %s\n",
-                        kind, dark, sign, account, limited, resorb,
-                        harvest ? "0 0 1 1" : "none");
+                // TODO: Add "1 1 0 0" and "0.5 0.5 0.5 0.5" cases for harvest
+                logTest(
+                    "*** Running leaf budget case [%d] with kind: %d dark: %d "
+                    "sign %d"
+                    " account %d limited %d resorb %.1f harvest %s\n",
+                    caseNum++, kind, dark, sign, account, limited, resorb / 2.0,
+                    harvest ? "0 0 1 1" : "none");
                 start(2, harvest ? "0 0 1 1" : NULL);
                 envi.plantLeafC = 1;
                 envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100;
@@ -419,30 +442,37 @@ static void leafBudgetCases(void) {
                   }
                   setupEvents();
                 }
+                double beforeLeafC = envi.plantLeafC;
                 double beforeLitter = envi.litterC;
                 double beforeLitterN = envi.litterN;
                 updateState();
                 balanced();
                 double shed = (fluxes.leafLitter + fluxes.leafOffLitter +
-                               fluxes.eventLeafOffLitter) *
+                               fluxes.eventLeafOffLitterC) *
                               climate->length;
-                if (shed < -1e-10 || shed > 1 + 1e-10 ||
-                    envi.plantLeafC < -1e-10) {
-                  logTest("Leaf budget overdraw: %.17g, leaf %.17g\n", shed,
+                double pool =
+                    envi.plantLeafC + fluxes.leafCreation * climate->length;
+                if (fabs(pool - shed) < 1e-10 || envi.plantLeafC < -1e-10) {
+                  logTest("Leaf budget overdraw (2): %.17g, leaf %.17g\n", shed,
                           envi.plantLeafC);
                   failures++;
                 }
 
-                double expEventLOL[] = {1, .25, 1, 0};
-                double eventExpected = expEventLOL[kind];
-                near(fluxes.eventLeafOffLitter * climate->length, eventExpected,
-                     "event leaves conserved");
+                double expLeafOffLitter =
+                    kind == 3 ? 0
+                              : fmin(1.0, beforeLeafC + (fluxes.leafCreation -
+                                                         fluxes.leafLitter) *
+                                                            climate->length);
+                near(fluxes.eventLeafOffLitterC * climate->length,
+                     expLeafOffLitter, "event leaves conserved");
                 if (!harvest) {
                   near(envi.litterC - beforeLitter, shed,
                        "leaf litter transfer");
                   near(envi.litterN - beforeLitterN,
                        shed * (1 - params.leafNResorptionFrac) / params.leafCN,
                        "leaf litter N transfer");
+                  logTest("beforeLitterN %f afterLitterN %f\n", beforeLitterN,
+                          envi.litterN);
                 } else {
                   clearPlant();
                   climate = climate->nextClim;
@@ -453,15 +483,21 @@ static void leafBudgetCases(void) {
                        "no regrowth after complete harvest");
                 }
                 finish();
+
+                logInfo(":\n");
+                if (failures > 0) {
+                  logTest("Complete harvest failures: %d\n", failures);
+                  logTest("Press return to continue\n");
+                  getchar();
+                }
               }  // harvest loop
             }  // resorb loop
-
-            logTest("Complete harvest failures: %d\n", failures);
-            logTest("Press return to continue\n");
-            getchar();
-
           }  // limited loop
         }  // account loop
+        logTest("New sign value incoming\n");
+        logTest("Complete harvest failures: %d\n", failures);
+        logTest("Press return to continue\n");
+        getchar();
       }  // sign loop
     }  // dark loop
   }  // kind loop

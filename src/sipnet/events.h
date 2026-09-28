@@ -1,6 +1,8 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include "common/util.h"
+
 typedef enum EventType {
   FERTILIZATION,
   HARVEST,
@@ -82,7 +84,7 @@ struct EventNode {
   int year, day;
   void *eventParams;
   int numLogParamPairs;
-  char *logLine;
+  DynamicString *logLine;
   EventNode *nextEvent;
 };
 
@@ -119,29 +121,20 @@ EventNode *readEventData(const char *eventFile);
 void openEventOutFile(const char *eventOutFile, int printHeader);
 
 /*!
- * \brief Write a line to the event output file for a single oneEvent
- *
- * Writes a single oneEvent to the configured event output file. This is a
- * variadic function which expects to receive 2*numParams values in (char*,
- * double) pairs after the
- * numParams argument.
- *
- * Output format:
- *
- * year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
- *
- * \param oneEvent     Pointer to oneEvent node
- * \param numParams Number of param/value PAIRS to write
- * \param ...       Pairs of (char*, double) arguments to write, 2*numParams
- *                  values
+ * Append to an event's log line
  */
-void writeEventOut(EventNode *oneEvent, int numParams, ...);
+void appendLog(EventNode *event, int numParams, ...);
+
+/*!
+ * Write out all events for this time step
+ */
+void writeEventsOut(void);
 
 /*!
  * \brief Write a line to the event output file for a computed event
  *
- * Same as writeEventOut, but for events that are computed internally, such
- * as leaf on/leaf off events.
+ * Write an event that is computed internally, such as leaf on/leaf off or
+ * plant death events.
  *
  * Output format:
  *
@@ -189,6 +182,11 @@ void setupEvents(void);
 int isFirstEventBefore(int year, int day);
 
 /*!
+ * Return today's first event for SIPNET's multi-pass calls
+ */
+EventNode *getCurrentEvent(void);
+
+/*!
  * \brief Process carbon effects from events for current day
  *
  * Process all events for the current day, calculating all carbon
@@ -208,11 +206,6 @@ void processEventsForCarbon(EventNode *event);
  * limitation checks to be run before any nitrogen calculations are made.
  */
 void processEventsForNitrogen(EventNode *event);
-
-/*!
- * \brief Write events to the events output file for the current date
- */
-void writeAllEvents(void);
 
 /*!
  * Update relevant environment pools after event fluxes have been calculated

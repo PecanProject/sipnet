@@ -636,7 +636,9 @@ typedef struct FluxVars {
   // coarse root C)
   double eventLeafOnCreationFromWood;
   // Transfer from leafC to soil/litter from a leaf-off event
-  double eventLeafOffLitter;
+  double eventLeafOffLitterC;
+  // Transfer from leafN to soil/litter from a leaf-off event
+  double eventLeafOffLitterN;
   // Resorption of leaf N from a leaf-off event
   double eventLeafOffNResorption;
 

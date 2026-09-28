@@ -795,6 +795,7 @@ void calcWoodAndLeafFluxes(void) {
 void calcLeafOnOffFluxes(void) {
   // Calc additional fluxes at start/end of growing season
   // Note that these are basically events, and we will track them as such
+  double len = climate->length;
 
   // first check for new year; if new year, reset trackers (since we haven't
   // done leaf growth or fall yet in this new year):
@@ -807,23 +808,26 @@ void calcLeafOnOffFluxes(void) {
   // check for start of growing season:
   if (!phenologyTrackers.didLeafGrowth && pastLeafGrowth()) {
     // we just reached the start of the growing season
-    double leafOn = params.leafGrowth / climate->length;
+    double leafOn = params.leafGrowth / len;
+    double leafOnFromWood = 0;
     checkLeafOnLimitation(&leafOn);
     fluxes.leafOnCreation += leafOn;
     double totalSourceC = envi.plantWoodC + envi.coarseRootC;
     if (totalSourceC > TINY) {
-      fluxes.leafOnCreationFromWood += leafOn * envi.plantWoodC / totalSourceC;
+      leafOnFromWood = leafOn * envi.plantWoodC / totalSourceC;
+      fluxes.leafOnCreationFromWood += leafOnFromWood;
     }
     phenologyTrackers.didLeafGrowth = 1;
-    // This is a computed event - however, the value may get reduced by
-    // nitrogen limitation. The writeEvent call is in writeLeafOnEventIfNeeded,
-    // called after N limiting is checked.
+
+    writeComputedEventOut(climate->year, climate->day,
+                          eventTypeToString(LEAFON), 2, "leafOnCreation",
+                          leafOn * len, "leafOnCreationFromWood",
+                          leafOnFromWood * len);
   }
 
   // check for end of growing season:
   if (!phenologyTrackers.didLeafFall && pastLeafFall()) {
     // we just reached the end of the growing season
-    double len = climate->length;
     double leafOff = (envi.plantLeafC * params.fracLeafFall) / len;
     fluxes.leafOffLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
@@ -1215,31 +1219,6 @@ void calcMethaneFlux(void) {
  */
 void resetFluxes(void) { fluxes = (struct FluxVars){0}; }
 
-/**
- * Write out a leaf-on event if one happened
- *
- * Delayed event writing for leaf-on, if appropriate, since the value may
- * have changed due to N limitation
- */
-void writeLeafOnEventIfNeeded(void) {
-  const char *type = eventTypeToString(LEAFON);
-  const double len = climate->length;
-  if (fluxes.leafOnCreation > TINY && ctx.events) {
-    writeComputedEventOut(climate->year, climate->day, type, 2,
-                          "leafOnCreation", fluxes.leafOnCreation * len,
-                          "leafOnCreationFromWood",
-                          fluxes.leafOnCreationFromWood * len);
-  }
-  if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
-    // Not really a computed event, but we don't have the event object here, so
-    // we use this mechanism
-    writeComputedEventOut(
-        climate->year, climate->day, type, 2, "eventLeafOnCreation",
-        fluxes.eventLeafOnCreation * len, "eventLeafOnCreationFromWood",
-        fluxes.eventLeafOnCreationFromWood * len);
-  }
-}
-
 /*!
  * Calculate flux terms for sipnet as part of main model flow
  *
@@ -1267,6 +1246,9 @@ void calculateFluxes(void) {
   // Psn, moisture and water fluxes
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai
 
+  // Today's first event
+  EventNode *event = getCurrentEvent();
+
   potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd,
          climate->par);
   moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd,
@@ -1278,6 +1260,9 @@ void calculateFluxes(void) {
                       &(fluxes.drainage), envi.soilWater, netRain,
                       fluxes.snowMelt, fluxes.transpiration);
   getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
+
+  // First pass for events: carbon effects
+  processEventsForCarbon(event);
 
   // Vegetation respiration
   if (ctx.growthResp) {
@@ -1317,15 +1302,17 @@ void calculateFluxes(void) {
   // so make sure this stays at the bottom of this function (or after the
   // carbon and water calcs, at least).
   if (ctx.nitrogenCycle) {
+    // Second pass for events: nitrogen effects
+    processEventsForNitrogen(event);
+    // General nitrogen fluxes
     calcNitrogenFluxes();
   }
 
   // Check limitations; must be after all flux calcs
   checkLimitations();
 
-  // Delayed write needed due to N limitation check - leafOn value may have
-  // changed
-  writeLeafOnEventIfNeeded();
+  // Write to events file for all of today's events
+  writeEventsOut();
 }
 
 // /////////////////////// //
@@ -1468,7 +1455,7 @@ void updateTrackers(double oldSoilWater) {
 
   // If we get another event flux in this function, we should create an
   // updateTrackersForEvents() function in events.c|h
-  trackers.yearlyLitter += getLeafLitterFlux() + fluxes.eventLeafOffLitter;
+  trackers.yearlyLitter += getLeafLitterFlux() + fluxes.eventLeafOffLitterC;
 
   if (ctx.gdd) {
     trackers.gdd += climate->gdd;
@@ -1844,12 +1831,7 @@ void updateState(void) {
   ///////////////////////
   // 1. Calculate Fluxes
 
-  // All event handling, which is modeled as fluxes. Note that we have this
-  // before the other fluxes so that everything is in place when we consider
-  // N limitation at the end of calculateFluxes().
-  processEvents();
-
-  // All non-event fluxes
+  // All modeled fluxes, including events
   calculateFluxes();
 
   ///////////////////////
