@@ -412,6 +412,7 @@ static void leafBudgetCases(void) {
                     caseNum++, kind, dark, sign, account, limited, resorb / 2.0,
                     harvest ? "0 0 1 1" : "none");
                 start(2, harvest ? "0 0 1 1" : NULL);
+                logInfo("* Post start setup *\n");
                 envi.plantLeafC = 1;
                 envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100;
                 envi.plantCAccountingDelta = account;
@@ -450,19 +451,21 @@ static void leafBudgetCases(void) {
                 double shed = (fluxes.leafLitter + fluxes.leafOffLitter +
                                fluxes.eventLeafOffLitterC) *
                               climate->length;
-                double pool =
-                    envi.plantLeafC + fluxes.leafCreation * climate->length;
-                if (fabs(pool - shed) < 1e-10 || envi.plantLeafC < -1e-10) {
-                  logTest("Leaf budget overdraw (2): %.17g, leaf %.17g\n", shed,
-                          envi.plantLeafC);
+                double pool = 1 + fluxes.leafCreation * climate->length;
+                if (pool - shed < -1e-10 || envi.plantLeafC < -1e-10) {
+                  logTest("Leaf budget overdraw (2): shed %.17g pool %.17g "
+                          "|s-p| %.17g leaf %.17g expr1 %d expr2 %d\n",
+                          shed, pool, pool - shed, envi.plantLeafC,
+                          pool - shed < -1e-10, envi.plantLeafC < -1e-10);
                   failures++;
                 }
 
                 double expLeafOffLitter =
                     kind == 3 ? 0
-                              : fmin(1.0, beforeLeafC + (fluxes.leafCreation -
-                                                         fluxes.leafLitter) *
-                                                            climate->length);
+                              : fmin(params.fracLeafFall,
+                                     beforeLeafC + (fluxes.leafCreation -
+                                                    fluxes.leafLitter) *
+                                                       climate->length);
                 near(fluxes.eventLeafOffLitterC * climate->length,
                      expLeafOffLitter, "event leaves conserved");
                 if (!harvest) {
@@ -494,10 +497,12 @@ static void leafBudgetCases(void) {
             }  // resorb loop
           }  // limited loop
         }  // account loop
-        logTest("New sign value incoming\n");
-        logTest("Complete harvest failures: %d\n", failures);
-        logTest("Press return to continue\n");
-        getchar();
+        if (kind > 1) {
+          logTest("New sign value incoming\n");
+          logTest("Complete harvest failures: %d\n", failures);
+          logTest("Press return to continue\n");
+          getchar();
+        }
       }  // sign loop
     }  // dark loop
   }  // kind loop

@@ -78,11 +78,13 @@ static void checkNegativeCreation(void) {
 
   logInfo("checkNeg BEFORE: leafLitter %f eventLOLitter %f leafC %f "
           "leafCreation %f "
-          "eventLONResorp %f eventLOLitterN %f eventLitterN %f\n",
+          "eventLONResorp %f eventLOLitterN %f eventLitterN %f "
+          "params.fracLeafFall %f\n",
           fluxes.leafLitter * len, fluxes.eventLeafOffLitterC * len,
           envi.plantLeafC, fluxes.leafCreation * len,
           fluxes.eventLeafOffNResorption * len,
-          fluxes.eventLeafOffLitterN * len, fluxes.eventLitterN);
+          fluxes.eventLeafOffLitterN * len, fluxes.eventLitterN,
+          params.fracLeafFall);
 
   // Above ground
   // If leafCreation is too negative, we need to deduct from wood instead

@@ -73,11 +73,11 @@ static void calcNPoolFluxes(void) {
       fluxes.litterToSoil / litterCN + (soilNInputs * saturationFraction);
 
   double len = climate->length;
-  logInfo("NPoolFluxes: leaf litter %f, leafOffNResorp %f, litterMin %f "
-          "nOrgLitter %f\n",
+  logInfo("NPoolFluxes: leafLitterN %f, leafOffNResorp %f, litterMin %f "
+          "nOrgLitter %f params.leafNResorptionFrac %f\n",
           getLeafLitterFlux() / params.leafCN * len,
           fluxes.leafOffNResorption * len, litterMin * len,
-          fluxes.nOrgLitter * len);
+          fluxes.nOrgLitter * len, params.leafNResorptionFrac);
 
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
