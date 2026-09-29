@@ -819,10 +819,12 @@ void calcLeafOnOffFluxes(void) {
     }
     phenologyTrackers.didLeafGrowth = 1;
 
-    writeComputedEventOut(climate->year, climate->day,
-                          eventTypeToString(LEAFON), 2, "leafOnCreation",
-                          leafOn * len, "leafOnCreationFromWood",
-                          leafOnFromWood * len);
+    if (ctx.events) {
+      writeComputedEventOut(climate->year, climate->day,
+                            eventTypeToString(LEAFON), 2, "leafOnCreation",
+                            leafOn * len, "leafOnCreationFromWood",
+                            leafOnFromWood * len);
+    }
   }
 
   // check for end of growing season:
