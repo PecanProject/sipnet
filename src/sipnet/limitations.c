@@ -76,16 +76,6 @@ static void checkNegativeCreation(void) {
 
   double len = climate->length;
 
-  logInfo("checkNeg BEFORE: leafLitter %f eventLOLitter %f leafC %f "
-          "leafCreation %f "
-          "eventLONResorp %f eventLOLitterN %f eventLitterN %f "
-          "params.fracLeafFall %f\n",
-          fluxes.leafLitter * len, fluxes.eventLeafOffLitterC * len,
-          envi.plantLeafC, fluxes.leafCreation * len,
-          fluxes.eventLeafOffNResorption * len,
-          fluxes.eventLeafOffLitterN * len, fluxes.eventLitterN,
-          params.fracLeafFall);
-
   // Above ground
   // If leafCreation is too negative, we need to deduct from wood instead
   // Need to make sure we don't go too far the other way. Leaf off litter
@@ -123,14 +113,6 @@ static void checkNegativeCreation(void) {
     }
   }
 
-  logInfo("checkNeg AFTER:  leafLitter %f eventLOLitter %f leafC %f "
-          "leafCreation %f "
-          "eventLONResorp %f eventLOLitterN %f eventLitterN %f\n",
-          fluxes.leafLitter * len, fluxes.eventLeafOffLitterC * len,
-          envi.plantLeafC, fluxes.leafCreation * len,
-          fluxes.eventLeafOffNResorption * len,
-          fluxes.eventLeafOffLitterN * len, fluxes.eventLitterN);
-
   // Below ground
   double fineRootDeficit =
       envi.fineRootC / len + fluxes.fineRootCreation - fluxes.fineRootLoss;
@@ -155,13 +137,6 @@ static void checkNegativeCreation(void) {
  */
 static void checkNitrogenLimitation(void) {
   double len = climate->length;
-  logInfo("checkNLimit BEFORE: leafLitter %f eventLOLitter %f leafC %f "
-          "leafCreation %f "
-          "eventLONResorp %f eventLOLitterN %f eventLitterN %f\n",
-          fluxes.leafLitter * len, fluxes.eventLeafOffLitterC * len,
-          envi.plantLeafC, fluxes.leafCreation * len,
-          fluxes.eventLeafOffNResorption * len,
-          fluxes.eventLeafOffLitterN * len, fluxes.eventLitterN);
 
   // First, determine if we are in a nitrogen-limited situation. The uptake
   // flux has already taken the storage pool into account, so we just need to
@@ -208,24 +183,6 @@ static void checkNitrogenLimitation(void) {
     // reduced leaf growth down to the point where the pool will go negative
     // Re-call that check
     checkNegativeCreation();
-    // double leafOffFlux = fluxes.leafOffLitter + fluxes.eventLeafOffLitter;
-    // if (leafOffFlux > 0) {
-    //   logInfo("Leaf-off flux %.f, leaf pool %.f, leaf creation %.f leaf
-    //   litter %.f\n",
-    //           leafOffFlux * len, envi.plantLeafC, fluxes.leafCreation * len,
-    //           fluxes.leafLitter * len);
-    //   double leafPool = envi.plantLeafC +
-    //     (fluxes.leafCreation + fluxes.leafLitter + leafOffFlux) * len;
-    //   if (leafPool < 0) {
-    //     // Reduce leaf-off litter to avoid negative pool; note that only one
-    //     of
-    //     // these will be > 0, meaning the other is unaffected by this calc
-    //     fluxes.leafOffLitter = fmax(0.0, fluxes.leafOffLitter + leafPool);
-    //     fluxes.eventLeafOffLitter =
-    //       fmax(0.0, fluxes.eventLeafOffLitter + leafPool);
-    //   }
-    //   // Recalc N effects for event leaf off; will be a no-op if there was
-    //   // no event leaf off
 
     // Reset and recalc event leaf-off N
     fluxes.eventLeafOffNResorption = 0.0;
@@ -238,14 +195,6 @@ static void checkNitrogenLimitation(void) {
     // Reset N calculations
     calcNitrogenFluxes();
   }
-
-  logInfo("checkNLimit AFTER:  leafLitter %f eventLOLitter %f leafC %f "
-          "leafCreation %f "
-          "eventLONResorp %f eventLOLitterN %f eventLitterN %f\n",
-          fluxes.leafLitter * len, fluxes.eventLeafOffLitterC * len,
-          envi.plantLeafC, fluxes.leafCreation * len,
-          fluxes.eventLeafOffNResorption * len,
-          fluxes.eventLeafOffLitterN * len, fluxes.eventLitterN);
 }
 
 /**

@@ -483,6 +483,9 @@ void processEventsForCarbon(EventNode *event) {
   // Reset harvest tracking
   eventTrackers.harvestTrackers = (HarvestTrackers){0};
 
+  // Make sure we don't have more than 100% leaves fall for leaf-off
+  double totalLeafFallFrac = 0.0;
+
   while (event != NULL && event->year <= climYear && event->day <= climDay) {
     // The events file has been tested on read, so we know this event list
     // should be in chrono order. However, we need to check to make sure the
@@ -693,6 +696,15 @@ void processEventsForCarbon(EventNode *event) {
         // clang-format on
       } break;
       case LEAFOFF: {
+        double frac = params.fracLeafFall;
+        totalLeafFallFrac += frac;
+        if (totalLeafFallFrac > 1.0) {
+          logError("Total leaf fall for leaf-off event(s) is greater than 100 "
+                   "percent (%.3f) for year %d day %d\n",
+                   totalLeafFallFrac, event->year, event->day);
+          exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+        }
+
         double leafOff = envi.plantLeafC * params.fracLeafFall;
         fluxes.eventLeafOffLitterC += leafOff / climLen;
 
@@ -852,8 +864,7 @@ void processEventsForNitrogen(EventNode *event) {
 
         double leafNResorptionFlux = fluxes.eventLeafOffNResorption - preResorp;
         double litterNAddFlux = fluxes.eventLeafOffLitterN - preLitter;
-        logInfo("Proc events: leaf N resorption %.4f litter N = %.4f\n",
-                leafNResorptionFlux * climLen, litterNAddFlux * climLen);
+
         // clang-format off
         appendLog(gEvent, 2,
           "eventLeafOffNResorption", leafNResorptionFlux * climLen,
@@ -916,9 +927,6 @@ void updatePoolsForEvents(void) {
     envi.soilOrgN += fluxes.eventSoilOrgN * climate->length;
     envi.litterN +=
         (fluxes.eventLitterN + fluxes.eventLeafOffLitterN) * climate->length;
-    logInfo("Proc events: envi.litterN += %f\n",
-            (fluxes.eventLitterN + fluxes.eventLeafOffLitterN) *
-                climate->length);
     double leafOnNFlux = calcLeafOnNFromC(fluxes.eventLeafOnCreation);
     envi.plantStorageN +=
         (fluxes.eventLeafOffNResorption - leafOnNFlux) * climate->length;
