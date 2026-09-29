@@ -380,6 +380,7 @@ static void restartCase(void) {
 
 static void leafBudgetCases(void) {
   int caseNum = 0;
+  char harvests[4][16] = {"none", "0 0 1 1", "0.5 0.5 0.5 0.5", "1 1 0 0"};
   for (int kind = 0; kind < 4; kind++) {
     // kind:          0    1    2    3
     // fracLeafFall   1  .25  .40  .75
@@ -397,14 +398,14 @@ static void leafBudgetCases(void) {
             // limited: starting minN = 0 if limited (1000 else)
             for (int resorb = 0; resorb < 3; resorb++) {
               /// resorb: leafNResorptionFrac = 0, .5, 1  (resorb/2)
-              for (int harvest = 0; harvest < 2; harvest++) {
-                // TODO: Add "1 1 0 0" and "0.5 0.5 0.5 0.5" cases for harvest
+              for (int harvest = 0; harvest < 4; harvest++) {
+                char *harvestStr = harvests[harvest];
                 logTest(
                     "*** Running leaf budget case [%d] with kind: %d dark: %d "
                     "sign %d account %d limited %d resorb %.1f harvest %s\n",
                     caseNum++, kind, dark, sign, account, limited, resorb / 2.0,
-                    harvest ? "0 0 1 1" : "none");
-                start(2, harvest ? "0 0 1 1" : NULL);
+                    harvestStr);
+                start(2, harvest ? harvestStr : NULL);
                 envi.plantLeafC = 1;
                 envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100;
                 envi.plantCAccountingDelta = account;
