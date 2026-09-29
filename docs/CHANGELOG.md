@@ -15,6 +15,9 @@ sections to include in release notes:
 
 ### Fixed
 
+- Prevent zero carbon transfers from producing non-finite nitrogen fluxes when
+  litter or soil carbon pools are empty.
+
 ### Changed
 
 ### Removed
