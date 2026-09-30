@@ -390,9 +390,7 @@ void appendLog(EventNode *event, int numParams, ...) {
   for (int ind = 0; ind < numParams; ind++) {
     char *param = va_arg(args, char *);
     double val = va_arg(args, double);
-    char suffix = (ind == numParams - 1) ? '\n' : ',';
-    int success =
-        dsAppendFormatted(event->logLine, "%s=%-.2f%c", param, val, suffix);
+    int success = dsAppendFormatted(event->logLine, "%s=%-.2f,", param, val);
     if (!success) {
       logError("appending event log line failed\n");
       exit(EXIT_CODE_INTERNAL_ERROR);
@@ -407,8 +405,17 @@ void writeEventsOut(void) {
   const int climYear = climate->year;
   const int climDay = climate->day;
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+    // Change last char to a newline if it is a comma
+    // Get the current length of the string
+    char *log = gEvent->logLine->buffer;
+    size_t len = strlen(log);
+    if (len > 0 && log[len - 1] == ',') {
+      log[len - 1] = '\n';
+    } else {
+      dsAppend(gEvent->logLine, "\n");
+    }
     fprintf(eventOutFile, "%4d  %3d  %-7s  %s", gEvent->year, gEvent->day,
-            eventTypeToString(gEvent->type), gEvent->logLine->buffer);
+            eventTypeToString(gEvent->type), log);
     gEvent = gEvent->nextEvent;
   }
 }
@@ -520,7 +527,7 @@ void processEventsForCarbon(EventNode *event) {
         fluxes.eventEvap += evapAmount / climLen;
         fluxes.eventSoilWater += soilAmount / climLen;
 
-        appendLog(gEvent, 2, "eventSoilWater", soilAmount, "eventEvap",
+        appendLog(event, 2, "eventSoilWater", soilAmount, "eventEvap",
                   evapAmount);
 
       } break;
@@ -545,7 +552,7 @@ void processEventsForCarbon(EventNode *event) {
         fluxes.eventInputC += inputC / climLen;
 
         // clang-format off
-        appendLog(gEvent, 5,
+        appendLog(event, 5,
                       "eventLeafC", leafC,
                       "eventWoodC", woodC,
                       "eventFineRootC", fineRootC,
@@ -631,7 +638,7 @@ void processEventsForCarbon(EventNode *event) {
 
         // clang-format off
         appendLog(
-            gEvent, 8,
+            event, 8,
             "eventSoilC", soilAdd,
             "eventLitterC", litterAdd,
             "eventLeafC", leafDelta,
@@ -652,7 +659,7 @@ void processEventsForCarbon(EventNode *event) {
         // as there may be lingering effects from a prior tillage.
         eventTrackers.d_till_mod += tillParams->tillageEffect;
 
-        appendLog(gEvent, 1, "eventTrackers.d_till_mod",
+        appendLog(event, 1, "eventTrackers.d_till_mod",
                   tillParams->tillageEffect);
 
       } break;
@@ -669,7 +676,7 @@ void processEventsForCarbon(EventNode *event) {
         fluxes.eventInputC += orgC / climLen;
 
         // clang-format off
-        appendLog(gEvent, 3,
+        appendLog(event, 3,
           "eventLitterC", ctx.litterPool ? orgC : 0.0,
           "eventSoilC", ctx.litterPool ? 0.0 : orgC,
           "eventInputC", orgC);
@@ -690,7 +697,7 @@ void processEventsForCarbon(EventNode *event) {
         // eventInputC
 
         // clang-format off
-        appendLog(gEvent, 2,
+        appendLog(event, 2,
           "eventLeafOnCreation", leafOnFlux * climLen,
           "eventLeafOnCreationFromWood", leafOnFluxFromWood * climLen);
         // clang-format on
@@ -708,7 +715,7 @@ void processEventsForCarbon(EventNode *event) {
         double leafOff = envi.plantLeafC * params.fracLeafFall;
         fluxes.eventLeafOffLitterC += leafOff / climLen;
 
-        appendLog(gEvent, 1, "eventLeafOffLitter", leafOff);
+        appendLog(event, 1, "eventLeafOffLitter", leafOff);
       } break;
       case PLANTDEATH:
         // There should be no way to get here, but covering our bases...
@@ -767,7 +774,7 @@ void processEventsForNitrogen(EventNode *event) {
                         coarseRootC / params.woodCN;
         fluxes.eventInputN += inputN / climLen;
 
-        appendLog(gEvent, 1, "eventInputN", inputN);
+        appendLog(event, 1, "eventInputN", inputN);
       } break;
       case HARVEST: {
         // Harvest can both remove biomass and move biomass to the soil/litter
@@ -803,7 +810,7 @@ void processEventsForNitrogen(EventNode *event) {
 
         // clang-format off
         appendLog(
-            gEvent, 3,
+            event, 3,
             "eventSoilOrgN", soilNAdd,
             "eventLitterN", litterNAdd,
             "eventOutputN", outputN);
@@ -826,7 +833,7 @@ void processEventsForNitrogen(EventNode *event) {
         fluxes.eventInputN += (orgN + minN) / climLen;
 
         // clang-format off
-        appendLog(gEvent, 3,
+        appendLog(event, 3,
           "eventMinN", minN,
           "eventLitterN", orgN,
           "eventInputN", (orgN + minN));
@@ -866,7 +873,7 @@ void processEventsForNitrogen(EventNode *event) {
         double litterNAddFlux = fluxes.eventLeafOffLitterN - preLitter;
 
         // clang-format off
-        appendLog(gEvent, 2,
+        appendLog(event, 2,
           "eventLeafOffNResorption", leafNResorptionFlux * climLen,
           "eventLitterN", litterNAddFlux * climLen);
         // clang-format on

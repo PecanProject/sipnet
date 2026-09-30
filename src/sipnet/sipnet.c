@@ -819,7 +819,7 @@ void calcLeafOnOffFluxes(void) {
     }
     phenologyTrackers.didLeafGrowth = 1;
 
-    if (ctx.events) {
+    if (ctx.events && leafOn > TINY) {
       writeComputedEventOut(climate->year, climate->day,
                             eventTypeToString(LEAFON), 2, "leafOnCreation",
                             leafOn * len, "leafOnCreationFromWood",
