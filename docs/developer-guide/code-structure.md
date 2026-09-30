@@ -65,7 +65,7 @@ Name fluxes by direction and target, e.g., `fluxes.NPP`, `fluxes.soilRespiration
 
 - Apply all additions/removals in a consistent order if constraints require it (e.g., water first if it bounds biochemical rates next step).
 - Enforce invariants:
-  - No negative pools; clamp with tracked deficits and warnings if needed.
+  - No negative pools; enforce with additional `ensureNonNegative()` call(s) in `ensureNonNegativeStocks()`.
   - Mass conservation across linked pools (e.g., C/N stoichiometry) with balanced cross-pool transfers.
 - Centralize any event-specific application here (e.g., harvest removing biomass, adding residues).
 
