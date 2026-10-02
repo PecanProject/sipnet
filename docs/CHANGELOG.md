@@ -28,6 +28,7 @@ sections to include in release notes:
 ### Fixed
 
 ### Changed
+- SIPNET will now error instead of warning when an environment pool goes negative. This is a change from previous behavior where SIPNET would log a warning and continue running. (#398)
 
 ### Removed
 
