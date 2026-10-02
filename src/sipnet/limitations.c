@@ -185,12 +185,13 @@ static void checkNitrogenLimitation(void) {
     checkNegativeCreation();
 
     // Reset and recalc event leaf-off N
+    // Nitrogen for "calculated" leaf-off events will be redone in
+    // calcNitrogenFluxes below
     fluxes.eventLeafOffNResorption = 0.0;
     fluxes.eventLeafOffLitterN = 0.0;
     calcLeafOffNEffects(fluxes.eventLeafOffLitterC * len,
                         &fluxes.eventLeafOffNResorption,
                         &fluxes.eventLeafOffLitterN);
-    // }
 
     // Reset N calculations
     calcNitrogenFluxes();

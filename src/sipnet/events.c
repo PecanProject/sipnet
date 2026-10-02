@@ -500,8 +500,9 @@ void processEventsForCarbon(EventNode *event) {
     // did not have a corresponding climate file record.
     if (event->year < climYear || event->day < climDay) {
       logError("Agronomic event found for year: %d day: %d that does not "
-               "have a corresponding record in the climate file\n",
-               event->year, event->day);
+               "have a corresponding record in the climate file "
+               "(current climate date is year %d day %d)\n",
+               event->year, event->day, climYear, climDay);
       exit(EXIT_CODE_INPUT_FILE_ERROR);
     }
 
