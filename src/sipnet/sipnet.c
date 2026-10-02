@@ -791,19 +791,11 @@ void calcWoodAndLeafFluxes(void) {
  * the start or end of the growing season. These transition fluxes are tracked
  * separately from the continuous leaf creation and litter fluxes calculated in
  * calcLeafFluxes().
- *
- * @param[out] leafOnCreation Additional leaf creation flux at leaf-on
- *   (g C/m^2 ground/day)
- * @param[out] leafOnFromWood Carbon transferred from wood to leaves at
- *   leaf-on (g C/m^2 ground/day)
- * @param[out] leafLitter Additional leaf litter flux at leaf-off
- *   (g C/m^2 ground/day)
- * @param[in] plantLeafC Leaf carbon pool size (g C/m^2 ground area)
  */
-void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
-                         double *leafLitter, double plantLeafC) {
+void calcLeafOnOffFluxes(void) {
   // Calc additional fluxes at start/end of growing season
   // Note that these are basically events, and we will track them as such
+  double len = climate->length;
 
   // first check for new year; if new year, reset trackers (since we haven't
   // done leaf growth or fall yet in this new year):
@@ -816,25 +808,30 @@ void calcLeafOnOffFluxes(double *leafOnCreation, double *leafOnFromWood,
   // check for start of growing season:
   if (!phenologyTrackers.didLeafGrowth && pastLeafGrowth()) {
     // we just reached the start of the growing season
-    double leafOn = params.leafGrowth / climate->length;
+    double leafOn = params.leafGrowth / len;
+    double leafOnFromWood = 0;
     checkLeafOnLimitation(&leafOn);
-    *leafOnCreation += leafOn;
+    fluxes.leafOnCreation += leafOn;
     double totalSourceC = envi.plantWoodC + envi.coarseRootC;
     if (totalSourceC > TINY) {
-      *leafOnFromWood += leafOn * envi.plantWoodC / totalSourceC;
+      leafOnFromWood = leafOn * envi.plantWoodC / totalSourceC;
+      fluxes.leafOnCreationFromWood += leafOnFromWood;
     }
     phenologyTrackers.didLeafGrowth = 1;
-    // This is a computed event - however, the value may get reduced by
-    // nitrogen limitation. The writeEvent call is in writeLeafOnEventIfNeeded,
-    // called after N limiting is checked.
+
+    if (ctx.events && leafOn > TINY) {
+      writeComputedEventOut(climate->year, climate->day,
+                            eventTypeToString(LEAFON), 2, "leafOnCreation",
+                            leafOn * len, "leafOnCreationFromWood",
+                            leafOnFromWood * len);
+    }
   }
 
   // check for end of growing season:
   if (!phenologyTrackers.didLeafFall && pastLeafFall()) {
     // we just reached the end of the growing season
-    double len = climate->length;
-    double leafOff = (plantLeafC * params.fracLeafFall) / len;
-    *leafLitter += leafOff;
+    double leafOff = (envi.plantLeafC * params.fracLeafFall) / len;
+    fluxes.leafOffLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
     if (leafOff > TINY && ctx.events) {
       writeComputedEventOut(climate->year, climate->day,
@@ -1224,31 +1221,6 @@ void calcMethaneFlux(void) {
  */
 void resetFluxes(void) { fluxes = (struct FluxVars){0}; }
 
-/**
- * Write out a leaf-on event if one happened
- *
- * Delayed event writing for leaf-on, if appropriate, since the value may
- * have changed due to N limitation
- */
-void writeLeafOnEventIfNeeded(void) {
-  const char *type = eventTypeToString(LEAFON);
-  const double len = climate->length;
-  if (fluxes.leafOnCreation > TINY && ctx.events) {
-    writeComputedEventOut(climate->year, climate->day, type, 2,
-                          "leafOnCreation", fluxes.leafOnCreation * len,
-                          "leafOnCreationFromWood",
-                          fluxes.leafOnCreationFromWood * len);
-  }
-  if (fluxes.eventLeafOnCreation > TINY && ctx.events) {
-    // Not really a computed event, but we don't have the event object here, so
-    // we use this mechanism
-    writeComputedEventOut(
-        climate->year, climate->day, type, 2, "eventLeafOnCreation",
-        fluxes.eventLeafOnCreation * len, "eventLeafOnCreationFromWood",
-        fluxes.eventLeafOnCreationFromWood * len);
-  }
-}
-
 /*!
  * Calculate flux terms for sipnet as part of main model flow
  *
@@ -1276,6 +1248,9 @@ void calculateFluxes(void) {
   // Psn, moisture and water fluxes
   lai = envi.plantLeafC / params.leafCSpWt;  // current lai
 
+  // Today's first event
+  EventNode *event = getCurrentEvent();
+
   potPsn(&potGrossPsn, &baseFolResp, lai, climate->tair, climate->vpd,
          climate->par);
   moisture(&(fluxes.transpiration), &dWater, potGrossPsn, climate->vpd,
@@ -1287,6 +1262,9 @@ void calculateFluxes(void) {
                       &(fluxes.drainage), envi.soilWater, netRain,
                       fluxes.snowMelt, fluxes.transpiration);
   getGpp(&(fluxes.photosynthesis), potGrossPsn, dWater);
+
+  // First pass for events: carbon effects
+  processEventsForCarbon(event);
 
   // Vegetation respiration
   if (ctx.growthResp) {
@@ -1301,8 +1279,7 @@ void calculateFluxes(void) {
   calcWoodAndLeafFluxes();
 
   // Leaf on/off
-  calcLeafOnOffFluxes(&fluxes.leafOnCreation, &fluxes.leafOnCreationFromWood,
-                      &fluxes.leafLitter, envi.plantLeafC);
+  calcLeafOnOffFluxes();
 
   // Litter pool, if LITTER is on
   calcLitterFluxes();
@@ -1327,15 +1304,17 @@ void calculateFluxes(void) {
   // so make sure this stays at the bottom of this function (or after the
   // carbon and water calcs, at least).
   if (ctx.nitrogenCycle) {
+    // Second pass for events: nitrogen effects
+    processEventsForNitrogen(event);
+    // General nitrogen fluxes
     calcNitrogenFluxes();
   }
 
   // Check limitations; must be after all flux calcs
   checkLimitations();
 
-  // Delayed write needed due to N limitation check - leafOn value may have
-  // changed
-  writeLeafOnEventIfNeeded();
+  // Write to events file for all of today's events
+  writeEventsOut();
 }
 
 // /////////////////////// //
@@ -1478,7 +1457,7 @@ void updateTrackers(double oldSoilWater) {
 
   // If we get another event flux in this function, we should create an
   // updateTrackersForEvents() function in events.c|h
-  trackers.yearlyLitter += fluxes.leafLitter + fluxes.eventLeafOffLitter;
+  trackers.yearlyLitter += getLeafLitterFlux() + fluxes.eventLeafOffLitterC;
 
   if (ctx.gdd) {
     trackers.gdd += climate->gdd;
@@ -1529,8 +1508,16 @@ void initPhenologyTrackers(void) {
                                                // this year
 }
 
-// Check that woodC and total root C are both positive
+// Check that woodC and total root C are both positive and that there was no
+// terminating harvest
 int hasSufficientBiomass(void) {
+  // If there was a harvest termination event, the answer is no
+  if (eventTrackers.harvestTrackers.totalFracRemoved +
+          eventTrackers.harvestTrackers.totalFracTransferred >
+      1.0 - TINY) {
+    return 0;
+  }
+
   double totalWoodC = getTotalWoodC();
   double totalRootC = envi.fineRootC + envi.coarseRootC;
   // We want to check that both plantWoodC AND totalWoodC are positive, as well
@@ -1608,7 +1595,7 @@ void updateMainPools(void) {
   //     L_L = fluxes.leafLitter
   // Note: we have split leafCreation into two parts
   envi.plantLeafC +=
-      (fluxes.leafCreation + fluxes.leafOnCreation - fluxes.leafLitter) *
+      (fluxes.leafCreation + fluxes.leafOnCreation - getLeafLitterFlux()) *
       climate->length;
 
   // :: from [1], eq (A4), where:
@@ -1649,7 +1636,7 @@ void updatePoolsForSoil(void) {
         ctx.carbonSaturation ? unitClip(envi.soilC / params.soilCSaturation)
                              : 0.0;
     // :: from [2], litter model description
-    envi.litterC += (fluxes.woodLitter + fluxes.leafLitter +
+    envi.litterC += (fluxes.woodLitter + getLeafLitterFlux() +
                      (soilInputs * saturationFraction) - fluxes.litterToSoil -
                      fluxes.rLitter - fluxes.litterMethane) *
                     climate->length;
@@ -1661,12 +1648,12 @@ void updatePoolsForSoil(void) {
     // Normal pool (single pool, no microbes)
     // :: from [1] (and others, TBD), eq (A3), where:
     //     L_w = fluxes.woodLitter
-    //     L_l = fluxes.leafLitter
+    //     L_l = fluxes.leafLitter + fluxes.leafOffLitter
     //     R_h = fluxes.rSoil
     // :: from [3], root terms
     envi.soilC +=
         (fluxes.coarseRootLoss + fluxes.fineRootLoss + fluxes.woodLitter +
-         fluxes.leafLitter - fluxes.rSoil - fluxes.soilMethane) *
+         getLeafLitterFlux() - fluxes.rSoil - fluxes.soilMethane) *
         climate->length;
   }
 
@@ -1706,18 +1693,15 @@ void checkForMortality(void) {
     plantSurvivalTracker.isAlive = 0;
     double totalWoodC = getTotalWoodC();
     double totalRootC = envi.fineRootC + envi.coarseRootC;
-
-    if (eventTrackers.harvestFracRemoved +
-            eventTrackers.harvestFracTransferred >=
-        TINY) {
+    HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+    int harvestOccurred =
+        ht->totalFracRemoved + ht->totalFracTransferred >= TINY;
+    if (harvestOccurred) {
       logInfo("Plant mortality detected after harvest event: total fraction "
-              "removed %.3f total fraction transferred %.3f; woodC %f "
-              "totalWoodC %f coarseRootC %f fineRootC %f year %d day %d "
+              "removed %.3f total fraction transferred %.3f on year %d day %d "
               "time %6.3f; zeroing out biomass pools\n",
-              eventTrackers.harvestFracRemoved,
-              eventTrackers.harvestFracTransferred, envi.plantWoodC, totalWoodC,
-              envi.coarseRootC, envi.fineRootC, climate->year, climate->day,
-              climate->time);
+              ht->totalFracRemoved, ht->totalFracTransferred, climate->year,
+              climate->day, climate->time);
     } else {
       logWarning(
           "Plant mortality detected as wood or total root carbon is zero "
@@ -1732,19 +1716,34 @@ void checkForMortality(void) {
     // multiple processes being modeled, it's believable that there may be a bit
     // of overshoot when a plant dies - for example, a 100% harvest event with
     // any overall loss (respiration, turnover).
-    envi.soilC += totalRootC;
+
+    // Also, if there was a harvest, reduce by the appropriate removal fraction
+    // (For no harvest, these will be 1)
+    double aboveRemovalReduction = (1 - ht->totalFracRemovedAbove);
+    double belowRemovalReduction = (1 - ht->totalFracRemovedBelow);
+
+    envi.soilC += totalRootC * belowRemovalReduction;
+    double aboveC =
+        envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
     if (ctx.litterPool) {
-      envi.litterC +=
-          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+      envi.litterC += aboveC * aboveRemovalReduction;
     } else {
-      envi.soilC +=
-          envi.plantWoodC + envi.plantLeafC + envi.plantCAccountingDelta;
+      envi.soilC += aboveC * aboveRemovalReduction;
     }
+    fluxes.eventOutputC += (aboveC * ht->totalFracRemovedAbove +
+                            totalRootC * ht->totalFracRemovedBelow) /
+                           climate->length;
+
     if (ctx.nitrogenCycle) {  // litter pool implied
-      envi.soilOrgN +=
+      double aboveN =
+          envi.plantWoodC / params.woodCN + envi.plantLeafC / params.leafCN;
+      double belowN =
           envi.fineRootC / params.fineRootCN + envi.coarseRootC / params.woodCN;
-      envi.litterN += envi.plantWoodC / params.woodCN +
-                      envi.plantLeafC / params.leafCN + envi.plantStorageN;
+      envi.soilOrgN += belowN * belowRemovalReduction;
+      envi.litterN += aboveN * aboveRemovalReduction + envi.plantStorageN;
+      fluxes.eventOutputN += (aboveN * ht->totalFracRemovedAbove +
+                              belowN * ht->totalFracRemovedBelow) /
+                             climate->length;
     }
 
     // Force pools to zero
@@ -1760,11 +1759,11 @@ void checkForMortality(void) {
     resetMeanTracker(meanNPP, 0.0);
 
     if (ctx.events) {
-      writeComputedEventOut(
-          climate->year, climate->day, eventTypeToString(PLANTDEATH), 4,
-          "harvestFracRemoved", eventTrackers.harvestFracRemoved,
-          "harvestFracTransferred", eventTrackers.harvestFracTransferred,
-          "totalWoodC", totalWoodC, "totalRootC", totalRootC);
+      writeComputedEventOut(climate->year, climate->day,
+                            eventTypeToString(PLANTDEATH), 4,
+                            "harvestFracRemoved", ht->totalFracRemoved,
+                            "harvestFracTransferred", ht->totalFracTransferred,
+                            "totalWoodC", totalWoodC, "totalRootC", totalRootC);
     }
   }
 }
@@ -1791,11 +1790,12 @@ void updatePoolsAndBalance() {
     updateNitrogenPools();
   }
 
+  // Check for obvious plant death (wood and/or roots at zero); also
+  // correct for harvest termination
+  checkForMortality();
+
   // Calc total C and N after pool updates
   updateBalanceTrackerPostUpdate();
-
-  // Check for obvious plant death (wood and/or roots at zero)
-  checkForMortality();
 
   // Verify none of our stocks have gone negative (set any that are to zero).
   ensureNonNegativeStocks();
@@ -1833,12 +1833,7 @@ void updateState(void) {
   ///////////////////////
   // 1. Calculate Fluxes
 
-  // All event handling, which is modeled as fluxes. Note that we have this
-  // before the other fluxes so that everything is in place when we consider
-  // N limitation at the end of calculateFluxes().
-  processEvents();
-
-  // All non-event fluxes
+  // All modeled fluxes, including events
   calculateFluxes();
 
   ///////////////////////

@@ -17,3 +17,7 @@ PlantSurvivalTracker plantSurvivalTracker;
 double getTotalWoodC(void) {
   return envi.plantWoodC + envi.plantCAccountingDelta;
 }
+
+double getLeafLitterFlux(void) {
+  return fluxes.leafLitter + fluxes.leafOffLitter;
+}

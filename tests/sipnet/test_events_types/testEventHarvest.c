@@ -140,9 +140,39 @@ int run(void) {
   return status;
 }
 
+int checkAccountingHarvest(void) {
+  int status = 0;
+  for (int i = -1; i <= 1; i++) {
+    prepTypesTest();
+    updateIntContext("litterPool", 1, CTX_TEST);
+    updateIntContext("nitrogenCycle", 1, CTX_TEST);
+    initEnv();
+    envi.plantCAccountingDelta = i;
+    updateBalanceTrackerPreUpdate();
+    initEvents("events_one_harvest.in", "events.out", 0);
+    setupEvents();
+    procEvents();
+    closeEventOutFile();
+    updateBalanceTrackerPostUpdate();
+    const double dc = balanceTracker.postTotalC - balanceTracker.preTotalC +
+                      fluxes.eventOutputC * climate->length;
+    const double dn = balanceTracker.postTotalN - balanceTracker.preTotalN +
+                      fluxes.eventOutputN * climate->length;
+    if (fabs(dc) > 1e-12 || fabs(dn) > 1e-12 ||
+        fabs(envi.plantWoodC - 1.8) > 1e-12 ||
+        fabs(envi.plantCAccountingDelta - 0.6 * i) > 1e-12) {
+      logTest("Accounting harvest failed: A=%d, C residual=%.15g, N "
+              "residual=%.15g\n",
+              i, dc, dn);
+      status = 1;
+    }
+  }
+  return status;
+}
+
 int main(void) {
   logTest("Starting run()\n");
-  int status = run();
+  int status = run() | checkAccountingHarvest();
   if (status) {
     logTest("FAILED testEventHarvest with status %d\n", status);
     exit(status);

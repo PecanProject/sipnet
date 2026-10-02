@@ -2,6 +2,7 @@
 #include "sipnet/events.c"
 #include "sipnet/nitrogen.c"
 #include "sipnet/limitations.c"
+#include "utils/helpers.c"
 
 /////
 // Setup and general test state management
@@ -134,15 +135,17 @@ int testFertilization(void) {
   // init minN 2, nVol 0.1
   initNVolatilizationState(initN, nVolFrac);
 
-  // fert event: 15 5 10
+  // fert event: 15 orgN 5 orgC 10 minN
   double fertMinN = 10;
   initEvents("events_fert.in", "events.out", 0);
   setupEvents();
 
+  EventNode *event = getCurrentEvent();
+  processEventsForCarbon(event);
+  processEventsForNitrogen(event);
   calcNVolatilizationFlux();
-  processEvents();
-  updateNitrogenPools();
   updatePoolsForEvents();
+  updateNitrogenPools();
 
   // Want to test:
   // envi: minN
@@ -708,6 +711,8 @@ int testLeafTurnoverNResorption(void) {
   envi.minN = 1.0;
   envi.plantStorageN = 0.0;
   fluxes.leafOffNResorption = 2.0;
+  params.leafNResorptionFrac = 0.5;
+
   updateNitrogenPools();
 
   double expStorageN = 2.0 * climate->length;  // 0.25
@@ -727,9 +732,14 @@ int testLeafTurnoverNResorption(void) {
   double availableN = minN2;  // plus unclaimed plantStorageN, which is 0 here
   double maxUptake = demandFlux * climate->length;
   double reduction = availableN / maxUptake;
+  // enough so we don't limit leaf litter in checkNegativeCreation
+  envi.plantLeafC = 8.0;
 
   initNLimitationState(minN2, 0);
   fluxes.leafOffNResorption = resorpFlux;
+  // to make sure leafOffNResorption is not reduced by leafOffLitter
+  fluxes.leafOffLitter =
+      resorpFlux * params.leafCN / params.leafNResorptionFrac;
 
   doNFixUpLimitCalcs();
   updateNitrogenPools();
@@ -738,7 +748,7 @@ int testLeafTurnoverNResorption(void) {
                                  "[turnover resorption] leafCreation");
   status |= checkNLimitationFlux(fluxes.woodCreation, 500 * reduction,
                                  "[turnover resorption] woodCreation");
-  status |= checkMinAndStorageN("turnover resorption", 0.0,
+  status |= checkMinAndStorageN("turnover resorption final", 0.0,
                                 resorpFlux * climate->length);
 
   return status;

@@ -1,6 +1,8 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include "common/util.h"
+
 typedef enum EventType {
   FERTILIZATION,
   HARVEST,
@@ -81,6 +83,8 @@ struct EventNode {
   event_type_t type;
   int year, day;
   void *eventParams;
+  int numLogParamPairs;
+  DynamicString *logLine;
   EventNode *nextEvent;
 };
 
@@ -117,29 +121,20 @@ EventNode *readEventData(const char *eventFile);
 void openEventOutFile(const char *eventOutFile, int printHeader);
 
 /*!
- * \brief Write a line to the event output file for a single oneEvent
- *
- * Writes a single oneEvent to the configured event output file. This is a
- * variadic function which expects to receive 2*numParams values in (char*,
- * double) pairs after the
- * numParams argument.
- *
- * Output format:
- *
- * year day event_type \<param_name>=\<delta>[,\<param_name>=\<delta>,...]
- *
- * \param oneEvent     Pointer to oneEvent node
- * \param numParams Number of param/value PAIRS to write
- * \param ...       Pairs of (char*, double) arguments to write, 2*numParams
- *                  values
+ * Append to an event's log line
  */
-void writeEventOut(EventNode *oneEvent, int numParams, ...);
+void appendLog(EventNode *event, int numParams, ...);
+
+/*!
+ * Write out all events for this time step
+ */
+void writeEventsOut(void);
 
 /*!
  * \brief Write a line to the event output file for a computed event
  *
- * Same as writeEventOut, but for events that are computed internally, such
- * as leaf on/leaf off events.
+ * Write an event that is computed internally, such as leaf on/leaf off or
+ * plant death events.
  *
  * Output format:
  *
@@ -187,17 +182,30 @@ void setupEvents(void);
 int isFirstEventBefore(int year, int day);
 
 /*!
- * \brief Process events for current location/year/day
- *
- * For a given year and day (as determined by the global `climate`
- * pointer), process all events listed in the global `events` pointer for the
- * referenced location.
- *
- * For each event, modify flux variables according to the model for that event,
- * and write a row to the configured event output file listing the modified
- * variables and the delta applied.
+ * Return today's first event for SIPNET's multi-pass calls
  */
-void processEvents(void);
+EventNode *getCurrentEvent(void);
+
+/*!
+ * \brief Process carbon effects from events for current day
+ *
+ * Process all events for the current day, calculating all carbon
+ * effects. For each event, modify flux variables according to the model for
+ * that event type.
+ */
+void processEventsForCarbon(EventNode *event);
+
+/*!
+ * \brief Process nitrogen effects from events for current day
+ *
+ * Process all events for the current day, calculating all nitrogen
+ * effects. For each event, modify flux variables according to the model for
+ * that event type.
+ *
+ * Carbon and nitrogen effects are calculated separately to allow carbon
+ * limitation checks to be run before any nitrogen calculations are made.
+ */
+void processEventsForNitrogen(EventNode *event);
 
 /*!
  * Update relevant environment pools after event fluxes have been calculated
@@ -209,6 +217,15 @@ void updatePoolsForEvents(void);
  */
 void freeEventList(void);
 
+typedef struct HarvestTrackersStruct {
+  double totalFracRemoved;
+  double totalFracTransferred;
+  double totalFracRemovedAbove;
+  double totalFracRemovedBelow;
+  double totalFracTransferredAbove;
+  double totalFracTransferredBelow;
+} HarvestTrackers;
+
 // Variables to track events with lingering effects
 typedef struct EventTrackerStruct {
   // Tillage effect on Rh; exponentially decays at each time step by a factor
@@ -216,8 +233,7 @@ typedef struct EventTrackerStruct {
   double d_till_mod;
 
   // Fraction removed and transferred from harvest event this time step
-  double harvestFracRemoved;
-  double harvestFracTransferred;
+  HarvestTrackers harvestTrackers;
 } EventTrackers;
 
 extern EventTrackers eventTrackers;

@@ -37,7 +37,7 @@
 #define NUM_TRACKER_FIELDS 33
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_SURVIVAL_TRACKERS_FIELDS 1
-#define NUM_EVENT_TRACKERS_FIELDS 3
+#define NUM_EVENT_TRACKERS_FIELDS 7
 
 // This one shouldn't change
 #define NUM_END_FIELDS 1
@@ -291,9 +291,13 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   }
 
   ind = 0;
-  state->eventPF[ind++] = (StateField){"event_trackers.d_till_mod",             FT_DOUBLE,  &eventTrackers.d_till_mod,             0};
-  state->eventPF[ind++] = (StateField){"event_trackers.harvestFracRemoved",     FT_DOUBLE,  &eventTrackers.harvestFracRemoved,     0};
-  state->eventPF[ind++] = (StateField){"event_trackers.harvestFracTransferred", FT_DOUBLE,  &eventTrackers.harvestFracTransferred, 0};
+  state->eventPF[ind++] = (StateField){"event_trackers.d_till_mod",                                FT_DOUBLE,  &eventTrackers.d_till_mod,                                0};
+  state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracRemoved",          FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracRemoved,          0};
+  state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracTransferred",      FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracTransferred,      0};
+  state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracRemovedAbove",     FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracRemovedAbove,     0};
+  state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracRemovedBelow",     FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracRemovedBelow,     0};
+  state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracTransferredAbove", FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracTransferredAbove, 0};
+  state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracTransferredBelow", FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracTransferredBelow, 0};
   state->eventPF[ind++] = (StateField){"event_trackers.invalid",                FT_INVALID, NULL, FIELD_INVALID};
   if (ind != NUM_EVENT_TRACKERS_FIELDS + 1) {
     logInternalError("Restart array size mismatch: eventPF\n");
