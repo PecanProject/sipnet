@@ -12,7 +12,7 @@ python -m pip install "https://github.com/PecanProject/sipnet/archive/refs/tags/
 sipnet-view --input-file base.out --events-file base.events.out
 ```
 
-In **Y-axis columns**, select `gpp` and `nee` (use Command-click on macOS or Ctrl-click on Linux to select both). Choose **Split subplots**, set **Start time** to `2016-092-00.00` and **End time** to `2016-122-00.00`, then click **Apply**. These dates show April 2016, using year–day-of-year–hour notation.
+In **Y-axis columns**, click `gpp` and `nee` to select both; click any other selected variable to deselect it. Choose **Split subplots**, set **Start time** to `2016-092-00.00` and **End time** to `2016-121-23.99`, then click **Apply**. This selects April 2016, using year–day-of-year–hour notation.
 
 The viewer shows native three-hour timestep totals in g C m⁻², whereas Tutorial 1 plots daily sums. Negative NEE means net uptake. Use the plot toolbar to zoom or pan, and its home button to restore the plotted extent.
 
@@ -29,7 +29,7 @@ The same view can be opened with preset selections:
 ```bash
 sipnet-view --input-file base.out --events-file base.events.out \
   --columns gpp,nee --layout subplots --event-types irrig \
-  --time-range 2016-092-00.00,2016-122-00.00
+  --time-range 2016-092-00.00,2016-121-23.99
 ```
 
 Click **Apply** to draw it. To explore another output, change **Y-axis columns**; use [Model outputs](model-outputs.md) for its definition and units.
@@ -42,7 +42,7 @@ Keep the baseline window open. In a second terminal, return to `sipnet-tutorial`
 source .venv/bin/activate
 sipnet-view --input-file sipnet.out --events-file events.out \
   --columns gpp,nee --layout subplots --event-types irrig \
-  --time-range 2016-092-00.00,2016-122-00.00
+  --time-range 2016-092-00.00,2016-121-23.99
 ```
 
-Click **Apply**. Compare the same dates and read the axis limits: each window autoscales independently. Use Tutorial 1's plotting script for overlaid daily curves and annual totals. Close both windows before following its [cleanup instructions](tutorial-1.md#clean-up).
+Click **Apply**. Compare the same dates and read the axis limits: each window autoscales independently. Use Tutorial 1's Python examples for overlaid daily curves and annual totals. Close both windows before following its [cleanup instructions](tutorial-1.md#clean-up).

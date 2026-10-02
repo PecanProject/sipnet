@@ -72,21 +72,42 @@ source .venv/bin/activate
 python -m pip install pandas matplotlib
 ```
 
-Download [plot-tutorial.py](plot-tutorial.py) into your `sipnet-tutorial` directory, then run:
+From `sipnet-tutorial`, start the Python console:
 
 ```bash
-python plot-tutorial.py base.out
+python
 ```
 
-Open `baseline.png` to view daily totals for 2016. The script reads named columns, constructs dates, and sums timestep fluxes into daily totals:
+Paste the code below at the `>>>` prompt. It reads named output columns and constructs dates from the year, day of year, and hour. The `read_daily` function selects 2016 and sums timestep GPP and NEE into daily totals.
 
 ```python
-data = pd.read_csv(filename, sep=r"\s+")
-data.index = (pd.to_datetime(data.year.astype(str), format="%Y")
-              + pd.to_timedelta(data.day - 1, unit="D")
-              + pd.to_timedelta(data.time, unit="h"))
-daily = data.loc["2016", ["gpp", "nee"]].resample("D").sum()
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def read_daily(filename):
+    data = pd.read_csv(filename, sep=r"\s+")
+    data.index = (pd.to_datetime(data.year.astype(str), format="%Y")
+                  + pd.to_timedelta(data.day - 1, unit="D")
+                  + pd.to_timedelta(data.time, unit="h"))
+    return data.loc["2016", ["gpp", "nee"]].resample("D").sum()
+
+
+baseline = read_daily("base.out")
+fig, axes = plt.subplots(2, 1, figsize=(8, 5), sharex=True)
+for axis, column in zip(axes, ["gpp", "nee"]):
+    axis.plot(baseline.index, baseline[column], label="Baseline")
+    axis.set_ylabel(f"{column.upper()} (g C m⁻² day⁻¹)")
+
+axes[0].legend()
+axes[1].axhline(0, color="gray", linewidth=0.7)
+axes[1].set_xlabel("Date (2016)")
+fig.tight_layout()
+fig.savefig("baseline.png", dpi=150)
+plt.show()
 ```
+
+The plot opens in a window and is also saved as `baseline.png`. Close the plot window, then enter `exit()` at the Python prompt to return to the terminal before continuing. If no window opens, view the saved PNG.
 
 ![Baseline daily GPP and NEE in 2016, with separate panels and a zero reference for net ecosystem exchange.](tutorial-1_files/baseline.png)
 
@@ -122,10 +143,45 @@ Predict: will 20% higher `aMax` increase GPP by exactly 20%? Will the ecosystem 
 
 ```bash
 ./sipnet -i sipnet.in
-python plot-tutorial.py base.out sipnet.out
 ```
 
-Open `comparison.png` to compare the runs. The script also prints annual totals and absolute differences (higher `aMax` minus baseline) in g C m⁻², and saves them in `annual-totals.csv`. Compare their signs and magnitudes with your prediction.
+Start a fresh Python console with `python`, then paste this complete comparison example:
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def read_daily(filename):
+    data = pd.read_csv(filename, sep=r"\s+")
+    data.index = (pd.to_datetime(data.year.astype(str), format="%Y")
+                  + pd.to_timedelta(data.day - 1, unit="D")
+                  + pd.to_timedelta(data.time, unit="h"))
+    return data.loc["2016", ["gpp", "nee"]].resample("D").sum()
+
+
+baseline = read_daily("base.out")
+modified = read_daily("sipnet.out")
+fig, axes = plt.subplots(2, 1, figsize=(8, 5), sharex=True)
+for axis, column in zip(axes, ["gpp", "nee"]):
+    axis.plot(baseline.index, baseline[column], label="Baseline")
+    axis.plot(modified.index, modified[column], "--", label="Higher aMax")
+    axis.set_ylabel(f"{column.upper()} (g C m⁻² day⁻¹)")
+
+axes[0].legend()
+axes[1].axhline(0, color="gray", linewidth=0.7)
+axes[1].set_xlabel("Date (2016)")
+fig.tight_layout()
+fig.savefig("comparison.png", dpi=150)
+
+totals = pd.DataFrame({"Baseline": baseline.sum(), "Higher aMax": modified.sum()})
+totals["Difference"] = totals["Higher aMax"] - totals["Baseline"]
+totals.to_csv("annual-totals.csv")
+print(totals.round(2))
+plt.show()
+```
+
+The code displays the comparison, saves `comparison.png`, and prints annual totals and absolute differences (higher `aMax` minus baseline) in g C m⁻², and saves them in `annual-totals.csv`. Compare their signs and magnitudes with your prediction. Close the plot window and enter `exit()` to return to the terminal.
 
 ![Daily GPP and NEE for baseline and higher aMax in 2016, distinguished by solid and dashed lines.](tutorial-1_files/comparison.png)
 
