@@ -4,11 +4,44 @@
 
 #include "debug_log.h"
 
+#include "events.h"
 #include "common/exitCodes.h"
 #include "common/logging.h"
 #include "common/context.h"
 #include "common/util.h"
 #include "state.h"
+
+#define NUM_LOGGED_ENVI_FIELDS 13
+#define NUM_LOGGED_FLUX_FIELDS 59
+#define NUM_LOGGED_TRACKER_FIELDS 33
+#define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
+#define NUM_LOGGED_SURVIVAL_FIELDS 1
+#define NUM_LOGGED_EVENT_TRACKER_FIELDS 7
+
+#define DEBUG_LAYOUT_ENVI_SIZE (8 * NUM_LOGGED_ENVI_FIELDS)
+#define DEBUG_LAYOUT_FLUX_SIZE (8 * NUM_LOGGED_FLUX_FIELDS)
+// The Trackers struct is not all doubles, but the int(s) get padded to 8 bytes
+#define DEBUG_LAYOUT_TRACKER_SIZE (8 * NUM_LOGGED_TRACKER_FIELDS)
+#define DEBUG_LAYOUT_PHEN_SIZE (4 * NUM_LOGGED_PHEN_TRACKER_FIELDS)
+#define DEBUG_LAYOUT_SURVIVAL_SIZE (4 * NUM_LOGGED_SURVIVAL_FIELDS)
+#define DEBUG_LAYOUT_EVENT_SIZE (8 * NUM_LOGGED_EVENT_TRACKER_FIELDS)
+
+_Static_assert(sizeof(Envi) == DEBUG_LAYOUT_ENVI_SIZE,
+               "Debug log schema drift: Envi changed; update debug_log.c");
+_Static_assert(sizeof(Fluxes) == DEBUG_LAYOUT_FLUX_SIZE,
+               "Debug log schema drift: Fluxes changed; update debug_log.c");
+_Static_assert(sizeof(Trackers) == DEBUG_LAYOUT_TRACKER_SIZE,
+               "Debug log schema drift: Trackers changed; update debug_log.c");
+_Static_assert(
+    sizeof(PhenologyTrackers) == DEBUG_LAYOUT_PHEN_SIZE,
+    "Debug log schema drift: PhenologyTrackers changed; update debug_log.c");
+_Static_assert(
+    sizeof(PlantSurvivalTracker) == DEBUG_LAYOUT_SURVIVAL_SIZE,
+    "Debug log schema drift: PlantSurvival changed; update debug_log.c");
+_Static_assert(
+    sizeof(EventTrackers) == DEBUG_LAYOUT_EVENT_SIZE,
+    "Debug log schema drift: EventTrackers changed; update debug_log.c");
+
 typedef enum DebugFieldType {
   DEBUG_FIELD_INT = 0,
   DEBUG_FIELD_DOUBLE = 1
@@ -20,18 +53,13 @@ typedef struct DebugField {
   const void *value;
 } DebugField;
 
-#define NUM_LOGGED_ENVI_FIELDS 13
-#define NUM_LOGGED_FLUX_FIELDS 57
-#define NUM_LOGGED_TRACKER_FIELDS 33
-#define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
-#define NUM_LOGGED_SURVIVAL_FIELDS 1
-
 typedef struct DebugFieldArrays {
   DebugField enviDF[NUM_LOGGED_ENVI_FIELDS];
   DebugField fluxDF[NUM_LOGGED_FLUX_FIELDS];
   DebugField trackerDF[NUM_LOGGED_TRACKER_FIELDS];
   DebugField phenoDF[NUM_LOGGED_PHEN_TRACKER_FIELDS];
   DebugField survivalDF[NUM_LOGGED_SURVIVAL_FIELDS];
+  DebugField eventDF[NUM_LOGGED_EVENT_TRACKER_FIELDS];
 } DebugFieldArrays;
 
 static DebugFieldArrays *debugFields = NULL;
@@ -61,7 +89,11 @@ void initDebugArrays() {
   debugFields->enviDF[ind++] = (DebugField){"soilOrgN", DEBUG_FIELD_DOUBLE, &envi.soilOrgN},
   debugFields->enviDF[ind++] = (DebugField){"litterN", DEBUG_FIELD_DOUBLE, &envi.litterN},
   debugFields->enviDF[ind++] = (DebugField){"plantStorageN", DEBUG_FIELD_DOUBLE, &envi.plantStorageN},
-  debugFields->enviDF[ind  ] = (DebugField){"plantCAccountingDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
+  debugFields->enviDF[ind++] = (DebugField){"plantCAccountingDelta", DEBUG_FIELD_DOUBLE,&envi.plantCAccountingDelta};
+  if (ind != NUM_LOGGED_ENVI_FIELDS) {
+    logInternalError("Debug log array size mismatch: enviDF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   ind = 0;
   debugFields->fluxDF[ind++] = (DebugField){"photosynthesis", DEBUG_FIELD_DOUBLE, &fluxes.photosynthesis};
@@ -90,6 +122,7 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"woodCreation", DEBUG_FIELD_DOUBLE, &fluxes.woodCreation},
   debugFields->fluxDF[ind++] = (DebugField){"leafOnCreation", DEBUG_FIELD_DOUBLE, &fluxes.leafOnCreation},
   debugFields->fluxDF[ind++] = (DebugField){"leafOnCreationFromWood", DEBUG_FIELD_DOUBLE, &fluxes.leafOnCreationFromWood},
+  debugFields->fluxDF[ind++] = (DebugField){"leafOffLitter", DEBUG_FIELD_DOUBLE, &fluxes.leafOffLitter},
   debugFields->fluxDF[ind++] = (DebugField){"nVolatilization", DEBUG_FIELD_DOUBLE, &fluxes.nVolatilization},
   debugFields->fluxDF[ind++] = (DebugField){"nLeaching", DEBUG_FIELD_DOUBLE, &fluxes.nLeaching},
   debugFields->fluxDF[ind++] = (DebugField){"nOrgSoil", DEBUG_FIELD_DOUBLE, &fluxes.nOrgSoil},
@@ -117,10 +150,15 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"eventOutputN", DEBUG_FIELD_DOUBLE, &fluxes.eventOutputN},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOnCreation", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOnCreation},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOnCreationFromWood", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOnCreationFromWood},
-  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffLitter", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitterC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffLitterC", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitterC},
+  debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffLitterN", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffLitterN},
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffNResorption},
   debugFields->fluxDF[ind++] = (DebugField){"soilMethane", DEBUG_FIELD_DOUBLE, &fluxes.soilMethane},
-  debugFields->fluxDF[ind  ] = (DebugField){"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane};
+  debugFields->fluxDF[ind++] = (DebugField){"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane};
+  if (ind != NUM_LOGGED_FLUX_FIELDS) {
+    logInternalError("Debug log array size mismatch: fluxDF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   ind = 0;
   debugFields->trackerDF[ind++] = (DebugField){"gpp", DEBUG_FIELD_DOUBLE, &trackers.gpp},
@@ -155,15 +193,40 @@ void initDebugArrays() {
   debugFields->trackerDF[ind++] = (DebugField){"nLeaching", DEBUG_FIELD_DOUBLE, &trackers.nLeaching},
   debugFields->trackerDF[ind++] = (DebugField){"nFixation", DEBUG_FIELD_DOUBLE, &trackers.nFixation},
   debugFields->trackerDF[ind++] = (DebugField){"nUptake", DEBUG_FIELD_DOUBLE, &trackers.nUptake};
-  debugFields->trackerDF[ind  ] = (DebugField){"meanNPP", DEBUG_FIELD_DOUBLE, &trackers.meanNPP};
+  debugFields->trackerDF[ind++] = (DebugField){"meanNPP", DEBUG_FIELD_DOUBLE, &trackers.meanNPP};
+  if (ind != NUM_LOGGED_TRACKER_FIELDS) {
+    logInternalError("Debug log array size mismatch: trackerDF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   ind = 0;
   debugFields->phenoDF[ind++] = (DebugField){"didLeafGrowth", DEBUG_FIELD_INT, &phenologyTrackers.didLeafGrowth},
   debugFields->phenoDF[ind++] = (DebugField){"didLeafFall", DEBUG_FIELD_INT, &phenologyTrackers.didLeafFall},
-  debugFields->phenoDF[ind  ] = (DebugField){"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear};
+  debugFields->phenoDF[ind++] = (DebugField){"lastYear", DEBUG_FIELD_INT, &phenologyTrackers.lastYear};
+  if (ind != NUM_LOGGED_PHEN_TRACKER_FIELDS) {
+    logInternalError("Debug log array size mismatch: phenoDF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
 
   ind = 0;
-  debugFields->survivalDF[ind] = (DebugField){"isAlive", DEBUG_FIELD_INT, &plantSurvivalTracker.isAlive};
+  debugFields->survivalDF[ind++] = (DebugField){"isAlive", DEBUG_FIELD_INT, &plantSurvivalTracker.isAlive};
+  if (ind != NUM_LOGGED_SURVIVAL_FIELDS) {
+    logInternalError("Debug log array size mismatch: survivalDF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
+
+  ind = 0;
+  debugFields->eventDF[ind++] = (DebugField){"d_till_mod", DEBUG_FIELD_DOUBLE, &eventTrackers.d_till_mod};
+  debugFields->eventDF[ind++] = (DebugField){"ht.totalFracRemoved", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracRemoved};
+  debugFields->eventDF[ind++] = (DebugField){"ht.totalFracTransferred", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracTransferred};
+  debugFields->eventDF[ind++] = (DebugField){"ht.totalFracRemovedAbove", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracRemovedAbove};
+  debugFields->eventDF[ind++] = (DebugField){"ht.totalFracRemovedBelow", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracRemovedBelow};
+  debugFields->eventDF[ind++] = (DebugField){"ht.totalFracTransferredAbove", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracTransferredAbove};
+  debugFields->eventDF[ind++] = (DebugField){"ht.totalFracTransferredBelow", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracTransferredBelow};
+  if (ind != NUM_LOGGED_EVENT_TRACKER_FIELDS) {
+    logInternalError("Debug log array size mismatch: eventDF\n");
+    exit(EXIT_CODE_INTERNAL_ERROR);
+  }
   // clang-format on
 }
 
@@ -279,6 +342,8 @@ void outputDebugHeaders(DebugLogFiles *debugLogFiles) {
     outputDebugFieldHeader(debugLogFiles->trackers, "s.",
                            debugFields->survivalDF, NUM_LOGGED_SURVIVAL_FIELDS,
                            0);
+    outputDebugFieldHeader(debugLogFiles->trackers, "et.", debugFields->eventDF,
+                           NUM_LOGGED_EVENT_TRACKER_FIELDS, 0);
     fprintf(debugLogFiles->trackers, "\n");
   }
 }
@@ -308,6 +373,9 @@ void outputDebugState(DebugLogFiles *debugLogFiles, int year, int day,
     outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
                            debugFields->survivalDF, NUM_LOGGED_SURVIVAL_FIELDS,
                            0);
+    outputDebugFieldValues(debugLogFiles->trackers, year, day, time,
+                           debugFields->eventDF,
+                           NUM_LOGGED_EVENT_TRACKER_FIELDS, 0);
     fprintf(debugLogFiles->trackers, "\n");
   }
 }
