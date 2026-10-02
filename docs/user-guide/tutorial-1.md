@@ -9,6 +9,7 @@ This tutorial uses an example based on the [Century Experiment at Russell Ranch]
 
 **Requirements:** basic terminal operations, Python 3.12 or newer, and SIPNET 2.2.0. The release binaries below support Apple Silicon macOS and x86-64 Linux, including WSL.
 
+The table below lists other documentation topics that will help familiarize yourself with SIPNET.
 | Topic | Reference |
 |---|---|
 | Processes, pools, and equations | [Model structure](../model-structure.md) |
