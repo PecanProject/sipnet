@@ -9,6 +9,7 @@ This tutorial uses an example based on the [Century Experiment at Russell Ranch]
 
 **Requirements:** basic terminal operations, Python 3.12 or newer, and SIPNET 2.2.0. The release binaries below support Apple Silicon macOS and x86-64 Linux, including WSL.
 
+The table below lists other documentation topics that will help familiarize yourself with SIPNET.
 | Topic | Reference |
 |---|---|
 | Processes, pools, and equations | [Model structure](../model-structure.md) |
@@ -17,9 +18,9 @@ This tutorial uses an example based on the [Century Experiment at Russell Ranch]
 | Configuration settings and command-line options | [Running SIPNET](running-sipnet.md) |
 | Output variables and units | [Model outputs](model-outputs.md) |
 
-**Parameters** describe the ecosystem and its processes, including plant physiological traits and soil biogeochemical kinetics.
+**Parameters** describes the ecosystem and its processes, including plant physiological traits and soil biogeochemical kinetics.
 
-**Settings** select model features and control files and outputs.
+**Settings** describes select model features and control files and outputs.
 
 ## 2. Run SIPNET
 
