@@ -504,6 +504,9 @@ static void exportLossCase(void) {
 }
 
 int main(void) {
+
+  logTest("Starting testCompleteHarvest\n");
+
   const char *harvest[] = {"0 0 1 1", "1 1 0 0", ".25 .75 .75 .25"};
   const double above[] = {0, 1, .25}, below[] = {0, 1, .75};
   for (int mode = 0; mode < 3; mode++)
@@ -542,6 +545,16 @@ int main(void) {
 
   logTest("\n");
   logTest("Complete harvest total failures: %d\n", failures);
+  logTest("\n");
+
+  int status = failures > 0;
+
+  if (status) {
+    logTest("FAILED testCompleteHarvest with status %d\n", status);
+    exit(status);
+  }
+
+  logTest("PASSED testCompleteHarvest\n");
 
   return failures != 0;
 }
