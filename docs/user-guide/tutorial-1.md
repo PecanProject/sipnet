@@ -17,9 +17,9 @@ This tutorial uses an example based on the [Century Experiment at Russell Ranch]
 | Configuration settings and command-line options | [Running SIPNET](running-sipnet.md) |
 | Output variables and units | [Model outputs](model-outputs.md) |
 
-**Parameters** describe the ecosystem and its processes, including plant physiological traits and soil biogeochemical kinetics.
+**Parameters** describes the ecosystem and its processes, including plant physiological traits and soil biogeochemical kinetics.
 
-**Settings** select model features and control files and outputs.
+**Settings** describes select model features and control files and outputs.
 
 ## 2. Run SIPNET
 
