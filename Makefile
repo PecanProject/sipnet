@@ -40,6 +40,13 @@ all: sipnet document
 # Build documentation with both Doxygen and Mkdocs
 document: .doxygen.stamp .mkdocs.stamp
 
+# Verify tutorial scenarios and refresh the saved plots on demand.
+PYTHON ?= python3
+tutorial:
+	$(PYTHON) examples/first-experiment/render.py
+
+.PHONY: tutorial
+
 # Only update docs if source files or Doxyfile have changed
 .doxygen.stamp: $(DOXYFILE) $(CFILES)
 	@if [ ! -d $(DOXYGEN_HTML_DIR) ] || [ $(DOXYFILE) -nt .doxygen.stamp ] || \
@@ -116,6 +123,7 @@ help:
 	@echo "  sipnet       - (also default target) Build the sipnet executable; see sipnet.in in the src/sipnet"
 	@echo "                 directory for a sample input file"
 	@echo "  document     - Generate documentation (via doxygen and mkdocs)"
+	@echo "  tutorial     - Run tutorial scenarios and regenerate figures"
 	@echo "  all          - Build sipnet executable and the documentation"
 	@echo "  clean        - Remove compiled files, executables, and documentation"
 	@echo "  depend       - Generate build dependency information for source files and append to Makefile"
