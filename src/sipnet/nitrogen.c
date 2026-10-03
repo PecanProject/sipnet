@@ -49,14 +49,16 @@ static void calcNPoolFluxes(void) {
 
   // for both litter and soil, mineralization is calculated as heterotrophic
   // respiration divided by the C:N ratio of that pool.
-  double litterMin = fluxes.rLitter / litterCN;
-  double soilMin = fluxes.rSoil / soilCN;
+  // A zero carbon transfer carries no nitrogen, including from an empty pool.
+  double litterMin = fluxes.rLitter == 0.0 ? 0.0 : fluxes.rLitter / litterCN;
+  double soilMin = fluxes.rSoil == 0.0 ? 0.0 : fluxes.rSoil / soilCN;
 
   // Adding soil carbon saturation functionality so organic N fluxes to soil
   // and litter are proportional to respective carbon fluxes dependent on
   // soil carbon saturation
-  double soilNInputs = fluxes.litterToSoil / litterCN +
-                       fluxes.fineRootLoss / params.fineRootCN +
+  double litterNToSoil =
+      fluxes.litterToSoil == 0.0 ? 0.0 : fluxes.litterToSoil / litterCN;
+  double soilNInputs = litterNToSoil + fluxes.fineRootLoss / params.fineRootCN +
                        fluxes.coarseRootLoss / params.woodCN;
   // saturationFraction capped between zero and one
   double saturationFraction =
@@ -67,10 +69,10 @@ static void calcNPoolFluxes(void) {
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter (modified by leaf N resorption), and N loss due to mineralization.
   // N added via fertilization is handled elsewhere.
-  fluxes.nOrgLitter =
-      fluxes.leafLitter / params.leafCN - fluxes.leafOffNResorption +
-      fluxes.woodLitter / params.woodCN - litterMin -
-      fluxes.litterToSoil / litterCN + (soilNInputs * saturationFraction);
+  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN -
+                      fluxes.leafOffNResorption +
+                      fluxes.woodLitter / params.woodCN - litterMin -
+                      litterNToSoil + (soilNInputs * saturationFraction);
 
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
