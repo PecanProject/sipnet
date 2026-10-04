@@ -502,6 +502,45 @@ int testOrganicN(void) {
   return status;
 }
 
+int testZeroCarbonNitrogenTransfer(void) {
+  int status = 0;
+  logTest("Running testZeroCarbonNitrogenTransfer\n");
+
+  for (int organicNPresent = 0; organicNPresent <= 1; organicNPresent++) {
+    resetState();
+    envi.litterC = 0.0;
+    envi.soilC = 0.0;
+    envi.minN = 2.0;
+    envi.litterN = organicNPresent ? 0.0211 : 0.0;
+    envi.soilOrgN = organicNPresent ? 127.7255 : 0.0;
+
+    double initialTotalN = envi.minN + envi.litterN + envi.soilOrgN;
+    double initialLitterN = envi.litterN;
+    double initialSoilOrgN = envi.soilOrgN;
+
+    calcNPoolFluxes();
+    updateNitrogenPools();
+
+    if (!isfinite(envi.minN) || !isfinite(envi.litterN) ||
+        !isfinite(envi.soilOrgN)) {
+      logTest("Zero-carbon pools produced non-finite nitrogen stocks\n");
+      status = 1;
+    }
+    status |= checkFlux(fluxes.nMin, 0.0, "Zero-carbon mineralization");
+    status |= checkFlux(fluxes.nOrgLitter, 0.0, "Zero-carbon organic litter N");
+    status |= checkFlux(fluxes.nOrgSoil, 0.0, "Zero-carbon organic soil N");
+    status |= checkFlux(envi.minN, 2.0, "Zero-carbon mineral N pool");
+    status |=
+        checkFlux(envi.litterN, initialLitterN, "Zero-carbon litter N pool");
+    status |= checkFlux(envi.soilOrgN, initialSoilOrgN,
+                        "Zero-carbon soil organic N pool");
+    status |= checkFlux(envi.minN + envi.litterN + envi.soilOrgN, initialTotalN,
+                        "Zero-carbon total N conservation");
+  }
+
+  return status;
+}
+
 /////
 // Organic N with leafOffNResorption
 int testOrganicNWithResorption(void) {
@@ -841,6 +880,7 @@ int run(void) {
   status |= testFertilization();
   status |= testNLeaching();
   status |= testOrganicN();
+  status |= testZeroCarbonNitrogenTransfer();
   status |= testLeafOnNFromC();
   status |= testNFixation();
   status |= testNLimitation();
