@@ -151,22 +151,31 @@ static void checkNegativeCreation(void) {
 
   double len = climate->length;
   // Above ground
-  // If leafCreation is too negative, we need to deduct from wood instead
-  // Use only the continuous turnover term to match previous logic - but see
-  // SIPNET issue #372.
-  double leafLitterTurnover = envi.plantLeafC * params.leafTurnoverRate;
-  double leafDeficit =
-      envi.plantLeafC / len + fluxes.leafCreation - leafLitterTurnover;
+  // If leafCreation is too negative, we need to deduct from wood instead.
+  // Account for continuous turnover, phenology leaf-off, event leaf-off,
+  // leaf-on allocations, and event leaf C additions.
+  double leafDeficit = envi.plantLeafC / len + fluxes.leafCreation +
+                       fluxes.leafOnCreation + fluxes.eventLeafC +
+                       fluxes.eventLeafOnCreation - fluxes.leafLitter -
+                       fluxes.eventLeafOffLitter;
   if (leafDeficit < 0) {
     fluxes.woodCreation += leafDeficit;
     fluxes.leafCreation -= leafDeficit;
   }
 
   // Below ground
-  double fineRootDeficit =
-      envi.fineRootC / len + fluxes.fineRootCreation - fluxes.fineRootLoss;
+  // Account for event fluxes and leaf-on allocations from coarse root
+  double leafOnFromRoot =
+      fluxes.leafOnCreation - fluxes.leafOnCreationFromWood;
+  double eventLeafOnFromRoot =
+      fluxes.eventLeafOnCreation - fluxes.eventLeafOnCreationFromWood;
+
+  double fineRootDeficit = envi.fineRootC / len + fluxes.fineRootCreation +
+                           fluxes.eventFineRootC - fluxes.fineRootLoss;
   double coarseRootDeficit = envi.coarseRootC / len +
-                             fluxes.coarseRootCreation - fluxes.coarseRootLoss;
+                             fluxes.coarseRootCreation +
+                             fluxes.eventCoarseRootC - fluxes.coarseRootLoss -
+                             leafOnFromRoot - eventLeafOnFromRoot;
   if ((fineRootDeficit < 0.0) != (coarseRootDeficit < 0.0)) {
     // If neither are negative, nothing to do
     // If both are negative, the plant will die in checkForMortality()
