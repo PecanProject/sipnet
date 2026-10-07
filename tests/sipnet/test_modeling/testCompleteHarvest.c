@@ -179,6 +179,68 @@ static void partialTimestepCase(int accounting) {
   finish();
 }
 
+static void runPartialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
+                                            double leafTurnoverRate,
+                                            double harvestFraction) {
+  char harvest[32];
+  snprintf(harvest, sizeof(harvest), "%.8f 0 %.8f 0", harvestFraction / 2,
+           harvestFraction / 2);
+  start(1, harvest);
+
+  envi.plantLeafC = 1.0;
+  envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100.0;
+  climate->par = 0;
+  resetMeanTracker(meanNPP, meanNPPValue);
+  params.leafAllocation = params.woodAllocation =
+      params.fineRootAllocation = params.coarseRootAllocation = 0.25;
+  params.leafTurnoverRate = leafTurnoverRate;
+  params.woodTurnoverRate = params.fineRootTurnoverRate =
+      params.coarseRootTurnoverRate = 0;
+  params.baseFolRespFrac = params.baseVegResp = params.baseSoilResp = 0;
+  params.baseFineRootResp = params.baseCoarseRootResp = 0;
+  params.litterBreakdownRate = params.soilMethaneRate =
+      params.litterMethaneRate = 0;
+  params.leafGrowth = 366;
+  params.leafOffDay = 366;
+
+  updateState();
+  balanced();
+  if (envi.plantLeafC < 0) {
+    logTest("%s left a negative leaf pool: %.15g\n", name, envi.plantLeafC);
+    failures++;
+  }
+  finish();
+}
+
+static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
+                                         double leafTurnoverRate,
+                                         double harvestFraction) {
+  logTest("*** Running partial harvest leaf budget case: %s\n", name);
+  fflush(NULL);
+  pid_t child = fork();
+  if (child < 0) {
+    failures++;
+    return;
+  }
+  if (child == 0) {
+    int failuresBefore = failures;
+    runPartialHarvestLeafBudgetCase(name, meanNPPValue, leafTurnoverRate,
+                                    harvestFraction);
+    fflush(NULL);
+    _exit(failures == failuresBefore ? EXIT_SUCCESS : EXIT_FAILURE);
+  }
+
+  int status;
+  if (waitpid(child, &status, 0) != child) {
+    logTest("%s partial harvest leaf budget case wait failed\n", name);
+    failures++;
+  } else if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS) {
+    logTest("%s partial harvest leaf budget case failed (status %d)\n", name,
+            WIFEXITED(status) ? WEXITSTATUS(status) : -1);
+    failures++;
+  }
+}
+
 static void invalidCase(int which) {
   pid_t child = fork();
   if (child < 0) {
@@ -523,6 +585,11 @@ int main(void) {
     partialCase(account, ".1 .2 .3 .4", .4);
     partialCase(account, "0 0 .999999999 .999999999", .999999999);
   }
+
+  partialHarvestLeafBudgetCase("negative creation", -4, 0, .9);
+  partialHarvestLeafBudgetCase("turnover", 0, 2, .8);
+  partialHarvestLeafBudgetCase("negative creation and turnover", -4, 1.5,
+                               .7);
 
   logTest("\n");
   coincidentFertilizerCase();
