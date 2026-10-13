@@ -54,8 +54,9 @@ def main():
         (run / "sipnet").chmod(0o755)
         download(f"{RELEASE}/sipnet-tutorial-v2.2.0.zip", run / "tutorial.zip")
         with zipfile.ZipFile(run / "tutorial.zip") as archive:
-            for filename in ["sipnet.clim", "sipnet.param", "events.in", "sipnet.in"]:
+            for filename in ["sipnet.clim", "sipnet.param", "events.in"]:
                 (run / filename).write_bytes(archive.read(f"sipnet-tutorial/{filename}"))
+        shutil.copyfile(Path(__file__).parent / "sipnet.in", run / "sipnet.in")
         original = (run / "sipnet.param").read_text()
         old = "aMax 53.2895432752984\n"
         if original.count(old) != 1:
