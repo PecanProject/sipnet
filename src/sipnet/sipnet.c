@@ -206,6 +206,8 @@ void readClimData(const char *climFile) {
     curr->day = day;
     curr->time = time;
 
+    // TODO: remove this odd undocumented behavior that allows time as seconds
+    // if negative
     if (length < 0) {  // parse as seconds
       length = length / -86400.;  // convert to days
     }
@@ -440,7 +442,7 @@ void outputHeader(FILE *out) {
   fprintf(out,
           "fluxestranspiration     minN  soilOrgN    litterN  "
           "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
-          "nppStorage\n");
+          "nppStorage        lai\n");
 }
 
 /*!
@@ -469,7 +471,8 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
           trackers.nLeaching, trackers.nFixation, trackers.nUptake,
           trackers.methane);
-  fprintf(out, "%12.4f\n", envi.plantCAccountingDelta);
+  fprintf(out, "%12.4f %10.4f\n", envi.plantCAccountingDelta,
+          envi.plantLeafC / params.leafCSpWt);
 }
 
 // de-allocate space used for climate linked list
@@ -1345,11 +1348,11 @@ void calculateFluxes(void) {
 //  which var is treated as 0
 void ensureNonNegative(double *var, double minVal, const char *label) {
   if (*var < minVal) {
-    if (fabs(*var) > EPS) {  // Don't print the zeros
-      logWarning(
-          "Non-negative stock constraint applied for %s (value %8.5f set "
-          "to zero) year %d day %d time %6.3f\n",
-          label, *var, climate->year, climate->day, climate->time);
+    if (*var < -EPS) {  // Don't print the zeros
+      logError("Non-negative stock constraint violated for %s year %d day %d "
+               "time %6.3f\n",
+               label, *var, climate->year, climate->day, climate->time);
+      exit(EXIT_CODE_INTERNAL_ERROR);
     }
     *var = 0.;
   }
