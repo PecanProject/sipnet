@@ -20,6 +20,8 @@ SIPNET (Simplified Photosynthesis and Evapotranspiration Model) is a lightweight
 
 - Browse the latest published documentation: https://pecanproject.github.io/sipnet/
 - **Getting started:** Follow the [quick-start guide](user-guide/getting-started.md) to install prerequisites, compile, and run smoke tests.
+- **New user tutorial:** [Get started with the Russell Ranch example](user-guide/tutorial-1.md): learn the inputs, run SIPNET, change a parameter, and compare results using Python or the interactive viewer.
+- **Interactive output:** [Explore results with the SIPNET viewer](user-guide/tutorial-2.md), including irrigation overlays and side-by-side scenario inspection.
 - **Running the model:** The [user guide](user-guide/running-sipnet.md) explains configuration, climate/parameter files, and runtime options, with dedicated pages for [inputs](user-guide/model-inputs.md) and [outputs](user-guide/model-outputs.md).
 - **Understanding the code:** The [developer docs](model-structure.md) describe architecture, while sections on [testing](developer-guide/testing.md) and [CLI extensions](developer-guide/cli-options.md) cover contributions.
 - **Project practices:** Review the [Contributing guide](CONTRIBUTING.md), [Code of Conduct](CODE_OF_CONDUCT.md), and [Changelog](CHANGELOG.md) before opening PRs or issues.
