@@ -182,6 +182,11 @@ the remaining fraction becomes `coarseRootAllocation`. A sum of exactly one
 is allowed and gives zero coarse-root allocation. Invalid allocations cause
 model setup to fail.
 
+Supplied, recognized model parameters must be finite. NaN and positive or
+negative infinity are rejected when reading the parameter file, including
+numeric overflow that converts to infinity. Omitted optional parameters and
+ignored unknown legacy parameter names retain their existing behavior.
+
 ### Autotrophic Respiration Parameters
 
 | Symbol                      | Parameter Name      | Definition                                                               | Units                                                                           | Notes                                                                                                                                              |

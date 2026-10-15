@@ -1112,6 +1112,15 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
 //   0 <= leaf, wood, fine root < 1 individually
 //   coarse root >=0 which enforces leaf + wood + fine root <= 1
 void ensureAllocation(void) {
+  if (!isfinite(params.leafAllocation) || !isfinite(params.woodAllocation) ||
+      !isfinite(params.fineRootAllocation)) {
+    logError("NPP allocation parameters must be finite: leafAllocation=%.17g, "
+             "woodAllocation=%.17g, fineRootAllocation=%.17g\n",
+             params.leafAllocation, params.woodAllocation,
+             params.fineRootAllocation);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
   // :: from [3], root model description
   params.coarseRootAllocation = 1 - params.leafAllocation -
                                 params.woodAllocation -
