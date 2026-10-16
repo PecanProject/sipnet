@@ -201,6 +201,7 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $D_{\text{moisture}}$ | soilRespMoistEffect | scalar determining effect of moisture on soil resp.                                 | unitless                                                                            |                                                                |
 | $f_{\text{till}}$     | tillageEff          | Effect of tillage on decomposition that exponentially decays over time              | fraction                                                                            | Documented in model structure; event-level term in `events.in` |
 | $C_{\text{soil,saturation}}$ | soilCSaturation | Maximum amount of carbon that can be stabilized in the soil, used when carbon-saturation is enabled.        | $\text{g C} \cdot \text{m}^{-2} \text{ ground area}$                                                                                   |                                                                |
+| $f_{\text{stable}}$          | fracOrgCStable  | Fraction of fertilization event organic carbon routed directly to the soil pool as pre-stabilized material; the remainder $(1 - f_{\text{stable}})$ enters the litter pool as fresh residue. Default 0 preserves backward compatibility. | unitless | \eqref{eq:fert_litter}--\eqref{eq:fert_soil}; only active when `LITTER_POOL = 1` |
 
 ### Nitrogen Cycle Parameters
 

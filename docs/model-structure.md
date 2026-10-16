@@ -371,14 +371,14 @@ the methane flux from the litter \eqref{eq:ch4}. Note that belowground turnover 
 pool (see Sec. [Soil Carbon](#soil-carbon)).
 
 $F^C_\text{litter}$ is the sum of litter produced through aboveground senescence, transfer of biomass during harvest,
-and organic matter amendments:
+and the labile fraction of organic matter amendments:
 
 \begin{equation}
 F^C_\text{litter} =
 \sum_{i} K_{\text{plant,}i} \cdot C_{\text{plant,}i} +
 \left(
 \sum_{i} F^C_{\text{harvest,transfer,}i} +
-F^C_\text{fert,org}
+(1 - f_{\text{stable}}) \cdot F^C_\text{fert,org}
 \right)
 \label{eq:litter_flux}
 \end{equation}
@@ -388,7 +388,52 @@ F^C_\text{fert,org}
 \end{equation*}
 
 Where $K_{\text{plant},i}$ is the turnover rate of plant pool $i$ that controls the rate at which plant biomass is
-transferred to litter.
+transferred to litter, and $f_{\text{stable}}$ is the fraction of amendment organic carbon that is routed directly to
+the soil pool as pre-stabilized material (see [Organic Amendment Quality Partition](#organic-amendment-quality-partition)).
+
+#### Organic Amendment Quality Partition
+
+Organic amendments vary widely in their degree of stabilization prior to application. Fresh crop residues consist
+mostly of labile substrates that decompose rapidly through normal litter kinetics. Mature composts, by contrast, have
+already undergone extensive microbial processing during composting; the easily decomposable fraction has been consumed,
+and the remaining carbon is dominated by chemically recalcitrant, humified material.
+
+Using a single litter pool to represent both end-members forces the parameter $f_{\text{litter}}$ (the fraction of
+decomposed litter that is respired) to absorb the contrast, causing it to rail against its bound when large compost
+amendments are applied alongside fresh plant residue.
+
+The parameter $f_{\text{stable}}$ (fracOrgCStable) addresses this by partitioning event organic carbon at the point of
+entry:
+
+\begin{equation}
+F^C_{\text{fert,litter}} = (1 - f_{\text{stable}}) \cdot F^C_{\text{fert,org}}
+\label{eq:fert_litter}
+\end{equation}
+
+\begin{equation}
+F^C_{\text{fert,soil}} = f_{\text{stable}} \cdot F^C_{\text{fert,org}}
+\label{eq:fert_soil}
+\end{equation}
+
+Where $F^C_{\text{fert,org}}$ is the total organic carbon applied in a fertilization event, $F^C_{\text{fert,litter}}$ is
+the labile fraction routed to the litter pool, and $F^C_{\text{fert,soil}}$ is the stable fraction routed directly to
+the soil organic carbon pool.
+
+The default value of $f_{\text{stable}} = 0$ recovers the original behavior (all organic amendment carbon enters the
+litter pool). This parameter is only active when `LITTER_POOL = 1`.
+
+Guidance for setting $f_{\text{stable}}$:
+
+- **Fresh crop residues**: $f_{\text{stable}} \approx 0$ (all labile; normal litter kinetics apply)
+- **Mature composts**: $f_{\text{stable}} \approx 0.50$–$0.70$, consistent with the directly humified fractions
+  reported by RothC-EOM (0.59–0.69; Mondini et al. 2017, *Biogeosciences* 14:3253–3274) and the effective
+  humification coefficients used by ICBM (compost $h \approx 0.75$; Kätterer & Andrén 2001) and AMG
+  (green waste compost $h = 0.43$–$1.0$; Levavasseur et al. 2020, *Nutr. Cycl. Agroecosyst.* 117:215–229)
+- **FYM / slurries**: intermediate values, as the labile fraction is only partially consumed during storage
+
+This structure is analogous to the amendment quality partitioning used in RothC (separate DPM/RPM/HUM pools for
+FYM), ICBM (per-amendment humification coefficient $h$), and AMG (per-amendment humification rate), allowing
+SIPNET to represent the continuum from fresh residue to stabilized compost with a single additional scalar.
 
 When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as 
 fast-turnover carbon. This functionality is described in more detail below in Sec. 
@@ -453,12 +498,13 @@ respiration, and $F^C_{\text{CH}_4\text{,soil}}$ is the methane flux from the so
 
 This is equation (A3) from Braswell, et al. (2005), with the addition of the methane flux.
 
-Total carbon input to the soil includes both
-(i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon} and
-(ii) inputs from root turnover:
+Total carbon input to the soil includes:
+(i) carbon transferred from the litter pool during decomposition \eqref{eq:soil_carbon},
+(ii) inputs from root turnover, and
+(iii) direct inputs of stabilized organic amendments \eqref{eq:fert_soil}:
 
 \begin{equation}
-F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}}
+F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}} + F^C_{\text{fert,soil}}
 \label{eq:soil_carbon_flux}
 \end{equation}
 
