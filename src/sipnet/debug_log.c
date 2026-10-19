@@ -16,7 +16,7 @@
 #define NUM_LOGGED_TRACKER_FIELDS 33
 #define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
 #define NUM_LOGGED_SURVIVAL_FIELDS 1
-#define NUM_LOGGED_EVENT_TRACKER_FIELDS 7
+#define NUM_LOGGED_EVENT_TRACKER_FIELDS 8
 
 #define DEBUG_LAYOUT_ENVI_SIZE (8 * NUM_LOGGED_ENVI_FIELDS)
 #define DEBUG_LAYOUT_FLUX_SIZE (8 * NUM_LOGGED_FLUX_FIELDS)
@@ -223,6 +223,7 @@ void initDebugArrays() {
   debugFields->eventDF[ind++] = (DebugField){"ht.totalFracRemovedBelow", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracRemovedBelow};
   debugFields->eventDF[ind++] = (DebugField){"ht.totalFracTransferredAbove", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracTransferredAbove};
   debugFields->eventDF[ind++] = (DebugField){"ht.totalFracTransferredBelow", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.totalFracTransferredBelow};
+  debugFields->eventDF[ind++] = (DebugField){"ht.leafCAdjustment", DEBUG_FIELD_DOUBLE, &eventTrackers.harvestTrackers.leafCAdjustment};
   if (ind != NUM_LOGGED_EVENT_TRACKER_FIELDS) {
     logInternalError("Debug log array size mismatch: eventDF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
