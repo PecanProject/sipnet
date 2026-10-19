@@ -151,6 +151,11 @@ void checkBalance(void) {
     logWarning(
         "Carbon balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
         balanceTracker.deltaC, climate->year, climate->day, climate->time);
+    logWarning("preTot %.7f postTot %.7f input %.7f output %.7f clamped "
+               "%.7f delta %.7f\n",
+               balanceTracker.preTotalC, balanceTracker.postTotalC,
+               balanceTracker.inputsC, balanceTracker.outputsC,
+               balanceTracker.clampedC, balanceTracker.deltaC);
   }
   if (fabs(balanceTracker.deltaN) > 0.0) {
     // err = 1;
