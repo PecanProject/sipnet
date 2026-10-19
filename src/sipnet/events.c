@@ -399,12 +399,82 @@ void appendLog(EventNode *event, int numParams, ...) {
   va_end(args);
 }
 
+void writePendingLeafOffEvent(EventNode *event) {
+  const double climLen = climate->length;
+  double litterC = fluxes.eventLeafOffLitterC * climLen;
+  appendLog(event, 1, "eventLeafOffLitterC", litterC);
+  if (ctx.nitrogenCycle) {
+    double litterN = fluxes.eventLeafOffLitterN * climLen;
+    double leafOffNResorp = fluxes.eventLeafOffNResorption * climLen;
+    // clang-format off
+      appendLog(event, 2,
+      "eventLeafOffNResorption", leafOffNResorp,
+      "eventLeafOffLitterN", litterN);
+    // clang-format on
+  }
+}
+
+void writePendingHarvestEvent(EventNode *event) {
+  double climLen = climate->length;
+  double litterAdd = fluxes.eventLitterC * climLen;
+  double soilAdd = fluxes.eventSoilC * climLen;
+  double leafDelta = fluxes.eventLeafC * climLen;
+  double woodDelta = fluxes.eventWoodC * climLen;
+  double accountingDelta = fluxes.eventAccountingC * climLen;
+  double fineDelta = fluxes.eventFineRootC * climLen;
+  double coarseDelta = fluxes.eventCoarseRootC * climLen;
+  double outputC = fluxes.eventOutputC * climLen;
+  // clang-format off
+  appendLog(
+      event, 8,
+      "eventSoilC", soilAdd,
+      "eventLitterC", litterAdd,
+      "eventLeafC", leafDelta,
+      "eventWoodC", woodDelta,
+      "eventAccountingC", accountingDelta,
+      "eventFineRootC", fineDelta,
+      "eventCoarseRootC", coarseDelta,
+      "eventOutputC", outputC);
+  // clang-format on
+  if (ctx.nitrogenCycle) {
+    double soilNAdd = fluxes.eventSoilOrgN * climLen;
+    double litterNAdd = fluxes.eventLitterN * climLen;
+    double outputN = fluxes.eventOutputN * climLen;
+    // clang-format off
+    appendLog(
+        event, 3,
+        "eventSoilOrgN", soilNAdd,
+        "eventLitterN", litterNAdd,
+        "eventOutputN", outputN);
+    // clang-format on
+  }
+}
+
 void writeEventsOut(void) {
   // We move the global events pointer here (instead of a copy as in the
   // processEvents functions), as this is the last pass
+  // We will also handle any "pending" events (currently: leaf-off) whose
+  // values may have changed due to limitation checks
+
   const int climYear = climate->year;
   const int climDay = climate->day;
+  int hasSeenLeafOff = 0;
+  int hasSeenHarvest = 0;
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+    // First up, check the pending events
+    if (gEvent->type == HARVEST) {
+      if (!hasSeenHarvest) {
+      }
+      writePendingHarvestEvent(gEvent);
+      hasSeenHarvest = 1;
+    }
+    if (gEvent->type == LEAFOFF) {
+      if (!hasSeenLeafOff) {
+      }
+      writePendingLeafOffEvent(gEvent);
+      hasSeenLeafOff = 1;
+    }
+
     // Change last char to a newline if it is a comma
     // Get the current length of the string
     char *log = gEvent->logLine->buffer;
@@ -493,6 +563,9 @@ void processEventsForCarbon(EventNode *event) {
   // Make sure we don't have more than 100% leaves fall for leaf-off
   double totalLeafFallFrac = 0.0;
 
+  int hasSeenLeafOff = 0;
+  int hasSeenHarvest = 0;
+
   while (event != NULL && event->year <= climYear && event->day <= climDay) {
     // The events file has been tested on read, so we know this event list
     // should be in chrono order. However, we need to check to make sure the
@@ -563,6 +636,13 @@ void processEventsForCarbon(EventNode *event) {
 
       } break;
       case HARVEST: {
+        if (!hasSeenHarvest) {
+          logInfo("Multiple harvest events found for year %f day %d; combining "
+                  "into one event\n",
+                  event->year, event->day);
+          hasSeenHarvest = 1;
+        }
+
         // Harvest can both remove biomass and move biomass to the soil/litter
         // pools
         const HarvestParams *harvParams = event->eventParams;
@@ -637,19 +717,7 @@ void processEventsForCarbon(EventNode *event) {
                                 (envi.fineRootC + envi.coarseRootC) * fracRB);
         fluxes.eventOutputC += outputC / climLen;
 
-        // clang-format off
-        appendLog(
-            event, 8,
-            "eventSoilC", soilAdd,
-            "eventLitterC", litterAdd,
-            "eventLeafC", leafDelta,
-            "eventWoodC", woodDelta,
-            "eventAccountingC", accountingDelta,
-            "eventFineRootC", fineDelta,
-            "eventCoarseRootC", coarseDelta,
-            "eventOutputC", outputC);
-        // clang-format on
-
+        // No log here, as eventLeafC may change due to limitation checks
       } break;
       case TILLAGE: {
         // BIG NOTE: this is the one event type that is NOT modeled as a flux;
@@ -704,6 +772,14 @@ void processEventsForCarbon(EventNode *event) {
         // clang-format on
       } break;
       case LEAFOFF: {
+        if (!hasSeenLeafOff) {
+          logInfo(
+              "Multiple leaf-off events found for year %f day %d; combining "
+              "into one event\n",
+              event->year, event->day);
+          hasSeenLeafOff = 1;
+        }
+
         double frac = params.fracLeafFall;
         totalLeafFallFrac += frac;
         if (totalLeafFallFrac > 1.0) {
@@ -715,8 +791,7 @@ void processEventsForCarbon(EventNode *event) {
 
         double leafOff = envi.plantLeafC * params.fracLeafFall;
         fluxes.eventLeafOffLitterC += leafOff / climLen;
-
-        appendLog(event, 1, "eventLeafOffLitter", leafOff);
+        // No log here, as this value may change due to limitation checks
       } break;
       case PLANTDEATH:
         // There should be no way to get here, but covering our bases...
@@ -750,9 +825,10 @@ void processEventsForNitrogen(EventNode *event) {
   // Checks performed in processEventsForCarbon are not repeated here unless
   // necessary for nitrogen handling.
 
-  // Leaf-off events are a little special, as we only process the first one
-  // (see LEAFOFF below)
-  int firstLeafOff = 1;
+  // Make sure not to double-process these event types, in case there is more
+  // than one
+  int hasSeenLeafOff = 0;
+  int hasSeenHarvest = 0;
 
   while (event != NULL && event->year <= climYear && event->day <= climDay) {
     switch (event->type) {
@@ -778,13 +854,18 @@ void processEventsForNitrogen(EventNode *event) {
         appendLog(event, 1, "eventInputN", inputN);
       } break;
       case HARVEST: {
+        if (hasSeenHarvest) {
+          break;  // already processed the combined harvest events
+        }
+        hasSeenHarvest = 1;
+
         // Harvest can both remove biomass and move biomass to the soil/litter
         // pools
-        const HarvestParams *harvParams = event->eventParams;
-        const double fracRA = harvParams->fractionRemovedAbove;
-        const double fracRB = harvParams->fractionRemovedBelow;
-        const double fracTA = harvParams->fractionTransferredAbove;
-        const double fracTB = harvParams->fractionTransferredBelow;
+        HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+        const double fracRA = ht->totalFracRemovedAbove;
+        const double fracRB = ht->totalFracRemovedBelow;
+        const double fracTA = ht->totalFracTransferredAbove;
+        const double fracTB = ht->totalFracTransferredBelow;
 
         // No need to allocate to biomass N pools, we don't track that N
         // explicitly. We do need to handle soil and litter N, though.
@@ -809,13 +890,15 @@ void processEventsForNitrogen(EventNode *event) {
                              fracRB;
         fluxes.eventOutputN += outputN / climLen;
 
-        // clang-format off
-        appendLog(
-            event, 3,
-            "eventSoilOrgN", soilNAdd,
-            "eventLitterN", litterNAdd,
-            "eventOutputN", outputN);
-        // clang-format on
+        // NOTE: leaf/litter/output C may have been adjusted by
+        // limitation checks; make sure to do the same for N
+        double leafDiffFlux = ht->leafCAdjustment;
+
+        // Figure out how to distribute
+        double litterFlux, outputFlux;
+        partitionLeafAdjustment(leafDiffFlux, &litterFlux, &outputFlux);
+        fluxes.eventLitterN -= litterFlux / params.leafCN;
+        fluxes.eventOutputN -= outputFlux / params.leafCN;
       } break;
       case TILLAGE: {
         // Nothing to do for tillage events
@@ -849,35 +932,21 @@ void processEventsForNitrogen(EventNode *event) {
         // eventInputN
       } break;
       case LEAFOFF: {
-        // We need to use fluxes.eventLeafOffLitter here instead of
-        // recalculating it, as it may have been reduced. Note that this means
-        // we are processing ALL leaf-off events in one shot in the unlikely
-        // event that there are more than one in this time step.
-        if (!firstLeafOff) {
-          logInfo(
-              "Ignoring nitrogen effects of second (or more) leaf-off "
-              "event at year %d day %d; all nitrogen effects are recorded with "
-              "the first leaf-off event in this time step\n",
-              event->year, event->day);
-          break;
+        if (hasSeenLeafOff) {
+          break;  // already processed the combined leaf-off events
         }
-        firstLeafOff = 0;
+        hasSeenLeafOff = 1;
+
+        // We need to use fluxes.eventLeafOffLitter here instead of
+        // recalculating it, as it may have been reduced.
+
         // Nitrogen - need to account for leaf N moving to litter, as with
         // harvests
         double leafOff = fluxes.eventLeafOffLitterC * climLen;
-        double preResorp = fluxes.eventLeafOffNResorption;
-        double preLitter = fluxes.eventLeafOffLitterN;
         calcLeafOffNEffects(leafOff, &fluxes.eventLeafOffNResorption,
                             &fluxes.eventLeafOffLitterN);
 
-        double leafNResorptionFlux = fluxes.eventLeafOffNResorption - preResorp;
-        double litterNAddFlux = fluxes.eventLeafOffLitterN - preLitter;
-
-        // clang-format off
-        appendLog(event, 2,
-          "eventLeafOffNResorption", leafNResorptionFlux * climLen,
-          "eventLitterN", litterNAddFlux * climLen);
-        // clang-format on
+        // No log here, as these values may change
       } break;
       case PLANTDEATH:
         // Nothing to do here
@@ -1033,4 +1102,14 @@ void printEvent(EventNode *oneEvent) {
     default:
       printf("ERROR printing oneEvent: unknown type %d\n", oneEvent->type);
   }
+}
+
+void partitionLeafAdjustment(double leafAdjust, double *litterAdjust,
+                             double *outputAdjust) {
+  const HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+  double fracRemovedAbove = ht->totalFracRemovedAbove;
+  double fracTransferredAbove = ht->totalFracTransferredAbove;
+  double totalFrac = fracRemovedAbove + fracTransferredAbove;
+  *litterAdjust = leafAdjust * fracTransferredAbove / totalFrac;
+  *outputAdjust = leafAdjust * fracRemovedAbove / totalFrac;
 }

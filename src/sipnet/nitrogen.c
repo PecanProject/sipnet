@@ -192,7 +192,7 @@ void calcNResorptionFluxes(void) {
       params.leafNResorptionFrac * getLeafLitterFlux() / params.leafCN;
   fluxes.leafOffNResorption = nResorp;
 
-  // TODO: Should we resorb N from wood litter?
+  // TODO: [consider] Should we resorb N from wood litter?
 }
 
 // see nitrogen.h

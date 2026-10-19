@@ -6,6 +6,7 @@
 #include "common/logging.h"
 #include "common/util.h"
 
+#include "events.h"
 #include "nitrogen.h"
 #include "state.h"
 
@@ -89,35 +90,59 @@ static void checkNegativeCreation(void) {
   // Reminder: litter and creation fluxes "point" in the opposite direction, so
   // their signs are opposite here
   double deficit = fluxes.leafOffLitter + fluxes.eventLeafOffLitterC -
-                   fluxes.leafCreation - availableLeafRate;
-  if (deficit > 0) {
+                   fluxes.leafCreation - fluxes.eventLeafC - availableLeafRate;
+  double adjust;
+  if (deficit > 0 && fluxes.eventLeafOffLitterC > 0) {
     // If negative growth + leaf off is too much, let's first reduce leaf off
-    if (fluxes.eventLeafOffLitterC > 0) {
-      double adjust = fmin(fluxes.eventLeafOffLitterC, deficit);
-      fluxes.eventLeafOffLitterC -= adjust;
-      deficit -= adjust;
-    }
-    if (deficit > 0) {
-      if (fluxes.leafOffLitter > 0) {
-        double adjust = fmin(fluxes.leafOffLitter, deficit);
-        fluxes.leafOffLitter -= adjust;
-        deficit -= adjust;
-      }
-    }
-    // Next, move some negative growth to the wood pool
-    if (deficit > 0) {
-      // If this is too much for the wood pool to handle, we have an error that
-      // will be caught in ensureNonNegative
-      fluxes.woodCreation -= deficit;
-      fluxes.leafCreation += deficit;
-    }
+    adjust = fmin(fluxes.eventLeafOffLitterC, deficit);
+    fluxes.eventLeafOffLitterC -= adjust;
+    deficit -= adjust;
+  }
+  // Try the other leaf off litter (only one of these at most will be > 0)
+  if (deficit > 0 && fluxes.leafOffLitter > 0) {
+    adjust = fmin(fluxes.leafOffLitter, deficit);
+    fluxes.leafOffLitter -= adjust;
+    deficit -= adjust;
+  }
+  // Next, check to see if a harvest might have overdrawn
+  if (deficit > 0 && fluxes.eventLeafC < 0) {
+    // Negative eventLeafC is removal; need it to be "less", i.e. closer to 0
+    adjust = fmin(-fluxes.eventLeafC, deficit);
+    fluxes.eventLeafC += adjust;
+    HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+    ht->leafCAdjustment = adjust;
+
+    // Figure out where it should come from; note totalFrac will be greater
+    // than zero here
+    double litterAdjust, outAdjust;
+    partitionLeafAdjustment(adjust, &litterAdjust, &outAdjust);
+
+    double fracRemovedAbove = ht->totalFracRemovedAbove;
+    double fracTransferredAbove = ht->totalFracTransferredAbove;
+    double totalFrac = fracRemovedAbove + fracTransferredAbove;
+    fracRemovedAbove /= totalFrac;
+    fracTransferredAbove /= totalFrac;
+
+    fluxes.eventOutputC -= adjust * fracRemovedAbove;
+    fluxes.eventLitterC -= adjust * fracTransferredAbove;
+
+    // Update the deficit
+    deficit -= adjust;
+  }
+  // Last, move some negative growth to the wood pool
+  if (deficit > 0) {
+    // If this is too much for the wood pool to handle, we have an error that
+    // will be caught in ensureNonNegative
+    fluxes.woodCreation -= deficit;
+    fluxes.leafCreation += deficit;
   }
 
   // Below ground
-  double fineRootDeficit =
-      envi.fineRootC / len + fluxes.fineRootCreation - fluxes.fineRootLoss;
+  double fineRootDeficit = envi.fineRootC / len + fluxes.fineRootCreation +
+                           fluxes.eventFineRootC - fluxes.fineRootLoss;
   double coarseRootDeficit = envi.coarseRootC / len +
-                             fluxes.coarseRootCreation - fluxes.coarseRootLoss;
+                             fluxes.coarseRootCreation +
+                             fluxes.eventCoarseRootC - fluxes.coarseRootLoss;
   if ((fineRootDeficit < 0.0) != (coarseRootDeficit < 0.0)) {
     // If neither are negative, nothing to do
     // If both are negative, the plant will die in checkForMortality()
@@ -182,7 +207,16 @@ static void checkNitrogenLimitation(void) {
     // If there was a leaf-off event in this step, it is possible that we have
     // reduced leaf growth down to the point where the pool will go negative
     // Re-call that check
+    // First, reset this tracker so we know if eventLeafC is changed
+    HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+    ht->leafCAdjustment = 0.0;
     checkNegativeCreation();
+    if (ht->leafCAdjustment > 0.0) {
+      double litterFlux, outputFlux;
+      partitionLeafAdjustment(ht->leafCAdjustment, &litterFlux, &outputFlux);
+      fluxes.eventLitterN -= litterFlux / params.leafCN;
+      fluxes.eventOutputN -= outputFlux / params.leafCN;
+    }
 
     // Reset and recalc event leaf-off N
     // Nitrogen for "calculated" leaf-off events will be redone in

@@ -224,6 +224,7 @@ typedef struct HarvestTrackersStruct {
   double totalFracRemovedBelow;
   double totalFracTransferredAbove;
   double totalFracTransferredBelow;
+  double leafCAdjustment;
 } HarvestTrackers;
 
 // Variables to track events with lingering effects
@@ -247,5 +248,18 @@ void initEventTrackers(void);
  * Perform any needed updates post fluxes-and-pools updates
  */
 void updateEventTrackers(void);
+
+/*!
+ * Limitation checks need to split an adjustment between litter and output
+ *
+ * Limitation checks may calculate a leaf adjustment that needs to be balanced
+ * by changes to litter and output. Based on total harvest fractions, split the
+ * leaf adjustment between litter and output fluxes.
+ * @param litterAdjust
+ * @param outputAdjust
+ * @param leafAdjust
+ */
+void partitionLeafAdjustment(double leafAdjust, double *litterAdjust,
+                             double *outputAdjust);
 
 #endif  // EVENTS_H

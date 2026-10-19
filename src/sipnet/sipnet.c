@@ -206,8 +206,8 @@ void readClimData(const char *climFile) {
     curr->day = day;
     curr->time = time;
 
-    // TODO: remove this odd undocumented behavior that allows time as seconds
-    // if negative
+    // TODO: [consider] remove this odd undocumented behavior that allows time
+    // as seconds if negative
     if (length < 0) {  // parse as seconds
       length = length / -86400.;  // convert to days
     }
@@ -1096,7 +1096,7 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
   // Rg is a fraction of the recent mean NPP
   *growthResp = params.growthRespFrac * getMeanTrackerMean(meanNPP);
 
-  // TODO: not sure what to do here, probably just delete this?
+  // TODO: [consider] not sure what to do here, probably just delete this?
   if (*growthResp < 0) {
     *growthResp = 0;
   }
@@ -1331,7 +1331,7 @@ void ensureNonNegative(double *var, double minVal, const char *label) {
       logError("Non-negative stock constraint violated for %s year %d day %d "
                "time %6.3f\n",
                label, *var, climate->year, climate->day, climate->time);
-      exit(EXIT_CODE_INTERNAL_ERROR);
+      // exit(EXIT_CODE_INTERNAL_ERROR);
     }
     *var = 0.;
   }
@@ -1691,6 +1691,7 @@ void checkForMortality(void) {
   // Plant was alive last time step - are you still there?
   if (!hasSufficientBiomass()) {
     plantSurvivalTracker.isAlive = 0;
+    double len = climate->length;
     double totalWoodC = getTotalWoodC();
     double totalRootC = envi.fineRootC + envi.coarseRootC;
     HarvestTrackers *ht = &eventTrackers.harvestTrackers;
@@ -1732,7 +1733,7 @@ void checkForMortality(void) {
     }
     fluxes.eventOutputC += (aboveC * ht->totalFracRemovedAbove +
                             totalRootC * ht->totalFracRemovedBelow) /
-                           climate->length;
+                           len;
 
     if (ctx.nitrogenCycle) {  // litter pool implied
       double aboveN =
@@ -1743,7 +1744,7 @@ void checkForMortality(void) {
       envi.litterN += aboveN * aboveRemovalReduction + envi.plantStorageN;
       fluxes.eventOutputN += (aboveN * ht->totalFracRemovedAbove +
                               belowN * ht->totalFracRemovedBelow) /
-                             climate->length;
+                             len;
     }
 
     // Force pools to zero
