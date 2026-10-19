@@ -212,8 +212,8 @@ static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
   envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100.0;
   climate->par = 0;
   resetMeanTracker(meanNPP, meanNPPValue);
-  params.leafAllocation = params.woodAllocation =
-      params.fineRootAllocation = params.coarseRootAllocation = 0.25;
+  params.leafAllocation = params.woodAllocation = params.fineRootAllocation =
+      params.coarseRootAllocation = 0.25;
   params.leafTurnoverRate = leafTurnoverRate;
   params.woodTurnoverRate = params.fineRootTurnoverRate =
       params.coarseRootTurnoverRate = 0;
@@ -663,8 +663,7 @@ int main(void) {
   logTest("\n");
   partialHarvestLeafBudgetCase("negative creation", -4, 0, .9);
   partialHarvestLeafBudgetCase("turnover", 0, 2, .8);
-  partialHarvestLeafBudgetCase("negative creation and turnover", -4, 1.5,
-                               .7);
+  partialHarvestLeafBudgetCase("negative creation and turnover", -4, 1.5, .7);
 
   logTest("\n");
   coincidentFertilizerCase();

@@ -69,10 +69,10 @@ static void calcNPoolFluxes(void) {
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter (modified by leaf N resorption), and N loss due to mineralization.
   // N added via fertilization is handled elsewhere.
-  fluxes.nOrgLitter = 
-      getLeafLitterFlux() / params.leafCN - fluxes.leafOffNResorption +
-      fluxes.woodLitter / params.woodCN - litterMin -
-      litterNToSoil + (soilNInputs * saturationFraction);
+  fluxes.nOrgLitter = getLeafLitterFlux() / params.leafCN -
+                      fluxes.leafOffNResorption +
+                      fluxes.woodLitter / params.woodCN - litterMin -
+                      litterNToSoil + (soilNInputs * saturationFraction);
 
   // soil
   // The soil org N flux is determined by the carbon flux from the litter pool,
