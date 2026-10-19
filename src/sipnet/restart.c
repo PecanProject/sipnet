@@ -37,7 +37,7 @@
 #define NUM_TRACKER_FIELDS 33
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_SURVIVAL_TRACKERS_FIELDS 1
-#define NUM_EVENT_TRACKERS_FIELDS 7
+#define NUM_EVENT_TRACKERS_FIELDS 8
 
 // This one shouldn't change
 #define NUM_END_FIELDS 1
@@ -298,6 +298,7 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracRemovedBelow",     FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracRemovedBelow,     0};
   state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracTransferredAbove", FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracTransferredAbove, 0};
   state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.totalFracTransferredBelow", FT_DOUBLE,  &eventTrackers.harvestTrackers.totalFracTransferredBelow, 0};
+  state->eventPF[ind++] = (StateField){"event_trackers.harvestTrackers.leafCAdjustment",           FT_DOUBLE,  &eventTrackers.harvestTrackers.leafCAdjustment,           0};
   state->eventPF[ind++] = (StateField){"event_trackers.invalid",                FT_INVALID, NULL, FIELD_INVALID};
   if (ind != NUM_EVENT_TRACKERS_FIELDS + 1) {
     logInternalError("Restart array size mismatch: eventPF\n");
