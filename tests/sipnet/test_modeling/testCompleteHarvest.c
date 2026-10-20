@@ -230,8 +230,7 @@ static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
 
   const double expectedLeafCreation =
       fmax(meanNPPValue * params.leafAllocation,
-           params.leafTurnoverRate -
-               initialLeafC / climate->length);
+           params.leafTurnoverRate - initialLeafC / climate->length);
   near(envi.plantLeafC, 0, "partial harvest leaf");
   near(fluxes.leafCreation, expectedLeafCreation,
        "partial harvest leaf creation");
