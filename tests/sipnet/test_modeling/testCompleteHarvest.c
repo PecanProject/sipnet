@@ -224,10 +224,19 @@ static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
   params.leafGrowth = 366;
   params.leafOffDay = 366;
 
+  const double initialLeafC = envi.plantLeafC;
   updateState();
   balanced();
 
-  // TODO: add expected value tests
+  const double expectedLeafCreation =
+      fmax(meanNPPValue * params.leafAllocation,
+           params.leafTurnoverRate -
+               initialLeafC / climate->length);
+  near(envi.plantLeafC, 0, "partial harvest leaf");
+  near(fluxes.leafCreation, expectedLeafCreation,
+       "partial harvest leaf creation");
+  near(fluxes.leafLitter, params.leafTurnoverRate,
+       "partial harvest leaf litter");
 
   finish();
   checkFailures();
