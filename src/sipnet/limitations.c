@@ -124,7 +124,11 @@ static void checkNegativeCreation(void) {
     fracTransferredAbove /= totalFrac;
 
     fluxes.eventOutputC -= adjust * fracRemovedAbove;
-    fluxes.eventLitterC -= adjust * fracTransferredAbove;
+    if (ctx.litterPool) {
+      fluxes.eventLitterC -= adjust * fracTransferredAbove;
+    } else {
+      fluxes.eventSoilC -= adjust * fracTransferredAbove;
+    }
 
     // Update the deficit
     deficit -= adjust;

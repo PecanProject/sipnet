@@ -47,7 +47,7 @@ void updateBalanceTrackerPostClamp(void) {
   balanceTracker.clampedC = balanceTracker.finalC - balanceTracker.postTotalC;
   if (balanceTracker.clampedC < -EPS) {
     // This shouldn't happen, by construction
-    logInternalError("Non-negative clamping has cause carbon loss %f\n",
+    logInternalError("Non-negative clamping has caused carbon loss %f\n",
                      balanceTracker.clampedC);
   }
   if (balanceTracker.clampedC < EPS) {
@@ -57,7 +57,7 @@ void updateBalanceTrackerPostClamp(void) {
   balanceTracker.clampedN = balanceTracker.finalN - balanceTracker.postTotalN;
   if (balanceTracker.clampedN < -EPS) {
     // This shouldn't happen, by construction
-    logInternalError("Non-negative clamping has cause nitrogen loss %f\n",
+    logInternalError("Non-negative clamping has caused nitrogen loss %f\n",
                      balanceTracker.clampedN);
   }
   if (balanceTracker.clampedN < EPS) {
