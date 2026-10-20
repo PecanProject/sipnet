@@ -1110,6 +1110,11 @@ void partitionLeafAdjustment(double leafAdjust, double *litterAdjust,
   double fracRemovedAbove = ht->totalFracRemovedAbove;
   double fracTransferredAbove = ht->totalFracTransferredAbove;
   double totalFrac = fracRemovedAbove + fracTransferredAbove;
-  *litterAdjust = leafAdjust * fracTransferredAbove / totalFrac;
-  *outputAdjust = leafAdjust * fracRemovedAbove / totalFrac;
+  if (totalFrac > 0.0) {
+    *litterAdjust = leafAdjust * fracTransferredAbove / totalFrac;
+    *outputAdjust = leafAdjust * fracRemovedAbove / totalFrac;
+  } else {
+    *litterAdjust = 0.0;
+    *outputAdjust = 0.0;
+  }
 }
