@@ -1331,7 +1331,7 @@ void ensureNonNegative(double *var, double minVal, const char *label) {
       logError("Non-negative stock constraint violated for %s year %d day %d "
                "time %6.3f\n",
                label, *var, climate->year, climate->day, climate->time);
-      // exit(EXIT_CODE_INTERNAL_ERROR);
+      exit(EXIT_CODE_INTERNAL_ERROR);
     }
     *var = 0.;
   }
