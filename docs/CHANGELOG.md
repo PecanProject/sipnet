@@ -32,6 +32,7 @@ sections to include in release notes:
 
 ### Changed
 - SIPNET will now error instead of warning when an environment pool goes negative. This is a change from previous behavior where SIPNET would log a warning and continue running. (#398)
+- SIPNET now exits with `EXIT_CODE_INTERNAL_ERROR` when a timestep fails the carbon or nitrogen balance check (residual magnitude >= 1e-8, or a NaN/infinite residual), instead of logging a warning and continuing. The error reports the residual, timestep, pool totals, inputs, outputs, and clamping adjustment at full precision. (#411)
 
 ### Removed
 
