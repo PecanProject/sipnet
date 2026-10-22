@@ -140,11 +140,12 @@ Specifically:
 | org-N     |   5   |   Y   | g N / m2    |
 | org-C     |   6   |   Y   | g C / m2    |
 | min-N     |   7   |   Y   | g N / m2    |
+| fracOrgCStable ($f_{\text{stable}}$) | 8 | N | Fraction of organic C and N routed directly to soil; default 0 |
 <!--(NH4+NO3 in one pool model; NH4 in two pool model)
-| min-N2 |   8   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | 
+| min-N2 |   9   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | 
 -->
 
-  - Model representation: organic C is added to litter when `litter-pool` is on, otherwise directly to soil. Mineral N and organic N are added only when `nitrogen-cycle` is enabled; otherwise those N quantities are ignored with a warning. Urea-N is assumed to be mineral N.
+  - Model representation: When `litter-pool` is on and $f_{\text{stable}} > 0$, organic C and organic N are partitioned at entry: $(1 - f_{\text{stable}})$ enters litter and $f_{\text{stable}}$ enters soil organic matter directly. When $f_{\text{stable}} = 0$ (default), all organic C enters litter (or soil if `litter-pool` is off). Mineral N and organic N are added only when `nitrogen-cycle` is enabled; otherwise those N quantities are ignored with a warning. Urea-N is assumed to be mineral N.
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
   - The code that generates `events.in` will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools. In PEcAn this is done by the `PEcAn.SIPNET::write.configs.SIPNET()` function.
 
