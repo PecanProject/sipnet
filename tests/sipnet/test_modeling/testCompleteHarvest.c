@@ -12,7 +12,7 @@ static int prevFailures;
 static ModelParams *testParams;
 
 // Set this to one to force test to pause on failures
-static int debug = 0;
+static int debug = 1;
 
 static void checkFailures(void) {
   if (failures > prevFailures && debug) {
@@ -200,7 +200,9 @@ static void partialTimestepCase(int accounting) {
 static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
                                          double leafTurnoverRate,
                                          double harvestFraction) {
-  logTest("*** Running partial harvest leaf budget case: %s\n", name);
+  logTest("*** Running partial harvest leaf budget case: %s meanNPP %f "
+          "leafTurnoverRate %f harvestFraction %f\n",
+          name, meanNPPValue, leafTurnoverRate, harvestFraction);
   prevFailures = failures;
 
   char harvest[32];
@@ -210,6 +212,9 @@ static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
 
   envi.plantLeafC = 1.0;
   envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100.0;
+  envi.litterC = envi.soilC = 100.0;
+  envi.plantCAccountingDelta = 5.0;
+
   climate->par = 0;
   resetMeanTracker(meanNPP, meanNPPValue);
   params.leafAllocation = params.woodAllocation = params.fineRootAllocation =
@@ -228,14 +233,34 @@ static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
   updateState();
   balanced();
 
+  double len = climate->length;
+
   const double expectedLeafCreation =
       fmax(meanNPPValue * params.leafAllocation,
-           params.leafTurnoverRate - initialLeafC / climate->length);
+           params.leafTurnoverRate - initialLeafC / len);
   near(envi.plantLeafC, 0, "partial harvest leaf");
   near(fluxes.leafCreation, expectedLeafCreation,
        "partial harvest leaf creation");
   near(fluxes.leafLitter, params.leafTurnoverRate,
        "partial harvest leaf litter");
+  near(fluxes.woodLitter, 100 * params.woodTurnoverRate,
+       "partial harvest wood litter");
+  const double expectedWoodC =
+      fmax(0.0, 100 * (1 - harvestFraction) +
+                    meanNPPValue * params.woodAllocation * len);
+  near(envi.plantWoodC, expectedWoodC, "partial harvest leaf wood");
+
+  const double expEventLeafC = -harvestFraction;
+  const double availableLeafRate = 1 - fluxes.leafLitter * len;
+  const double deficit =
+      -expectedLeafCreation * len - expEventLeafC - availableLeafRate;
+  const double expLitterC =
+      100 + 106 * harvestFraction / 2 - deficit / 2 + fluxes.leafLitter * len;
+  const double expOutputC = 106 * harvestFraction / 2 - deficit / 2;
+  near(fluxes.eventLeafC * len, expEventLeafC + deficit,
+       "partial harvest leaf removal");
+  near(envi.litterC, expLitterC, "partial harvest litter");
+  near(fluxes.eventOutputC * len, expOutputC, "partial harvest output C");
 
   finish();
   checkFailures();
