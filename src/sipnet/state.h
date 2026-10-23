@@ -619,6 +619,15 @@ typedef struct FluxVars {
   // nitrogen added to litter N pool
   double eventLitterN;
 
+  // HARVEST TRACKING
+  // The event* version of these fluxes are modified by fert events, so (for
+  // now) we need separate fluxes for harvest as we delay logging those events.
+  // We won't need these anymore if/when we move the big-delta events to their
+  // own separate handling post pool update.
+  double harvestSoilC;
+  double harvestLitterC;
+  double harvestLitterN;
+
   // MASS BALANCE HELPERS
   // Total system carbon input, for mass balance checks
   double eventInputC;
