@@ -12,7 +12,7 @@
 #include "state.h"
 
 #define NUM_LOGGED_ENVI_FIELDS 13
-#define NUM_LOGGED_FLUX_FIELDS 59
+#define NUM_LOGGED_FLUX_FIELDS 62
 #define NUM_LOGGED_TRACKER_FIELDS 33
 #define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
 #define NUM_LOGGED_SURVIVAL_FIELDS 1
@@ -155,6 +155,11 @@ void initDebugArrays() {
   debugFields->fluxDF[ind++] = (DebugField){"eventLeafOffNResorption", DEBUG_FIELD_DOUBLE, &fluxes.eventLeafOffNResorption},
   debugFields->fluxDF[ind++] = (DebugField){"soilMethane", DEBUG_FIELD_DOUBLE, &fluxes.soilMethane},
   debugFields->fluxDF[ind++] = (DebugField){"litterMethane", DEBUG_FIELD_DOUBLE, &fluxes.litterMethane};
+  // These should be temporary, until we change how/where leaf-on/off and
+  // harvest are handled
+  debugFields->fluxDF[ind++] = (DebugField){"harvestLitterC", DEBUG_FIELD_DOUBLE, &fluxes.harvestLitterC};
+  debugFields->fluxDF[ind++] = (DebugField){"harvestLitterN", DEBUG_FIELD_DOUBLE, &fluxes.harvestLitterN};
+  debugFields->fluxDF[ind++] = (DebugField){"harvestSoilC", DEBUG_FIELD_DOUBLE, &fluxes.harvestSoilC};
   if (ind != NUM_LOGGED_FLUX_FIELDS) {
     logInternalError("Debug log array size mismatch: fluxDF\n");
     exit(EXIT_CODE_INTERNAL_ERROR);
