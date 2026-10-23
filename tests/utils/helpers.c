@@ -21,6 +21,9 @@ void prepTypesTest(void) {
 
 void procEvents(void) {
   resetFluxes();
-  processEvents();
+  EventNode *event = getCurrentEvent();
+  processEventsForCarbon(event);
+  processEventsForNitrogen(event);
+  writeEventsOut();
   updatePoolsForEvents();
 }
