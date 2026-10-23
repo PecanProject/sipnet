@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "common/logging.h"
+#include "sipnet/events.h"
 #include "sipnet/state.h"
 #include "utils/tUtils.h"
 
@@ -15,14 +16,12 @@
 
 #define EXPECTED_ENVI_FIELDS ((int)(sizeof(Envi) / sizeof(double)))
 #define EXPECTED_FLUX_FIELDS ((int)(sizeof(Fluxes) / sizeof(double)))
-// These are not all doubles
-// Let's do a little more work for Trackers
-#define NUM_TRACKER_INTS 1
-#define TRACKERS_SIZE (int)(sizeof(Trackers) - NUM_TRACKER_INTS * sizeof(int))
-#define EXPECTED_TRACKER_FIELDS                                                \
-  ((int)(TRACKERS_SIZE / sizeof(double)) + NUM_TRACKER_INTS)
+// The Trackers struct is not all doubles, but the int(s) get padded to 8 bytes
+#define EXPECTED_TRACKER_FIELDS ((int)(sizeof(Trackers) / sizeof(double)))
 #define EXPECTED_PHENOLOGY_FIELDS 3
 #define EXPECTED_SURVIVAL_FIELDS 1
+#define EXPECTED_EVENT_TRACKER_FIELDS                                          \
+  (int)(sizeof(EventTrackers) / sizeof(double))
 
 static int countTokens(const char *line) {
   int count = 0;
@@ -114,7 +113,7 @@ int run(void) {
   status |=
       checkHeader(TRACKERS_FILE,
                   3 + EXPECTED_TRACKER_FIELDS + EXPECTED_PHENOLOGY_FIELDS +
-                      EXPECTED_SURVIVAL_FIELDS,
+                      EXPECTED_SURVIVAL_FIELDS + EXPECTED_EVENT_TRACKER_FIELDS,
                   "t.gpp", "pt.lastYear");
 
   int mainLines = countLines(SIPNET_OUT_FILE);
