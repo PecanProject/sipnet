@@ -818,13 +818,6 @@ void calcLeafOnOffFluxes(void) {
       fluxes.leafOnCreationFromWood += leafOnFromWood;
     }
     phenologyTrackers.didLeafGrowth = 1;
-
-    if (ctx.events && leafOn > TINY) {
-      writeComputedEventOut(climate->year, climate->day,
-                            eventTypeToString(LEAFON), 2, "leafOnCreation",
-                            leafOn * len, "leafOnCreationFromWood",
-                            leafOnFromWood * len);
-    }
   }
 
   // check for end of growing season:
@@ -833,11 +826,6 @@ void calcLeafOnOffFluxes(void) {
     double leafOff = (envi.plantLeafC * params.fracLeafFall) / len;
     fluxes.leafOffLitter += leafOff;
     phenologyTrackers.didLeafFall = 1;
-    if (leafOff > TINY && ctx.events) {
-      writeComputedEventOut(climate->year, climate->day,
-                            eventTypeToString(LEAFOFF), 1, "leafLitter",
-                            leafOff * len);
-    }
   }
 }
 
@@ -1312,9 +1300,6 @@ void calculateFluxes(void) {
 
   // Check limitations; must be after all flux calcs
   checkLimitations();
-
-  // Write to events file for all of today's events
-  writeEventsOut();
 }
 
 // /////////////////////// //
@@ -1851,6 +1836,11 @@ void updateState(void) {
   updateMeanTrackers();
 
   updateEventTrackers();
+
+  ///////////////////////
+  // 4. Write to events file
+  // Write all of today's events, after all limitations are checked
+  writeEventsOut();
 }
 
 // See sipnet.h

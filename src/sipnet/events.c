@@ -36,8 +36,8 @@ static EventNode *gEvent = NULL;
 // events.out handle, only needed here
 static FILE *eventOutFile = NULL;
 
-EventNode *createEventNode(int year, int day, int eventType,
-                           const char *eventParamsStr) {
+static EventNode *createEventNode(int year, int day, int eventType,
+                                  const char *eventParamsStr) {
   static int nitrogenWarned = 0;
   EventNode *newEvent = (EventNode *)malloc(sizeof(EventNode));
   newEvent->year = year;
@@ -256,15 +256,54 @@ static void checkEventLineTruncation(const char *line, size_t len) {
   }
 }
 
-void checkForCalculatedLeafEvents(void) {
-  // We have a leaf event in events.in, so make sure we are not also
-  // calculating leaf events
-  if (ctx.gdd || ctx.soilPhenol || params.leafOnDay > 0 ||
-      params.leafOffDay > 0) {
-    logError("calculated leaf events (via leafOnDay/leafOffDay params or "
-             "gdd/soil-phenol command-line options) are not compatible "
-             "with user-specified leaf events in event file\n");
-    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+struct EventValidation {
+  int todayHasHarvest;
+  int todayHasPlanting;
+  int hasCheckedLeafEvents;
+};
+
+static struct EventValidation eVal = {0};
+
+void validateEvent(EventNode *event, int currYear, int currDay) {
+  // logInfo("Validating event with type %s\n", eventTypeToString(event->type));
+  // If we have a leaf event, make sure we aren't also looking for
+  // calculated leaf events.
+  if (event->type == LEAFOFF || event->type == LEAFON) {
+    // logInfo("-->hasCheckedLeafEvents: %d\n", eVal.hasCheckedLeafEvents);
+    if (!eVal.hasCheckedLeafEvents) {
+
+      // logInfo("-->if test: %d\n",
+      // ctx.gdd || ctx.soilPhenol || params.leafOnDay > 0 ||
+      //   params.leafOffDay > 0);
+
+      if (ctx.gdd || ctx.soilPhenol || params.leafOnDay > 0 ||
+          params.leafOffDay > 0) {
+        logError("calculated leaf events (via leafOnDay/leafOffDay params or "
+                 "gdd/soil-phenol command-line options) are not compatible "
+                 "with user-specified leaf events in event file\n");
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+      }
+      eVal.hasCheckedLeafEvents = 1;
+    }
+    return;
+  }
+
+  // Make sure we don't have planting and harvest on the same day
+  if (event->year > currYear || event->day > currDay) {
+    eVal.todayHasHarvest = 0;
+    eVal.todayHasPlanting = 0;
+  }
+  if (event->type == HARVEST) {
+    eVal.todayHasHarvest = 1;
+  }
+  if (event->type == PLANTING) {
+    eVal.todayHasPlanting = 1;
+  }
+  if (eVal.todayHasHarvest && eVal.todayHasPlanting) {
+    logError("reading event file: planting and harvest events cannot occur "
+             "on the same day (%d, %d)\n",
+             event->year, event->day);
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
   }
 }
 
@@ -276,24 +315,24 @@ EventNode *readEventData(const char *eventFile) {
   char eventTypeStr[20];
   char line[EVENT_LINE_SIZE];
   EventNode *curr, *next;
-  EventNode *newEvents = NULL;
-  int hasCheckedLeafEvents = 0;
+  EventNode *newEvent = NULL;
 
   // Check for a non-empty file
   if (access(eventFile, F_OK) != 0) {
     // no file found, which is fine; we're done, a vector of NULL is what we
     // want for newEvents
     logInfo("No event file found, assuming no input events\n");
-    return newEvents;
+    return newEvent;
   }
 
   logInfo("Begin reading event data from file %s\n", eventFile);
 
   FILE *in = openFile(eventFile, "r");
+  eVal = (struct EventValidation){0};
 
   if (fgets(line, EVENT_LINE_SIZE, in) == NULL) {
     // Again, this is fine - just return the empty newEvents array
-    return newEvents;
+    return newEvent;
   }
 
   // Check for line truncation
@@ -314,17 +353,12 @@ EventNode *readEventData(const char *eventFile) {
     exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
   }
 
-  if (eventType == LEAFOFF || eventType == LEAFON) {
-    // If we have a leaf event, make sure we aren't also looking for
-    // calculated leaf events.
-    checkForCalculatedLeafEvents();
-    hasCheckedLeafEvents = 1;
-  }
-
-  newEvents = createEventNode(year, day, eventType, eventParamsStr);
-  next = newEvents;
+  newEvent = createEventNode(year, day, eventType, eventParamsStr);
+  next = newEvent;
   currYear = year;
   currDay = day;
+
+  validateEvent(newEvent, currYear, currDay);
 
   while (fgets(line, EVENT_LINE_SIZE, in) != NULL) {
     // Check if line was truncated
@@ -347,15 +381,6 @@ EventNode *readEventData(const char *eventFile) {
       exit(EXIT_CODE_UNKNOWN_EVENT_TYPE_OR_PARAM);
     }
 
-    if (eventType == LEAFOFF || eventType == LEAFON) {
-      // If we have a leaf event, make sure we aren't also looking for
-      // calculated leaf events.
-      if (!hasCheckedLeafEvents) {
-        checkForCalculatedLeafEvents();
-        hasCheckedLeafEvents = 1;
-      }
-    }
-
     if ((year < currYear) || ((year == currYear) && (day < currDay))) {
       logError("reading event file: last event was at (%d, %d), next event is "
                "at (%d, %d)\n",
@@ -365,13 +390,15 @@ EventNode *readEventData(const char *eventFile) {
     }
 
     next = createEventNode(year, day, eventType, eventParamsStr);
+    validateEvent(newEvent, currYear, currDay);
+
     curr->nextEvent = next;
     currYear = year;
     currDay = day;
   }
 
   fclose(in);
-  return newEvents;
+  return newEvent;
 }
 
 void openEventOutFile(const char *eventOutFilePath, int printHeader) {
@@ -399,6 +426,19 @@ void appendLog(EventNode *event, int numParams, ...) {
   va_end(args);
 }
 
+void writePendingLeafOnEvent(EventNode *event) {
+  const double climLen = climate->length;
+  double creation = fluxes.eventLeafOnCreation * climLen;
+  double creationFromWood = fluxes.eventLeafOnCreationFromWood * climLen;
+  // clang-format off
+  appendLog(event, 2,
+    "eventLeafOnCreation", creation,
+    "eventLeafOnCreationFromWood", creationFromWood);
+  // clang-format on
+
+  // No N changes for leaf on (N is implicitly handled for biomass pools)
+}
+
 void writePendingLeafOffEvent(EventNode *event) {
   const double climLen = climate->length;
   double litterC = fluxes.eventLeafOffLitterC * climLen;
@@ -407,17 +447,17 @@ void writePendingLeafOffEvent(EventNode *event) {
     double litterN = fluxes.eventLeafOffLitterN * climLen;
     double leafOffNResorp = fluxes.eventLeafOffNResorption * climLen;
     // clang-format off
-      appendLog(event, 2,
-      "eventLeafOffNResorption", leafOffNResorp,
-      "eventLeafOffLitterN", litterN);
+    appendLog(event, 2,
+    "eventLeafOffNResorption", leafOffNResorp,
+    "eventLeafOffLitterN", litterN);
     // clang-format on
   }
 }
 
 void writePendingHarvestEvent(EventNode *event) {
   double climLen = climate->length;
-  double litterAdd = fluxes.eventLitterC * climLen;
-  double soilAdd = fluxes.eventSoilC * climLen;
+  double litterAdd = fluxes.harvestLitterC * climLen;
+  double soilAdd = fluxes.harvestSoilC * climLen;
   double leafDelta = fluxes.eventLeafC * climLen;
   double woodDelta = fluxes.eventWoodC * climLen;
   double accountingDelta = fluxes.eventAccountingC * climLen;
@@ -427,24 +467,24 @@ void writePendingHarvestEvent(EventNode *event) {
   // clang-format off
   appendLog(
       event, 8,
-      "eventSoilC", soilAdd,
-      "eventLitterC", litterAdd,
-      "eventLeafC", leafDelta,
-      "eventWoodC", woodDelta,
+      "eventSoilC", soilAdd,  // also modified by fert
+      "eventLitterC", litterAdd,  // fert
+      "eventLeafC", leafDelta,  // planting
+      "eventWoodC", woodDelta,  // planting
       "eventAccountingC", accountingDelta,
-      "eventFineRootC", fineDelta,
-      "eventCoarseRootC", coarseDelta,
+      "eventFineRootC", fineDelta,  // planting
+      "eventCoarseRootC", coarseDelta,  // planting
       "eventOutputC", outputC);
   // clang-format on
   if (ctx.nitrogenCycle) {
     double soilNAdd = fluxes.eventSoilOrgN * climLen;
-    double litterNAdd = fluxes.eventLitterN * climLen;
+    double litterNAdd = fluxes.harvestLitterN * climLen;
     double outputN = fluxes.eventOutputN * climLen;
     // clang-format off
     appendLog(
         event, 3,
         "eventSoilOrgN", soilNAdd,
-        "eventLitterN", litterNAdd,
+        "eventLitterN", litterNAdd,  // fert
         "eventOutputN", outputN);
     // clang-format on
   }
@@ -458,18 +498,31 @@ void writeEventsOut(void) {
 
   const int climYear = climate->year;
   const int climDay = climate->day;
+  int hasSeenLeafOn = 0;
   int hasSeenLeafOff = 0;
   int hasSeenHarvest = 0;
   while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
     // First up, check the pending events
     if (gEvent->type == HARVEST) {
-      if (!hasSeenHarvest) {
+      if (hasSeenHarvest) {
+        gEvent = gEvent->nextEvent;
+        continue;
       }
       writePendingHarvestEvent(gEvent);
       hasSeenHarvest = 1;
     }
+    if (gEvent->type == LEAFON) {
+      if (hasSeenLeafOn) {
+        gEvent = gEvent->nextEvent;
+        continue;
+      }
+      writePendingLeafOnEvent(gEvent);
+      hasSeenLeafOn = 1;
+    }
     if (gEvent->type == LEAFOFF) {
-      if (!hasSeenLeafOff) {
+      if (hasSeenLeafOff) {
+        gEvent = gEvent->nextEvent;
+        continue;
       }
       writePendingLeafOffEvent(gEvent);
       hasSeenLeafOff = 1;
@@ -487,6 +540,24 @@ void writeEventsOut(void) {
     fprintf(eventOutFile, "%4d  %3d  %-7s  %s", gEvent->year, gEvent->day,
             eventTypeToString(gEvent->type), log);
     gEvent = gEvent->nextEvent;
+  }
+
+  // Last, check for calculated leaf on/off "events"
+  double climLen = climate->length;
+  if (fluxes.leafOnCreation > 0.0) {
+    // clang-format off
+    writeComputedEventOut(
+      climate->year, climate->day, eventTypeToString(LEAFON), 2,
+      "leafOnCreation", fluxes.leafOnCreation * climLen,
+      "leafOnCreationFromWood", fluxes.leafOnCreationFromWood * climLen);
+    // clang-format on
+  }
+  if (fluxes.leafOffLitter > 0.0) {
+    // clang-format off
+    writeComputedEventOut(
+      climate->year, climate->day, eventTypeToString(LEAFOFF), 1,
+      "leafOffLitter", fluxes.leafOffLitter * climLen);
+    // clang-format on
   }
 }
 
@@ -563,6 +634,7 @@ void processEventsForCarbon(EventNode *event) {
   // Make sure we don't have more than 100% leaves fall for leaf-off
   double totalLeafFallFrac = 0.0;
 
+  int hasSeenLeafOn = 0;
   int hasSeenLeafOff = 0;
   int hasSeenHarvest = 0;
 
@@ -636,12 +708,12 @@ void processEventsForCarbon(EventNode *event) {
 
       } break;
       case HARVEST: {
-        if (!hasSeenHarvest) {
-          logInfo("Multiple harvest events found for year %f day %d; combining "
-                  "into one event\n",
+        if (hasSeenHarvest) {
+          logInfo("Multiple harvest events found for year %d day %d; reporting "
+                  "will be combined into one event line\n",
                   event->year, event->day);
-          hasSeenHarvest = 1;
         }
+        hasSeenHarvest = 1;
 
         // Harvest can both remove biomass and move biomass to the soil/litter
         // pools
@@ -704,8 +776,8 @@ void processEventsForCarbon(EventNode *event) {
           soilAdd += litterAdd;
           litterAdd = 0.0;
         }
-        fluxes.eventLitterC += litterAdd / climLen;
-        fluxes.eventSoilC += soilAdd / climLen;
+        fluxes.harvestLitterC += litterAdd / climLen;
+        fluxes.harvestSoilC += soilAdd / climLen;
         fluxes.eventLeafC += leafDelta / climLen;
         fluxes.eventWoodC += woodDelta / climLen;
         fluxes.eventAccountingC += accountingDelta / climLen;
@@ -753,32 +825,35 @@ void processEventsForCarbon(EventNode *event) {
 
       } break;
       case LEAFON: {
+        if (hasSeenLeafOn) {
+          logInfo("Multiple leaf-on events found for year %d day %d; reporting "
+                  "will be combined into one event line\n",
+                  event->year, event->day);
+        }
+        hasSeenLeafOn = 1;
+
         double leafOnFlux = params.leafGrowth / climLen;
-        double leafOnFluxFromWood = 0.0;
         checkLeafOnLimitation(&leafOnFlux);
         fluxes.eventLeafOnCreation += leafOnFlux;
         double totalSourceC = envi.plantWoodC + envi.coarseRootC;
         if (totalSourceC > TINY) {
-          leafOnFluxFromWood = leafOnFlux * envi.plantWoodC / totalSourceC;
+          double leafOnFluxFromWood =
+              leafOnFlux * envi.plantWoodC / totalSourceC;
           fluxes.eventLeafOnCreationFromWood += leafOnFluxFromWood;
         }
         // Unlike planting, this is NOT a system input, so no adjustments to
         // eventInputC
 
-        // clang-format off
-        appendLog(event, 2,
-          "eventLeafOnCreation", leafOnFlux * climLen,
-          "eventLeafOnCreationFromWood", leafOnFluxFromWood * climLen);
-        // clang-format on
+        // No log here, in case we have more than one
       } break;
       case LEAFOFF: {
-        if (!hasSeenLeafOff) {
+        if (hasSeenLeafOff) {
           logInfo(
-              "Multiple leaf-off events found for year %f day %d; combining "
-              "into one event\n",
+              "Multiple leaf-off events found for year %d day %d; reporting "
+              "will be combined into one event line\n",
               event->year, event->day);
-          hasSeenLeafOff = 1;
         }
+        hasSeenLeafOff = 1;
 
         double frac = params.fracLeafFall;
         totalLeafFallFrac += frac;
@@ -878,7 +953,7 @@ void processEventsForNitrogen(EventNode *event) {
         double litterNAdd = fracTA * totalAbove;
         double soilNAdd = fracTB * totalBelow;
         fluxes.eventSoilOrgN += soilNAdd / climLen;
-        fluxes.eventLitterN += litterNAdd / climLen;
+        fluxes.harvestLitterN += litterNAdd / climLen;
 
         // MASS BALANCE: removed fractions are system outputs
         // just plantWoodC here, not woodC
@@ -897,7 +972,7 @@ void processEventsForNitrogen(EventNode *event) {
         // Figure out how to distribute
         double litterFlux, outputFlux;
         partitionLeafAdjustment(leafDiffFlux, &litterFlux, &outputFlux);
-        fluxes.eventLitterN -= litterFlux / params.leafCN;
+        fluxes.harvestLitterN -= litterFlux / params.leafCN;
         fluxes.eventOutputN -= outputFlux / params.leafCN;
       } break;
       case TILLAGE: {
@@ -968,9 +1043,10 @@ void updatePoolsForEvents(void) {
   envi.plantLeafC += fluxes.eventLeafC * climate->length;
 
   // Harvest and fertilization events
-  envi.soilC += fluxes.eventSoilC * climate->length;
+  envi.soilC += (fluxes.eventSoilC + fluxes.harvestSoilC) * climate->length;
   if (ctx.litterPool) {
-    envi.litterC += fluxes.eventLitterC * climate->length;
+    envi.litterC +=
+        (fluxes.eventLitterC + fluxes.harvestLitterC) * climate->length;
   }
 
   // Leaf on and off events
@@ -1002,8 +1078,9 @@ void updatePoolsForEvents(void) {
   if (ctx.nitrogenCycle) {
     envi.minN += fluxes.eventMinN * climate->length;
     envi.soilOrgN += fluxes.eventSoilOrgN * climate->length;
-    envi.litterN +=
-        (fluxes.eventLitterN + fluxes.eventLeafOffLitterN) * climate->length;
+    envi.litterN += (fluxes.eventLitterN + fluxes.harvestLitterN +
+                     fluxes.eventLeafOffLitterN) *
+                    climate->length;
     double leafOnNFlux = calcLeafOnNFromC(fluxes.eventLeafOnCreation);
     envi.plantStorageN +=
         (fluxes.eventLeafOffNResorption - leafOnNFlux) * climate->length;

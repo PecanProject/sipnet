@@ -16,7 +16,12 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   // * leafGrowth parameter (input leafOn value)
   // * available carbon
   // * available nitrogen
-  double leafOnCDemand = *leafOnFlux * climate->length;
+
+  // Make sure to include current leaf on flux, in case there is more than
+  // one leaf on event
+  double currentFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
+  double totalDemandFlux = *leafOnFlux + currentFlux;
+  double leafOnCDemand = totalDemandFlux * climate->length;
 
   if (leafOnCDemand < TINY) {
     // Nothing to check
@@ -45,7 +50,8 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   double limitation = unitClip(fmin(cLimiter, nLimiter));
 
   if (limitation < 1) {
-    *leafOnFlux *= limitation;
+    totalDemandFlux *= limitation;
+    *leafOnFlux = totalDemandFlux - currentFlux;
     if (ctx.nitrogenCycle) {
       logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f / N "
               "%.4f (C ratio: %.4f, N ratio: %.4f), "
@@ -126,6 +132,7 @@ static void checkNegativeCreation(void) {
     fluxes.eventOutputC -= adjust * fracRemovedAbove;
     if (ctx.litterPool) {
       fluxes.eventLitterC -= adjust * fracTransferredAbove;
+      fluxes.harvestLitterC -= adjust * fracTransferredAbove;
     } else {
       fluxes.eventSoilC -= adjust * fracTransferredAbove;
     }
@@ -158,6 +165,21 @@ static void checkNegativeCreation(void) {
       fluxes.fineRootCreation += coarseRootDeficit;
       fluxes.coarseRootCreation -= coarseRootDeficit;
     }
+  }
+}
+
+/**
+ * Check if leaching and volatilization will drive mineral N negative
+ */
+static void checkMineralNLimitation(void) {
+  double len = climate->length;
+  double pool = envi.minN + (fluxes.nMin + fluxes.eventMinN) * len;
+  double loss = (fluxes.nLeaching + fluxes.nVolatilization) * len;
+
+  if (loss > TINY && loss > pool) {
+    double reduction = pool / loss;
+    fluxes.nLeaching *= reduction;
+    fluxes.nVolatilization *= reduction;
   }
 }
 
@@ -233,21 +255,7 @@ static void checkNitrogenLimitation(void) {
 
     // Reset N calculations
     calcNitrogenFluxes();
-  }
-}
-
-/**
- * Check if leaching and volatilization will drive mineral N negative
- */
-static void checkMineralNLimitation(void) {
-  double len = climate->length;
-  double pool = envi.minN + (fluxes.nMin + fluxes.eventMinN) * len;
-  double loss = (fluxes.nLeaching + fluxes.nVolatilization) * len;
-
-  if (loss > TINY && loss > pool) {
-    double reduction = pool / loss;
-    fluxes.nLeaching *= reduction;
-    fluxes.nVolatilization *= reduction;
+    checkMineralNLimitation();
   }
 }
 
