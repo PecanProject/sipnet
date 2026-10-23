@@ -123,18 +123,11 @@ static void checkNegativeCreation(void) {
     double litterAdjust, outAdjust;
     partitionLeafAdjustment(adjust, &litterAdjust, &outAdjust);
 
-    double fracRemovedAbove = ht->totalFracRemovedAbove;
-    double fracTransferredAbove = ht->totalFracTransferredAbove;
-    double totalFrac = fracRemovedAbove + fracTransferredAbove;
-    fracRemovedAbove /= totalFrac;
-    fracTransferredAbove /= totalFrac;
-
-    fluxes.eventOutputC -= adjust * fracRemovedAbove;
+    fluxes.eventOutputC -= outAdjust;
     if (ctx.litterPool) {
-      fluxes.eventLitterC -= adjust * fracTransferredAbove;
-      fluxes.harvestLitterC -= adjust * fracTransferredAbove;
+      fluxes.harvestLitterC -= litterAdjust;
     } else {
-      fluxes.eventSoilC -= adjust * fracTransferredAbove;
+      fluxes.eventSoilC -= litterAdjust;
     }
 
     // Update the deficit
