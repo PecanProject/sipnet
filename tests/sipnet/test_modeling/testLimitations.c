@@ -1,17 +1,9 @@
+#include "utils/failureTracker.c"
 #include "utils/tUtils.h"
 #include "sipnet/events.c"
 #include "sipnet/sipnet.c"
 
-static int failures;
 static int cases;
-
-static void near(double actual, double expected, const char *name) {
-  if (!isfinite(actual) || fabs(actual - expected) > 1e-8) {
-    logTest("[TEST POINT FAIL] case %d %s: %.15g, expected %.15g\n", cases,
-            name, actual, expected);
-    failures++;
-  }
-}
 
 static void addEvent(int type, const char *arguments) {
   EventNode *event =
@@ -31,7 +23,7 @@ static void limitationCase(int harvest, int leafOn, int leafOff, int fertilizer,
           "%d sign %d storage %d mineral %d flooded %d lossRate %g\n",
           ++cases, harvest, leafOn, leafOff, fertilizer, sign, storage, mineral,
           flooded, lossRate);
-
+  checkpointFailureTracking();
   initContext();
   ctx.events = ctx.litterPool = ctx.nitrogenCycle = ctx.anaerobic = 1;
   ctx.waterHResp = ctx.flooding = 1;
@@ -160,9 +152,13 @@ static void limitationCase(int harvest, int leafOn, int leafOff, int fertilizer,
   cleanupModel();
   deleteModelParams(testParams);
   gEvents = gEvent = NULL;
+
+  checkFailures();
 }
 
 int main(void) {
+  initFailureTracking(0);
+
   // Full Cartesian product, including independent empty storage/mineral pools.
   for (int harvest = 0; harvest < 2; harvest++)
     for (int leafOn = 0; leafOn < 3; leafOn++)
@@ -188,7 +184,7 @@ int main(void) {
     for (int flooded = 0; flooded < 2; flooded++)
       limitationCase(1, 2, 2, 0, 1, storage, 1, flooded, 1000);
 
-  logTest("%s testLimitations: %d cases, %d failures\n",
-          failures ? "FAILED" : "PASSED", cases, failures);
-  return failures != 0;
+  checkStatus("testLimitations");
+
+  return 0;
 }
