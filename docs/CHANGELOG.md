@@ -28,6 +28,9 @@ sections to include in release notes:
 
 ### Added
 
+- Model-level nitrogen limitation tests covering coincident harvest, leaf, and
+  fertilizer events, NPP signs, nitrogen availability, and flooding. (#415)
+
 ### Fixed
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
 - Leaf-off mechanics refined to ensure that leaf-off events do not remove more leaf carbon than is available in the leaf pool. (#400)

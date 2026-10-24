@@ -14,6 +14,7 @@ TEST_CFILES= \
   testCompleteHarvest.c \
   testDependencyFunctions.c \
   testFluxCalculations.c \
+  testLimitations.c \
   testMethane.c \
   testNitrogenCycle.c \
   testPlantMortality.c \
