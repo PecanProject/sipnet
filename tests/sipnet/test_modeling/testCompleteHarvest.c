@@ -3,31 +3,12 @@
 // intentional even at the midnight harvest timestamp. This is a constructed
 // model regression fixture, not a field observation or restart replay.
 #include "utils/tUtils.h"
+#include "utils/failureTracker.c"
 #include "sipnet/events.c"
 #include "sipnet/sipnet.c"
 #include <sys/wait.h>
 
-static int failures;
-static int prevFailures;
 static ModelParams *testParams;
-
-// Set this to one to force test to pause on failures
-static int debug = 1;
-
-static void checkFailures(void) {
-  if (failures > prevFailures && debug) {
-    logTest("FAIL above\n");
-    getchar();
-  }
-}
-
-static void near(double actual, double expected, const char *name) {
-  if (!isfinite(actual) || fabs(actual - expected) > 1e-8) {
-    logTest("[TEST POINT FAIL] %s: %.15g, expected %.15g\n", name, actual,
-            expected);
-    failures++;
-  }
-}
 
 static void balanced(void) {
   near(balanceTracker.deltaC, 0, "C balance");
@@ -88,7 +69,7 @@ static void fullCase(int mode, int accounting, int dark, int limited,
                      const char *harvest, double aboveExport,
                      double belowExport) {
   // A no-harvest run supplies the independently calculated end-of-step pools.
-  prevFailures = failures;
+  checkpointFailureTracking();
   logTest(
       "*** Running full case with mode: %d accounting: %d dark: %d limited: %d"
       " harvest: %s aboveExport: %.2f belowExport: %.2f\n",
@@ -158,7 +139,7 @@ static void fullCase(int mode, int accounting, int dark, int limited,
 }
 
 static void partialCase(int accounting, const char *harvest, double fraction) {
-  prevFailures = failures;
+  checkpointFailureTracking();
   logTest(
       "*** Running partial case with accounting: %d harvest: %s fraction: %f\n",
       accounting, harvest, fraction);
@@ -183,7 +164,7 @@ static void partialCase(int accounting, const char *harvest, double fraction) {
 
 static void partialTimestepCase(int accounting) {
   logTest("*** Running partial timestep case\n");
-  prevFailures = failures;
+  checkpointFailureTracking();
   start(2, ".1 .2 .3 .4");
   envi.plantCAccountingDelta = accounting;
   updateState();
@@ -203,7 +184,7 @@ static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
   logTest("*** Running partial harvest leaf budget case: %s meanNPP %f "
           "leafTurnoverRate %f harvestFraction %f\n",
           name, meanNPPValue, leafTurnoverRate, harvestFraction);
-  prevFailures = failures;
+  checkpointFailureTracking();
 
   char harvest[32];
   snprintf(harvest, sizeof(harvest), "%.8f 0 %.8f 0", harvestFraction / 2,
@@ -269,7 +250,7 @@ static void partialHarvestLeafBudgetCase(const char *name, double meanNPPValue,
 static void invalidCase(int which) {
   pid_t child = fork();
   if (child < 0) {
-    failures++;
+    incrFailureCount();
     return;
   }
   if (child == 0) {
@@ -307,13 +288,14 @@ static void invalidCase(int which) {
   if (!WIFEXITED(status) || WEXITSTATUS(status) != expected) {
     logTest("Invalid case %d did not exit with code %d (was %d)\n", which,
             expected, WIFEXITED(status) ? WEXITSTATUS(status) : -1);
-    failures++;
+    incrFailureCount();
+    ;
   }
 }
 
 static void coincidentFertilizerCase(void) {
   logTest("*** Running coincident fertilizer case\n");
-  prevFailures = failures;
+  checkpointFailureTracking();
   Envi expected = {0};
   for (int h = 0; h < 2; h++) {
     start(2, h ? "0 0 1 1" : NULL);
@@ -390,7 +372,7 @@ static void coincidentEventCase(int type, const char *arguments,
           " %f\n",
           eventTypeToString(type), *arguments ? arguments : "<none>",
           meanNPPValue);
-  prevFailures = failures;
+  checkpointFailureTracking();
   Envi end;
   Fluxes ordinary;
   // This test runs in three passes:
@@ -433,7 +415,7 @@ static void coincidentEventCase(int type, const char *arguments,
       if ((type == LEAFON && fluxes.eventLeafOnCreation <= 0) ||
           (type == LEAFOFF && fluxes.eventLeafOffLitterC <= 0) ||
           (type == IRRIGATION && fluxes.eventSoilWater <= 0))
-        failures++;
+        incrFailureCount();
     } else {
       double aboveC =
           end.plantWoodC + end.plantCAccountingDelta + end.plantLeafC;
@@ -445,7 +427,7 @@ static void coincidentEventCase(int type, const char *arguments,
           end.fineRootC / params.fineRootCN + end.coarseRootC / params.woodCN;
       Envi expected = end;
       expected.soilC += .25 * belowC;
-      // LEAFOFF: 25% of deficit is removed via harvest, not leaf off
+      // LEAF OFF: 25% of deficit is removed via harvest, not leaf off
       double litterLeafOffCMod = .25 * leafOffDeficit * len;
       double litterLeafOffNMod = litterLeafOffCMod / params.leafCN;
       // LEAF C: 75% of deficit will increase litter due to reduced harvest
@@ -496,7 +478,7 @@ static void coincidentEventCase(int type, const char *arguments,
 
 static void restartCase(void) {
   logTest("*** Running restart case\n");
-  prevFailures = failures;
+  checkpointFailureTracking();
   Envi expected;
   for (int resumed = 0; resumed < 2; resumed++) {
     start(2, "0 0 1 1");
@@ -565,7 +547,7 @@ static void leafBudgetCases(void) {
                     "sign %d account %d limited %d resorb %.1f harvest %s\n",
                     caseNum++, kind, dark, sign, account, limited, resorb / 2.0,
                     harvestStr);
-                prevFailures = failures;
+                checkpointFailureTracking();
                 start(2, harvest ? harvestStr : NULL);
                 envi.plantLeafC = 1;
                 envi.plantWoodC = envi.fineRootC = envi.coarseRootC = 100;
@@ -622,7 +604,7 @@ static void leafBudgetCases(void) {
                           "|s-p| %.17g leaf %.17g expr1 %d expr2 %d\n",
                           shed, pool, pool - shed, envi.plantLeafC,
                           pool - shed < -1e-10, envi.plantLeafC < -1e-10);
-                  failures++;
+                  incrFailureCount();
                 }
 
                 double expLeafOffLitter =
@@ -658,7 +640,7 @@ static void leafBudgetCases(void) {
 
 // Full export during net loss must not borrow carbon from an empty soil pool.
 static void exportLossCase(void) {
-  prevFailures = failures;
+  checkpointFailureTracking();
   start(1, "1 1 0 0");
   envi.litterC = envi.soilC = envi.litterN = envi.soilOrgN = 0;
   params.baseSoilResp = params.litterBreakdownRate = 0;
@@ -675,6 +657,8 @@ static void exportLossCase(void) {
 int main(void) {
 
   logTest("Starting testCompleteHarvest\n");
+
+  initFailureTracking(0);
 
   const char *harvest[] = {"0 0 1 1", "1 1 0 0", ".25 .75 .75 .25"};
   const double above[] = {0, 1, .25}, below[] = {0, 1, .75};
@@ -723,18 +707,7 @@ int main(void) {
     invalidCase(which);
   }
 
-  logTest("\n");
-  logTest("Complete harvest total failures: %d\n", failures);
-  logTest("\n");
+  checkStatus("testCompleteHarvest");
 
-  int status = failures > 0;
-
-  if (status) {
-    logTest("FAILED testCompleteHarvest with status %d\n", status);
-    exit(status);
-  }
-
-  logTest("PASSED testCompleteHarvest\n");
-
-  return failures != 0;
+  return 0;
 }
