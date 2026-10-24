@@ -1090,22 +1090,36 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
   }
 }
 
-// ensure that all the allocation to wood + leaves + fine roots < 1,
+// ensure that the allocation to wood + leaves + fine roots <= 1,
 // calculate coarse root allocation as:
 //   coarse = 1 - leaf - wood - fine, making sum(params) = 1
 // require:
-//   leaf, wood, fine root < 1 individually
+//   0 <= leaf, wood, fine root < 1 individually
 //   coarse root >=0 which enforces leaf + wood + fine root <= 1
 void ensureAllocation(void) {
+  if (!isfinite(params.leafAllocation) || !isfinite(params.woodAllocation) ||
+      !isfinite(params.fineRootAllocation)) {
+    logError("NPP allocation parameters must be finite: leafAllocation=%.17g, "
+             "woodAllocation=%.17g, fineRootAllocation=%.17g\n",
+             params.leafAllocation, params.woodAllocation,
+             params.fineRootAllocation);
+    exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+  }
+
   // :: from [3], root model description
   params.coarseRootAllocation = 1 - params.leafAllocation -
                                 params.woodAllocation -
                                 params.fineRootAllocation;
 
-  if ((params.leafAllocation >= 1.0) || (params.woodAllocation >= 1.0) ||
-      (params.fineRootAllocation >= 1.0) || (params.coarseRootAllocation < 0)) {
-    printf("ERROR: NPP allocation params must be less than one individually "
-           "and add to less than one\n");
+  if ((params.leafAllocation < 0.0) || (params.leafAllocation >= 1.0) ||
+      (params.woodAllocation < 0.0) || (params.woodAllocation >= 1.0) ||
+      (params.fineRootAllocation < 0.0) || (params.fineRootAllocation >= 1.0) ||
+      (params.coarseRootAllocation < 0.0)) {
+    logError("NPP allocation parameters must each be in [0, 1) and sum to at "
+             "most 1: leafAllocation=%.17g, woodAllocation=%.17g, "
+             "fineRootAllocation=%.17g\n",
+             params.leafAllocation, params.woodAllocation,
+             params.fineRootAllocation);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
@@ -1851,8 +1865,7 @@ void setupModel(void) {
   // moisture-saturated soil, and soil C = init. soil C params.baseSoilResp =
   // ((5.2 * 365.0)/params.soilInit)/params.soilRespQ10;
 
-  // ensure that all the allocation parameters sum up to something less than
-  // one:
+  // Validate input allocations and calculate the coarse-root remainder.
   ensureAllocation();
 
   ///

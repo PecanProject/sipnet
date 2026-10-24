@@ -35,6 +35,9 @@ sections to include in release notes:
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
 - Leaf-off mechanics refined to ensure that leaf-off events do not remove more leaf carbon than is available in the leaf pool. (#400)
 
+- Reject negative leaf, wood, and fine-root NPP allocation parameters during model setup (#278).
+- Reject nonfinite supplied model parameters and NPP allocation inputs (#278).
+
 ### Changed
 - SIPNET will now error instead of warning when an environment pool goes negative. This is a change from previous behavior where SIPNET would log a warning and continue running. (#398)
 
