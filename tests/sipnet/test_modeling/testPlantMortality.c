@@ -44,8 +44,8 @@ void resetEnv(void) {
   envi.soilOrgN = 0.0;
   envi.litterN = 0.0;
   envi.plantStorageN = 0.0;
-  eventTrackers.harvestFracRemoved = 0.0;
-  eventTrackers.harvestFracTransferred = 0.0;
+  eventTrackers.harvestTrackers.totalFracRemoved = 0.0;
+  eventTrackers.harvestTrackers.totalFracTransferred = 0.0;
 }
 
 int checkPool(double calc, double exp, const char *label) {
