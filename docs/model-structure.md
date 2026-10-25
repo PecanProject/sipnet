@@ -464,7 +464,7 @@ their governing parameters, and typical literature values.
 
 | Model | Organic Matter Pools | Partitioning Mechanism | Governing Parameter(s) | Literature Values by Amendment Type |
 | :--- | :--- | :--- | :--- | :--- |
-| **SIPNET** (this work) | 2 pools: Litter, Soil SOM | Event-level partition into Litter (labile) vs Soil (pre-stabilized) | $f_{\text{stable}}$ (`fracOrgCStable`) | Fresh residue: $0.0$<br>Slurry/FYM: $0.20$–$0.40$<br>Mature compost: $0.50$–$0.75$<br>Biochar: $0.80$–$0.95$ |
+| **SIPNET** (this work) | 2 pools: Litter, Soil SOM | Event-level partition into Litter (labile) vs Soil (pre-stabilized) | $f_{\text{stable}}$ (`fracOrgCStable`) | Fresh residue: 0.0<br>Slurry/FYM: 0.20–0.40<br>Mature compost: 0.50–0.75<br>Biochar: 0.80–0.95 |
 | **RothC** (Coleman & Jenkinson 1996; Mondini et al. 2017) | 5 pools: DPM (decomposable), RPM (resistant), BIO (microbial), HUM (humified), IOM (inert) | Organic inputs split into DPM, RPM, and HUM upon entry | DPM/RPM ratio and $f_{\text{HUM}}$ | Plant residue: DPM/RPM = 59/41, $f_{\text{HUM}} = 0$<br>FYM: 49% DPM, 49% RPM, 2% HUM<br>Composts (RothC-EOM): $f_{\text{HUM}} = 0.59$–$0.69$, DPM = 9%–20%, RPM = 18%–22% |
 | **DayCent / Century** (Parton et al. 1994, 2001) | Metabolic litter, Structural litter, Active SOM, Slow SOM, Passive SOM | Input partitioned via `omad.100` allocation fractions based on lignin:N ratio and amendment type | `ASTF(1)` (metabolic), `ASTF(2)` (structural), `ASTF(3)` (slow/passive SOM) | Fresh residue: `ASTF(3)` = 0 (split by lignin:N into metabolic & structural)<br>Manure: ~20%–30% to slow SOM<br>Compost: 50%–70% to slow/passive SOM |
 | **DNDC** (Li et al. 1992, 2012) | 4 SOM pools: Very labile (litter/microbial), Moderately labile (humads), Passive (humus) | Manure and compost partitioned into labile vs resistant humads/humus fractions | $f_{\text{labile}}$, $f_{\text{humads}}$ | Crop residue: 90%–100% labile litter<br>Farmyard manure: ~50% labile, 50% humads<br>Compost: 10%–20% labile, 70%–80% humads/humus |
@@ -494,8 +494,12 @@ organic amendments challenge this spatial abstraction:
 - **Interaction with Decomposition Modifiers**: In SIPNET, litter decomposition is modulated by temperature, moisture, and pool C:N
   ratio, with a fraction $f_{\text{litter}}$ (`fracLitterRespired`) respired to $\text{CO}_2$ and the remainder $(1 - f_{\text{litter}})$
   transferred to soil SOM. When mature compost is forced through the litter pool, its low potential respiration and high persistence
-  force $f_{\text{litter}}$ to rail against its empirical bounds during calibration, distorting the model's ability to simultaneously
-  capture the fast decomposition of crop residue and the slow decomposition of compost.
+  force $f_{\text{litter}}$ to hit its parameter constraint boundary during calibration ("railing against the bound" in numerical
+  optimization and parameter estimation). Specifically, when an optimization routine (e.g., MCMC or gradient descent with box constraints)
+  calibrates $f_{\text{litter}}$ on sites receiving mature compost, the model's lack of a mechanism to bypass litter respiration forces
+  the optimizer to drive $f_{\text{litter}}$ down against its lower allowable bound (e.g., 0.0 or the edge of its prior distribution)
+  in an attempt to minimize unrealistically high respiratory losses. This distorts the parameter's physical meaning and compromises
+  the model's ability to simultaneously capture both the rapid decomposition of fresh crop residues and the slow turnover of compost.
 - **Partitioning as a Quality Bridge**: Defining $f_{\text{stable}}$ reconciles quality with location: the labile fraction
   $(1 - f_{\text{stable}})$ remains in litter, where it is subject to litter kinetic rate $K_{\text{litter}}$ and C:N modifiers,
   while the stabilized fraction $f_{\text{stable}}$ bypasses the litter respiration bottleneck and enters soil organic matter directly.
@@ -506,43 +510,70 @@ A critical consideration in introducing $f_{\text{stable}}$ is whether it repres
 or an unconstrained latent parameter:
 
 1. **Measurable Biochemical and Physical Fractions**:
-   - *Proximate Fiber Analysis (Van Soest)*: Neutral detergent fiber (NDF), acid detergent fiber (ADF), and acid detergent lignin (ADL)
-     provide direct chemical fractionation. The non-hydrolyzable, lignin-like fraction strongly correlates with the non-labile
-     amendment fraction.
-   - *Physical/Functional Fractionation*: Particulate organic matter (POM, labile, $>53\ \mu\text{m}$) versus mineral-associated
-     organic matter (MAOM, stabilized, $<53\ \mu\text{m}$). During composting, organic matter shifts from coarse particulate material
-     to fine, stabilized organo-mineral and microaggregated complexes.
-   - *Thermal Stability (Rock-Eval Pyrolysis)*: Rock-Eval thermal analysis yields stability indices (I-index, R-index) that measure
+   - *Long-Term Aerobic Respirometry (Primary Standard)*: Standardized 100- to 365-day laboratory incubations (e.g., ISO 16072 or
+     AFNOR NF U44-051) directly measure cumulative $\text{CO}_2$ mineralization, yielding the asymptotic residual carbon fraction
+     ($C_{\text{residual}} / C_0$). In European agronomy and biogeochemical modeling, this is standardized as the Indicator of Organic
+     Matter Stability ($I_S$, formerly $I_{\text{ROC}}$) or the humification coefficient ($h$).
+   - *Thermal Stability (Rock-Eval Pyrolysis)*: Rock-Eval thermal analysis yields stability indices (I-index, R-index) that quantify
      the proportion of thermally stable biopolymers. Levavasseur et al. (2020) demonstrated that Rock-Eval indices correlate tightly
-     ($R^2 > 0.85$) with experimentally measured amendment humification coefficients.
-   - *Long-Term Aerobic Respirometry*: 100- to 365-day laboratory incubations directly measure cumulative respiration, yielding the
-     asymptotic residual carbon fraction ($C_{\text{residual}} / C_0$), which corresponds directly to $f_{\text{stable}}$.
-2. **Parameter Identifiability**:
-   - If treated as a freely floating tuning parameter calibrated solely against field eddy covariance (NEE) data, $f_{\text{stable}}$
-     could exhibit equifinality with $f_{\text{litter}}$ and $K_{\text{litter}}$.
-   - However, when parameterized *a priori* using published lookup values by amendment category (e.g., from RothC-EOM or the EOM database)
-     or measured directly via respirometry/Rock-Eval analysis, $f_{\text{stable}}$ functions as an **observable, identifiable input property**,
-     eliminating parameter identifiability issues.
+     ($R^2 > 0.85$) with experimentally measured amendment humification coefficients, serving as a rapid, high-throughput proxy.
+   - *Proximate Fiber Analysis (Van Soest)*: Neutral detergent fiber (NDF), acid detergent fiber (ADF), and acid detergent lignin (ADL)
+     provide chemical fractionation into soluble cell contents, hemicellulose, cellulose, and lignin-like recalcitrant residues.
+   - *Physical/Functional Fractionation*: Particulate organic matter (POM, labile, $> 53\ \mu\text{m}$) versus mineral-associated
+     organic matter (MAOM, stabilized, $< 53\ \mu\text{m}$). Composting shifts carbon from coarse particulate material to fine,
+     stabilized organo-mineral and microaggregated complexes.
+
+2. **Which Measurement Makes the Most Sense for SIPNET?**:
+   Among these analytical candidates, **standardized long-term aerobic incubation / respirometry** (determining the residual organic
+   carbon fraction $I_S$ or humification coefficient $h$) makes the most conceptual and practical sense for SIPNET:
+   - *Conceptual alignment*: SIPNET's organic matter structure consists of a fast-turnover litter pool and a slower-turnover soil SOM pool.
+     Functionally, $f_{\text{stable}}$ represents the fraction of amendment carbon that resists rapid litter decay and contributes
+     directly to persistent SOM. Respirometric incubation directly measures this exact split at the end of the initial rapid respiratory flush.
+   - *Operational interoperability*: Standardized values of $I_S$ / $h$ are directly published in national amendment registries (e.g., the
+     French EOM database; Levavasseur et al. 2020) and match the input parameters of peer models (RothC-EOM, ICBM, AMG), allowing
+     unambiguous, defensible cross-model parameter transfers without recalibration.
+   - *High-throughput estimation*: For newly synthesized or unmeasured amendments, Rock-Eval pyrolysis and NIRS provide validated
+     pedotransfer regressions to estimate $I_S$ rapidly.
+
+3. **Defensible Parameter Sets for Modeled Organic Amendments**:
+   To provide defensible, literature-grounded priors for agricultural simulations in SIPNET and PEcAn (such as the Russell Ranch
+   experiments and regional agronomic runs), the table below compiles recommended default values and defensible ranges derived from
+   published databases (RothC-EOM, ICBM, AMG, and the French EOM database):
+
+| Amendment Class | Representative Materials & Description | Recommended Default $f_{\text{stable}}$ | Defensible Range | Primary Literature Source / Model Analogue |
+| :--- | :--- | :---: | :---: | :--- |
+| **Fresh crop residues** | Wheat straw, corn stover, cover crop biomass (green manure) | 0.00 | 0.00–0.05 | Standard SIPNET litter kinetics; RothC ($f_{\text{HUM}} = 0$); ICBM ($h = 0.125$) |
+| **Liquid slurries & manures** | Liquid swine slurry, dairy slurry, anaerobic digestates | 0.20 | 0.15–0.30 | AMG ($h = 0.25$–$0.35$); EOM database ($I_S \approx 0.18$–$0.25$) |
+| **Solid farmyard manure (FYM)** | Straw-bedded cattle manure, poultry litter | 0.35 | 0.25–0.45 | RothC FYM (49% RPM, 2% HUM); ICBM ($h = 0.27$–$0.31$); AMG ($h = 0.30$–$0.45$) |
+| **Composted manure & green waste** | Composted dairy/poultry manure (Russell Ranch organic plots), yard waste compost | 0.65 | 0.55–0.75 | RothC-EOM ($f_{\text{HUM}} = 0.59$–$0.69$); ICBM ($h = 0.70$–$0.78$); AMG ($h = 0.55$–$0.75$) |
+| **Biochar / Pyrogenic C** | Wood and agricultural residue biochars | 0.85 | 0.80–0.95 | ICBM biochar ($h = 0.80$–$0.90$); Woolf et al. (2010); Zimmerman (2010) |
+
+4. **Parameter Identifiability**:
+   - If treated as an unconstrained free parameter calibrated solely against ecosystem flux data (e.g., eddy covariance NEE),
+     $f_{\text{stable}}$ could exhibit equifinality with $f_{\text{litter}}$ and $K_{\text{litter}}$.
+   - However, when parameterized *a priori* using the lookup table above by amendment class, or measured directly via laboratory
+     incubation / Rock-Eval analysis, $f_{\text{stable}}$ functions as an **observable, identifiable input property**, eliminating
+     equifinality and calibration ambiguity.
 
 ##### Model Evaluation and Testing Framework
 
 To establish whether adding the $f_{\text{stable}}$ mechanism and parameter is justified, the following model evaluation protocol is proposed:
 
-1. **Information Criteria Accounting for Parameter Complexity**:
-   - Model selection should use the Akaike Information Criterion ($\text{AIC}$) and Bayesian Information Criterion ($\text{BIC}$):
-     $$\text{AIC} = 2k - 2\ln(\hat{L}), \quad \text{BIC} = k\ln(n) - 2\ln(\hat{L})$$
-     where $k$ is the number of estimated parameters, $n$ is the number of observations, and $\hat{L}$ is the maximum likelihood of the model.
-   - A reduction in $\text{AIC} > 2$ (or $\Delta\text{BIC} > 6$) would provide statistical justification that the error reduction achieved
-     by quality partitioning outweighs the penalty for adding the parameter.
-2. **Out-of-Sample Validation on Independent Long-Term Field Trials**:
-   - The model should be evaluated against decadal soil organic carbon trajectories from long-term agroecological experiments that include
-     contrasting organic amendment treatments (e.g., the Russell Research Station trials, Broadbalk at Rothamsted, or the Rodale Institute
-     Farming Systems Trial comparing compost, manure, and synthetic fertilizer treatments).
-3. **Quantifying Reduction in Prediction Error**:
-   - Performance should be quantified using Root Mean Square Error (RMSE), Mean Absolute Error (MAE), and Nash-Sutcliffe Model Efficiency
-     (NSE) for both decadal SOC stock change and sub-annual heterotrophic respiration fluxes ($R_H$).
-   - Without partitioning, models calibrated on crop residues systematically underpredict SOC accumulation under compost amendments
-     by 30%–60%; demonstrating a significant reduction in this systematic bias will validate the utility of the mechanism.
+- **Information Criteria Accounting for Parameter Complexity**:
+  Model selection should use the Akaike Information Criterion ($\text{AIC}$) and Bayesian Information Criterion ($\text{BIC}$):
+
+\begin{equation}
+\text{AIC} = 2k - 2\ln(\hat{L}), \quad \text{BIC} = k\ln(n) - 2\ln(\hat{L})
+\label{eq:aic_bic}
+\end{equation}
+
+  where $k$ is the number of estimated parameters, $n$ is the number of observations, and $\hat{L}$ is the maximum likelihood of the model. A reduction of $\Delta\text{AIC} > 2$ (or $\Delta\text{BIC} > 6$) would provide statistical justification that the error reduction achieved by quality partitioning outweighs the penalty for adding the parameter.
+
+- **Out-of-Sample Validation on Independent Long-Term Field Trials**:
+  The model should be evaluated against decadal soil organic carbon trajectories from long-term agroecological experiments that include contrasting organic amendment treatments (e.g., the Russell Research Station trials, Broadbalk at Rothamsted, or the Rodale Institute Farming Systems Trial comparing compost, manure, and synthetic fertilizer treatments).
+
+- **Quantifying Reduction in Prediction Error**:
+  Performance should be quantified using Root Mean Square Error (RMSE), Mean Absolute Error (MAE), and Nash-Sutcliffe Model Efficiency (NSE) for both decadal SOC stock change and sub-annual heterotrophic respiration fluxes ($R_H$). Without partitioning, models calibrated on crop residues systematically underpredict SOC accumulation under compost amendments by 30%–60%; demonstrating a significant reduction in this systematic bias will validate the utility of the mechanism.
 
 When soil carbon saturation is enabled, a fraction of soil carbon inputs may be redirected to the litter pool as 
 fast-turnover carbon. This functionality is described in more detail below in Sec. 
