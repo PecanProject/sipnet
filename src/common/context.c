@@ -107,7 +107,7 @@ void createContextMetadata(const char *name, const char *printName,
     strcpy(s->keyName, keyName);
     HASH_ADD_STR(ctx.metaMap, keyName, s);
   } else {
-    logError("Internal error: attempt to recreate context param %s\n", name);
+    logInternalError("attempt to recreate context param %s\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   strcpy(s->printName, printName);
@@ -122,7 +122,7 @@ void updateIntContext(const char *name, int value, context_source_t source) {
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s); /* name already in the hash? */
   if (s == NULL) {
-    logError("Internal error: no context param %s found\n", name);
+    logInternalError("no context param %s found\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   if (hasSourcePrecedence(s, source)) {
@@ -137,7 +137,7 @@ void updateCharContext(const char *name, const char *value,
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s); /* name already in the hash? */
   if (s == NULL) {
-    logError("Internal error: no context param %s found\n", name);
+    logInternalError("no context param %s found\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   if (hasSourcePrecedence(s, source)) {
@@ -260,8 +260,8 @@ void printConfig(FILE *outFile) {
               getContextSourceString(s->source), width, (char *)s->value);
     } else {
       // The height of paranoia
-      logError("Internal error: unknown type (%d) found for context param %s\n",
-               s->type, s->printName);
+      logInternalError("unknown type (%d) found for context param %s\n",
+                       s->type, s->printName);
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
