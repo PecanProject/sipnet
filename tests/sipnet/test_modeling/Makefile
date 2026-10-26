@@ -25,7 +25,7 @@ TEST_OBJ_FILES=$(TEST_CFILES:%.c=%.o)
 TEST_EXECUTABLES:=$(basename $(TEST_CFILES))
 RUN_EXECUTABLES:= $(addsuffix .run, $(TEST_EXECUTABLES))
 
-TEST_DEPS:=tUtils.h exitHandler.c
+TEST_DEPS:=tUtils.h exitHandler.c failureTracker.c
 TEST_DEPS:=$(addprefix $(ROOT_DIR)/tests/utils/, $(TEST_DEPS))
 
 LIB_DEPS:=libsipnet.a libsipnet_common.a
