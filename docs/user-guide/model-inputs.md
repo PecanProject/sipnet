@@ -135,19 +135,25 @@ Specifically:
 
 ### Fertilization
 
+To keep SIPNET simple while enabling flexible amendment quality representation, amendment characterization and partitioning are handled upstream (e.g., in PEcAn). SIPNET reads direct pool inputs for organic amendments: carbon and nitrogen added directly to the litter and soil pools.
+
 | parameter |  col  | req?  | description |
 | --------- | :---: | :---: | ----------- |
-| org-N     |   5   |   Y   | g N / m2    |
-| org-C     |   6   |   Y   | g C / m2    |
-| min-N     |   7   |   Y   | g N / m2    |
-| fracOrgCStable ($f_{\text{stable}}$) | 8 | N | Fraction of organic C and N routed directly to soil; default 0 |
+| org-N-litter ($F^N_{\text{fert,litter}}$) | 5 | Y | Organic nitrogen added to litter pool (g N / m2) |
+| org-C-litter ($F^C_{\text{fert,litter}}$) | 6 | Y | Organic carbon added to litter pool (g C / m2) |
+| min-N ($F^N_{\text{fert,min}}$)          | 7 | Y | Mineral nitrogen added (g N / m2) |
+| org-N-soil ($F^N_{\text{fert,soil}}$)     | 8 | N | Organic nitrogen added directly to soil pool (g N / m2); default 0 |
+| org-C-soil ($F^C_{\text{fert,soil}}$)     | 9 | N | Organic carbon added directly to soil pool (g C / m2); default 0 |
 <!--(NH4+NO3 in one pool model; NH4 in two pool model)
-| min-N2 |   9   | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | 
+| min-N2 |   10  | Y*          | g N / m2 (*not unused in one pool model, NO3 in two pool model) | 
 -->
 
-  - Model representation: When `litter-pool` is on and $f_{\text{stable}} > 0$, organic C and organic N are partitioned at entry: $(1 - f_{\text{stable}})$ enters litter and $f_{\text{stable}}$ enters soil organic matter directly. When $f_{\text{stable}} = 0$ (default), all organic C enters litter (or soil if `litter-pool` is off). Mineral N and organic N are added only when `nitrogen-cycle` is enabled; otherwise those N quantities are ignored with a warning. Urea-N is assumed to be mineral N.
+  - Model representation:
+    - Upstream workflows (e.g., `PEcAn.SIPNET::write.configs.SIPNET()`) store default amendment composition and partitioning values in lookup tables and use fertilizer lookup functions to calculate these four direct inputs. This avoids introducing a new partitioning parameter inside SIPNET and allows carbon and nitrogen to have distinct partitioning fractions.
+    - When `litter-pool` is on, `org-C-litter` enters the litter pool; `org-C-soil` enters the soil organic matter pool directly as pre-stabilized carbon. When `litter-pool` is off, all organic C enters the soil pool.
+    - When `nitrogen-cycle` is enabled, `org-N-litter` and `org-N-soil` are added to the litter and soil organic N pools, respectively; `min-N` is added to mineral N. When `nitrogen-cycle` is disabled, N quantities are ignored with a warning. Urea-N is assumed to be mineral N.
 <!-- or NH4 in two pool model ... common assumption (e.g. DayCent) unless urease inhibitors are represented.-->
-  - The code that generates `events.in` will handle conversion from fertilizer amount and type to mass of N and C allocated to different pools. In PEcAn this is done by the `PEcAn.SIPNET::write.configs.SIPNET()` function.
+  - The code that generates `events.in` handles conversion from fertilizer amount and type to mass of N and C allocated to different pools. In PEcAn this is done by the `PEcAn.SIPNET::write.configs.SIPNET()` function.
 
 ### Tillage
 
