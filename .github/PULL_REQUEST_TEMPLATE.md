@@ -1,4 +1,7 @@
-<!-- Please fill out the sections below to help reviewers. -->
+<!-- Please fill out the sections below to help reviewers. 
+
+Please **don't submit a pull request until** there is an **open issue** with a plan for implementation that has been **assigned to you** by a maintainer
+-->
 
 ## Summary
 
