@@ -24,6 +24,7 @@ tests/sipnet/*/*
 !tests/sipnet/*/*.out
 !tests/sipnet/*/*.clim
 !tests/sipnet/*/*.param
+!tests/sipnet/*/Makefile
 !**/.clang-tidy
 # But exclude generated test outputs
 tests/sipnet/*/events.out
