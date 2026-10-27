@@ -28,15 +28,24 @@ typedef struct BalanceTrackerStruct {
   double inputsN;
   double outputsN;
 
+  // Water balance
+  double preTotalWater;
+  double postTotalWater;
+  double finalWater;
+  double inputsWater;
+  double outputsWater;
+
   // Stock clamping adjustments: mass added by clamping negative stocks to zero.
   // Positive values indicate that stocks were clamped (mass was "created" to
   // prevent negative pools).
   double clampedC;
   double clampedN;
+  double clampedWater;
 
   // Checks
   double deltaC;
   double deltaN;
+  double deltaWater;
 } BalanceTracker;
 
 // Global var
