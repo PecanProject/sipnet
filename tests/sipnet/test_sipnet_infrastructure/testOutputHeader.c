@@ -107,15 +107,16 @@ int testEnsureNonNegativeClamping(void) {
   return 0;
 }
 
+static ClimateNode testClimateNode = {
+    .year = 2026,
+    .day = 100,
+    .time = 0.5,
+    .nextClim = NULL,
+};
+
 int testEnsureNonNegativeViolation(void) {
   logTest("Testing ensureNonNegative stock violation error handling\n");
-  ClimateNode dummyClim = {
-      .year = 2026,
-      .day = 100,
-      .time = 0.5,
-      .nextClim = NULL,
-  };
-  climate = &dummyClim;
+  climate = &testClimateNode;
 
   double val = -10.0;
   should_exit = 1;
@@ -127,6 +128,7 @@ int testEnsureNonNegativeViolation(void) {
     ensureNonNegative(&val, 0.0, "plantWoodC");
   }
 
+  climate = NULL;
   test_assert(jmp_rval == 1);
   return !exit_result;
 }
