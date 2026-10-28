@@ -829,7 +829,13 @@ static void writeRestartState(const char *restartOut, const RestartState *state,
 
   fprintf(out, "end_restart 1\n");
 
-  fclose(out);
+  int writeFailed = ferror(out);
+  // Always close the stream: buffered writes can fail during the final flush.
+  int closeFailed = fclose(out);
+  if (writeFailed || closeFailed != 0) {
+    logError("Failed to write restart checkpoint '%s'\n", restartOut);
+    exit(EXIT_CODE_FAILURE);
+  }
 }
 
 static void checkRestartContextCompatibility(void) {

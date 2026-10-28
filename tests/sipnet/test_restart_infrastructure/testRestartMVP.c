@@ -716,6 +716,39 @@ static int testMalformedCheckpointFails(void) {
   return status;
 }
 
+static int testCheckpointWriteFailure(void) {
+  logTest("Starting testCheckpointWriteFailure\n");
+
+  if (access("/dev/full", W_OK) != 0) {
+    logTest("Skipping checkpoint write failure test: /dev/full unavailable\n");
+    return 0;
+  }
+
+  int status = prepRunFiles("restart_segment1.clim", "events_segment1.in");
+  if (status) {
+    return status;
+  }
+
+  const char *args[] = {
+      "--restart-out /dev/full --no-do-main-output --no-quiet",
+      "--restart-out /dev/full --no-do-main-output --quiet"};
+  const char *logs[] = {"checkpoint_write_failure.log",
+                        "checkpoint_write_failure_quiet.log"};
+  for (int i = 0; i < 2; ++i) {
+    int rc = runModelWithArgs("restart_seg1.in", logs[i], args[i]);
+    int failed = (rc != EXIT_CODE_FAILURE);
+    failed |= !fileContains(logs[i], "[ERROR  ]");
+    failed |= !fileContains(logs[i],
+                            "Failed to write restart checkpoint '/dev/full'");
+    if (failed) {
+      logTest("Checkpoint write failure test failed (quiet=%d, rc=%d)\n", i,
+              rc);
+    }
+    status |= failed;
+  }
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -734,6 +767,7 @@ int run(void) {
   status |= testBuildInfoMismatchWarnsAndSucceeds();
   status |= testTruncatedCheckpointFails();
   status |= testMalformedCheckpointFails();
+  status |= testCheckpointWriteFailure();
 
   return status;
 }
