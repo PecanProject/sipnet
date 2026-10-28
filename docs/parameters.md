@@ -177,10 +177,10 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $\alpha_{\text{wood}}$        | woodAllocation       | Fraction of $NPP$ allocated to wood         | unitless |                                                                                                                                                   |
 
 `leafAllocation`, `woodAllocation`, and `fineRootAllocation` must each be
-greater than or equal to zero and less than one. Their sum must be at most one;
-the remaining fraction becomes `coarseRootAllocation`. A sum of exactly one
-is allowed and gives zero coarse-root allocation. Invalid allocations cause
-model setup to fail.
+greater than zero and less than one. Their sum must be less than one so that
+the remaining fraction, `coarseRootAllocation`, is also greater than zero.
+Zero allocations, including a zero coarse-root remainder, cause model setup
+to fail.
 
 Supplied, recognized model parameters must be finite. NaN and positive or
 negative infinity are rejected when reading the parameter file, including

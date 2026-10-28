@@ -1105,12 +1105,12 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
   }
 }
 
-// ensure that the allocation to wood + leaves + fine roots <= 1,
+// ensure that the allocation to wood + leaves + fine roots < 1,
 // calculate coarse root allocation as:
 //   coarse = 1 - leaf - wood - fine, making sum(params) = 1
 // require:
-//   0 <= leaf, wood, fine root < 1 individually
-//   coarse root >=0 which enforces leaf + wood + fine root <= 1
+//   0 < leaf, wood, fine root < 1 individually
+//   coarse root > 0 which enforces leaf + wood + fine root < 1
 void ensureAllocation(void) {
   if (!isfinite(params.leafAllocation) || !isfinite(params.woodAllocation) ||
       !isfinite(params.fineRootAllocation)) {
@@ -1126,12 +1126,13 @@ void ensureAllocation(void) {
                                 params.woodAllocation -
                                 params.fineRootAllocation;
 
-  if ((params.leafAllocation < 0.0) || (params.leafAllocation >= 1.0) ||
-      (params.woodAllocation < 0.0) || (params.woodAllocation >= 1.0) ||
-      (params.fineRootAllocation < 0.0) || (params.fineRootAllocation >= 1.0) ||
-      (params.coarseRootAllocation < 0.0)) {
-    logError("NPP allocation parameters must each be in [0, 1) and sum to at "
-             "most 1: leafAllocation=%.17g, woodAllocation=%.17g, "
+  if ((params.leafAllocation <= 0.0) || (params.leafAllocation >= 1.0) ||
+      (params.woodAllocation <= 0.0) || (params.woodAllocation >= 1.0) ||
+      (params.fineRootAllocation <= 0.0) ||
+      (params.fineRootAllocation >= 1.0) ||
+      (params.coarseRootAllocation <= 0.0)) {
+    logError("NPP allocation parameters must each be in (0, 1) and sum to "
+             "less than 1: leafAllocation=%.17g, woodAllocation=%.17g, "
              "fineRootAllocation=%.17g\n",
              params.leafAllocation, params.woodAllocation,
              params.fineRootAllocation);
