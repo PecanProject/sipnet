@@ -38,6 +38,7 @@ sections to include in release notes:
 ### Changed
 - SIPNET will now error instead of warning when an environment pool goes negative. This is a change from previous behavior where SIPNET would log a warning and continue running. (#398)
 - SIPNET now errors and exits when a mass balance check failure occurs, instead of logging a warning and continuing (#414)
+- Removed the stock clamping adjustment from the mass balance check, which now allows a tolerance of `10 * EPS` (#425)
 
 ### Removed
 
