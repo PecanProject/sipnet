@@ -211,7 +211,7 @@ static void checkNitrogenLimitation(void) {
     double reduction = (availableMinN / uptakeFrac + unclaimedStorage) / demand;
 
     logInfo("N limitation: available soil min N %.4f + storage N %.4f < plant N"
-            " demand %.4f - N fixation %,4f, "
+            " demand %.4f - N fixation %.4f, "
             "reducing plant growth by %.2f%% on year %d day %d time %.3f\n",
             availableMinN, unclaimedStorage, demand, fluxes.nFixation * len,
             (1 - reduction) * 100, climate->year, climate->day, climate->time);
