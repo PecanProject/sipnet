@@ -30,7 +30,7 @@ void setupTests(ModelParams **modelParamsPtr) {
   ctx.anaerobic = 1;
 
   initModel(modelParamsPtr, "balance.param", "balance.clim");
-  initEvents("events.in", "events.out", ctx.printHeader);
+  initEvents("", "events.out", ctx.printHeader);
   reset();
 #if DO_OUTPUT
   out = openFile(OUTPUT_FILE, "w");
