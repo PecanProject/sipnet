@@ -18,13 +18,11 @@ static void setResidual(Element element, double residual) {
   if (element == CARBON) {
     balanceTracker.preTotalC = 0.0;
     balanceTracker.postTotalC = residual;
-    balanceTracker.finalC = residual;
     balanceTracker.inputsC = 2.0;
     balanceTracker.outputsC = 2.0;
   } else {
     balanceTracker.preTotalN = 0.0;
     balanceTracker.postTotalN = residual;
-    balanceTracker.finalN = residual;
     balanceTracker.inputsN = 2.0;
     balanceTracker.outputsN = 2.0;
   }
@@ -83,18 +81,20 @@ static int expectPass(Element element, double residual, const char *label) {
 
 static int testElement(Element element) {
   int status = 0;
-  double justBelow = nextafter(EPS, 0.0);
+  double justBelow = nextafter(BALANCE_TOLERANCE, 0.0);
 
   // Balanced and below-threshold residuals are numerical noise
   status |= expectPass(element, 0.0, "zero");
-  status |= expectPass(element, 0.5 * EPS, "half-EPS positive");
-  status |= expectPass(element, -0.5 * EPS, "half-EPS negative");
-  status |= expectPass(element, justBelow, "just-below-EPS positive");
-  status |= expectPass(element, -justBelow, "just-below-EPS negative");
+  status |=
+      expectPass(element, 0.5 * BALANCE_TOLERANCE, "half-tolerance positive");
+  status |=
+      expectPass(element, -0.5 * BALANCE_TOLERANCE, "half-tolerance negative");
+  status |= expectPass(element, justBelow, "just-below-tolerance positive");
+  status |= expectPass(element, -justBelow, "just-below-tolerance negative");
 
   // At and above the threshold, in both directions
-  status |= expectFatal(element, EPS, "at-EPS positive");
-  status |= expectFatal(element, -EPS, "at-EPS negative");
+  status |= expectFatal(element, BALANCE_TOLERANCE, "at-tolerance positive");
+  status |= expectFatal(element, -BALANCE_TOLERANCE, "at-tolerance negative");
   status |= expectFatal(element, 1e-3, "large positive");
   status |= expectFatal(element, -1e-3, "large negative");
 
@@ -108,14 +108,14 @@ static int testElement(Element element) {
 
 static int testResidualPredicate(void) {
   int status = 0;
-  double justBelow = nextafter(EPS, 0.0);
+  double justBelow = nextafter(BALANCE_TOLERANCE, 0.0);
 
   status |= balanceResidualFailed(0.0) != 0;
   status |= balanceResidualFailed(-0.0) != 0;
   status |= balanceResidualFailed(justBelow) != 0;
   status |= balanceResidualFailed(-justBelow) != 0;
-  status |= balanceResidualFailed(EPS) != 1;
-  status |= balanceResidualFailed(-EPS) != 1;
+  status |= balanceResidualFailed(BALANCE_TOLERANCE) != 1;
+  status |= balanceResidualFailed(-BALANCE_TOLERANCE) != 1;
   status |= balanceResidualFailed(NAN) != 1;
   status |= balanceResidualFailed(INFINITY) != 1;
   status |= balanceResidualFailed(-INFINITY) != 1;
@@ -132,14 +132,11 @@ static int testBalancedStep(void) {
   initBalanceTracker();
   balanceTracker.preTotalC = 1000.0;
   balanceTracker.postTotalC = 1006.0;
-  balanceTracker.finalC = 1006.0;
   balanceTracker.inputsC = 10.0;
   balanceTracker.outputsC = 4.0;
   balanceTracker.preTotalN = 50.0;
-  balanceTracker.postTotalN = 49.5;
-  balanceTracker.finalN = 50.25;
-  balanceTracker.clampedN = 0.75;
-  balanceTracker.inputsN = 1.75;  // includes clamped
+  balanceTracker.postTotalN = 50.25;
+  balanceTracker.inputsN = 1.75;
   balanceTracker.outputsN = 1.5;
 
   really_exit = 0;

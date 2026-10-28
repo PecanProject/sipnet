@@ -1780,15 +1780,12 @@ void updatePoolsAndBalance() {
   // correct for harvest termination
   checkForMortality();
 
-  // Calc total C and N after pool updates
-  updateBalanceTrackerPostUpdate();
-
-  // Verify none of our stocks have gone negative (set any that are to zero).
+  // Verify none of our stocks have gone negative; exits on a real violation,
+  // and zeroes values within rounding error of zero
   ensureNonNegativeStocks();
 
-  // Calc total C and N after non-negative check, and total system inputs and
-  // outputs
-  updateBalanceTrackerPostClamp();
+  // Calc total C and N after pool updates, and total system inputs and outputs
+  updateBalanceTrackerPostUpdate();
 
   // Perform balance check
   checkBalance();
