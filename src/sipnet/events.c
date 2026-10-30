@@ -265,6 +265,12 @@ struct EventValidation {
 static struct EventValidation eVal = {0};
 
 void validateEvent(EventNode *event, int currYear, int currDay) {
+  // Leaf events can start a new day too, so reset before their early return.
+  if (event->year > currYear || event->day > currDay) {
+    eVal.todayHasHarvest = 0;
+    eVal.todayHasPlanting = 0;
+  }
+
   // logInfo("Validating event with type %s\n", eventTypeToString(event->type));
   // If we have a leaf event, make sure we aren't also looking for
   // calculated leaf events.
@@ -289,10 +295,6 @@ void validateEvent(EventNode *event, int currYear, int currDay) {
   }
 
   // Make sure we don't have planting and harvest on the same day
-  if (event->year > currYear || event->day > currDay) {
-    eVal.todayHasHarvest = 0;
-    eVal.todayHasPlanting = 0;
-  }
   if (event->type == HARVEST) {
     eVal.todayHasHarvest = 1;
   }
@@ -390,7 +392,7 @@ EventNode *readEventData(const char *eventFile) {
     }
 
     next = createEventNode(year, day, eventType, eventParamsStr);
-    validateEvent(newEvent, currYear, currDay);
+    validateEvent(next, currYear, currDay);
 
     curr->nextEvent = next;
     currYear = year;
