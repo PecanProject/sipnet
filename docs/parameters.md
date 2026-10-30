@@ -176,6 +176,17 @@ Run-time parameters can change from one run to the next, or when the model is st
 | $\alpha_{\text{coarse root}}$ | coarseRootAllocation | Fraction of $NPP$ allocated to coarse roots | unitless | Calculated internally from remainder: $\alpha_{\text{coarse root}} = 1 - \alpha_{\text{leaf}} - \alpha_{\text{wood}} - \alpha_{\text{fine root}}$ |
 | $\alpha_{\text{wood}}$        | woodAllocation       | Fraction of $NPP$ allocated to wood         | unitless |                                                                                                                                                   |
 
+`leafAllocation`, `woodAllocation`, and `fineRootAllocation` must each be
+greater than zero and less than one. Their sum must be less than one so that
+the remaining fraction, `coarseRootAllocation`, is also greater than zero.
+Zero allocations, including a zero coarse-root remainder, cause model setup
+to fail.
+
+Supplied, recognized model parameters must be finite. NaN and positive or
+negative infinity are rejected when reading the parameter file, including
+numeric overflow that converts to infinity. Omitted optional parameters and
+ignored unknown legacy parameter names retain their existing behavior.
+
 ### Autotrophic Respiration Parameters
 
 | Symbol                      | Parameter Name      | Definition                                                               | Units                                                                           | Notes                                                                                                                                              |
