@@ -32,6 +32,9 @@ sections to include in release notes:
   fertilizer events, NPP signs, nitrogen availability, and flooding. (#415)
 
 ### Fixed
+- Validate all input event records for calculated-phenology conflicts and
+  same-day planting/harvest, resetting daily checks when leaf events start a new
+  date. (#429)
 - Restore format specifiers for stock value in `ensureNonNegative()` error logging to align arguments and prevent undefined behavior. (#406)
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
 - Leaf-off mechanics refined to ensure that leaf-off events do not remove more leaf carbon than is available in the leaf pool. (#400)
