@@ -1,0 +1,9 @@
+! Russell Ranch tutorial: carbon and water with supplied irrigation events.
+FILE_PREFIX sipnet
+EVENTS 1
+EVENTS_PREFIX events
+NITROGEN_CYCLE 0
+LITTER_POOL 0
+PRINT_HEADER 1
+DO_MAIN_OUTPUT 1
+DUMP_CONFIG 1

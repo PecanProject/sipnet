@@ -2,6 +2,8 @@
 
 Use this guide to install the prerequisites, build the model, and run your first simulations and tests.
 
+For an introduction to the model and a guided run, follow [Getting started with SIPNET: a Russell Ranch example](tutorial-1.md) using a release binary.
+
 ## Requirements
 
 - `gcc` or `clang`

@@ -8,14 +8,22 @@ LDFLAGS=-L$(ROOT_DIR)/libs
 LDLIBS=-lsipnet -lsipnet_common -lm
 
 # List test files in this directory here
-TEST_CFILES=testNitrogenCycle.c testDependencyFunctions.c testBalance.c testMethane.c testSoilMoisture.c testCarbonSaturation.c testPlantMortality.c testFluxCalculations.c
+TEST_CFILES= \
+  testBalanceCheck.c \
+  testCarbonSaturation.c \
+  testDependencyFunctions.c \
+  testFluxCalculations.c \
+  testMethane.c \
+  testNitrogenCycle.c \
+  testPlantMortality.c \
+  testSoilMoisture.c \
 
 # The rest is boilerplate, likely copyable as is to a new test directory
 TEST_OBJ_FILES=$(TEST_CFILES:%.c=%.o)
 TEST_EXECUTABLES:=$(basename $(TEST_CFILES))
 RUN_EXECUTABLES:= $(addsuffix .run, $(TEST_EXECUTABLES))
 
-TEST_DEPS:=tUtils.h exitHandler.c
+TEST_DEPS:=tUtils.h exitHandler.c failureTracker.c
 TEST_DEPS:=$(addprefix $(ROOT_DIR)/tests/utils/, $(TEST_DEPS))
 
 LIB_DEPS:=libsipnet.a libsipnet_common.a

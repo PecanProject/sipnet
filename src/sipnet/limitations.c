@@ -6,6 +6,7 @@
 #include "common/logging.h"
 #include "common/util.h"
 
+#include "events.h"
 #include "nitrogen.h"
 #include "state.h"
 
@@ -15,7 +16,12 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   // * leafGrowth parameter (input leafOn value)
   // * available carbon
   // * available nitrogen
-  double leafOnCDemand = *leafOnFlux * climate->length;
+
+  // Make sure to include current leaf on flux, in case there is more than
+  // one leaf on event
+  double currentFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
+  double totalDemandFlux = *leafOnFlux + currentFlux;
+  double leafOnCDemand = totalDemandFlux * climate->length;
 
   if (leafOnCDemand < TINY) {
     // Nothing to check
@@ -44,7 +50,8 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   double limitation = unitClip(fmin(cLimiter, nLimiter));
 
   if (limitation < 1) {
-    *leafOnFlux *= limitation;
+    totalDemandFlux *= limitation;
+    *leafOnFlux = totalDemandFlux - currentFlux;
     if (ctx.nitrogenCycle) {
       logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f / N "
               "%.4f (C ratio: %.4f, N ratio: %.4f), "
@@ -64,15 +71,123 @@ void checkLeafOnLimitation(double *leafOnFlux) {
 }
 
 /**
+ * Check that negative growth is not driving a pool to end negative
+ *
+ * Adjust if necessary
+ */
+static void checkNegativeCreation(void) {
+  // In the case of negative growth (mean npp < 0), we might be allocating that
+  // negative growth to a pool that can't handle it (e.g., leaf creation is
+  // negative, but leaf pool is already at 0). In those cases, adjust
+  // appropriately.
+
+  double len = climate->length;
+
+  // Above ground
+  // If leafCreation is too negative, we need to deduct from wood instead
+  // Need to make sure we don't go too far the other way. Leaf off litter
+  // (either fluxes.leafLitter or fluxes.eventLeafOffLitter) might also
+  // incorrectly drive the pool negative, sp adjust for that too.
+
+  // First we handle leaf litter. Assuming params.leafTurnoverRate is valid
+  // (ie, <=1), availableLeafRate should be non-negative.
+  double availableLeafRate = envi.plantLeafC / len - fluxes.leafLitter;
+
+  // Reminder: litter and creation fluxes "point" in the opposite direction, so
+  // their signs are opposite here
+  double deficit = fluxes.leafOffLitter + fluxes.eventLeafOffLitterC -
+                   fluxes.leafCreation - fluxes.eventLeafC - availableLeafRate;
+  double adjust;
+  if (deficit > 0 && fluxes.eventLeafOffLitterC > 0) {
+    // If negative growth + leaf off is too much, let's first reduce leaf off
+    adjust = fmin(fluxes.eventLeafOffLitterC, deficit);
+    fluxes.eventLeafOffLitterC -= adjust;
+    deficit -= adjust;
+  }
+  // Try the other leaf off litter (only one of these at most will be > 0)
+  if (deficit > 0 && fluxes.leafOffLitter > 0) {
+    adjust = fmin(fluxes.leafOffLitter, deficit);
+    fluxes.leafOffLitter -= adjust;
+    deficit -= adjust;
+  }
+  // Next, check to see if a harvest might have overdrawn
+  if (deficit > 0 && fluxes.eventLeafC < 0) {
+    // Negative eventLeafC is removal; need it to be "less", i.e. closer to 0
+    adjust = fmin(-fluxes.eventLeafC, deficit);
+    fluxes.eventLeafC += adjust;
+    HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+    ht->leafCAdjustment = adjust;
+
+    // Figure out where it should come from; note totalFrac will be greater
+    // than zero here
+    double litterAdjust, outAdjust;
+    partitionLeafAdjustment(adjust, &litterAdjust, &outAdjust);
+
+    fluxes.eventOutputC -= outAdjust;
+    if (ctx.litterPool) {
+      fluxes.harvestLitterC -= litterAdjust;
+    } else {
+      fluxes.eventSoilC -= litterAdjust;
+    }
+
+    // Update the deficit
+    deficit -= adjust;
+  }
+  // Last, move some negative growth to the wood pool
+  if (deficit > 0) {
+    // If this is too much for the wood pool to handle, we have an error that
+    // will be caught in ensureNonNegative
+    fluxes.woodCreation -= deficit;
+    fluxes.leafCreation += deficit;
+  }
+
+  // Below ground
+  double fineRootDeficit = envi.fineRootC / len + fluxes.fineRootCreation +
+                           fluxes.eventFineRootC - fluxes.fineRootLoss;
+  double coarseRootDeficit = envi.coarseRootC / len +
+                             fluxes.coarseRootCreation +
+                             fluxes.eventCoarseRootC - fluxes.coarseRootLoss;
+  if ((fineRootDeficit < 0.0) != (coarseRootDeficit < 0.0)) {
+    // If neither are negative, nothing to do
+    // If both are negative, the plant will die in checkForMortality()
+    if (fineRootDeficit < 0.0) {
+      fluxes.coarseRootCreation += fineRootDeficit;
+      fluxes.fineRootCreation -= fineRootDeficit;
+    }
+    if (coarseRootDeficit < 0.0) {
+      fluxes.fineRootCreation += coarseRootDeficit;
+      fluxes.coarseRootCreation -= coarseRootDeficit;
+    }
+  }
+}
+
+/**
+ * Check if leaching and volatilization will drive mineral N negative
+ */
+static void checkMineralNLimitation(void) {
+  double len = climate->length;
+  double pool = envi.minN + (fluxes.nMin + fluxes.eventMinN) * len;
+  double loss = (fluxes.nLeaching + fluxes.nVolatilization) * len;
+
+  if (loss > TINY && loss > pool) {
+    double reduction = pool / loss;
+    fluxes.nLeaching *= reduction;
+    fluxes.nVolatilization *= reduction;
+  }
+}
+
+/**
  * Check for nitrogen limitation, and reduce growth if needed
  */
 static void checkNitrogenLimitation(void) {
+  double len = climate->length;
+
   // First, determine if we are in a nitrogen-limited situation. The uptake
   // flux has already taken the storage pool into account, so we just need to
   // see if that uptake is too much, taking into account other fluxes to the
   // minN pool.
   // Calc total delta to minN pool
-  double len = climate->length;
+  // double len = climate->length;
   double uptakeDemand = fluxes.nUptake * len;
   double nonUptakeDelta = calcMinNNonUptakeFluxes() * len;
   double availableMinN = envi.minN + nonUptakeDelta;
@@ -96,7 +211,7 @@ static void checkNitrogenLimitation(void) {
     double reduction = (availableMinN / uptakeFrac + unclaimedStorage) / demand;
 
     logInfo("N limitation: available soil min N %.4f + storage N %.4f < plant N"
-            " demand %.4f - N fixation %,4f, "
+            " demand %.4f - N fixation %.4f, "
             "reducing plant growth by %.2f%% on year %d day %d time %.3f\n",
             availableMinN, unclaimedStorage, demand, fluxes.nFixation * len,
             (1 - reduction) * 100, climate->year, climate->day, climate->time);
@@ -108,23 +223,32 @@ static void checkNitrogenLimitation(void) {
     fluxes.fineRootCreation *= reduction;
     fluxes.coarseRootCreation *= reduction;
 
-    // Reset fixation and uptake
-    calcNFixationAndUptakeFluxes();
-  }
-}
+    // If there was a leaf-off event in this step, it is possible that we have
+    // reduced leaf growth down to the point where the pool will go negative
+    // Re-call that check
+    // First, reset this tracker so we know if eventLeafC is changed
+    HarvestTrackers *ht = &eventTrackers.harvestTrackers;
+    ht->leafCAdjustment = 0.0;
+    checkNegativeCreation();
+    if (ht->leafCAdjustment > 0.0) {
+      double litterFlux, outputFlux;
+      partitionLeafAdjustment(ht->leafCAdjustment, &litterFlux, &outputFlux);
+      fluxes.eventLitterN -= litterFlux / params.leafCN;
+      fluxes.eventOutputN -= outputFlux / params.leafCN;
+    }
 
-/**
- * Check if leaching and volatilization will drive mineral N negative
- */
-static void checkMineralNLimitation(void) {
-  double len = climate->length;
-  double pool = envi.minN + (fluxes.nMin + fluxes.eventMinN) * len;
-  double loss = (fluxes.nLeaching + fluxes.nVolatilization) * len;
+    // Reset and recalc event leaf-off N
+    // Nitrogen for "calculated" leaf-off events will be redone in
+    // calcNitrogenFluxes below
+    fluxes.eventLeafOffNResorption = 0.0;
+    fluxes.eventLeafOffLitterN = 0.0;
+    calcLeafOffNEffects(fluxes.eventLeafOffLitterC * len,
+                        &fluxes.eventLeafOffNResorption,
+                        &fluxes.eventLeafOffLitterN);
 
-  if (loss > TINY && loss > pool) {
-    double reduction = pool / loss;
-    fluxes.nLeaching *= reduction;
-    fluxes.nVolatilization *= reduction;
+    // Reset N calculations
+    calcNitrogenFluxes();
+    checkMineralNLimitation();
   }
 }
 
@@ -135,49 +259,6 @@ void checkLimitations(void) {
     // Call the mineral N check before the general N Limitation check
     checkMineralNLimitation();
     checkNitrogenLimitation();
-  }
-}
-
-/**
- * Check that negative growth is not driving a pool to end negative
- *
- * Adjust if necessary
- */
-static void checkNegativeCreation(void) {
-  // In the case of negative growth (mean npp < 0), we might be allocating that
-  // negative growth to a pool that can't handle it (e.g., leaf creation is
-  // negative, but leaf pool is already at 0). In those cases, adjust
-  // appropriately.
-
-  double len = climate->length;
-  // Above ground
-  // If leafCreation is too negative, we need to deduct from wood instead
-  // Use only the continuous turnover term to match previous logic - but see
-  // SIPNET issue #372.
-  double leafLitterTurnover = envi.plantLeafC * params.leafTurnoverRate;
-  double leafDeficit =
-      envi.plantLeafC / len + fluxes.leafCreation - leafLitterTurnover;
-  if (leafDeficit < 0) {
-    fluxes.woodCreation += leafDeficit;
-    fluxes.leafCreation -= leafDeficit;
-  }
-
-  // Below ground
-  double fineRootDeficit =
-      envi.fineRootC / len + fluxes.fineRootCreation - fluxes.fineRootLoss;
-  double coarseRootDeficit = envi.coarseRootC / len +
-                             fluxes.coarseRootCreation - fluxes.coarseRootLoss;
-  if ((fineRootDeficit < 0.0) != (coarseRootDeficit < 0.0)) {
-    // If neither are negative, nothing to do
-    // If both are negative, the plant will die in checkForMortality()
-    if (fineRootDeficit < 0.0) {
-      fluxes.coarseRootCreation += fineRootDeficit;
-      fluxes.fineRootCreation -= fineRootDeficit;
-    }
-    if (coarseRootDeficit < 0.0) {
-      fluxes.fineRootCreation += coarseRootDeficit;
-      fluxes.coarseRootCreation -= coarseRootDeficit;
-    }
   }
 }
 

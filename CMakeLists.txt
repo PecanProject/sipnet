@@ -56,7 +56,6 @@ add_library(tests
         tests/sipnet/test_events_types/testEventLeafOnOff.c
         tests/sipnet/test_events_types/testEventPlanting.c
         tests/sipnet/test_events_types/testEventTillage.c
-        tests/sipnet/test_modeling/testBalance.c
         tests/sipnet/test_modeling/testCarbonSaturation.c
         tests/sipnet/test_modeling/testDependencyFunctions.c
         tests/sipnet/test_modeling/testMethane.c
@@ -70,6 +69,10 @@ add_library(tests
         tests/sipnet/test_sipnet_infrastructure/testDebugLogFiles.c
         tests/sipnet/test_sipnet_infrastructure/testOutputHeader.c
         tests/sipnet/test_sipnet_infrastructure/testParamInput.c
+        tests/sipnet/test_system/testBalance.c
+        tests/sipnet/test_system/testCompleteHarvest.c
+        tests/sipnet/test_system/testLimitations.c
+        tests/utils/failureTracker.c
         tests/utils/helpers.c
         tests/utils/exitHandler.c
 )

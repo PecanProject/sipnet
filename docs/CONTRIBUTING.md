@@ -134,6 +134,12 @@ If a commit is blocked, format staged changes:
   ```bash
   make document
   ```
+- Verify tutorial examples and regenerate their plots (requires network access):
+  ```bash
+  python -m pip install -r examples/first-experiment/requirements.txt
+  make tutorial
+  ```
+  Commit updated plots with tutorial changes. Update the viewer screenshot manually when needed.
 - Live preview while editing docs:
   ```bash
   pip install mkdocs mkdocs-material pymdown-extensions

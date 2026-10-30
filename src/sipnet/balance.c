@@ -47,7 +47,8 @@ void updateBalanceTrackerPostClamp(void) {
   balanceTracker.clampedC = balanceTracker.finalC - balanceTracker.postTotalC;
   if (balanceTracker.clampedC < -EPS) {
     // This shouldn't happen, by construction
-    logInternalError("Non-negative clamping has cause carbon loss\n");
+    logInternalError("Non-negative clamping has caused carbon loss %f\n",
+                     balanceTracker.clampedC);
   }
   if (balanceTracker.clampedC < EPS) {
     balanceTracker.clampedC = 0;
@@ -56,7 +57,8 @@ void updateBalanceTrackerPostClamp(void) {
   balanceTracker.clampedN = balanceTracker.finalN - balanceTracker.postTotalN;
   if (balanceTracker.clampedN < -EPS) {
     // This shouldn't happen, by construction
-    logInternalError("Non-negative clamping has cause nitrogen loss\n");
+    logInternalError("Non-negative clamping has caused nitrogen loss %f\n",
+                     balanceTracker.clampedN);
   }
   if (balanceTracker.clampedN < EPS) {
     balanceTracker.clampedN = 0;
@@ -119,6 +121,28 @@ void initBalanceTracker(void) {
   balanceTracker.deltaN = 0.0;
 }
 
+int balanceResidualFailed(double residual) {
+  return !isfinite(residual) || fabs(residual) >= EPS;
+}
+
+// %.17g round-trips a double, so differences near EPS remain visible even
+// when pool totals are large
+static void logBalanceFailure(const char *element, double residual,
+                              double preTotal, double postTotal,
+                              double finalTotal, double inputs, double outputs,
+                              double clamped) {
+  logInternalError("%s balance check failed: residual=%.17g (tolerance %g) at "
+                   "year %d day %d time %.17g\n",
+                   element, residual, EPS, climate->year, climate->day,
+                   climate->time);
+  logInternalError("  %s pools: preTotal=%.17g postUpdateTotal=%.17g "
+                   "finalTotal=%.17g\n",
+                   element, preTotal, postTotal, finalTotal);
+  logInternalError("  %s system: inputs=%.17g (includes clamped) outputs=%.17g "
+                   "clamped=%.17g\n",
+                   element, inputs, outputs, clamped);
+}
+
 void checkBalance(void) {
   // CARBON
   // Pool delta
@@ -134,7 +158,8 @@ void checkBalance(void) {
   double systemNDelta = balanceTracker.outputsN - balanceTracker.inputsN;
   balanceTracker.deltaN = poolNDelta + systemNDelta;
 
-  // To avoid weird negative-zero issues...
+  // Finite residuals smaller than EPS are numerical noise; zero them to avoid
+  // weird negative-zero issues. NaN and infinity fail this test and are kept.
   if (fabs(balanceTracker.deltaC) < EPS) {
     balanceTracker.deltaC = 0.0;
   }
@@ -143,24 +168,19 @@ void checkBalance(void) {
   }
 
   int err = 0;
-  if (fabs(balanceTracker.deltaC) > 0.0) {
-    // err = 1;
-    //  logInternalError(  someday
-    logWarning(
-        "Carbon balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
-        balanceTracker.deltaC, climate->year, climate->day, climate->time);
+  if (balanceResidualFailed(balanceTracker.deltaC)) {
+    err = 1;
+    logBalanceFailure("Carbon", balanceTracker.deltaC, balanceTracker.preTotalC,
+                      balanceTracker.postTotalC, balanceTracker.finalC,
+                      balanceTracker.inputsC, balanceTracker.outputsC,
+                      balanceTracker.clampedC);
   }
-  if (fabs(balanceTracker.deltaN) > 0.0) {
-    // err = 1;
-    // logInternalError(  someday
-    logWarning(
-        "Nitrogen balance check failed (delta=%.6f, Y: %d D: %d T: %4.2f)\n",
-        balanceTracker.deltaN, climate->year, climate->day, climate->time);
-    logWarning("preTot %.7f postTot %.7f input %.7f output %.7f clamped "
-               "%.7f delta %.7f\n",
-               balanceTracker.preTotalN, balanceTracker.postTotalN,
-               balanceTracker.inputsN, balanceTracker.outputsN,
-               balanceTracker.clampedN, balanceTracker.deltaN);
+  if (balanceResidualFailed(balanceTracker.deltaN)) {
+    err = 1;
+    logBalanceFailure("Nitrogen", balanceTracker.deltaN,
+                      balanceTracker.preTotalN, balanceTracker.postTotalN,
+                      balanceTracker.finalN, balanceTracker.inputsN,
+                      balanceTracker.outputsN, balanceTracker.clampedN);
   }
   if (err) {
     logInternalError("Exiting\n");

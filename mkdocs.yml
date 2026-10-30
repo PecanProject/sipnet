@@ -7,6 +7,8 @@ nav:
     - Model Specification: model-structure.md
   - User Guide:
       - Getting Started: user-guide/getting-started.md
+      - "Tutorial 1: Russell Ranch": user-guide/tutorial-1.md
+      - "Tutorial 2: Output Viewer": user-guide/tutorial-2.md
       - Running SIPNET: user-guide/running-sipnet.md
       - Model Inputs: user-guide/model-inputs.md
       - Model Outputs: user-guide/model-outputs.md

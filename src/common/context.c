@@ -107,7 +107,7 @@ void createContextMetadata(const char *name, const char *printName,
     strcpy(s->keyName, keyName);
     HASH_ADD_STR(ctx.metaMap, keyName, s);
   } else {
-    printf("Internal error: attempt to recreate context param %s\n", name);
+    logInternalError("attempt to recreate context param %s\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   strcpy(s->printName, printName);
@@ -122,7 +122,7 @@ void updateIntContext(const char *name, int value, context_source_t source) {
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s); /* name already in the hash? */
   if (s == NULL) {
-    printf("Internal error: no context param %s found\n", name);
+    logInternalError("no context param %s found\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   if (hasSourcePrecedence(s, source)) {
@@ -137,7 +137,7 @@ void updateCharContext(const char *name, const char *value,
   nameToKey(name);
   HASH_FIND_STR(ctx.metaMap, keyName, s); /* name already in the hash? */
   if (s == NULL) {
-    printf("Internal error: no context param %s found\n", name);
+    logInternalError("no context param %s found\n", name);
     exit(EXIT_CODE_INTERNAL_ERROR);
   }
   if (hasSourcePrecedence(s, source)) {
@@ -181,13 +181,13 @@ void validateFilename(void) {
   // Make sure FILENAME is set and well-sized; everything else is optional (not
   // necessary or has a default)
   if (strcmp(ctx.filePrefix, "") == 0) {
-    printf("Error: filePrefix must be set for SIPNET to run\n");
+    logError("filePrefix must be set for SIPNET to run\n");
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
   if (strlen(ctx.filePrefix) > FILENAME_PREFIX_MAXLEN) {
     // We need room to append .clim, .param, etc
-    printf("Error: filePrefix is too long; max length is %d characters\n",
-           FILENAME_PREFIX_MAXLEN);
+    logError("filePrefix '%s' is too long; max length is %d characters\n",
+             ctx.filePrefix, FILENAME_PREFIX_MAXLEN);
     exit(EXIT_CODE_BAD_PARAMETER_VALUE);
   }
 }
@@ -260,8 +260,8 @@ void printConfig(FILE *outFile) {
               getContextSourceString(s->source), width, (char *)s->value);
     } else {
       // The height of paranoia
-      printf("Internal error, unknown type (%d) found for context param\n",
-             s->type);
+      logInternalError("unknown type (%d) found for context param %s\n",
+                       s->type, s->printName);
       exit(EXIT_CODE_INTERNAL_ERROR);
     }
   }
