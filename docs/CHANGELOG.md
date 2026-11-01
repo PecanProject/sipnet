@@ -32,11 +32,13 @@ sections to include in release notes:
   fertilizer events, NPP signs, nitrogen availability, and flooding. (#415)
 
 ### Fixed
+- Restore format specifiers for stock value in `ensureNonNegative()` error logging to align arguments and prevent undefined behavior. (#406)
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
 - Leaf-off mechanics refined to ensure that leaf-off events do not remove more leaf carbon than is available in the leaf pool. (#400)
 
 ### Changed
 - SIPNET will now error instead of warning when an environment pool goes negative. This is a change from previous behavior where SIPNET would log a warning and continue running. (#398)
+- SIPNET now errors and exits when a mass balance check failure occurs, instead of logging a warning and continuing (#414)
 
 ### Removed
 

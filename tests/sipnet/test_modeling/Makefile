@@ -9,6 +9,7 @@ LDLIBS=-lsipnet -lsipnet_common -lm
 
 # List test files in this directory here
 TEST_CFILES= \
+  testBalanceCheck.c \
   testCarbonSaturation.c \
   testDependencyFunctions.c \
   testFluxCalculations.c \

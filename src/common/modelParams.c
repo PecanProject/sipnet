@@ -184,9 +184,9 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
           // Check if there's room for ", ", pName, and null terminator
           if (strlen(unknownParams) + strlen(pName) + 3 >
               MODEL_PARAM_ERROR_BUFFER_SIZE) {
-            logError("Too many unknown params; please remove some from %s and "
-                     "rerun\n",
-                     paramFile);
+            logError(
+                "Too many unknown params; please remove some from parameter "
+                "file and rerun\n");
             logError("Unknown params include: %s\n", unknownParams);
             exit(EXIT_CODE_INPUT_FILE_ERROR);
           }
