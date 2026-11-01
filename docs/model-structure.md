@@ -570,6 +570,32 @@ represent empirically measurable physical properties rather than unconstrained c
      $F^N_{\text{fert,soil}}$ from observable amendment properties ($I_S$, $h$, or lookup tables), keeping parameter identifiability
      sound and transparent.
 
+##### Interaction with Soil Carbon Saturation (MAOC vs. POC Framework)
+
+When soil carbon saturation is enabled (`carbon-saturation` = 1), SIPNET's two-pool organic matter structure
+conceptually maps onto the distinction between mineral-associated organic carbon (MAOC, represented by $C_{\text{soil}}$)
+and particulate organic carbon (POC, represented by $C_{\text{litter}}$):
+- **Soil pool as MAOC**: Soil organic carbon ($C_{\text{soil}}$) acts as the slow-turnover, mineral-associated pool
+  with a finite physical and chemical stabilization capacity governed by $C_{\text{soil,saturation}}$.
+- **Litter pool as POC**: Litter carbon ($C_{\text{litter}}$) acts as the fast-turnover particulate organic carbon
+  pool with unconstrained storage capacity.
+
+Direct amendment inputs routed to the soil pool ($F^C_{\text{fert,soil}}$ and $F^N_{\text{fert,soil}}$) are integrated
+directly into this saturation framework:
+- **Carbon Saturation Scaling**: The actual addition to $C_{\text{soil}}$ is scaled by the unsaturated fraction
+  $(1 - C_{\text{soil}} / C_{\text{soil,saturation}})$. Any amendment carbon that cannot be accepted because the mineral
+  soil is saturated is redirected to the litter (POC) pool via the saturation fraction $(C_{\text{soil}} / C_{\text{soil,saturation}})$,
+  where it remains subject to litter decomposition.
+- **Nitrogen Stoichiometry Conservation**: When `nitrogen-cycle` is enabled, the same saturation fraction $(C_{\text{soil}} / C_{\text{soil,saturation}})$
+  governs the redirection of amendment organic nitrogen ($F^N_{\text{fert,soil}}$) to litter organic nitrogen ($N_{\text{litter}}$).
+  This maintains stoichiometric balance between redirected C and N.
+- **Full Saturation ($C_{\text{soil}} \ge C_{\text{soil,saturation}}$)**: When $C_{\text{soil}}$ reaches or exceeds the
+  saturation limit, the saturation fraction evaluates to 1.0, directing 100% of incoming amendment soil inputs to the litter
+  pool until heterotrophic respiration and methane production reduce $C_{\text{soil}}$ below capacity.
+
+This behavior guarantees that stabilized amendment additions cannot circumvent mineral surface saturation limits, preserving
+theoretical consistency across the model.
+
 ##### Model Evaluation and Testing Framework
 
 To establish whether quality-partitioned amendment inputs provide measurable predictive improvement over single-litter routing,
@@ -666,9 +692,11 @@ F^C_{\text{soil}} = F^C_{\text{soil,litter}} + F^C_{\text{soil,roots}} + F^C_{\t
 
 #### Soil Carbon Saturation
 
-When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs is added to the 
-soil pool. This fraction declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining
-input C is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover carbon rather than being 
+When soil carbon saturation is enabled, only a saturation-dependent fraction of gross soil C inputs $F^C_{\text{soil}}$ is added to the 
+soil pool. Conceptually, this treats the soil pool as slow-turnover mineral-associated organic carbon (MAOC) subject to a finite capacity limit $C_{\text{soil,saturation}}$, while the litter pool represents fast-turnover particulate organic carbon (POC).
+
+The fraction of inputs accepted declines as $C_{\text{soil}}$ approaches the specified soil C saturation limit. The remaining
+input C—including any saturated portion of direct organic amendments $F^C_{\text{fert,soil}}$—is redirected to the litter pool \eqref{eq:soil_carbon_to_litter} as fast-turnover POC rather than being 
 added to the soil pool.
 
 \begin{equation}
@@ -1422,6 +1450,9 @@ nitrogen to have different partitioning fractions upstream ($f_{\text{stable},C}
 and leaves assumptions about amendment quality, stoichiometry, and lookup tables upstream.
 When only litter inputs are specified (or in legacy single-pool inputs), all organic amendment carbon enters
 the litter pool (or soil if `LITTER_POOL = 0`), preserving exact backward compatibility.
+When `carbon-saturation` is enabled, direct soil additions ($F^C_{\text{fert,soil}}$ and $F^N_{\text{fert,soil}}$) are
+subject to the soil saturation fraction: any portion that exceeds the mineral saturation capacity is redirected to the
+litter (POC) pool (see [Interaction with Soil Carbon Saturation](#interaction-with-soil-carbon-saturation-maoc-vs-poc-framework)).
 
 Mineral N includes fertilizer supplied as NO3, NH4, and Urea-N. Urea-N is assumed to hydrolyze to ammonium
 and bicarbonate rapidly and is treated as a mineral N pool. This is a common model assumption because of
