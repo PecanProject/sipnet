@@ -12,12 +12,12 @@ void checkLimitations(void);
 /**
  * Check for carbon and nitrogen limitations for leaf-on events
  *
- * This function is called where leaf-on flux is calculated
+ * This function is called where leaf-on events are processed
  *
- * @param[inout] leafOnFlux pointer to leaf-on flux variable, which may be
- *               modified if limitation is in effect
+ * @param[inout] leafOnCDemand pointer to leaf-on demand variable, which may be
+ *               modified if limitation is in effect (g C m^-2)
  */
-void checkLeafOnLimitation(double *leafOnFlux);
+void checkLeafOnLimitation(double *leafOnCDemand);
 
 /** Check for carbon-specific limitations
  *

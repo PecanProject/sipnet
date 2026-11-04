@@ -10,14 +10,11 @@ ClimateNode *climate;  // current climate
 Params params;
 Envi envi;  // state variables
 Fluxes fluxes;  // fluxes
+PendingEvents pendingEvents;
 Trackers trackers;
 PhenologyTrackers phenologyTrackers;
 PlantSurvivalTracker plantSurvivalTracker;
 
 double getTotalWoodC(void) {
   return envi.plantWoodC + envi.plantCAccountingDelta;
-}
-
-double getLeafLitterFlux(void) {
-  return fluxes.leafLitter + fluxes.leafOffLitter;
 }

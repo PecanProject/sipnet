@@ -546,10 +546,10 @@ typedef struct FluxVars {
   double woodCreation;
   // creation from leaf-on event; separated from leafCreation for N balance (as
   // we take this from the wood pool) (g C * m^-2 ground area * day^-1)
-  double leafOnCreation;
+  // double leafOnCreation; TODO: remove
   // Portion of leaf-on creation C that comes from wood C (the rest comes from
   // coarse root C)
-  double leafOnCreationFromWood;
+  // double leafOnCreationFromWood; TODO: remove
   // leaf fall from calculated leaf off 'events' (gdd, soil temp, day of year)
   // (g C * m^-2 grount area * day^-1)
   double leafOffLitter;
@@ -663,6 +663,33 @@ typedef struct FluxVars {
 // Global var
 extern Fluxes fluxes;
 
+// Mostly for debugging, though these do make logging the pending events easier
+typedef struct PendingEventVars {
+  // leaf on
+  double leafOnCreation;
+  double leafOnCreationFromWood;
+
+  // harvest
+  double harvestLeafC;
+  double harvestWoodC;
+  double harvestAccountingC;
+  double harvestFineRootC;
+  double harvestCoarseRootC;
+  double harvestLitterC;
+  double harvestSoilC;
+  double harvestLitterN;
+  double harvestSoilN;
+  double harvestOutputC;
+  double harvestOutputN;
+
+  // leaf off
+  double leafOffC;
+  double leafOffNResorption;
+  double leafOffLitterN;
+} PendingEvents;
+
+extern PendingEvents pendingEvents;
+
 typedef struct TrackerVars {  // variables to track various things
   // g C * m^-2 taken up in this time interval; GROSS photosynthesis
   double gpp;
@@ -707,8 +734,6 @@ typedef struct TrackerVars {  // variables to track various things
   double yearlyNpp;
   // g C * m^-2 given off, year to date
   double yearlyNee;
-  // g C * m^-2 litterfall, year to date: SUM litter
-  double yearlyLitter;
   // g C * m^-2 taken up, to date: GROSS photosynthesis
   double totGpp;
   // g C * m^-2 respired, to date
@@ -770,7 +795,5 @@ typedef struct PlantSurvivalStruct {
 extern PlantSurvivalTracker plantSurvivalTracker;
 
 double getTotalWoodC(void);
-
-double getLeafLitterFlux(void);
 
 #endif  // SIPNET_STATE_H

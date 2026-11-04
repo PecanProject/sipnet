@@ -11,19 +11,13 @@
 #include "state.h"
 
 // See limitations.h
-void checkLeafOnLimitation(double *leafOnFlux) {
+void checkLeafOnLimitation(double *leafOnCDemand) {
   // Leaf on events are limited by:
   // * leafGrowth parameter (input leafOn value)
   // * available carbon
   // * available nitrogen
 
-  // Make sure to include current leaf on flux, in case there is more than
-  // one leaf on event
-  double currentFlux = fluxes.leafOnCreation + fluxes.eventLeafOnCreation;
-  double totalDemandFlux = *leafOnFlux + currentFlux;
-  double leafOnCDemand = totalDemandFlux * climate->length;
-
-  if (leafOnCDemand < TINY) {
+  if (*leafOnCDemand < TINY) {
     // Nothing to check
     return;
   }
@@ -31,7 +25,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   // First up, carbon. We do not draw from the C storage pool for this.
   double availableC =
       (envi.plantWoodC + envi.coarseRootC) * params.leafOnReallocFrac;
-  double cLimiter = availableC / leafOnCDemand;
+  double cLimiter = availableC / *leafOnCDemand;
 
   double leafOnNDemand = 0.0;
   double nLimiter = 1.0;
@@ -41,7 +35,7 @@ void checkLeafOnLimitation(double *leafOnFlux) {
     // Needed N for this transfer is (what leaves need) - (what wood provides)
     // Reminder: both wood and coarseRoot use params.woodCN, so no need to
     // treat those C demands separately
-    leafOnNDemand = calcLeafOnNFromC(leafOnCDemand);
+    leafOnNDemand = calcLeafOnNFromC(*leafOnCDemand);
     availableN = envi.plantStorageN;
     if (leafOnNDemand > TINY) {
       nLimiter = availableN / leafOnNDemand;
@@ -50,20 +44,19 @@ void checkLeafOnLimitation(double *leafOnFlux) {
   double limitation = unitClip(fmin(cLimiter, nLimiter));
 
   if (limitation < 1) {
-    totalDemandFlux *= limitation;
-    *leafOnFlux = totalDemandFlux - currentFlux;
+    *leafOnCDemand *= limitation;
     if (ctx.nitrogenCycle) {
       logInfo("Leaf on creation %.4f C / %.4f N exceeds available C %.4f / N "
               "%.4f (C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, leafOnNDemand, availableC, availableN, cLimiter,
+              *leafOnCDemand, leafOnNDemand, availableC, availableN, cLimiter,
               nLimiter, (1 - limitation) * 100, climate->year, climate->day,
               climate->time);
     } else {
       logInfo("Leaf on creation %.4f exceeds available C %.4f "
               "(C ratio: %.4f, N ratio: %.4f), "
               "reducing leaf-on growth by %.2f%% on year %d day %d time %.3f\n",
-              leafOnCDemand, availableC, cLimiter, nLimiter,
+              *leafOnCDemand, availableC, cLimiter, nLimiter,
               (1 - limitation) * 100, climate->year, climate->day,
               climate->time);
     }

@@ -34,7 +34,7 @@
 #define NUM_SCHEMA_FIELDS 5
 #define NUM_MEAN_META_FIELDS 5
 #define NUM_ENVI_FIELDS 13
-#define NUM_TRACKER_FIELDS 33
+#define NUM_TRACKER_FIELDS 32
 #define NUM_PHENOLOGY_TRACKERS_FIELDS 3
 #define NUM_SURVIVAL_TRACKERS_FIELDS 1
 #define NUM_EVENT_TRACKERS_FIELDS 8
@@ -252,7 +252,6 @@ void initResetState(RestartState *state, MeanTracker *npp) {
   state->trackersPF[ind++] = (StateField){"trackers.yearlyRh",           FT_DOUBLE, &trackers.yearlyRh,           0};
   state->trackersPF[ind++] = (StateField){"trackers.yearlyNpp",          FT_DOUBLE, &trackers.yearlyNpp,          0};
   state->trackersPF[ind++] = (StateField){"trackers.yearlyNee",          FT_DOUBLE, &trackers.yearlyNee,          0};
-  state->trackersPF[ind++] = (StateField){"trackers.yearlyLitter",       FT_DOUBLE, &trackers.yearlyLitter,       0};
   state->trackersPF[ind++] = (StateField){"trackers.totGpp",             FT_DOUBLE, &trackers.totGpp,             0};
   state->trackersPF[ind++] = (StateField){"trackers.totRtot",            FT_DOUBLE, &trackers.totRtot,            0};
   state->trackersPF[ind++] = (StateField){"trackers.totRa",              FT_DOUBLE, &trackers.totRa,              0};

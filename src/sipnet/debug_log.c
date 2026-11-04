@@ -13,7 +13,7 @@
 
 #define NUM_LOGGED_ENVI_FIELDS 13
 #define NUM_LOGGED_FLUX_FIELDS 62
-#define NUM_LOGGED_TRACKER_FIELDS 33
+#define NUM_LOGGED_TRACKER_FIELDS 32
 #define NUM_LOGGED_PHEN_TRACKER_FIELDS 3
 #define NUM_LOGGED_SURVIVAL_FIELDS 1
 #define NUM_LOGGED_EVENT_TRACKER_FIELDS 8
@@ -185,7 +185,6 @@ void initDebugArrays() {
   debugFields->trackerDF[ind++] = (DebugField){"yearlyRh", DEBUG_FIELD_DOUBLE, &trackers.yearlyRh},
   debugFields->trackerDF[ind++] = (DebugField){"yearlyNpp", DEBUG_FIELD_DOUBLE, &trackers.yearlyNpp},
   debugFields->trackerDF[ind++] = (DebugField){"yearlyNee", DEBUG_FIELD_DOUBLE, &trackers.yearlyNee},
-  debugFields->trackerDF[ind++] = (DebugField){"yearlyLitter", DEBUG_FIELD_DOUBLE, &trackers.yearlyLitter},
   debugFields->trackerDF[ind++] = (DebugField){"totGpp", DEBUG_FIELD_DOUBLE, &trackers.totGpp},
   debugFields->trackerDF[ind++] = (DebugField){"totRtot", DEBUG_FIELD_DOUBLE, &trackers.totRtot},
   debugFields->trackerDF[ind++] = (DebugField){"totRa", DEBUG_FIELD_DOUBLE, &trackers.totRa},

@@ -81,10 +81,9 @@ void calcNResorptionFluxes(void);
 /**
  * Helper function for handling leaf-off events
  *
- * This is used by both processEventsForNitrogen and the nitrogen limitation
- * check in limitations.
+ * This is used by processPendingEvents.
  */
-void calcLeafOffNEffects(double leafOffC, double *resorptionFlux,
-                         double *litterFlux);
+void calcLeafOffNEffects(double leafOffC, double *resorptionAmount,
+                         double *litterAmount);
 
 #endif  // NITROGEN_H

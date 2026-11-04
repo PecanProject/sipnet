@@ -208,6 +208,11 @@ void processEventsForCarbon(EventNode *event);
 void processEventsForNitrogen(EventNode *event);
 
 /*!
+ * \brief Process harvest and leaf on/off events
+ */
+void processPendingEvents(void);
+
+/*!
  * Update relevant environment pools after event fluxes have been calculated
  */
 void updatePoolsForEvents(void);
@@ -225,6 +230,7 @@ typedef struct HarvestTrackersStruct {
   double totalFracTransferredAbove;
   double totalFracTransferredBelow;
   double leafCAdjustment;
+  int harvestOccurred;
 } HarvestTrackers;
 
 // Variables to track events with lingering effects
@@ -233,7 +239,13 @@ typedef struct EventTrackerStruct {
   // equal to exp(-delta_t / 30)
   double d_till_mod;
 
-  // Fraction removed and transferred from harvest event this time step
+  // Total leaf on amount
+  double totalLeafOnAmount;
+
+  // Total leaf off fraction
+  double totalLeafOffFraction;
+
+  // Fraction removed and transferred from harvest events this time step
   HarvestTrackers harvestTrackers;
 } EventTrackers;
 

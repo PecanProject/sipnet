@@ -69,7 +69,7 @@ static void calcNPoolFluxes(void) {
   // The litter org N flux is determined by the carbon fluxes from wood and leaf
   // litter (modified by leaf N resorption), and N loss due to mineralization.
   // N added via fertilization is handled elsewhere.
-  fluxes.nOrgLitter = getLeafLitterFlux() / params.leafCN -
+  fluxes.nOrgLitter = fluxes.leafLitter / params.leafCN -
                       fluxes.leafOffNResorption +
                       fluxes.woodLitter / params.woodCN - litterMin -
                       litterNToSoil + (soilNInputs * saturationFraction);
@@ -188,11 +188,9 @@ void calcNResorptionFluxes(void) {
          fluxes.fineRootCreation / params.fineRootCN);
   }
 
-  // Leaf litter resorption; at this point. Note that event leaf off is handled
-  // in events.c
-  double nResorp =
-      params.leafNResorptionFrac * getLeafLitterFlux() / params.leafCN;
-  fluxes.leafOffNResorption = nResorp;
+  // Leaf litter resorption
+  fluxes.leafOffNResorption =
+      params.leafNResorptionFrac * fluxes.leafLitter / params.leafCN;
 
   // TODO: [consider] Should we resorb N from wood litter?
 }
@@ -215,17 +213,14 @@ void updateNitrogenPools(void) {
   // TBD: add equation numbers once published
 
   // Storage N changes
-  // fluxes nUptake  and nFixation handle part of the demand flux (see
+  // fluxes nUptake and nFixation handle part of the demand flux (see
   // calcNFixationAndUptakeFluxes), but we expect the rest to come from the
   // storage pool
   double nDemandFlux = calcPlantNDemandFlux();
   double storageDemandFlux = nDemandFlux - fluxes.nUptake - fluxes.nFixation;
   // leaf-on; fluxes.eventLeafOnCreation is handled in events.c
-  double leafOnNFlux = calcLeafOnNFromC(fluxes.leafOnCreation);
   envi.plantStorageN +=
-      (fluxes.leafOffNResorption + fluxes.reductionNResorption -
-       storageDemandFlux - leafOnNFlux) *
-      climate->length;
+      (fluxes.reductionNResorption - storageDemandFlux) * climate->length;
 
   // Unmet uptake plus other fluxes go to soil mineral N (note we have one
   // mineral pool for soil+litter).
@@ -240,12 +235,13 @@ void updateNitrogenPools(void) {
   envi.litterN += fluxes.nOrgLitter * climate->length;
 }
 
-void calcLeafOffNEffects(double leafOffC, double *resorptionFlux,
-                         double *litterFlux) {
+void calcLeafOffNEffects(double leafOffC, double *resorptionAmount,
+                         double *litterAmount) {
+  // TODO: move to processPendingEvents?
   double climLen = climate->length;
   double leafN = leafOffC / params.leafCN;
   double leafNResorption = leafN * params.leafNResorptionFrac;
   double litterNAdd = leafN - leafNResorption;
-  *resorptionFlux += leafNResorption / climLen;
-  *litterFlux += litterNAdd / climLen;
+  *resorptionAmount += leafNResorption / climLen;
+  *litterAmount += litterNAdd / climLen;
 }
