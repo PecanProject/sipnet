@@ -24,6 +24,7 @@ echo -e "${GREEN}Build succeeded.${RESET}"
 
 # Arrays to store results
 declare -a results
+overall_status=0
 
 # Step 2: Search only under ./test/sipnet
 for d in ./tests/sipnet/*/ ; do
@@ -53,6 +54,7 @@ for d in ./tests/sipnet/*/ ; do
         if [ ! -x "./$exe" ]; then
             echo "  Skipping $exe (not found or not executable)"
             results+=("$d/$exe|MISSING|N/A")
+            overall_status=1
             continue
         fi
 
@@ -63,6 +65,10 @@ for d in ./tests/sipnet/*/ ; do
 
         echo "    Last line: $last_line"
         echo "    Exit code: $exit_code"
+
+        if [ "$exit_code" -ne 0 ]; then
+            overall_status=1
+        fi
 
         # Save for summary
         results+=("$d/$exe|$exit_code|$last_line")
@@ -96,3 +102,4 @@ for entry in "${results[@]}"; do
 done
 
 echo "==============================================================="
+exit "$overall_status"
