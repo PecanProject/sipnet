@@ -726,6 +726,7 @@ static int testCheckpointWriteFailure(void) {
 
   int status = prepRunFiles("restart_segment1.clim", "events_segment1.in");
   if (status) {
+    logTest("Failed to prepare files for checkpoint write failure test\n");
     return status;
   }
 
@@ -736,7 +737,7 @@ static int testCheckpointWriteFailure(void) {
                         "checkpoint_write_failure_quiet.log"};
   for (int i = 0; i < 2; ++i) {
     int rc = runModelWithArgs("restart_seg1.in", logs[i], args[i]);
-    int failed = (rc != EXIT_CODE_FAILURE);
+    int failed = (rc != EXIT_CODE_FILE_CLOSE_OR_WRITE_ERROR);
     failed |= !fileContains(logs[i], "[ERROR  ]");
     failed |= !fileContains(logs[i],
                             "Failed to write restart checkpoint '/dev/full'");

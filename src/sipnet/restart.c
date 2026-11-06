@@ -834,7 +834,7 @@ static void writeRestartState(const char *restartOut, const RestartState *state,
   int closeFailed = fclose(out);
   if (writeFailed || closeFailed != 0) {
     logError("Failed to write restart checkpoint '%s'\n", restartOut);
-    exit(EXIT_CODE_FAILURE);
+    exit(EXIT_CODE_FILE_CLOSE_OR_WRITE_ERROR);
   }
 }
 
