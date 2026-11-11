@@ -80,7 +80,12 @@ def stages(data):
                 )
             )
         result.append(
-            (f"spatial_{outer}", evaluate.spatial_outputs(outer), "spatial", (outer,))
+            (
+                f"spatial_{outer}",
+                [f"models/spatial_o{outer}.npz", f"validation/spatial_o{outer}.json"],
+                "spatial",
+                (outer,),
+            )
         )
     result += [
         ("report", evaluate.report_outputs(data), "report", ()),

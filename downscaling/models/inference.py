@@ -143,8 +143,6 @@ class Models:
                 int(candidate["width"]),
                 int(candidate["blocks"]),
                 candidate["sharing"],
-                "student_t",
-                metadata["settings"]["quantiles"],
                 use_year_embedding=bool(candidate["use_year_embedding"]),
             )
             state = torch.load(

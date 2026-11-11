@@ -7,17 +7,8 @@ from scipy.special import beta
 from sklearn.neighbors import BallTree
 from downscaling.artifacts import receipt
 from downscaling.contracts import TARGETS
+from downscaling.models.inference import average_finite
 from downscaling.train.recipe import Q90
-
-
-def meanfinite(a, axis=0):
-    n = np.isfinite(a).sum(axis=axis)
-    return np.divide(
-        np.nansum(a, axis=axis),
-        n,
-        out=np.full_like(np.nansum(a, axis=axis), np.nan),
-        where=n > 0,
-    )
 
 
 def weighted_quantile(a, w, q=0.999):
@@ -68,7 +59,7 @@ def smooth(cell, train, query, coords, lc, exclude_self=False):
                     dd = dd[keep]
                 indices = indices[:20]
                 dd = dd[:20]
-                value = meanfinite(cell[indices]) if len(indices) else fallback
+                value = average_finite(cell[indices]) if len(indices) else fallback
                 if len(dd):
                     distance[site] = dd[-1] * 6371.0088
                 pred[site] = np.where(np.isfinite(value), value, fallback)
@@ -122,10 +113,6 @@ def summary(a):
 def add(stats, key, values, mask):
     if np.any(mask):
         stats.setdefault(key, np.zeros(11))[:] += values[mask].sum(axis=0)
-
-
-def spatial_outputs(outer):
-    return [f"models/spatial_o{outer}.npz", f"validation/spatial_o{outer}.json"]
 
 
 def spatial(run, outer):

@@ -18,10 +18,12 @@ def bracket(axis, values):
     return order[lo], order[hi], w, inside
 
 
-class EraReader:
+class MapEra:
     def __init__(self, root):
         self.root = root
         self.files = {}
+        self.maps = {}
+        self.coords = None
 
     def close(self):
         for f in self.files.values():
@@ -34,42 +36,6 @@ class EraReader:
     def __exit__(self, *args):
         self.close()
 
-    def at(self, name, t, points):
-        if t.year not in self.files:
-            self.files[t.year] = netcdf_file(
-                self.root / f"ERA5_{t.year}.nc", "r", mmap=True
-            )
-        f = self.files[t.year]
-        time = f.variables["time"]
-        encoded = (t - pd.Timestamp("1900-01-01", tz="UTC")).total_seconds() / 3600
-        pos = np.flatnonzero(time[:] == encoded)
-        if len(pos) != 1:
-            raise ValueError(f"ERA timestamp absent or duplicated: {t}")
-        r0, r1, wy, iy = bracket(f.variables["latitude"][:], points.lat)
-        c0, c1, wx, ix = bracket(f.variables["longitude"][:], points.lon)
-        v = f.variables[name]
-        raw = v.data[int(pos[0])]  # mmap slice, no full-year read
-        out = np.zeros(len(points))
-        total = np.zeros(len(points))
-        for rr, cc, w in [
-            (r0, c0, (1 - wy) * (1 - wx)),
-            (r0, c1, (1 - wy) * wx),
-            (r1, c0, wy * (1 - wx)),
-            (r1, c1, wy * wx),
-        ]:
-            z = raw[:, rr, cc].astype(float)
-            z[z == getattr(v, "_FillValue", -32767)] = np.nan
-            z = z * getattr(v, "scale_factor", 1) + getattr(v, "add_offset", 0)
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", RuntimeWarning)
-                z = np.nanmean(z, axis=0)
-            good = np.isfinite(z) & (w > 1e-12)
-            out[good] += z[good] * w[good]
-            total[good] += w[good]
-        out = np.divide(out, total, out=np.full(len(points), np.nan), where=total > 0)
-        out[~(ix & iy)] = np.nan
-        return out
-
     def at_window(self, t, points):
         return {
             n: self.at(
@@ -79,13 +45,6 @@ class EraReader:
             )
             for n in ("t2m", "sp", "d2m", "tp", "ssrd", "strd", "u10", "v10")
         }
-
-
-class MapEra(EraReader):
-    def __init__(self, root):
-        super().__init__(root)
-        self.maps = {}
-        self.coords = None
 
     def at(self, name, t, points):
         coords = points[["lat", "lon"]].to_numpy()

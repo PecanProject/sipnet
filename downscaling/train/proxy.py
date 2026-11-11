@@ -27,8 +27,6 @@ def build(device):
         CANDIDATE["width"],
         CANDIDATE["blocks"],
         CANDIDATE["sharing"],
-        "student_t",
-        SETTINGS["quantiles"],
         use_year_embedding=CANDIDATE["use_year_embedding"],
         lc_categories=9,
     )

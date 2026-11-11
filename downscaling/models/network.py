@@ -55,19 +55,10 @@ class ProxyNetwork(nn.Module):
         width: int,
         blocks: int,
         sharing: str,
-        loss_name: str,
-        quantiles: list[float],
         use_year_embedding: bool = True,
         lc_categories: int = 12,
     ) -> None:
         super().__init__()
-        self.loss_name = loss_name
-        self.quantiles = quantiles
-        output_count = 1
-        if loss_name in ("gaussian", "student_t"):
-            output_count = 2
-        elif loss_name == "quantile":
-            output_count = len(quantiles)
         self.sharing = sharing
         self.use_year_embedding = use_year_embedding
         if sharing == "shared":
@@ -80,7 +71,7 @@ class ProxyNetwork(nn.Module):
                     nn.Sequential(
                         nn.Linear(width, 128),
                         nn.SiLU(),
-                        nn.Linear(128, output_count),
+                        nn.Linear(128, 2),
                     )
                     for _ in range(2)
                 ]
@@ -100,7 +91,7 @@ class ProxyNetwork(nn.Module):
                     nn.Sequential(
                         nn.Linear(width, 128),
                         nn.SiLU(),
-                        nn.Linear(128, output_count),
+                        nn.Linear(128, 2),
                     )
                     for _ in range(2)
                 ]
@@ -120,21 +111,4 @@ class ProxyNetwork(nn.Module):
                 head(backbone(numeric, lc, year))
                 for backbone, head in zip(self.backbones, self.heads)
             ]
-        stacked = torch.stack(outputs, dim=1)
-        if self.loss_name == "mse":
-            return stacked[:, :, 0]
-        if self.loss_name == "quantile":
-            median_position = self.quantiles.index(0.5)
-            raw_median = stacked[:, :, median_position]
-            result = torch.empty_like(stacked)
-            result[:, :, median_position] = raw_median
-            lower = raw_median
-            for position in range(median_position - 1, -1, -1):
-                lower = lower - torch.nn.functional.softplus(stacked[:, :, position])
-                result[:, :, position] = lower
-            upper = raw_median
-            for position in range(median_position + 1, len(self.quantiles)):
-                upper = upper + torch.nn.functional.softplus(stacked[:, :, position])
-                result[:, :, position] = upper
-            return result
-        return stacked
+        return torch.stack(outputs, dim=1)
