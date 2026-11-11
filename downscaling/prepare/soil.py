@@ -1,13 +1,12 @@
 """Read coarse soil layers once per period, then share memory-mapped windows."""
 
-from pathlib import Path
 import os
 import numpy as np
 import pandas as pd
 import h5py
 import rasterio
 from rasterio.windows import Window, bounds
-from downscaling.artifacts import identity, read, write, receipt, valid, require
+from downscaling.artifacts import identity, read, write, receipt, require
 from downscaling.prepare.sources import GLDAS_FIELDS
 
 

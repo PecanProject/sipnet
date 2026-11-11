@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import rasterio
-from downscaling.artifacts import receipt, read
+from downscaling.artifacts import receipt
 from downscaling.predict.products import export, report, inventory, BANDS
 from test_resume import publish_blocks
 
@@ -34,6 +34,7 @@ def test_export_reopen_and_resume(run_case, all_excluded):
             assert ds.tags()["expected_steps"] == "8"
             if all_excluded:
                 assert np.isnan(ds.read([1, 2, 3, 4, 5])).all()
+                assert (ds.read(12) == 0).all()
                 assert (ds.read(6) == 0).all() and (ds.read(10) == 4).all()
             else:
                 np.testing.assert_array_equal(ds.read(6).ravel(), [8, 4, 0, 0])

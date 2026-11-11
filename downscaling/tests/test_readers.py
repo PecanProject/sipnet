@@ -95,3 +95,19 @@ def test_receipt_checks_original_and_layers(tmp_path):
     raw.write_bytes(b"replaced")
     with pytest.raises(ValueError, match="Changed Aqua"):
         source.aqua_receipt(dict(title="granule"))
+
+
+def test_timezone_exclusions_and_missing_table_ids(tmp_path):
+    from types import SimpleNamespace
+    from downscaling.prepare.domain import timezones
+
+    points = pd.DataFrame(dict(index=[10, 11], lat=[45.0, 45.0], lon=[-90.0, -91.0]))
+    table = points.copy()
+    table["tz"] = None
+    path = tmp_path / "timezones.parquet"
+    table.to_parquet(path)
+    config = SimpleNamespace(sources=dict(timezones=path))
+    assert pd.isna(timezones(config, points)).all()
+    table.iloc[:1].to_parquet(path)
+    with pytest.raises(ValueError, match="Missing timezone table rows"):
+        timezones(config, points)

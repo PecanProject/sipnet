@@ -1,7 +1,6 @@
 """Bounded original-grid land masks and explicit timezone exclusions."""
 
 from pathlib import Path
-from contextlib import ExitStack
 import subprocess
 import numpy as np
 import pandas as pd

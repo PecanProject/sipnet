@@ -1,4 +1,5 @@
 """Feature order, units and missingness contracts shared by all inference paths."""
+
 import numpy as np
 import pandas as pd
 from rasterio.warp import transform
@@ -80,17 +81,28 @@ DYNAMIC = [
     "gldas_rootzone_vwc",
 ]
 
-STATIC=['year_since_disturb','agb','PH','N','SOC','Sand','lat','lon','DEM']
+STATIC = ["year_since_disturb", "agb", "PH", "N", "SOC", "Sand", "lat", "lon", "DEM"]
 
-TIME=['time_sin_k1','time_cos_k1','time_sin_k4','time_cos_k4','photoperiod_hours','projected_x_m','projected_y_m','hydrological_year_continuous']
+TIME = [
+    "time_sin_k1",
+    "time_cos_k1",
+    "time_sin_k4",
+    "time_cos_k4",
+    "photoperiod_hours",
+    "projected_x_m",
+    "projected_y_m",
+    "hydrological_year_continuous",
+]
 
-NUMERIC=STATIC+DYNAMIC+TIME+[f'{n}_L{k}' for k in range(1,5) for n in DYNAMIC]
+NUMERIC = STATIC + DYNAMIC + TIME + [f"{n}_L{k}" for k in range(1, 5) for n in DYNAMIC]
 
-CEA='+proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs'
+CEA = "+proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+
 
 def unique(frame, keys):
     if frame[keys].isna().any().any() or frame.duplicated(keys).any():
         raise ValueError(f"Missing or duplicate keys: {keys}")
+
 
 def rootzone(layers):
     a = np.asarray(layers, dtype=float)
@@ -99,8 +111,10 @@ def rootzone(layers):
     # Sum, not nansum: an absent constituent does not mean dry soil.
     return a[..., :3].sum(axis=-1) / 1000.0
 
+
 def ppfd(shortwave_j_m2):
     return np.asarray(shortwave_j_m2) / 10800.0 * 0.45 * 4.57
+
 
 def short_gaps(values, dates, sources, maximum=2):
     """Fill bounded gaps on a COMPLETE composite calendar, same sensor only."""
@@ -131,6 +145,7 @@ def short_gaps(values, dates, sources, maximum=2):
         i = j
     return a, flag
 
+
 def aggregate_period(frame, start, stop):
     f = frame[(frame.utc >= start) & (frame.utc < stop)].copy()
     unique(f, ["index", "utc"])
@@ -159,18 +174,34 @@ def aggregate_period(frame, start, stop):
     out["expected_steps"] = expected
     return out.reset_index()
 
+
 def predictors(frame):
     """Same numeric fields for fitting and prediction. No target argument or label reads."""
-    f=frame.copy();dates=pd.to_datetime(f.period_key);doy=dates.dt.dayofyear.to_numpy()
-    for k in [1,4]:
-        f[f'time_sin_k{k}']=np.sin(2*np.pi*k*doy/365.25)
-        f[f'time_cos_k{k}']=np.cos(2*np.pi*k*doy/365.25)
-    decl=.409*np.sin(2*np.pi*doy/365-1.39)
-    f['photoperiod_hours']=24/np.pi*np.arccos(np.clip(-np.tan(np.deg2rad(f.lat))*np.tan(decl),-1,1))
-    x,y=transform('EPSG:4326',CEA,f.lon.tolist(),f.lat.tolist())
-    f['projected_x_m']=x;f['projected_y_m']=y
-    f['hydrological_year_continuous']=dates.dt.year+(dates.dt.strftime('%m-%d')>='07-16').astype(int)
-    values=f[NUMERIC].to_numpy(np.float32)
-    lc=f.LC_proxy.to_numpy(float)
-    valid=np.isfinite(values).all(axis=1)&np.isfinite(lc)&(lc>=0)&(lc<=11)&(lc==np.floor(lc))
-    return values,lc,valid
+    f = frame.copy()
+    dates = pd.to_datetime(f.period_key)
+    doy = dates.dt.dayofyear.to_numpy()
+    for k in [1, 4]:
+        f[f"time_sin_k{k}"] = np.sin(2 * np.pi * k * doy / 365.25)
+        f[f"time_cos_k{k}"] = np.cos(2 * np.pi * k * doy / 365.25)
+    decl = 0.409 * np.sin(2 * np.pi * doy / 365 - 1.39)
+    f["photoperiod_hours"] = (
+        24
+        / np.pi
+        * np.arccos(np.clip(-np.tan(np.deg2rad(f.lat)) * np.tan(decl), -1, 1))
+    )
+    x, y = transform("EPSG:4326", CEA, f.lon.tolist(), f.lat.tolist())
+    f["projected_x_m"] = x
+    f["projected_y_m"] = y
+    f["hydrological_year_continuous"] = dates.dt.year + (
+        dates.dt.strftime("%m-%d") >= "07-16"
+    ).astype(int)
+    values = f[NUMERIC].to_numpy(np.float32)
+    lc = f.LC_proxy.to_numpy(float)
+    valid = (
+        np.isfinite(values).all(axis=1)
+        & np.isfinite(lc)
+        & (lc >= 0)
+        & (lc <= 11)
+        & (lc == np.floor(lc))
+    )
+    return values, lc, valid

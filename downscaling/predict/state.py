@@ -3,10 +3,9 @@
 from pathlib import Path
 from contextlib import contextmanager
 import fcntl
-import os
 import shutil
 import pandas as pd
-from downscaling.artifacts import identity, sha, digest, read, write
+from downscaling.artifacts import identity, sha, digest, read
 from downscaling.calendar import read_periods, selection
 from downscaling.models.bundle import validate
 from downscaling.prepare.sources import Sources
@@ -18,7 +17,8 @@ def code_identity():
     return {
         str(p.relative_to(root)): sha(p)
         for p in sorted(root.rglob("*"))
-        if p.suffix in (".py", ".R") and "tests" not in p.parts
+        if p.suffix in (".py", ".R")
+        and not {"tests", "scripts"}.intersection(p.relative_to(root).parts)
     }
 
 

@@ -159,7 +159,6 @@ def tile_values(config, tile, item, files, grid_width, mask, wanted):
         "index"
     ].to_numpy()
     reason[local_indices(excluded, tile, grid_width)] |= 4
-    longest[local_indices(excluded, tile, grid_width)] = item["expected"]
     means = np.divide(
         sums, counts[None, :], out=np.full_like(sums, np.nan), where=counts[None, :] > 0
     )
