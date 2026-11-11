@@ -66,3 +66,9 @@ cmake-build-debug-gcc/
 *~
 *.tmp
 /tmp/
+
+# Downscaling runtime files (small test fixtures remain trackable)
+/downscaling/runs/
+/downscaling/model_bundles/
+/downscaling/**/__pycache__/
+/downscaling/.pytest_cache/
