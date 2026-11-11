@@ -158,7 +158,11 @@ class Dataset:
         stops = pd.to_datetime(p.end_date, utc=True) + pd.Timedelta(days=1)
         steps = (stops - starts).dt.total_seconds() / 10800
         if (
-            not ((steps > 0) & (steps == p.expected_3hour_steps)).all()
+            not (
+                (steps > 0)
+                & (steps == np.floor(steps))
+                & (steps == p.expected_3hour_steps)
+            ).all()
             or (starts.iloc[1:].to_numpy() < stops.iloc[:-1].to_numpy()).any()
         ):
             raise ValueError("Invalid period boundaries or support")

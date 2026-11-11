@@ -42,6 +42,7 @@ class Historical:
         self.folds = sites.fold.to_numpy()
         if not np.isin(self.folds, (1, 2, 3)).all():
             raise ValueError("Unknown historical fold")
+        self.folds = self.folds.astype(np.int64)
         self.times = pd.DatetimeIndex(
             pd.to_datetime(pd.read_csv(self.root / "steps.csv").utc, utc=True)
         )
@@ -156,7 +157,7 @@ def compare(run, reference, output):
             for (model, target), value in stats.items()
         ]
     )
-    output.mkdir(parents=True)
+    output.mkdir(parents=True, exist_ok=True)
     table.to_csv(output / "metrics.csv", index=False)
     write(
         output / "comparison.json",

@@ -26,3 +26,7 @@ See the [usage and input contract](../docs/user-guide/downscaling.md) for CUDA
 installation, input formats, model packaging, output bands and validation commands.
 The component has its own dependencies and is not part of the root Python
 package installation.
+
+To train and calibrate models from verified prepared arrays, see the
+[training guide](../docs/user-guide/downscaling-training.md). Training exports the
+same portable bundle consumed by the prediction commands above.

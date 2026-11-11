@@ -7,7 +7,6 @@ from downscaling.train.state import Run
 from downscaling.train import correct
 from downscaling.train.proxy import assembled_path
 from downscaling.train.recipe import Q90, EPS
-from downscaling.tests.test_training_data import training_data
 
 
 def calibration_run(training_data, tmp_path):

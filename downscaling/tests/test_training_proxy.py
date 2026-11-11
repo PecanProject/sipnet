@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-import torch
 from downscaling.artifacts import read
 from downscaling.train.configuration import Config
 from downscaling.train.optimization import prepare
@@ -13,7 +12,6 @@ from downscaling.train.proxy import (
     infer,
 )
 from downscaling.train.state import Run
-from downscaling.tests.test_training_data import training_data
 
 
 def test_preprocessing_excludes_held_rows(training_data, tmp_path):

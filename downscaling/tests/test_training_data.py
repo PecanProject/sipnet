@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from downscaling.artifacts import read, write
+from downscaling.artifacts import write
 from downscaling.contracts import NUMERIC
 from downscaling.train.data import Dataset, publish, period_position, native_matrix
 from downscaling.train.splits import align_ids, declare_nested, proxy_keys, sites
@@ -65,11 +65,6 @@ def make_dataset(root):
     write(root / "native/sample.json", dict(name="sample", rows=len(row)))
     publish(root, ["sample"], dict(synthetic=True), "2020-02-28T00:00:00Z")
     return root
-
-
-@pytest.fixture
-def training_data(tmp_path):
-    return make_dataset(tmp_path / "data")
 
 
 def test_all_39_splits_and_reordered_ids(training_data):

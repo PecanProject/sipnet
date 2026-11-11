@@ -11,6 +11,7 @@ nav:
       - "Tutorial 2: Output Viewer": user-guide/tutorial-2.md
       - Running SIPNET: user-guide/running-sipnet.md
       - Downscaling: user-guide/downscaling.md
+      - Downscaling training: user-guide/downscaling-training.md
       - Model Inputs: user-guide/model-inputs.md
       - Model Outputs: user-guide/model-outputs.md
   - Developer Guide:

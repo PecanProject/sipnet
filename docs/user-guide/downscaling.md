@@ -1,5 +1,7 @@
 # SIPNET Downscaling
 
+Models can be produced with the [training and calibration workflow](downscaling-training.md).
+
 SIPNET Downscaling combines a three-fold model ensemble with environmental
 covariates to produce NEE and LE maps. The inference interface accepts an
 original-grid window and period IDs, builds the four preceding predictor

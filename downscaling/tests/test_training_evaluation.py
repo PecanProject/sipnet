@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 import pytest
 import h5py
+from types import SimpleNamespace
 from downscaling.artifacts import write, sha, digest
 from downscaling.train.state import Run
 from downscaling.train.configuration import Config
 from downscaling.train import evaluate, correct
-from downscaling.train.history import Historical, ARRAYS
-from downscaling.tests.test_training_data import training_data
+from downscaling.train.history import Historical, ARRAYS, compare
 
 
 def test_spatial_excludes_test_and_self():
@@ -75,7 +75,7 @@ def test_scores_export_and_unchanged_interval_scale(training_data, tmp_path):
 
 def history_fixture(root):
     root.mkdir()
-    pd.DataFrame(dict(index=[9, 2], fold=[3, 1])).to_csv(
+    pd.DataFrame(dict(index=[9, 2], fold=[3.0, 1.0])).to_csv(
         root / "sites.csv", index=False
     )
     pd.DataFrame(dict(utc=["2020-01-01T00:00:00Z"])).to_csv(
@@ -118,3 +118,36 @@ def test_history_uses_its_own_ids_and_folds(tmp_path):
     np.testing.assert_array_equal(valid, [True, True, False])
     with pytest.raises(ValueError, match="site IDs"):
         history.values([123], pd.to_datetime(["2020-01-01T00:00Z"]))
+
+
+def test_history_comparison_accepts_empty_output_directory(tmp_path):
+    history = history_fixture(tmp_path / "history")
+    truth = np.array([[20.0, 21.0], [90.0, 91.0]])
+    data = SimpleNamespace(
+        root=tmp_path / "prepared",
+        n=2,
+        arrays={"site_ids": np.array([2, 9])},
+        shards=[{"name": "sample"}],
+        native=lambda *_: truth,
+        times=lambda steps: pd.to_datetime(["2020-01-01T00:00Z"] * len(steps)),
+    )
+    run = SimpleNamespace(
+        root=tmp_path / "run",
+        data=data,
+        token="example",
+        load=lambda _: dict(
+            period_row=np.array([0, 1]),
+            step=np.zeros(2, int),
+            location=truth + 1,
+            scale=np.ones_like(truth),
+        ),
+    )
+    output = tmp_path / "comparison"
+    output.mkdir()
+    assert compare(run, history.root, output)["status"] == "complete"
+    metrics = pd.read_csv(output / "metrics.csv")
+    assert set(metrics.target) == {"NEE", "LE"}
+    assert metrics.rows.eq(2).all()
+    np.testing.assert_allclose(
+        metrics.loc[metrics.model == "reference", "rmse"], np.sqrt(2)
+    )
