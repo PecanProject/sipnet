@@ -182,7 +182,9 @@ python -m downscaling.scripts.validate \
 ```
 
 The reference manifest declares the exact request and hashes its expected files.
-Use a reference captured on the same device for accumulated floating-point sums.
+Monthly sums are divided by their verified actual support counts before
+comparison, so the native flux tolerances apply in the same units as predictions.
+Support counts, shapes, dtypes and zero-support sums remain exact checks.
 Use an empty output directory for the first run. The same command validates CPU
 or CUDA according to the configuration. It checks exact IDs, shapes, masks,
 float32 features and support counts, plus the established proxy, native and

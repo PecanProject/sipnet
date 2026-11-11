@@ -44,6 +44,41 @@ def models_match(config, reference):
             )
 
 
+def compare_block_arrays(actual, expected):
+    """Compare flux means in native units; retain exact support and mask contracts.
+
+    A sum of n supported values has n times the absolute tolerance of one
+    value. Dividing both sums by the same verified count expresses this without
+    changing the native rtol/atol. Never divide by nominal expected support.
+    """
+    assert set(actual) == set(expected), "Block array inventory changed"
+    for name in expected:
+        assert actual[name].shape == expected[name].shape, f"Shape changed: {name}"
+        assert actual[name].dtype == expected[name].dtype, f"Dtype changed: {name}"
+        if name != "fold_mean" and not name.startswith("sum_"):
+            np.testing.assert_array_equal(actual[name], expected[name], err_msg=name)
+    maximum = 0.0
+    for name in expected:
+        if name != "fold_mean" and not name.startswith("sum_"):
+            continue
+        left, right = actual[name], expected[name]
+        if name.startswith("sum_"):
+            count = expected["count_" + name[4:]]
+            assert left.ndim == 3 and left.shape[1] == len(count)
+            assert np.isfinite(left).all() and np.isfinite(right).all(), name
+            assert (count >= 0).all() and np.equal(count, np.floor(count)).all()
+            np.testing.assert_array_equal(left[:, count == 0, :], 0, err_msg=name)
+            np.testing.assert_array_equal(right[:, count == 0, :], 0, err_msg=name)
+            left = left[:, count > 0, :] / count[None, count > 0, None]
+            right = right[:, count > 0, :] / count[None, count > 0, None]
+        np.testing.assert_allclose(left, right, rtol=1e-6, atol=1e-5, err_msg=name)
+        difference = np.abs(actual[name] - expected[name])
+        finite = difference[np.isfinite(difference)]
+        if finite.size:
+            maximum = max(maximum, float(finite.max()))
+    return maximum
+
+
 def validate(config, reference):
     manifest = read(reference / "manifest.json")
     if (
@@ -87,19 +122,7 @@ def validate(config, reference):
             np.load(base / f"period_{period_id:03d}.npz") as actual,
             np.load(reference / f"period_{period_id}.npz") as expected,
         ):
-            assert set(actual.files) == set(expected.files)
-            for name in expected.files:
-                if name == "fold_mean" or name.startswith("sum_"):
-                    np.testing.assert_allclose(
-                        actual[name], expected[name], rtol=1e-6, atol=1e-5, err_msg=name
-                    )
-                    maximum = max(
-                        maximum, float(np.nanmax(abs(actual[name] - expected[name])))
-                    )
-                else:
-                    np.testing.assert_array_equal(
-                        actual[name], expected[name], err_msg=name
-                    )
+            maximum = max(maximum, compare_block_arrays(actual, expected))
         with np.load(reference / f"period_{period_id}.npz") as expected:
             for target_index, target in enumerate(("NEE", "LE")):
                 with rasterio.open(
