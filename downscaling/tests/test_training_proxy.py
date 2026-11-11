@@ -36,7 +36,7 @@ def test_refit_updates_weights_and_logs_used_rate(training_data, tmp_path, monke
         return step(optimizer, *args, **kwargs)
 
     monkeypatch.setattr(torch.optim.AdamW, "step", record_step)
-    _, history, _ = fit_model(
+    _, history = fit_model(
         model, prepared, rows, None, SETTINGS, "cpu", SEED, JITTER_SIGMA, epochs
     )
     assert rates[0] > 0
@@ -57,7 +57,6 @@ def test_preprocessing_excludes_held_rows(training_data, tmp_path):
     np.testing.assert_array_equal(original.numeric[fit], changed.numeric[fit])
     np.testing.assert_array_equal(original.target_center, changed.target_center)
     np.testing.assert_array_equal(original.target_scale, changed.target_scale)
-    assert original.target_members.shape[-1] == 1
 
 
 def test_full_recipe_proxy_reload_and_resume(training_data, tmp_path):
@@ -72,6 +71,8 @@ def test_full_recipe_proxy_reload_and_resume(training_data, tmp_path):
     rows, _, _, test, *_ = training_rows(run.data, 1)
     prepared = prepare(run.data.arrays, rows)
     result = infer(model, prepared, test)
+    prepared.target_mean[test] = 123456.0
+    np.testing.assert_array_equal(result, infer(model, prepared, test))
     saved = run.load(f"predictions/{key}.npz")
     np.testing.assert_allclose(result[:, :, 0], saved["location"], rtol=0, atol=1e-6)
     before = (run.root / expected[0]).stat().st_mtime_ns

@@ -133,7 +133,8 @@ def test_interrupted_fit_matches_uninterrupted(training_data, tmp_path, monkeypa
         patch.setattr(correct.Progress, "after_iteration", interrupt)
         with pytest.raises(Interrupted):
             correct.fit(run, mode, 1, 0, 0)
-    assert xgb.Booster(model_file=path).num_boosted_rounds() == 10
+    assert not path.exists()
+    assert read(run.root / f"validation/{key}_progress.json")["rounds"] == 10
     run.stage(key, correct.outputs(run.data, mode, 1, 0, 0),
               lambda: correct.fit(run, mode, 1, 0, 0))
     assert xgb.Booster(model_file=path).get_dump() == expected

@@ -116,7 +116,8 @@ A completed stage is skipped only when all its declared outputs and receipts
 match the run. A completed stage with a missing or stale output fails explicitly;
 it is not silently retrained. Incomplete proxy and boosting fits restart that fit
 from the original seed. Boosting restarts all 200 rounds to preserve its random
-sampling sequence; partial saved trees are not used for continuation. All completed
+sampling sequence. Progress is recorded during fitting; models are saved once
+fitting finishes. All completed
 stages are preserved. Repeated preflight checks preserve the frozen manifest.
 Changed inputs, scientific code or execution configuration require a new run.
 

@@ -163,7 +163,6 @@ class Progress(xgb.callback.TrainingCallback):
     def after_iteration(self, model, epoch, evals_log):
         rounds = epoch + 1
         if rounds % 10 == 0:
-            save_model(self.run, self.key, model, final=False)
             self.run.json(
                 f"validation/{self.key}_progress.json",
                 dict(
@@ -171,16 +170,6 @@ class Progress(xgb.callback.TrainingCallback):
                 ),
             )
         return False
-
-
-def save_model(run, key, model, final):
-    path = run.path(f"models/{key}.json")
-    partial = path.with_suffix(".partial.json")
-    model.set_attr(training_token=run.token)
-    model.save_model(partial)
-    partial.replace(path)
-    if final:
-        receipt(path, run.token)
 
 
 def predict(model, matrix, device):
@@ -221,16 +210,6 @@ def fit(run, mode, outer, inner, target):
     )
     if mode == "quantile":
         params["quantile_alpha"] = 0.9
-    restarted_rounds = 0
-    if path.exists():
-        previous = xgb.Booster()
-        previous.load_model(path)
-        if previous.attr("training_token") != run.token:
-            raise ValueError(f"Unbound partial calibration model: {key}")
-        restarted_rounds = previous.num_boosted_rounds()
-        if restarted_rounds > ROUNDS:
-            raise ValueError("Partial model exceeds the fixed round count")
-        del previous
     fit_start = time.perf_counter()
     # Saved trees do not preserve the sampling RNG state. Restart unfinished
     # stages with the original seed; Run.stage skips verified completed stages.
@@ -240,7 +219,11 @@ def fit(run, mode, outer, inner, target):
         num_boost_round=ROUNDS,
         callbacks=[Progress(run, key)],
     )
-    save_model(run, key, model, final=True)
+    partial = path.with_suffix(".partial.json")
+    model.set_attr(training_token=run.token)
+    model.save_model(partial)
+    partial.replace(path)
+    receipt(path, run.token)
     fit_seconds = time.perf_counter() - fit_start
     del matrix, iterator
     gc.collect()
@@ -250,7 +233,7 @@ def fit(run, mode, outer, inner, target):
     reloaded.load_model(path)
     reloaded.set_param(dict(device=run.config.device, nthread=run.config.cpu_threads))
     proxy = run.array(assembled_path(outer))
-    count, checked = 0, False
+    count = 0
     for shard in run.data.shards:
         offsets, matrix, location, scale = inference_data(
             run, mode, shard, outer, inner, target, proxy
@@ -260,11 +243,10 @@ def fit(run, mode, outer, inner, target):
         prediction = predict(reloaded, matrix, run.config.device)
         if not np.isfinite(prediction).all():
             raise ValueError("Nonfinite calibration prediction")
-        if not checked:
+        if count == 0:
             np.testing.assert_array_equal(
                 predict(model, matrix[:128], run.config.device), prediction[:128]
             )
-            checked = True
         destination = f'predictions/{key}/{shard["name"]}.npz'
         if mode == "mean":
             run.save(
@@ -279,7 +261,7 @@ def fit(run, mode, outer, inner, target):
                 raise ValueError("Invalid interval multiplier")
             run.save(destination, offset=offsets, k=multiplier.astype(np.float32))
         count += len(offsets)
-    if not checked:
+    if count == 0:
         raise ValueError(f"Empty calibration prediction set: {key}")
     run.json(
         f"validation/{key}.json",
@@ -291,7 +273,6 @@ def fit(run, mode, outer, inner, target):
             target=TARGETS[target],
             params=params,
             rounds=ROUNDS,
-            restarted_from_rounds=restarted_rounds,
             matrix_seconds=built,
             training_seconds=fit_seconds,
             total_seconds=time.perf_counter() - start,

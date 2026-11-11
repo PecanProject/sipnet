@@ -1,7 +1,6 @@
 """Train-side scaling and the fixed Student-t proxy optimization loop."""
 
 from dataclasses import dataclass
-import copy
 import math
 import os
 import numpy as np
@@ -16,7 +15,6 @@ class Prepared:
     lc: np.ndarray
     year_ids: np.ndarray
     target_mean: np.ndarray
-    target_members: np.ndarray
     target_center: np.ndarray
     target_scale: np.ndarray
     jitter_mask: np.ndarray
@@ -63,7 +61,6 @@ def prepare(arrays, fit_rows):
         np.asarray(arrays["lc"], np.int64),
         year_ids,
         target,
-        target[:, :, None].copy(),
         center,
         scale,
         np.asarray([name not in JITTER_EXCLUDE for name in NUMERIC]),
@@ -92,19 +89,16 @@ def batch_tensors(prepared, rows, device, jitter_sigma, year_dropout, training):
         year = year.clone()
         year[torch.rand(len(year), device=device) < year_dropout] = 0
     target = torch.from_numpy(prepared.target_mean[rows]).to(device, non_blocking=True)
-    members = torch.from_numpy(prepared.target_members[rows]).to(
-        device, non_blocking=True
-    )
-    return numeric, lc, year, target, members
+    return numeric, lc, year, target
 
 
-def model_loss(output, target, members, settings):
+def model_loss(output, target, settings):
     location = output[:, :, 0]
     scale = float(settings["gaussian_scale_floor"]) + torch.nn.functional.softplus(
         output[:, :, 1]
     )
     degrees = float(settings["student_df"])
-    residual2 = ((members - location[:, :, None]) / scale[:, :, None]).square()
+    residual2 = ((target - location) / scale).square()
     constant = (
         torch.lgamma(torch.tensor((degrees + 1) / 2, device=output.device))
         - torch.lgamma(torch.tensor(degrees / 2, device=output.device))
@@ -112,7 +106,7 @@ def model_loss(output, target, members, settings):
     )
     log_probability = (
         constant
-        - torch.log(scale[:, :, None])
+        - torch.log(scale)
         - ((degrees + 1) / 2) * torch.log1p(residual2 / degrees)
     )
     return -log_probability.mean() + float(
@@ -126,10 +120,10 @@ def evaluate_loss(model, prepared, rows, batch_size, device, settings):
     with torch.no_grad():
         for start in range(0, len(rows), batch_size):
             selected = rows[start : start + batch_size]
-            numeric, lc, year, target, members = batch_tensors(
+            numeric, lc, year, target = batch_tensors(
                 prepared, selected, device, 0.0, 0.0, False
             )
-            loss = model_loss(model(numeric, lc, year), target, members, settings)
+            loss = model_loss(model(numeric, lc, year), target, settings)
             total += float(loss.cpu()) * len(selected)
     return total / len(rows)
 
@@ -164,7 +158,6 @@ def fit_model(
     rng = np.random.default_rng(seed)
     batch_size, patience = int(settings["batch_size"]), int(settings["patience"])
     best_epoch, best_loss, stale = max_epochs, float("inf"), 0
-    best_state = copy.deepcopy(model.state_dict())
     history = []
     for epoch in range(1, max_epochs + 1):
         model.train()
@@ -172,7 +165,7 @@ def fit_model(
         total = 0.0
         for start in range(0, len(shuffled), batch_size):
             selected = shuffled[start : start + batch_size]
-            numeric, lc, year, target, members = batch_tensors(
+            numeric, lc, year, target = batch_tensors(
                 prepared,
                 selected,
                 device,
@@ -181,7 +174,7 @@ def fit_model(
                 True,
             )
             optimizer.zero_grad(set_to_none=True)
-            loss = model_loss(model(numeric, lc, year), target, members, settings)
+            loss = model_loss(model(numeric, lc, year), target, settings)
             if not torch.isfinite(loss):
                 raise RuntimeError(f"Nonfinite Student-t loss at epoch {epoch}")
             loss.backward()
@@ -205,10 +198,6 @@ def fit_model(
             row["inner_validation_loss"] = value
             if value < best_loss - 1e-6:
                 best_loss, best_epoch, stale = value, epoch, 0
-                best_state = {
-                    key: value.detach().cpu().clone()
-                    for key, value in model.state_dict().items()
-                }
             else:
                 stale += 1
             if stale >= patience:
@@ -216,9 +205,5 @@ def fit_model(
                 break
         else:
             best_epoch = epoch
-            best_state = {
-                key: value.detach().cpu().clone()
-                for key, value in model.state_dict().items()
-            }
         history.append(row)
-    return best_epoch, history, best_state
+    return best_epoch, history
