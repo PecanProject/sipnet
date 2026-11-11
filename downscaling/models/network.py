@@ -23,10 +23,11 @@ class Backbone(nn.Module):
         width: int,
         blocks: int,
         use_year_embedding: bool = True,
+        lc_categories: int = 12,
     ) -> None:
         super().__init__()
         self.use_year_embedding = use_year_embedding
-        self.lc_embedding = nn.Embedding(12, 4)
+        self.lc_embedding = nn.Embedding(lc_categories, 4)
         self.year_embedding = nn.Embedding(13, 4) if use_year_embedding else None
         categorical_count = 4 + (4 if use_year_embedding else 0)
         self.input_feature_count = numeric_count + categorical_count
@@ -57,6 +58,7 @@ class ProxyNetwork(nn.Module):
         loss_name: str,
         quantiles: list[float],
         use_year_embedding: bool = True,
+        lc_categories: int = 12,
     ) -> None:
         super().__init__()
         self.loss_name = loss_name
@@ -69,7 +71,9 @@ class ProxyNetwork(nn.Module):
         self.sharing = sharing
         self.use_year_embedding = use_year_embedding
         if sharing == "shared":
-            self.backbone = Backbone(numeric_count, width, blocks, use_year_embedding)
+            self.backbone = Backbone(
+                numeric_count, width, blocks, use_year_embedding, lc_categories
+            )
             self.input_feature_count = self.backbone.input_feature_count
             self.heads = nn.ModuleList(
                 [
@@ -84,7 +88,9 @@ class ProxyNetwork(nn.Module):
         elif sharing == "separate":
             self.backbones = nn.ModuleList(
                 [
-                    Backbone(numeric_count, width, blocks, use_year_embedding)
+                    Backbone(
+                        numeric_count, width, blocks, use_year_embedding, lc_categories
+                    )
                     for _ in range(2)
                 ]
             )
