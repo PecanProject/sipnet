@@ -156,12 +156,12 @@ class Iterator(xgb.DataIter):
 
 
 class Progress(xgb.callback.TrainingCallback):
-    def __init__(self, run, key, offset):
-        self.run, self.key, self.offset = run, key, offset
+    def __init__(self, run, key):
+        self.run, self.key = run, key
         self.start = time.perf_counter()
 
     def after_iteration(self, model, epoch, evals_log):
-        rounds = epoch + 1 + self.offset
+        rounds = epoch + 1
         if rounds % 10 == 0:
             save_model(self.run, self.key, model, final=False)
             self.run.json(
@@ -221,26 +221,24 @@ def fit(run, mode, outer, inner, target):
     )
     if mode == "quantile":
         params["quantile_alpha"] = 0.9
-    previous, offset = None, 0
+    restarted_rounds = 0
     if path.exists():
         previous = xgb.Booster()
         previous.load_model(path)
         if previous.attr("training_token") != run.token:
             raise ValueError(f"Unbound partial calibration model: {key}")
-        offset = previous.num_boosted_rounds()
-        if offset > ROUNDS:
+        restarted_rounds = previous.num_boosted_rounds()
+        if restarted_rounds > ROUNDS:
             raise ValueError("Partial model exceeds the fixed round count")
+        del previous
     fit_start = time.perf_counter()
-    model = (
-        xgb.train(
-            params,
-            matrix,
-            num_boost_round=ROUNDS - offset,
-            xgb_model=previous,
-            callbacks=[Progress(run, key, offset)],
-        )
-        if offset < ROUNDS
-        else previous
+    # Saved trees do not preserve the sampling RNG state. Restart unfinished
+    # stages with the original seed; Run.stage skips verified completed stages.
+    model = xgb.train(
+        params,
+        matrix,
+        num_boost_round=ROUNDS,
+        callbacks=[Progress(run, key)],
     )
     save_model(run, key, model, final=True)
     fit_seconds = time.perf_counter() - fit_start
@@ -293,7 +291,7 @@ def fit(run, mode, outer, inner, target):
             target=TARGETS[target],
             params=params,
             rounds=ROUNDS,
-            resumed_rounds=offset,
+            restarted_from_rounds=restarted_rounds,
             matrix_seconds=built,
             training_seconds=fit_seconds,
             total_seconds=time.perf_counter() - start,

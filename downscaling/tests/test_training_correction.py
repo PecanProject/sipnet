@@ -97,3 +97,47 @@ def test_empty_interval_holdout(training_data, tmp_path, monkeypatch):
     )
     assert matrix.shape == (0, 67)
     assert len(offsets) == 0
+
+
+@pytest.mark.parametrize("mode", ["mean", "quantile"])
+def test_interrupted_fit_matches_uninterrupted(training_data, tmp_path, monkeypatch, mode):
+    run, proxy = calibration_run(training_data, tmp_path)
+    # Vary the labels so row/column sampling affects the learned trees.
+    proxy[:, :, 0] += run.data.arrays["numeric"][:, :2] * 5
+    run.array_save(assembled_path(1), proxy)
+    correct.assemble(run, 1)
+    shard = run.data.shards[0]
+    nested = run.load("cache/nested_o1/sample.npz")
+    nested["logk"] += np.abs(run.data.native(shard, "x")[nested["offset"], :2])
+    run.save("cache/nested_o1/sample.npz", **nested)
+    if mode == "quantile":
+        correct.fit(run, "mean", 1, 0, 0)
+    key = correct.name(mode, 1, 0, 0)
+    correct.fit(run, mode, 1, 0, 0)
+    path = run.root / f"models/{key}.json"
+    expected = xgb.Booster(model_file=path).get_dump()
+    predictions = run.load(f"predictions/{key}/sample.npz")
+    path.rename(run.root / "uninterrupted-model.json")
+    callback = correct.Progress.after_iteration
+
+    class Interrupted(Exception):
+        pass
+
+    def interrupt(self, model, epoch, evals_log):
+        result = callback(self, model, epoch, evals_log)
+        if epoch == 9:
+            raise Interrupted
+        return result
+
+    with monkeypatch.context() as patch:
+        patch.setattr(correct.Progress, "after_iteration", interrupt)
+        with pytest.raises(Interrupted):
+            correct.fit(run, mode, 1, 0, 0)
+    assert xgb.Booster(model_file=path).num_boosted_rounds() == 10
+    run.stage(key, correct.outputs(run.data, mode, 1, 0, 0),
+              lambda: correct.fit(run, mode, 1, 0, 0))
+    assert xgb.Booster(model_file=path).get_dump() == expected
+    for name, values in predictions.items():
+        np.testing.assert_array_equal(
+            run.load(f"predictions/{key}/sample.npz")[name], values
+        )
