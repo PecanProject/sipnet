@@ -153,6 +153,8 @@ def fit_model(
     warmup_epochs = max(1, round(max_epochs * float(settings["warmup_fraction"])))
 
     def learning_rate(epoch):
+        # LambdaLR starts at zero; optimizer epoch one needs warmup step one.
+        epoch = min(epoch + 1, max_epochs)
         if epoch <= warmup_epochs:
             return epoch / warmup_epochs
         progress = (epoch - warmup_epochs) / max(1, max_epochs - warmup_epochs)
@@ -188,12 +190,12 @@ def fit_model(
             )
             optimizer.step()
             total += float(loss.detach().cpu()) * len(selected)
-        scheduler.step()
         row = dict(
             epoch=float(epoch),
             train_loss=total / len(shuffled),
             learning_rate=float(optimizer.param_groups[0]["lr"]),
         )
+        scheduler.step()
         if validation_rows is not None:
             value = evaluate_loss(
                 model, prepared, validation_rows, batch_size, device, settings
