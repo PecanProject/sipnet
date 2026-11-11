@@ -57,6 +57,9 @@ def prepare(config, sources, period, token):
     shape = (len(times), len(lat), len(lon), 4)
     if np.prod(shape) * 4 > config.max_output_bytes:
         raise ValueError("Soil cache exceeds configured storage budget")
+    from downscaling.predict.state import budget
+
+    budget(config, int(np.prod(shape)) * 4 + 65536)
     dest.parent.mkdir(parents=True, exist_ok=True)
     partial = dest.with_name(dest.name + f".partial.{os.getpid()}")
     array = np.lib.format.open_memmap(partial, mode="w+", dtype=np.float32, shape=shape)
