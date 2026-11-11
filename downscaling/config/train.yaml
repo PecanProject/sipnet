@@ -1,0 +1,6 @@
+# Prepared arrays follow the training data contract. No scientific overrides.
+prepared_data: /path/to/prepared_training_data
+output: /path/to/new_training_run
+resources:
+  device: cpu
+  cpu_threads: 1
