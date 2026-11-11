@@ -43,3 +43,22 @@ def test_integrity_checks_are_not_normalized_away(damage):
         actual["sum_2020-01"][:, 0, :] = np.nan
     with pytest.raises(AssertionError):
         compare_block_arrays(actual, block())
+
+
+def test_module_audit_tolerates_lazy_import(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from downscaling.scripts import validate
+
+    source = tmp_path / "module.py"
+    source.write_text("# fixture\n")
+    registry = {}
+
+    class LazyModule:
+        @property
+        def __file__(self):
+            registry["newly_imported"] = SimpleNamespace(__file__=str(source))
+            return str(source)
+
+    registry["lazy"] = LazyModule()
+    monkeypatch.setattr(validate, "sys", SimpleNamespace(modules=registry))
+    assert validate.loaded_module_paths() == [str(source.resolve())]

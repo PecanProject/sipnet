@@ -79,6 +79,17 @@ def compare_block_arrays(actual, expected):
     return maximum
 
 
+def loaded_module_paths():
+    """Snapshot the registry before lazy/background imports can mutate it."""
+    return sorted(
+        {
+            str(Path(module.__file__).resolve())
+            for module in tuple(sys.modules.values())
+            if getattr(module, "__file__", None) and Path(module.__file__).is_file()
+        }
+    )
+
+
 def validate(config, reference):
     manifest = read(reference / "manifest.json")
     if (
@@ -157,13 +168,7 @@ def validate(config, reference):
     assert execute("run", config, resume=True) == result
     resume_seconds = time.perf_counter() - started
     assert before == {str(p): identity(p) for p in artifacts}
-    module_paths = sorted(
-        {
-            str(Path(module.__file__).resolve())
-            for module in sys.modules.values()
-            if getattr(module, "__file__", None) and Path(module.__file__).is_file()
-        }
-    )
+    module_paths = loaded_module_paths()
     allowed = (
         Path(sys.prefix).resolve(),
         Path(sys.base_prefix).resolve(),
