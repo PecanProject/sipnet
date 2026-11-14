@@ -54,6 +54,11 @@ The `sipnet.out` file contains a time series of state variables and fluxes from 
 [^1]: Mean soilWetnessFrac (ratio of soil water / water holding capacity) calculated as average between previous and current time step. Reported for diagnostics only, and it can exceed 1 when `flooding` is enabled.
 Internal moisture dependency functions use instantaneous $W_{soil}/W_{WHC}$ (not this average), and clip that ratio to [0,1] where those dependency functions are defined.
 
+SIPNET writes zero for balance residuals smaller than `1e-8` in magnitude.
+If any residual is nonfinite or reaches that threshold in magnitude, SIPNET
+logs the timestep, pool totals, inputs, outputs, and clamping adjustment and
+exits before writing that timestep to `sipnet.out`.
+
 An example output file can be found in [tests/smoke/russell_1/sipnet.out](https://github.com/PecanProject/sipnet/blob/master/tests/smoke/russell_1/sipnet.out).
 
 ```

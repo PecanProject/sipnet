@@ -31,7 +31,14 @@
 #define logInternalError(...) logprint(2, "[ERROR (INTERNAL)] ", FILE_NAME, __LINE__, __VA_ARGS__)
 // clang-format on
 
+#if defined(__GNUC__) || defined(__clang__)
+#define ATTRIB_PRINTF(fmt_idx, arg_idx)                                        \
+  __attribute__((format(printf, fmt_idx, arg_idx)))
+#else
+#define ATTRIB_PRINTF(fmt_idx, arg_idx)
+#endif
+
 void logprint(int logLevel, const char *prefix, const char *file, int lineNum,
-              const char *fmt, ...);
+              const char *fmt, ...) ATTRIB_PRINTF(5, 6);
 
 #endif  // SIPNET_LOGGING_H

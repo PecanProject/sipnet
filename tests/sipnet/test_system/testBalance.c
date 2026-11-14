@@ -31,7 +31,7 @@ void setupTests(ModelParams **modelParamsPtr) {
   ctx.anaerobic = 1;
 
   initModel(modelParamsPtr, "balance.param", "balance.clim");
-  initEvents("events.in", "events.out", ctx.printHeader);
+  initEvents("", "events.out", ctx.printHeader);
   reset();
 #if DO_OUTPUT
   out = openFile(OUTPUT_FILE, "w");
@@ -79,7 +79,7 @@ int checkWater(void) {
   validateContext();
 
   int status = 0;
-  if (fabs(balanceTracker.deltaWater) > TEST_EPS) {
+  if (balanceResidualFailed(balanceTracker.deltaWater)) {
     status = 1;
     logTest("water balance check delta %8.5f (Y %d D %d T %4.2f)\n",
             balanceTracker.deltaWater, climate->year, climate->day,
@@ -136,6 +136,7 @@ int testBalanceLeafNegativeLeafOnN(void) {
 
     status |= checkCarbon();
     status |= checkNitrogen();
+    status |= checkWater();
 
     climate = climate->nextClim;
   }
@@ -237,7 +238,7 @@ int main(void) {
 }
 
 void dumpState(void) {
-#if DEBUG_C | DEBUG_N | DEBUG_W
+#if DEBUG_C | DEBUG_N
   double len = climate->length;
 #endif
 #if DEBUG_C

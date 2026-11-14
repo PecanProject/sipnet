@@ -5,6 +5,7 @@
 
 #include "common/logging.h"
 #include "sipnet/sipnet.c"
+#include "utils/exitHandler.c"
 
 #define MAX_LINE_LEN 4096
 #define MAX_TOKENS 1024
@@ -95,6 +96,43 @@ void genOutput(FILE *out) {
   outputState(out, 2026, 50, 0.0);
 }
 
+int testEnsureNonNegativeClamping(void) {
+  logTest("Testing ensureNonNegative clamping\n");
+  double val = -0.5 * EPS;
+  ensureNonNegative(&val, 0.0, "testPool");
+  if (val != 0.0) {
+    logTest("ensureNonNegative failed to clamp small negative value\n");
+    return 1;
+  }
+  return 0;
+}
+
+static ClimateNode testClimateNode = {
+    .year = 2026,
+    .day = 100,
+    .time = 0.5,
+    .nextClim = NULL,
+};
+
+int testEnsureNonNegativeViolation(void) {
+  logTest("Testing ensureNonNegative stock violation error handling\n");
+  climate = &testClimateNode;
+
+  double val = -10.0;
+  should_exit = 1;
+  expected_code = EXIT_CODE_INTERNAL_ERROR;
+  exit_result = 1;
+
+  int jmp_rval = setjmp(jump_env);
+  if (!jmp_rval) {
+    ensureNonNegative(&val, 0.0, "plantWoodC");
+  }
+
+  climate = NULL;
+  test_assert(jmp_rval == 1);
+  return !exit_result;
+}
+
 int run(void) {
   int status = 0;
 
@@ -108,6 +146,10 @@ int run(void) {
   fclose(out);
 
   status |= checkOutput();
+  status |= testEnsureNonNegativeClamping();
+  status |= testEnsureNonNegativeViolation();
+
+  really_exit = 1;
 
   return status;
 }
@@ -119,6 +161,7 @@ int main(void) {
 
   status = run();
   if (status) {
+    really_exit = 1;
     logTest("FAILED testOutputHeader with status %d\n", status);
     exit(status);
   }

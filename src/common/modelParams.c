@@ -1,6 +1,7 @@
 #include "modelParams.h"
 
 #include <stdlib.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -184,9 +185,9 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
           // Check if there's room for ", ", pName, and null terminator
           if (strlen(unknownParams) + strlen(pName) + 3 >
               MODEL_PARAM_ERROR_BUFFER_SIZE) {
-            logError("Too many unknown params; please remove some from %s and "
-                     "rerun\n",
-                     paramFile);
+            logError(
+                "Too many unknown params; please remove some from parameter "
+                "file and rerun\n");
             logError("Unknown params include: %s\n", unknownParams);
             exit(EXIT_CODE_INPUT_FILE_ERROR);
           }
@@ -204,6 +205,11 @@ void readModelParams(ModelParams *modelParams, FILE *paramFile) {
       } else {  // otherwise, we're good to go
         // set param to point to the appropriate parameter, for easier access
         param = &(modelParams->params[paramIndex]);
+        if (!isfinite(value)) {
+          logError("parameter %s must be finite; got %.17g\n", param->name,
+                   value);
+          exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+        }
         *(param->value) = value;
         param->isRead = 1;
         // mark this as the next parameter read from file:

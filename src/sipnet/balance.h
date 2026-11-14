@@ -59,6 +59,10 @@ void updateBalanceTrackerPostClamp(void);
 
 void initBalanceTracker(void);
 
+// Returns 1 if a balance residual is nonfinite or has magnitude >= EPS
+int balanceResidualFailed(double residual);
+
+// Exits with EXIT_CODE_INTERNAL_ERROR if any balance check fails
 void checkBalance(void);
 
 #endif  // BALANCE_H
