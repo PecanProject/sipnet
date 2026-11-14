@@ -442,7 +442,7 @@ void outputHeader(FILE *out) {
   fprintf(out,
           "fluxestranspiration     minN  soilOrgN    litterN  "
           "plantStorageN       n2o nLeaching  nFixation  nUptake      ch4  "
-          "nppStorage        lai\n");
+          "nppStorage        lai  bcdeltaC  bcdeltaN  bcdeltaW\n");
 }
 
 /*!
@@ -471,8 +471,9 @@ void outputState(FILE *out, int year, int day, double time) {
   fprintf(out, "%9.6f %9.4f %10.4f %8.4f %8.4f", trackers.n2o,
           trackers.nLeaching, trackers.nFixation, trackers.nUptake,
           trackers.methane);
-  fprintf(out, "%12.4f %10.4f\n", envi.plantCAccountingDelta,
-          envi.plantLeafC / params.leafCSpWt);
+  fprintf(out, "%12.4f %10.4f %9.5f %9.5f %9.5f\n", envi.plantCAccountingDelta,
+          envi.plantLeafC / params.leafCSpWt, balanceTracker.deltaC,
+          balanceTracker.deltaN, balanceTracker.deltaWater);
 }
 
 // de-allocate space used for climate linked list
@@ -1771,7 +1772,7 @@ void checkForMortality(void) {
 }
 
 void updatePoolsAndBalance() {
-  // Calc total C and N before pool updates
+  // Calc total C, N, and water before pool updates
   updateBalanceTrackerPreUpdate();
 
   // Update pools for fluxes from events
@@ -1796,14 +1797,14 @@ void updatePoolsAndBalance() {
   // correct for harvest termination
   checkForMortality();
 
-  // Calc total C and N after pool updates
+  // Calc total C, N, and water after pool updates
   updateBalanceTrackerPostUpdate();
 
   // Verify none of our stocks have gone negative (set any that are to zero).
   ensureNonNegativeStocks();
 
-  // Calc total C and N after non-negative check, and total system inputs and
-  // outputs
+  // Calc total C, N, and water after non-negative check, and total system
+  // inputs and outputs
   updateBalanceTrackerPostClamp();
 
   // Perform balance check

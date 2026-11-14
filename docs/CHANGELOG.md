@@ -28,6 +28,8 @@ sections to include in release notes:
 
 ### Added
 
+- Water mass-balance checking, with `bcdeltaC`, `bcdeltaN`, and `bcdeltaW`
+  columns in `sipnet.out`. (#310)
 - Model-level nitrogen limitation tests covering coincident harvest, leaf, and
   fertilizer events, NPP signs, nitrogen availability, and flooding. (#415)
 
