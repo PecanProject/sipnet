@@ -34,8 +34,10 @@ sections to include in release notes:
 ### Fixed
 - Validate all input event records for calculated-phenology conflicts and
   same-day planting/harvest, resetting daily checks when leaf events start a new
-  date. (#429)
-- Return a non-zero exit status from the unit test runner when a test fails or is missing. (#432)
+  date. (#431)
+- Report missed agronomic events immediately across year boundaries instead of silently blocking later events. (#428)
+- Return a non-zero exit status from the unit test runner when a test fails or is missing. (#433)
+- Report restart checkpoint write or close failures and exit with file write error status 11, including in quiet mode. (#427)
 - Restore format specifiers for stock value in `ensureNonNegative()` error logging to align arguments and prevent undefined behavior. (#406)
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
 - Leaf-off mechanics refined to ensure that leaf-off events do not remove more leaf carbon than is available in the leaf pool. (#400)
