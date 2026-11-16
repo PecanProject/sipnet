@@ -33,7 +33,7 @@ sections to include in release notes:
 
 ### Fixed
 - Reject configuration keys longer than 255 alphanumeric characters before
-  overflowing the normalization buffer. (#438)
+  overflowing the normalization buffer. (#439)
 - Return a non-zero exit status from the unit test runner when a test fails or is missing. (#432)
 - Restore format specifiers for stock value in `ensureNonNegative()` error logging to align arguments and prevent undefined behavior. (#406)
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
