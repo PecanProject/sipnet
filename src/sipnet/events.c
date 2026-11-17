@@ -265,6 +265,12 @@ struct EventValidation {
 static struct EventValidation eVal = {0};
 
 void validateEvent(EventNode *event, int currYear, int currDay) {
+  // Leaf events can start a new day too, so reset before their early return.
+  if (event->year > currYear || event->day > currDay) {
+    eVal.todayHasHarvest = 0;
+    eVal.todayHasPlanting = 0;
+  }
+
   // logInfo("Validating event with type %s\n", eventTypeToString(event->type));
   // If we have a leaf event, make sure we aren't also looking for
   // calculated leaf events.
@@ -289,10 +295,6 @@ void validateEvent(EventNode *event, int currYear, int currDay) {
   }
 
   // Make sure we don't have planting and harvest on the same day
-  if (event->year > currYear || event->day > currDay) {
-    eVal.todayHasHarvest = 0;
-    eVal.todayHasPlanting = 0;
-  }
   if (event->type == HARVEST) {
     eVal.todayHasHarvest = 1;
   }
@@ -390,7 +392,7 @@ EventNode *readEventData(const char *eventFile) {
     }
 
     next = createEventNode(year, day, eventType, eventParamsStr);
-    validateEvent(newEvent, currYear, currDay);
+    validateEvent(next, currYear, currDay);
 
     curr->nextEvent = next;
     currYear = year;
@@ -490,6 +492,10 @@ void writePendingHarvestEvent(EventNode *event) {
   }
 }
 
+static int eventIsDue(const EventNode *event, int year, int day) {
+  return event->year < year || (event->year == year && event->day <= day);
+}
+
 void writeEventsOut(void) {
   // We move the global events pointer here (instead of a copy as in the
   // processEvents functions), as this is the last pass
@@ -501,7 +507,7 @@ void writeEventsOut(void) {
   int hasSeenLeafOn = 0;
   int hasSeenLeafOff = 0;
   int hasSeenHarvest = 0;
-  while (gEvent != NULL && gEvent->year <= climYear && gEvent->day <= climDay) {
+  while (gEvent != NULL && eventIsDue(gEvent, climYear, climDay)) {
     // First up, check the pending events
     if (gEvent->type == HARVEST) {
       if (hasSeenHarvest) {
@@ -638,7 +644,7 @@ void processEventsForCarbon(EventNode *event) {
   int hasSeenLeafOff = 0;
   int hasSeenHarvest = 0;
 
-  while (event != NULL && event->year <= climYear && event->day <= climDay) {
+  while (event != NULL && eventIsDue(event, climYear, climDay)) {
     // The events file has been tested on read, so we know this event list
     // should be in chrono order. However, we need to check to make sure the
     // current event is not in the past, as that would indicate an event that
@@ -905,7 +911,7 @@ void processEventsForNitrogen(EventNode *event) {
   int hasSeenLeafOff = 0;
   int hasSeenHarvest = 0;
 
-  while (event != NULL && event->year <= climYear && event->day <= climDay) {
+  while (event != NULL && eventIsDue(event, climYear, climDay)) {
     switch (event->type) {
       case IRRIGATION: {
         // Nothing to do for irrigation events
