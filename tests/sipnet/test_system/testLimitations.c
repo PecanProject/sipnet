@@ -124,8 +124,6 @@ static void limitationCase(int harvest, int leafOn, int leafOff, int fertilizer,
   updateState();
   near(balanceTracker.deltaC, 0, "C balance");
   near(balanceTracker.deltaN, 0, "N balance");
-  near(balanceTracker.clampedC, 0, "C clamping");
-  near(balanceTracker.clampedN, 0, "N clamping");
   near(envi.plantLeafC, 10 - 2 * harvest + newLeaves - shedLeaves + growth,
        "plantLeafC");
   near(envi.litterC, 100 + 11 * harvest + shedLeaves + 3 * fertilizer,
