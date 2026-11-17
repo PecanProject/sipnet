@@ -32,6 +32,9 @@ sections to include in release notes:
   fertilizer events, NPP signs, nitrogen availability, and flooding. (#415)
 
 ### Fixed
+- Reject configuration keys longer than 255 alphanumeric characters before
+  overflowing the normalization buffer. (#439)
+- Return a non-zero exit status from the unit test runner when a test fails or is missing. (#432)
 - Validate all input event records for calculated-phenology conflicts and
   same-day planting/harvest, resetting daily checks when leaf events start a new
   date. (#431)

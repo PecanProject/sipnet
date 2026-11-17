@@ -102,6 +102,8 @@ KEY = VALUE
 
 Keys are case-insensitive, and hyphens and underscores are ignored, so `INPUT_FILE`, `inputfile`, and `iNPUtFiLE` are equivalent.
 
+Keys may contain at most 255 alphanumeric characters after normalization. Longer normalized keys cause a configuration error.
+
 ### Configuration File Keys
 
 #### Input/Output Keys
