@@ -9,8 +9,9 @@
 // up so that the pool delta alone produces the requested residual, with the
 // system inputs and outputs balancing each other.
 
-typedef enum { CARBON, NITROGEN } Element;
+typedef enum { CARBON, NITROGEN, WATER } Element;
 
+static const char *const elementNames[] = {"carbon", "nitrogen", "water"};
 static ClimateNode testClimate;
 
 static void setResidual(Element element, double residual) {
@@ -21,17 +22,19 @@ static void setResidual(Element element, double residual) {
     balanceTracker.finalC = residual;
     balanceTracker.inputsC = 2.0;
     balanceTracker.outputsC = 2.0;
-  } else {
+  } else if (element == NITROGEN) {
     balanceTracker.preTotalN = 0.0;
     balanceTracker.postTotalN = residual;
     balanceTracker.finalN = residual;
     balanceTracker.inputsN = 2.0;
     balanceTracker.outputsN = 2.0;
+  } else {
+    balanceTracker.preTotalWater = 0.0;
+    balanceTracker.postTotalWater = residual;
+    balanceTracker.finalWater = residual;
+    balanceTracker.inputsWater = 2.0;
+    balanceTracker.outputsWater = 2.0;
   }
-}
-
-static const char *elementName(Element element) {
-  return element == CARBON ? "carbon" : "nitrogen";
 }
 
 // Returns 0 if checkBalance() exits with EXIT_CODE_INTERNAL_ERROR
@@ -51,7 +54,7 @@ static int expectFatal(Element element, double residual, const char *label) {
 
   if (!exit_result) {
     logTest("FAIL: %s %s residual %.17g did not exit as expected\n",
-            elementName(element), label, residual);
+            elementNames[element], label, residual);
     return 1;
   }
   return 0;
@@ -71,11 +74,12 @@ static int expectPass(Element element, double residual, const char *label) {
   }
   test_assert(jmp_rval == 0);
 
-  double delta =
-      element == CARBON ? balanceTracker.deltaC : balanceTracker.deltaN;
+  const double deltas[] = {balanceTracker.deltaC, balanceTracker.deltaN,
+                           balanceTracker.deltaWater};
+  double delta = deltas[element];
   if (!exit_result || delta != 0.0) {
     logTest("FAIL: %s %s residual %.17g should pass (delta %.17g)\n",
-            elementName(element), label, residual, delta);
+            elementNames[element], label, residual, delta);
     return 1;
   }
   return 0;
@@ -141,6 +145,11 @@ static int testBalancedStep(void) {
   balanceTracker.clampedN = 0.75;
   balanceTracker.inputsN = 1.75;  // includes clamped
   balanceTracker.outputsN = 1.5;
+  balanceTracker.preTotalWater = 3.0;
+  balanceTracker.postTotalWater = 2.5;
+  balanceTracker.finalWater = 2.5;
+  balanceTracker.inputsWater = 0.25;
+  balanceTracker.outputsWater = 0.75;
 
   really_exit = 0;
   should_exit = 0;
@@ -170,6 +179,7 @@ int run(void) {
   status |= testResidualPredicate();
   status |= testElement(CARBON);
   status |= testElement(NITROGEN);
+  status |= testElement(WATER);
   status |= testBalancedStep();
 
   climate = NULL;
