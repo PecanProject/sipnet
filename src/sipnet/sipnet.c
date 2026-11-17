@@ -834,13 +834,13 @@ void calcLeafOnOffFluxes(void) {
 // calculate total rain and snowfall (cm water equiv./day)
 // also, immediate evaporation (from interception) (cm/day)
 void calcPrecip(double *rain, double *snowFall, double *immedEvap, double lai) {
-  // below freezing -> precip falls as snow
-  if (climate->tair <= 0) {
+  // At or below freezing, precipitation falls as snow only if snow is enabled.
+  if (ctx.snow && climate->tair <= 0) {
     *snowFall = climate->precip / climate->length;
     *rain = 0;
   }
 
-  // above freezing -> precip falls as rain
+  // Above freezing or with snow disabled, precipitation falls as rain.
   else {
     *snowFall = 0;
     *rain = climate->precip / climate->length;
