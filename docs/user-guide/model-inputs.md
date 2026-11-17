@@ -113,7 +113,7 @@ Rules:
 
 - File must be in chronological order. Ties (same day multiple events) are allowed and processed in file order.
 - Events are specified at day resolution (no sub‑daily timestamp).
-- Every (year, day) appearing in `events.in` must have at least one corresponding climate record; otherwise SIPNET errors.
+- Every (year, day) appearing in `events.in` must have at least one corresponding climate record. This includes events before the first climate date, between climate records, and after the final climate date. SIPNET reports the first unmatched event's year and day and exits with input-file error status 5. For segmented runs, each segment's event file must contain only events with matching climate records in that segment.
 - Values in `events.in` are instantaneous amounts (cm or mass/area) applied on the date and time of the first climate record matching that event's year and day.
 
 See subsections below for details and parameter definitions for each event type.

@@ -1985,6 +1985,16 @@ void runModelOutput(FILE *out, DebugLogFiles *debugLogFiles,
     climate = climate->nextClim;
   }
 
+  // No later climate step can catch an event still pending at end of input.
+  EventNode *pendingEvent = getCurrentEvent();
+  if (ctx.events && pendingEvent != NULL) {
+    logError("Agronomic event found for year: %d day: %d that does not "
+             "have a corresponding record in the climate file "
+             "(end of climate data)\n",
+             pendingEvent->year, pendingEvent->day);
+    exit(EXIT_CODE_INPUT_FILE_ERROR);
+  }
+
   if (outputItems != NULL) {
     terminateOutputItemLines(outputItems);
   }
