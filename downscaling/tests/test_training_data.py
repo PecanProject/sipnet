@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from downscaling.artifacts import write
 from downscaling.contracts import NUMERIC
-from downscaling.train.data import Dataset, publish, period_position, native_matrix
+from downscaling.train.data import Dataset, publish, period_position
 from downscaling.train.splits import align_ids, declare_nested, proxy_keys, sites
 
 
@@ -105,16 +105,10 @@ def test_failed_republish_keeps_manifest(training_data):
     assert (path.read_bytes(), path.stat().st_mtime_ns) == before
 
 
-def test_leap_boundary_and_encoding(training_data):
+def test_leap_boundary(training_data):
     data = Dataset(training_data)
     positions, valid = period_position(
         ["2020-02-29T21:00Z", "2020-03-01T00:00Z", "2020-03-02T00:00Z"], data.periods
     )
     np.testing.assert_array_equal(positions, [0, 1, 1])
     np.testing.assert_array_equal(valid, [True, True, False])
-    x = np.zeros((2, 33), np.float32)
-    x[:, 31], x[:, 32] = [0, 22], [1, 8]
-    encoded = native_matrix(x)
-    assert encoded.shape == (2, 61)
-    assert encoded[0, 5] == encoded[1, 27] == encoded[1, -1] == 1
-    assert encoded[0, -7:].sum() == 0

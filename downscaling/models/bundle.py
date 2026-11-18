@@ -4,10 +4,10 @@ from pathlib import Path
 from downscaling.artifacts import read, sha, digest
 from downscaling.contracts import TARGETS, NATIVE, KGC, NUMERIC
 
-SCHEMA = "sipnet-downscaling-model-1"
+SCHEMA = "sipnet-period-residual-1"
 
 
-def feature_contract():
+def prepared_contract():
     return dict(
         targets=TARGETS,
         native=NATIVE,
@@ -22,6 +22,15 @@ def feature_contract():
     )
 
 
+def feature_contract():
+    return dict(
+        **prepared_contract(),
+        sequence_steps=128,
+        forest_features=4220,
+        spatial_months=12,
+    )
+
+
 def required_files():
     return {
         name
@@ -30,7 +39,7 @@ def required_files():
             f"proxy/fold_{fold}.pt",
             f"proxy/fold_{fold}.json",
             f"spatial/fold_{fold}.npz",
-            *[f"mean/fold_{fold}_{target}.json" for target in TARGETS],
+            *[f"residual/fold_{fold}_{target}.json" for target in TARGETS],
         ]
     }
 

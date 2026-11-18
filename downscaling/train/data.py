@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from downscaling.artifacts import digest, read, sha, write
 from downscaling.contracts import NUMERIC
-from downscaling.models.bundle import feature_contract
+from downscaling.models.bundle import prepared_contract
 from downscaling.train import splits
 
 SCHEMA = "sipnet-downscaling-training-data-1"
@@ -48,7 +48,7 @@ def publish(root, names, provenance, calendar_start_utc):
     }
     payload = dict(
         schema=SCHEMA,
-        contract=feature_contract(),
+        contract=prepared_contract(),
         expected_shards=names,
         calendar_start_utc=calendar_start_utc,
         files=files,
@@ -83,21 +83,6 @@ def period_position(utc, periods):
     return positions, valid
 
 
-def native_matrix(values):
-    kgc, lc = values[:, 31], values[:, 32]
-    if not np.isin(kgc, np.arange(23)).all() or not np.isin(lc, np.arange(1, 9)).all():
-        raise ValueError("Unknown native category")
-    return np.concatenate(
-        [
-            values[:, :5],
-            np.eye(23, dtype=np.float32)[kgc.astype(int)],
-            values[:, 5:31],
-            np.eye(8, dtype=np.float32)[lc.astype(int) - 1, 1:],
-        ],
-        axis=1,
-    )
-
-
 class Dataset:
     def __init__(self, root, manifest=None):
         self.root = Path(root).resolve()
@@ -107,7 +92,7 @@ class Dataset:
         payload = {key: value for key, value in self.manifest.items() if key != "id"}
         if (
             self.manifest.get("schema") != SCHEMA
-            or self.manifest.get("contract") != feature_contract()
+            or self.manifest.get("contract") != prepared_contract()
             or digest(payload) != self.manifest.get("id")
         ):
             raise ValueError("Incompatible prepared data manifest")
@@ -214,17 +199,10 @@ class Dataset:
             allow_pickle=False,
         )
 
-    def matrix(self, shard, offsets):
-        return native_matrix(np.asarray(self.native(shard, "x")[offsets]))
-
     def times(self, steps):
         return pd.DatetimeIndex(
             self.start + pd.to_timedelta(steps.astype(np.int64) * 3, unit="h")
         )
-
-    def calendar_bins(self, steps):
-        times = self.times(steps)
-        return (times.month.to_numpy() - 1) * 8 + times.hour.to_numpy() // 3
 
     def validate_native(self):
         partitions = set()
