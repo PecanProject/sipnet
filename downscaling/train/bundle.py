@@ -30,8 +30,8 @@ def export(run):
         write(run.path(f"model_bundle/proxy/fold_{outer}.json"), checkpoint["metadata"])
         for target in ("NEE", "LE"):
             shutil.copyfile(
-                run.root / f"models/mean_o{outer}_j0_{target}.json",
-                run.path(f"model_bundle/mean/fold_{outer}_{target}.json"),
+                run.root / f"models/residual_o{outer}_j0_{target}.json",
+                run.path(f"model_bundle/residual/fold_{outer}_{target}.json"),
             )
         spatial = run.load(f"models/spatial_o{outer}.npz")
         destination = run.path(f"model_bundle/spatial/fold_{outer}.npz")
@@ -43,8 +43,7 @@ def export(run):
                     for key in (
                         "cell",
                         "caps",
-                        "train_sites",
-                        "site_ids",
+                        "train_positions",
                         "lc",
                         "coords",
                     )

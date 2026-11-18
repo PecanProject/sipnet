@@ -12,85 +12,44 @@ from downscaling.train import proxy, correct, evaluate, bundle
 
 
 def stages(data):
-    result = []
-    for outer in (1, 2, 3):
-        for inner in (0, 1, 2, 3):
-            result.append(
-                (
-                    proxy.name(outer, inner),
-                    proxy.outputs(outer, inner),
-                    "proxy",
-                    (outer, inner, 0),
-                )
-            )
-        result.append(
-            (
-                f"proxy_assemble_{outer}_0",
-                [proxy.assembled_path(outer)],
-                "proxy_assemble",
-                (outer, 0),
-            )
-        )
-        for target in (0, 1):
-            result.append(
-                (
-                    correct.name("mean", outer, 0, target),
-                    correct.outputs(data, "mean", outer, 0, target),
-                    "correct",
-                    ("mean", outer, 0, target),
-                )
-            )
-        for inner in (1, 2, 3):
-            for nested in (1, 2, 3):
-                result.append(
-                    (
-                        proxy.name(outer, inner, nested),
-                        proxy.outputs(outer, inner, nested),
-                        "proxy",
-                        (outer, inner, nested),
-                    )
-                )
-            result.append(
-                (
-                    f"proxy_assemble_{outer}_{inner}",
-                    [proxy.assembled_path(outer, inner)],
-                    "proxy_assemble",
-                    (outer, inner),
-                )
-            )
-            for target in (0, 1):
-                result.append(
-                    (
-                        correct.name("mean", outer, inner, target),
-                        correct.outputs(data, "mean", outer, inner, target),
-                        "correct",
-                        ("mean", outer, inner, target),
-                    )
-                )
-        result.append(
-            (f"nested_{outer}", correct.nested_outputs(data, outer), "nested", (outer,))
-        )
-        for target in (0, 1):
-            result.append(
-                (
-                    correct.name("quantile", outer, 0, target),
-                    correct.outputs(data, "quantile", outer, 0, target),
-                    "correct",
-                    ("quantile", outer, 0, target),
-                )
-            )
-        result.append(
-            (
-                f"spatial_{outer}",
-                [f"models/spatial_o{outer}.npz", f"validation/spatial_o{outer}.json"],
-                "spatial",
-                (outer,),
-            )
-        )
-    result += [
-        ("report", evaluate.report_outputs(data), "report", ()),
-        ("bundle", bundle.outputs(), "bundle", ()),
+    result = [
+        (proxy.name(*key), proxy.outputs(*key), "proxy", key) for key in proxy_keys()
     ]
+    result.append(
+        (
+            "period_features",
+            ["cache/period_features.npy", "cache/periods.npz"],
+            "prepare",
+            (),
+        )
+    )
+    for o in (1, 2, 3):
+        for j in range(4):
+            result.append(
+                (
+                    f"proxy_assemble_{o}_{j}",
+                    [proxy.assembled_path(o, j)],
+                    "proxy_assemble",
+                    (o, j),
+                )
+            )
+            result.append(
+                (f"residual_{o}_{j}", correct.outputs(o, j), "correct", (o, j))
+            )
+        result.append(
+            (
+                f"spatial_{o}",
+                [f"models/spatial_o{o}.npz", f"predictions/spatial_o{o}.npz"],
+                "spatial",
+                (o,),
+            )
+        )
+    result.extend(
+        [
+            ("report", ["validation/period_scores.json"], "report", ()),
+            ("bundle", bundle.outputs(), "bundle", ()),
+        ]
+    )
     return result
 
 
@@ -185,7 +144,7 @@ def execute(command, config, resume=False):
             proxy=proxy.train,
             proxy_assemble=proxy.assemble,
             correct=correct.fit,
-            nested=correct.assemble,
+            prepare=correct.prepare,
             spatial=evaluate.spatial,
             report=evaluate.report,
             bundle=bundle.export,

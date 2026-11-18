@@ -12,16 +12,7 @@ def test_declared_training_schedule(training_data, tmp_path):
     schedule = stages(run.data)
     assert len({name for name, *_ in schedule}) == len(schedule)
     assert sum(task == "proxy" for _, _, task, _ in schedule) == 39
-    assert (
-        sum(task == "correct" and args[0] == "mean" for _, _, task, args in schedule)
-        == 24
-    )
-    assert (
-        sum(
-            task == "correct" and args[0] == "quantile" for _, _, task, args in schedule
-        )
-        == 6
-    )
+    assert sum(task == "correct" for _, _, task, _ in schedule) == 12
     assert sum(task == "spatial" for _, _, task, _ in schedule) == 3
 
 
