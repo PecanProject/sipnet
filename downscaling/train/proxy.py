@@ -145,7 +145,8 @@ def train(run, outer, inner=0, nested=0):
     )
     prediction = infer(model, prepared, test)
     probe = test[:128]
-    original = prediction[:len(probe)]
+    # Match batch shape across reloads so GPU kernel selection is identical.
+    original = infer(model, prepared, probe)
     metadata = dict(
         candidate=CANDIDATE,
         settings=SETTINGS,
