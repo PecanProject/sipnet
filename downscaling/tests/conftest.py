@@ -63,6 +63,10 @@ def run_case(tmp_path, monkeypatch):
         sources["aqua_catalog"],
         dict(start="2017-01-01", stop="2019-01-01", granules=[]),
     )
+    sources["soil_cache"] = inputs / "coarse"
+    sources["soil_cache"].mkdir()
+    sources["aqua_ledger"] = inputs / "ledger.json"
+    write(sources["aqua_ledger"], dict(dates=["A2017009", "A2018350"], sources=[]))
     dates = pd.date_range("2018-01-01", periods=6, tz="UTC")
     calendar = pd.DataFrame(
         dict(
@@ -78,6 +82,20 @@ def run_case(tmp_path, monkeypatch):
             sources["gldas"]
             / f"GLDAS_NOAH025_3H.A{time:%Y%m%d}.{time:%H}00.021.nc4.SUB.nc4"
         ).write_bytes(b"soil")
+    from downscaling.artifacts import identity
+
+    for row in calendar.itertuples():
+        base = sources["soil_cache"] / f"gldas_{row.period_id:03d}"
+        base.with_suffix(".npy").write_bytes(b"soil cache")
+        write(
+            base.with_suffix(".json"),
+            dict(
+                sources=[],
+                start=str(row.start),
+                stop=str(row.stop),
+                artifact=identity(base.with_suffix(".npy")),
+            ),
+        )
     config = Config(
         tmp_path / "models",
         tmp_path / "output",

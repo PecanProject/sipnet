@@ -9,15 +9,13 @@ REQUIRED_SOURCES = (
     "grid",
     "periods",
     "era",
-    "gldas",
-    "gldas_registry",
+    "soil_cache",
     "annual_covariates",
     "native_covariates",
     "native_lc",
     "kgc",
     "kgc_legend",
-    "aqua_catalog",
-    "aqua_receipts",
+    "aqua_ledger",
 )
 
 
@@ -32,6 +30,7 @@ class Config:
     workers: int = 3
     cpu_threads: int = 1
     max_output_bytes: int = 50 * 1024**3
+    panel_cache: Path | None = None
 
     def destination(self, relative):
         path = (self.output / relative).resolve()
@@ -46,6 +45,7 @@ def load(path):
     if not isinstance(document, dict):
         raise ValueError("Configuration must be a mapping")
     unknown = set(document) - {
+        "panel_cache",
         "model_bundle",
         "output",
         "sources",
@@ -71,7 +71,11 @@ def load(path):
         missing = set(REQUIRED_SOURCES) - set(raw_sources)
         if missing:
             raise ValueError(f"Missing sources: {sorted(missing)}")
-        unknown_sources = set(raw_sources) - set(REQUIRED_SOURCES) - {"timezones"}
+        unknown_sources = (
+            set(raw_sources)
+            - set(REQUIRED_SOURCES)
+            - {"timezones", "point_blocks", "spatial_cache"}
+        )
         if unknown_sources:
             raise ValueError(f"Unknown sources: {sorted(unknown_sources)}")
         sources = {key: resolve(value) for key, value in raw_sources.items()}
@@ -116,6 +120,18 @@ def load(path):
     for source in [bundle, *sources.values()]:
         if output == source or output in source.parents or source in output.parents:
             raise ValueError(f"Input and output roots overlap: {source}")
+    cache = resolve(document["panel_cache"]) if "panel_cache" in document else None
+    if cache:
+        for other in (output, bundle, *sources.values()):
+            if cache.is_relative_to(other) or other.is_relative_to(cache):
+                raise ValueError("Choose a separate writable panel_cache")
     return Config(
-        bundle, output, sources, dict(window), tuple(sorted(periods)), device, *numbers
+        bundle,
+        output,
+        sources,
+        dict(window),
+        tuple(sorted(periods)),
+        device,
+        *numbers,
+        cache,
     )

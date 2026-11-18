@@ -8,7 +8,9 @@ import pandas as pd
 from downscaling.artifacts import identity, sha, digest, read
 from downscaling.calendar import read_periods, selection
 from downscaling.models.bundle import validate
-from downscaling.prepare.sources import Sources
+from downscaling.prepare.sources import aqua_tiles
+from types import SimpleNamespace
+import numpy as np
 from downscaling.prepare.domain import tiles, points_for_tile
 
 
@@ -17,7 +19,7 @@ def code_identity():
     return {
         str(p.relative_to(root)): sha(p)
         for p in sorted(root.rglob("*"))
-        if p.suffix in (".py", ".R")
+        if (p.suffix in (".py", ".R") or p.name == "point_export_gaps.json")
         and not {"tests", "scripts"}.intersection(p.relative_to(root).parts)
     }
 
@@ -44,7 +46,9 @@ def plan(config):
     needed, wanted = selection(
         read_periods(config.sources["periods"]), config.period_ids
     )
-    sources = Sources(config.sources)
+    sources = SimpleNamespace(
+        annual=lambda y: config.sources["annual_covariates"] / f"covariates_{y}.tiff"
+    )
     requested_tiles = tiles(config)
     records = {}
 
@@ -57,11 +61,10 @@ def plan(config):
     for key in (
         "grid",
         "periods",
-        "gldas_registry",
         "native_lc",
         "kgc",
         "kgc_legend",
-        "aqua_catalog",
+        "aqua_ledger",
         "timezones",
     ):
         if key in config.sources:
@@ -70,9 +73,8 @@ def plan(config):
                 key
                 in (
                     "periods",
-                    "gldas_registry",
                     "kgc_legend",
-                    "aqua_catalog",
+                    "aqua_ledger",
                     "timezones",
                 ),
             )
@@ -85,37 +87,90 @@ def plan(config):
             if hasattr(row, "hydrological_year") and pd.notna(row.hydrological_year)
             else row.start.year + int(row.start.strftime("%m-%d") >= "07-16")
         )
+        base = config.sources["soil_cache"] / f"gldas_{row.period_id:03d}"
+        meta = read(base.with_suffix(".json"))
+        if (
+            meta["artifact"] != identity(base.with_suffix(".npy"))
+            or pd.Timestamp(meta["start"]) != row.start
+            or pd.Timestamp(meta["stop"]) != row.stop
+        ):
+            raise ValueError(f"Changed soil cache: {base}")
+        for source in meta["sources"]:
+            verify_ledger([source])
+            records[source["path"]] = source
+        bind(base.with_suffix(".npy"))
+        bind(base.with_suffix(".json"), True)
         for time in pd.date_range(row.start, row.stop, freq="3h", inclusive="left"):
-            records[str(sources.soil_path(time).resolve())] = sources.soil_identity(
-                time
-            )
             native_years.add(time.year)
             era_years.update((time.year, (time + pd.Timedelta(hours=3)).year))
     for year in sorted(years):
         bind(sources.annual(year))
     for year in sorted(native_years):
-        bind(sources.native(year))
+        bind(config.sources["native_covariates"] / f"covariates_{year}.tiff")
     for year in sorted(era_years):
         bind(config.sources["era"] / f"ERA5_{year}.nc")
+    cache = config.sources.get("spatial_cache")
+    if cache:
+        prior = read(cache / "manifest.json")
+        hashes = {Path(m["path"]).name: m["sha256"] for m in prior["models"]}
+        for o in (1, 2, 3):
+            if hashes[f"spatial_o{o}.npz"] != bundle["files"][f"spatial/fold_{o}.npz"]:
+                raise ValueError("Spatial cache belongs to different model weights")
+        bind(cache / "manifest.json", True)
+    vi_tiles = set()
     for tile in requested_tiles:
         points, _ = points_for_tile(config, sources, tile)
         tile["land_pixels"] = len(points)
         if not len(points):
             continue
-        _, _, granules = sources.aqua_requirements(
-            points, needed.start.min(), needed.stop.max()
-        )
-        for row in granules:
-            receipt, record = sources.aqua_receipt(row)
-            bind(receipt, True)
-            for entry in [record["raw"], *record["layers"]]:
-                bind(entry["path"])
+        if cache and tile["row"] % 256 == 0 and tile["col"] % 256 == 0:
+            path = (
+                cache
+                / f"continental_cache/spatial/r{tile['row']}_c{tile['col']}_b0.npy"
+            )
+            if path.with_suffix(".json").exists():
+                if read(path.with_suffix(".json"))["artifact"] != identity(path):
+                    raise ValueError("Changed spatial cache")
+                bind(path)
+                bind(path.with_suffix(".json"), True)
+        vi_tiles.update(np.unique(aqua_tiles(points)))
+        if "point_blocks" in config.sources:
+            for rr, cc in point_blocks(tile):
+                path = config.sources["point_blocks"] / f"r{rr}_c{cc}_b0/points.parquet"
+                stamp = str(path) + ".ok.json"
+                if read(stamp)["artifact"] != identity(path):
+                    raise ValueError(f"Changed points: {path}")
+                bind(path)
+                bind(stamp, True)
+    ledger = read(config.sources["aqua_ledger"])
+    start = needed.start.min() - pd.Timedelta(days=64)
+    stop = needed.stop.max() + pd.Timedelta(days=64)
+    dates = pd.to_datetime(ledger["dates"], format="A%Y%j", utc=True)
+    if dates.min() > start + pd.Timedelta(days=16) or dates.max() < stop - pd.Timedelta(
+        days=16
+    ):
+        raise ValueError("Vegetation ledger does not cover requested windows")
+    for item in ledger["sources"]:
+        if item["tile"] in vi_tiles and start <= pd.Timestamp(item["date"]) <= stop:
+            for entry in (item["receipt"], item["raw"], *item["layers"]):
+                if identity(entry["path"]) != {
+                    k: entry[k] for k in ("path", "size", "mtime_ns")
+                }:
+                    raise ValueError(f"Changed vegetation input: {entry['path']}")
+                if (
+                    entry is item["receipt"]
+                    and entry.get("sha256")
+                    and sha(entry["path"]) != entry["sha256"]
+                ):
+                    raise ValueError(f"Changed vegetation receipt: {entry['path']}")
+                bind(entry["path"], entry is item["receipt"])
     if not sum(t["land_pixels"] for t in requested_tiles):
         raise ValueError("Requested window contains no land pixels")
     contract = dict(
         schema="sipnet-downscaling-run-1",
         code=code_identity(),
         model_id=bundle["id"],
+        panel_cache=str(config.panel_cache) if config.panel_cache else None,
         window=config.window,
         period_ids=list(config.period_ids),
         tiles=requested_tiles,
@@ -158,3 +213,11 @@ def locked(config):
             yield
         finally:
             fcntl.flock(handle, fcntl.LOCK_UN)
+
+
+def point_blocks(tile):
+    return [
+        (r, c)
+        for r in range(tile["row"] // 256 * 256, tile["row"] + tile["height"], 256)
+        for c in range(tile["col"] // 256 * 256, tile["col"] + tile["width"], 256)
+    ]
