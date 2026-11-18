@@ -18,7 +18,7 @@ request:
   window: {row: 4864, col: 8704, height: 16, width: 16}
   period_ids: [139]
 resources:
-  device: cuda
+  device: cpu
   workers: 3
   cpu_threads: 1
   max_output_bytes: 53687091200

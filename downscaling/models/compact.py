@@ -27,7 +27,8 @@ def layout(row, root):
     keys = {}
     representatives = []
     mapping = {}
-    for i in sorted(used):
+    # XGBoost still needs an input column for a forest of constant leaves.
+    for i in sorted(used or {4219}):
         if i < 3968:
             step, var = divmod(i, 31)
             if step >= len(times):

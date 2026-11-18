@@ -31,6 +31,11 @@ def store(config, row, tile, payload, pred, token):
         if pred is not None
         else np.empty(0, np.int64)
     )
+    write(
+        path.with_suffix(".json"),
+        dict(token=token, panels=payload["meta"]["period_panels"]),
+    )
+    receipt(path.with_suffix(".json"), token)
     save_npz(
         path,
         token,
@@ -40,11 +45,6 @@ def store(config, row, tile, payload, pred, token):
         pixel=ids,
         fold_mean=pred if pred is not None else np.empty((3, 0, 2), np.float32),
     )
-    write(
-        path.with_suffix(".json"),
-        dict(token=token, panels=payload["meta"]["period_panels"]),
-    )
-    receipt(path.with_suffix(".json"), token)
 
 
 def path_for(config, row, target):
