@@ -2,7 +2,7 @@
 
 SIPNET Downscaling predicts NEE and LE from a portable model bundle and
 meteorological, soil, vegetation and land-surface covariates. It produces
-period and monthly GeoTIFFs on a requested window of the original grid.
+seven-band period GeoTIFFs on a requested window of the original grid.
 
 From the repository root, use a dedicated Python 3.12 environment:
 
@@ -23,7 +23,7 @@ must still match. Run data and model bundles belong outside this repository.
 Importing `downscaling` performs no processing and creates no output.
 
 See the [usage and input contract](../docs/user-guide/downscaling.md) for CUDA
-installation, input formats, model packaging, output bands and validation commands.
+installation, input formats, model bundles, output bands and validation commands.
 The component has its own dependencies and is not part of the root Python
 package installation.
 

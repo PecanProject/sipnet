@@ -33,15 +33,12 @@ The fixed recipe uses three outer site folds, nested predictions for calibration
 and training-side preprocessing. The proxy uses a shared residual network with
 12 land-cover categories, no year embedding, and a Student-t loss with four
 degrees of freedom. Epoch selection uses up to 80 epochs and patience 10, followed
-by a fresh fit on all fitting sites for the selected number of epochs. Mean and
-interval correctors each use 200 boosting rounds. Spatial correction uses up to
-20 same-land-cover neighbors and training-side clipping thresholds.
-
-The configuration controls paths and resources. Scientific settings are recorded
-by the recipe and cannot be overridden in the run YAML. A bounded validation
-dataset reduces sites and temporal support while retaining the recipe. Full-size
-training needs additional storage and compute; native matrices are streamed from
-declared shards rather than concatenated into one in-memory matrix.
+by a fresh fit on all fitting sites for the selected number of epochs. Each target has a 200-tree residual forest on the 4,220-column period representation.
+Training uses site-periods with complete three-hour target support, including
+the actual lengths of the first and last windows. The target is the period
+mean minus the corresponding cross-fitted proxy prediction. Only inner-fold
+held-out errors contribute to the monthly spatial correction. Clipping uses
+the support-weighted leave-self-out 99.9th percentile.
 
 ## Prepared data contract
 
@@ -91,79 +88,16 @@ arrays, each with an original `.ok.json` receipt. The utility verifies every
 declared source before copying. It never modifies source receipts. An optional
 `--selection selection.json` declares `site_ids`, `period_ids` and a positive
 `native_day_stride` for a bounded validation dataset; normal training uses the
-complete prepared release.
+complete prepared release. Select complete periods with `native_day_stride: 1` for residual training.
 
-## Outputs and recovery
 
-`model_bundle/` contains three proxy models, six mean correctors and three spatial
-models, with preprocessing and feature metadata. Set the prediction configuration's
-`model_bundle` to this directory. The deployed loader does not read training
-caches, interval models or historical scoring data.
+## Outputs and replay
 
-The training run also preserves proxy checkpoints, interval correctors, nested
-predictions, stage audits, final native out-of-fold predictions, and evaluation:
-
-- `tables/metrics.csv`: native, period and monthly scores by target and fold,
-  with native land-cover, route and neighbor-distance strata.
-- `predictions/period_oof.h5` and `month_oof.h5`: truth means, predicted means,
-  mean scales, actual support counts, site IDs and temporal keys.
-- `REPORT.md`: evaluation overview. Aggregate scales use the shared-quantile
-  assumption and are diagnostics rather than calibrated aggregate probabilities.
-- `COMPLETE.json`: published only after all required stage products and the
-  portable bundle have been verified.
-
-A completed stage is skipped only when all its declared outputs and receipts
-match the run. A completed stage with a missing or stale output fails explicitly;
-it is not silently retrained. Incomplete proxy and boosting fits restart that fit
-from the original seed. Boosting restarts all 200 rounds to preserve its random
-sampling sequence. Progress is recorded during fitting; models are saved once
-fitting finishes. All completed
-stages are preserved. Repeated preflight checks preserve the frozen manifest.
-Changed inputs, scientific code or execution configuration require a new run.
-
-## Validation
-
-The standard CPU contract tests include splitting, preprocessing isolation,
-checkpoint reload, both calibration objectives, spatial exclusion and recovery:
+Pass `model_bundle/` to the prediction configuration. The training run also
+retains held-out predictions, per-target MAE and RMSE in
+`validation/period_scores.json`, checkpoint selection and stage receipts.
+Re-read the exported forests and compare held-out predictions with:
 
 ```bash
-python -m pytest downscaling/tests
+python -m downscaling.scripts.validate_training --config /path/to/train.yaml
 ```
-
-After completing a bounded training run, validate its exported bundle using a
-raw proxy predictor fixture containing both supported and unsupported rows:
-
-```bash
-python -m downscaling.scripts.validate_training \
-  --config /path/to/train.yaml \
-  --proxy-fixture /path/to/proxy_predictors.parquet \
-  --output /path/to/validation.json
-```
-
-The same command works for CPU or CUDA according to the configuration. It compares
-proxy predictions, native correction and spatial lookup through the deployed
-interfaces, verifies unchanged artifacts after resume, and records runtime module
-sources and resource measurements. Retraining variability and fixed-checkpoint
-prediction parity are separate checks.
-
-## Optional historical comparison
-
-Historical evaluation is an explicit command and is not needed for training,
-completion or prediction:
-
-```bash
-python -m downscaling.train compare-history --config /path/to/train.yaml \
-  --reference /path/to/historical_reference \
-  --comparison-output /path/to/new_comparison
-```
-
-The reference uses schema `sipnet-downscaling-history-1`, a manifest `id` digest
-and a `files` mapping of SHA-256 hashes. It contains `sites.csv` (`index`, `fold`),
-`steps.csv` (unique ordered three-hour UTC `utc` values), and `thresholds.csv`
-(one `cap` for each `fold`, `target`). Arrays `truth.npy`, `error.npy` and
-`calibrated_scale.npy` use `(site, UTC step, target)` order;
-`nearby_calendar_LC.npy` uses `(site, 96 month/hour bins, target)`;
-`eligible.npy` is boolean `(site, UTC step)` and explicitly declares common-support
-eligibility. All arrays follow the reference's own IDs. Missing or duplicate IDs
-and thresholds are errors. Comparison uses matched supported native keys and each
-product's own truth; a difference is not independent-observation skill gain.
