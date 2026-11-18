@@ -1,8 +1,14 @@
 import atexit, time, json
-from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
 from scipy.io import netcdf_file
+from downscaling.prepare.domain import (
+    land_mask,
+    land_points,
+    land_sources,
+    point_block,
+    timezones,
+)
 from downscaling.prepare.features import add_previous
 from downscaling.prepare.met import bracket
 from downscaling.contracts import KGC, unique, predictors
@@ -131,24 +137,15 @@ def prepare(tile, slot=-1, generation=0):
     k = f"r{tile['row']}_c{tile['col']}"
     timing = {}
     tick = time.perf_counter()
-    from downscaling.prepare.domain import points_for_tile, timezones
-
-    q, _ = points_for_tile(
-        config,
-        SimpleNamespace(
-            annual=lambda year: config.sources["annual_covariates"]
-            / f"covariates_{year}.tiff"
-        ),
-        tile,
-    )
-    if "point_blocks" in config.sources and len(q):
-        from downscaling.predict.state import point_blocks
-
-        frames = []
-        for rr, cc in point_blocks(tile):
-            path = config.sources["point_blocks"] / f"r{rr}_c{cc}_b0/points.parquet"
-            frames.append(pd.read_parquet(path, columns=["index", "lat", "lon", "tz"]))
-        saved = pd.concat(frames)
+    with land_sources(config) as (grid, rasters):
+        mask = land_mask(tile, rasters, "domain" in config.sources)
+        q = land_points(tile, mask, grid)
+    if len(q) != tile["land_pixels"]:
+        raise ValueError(f"Land count differs from planned tile {k}")
+    if "point_blocks" in config.sources:
+        saved = pd.read_parquet(
+            point_block(config, tile), columns=["index", "lat", "lon", "tz"]
+        )
         q = q.merge(
             saved, on=["index", "lat", "lon"], how="left", validate="one_to_one"
         )

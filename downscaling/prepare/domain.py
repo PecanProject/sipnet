@@ -1,5 +1,6 @@
 """Bounded original-grid land masks and explicit timezone exclusions."""
 
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 import subprocess
 import numpy as np
@@ -7,56 +8,134 @@ import pandas as pd
 import rasterio
 from rasterio.windows import Window
 from zoneinfo import ZoneInfo
-from downscaling.artifacts import digest
+from downscaling.artifacts import digest, identity, read
+from downscaling.prepare.sources import aqua_tiles
 
 
-def tiles(config):
+@contextmanager
+def land_sources(config):
+    with ExitStack() as stack:
+        grid = stack.enter_context(rasterio.open(config.sources["grid"]))
+        domain = config.sources.get("domain")
+        paths = (
+            [domain / "domain.tif"]
+            if domain
+            else [
+                config.sources["annual_covariates"] / f"covariates_{year}.tiff"
+                for year in range(2013, 2025)
+            ]
+        )
+        rasters = [stack.enter_context(rasterio.open(path)) for path in paths]
+        if any(
+            (src.shape, src.crs, src.transform)
+            != (grid.shape, grid.crs, grid.transform)
+            for src in rasters
+        ):
+            raise ValueError("Land mask/reference grid mismatch")
+        yield grid, rasters
+
+
+def land_mask(tile, rasters, cached):
+    window = Window(tile["col"], tile["row"], tile["width"], tile["height"])
+    if cached:
+        return rasters[0].read(1, window=window) == 1
+    mask = np.zeros((tile["height"], tile["width"]), bool)
+    for source in rasters:
+        values = source.read(1, window=window, masked=True)
+        if not np.isin(values.compressed(), np.arange(12)).all():
+            raise ValueError("Unknown annual land-cover code")
+        mask |= values.filled(0) > 0
+    return mask
+
+
+def land_points(tile, mask, grid):
+    rows, cols = np.nonzero(mask)
+    rows += tile["row"]
+    cols += tile["col"]
+    lon, lat = rasterio.transform.xy(grid.transform, rows, cols)
+    return pd.DataFrame(dict(index=rows * grid.width + cols, lat=lat, lon=lon))
+
+
+def plan_domain(config):
     w = config.window
-    with rasterio.open(config.sources["grid"]) as grid:
+    bottom, right = w["row"] + w["height"], w["col"] + w["width"]
+    domain = config.sources.get("domain")
+    files = []
+    vi_tiles = set()
+    tiles = []
+    with land_sources(config) as (grid, rasters):
         if (
             grid.crs != rasterio.crs.CRS.from_epsg(4326)
             or grid.transform.b
             or grid.transform.d
         ):
             raise ValueError("A north-up EPSG:4326 reference grid is required")
-        if w["row"] + w["height"] > grid.height or w["col"] + w["width"] > grid.width:
+        if bottom > grid.height or right > grid.width:
             raise ValueError("Requested window exceeds reference grid")
-    return [
-        dict(
-            row=row,
-            col=col,
-            height=min(256, w["row"] + w["height"] - row),
-            width=min(256, w["col"] + w["width"] - col),
-        )
-        for row in range(w["row"], w["row"] + w["height"], 256)
-        for col in range(w["col"], w["col"] + w["width"], 256)
-    ]
-
-
-def points_for_tile(config, sources, tile):
-    window = Window(tile["col"], tile["row"], tile["width"], tile["height"])
-    mask = np.zeros((tile["height"], tile["width"]), bool)
-    with rasterio.open(config.sources["grid"]) as reference:
-        for year in range(2013, 2025):
-            with rasterio.open(sources.annual(year)) as source:
-                if (source.shape, source.crs, source.transform) != (
-                    reference.shape,
-                    reference.crs,
-                    reference.transform,
+        if domain:
+            artifact = identity(domain / "domain.tif")
+            metadata = read(domain / "domain.json")
+            annual = [
+                identity(config.sources["annual_covariates"] / f"covariates_{y}.tiff")
+                for y in range(2013, 2025)
+            ]
+            if metadata["artifact"] != artifact or metadata["sources"] != annual:
+                raise ValueError("Changed land mask or annual land-cover sources")
+            files.extend([domain / "domain.tif", domain / "domain.json"])
+            if (
+                grid.shape == (w["height"], w["width"])
+                and (domain / "modis_tiles.json").exists()
+            ):
+                inventory = read(domain / "modis_tiles.json")
+                if inventory["domain"] != artifact:
+                    raise ValueError(
+                        "MODIS tile inventory belongs to a different land mask"
+                    )
+                tiles = [
+                    dict(
+                        row=t["row"],
+                        col=t["col"],
+                        height=t["height"],
+                        width=t["width"],
+                        land_pixels=t["pixels"],
+                    )
+                    for t in metadata["tiles"]
+                ]
+                if (
+                    not tiles
+                    or sum(t["land_pixels"] for t in tiles) != metadata["land_pixels"]
+                    or sum(inventory["tiles"].values()) != metadata["land_pixels"]
                 ):
-                    raise ValueError("Annual/reference grid mismatch")
-                values = source.read(1, window=window, masked=True)
-                if not np.isin(values.compressed(), np.arange(12)).all():
-                    raise ValueError("Unknown annual land-cover code")
-                mask |= (~np.ma.getmaskarray(values)) & (values.filled(0) > 0)
-        rows, cols = np.nonzero(mask)
-        rows += tile["row"]
-        cols += tile["col"]
-        lon, lat = rasterio.transform.xy(reference.transform, rows, cols)
-        points = pd.DataFrame(
-            dict(index=rows * reference.width + cols, lat=lat, lon=lon)
-        )
-    return points, mask
+                    raise ValueError("Land counts differ in the domain inventories")
+                return (
+                    tiles,
+                    set(inventory["tiles"]),
+                    [*files, domain / "modis_tiles.json"],
+                )
+        for rr in range(w["row"] // 256 * 256, bottom, 256):
+            for cc in range(w["col"] // 256 * 256, right, 256):
+                row, col = max(rr, w["row"]), max(cc, w["col"])
+                tile = dict(
+                    row=row,
+                    col=col,
+                    height=min(rr + 256, bottom) - row,
+                    width=min(cc + 256, right) - col,
+                )
+                mask = land_mask(tile, rasters, bool(domain))
+                count = int(mask.sum())
+                if count:
+                    tiles.append(dict(**tile, land_pixels=count))
+                    vi_tiles.update(
+                        np.unique(aqua_tiles(land_points(tile, mask, grid)))
+                    )
+    if not tiles:
+        raise ValueError("Requested window contains no land pixels")
+    return tiles, vi_tiles, files
+
+
+def point_block(config, tile):
+    row, col = tile["row"] // 256 * 256, tile["col"] // 256 * 256
+    return config.sources["point_blocks"] / f"r{row}_c{col}_b0/points.parquet"
 
 
 def timezones(config, points):

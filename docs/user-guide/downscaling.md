@@ -61,6 +61,7 @@ changed through YAML overrides.
 | `aqua_ledger` | Dated MYD13Q1 tile inventory with original HDF, NDVI/EVI layer identities and acquisition receipts. Include 64 days around the predictor windows for short-gap interpolation. |
 | `annual_covariates`, `native_covariates` | Annual proxy raster bands LC=1, disturbance age=2, biomass=3, pH=8, N=9, SOC=10, sand=11, elevation=15. Native bands are age=2, biomass=3, wetness=4, pH=9, N=10, SOC=11 and sand=12. Annual proxy rasters for 2013–2024 define the land union. |
 | `native_lc`, `kgc`, `kgc_legend` | Native land-cover raster, climate-class raster and its code-to-KGC CSV. |
+| `domain` | Optional directory with the land-union raster `domain.tif` and its annual-source manifest `domain.json`. Full-grid requests can also use its `modis_tiles.json` inventory. |
 | `timezones` or `point_blocks` | Optional pixel timezone table (index, lat, lon, tz), or the shared directory of verified 256 × 256 point blocks. Without either source the run uses R and lutz. |
 | `spatial_cache` | Optional shared production directory with the model manifest and precomputed monthly spatial corrections under `continental_cache/spatial/`. Omit for newly trained models. |
 

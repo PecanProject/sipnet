@@ -88,6 +88,7 @@ def products(config, manifest, row, create):
             transform=transform,
             nodata=np.nan,
             tiled=True,
+            sparse_ok=True,  # Unwritten water blocks read back as NoData.
             blockxsize=256,
             blockysize=256,
             compress="deflate",

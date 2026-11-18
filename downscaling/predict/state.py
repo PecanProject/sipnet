@@ -8,10 +8,7 @@ import pandas as pd
 from downscaling.artifacts import identity, sha, digest, read
 from downscaling.calendar import read_periods, selection
 from downscaling.models.bundle import validate
-from downscaling.prepare.sources import aqua_tiles
-from types import SimpleNamespace
-import numpy as np
-from downscaling.prepare.domain import tiles, points_for_tile
+from downscaling.prepare.domain import plan_domain, point_block
 from downscaling.predict.panels import panel_sources
 
 
@@ -47,10 +44,7 @@ def plan(config):
     needed, wanted = selection(
         read_periods(config.sources["periods"]), config.period_ids
     )
-    sources = SimpleNamespace(
-        annual=lambda y: config.sources["annual_covariates"] / f"covariates_{y}.tiff"
-    )
-    requested_tiles = tiles(config)
+    requested_tiles, vi_tiles, domain_files = plan_domain(config)
     records = {}
 
     def bind(path, hash_content=False):
@@ -59,6 +53,8 @@ def plan(config):
             value["sha256"] = sha(path)
         records[value["path"]] = value
 
+    for path in domain_files:
+        bind(path, path.suffix == ".json")
     for key in (
         "grid",
         "periods",
@@ -105,7 +101,7 @@ def plan(config):
             native_years.add(time.year)
             era_years.update((time.year, (time + pd.Timedelta(hours=3)).year))
     for year in sorted(years):
-        bind(sources.annual(year))
+        bind(config.sources["annual_covariates"] / f"covariates_{year}.tiff")
     for year in sorted(native_years):
         bind(config.sources["native_covariates"] / f"covariates_{year}.tiff")
     for year in sorted(era_years):
@@ -118,12 +114,7 @@ def plan(config):
             if hashes[f"spatial_o{o}.npz"] != bundle["files"][f"spatial/fold_{o}.npz"]:
                 raise ValueError("Spatial cache belongs to different model weights")
         bind(cache / "manifest.json", True)
-    vi_tiles = set()
     for tile in requested_tiles:
-        points, _ = points_for_tile(config, sources, tile)
-        tile["land_pixels"] = len(points)
-        if not len(points):
-            continue
         if cache and tile["row"] % 256 == 0 and tile["col"] % 256 == 0:
             path = (
                 cache
@@ -134,15 +125,13 @@ def plan(config):
                     raise ValueError("Changed spatial cache")
                 bind(path)
                 bind(path.with_suffix(".json"), True)
-        vi_tiles.update(np.unique(aqua_tiles(points)))
         if "point_blocks" in config.sources:
-            for rr, cc in point_blocks(tile):
-                path = config.sources["point_blocks"] / f"r{rr}_c{cc}_b0/points.parquet"
-                stamp = str(path) + ".ok.json"
-                if read(stamp)["artifact"] != identity(path):
-                    raise ValueError(f"Changed points: {path}")
-                bind(path)
-                bind(stamp, True)
+            path = point_block(config, tile)
+            stamp = str(path) + ".ok.json"
+            if read(stamp)["artifact"] != identity(path):
+                raise ValueError(f"Changed points: {path}")
+            bind(path)
+            bind(stamp, True)
     ledger = read(config.sources["aqua_ledger"])
     start = needed.start.min() - pd.Timedelta(days=64)
     stop = needed.stop.max() + pd.Timedelta(days=64)
@@ -165,8 +154,6 @@ def plan(config):
                 ):
                     raise ValueError(f"Changed vegetation receipt: {entry['path']}")
                 bind(entry["path"], entry is item["receipt"])
-    if not sum(t["land_pixels"] for t in requested_tiles):
-        raise ValueError("Requested window contains no land pixels")
     contract = dict(
         schema="sipnet-downscaling-run-1",
         code=code_identity(),
@@ -215,11 +202,3 @@ def locked(config):
             yield
         finally:
             fcntl.flock(handle, fcntl.LOCK_UN)
-
-
-def point_blocks(tile):
-    return [
-        (r, c)
-        for r in range(tile["row"] // 256 * 256, tile["row"] + tile["height"], 256)
-        for c in range(tile["col"] // 256 * 256, tile["col"] + tile["width"], 256)
-    ]

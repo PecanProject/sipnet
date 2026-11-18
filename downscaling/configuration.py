@@ -74,7 +74,7 @@ def load(path):
         unknown_sources = (
             set(raw_sources)
             - set(REQUIRED_SOURCES)
-            - {"timezones", "point_blocks", "spatial_cache"}
+            - {"timezones", "point_blocks", "spatial_cache", "domain"}
         )
         if unknown_sources:
             raise ValueError(f"Unknown sources: {sorted(unknown_sources)}")
