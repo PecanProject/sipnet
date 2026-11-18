@@ -75,7 +75,10 @@ python -m downscaling.predict report --config /path/to/run.yaml
 
 Group consecutive period IDs in one request to reuse the four preceding panels
 in each block. Set the optional top-level `panel_cache` to the same writable
-directory across requests to continue reuse between runs. Resume verifies the frozen request and completed blocks.
+directory across requests to continue reuse between runs. Panels depend on the
+period, pixel coordinates, covariate sources and sampling recipe. Changing the
+model or device allows the same panels to be reused in a new output directory.
+Resume verifies the frozen request and completed blocks.
 
 Each period produces `products/period/NEE_NNN.tif` and `LE_NNN.tif`.
 Bands 1–2 give the ensemble mean and population standard deviation; bands 3–5

@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from downscaling.predict.inputs import point_signature
 import numpy as np
 import pandas as pd
-from downscaling.artifacts import digest, identity, valid, require, write, read, receipt
+from downscaling.artifacts import valid, require, write, read, receipt
 from downscaling.models.compact import layout, compile_models
 from downscaling.models.inference import Models
 from downscaling.predict import producer, gpu_device
@@ -34,29 +34,6 @@ def run_period(config, contract, row, needed, models):
 
         runtime = SimpleNamespace(cp=cp, reps=reps, capacity=0)
     workers = min(config.workers, len(todo))
-    panel_tokens = {}
-    for period in needed.itertuples():
-        year = (
-            int(period.hydrological_year)
-            if pd.notna(getattr(period, "hydrological_year", None))
-            else period.start.year + int(period.start.strftime("%m-%d") >= "07-16")
-        )
-        paths = [
-            config.sources["annual_covariates"] / f"covariates_{year}.tiff",
-            config.sources["aqua_ledger"],
-            config.sources["soil_cache"] / f"gldas_{period.period_id:03d}.json",
-        ]
-        paths.extend(
-            config.sources["era"] / f"ERA5_{y}.nc"
-            for y in range(period.start.year, period.stop.year + 1)
-        )
-        panel_tokens[period.period_id] = digest(
-            dict(
-                code=contract["code"],
-                key=period.period_key,
-                inputs=[identity(p) for p in paths],
-            )
-        )
     ring = Ring(
         workers,
         max(3 * 128, len(reps)),
@@ -72,7 +49,7 @@ def run_period(config, contract, row, needed, models):
                 needed,
                 SimpleNamespace(**row._asdict()),
                 config,
-                panel_tokens,
+                contract["panel_sources"],
                 reps,
             ),
         ) as pool:

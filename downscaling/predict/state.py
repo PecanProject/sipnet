@@ -12,6 +12,7 @@ from downscaling.prepare.sources import aqua_tiles
 from types import SimpleNamespace
 import numpy as np
 from downscaling.prepare.domain import tiles, points_for_tile
+from downscaling.predict.panels import panel_sources
 
 
 def code_identity():
@@ -170,6 +171,7 @@ def plan(config):
         schema="sipnet-downscaling-run-1",
         code=code_identity(),
         model_id=bundle["id"],
+        panel_sources=panel_sources(config.sources, needed, records.values(), ledger),
         panel_cache=str(config.panel_cache) if config.panel_cache else None,
         window=config.window,
         period_ids=list(config.period_ids),
