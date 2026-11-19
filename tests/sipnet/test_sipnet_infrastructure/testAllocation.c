@@ -1,3 +1,4 @@
+#include <float.h>
 #include "utils/tUtils.h"
 #include "utils/exitHandler.c"
 #include "sipnet/sipnet.c"
@@ -66,6 +67,8 @@ int main(void) {
       {"sum below one", 0.25, 0.25, 0.25, 0, 0.25},
       {"sum exactly one", 0.25, 0.25, 0.5, 0, 0},
       {"decimal sum exactly one", 0.8, 0.1, 0.1, 0, 0},
+      {"decimal sum rounds above one", 0.33, 0.56, 0.11, 0, 0},
+      {"sum two ulps above one", 0.25, 0.25, 0.5 + 2 * DBL_EPSILON, 1, 0},
       {"leaf equals one", 1, 0, 0, 1, 0},
       {"wood equals one", 0, 1, 0, 1, 0},
       {"fine root equals one", 0, 0, 1, 1, 0},

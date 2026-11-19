@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 
 #include "common/context.h"
 #include "common/exitCodes.h"
@@ -1110,6 +1111,11 @@ void ensureAllocation(void) {
   params.coarseRootAllocation =
       1 - (params.leafAllocation + params.woodAllocation +
            params.fineRootAllocation);
+  // Decimal fractions summing to one can round to the next double above one.
+  if (params.coarseRootAllocation < 0.0 &&
+      params.coarseRootAllocation >= -DBL_EPSILON) {
+    params.coarseRootAllocation = 0.0;
+  }
 
   if ((params.leafAllocation <= 0.0) || (params.leafAllocation >= 1.0) ||
       (params.woodAllocation <= 0.0) || (params.woodAllocation >= 1.0) ||
