@@ -28,7 +28,11 @@ static int runCase(const AllocationCase *test) {
   }
   test_assert(jumped == test->rejects);
   if (!test->rejects) {
-    test_assert(params.coarseRootAllocation > 0.0);
+    if (test->coarseRoot == 0.0) {
+      test_assert(params.coarseRootAllocation == 0.0);
+    } else {
+      test_assert(params.coarseRootAllocation > 0.0);
+    }
     test_assert(compareDoubles(params.coarseRootAllocation, test->coarseRoot));
   }
   test_assert(params.leafAllocation == test->leaf);
@@ -60,7 +64,8 @@ int main(void) {
       {"small positive fine root", 0.25, 0.25, 1e-12, 0, 0.5 - 1e-12},
       {"small positive coarse root", 0.25, 0.25, 0.5 - 1e-12, 0, 1e-12},
       {"sum below one", 0.25, 0.25, 0.25, 0, 0.25},
-      {"sum exactly one", 0.25, 0.25, 0.5, 1, 0},
+      {"sum exactly one", 0.25, 0.25, 0.5, 0, 0},
+      {"decimal sum exactly one", 0.8, 0.1, 0.1, 0, 0},
       {"leaf equals one", 1, 0, 0, 1, 0},
       {"wood equals one", 0, 1, 0, 1, 0},
       {"fine root equals one", 0, 0, 1, 1, 0},
