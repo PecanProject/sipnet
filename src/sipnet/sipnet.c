@@ -1113,7 +1113,7 @@ void ensureAllocation(void) {
            params.fineRootAllocation);
   // Decimal fractions summing to one can round to the next double above one.
   if (params.coarseRootAllocation < 0.0 &&
-      params.coarseRootAllocation >= -DBL_EPSILON) {
+      params.coarseRootAllocation >= -4 * DBL_EPSILON) {
     params.coarseRootAllocation = 0.0;
   }
 
