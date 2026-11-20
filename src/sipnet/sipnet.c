@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 
 #include "common/context.h"
 #include "common/exitCodes.h"
@@ -1090,12 +1091,12 @@ void vegResp2(double *folResp, double *woodResp, double *growthResp,
   }
 }
 
-// ensure that the allocation to wood + leaves + fine roots < 1,
+// ensure that the allocation to wood + leaves + fine roots <= 1,
 // calculate coarse root allocation as:
 //   coarse = 1 - leaf - wood - fine, making sum(params) = 1
 // require:
 //   0 < leaf, wood, fine root < 1 individually
-//   coarse root > 0 which enforces leaf + wood + fine root < 1
+//   coarse root >= 0 which enforces leaf + wood + fine root <= 1
 void ensureAllocation(void) {
   if (!isfinite(params.leafAllocation) || !isfinite(params.woodAllocation) ||
       !isfinite(params.fineRootAllocation)) {
@@ -1107,17 +1108,22 @@ void ensureAllocation(void) {
   }
 
   // :: from [3], root model description
-  params.coarseRootAllocation = 1 - params.leafAllocation -
-                                params.woodAllocation -
-                                params.fineRootAllocation;
+  params.coarseRootAllocation =
+      1 - (params.leafAllocation + params.woodAllocation +
+           params.fineRootAllocation);
+  // Decimal fractions summing to one can round to the next double above one.
+  if (params.coarseRootAllocation < 0.0 &&
+      params.coarseRootAllocation >= -4 * DBL_EPSILON) {
+    params.coarseRootAllocation = 0.0;
+  }
 
   if ((params.leafAllocation <= 0.0) || (params.leafAllocation >= 1.0) ||
       (params.woodAllocation <= 0.0) || (params.woodAllocation >= 1.0) ||
       (params.fineRootAllocation <= 0.0) ||
       (params.fineRootAllocation >= 1.0) ||
-      (params.coarseRootAllocation <= 0.0)) {
+      (params.coarseRootAllocation < 0.0)) {
     logError("NPP allocation parameters must each be in (0, 1) and sum to "
-             "less than 1: leafAllocation=%.17g, woodAllocation=%.17g, "
+             "at most 1: leafAllocation=%.17g, woodAllocation=%.17g, "
              "fineRootAllocation=%.17g\n",
              params.leafAllocation, params.woodAllocation,
              params.fineRootAllocation);
