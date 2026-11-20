@@ -1117,11 +1117,10 @@ void ensureAllocation(void) {
     params.coarseRootAllocation = 0.0;
   }
 
-  if ((params.leafAllocation <= 0.0) || (params.leafAllocation >= 1.0) ||
-      (params.woodAllocation <= 0.0) || (params.woodAllocation >= 1.0) ||
-      (params.fineRootAllocation <= 0.0) ||
-      (params.fineRootAllocation >= 1.0) ||
-      (params.coarseRootAllocation < 0.0)) {
+  // If any of the four allocation params are negative, there was a param
+  // input value problem
+  if (params.leafAllocation <= 0.0 || params.woodAllocation <= 0.0 ||
+      params.fineRootAllocation <= 0.0 || params.coarseRootAllocation < 0.0) {
     logError("NPP allocation parameters must each be in (0, 1) and sum to "
              "at most 1: leafAllocation=%.17g, woodAllocation=%.17g, "
              "fineRootAllocation=%.17g\n",
