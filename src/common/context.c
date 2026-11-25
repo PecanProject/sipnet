@@ -78,6 +78,13 @@ void nameToKey(const char *name) {
   // Drop all non-alphanumeric chars (eg '-', '_'), and convert to lowercase
   for (int i = 0; name[i]; i++) {
     if (isalnum(name[i])) {
+      // Reserve one byte for the null terminator; do not truncate keys.
+      if (keyInd >= CONTEXT_CHAR_MAXLEN - 1) {
+        logError("Configuration key '%s' exceeds maximum normalized length "
+                 "of %d characters\n",
+                 name, CONTEXT_CHAR_MAXLEN - 1);
+        exit(EXIT_CODE_BAD_PARAMETER_VALUE);
+      }
       keyName[keyInd] = tolower(name[i]);  // NOLINT
       ++keyInd;
     }

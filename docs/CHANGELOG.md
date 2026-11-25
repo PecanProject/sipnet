@@ -32,6 +32,8 @@ sections to include in release notes:
   fertilizer events, NPP signs, nitrogen availability, and flooding. (#415)
 
 ### Fixed
+- Reject configuration keys longer than 255 alphanumeric characters before
+  overflowing the normalization buffer. (#439)
 - Reject empty or oversized effective `FILE_PREFIX` values before constructing
   filenames, preserving command-line overrides and legacy aliases. (#437)
 - Validate all input event records for calculated-phenology conflicts and
