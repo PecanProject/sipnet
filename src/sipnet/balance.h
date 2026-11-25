@@ -28,15 +28,24 @@ typedef struct BalanceTrackerStruct {
   double inputsN;
   double outputsN;
 
+  // Water balance
+  double preTotalWater;
+  double postTotalWater;
+  double finalWater;
+  double inputsWater;
+  double outputsWater;
+
   // Stock clamping adjustments: mass added by clamping negative stocks to zero.
   // Positive values indicate that stocks were clamped (mass was "created" to
   // prevent negative pools).
   double clampedC;
   double clampedN;
+  double clampedWater;
 
   // Checks
   double deltaC;
   double deltaN;
+  double deltaWater;
 } BalanceTracker;
 
 // Global var
@@ -53,7 +62,7 @@ void initBalanceTracker(void);
 // Returns 1 if a balance residual is nonfinite or has magnitude >= EPS
 int balanceResidualFailed(double residual);
 
-// Exits with EXIT_CODE_INTERNAL_ERROR if the carbon or nitrogen balance fails
+// Exits with EXIT_CODE_INTERNAL_ERROR if any balance check fails
 void checkBalance(void);
 
 #endif  // BALANCE_H
