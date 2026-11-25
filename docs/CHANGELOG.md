@@ -34,7 +34,8 @@ sections to include in release notes:
 ### Fixed
 - Reject configuration keys longer than 255 alphanumeric characters before
   overflowing the normalization buffer. (#439)
-- Return a non-zero exit status from the unit test runner when a test fails or is missing. (#432)
+- Reject empty or oversized effective `FILE_PREFIX` values before constructing
+  filenames, preserving command-line overrides and legacy aliases. (#437)
 - Validate all input event records for calculated-phenology conflicts and
   same-day planting/harvest, resetting daily checks when leaf events start a new
   date. (#431)
@@ -45,7 +46,7 @@ sections to include in release notes:
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
 - Leaf-off mechanics refined to ensure that leaf-off events do not remove more leaf carbon than is available in the leaf pool. (#400)
 
-- Require strictly positive leaf, wood, fine-root, and coarse-root NPP allocations during model setup (#405).
+- Require strictly positive leaf, wood, and fine-root NPP allocations during model setup and allow a zero coarse-root remainder (#405, PR #445).
 - Reject nonfinite supplied model parameters and NPP allocation inputs (#405).
 
 ### Changed
