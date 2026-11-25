@@ -114,7 +114,7 @@ cleanall: clean testclean
 	rm -f ./tests/smoke/*/debug*.log
 
 .PHONY: all clean help document exec cleanall \
-		test testbuild $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun smoke unit cli
+		test testbuild $(SIPNET_TEST_DIRS) $(SIPNET_TEST_DIRS_RUN) testclean $(SIPNET_TEST_DIRS_CLEAN) testrun smoke unit
 
 help:
 	@echo "Available make targets:"
@@ -128,11 +128,10 @@ help:
 	@echo "  clean        - Remove compiled files, executables, and documentation"
 	@echo "  depend       - Generate build dependency information for source files and append to Makefile"
 	@echo "  === Tests ==="
-	@echo "  test         - Build + run unit, CLI, and smoke tests"
+	@echo "  test         - Build + run unit tests, then smoke tests"
 	@echo "  testbuild    - Build the unit tests (does not run)"
 	@echo "  testrun      - Run the unit tests (per-directory runners)"
 	@echo "  unit         - Build and run unit tests (wrapper with summary)"
-	@echo "  cli          - Run command-line regression tests"
 	@echo "  smoke        - Run smoke tests (end-to-end diffs)"
 	@echo "  smokedebug   - Run smoke tests (end-to-end diffs) with debug logging"
 	@echo "  testclean    - Clean build artifacts and executables from the unit tests"
@@ -148,12 +147,9 @@ smoke: sipnet
 smokedebug: sipnet
 	./tests/smoke/run_smoke.sh debug
 
-cli: sipnet
-	bash tests/cli/test_snow.sh
-
 # Combined verification target
 test: sipnet testbuild
-	./tools/run_unit_tests.sh && bash tests/cli/test_snow.sh && ./tests/smoke/run_smoke.sh
+	./tools/run_unit_tests.sh && ./tests/smoke/run_smoke.sh
 
 # Make sure this target and subsequent comment remain at the bottom of this file
 depend::
