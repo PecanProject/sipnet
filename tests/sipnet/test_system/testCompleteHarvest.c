@@ -13,8 +13,6 @@ static ModelParams *testParams;
 static void balanced(void) {
   near(balanceTracker.deltaC, 0, "C balance");
   near(balanceTracker.deltaN, 0, "N balance");
-  near(balanceTracker.clampedC, 0, "C clamping");
-  near(balanceTracker.clampedN, 0, "N clamping");
 }
 
 static void processEvents(void) {

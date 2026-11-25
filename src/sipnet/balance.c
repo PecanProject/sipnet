@@ -37,32 +37,6 @@ void updateBalanceTrackerPreUpdate(void) {
 void updateBalanceTrackerPostUpdate(void) {
   // Set the post-update pool totals
   getMassTotals(&balanceTracker.postTotalC, &balanceTracker.postTotalN);
-}
-
-void updateBalanceTrackerPostClamp(void) {
-  getMassTotals(&balanceTracker.finalC, &balanceTracker.finalN);
-
-  // Difference between post-update and post-clamp is the amount we "gained" by
-  // setting negative values to zero
-  balanceTracker.clampedC = balanceTracker.finalC - balanceTracker.postTotalC;
-  if (balanceTracker.clampedC < -EPS) {
-    // This shouldn't happen, by construction
-    logInternalError("Non-negative clamping has caused carbon loss %f\n",
-                     balanceTracker.clampedC);
-  }
-  if (balanceTracker.clampedC < EPS) {
-    balanceTracker.clampedC = 0;
-  }
-
-  balanceTracker.clampedN = balanceTracker.finalN - balanceTracker.postTotalN;
-  if (balanceTracker.clampedN < -EPS) {
-    // This shouldn't happen, by construction
-    logInternalError("Non-negative clamping has caused nitrogen loss %f\n",
-                     balanceTracker.clampedN);
-  }
-  if (balanceTracker.clampedN < EPS) {
-    balanceTracker.clampedN = 0;
-  }
 
   // Calculate the system inputs and outputs
   // CARBON
@@ -90,12 +64,6 @@ void updateBalanceTrackerPostClamp(void) {
     balanceTracker.inputsN *= climate->length;
     balanceTracker.outputsN *= climate->length;
   }
-
-  // Account for gains from clamping
-  balanceTracker.inputsC += balanceTracker.clampedC;
-  if (ctx.nitrogenCycle) {
-    balanceTracker.inputsN += balanceTracker.clampedN;
-  }
 }
 
 void initBalanceTracker(void) {
@@ -103,12 +71,8 @@ void initBalanceTracker(void) {
   // Pools
   balanceTracker.preTotalC = 0.0;
   balanceTracker.postTotalC = 0.0;
-  balanceTracker.clampedC = 0.0;
-  balanceTracker.finalC = 0.0;
   balanceTracker.preTotalN = 0.0;
   balanceTracker.postTotalN = 0.0;
-  balanceTracker.clampedN = 0.0;
-  balanceTracker.finalN = 0.0;
 
   // System I/O
   balanceTracker.inputsC = 0.0;
@@ -122,48 +86,45 @@ void initBalanceTracker(void) {
 }
 
 int balanceResidualFailed(double residual) {
-  return !isfinite(residual) || fabs(residual) >= EPS;
+  return !isfinite(residual) || fabs(residual) >= BALANCE_TOLERANCE;
 }
 
 // %.17g round-trips a double, so differences near EPS remain visible even
 // when pool totals are large
 static void logBalanceFailure(const char *element, double residual,
-                              double preTotal, double postTotal,
-                              double finalTotal, double inputs, double outputs,
-                              double clamped) {
+                              double preTotal, double postTotal, double inputs,
+                              double outputs) {
   logInternalError("%s balance check failed: residual=%.17g (tolerance %g) at "
                    "year %d day %d time %.17g\n",
-                   element, residual, EPS, climate->year, climate->day,
-                   climate->time);
-  logInternalError("  %s pools: preTotal=%.17g postUpdateTotal=%.17g "
-                   "finalTotal=%.17g\n",
-                   element, preTotal, postTotal, finalTotal);
-  logInternalError("  %s system: inputs=%.17g (includes clamped) outputs=%.17g "
-                   "clamped=%.17g\n",
-                   element, inputs, outputs, clamped);
+                   element, residual, BALANCE_TOLERANCE, climate->year,
+                   climate->day, climate->time);
+  logInternalError("  %s pools: preTotal=%.17g postTotal=%.17g\n", element,
+                   preTotal, postTotal);
+  logInternalError("  %s system: inputs=%.17g outputs=%.17g\n", element, inputs,
+                   outputs);
 }
 
 void checkBalance(void) {
   // CARBON
   // Pool delta
-  double poolCDelta = balanceTracker.finalC - balanceTracker.preTotalC;
+  double poolCDelta = balanceTracker.postTotalC - balanceTracker.preTotalC;
   // System delta
   double systemCDelta = balanceTracker.inputsC - balanceTracker.outputsC;
   balanceTracker.deltaC = poolCDelta - systemCDelta;
 
   // NITROGEN
   // Pool delta
-  double poolNDelta = balanceTracker.finalN - balanceTracker.preTotalN;
+  double poolNDelta = balanceTracker.postTotalN - balanceTracker.preTotalN;
   // System delta
   double systemNDelta = balanceTracker.outputsN - balanceTracker.inputsN;
   balanceTracker.deltaN = poolNDelta + systemNDelta;
 
-  // Finite residuals smaller than EPS are numerical noise; zero them to avoid
+  // Finite residuals within tolerance are numerical noise; zero them to avoid
   // weird negative-zero issues. NaN and infinity fail this test and are kept.
-  if (fabs(balanceTracker.deltaC) < EPS) {
+  if (fabs(balanceTracker.deltaC) < BALANCE_TOLERANCE) {
     balanceTracker.deltaC = 0.0;
   }
-  if (fabs(balanceTracker.deltaN) < EPS) {
+  if (fabs(balanceTracker.deltaN) < BALANCE_TOLERANCE) {
     balanceTracker.deltaN = 0.0;
   }
 
@@ -171,16 +132,14 @@ void checkBalance(void) {
   if (balanceResidualFailed(balanceTracker.deltaC)) {
     err = 1;
     logBalanceFailure("Carbon", balanceTracker.deltaC, balanceTracker.preTotalC,
-                      balanceTracker.postTotalC, balanceTracker.finalC,
-                      balanceTracker.inputsC, balanceTracker.outputsC,
-                      balanceTracker.clampedC);
+                      balanceTracker.postTotalC, balanceTracker.inputsC,
+                      balanceTracker.outputsC);
   }
   if (balanceResidualFailed(balanceTracker.deltaN)) {
     err = 1;
     logBalanceFailure("Nitrogen", balanceTracker.deltaN,
                       balanceTracker.preTotalN, balanceTracker.postTotalN,
-                      balanceTracker.finalN, balanceTracker.inputsN,
-                      balanceTracker.outputsN, balanceTracker.clampedN);
+                      balanceTracker.inputsN, balanceTracker.outputsN);
   }
   if (err) {
     logInternalError("Exiting\n");
