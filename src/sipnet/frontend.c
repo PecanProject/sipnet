@@ -158,6 +158,7 @@ int main(int argc, char *argv[]) {
   readInputFile();
 
   // 4. Run some checks
+  validateFilename();
   validateContext();
 
   // 5. Set calculated parameters

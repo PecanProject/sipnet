@@ -32,6 +32,8 @@ sections to include in release notes:
   fertilizer events, NPP signs, nitrogen availability, and flooding. (#415)
 
 ### Fixed
+- Reject empty or oversized effective `FILE_PREFIX` values before constructing
+  filenames, preserving command-line overrides and legacy aliases. (#437)
 - Validate all input event records for calculated-phenology conflicts and
   same-day planting/harvest, resetting daily checks when leaf events start a new
   date. (#431)
