@@ -319,6 +319,35 @@ int testRootFluxesNegativeNPP(void) {
   return status;
 }
 
+int testPrecipitation(void) {
+  int status = 0;
+  const struct {
+    int snow;
+    double tair, rain, snowFall;
+  } cases[] = {{0, -5.0, 2.0, 0.0}, {0, 0.0, 2.0, 0.0}, {0, 5.0, 2.0, 0.0},
+               {1, -5.0, 0.0, 2.0}, {1, 0.0, 0.0, 2.0}, {1, 5.0, 2.0, 0.0}};
+
+  resetContext();
+  ctx.leafWater = 0;
+  params.immedEvapFrac = 0.0;
+  climate->precip = 1.0;  // 1 cm over half a day gives 2 cm/day.
+  climate->length = 0.5;
+
+  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+    double rain, snowFall, immedEvap;
+    ctx.snow = cases[i].snow;
+    climate->tair = cases[i].tair;
+    logTest("Running testPrecipitation: snow=%d, tair=%g\n", ctx.snow,
+            climate->tair);
+
+    calcPrecip(&rain, &snowFall, &immedEvap, 0.0);
+
+    status |= checkFlux(rain, cases[i].rain, "rain");
+    status |= checkFlux(snowFall, cases[i].snowFall, "snowFall");
+  }
+  return status;
+}
+
 int run(void) {
   int status = 0;
 
@@ -330,6 +359,7 @@ int run(void) {
   status |= testWoodAndLeafFluxesWithAccountingDelta();
   status |= testRootFluxesPositiveNPP();
   status |= testRootFluxesNegativeNPP();
+  status |= testPrecipitation();
 
   return status;
 }
