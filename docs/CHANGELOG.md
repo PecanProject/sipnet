@@ -42,7 +42,7 @@ sections to include in release notes:
 - Terminating harvest events will now remove all biomass at end of time step, instead of allowing small amounts to remain in the plant pools due to growth in that step. (#400)
 - Leaf-off mechanics refined to ensure that leaf-off events do not remove more leaf carbon than is available in the leaf pool. (#400)
 
-- Require strictly positive leaf, wood, fine-root, and coarse-root NPP allocations during model setup (#405).
+- Require strictly positive leaf, wood, and fine-root NPP allocations during model setup and allow a zero coarse-root remainder (#405, PR #445).
 - Reject nonfinite supplied model parameters and NPP allocation inputs (#405).
 
 ### Changed
